@@ -1,0 +1,37 @@
+These is an tasklist covering all diffrent tasks these project has.
+
+split everything into SEPERATED files
+add eventhandler
+add globals
+add Block-baseclass
+add BlockHandler
+add cleanup-function to model
+add States
+add StateEntrys
+add StateEntry for game with constructor option for enabking/disabling game loop, user interaction, etc.
+add Game-state
+add Escape-state
+add start-menu state (only basic)
+split block assets into seperated files
+add TextureFactory, TextureAtlas
+add Model, ModelLoader for mc(!)-models
+add blocks (test modelloader for all block models)
+add update.py for downloading latest build of mcpython and unpacking it
+add mc-resource-extractor/direct loader
+add player-class, gamemode, harts, hunger, xp, xp_level and functions for it
+add Inventory-class, Slot-class, SlotCopy-class, InventoryHandler based on states
+add attribute to Inventory: should_be_on_escape_stack() -> bool
+add chat (based on state), commands, CommandHandler, CommandParser
+add Item, ItemHandler, ItemModelLoader
+add PlayerInventory, PlayerHotbar, PlayerMainInventory, PlayerCreativeInventory, PlayerCreativeTab
+add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid
+add BlockInventory-attribute to Block for auto-opening an inventory
+add the following block inventorys: crafting table, furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
+add Enchantment-baseclass with attribute is_combineable_with(...) -> bool & all enchanments
+add Tool-baseclass and Tool-durability
+add braketime-attribute to Block
+add datapacks
+move world storage to Chunk, Dimension & World-class
+add WorldGenerator, WorldGeneratorChunkProvider, WorldGenerationHandler
+
+make the following attributes as json-saved files: Block.is_brake_able, Block.brake_time, Item.tool_types, Item.max_durability, Item.braketime_of
