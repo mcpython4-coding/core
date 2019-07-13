@@ -12,3 +12,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed library bug locally, if somebody gets when closing the window an exception from weakref, contact me and I
         will give you an workaround
 [uuk]: removed compatibility to python 2
+[uuk]: when starting, mouse will NOT be locked anymore
+[uuk]: splitted everything into single files
+[uuk]: added warning msg when update is called to less
+[uuk]: new chunk format: (x, z) instead of (x, 0, z)
