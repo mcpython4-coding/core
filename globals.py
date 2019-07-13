@@ -7,3 +7,4 @@ model = None
 eventhandler = None
 
 blockhandler = None
+statehandler = None

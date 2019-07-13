@@ -8,6 +8,7 @@ from util.math import *
 import time
 import world.Model
 import globals as G
+import state.StateHandler
 
 
 class Window(pyglet.window.Window):
@@ -74,6 +75,8 @@ class Window(pyglet.window.Window):
         # This call schedules the `update()` method to be called
         # TICKS_PER_SEC. This is the main game event loop.
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
+
+        state.StateHandler.load()
 
     def set_exclusive_mouse(self, exclusive):
         """ If `exclusive` is True, the game will capture the mouse, if False
@@ -160,41 +163,8 @@ class Window(pyglet.window.Window):
             if self.sector is None:
                 self.model.process_entire_queue()
             self.sector = sector
-        m = 8
-        dt = min(dt, 0.2)
-        for _ in range(m):
-            self._update(dt / m)
 
         G.eventhandler.call("gameloop:tick:end", dt)
-
-    def _update(self, dt):
-        """ Private implementation of the `update()` method. This is where most
-        of the motion logic lives, along with gravity and collision detection.
-
-        Parameters
-        ----------
-        dt : float
-            The change in time since the last call.
-
-        """
-        # walking
-        speed = FLYING_SPEED if self.flying else WALKING_SPEED
-        d = dt * speed # distance covered this tick.
-        dx, dy, dz = self.get_motion_vector()
-        # New position in space, before accounting for gravity.
-        dx, dy, dz = dx * d, dy * d, dz * d
-        # gravity
-        if not self.flying:
-            # Update your vertical speed: if you are falling, speed up until you
-            # hit terminal velocity; if you are jumping, slow down until you
-            # start falling.
-            self.dy -= dt * GRAVITY
-            self.dy = max(self.dy, -TERMINAL_VELOCITY)
-            dy += self.dy * dt
-        # collisions
-        x, y, z = self.position
-        x, y, z = self.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
-        self.position = (x, y, z)
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`
@@ -259,21 +229,7 @@ class Window(pyglet.window.Window):
             mouse button was clicked.
 
         """
-        if self.exclusive:
-            G.eventhandler.call("user:mouse:press", x, y, button, modifiers)
-            vector = self.get_sight_vector()
-            blockpos, previous = self.model.hit_test(self.position, vector)
-            if (button == mouse.RIGHT) or \
-                    ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
-                # ON OSX, control + left click = right click.
-                if previous:
-                    self.model.add_block(previous, self.block)
-            elif button == pyglet.window.mouse.LEFT and blockpos:
-                block = self.model.world[blockpos]
-                if block.is_brakeable():
-                    self.model.remove_block(blockpos)
-        else:
-            self.set_exclusive_mouse(True)
+        G.eventhandler.call("user:mouse:press", x, y, button, modifiers)
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ Called when the player moves the mouse.
@@ -287,13 +243,7 @@ class Window(pyglet.window.Window):
             The movement of the mouse.
 
         """
-        if self.exclusive:
-            G.eventhandler.call("user:mouse:motion", x, y, dx, dy)
-            m = 0.15
-            x, y = self.rotation
-            x, y = x + dx * m, y + dy * m
-            y = max(-90, min(90, y))
-            self.rotation = (x, y)
+        G.eventhandler.call("user:mouse:motion", x, y, dx, dy)
 
     def on_key_press(self, symbol, modifiers):
         """ Called when the player presses a key. See pyglet docs for key
@@ -308,26 +258,6 @@ class Window(pyglet.window.Window):
 
         """
         G.eventhandler.call("user:keyboard:press", symbol, modifiers)
-        if symbol == key.W:
-            self.strafe[0] -= 1
-        elif symbol == key.S:
-            self.strafe[0] += 1
-        elif symbol == key.A:
-            self.strafe[1] -= 1
-        elif symbol == key.D:
-            self.strafe[1] += 1
-        elif symbol == key.SPACE:
-            if self.dy == 0:
-                self.dy = JUMP_SPEED
-        elif symbol == key.ESCAPE:
-            self.set_exclusive_mouse(False)
-        elif symbol == key.TAB:
-            self.flying = not self.flying
-        elif symbol in self.num_keys:
-            index = (symbol - self.num_keys[0]) % len(self.inventory)
-            self.block = self.inventory[index]
-        elif symbol == key.N:
-            self.model.regenerate()
 
     def on_key_release(self, symbol, modifiers):
         """ Called when the player releases a key. See pyglet docs for key
@@ -342,14 +272,6 @@ class Window(pyglet.window.Window):
 
         """
         G.eventhandler.call("user:keyboard:release", symbol, modifiers)
-        if symbol == key.W:
-            self.strafe[0] += 1
-        elif symbol == key.S:
-            self.strafe[0] -= 1
-        elif symbol == key.A:
-            self.strafe[1] += 1
-        elif symbol == key.D:
-            self.strafe[1] -= 1
 
     def on_resize(self, width, height):
         """ Called when the window is resized to a new `width` and `height`.
@@ -406,13 +328,8 @@ class Window(pyglet.window.Window):
         """
         self.clear()
         self.set_3d()
-        glColor3d(1, 1, 1)
-        self.model.batch.draw()
-        self.draw_focused_block()
         G.eventhandler.call("render:draw:3d")
         self.set_2d()
-        self.draw_label()
-        self.draw_reticle()
         G.eventhandler.call("render:draw:2d")
 
     def draw_focused_block(self):

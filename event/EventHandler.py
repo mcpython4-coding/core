@@ -9,13 +9,16 @@ class EventReSubscriber:
         self.handler = handler
         self.eventname = None
         self.function = None
+        self.call_active = None
 
     def __call__(self, function):
         self.set_function(function)
+        return function
 
     def set_function(self, function):
         self.function = function
         self.handler.revert_resubscriber(self, insert=True)
+        return function
 
 
 class EventHandler:
@@ -24,21 +27,30 @@ class EventHandler:
         self.event_registrations = {}  # str: event -> function[]
         self.eventresubscriber = [EventReSubscriber(self) for _ in range(10)]
 
-    def __call__(self, eventname):
+    def __call__(self, eventname, callactive=True):
         if len(self.eventresubscriber) == 0:
             self.eventresubscriber.append(EventReSubscriber(self))
         eventresubscriber = self.eventresubscriber.pop(0)
         eventresubscriber.eventname = eventname
+        eventresubscriber.call_active = callactive
         return eventresubscriber
 
     def revert_resubscriber(self, sub: EventReSubscriber, insert=False):
         if insert and sub.function:
             if sub.eventname not in self.event_names:
                 raise ValueError("can't subscribe to event named "+str(sub.eventname))
-            self.event_registrations[sub.eventname].append(sub.function)
+            if sub.call_active:
+                self.event_registrations[sub.eventname].append(sub.function)
         self.eventresubscriber.append(sub)
         sub.eventname = None
         sub.function = None
+        sub.call_active = None
+
+    def deactivate_from_callback(self, eventname, function):
+        self.event_registrations[eventname].remove(function)
+
+    def activate_to_callback(self, eventname, function):
+        self.event_registrations[eventname].append(function)
 
     def add_event_name(self, eventname):
         if eventname in self.event_names: return

@@ -28,3 +28,7 @@ started these clone on 12th of July, 2019
 [uuk]: added "air"-block
 [uuk]: added cleanup & regenerate-function to model
 [uuk]: pressing "N" ends now in an new level
+[uuk]: added State-class, StateHandler, StatePart
+[uuk]: added activate/deactivate callback functions to EventHandler
+[uuk]: added State for game, StatePart of GameLoop
+[uuk]: moved all eventhandling out of window into GameStatePart and GameState

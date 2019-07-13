@@ -1,13 +1,9 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-add cleanup-function to model
-add States
-add StateEntrys
-add StateEntry for game with constructor option for enabling/disabling game loop, user interaction, etc.
-add Game-state
 add Escape-state
 add start-menu state (only basic)
-split block assets into seperated files
+add TickHandler & make sand falling
+split block assets into separated files
 add TextureFactory, TextureAtlas
 add Model, ModelLoader for mc(!)-models
 add blocks (test modelloader for all block models)
