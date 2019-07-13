@@ -3,9 +3,10 @@ authors: uuk"""
 import time
 import pyglet
 from config import TEXTURE_PATH, FACES, TICKS_PER_SEC
-from util.math import sectorize, normalize, cube_vertices
+from util.math import sectorize, normalize, cube_vertices, tex_coords
 import collections
 import block.Block
+import block.BlockHandler
 import random
 import globals as G
 
@@ -39,6 +40,10 @@ class Model(object):
 
         G.model = self
 
+        self.pyramid_parts = []
+
+        block.BlockHandler.load()
+
         self._initialize()
 
     def _initialize(self):
@@ -52,12 +57,12 @@ class Model(object):
         for x in range(-n, n + 1, s):
             for z in range(-n, n + 1, s):
                 # create a layer stone an grass everywhere.
-                self.add_block((x, y - 2, z), block.Block.GRASS, immediate=False)
-                self.add_block((x, y - 3, z), block.Block.STONE, immediate=False)
+                self.add_block((x, y - 2, z), "minecraft:grass_block", immediate=False)
+                self.add_block((x, y - 3, z), "minecraft:stone", immediate=False)
                 if x in (-n, n) or z in (-n, n):
                     # create outer walls.
                     for dy in range(-2, 3):
-                        self.add_block((x, y + dy, z), block.Block.STONE, immediate=False)
+                        self.add_block((x, y + dy, z), "minecraft:stone", immediate=False)
 
         G.eventhandler.call("game:generation:mid")
         # generate the hills randomly
@@ -69,7 +74,7 @@ class Model(object):
             h = random.randint(1, 6)  # height of the hill
             s = random.randint(4, 8)  # 2 * s is the side length of the hill
             d = 1  # how quickly to taper off the hills
-            t = random.choice([block.Block.GRASS, block.Block.SAND, block.Block.BRICK])
+            t = random.choice(self.pyramid_parts)
             for y in range(c, c + h):
                 for x in range(a - s, a + s + 1):
                     for z in range(b - s, b + s + 1):
@@ -120,23 +125,23 @@ class Model(object):
                 return True
         return False
 
-    def add_block(self, position, texture, immediate=True):
+    def add_block(self, position: tuple, block_name: str, immediate=True):
         """ Add a block with the given `texture` and `position` to the world.
 
         Parameters
         ----------
         position : tuple of len 3
             The (x, y, z) position of the block to add.
-        texture : list of len 3
-            The coordinates of the texture squares. Use `tex_coords()` to
-            generate.
+        block_name : the name of the block to add
         immediate : bool
             Whether or not to draw the block immediately.
 
         """
         if position in self.world:
             self.remove_block(position, immediate)
-        self.world[position] = texture
+        if block_name in [None, "air", "minecraft:air"]: return
+        blockobj = G.blockhandler.blocks[block_name](position)
+        self.world[position] = blockobj
         self.sectors.setdefault(sectorize(position), []).append(position)
         if immediate:
             if self.exposed(position):
@@ -154,6 +159,7 @@ class Model(object):
             Whether or not to immediately remove block from canvas.
 
         """
+        self.world[position].on_delete()
         del self.world[position]
         self.sectors[sectorize(position)].remove(position)
         if immediate:
@@ -192,7 +198,7 @@ class Model(object):
             Whether or not to show the block immediately.
 
         """
-        texture = self.world[position]
+        texture = tex_coords(*self.world[position].get_tex_coords())
         self.shown[position] = texture
         if immediate:
             self._show_block(position, texture)

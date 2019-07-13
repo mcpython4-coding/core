@@ -20,3 +20,9 @@ started these clone on 12th of July, 2019
 [uuk]: added globals
 [uuk]: added events
 [uuk]: added exception handling for events
+[uuk]: added base class for blocks and block handler
+[uuk]: added missing texture to texture.png
+[uuk]: all blocks are now using the new block system
+[uuk]: added hooks for all different block uses to Block-class
+[uuk]: added dirt-block
+[uuk]: added "air"-block

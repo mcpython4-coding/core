@@ -6,7 +6,6 @@ from config import *
 from pyglet.window import key, mouse
 from util.math import *
 import time
-import block.Block
 import world.Model
 import globals as G
 
@@ -54,10 +53,10 @@ class Window(pyglet.window.Window):
         self.dy = 0
 
         # A list of blocks the player can place. Hit num keys to cycle.
-        self.inventory = [block.Block.BRICK, block.Block.GRASS, block.Block.SAND]
+        self.inventory = []
 
         # The current block the user can place. Hit num keys to cycle.
-        self.block = self.inventory[0]
+        self.block = None
 
         # Convenience list of num keys.
         self.num_keys = [
@@ -270,8 +269,8 @@ class Window(pyglet.window.Window):
                 if previous:
                     self.model.add_block(previous, self.block)
             elif button == pyglet.window.mouse.LEFT and blockpos:
-                texture = self.model.world[blockpos]
-                if texture != block.Block.STONE:
+                block = self.model.world[blockpos]
+                if block.is_brakeable():
                     self.model.remove_block(blockpos)
         else:
             self.set_exclusive_mouse(True)
