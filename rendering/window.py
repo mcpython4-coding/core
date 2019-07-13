@@ -8,12 +8,15 @@ from util.math import *
 import time
 import block.Block
 import world.Model
+import globals as G
 
 
 class Window(pyglet.window.Window):
 
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
+
+        G.window = self
 
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False

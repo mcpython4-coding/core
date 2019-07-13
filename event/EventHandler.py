@@ -1,4 +1,4 @@
-import enum
+import globals as G
 
 
 class EventReSubscriber:
@@ -49,5 +49,5 @@ class EventHandler:
             function(*args, **kwargs)
 
 
-handler = EventHandler()
+handler = G.eventhandler = EventHandler()
 

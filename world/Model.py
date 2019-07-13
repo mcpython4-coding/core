@@ -7,6 +7,7 @@ from util.math import sectorize, normalize, cube_vertices
 import collections
 import block.Block
 import random
+import globals as G
 
 
 class Model(object):
@@ -35,6 +36,8 @@ class Model(object):
         # Simple function queue implementation. The queue is populated with
         # _show_block() and _hide_block() calls
         self.queue = collections.deque()
+
+        G.model = self
 
         self._initialize()
 

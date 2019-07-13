@@ -16,4 +16,5 @@ started these clone on 12th of July, 2019
 [uuk]: splitted everything into single files
 [uuk]: added warning msg when update is called to less
 [uuk]: new chunk format: (x, z) instead of (x, 0, z)
-[uuk]: add event/EventHandler
+[uuk]: added event/EventHandler
+[uuk]: added globals
