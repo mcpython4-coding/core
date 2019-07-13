@@ -9,3 +9,6 @@ started these clone on 12th of July, 2019
 [uuk]: added code from https://github.com/fogleman/Minecraft
 [uuk]: created __main__.py for launching
 [uuk]: fixed missing call of main.main() in __main__
+[uuk]: fixed library bug locally, if somebody gets when closing the window an exception from weakref, contact me and I
+        will give you an workaround
+[uuk]: removed compatibility to python 2
