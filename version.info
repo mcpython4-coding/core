@@ -6,3 +6,6 @@ started these clone on 12th of July, 2019
 [uuk]: added tools/updatelicenceheaders [1]
 [github]: started day 2 as 13th of July, 2019
 [uuk]: added tools/updatelicenceheaders [2]
+[uuk]: added code from https://github.com/fogleman/Minecraft
+[uuk]: created __main__.py for launching
+[uuk]: fixed missing call of main.main() in __main__
