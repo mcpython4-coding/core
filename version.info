@@ -18,3 +18,5 @@ started these clone on 12th of July, 2019
 [uuk]: new chunk format: (x, z) instead of (x, 0, z)
 [uuk]: added event/EventHandler
 [uuk]: added globals
+[uuk]: added events
+[uuk]: added exception handling for events

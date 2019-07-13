@@ -150,6 +150,7 @@ class Window(pyglet.window.Window):
             The change in time since the last call.
 
         """
+        G.eventhandler.call("gameloop:tick:start", dt)
         if dt > 3:
             print("[warning] running behind normal tick, did you overload game? missing " +
                   str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
@@ -164,6 +165,8 @@ class Window(pyglet.window.Window):
         dt = min(dt, 0.2)
         for _ in range(m):
             self._update(dt / m)
+
+        G.eventhandler.call("gameloop:tick:end", dt)
 
     def _update(self, dt):
         """ Private implementation of the `update()` method. This is where most
@@ -258,6 +261,7 @@ class Window(pyglet.window.Window):
 
         """
         if self.exclusive:
+            G.eventhandler.call("user:mouse:press", x, y, button, modifiers)
             vector = self.get_sight_vector()
             blockpos, previous = self.model.hit_test(self.position, vector)
             if (button == mouse.RIGHT) or \
@@ -285,6 +289,7 @@ class Window(pyglet.window.Window):
 
         """
         if self.exclusive:
+            G.eventhandler.call("user:mouse:motion", x, y, dx, dy)
             m = 0.15
             x, y = self.rotation
             x, y = x + dx * m, y + dy * m
@@ -303,6 +308,7 @@ class Window(pyglet.window.Window):
             Number representing any modifying keys that were pressed.
 
         """
+        G.eventhandler.call("user:keyboard:press", symbol, modifiers)
         if symbol == key.W:
             self.strafe[0] -= 1
         elif symbol == key.S:
@@ -334,6 +340,7 @@ class Window(pyglet.window.Window):
             Number representing any modifying keys that were pressed.
 
         """
+        G.eventhandler.call("user:keyboard:release", symbol, modifiers)
         if symbol == key.W:
             self.strafe[0] += 1
         elif symbol == key.S:
@@ -357,6 +364,7 @@ class Window(pyglet.window.Window):
         self.reticle = pyglet.graphics.vertex_list(4,
             ('v2i', (x - n, y, x + n, y, x, y - n, x, y + n))
         )
+        G.eventhandler.call("user:window:resize", width, height)
 
     def set_2d(self):
         """ Configure OpenGL to draw in 2d.
@@ -400,9 +408,11 @@ class Window(pyglet.window.Window):
         glColor3d(1, 1, 1)
         self.model.batch.draw()
         self.draw_focused_block()
+        G.eventhandler.call("render:draw:3d")
         self.set_2d()
         self.draw_label()
         self.draw_reticle()
+        G.eventhandler.call("render:draw:2d")
 
     def draw_focused_block(self):
         """ Draw black edges around the block that is currently under the

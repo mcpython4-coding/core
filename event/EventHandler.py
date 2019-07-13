@@ -1,4 +1,7 @@
+"""mcpython - a minecraft clone written in python licenced under MIT-licence
+authors: uuk"""
 import globals as G
+import traceback
 
 
 class EventReSubscriber:
@@ -45,9 +48,42 @@ class EventHandler:
     def call(self, eventname, *args, **kwargs):
         if eventname not in self.event_names:
             raise ValueError("can't call event "+str(eventname)+" because its unknown")
+        flag_exc = False
         for function in self.event_registrations[eventname]:
-            function(*args, **kwargs)
+            try:
+                function(*args, **kwargs)
+            except:
+                if not flag_exc:
+                    print("exceptions during calling event named "+str(eventname)+":\ncallen over:")
+                    traceback.print_stack()
+                    print("exceptions:")
+                    flag_exc = True
+                else:
+                    print()
+                traceback.print_exc()
 
 
 handler = G.eventhandler = EventHandler()
+
+handler.add_event_name("game:startup")
+handler.add_event_name("game:load_finished")
+handler.add_event_name("game:gameloop_startup")
+
+handler.add_event_name("game:generation:start")
+handler.add_event_name("game:generation:mid")
+handler.add_event_name("game:generation:end")
+
+handler.add_event_name("gameloop:tick:start")
+handler.add_event_name("gameloop:tick:end")
+
+handler.add_event_name("user:mouse:press")
+handler.add_event_name("user:mouse:motion")
+
+handler.add_event_name("user:keyboard:press")
+handler.add_event_name("user:keyboard:release")
+
+handler.add_event_name("user:window:resize")
+
+handler.add_event_name("render:draw:3d")
+handler.add_event_name("render:draw:2d")
 

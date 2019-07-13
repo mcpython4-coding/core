@@ -45,6 +45,7 @@ class Model(object):
         """ Initialize the world by placing all the blocks.
 
         """
+        G.eventhandler.call("game:generation:start")
         n = 80  # 1/2 width and height of world
         s = 1  # step size
         y = 0  # initial y height
@@ -58,6 +59,7 @@ class Model(object):
                     for dy in range(-2, 3):
                         self.add_block((x, y + dy, z), block.Block.STONE, immediate=False)
 
+        G.eventhandler.call("game:generation:mid")
         # generate the hills randomly
         o = n - 10
         for _ in range(120):
@@ -77,6 +79,8 @@ class Model(object):
                             continue
                         self.add_block((x, y, z), t, immediate=False)
                 s -= d  # decrement side lenth so hills taper off
+
+        G.eventhandler.call("game:generation:end")
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is

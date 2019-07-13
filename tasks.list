@@ -1,12 +1,11 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-add globals
 add Block-baseclass
 add BlockHandler
 add cleanup-function to model
 add States
 add StateEntrys
-add StateEntry for game with constructor option for enabking/disabling game loop, user interaction, etc.
+add StateEntry for game with constructor option for enabling/disabling game loop, user interaction, etc.
 add Game-state
 add Escape-state
 add start-menu state (only basic)
