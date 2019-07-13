@@ -198,6 +198,7 @@ class Model(object):
             Whether or not to show the block immediately.
 
         """
+        if position not in self.world: return
         texture = tex_coords(*self.world[position].get_tex_coords())
         self.shown[position] = texture
         if immediate:
@@ -326,3 +327,12 @@ class Model(object):
         while self.queue:
             self._dequeue()
 
+    def cleanup(self):
+        for positon in list(self.shown.keys()):
+            self.hide_block(positon, immediate=False)
+        self.world = {}
+
+    def regenerate(self):
+        self.cleanup()
+        self._initialize()
+        G.window.position = (0, 20, 0)
