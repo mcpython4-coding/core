@@ -1,6 +1,11 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk"""
+authors: uuk
+
+orginal game by forgleman licenced under MIT-licence
+minecraft by Mojang"""
 from . import State, StatePartGame
+import globals as G
+from pyglet.window import key
 
 
 class StateGame(State.State):
@@ -19,13 +24,18 @@ class StateGame(State.State):
         return [StatePartGame.StatePartGame()]
 
     def get_event_functions(self) -> list:
-        return []
+        return [(self.on_key_press, "user:keyboard:press")]
 
     def on_activate(self, old):
         pass
 
     def on_deactivate(self, new):
         pass
+
+    @G.eventhandler("user:keyboard:press", callactive=False)
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.ESCAPE:
+            G.statehandler.switch_to("minecraft:escape_state")
 
 
 game = StateGame()

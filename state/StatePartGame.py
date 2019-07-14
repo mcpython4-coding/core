@@ -1,5 +1,8 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk"""
+authors: uuk
+
+orginal game by forgleman licenced under MIT-licence
+minecraft by Mojang"""
 from . import StatePart
 import globals as G
 from config import FLYING_SPEED, WALKING_SPEED, GRAVITY, TERMINAL_VELOCITY, PLAYER_HEIGHT, JUMP_SPEED
@@ -9,12 +12,13 @@ import pyglet
 
 class StatePartGame(StatePart.StatePart):
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
-                 activate_focused_block=True):
+                 activate_focused_block=True, glcolor3d=(1., 1., 1.)):
         self.activate_physics = activate_physics
         self.activate_mouse = activate_mouse
         self.activate_keyboard = activate_keyboard
         self.activate_3d_draw = activate_3d_draw
         self.activate_focused_block_draw = activate_focused_block
+        self.glcolor3d = glcolor3d
 
         self.event_functions = [("gameloop:tick:end", self.on_update),
                                 ("user:mouse:press", self.on_mouse_press),
@@ -30,7 +34,7 @@ class StatePartGame(StatePart.StatePart):
 
     def deactivate(self):
         for eventname, function in self.event_functions:
-            G.eventhandler.deactivate_to_callback(eventname, function)
+            G.eventhandler.deactivate_from_callback(eventname, function)
 
     @G.eventhandler("gameloop:tick:end", callactive=False)
     def on_update(self, dt):
@@ -84,8 +88,6 @@ class StatePartGame(StatePart.StatePart):
                 block = G.window.model.world[blockpos]
                 if block.is_brakeable():
                     G.window.model.remove_block(blockpos)
-        else:
-            G.window.set_exclusive_mouse(True)
 
     @G.eventhandler("user:mouse:motion", callactive=False)
     def on_mouse_motion(self, x, y, dx, dy):
@@ -110,8 +112,6 @@ class StatePartGame(StatePart.StatePart):
         elif symbol == key.SPACE:
             if G.window.dy == 0:
                 G.window.dy = JUMP_SPEED
-        elif symbol == key.ESCAPE:
-            G.window.set_exclusive_mouse(False)
         elif symbol == key.TAB:
             G.window.flying = not G.window.flying
         elif symbol in G.window.num_keys:
@@ -134,7 +134,7 @@ class StatePartGame(StatePart.StatePart):
 
     @G.eventhandler("render:draw:3d", callactive=False)
     def on_draw_3d(self):
-        pyglet.gl.glColor3d(1, 1, 1)
+        pyglet.gl.glColor3d(*self.glcolor3d)
         if self.activate_3d_draw:
             G.window.model.batch.draw()
             if self.activate_focused_block_draw:

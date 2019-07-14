@@ -1,5 +1,8 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk"""
+authors: uuk
+
+orginal game by forgleman licenced under MIT-licence
+minecraft by Mojang"""
 import math
 
 
@@ -22,7 +25,7 @@ TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
 
-TEXTURE_PATH = 'texture.png'
+TEXTURE_PATH = 'assets/texture.png'
 
 FACES = [
     ( 0, 1, 0),

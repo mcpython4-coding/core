@@ -1,5 +1,8 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk"""
+authors: uuk
+
+orginal game by forgleman licenced under MIT-licence
+minecraft by Mojang"""
 
 
 def cube_vertices(x, y, z, n):

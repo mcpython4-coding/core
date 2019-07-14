@@ -1,5 +1,8 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk"""
+authors: uuk
+
+orginal game by forgleman licenced under MIT-licence
+minecraft by Mojang"""
 import time
 import pyglet
 from config import TEXTURE_PATH, FACES, TICKS_PER_SEC
@@ -291,10 +294,10 @@ class Model(object):
                         after_set.add((x + dx, z + dz))
         show = after_set - before_set
         hide = before_set - after_set
-        for sector in show:
-            self.show_sector(sector)
         for sector in hide:
             self.hide_sector(sector)
+        for sector in show:
+            self.show_sector(sector)
 
     def _enqueue(self, func, *args):
         """ Add `func` to the internal queue.

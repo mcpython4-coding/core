@@ -1,5 +1,8 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk"""
+authors: uuk
+
+orginal game by forgleman licenced under MIT-licence
+minecraft by Mojang"""
 import globals as G
 import traceback
 
@@ -47,7 +50,8 @@ class EventHandler:
         sub.call_active = None
 
     def deactivate_from_callback(self, eventname, function):
-        self.event_registrations[eventname].remove(function)
+        if function in self.event_registrations[eventname]:
+            self.event_registrations[eventname].remove(function)
 
     def activate_to_callback(self, eventname, function):
         self.event_registrations[eventname].append(function)

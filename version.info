@@ -32,3 +32,21 @@ started these clone on 12th of July, 2019
 [uuk]: added activate/deactivate callback functions to EventHandler
 [uuk]: added State for game, StatePart of GameLoop
 [uuk]: moved all eventhandling out of window into GameStatePart and GameState
+[uuk]: added Escape-state
+[uuk]: fixed some function misspells
+[uuk]: added state/ui for buttons
+[uuk]: added event/EventInfo for getting an info storing exactly when event args are True
+[uuk]: fixed possible memory leak when changing fast chunks (chunks were shown before other were hidden)
+[uuk]: added assets-folder
+[uuk]: added some resources from mc 1.14.4-pre5
+[uuk]: added textures/helpers for image editing, for that PIL is required
+[uuk]: added local to globals
+[uuk]: added tmp-folder
+[github]: started day 3 as 14th of July, 2019
+[uuk]: finished UIPartButton
+[uuk]: some licence header improvements
+[uuk]: added UIPartLable
+[uuk]: added callbackhelper - an class for calling an function with extra args
+[uuk]: fixed that when switching statets sub-parts are recreated so we are not removing the old
+[uuk]: finished EscapeState for the moment
+
