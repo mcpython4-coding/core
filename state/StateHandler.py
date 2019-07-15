@@ -37,7 +37,7 @@ handler = G.statehandler = StateHandler()
 
 
 def load():
-    from . import (StateGame, StateEscape)
+    from . import (StateGame, StateEscape, StateStartMenu)
 
-    handler.switch_to("minecraft:escape_state")
+    handler.switch_to("minecraft:startmenu")
 

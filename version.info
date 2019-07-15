@@ -49,4 +49,11 @@ started these clone on 12th of July, 2019
 [uuk]: added callbackhelper - an class for calling an function with extra args
 [uuk]: fixed that when switching statets sub-parts are recreated so we are not removing the old
 [uuk]: finished EscapeState for the moment
+[uuk]: added StateStartMenu
+[uuk]: added two new rendering events: "render:draw:2d:background" & "render:draw:2d:overlay"
+[uuk]: added text_size attribute to UIPartLable
+[github]: started day 4 as 15th of July, 2019
+[uuk]: fixed bug: world is invisable after loading
+[uuk]: added immediate-parameter to sector-functions of Model
+[uuk]: fixed bug: you can spawn in blocks
 

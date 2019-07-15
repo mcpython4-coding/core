@@ -134,6 +134,7 @@ class StatePartGame(StatePart.StatePart):
 
     @G.eventhandler("render:draw:3d", callactive=False)
     def on_draw_3d(self):
+        pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
         pyglet.gl.glColor3d(*self.glcolor3d)
         if self.activate_3d_draw:
             G.window.model.batch.draw()

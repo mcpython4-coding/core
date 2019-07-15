@@ -47,9 +47,7 @@ class Model(object):
 
         block.BlockHandler.load()
 
-        self._initialize()
-
-    def _initialize(self):
+    def initialize(self):
         """ Initialize the world by placing all the blocks.
 
         """
@@ -254,25 +252,25 @@ class Model(object):
         """
         self._shown.pop(position).delete()
 
-    def show_sector(self, sector):
+    def show_sector(self, sector, immediate=False):
         """ Ensure all blocks in the given sector that should be shown are
         drawn to the canvas.
 
         """
         for position in self.sectors.get(sector, []):
             if position not in self.shown and self.exposed(position):
-                self.show_block(position, False)
+                self.show_block(position, immediate)
 
-    def hide_sector(self, sector):
+    def hide_sector(self, sector, immediate=False):
         """ Ensure all blocks in the given sector that should be hidden are
         removed from the canvas.
 
         """
         for position in self.sectors.get(sector, []):
             if position in self.shown:
-                self.hide_block(position, False)
+                self.hide_block(position, immediate)
 
-    def change_sectors(self, before, after):
+    def change_sectors(self, before, after, immediate=False):
         """ Move from sector `before` to sector `after`. A sector is a
         contiguous x, y sub-region of world. Sectors are used to speed up
         world rendering.
@@ -295,9 +293,9 @@ class Model(object):
         show = after_set - before_set
         hide = before_set - after_set
         for sector in hide:
-            self.hide_sector(sector)
+            self.hide_sector(sector, immediate)
         for sector in show:
-            self.show_sector(sector)
+            self.show_sector(sector, immediate)
 
     def _enqueue(self, func, *args):
         """ Add `func` to the internal queue.

@@ -333,7 +333,9 @@ class Window(pyglet.window.Window):
         self.set_3d()
         G.eventhandler.call("render:draw:3d")
         self.set_2d()
+        G.eventhandler.call("render:draw:2d:background")
         G.eventhandler.call("render:draw:2d")
+        G.eventhandler.call("render:draw:2d:overlay")
 
     def draw_focused_block(self):
         """ Draw black edges around the block that is currently under the

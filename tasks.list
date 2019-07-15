@@ -1,7 +1,5 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-add Escape-state
-add start-menu state (only basic)
 add TickHandler & make sand falling
 split block assets into separated files
 add on startup with help of the demo screen an info

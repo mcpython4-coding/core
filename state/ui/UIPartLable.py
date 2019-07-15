@@ -12,7 +12,7 @@ from pyglet.window import mouse
 
 class UIPartLable(state.StatePart.StatePart):
     def __init__(self, text, position, press=event.EventInfo.MousePressEventInfo(pyglet.window.mouse.LEFT),
-                 anchor_lable="WS", anchor_window="WS", on_press=None, color=(0, 0, 0, 255)):
+                 anchor_lable="WS", anchor_window="WS", on_press=None, color=(0, 0, 0, 255), text_size=20):
         """
         creates an new UIPartButton
         :param text: the text of the button
@@ -27,6 +27,7 @@ class UIPartLable(state.StatePart.StatePart):
         self.anchor_lable = anchor_lable
         self.anchor_window = anchor_window
         self.color = color
+        self.text_size = text_size
 
         self.on_press = on_press
 
@@ -82,5 +83,6 @@ class UIPartLable(state.StatePart.StatePart):
         self.lable.x = x + size[0] // 2 - wx // 2
         self.lable.y = y + size[1] // 2 - wy // 2
         self.lable.color = self.color
+        self.lable.font_size = self.text_size
         self.lable.draw()
 

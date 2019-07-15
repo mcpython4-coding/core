@@ -24,10 +24,18 @@ class StateEscape(State.State):
                                         color=(255, 255, 255, 255)),
                 UIPartButton.UIPartButton((150, 25), "Back to game", (0, 150), anchor_window="MM", anchor_button="MM",
                                           on_press=event.EventInfo.CallbackHelper(
-                                              G.statehandler.switch_to, ["minecraft:game"], enable_extra_args=False))]
+                                              G.statehandler.switch_to, ["minecraft:game"], enable_extra_args=False)),
+                UIPartButton.UIPartButton((150, 25), "Back to startmenu", (0, 100), anchor_window="MM", anchor_button="MM",
+                                          on_press=self.start_menu_press)
+                ]
 
     def get_event_functions(self) -> list:
         return []
+
+    @staticmethod
+    def start_menu_press(x, y):
+        G.model.cleanup()
+        G.statehandler.switch_to("minecraft:startmenu")
 
     def on_activate(self, old):
         pass

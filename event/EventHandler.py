@@ -101,5 +101,7 @@ handler.add_event_name("user:keyboard:release")
 handler.add_event_name("user:window:resize")
 
 handler.add_event_name("render:draw:3d")
+handler.add_event_name("render:draw:2d:background")
 handler.add_event_name("render:draw:2d")
+handler.add_event_name("render:draw:2d:overlay")
 

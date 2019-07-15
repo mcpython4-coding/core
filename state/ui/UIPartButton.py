@@ -204,6 +204,7 @@ class UIPartButton(state.StatePart.StatePart):
         self.lable.text = self.text
         wx, wy = self.lable.content_width, self.lable.content_height
         self.lable.x = x + self.size[0] // 2 - wx // 2
-        self.lable.y = y + self.size[1] // 2 - wy // 2
+        self.lable.y = y + self.size[1] // 2 - wy // 3
+        self.lable.font_size = self.size[1] // 2.0
         self.lable.draw()
 
