@@ -56,4 +56,9 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: world is invisable after loading
 [uuk]: added immediate-parameter to sector-functions of Model
 [uuk]: fixed bug: you can spawn in blocks
+[uuk]: added TickHandler with simple ticking
+[uuk]: added on_block_update()-method to Block
+[uuk]: removed N-key to generate an new level
+[uuk]: added ability to use add_block & remove_block with block instances
+[uuk]: sand will now fall by 2 Blocks / sec
 

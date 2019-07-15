@@ -117,8 +117,6 @@ class StatePartGame(StatePart.StatePart):
         elif symbol in G.window.num_keys:
             index = (symbol - G.window.num_keys[0]) % len(G.window.inventory)
             G.window.block = G.window.inventory[index]
-        elif symbol == key.N:
-            G.window.model.regenerate()
 
     @G.eventhandler("user:keyboard:release", callactive=False)
     def on_key_release(self, symbol, modifiers):

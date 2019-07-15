@@ -87,6 +87,13 @@ class Model(object):
                 s -= d  # decrement side lenth so hills taper off
 
         G.eventhandler.call("game:generation:end")
+        
+    def on_block_updated(self, position):
+        x, y, z = position
+        for dx, dy, dz in FACES+[(0, 0, 0)]:
+            position = x + dx, y + dy, z + dz
+            if position in self.world:
+                self.world[position].on_block_update()
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -141,12 +148,17 @@ class Model(object):
         if position in self.world:
             self.remove_block(position, immediate)
         if block_name in [None, "air", "minecraft:air"]: return
-        blockobj = G.blockhandler.blocks[block_name](position)
+        if issubclass(type(block_name), block.Block.Block):
+            blockobj = block_name
+            blockobj.position = position
+        else:
+            blockobj = G.blockhandler.blocks[block_name](position)
         self.world[position] = blockobj
         self.sectors.setdefault(sectorize(position), []).append(position)
         if immediate:
             if self.exposed(position):
                 self.show_block(position)
+            self.on_block_updated(position)
             self.check_neighbors(position)
 
     def remove_block(self, position, immediate=True):
@@ -160,12 +172,15 @@ class Model(object):
             Whether or not to immediately remove block from canvas.
 
         """
+        if issubclass(type(position), block.Block.Block):
+            position = position.position
         self.world[position].on_delete()
         del self.world[position]
         self.sectors[sectorize(position)].remove(position)
         if immediate:
             if position in self.shown:
                 self.hide_block(position)
+            self.on_block_updated(position)
             self.check_neighbors(position)
 
     def check_neighbors(self, position):
@@ -333,7 +348,3 @@ class Model(object):
             self.hide_block(positon, immediate=False)
         self.world = {}
 
-    def regenerate(self):
-        self.cleanup()
-        self._initialize()
-        G.window.position = (0, 20, 0)

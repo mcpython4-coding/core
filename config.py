@@ -36,3 +36,7 @@ FACES = [
     ( 0, 0,-1),
 ]
 
+
+RANDOM_TICK_SPEED = 1
+RANDOM_TICK_RANGE = 0
+

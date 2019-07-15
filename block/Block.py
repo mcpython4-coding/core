@@ -35,3 +35,9 @@ class Block:
     def is_part_of_pyramids() -> bool:
         return True
 
+    def on_random_update(self):
+        pass
+
+    def on_block_update(self):
+        pass
+
