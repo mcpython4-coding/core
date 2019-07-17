@@ -18,5 +18,6 @@ add braketime-attribute to Block
 add datapacks
 move world storage to Chunk, Dimension & World-class
 add WorldGenerator, WorldGeneratorChunkProvider, WorldGenerationHandler
+fix missing resize of image-parts when using only a part of it
 
 make the following attributes as json-saved files: Block.is_brake_able, Block.brake_time, Item.tool_types, Item.max_durability, Item.braketime_of

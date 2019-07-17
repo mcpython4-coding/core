@@ -8,11 +8,11 @@ from . import Block
 
 
 @G.blockhandler
-class BlockStone(Block.Block):
+class BlockCobbleStone(Block.Block):
     @staticmethod
     def get_name() -> str:
-        return "minecraft:stone"
+        return "minecraft:cobblestone"
 
     def get_model_name(self):
-        return "block/stone"
+        return "block/cobblestone"
 

@@ -60,11 +60,11 @@ class Model(object):
             for z in range(-n, n + 1, s):
                 # create a layer stone an grass everywhere.
                 self.add_block((x, y - 2, z), "minecraft:grass_block", immediate=False)
-                self.add_block((x, y - 3, z), "minecraft:stone", immediate=False)
+                self.add_block((x, y - 3, z), "minecraft:bedrock", immediate=False)
                 if x in (-n, n) or z in (-n, n):
                     # create outer walls.
                     for dy in range(-2, 3):
-                        self.add_block((x, y + dy, z), "minecraft:stone", immediate=False)
+                        self.add_block((x, y + dy, z), "minecraft:bedrock", immediate=False)
 
         G.eventhandler.call("game:generation:mid")
         # generate the hills randomly

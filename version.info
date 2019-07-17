@@ -84,4 +84,6 @@ started these clone on 12th of July, 2019
 [uuk]: added some cleanup function into some functions
 [uuk]: added assets/models/block_modified-folder for giving the game alternative models to load (used for grass at the moment)
 [uuk]: added texture/factory for classes working with images from pre-definited files
+[uuk]: added the following blocks: bedrock, cobblestone
+[uuk]: made stone brakeable
 
