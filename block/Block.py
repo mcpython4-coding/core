@@ -21,8 +21,8 @@ class Block:
     def on_delete(self):
         pass
 
-    def get_tex_coords(self) -> list:
-        return [(3, 0)] * 3
+    def get_model_name(self):
+        return None
 
     def is_brakeable(self) -> bool:
         return True

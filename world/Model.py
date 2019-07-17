@@ -12,6 +12,7 @@ import block.Block
 import block.BlockHandler
 import random
 import globals as G
+import texture.ModelLoader
 
 
 class Model(object):
@@ -22,7 +23,7 @@ class Model(object):
         self.batch = pyglet.graphics.Batch()
 
         # A TextureGroup manages an OpenGL texture.
-        self.group = pyglet.graphics.TextureGroup(pyglet.image.load(TEXTURE_PATH).get_texture())
+        # self.group = pyglet.graphics.TextureGroup(pyglet.image.load(TEXTURE_PATH).get_texture())
 
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
@@ -214,34 +215,28 @@ class Model(object):
             Whether or not to show the block immediately.
 
         """
+        if type(position) == block.Block.Block:
+            position = position.position
         if position not in self.world: return
-        texture = tex_coords(*self.world[position].get_tex_coords())
-        self.shown[position] = texture
+        if position in self.shown:
+            self.hide_block(position)
+        self.shown[position] = True
         if immediate:
-            self._show_block(position, texture)
+            self._show_block(position, self.world[position])
         else:
-            self._enqueue(self._show_block, position, texture)
+            self._enqueue(self._show_block, position, self.world[position])
 
-    def _show_block(self, position, texture):
+    def _show_block(self, position, block):
         """ Private implementation of the `show_block()` method.
 
         Parameters
         ----------
         position : tuple of len 3
             The (x, y, z) position of the block to show.
-        texture : list of len 3
-            The coordinates of the texture squares. Use `tex_coords()` to
-            generate.
+        block: the blockinstance to show
 
         """
-        x, y, z = position
-        vertex_data = cube_vertices(x, y, z, 0.5)
-        texture_data = list(texture)
-        # create vertex list
-        # FIXME Maybe `add_indexed()` should be used instead
-        self._shown[position] = self.batch.add(24, pyglet.gl.GL_QUADS, self.group,
-            ('v3f/static', vertex_data),
-            ('t2f/static', texture_data))
+        self._shown[position] = G.modelloader.show_block(self.batch, position, block.get_model_name())
 
     def hide_block(self, position, immediate=True):
         """ Hide the block at the given `position`. Hiding does not remove the
@@ -255,6 +250,9 @@ class Model(object):
             Whether or not to immediately remove the block from the canvas.
 
         """
+        if type(position) == block.Block.Block:
+            position = position.position
+        if position not in self.shown: return
         self.shown.pop(position)
         if immediate:
             self._hide_block(position)
@@ -265,7 +263,8 @@ class Model(object):
         """ Private implementation of the 'hide_block()` method.
 
         """
-        self._shown.pop(position).delete()
+        if position not in self._shown: return
+        [x.delete() for x in self._shown.pop(position)]
 
     def show_sector(self, sector, immediate=False):
         """ Ensure all blocks in the given sector that should be shown are

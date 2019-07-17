@@ -15,4 +15,9 @@ tickhandler = None
 
 blockhandler = None
 statehandler = None
+texturefactoryhandler = None
 
+modelloader = None
+
+
+jar_archive = None

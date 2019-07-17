@@ -61,4 +61,27 @@ started these clone on 12th of July, 2019
 [uuk]: removed N-key to generate an new level
 [uuk]: added ability to use add_block & remove_block with block instances
 [uuk]: sand will now fall by 2 Blocks / sec
+[uuk]: added textureatlas
+[uuk]: added helper function for transforming an pyglet image into an pillow one
+[uuk]: added resourcelocator making it possible to extract resources direct out of the .jar file,
+       an public instance is used
+[uuk]: removed textures from system
+[uuk]: removed texture group of model, we are using now texture atlas system
+[uuk]: added ModelLoader
+[uuk]: setup() was callen twice in __main__.py
+[github]: started day 5 as 16th of July, 2019
+[uuk]: fixed bugs around Model system
+[uuk]: added missingtexture-image
+[uuk]: added cube_verices_2 & tex_coords_2 for definiting all dimensions (xyz)
+[uuk]: missing texture will now be loaded into every texture atlas
+[uuk]: model.hide_block & model.show_block accepts now also blocks
+[uuk]: added auto-injected misssing-texture-block
+[uuk]: ResourceLocator accepts now files without G.local before
+[uuk]: if an face is not definitied, it will be missingtexture
+[github]: started day 6 as 17th of July, 2019
+[uuk]: fixed bugs around the model system & the atlas system
+[uuk]: added some security checks in various functions
+[uuk]: added some cleanup function into some functions
+[uuk]: added assets/models/block_modified-folder for giving the game alternative models to load (used for grass at the moment)
+[uuk]: added texture/factory for classes working with images from pre-definited files
 

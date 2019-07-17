@@ -20,7 +20,7 @@ class ButtonMode(enum.Enum):
 
 IMAGE_DICT = {}  # ButtonMode -> [NW, NM, NE, MW, MM, ME, SW, SM, SE] as 10x10 images loaded in pyglet as corner
 
-button_file = texture.helpers.load_image("assets/widgets.png")
+button_file = texture.helpers.load_image("gui/widgets")
 
 IMAGE_DICT[ButtonMode.ENABLED] = [
     texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 66, 10, 76))),  # NW

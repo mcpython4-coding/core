@@ -2,15 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b089e0db-f5db-4782-b184-a43ba234ba56" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/event/TickHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ResourceLocator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/1.14.4_pre5.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/factory/texture/grass_block_top.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/missingtexture.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/models/block_modified/grass_block.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/texture/ModelLoader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/texture/atlas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/texture/factory.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/texture.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/block/Block.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/Block.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockBrick.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockBrick.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockDirt.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockDirt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockGrassBlock.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockGrassBlock.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/block/BlockSand.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockSand.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockStone.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockStone.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/globals.py" beforeDir="false" afterPath="$PROJECT_DIR$/globals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/StatePartGame.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StatePartGame.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/ui/UIPartButton.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/ui/UIPartButton.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks.list" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.list" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/texture/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/texture/helpers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/math.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/math.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/version.info" beforeDir="false" afterPath="$PROJECT_DIR$/version.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/world/Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/Model.py" afterDir="false" />
     </list>
@@ -25,68 +38,38 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tasks.list">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" selection-start-line="1" selection-end-line="1" />
+            <state relative-caret-position="51">
+              <caret line="3" column="31" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="31" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/version.info">
+        <entry file="file://$PROJECT_DIR$/texture/factory.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1003">
-              <caret line="59" selection-start-line="59" selection-end-line="59" />
+            <state relative-caret-position="222">
+              <caret line="31" column="33" selection-start-line="31" selection-start-column="33" selection-end-line="31" selection-end-column="33" />
+              <folding>
+                <element signature="e#167#183#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ResourceLocator.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="260">
+              <caret line="48" column="24" selection-start-line="48" selection-start-column="24" selection-end-line="48" selection-end-column="24" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/world/Model.py">
+        <entry file="file://$PROJECT_DIR$/version.info">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="96" column="34" selection-start-line="96" selection-start-column="34" selection-end-line="96" selection-end-column="34" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/block/Block.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="697">
-              <caret line="41" column="12" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/block/BlockSand.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="20" column="31" selection-start-line="20" selection-start-column="31" selection-end-line="20" selection-end-column="31" />
-              <folding>
-                <element signature="e#167#186#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/event/TickHandler.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="73">
-              <caret line="34" column="10" selection-start-line="34" selection-start-column="10" selection-end-line="34" selection-end-column="10" />
-              <folding>
-                <element signature="e#167#186#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
-              <caret line="39" column="21" selection-start-line="39" selection-start-column="21" selection-end-line="39" selection-end-column="21" />
+            <state relative-caret-position="198">
+              <caret line="82" column="54" lean-forward="true" selection-start-line="82" selection-start-column="54" selection-end-line="82" selection-end-column="54" />
             </state>
           </provider>
         </entry>
@@ -106,11 +89,20 @@
       <find>add_event_name</find>
       <find>self</find>
       <find>to_pyglet_image</find>
+      <find>box[&quot;faces&quot;]</find>
+      <find>y-n</find>
+      <find>x+n</find>
+      <find>self.textureindex[</find>
     </findStrings>
     <replaceStrings>
       <replace>range</replace>
       <replace>G.window</replace>
       <replace>to_pyglet_sprite</replace>
+      <replace>f</replace>
+      <replace>x - nx</replace>
+      <replace>x - ny</replace>
+      <replace>x - nz</replace>
+      <replace>x + nx</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -121,18 +113,11 @@
       <list>
         <option value="$PROJECT_DIR$/../../tools/python3.7.4/Lib/weakref.py" />
         <option value="$PROJECT_DIR$/opengl_setup.py" />
-        <option value="$PROJECT_DIR$/util/math.py" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/block/BlockGrass.py" />
-        <option value="$PROJECT_DIR$/block/BlockGrassBlock.py" />
-        <option value="$PROJECT_DIR$/block/BlockBrick.py" />
-        <option value="$PROJECT_DIR$/block/BlockStone.py" />
-        <option value="$PROJECT_DIR$/block/BlockHandler.py" />
-        <option value="$PROJECT_DIR$/block/BlockDirt.py" />
         <option value="$PROJECT_DIR$/state/StatePart.py" />
         <option value="$PROJECT_DIR$/state/State.py" />
         <option value="$PROJECT_DIR$/state/StateGame.py" />
-        <option value="$PROJECT_DIR$/texture/helpers.py" />
         <option value="$PROJECT_DIR$/tools/updatelicenceheaders.py" />
         <option value="$PROJECT_DIR$/state/StateHandler.py" />
         <option value="$PROJECT_DIR$/rendering/window.py" />
@@ -140,18 +125,31 @@
         <option value="$PROJECT_DIR$/state/ui/UIPartLable.py" />
         <option value="$PROJECT_DIR$/event/EventInfo.py" />
         <option value="$PROJECT_DIR$/state/StateEscape.py" />
-        <option value="$PROJECT_DIR$/state/ui/UIPartButton.py" />
         <option value="$PROJECT_DIR$/state/StateStartMenu.py" />
-        <option value="$PROJECT_DIR$/globals.py" />
-        <option value="$PROJECT_DIR$/__main__.py" />
-        <option value="$PROJECT_DIR$/block/Block.py" />
-        <option value="$PROJECT_DIR$/tasks.list" />
         <option value="$PROJECT_DIR$/state/StatePartGame.py" />
         <option value="$PROJECT_DIR$/config.py" />
-        <option value="$PROJECT_DIR$/version.info" />
-        <option value="$PROJECT_DIR$/block/BlockSand.py" />
         <option value="$PROJECT_DIR$/event/TickHandler.py" />
+        <option value="$PROJECT_DIR$/state/ui/UIPartButton.py" />
+        <option value="$PROJECT_DIR$/texture/helpers.py" />
+        <option value="$PROJECT_DIR$/util/math.py" />
+        <option value="$PROJECT_DIR$/block/Block.py" />
+        <option value="$PROJECT_DIR$/block/BlockBrick.py" />
+        <option value="$PROJECT_DIR$/block/BlockDirt.py" />
+        <option value="$PROJECT_DIR$/block/BlockGrassBlock.py" />
+        <option value="$PROJECT_DIR$/block/BlockSand.py" />
+        <option value="$PROJECT_DIR$/block/BlockStone.py" />
+        <option value="$PROJECT_DIR$/assets/loadedmodels.list" />
+        <option value="$PROJECT_DIR$/block/BlockHandler.py" />
         <option value="$PROJECT_DIR$/world/Model.py" />
+        <option value="$PROJECT_DIR$/texture/ModelLoader.py" />
+        <option value="$PROJECT_DIR$/texture/atlas.py" />
+        <option value="$PROJECT_DIR$/tasks.list" />
+        <option value="$PROJECT_DIR$/version.info" />
+        <option value="$PROJECT_DIR$/globals.py" />
+        <option value="$PROJECT_DIR$/__main__.py" />
+        <option value="$PROJECT_DIR$/ResourceLocator.py" />
+        <option value="$PROJECT_DIR$/texture/factory.py" />
+        <option value="$PROJECT_DIR$/assets/factory/texture/grass_block_top.json" />
       </list>
     </option>
   </component>
@@ -167,6 +165,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -177,17 +176,22 @@
             <path>
               <item name="active_branch" type="b2602c69:ProjectViewProjectNode" />
               <item name="active_branch" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="active_branch" type="b2602c69:ProjectViewProjectNode" />
+              <item name="active_branch" type="462c0819:PsiDirectoryNode" />
               <item name="block" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="active_branch" type="b2602c69:ProjectViewProjectNode" />
               <item name="active_branch" type="462c0819:PsiDirectoryNode" />
-              <item name="event" type="462c0819:PsiDirectoryNode" />
+              <item name="texture" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="active_branch" type="b2602c69:ProjectViewProjectNode" />
               <item name="active_branch" type="462c0819:PsiDirectoryNode" />
-              <item name="state" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="active_branch" type="b2602c69:ProjectViewProjectNode" />
@@ -198,7 +202,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -383,7 +386,14 @@
       <option name="project" value="LOCAL" />
       <updated>1563196798757</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="added TickHandler, Sand will now fall">
+      <created>1563206586051</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1563206586051</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -393,7 +403,7 @@
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info id="DB Browser" order="3" />
+      <window_info id="DB Browser" order="3" weight="0.3296131" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3289689" />
@@ -402,7 +412,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49925596" weight="0.3289689" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.3289689" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50074404" side_tool="true" weight="0.3289689" />
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="bottom" id="DB Execution Console" order="11" />
@@ -466,7 +476,8 @@
     <MESSAGE value="added States &amp; GameState" />
     <MESSAGE value="added Escape-State and UI-elements" />
     <MESSAGE value="added Start-Menu, fixed some bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="added Start-Menu, fixed some bugs" />
+    <MESSAGE value="added TickHandler, Sand will now fall" />
+    <option name="LAST_COMMIT_MESSAGE" value="added TickHandler, Sand will now fall" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/-815793096/_weakref.py">
@@ -490,79 +501,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/util/math.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="56" column="18" selection-start-line="56" selection-start-column="18" selection-end-line="56" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py" />
     <entry file="file://$PROJECT_DIR$/block/BlockGrass.py" />
-    <entry file="file://$PROJECT_DIR$/block/BlockStone.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="16" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/block/BlockBrick.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="17" selection-end-line="13" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/block/BlockGrassBlock.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="19" lean-forward="true" selection-end-line="13" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/block/BlockDirt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="21" selection-start-line="11" selection-start-column="21" selection-end-line="11" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/block/BlockHandler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="29" column="80" selection-start-line="29" selection-start-column="80" selection-end-line="29" selection-end-column="80" />
-          <folding>
-            <element signature="e#93#112#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/state/StatePart.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="4" selection-start-line="6" selection-start-column="4" selection-end-line="10" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/texture/helpers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="23" column="68" selection-start-line="23" selection-start-column="68" selection-end-line="23" selection-end-column="68" />
-          <folding>
-            <element signature="e#243#252#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -635,13 +579,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/state/ui/UIPartButton.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
-          <caret line="207" column="50" selection-start-line="207" selection-start-column="50" selection-end-line="207" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/state/StateStartMenu.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -652,27 +589,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/globals.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="18" lean-forward="true" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/__main__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="107">
-          <caret line="15" column="19" lean-forward="true" selection-start-line="15" selection-start-column="19" selection-end-line="15" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rendering/window.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-176">
-          <caret line="162" column="41" selection-start-line="162" selection-start-column="8" selection-end-line="162" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/state/StatePartGame.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="804">
@@ -680,41 +596,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tasks.list">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/version.info">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1003">
-          <caret line="59" selection-start-line="59" selection-end-line="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/block/Block.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="697">
-          <caret line="41" column="12" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="663">
           <caret line="39" column="21" selection-start-line="39" selection-start-column="21" selection-end-line="39" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/block/BlockSand.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="20" column="31" selection-start-line="20" selection-start-column="31" selection-end-line="20" selection-end-column="31" />
-          <folding>
-            <element signature="e#167#186#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -728,10 +613,189 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../../tools/python3.7.4/Lib/site-packages/pyglet/image/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="181" selection-start-line="181" selection-end-line="181" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../tools/python3.7.4/Lib/site-packages/PIL/Image.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="2769" selection-start-line="2769" selection-end-line="2769" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/state/ui/UIPartButton.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="77">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/texture/helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="42" column="55" selection-start-line="42" selection-start-column="55" selection-end-line="42" selection-end-column="55" />
+          <folding>
+            <element signature="e#317#326#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rendering/window.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2210">
+          <caret line="162" column="41" selection-start-line="162" selection-start-column="8" selection-end-line="162" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/math.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="39">
+          <caret line="58" lean-forward="true" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/block/BlockBrick.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="28" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
+          <folding>
+            <element signature="e#167#186#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/block/BlockDirt.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="16" column="26" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/block/BlockGrassBlock.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="16" column="33" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/block/BlockSand.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="17" column="26" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
+          <folding>
+            <element signature="e#167#186#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/block/Block.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="24" column="19" selection-start-line="24" selection-start-column="19" selection-end-line="24" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/block/BlockStone.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="16" column="27" selection-start-line="16" selection-start-column="27" selection-end-line="16" selection-end-column="27" />
+          <folding>
+            <element signature="e#167#186#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/loadedmodels.list" />
+    <entry file="file://$PROJECT_DIR$/block/BlockHandler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="31" column="11" selection-start-line="31" selection-start-column="11" selection-end-line="31" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/texture/ModelLoader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="71" selection-start-line="71" selection-end-line="71" />
+          <folding>
+            <element signature="e#167#186#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tasks.list">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="31" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/globals.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="17" column="28" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/texture/atlas.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="49" selection-start-line="49" selection-end-line="49" />
+          <folding>
+            <element signature="e#167#186#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/world/Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="96" column="34" selection-start-line="96" selection-start-column="34" selection-end-line="96" selection-end-column="34" />
+        <state relative-caret-position="103">
+          <caret line="217" column="47" selection-start-line="217" selection-start-column="47" selection-end-line="217" selection-end-column="47" />
+          <folding>
+            <element signature="e#167#178#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__main__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="86">
+          <caret line="35" column="35" selection-start-line="35" selection-start-column="35" selection-end-line="35" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ResourceLocator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="48" column="24" selection-start-line="48" selection-start-column="24" selection-end-line="48" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/texture/factory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="31" column="33" selection-start-line="31" selection-start-column="33" selection-end-line="31" selection-end-column="33" />
+          <folding>
+            <element signature="e#167#183#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/factory/texture/grass_block_top.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="28" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/version.info">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="82" column="54" lean-forward="true" selection-start-line="82" selection-start-column="54" selection-end-line="82" selection-end-column="54" />
         </state>
       </provider>
     </entry>

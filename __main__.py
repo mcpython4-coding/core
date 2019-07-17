@@ -4,42 +4,84 @@ authors: uuk
 orginal game by forgleman licenced under MIT-licence
 minecraft by Mojang"""
 
-
-import event.EventHandler
-
-
-import opengl_setup
-
-import rendering.window
-
-import os
-import globals as G
-
-if os.path.exists(G.local+"/tmp"):
-    import shutil
-    shutil.rmtree(G.local+"/tmp")
-os.makedirs(G.local+"/tmp")
+try:
+    import event.EventHandler
 
 
-def setup():
-    opengl_setup.setup()
+    import opengl_setup
+
+    import rendering.window
+
+    import os
+    import globals as G
+
+    while os.path.exists(G.local+"/tmp"):
+        try:
+            import shutil
+            shutil.rmtree(G.local+"/tmp")
+        except:
+            pass
+
+    os.makedirs(G.local+"/tmp")
+
+    import zipfile
+
+    G.jar_archive = zipfile.ZipFile(G.local+"/assets/1.14.4_pre5.jar")
+
+    import texture.atlas
+
+    print("generating textures...")
+    import texture.factory
+    G.texturefactoryhandler.add_location(G.local+"/assets/factory/texture")
+    G.texturefactoryhandler.build()
+
+    import texture.ModelLoader
+    print("searching for models...")
+    texture.ModelLoader.loader.search_in_main_jar()
+    print("finished!")
 
 
-def run():
-    import pyglet
-    window = rendering.window.Window(width=800, height=600, caption='Pyglet', resizable=True)
-    setup()
-    event.EventHandler.handler.call("game:gameloop_startup")
-    pyglet.app.run()
+    def setup():
+        opengl_setup.setup()
+        print("generating models...")
+        texture.ModelLoader.loader.build()
+        G.modelloader.from_data(
+            "missing_texture",
+            {
+                "parent": "block/cube_all",
+                "textures": {
+                    "all": "assets/missingtexture.png"
+                }
+            }
+        )
+        print("generating image atlases...")
+        texture.atlas.generator.build()
+        print("finished!")
 
 
-def main():
-    event.EventHandler.handler.call("game:startup")
-    setup()
-    event.EventHandler.handler.call("game:load_finished")
-    run()
+    def run():
+        import pyglet
+        window = rendering.window.Window(width=800, height=600, caption='Pyglet', resizable=True)
+        event.EventHandler.handler.call("game:gameloop_startup")
+        pyglet.app.run()
+
+
+    def main():
+        event.EventHandler.handler.call("game:startup")
+        setup()
+        event.EventHandler.handler.call("game:load_finished")
+        run()
+except:
+    import sys
+    import globals as G
+    if G.jar_archive:
+        G.jar_archive.close()
+    raise
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    finally:
+        G.jar_archive.close()
 

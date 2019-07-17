@@ -1,12 +1,13 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-split block assets into separated files
+todo: in ModelLoader: make Model and DrawableBox generating everything BEFORE what possible -> better performance
+todo: make rendering with alpha
+todo: look for things that we're collecting at startup but don't need later and remove them
+
+add TextureFactory for doing some stuff around textures (!!!, .meta-files)
+add more blocks from models
 add on startup with help of the demo screen an info
-add TextureFactory, TextureAtlas
-add Model, ModelLoader for mc(!)-models
-add blocks (test modelloader for all block models)
 add update.py for downloading latest build of mcpython and unpacking it
-add mc-resource-extractor/direct loader
 add player-class, gamemode, harts, hunger, xp, xp_level and functions for it
 add Inventory-class, Slot-class, SlotCopy-class, InventoryHandler based on states
 add attribute to Inventory: should_be_on_escape_stack() -> bool

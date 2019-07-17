@@ -14,8 +14,8 @@ class BlockSand(Block.Block):
     def get_name() -> str:
         return "minecraft:sand"
 
-    def get_tex_coords(self) -> list:
-        return [(1, 1)] * 3
+    def get_model_name(self):
+        return "block/sand"
 
     def on_block_update(self):
         x, y, z = self.position

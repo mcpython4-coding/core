@@ -13,8 +13,8 @@ class BlockStone(Block.Block):
     def get_name() -> str:
         return "minecraft:stone"
 
-    def get_tex_coords(self) -> list:
-        return [(2, 1)] * 3
+    def get_model_name(self):
+        return "block/stone"
 
     def is_brakeable(self) -> bool:
         return False

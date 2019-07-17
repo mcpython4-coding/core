@@ -13,6 +13,6 @@ class BlockGrassBlock(Block.Block):
     def get_name() -> str:
         return "minecraft:grass_block"
 
-    def get_tex_coords(self) -> list:
-        return [(1, 0), (0, 1), (0, 0)]
+    def get_model_name(self):
+        return "block/grass_block"
 

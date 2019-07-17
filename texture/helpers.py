@@ -10,9 +10,13 @@ except ImportError:
 import os
 import globals as G
 import pyglet
+import ResourceLocator
 
 
 def load_image(location) -> PIL.Image.Image:
+    resource = ResourceLocator.ResourceLocator(location)
+    if resource and resource.data:
+        return resource.data
     if not os.path.exists(location): location = G.local+"/"+location
     return PIL.Image.open(location)
 
@@ -28,6 +32,11 @@ def get_image_part(image: PIL.Image.Image, area) -> PIL.Image.Image:
 def to_pyglet_image(image: PIL.Image.Image):
     image.save(G.local+"/tmp/imagehelper_topyglet.png")
     return pyglet.image.load(G.local+"/tmp/imagehelper_topyglet.png")
+
+
+def to_pillow_image(image: pyglet.image.AbstractImage):
+    image.save(G.local+"/tmp/imagehelper_topillow.png")
+    return PIL.Image.open(G.local+"/tmp/imagehelper_topillow.png")
 
 
 def to_pyglet_sprite(image: PIL.Image.Image):

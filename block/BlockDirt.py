@@ -13,6 +13,6 @@ class BlockDirt(Block.Block):
     def get_name() -> str:
         return "minecraft:dirt"
 
-    def get_tex_coords(self) -> list:
-        return [(0, 1)] * 3
+    def get_model_name(self):
+        return "block/dirt"
 
