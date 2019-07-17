@@ -58,6 +58,12 @@ try:
         texture.atlas.generator.build()
         print("finished!")
 
+        print("cleaning up...")
+
+        del G.modelloader.models
+
+        print("finished!")
+
 
     def run():
         import pyglet

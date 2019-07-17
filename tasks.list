@@ -1,10 +1,5 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-todo: in ModelLoader: make Model and DrawableBox generating everything BEFORE what possible -> better performance
-todo: make rendering with alpha
-todo: look for things that we're collecting at startup but don't need later and remove them
-
-add TextureFactory for doing some stuff around textures (!!!, .meta-files)
 add more blocks from models
 add on startup with help of the demo screen an info
 add update.py for downloading latest build of mcpython and unpacking it
