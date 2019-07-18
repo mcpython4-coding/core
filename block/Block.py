@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4-pre6.jar"""
 from util.math import tex_coords
+import gui.ItemStack
 
 
 class Block:
@@ -41,5 +42,11 @@ class Block:
         pass
 
     def on_block_update(self):
+        pass
+
+    def is_useable_by_item(self, item: gui.ItemStack) -> bool:
+        return False
+
+    def on_use_by_item(self, item: gui.ItemStack, triggered_by_block: bool):
         pass
 

@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4-pre6.jar"""
 from . import State, StatePartGame
+import gui.InventoryHandler
 import globals as G
 from pyglet.window import key
 
@@ -23,7 +24,7 @@ class StateGame(State.State):
         State.State.__init__(self)
 
     def get_parts(self) -> list:
-        return [StatePartGame.StatePartGame()]
+        return [StatePartGame.StatePartGame(), gui.InventoryHandler.OpenedInventoryStatePart()]
 
     def get_event_functions(self) -> list:
         return [(self.on_key_press, "user:keyboard:press")]

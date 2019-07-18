@@ -34,12 +34,16 @@ class StateHandler:
     def add_state(self, state: State.State):
         self.states[state.get_name()] = state
 
+    def update_exclusive(self):
+        G.window.set_exclusive_mouse(self.active_state.is_mouse_exclusive())
+
 
 handler = G.statehandler = StateHandler()
 
 
 def load():
     from . import (StateGame, StateEscape, StateStartMenu, StateGameInfo)
+    import gui.InventoryHandler
 
     handler.switch_to("minecraft:startmenu")
 

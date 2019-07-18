@@ -19,6 +19,8 @@ tickhandler = None
 blockhandler = None
 statehandler = None
 texturefactoryhandler = None
+inventoryhandler = None
+itemhandler = None
 
 modelloader = None
 

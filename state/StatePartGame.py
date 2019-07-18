@@ -14,12 +14,13 @@ import pyglet
 
 class StatePartGame(StatePart.StatePart):
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
-                 activate_focused_block=True, glcolor3d=(1., 1., 1.)):
+                 activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True):
         self.activate_physics = activate_physics
         self.activate_mouse = activate_mouse
         self.activate_keyboard = activate_keyboard
         self.activate_3d_draw = activate_3d_draw
         self.activate_focused_block_draw = activate_focused_block
+        self.activate_crosshair = activate_crosshair
         self.glcolor3d = glcolor3d
 
         self.event_functions = [("gameloop:tick:end", self.on_update),
@@ -144,5 +145,6 @@ class StatePartGame(StatePart.StatePart):
     @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
         G.window.draw_label()
-        G.window.draw_reticle()
+        if self.activate_crosshair:
+            G.window.draw_reticle()
 

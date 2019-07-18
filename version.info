@@ -93,4 +93,7 @@ started these clone on 12th of July, 2019
 [uuk]: updated jar-archive to 1.14.4-pre6
 [uuk]: added interaction to above state
 [uuk]: added player-class
+[uuk]: added activate_crosshair-attribute to StatePartGame
+[uuk]: added Inventory, InventoryHandler, Slot, ItemStack
+[uuk]: added Items, Stone-item
 
