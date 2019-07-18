@@ -86,4 +86,10 @@ started these clone on 12th of July, 2019
 [uuk]: added texture/factory for classes working with images from pre-definited files
 [uuk]: added the following blocks: bedrock, cobblestone
 [uuk]: made stone brakeable
+[uuk]: added some kind of info state
+[uuk]: added UIPartImage
+[github]: started day 7 as 18th of July, 2019
+[uuk]: optimized above state
+[uuk]: updated jar-archive to 1.14.4-pre6
+[uuk]: added interaction to above state
 

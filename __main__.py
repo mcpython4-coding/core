@@ -2,7 +2,9 @@
 authors: uuk
 
 orginal game by forgleman licenced under MIT-licence
-minecraft by Mojang"""
+minecraft by Mojang
+
+blocks based on 1.14.4-pre6.jar"""
 
 try:
     import event.EventHandler
@@ -26,7 +28,7 @@ try:
 
     import zipfile
 
-    G.jar_archive = zipfile.ZipFile(G.local+"/assets/1.14.4_pre5.jar")
+    G.jar_archive = zipfile.ZipFile(G.local+"/assets/1.14.4_pre6.jar")
 
     import texture.atlas
 

@@ -2,7 +2,9 @@
 authors: uuk
 
 orginal game by forgleman licenced under MIT-licence
-minecraft by Mojang"""
+minecraft by Mojang
+
+blocks based on 1.14.4-pre6.jar"""
 import state.State
 from state.ui import (UIPartLable, UIPartButton)
 import globals as G
@@ -28,7 +30,7 @@ class StateStartMenu(state.State.State):
         print("generating world")
         G.model.initialize()
         print("finished")
-        G.statehandler.switch_to("minecraft:game")
+        G.statehandler.switch_to("minecraft:gameinfo")
         G.model.change_sectors(None, util.math.sectorize(G.window.position), immediate=True)
         G.window.position = (0, 10, 0)
 

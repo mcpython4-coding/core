@@ -1,7 +1,5 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-add more blocks from models
-add on startup with help of the demo screen an info
 add update.py for downloading latest build of mcpython and unpacking it
 add player-class, gamemode, harts, hunger, xp, xp_level and functions for it
 add Inventory-class, Slot-class, SlotCopy-class, InventoryHandler based on states

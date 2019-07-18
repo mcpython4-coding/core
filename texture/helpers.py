@@ -2,7 +2,9 @@
 authors: uuk
 
 orginal game by forgleman licenced under MIT-licence
-minecraft by Mojang"""
+minecraft by Mojang
+
+blocks based on 1.14.4-pre6.jar"""
 try:
     import PIL.Image
 except ImportError:

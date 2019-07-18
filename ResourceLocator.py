@@ -2,7 +2,9 @@
 authors: uuk
 
 orginal game by forgleman licenced under MIT-licence
-minecraft by Mojang"""
+minecraft by Mojang
+
+blocks based on 1.14.4-pre6.jar"""
 import globals as G
 import zipfile
 import PIL.Image
@@ -44,8 +46,13 @@ class ResourceLocator:
                 self.data = PIL.Image.open(output)
             if self.data is None:
                 try:
-                    self.data = G.jar_archive.read(location)
+                    if not location.endswith(".png"):
+                        self.data = G.jar_archive.read(location)
+                    else:
+                        with G.jar_archive.open(location, mode="r") as f, open(output, mode="wb") as t:
+                            t.write(f.read())
+                        self.data = PIL.Image.open(output)
                 except:
-                    pass
+                    raise
 
 

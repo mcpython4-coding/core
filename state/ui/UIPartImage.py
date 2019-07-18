@@ -13,30 +13,25 @@ from pyglet.window import mouse
 
 
 class UIPartLable(state.StatePart.StatePart):
-    def __init__(self, text, position, press=event.EventInfo.MousePressEventInfo(pyglet.window.mouse.LEFT),
-                 anchor_lable="WS", anchor_window="WS", on_press=None, color=(0, 0, 0, 255), text_size=20):
+    def __init__(self, image: pyglet.sprite.Sprite, position, anchor_window="WS", on_press=None,
+                 press=event.EventInfo.MousePressEventInfo(pyglet.window.mouse.LEFT), anchor_lable="WS"):
         """
         creates an new UIPartButton
-        :param text: the text of the button
         :param position: the position of the button
         :param press: the EventInfo for mouse buttons and mods, no area
         :param anchor_lable: the anchor on the button
         :param anchor_window: the anchor on the window
         """
-        self.text = text
+        self.image = image
         self.position = position
         self.press: event.EventInfo.MousePressEventInfo = press
         self.anchor_lable = anchor_lable
         self.anchor_window = anchor_window
-        self.color = color
-        self.text_size = text_size
 
         self.on_press = on_press
 
         self.event_functions = [("user:mouse:press", self.on_mouse_press),
                                 ("render:draw:2d", self.on_draw_2d)]
-
-        self.lable = pyglet.text.Label(text=text)
 
     def activate(self):
         for eventname, function in self.event_functions:
@@ -49,7 +44,7 @@ class UIPartLable(state.StatePart.StatePart):
     def _get_button_base_positon(self):
         x, y = self.position
         wx, wy = G.window.get_size()
-        bx, by = self.lable.content_width, self.lable.content_width
+        bx, by = self.image.image.width, self.image.image.height
         if self.anchor_lable[0] == "M":
             x -= bx // 2
         elif self.anchor_lable[0] == "E":
@@ -71,7 +66,7 @@ class UIPartLable(state.StatePart.StatePart):
     @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self._get_button_base_positon()
-        sx, sy = self.lable.content_width, self.lable.content_width
+        sx, sy = self.image.image.width, self.image.image.height
         self.press.area = ((mx, my), (mx+sx, my+sy))
         if self.press.equals(x, y, button, modifiers):
             if self.on_press:
@@ -80,11 +75,7 @@ class UIPartLable(state.StatePart.StatePart):
     @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
         x, y = self._get_button_base_positon()
-        wx, wy = self.lable.content_width, self.lable.content_height
-        size = self.lable.content_width, self.lable.content_width
-        self.lable.x = x + size[0] // 2 - wx // 2
-        self.lable.y = y + size[1] // 2 - wy // 2
-        self.lable.color = self.color
-        self.lable.font_size = self.text_size
-        self.lable.draw()
+        wx, wy = size = self.image.image.width, self.image.image.height
+        self.image.position = (x + size[0] // 2 - wx // 2, y + size[1] // 2 - wy // 2)
+        self.image.draw()
 
