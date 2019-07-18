@@ -15,6 +15,7 @@ import block.BlockHandler
 import random
 import globals as G
 import texture.ModelLoader
+import world.player
 
 
 class Model(object):
@@ -47,6 +48,8 @@ class Model(object):
         G.model = self
 
         self.pyramid_parts = []
+
+        self.player = world.player.Player("unknown")
 
         block.BlockHandler.load()
 

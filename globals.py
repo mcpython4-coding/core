@@ -11,6 +11,7 @@ local = os.path.dirname(__file__)
 
 window = None
 model = None
+player = None
 
 eventhandler = None
 tickhandler = None

@@ -72,7 +72,7 @@ class StatePartGame(StatePart.StatePart):
             dy += G.window.dy * dt
         # collisions
         x, y, z = G.window.position
-        x, y, z = G.window.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+        if G.player.gamemode != 3: x, y, z = G.window.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
         G.window.position = (x, y, z)
 
     @G.eventhandler("user:mouse:press", callactive=False)
@@ -84,11 +84,11 @@ class StatePartGame(StatePart.StatePart):
             if (button == mouse.RIGHT) or \
                     ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # ON OSX, control + left click = right click.
-                if previous:
+                if previous and G.player.gamemode in [0, 1]:
                     G.window.model.add_block(previous, G.window.block)
             elif button == mouse.LEFT and blockpos:
                 block = G.window.model.world[blockpos]
-                if block.is_brakeable():
+                if block.is_brakeable() and G.player.gamemode in [0, 1]:
                     G.window.model.remove_block(blockpos)
 
     @G.eventhandler("user:mouse:motion", callactive=False)
@@ -114,9 +114,9 @@ class StatePartGame(StatePart.StatePart):
         elif symbol == key.SPACE:
             if G.window.dy == 0:
                 G.window.dy = JUMP_SPEED
-        elif symbol == key.TAB:
+        elif symbol == key.TAB and G.player.gamemode == 1:
             G.window.flying = not G.window.flying
-        elif symbol in G.window.num_keys:
+        elif symbol in G.window.num_keys and G.player.gamemode in (0, 1):
             index = (symbol - G.window.num_keys[0]) % len(G.window.inventory)
             G.window.block = G.window.inventory[index]
 
