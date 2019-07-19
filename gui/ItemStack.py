@@ -17,7 +17,7 @@ class ItemStack:
             self.item = G.itemhandler.items[item_name_or_instance]
         else:
             self.item = None
-        self.amount = amount if 0 <= amount <= self.item.get_max_stack_size() else 0
+        self.amount = amount if self.item and 0 <= amount <= self.item.get_max_stack_size() else 0
 
     def copy(self):
         return ItemStack(self.item, self.amount)

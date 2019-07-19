@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4-pre6.jar"""
 import globals as G
+import gui.InventoryPlayerHotbar
 
 
 class Player:
@@ -24,6 +25,10 @@ class Player:
         self.hunger = 20
         self.xp = 0
         self.xp_level = 0
+
+        self.inventorys = {
+            "hotbar": gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
+        }
 
         G.player = self
 

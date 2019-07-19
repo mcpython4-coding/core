@@ -10,6 +10,7 @@ import gui.Inventory
 import state.StatePart
 import state.StatePartGame
 from pyglet.window import key
+import ResourceLocator
 
 
 class OpenedInventoryStatePart(state.StatePart.StatePart):
@@ -57,6 +58,19 @@ class InventoryHandler:
             self.alwaysopened.append(inventory)
             self.show(inventory)
 
+    def reload_config(self):
+        for inventory in self.inventorys:
+            if inventory.get_config_file():
+                inventory.config = ResourceLocator.ResourceLocator(inventory.get_config_file(), load_as_json=True).data
+            else:
+                inventory.config = {}
+            for slotid in inventory.config["slots"] if "slots" in inventory.config else []:
+                sid = int(slotid)
+                entry = inventory.config["slots"][slotid]
+                if "position" in entry:
+                    print(sid, entry)
+                    inventory.slots[sid].position = tuple(entry["position"])
+
     def show(self, inventory):
         if inventory in self.opened_inventorystack: return
         self.opened_inventorystack.append(inventory)
@@ -82,8 +96,4 @@ class InventoryHandler:
 
 
 G.inventoryhandler = InventoryHandler()
-
-
-def load():
-    pass
 

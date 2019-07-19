@@ -96,4 +96,18 @@ started these clone on 12th of July, 2019
 [uuk]: added activate_crosshair-attribute to StatePartGame
 [uuk]: added Inventory, InventoryHandler, Slot, ItemStack
 [uuk]: added Items, Stone-item
+[github]: started day 8 as 19th of July, 2019
+[uuk]: added PlayerHotbar-Inventory
+[uuk]: fixed bug: stone has no texture location
+[uuk]: fixed bug: copy of slot has no itemstack-attribute
+[uuk]: fixed bugs around rendering inventorys
+[uuk]: slot position is now relative to base position of background image, making resizing now working correct
+[uuk]: added json-support to ResourceLocator
+[uuk]: added config-file-option to Inventory
+[uuk]: pressing ESC in escape-state will now return to game
+[uuk]: added factory entry: generating hotbar image
+[uuk]: added on_create-function to Inventory
+[uuk]: added resize & cut task to texture/factory
+[uuk]: added ItemImageTable and reworked old Slot-system to use it; items will now be resized internally
+[uuk]: added key.R support for reloading inventory definitions
 

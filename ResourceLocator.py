@@ -9,6 +9,7 @@ import globals as G
 import zipfile
 import PIL.Image
 import os
+import json
 
 
 LOCATION_INFO = {
@@ -19,20 +20,28 @@ LOCATION_INFO = {
 
 
 class ResourceLocator:
-    def __init__(self, location, output=G.local+"/tmp/generator_output"):
+    def __init__(self, location: str, output=G.local+"/tmp/generator_output", load_as_json=False):
         # block/yellow_wool
         self.data = None
         # print(location)
-        if os.path.exists(location):
+        if location.startswith(G.local):
             if not location.endswith(".png"):
-                with open(location, mode="rb") as f:
-                    self.data = f.read()
+                if location.endswith(".json") and load_as_json:
+                    with open(location) as f:
+                        self.data = json.load(f)
+                else:
+                    with open(location, mode="rb") as f:
+                        self.data = f.read()
             else:
                 self.data = PIL.Image.open(location)
         elif os.path.exists(os.path.join(G.local, location)):
             if not location.endswith(".png"):
-                with open(os.path.join(G.local, location), mode="rb") as f:
-                    self.data = f.read()
+                if location.endswith(".json") and load_as_json:
+                    with open(os.path.join(G.local, location)) as f:
+                        self.data = json.load(f)
+                else:
+                    with open(os.path.join(G.local, location), mode="rb") as f:
+                        self.data = f.read()
             else:
                 self.data = PIL.Image.open(os.path.join(G.local, location))
         else:

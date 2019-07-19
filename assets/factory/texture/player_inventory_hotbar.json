@@ -1,0 +1,18 @@
+{
+  "load": ["gui/widgets"],
+  "store_result": {"0": "tmp/gui/hotbar.png"},
+  "tasks": [
+    {
+      "type": "cut",
+      "area": [0, 0, 182, 22],
+      "affect": [0],
+      "store": ["1"]
+    },
+    {
+      "type": "resize",
+      "size": [364, 44],
+      "affect": ["1"],
+      "store": "0"
+    }
+  ]
+}

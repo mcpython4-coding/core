@@ -39,6 +39,8 @@ class StateGame(State.State):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             G.statehandler.switch_to("minecraft:escape_state")
+        elif symbol == key.R:
+            G.inventoryhandler.reload_config()
 
 
 game = StateGame()

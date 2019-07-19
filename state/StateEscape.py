@@ -9,6 +9,7 @@ from . import State, StatePartGame
 from .ui import UIPartButton, UIPartLable
 import event.EventInfo
 import globals as G
+from pyglet.window import key
 
 
 class StateEscape(State.State):
@@ -32,7 +33,7 @@ class StateEscape(State.State):
                 ]
 
     def get_event_functions(self) -> list:
-        return []
+        return [(self.on_key_press, "user:keyboard:press")]
 
     @staticmethod
     def start_menu_press(x, y):
@@ -44,6 +45,11 @@ class StateEscape(State.State):
 
     def on_deactivate(self, new):
         pass
+
+    @G.eventhandler("user:keyboard:press", callactive=False)
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.ESCAPE:
+            G.statehandler.switch_to("minecraft:game")
 
 
 escape = StateEscape()

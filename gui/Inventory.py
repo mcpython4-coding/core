@@ -8,17 +8,37 @@ blocks based on 1.14.4-pre6.jar"""
 import globals as G
 from state.ui import (UIPartImage)
 import pyglet
+import ResourceLocator
 
 
 class Inventory:
+    @staticmethod
+    def get_config_file() -> str or None:
+        pass
+
     def __init__(self):
         self.active = False
         self.bgsprite: pyglet.sprite.Sprite = None
+        self.bgimagesize = None
         self.bganchor = "MM"
         self.windowanchor = "MM"
         self.positon = (0, 0)
         G.inventoryhandler.add(self)
         self.slots = self.create_slots()
+        if self.get_config_file():
+            self.config = ResourceLocator.ResourceLocator(self.get_config_file(), load_as_json=True).data
+        else:
+            self.config = {}
+        for slotid in self.config["slots"] if "slots" in self.config else []:
+            sid = int(slotid)
+            entry = self.config["slots"][slotid]
+            if "position" in entry:
+                print(sid, entry)
+                self.slots[sid].position = tuple(entry["position"])
+        self.on_create()
+
+    def on_create(self):
+        pass
 
     def create_slots(self) -> list:
         return []
@@ -26,7 +46,7 @@ class Inventory:
     def _get_position(self):
         x, y = self.positon
         wx, wy = G.window.get_size()
-        sx, sy = self.bgsprite.image.size if self.bgsprite else (0, 0)
+        sx, sy = self.bgimagesize if self.bgsprite else (0, 0)
         if self.bganchor[0] == "M":
             x -= sx // 2
         elif self.bganchor[0] == "R":
@@ -36,11 +56,11 @@ class Inventory:
         elif self.bganchor[1] == "U":
             y -= sy
         if self.windowanchor[0] == "M":
-            x -= wx // 2
+            x += wx // 2
         elif self.windowanchor[0] == "R":
             x = wx - abs(x)
         if self.windowanchor[1] == "M":
-            y -= wy // 2
+            y += wy // 2
         elif self.windowanchor[1] == "U":
             y = wy - abs(y)
         return x, y
@@ -65,12 +85,11 @@ class Inventory:
         self.on_draw_background()
         x, y = self._get_position()
         if self.bgsprite:
-            sx, sy = self.bgsprite.image.size
             self.bgsprite.position = (x, y)
             self.bgsprite.draw()
         self.on_draw_over_backgroundimage()
         for slot in self.slots:
-            slot.draw()
+            slot.draw(x, y)
         self.on_draw_overlay()
 
     def on_draw_background(self):

@@ -1,7 +1,7 @@
 These is an tasklist covering all diffrent tasks these project has.
 
 add Inventory-class, Slot-class, SlotCopy-class, InventoryHandler based on states
-add attribute to Inventory: should_be_on_escape_stack() -> bool
+add SlotOutput-typed slot
 add chat (based on state), commands, CommandHandler, CommandParser
 add Item, ItemHandler, ItemModelLoader
 add PlayerInventory, PlayerHotbar, PlayerMainInventory, PlayerCreativeInventory, PlayerCreativeTab

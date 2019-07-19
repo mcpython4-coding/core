@@ -7,11 +7,14 @@ minecraft by Mojang
 blocks based on 1.14.4-pre6.jar"""
 import globals as G
 import item.Item
+import texture.helpers
+import ResourceLocator
 
 
 class ItemHandler:
     def __init__(self):
         self.items = {}
+        self.pygletimagetable = {}
 
     def register(self, itemclass: type(item.Item)):
         self(itemclass)
@@ -20,6 +23,8 @@ class ItemHandler:
         if itemclass.get_name() in self.items and not overwrite: return
         self.items[itemclass.get_name()] = itemclass
         self.items[itemclass.get_name().split(":")[-1]] = itemclass
+        self.pygletimagetable[itemclass.get_name()] = texture.helpers.to_pyglet_image(
+            itemclass.get_as_item_image(ResourceLocator.ResourceLocator(itemclass.get_item_image_location()).data))
 
 
 G.itemhandler = ItemHandler()

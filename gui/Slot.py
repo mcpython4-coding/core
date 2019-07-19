@@ -13,7 +13,7 @@ import texture.helpers
 import ResourceLocator
 
 
-SLOT_WIDTH = 10
+SLOT_WIDTH = 32
 
 
 class Slot:
@@ -23,28 +23,29 @@ class Slot:
         self.itemstack.amount = 2
         self.position = position
         if self.itemstack.item:
-            self.sprite: pyglet.sprite.Sprite = texture.helpers.to_pyglet_sprite(
-                ResourceLocator.ResourceLocator(self.itemstack.item.get_item_image_location()).data)
+            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.itemhandler.pygletimagetable[
+                                                                         self.itemstack.item.get_name()])
         else:
             self.sprite = None
-        self.amount_lable = pyglet.text.Label(text=self.itemstack.amount)
+        self.amount_lable = pyglet.text.Label(text=str(self.itemstack.amount))
         self.__last_itemfile = self.itemstack.item.get_item_image_location() if self.itemstack.item else None
 
     def copy(self, position):
         return SlotCopy(position, self)
 
-    def draw(self):
+    def draw(self, dx, dy):
         if self.itemstack.item and self.itemstack.item.get_item_image_location() != self.__last_itemfile:
-            self.sprite: pyglet.sprite.Sprite = texture.helpers.to_pyglet_sprite(
-                ResourceLocator.ResourceLocator(self.itemstack.item.get_item_image_location()).data)
+            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.itemhandler.pygletimagetable[
+                                                                         self.itemstack.item.get_name()])
         elif not self.itemstack.item:
             self.sprite = None
-        self.amount_lable.text = self.itemstack.amount
+        self.amount_lable.text = str(self.itemstack.amount)
         if self.sprite:
-            self.sprite.position = self.position
+            self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.sprite.draw()
             if self.itemstack.amount != 1:
-                self.amount_lable.x, self.amount_lable.y = self.position[0] + SLOT_WIDTH + 2, self.position[0] - 2
+                self.amount_lable.x = self.position[0] + SLOT_WIDTH + 2 + dx
+                self.amount_lable.y = self.position[0] - 2 + dy
                 self.amount_lable.draw()
         self.__last_itemfile = self.itemstack.item.get_item_image_location() if self.itemstack.item else None
 
@@ -54,15 +55,23 @@ class SlotCopy:
         self.master = master
         self.position = position
 
+    def set_itemstack(self, itemstack: gui.ItemStack.ItemStack):
+        self.master.itemstack = itemstack
+
+    def get_itemstack(self) -> gui.ItemStack.ItemStack:
+        return self.master.itemstack
+
+    itemstack = property(get_itemstack, set_itemstack)
+
     def copy(self, position):
         return self.master.copy(position)
 
-    def draw(self):
+    def draw(self, dx, dy):
         if self.master.sprite:
-            self.master.sprite.position = self.position
+            self.master.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.master.sprite.draw()
             if self.master.itemstack.amount > 1:
-                self.master.amount_lable.x = self.position[0] + SLOT_WIDTH + 2
-                self.master.amount_lable.y = self.position[0] - 2
+                self.master.amount_lable.x = self.position[0] + SLOT_WIDTH + 2 + dx
+                self.master.amount_lable.y = self.position[0] - 2 + dy
                 self.master.amount_lable.draw()
 

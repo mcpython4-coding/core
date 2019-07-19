@@ -20,7 +20,7 @@ class TextureFactoryHandler:
     def build(self):
         print("working on files...")
         for i, file in enumerate(self.files):
-            print("{}/{} {}".format(i+1, len(self.files), file))
+            print("{}/{} {}".format(i+1, len(self.files), file), end="")
             with open(file) as f:
                 data = json.load(f)
             images = [ResourceLocator.ResourceLocator(location).data for location in data["load"]]
@@ -35,7 +35,7 @@ class TextureFactoryHandler:
                 path = os.path.dirname(file)
                 if not os.path.exists(path): os.makedirs(path)
                 tmp[key].save(file)
-            print("\r")
+            print("\r", end="")
         print()
 
     def add_location(self, file_or_folder):
@@ -84,4 +84,37 @@ class TaskColorize(ITaskType):
 
 
 G.texturefactoryhandler.add_factory_task(TaskColorize)
+
+
+class TaskCut(ITaskType):
+    @staticmethod
+    def get_name() -> str:
+        return "cut"
+
+    @staticmethod
+    def modify(images, data) -> list:
+        result = []
+        for i, image in enumerate(images):
+            result.append(image.crop(data["area"] if type(data["area"][0] == int) else data["area"][i]))
+        return result
+
+
+G.texturefactoryhandler.add_factory_task(TaskCut)
+
+
+class TaskResize(ITaskType):
+    @staticmethod
+    def get_name() -> str:
+        return "resize"
+
+    @staticmethod
+    def modify(images, data) -> list:
+        print(data)
+        result = []
+        for i, image in enumerate(images):
+            result.append(image.resize(data["size"] if type(data["size"][0] == int) else data["size"][i], 2))
+        return result
+
+
+G.texturefactoryhandler.add_factory_task(TaskResize)
 
