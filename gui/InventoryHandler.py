@@ -9,14 +9,17 @@ import globals as G
 import gui.Inventory
 import state.StatePart
 import state.StatePartGame
-from pyglet.window import key
+from pyglet.window import key, mouse
 import ResourceLocator
+import gui.Slot
 
 
 class OpenedInventoryStatePart(state.StatePart.StatePart):
     def __init__(self):
         self.event_functions = [("user:keyboard:press", self.on_key_press),
-                                ("render:draw:2d", self.on_draw_2d)]
+                                ("render:draw:2d", self.on_draw_2d),
+                                ("user:mouse:press", self.on_mouse_press),
+                                ("user:mouse:motion", self.on_mouse_motion)]
 
     def activate(self):
         for eventname, function in self.event_functions:
@@ -39,10 +42,70 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
     def on_draw_2d(self):
         if any([inventory.is_blocking_interactions() for inventory in G.inventoryhandler.opened_inventorystack]):
             G.window.set_exclusive_mouse(False)
+            G.statehandler.states["minecraft:game"].parts[0].activate_keyboard = False
         else:
             G.statehandler.update_exclusive()
+            G.statehandler.states["minecraft:game"].parts[0].activate_keyboard = True
         for inventory in G.inventoryhandler.opened_inventorystack:
             inventory.draw()
+        if G.inventoryhandler.moving_slot.itemstack.item:
+            G.inventoryhandler.moving_slot.draw(0, 0)
+
+    def _get_slot_for(self, x, y) -> gui.Slot.Slot or None:
+        for inventory in G.inventoryhandler.opened_inventorystack:
+            dx, dy = inventory._get_position()
+            for slot in inventory.slots:
+                sx, sy = slot.position
+                sx += dx
+                sy += dy
+                if 0 <= x - sx <= 32 and 0 <= y - sy <= 32:
+                    return slot
+        return None
+
+    @G.eventhandler("user:mouse:press", callactive=False)
+    def on_mouse_press(self, x, y, button, modifiers):
+        if G.window.exclusive: return
+        slot: gui.Slot.Slot = self._get_slot_for(x, y)
+        moving_slot: gui.Slot.Slot = G.inventoryhandler.moving_slot
+        if button == mouse.LEFT:
+            if slot and (slot.interaction_mode[0] or not slot.itemstack.item) and (slot.interaction_mode[1] or not
+                                                                                   moving_slot.itemstack.item):
+                slot.itemstack, moving_slot.itemstack = moving_slot.itemstack, slot.itemstack
+            else:
+                # threw the item
+                pass
+        elif button == mouse.RIGHT:
+            if slot:
+                if not slot.itemstack.item:
+                    if slot.interaction_mode[1]:
+                        slot.itemstack = moving_slot.itemstack.copy()
+                        slot.itemstack.amount = 1
+                        moving_slot.itemstack.amount -= 1
+                elif not moving_slot.itemstack.item:
+                    if slot.interaction_mode[0]:
+                        moving_slot.itemstack = slot.itemstack.copy()
+                        slot.itemstack.amount //= 2
+                        moving_slot.itemstack.amount = moving_slot.itemstack.amount - slot.itemstack.amount
+                elif slot.itemstack.item.get_name() == moving_slot.itemstack.item.get_name() and \
+                        slot.itemstack.amount < slot.itemstack.item.get_max_stack_size():
+                    if slot.interaction_mode[1]:
+                        slot.itemstack.amount += 1
+                        moving_slot.itemstack.amount -= 1
+            else:
+                # threw one item
+                pass
+        elif button == mouse.MIDDLE:
+            if G.player.gamemode == 1:
+                moving_slot.itemstack = slot.itemstack.copy()
+                moving_slot.itemstack.amount = moving_slot.itemstack.item.get_max_stack_size()
+
+        if moving_slot.itemstack.amount == 0:
+            moving_slot.itemstack.clean()
+
+    @G.eventhandler("user:mouse:motion", callactive=False)
+    def on_mouse_motion(self, x, y, dx, dy):
+        if G.inventoryhandler.moving_slot.itemstack.item:
+            G.inventoryhandler.moving_slot.position = (x, y)
 
 
 class InventoryHandler:
@@ -50,6 +113,8 @@ class InventoryHandler:
         self.opened_inventorystack = []
         self.alwaysopened = []
         self.inventorys = []
+        self.moving_slot: gui.Slot.Slot = gui.Slot.Slot(allow_player_add_to_free_place=False, allow_player_insert=False,
+                                                        allow_player_remove=False)
 
     def add(self, inventory):
         if inventory in self.inventorys: return

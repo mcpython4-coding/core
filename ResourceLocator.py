@@ -45,14 +45,17 @@ class ResourceLocator:
             else:
                 self.data = PIL.Image.open(os.path.join(G.local, location))
         else:
-            if location.count("/") == 1 and ":" not in location:
-                s = location.split("/")
-                info = LOCATION_INFO[s[0]]
-                location = "assets/minecraft/{}/{}/{}{}".format(info[0], s[0], s[1], info[1])
-                output += info[1]
-                with open(output, mode="wb") as wf:
-                    wf.write(G.jar_archive.read(location))
-                self.data = PIL.Image.open(output)
+            if ":" not in location:
+                try:
+                    s = location.split("/")
+                    info = LOCATION_INFO[s[0]]
+                    location = "assets/minecraft/{}/{}/{}{}".format(info[0], s[0], "/".join(s[1:]), info[1])
+                    output += info[1]
+                    with open(output, mode="wb") as wf:
+                        wf.write(G.jar_archive.read(location))
+                    self.data = PIL.Image.open(output)
+                except:
+                    pass
             if self.data is None:
                 try:
                     if not location.endswith(".png"):

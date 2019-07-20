@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.14.4-pre6.jar"""
 import globals as G
 import gui.InventoryPlayerHotbar
+import gui.InventoryPlayerMain
 import gui.ItemStack
 import gui.Slot
 
@@ -20,6 +21,8 @@ class Player:
     }
 
     def __init__(self, name):
+        G.player: Player = self
+
         self.name: str = name
         self.gamemode: int = -1
         self.set_gamemode(1)
@@ -28,15 +31,15 @@ class Player:
         self.xp: int = 0
         self.xp_level: int = 0
 
-        self.inventorys: dict = {
-            "hotbar": gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
-        }
+        self.inventorys: dict = {}
+
+        self.inventorys["hotbar"] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
+        self.inventorys["main"] = gui.InventoryPlayerMain.InventoryPlayerMain()
 
         self.inventory_order: list = [  # an ([inventoryindexname], [reversed slots}) list
-            ("hotbar", False)
+            ("hotbar", False),
+            ("main", True)
         ]
-
-        G.player: Player = self
 
         self.active_inventory_slot: int = 0
 

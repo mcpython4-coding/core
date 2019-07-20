@@ -109,10 +109,10 @@ class TaskResize(ITaskType):
 
     @staticmethod
     def modify(images, data) -> list:
-        print(data)
+        # print(data)
         result = []
         for i, image in enumerate(images):
-            result.append(image.resize(data["size"] if type(data["size"][0] == int) else data["size"][i], 2))
+            result.append(image.resize(data["size"] if type(data["size"][0] == int) else data["size"][i]))
         return result
 
 

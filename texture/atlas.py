@@ -43,6 +43,7 @@ class TextureAtlasGenerator:
     def add_files_or_images(self, files_or_images: list):
         if self.__builed:
             raise RuntimeError("can't add to an builded texture atlas")
+        if len(files_or_images) == 0: return
         images = []
         for file_or_image in files_or_images:
             if type(file_or_image) == str:

@@ -41,9 +41,11 @@ class Inventory:
                 # print(sid, entry)
                 self.slots[sid].position = tuple(entry["position"])
             if "allow_player_insert" in entry:
-                self.slots[sid].interaction_mode[0] = entry["allow_player_insert"]
+                self.slots[sid].interaction_mode[1] = entry["allow_player_insert"]
             if "allow_player_remove" in entry:
-                self.slots[sid].interaction_mode[1] = entry["allow_player_remove"]
+                self.slots[sid].interaction_mode[0] = entry["allow_player_remove"]
+            if "allow_player_add_to_free_place" in entry:
+                self.slots[sid].interaction_mode[2] = entry["allow_player_add_to_free_place"]
         if "image_size" in self.config:
             self.bgimagesize = tuple(self.config["image_size"])
         if "image_anchor" in self.config:

@@ -1,10 +1,10 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-add Inventory-class, Slot-class, SlotCopy-class, InventoryHandler based on states
 add chat (based on state), commands, CommandHandler, CommandParser
 add loot-tables & bind to blocks
-add Item, ItemHandler, ItemModelLoader
-add PlayerInventory, PlayerHotbar, PlayerMainInventory, PlayerCreativeInventory, PlayerCreativeTab
+add ItemModelLoader
+add generator for item images for blocks
+add PlayerCreativeInventory, PlayerCreativeTab
 add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid
 add BlockInventory-attribute to Block for auto-opening an inventory
 add the following block inventorys: crafting table, furnes and furnes-like inventorys, brewing stand, anvil, enchantment table

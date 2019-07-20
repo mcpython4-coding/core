@@ -1,0 +1,159 @@
+{
+  "image_location": "tmp/gui/main.png",
+  "image_size": [
+    352,
+    332
+  ],
+  "slots": {
+    "0": {
+      "position": [16, 17]
+    },
+    "1": {
+      "position": [52, 17]
+    },
+    "2": {
+      "position": [88, 17]
+    },
+    "3": {
+      "position": [124, 17]
+    },
+    "4": {
+      "position": [160, 17]
+    },
+    "5": {
+      "position": [196, 17]
+    },
+    "6": {
+      "position": [232, 17]
+    },
+    "7": {
+      "position": [268, 17]
+    },
+    "8": {
+      "position": [304, 17]
+    },
+
+    "9": {
+      "position": [16, 60]
+    },
+    "10": {
+      "position": [52, 60]
+    },
+    "11": {
+      "position": [88, 60]
+    },
+    "12": {
+      "position": [124, 60]
+    },
+    "13": {
+      "position": [160, 60]
+    },
+    "14": {
+      "position": [196, 60]
+    },
+    "15": {
+      "position": [232, 60]
+    },
+    "16": {
+      "position": [268, 60]
+    },
+    "17": {
+      "position": [304, 60]
+    },
+
+    "18": {
+      "position": [16, 96]
+    },
+    "19": {
+      "position": [52, 96]
+    },
+    "20": {
+      "position": [88, 96]
+    },
+    "21": {
+      "position": [124, 96]
+    },
+    "22": {
+      "position": [160, 96]
+    },
+    "23": {
+      "position": [196, 96]
+    },
+    "24": {
+      "position": [232, 96]
+    },
+    "25": {
+      "position": [268, 96]
+    },
+    "26": {
+      "position": [304, 96]
+    },
+
+    "27": {
+      "position": [16, 132]
+    },
+    "28": {
+      "position": [52, 132]
+    },
+    "29": {
+      "position": [88, 132]
+    },
+    "30": {
+      "position": [124, 132]
+    },
+    "31": {
+      "position": [160, 132]
+    },
+    "32": {
+      "position": [196, 132]
+    },
+    "33": {
+      "position": [232, 132]
+    },
+    "34": {
+      "position": [268, 132]
+    },
+    "35": {
+      "position": [304, 132]
+    },
+
+    "36": {
+      "position": [16, 176]
+    },
+    "37": {
+      "position": [16, 212]
+    },
+    "38": {
+      "position": [16, 248]
+    },
+    "39": {
+      "position": [16, 284]
+    },
+
+    "40": {
+      "position": [196, 264],
+      "allow_player_add_to_free_place": false
+    },
+    "41": {
+      "position": [232, 264],
+      "allow_player_add_to_free_place": false
+    },
+    "42": {
+      "position": [196, 228],
+      "allow_player_add_to_free_place": false
+    },
+    "43": {
+      "position": [232, 228],
+      "allow_player_add_to_free_place": false
+    },
+    "44": {
+      "position": [308, 244],
+      "allow_player_add_to_free_place": false,
+      "allow_player_insert": false
+    },
+
+    "45": {
+      "position": [154, 176]
+    }
+  }
+}

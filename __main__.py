@@ -28,7 +28,7 @@ try:
 
     import zipfile
 
-    G.jar_archive = zipfile.ZipFile(G.local+"/assets/1.14.4_pre6.jar")
+    G.jar_archive = zipfile.ZipFile(G.local+"/assets/1.14.4.jar")
 
     import texture.atlas
 

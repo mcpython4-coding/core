@@ -37,10 +37,15 @@ class StateGame(State.State):
 
     @G.eventhandler("user:keyboard:press", callactive=False)
     def on_key_press(self, symbol, modifiers):
-        if symbol == key.ESCAPE:
+        if symbol == key.ESCAPE and G.window.exclusive:
             G.statehandler.switch_to("minecraft:escape_state")
         elif symbol == key.R:
             G.inventoryhandler.reload_config()
+        elif symbol == key.E:
+            if not G.player.inventorys["main"] in G.inventoryhandler.opened_inventorystack:
+                G.inventoryhandler.show(G.player.inventorys["main"])
+            else:
+                G.inventoryhandler.hide(G.player.inventorys["main"])
 
 
 game = StateGame()

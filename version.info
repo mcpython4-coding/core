@@ -125,4 +125,16 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: in gamemode 1, bedrock can't be broken
 [uuk]: added mouse-middle support
 [uuk]: fixed bug: itemstack is getting the class, not an instance of it when creating with itemname
+[uuk]: added main-part of the inventory
+[uuk]: enabled sub-locations in archives for ResourceLocator
+[uuk]: when adding an empty array to texture atlas, it will be simply skipped
+[uuk]: updated .jar to 1.14.4
+[uuk]: fixed bug: when opening an inventory, you can move yourself by arrow-keys
+[uuk]: key E will close now also the inventory
+[uuk]: fixed bug: ESC can be used when an inventory is opened to get to the esc-screen
+[uuk]: fixed bug: resize with factory was some kind broken due to an wrong argument
+[uuk]: added allow_player_add_to_free_place-attribute to slot
+[uuk]: fixed bug: slotcopy has no allow_[...]-attributes
+[uuk]: added mouse interaction
+[uuk]: fixed bug: remove/insert options to Slot were wrong
 
