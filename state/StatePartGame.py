@@ -10,6 +10,7 @@ import globals as G
 from config import FLYING_SPEED, WALKING_SPEED, GRAVITY, TERMINAL_VELOCITY, PLAYER_HEIGHT, JUMP_SPEED
 from pyglet.window import key, mouse
 import pyglet
+import gui.ItemStack
 
 
 class StatePartGame(StatePart.StatePart):
@@ -86,11 +87,39 @@ class StatePartGame(StatePart.StatePart):
                     ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # ON OSX, control + left click = right click.
                 if previous and G.player.gamemode in [0, 1]:
-                    G.window.model.add_block(previous, G.window.block)
+                    slot = G.player.get_active_inventory_slot()
+                    if slot.itemstack.item and slot.itemstack.item.has_block():
+                        G.window.model.add_block(previous, slot.itemstack.item.get_block())
+                        if G.player.gamemode in [0, 2]:
+                            slot.itemstack.amount -= 1
+                            if slot.itemstack.amount == 0:
+                                slot.itemstack.clean()
             elif button == mouse.LEFT and blockpos:
                 block = G.window.model.world[blockpos]
-                if block.is_brakeable() and G.player.gamemode in [0, 1]:
+                if (block.is_brakeable() and G.player.gamemode == 0) or G.player.gamemode == 1:
+                    if G.player.gamemode == 0:
+                        G.player.add_to_free_place(gui.ItemStack.ItemStack(G.model.world[blockpos].get_name()))
                     G.window.model.remove_block(blockpos)
+            elif button == mouse.MIDDLE and blockpos:
+                block = G.window.model.world[blockpos]
+                selected_slot = G.player.get_active_inventory_slot()
+                for inventoryname, reverse in G.player.inventory_order:
+                    inventory = G.player.inventorys[inventoryname]
+                    slots: list = inventory.slots
+                    if reverse:
+                        slots.reverse()
+                    for slot in slots:
+                        if slot.itemstack.item and slot.itemstack.item.has_block() and \
+                                slot.itemstack.item.get_block() == block.get_name():
+                            if inventoryname != "hotbar":
+                                selected_slot.itemstack, slot.itemstack = slot.itemstack, selected_slot.itemstack
+                            else:
+                                G.player.set_active_inventory_slot(slots.index(slot))
+                            return
+                if G.player.gamemode == 1:
+                    old_itemstack = selected_slot.itemstack
+                    selected_slot.itemstack = gui.ItemStack.ItemStack(block.get_name())
+                    G.player.add_to_free_place(old_itemstack)
 
     @G.eventhandler("user:mouse:motion", callactive=False)
     def on_mouse_motion(self, x, y, dx, dy):
@@ -118,8 +147,8 @@ class StatePartGame(StatePart.StatePart):
         elif symbol == key.TAB and G.player.gamemode == 1:
             G.window.flying = not G.window.flying
         elif symbol in G.window.num_keys and G.player.gamemode in (0, 1):
-            index = (symbol - G.window.num_keys[0]) % len(G.window.inventory)
-            G.window.block = G.window.inventory[index]
+            index = symbol - G.window.num_keys[0]
+            G.player.set_active_inventory_slot(index)
 
     @G.eventhandler("user:keyboard:release", callactive=False)
     def on_key_release(self, symbol, modifiers):

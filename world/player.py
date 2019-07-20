@@ -7,10 +7,12 @@ minecraft by Mojang
 blocks based on 1.14.4-pre6.jar"""
 import globals as G
 import gui.InventoryPlayerHotbar
+import gui.ItemStack
+import gui.Slot
 
 
 class Player:
-    GAMEMODE_DICT = {
+    GAMEMODE_DICT: dict = {
         "survival": 0,
         "creative": 1,
         "adventure": 2,
@@ -18,19 +20,25 @@ class Player:
     }
 
     def __init__(self, name):
-        self.name = name
-        self.gamemode = None
+        self.name: str = name
+        self.gamemode: int = -1
         self.set_gamemode(1)
-        self.harts = 20
-        self.hunger = 20
-        self.xp = 0
-        self.xp_level = 0
+        self.harts: int = 20
+        self.hunger: int = 20
+        self.xp: int = 0
+        self.xp_level: int = 0
 
-        self.inventorys = {
+        self.inventorys: dict = {
             "hotbar": gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
         }
 
-        G.player = self
+        self.inventory_order: list = [  # an ([inventoryindexname], [reversed slots}) list
+            ("hotbar", False)
+        ]
+
+        G.player: Player = self
+
+        self.active_inventory_slot: int = 0
 
     def set_gamemode(self, gamemode: int or str):
         if gamemode in self.GAMEMODE_DICT:
@@ -69,4 +77,35 @@ class Player:
 
     def add_xp_level(self, xp_levels: int):
         self.xp_level += 1
+
+    def add_to_free_place(self, itemstack: gui.ItemStack.ItemStack) -> bool:
+        """
+        adds the item onto the itemstack
+        :param itemstack: the itemstack to add
+        :return: either successful or not
+        """
+        if not itemstack.item or itemstack.amount == 0: return True
+        for inventoryname, reverse in self.inventory_order:
+            inventory = self.inventorys[inventoryname]
+            slots = inventory.slots
+            if reverse:
+                slots.reverse()
+            for slot in slots:
+                if not slot.itemstack.item:
+                    slot.itemstack = itemstack
+                    return True
+                elif slot.itemstack.item.get_name() == itemstack.item.get_name():
+                    m = slot.itemstack.item.get_max_stack_size()
+                    delta = m - slot.itemstack.amount
+                    slot.itemstack.amount = m
+                    itemstack.amount = delta
+                if itemstack.amount == 0:
+                    return True
+        return False
+
+    def set_active_inventory_slot(self, id: int):
+        self.active_inventory_slot = id
+
+    def get_active_inventory_slot(self):
+        return self.inventorys["hotbar"].slots[self.active_inventory_slot]
 

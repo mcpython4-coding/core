@@ -1,8 +1,8 @@
 These is an tasklist covering all diffrent tasks these project has.
 
 add Inventory-class, Slot-class, SlotCopy-class, InventoryHandler based on states
-add SlotOutput-typed slot
 add chat (based on state), commands, CommandHandler, CommandParser
+add loot-tables & bind to blocks
 add Item, ItemHandler, ItemModelLoader
 add PlayerInventory, PlayerHotbar, PlayerMainInventory, PlayerCreativeInventory, PlayerCreativeTab
 add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid

@@ -59,17 +59,7 @@ class InventoryHandler:
             self.show(inventory)
 
     def reload_config(self):
-        for inventory in self.inventorys:
-            if inventory.get_config_file():
-                inventory.config = ResourceLocator.ResourceLocator(inventory.get_config_file(), load_as_json=True).data
-            else:
-                inventory.config = {}
-            for slotid in inventory.config["slots"] if "slots" in inventory.config else []:
-                sid = int(slotid)
-                entry = inventory.config["slots"][slotid]
-                if "position" in entry:
-                    print(sid, entry)
-                    inventory.slots[sid].position = tuple(entry["position"])
+        [inventory.reload_config() for inventory in self.inventorys]
 
     def show(self, inventory):
         if inventory in self.opened_inventorystack: return

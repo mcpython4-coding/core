@@ -58,16 +58,10 @@ class Window(pyglet.window.Window):
         # Velocity in the y (upward) direction.
         self.dy = 0
 
-        # A list of blocks the player can place. Hit num keys to cycle.
-        self.inventory = []
-
-        # The current block the user can place. Hit num keys to cycle.
-        self.block = None
-
         # Convenience list of num keys.
         self.num_keys = [
             key._1, key._2, key._3, key._4, key._5,
-            key._6, key._7, key._8, key._9, key._0]
+            key._6, key._7, key._8, key._9]
 
         # Instance of the model that handles the world.
         self.model = world.Model.Model()

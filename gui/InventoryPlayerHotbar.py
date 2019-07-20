@@ -14,15 +14,14 @@ import ResourceLocator
 
 
 class InventoryPlayerHotbar(gui.Inventory.Inventory):
+    def __init__(self):
+        gui.Inventory.Inventory.__init__(self)
+        self.selected_sprite = texture.helpers.to_pyglet_sprite(
+            ResourceLocator.ResourceLocator("tmp/gui/selected_slot.png").data)
+
     @staticmethod
     def get_config_file():
         return G.local+"/assets/config/inventory/playerinventoryhorbar.json"
-
-    def on_create(self):
-        self.bgsprite = texture.helpers.to_pyglet_sprite(ResourceLocator.ResourceLocator("tmp/gui/hotbar.png").data)
-        self.bgimagesize = (364, 44)
-        self.windowanchor = "MD"
-        self.positon = (0, 100)
 
     def is_blocking_interactions(self) -> bool:
         return False
@@ -35,6 +34,17 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
 
     def on_deactivate(self):
         pass
+
+    def on_draw_over_image(self):
+        x, y = G.player.get_active_inventory_slot().position
+        dx, dy = tuple(self.config["selected_delta"]) if "selected_delta" in self.config else (8, 8)
+        x -= dx
+        y -= dy
+        dx, dy = self._get_position()
+        x += dx
+        y += dy
+        self.selected_sprite.position = (x, y)
+        self.selected_sprite.draw()
 
     def is_closable_by_escape(self) -> bool: return False
 

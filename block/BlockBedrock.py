@@ -22,10 +22,6 @@ class BlockBedrock(Block.Block):
         return False
 
     @staticmethod
-    def is_optainable_by_player() -> bool:
-        return False
-
-    @staticmethod
     def is_part_of_pyramids() -> bool:
         return False
 

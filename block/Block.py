@@ -31,10 +31,6 @@ class Block:
         return True
 
     @staticmethod
-    def is_optainable_by_player() -> bool:
-        return True
-
-    @staticmethod
     def is_part_of_pyramids() -> bool:
         return True
 

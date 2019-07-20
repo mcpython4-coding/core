@@ -14,7 +14,7 @@ class ItemStack:
         if issubclass(type(item_name_or_instance), item.Item.Item):
             self.item = item
         elif item_name_or_instance in G.itemhandler.items:
-            self.item = G.itemhandler.items[item_name_or_instance]
+            self.item = G.itemhandler.items[item_name_or_instance]()
         else:
             self.item = None
         self.amount = amount if self.item and 0 <= amount <= self.item.get_max_stack_size() else 0

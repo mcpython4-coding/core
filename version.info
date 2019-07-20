@@ -109,5 +109,20 @@ started these clone on 12th of July, 2019
 [uuk]: added on_create-function to Inventory
 [uuk]: added resize & cut task to texture/factory
 [uuk]: added ItemImageTable and reworked old Slot-system to use it; items will now be resized internally
-[uuk]: added key.R support for reloading inventory definitions
+[uuk]: added key.R support for reloading inventory config
+[uuk]: added add_to_free_place-function to player
+[uuk]: moved hotbar a little bit down
+[uuk]: added reload_config-function to Inventory
+[uuk]: moved a lot of stuff into inventory config
+[uuk]: added selection for active inventory slot
+[uuk]: fixed bug with amount label rendering at wrong position
+[uuk]: fixed miss-spell of Inventory's position-attribute named positon
+[uuk]: fixed bug: amount labels are overlapped by next items
+[github]: started day 9 as 20th of July, 2019
+[uuk]: added allow_player_remove & allow_player_insert-attribute to Slot, added to config system
+[uuk]: removed old block selection system
+[uuk]: added on_draw_over_image-function to Inventory
+[uuk]: fixed bug: in gamemode 1, bedrock can't be broken
+[uuk]: added mouse-middle support
+[uuk]: fixed bug: itemstack is getting the class, not an instance of it when creating with itemname
 

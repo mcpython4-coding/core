@@ -9,6 +9,7 @@ import globals as G
 from state.ui import (UIPartImage)
 import pyglet
 import ResourceLocator
+import texture.helpers
 
 
 class Inventory:
@@ -22,9 +23,13 @@ class Inventory:
         self.bgimagesize = None
         self.bganchor = "MM"
         self.windowanchor = "MM"
-        self.positon = (0, 0)
+        self.position = (0, 0)
         G.inventoryhandler.add(self)
         self.slots = self.create_slots()
+        self.config = {}
+        self.reload_config()
+
+    def reload_config(self):
         if self.get_config_file():
             self.config = ResourceLocator.ResourceLocator(self.get_config_file(), load_as_json=True).data
         else:
@@ -33,8 +38,23 @@ class Inventory:
             sid = int(slotid)
             entry = self.config["slots"][slotid]
             if "position" in entry:
-                print(sid, entry)
+                # print(sid, entry)
                 self.slots[sid].position = tuple(entry["position"])
+            if "allow_player_insert" in entry:
+                self.slots[sid].interaction_mode[0] = entry["allow_player_insert"]
+            if "allow_player_remove" in entry:
+                self.slots[sid].interaction_mode[1] = entry["allow_player_remove"]
+        if "image_size" in self.config:
+            self.bgimagesize = tuple(self.config["image_size"])
+        if "image_anchor" in self.config:
+            self.bganchor = self.config["image_anchor"]
+        if "window_anchor" in self.config:
+            self.windowanchor = self.config["window_anchor"]
+        if "image_position" in self.config:
+            self.position = self.config["image_position"]
+        if "image_location" in self.config:
+            self.bgsprite = texture.helpers.to_pyglet_sprite(ResourceLocator.ResourceLocator(
+                self.config["image_location"]).data)
         self.on_create()
 
     def on_create(self):
@@ -44,7 +64,7 @@ class Inventory:
         return []
 
     def _get_position(self):
-        x, y = self.positon
+        x, y = self.position
         wx, wy = G.window.get_size()
         sx, sy = self.bgimagesize if self.bgsprite else (0, 0)
         if self.bganchor[0] == "M":
@@ -90,12 +110,18 @@ class Inventory:
         self.on_draw_over_backgroundimage()
         for slot in self.slots:
             slot.draw(x, y)
+        self.on_draw_over_image()
+        for slot in self.slots:
+            slot.draw_lable()
         self.on_draw_overlay()
 
     def on_draw_background(self):
         pass
 
     def on_draw_over_backgroundimage(self):
+        pass
+
+    def on_draw_over_image(self):
         pass
 
     def on_draw_overlay(self):

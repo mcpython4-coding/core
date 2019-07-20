@@ -17,8 +17,6 @@ class BlockHandler:
         if issubclass(obj, block.Block.Block):
             name = obj.get_name()
             self.blocks[name] = self.blocks[name.split(":")[-1]] = obj
-            if obj.is_optainable_by_player():
-                G.window.inventory.append(obj.get_name())
             if obj.is_part_of_pyramids():
                 G.model.pyramid_parts.append(obj.get_name())
         else:

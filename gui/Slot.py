@@ -17,9 +17,9 @@ SLOT_WIDTH = 32
 
 
 class Slot:
-    def __init__(self, itemstack=None, position=(0, 0)):
+    def __init__(self, itemstack=None, position=(0, 0), allow_player_remove=True, allow_player_insert=True):
         self.itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
-        self.itemstack.item = G.itemhandler.items["minecraft:stone"]()
+        # self.itemstack.item = G.itemhandler.items["minecraft:stone"]()
         self.itemstack.amount = 2
         self.position = position
         if self.itemstack.item:
@@ -29,6 +29,7 @@ class Slot:
             self.sprite = None
         self.amount_lable = pyglet.text.Label(text=str(self.itemstack.amount))
         self.__last_itemfile = self.itemstack.item.get_item_image_location() if self.itemstack.item else None
+        self.interaction_mode = [allow_player_remove, allow_player_insert]
 
     def copy(self, position):
         return SlotCopy(position, self)
@@ -45,9 +46,16 @@ class Slot:
             self.sprite.draw()
             if self.itemstack.amount != 1:
                 self.amount_lable.x = self.position[0] + SLOT_WIDTH + 2 + dx
-                self.amount_lable.y = self.position[0] - 2 + dy
+                self.amount_lable.y = self.position[1] - 2 + dy
                 self.amount_lable.draw()
         self.__last_itemfile = self.itemstack.item.get_item_image_location() if self.itemstack.item else None
+
+    def draw_lable(self):
+        """
+        these code draws only the lable, before, normal draw must be executed
+        """
+        if self.itemstack.amount > 1:
+            self.amount_lable.draw()
 
 
 class SlotCopy:
@@ -72,6 +80,12 @@ class SlotCopy:
             self.master.sprite.draw()
             if self.master.itemstack.amount > 1:
                 self.master.amount_lable.x = self.position[0] + SLOT_WIDTH + 2 + dx
-                self.master.amount_lable.y = self.position[0] - 2 + dy
-                self.master.amount_lable.draw()
+                self.master.amount_lable.y = self.position[1] - 2 + dy
+
+    def draw_lable(self):
+        """
+        these code draws only the lable, before, normal draw must be executed
+        """
+        if self.master.itemstack.amount > 1:
+            self.master.amount_lable.draw()
 
