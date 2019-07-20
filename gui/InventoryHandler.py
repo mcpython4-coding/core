@@ -85,7 +85,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                     if slot.interaction_mode[0]:
                         moving_slot.itemstack = slot.itemstack.copy()
                         slot.itemstack.amount //= 2
-                        moving_slot.itemstack.amount = moving_slot.itemstack.amount - slot.itemstack.amount
+                        moving_slot.itemstack.amount = abs(moving_slot.itemstack.amount - slot.itemstack.amount)
                 elif slot.itemstack.item.get_name() == moving_slot.itemstack.item.get_name() and \
                         slot.itemstack.amount < slot.itemstack.item.get_max_stack_size():
                     if slot.interaction_mode[1]:
@@ -101,11 +101,11 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
 
         if moving_slot.itemstack.amount == 0:
             moving_slot.itemstack.clean()
+            moving_slot.amount = 0
 
     @G.eventhandler("user:mouse:motion", callactive=False)
     def on_mouse_motion(self, x, y, dx, dy):
-        if G.inventoryhandler.moving_slot.itemstack.item:
-            G.inventoryhandler.moving_slot.position = (x, y)
+        G.inventoryhandler.moving_slot.position = (x, y)
 
 
 class InventoryHandler:

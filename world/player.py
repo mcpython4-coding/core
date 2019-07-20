@@ -10,14 +10,15 @@ import gui.InventoryPlayerHotbar
 import gui.InventoryPlayerMain
 import gui.ItemStack
 import gui.Slot
+import chat.Chat
 
 
 class Player:
     GAMEMODE_DICT: dict = {
-        "survival": 0,
-        "creative": 1,
-        "adventure": 2,
-        "spectator": 3
+        "survival": 0, "0": 0,
+        "creative": 1, "1": 1,
+        "adventure": 2, "2": 2,
+        "spectator": 3, "3": 3
     }
 
     def __init__(self, name):
@@ -35,6 +36,7 @@ class Player:
 
         self.inventorys["hotbar"] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
         self.inventorys["main"] = gui.InventoryPlayerMain.InventoryPlayerMain()
+        self.inventorys["chat"] = chat.Chat.ChatInventory()
 
         self.inventory_order: list = [  # an ([inventoryindexname], [reversed slots}) list
             ("hotbar", False),
@@ -94,15 +96,27 @@ class Player:
             if reverse:
                 slots.reverse()
             for slot in slots:
-                if not slot.itemstack.item:
-                    slot.itemstack = itemstack
+                if slot.itemstack.item and slot.itemstack.item.get_name() == itemstack.item.get_name() and \
+                        slot.interaction_mode[2]:
+                    if slot.itemstack.item and slot.itemstack.amount + itemstack.amount <= itemstack.item.\
+                            get_max_stack_size():
+                        slot.itemstack.amount += itemstack.amount
+                        return True
+                    else:
+                        m = slot.itemstack.item.get_max_stack_size()
+                        delta = m - slot.itemstack.amount
+                        slot.itemstack.amount = m
+                        itemstack.amount -= delta
+                if itemstack.amount <= 0:
                     return True
-                elif slot.itemstack.item.get_name() == itemstack.item.get_name():
-                    m = slot.itemstack.item.get_max_stack_size()
-                    delta = m - slot.itemstack.amount
-                    slot.itemstack.amount = m
-                    itemstack.amount = delta
-                if itemstack.amount == 0:
+        for inventoryname, reverse in self.inventory_order:
+            inventory = self.inventorys[inventoryname]
+            slots = inventory.slots
+            if reverse:
+                slots.reverse()
+            for slot in slots:
+                if not slot.itemstack.item and slot.interaction_mode[2]:
+                    slot.itemstack = itemstack
                     return True
         return False
 

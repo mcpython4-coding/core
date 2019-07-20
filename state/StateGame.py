@@ -9,6 +9,8 @@ from . import State, StatePartGame
 import gui.InventoryHandler
 import globals as G
 from pyglet.window import key
+import chat.Chat
+import json
 
 
 class StateGame(State.State):
@@ -43,9 +45,12 @@ class StateGame(State.State):
             G.inventoryhandler.reload_config()
         elif symbol == key.E:
             if not G.player.inventorys["main"] in G.inventoryhandler.opened_inventorystack:
-                G.inventoryhandler.show(G.player.inventorys["main"])
+                if G.window.exclusive:
+                    G.inventoryhandler.show(G.player.inventorys["main"])
             else:
                 G.inventoryhandler.hide(G.player.inventorys["main"])
+        elif symbol == key.T and G.window.exclusive:
+            G.inventoryhandler.show(G.player.inventorys["chat"])
 
 
 game = StateGame()

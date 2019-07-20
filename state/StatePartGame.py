@@ -74,7 +74,10 @@ class StatePartGame(StatePart.StatePart):
             dy += G.window.dy * dt
         # collisions
         x, y, z = G.window.position
-        if G.player.gamemode != 3: x, y, z = G.window.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+        if G.player.gamemode != 3:
+            x, y, z = G.window.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+        else:
+            x, y, z = x + dx, y + dy, z + dz
         G.window.position = (x, y, z)
 
     @G.eventhandler("user:mouse:press", callactive=False)
@@ -168,7 +171,7 @@ class StatePartGame(StatePart.StatePart):
         pyglet.gl.glColor3d(*self.glcolor3d)
         if self.activate_3d_draw:
             G.window.model.batch.draw()
-            if self.activate_focused_block_draw:
+            if self.activate_focused_block_draw and G.player.gamemode != 3:
                 G.window.draw_focused_block()
 
     @G.eventhandler("render:draw:2d", callactive=False)

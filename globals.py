@@ -13,6 +13,8 @@ window = None
 model = None
 player = None
 
+chat = None
+
 eventhandler = None
 tickhandler = None
 
@@ -21,6 +23,8 @@ statehandler = None
 texturefactoryhandler = None
 inventoryhandler = None
 itemhandler = None
+commandhandler = None
+commandparser = None
 
 modelloader = None
 

@@ -1,8 +1,6 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-add chat (based on state), commands, CommandHandler, CommandParser
-add loot-tables & bind to blocks
-add ItemModelLoader
+add loot-tables & bind to blocks, add /loot-command
 add generator for item images for blocks
 add PlayerCreativeInventory, PlayerCreativeTab
 add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid
@@ -17,4 +15,7 @@ add WorldGenerator, WorldGeneratorChunkProvider, WorldGenerationHandler
 fix missing resize of image-parts when using only a part of it
 make the following attributes as json-saved files: Block.is_brake_able, Block.brake_time, Item.tool_types, Item.max_durability, Item.braketime_of
 add update.py for downloading latest build of mcpython and unpacking it
+add ItemModelLoader
+add datapack, resourcepack (binding to resourcelocator)
+add ModInterface
 

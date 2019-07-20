@@ -99,6 +99,7 @@ handler.add_event_name("user:mouse:motion")
 
 handler.add_event_name("user:keyboard:press")
 handler.add_event_name("user:keyboard:release")
+handler.add_event_name("user:keyboard:enter")
 
 handler.add_event_name("user:window:resize")
 

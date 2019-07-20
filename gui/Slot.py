@@ -21,7 +21,7 @@ class Slot:
                  allow_player_add_to_free_place=True):
         self.itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
         # self.itemstack.item = G.itemhandler.items["minecraft:stone"]()
-        self.itemstack.amount = 2
+        # self.itemstack.amount = 2
         self.position = position
         if self.itemstack.item:
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.itemhandler.pygletimagetable[

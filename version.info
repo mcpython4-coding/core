@@ -137,4 +137,15 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: slotcopy has no allow_[...]-attributes
 [uuk]: added mouse interaction
 [uuk]: fixed bug: remove/insert options to Slot were wrong
-
+[uuk]: added Chat as an inventory
+[uuk]: added util/opengl
+[uuk]: added event "user:keyboard:enter" when user enters an text (window: on_text(text: str))
+[uuk]: added Command-system
+[uuk]: added /give-command (structure: selector, itemname, optional: int)
+[uuk]: add_to_free_place of player will now search for an used stack before using empty
+[uuk]: fixed bug: add_to_free_place when adding to an not-full stack the result will be what was added not the rest
+[uuk]: fixed bug: amount for slot was always 2 due to an missed debug line
+[uuk]: fixed bug: ItemStack.copy() is not right
+[uuk]: added /gamemode-command with number and string using
+[uuk]: fixed bug: in gamemode 3, you can't move
+[uuk]: fixed bug: in gamemode 3, hitbox of blocks were drawn

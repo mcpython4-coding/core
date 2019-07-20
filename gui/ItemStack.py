@@ -12,7 +12,7 @@ import item.Item
 class ItemStack:
     def __init__(self, item_name_or_instance, amount=1):
         if issubclass(type(item_name_or_instance), item.Item.Item):
-            self.item = item
+            self.item = item_name_or_instance
         elif item_name_or_instance in G.itemhandler.items:
             self.item = G.itemhandler.items[item_name_or_instance]()
         else:

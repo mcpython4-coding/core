@@ -365,3 +365,6 @@ class Window(pyglet.window.Window):
         glColor3d(0, 0, 0)
         self.reticle.draw(GL_LINES)
 
+    def on_text(self, text):
+        G.eventhandler.call("user:keyboard:enter", text)
+

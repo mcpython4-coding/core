@@ -118,16 +118,20 @@
     },
 
     "36": {
-      "position": [16, 176]
+      "position": [16, 176],
+      "allow_player_add_to_free_place": false
     },
     "37": {
-      "position": [16, 212]
+      "position": [16, 212],
+      "allow_player_add_to_free_place": false
     },
     "38": {
-      "position": [16, 248]
+      "position": [16, 248],
+      "allow_player_add_to_free_place": false
     },
     "39": {
-      "position": [16, 284]
+      "position": [16, 284],
+      "allow_player_add_to_free_place": false
     },
 
     "40": {
@@ -153,7 +157,8 @@
     },
 
     "45": {
-      "position": [154, 176]
+      "position": [154, 176],
+      "allow_player_add_to_free_place": false
     }
   }
 }
