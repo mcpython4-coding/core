@@ -4,7 +4,7 @@ authors: uuk
 orginal game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4-pre6.jar"""
+blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import enum
 
@@ -19,6 +19,8 @@ class ParseType(enum.Enum):
     PLAYERINVENTORYPART = 6
     SELECTOR = 7
     POSITION = 8
+    SELECT_DEFINITED_STRING = 9
+    OPEN_END_UNDEFINITED_STRING = 10
 
 
 class ParseMode(enum.Enum):
@@ -27,11 +29,12 @@ class ParseMode(enum.Enum):
 
 
 class SubCommand:
-    def __init__(self, type, *args, mode=ParseMode.USER_NEED_ENTER):
+    def __init__(self, type, *args, mode=ParseMode.USER_NEED_ENTER, **kwargs):
         self.type = type
         self.mode = mode
         self.sub_commands = []
         self.args = args
+        self.kwargs = kwargs
 
     def add_subcommand(self, subcommand):
         self.sub_commands.append(subcommand)
@@ -80,8 +83,12 @@ class SubCommand:
                 return True
             except ValueError:
                 return False
+        if self.type == ParseType.SELECT_DEFINITED_STRING:
+            return entry in self.args or (type(self.args[0]) in (tuple, list, set) and entry in self.args[0])
+        if self.type == ParseType.OPEN_END_UNDEFINITED_STRING:
+            return (self.kwargs["min"] if "min" in self.kwargs else 0) <= len(entrylist) - start + 1
 
-    def parse(self, entrylist: list, start: int) -> tuple:
+    def parse(self, entrylist: list, start: int, info) -> tuple:
         """
         parse an value to an result, executed when an command was entered
         :param entrylist: the list to enter
@@ -89,7 +96,7 @@ class SubCommand:
         :return: an index, value object
         """
         entry: str = entrylist[start]
-        if self.type == ParseType.DEFINIED_STRING:
+        if self.type in [ParseType.DEFINIED_STRING, ParseType.SELECT_DEFINITED_STRING]:
             return start+1, entry
         if self.type == ParseType.INT:
             return start+1, int(entry)
@@ -101,7 +108,10 @@ class SubCommand:
                 while not entrylist[start + i].endswith(startc):
                     start += 1
                     entrys.append(entrylist[start + i])
-                return start+i+1, " ".join(entrys)[1:-1]
+                data = " ".join(entrys)
+                if data[0] in "'\"":
+                    data = data[1:-1]
+                return start+i+1, data
         if self.type == ParseType.FLOAT:
             return start+1, float(entry)
         if self.type == ParseType.BLOCKNAME:
@@ -111,11 +121,15 @@ class SubCommand:
         if self.type == ParseType.PLAYERINVENTORYPART:
             return start+1, entry
         if self.type == ParseType.SELECTOR:
-            return start+1, G.player
+            return start+1, [G.player]
         if self.type == ParseType.POSITION:
             value1 = entry.startswith("@") and entry in ["@p", "@s"]
-            if value1: return start+1, G.window.position
-            return start+3, [float(x) for x in entrylist[start:start+3]]
+            if value1: return start+1, [G.window.position]
+            return start+3, [[float(x) if x != "~" else info.position[i] for i, x in
+                              enumerate(entrylist[start:start+3])]]
+        if self.type == ParseType.OPEN_END_UNDEFINITED_STRING:
+            end = start + (self.kwargs["max"] if "max" in self.kwargs else len(entrylist))
+            return len(entrylist) - 1, (entrylist[start:] if len(entrylist) < end else entrylist[start:end])
 
 
 class ParseBridge:
@@ -135,6 +149,11 @@ class Command:
         pass
 
     @staticmethod
-    def parse(values: list, modes: list):
+    def parse(values: list, modes: list, info):
         pass
+
+    # a (commandprefix, info)-list
+    @staticmethod
+    def get_help() -> list:
+        return []
 

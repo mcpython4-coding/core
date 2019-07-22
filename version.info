@@ -144,8 +144,25 @@ started these clone on 12th of July, 2019
 [uuk]: added /give-command (structure: selector, itemname, optional: int)
 [uuk]: add_to_free_place of player will now search for an used stack before using empty
 [uuk]: fixed bug: add_to_free_place when adding to an not-full stack the result will be what was added not the rest
-[uuk]: fixed bug: amount for slot was always 2 due to an missed debug line
+[uuk]: fixed bug: amount for slot was after creation always 2 due to an missed debug line
 [uuk]: fixed bug: ItemStack.copy() is not right
 [uuk]: added /gamemode-command with number and string using
 [uuk]: fixed bug: in gamemode 3, you can't move
 [uuk]: fixed bug: in gamemode 3, hitbox of blocks were drawn
+[uuk]: added SELECT_DEFINITED_STRING-type to CommandEntryType, reworked /gamemode-command to use it
+[github]: started day 10 as 21th of July, 2019
+[uuk]: added OPEN_END_UNDEFINITED_STRING-type to CommandEntryType
+[uuk]: added /execute-command
+[uuk]: added ParsingCommandInfo for storing how and where the command is parsed from
+[uuk]: position & selector types will now return an list of elements instead of an single one
+[uuk]: position will accept now ~-inputs
+[uuk]: added commands: /kill, /clear, /teleport, /tp
+[uuk]: main_entry can now be list
+[uuk]: added kill-method to player
+[uuk]: updated licence headers to fit the version of jar used in these project
+[uuk]: fixed bug: Can get 0-Slot by right-clicking an 1-Slot
+[github]: started day 11 as 22th of July, 2019
+[uuk]: fixed some bugs around /tp & /teleport
+[uuk]: added some security to math functions
+[uuk]: added /help-command
+

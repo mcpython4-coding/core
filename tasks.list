@@ -3,13 +3,16 @@ These is an tasklist covering all diffrent tasks these project has.
 add loot-tables & bind to blocks, add /loot-command
 add generator for item images for blocks
 add PlayerCreativeInventory, PlayerCreativeTab
+rework command entry system to use an registry
 add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid
 add BlockInventory-attribute to Block for auto-opening an inventory
 add the following block inventorys: crafting table, furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
 add Enchantment-baseclass with attribute is_combineable_with(...) -> bool & all enchanments
 add Tool-baseclass and Tool-durability
-add braketime-attribute to Block
-add datapacks
+add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload, /clone, /fill, /setblock, /?
+add braketime-attribute to Block, use it in window brake system (also in StatePartGame)
+add datapacks with .mcfunction-files, add resourcelocator binding for recipes, add /function & /shedule -command
+add Selector-registry & add more selectors
 move world storage to Chunk, Dimension & World-class
 add WorldGenerator, WorldGeneratorChunkProvider, WorldGenerationHandler
 fix missing resize of image-parts when using only a part of it
@@ -18,4 +21,7 @@ add update.py for downloading latest build of mcpython and unpacking it
 add ItemModelLoader
 add datapack, resourcepack (binding to resourcelocator)
 add ModInterface
+add time-system and /time-command
+add scoreboards
+add entitys with handler, add an batch to system for rendering them OR use seperated classes
 

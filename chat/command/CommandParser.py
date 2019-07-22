@@ -4,9 +4,20 @@ authors: uuk
 orginal game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4-pre6.jar"""
+blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import chat.command.Command
+
+
+class ParsingCommandInfo:
+    def __init__(self, entity=None, position=None):
+        if not entity: entity = G.player
+        if not position: position = G.window.position
+        self.entity = entity
+        self.position = position
+
+    def copy(self):
+        return ParsingCommandInfo(entity=self.entity, position=self.position)
 
 
 class CommandParser:
@@ -15,20 +26,22 @@ class CommandParser:
 
     def add_command(self, command: chat.command.Command):
         parsebridge = chat.command.Command.ParseBridge(command)
-        self.commandparsing[parsebridge.main_entry] = (command, parsebridge)
+        for entry in ([parsebridge.main_entry] if type(parsebridge.main_entry) == str else parsebridge.main_entry):
+            self.commandparsing[entry] = (command, parsebridge)
 
-    def parse(self, command: str):
+    def parse(self, command: str, info=None):
         splitted = command.split(" ")
         pre = splitted[0]
+        if not info: info = ParsingCommandInfo()
         if pre[1:] in self.commandparsing:
             command, parsebridge = self.commandparsing[pre[1:]]
-            values, trace = self._convert_to_values(splitted, parsebridge)
+            values, trace = self._convert_to_values(splitted, parsebridge, info)
             if values is None: return
-            command.parse(values, trace)
+            command.parse(values, trace, info)
         else:
             print("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
 
-    def _convert_to_values(self, command, parsebridge, index=1) -> tuple:
+    def _convert_to_values(self, command, parsebridge, info, index=1) -> tuple:
         # print(command)
         active_entry = parsebridge
         values = []
@@ -39,7 +52,7 @@ class CommandParser:
                 if not flag1 and subcommand.is_valid(command, index):
                     array.append((subcommand, active_entry.sub_commands.index(subcommand)))
                     active_entry = subcommand
-                    index, value = active_entry.parse(command, index)
+                    index, value = active_entry.parse(command, index, info)
                     values.append(value)
                     flag1 = True
             if not flag1:
@@ -49,7 +62,7 @@ class CommandParser:
                 else:
                     print("[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}".
                           format(len(array)+1))
-                    print("mising one of the following entrys: {}".format([subcommand.type for subcommand in
+                    print("missing one of the following entrys: {}".format([subcommand.type for subcommand in
                                                                            active_entry.sub_commands]))
                     print("gotten values: {}".format(values))
                     return None, array

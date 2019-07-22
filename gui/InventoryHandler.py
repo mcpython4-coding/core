@@ -4,7 +4,7 @@ authors: uuk
 orginal game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4-pre6.jar"""
+blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import gui.Inventory
 import state.StatePart
@@ -86,6 +86,10 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                         moving_slot.itemstack = slot.itemstack.copy()
                         slot.itemstack.amount //= 2
                         moving_slot.itemstack.amount = abs(moving_slot.itemstack.amount - slot.itemstack.amount)
+                        if slot.itemstack.amount == 0:
+                            slot.itemstack.clean()
+                        if moving_slot.itemstack.amount == 0:
+                            moving_slot.itemstack.clean()
                 elif slot.itemstack.item.get_name() == moving_slot.itemstack.item.get_name() and \
                         slot.itemstack.amount < slot.itemstack.item.get_max_stack_size():
                     if slot.interaction_mode[1]:

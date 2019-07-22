@@ -4,7 +4,7 @@ authors: uuk
 orginal game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4-pre6.jar"""
+blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import gui.InventoryPlayerHotbar
 import gui.InventoryPlayerMain
@@ -40,7 +40,7 @@ class Player:
 
         self.inventory_order: list = [  # an ([inventoryindexname], [reversed slots}) list
             ("hotbar", False),
-            ("main", True)
+            ("main", False)
         ]
 
         self.active_inventory_slot: int = 0
@@ -125,4 +125,20 @@ class Player:
 
     def get_active_inventory_slot(self):
         return self.inventorys["hotbar"].slots[self.active_inventory_slot]
+
+    def kill(self):
+        G.commandparser.parse("/clear")
+        print("[CHAT] player {} died".format(self.name))
+        G.window.position = (0, 20, 0)
+        self.active_inventory_slot = 0
+        self.harts = 20
+        self.hunger = 20
+
+    def _get_position(self):
+        return G.window.position
+
+    def _set_position(self, position):
+        G.window.position = position
+
+    position = property(_get_position, _set_position)
 

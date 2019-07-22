@@ -4,7 +4,7 @@ authors: uuk
 orginal game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4-pre6.jar"""
+blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 
 
 def cube_vertices(x, y, z, n):
@@ -98,9 +98,13 @@ def normalize(position):
     block_position : tuple of ints of len 3
 
     """
-    x, y, z = position
-    x, y, z = (int(round(x)), int(round(y)), int(round(z)))
-    return x, y, z
+    try:
+        x, y, z = position if type(position) == tuple else tuple(position)
+        x, y, z = (int(round(x)), int(round(y)), int(round(z)))
+        return x, y, z
+    except:
+        print(position)
+        raise
 
 
 def sectorize(position):

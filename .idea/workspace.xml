@@ -2,26 +2,66 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b089e0db-f5db-4782-b184-a43ba234ba56" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/chat/Chat.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/chat/command/Command.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/chat/command/CommandGamemode.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/chat/command/CommandGive.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/chat/command/CommandHandler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/chat/command/CommandParser.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/util/opengl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/baulu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/baulu.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chat/command/CommandClear.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chat/command/CommandExecute.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chat/command/CommandHelp.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chat/command/CommandKill.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chat/command/CommandTeleport.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/config/inventory/playerinventorymain.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/config/inventory/playerinventorymain.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ResourceLocator.py" beforeDir="false" afterPath="$PROJECT_DIR$/ResourceLocator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/Block.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/Block.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockBedrock.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockBedrock.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockBrick.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockBrick.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockCobbleStone.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockCobbleStone.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockDirt.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockDirt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockGrassBlock.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockGrassBlock.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockSand.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockSand.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockStone.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockStone.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/Chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/Chat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/command/Command.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/command/Command.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/command/CommandGamemode.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/command/CommandGamemode.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/command/CommandGive.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/command/CommandGive.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/command/CommandHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/command/CommandHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/command/CommandParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/command/CommandParser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/event/EventHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/EventHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event/EventInfo.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/EventInfo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event/TickHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/TickHandler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/globals.py" beforeDir="false" afterPath="$PROJECT_DIR$/globals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/Inventory.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/Inventory.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/InventoryHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/InventoryHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/InventoryPlayerHotbar.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/InventoryPlayerHotbar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/InventoryPlayerMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/InventoryPlayerMain.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/ItemStack.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/ItemStack.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/Slot.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/Slot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/item/Item.py" beforeDir="false" afterPath="$PROJECT_DIR$/item/Item.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/item/ItemHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/item/ItemHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/item/ItemStone.py" beforeDir="false" afterPath="$PROJECT_DIR$/item/ItemStone.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/opengl_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/opengl_setup.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rendering/window.py" beforeDir="false" afterPath="$PROJECT_DIR$/rendering/window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/State.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/State.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StateEscape.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateEscape.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/state/StateGame.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateGame.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StateGameInfo.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateGameInfo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StateHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StatePart.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StatePart.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/state/StatePartGame.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StatePartGame.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StateStartMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateStartMenu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/ui/UIPartButton.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/ui/UIPartButton.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/ui/UIPartImage.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/ui/UIPartImage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/ui/UIPartLable.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/ui/UIPartLable.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks.list" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.list" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/texture/ModelLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/texture/ModelLoader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/texture/atlas.py" beforeDir="false" afterPath="$PROJECT_DIR$/texture/atlas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/texture/factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/texture/factory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/texture/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/texture/helpers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/updatelicenceheaders.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/updatelicenceheaders.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/math.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/math.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/opengl.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/opengl.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/version.info" beforeDir="false" afterPath="$PROJECT_DIR$/version.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/Model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/world/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/player.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -36,7 +76,7 @@
         <entry file="file://$PROJECT_DIR$/version.info">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="317">
-              <caret line="150" column="60" selection-start-line="150" selection-start-column="60" selection-end-line="150" selection-end-column="60" />
+              <caret line="166" column="26" selection-start-line="166" selection-start-column="26" selection-end-line="166" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -44,32 +84,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tasks.list">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="19" column="16" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chat/command/CommandParser.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="103">
-              <caret line="31" column="10" selection-start-line="31" selection-start-column="10" selection-end-line="31" selection-end-column="10" />
-              <folding>
-                <element signature="e#200#219#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/state/StatePartGame.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="107">
-              <caret line="173" column="74" selection-start-line="173" selection-start-column="74" selection-end-line="173" selection-end-column="74" />
-              <folding>
-                <element signature="e#200#223#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="119">
+              <caret line="10" column="9" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -120,15 +136,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/assets/factory/texture/grass_block_top.json" />
-        <option value="$PROJECT_DIR$/opengl_setup.py" />
-        <option value="$PROJECT_DIR$/block/BlockBrick.py" />
-        <option value="$PROJECT_DIR$/block/BlockStone.py" />
-        <option value="$PROJECT_DIR$/block/BlockCobbleStone.py" />
-        <option value="$PROJECT_DIR$/state/ui/UIPartImage.py" />
         <option value="$PROJECT_DIR$/state/StateStartMenu.py" />
         <option value="$PROJECT_DIR$/state/ui/UIPartLable.py" />
-        <option value="$PROJECT_DIR$/tools/updatelicenceheaders.py" />
         <option value="$PROJECT_DIR$/state/StateGameInfo.py" />
         <option value="$PROJECT_DIR$/world/Model.py" />
         <option value="$PROJECT_DIR$/gui/ItemStacj.py" />
@@ -161,16 +170,23 @@
         <option value="$PROJECT_DIR$/gui/Slot.py" />
         <option value="$PROJECT_DIR$/assets/config/inventory/playerinventorymain.json" />
         <option value="$PROJECT_DIR$/gui/ItemStack.py" />
-        <option value="$PROJECT_DIR$/gui/InventoryHandler.py" />
-        <option value="$PROJECT_DIR$/chat/command/CommandGive.py" />
-        <option value="$PROJECT_DIR$/chat/command/CommandHandler.py" />
-        <option value="$PROJECT_DIR$/chat/command/CommandGamemode.py" />
-        <option value="$PROJECT_DIR$/tasks.list" />
-        <option value="$PROJECT_DIR$/chat/command/Command.py" />
-        <option value="$PROJECT_DIR$/world/player.py" />
-        <option value="$PROJECT_DIR$/chat/command/CommandParser.py" />
         <option value="$PROJECT_DIR$/state/StatePartGame.py" />
+        <option value="$PROJECT_DIR$/tools/updatelicenceheaders.py" />
+        <option value="$PROJECT_DIR$/chat/command/CommandParser.py" />
+        <option value="$PROJECT_DIR$/gui/InventoryHandler.py" />
+        <option value="$PROJECT_DIR$/world/player.py" />
+        <option value="$PROJECT_DIR$/util/math.py" />
+        <option value="$PROJECT_DIR$/chat/command/CommandHandler.py" />
+        <option value="$PROJECT_DIR$/chat/command/Command.py" />
+        <option value="$PROJECT_DIR$/chat/command/CommandHelp.py" />
         <option value="$PROJECT_DIR$/version.info" />
+        <option value="$PROJECT_DIR$/tasks.list" />
+        <option value="$PROJECT_DIR$/chat/command/CommandClear.py" />
+        <option value="$PROJECT_DIR$/chat/command/CommandExecute.py" />
+        <option value="$PROJECT_DIR$/chat/command/CommandGamemode.py" />
+        <option value="$PROJECT_DIR$/chat/command/CommandGive.py" />
+        <option value="$PROJECT_DIR$/chat/command/CommandKill.py" />
+        <option value="$PROJECT_DIR$/chat/command/CommandTeleport.py" />
       </list>
     </option>
   </component>
@@ -196,7 +212,13 @@
             <path>
               <item name="active_branch" type="b2602c69:ProjectViewProjectNode" />
               <item name="active_branch" type="462c0819:PsiDirectoryNode" />
-              <item name="state" type="462c0819:PsiDirectoryNode" />
+              <item name="chat" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="active_branch" type="b2602c69:ProjectViewProjectNode" />
+              <item name="active_branch" type="462c0819:PsiDirectoryNode" />
+              <item name="chat" type="462c0819:PsiDirectoryNode" />
+              <item name="command" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="active_branch" type="b2602c69:ProjectViewProjectNode" />
@@ -213,7 +235,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Documents/chemistry/db1" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../chemistry/db3" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -455,7 +477,14 @@
       <option name="project" value="LOCAL" />
       <updated>1563617919150</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="added Command system, added /give &amp; /gamemode-command">
+      <created>1563637366272</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1563637366272</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -570,73 +599,10 @@
     <MESSAGE value="added Hotbar-Inventory, some helpful code around it" />
     <MESSAGE value="moved block selection system to hotbar" />
     <MESSAGE value="added main part of inventory; added inventory interaction" />
-    <option name="LAST_COMMIT_MESSAGE" value="added main part of inventory; added inventory interaction" />
+    <MESSAGE value="added Command system, added /give &amp; /gamemode-command" />
+    <option name="LAST_COMMIT_MESSAGE" value="added Command system, added /give &amp; /gamemode-command" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../tools/python3.7.4/Lib/zipfile.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="1450" selection-start-line="1450" selection-end-line="1450" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/state/StateStartMenu.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="30" column="53" selection-start-line="30" selection-start-column="53" selection-end-line="30" selection-end-column="53" />
-          <folding>
-            <element signature="e#167#185#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/state/ui/UIPartLable.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="31" column="32" lean-forward="true" selection-start-line="31" selection-start-column="32" selection-end-line="31" selection-end-column="32" />
-          <folding>
-            <element signature="e#167#189#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/state/ui/UIPartImage.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1241">
-          <caret line="79" column="25" selection-start-line="79" selection-start-column="25" selection-end-line="79" selection-end-column="25" />
-          <folding>
-            <element signature="e#167#189#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tools/updatelicenceheaders.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="36" column="31" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/state/StateGameInfo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="51" column="55" selection-start-line="51" selection-start-column="55" selection-end-line="51" selection-end-column="55" />
-          <folding>
-            <element signature="e#200#219#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/world/Model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="26">
-          <caret line="51" column="50" selection-start-line="51" selection-start-column="50" selection-end-line="51" selection-end-column="50" />
-          <folding>
-            <element signature="e#200#211#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gui/ItemStacj.py" />
     <entry file="file://$PROJECT_DIR$/state/StateHandler.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -823,13 +789,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assets/config/chat/keys.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/config/chat/keys.json" />
     <entry file="file://$PROJECT_DIR$/state/StateGame.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -895,90 +855,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gui/InventoryHandler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="87" column="112" selection-start-line="87" selection-start-column="112" selection-end-line="87" selection-end-column="112" />
-          <folding>
-            <element signature="e#200#219#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chat/command/CommandGive.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="24" column="57" selection-start-line="24" selection-start-column="57" selection-end-line="24" selection-end-column="57" />
-          <folding>
-            <element signature="e#200#219#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/config/inventory/playerinventorymain.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="121" column="45" selection-start-line="121" selection-start-column="45" selection-end-line="121" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chat/command/CommandHandler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="27" column="43" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="43" />
-          <folding>
-            <element signature="e#200#219#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chat/command/Command.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="103">
-          <caret line="39" column="60" selection-start-line="39" selection-start-column="60" selection-end-line="39" selection-end-column="60" />
-          <folding>
-            <element signature="e#200#219#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tasks.list">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="19" column="16" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chat/command/CommandGamemode.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="35" column="41" selection-start-line="35" selection-start-column="41" selection-end-line="35" selection-end-column="41" />
-          <folding>
-            <element signature="e#200#219#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/world/player.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="112" column="32" selection-start-line="112" selection-start-column="32" selection-end-line="112" selection-end-column="32" />
-          <folding>
-            <element signature="e#200#219#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chat/command/CommandParser.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="103">
-          <caret line="31" column="10" selection-start-line="31" selection-start-column="10" selection-end-line="31" selection-end-column="10" />
-          <folding>
-            <element signature="e#200#219#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/state/StatePartGame.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="107">
@@ -989,10 +865,125 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tools/updatelicenceheaders.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="36" column="73" selection-start-line="36" selection-start-column="73" selection-end-line="36" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gui/InventoryHandler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="239">
+          <caret line="91" column="57" selection-start-line="91" selection-start-column="57" selection-end-line="91" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/config/inventory/playerinventorymain.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-454">
+          <caret line="121" column="45" selection-start-line="121" selection-start-column="45" selection-end-line="121" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/CommandParser.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-493">
+          <caret line="19" column="76" selection-start-line="19" selection-start-column="76" selection-end-line="19" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/world/player.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="142" column="52" selection-start-line="142" selection-start-column="52" selection-end-line="142" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/math.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="100" column="8" selection-start-line="100" selection-start-column="8" selection-end-line="100" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/CommandHandler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="29" column="28" selection-start-line="29" selection-start-column="28" selection-end-line="29" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/Command.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="157" column="16" selection-start-line="157" selection-start-column="16" selection-end-line="157" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tasks.list">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="10" column="9" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/CommandHelp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="56" column="27" lean-forward="true" selection-start-line="55" selection-start-column="4" selection-end-line="56" selection-end-column="27" />
+          <folding>
+            <element signature="e#242#261#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/CommandClear.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="32" column="95" selection-start-line="32" selection-start-column="95" selection-end-line="32" selection-end-column="95" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/CommandExecute.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="95" column="74" selection-start-line="95" selection-start-column="74" selection-end-line="95" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/CommandGamemode.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="32" column="85" selection-start-line="32" selection-start-column="85" selection-end-line="32" selection-end-column="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/CommandGive.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="328">
+          <caret line="30" column="75" selection-start-line="30" selection-start-column="75" selection-end-line="30" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/CommandKill.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="27" column="64" selection-start-line="27" selection-start-column="64" selection-end-line="27" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chat/command/CommandTeleport.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="30" column="30" lean-forward="true" selection-start-line="30" selection-start-column="30" selection-end-line="30" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/version.info">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="317">
-          <caret line="150" column="60" selection-start-line="150" selection-start-column="60" selection-end-line="150" selection-end-column="60" />
+          <caret line="166" column="26" selection-start-line="166" selection-start-column="26" selection-end-line="166" selection-end-column="26" />
         </state>
       </provider>
     </entry>

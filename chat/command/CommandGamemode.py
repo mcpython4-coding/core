@@ -4,7 +4,7 @@ authors: uuk
 orginal game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4-pre6.jar"""
+blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import chat.command.Command
 from chat.command.Command import ParseBridge, ParseType, SubCommand, ParseMode
@@ -14,26 +14,21 @@ from chat.command.Command import ParseBridge, ParseType, SubCommand, ParseMode
 class CommandGamemode(chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "0").add_subcommand(
-            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "1").add_subcommand(
-            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "2").add_subcommand(
-            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "3").add_subcommand(
-            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "survival").add_subcommand(
-            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "creative").add_subcommand(
-            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "adventure").add_subcommand(
-            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "spectator").add_subcommand(
+        parsebridge.add_subcommand(SubCommand(ParseType.SELECT_DEFINITED_STRING, "0", "1", "2", "3", "survival",
+                                              "creative", "hardcore", "spectator").add_subcommand(
             SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)))
         parsebridge.main_entry = "gamemode"
 
     @staticmethod
-    def parse(values: list, modes: list):
+    def parse(values: list, modes: list, info):
         mode = values[0]
-        (G.player if len(values) == 1 else values[1]).set_gamemode(mode)
+        if len(values) == 1:
+            G.player.set_gamemode(mode)
+        else:
+            for player in values[1]:
+                player.set_gamemode(mode)
+
+    @staticmethod
+    def get_help() -> list:
+        return ["/gamemode <mode> [<selector>: default=@s]: set gamemode of entity(s)"]
 
