@@ -1,7 +1,7 @@
 These is an tasklist covering all diffrent tasks these project has.
 
+add remove of items from crafting slots
 add loot-tables & bind to blocks, add /loot-command
-add generator for item images for blocks
 add PlayerCreativeInventory, PlayerCreativeTab
 rework command entry system to use an registry
 add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid

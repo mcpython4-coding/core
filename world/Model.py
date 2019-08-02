@@ -139,7 +139,7 @@ class Model(object):
                 return True
         return False
 
-    def add_block(self, position: tuple, block_name: str, immediate=True):
+    def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True):
         """ Add a block with the given `texture` and `position` to the world.
 
         Parameters
@@ -152,7 +152,7 @@ class Model(object):
 
         """
         if position in self.world:
-            self.remove_block(position, immediate)
+            self.remove_block(position, immediate=immediate, block_update=block_update)
         if block_name in [None, "air", "minecraft:air"]: return
         if issubclass(type(block_name), block.Block.Block):
             blockobj = block_name
@@ -164,10 +164,11 @@ class Model(object):
         if immediate:
             if self.exposed(position):
                 self.show_block(position)
-            self.on_block_updated(position)
+            if block_update:
+                self.on_block_updated(position)
             self.check_neighbors(position)
 
-    def remove_block(self, position, immediate=True):
+    def remove_block(self, position, immediate=True, block_update=True):
         """ Remove the block at the given `position`.
 
         Parameters
@@ -186,7 +187,8 @@ class Model(object):
         if immediate:
             if position in self.shown:
                 self.hide_block(position)
-            self.on_block_updated(position)
+            if block_update:
+                self.on_block_updated(position)
             self.check_neighbors(position)
 
     def check_neighbors(self, position):

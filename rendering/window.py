@@ -64,7 +64,7 @@ class Window(pyglet.window.Window):
             key._6, key._7, key._8, key._9]
 
         # Instance of the model that handles the world.
-        self.model = world.Model.Model()
+        self.model = G.model
 
         # The label that is displayed in the top left of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=18,

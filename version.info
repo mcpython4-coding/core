@@ -165,4 +165,10 @@ started these clone on 12th of July, 2019
 [uuk]: fixed some bugs around /tp & /teleport
 [uuk]: added some security to math functions
 [uuk]: added /help-command
+[github]: started day 12 as 2nd of August, 2019
+[uuk]: added StateBlockItemGenerator
+[uuk]: added clearcolor-attribute to StatePartGame
+[uuk]: added get_used_models-attribute to Block
+[uuk]: speeded model loading up by loading only the used models and the models which have childs
+[uuk]: aded block_update-parameter to add & remove functions of model
 

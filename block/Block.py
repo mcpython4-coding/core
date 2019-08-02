@@ -10,6 +10,10 @@ import gui.ItemStack
 
 
 class Block:
+    @classmethod
+    def get_used_models(cls) -> list:
+        return [cls.get_model_name(None)]
+
     def __init__(self, position):
         self.position = position
         self.on_create()

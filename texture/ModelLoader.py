@@ -154,6 +154,8 @@ class ModelLoader:
         # search data for dependencies, add to local list
         depend = None if "parent" not in data else data["parent"]
         self.models[location] = set([depend]) if depend else set([])
+        if depend and depend not in G.blockhandler.used_models:
+            G.blockhandler.used_models.append(depend)
 
     def build(self):
         ordered = list(toposort_flatten(self.models))
@@ -165,10 +167,12 @@ class ModelLoader:
         print()
 
     def _load_model(self, entry: str):
-        if "block/"+entry.split("/")[-1].split(".")[0] in self.loaded_models:
+        name = "block/"+entry.split("/")[-1].split(".")[0]
+        if name in self.loaded_models or name not in G.blockhandler.used_models:
             return
         if not entry.endswith(".json"):
             return
+        # print(name, G.blockhandler.used_models)
         res = ResourceLocator.ResourceLocator(entry)
         res.data: bytes
         encoded = res.data.decode("UTF-8")

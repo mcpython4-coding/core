@@ -15,7 +15,8 @@ import gui.ItemStack
 
 class StatePartGame(StatePart.StatePart):
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
-                 activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True):
+                 activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True,
+                 clearcolor=(0.5, 0.69, 1.0, 1)):
         self.activate_physics = activate_physics
         self.activate_mouse = activate_mouse
         self.activate_keyboard = activate_keyboard
@@ -23,6 +24,7 @@ class StatePartGame(StatePart.StatePart):
         self.activate_focused_block_draw = activate_focused_block
         self.activate_crosshair = activate_crosshair
         self.glcolor3d = glcolor3d
+        self.clearcolor = clearcolor
 
         self.event_functions = [("gameloop:tick:end", self.on_update),
                                 ("user:mouse:press", self.on_mouse_press),
@@ -167,7 +169,7 @@ class StatePartGame(StatePart.StatePart):
 
     @G.eventhandler("render:draw:3d", callactive=False)
     def on_draw_3d(self):
-        pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
+        pyglet.gl.glClearColor(*self.clearcolor)
         pyglet.gl.glColor3d(*self.glcolor3d)
         if self.activate_3d_draw:
             G.window.model.batch.draw()

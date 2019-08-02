@@ -34,8 +34,16 @@ try:
 
     print("generating textures...")
     import texture.factory
-    G.texturefactoryhandler.add_location(G.local+"/assets/factory/texture")
+
+    G.texturefactoryhandler.add_location(G.local + "/assets/factory/texture")
     G.texturefactoryhandler.build()
+
+    import world.Model
+    G.model = world.Model.Model()
+
+    print("loading blocks...")
+    import block.BlockHandler
+    block.BlockHandler.load()
 
     import texture.ModelLoader
     print("searching for models...")

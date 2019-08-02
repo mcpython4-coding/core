@@ -12,11 +12,17 @@ import block.Block
 class BlockHandler:
     def __init__(self):
         self.blocks = {}
+        self.blockclasses = []
+        self.used_models = []
 
     def register(self, obj):
         if issubclass(obj, block.Block.Block):
+            self.blockclasses.append(obj)
             name = obj.get_name()
             self.blocks[name] = self.blocks[name.split(":")[-1]] = obj
+            self.used_models += obj.get_used_models()
+            self.used_models = list(dict.fromkeys(self.used_models))
+            # todo: remove for new world generation
             if obj.is_part_of_pyramids():
                 G.model.pyramid_parts.append(obj.get_name())
         else:

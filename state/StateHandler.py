@@ -42,8 +42,8 @@ handler = G.statehandler = StateHandler()
 
 
 def load():
-    from . import (StateGame, StateEscape, StateStartMenu, StateGameInfo)
+    from . import (StateGame, StateEscape, StateStartMenu, StateGameInfo, StateBlockItemGenerator)
     import gui.InventoryHandler
 
-    handler.switch_to("minecraft:startmenu")
+    handler.switch_to("minecraft:blockitemgenerator")
 
