@@ -95,7 +95,9 @@ handler.add_event_name("gameloop:tick:start")
 handler.add_event_name("gameloop:tick:end")
 
 handler.add_event_name("user:mouse:press")
+handler.add_event_name("user:mouse:release")
 handler.add_event_name("user:mouse:motion")
+handler.add_event_name("user:mouse:drag")
 
 handler.add_event_name("user:keyboard:press")
 handler.add_event_name("user:keyboard:release")

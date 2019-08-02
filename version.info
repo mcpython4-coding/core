@@ -170,5 +170,11 @@ started these clone on 12th of July, 2019
 [uuk]: added clearcolor-attribute to StatePartGame
 [uuk]: added get_used_models-attribute to Block
 [uuk]: speeded model loading up by loading only the used models and the models which have childs
-[uuk]: aded block_update-parameter to add & remove functions of model
+[uuk]: added block_update-parameter to add & remove functions of model
+[uuk]: added build-limits (y <0 and >255), changed world generation a little bit to fit in
+[uuk]: pressing during moving mouse rotates now the camera normally
+[uuk]: braking & setting blocks is now always when pressing mouse, not only on_press
+[uuk]: added brake-time-attribute to block, gamemode 1 is instant mining
+[uuk]: added events: user:mouse:release, user:mouse:drag
+[uuk]: added setted_to-attribute to Block
 

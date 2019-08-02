@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 from util.math import tex_coords
 import gui.ItemStack
+import block.Block
 
 
 class Block:
@@ -14,8 +15,9 @@ class Block:
     def get_used_models(cls) -> list:
         return [cls.get_model_name(None)]
 
-    def __init__(self, position):
+    def __init__(self, position, setted_to=None):
         self.position = position
+        self.setted_to = setted_to
         self.on_create()
 
     @staticmethod
@@ -49,4 +51,7 @@ class Block:
 
     def on_use_by_item(self, item: gui.ItemStack, triggered_by_block: bool):
         pass
+
+    def get_brake_time(self, item: gui.ItemStack) -> int:
+        return 2
 

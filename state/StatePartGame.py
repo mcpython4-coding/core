@@ -14,6 +14,9 @@ import gui.ItemStack
 
 
 class StatePartGame(StatePart.StatePart):
+    mouse_press_time = 0
+    block_looking_at = None
+
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
                  activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True,
                  clearcolor=(0.5, 0.69, 1.0, 1)):
@@ -35,6 +38,8 @@ class StatePartGame(StatePart.StatePart):
                                 ("render:draw:2d", self.on_draw_2d)]
 
     def activate(self):
+        for k in G.window.mouse_pressing:
+            G.window.mouse_pressing[k] = False
         for eventname, function in self.event_functions:
             G.eventhandler.activate_to_callback(eventname, function)
 
@@ -44,11 +49,66 @@ class StatePartGame(StatePart.StatePart):
 
     @G.eventhandler("gameloop:tick:end", callactive=False)
     def on_update(self, dt):
+        if any(G.window.mouse_pressing.values()):
+            self.mouse_press_time += dt
+
         if self.activate_physics:
             m = 8
             dt = min(dt, 0.2)
             for _ in range(m):
                 self._update(dt / m)
+
+        if G.window.exclusive and any(G.window.mouse_pressing.values()):
+            vector = G.window.get_sight_vector()
+            blockpos, previous = G.window.model.hit_test(G.window.position, vector)
+            if blockpos != self.block_looking_at:
+                self.block_looking_at = blockpos
+                self.mouse_press_time = 0
+
+            if G.window.mouse_pressing[mouse.LEFT] and blockpos in G.model.world:
+                block = G.model.world[blockpos]
+                item = G.player.get_active_inventory_slot().itemstack
+                if G.player.gamemode == 1:
+                    if self.mouse_press_time >= 0.10:
+                        G.model.remove_block(blockpos)
+                elif G.player.gamemode == 0:
+                    if self.mouse_press_time >= block.get_brake_time(item):
+                        G.player.add_to_free_place(gui.ItemStack.ItemStack(G.model.world[blockpos].get_name()))
+                        G.model.remove_block(blockpos)
+                # todo: check if brakeable in gamemode 2
+            if G.window.mouse_pressing[mouse.RIGHT] and previous:
+                slot = G.player.get_active_inventory_slot()
+                if slot.itemstack.item and slot.itemstack.item.has_block() and self.mouse_press_time > 0.12:
+                    if G.player.gamemode == 1:
+                        G.model.add_block(previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos})
+                    elif G.player.gamemode == 2:
+                        G.model.add_block(previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos})
+                        slot.itemstack.amount -= 1
+                        if slot.itemstack.amount == 0:
+                            slot.itemstack.clean()
+                    self.mouse_press_time = 0
+                    # todo: check if setable in gamemode 2
+            if G.window.mouse_pressing[mouse.MIDDLE] and blockpos and self.mouse_press_time > 0.1:
+                self.mouse_press_time = 0
+                block = G.window.model.world[blockpos]
+                selected_slot = G.player.get_active_inventory_slot()
+                for inventoryname, reverse in G.player.inventory_order:
+                    inventory = G.player.inventorys[inventoryname]
+                    slots: list = inventory.slots
+                    if reverse:
+                        slots.reverse()
+                    for slot in slots:
+                        if slot.itemstack.item and slot.itemstack.item.has_block() and \
+                                slot.itemstack.item.get_block() == block.get_name():
+                            if inventoryname != "hotbar":
+                                selected_slot.itemstack, slot.itemstack = slot.itemstack, selected_slot.itemstack
+                            else:
+                                G.player.set_active_inventory_slot(slots.index(slot))
+                            return
+                if G.player.gamemode == 1:
+                    old_itemstack = selected_slot.itemstack
+                    selected_slot.itemstack = gui.ItemStack.ItemStack(block.get_name())
+                    G.player.add_to_free_place(old_itemstack)
 
     def _update(self, dt):
         """ Private implementation of the `update()` method. This is where most
@@ -84,47 +144,7 @@ class StatePartGame(StatePart.StatePart):
 
     @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
-        if not self.activate_mouse: return
-        if G.window.exclusive:
-            vector = G.window.get_sight_vector()
-            blockpos, previous = G.window.model.hit_test(G.window.position, vector)
-            if (button == mouse.RIGHT) or \
-                    ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
-                # ON OSX, control + left click = right click.
-                if previous and G.player.gamemode in [0, 1]:
-                    slot = G.player.get_active_inventory_slot()
-                    if slot.itemstack.item and slot.itemstack.item.has_block():
-                        G.window.model.add_block(previous, slot.itemstack.item.get_block())
-                        if G.player.gamemode in [0, 2]:
-                            slot.itemstack.amount -= 1
-                            if slot.itemstack.amount == 0:
-                                slot.itemstack.clean()
-            elif button == mouse.LEFT and blockpos:
-                block = G.window.model.world[blockpos]
-                if (block.is_brakeable() and G.player.gamemode == 0) or G.player.gamemode == 1:
-                    if G.player.gamemode == 0:
-                        G.player.add_to_free_place(gui.ItemStack.ItemStack(G.model.world[blockpos].get_name()))
-                    G.window.model.remove_block(blockpos)
-            elif button == mouse.MIDDLE and blockpos:
-                block = G.window.model.world[blockpos]
-                selected_slot = G.player.get_active_inventory_slot()
-                for inventoryname, reverse in G.player.inventory_order:
-                    inventory = G.player.inventorys[inventoryname]
-                    slots: list = inventory.slots
-                    if reverse:
-                        slots.reverse()
-                    for slot in slots:
-                        if slot.itemstack.item and slot.itemstack.item.has_block() and \
-                                slot.itemstack.item.get_block() == block.get_name():
-                            if inventoryname != "hotbar":
-                                selected_slot.itemstack, slot.itemstack = slot.itemstack, selected_slot.itemstack
-                            else:
-                                G.player.set_active_inventory_slot(slots.index(slot))
-                            return
-                if G.player.gamemode == 1:
-                    old_itemstack = selected_slot.itemstack
-                    selected_slot.itemstack = gui.ItemStack.ItemStack(block.get_name())
-                    G.player.add_to_free_place(old_itemstack)
+        pass
 
     @G.eventhandler("user:mouse:motion", callactive=False)
     def on_mouse_motion(self, x, y, dx, dy):

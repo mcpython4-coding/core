@@ -71,6 +71,8 @@ class Window(pyglet.window.Window):
             x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
             color=(0, 0, 0, 255))
 
+        self.mouse_pressing = {mouse.LEFT: False, mouse.RIGHT: False, mouse.MIDDLE: False}
+
         # This call schedules the `update()` method to be called
         # TICKS_PER_SEC. This is the main game event loop.
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
@@ -229,6 +231,16 @@ class Window(pyglet.window.Window):
 
         """
         G.eventhandler.call("user:mouse:press", x, y, button, modifiers)
+        self.mouse_pressing[button] = True
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        G.eventhandler.call("user:mouse:release", x, y, button, modifiers)
+        self.mouse_pressing[button] = False
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        G.eventhandler.call("user:mouse:drag", x, y, dx, dy, buttons, modifiers)
+        if self.exclusive:
+            self.on_mouse_motion(x, y, dx, dy)
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ Called when the player moves the mouse.

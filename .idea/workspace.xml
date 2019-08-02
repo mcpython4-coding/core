@@ -2,16 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b089e0db-f5db-4782-b184-a43ba234ba56" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/state/StateBlockItemGenerator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/block/Block.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/Block.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/block/BlockHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event/EventHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/EventHandler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rendering/window.py" beforeDir="false" afterPath="$PROJECT_DIR$/rendering/window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/StateHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateHandler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/state/StatePartGame.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StatePartGame.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks.list" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.list" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/texture/ModelLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/texture/ModelLoader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/version.info" beforeDir="false" afterPath="$PROJECT_DIR$/version.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/world/Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/Model.py" afterDir="false" />
     </list>
@@ -294,7 +290,14 @@
       <option name="project" value="LOCAL" />
       <updated>1563637366272</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="added Item generation for blocks, speeded up model loading a lot">
+      <created>1564748557950</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1564748557950</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -349,6 +352,7 @@
     <MESSAGE value="moved block selection system to hotbar" />
     <MESSAGE value="added main part of inventory; added inventory interaction" />
     <MESSAGE value="added Command system, added /give &amp; /gamemode-command" />
-    <option name="LAST_COMMIT_MESSAGE" value="added Command system, added /give &amp; /gamemode-command" />
+    <MESSAGE value="added Item generation for blocks, speeded up model loading a lot" />
+    <option name="LAST_COMMIT_MESSAGE" value="added Item generation for blocks, speeded up model loading a lot" />
   </component>
 </project>

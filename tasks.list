@@ -1,14 +1,17 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-add remove of items from crafting slots
 add loot-tables & bind to blocks, add /loot-command
+add can_brake-attribute to item to definite items that can brake blocks in gamemode 2
 add PlayerCreativeInventory, PlayerCreativeTab
 rework command entry system to use an registry
+add an header to BlockItemFactory what is done at the moment
 add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid
 add BlockInventory-attribute to Block for auto-opening an inventory
 add the following block inventorys: crafting table, furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
 add Enchantment-baseclass with attribute is_combineable_with(...) -> bool & all enchanments
 add Tool-baseclass and Tool-durability
+add remove of items from crafting slots
+optimize BlockItemGenerator to have shorter times
 add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload, /clone, /fill, /setblock, /?
 add braketime-attribute to Block, use it in window brake system (also in StatePartGame)
 add datapacks with .mcfunction-files, add resourcelocator binding for recipes, add /function & /shedule -command

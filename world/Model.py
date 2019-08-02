@@ -60,7 +60,7 @@ class Model(object):
         G.eventhandler.call("game:generation:start")
         n = 80  # 1/2 width and height of world
         s = 1  # step size
-        y = 0  # initial y height
+        y = 3  # initial y height
         for x in range(-n, n + 1, s):
             for z in range(-n, n + 1, s):
                 # create a layer stone an grass everywhere.
@@ -77,7 +77,7 @@ class Model(object):
         for _ in range(120):
             a = random.randint(-o, o)  # x position of the hill
             b = random.randint(-o, o)  # z position of the hill
-            c = -1  # base of the hill
+            c = 2  # base of the hill
             h = random.randint(1, 6)  # height of the hill
             s = random.randint(4, 8)  # 2 * s is the side length of the hill
             d = 1  # how quickly to taper off the hills
@@ -139,7 +139,8 @@ class Model(object):
                 return True
         return False
 
-    def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True):
+    def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True,
+                  args=[], kwargs={}):
         """ Add a block with the given `texture` and `position` to the world.
 
         Parameters
@@ -153,12 +154,13 @@ class Model(object):
         """
         if position in self.world:
             self.remove_block(position, immediate=immediate, block_update=block_update)
+        if position[1] < 0 or position[1] > 255: return
         if block_name in [None, "air", "minecraft:air"]: return
         if issubclass(type(block_name), block.Block.Block):
             blockobj = block_name
             blockobj.position = position
         else:
-            blockobj = G.blockhandler.blocks[block_name](position)
+            blockobj = G.blockhandler.blocks[block_name](position, *args, **kwargs)
         self.world[position] = blockobj
         self.sectors.setdefault(sectorize(position), []).append(position)
         if immediate:
