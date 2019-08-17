@@ -1,12 +1,38 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-add loot-tables & bind to blocks, add /loot-command
-add can_brake-attribute to item to definite items that can brake blocks in gamemode 2
+cleanup tasks (should be done regulary):
+    document every change
+    go to EVERY PYTHON FILE and do:
+        have we unused imports? -> delete
+        look at EVERY name and check if it is good
+        has every file, class & function an docstring?
+        is the code with enough comments?
+        is every code reachable?
+        have we outdated code which should be updated?
+        is there an way for every interested function / field to overwrite
+        could this file splitted into diffrent?
+        could this class be splitted into seperated / super - child classes?
+        could this function be splitted into diffrent for better handling?
+        should be this function be part of the util-code?
+        is there any library or any code around web that does this better / can replace this?
+        should be some of these code be part of an load-event?
+        should be any of this classes/objects/functions be part of an registry?
+        are here any texture-generating codes which can be represented by texture generator code?
+        could be parts of these generated on setup?
+        is there code which should be as config / world config / world storage data stored?
+
+make an load.py file with most of the content of the __main__ file and the __main__-file should only launch it
+add an setup.py-file for setting up all code fragments, make an event for it, use load.py to get data and then launch
+    event
+split everything into seperated load events which are called ones per ones
+make an registry base class, an registry handler and registry locks
 add PlayerCreativeInventory, PlayerCreativeTab
 rework command entry system to use an registry
 add an header to BlockItemFactory what is done at the moment
 add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid
 add BlockInventory-attribute to Block for auto-opening an inventory
+add loot-tables & bind to blocks, add /loot-command
+add can_brake-attribute to item to definite items that can brake blocks in gamemode 2
 add the following block inventorys: crafting table, furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
 add Enchantment-baseclass with attribute is_combineable_with(...) -> bool & all enchanments
 add Tool-baseclass and Tool-durability
