@@ -1,0 +1,9 @@
+These File contains Information about some tasks for future
+
+Make an Registry base class and an registry registry
+Add crafting system
+Have a look for FOV (field of view)
+Have a look for vanilla crafting system
+Have a look for nbt files
+Have a look at vanilla world files
+Have a look to vanilla's wold gen
