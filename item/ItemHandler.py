@@ -29,5 +29,5 @@ class ItemHandler:
 
 G.itemhandler = ItemHandler()
 
-from . import (ItemStone)
+from . import (Item)
 

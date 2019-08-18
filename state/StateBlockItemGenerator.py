@@ -40,13 +40,14 @@ class StateBlockItemGenerator(State.State):
     def on_activate(self, old):
         G.window.position = (1.5, 2, 1.5)
         G.window.rotation = (-45, -45)
-        G.model.add_block((0, 0, 0), G.blockhandler.blockclasses[0].get_name(), block_update=False)
+        G.world.get_active_dimension().add_block(
+            (0, 0, 0), G.blockhandler.blockclasses[0].get_name(), block_update=False)
         self.blockindex = 0
         event.TickHandler.handler.bind(self.take_image, 5)
         event.TickHandler.handler.bind(self.add_new_screen, 15)
 
     def on_deactivate(self, new):
-        pass
+        G.world.cleanup()
 
     def add_new_screen(self):
         self.blockindex += 1
@@ -54,11 +55,16 @@ class StateBlockItemGenerator(State.State):
             G.statehandler.switch_to("minecraft:startmenu")
             G.window.position = (0, 10, 0)
             G.window.rotation = (0, 0)
-            G.model.remove_block((0, 0, 0))
+            G.world.get_active_dimension().remove_block((0, 0, 0))
             return
-        G.model.add_block((0, 0, 0), G.blockhandler.blockclasses[self.blockindex].get_name(), block_update=False)
+        # print(G.blockhandler.blockclasses[self.blockindex].get_name())
+        G.world.get_active_dimension().hide_block((0, 0, 0))
+        G.world.get_active_dimension().add_block(
+            (0, 0, 0), G.blockhandler.blockclasses[self.blockindex].get_name(), block_update=False)
+        # todo: add states
         event.TickHandler.handler.bind(self.take_image, 5)
         event.TickHandler.handler.bind(self.add_new_screen, 15)
+        G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
         if self.blockindex >= len(G.blockhandler.blockclasses): return

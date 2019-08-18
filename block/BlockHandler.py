@@ -22,9 +22,6 @@ class BlockHandler:
             self.blocks[name] = self.blocks[name.split(":")[-1]] = obj
             self.used_models += obj.get_used_models()
             self.used_models = list(dict.fromkeys(self.used_models))
-            # todo: remove for new world generation
-            if obj.is_part_of_pyramids():
-                G.model.pyramid_parts.append(obj.get_name())
         else:
             raise ValueError("can only cast "+str(block.Block.Block)+"-subclasses to valid blocks")
 
@@ -36,5 +33,7 @@ handler = G.blockhandler = BlockHandler()
 
 
 def load():
-    from . import (BlockGrassBlock, BlockSand, BlockBrick, BlockStone, BlockDirt, BlockBedrock, BlockCobbleStone)
+    from . import (BlockGrassBlock, BlockSand, BlockBrick, BlockStone, BlockDirt, BlockBedrock, BlockCobbleStone,
+                   BlockCoalOre, BlockIronOre, BlockGoldOre, BlockEmeraldOre, BlockRedstoneOre, BlockDiamondOre,
+                   BlockLapisOre)
 

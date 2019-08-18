@@ -57,8 +57,8 @@ class TickHandler:
                         for _ in range(config.RANDOM_TICK_SPEED):
                             ddx, ddy, ddz = random.randint(0, 15), random.randint(0, 255), random.randint(0, 15)
                             position = (x+ddx, ddy, z+ddz)
-                            if position in G.model.world:
-                                G.model.world[position].on_random_update()
+                            if position in G.world.world:
+                                G.world.world[position].on_random_update()
 
 
 handler = G.tickhandler = TickHandler()

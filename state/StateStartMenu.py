@@ -28,10 +28,10 @@ class StateStartMenu(state.State.State):
     @staticmethod
     def on_new_game_press(x, y):
         print("generating world")
-        G.model.initialize()
+        G.world.initialize()
         print("finished")
         G.statehandler.switch_to("minecraft:gameinfo")
-        G.model.change_sectors(None, util.math.sectorize(G.window.position), immediate=True)
+        G.world.change_sectors(None, util.math.sectorize(G.window.position), immediate=True)
         G.window.position = (0, 10, 0)
 
     def get_event_functions(self) -> list:

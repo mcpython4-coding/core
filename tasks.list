@@ -54,3 +54,6 @@ add time-system and /time-command
 add scoreboards
 add entitys with handler, add an batch to system for rendering them OR use seperated classes
 
+implement client/server by making an @client and @server notation system which will decide returning an callable object
+    representing an network or direct access to the function (so afterwards changeable by joining server)
+

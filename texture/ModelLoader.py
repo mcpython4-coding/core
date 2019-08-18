@@ -70,7 +70,7 @@ class DrawableBox:
                                                                                                     self.boxsize[0] /
                                                                                                     32)
         # vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32)
-        return batch.add(24, pyglet.gl.GL_QUADS, atlas.generator.texture_groups[
+        return batch[0].add(24, pyglet.gl.GL_QUADS, atlas.generator.texture_groups[
             any_texture.get_texture_atlas_and_index()[0]],
                        ('v3f/static', vertex),
                        ('t2f/static', util.math.tex_coords_2(
@@ -212,6 +212,7 @@ class ModelLoader:
             return self._show_block(batch, position, "missing_texture")
 
     def _show_block(self, batch, position, name) -> list:
+        # print(position, batch)
         if name not in self.loaded_models:
             name = "missing_texture"
         model = self.loaded_models[name]

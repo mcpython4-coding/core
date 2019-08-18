@@ -7,7 +7,7 @@ minecraft by Mojang
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 from util.math import tex_coords
 import gui.ItemStack
-import block.Block
+import traceback
 
 
 class Block:
@@ -34,10 +34,6 @@ class Block:
         return None
 
     def is_brakeable(self) -> bool:
-        return True
-
-    @staticmethod
-    def is_part_of_pyramids() -> bool:
         return True
 
     def on_random_update(self):

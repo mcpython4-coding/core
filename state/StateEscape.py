@@ -37,7 +37,7 @@ class StateEscape(State.State):
 
     @staticmethod
     def start_menu_press(x, y):
-        G.model.cleanup()
+        G.world.cleanup()
         G.statehandler.switch_to("minecraft:startmenu")
 
     def on_activate(self, old):

@@ -70,8 +70,8 @@ class CommandExecute(chat.command.Command.Command):
             if subcommand == "block":
                 position, name = values[index], values[index+1]
                 index += 2
-                if position in G.model.world:
-                    block = G.model.world[position]
+                if position in G.world.world:
+                    block = G.world.world[position]
                     flag = block.get_name() == G.blockhandler.blocks[name].get_name()
                 else:
                     flag = name in ["air", "minecraft:air", None, 0]

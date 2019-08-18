@@ -11,7 +11,6 @@ from config import *
 from pyglet.window import key, mouse
 from util.math import *
 import time
-import world.Model
 import globals as G
 import state.StateHandler
 
@@ -64,7 +63,7 @@ class Window(pyglet.window.Window):
             key._6, key._7, key._8, key._9]
 
         # Instance of the model that handles the world.
-        self.model = G.model
+        self.world = G.world
 
         # The label that is displayed in the top left of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
@@ -157,12 +156,12 @@ class Window(pyglet.window.Window):
         if dt > 3:
             print("[warning] running behind normal tick, did you overload game? missing " +
                   str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
-        self.model.process_queue()
+        self.world.process_queue()
         sector = sectorize(self.position)
         if sector != self.sector:
-            self.model.change_sectors(self.sector, sector)
+            G.world.change_sectors(self.sector, sector)
             if self.sector is None:
-                self.model.process_entire_queue()
+                G.world.process_entire_queue()
             self.sector = sector
 
         G.eventhandler.call("gameloop:tick:end", dt)
@@ -203,7 +202,7 @@ class Window(pyglet.window.Window):
                     op = list(np)
                     op[1] -= dy
                     op[i] += face[i]
-                    if tuple(op) not in self.model.world:
+                    if not G.world.get_active_dimension().get_block(tuple(op)):
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
@@ -351,7 +350,7 @@ class Window(pyglet.window.Window):
 
         """
         vector = self.get_sight_vector()
-        block = self.model.hit_test(self.position, vector)[0]
+        block = G.world.hit_test(self.position, vector)[0]
         if block:
             x, y, z = block
             vertex_data = cube_vertices(x, y, z, 0.51)
@@ -365,9 +364,8 @@ class Window(pyglet.window.Window):
 
         """
         x, y, z = self.position
-        self.label.text = '%02d (%.2f, %.2f, %.2f) %d / %d' % (
-            pyglet.clock.get_fps(), x, y, z,
-            len(self.model._shown), len(self.model.world))
+        self.label.text = '%02d (%.2f, %.2f, %.2f)' % (
+            pyglet.clock.get_fps(), x, y, z)
         self.label.draw()
 
     def draw_reticle(self):

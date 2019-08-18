@@ -10,14 +10,11 @@ from . import Block
 
 
 @G.blockhandler
-class BlockBedrock(Block.Block):
+class BlockEmeraldOre(Block.Block):
     @staticmethod
     def get_name() -> str:
-        return "minecraft:bedrock"
+        return "minecraft:emerald_ore"
 
     def get_model_name(self):
-        return "block/bedrock"
-
-    def is_brakeable(self) -> bool:
-        return False
+        return "block/emerald_ore"
 

@@ -10,7 +10,7 @@ import os
 local = os.path.dirname(__file__)
 
 window = None
-model = None
+world = None
 player = None
 
 chat = None

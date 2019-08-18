@@ -177,6 +177,13 @@ started these clone on 12th of July, 2019
 [uuk]: added brake-time-attribute to block, gamemode 1 is instant mining
 [uuk]: added events: user:mouse:release, user:mouse:drag
 [uuk]: added setted_to-attribute to Block
-[github]: started day 13 as 17th of August , 2019
+[github]: started day 13 as 17th of August, 2019
 [uuk]: added some interesting tasks
-
+[github]: started day 14 as 18th of August, 2019
+[uuk]: added the following blocks: coal ore, iron ore, gold ore, emerald ore, redstone ore, diamond ore, lapis ore
+[uuk]: fixed bug: ItemStone-class still exists outside the generation system
+[uuk]: splitted model into Chunk, Dimension & World, removed Model, renamed globals model to world
+[uuk]: implemented some kind of Dimension-system
+[uuk]: moved some code for adding / removing blocks around
+[uuk]: fixed bug: braking "void" raises an exception due to an missed check
+[uuk]: removed world gen for now, only one stone block is generated

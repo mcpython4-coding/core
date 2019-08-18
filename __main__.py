@@ -38,8 +38,8 @@ try:
     G.texturefactoryhandler.add_location(G.local + "/assets/factory/texture")
     G.texturefactoryhandler.build()
 
-    import world.Model
-    G.model = world.Model.Model()
+    import world.World
+    G.world = world.World.World()
 
     print("loading blocks...")
     import block.BlockHandler
@@ -67,13 +67,6 @@ try:
         print("generating image atlases...")
         texture.atlas.generator.build()
         print("finished!")
-
-        print("cleaning up...")
-
-        del G.modelloader.models
-
-        print("finished!")
-
 
     def run():
         import pyglet

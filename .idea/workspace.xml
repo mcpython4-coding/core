@@ -2,9 +2,37 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b089e0db-f5db-4782-b184-a43ba234ba56" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/block/BlockCoalOre.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/block/BlockDiamondOre.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/block/BlockEmeraldOre.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/block/BlockGoldOre.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/block/BlockIronOre.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/block/BlockLapisOre.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/block/BlockRedstoneOre.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/world/Chunk.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/world/Dimension.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/world/World.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/Block.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/Block.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockBedrock.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockBedrock.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockSand.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockSand.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/command/CommandExecute.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/command/CommandExecute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/event/TickHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/TickHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/globals.py" beforeDir="false" afterPath="$PROJECT_DIR$/globals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/item/Item.py" beforeDir="false" afterPath="$PROJECT_DIR$/item/Item.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/item/ItemHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/item/ItemHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/item/ItemStone.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rendering/window.py" beforeDir="false" afterPath="$PROJECT_DIR$/rendering/window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StateBlockItemGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateBlockItemGenerator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StateEscape.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateEscape.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StatePartGame.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StatePartGame.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StateStartMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateStartMenu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks.list" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.list" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/texture/ModelLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/texture/ModelLoader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/version.info" beforeDir="false" afterPath="$PROJECT_DIR$/version.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/Model.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

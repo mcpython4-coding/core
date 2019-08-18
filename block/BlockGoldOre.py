@@ -6,16 +6,15 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
-import item.Item
+from . import Block
 
 
-@G.itemhandler
-class Stone(item.Item.Item):
+@G.blockhandler
+class BlockGoldOre(Block.Block):
     @staticmethod
     def get_name() -> str:
-        return "minecraft:stone"
+        return "minecraft:gold_ore"
 
-    @staticmethod
-    def get_item_image_location() -> str:
-        return "assets/missingtexture.png"
+    def get_model_name(self):
+        return "block/gold_ore"
 
