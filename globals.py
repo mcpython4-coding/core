@@ -25,6 +25,7 @@ inventoryhandler = None
 itemhandler = None
 commandhandler = None
 commandparser = None
+worldgenerationhandler = None
 
 modelloader = None
 

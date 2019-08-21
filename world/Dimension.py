@@ -8,13 +8,18 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import world.Chunk
 import util.math
+import pyglet
 
 
 class Dimension:
-    def __init__(self, world, id):
+    def __init__(self, world, id, genconfig={}):
         self.id = id
         self.world = world
         self.chunks = {}
+        self.worldgenerationconfig = genconfig
+        self.worldgenerationconfigobjects = {}
+        # normal batch
+        self.batches = [pyglet.graphics.Batch()]
 
     def get_chunk(self, cx, cz, generate=True, create=True) -> world.Chunk.Chunk or None:
         if (cx, cz) not in self.chunks:
@@ -22,8 +27,7 @@ class Dimension:
                 return
             self.chunks[(cx, cz)] = world.Chunk.Chunk(self, (cx, cz))
             if generate:
-                # todo: add generation
-                pass
+                G.worldgenerationhandler.generate_chunk(self.chunks[(cx, cz)])
         return self.chunks[(cx, cz)]
 
     def get_chunk_for_position(self, position, **kwargs) -> world.Chunk.Chunk or None:
@@ -57,4 +61,5 @@ class Dimension:
                 chunk = self.get_chunk(cx, cz, create=False)
                 if chunk:
                     chunk.draw()
+        [x.draw() for x in self.batches]
 

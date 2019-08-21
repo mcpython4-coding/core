@@ -14,27 +14,43 @@ from typing import Dict, List
 
 
 class Chunk:
+    attributes = {}
+
+    @staticmethod
+    def add_default_attribute(name, reference, default, authcode=None) -> int:
+        if authcode is None: authcode = hash(name)
+        Chunk.attributes[name] = (reference, default, authcode)
+        return authcode
+
     def __init__(self, dimension, position):
         self.dimension = dimension
         self.position = position
         self.world = {}
-        self.tmpworld = {}
         self.shown = {}
         self.show_tasks = []
         self.hide_tasks = []
-        self.is_ready = True  # todo: change to False after new world gen is introduced
+        self.chunkgenerationtasks = []
+        self.is_ready = False  # todo: change to False after new world gen is introduced
         self.visible = False
         self.loaded = True
-        # normal batch
-        self.batches = [pyglet.graphics.Batch()]
+        self.attr = {}
+        for attr in self.attributes.keys():
+            self.attr[attr] = self.attributes[attr][1]
+
+    def set_value(self, name, value, authcode):
+        if authcode != self.attributes[name][2]:
+            raise ValueError("not able to set value. protection is not uncoverable")
+        self.attr[name] = value
+
+    def get_value(self, name):
+        return self.attr[name]
 
     def draw(self):
-        if not self.is_ready: return
+        if not self.is_ready or len(self.chunkgenerationtasks) > 0: return
         if not self.visible: return
         if not self.loaded:
             # todo: load chunk
             return
-        self.batches[0].draw()
 
     def exposed(self, position):
         """ Returns False is given `position` is surrounded on all 6 sides by
@@ -49,6 +65,12 @@ class Chunk:
             if pos not in chunk.world:
                 return True
         return False
+
+    def add_add_block_gen_task(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[],
+                               kwargs={}):
+        self.chunkgenerationtasks.append([self.add_block, [position, block_name], {"immediate": immediate,
+                                                                                   "block_update": block_update,
+                                                                                   "args": args, "kwargs": kwargs}])
 
     def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[], kwargs={}):
         """ Add a block with the given `texture` and `position` to the world.
@@ -172,7 +194,7 @@ class Chunk:
 
         """
         # print("showing", position)
-        self.shown[position] = G.modelloader.show_block(self.batches, position, block.get_model_name())
+        self.shown[position] = G.modelloader.show_block(self.dimension.batches, position, block.get_model_name())
         # print(self.world[position], self.shown[position])
 
     def hide_block(self, position, immediate=True):
@@ -190,7 +212,6 @@ class Chunk:
         if type(position) == block.Block.Block:
             position = position.position
         if position not in self.shown: return
-        self.tmpworld[position] = self.world[position]
         if immediate:
             self._hide_block(position)
         else:
@@ -206,19 +227,20 @@ class Chunk:
         # print("hiding", self.tmpworld[position], "at", position, "with", self.tmpworld[position].shown_data)
         [x.delete() for x in self.shown[position]]
         del self.shown[position]
-        del self.tmpworld[position]
 
     def show(self):
         self.visible = True
+        self.update_visable(hide=False, immediate=False)
 
     def hide(self):
         self.visible = False
+        self.hide_all()
 
-    def update_visable(self, immediate=True):
+    def update_visable(self, immediate=True, hide=True):
         for position in self.world.keys():
             if not self.exposed(position):
                 self.hide_block(position, immediate=immediate)
-            else:
+            elif hide:
                 self.show_block(position, immediate=immediate)
 
     def hide_all(self, immediate=True):

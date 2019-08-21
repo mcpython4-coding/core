@@ -27,8 +27,15 @@ class StateStartMenu(state.State.State):
 
     @staticmethod
     def on_new_game_press(x, y):
+        G.world.cleanup()
         print("generating world")
-        G.world.initialize()
+        G.worldgenerationhandler.enable_generation = True
+        for x in range(-2, 3):
+            for z in range(-2, 3):
+                G.world.dimensions[0].get_chunk(x, z)
+        G.world.process_entire_queue()
+        G.worldgenerationhandler.enable_generation = False
+        # todo: remove disable for auto-gen
         print("finished")
         G.statehandler.switch_to("minecraft:gameinfo")
         G.world.change_sectors(None, util.math.sectorize(G.window.position), immediate=True)

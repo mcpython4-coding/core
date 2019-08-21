@@ -87,10 +87,6 @@ handler.add_event_name("game:startup")
 handler.add_event_name("game:load_finished")
 handler.add_event_name("game:gameloop_startup")
 
-handler.add_event_name("game:generation:start")
-handler.add_event_name("game:generation:mid")
-handler.add_event_name("game:generation:end")
-
 handler.add_event_name("gameloop:tick:start")
 handler.add_event_name("gameloop:tick:end")
 

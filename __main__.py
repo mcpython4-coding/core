@@ -50,6 +50,8 @@ try:
     texture.ModelLoader.loader.search_in_main_jar()
     print("finished!")
 
+    import world.gen.WorldGenerationHandler
+
 
     def setup():
         opengl_setup.setup()
@@ -70,7 +72,7 @@ try:
 
     def run():
         import pyglet
-        window = rendering.window.Window(width=800, height=600, caption='Pyglet', resizable=True)
+        rendering.window.Window(width=800, height=600, caption='Pyglet', resizable=True)
         event.EventHandler.handler.call("game:gameloop_startup")
         pyglet.app.run()
 

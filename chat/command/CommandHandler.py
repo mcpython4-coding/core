@@ -26,7 +26,8 @@ class CommandHandler:
 G.commandhandler = CommandHandler()
 
 
-from . import (CommandGive, CommandGamemode, CommandExecute, CommandKill, CommandClear, CommandTeleport)
+from . import (CommandGive, CommandGamemode, CommandExecute, CommandKill, CommandClear, CommandTeleport, CommandReload,
+               CommandGenerate)
 # register these at the end:
 from . import CommandHelp
 
