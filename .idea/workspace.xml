@@ -2,26 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b089e0db-f5db-4782-b184-a43ba234ba56" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/chat/command/CommandGenerate.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/chat/command/CommandReload.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/world/gen/WorldGenerationHandler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/world/gen/layer/DefaultBedrockLayer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/world/gen/layer/DefaultLandMassLayer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/world/gen/layer/DefaultTemperatureLayer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/world/gen/layer/Layer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/world/gen/mode/DefaultOverWorldGenerator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__main__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/command/CommandHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/command/CommandHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/event/EventHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/event/EventHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/globals.py" beforeDir="false" afterPath="$PROJECT_DIR$/globals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/StateStartMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateStartMenu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks.list" beforeDir="false" afterPath="$PROJECT_DIR$/tasks.list" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rendering/window.py" beforeDir="false" afterPath="$PROJECT_DIR$/rendering/window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StatePartGame.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StatePartGame.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/version.info" beforeDir="false" afterPath="$PROJECT_DIR$/version.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/Chunk.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/Chunk.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/Dimension.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/Dimension.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/World.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/World.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

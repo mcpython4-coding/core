@@ -78,6 +78,9 @@ class Window(pyglet.window.Window):
 
         state.StateHandler.load()
 
+        self.keys = key.KeyStateHandler()
+        self.push_handlers(self.keys)
+
     def set_exclusive_mouse(self, exclusive):
         """ If `exclusive` is True, the game will capture the mouse, if False
         the game will ignore the mouse.

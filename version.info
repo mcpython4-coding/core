@@ -202,5 +202,7 @@ started these clone on 12th of July, 2019
 [uuk]: added reload-command, /generate [<x> <z>]-command
 [github] started day 15 as 21th of August, 2019
 [uuk]: added TemperatureMapLayer
+[uuk]: fixed bug in #1 by adding some checks and resets
+[uuk]: added feature 1 out of #1, so player will be killed under level -10
 
 todo: add ore blocks, add ore drops (not bindable at the moment)

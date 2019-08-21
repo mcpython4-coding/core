@@ -46,6 +46,7 @@ class StatePartGame(StatePart.StatePart):
     def deactivate(self):
         for eventname, function in self.event_functions:
             G.eventhandler.deactivate_from_callback(eventname, function)
+        G.window.strafe = [0, 0]
 
     @G.eventhandler("gameloop:tick:end", callactive=False)
     def on_update(self, dt):
@@ -144,6 +145,8 @@ class StatePartGame(StatePart.StatePart):
         else:
             x, y, z = x + dx, y + dy, z + dz
         G.window.position = (x, y, z)
+        if y < -10:
+            G.player.kill()
 
     @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
@@ -161,14 +164,14 @@ class StatePartGame(StatePart.StatePart):
     @G.eventhandler("user:keyboard:press", callactive=False)
     def on_key_press(self, symbol, modifiers):
         if not self.activate_keyboard: return
-        if symbol == key.W:
-            G.window.strafe[0] -= 1
-        elif symbol == key.S:
-            G.window.strafe[0] += 1
-        elif symbol == key.A:
-            G.window.strafe[1] -= 1
-        elif symbol == key.D:
-            G.window.strafe[1] += 1
+        if symbol == key.W and not G.window.keys[key.S]:
+            G.window.strafe[0] = -1
+        elif symbol == key.S and not G.window.keys[key.W]:
+            G.window.strafe[0] = 1
+        elif symbol == key.A and not G.window.keys[key.D]:
+            G.window.strafe[1] = -1
+        elif symbol == key.D and not G.window.keys[key.A]:
+            G.window.strafe[1] = 1
         elif symbol == key.SPACE:
             if G.window.dy == 0:
                 G.window.dy = JUMP_SPEED
@@ -182,13 +185,13 @@ class StatePartGame(StatePart.StatePart):
     def on_key_release(self, symbol, modifiers):
         if not self.activate_keyboard: return
         if symbol == key.W:
-            G.window.strafe[0] += 1
+            G.window.strafe[0] = 0 if not G.window.keys[key.S] else 1
         elif symbol == key.S:
-            G.window.strafe[0] -= 1
+            G.window.strafe[0] = 0 if not G.window.keys[key.W] else -1
         elif symbol == key.A:
-            G.window.strafe[1] += 1
+            G.window.strafe[1] = 0 if not G.window.keys[key.D] else 1
         elif symbol == key.D:
-            G.window.strafe[1] -= 1
+            G.window.strafe[1] = 0 if not G.window.keys[key.A] else -1
 
     @G.eventhandler("render:draw:3d", callactive=False)
     def on_draw_3d(self):
