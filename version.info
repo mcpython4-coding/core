@@ -204,5 +204,13 @@ started these clone on 12th of July, 2019
 [uuk]: added TemperatureMapLayer
 [uuk]: fixed bug in #1 by adding some checks and resets
 [uuk]: added feature 1 out of #1, so player will be killed under level -10
+[uuk]: added DefaultBiomeLayer
+[uuk]: fixed bug: value in LandMassLayer-map was float instead of landmass name
+[uuk]: fixed bug: BlockSand fall-system gave errors due to an overlooked look into model.world
+[uuk]: fixed bug: world is not generated during world generation call, instead during runtime -> lag!
+[github] started day 16 as 22th of August, 2019
+[uuk]: fixed bugs around world generation
+[uuk]: removed ocean from landmasses, it is not used at the moment
+[uuk]: added biome-lable (not working?)
 
 todo: add ore blocks, add ore drops (not bindable at the moment)

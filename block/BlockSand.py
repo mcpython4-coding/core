@@ -21,11 +21,13 @@ class BlockSand(Block.Block):
 
     def on_block_update(self):
         x, y, z = self.position
-        if (x, y-1, z) not in G.world.world:
+        block = G.world.get_active_dimension().get_block((x, y-1, z))
+        if not block:
             event.TickHandler.handler.bind(self.fall, 10)
 
     def fall(self):
         x, y, z = self.position
-        if (x, y - 1, z) not in G.world.world:
+        block = G.world.get_active_dimension().get_block((x, y - 1, z))
+        if not block:
             G.world.get_active_dimension().remove_block(self)
             G.world.get_active_dimension().add_block((x, y - 1, z), self)

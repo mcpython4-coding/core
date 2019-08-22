@@ -34,7 +34,7 @@ class Dimension:
         return self.get_chunk(*util.math.sectorize(position), **kwargs)
 
     def get_block(self, position):
-        chunk = self.get_chunk_for_position(position)
+        chunk = self.get_chunk_for_position(position, generate=False)
         return chunk.world[position] if position in chunk.world else None
 
     def add_block(self, position: tuple, blockname: str, immediate=True, block_update=True, args=[], kwargs={}):

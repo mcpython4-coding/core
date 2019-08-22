@@ -2,10 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b089e0db-f5db-4782-b184-a43ba234ba56" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/world/gen/biome/Biome.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/world/gen/biome/BiomeHandler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/world/gen/biome/TestBiomeNormal.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/world/gen/biome/TestBiomeNormal2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/world/gen/layer/DefaultBiomeLayer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tasks.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/BlockSand.py" beforeDir="false" afterPath="$PROJECT_DIR$/block/BlockSand.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/globals.py" beforeDir="false" afterPath="$PROJECT_DIR$/globals.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rendering/window.py" beforeDir="false" afterPath="$PROJECT_DIR$/rendering/window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state/StatePartGame.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StatePartGame.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/state/StateStartMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/state/StateStartMenu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/version.info" beforeDir="false" afterPath="$PROJECT_DIR$/version.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/Dimension.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/Dimension.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/gen/WorldGenerationHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/gen/WorldGenerationHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/gen/layer/DefaultLandMassLayer.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/gen/layer/DefaultLandMassLayer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/gen/layer/DefaultTemperatureLayer.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/gen/layer/DefaultTemperatureLayer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/gen/layer/Layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/gen/layer/Layer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/gen/mode/DefaultOverWorldGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/world/gen/mode/DefaultOverWorldGenerator.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -301,7 +316,14 @@
       <option name="project" value="LOCAL" />
       <updated>1566157415287</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="fixing #1">
+      <created>1566415821419</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1566415821419</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -332,7 +354,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added licence header updater" />
     <MESSAGE value="added code-base (https://github.com/fogleman/Minecraft) into the repo" />
     <MESSAGE value="fixed missing call of main.main() in __main__" />
     <MESSAGE value="removed python-2-compatibility" />
@@ -357,6 +378,7 @@
     <MESSAGE value="added Command system, added /give &amp; /gamemode-command" />
     <MESSAGE value="added Item generation for blocks, speeded up model loading a lot" />
     <MESSAGE value="added all ores except nether quartz ore, replaced Model by Chunk, Dimension &amp; World-classes, removed world gen for the moment" />
-    <option name="LAST_COMMIT_MESSAGE" value="added all ores except nether quartz ore, replaced Model by Chunk, Dimension &amp; World-classes, removed world gen for the moment" />
+    <MESSAGE value="fixing #1" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing #1" />
   </component>
 </project>

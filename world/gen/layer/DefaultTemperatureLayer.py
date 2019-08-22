@@ -37,7 +37,7 @@ class DefaultTemperatureLayer(Layer):
     @staticmethod
     def generate_temperature(chunk, config):
         cx, cz = chunk.position
-        landmap = chunk.get_value("temperaturemap")
+        temperaturemap = chunk.get_value("temperaturemap")
         factor = 10**config.size
         r = [config.min, config.max]
         for x in range(cx*16, cx*16+16):
@@ -46,7 +46,7 @@ class DefaultTemperatureLayer(Layer):
                 v = v / 2. + .5
                 v *= abs(r[0] - r[1])
                 v += r[0]
-                landmap[(x, z)] = v
+                temperaturemap[(x, z)] = v
 
 
 authcode = world.Chunk.Chunk.add_default_attribute("temperaturemap", DefaultTemperatureLayer, {})

@@ -32,7 +32,9 @@ class StateStartMenu(state.State.State):
         G.worldgenerationhandler.enable_generation = True
         for x in range(-2, 3):
             for z in range(-2, 3):
-                G.world.dimensions[0].get_chunk(x, z)
+                chunk = G.world.dimensions[0].get_chunk(x, z, generate=False)
+                chunk.is_ready = False
+                G.worldgenerationhandler.generate_chunk(chunk)
         G.world.process_entire_queue()
         G.worldgenerationhandler.enable_generation = False
         # todo: remove disable for auto-gen

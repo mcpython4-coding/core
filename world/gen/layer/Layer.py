@@ -14,6 +14,7 @@ class LayerConfig:
         self.layer = None
         for key in cconfig.keys():
             setattr(self, key, cconfig[key])
+        self.dimension = None
 
 
 class Layer:

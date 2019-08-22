@@ -13,6 +13,7 @@ from util.math import *
 import time
 import globals as G
 import state.StateHandler
+import util.math
 
 
 class Window(pyglet.window.Window):
@@ -367,8 +368,13 @@ class Window(pyglet.window.Window):
 
         """
         x, y, z = self.position
+        chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(self.position), create=False)
         self.label.text = '%02d (%.2f, %.2f, %.2f)' % (
             pyglet.clock.get_fps(), x, y, z)
+        if chunk:
+            biomemap = chunk.get_value("biomemap")
+            if (x, z) in biomemap:
+                self.label.text += ", biome: "+str(biomemap[(x, z)])
         self.label.draw()
 
     def draw_reticle(self):

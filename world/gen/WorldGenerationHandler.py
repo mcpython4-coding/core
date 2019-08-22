@@ -26,6 +26,7 @@ class WorldGenerationHandler:
             if config is None or layername not in config:
                 cconfig = world.gen.layer.Layer.LayerConfig(**dimension.worldgenerationconfig[layername]
                     if layername in dimension.worldgenerationconfig else {})
+                cconfig.dimension = dimension.id
             else:
                 cconfig = config[layername]
             layer.normalize_config(cconfig)
@@ -33,7 +34,7 @@ class WorldGenerationHandler:
             cconfig.layer = layer
 
     def generate_chunk(self, chunk: world.Chunk.Chunk):
-        if not self.enable_generation:
+        if not self.enable_generation or chunk.is_ready:
             return
         print("generating", chunk.position)
         dimension = chunk.dimension
@@ -41,6 +42,7 @@ class WorldGenerationHandler:
         for layername in self.configs[configname]["layers"]:
             layer = self.layers[layername]
             layer.add_generate_functions_to_chunk(dimension.worldgenerationconfigobjects[layername], chunk)
+            G.world.process_entire_queue()
 
     def register_layer(self, layer: world.gen.layer.Layer.Layer):
         # print(layer, layer.get_name())
@@ -66,5 +68,5 @@ class WorldGenerationHandler:
 
 G.worldgenerationhandler = WorldGenerationHandler()
 
-from world.gen.layer import (DefaultBedrockLayer, DefaultLandMassLayer, DefaultTemperatureLayer)
+from world.gen.layer import (DefaultBedrockLayer, DefaultLandMassLayer, DefaultTemperatureLayer, DefaultBiomeLayer)
 from world.gen.mode import DefaultOverWorldGenerator

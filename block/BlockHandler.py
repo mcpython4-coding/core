@@ -33,7 +33,7 @@ handler = G.blockhandler = BlockHandler()
 
 
 def load():
-    from . import (BlockGrassBlock, BlockSand, BlockBrick, BlockStone, BlockDirt, BlockBedrock, BlockCobbleStone,
+    from . import (BlockGrassBlock, BlockBrick, BlockStone, BlockDirt, BlockBedrock, BlockCobbleStone,
                    BlockCoalOre, BlockIronOre, BlockGoldOre, BlockEmeraldOre, BlockRedstoneOre, BlockDiamondOre,
-                   BlockLapisOre)
+                   BlockLapisOre, BlockSand)
 

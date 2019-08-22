@@ -15,14 +15,17 @@ import world.Chunk
 
 @G.worldgenerationhandler
 class DefaultLandMassLayer(Layer):
-    noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
+    noise1 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
+    noise2 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
+    noise3 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
 
     @staticmethod
     def normalize_config(config: LayerConfig):
         if not hasattr(config, "masses"):
-            config.masses = ["land", "ocean"]
+            config.masses = ["land"]
+            # todo: add underwaterbiomes
         if not hasattr(config, "size"):
-            config.size = 4
+            config.size = 1
 
     @staticmethod
     def get_name() -> str:
@@ -39,11 +42,20 @@ class DefaultLandMassLayer(Layer):
         factor = 10**config.size
         for x in range(cx*16, cx*16+16):
             for z in range(cz*16, cz*16+16):
-                v = landmap[(x, z)] = DefaultLandMassLayer.noise.noise2d(x/factor, z/factor)
+                v = sum([DefaultLandMassLayer.noise1.noise2d(x/factor, z/factor) * 0.5 + 0.5,
+                         DefaultLandMassLayer.noise2.noise2d(x/factor, z/factor) * 0.5 + 0.5,
+                         DefaultLandMassLayer.noise3.noise2d(x/factor, z/factor) * 0.5 + 0.5]) / 3
+                v *= len(config.masses)
+                v = round(v)
+                if v == len(config.masses):
+                    v = 0
+                landmap[(x, z)] = config.masses[v]
+                """
                 if v < 0:
                     chunk.add_add_block_gen_task((x, 5, z), "minecraft:stone")
                 else:
                     chunk.add_add_block_gen_task((x, 5, z), "minecraft:dirt")
+                """
 
 
 authcode = world.Chunk.Chunk.add_default_attribute("landmassmap", DefaultLandMassLayer, {})
