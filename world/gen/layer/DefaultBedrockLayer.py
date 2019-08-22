@@ -16,7 +16,7 @@ class DefaultBedrockLayer(Layer):
     @staticmethod
     def normalize_config(config: LayerConfig):
         if not hasattr(config, "bedrockchance"):
-            config.bedrockchance = 4
+            config.bedrockchance = 3
 
     @staticmethod
     def get_name() -> str:

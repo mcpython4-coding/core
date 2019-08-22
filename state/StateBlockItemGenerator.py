@@ -32,7 +32,7 @@ class StateBlockItemGenerator(State.State):
     def get_parts(self) -> list:
         return [StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False, activate_keyboard=False,
                                             activate_focused_block=False, clearcolor=(1., 1., 1., 0.),
-                                            glcolor3d=(1., 1., 1.), activate_crosshair=False)]
+                                            glcolor3d=(1., 1., 1.), activate_crosshair=False, activate_lable=False)]
 
     def get_event_functions(self) -> list:
         return []
@@ -42,6 +42,9 @@ class StateBlockItemGenerator(State.State):
         G.window.rotation = (-45, -45)
         G.world.get_active_dimension().add_block(
             (0, 0, 0), G.blockhandler.blockclasses[0].get_name(), block_update=False)
+        G.window.set_caption("generating block item images | block: {} | {} / {}".format(
+            G.blockhandler.blockclasses[0].get_name(), 1, len(G.blockhandler.blockclasses)
+        ))
         self.blockindex = 0
         event.TickHandler.handler.bind(self.take_image, 5)
         event.TickHandler.handler.bind(self.add_new_screen, 15)
@@ -56,11 +59,15 @@ class StateBlockItemGenerator(State.State):
             G.window.position = (0, 10, 0)
             G.window.rotation = (0, 0)
             G.world.get_active_dimension().remove_block((0, 0, 0))
+            G.window.set_caption("Pyglet")
             return
         # print(G.blockhandler.blockclasses[self.blockindex].get_name())
         G.world.get_active_dimension().hide_block((0, 0, 0))
         G.world.get_active_dimension().add_block(
             (0, 0, 0), G.blockhandler.blockclasses[self.blockindex].get_name(), block_update=False)
+        G.window.set_caption("generating block item images | block: {} | {} / {}".format(
+            G.blockhandler.blockclasses[self.blockindex].get_name(), self.blockindex+1, len(G.blockhandler.blockclasses)
+        ))
         # todo: add states
         event.TickHandler.handler.bind(self.take_image, 5)
         event.TickHandler.handler.bind(self.add_new_screen, 15)

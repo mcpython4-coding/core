@@ -10,23 +10,19 @@ from . import Biome
 
 
 @G.biomehandler
-class Test(Biome.Biome):
+class Plains(Biome.Biome):
     @staticmethod
     def get_name() -> str:
-        return "tests:biome:normal"
+        return "minecraft:plains"
 
     @staticmethod
     def get_temperature() -> float:
-        return 0.
-
-    @staticmethod
-    def get_landmass() -> str:
-        return "land"
+        return .8
 
     @staticmethod
     def get_weight() -> int:
-        return 10
+        return 20
 
 
-G.biomehandler.add_biome_to_dim(0, "tests:biome:normal")
+G.biomehandler.add_biome_to_dim(0, "minecraft:plains")
 

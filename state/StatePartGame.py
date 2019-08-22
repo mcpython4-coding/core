@@ -11,6 +11,7 @@ from config import FLYING_SPEED, WALKING_SPEED, GRAVITY, TERMINAL_VELOCITY, PLAY
 from pyglet.window import key, mouse
 import pyglet
 import gui.ItemStack
+import config
 
 
 class StatePartGame(StatePart.StatePart):
@@ -18,7 +19,7 @@ class StatePartGame(StatePart.StatePart):
     block_looking_at = None
 
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
-                 activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True,
+                 activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True, activate_lable=True,
                  clearcolor=(0.5, 0.69, 1.0, 1)):
         self.activate_physics = activate_physics
         self.activate_mouse = activate_mouse
@@ -26,6 +27,7 @@ class StatePartGame(StatePart.StatePart):
         self.activate_3d_draw = activate_3d_draw
         self.activate_focused_block_draw = activate_focused_block
         self.activate_crosshair = activate_crosshair
+        self.active_lable = activate_lable
         self.glcolor3d = glcolor3d
         self.clearcolor = clearcolor
 
@@ -124,8 +126,8 @@ class StatePartGame(StatePart.StatePart):
             The change in time since the last call.
 
         """
-        # walking
-        speed = FLYING_SPEED if G.window.flying else WALKING_SPEED
+        speed = config.SPEED_DICT[G.player.gamemode][(0 if not G.window.keys[key.LSHIFT] else 1) +
+                                                     (0 if not G.window.flying else 2)]
         d = dt * speed  # distance covered this tick.
         dx, dy, dz = G.window.get_motion_vector()
         # New position in space, before accounting for gravity.
@@ -204,7 +206,8 @@ class StatePartGame(StatePart.StatePart):
 
     @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
-        G.window.draw_label()
+        if self.active_lable:
+            G.window.draw_label()
         if self.activate_crosshair:
             G.window.draw_reticle()
 

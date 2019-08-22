@@ -212,5 +212,13 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bugs around world generation
 [uuk]: removed ocean from landmasses, it is not used at the moment
 [uuk]: added biome-lable (not working?)
+[uuk]: added gamemode lable
+[uuk]: added new biome: plains
+[uuk]: tweaked some world generation constants
+[uuk]: added option in StatePartGame to disable lable
+[uuk]: in StateBlockItemGenerator, caption will show where we are
+[uuk]: fixed bug: player.add_to_free_place could place items into armor, crafting & offhand slots
+[uuk]: crafting slots of player will now be automaticly cleared when closed addding stuff into inventory
+[uuk]: added sprinting, reworked speed for flying & gamemode 3
 
 todo: add ore blocks, add ore drops (not bindable at the moment)

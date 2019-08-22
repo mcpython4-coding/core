@@ -74,5 +74,5 @@ class BiomeHandler:
 
 G.biomehandler = BiomeHandler()
 
-from . import (TestBiomeNormal, TestBiomeNormal2)
+from . import (BiomePlains)
 
