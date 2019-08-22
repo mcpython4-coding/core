@@ -30,6 +30,7 @@ class Chunk:
         self.show_tasks = []
         self.hide_tasks = []
         self.chunkgenerationtasks = []
+        self.blockmap = {}  # an map with position -> [arguments: list, optional_arguments: kwargs] generation code
         self.is_ready = False  # todo: change to False after new world gen is introduced
         self.visible = False
         self.loaded = True
@@ -68,9 +69,11 @@ class Chunk:
 
     def add_add_block_gen_task(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[],
                                kwargs={}):
-        self.chunkgenerationtasks.append([self.add_block, [position, block_name], {"immediate": immediate,
-                                                                                   "block_update": block_update,
-                                                                                   "args": args, "kwargs": kwargs}])
+        self.blockmap[position] = ([position, block_name], {"immediate": immediate, "block_update": block_update,
+                                                            "args": args, "kwargs": kwargs})
+
+    def is_position_blocked(self, position):
+        return position in self.world or position in self.blockmap
 
     def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[], kwargs={}):
         """ Add a block with the given `texture` and `position` to the world.
@@ -230,18 +233,21 @@ class Chunk:
 
     def show(self):
         self.visible = True
-        self.update_visable(hide=False, immediate=False)
+        self.update_visable(hide=False)
 
     def hide(self):
         self.visible = False
         self.hide_all()
 
-    def update_visable(self, immediate=True, hide=True):
+    def update_visable_block(self, position, hide=True):
+        if not self.exposed(position):
+            self.hide_block(position)
+        elif hide:
+            self.show_block(position)
+
+    def update_visable(self, hide=True):
         for position in self.world.keys():
-            if not self.exposed(position):
-                self.hide_block(position, immediate=immediate)
-            elif hide:
-                self.show_block(position, immediate=immediate)
+            self.chunkgenerationtasks.append([self.update_visable_block, [position], {"hide": hide}])
 
     def hide_all(self, immediate=True):
         for position in self.shown.copy():

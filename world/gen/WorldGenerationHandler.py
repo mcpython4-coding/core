@@ -68,5 +68,6 @@ class WorldGenerationHandler:
 
 G.worldgenerationhandler = WorldGenerationHandler()
 
-from world.gen.layer import (DefaultBedrockLayer, DefaultLandMassLayer, DefaultTemperatureLayer, DefaultBiomeLayer)
+from world.gen.layer import (DefaultBedrockLayer, DefaultLandMassLayer, DefaultTemperatureLayer, DefaultBiomeLayer,
+                             DefaultHighMapLayer, DefaultStonePlacementLayer)
 from world.gen.mode import DefaultOverWorldGenerator

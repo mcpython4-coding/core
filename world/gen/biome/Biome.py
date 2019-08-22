@@ -25,3 +25,7 @@ class Biome:
     def get_weight() -> int:
         return 10
 
+    @staticmethod
+    def get_high_range():
+        return [10, 30]
+

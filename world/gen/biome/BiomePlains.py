@@ -23,6 +23,10 @@ class Plains(Biome.Biome):
     def get_weight() -> int:
         return 20
 
+    @staticmethod
+    def get_high_range():
+        return [30, 50]
+
 
 G.biomehandler.add_biome_to_dim(0, "minecraft:plains")
 

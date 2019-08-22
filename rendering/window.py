@@ -368,13 +368,14 @@ class Window(pyglet.window.Window):
 
         """
         x, y, z = self.position
+        nx, ny, nz = util.math.normalize(self.position)
         chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(self.position), create=False)
         self.label.text = '%02d (%.2f, %.2f, %.2f), gamemode %01d' % (
             pyglet.clock.get_fps(), x, y, z, G.player.gamemode)
         if chunk:
             biomemap = chunk.get_value("biomemap")
-            if (x, z) in biomemap:
-                self.label.text += ", biome: "+str(biomemap[(x, z)])
+            if (nx, nz) in biomemap:
+                self.label.text += ", biome: "+str(biomemap[(nx, nz)])
         self.label.draw()
 
     def draw_reticle(self):

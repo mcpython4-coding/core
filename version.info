@@ -220,5 +220,15 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: player.add_to_free_place could place items into armor, crafting & offhand slots
 [uuk]: crafting slots of player will now be automaticly cleared when closed addding stuff into inventory
 [uuk]: added sprinting, reworked speed for flying & gamemode 3
+[uuk]: added HighMapLayer, added get_high_range-function to Biome
+[uuk]: fixed biome-lable, missed an normalize(vector)-call
+[uuk]: reworked addition of blocks in chunk by adding extra map due to better access in future systems
+[uuk]: added DefaultStonePlacementLayer for generating stone
+[uuk]: fixed bug: generating chunks during runtime causes them to never get the is_ready-flag True
+[uuk]: Chunk.update_visable is now faster by making it runtime-operating
 
+todo: add itemfactory, blockfactory, make inventory-data complete configurated from .json file
 todo: add ore blocks, add ore drops (not bindable at the moment)
+todo: fix /generate-command
+todo: rework model use system by iterating downwards an array and adding parents to it
+todo: can we speed up blockitemfactory?

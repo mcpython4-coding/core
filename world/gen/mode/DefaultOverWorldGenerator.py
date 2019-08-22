@@ -7,7 +7,8 @@ minecraft by Mojang
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 
-config = {"layers": ["landmass_default", "temperaturemap", "biomemap_default", "bedrock_default"]}
+config = {"layers": ["landmass_default", "temperaturemap", "biomemap_default", "highmap_default", "bedrock_default",
+                     "stone_default"]}
 
 G.worldgenerationhandler.register_world_gen_config("default_overworld", config)
 

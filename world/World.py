@@ -113,12 +113,13 @@ class World:
         t = time.time()
         for chunk in list(dim.chunks.values()):
             for task in chunk.show_tasks:
-                chunk._show_block(task, chunk.world[task])
+                chunk._show_block(task)
                 chunk.show_tasks.remove(task)
                 if time.time() - t > 0.1:
                     return
             for task in chunk.hide_tasks:
-                chunk._hide_block(task, chunk.world[task])
+                # print(task)
+                chunk._hide_block(task)
                 chunk.hide_tasks.remove(task)
                 if time.time() - t > 0.1:
                     return
@@ -127,6 +128,14 @@ class World:
                 chunk.chunkgenerationtasks.remove(task)
                 if time.time() - t > 0.1:
                     return
+            for position in list(chunk.blockmap.keys()):
+                args, kwargs = chunk.blockmap[position]
+                chunk.add_block(*args, **kwargs)
+                del chunk.blockmap[position]
+                if time.time() - t > 0.1:
+                    return
+            chunk.is_ready = \
+                len(chunk.show_tasks) == len(chunk.hide_tasks) == len(chunk.chunkgenerationtasks) == len(chunk.blockmap)
 
     def process_entire_queue(self):
         """ Process the entire queue with no breaks.
@@ -142,8 +151,12 @@ class World:
             while len(chunk.chunkgenerationtasks) > 0:
                 task = chunk.chunkgenerationtasks.pop(0)
                 task[0](*task[1], **task[2])
+            for position in list(chunk.blockmap.keys()):
+                args, kwargs = chunk.blockmap[position]
+                chunk.add_block(*args, **kwargs)
             chunk.show_tasks = []
             chunk.hide_tasks = []
+            chunk.blockmap = {}
             chunk.is_ready = True
 
     def cleanup(self):
