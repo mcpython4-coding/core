@@ -24,6 +24,10 @@ class Block:
     def get_name() -> str:
         return "minecraft:missing_name"
 
+    @staticmethod
+    def on_register(registry):
+        pass
+
     def on_create(self):
         pass
 

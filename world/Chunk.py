@@ -253,3 +253,6 @@ class Chunk:
         for position in self.shown.copy():
             self.hide_block(position, immediate=immediate)
 
+    def get_block(self, position):
+        return self.blockmap[position][0][1] if position in self.blockmap else self.world[position]
+

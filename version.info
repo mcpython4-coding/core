@@ -226,8 +226,15 @@ started these clone on 12th of July, 2019
 [uuk]: added DefaultStonePlacementLayer for generating stone
 [uuk]: fixed bug: generating chunks during runtime causes them to never get the is_ready-flag True
 [uuk]: Chunk.update_visable is now faster by making it runtime-operating
+[uuk]: added DefaultTopLayerLayer for for example grass & dirt on top of the stone
+[uuk]: lable size is now smaller, block looking at is now part of lable
+[uuk]: added BlockFactory
+[github] started day 17 as 23th of August, 2019
+[uuk]: added block-base-system, added IFallingBlock, added system for registry in BlockHandler
+[uuk]: fixed bug: braking blocks did not update visable state
 
-todo: add itemfactory, blockfactory, make inventory-data complete configurated from .json file
+todo: move as much blocks to BlockFactory as possible
+todo: add itemfactory, make inventory-data complete configurated from .json file
 todo: add ore blocks, add ore drops (not bindable at the moment)
 todo: fix /generate-command
 todo: rework model use system by iterating downwards an array and adding parents to it

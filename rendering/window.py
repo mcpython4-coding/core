@@ -67,9 +67,12 @@ class Window(pyglet.window.Window):
         self.world = G.world
 
         # The label that is displayed in the top left of the canvas.
-        self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
-            x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
-            color=(0, 0, 0, 255))
+        self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
+                                       x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
+                                       color=(0, 0, 0, 255))
+        self.label2 = pyglet.text.Label('', font_name='Arial', font_size=10,
+                                        x=10, y=self.height - 22, anchor_x='left', anchor_y='top',
+                                        color=(0, 0, 0, 255))
 
         self.mouse_pressing = {mouse.LEFT: False, mouse.RIGHT: False, mouse.MIDDLE: False}
 
@@ -372,6 +375,12 @@ class Window(pyglet.window.Window):
         chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(self.position), create=False)
         self.label.text = '%02d (%.2f, %.2f, %.2f), gamemode %01d' % (
             pyglet.clock.get_fps(), x, y, z, G.player.gamemode)
+        vector = G.window.get_sight_vector()
+        blockpos, previous = G.world.hit_test(G.window.position, vector)
+        if blockpos:
+            self.label2.text = "block {} at {}".format(G.world.get_active_dimension().get_block(blockpos).get_name(),
+                                                       blockpos)
+            self.label2.draw()
         if chunk:
             biomemap = chunk.get_value("biomemap")
             if (nx, nz) in biomemap:

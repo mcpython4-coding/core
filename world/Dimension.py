@@ -9,6 +9,7 @@ import globals as G
 import world.Chunk
 import util.math
 import pyglet
+import block.Block
 
 
 class Dimension:
@@ -31,6 +32,8 @@ class Dimension:
         return self.chunks[(cx, cz)]
 
     def get_chunk_for_position(self, position, **kwargs) -> world.Chunk.Chunk or None:
+        if issubclass(type(position), block.Block.Block):
+            position = position.position
         return self.get_chunk(*util.math.sectorize(position), **kwargs)
 
     def get_block(self, position):

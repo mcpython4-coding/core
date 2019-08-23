@@ -12,6 +12,7 @@ from pyglet.window import key, mouse
 import pyglet
 import gui.ItemStack
 import config
+import util.math
 
 
 class StatePartGame(StatePart.StatePart):
@@ -71,14 +72,17 @@ class StatePartGame(StatePart.StatePart):
 
                 if G.window.mouse_pressing[mouse.LEFT] and G.world.get_active_dimension().get_block(blockpos):
                     block = G.world.get_active_dimension().get_block(blockpos)
+                    chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(blockpos))
                     item = G.player.get_active_inventory_slot().itemstack
                     if G.player.gamemode == 1:
                         if self.mouse_press_time >= 0.10:
-                            G.world.get_active_dimension().remove_block(blockpos)
+                            chunk.remove_block(blockpos)
+                            chunk.check_neighbors(blockpos)
                     elif G.player.gamemode == 0:
                         if self.mouse_press_time >= block.get_brake_time(item):
                             G.player.add_to_free_place(gui.ItemStack.ItemStack(G.world.world[blockpos].get_name()))
-                            G.world.get_active_dimension().remove_block(blockpos)
+                            chunk.remove_block(blockpos)
+                            chunk.check_neighbors(blockpos)
                     # todo: check if brakeable in gamemode 2
                 if G.window.mouse_pressing[mouse.RIGHT] and previous:
                     slot = G.player.get_active_inventory_slot()
