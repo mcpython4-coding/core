@@ -232,10 +232,23 @@ started these clone on 12th of July, 2019
 [github] started day 17 as 23th of August, 2019
 [uuk]: added block-base-system, added IFallingBlock, added system for registry in BlockHandler
 [uuk]: fixed bug: braking blocks did not update visable state
+[uuk]: added ItemFactory
+[uuk]: added items: apple, arrow, baked potato, beef, beetroot, beetroot soup, black dye, blaze powder, blaze rod,
+                    blue dye, bone, bone meal, book, bowl, bread, brick, broken elytra, brown dye, carrot,
+                    charcoal, chicken, chorus fruit, clay, coal, cod, cooked chicken, cooked cod, cooked mutton,
+                    cooked porkchop, cooked rabbit, cooked salmon, cookie, cyan dye, diamond, dried kelp, egg,
+                    emerald, ender eye, ender pearl, feather, fermented spider eye, flint, ghast tear,
+                    glistering melon slice, glowstone dust, golden apple, gold ingot, gold nugget, gray dye, green dye,
+                    gunpowder, ink sac, iron ingot, iron nugget, lapis lazuli, leather, light blue dye,
+                    light gray dye, lime dye, magenta dye, magma cream, melon slice, mutton, name tag, nether brick,
+                    nether star, nether wart, orange dye, pink dye, poisonous potato, porkchop, potato, purple dye,
+                    quartz, rabbit, redstone, red dye, rotten flesh, salmon, shulker shell, slime ball, spider eye,
+                    stick, string, sugar, wheat, white dye, yellow dye
+[uuk]: added areas to the log
 
-todo: move as much blocks to BlockFactory as possible
-todo: add itemfactory, make inventory-data complete configurated from .json file
+todo: make inventory-data complete configurated from .json file
 todo: add ore blocks, add ore drops (not bindable at the moment)
 todo: fix /generate-command
 todo: rework model use system by iterating downwards an array and adding parents to it
 todo: can we speed up blockitemfactory?
+todo: add concrete, concrete powder, wool, terracotta, try glass and stained glass, logs, planks, barks, stripped logs

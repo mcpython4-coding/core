@@ -29,5 +29,9 @@ class ItemHandler:
 
 G.itemhandler = ItemHandler()
 
-from . import (Item)
+from . import (Item, ItemFactory)
+
+ItemFactory.ItemFactory.from_directory(G.local+"/assets/factory/item")
+
+ItemFactory.ItemFactory.load()
 
