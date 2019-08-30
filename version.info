@@ -245,7 +245,15 @@ started these clone on 12th of July, 2019
                     quartz, rabbit, redstone, red dye, rotten flesh, salmon, shulker shell, slime ball, spider eye,
                     stick, string, sugar, wheat, white dye, yellow dye
 [uuk]: added areas to the log
+[xkcdjerry]: fixed a bug out of #1
+[uuk]: added xkcdjerry to licence headers
 
+todo: fix bug: When The Player dies and he/she is moving, then he/she will jam into the ground(I forked yours, you can
+    see the bug there (#1)
+todo: optimized BlockItemFactory (#1)
+todo: make player go into gamemode 0 by default or give a menu(like MC) (#1)
+todo: make player able to fly using double spaces (like MC) (#1)
+todo: make it possible to change slots by using the scroll on the mouse(like MC) (#1)
 todo: make inventory-data complete configurated from .json file
 todo: add ore blocks, add ore drops (not bindable at the moment)
 todo: fix /generate-command
