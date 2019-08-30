@@ -41,7 +41,7 @@ class StateStartMenu(state.State.State):
         print("finished")
         G.statehandler.switch_to("minecraft:gameinfo")
         G.world.change_sectors(None, util.math.sectorize(G.window.position), immediate=True)
-        G.window.position = (0, 10, 0)
+        G.window.position = 0, util.math.get_max_y((0,0,0)), 0
 
     def get_event_functions(self) -> list:
         return [(self.on_draw_2d_pre, "render:draw:2d:background")]

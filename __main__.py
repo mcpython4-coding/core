@@ -13,7 +13,6 @@ try:
 
     import event.EventHandler
 
-
     import opengl_setup
 
     import rendering.window
