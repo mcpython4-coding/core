@@ -8,26 +8,40 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import chat.command.Command
 import chat.command.CommandParser
+import chat.command.CommandEntry
+import chat.command.Selector
 
 
 class CommandHandler:
     def __init__(self):
         self.commands = []
+        self.commandentries = {}
+        self.selectors = []
 
     def add(self, command):
         self(command)
 
     def __call__(self, command):
-        self.commands.append(command)
-        G.commandparser.add_command(command)
+        if issubclass(command, chat.command.Command.Command):
+            self.commands.append(command)
+            G.commandparser.add_command(command)
+        elif issubclass(command, chat.command.CommandEntry.CommandEntry):
+            self.commandentries[command.ENTRY_NAME] = command
+        elif issubclass(command, chat.command.Selector.Selector):
+            self.selectors.append(command)
+        else:
+            raise ValueError("can't register object {} to commandhandler".format(command))
         return command
 
 
 G.commandhandler = CommandHandler()
 
 
+chat.command.CommandEntry.load()
+chat.command.Selector.load()
+
 from . import (CommandGive, CommandGamemode, CommandExecute, CommandKill, CommandClear, CommandTeleport, CommandReload,
-               CommandGenerate)
+               CommandGenerate, CommandSetblock, CommandFill)
 # register these at the end:
 from . import CommandHelp
 

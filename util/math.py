@@ -13,8 +13,8 @@ def get_max_y(pos):
     """gets the max y at a x,y,z pos"""
     x, y, z = normalize(pos)
     chunk = G.world.get_active_dimension().get_chunk_for_position(pos)
-    highmap = chunk.get_value('highmap')
-    y = highmap[x, z][0][1]
+    heightmap = chunk.get_value('heightmap')
+    y = heightmap[x, z][0][1]
     return y + 2  # account for the distance from head to foot
 
 

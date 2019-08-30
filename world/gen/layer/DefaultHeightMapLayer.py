@@ -14,7 +14,7 @@ import world.Chunk
 
 
 @G.worldgenerationhandler
-class DefaultHighMapLayer(Layer):
+class DefaultHeightMapLayer(Layer):
     noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
 
     @staticmethod
@@ -24,33 +24,33 @@ class DefaultHighMapLayer(Layer):
 
     @staticmethod
     def get_name() -> str:
-        return "highmap_default"
+        return "heightmap_default"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):
-        chunk.chunkgenerationtasks.append([DefaultHighMapLayer.generate_highmap, [chunk, config], {}])
+        chunk.chunkgenerationtasks.append([DefaultHeightMapLayer.generate_heightmap, [chunk, config], {}])
 
     @classmethod
-    def generate_highmap(cls, chunk, config):
-        highmap = chunk.get_value("highmap")
+    def generate_heightmap(cls, chunk, config):
+        heightmap = chunk.get_value("heightmap")
         cx, cz = chunk.position
         factor = 10**config.size
         for x in range(cx*16, cx*16+16):
             for z in range(cz*16, cz*16+16):
-                highmap[(x, z)] = cls.get_high_at(chunk, x, z, factor)
-                # chunk.add_add_block_gen_task((x, highmap[(x, z)][0][1], z), "minecraft:stone")
+                heightmap[(x, z)] = cls.get_height_at(chunk, x, z, factor)
+                # chunk.add_add_block_gen_task((x, heightmap[(x, z)][0][1], z), "minecraft:stone")
 
     @classmethod
-    def get_high_at(cls, chunk, x, z, factor) -> list:
-        v = DefaultHighMapLayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
+    def get_height_at(cls, chunk, x, z, factor) -> list:
+        v = DefaultHeightMapLayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
         biomemap = chunk.get_value("biomemap")
         biome = G.biomehandler.biomes[biomemap[(x, z)]]
-        r = biome.get_high_range()
+        r = biome.get_height_range()
         v *= r[1] - r[0]
         v += r[0]
         info = [(1, round(v))]
         return info
 
 
-authcode = world.Chunk.Chunk.add_default_attribute("highmap", DefaultHighMapLayer, {})
+authcode = world.Chunk.Chunk.add_default_attribute("heightmap", DefaultHeightMapLayer, {})
 

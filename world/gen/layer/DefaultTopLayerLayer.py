@@ -38,20 +38,20 @@ class DefaultTopLayerLayer(Layer):
 
     @staticmethod
     def generate_xz(chunk, x, z, config, factor):
-        highmap = chunk.get_value("highmap")
-        mhigh = highmap[(x, z)][0][1]
+        heightmap = chunk.get_value("heightmap")
+        mheight = heightmap[(x, z)][0][1]
         biome = G.biomehandler.biomes[chunk.get_value("biomemap")[(x, z)]]
         noisevalue = DefaultTopLayerLayer.noise.noise2d(x/factor, z/factor) * 0.5 + 0.5
-        r = biome.get_top_layer_high_range()
+        r = biome.get_top_layer_height_range()
         noisevalue *= r[1] - r[0]
         noisevalue += r[0]
-        high = round(noisevalue)
-        decorators = biome.get_top_layer_configuration(high)
-        for i in range(high):
-            y = mhigh - (high-i-1)
+        height = round(noisevalue)
+        decorators = biome.get_top_layer_configuration(height)
+        for i in range(height):
+            y = mheight - (height-i-1)
             block = chunk.get_block((x, y, z)) if chunk.is_position_blocked((x, y, z)) else None
             if block and (block if type(block) == str else block.get_name()) in ["minecraft:stone"]:
-                chunk.add_add_block_gen_task((x, y, z), decorators[i], immediate=i == high - 1)
+                chunk.add_add_block_gen_task((x, y, z), decorators[i], immediate=i == height - 1)
 
 
 

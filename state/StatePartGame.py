@@ -147,7 +147,7 @@ class StatePartGame(StatePart.StatePart):
             G.window.dy = max(G.window.dy, -TERMINAL_VELOCITY)
             dy += G.window.dy * dt
         else:
-            dy = dt*3 if G.window.keys[key.SPACE] else (-dt*3 if G.window.keys[key.LSHIFT] else 0)
+            dy = dt*6 if G.window.keys[key.SPACE] else (-dt*6 if G.window.keys[key.LSHIFT] else 0)
         # collisions
         x, y, z = G.window.position
         if G.player.gamemode != 3:

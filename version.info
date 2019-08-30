@@ -220,7 +220,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: player.add_to_free_place could place items into armor, crafting & offhand slots
 [uuk]: crafting slots of player will now be automaticly cleared when closed addding stuff into inventory
 [uuk]: added sprinting, reworked speed for flying & gamemode 3
-[uuk]: added HighMapLayer, added get_high_range-function to Biome
+[uuk]: added HeightMapLayer, added get_height_range-function to Biome
 [uuk]: fixed biome-lable, missed an normalize(vector)-call
 [uuk]: reworked addition of blocks in chunk by adding extra map due to better access in future systems
 [uuk]: added DefaultStonePlacementLayer for generating stone
@@ -259,10 +259,11 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug in #1: exception like World object has no attribute world
 [uuk]: fixed bug in #1: can't set blocks in gamemode 0 due to an wrong gamemode check
 [uuk]: added blocks: coal block, diamond block, emerald block, gold block, iron block, lapis block, redstone block
+[uuk]: CommandEntries are now registered to CommandHandler and are extendable
+[uuk]: made generated area smaller for faster generation time
+[uuk]: added an registry for selectors, current selectors: @s, @p, @r, @a
+[uuk]: added /setblock-command, /fill-command
+[uuk]: added dimension-attribute to command info
+[uuk]: fixed bug: position-entry does only decode ~-parameters, not valid setting it
+[uuk]: fixed some miss-spells
 
-todo: add ore blocks
-todo: fix /generate-command
-todo: rework model use system by iterating downwards an array and adding parents to it
-todo: can we speed up blockitemfactory?
-todo: add concrete, concrete powder, wool, terracotta, try glass and stained glass, logs, planks, barks, stripped logs
-todo: when adding blocks by hand, add an check if block is near player (distance < 0.7?)

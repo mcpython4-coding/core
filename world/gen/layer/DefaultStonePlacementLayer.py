@@ -34,9 +34,9 @@ class DefaultStonePlacementLayer(Layer):
 
     @staticmethod
     def generate_xz(chunk, x, z, config):
-        highmap = chunk.get_value("highmap")
-        high = highmap[(x, z)][0][1]
-        for y in range(1, high+1):
+        heightmap = chunk.get_value("heightmap")
+        height = heightmap[(x, z)][0][1]
+        for y in range(1, height+1):
             if not chunk.is_position_blocked((x, y, z)):
                 chunk.add_add_block_gen_task((x, y, z), "minecraft:stone", immediate=False)
 

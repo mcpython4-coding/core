@@ -1,8 +1,5 @@
 These is an tasklist covering all diffrent tasks these project has.
 
-Task that should be done next:
-#1 is still open and not fully implemented
-
 cleanup tasks (should be done regulary):
     document every change
     go to EVERY PYTHON FILE and do:
@@ -30,7 +27,6 @@ add an setup.py-file for setting up all code fragments, make an event for it, us
 split everything into seperated load events which are called ones per ones
 make an registry base class, an registry handler and registry locks
 add PlayerCreativeInventory, PlayerCreativeTab
-rework command entry system to use an registry
 add an header to BlockItemFactory what is done at the moment
 add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid
 add BlockInventory-attribute to Block for auto-opening an inventory

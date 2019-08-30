@@ -26,14 +26,14 @@ class Biome:
         return 10
 
     @staticmethod
-    def get_high_range():
+    def get_height_range():
         return [10, 30]
 
     @staticmethod
-    def get_top_layer_high_range():
+    def get_top_layer_height_range():
         return [3, 5]
 
     @staticmethod
-    def get_top_layer_configuration(high: int):
-        return ["minecraft:dirt"] * (high - 1) + ["minecraft:grass_block"]
+    def get_top_layer_configuration(height: int):
+        return ["minecraft:dirt"] * (height - 1) + ["minecraft:grass_block"]
 

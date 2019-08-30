@@ -11,6 +11,7 @@ import block.Block
 from util.math import *
 import config
 from typing import Dict, List
+import util.math
 
 
 class Chunk:
@@ -87,6 +88,8 @@ class Chunk:
             Whether or not to draw the block immediately.
 
         """
+        if position != util.math.normalize(position):
+            raise ValueError("position {} is no valid block position".format(position))
         # print("adding", block_name, "at", position)
         if position in self.world:
             self.remove_block(position, immediate=immediate, block_update=block_update)

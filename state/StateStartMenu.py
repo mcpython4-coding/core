@@ -30,8 +30,8 @@ class StateStartMenu(state.State.State):
         G.world.cleanup()
         print("generating world")
         G.worldgenerationhandler.enable_generation = True
-        for x in range(-2, 3):
-            for z in range(-2, 3):
+        for x in range(-1, 2):
+            for z in range(-1, 2):
                 chunk = G.world.dimensions[0].get_chunk(x, z, generate=False)
                 chunk.is_ready = False
                 G.worldgenerationhandler.generate_chunk(chunk)

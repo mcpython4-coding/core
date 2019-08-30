@@ -10,14 +10,16 @@ import chat.command.Command
 
 
 class ParsingCommandInfo:
-    def __init__(self, entity=None, position=None):
+    def __init__(self, entity=None, position=None, dimension=None):
         if not entity: entity = G.player
         if not position: position = G.window.position
+        if not dimension: dimension = 0
         self.entity = entity
         self.position = position
+        self.dimension = dimension
 
     def copy(self):
-        return ParsingCommandInfo(entity=self.entity, position=self.position)
+        return ParsingCommandInfo(entity=self.entity, position=self.position, dimension=self.dimension)
 
 
 class CommandParser:
@@ -49,10 +51,13 @@ class CommandParser:
         while len(active_entry.sub_commands) > 0 and index < len(command):
             flag1 = False
             for subcommand in active_entry.sub_commands:
-                if not flag1 and subcommand.is_valid(command, index):
+                if not flag1 and G.commandhandler.commandentries[subcommand.type].is_valid(
+                        command, index, subcommand.args, subcommand.kwargs):
                     array.append((subcommand, active_entry.sub_commands.index(subcommand)))
                     active_entry = subcommand
-                    index, value = active_entry.parse(command, index, info)
+                    index, value = G.commandhandler.commandentries[subcommand.type].parse(command, index, info,
+                                                                                          subcommand.args,
+                                                                                          subcommand.kwargs)
                     values.append(value)
                     flag1 = True
             if not flag1:

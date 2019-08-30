@@ -24,7 +24,7 @@ class Plains(Biome.Biome):
         return 20
 
     @staticmethod
-    def get_high_range():
+    def get_height_range():
         return [30, 50]
 
 
