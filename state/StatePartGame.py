@@ -83,19 +83,18 @@ class StatePartGame(StatePart.StatePart):
                             chunk.check_neighbors(blockpos)
                     elif G.player.gamemode == 0:
                         if self.mouse_press_time >= block.get_brake_time(item):
-                            G.player.add_to_free_place(gui.ItemStack.ItemStack(G.world.world[blockpos].get_name()))
+                            G.player.add_to_free_place(gui.ItemStack.ItemStack(G.world.get_active_dimension().
+                                                                               get_block(blockpos).get_name()))
                             chunk.remove_block(blockpos)
                             chunk.check_neighbors(blockpos)
                     # todo: check if brakeable in gamemode 2
                 if G.window.mouse_pressing[mouse.RIGHT] and previous:
                     slot = G.player.get_active_inventory_slot()
-                    if slot.itemstack.item and slot.itemstack.item.has_block() and self.mouse_press_time > 0.12:
-                        if G.player.gamemode == 1:
-                            G.world.get_active_dimension().add_block(
-                                previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos})
-                        elif G.player.gamemode == 2:
-                            G.world.get_active_dimension().add_block(
-                                previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos})
+                    if slot.itemstack.item and slot.itemstack.item.has_block() and self.mouse_press_time > 0.12 and \
+                            G.player.gamemode in (0, 1):
+                        G.world.get_active_dimension().add_block(
+                            previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos})
+                        if G.player.gamemode == 0:
                             slot.itemstack.amount -= 1
                             if slot.itemstack.amount == 0:
                                 slot.itemstack.clean()
