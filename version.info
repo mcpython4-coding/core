@@ -258,9 +258,9 @@ started these clone on 12th of July, 2019
 [uuk]: added mouse-scroll system (#1) for slots
 [uuk]: fixed bug in #1: exception like World object has no attribute world
 [uuk]: fixed bug in #1: can't set blocks in gamemode 0 due to an wrong gamemode check
+[uuk]: added blocks: coal block, diamond block, emerald block, gold block, iron block, lapis block, redstone block
 
-todo: make inventory-data complete configurated from .json file
-todo: add ore blocks, add ore drops (not bindable at the moment)
+todo: add ore blocks
 todo: fix /generate-command
 todo: rework model use system by iterating downwards an array and adding parents to it
 todo: can we speed up blockitemfactory?
