@@ -5,12 +5,13 @@ orginal game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
-import globals as G
+import globals
 import gui.InventoryPlayerHotbar
 import gui.InventoryPlayerMain
 import gui.ItemStack
 import gui.Slot
 import chat.Chat
+import util.math
 
 
 class Player:
@@ -22,7 +23,7 @@ class Player:
     }
 
     def __init__(self, name):
-        G.player: Player = self
+        globals.player = self
 
         self.name: str = name
         self.gamemode: int = -1
@@ -33,10 +34,9 @@ class Player:
         self.xp_level: int = 0
 
         self.inventorys: dict = {}
-
-        self.inventorys["hotbar"] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
-        self.inventorys["main"] = gui.InventoryPlayerMain.InventoryPlayerMain()
-        self.inventorys["chat"] = chat.Chat.ChatInventory()
+        self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
+        self.inventorys['main'] =  gui.InventoryPlayerMain.InventoryPlayerMain()
+        self.inventorys['chat'] = chat.Chat.ChatInventory()
 
         self.inventory_order: list = [  # an ([inventoryindexname], [reversed slots}) list
             ("hotbar", False),
@@ -46,17 +46,18 @@ class Player:
         self.active_inventory_slot: int = 0
 
     def set_gamemode(self, gamemode: int or str):
-        if gamemode in self.GAMEMODE_DICT:
-            gamemode = self.GAMEMODE_DICT[gamemode]
+        gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
+        # if it is a repr of the gamemode, get the int gamemode
+        # else, return the int
         self.gamemode = gamemode
         if gamemode == 0:
-            G.window.flying = False
+            globals.window.flying = False
         elif gamemode == 1:
             pass
         elif gamemode == 2:
-            G.window.flying = False
+            globals.window.flying = False
         elif gamemode == 3:
-            G.window.flying = True
+            globals.window.flying = True
         else:
             raise ValueError("can't cast {} to valid gamemode".format(gamemode))
 
@@ -89,16 +90,17 @@ class Player:
         :param itemstack: the itemstack to add
         :return: either successful or not
         """
-        if not itemstack.item or itemstack.amount == 0: return True
-        for inventoryname, reverse in self.inventory_order:
-            inventory = self.inventorys[inventoryname]
+        if not itemstack.item or itemstack.amount == 0:
+            return True
+        for inventory_name, reverse in self.inventory_order:
+            inventory = self.inventorys[inventory_name]
             slots = inventory.slots
             if reverse:
                 slots.reverse()
             for slot in slots:
                 if slot.itemstack.item and slot.itemstack.item.get_name() == itemstack.item.get_name() and \
                         slot.interaction_mode[2]:
-                    if slot.itemstack.item and slot.itemstack.amount + itemstack.amount <= itemstack.item.\
+                    if slot.itemstack.item and slot.itemstack.amount + itemstack.amount <= itemstack.item. \
                             get_max_stack_size():
                         slot.itemstack.amount += itemstack.amount
                         return True
@@ -109,8 +111,8 @@ class Player:
                         itemstack.amount -= delta
                 if itemstack.amount <= 0:
                     return True
-        for inventoryname, reverse in self.inventory_order:
-            inventory = self.inventorys[inventoryname]
+        for inventory_name, reverse in self.inventory_order:
+            inventory = self.inventorys[inventory_name]
             slots = inventory.slots
             if reverse:
                 slots.reverse()
@@ -120,25 +122,24 @@ class Player:
                     return True
         return False
 
-    def set_active_inventory_slot(self, id: int):
-        self.active_inventory_slot = id
+    def set_active_inventory_slot(self, slot: int):
+        self.active_inventory_slot = slot
 
     def get_active_inventory_slot(self):
         return self.inventorys["hotbar"].slots[self.active_inventory_slot]
 
     def kill(self):
-        G.commandparser.parse("/clear")
+        globals.commandparser.parse("/clear")
         print("[CHAT] player {} died".format(self.name))
-        G.window.position = (0, 20, 0)
+        self.position = (0, util.math.get_max_y((0,0,0)), 0)
         self.active_inventory_slot = 0
         self.harts = 20
         self.hunger = 20
 
     def _get_position(self):
-        return G.window.position
+        return globals.window.position
 
     def _set_position(self, position):
-        G.window.position = position
+        globals.window.position = position
 
     position = property(_get_position, _set_position)
-

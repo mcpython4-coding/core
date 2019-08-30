@@ -6,6 +6,17 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 
+import globals as G
+
+
+def get_max_y(pos):
+    """gets the max y at a x,y,z pos"""
+    x, y, z = normalize(pos)
+    chunk = G.world.get_active_dimension().get_chunk_for_position(pos)
+    highmap = chunk.get_value('highmap')
+    y = highmap[x, z][0][1]
+    return y + 2  # account for the distance from head to foot
+
 
 def cube_vertices(x, y, z, n):
     """ Return the vertices of the cube at position x, y, z with size 2*n.
@@ -122,4 +133,3 @@ def sectorize(position):
     x, y, z = normalize(position)
     x, z = x // 16, z // 16
     return x, z
-
