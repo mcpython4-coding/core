@@ -165,6 +165,6 @@ class World:
             for chunk in dimension.chunks.values():
                 chunk.hide_all()
                 chunk.world = {}
+                chunk.is_ready = False
             dimension.chunks = {}
-            chunk.is_ready = False
 
