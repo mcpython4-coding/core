@@ -245,15 +245,18 @@ started these clone on 12th of July, 2019
                     quartz, rabbit, redstone, red dye, rotten flesh, salmon, shulker shell, slime ball, spider eye,
                     stick, string, sugar, wheat, white dye, yellow dye
 [uuk]: added areas to the log
+[github]: started day 18 as 24th of August, 2019
 [xkcdjerry]: fixed a bug out of #1
 [uuk]: added xkcdjerry to licence headers
+[uuk]: fixed bug in #1: when player falls out of world, he falls some way through ground after respawning
+[uuk]: after a world is generated, game is now faster
+[uuk]: BlockItemFactory is now faster (#1)
+[uuk]: player default gamemode will now be 0 (#1)
+[uuk]: fixed bug: player gamemode is not reset after generating new world
+[uuk]: changed fly key to double space (#1)
+[uuk]: changed behaviour of flying (#1?) so now pressing space / shift goes up/down
+[uuk]: added mouse-scroll system (#1) for slots
 
-todo: fix bug: When The Player dies and he/she is moving, then he/she will jam into the ground(I forked yours, you can
-    see the bug there (#1)
-todo: optimized BlockItemFactory (#1)
-todo: make player go into gamemode 0 by default or give a menu(like MC) (#1)
-todo: make player able to fly using double spaces (like MC) (#1)
-todo: make it possible to change slots by using the scroll on the mouse(like MC) (#1)
 todo: make inventory-data complete configurated from .json file
 todo: add ore blocks, add ore drops (not bindable at the moment)
 todo: fix /generate-command

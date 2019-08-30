@@ -115,24 +115,24 @@ class World:
             for task in chunk.show_tasks:
                 chunk._show_block(task)
                 chunk.show_tasks.remove(task)
-                if time.time() - t > 0.1:
+                if time.time() - t > 0.02:
                     return
             for task in chunk.hide_tasks:
                 # print(task)
                 chunk._hide_block(task)
                 chunk.hide_tasks.remove(task)
-                if time.time() - t > 0.1:
+                if time.time() - t > 0.02:
                     return
             for task in chunk.chunkgenerationtasks:
                 task[0](*task[1], **task[2])
                 chunk.chunkgenerationtasks.remove(task)
-                if time.time() - t > 0.1:
+                if time.time() - t > 0.02:
                     return
             for position in list(chunk.blockmap.keys()):
                 args, kwargs = chunk.blockmap[position]
                 chunk.add_block(*args, **kwargs)
                 del chunk.blockmap[position]
-                if time.time() - t > 0.1:
+                if time.time() - t > 0.02:
                     return
             chunk.is_ready = \
                 len(chunk.show_tasks) == len(chunk.hide_tasks) == len(chunk.chunkgenerationtasks) == len(chunk.blockmap)

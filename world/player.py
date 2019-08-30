@@ -82,7 +82,7 @@ class Player:
                 self.xp_level += 1
 
     def add_xp_level(self, xp_levels: int):
-        self.xp_level += 1
+        self.xp_level += xp_levels
 
     def add_to_free_place(self, itemstack: gui.ItemStack.ItemStack) -> bool:
         """
@@ -135,6 +135,7 @@ class Player:
         self.active_inventory_slot = 0
         self.harts = 20
         self.hunger = 20
+        globals.window.dy = 0
 
     def _get_position(self):
         return globals.window.position

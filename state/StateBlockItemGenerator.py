@@ -20,6 +20,10 @@ import PIL.Image, PIL.ImageDraw
 os.makedirs(G.local+"/tmp/generated_items")
 
 
+SETUP_TIME = 3
+CLEANUP_TIME = 2
+
+
 class StateBlockItemGenerator(State.State):
     @staticmethod
     def get_name():
@@ -46,8 +50,8 @@ class StateBlockItemGenerator(State.State):
             G.blockhandler.blockclasses[0].get_name(), 1, len(G.blockhandler.blockclasses)
         ))
         self.blockindex = 0
-        event.TickHandler.handler.bind(self.take_image, 5)
-        event.TickHandler.handler.bind(self.add_new_screen, 15)
+        event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
+        event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
 
     def on_deactivate(self, new):
         G.world.cleanup()
@@ -69,8 +73,8 @@ class StateBlockItemGenerator(State.State):
             G.blockhandler.blockclasses[self.blockindex].get_name(), self.blockindex+1, len(G.blockhandler.blockclasses)
         ))
         # todo: add states
-        event.TickHandler.handler.bind(self.take_image, 5)
-        event.TickHandler.handler.bind(self.add_new_screen, 15)
+        event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
+        event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
         G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):

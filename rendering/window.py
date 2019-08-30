@@ -125,29 +125,14 @@ class Window(pyglet.window.Window):
             strafe = math.degrees(math.atan2(*self.strafe))
             y_angle = math.radians(y)
             x_angle = math.radians(x + strafe)
-            if self.flying:
-                m = math.cos(y_angle)
-                dy = math.sin(y_angle)
-                if self.strafe[1]:
-                    # Moving left or right.
-                    dy = 0.0
-                    m = 1
-                if self.strafe[0] > 0:
-                    # Moving backwards.
-                    dy *= -1
-                # When you are flying up or down, you have less left and right
-                # motion.
-                dx = math.cos(x_angle) * m
-                dz = math.sin(x_angle) * m
-            else:
-                dy = 0.0
-                dx = math.cos(x_angle)
-                dz = math.sin(x_angle)
+            dy = 0.0
+            dx = math.cos(x_angle)
+            dz = math.sin(x_angle)
         else:
             dy = 0.0
             dx = 0.0
             dz = 0.0
-        return (dx, dy, dz)
+        return dx, dy, dz
 
     def update(self, dt):
         """ This method is scheduled to be called repeatedly by the pyglet
@@ -247,6 +232,9 @@ class Window(pyglet.window.Window):
         G.eventhandler.call("user:mouse:drag", x, y, dx, dy, buttons, modifiers)
         if self.exclusive:
             self.on_mouse_motion(x, y, dx, dy)
+
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        G.eventhandler.call("user:mouse:scroll", x, y, scroll_x, scroll_y)
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ Called when the player moves the mouse.
