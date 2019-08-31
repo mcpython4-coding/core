@@ -17,18 +17,21 @@ import util.math
 import pyglet
 import traceback
 import os
+import util.enums
+import config
 
 
 class DrawableBox:
     """
     class for drawing boxes
     """
+
     def __init__(self, model, f, t, textureindex, facedata):
         self.model = model
         self.f = f
         self.t = t
         self.textureindex = textureindex
-        self.boxsize = (t[0]-f[0], t[1]-f[1], t[2]-f[2])
+        self.boxsize = (t[0] - f[0], t[1] - f[1], t[2] - f[2])
         self.boxrposition = f
         self.facedata = facedata
 
@@ -37,7 +40,8 @@ class DrawableBox:
                           {**self.facedata, **extra_face_data})
         return box
 
-    def add_to_batch(self, batch, position):
+    def add_to_batch(self, batch, position: tuple, faces: list):
+        # faces = [True, True, True, True, True, True]
         if not self.model.is_drawable:
             raise ValueError("can't draw an undrawable texture")
         x, y, z = position
@@ -61,22 +65,24 @@ class DrawableBox:
             elif facename == "west":
                 textures[5] = self.transform_to_texture_name(face["texture"])
             else:
-                raise ValueError("can't cast face named "+str(facename)+" to valid entry")
+                raise ValueError("can't cast face named " + str(facename) + " to valid entry")
         for texture in textures:
             if texture: any_texture = texture
-        vertex = util.math.cube_vertices_2(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32,
-                                           self.boxsize[2] / 32) if not (
-                self.boxsize[0] == self.boxsize[1] == self.boxsize[2]) else util.math.cube_vertices(x, y, z,
-                                                                                                    self.boxsize[0] /
-                                                                                                    32)
+        vertex = util.math.cube_vertices_2(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
+                                           faces)
         # vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32)
-        return batch[0].add(24, pyglet.gl.GL_QUADS, atlas.generator.texture_groups[
-            any_texture.get_texture_atlas_and_index()[0]],
-                       ('v3f/static', vertex),
-                       ('t2f/static', util.math.tex_coords_2(
-                           *[textureatlasentry.get_texture_atlas_and_index()[1] if textureatlasentry else None
-                             for textureatlasentry in textures]
-                       )))
+        rtextures = util.math.tex_coords_2(
+            *[textureatlasentry.get_texture_atlas_and_index()[1] if textureatlasentry else
+              None for textureatlasentry in textures])
+        result = []
+        for i, v in enumerate(faces):
+            if v:
+                texture = textures[i]
+                t = rtextures[i * 8:i * 8 + 8]
+                result.append(batch[0].add(4, pyglet.gl.GL_QUADS, atlas.generator.texture_groups[
+                    texture.get_texture_atlas_and_index()[0]], ('v3f/static', vertex[i * 12:i * 12 + 12]),
+                                           ('t2f/static', t)))
+        return result
 
     def transform_to_texture_name(self, index):
         if not index.startswith("#"):
@@ -102,7 +108,7 @@ class DrawableBox:
                                 return self.textureindex[overwrite[1:]]
                             index = overwrite
             print(index, self.model.data, self.model.name)
-            raise ValueError("can't cast entry "+str(index)+" to valid texture file")
+            raise ValueError("can't cast entry " + str(index) + " to valid texture file")
 
 
 class Model:
@@ -162,12 +168,12 @@ class ModelLoader:
         print()
         for i, entry in enumerate(ordered):
             print("\r", end="")
-            print("loading model " + str(entry) + " ({}/{})".format(i+1, len(ordered)) + "" * 10, end="")
+            print("loading model " + str(entry) + " ({}/{})".format(i + 1, len(ordered)) + "" * 10, end="")
             self._load_model(entry)
         print()
 
     def _load_model(self, entry: str):
-        name = "block/"+entry.split("/")[-1].split(".")[0]
+        name = "block/" + entry.split("/")[-1].split(".")[0]
         if name in self.loaded_models or name not in G.blockhandler.used_models:
             return
         if not entry.endswith(".json"):
@@ -178,7 +184,7 @@ class ModelLoader:
         encoded = res.data.decode("UTF-8")
         data = json.loads(encoded)
         model = Model(data)
-        model.name = "block/"+entry.split("/")[-1].split(".")[0]
+        model.name = "block/" + entry.split("/")[-1].split(".")[0]
         self.loaded_models[model.name] = model
 
     def from_data(self, name, data):
@@ -193,32 +199,42 @@ class ModelLoader:
         for name in names:
             if name.endswith(".json") and name.startswith("assets/minecraft/models/block/"):
                 filename = name.split("/")[-1]
-                if not os.path.exists(G.local+"/assets/models/block_modified/"+filename):
+                if not os.path.exists(G.local + "/assets/models/block_modified/" + filename):
                     result.append(name)
                 else:
-                    result.append(G.local+"/assets/models/block_modified/"+filename)
+                    result.append(G.local + "/assets/models/block_modified/" + filename)
         print("-adding them")
         for i, r in enumerate(result):
-            print("{}/{}".format(i+1, len(result)), end="")
+            print("{}/{}".format(i + 1, len(result)), end="")
             self.add_from_location(r)
             print("\r", end="")
 
     def show_block(self, batch, position, name) -> list:
         # name = "missing_texture"
+        faces = []
+        x, y, z = position
+        for i, (dx, dy, dz) in enumerate(config.FACES):
+            block = G.world.get_active_dimension().get_block((x + dx, y + dy, z + dz))
+            if block:
+                v = (block.is_solid_side(config.REVERSED_FACE_NAMES[i]) if block and type(block) != str else \
+                         G.blockhandler.blocks[block].is_solid_side(None, config.REVERSED_FACE_NAMES[i]))
+            else:
+                v = True
+            faces.append(v)
         try:
-            return self._show_block(batch, position, name)
-        except:
+            return self._show_block(batch, position, name, faces)
+        except Exception:
             traceback.print_exc()
-            return self._show_block(batch, position, "missing_texture")
+            return self._show_block(batch, position, "missing_texture", [True] * 6)
 
-    def _show_block(self, batch, position, name) -> list:
+    def _show_block(self, batch, position: tuple, name: str, faces: list) -> list:
         # print(position, batch)
         if name not in self.loaded_models:
             name = "missing_texture"
         model = self.loaded_models[name]
         data = []
         for box in model.boxinfo:
-            data.append(box.add_to_batch(batch, position))
+            data += box.add_to_batch(batch, position, faces)
         return data
 
 

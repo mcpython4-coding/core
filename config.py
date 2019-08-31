@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import math
+import util.enums
 
 
 TICKS_PER_SEC = 60
@@ -41,13 +42,19 @@ PLAYER_HEIGHT = 2
 TEXTURE_PATH = 'assets/texture.png'
 
 FACES = [
-    ( 0, 1, 0),
-    ( 0,-1, 0),
+    (0, 1, 0),
+    (0, -1, 0),
     (-1, 0, 0),
-    ( 1, 0, 0),
-    ( 0, 0, 1),
-    ( 0, 0,-1),
+    (1, 0, 0),
+    (0, 0, 1),
+    (0, 0, -1),
 ]
+
+FACE_NAMES = [util.enums.EnumSide.U, util.enums.EnumSide.D,
+              util.enums.EnumSide.N, util.enums.EnumSide.E, util.enums.EnumSide.S, util.enums.EnumSide.W]
+
+REVERSED_FACE_NAMES = [util.enums.EnumSide.D, util.enums.EnumSide.U,
+                       util.enums.EnumSide.S, util.enums.EnumSide.W, util.enums.EnumSide.N, util.enums.EnumSide.E]
 
 
 RANDOM_TICK_SPEED = 1

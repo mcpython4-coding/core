@@ -38,7 +38,7 @@ class Dimension:
 
     def get_block(self, position):
         chunk = self.get_chunk_for_position(position, generate=False)
-        return chunk.world[position] if position in chunk.world else None
+        return chunk.get_block(position)
 
     def add_block(self, position: tuple, blockname: str, immediate=True, block_update=True, args=[], kwargs={}):
         self.get_chunk_for_position(position).add_block(position, blockname, immediate=immediate,

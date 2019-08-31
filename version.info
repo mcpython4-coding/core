@@ -266,4 +266,11 @@ started these clone on 12th of July, 2019
 [uuk]: added dimension-attribute to command info
 [uuk]: fixed bug: position-entry does only decode ~-parameters, not valid setting it
 [uuk]: fixed some miss-spells
+[uuk]: added new enum: EnumSide
+[uuk]: added is_solid_side-function to Block
+[uuk]: util.math.get_max_y(position) accepts now also an x,z position
+[uuk]: util.math.cube_vertices & util.math.cube_vertices_2 supports now face-deactivating
+[uuk]: made it possible to hide individual block faces
+[uuk]: fixed bug: Dimension.get_block did not access blocks that should be generated in the future
+[uuk]: fixed bug: Chunk.get_block did NOT give None back if position is empty
 

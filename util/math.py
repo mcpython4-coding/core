@@ -10,40 +10,44 @@ import globals as G
 
 
 def get_max_y(pos):
-    """gets the max y at a x,y,z pos"""
-    x, y, z = normalize(pos)
+    """gets the max y at a x,y,z or x,z pos"""
+    x, y, z = normalize(pos if len(pos) == 3 else (pos[0], 0, pos[1]))
     chunk = G.world.get_active_dimension().get_chunk_for_position(pos)
     heightmap = chunk.get_value('heightmap')
     y = heightmap[x, z][0][1]
     return y + 2  # account for the distance from head to foot
 
 
-def cube_vertices(x, y, z, n):
+def cube_vertices(x, y, z, n, faces=(True, True, True, True, True, True)):
     """ Return the vertices of the cube at position x, y, z with size 2*n.
 
     """
-    return [
-        x - n, y + n, z - n, x - n, y + n, z + n, x + n, y + n, z + n, x + n, y + n, z - n,  # top
-        x - n, y - n, z - n, x + n, y - n, z - n, x + n, y - n, z + n, x - n, y - n, z + n,  # bottom
-        x - n, y - n, z - n, x - n, y - n, z + n, x - n, y + n, z + n, x - n, y + n, z - n,  # left
-        x + n, y - n, z + n, x + n, y - n, z - n, x + n, y + n, z - n, x + n, y + n, z + n,  # right
-        x - n, y - n, z + n, x + n, y - n, z + n, x + n, y + n, z + n, x - n, y + n, z + n,  # front
-        x + n, y - n, z - n, x - n, y - n, z - n, x - n, y + n, z - n, x + n, y + n, z - n,  # back
-    ]
+    top = [x - n, y + n, z - n, x - n, y + n, z + n, x + n, y + n, z + n, x + n, y + n, z - n] if faces[0] else []
+    bottom = [x - n, y - n, z - n, x + n, y - n, z - n, x + n, y - n, z + n, x - n, y - n, z + n] if faces[1] else []
+    left = [x - n, y - n, z - n, x - n, y - n, z + n, x - n, y + n, z + n, x - n, y + n, z - n] if faces[2] else []
+    right = [x + n, y - n, z + n, x + n, y - n, z - n, x + n, y + n, z - n, x + n, y + n, z + n] if faces[3] else []
+    front = [x - n, y - n, z + n, x + n, y - n, z + n, x + n, y + n, z + n, x - n, y + n, z + n] if faces[4] else []
+    back = [x + n, y - n, z - n, x - n, y - n, z - n, x - n, y + n, z - n, x + n, y + n, z - n] if faces[5] else []
+    return top + bottom + left + right + front + back
 
 
-def cube_vertices_2(x, y, z, nx, ny, nz):
+def cube_vertices_2(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
     """ Return the vertices of the cube at position x, y, z with size 2*n.
 
     """
-    return [
-        x - nx, y + ny, z - nz, x - nx, y + ny, z + nz, x + nx, y + ny, z + nz, x + nx, y + ny, z - nz,  # top
-        x - nx, y - ny, z - nz, x + nx, y - ny, z - nz, x + nx, y - ny, z + nz, x - nx, y - ny, z + nz,  # bottom
-        x - nx, y - ny, z - nz, x - nx, y - ny, z + nz, x - nx, y + ny, z + nz, x - nx, y + ny, z - nz,  # left
-        x + nx, y - ny, z + nz, x + nx, y - ny, z - nz, x + nx, y + ny, z - nz, x + nx, y + ny, z + nz,  # right
-        x - nx, y - ny, z + nz, x + nx, y - ny, z + nz, x + nx, y + ny, z + nz, x - nx, y + ny, z + nz,  # front
-        x + nx, y - ny, z - nz, x - nx, y - ny, z - nz, x - nx, y + ny, z - nz, x + nx, y + ny, z - nz,  # back
-    ]
+    top = [x - nx, y + ny, z - nz, x - nx, y + ny, z + nz, x + nx, y + ny, z + nz, x + nx, y + ny, z - nz] if faces[0] \
+        else []
+    bottom = [x - nx, y - ny, z - nz, x + nx, y - ny, z - nz, x + nx, y - ny, z + nz, x - nx, y - ny, z + nz] if \
+        faces[1] else []
+    left = [x - nx, y - ny, z - nz, x - nx, y - ny, z + nz, x - nx, y + ny, z + nz, x - nx, y + ny, z - nz] if \
+        faces[2] else []
+    right = [x + nx, y - ny, z + nz, x + nx, y - ny, z - nz, x + nx, y + ny, z - nz, x + nx, y + ny, z + nz] if \
+        faces[3] else []
+    front = [x - nx, y - ny, z + nz, x + nx, y - ny, z + nz, x + nx, y + ny, z + nz, x - nx, y + ny, z + nz] if \
+        faces[4] else []
+    back = [x + nx, y - ny, z - nz, x - nx, y - ny, z - nz, x - nx, y + ny, z - nz, x + nx, y + ny, z - nz] if \
+        faces[5] else []
+    return top + bottom + left + right + front + back
 
 
 def tex_coord(x, y, n=16):

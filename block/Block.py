@@ -55,3 +55,6 @@ class Block:
     def get_brake_time(self, item: gui.ItemStack) -> int:
         return 2
 
+    def is_solid_side(self, side) -> bool:
+        return True
+
