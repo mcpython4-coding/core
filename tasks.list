@@ -37,10 +37,9 @@ add Enchantment-baseclass with attribute is_combineable_with(...) -> bool & all 
 add Tool-baseclass and Tool-durability
 add remove of items from crafting slots
 optimize BlockItemGenerator to have shorter times
-add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload, /clone, /fill, /setblock, /?
+add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload, /clone, /?
 add braketime-attribute to Block, use it in window brake system (also in StatePartGame)
 add datapacks with .mcfunction-files, add resourcelocator binding for recipes, add /function & /shedule -command
-add Selector-registry & add more selectors
 fix missing resize of image-parts when using only a part of it
 make the following attributes as json-saved files: Block.is_brake_able, Block.brake_time, Item.tool_types, Item.max_durability, Item.braketime_of
 add update.py for downloading latest build of mcpython and unpacking it

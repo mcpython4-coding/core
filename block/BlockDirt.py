@@ -11,6 +11,11 @@ from . import Block
 
 @G.blockhandler
 class BlockDirt(Block.Block):
+    """
+    base class for dirt
+    todo: implement -> grass convert
+    """
+
     @staticmethod
     def get_name() -> str:
         return "minecraft:dirt"

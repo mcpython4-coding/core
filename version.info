@@ -273,4 +273,6 @@ started these clone on 12th of July, 2019
 [uuk]: made it possible to hide individual block faces
 [uuk]: fixed bug: Dimension.get_block did not access blocks that should be generated in the future
 [uuk]: fixed bug: Chunk.get_block did NOT give None back if position is empty
-
+[github]: started day 19 as first of September, 2019
+[uuk]: cleaned up files & fixed some bugs:
+    - block directory

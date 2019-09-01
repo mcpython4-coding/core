@@ -12,6 +12,10 @@ import event.TickHandler
 
 @G.blockhandler
 class IFallingBlock(block.IBlock.IBlock):
+    """
+    base injection class for falling block
+    """
+
     @staticmethod
     def get_extension_name() -> str:
         return "falling_block"
@@ -28,10 +32,13 @@ class IFallingBlock(block.IBlock.IBlock):
         if not block:
             event.TickHandler.handler.bind(cls.fall, 10, args=[self])
 
-    def fall(self):
+    def fall(self, check=True):
+        """
+        let the block fall
+        :param check: weither to check if the block can fall to that position or not
+        """
         x, y, z = self.position
-        block = G.world.get_active_dimension().get_block((x, y - 1, z))
-        if not block:
+        if not check or not G.world.get_active_dimension().get_block((x, y - 1, z)):
             G.world.get_active_dimension().remove_block(self.position)
             G.world.get_active_dimension().add_block((x, y - 1, z), self)
 

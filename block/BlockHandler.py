@@ -11,19 +11,32 @@ import block.IBlock
 
 
 class BlockHandler:
+    """
+    main registry for blocks & block injection classes
+    """
+
     def __init__(self):
-        self.blocks = {}
-        self.blockclasses = []
-        self.used_models = []
-        self.injectionclasses = {}
+        """
+        setting up the BlockHandler
+        """
+
+        self.blocks = {}  # a name -> blockclass map
+        self.blockclasses = []  # a list of blockclasses
+        self.used_models = []  # a list of models which should be loaded
+        self.injectionclasses = {}  # a name -> injection class map
 
     def register(self, obj):
-        if issubclass(obj, block.Block.Block):
-            obj.on_register(self)
-            self.blockclasses.append(obj)
+        """
+        register an new block / block injection class
+        :param obj: the block / injection class to register
+        """
+
+        if issubclass(obj, block.Block.Block):  # check for block class
+            obj.on_register(self)  # call event function
+            self.blockclasses.append(obj)  # add it to registry
             name = obj.get_name()
             self.blocks[name] = self.blocks[name.split(":")[-1]] = obj
-            self.used_models += obj.get_used_models()
+            self.used_models += obj.get_used_models()  # read used models
             self.used_models = list(dict.fromkeys(self.used_models))
         elif issubclass(obj, block.IBlock.IBlock):
             self.injectionclasses[obj.get_extension_name()] = obj
@@ -31,13 +44,22 @@ class BlockHandler:
             raise ValueError("can only cast "+str(block.Block.Block)+"-subclasses to valid blocks")
 
     def __call__(self, obj):
+        """
+        makes it possible to use @G.blockhandler-notations
+        :param obj: the obj to register
+        :return: the obj itself
+        """
         self.register(obj)
+        return obj
 
 
 handler = G.blockhandler = BlockHandler()
 
 
 def load():
+    """
+    loads all blocks that should be loaded
+    """
     import block.BlockFactory
     block.BlockFactory.BlockFactory.from_directory(G.local+"/assets/factory/block")
 

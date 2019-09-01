@@ -1,60 +1,92 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-orginal game by forgleman licenced under MIT-licence
+original game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
-from util.math import tex_coords
 import gui.ItemStack
-import traceback
 
 
 class Block:
+    """
+    base class for all blocks
+    """
+
     @classmethod
     def get_used_models(cls) -> list:
+        """
+        :return: a list of all model names which should be loaded for these block
+        """
         return [cls.get_model_name(None)]
 
     def __init__(self, position, setted_to=None):
+        """
+        creates new Block
+        :param position: the position to create the block on
+        :param setted_to: when the block is setted to an block, these parameter contains where
+        """
         self.position = position
         self.setted_to = setted_to
         self.on_create()
 
     @staticmethod
     def get_name() -> str:
+        """
+        :return: the name of the block
+        """
         return "minecraft:missing_name"
 
     @staticmethod
     def on_register(registry):
+        """
+        callen when the block is registered to any registry
+        :param registry: the registry it registered to
+        """
         pass
 
     def on_create(self):
-        pass
+        """
+        callen when the block is created
+        """
 
     def on_delete(self):
-        pass
+        """
+        callen when the block is removed
+        """
 
     def get_model_name(self):
-        return None
+        """
+        :return: the name of the model to use for these block
+        """
 
     def is_brakeable(self) -> bool:
+        """
+        :return: if the block is brakeable in gamemode 0
+        """
         return True
 
     def on_random_update(self):
-        pass
+        """
+        callen on random update
+        todo: re-activate
+        """
 
     def on_block_update(self):
-        pass
-
-    def is_useable_by_item(self, item: gui.ItemStack) -> bool:
-        return False
-
-    def on_use_by_item(self, item: gui.ItemStack, triggered_by_block: bool):
-        pass
+        """
+        callen when an near-by blockposition is updated by setting/removing an block
+        """
 
     def get_brake_time(self, item: gui.ItemStack) -> int:
+        """
+        :param item: the item that is used
+        :return: how long it takes to brake the block
+        """
         return 2
 
     def is_solid_side(self, side) -> bool:
+        """
+        :param side: the side that is asked for
+        :return: if the side is solid or not
+        """
         return True
-
