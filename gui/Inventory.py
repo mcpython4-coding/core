@@ -13,9 +13,15 @@ import texture.helpers
 
 
 class Inventory:
+    """
+    base inventory class
+    """
+
     @staticmethod
-    def get_config_file() -> str or None:
-        pass
+    def get_config_file() -> str:
+        """
+        :return: the location of the inventory config file (if provided)
+        """
 
     def __init__(self):
         self.active = False
@@ -30,10 +36,14 @@ class Inventory:
         self.reload_config()
 
     def reload_config(self):
+        """
+        reload the config file
+        """
         if self.get_config_file():
             self.config = ResourceLocator.ResourceLocator(self.get_config_file(), load_as_json=True).data
         else:
             self.config = {}
+            return
         for slotid in self.config["slots"] if "slots" in self.config else []:
             sid = int(slotid)
             entry = self.config["slots"][slotid]
@@ -60,12 +70,21 @@ class Inventory:
         self.on_create()
 
     def on_create(self):
-        pass
+        """
+        callen when the inventory is created
+        """
 
     def create_slots(self) -> list:
+        """
+        creates the slots
+        :return: the slots the inventory uses
+        """
         return []
 
     def _get_position(self):
+        """
+        :return: the position of the inventory
+        """
         x, y = self.position
         wx, wy = G.window.get_size()
         sx, sy = self.bgimagesize if self.bgsprite else (0, 0)
@@ -94,16 +113,23 @@ class Inventory:
         G.inventoryhandler.hide(self)
 
     def on_activate(self):
-        pass
+        """
+        callen when the inventory is shown
+        """
 
     def on_deactivate(self):
-        pass
+        """
+        callen when the inventory is hidden
+        """
 
     def is_closable_by_escape(self) -> bool: return True
 
     def is_always_open(self) -> bool: return False
 
     def draw(self):
+        """
+        draws the inventory
+        """
         self.on_draw_background()
         x, y = self._get_position()
         if self.bgsprite:
@@ -118,16 +144,24 @@ class Inventory:
         self.on_draw_overlay()
 
     def on_draw_background(self):
-        pass
+        """
+        draw the background
+        """
 
     def on_draw_over_backgroundimage(self):
-        pass
+        """
+        draw between background and slots
+        """
 
     def on_draw_over_image(self):
-        pass
+        """
+        draw between slots and counts
+        """
 
     def on_draw_overlay(self):
-        pass
+        """
+        draw over anything else
+        """
 
     def is_blocking_interactions(self) -> bool:
         return True

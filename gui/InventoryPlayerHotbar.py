@@ -14,6 +14,10 @@ import ResourceLocator
 
 
 class InventoryPlayerHotbar(gui.Inventory.Inventory):
+    """
+    main inventory for the hotbar
+    """
+
     def __init__(self):
         gui.Inventory.Inventory.__init__(self)
         self.selected_sprite = texture.helpers.to_pyglet_sprite(

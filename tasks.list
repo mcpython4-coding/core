@@ -25,6 +25,7 @@ add crafting
 add logs & log base class
 add trees to world gen
 add save / load of world
+add option for inventories to be visable when another is also visable
 
 make an load.py file with most of the content of the __main__ file and the __main__-file should only launch it
 add an setup.py-file for setting up all code fragments, make an event for it, use load.py to get data and then launch

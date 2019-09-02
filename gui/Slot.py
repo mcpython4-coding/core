@@ -17,8 +17,20 @@ SLOT_WIDTH = 32
 
 
 class Slot:
+    """
+    slot class
+    """
+
     def __init__(self, itemstack=None, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
                  allow_player_add_to_free_place=True):
+        """
+        creates an new slot
+        :param itemstack: the itemstack to use
+        :param position: the position to create at
+        :param allow_player_remove: if the player is allowed to remove items out of it
+        :param allow_player_insert: if the player is allowed to insert items into it
+        :param allow_player_add_to_free_place: if items can be added direct to system
+        """
         self.itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
         # self.itemstack.item = G.itemhandler.items["minecraft:stone"]()
         # self.itemstack.amount = 2
@@ -33,9 +45,17 @@ class Slot:
         self.interaction_mode = [allow_player_remove, allow_player_insert, allow_player_add_to_free_place]
 
     def copy(self, position=(0, 0)):
+        """
+        creates an copy of self
+        :param position: the position to create at
+        :return: a slotcopy pointing to this
+        """
         return SlotCopy(position, self)
 
-    def draw(self, dx, dy):
+    def draw(self, dx=0, dy=0):
+        """
+        draws the slot
+        """
         if self.itemstack.item and self.itemstack.item.get_item_image_location() != self.__last_itemfile:
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.itemhandler.pygletimagetable[
                                                                          self.itemstack.item.get_name()])
@@ -60,6 +80,10 @@ class Slot:
 
 
 class SlotCopy:
+    """
+    copy of an slot with the same itemstack
+    """
+
     def __init__(self, position, master: Slot, allow_player_remove=True, allow_player_insert=True,
                  allow_player_add_to_free_place=True):
         self.master = master

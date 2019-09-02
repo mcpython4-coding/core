@@ -10,11 +10,14 @@ import gui.Inventory
 import state.StatePart
 import state.StatePartGame
 from pyglet.window import key, mouse
-import ResourceLocator
 import gui.Slot
 
 
 class OpenedInventoryStatePart(state.StatePart.StatePart):
+    """
+    class for inventories as state
+    """
+
     def __init__(self):
         self.event_functions = [("user:keyboard:press", self.on_key_press),
                                 ("render:draw:2d", self.on_draw_2d),
@@ -52,6 +55,12 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             G.inventoryhandler.moving_slot.draw(0, 0)
 
     def _get_slot_for(self, x, y) -> gui.Slot.Slot or None:
+        """
+        get slot for position
+        :param x: the x position
+        :param y: the y position
+        :return: the slot or None if none found
+        """
         for inventory in G.inventoryhandler.opened_inventorystack:
             dx, dy = inventory._get_position()
             for slot in inventory.slots:
@@ -113,6 +122,10 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
 
 
 class InventoryHandler:
+    """
+    main class for registrating inventories
+    """
+
     def __init__(self):
         self.opened_inventorystack = []
         self.alwaysopened = []
@@ -121,6 +134,10 @@ class InventoryHandler:
                                                         allow_player_remove=False)
 
     def add(self, inventory):
+        """
+        add an new inventory
+        :param inventory: the inventory to add
+        """
         if inventory in self.inventorys: return
         self.inventorys.append(inventory)
         if inventory.is_always_open():
@@ -131,25 +148,40 @@ class InventoryHandler:
         [inventory.reload_config() for inventory in self.inventorys]
 
     def show(self, inventory):
+        """
+        show an inventory
+        :param inventory: the inventory to show
+        """
         if inventory in self.opened_inventorystack: return
         self.opened_inventorystack.append(inventory)
         inventory.on_activate()
 
     def hide(self, inventory):
+        """
+        hide an inventory
+        :param inventory: the inventory to hide
+        """
         if inventory not in self.opened_inventorystack: return
         if inventory in self.alwaysopened: return
         inventory.on_deactivate()
         self.opened_inventorystack.remove(inventory)
 
     def remove_one_from_stack(self):
+        """
+        removes one inventory from stack
+        :return: the inventory removed or None if no is active
+        """
         stack = self.opened_inventorystack
         stack.reverse()
         for inventory in stack:
             if inventory.is_closable_by_escape():
                 self.hide(inventory)
-                return
+                return inventory
 
     def close_all_inventorys(self):
+        """
+        close all inventories
+        """
         for inventory in self.opened_inventorystack:
             self.hide(inventory)
 

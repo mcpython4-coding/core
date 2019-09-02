@@ -12,6 +12,10 @@ import gui.ItemStack
 
 
 class InventoryPlayerMain(gui.Inventory.Inventory):
+    """
+    inventory class for the main part of the inventory
+    """
+
     @staticmethod
     def get_config_file() -> str or None:
         return G.local+"/assets/config/inventory/playerinventorymain.json"
