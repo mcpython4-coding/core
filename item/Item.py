@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-orginal game by forgleman licenced under MIT-licence
+original game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -39,4 +39,8 @@ class Item:
 
     def get_max_stack_size(self) -> int:
         return 64
+
+    def __eq__(self, other):
+        if not issubclass(type(other), Item): return False
+        return other.get_name() == self.get_name()
 

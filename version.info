@@ -283,3 +283,6 @@ started these clone on 12th of July, 2019
     - event directory
 [uuk]: fixed bug: TickHandler.bind_redstone_tick was self-calling
     - gui directory
+[uuk]: implemented crafting system
+[uuk]: slot has now an on_update, allow_half_getting & on_shift_click implementation
+[uuk]: ItemStacks & Items have now an == implementation

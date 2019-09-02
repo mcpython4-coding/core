@@ -21,11 +21,16 @@ cleanup tasks (should be done regulary):
         could be parts of these generated on setup?
         is there code which should be as config / world config / world storage data stored?
 
-add crafting
 add logs & log base class
 add trees to world gen
 add save / load of world
 add option for inventories to be visable when another is also visable
+add option for toggling gamemode & world generator
+add loot tables for block drops
+
+
+todo: fix crafting shift click
+todo: fix bug: can't combine two itemstacks in inventory
 
 make an load.py file with most of the content of the __main__ file and the __main__-file should only launch it
 add an setup.py-file for setting up all code fragments, make an event for it, use load.py to get data and then launch
@@ -33,15 +38,12 @@ add an setup.py-file for setting up all code fragments, make an event for it, us
 split everything into seperated load events which are called ones per ones
 make an registry base class, an registry handler and registry locks
 add PlayerCreativeInventory, PlayerCreativeTab
-add an header to BlockItemFactory what is done at the moment
-add CraftingHandler, Recipe, RecipeChecker, RecipeLoader and bind to recipe grid
 add BlockInventory-attribute to Block for auto-opening an inventory
-add loot-tables & bind to blocks, add /loot-command
+add /loot-command
 add can_brake-attribute to item to definite items that can brake blocks in gamemode 2
 add the following block inventorys: crafting table, furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
 add Enchantment-baseclass with attribute is_combineable_with(...) -> bool & all enchanments
 add Tool-baseclass and Tool-durability
-add remove of items from crafting slots
 optimize BlockItemGenerator to have shorter times
 add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload, /clone, /?
 add braketime-attribute to Block, use it in window brake system (also in StatePartGame)

@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-orginal game by forgleman licenced under MIT-licence
+original game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -60,6 +60,8 @@ class ResourceLocator:
                 try:
                     if not location.endswith(".png"):
                         self.data = G.jar_archive.read(location)
+                        if load_as_json:
+                            self.data = json.loads(self.data.decode("UTF-8"))
                     else:
                         with G.jar_archive.open(location, mode="r") as f, open(output, mode="wb") as t:
                             t.write(f.read())

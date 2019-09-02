@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-orginal game by forgleman licenced under MIT-licence
+original game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -54,6 +54,7 @@ class StateBlockItemGenerator(State.State):
         event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
 
     def on_deactivate(self, new):
+        G.craftinghandler.load()
         G.world.cleanup()
 
     def add_new_screen(self):

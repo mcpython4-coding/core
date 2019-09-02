@@ -6,20 +6,17 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
-from . import Block
 
 
-@G.blockhandler
-class BlockDirt(Block.Block):
-    """
-    base class for dirt
-    todo: implement -> grass convert
-    """
-
+class IRecipe:
     @staticmethod
-    def get_name() -> str:
-        return "minecraft:dirt"
+    def get_recipe_name() -> str:
+        raise NotImplementedError()
 
-    def get_model_name(self):
-        return "block/dirt"
+    @classmethod
+    def from_data(cls, data: dict):
+        return cls()
+
+    def get_identification(self):
+        raise NotImplementedError()
 

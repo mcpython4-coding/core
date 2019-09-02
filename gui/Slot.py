@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-orginal game by forgleman licenced under MIT-licence
+original game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -22,7 +22,7 @@ class Slot:
     """
 
     def __init__(self, itemstack=None, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
-                 allow_player_add_to_free_place=True):
+                 allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None):
         """
         creates an new slot
         :param itemstack: the itemstack to use
@@ -30,8 +30,11 @@ class Slot:
         :param allow_player_remove: if the player is allowed to remove items out of it
         :param allow_player_insert: if the player is allowed to insert items into it
         :param allow_player_add_to_free_place: if items can be added direct to system
+        :param on_update: callen when the slot is updated
+        :param allow_half_getting: can the player get only the half of the items out of the slot?
+        :param on_shift_click: callen when shift-clicked on the block
         """
-        self.itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
+        self.__itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
         # self.itemstack.item = G.itemhandler.items["minecraft:stone"]()
         # self.itemstack.amount = 2
         self.position = position
@@ -43,6 +46,20 @@ class Slot:
         self.amount_lable = pyglet.text.Label(text=str(self.itemstack.amount))
         self.__last_itemfile = self.itemstack.item.get_item_image_location() if self.itemstack.item else None
         self.interaction_mode = [allow_player_remove, allow_player_insert, allow_player_add_to_free_place]
+        self.on_update = [on_update] if on_update else []
+        self.allow_half_getting = allow_half_getting
+        self.on_shift_click = on_shift_click
+
+    def get_itemstack(self):
+        return self.__itemstack
+
+    def set_itemstack(self, stack):
+        old_itemstack = self.__itemstack
+        self.__itemstack = stack
+        if stack != old_itemstack and self.on_update:
+            [f(old_itemstack, stack) for f in self.on_update]
+
+    itemstack = property(get_itemstack, set_itemstack)
 
     def copy(self, position=(0, 0)):
         """
@@ -85,10 +102,11 @@ class SlotCopy:
     """
 
     def __init__(self, position, master: Slot, allow_player_remove=True, allow_player_insert=True,
-                 allow_player_add_to_free_place=True):
+                 allow_player_add_to_free_place=True, allow_half_getting=True):
         self.master = master
         self.position = position
         self.interaction_mode = [allow_player_remove, allow_player_insert, allow_player_add_to_free_place]
+        self.allow_half_getting = allow_half_getting
 
     def set_itemstack(self, itemstack: gui.ItemStack.ItemStack):
         self.master.itemstack = itemstack

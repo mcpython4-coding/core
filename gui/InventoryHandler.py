@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-orginal game by forgleman licenced under MIT-licence
+original game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -79,7 +79,19 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         if button == mouse.LEFT:
             if slot and (slot.interaction_mode[0] or not slot.itemstack.item) and (slot.interaction_mode[1] or not
                                                                                    moving_slot.itemstack.item):
-                slot.itemstack, moving_slot.itemstack = moving_slot.itemstack, slot.itemstack
+                if modifiers & key.MOD_SHIFT and slot.on_shift_click:
+                    slot.on_shift_click(x, y, button, modifiers)
+                else:
+                    if slot.itemstack.item and moving_slot.itemstack.item and slot.itemstack.item.get_name() == \
+                            moving_slot.itemstack.item.get_name():
+                        toadd = slot.itemstack.item.get_max_stack_size() - slot.itemstack.amount
+                        if toadd > moving_slot.amount: toadd = moving_slot.amount
+                        moving_slot.amount -= toadd
+                        slot.itemstack.amount = slot.itemstack.amount + toadd
+                        if moving_slot.amount <= 0:
+                            moving_slot.itemstack.clean()
+                    else:
+                        slot.itemstack, moving_slot.itemstack = moving_slot.itemstack, slot.itemstack
             else:
                 # threw the item
                 pass
@@ -90,7 +102,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                         slot.itemstack = moving_slot.itemstack.copy()
                         slot.itemstack.amount = 1
                         moving_slot.itemstack.amount -= 1
-                elif not moving_slot.itemstack.item:
+                elif not moving_slot.itemstack.item and slot.allow_half_getting:
                     if slot.interaction_mode[0]:
                         moving_slot.itemstack = slot.itemstack.copy()
                         slot.itemstack.amount //= 2
