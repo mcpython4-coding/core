@@ -8,11 +8,19 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 
 
 class IEventInfo:
+    """
+    base class for every event info
+    """
+
     def equals(self, *args):
         raise NotImplementedError()
 
 
 class KeyPressEventInfo(IEventInfo):
+    """
+    info for key press
+    """
+
     def __init__(self, symbol: int, modifer=[]):
         self.symbol = symbol
         self.modifier = modifer
@@ -22,6 +30,10 @@ class KeyPressEventInfo(IEventInfo):
 
 
 class MousePressEventInfo(IEventInfo):
+    """
+    info for mouse press
+    """
+
     def __init__(self, mouse: int, modifier=[], area=None):
         self.mouse = mouse
         self.modifier = modifier

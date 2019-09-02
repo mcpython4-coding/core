@@ -280,3 +280,5 @@ started these clone on 12th of July, 2019
     - chat directory
 [uuk]: /generate accepts now an area
 [uuk]: /give-command give you now maximal the max stack size, not more
+    - event directory
+[uuk]: fixed bug: TickHandler.bind_redstone_tick was self-calling

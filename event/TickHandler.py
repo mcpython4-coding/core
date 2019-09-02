@@ -13,6 +13,10 @@ import config
 
 
 class TickHandler:
+    """
+    main handler for ticks
+    """
+
     def __init__(self):
         self.tick_array = {}
         self.active_tick = 0
@@ -21,6 +25,10 @@ class TickHandler:
         pyglet.clock.schedule_interval(self.tick, 1/20)
 
     def tick(self, dt):
+        """
+        execute ticks
+        :param dt: the time that came after the last event
+        """
         self.active_tick += 1
         # execute functions
         if self.active_tick in self.tick_array:
@@ -32,6 +40,15 @@ class TickHandler:
         # pyglet.clock.schedule(self.send_random_ticks)
 
     def bind(self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}):
+        """
+        bind an function to an given tick
+        :param function: the function to bind
+        :param tick: the tick to add
+        :param isdelta: if it is delta or not
+        :param ticketfunction: function which is called when the function is called with some informations
+        :param args: the args to give
+        :param kwargs: the kwargs to give
+        """
         if isdelta:
             tick += self.active_tick
         # print(function, tick, self.active_tick)
@@ -44,7 +61,7 @@ class TickHandler:
         self.tick_array[tick].append((ticketid, function, args, kwargs, ticketfunction))
 
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
-        self.bind_redstone_tick(function, tick*2, *args, **kwargs)
+        self.bind(function, tick*2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
         cx, cz = util.math.sectorize(G.window.position)
