@@ -276,3 +276,7 @@ started these clone on 12th of July, 2019
 [github]: started day 19 as first of September, 2019
 [uuk]: cleaned up files & fixed some bugs:
     - block directory
+[github]: started day 20 as second of Semptember, 2019
+    - chat directory
+[uuk]: /generate accepts now an area
+[uuk]: /give-command give you now maximal the max stack size, not more

@@ -13,6 +13,10 @@ import util.math
 
 @G.commandhandler
 class CommandSetblock(chat.command.Command.Command):
+    """
+    class for /setblock command
+    """
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "setblock"

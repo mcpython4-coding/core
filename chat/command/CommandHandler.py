@@ -13,21 +13,35 @@ import chat.command.Selector
 
 
 class CommandHandler:
+    """
+    main registry for commands
+    """
+
     def __init__(self):
         self.commands = []
         self.commandentries = {}
         self.selectors = []
 
     def add(self, command):
-        self(command)
+        """
+        register an command to the registry
+        :param command: the command to add
+        :return: the command
+        """
+        return self(command)
 
     def __call__(self, command):
-        if issubclass(command, chat.command.Command.Command):
+        """
+        register an command to the registry
+        :param command: the command to add
+        :return: the command
+        """
+        if issubclass(command, chat.command.Command.Command):  # is it an command
             self.commands.append(command)
             G.commandparser.add_command(command)
-        elif issubclass(command, chat.command.CommandEntry.CommandEntry):
+        elif issubclass(command, chat.command.CommandEntry.CommandEntry):  # or an command entry
             self.commandentries[command.ENTRY_NAME] = command
-        elif issubclass(command, chat.command.Selector.Selector):
+        elif issubclass(command, chat.command.Selector.Selector):  # or an selector?
             self.selectors.append(command)
         else:
             raise ValueError("can't register object {} to commandhandler".format(command))
@@ -36,6 +50,8 @@ class CommandHandler:
 
 G.commandhandler = CommandHandler()
 
+
+# load the stuff
 
 chat.command.CommandEntry.load()
 chat.command.Selector.load()

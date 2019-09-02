@@ -10,20 +10,45 @@ from chat.command.Command import ParseType
 
 
 class CommandEntry:
-    ENTRY_NAME = None
+    """
+    an parseable command entry
+    """
+
+    ENTRY_NAME = None  # the name of the entry
 
     @staticmethod
     def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
+        """
+        parse an entry in entrylist to an value
+        :param entrylist: the entrys to parse
+        :param start: which entry to start at
+        :param info: the command info to use
+        :param arguments: overgiven creation arguments
+        :param kwargs: overgiven optional creative arguments
+        :return: an (new start, value)-tuple
+        """
         return start+1, None
 
     @staticmethod
     def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
+        """
+        checks if entry is valid
+        :param entrylist: the entrys to check
+        :param start: which entry to start at
+        :param arguments: overgiven creation arguments
+        :param kwargs: overgiven optional creation arguments
+        :return: if entry is valid
+        """
         raise NotImplementedError()
 
 
 def load():
     @G.commandhandler
     class DefiniteString(CommandEntry):
+        """
+        Entry for definite string
+        """
+
         ENTRY_NAME = ParseType.DEFINIED_STRING
 
         @staticmethod
@@ -34,6 +59,10 @@ def load():
 
     @G.commandhandler
     class IntEntry(CommandEntry):
+        """
+        entry for int
+        """
+
         ENTRY_NAME = ParseType.INT
 
         @staticmethod
@@ -42,18 +71,22 @@ def load():
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             try:
-                int(entrylist[start])
+                int(entrylist[start])  # try to convert to int
                 return True
             except:
                 return False
 
     @G.commandhandler
     class StringEntry(CommandEntry):
+        """
+        string entry
+        """
+
         ENTRY_NAME = ParseType.STRING
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
-            startc = entrylist[start][0]
+            startc = entrylist[start][0]  # with what does it start?
             if startc in "'\"":
                 entrys = [entrylist[start]]
                 i = 0
@@ -67,7 +100,7 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            startc = entrylist[start][0]
+            startc = entrylist[start][0]  # with what does it start?
             if startc in "'\"":
                 entrys = [entrylist[start]]
                 i = 0
@@ -75,11 +108,16 @@ def load():
                     start += 1
                     entrys.append(entrylist[start + i])
                     if start >= len(entrylist):
-                        return False
-                return True
+                        return False  # it does NOT close
+                return True  # it does close
+            return False  # it does NOT start
 
     @G.commandhandler
     class FloatEntry(CommandEntry):
+        """
+        float entry
+        """
+
         ENTRY_NAME = ParseType.FLOAT
 
         @staticmethod
@@ -88,13 +126,17 @@ def load():
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             try:
-                float(entrylist[start])
+                float(entrylist[start])  # try to convert to float
                 return True
             except:
                 return False
             
     @G.commandhandler
     class BlockNameEntry(CommandEntry):
+        """
+        blockname entry
+        """
+
         ENTRY_NAME = ParseType.BLOCKNAME
 
         @staticmethod
@@ -103,10 +145,14 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in G.blockhandler.blocks
+            return entrylist[start] in G.blockhandler.blocks  # is this block arrival?
         
     @G.commandhandler
     class ItemNameEntry(CommandEntry):
+        """
+        itemname entry
+        """
+
         ENTRY_NAME = ParseType.ITEMNAME
 
         @staticmethod
@@ -115,26 +161,34 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in G.itemhandler.items
+            return entrylist[start] in G.itemhandler.items  # is this item arrival?
         
     @G.commandhandler
     class SelectorEntry(CommandEntry):
+        """
+        Selector entry
+        """
+
         ENTRY_NAME = ParseType.SELECTOR
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
             entry = entrylist[start]
             for selector in G.commandhandler.selectors:
-                if selector.is_valid(entry):
+                if selector.is_valid(entry):  # is this the selector we are searching for?
                     return start + 1, selector.parse(entry, info) 
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             entry = entrylist[start]
-            return any([x.is_valid(entry) for x in G.commandhandler.selectors])
+            return any([x.is_valid(entry) for x in G.commandhandler.selectors])  # have we any valid selector?
         
     @G.commandhandler
     class PositionEntry(CommandEntry):
+        """
+        position entry
+        """
+
         ENTRY_NAME = ParseType.POSITION
 
         @staticmethod
@@ -149,6 +203,13 @@ def load():
 
         @staticmethod
         def _parse_coordinate_to_real(r: str, index: int, info) -> float:
+            """
+            parse an coordinate (could be relative) to an valid coordinate
+            :param r: the coordinate to use
+            :param index: the index in the info position
+            :param info: the info to use
+            :return: an float value representing this
+            """
             if r.startswith("~"):
                 v = info.position[index]
                 if len(r) > 1:
@@ -167,7 +228,11 @@ def load():
                 return False
             
     @G.commandhandler
-    class SelectDefinitedString(CommandEntry):
+    class SelectDefinitedStringEntry(CommandEntry):
+        """
+        select definited stirng entry
+        """
+
         ENTRY_NAME = ParseType.SELECT_DEFINITED_STRING
 
         @staticmethod
@@ -176,10 +241,14 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in arguments
+            return entrylist[start] in arguments  # check if should be used
         
     @G.commandhandler
-    class OpenEndUndefinitedString(CommandEntry):
+    class OpenEndUndefinitedStringEntry(CommandEntry):
+        """
+        open end undefinited stirng entry
+        """
+
         ENTRY_NAME = ParseType.OPEN_END_UNDEFINITED_STRING
 
         @staticmethod
@@ -189,5 +258,5 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return (kwargs["min"] if "min" in kwargs else 0) <= len(entrylist) - start + 1
+            return (kwargs["min"] if "min" in kwargs else 0) <= len(entrylist) - start + 1  # if lenght is in range
 

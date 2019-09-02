@@ -13,6 +13,9 @@ import event.TickHandler
 
 @G.commandhandler
 class CommandReload(chat.command.Command.Command):
+    """
+    class for /reload command
+    """
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "reload"
@@ -20,7 +23,7 @@ class CommandReload(chat.command.Command.Command):
     @staticmethod
     def parse(values: list, modes: list, info):
         dim = G.world.get_active_dimension()
-        for i, chunk in enumerate(list(dim.chunks.values())):
+        for i, chunk in enumerate(list(dim.chunks.values())):  # iterate over all active chunks
             G.window.set_caption("preparing chunk {}/{} at {}".format(i+1, len(dim.chunks), chunk.position))
             chunk.update_visable()
         G.window.set_caption("finished!")

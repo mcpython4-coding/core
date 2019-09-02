@@ -12,6 +12,9 @@ from chat.command.Command import ParseBridge, ParseType, SubCommand, ParseMode
 
 @G.commandhandler
 class CommandGamemode(chat.command.Command.Command):
+    """
+    class for /gamemode command
+    """
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.add_subcommand(SubCommand(ParseType.SELECT_DEFINITED_STRING, "0", "1", "2", "3", "survival",
@@ -22,10 +25,10 @@ class CommandGamemode(chat.command.Command.Command):
     @staticmethod
     def parse(values: list, modes: list, info):
         mode = values[0]
-        if len(values) == 1:
+        if len(values) == 1:  # have we an selector?
             G.player.set_gamemode(mode)
         else:
-            for player in values[1]:
+            for player in values[1]:  # iterate through all players
                 player.set_gamemode(mode)
 
     @staticmethod

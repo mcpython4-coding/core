@@ -12,6 +12,10 @@ from chat.command.Command import SubCommand, ParseBridge, ParseType, ParseMode
 
 @G.commandhandler
 class CommandExecute(chat.command.Command.Command):
+    """
+    class for /execute command
+    """
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         # missing: align, anchored, facing, in
@@ -40,17 +44,24 @@ class CommandExecute(chat.command.Command.Command):
                              execute_if.sub_commands[1].sub_commands[0],
                              execute_unless.sub_commands[0].sub_commands[0].sub_commands[0],
                              execute_unless.sub_commands[1].sub_commands[0]]
-        for subcommand in sub_commands_ends + [parsebridge]:
+        for subcommand in sub_commands_ends + [parsebridge]:  # every end can be assinged with an new
             subcommand.sub_commands = sub_commands
         parsebridge.main_entry = "execute"
 
     @staticmethod
     def parse(values: list, modes: list, info):
-        index = 0
-        CommandExecute._parse_subcommand(index, values[index], values, info)
+        CommandExecute._parse_subcommand(0, values[index], values, info)  # execute first entry
 
     @staticmethod
     def _parse_subcommand(index, command, values, info):
+        """
+        execute an entry in the parsed command
+        :param index: the index to start
+        :param command: the parsed active command
+        :param values: the values that where parsed
+        :param info: the command info which was used
+        """
+
         if command == "as":
             index += 2
             for entity in values[index+1]:
@@ -80,14 +91,14 @@ class CommandExecute(chat.command.Command.Command):
                 index += 1
                 flag = len(selector) > 0
 
-            if command == "if" and not flag: return
-            if command == "unless" and flag: return
-
+            # should we exit?
+            if command == "unless" if flag else command == "if": return
         elif command == "run":
+            # execute command
             G.commandparser.parse("/"+" ".join(values[index+1]), info=info)
             index += 2
 
-        if len(values) > index:
+        if len(values) > index:  # have we more commands to parse?
             CommandExecute._parse_subcommand(index, values[index], values, info)
 
     @staticmethod

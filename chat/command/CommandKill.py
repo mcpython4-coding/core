@@ -12,6 +12,10 @@ from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 
 @G.commandhandler
 class CommandKill(chat.command.Command.Command):
+    """
+    class for /kill command
+    """
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "kill"
@@ -21,7 +25,7 @@ class CommandKill(chat.command.Command.Command):
     def parse(values: list, modes: list, info):
         if len(values) == 0: values.append([G.player])
         for entity in values[0]:
-            entity.kill()
+            entity.kill()  # kill all entities selected
 
     @staticmethod
     def get_help() -> list:

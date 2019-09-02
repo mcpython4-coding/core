@@ -12,9 +12,13 @@ from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 
 @G.commandhandler
 class CommandKill(chat.command.Command.Command):
+    """
+    class for /setblock command
+    """
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = ["tp", "teleport"]
+        parsebridge.main_entry = ["tp", "teleport"]  # both are valid
         parsebridge.add_subcommand(SubCommand(ParseType.SELECTOR).add_subcommand(SubCommand(ParseType.SELECTOR)).
                                    add_subcommand(SubCommand(ParseType.POSITION))).\
             add_subcommand(SubCommand(ParseType.POSITION))

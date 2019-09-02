@@ -9,9 +9,13 @@ import globals as G
 
 
 class Selector:
+    """
+    selector base class
+    """
+
     @staticmethod
     def is_valid(entry) -> bool:
-        pass
+        raise NotImplementedError()
 
     @staticmethod
     def parse(entry, config):

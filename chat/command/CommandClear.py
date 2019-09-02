@@ -11,7 +11,11 @@ from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 
 
 @G.commandhandler
-class CommandKill(chat.command.Command.Command):
+class CommandClear(chat.command.Command.Command):
+    """
+    command /clear
+    """
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "clear"

@@ -12,24 +12,36 @@ import util.math
 
 
 @G.commandhandler
-class CommandReload(chat.command.Command.Command):
+class CommandGenerate(chat.command.Command.Command):
+    """
+    class for /generate command
+    """
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "generate"
         parsebridge.add_subcommand(SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL).add_subcommand(
-            SubCommand(ParseType.INT)))
+            SubCommand(ParseType.INT).add_subcommand(SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL).add_subcommand(
+                                                     SubCommand(ParseType.INT)))))
 
     @staticmethod
     def parse(values: list, modes: list, info):
         dim = G.world.get_active_dimension()
-        if len(values) > 0:
-            chunkp = tuple(values)
+        if len(values) > 0:  # have we definite an chunk?
+            chunkf = tuple(values[:2])
+            chunkt = tuple(values[2:]) if len(values) > 2 else chunkf
         else:
-            chunkp = util.math.sectorize(G.window.position)
-        G.worldgenerationhandler.generate_chunk(dim.get_chunk(*chunkp, generate=False))
+            chunkf = chunkt = util.math.sectorize(G.window.position)
+        fx, fz = chunkf
+        tx, tz = chunkt
+        if fx > tx: fx, tx = tx, fx
+        if fz > tz: fz, tz = tz, fz
+        for x in range(fx, tx):
+            for z in range(fz, tz):
+                G.worldgenerationhandler.generate_chunk(dim.get_chunk(x, z, generate=False))
         G.world.process_entire_queue()
 
     @staticmethod
     def get_help() -> list:
-        return ["/generate [<x> <z>]: generates the chunk you are in if no one is specified, else the specified"]
+        return ["/generate [<x> <z> [<tox> <toz>]]: generates the chunk you are in if no one is specified or the "
+                "specified area, else the specified"]
 

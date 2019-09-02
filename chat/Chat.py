@@ -10,12 +10,15 @@ import gui.Inventory
 import util.opengl
 import pyglet
 from pyglet.window import key
-import json
 import time
 import chat.command.CommandHandler
 
 
 class ChatInventory(gui.Inventory.Inventory):
+    """
+    main class for chat
+    """
+
     def on_create(self):
         self.lable = pyglet.text.Label(x=15, y=15)
         self.enable_blink = True
@@ -48,48 +51,49 @@ class ChatInventory(gui.Inventory.Inventory):
 
 
 class Chat:
+    """
+    main class for chat
+    """
+
     def __init__(self):
+        """
+        creates an new chat
+        """
         self.text: str = ""
         self.history: list = []
         self.historyindex = -1
         self.has_entered_t = False
 
-    @staticmethod
-    def key_to_value(symbol, modifiers, table) -> str or None:
-        for keye in table.keys():
-            if str(symbol) == keye or (hasattr(key, keye) and getattr(key, keye) == symbol):
-                for modifiergroup in table[keye]:
-                    if len(modifiergroup["modifier"]) == 0 and modifiers == 0:
-                        return modifiergroup["value"]
-                    flag = True
-                    for modifier in modifiergroup["modifier"]:
-                        if not (type(modifier) == int and modifiers & modifier) and not (hasattr(key, modifier) and
-                                                                                modifiers & getattr(key, modifier)):
-                            flag = False
-                    if flag:
-                        return modifiergroup["value"]
-
     def enter(self, text: str):
-        if not self.has_entered_t and text == "t":
+        """
+        callen when text is entered
+        :param text: the text that is entered
+        """
+        if not self.has_entered_t and text == "t":  # check for t at beginning -> work-around after chat opening
             self.has_entered_t = True
             return
         self.text += text
 
     def on_key_press(self, symbol, modifiers):
+        """
+        callen when an key is pressed
+        :param symbol: the symbol that is pressed
+        :param modifiers: the modifiers that are used
+        """
         if symbol == 65288:  # BACK
             self.text = self.text[:-1]
-        elif symbol == key.ENTER:
+        elif symbol == key.ENTER:  # execute command
             if self.text.startswith("/"):
                 # excute command
                 G.commandparser.parse(self.text)
             else:
                 print("[CHAT] {}".format(self.text))
-            self.history = [self.text] + self.history
+            self.history.insert(0, self.text)
             self.close()
-        elif symbol == key.UP and self.historyindex < len(self.history) - 1:
+        elif symbol == key.UP and self.historyindex < len(self.history) - 1:  # go one item up in the history
             self.historyindex += 1
             self.text = self.history[self.historyindex]
-        elif symbol == key.DOWN and self.historyindex >= 0:
+        elif symbol == key.DOWN and self.historyindex >= 0:  # go one item down in the history
             self.historyindex -= 1
             if self.historyindex != -1:
                 self.text = self.history[self.historyindex]
@@ -97,6 +101,9 @@ class Chat:
                 self.text = ""
 
     def close(self):
+        """
+        closes the chat
+        """
         G.inventoryhandler.hide(G.player.inventorys["chat"])
 
 

@@ -12,6 +12,10 @@ from chat.command.Command import SubCommand, ParseType, ParseMode, ParseBridge
 
 @G.commandhandler
 class CommandHelp(chat.command.Command.Command):
+    """
+    class for /help command
+    """
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = ["help", "?"]
@@ -59,6 +63,7 @@ class CommandHelp(chat.command.Command.Command):
                 "/help <command>: returns help for given command if found"]
 
 
+# generate help pages
 PAGES = []
 for command in G.commandhandler.commands:
     PAGES += command.get_help()
