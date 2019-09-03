@@ -159,7 +159,7 @@ class World:
             chunk.blockmap = {}
             chunk.is_ready = True
 
-    def cleanup(self):
+    def cleanup(self, remove_dims=False):
         for dimension in self.dimensions.values():
             dimension: world.Dimension.Dimension
             for chunk in dimension.chunks.values():
@@ -167,4 +167,6 @@ class World:
                 chunk.world = {}
                 chunk.is_ready = False
             dimension.chunks = {}
+        if remove_dims:
+            self.dimensions = {}
 

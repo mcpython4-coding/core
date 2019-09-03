@@ -22,27 +22,12 @@ class StateStartMenu(state.State.State):
 
     def get_parts(self) -> list:
         return [UIPartLable.UIPartLable("Start Menu", (0, 100), anchor_window="MM", anchor_lable="MM"),
-                UIPartButton.UIPartButton((200, 15), "New Game", (0, 0), anchor_window="MM", anchor_button="MM",
+                UIPartButton.UIPartButton((200, 15), "Single Player", (0, 0), anchor_window="MM", anchor_button="MM",
                                           on_press=self.on_new_game_press)]
 
     @staticmethod
     def on_new_game_press(x, y):
-        G.world.cleanup()
-        print("generating world")
-        G.worldgenerationhandler.enable_generation = True
-        for x in range(-1, 2):
-            for z in range(-1, 2):
-                chunk = G.world.dimensions[0].get_chunk(x, z, generate=False)
-                chunk.is_ready = False
-                G.worldgenerationhandler.generate_chunk(chunk)
-        G.world.process_entire_queue()
-        G.worldgenerationhandler.enable_generation = False
-        # todo: remove disable for auto-gen
-        print("finished")
-        G.statehandler.switch_to("minecraft:gameinfo")
-        G.world.change_sectors(None, util.math.sectorize(G.window.position), immediate=True)
-        G.window.position = 0, util.math.get_max_y((0, 0, 0)), 0
-        G.player.set_gamemode(0)
+        G.statehandler.switch_to("minecraft:world_generation_config")
 
     def get_event_functions(self) -> list:
         return [(self.on_draw_2d_pre, "render:draw:2d:background")]

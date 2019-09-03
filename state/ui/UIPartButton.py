@@ -210,3 +210,85 @@ class UIPartButton(state.StatePart.StatePart):
         self.lable.font_size = self.size[1] // 2.0
         self.lable.draw()
 
+
+class UIPartToggleButton(UIPartButton):
+    def __init__(self, size, textpossibilitys, position,
+                 toggle=event.EventInfo.MousePressEventInfo(pyglet.window.mouse.LEFT),
+                 retoggle=event.EventInfo.MousePressEventInfo(pyglet.window.mouse.RIGHT),
+                 anchor_button="WS", anchor_window="WS", on_toggle=None, on_hover=None, on_try_press=None,
+                 enabled=True, has_hovering_state=True, text_constructor="{}", start=0):
+        """
+        creates an new UIPartButton
+        :param size: the size of the button
+        :param textpossibilitys: the texts of the button
+        :param position: the position of the button
+        :param toggle: the EventInfo for mouse buttons and mods, no area to define, toggle forward
+        :param retoggle: the EventInfo for mouse buttons and mods, no area to define, toggle backwards
+        :param anchor_button: the anchor on the button
+        :param anchor_window: the anchor on the window
+        :param on_toggle: callen when the button toggles, parameters: (from: str, to: str, direction: int, position:tuple)
+        :param on_hover: callen when the mouse is over the button
+        :param on_try_press: callen when button is disabled and the user presses the button
+        :param enabled: button should be clickable?
+        :param has_hovering_state: if the button gets blue when mouse is over it
+        :param text_constructor: an string.format(item) or an function(item: str) -> str entry
+        :param start: where in the array to start from
+        """
+        self.size = size
+        self.textpages = textpossibilitys
+        self.textconstructor = text_constructor
+        self.index = start
+        self.text = ""
+        self._generate_text()
+        self.position = position
+        self.toggle: event.EventInfo.MousePressEventInfo = toggle
+        self.retoggle: event.EventInfo.MousePressEventInfo = retoggle
+        self.anchor_button = anchor_button
+        self.anchor_window = anchor_window
+
+        self.on_toggle = on_toggle
+        self.on_hover = on_hover
+        self.on_try_press = on_try_press
+
+        self.event_functions = [("user:mouse:press", self.on_mouse_press),
+                                ("user:mouse:motion", self.on_mouse_motion),
+                                ("render:draw:2d", self.on_draw_2d)]
+
+        self.enabled = enabled
+        self.has_hovering_state = has_hovering_state
+        self.hovering = False
+
+        self.lable = pyglet.text.Label(text=self.text)
+
+    def _generate_text(self):
+        text = self.textpages[self.index]
+        if type(self.textconstructor) == str:
+            self.text = self.textconstructor.format(text)
+        elif callable(self.textconstructor):
+            self.text = self.textconstructor(text)
+        else:
+            self.text = text
+
+    @G.eventhandler("user:mouse:press", callactive=False)
+    def on_mouse_press(self, x, y, button, modifiers):
+        mx, my = self._get_button_base_positon()
+        sx, sy = self.size
+        self.toggle.area = self.retoggle.area = ((mx, my), (mx + sx, my + sy))
+        if self.toggle.equals(x, y, button, modifiers):
+            self.index += 1
+            if self.index >= len(self.textpages): self.index = 0
+            new = self.textpages[self.index]
+            if self.on_toggle:
+                self.on_toggle(self.text, new, 1, (x, y))
+            self._generate_text()
+        elif self.retoggle.equals(x, y, button, modifiers):
+            self.index -= 1
+            if self.index < 0: self.index = len(self.textpages) - 1
+            new = self.textpages[self.index]
+            if self.on_toggle:
+                self.on_toggle(self.text, new, -1, (x, y))
+            self._generate_text()
+        else:
+            if self.on_try_press:
+                self.on_try_press(x, y)
+

@@ -50,6 +50,16 @@ FACES = [
     (0, 0, -1),
 ]
 
+_ADVANCED_FACES = [[[(x, y, z) for z in range(-1, 2)] for y in range(-1, 2)] for x in range(-1, 2)]
+ADVANCED_FACES = []
+for e in _ADVANCED_FACES:
+    for i in e:
+        for m in e:
+            for x in m:
+                if any(m): ADVANCED_FACES.append(x)
+del _ADVANCED_FACES
+# print(ADVANCED_FACES)
+
 FACE_NAMES = [util.enums.EnumSide.U, util.enums.EnumSide.D,
               util.enums.EnumSide.N, util.enums.EnumSide.E, util.enums.EnumSide.S, util.enums.EnumSide.W]
 
