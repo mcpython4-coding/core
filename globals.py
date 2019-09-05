@@ -29,7 +29,5 @@ worldgenerationhandler = None
 biomehandler = None
 craftinghandler = None
 
-modelloader = None
+modelhandler = None
 
-
-jar_archive = None

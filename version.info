@@ -276,7 +276,7 @@ started these clone on 12th of July, 2019
 [github]: started day 19 as first of September, 2019
 [uuk]: cleaned up files & fixed some bugs:
     - block directory
-[github]: started day 20 as second of Semptember, 2019
+[github]: started day 20 as second of September, 2019
     - chat directory
 [uuk]: /generate accepts now an area
 [uuk]: /give-command give you now maximal the max stack size, not more
@@ -286,6 +286,14 @@ started these clone on 12th of July, 2019
 [uuk]: implemented crafting system
 [uuk]: slot has now an on_update, allow_half_getting & on_shift_click implementation
 [uuk]: ItemStacks & Items have now an == implementation
+[github]: started day 20 as third of September, 2019
 [uuk]: added states to customize parts of the world generation
 [uuk]: added ToggleButton
 [uuk]: tweaked some collision detection
+[uuk]: rewritten ResourceLocator, made it possible to add own resource packs
+[uuk]: rewritten model system, BlockStates are now used
+[uuk]: rewritten texture atlas system, rewritten texturefactory
+[github]: started day 21 as 5th of September, 2019
+[uuk]: worked on the rewrite (took me longer than expected due to some errors in model texture getting)
+
+todo: implement rotations for block models, remap texture reference to map to an array of {<rotation>:<image>}

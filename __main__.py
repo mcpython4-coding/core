@@ -29,28 +29,28 @@ try:
 
     os.makedirs(G.local+"/tmp")
 
-    import zipfile
+    import ResourceLocator
+    ResourceLocator.load_resources()
 
-    G.jar_archive = zipfile.ZipFile(G.local+"/assets/1.14.4.jar")
-
-    import texture.atlas
+    # import texture.atlas
 
     print("generating textures...")
     import texture.factory
-
-    G.texturefactoryhandler.add_location(G.local + "/assets/factory/texture")
-    G.texturefactoryhandler.build()
+    G.texturefactoryhandler.load()
 
     import world.World
     G.world = world.World.World()
+
+    import texture.model.ModelHandler
+    import texture.model.BlockState
 
     print("loading blocks...")
     import block.BlockHandler
     block.BlockHandler.load()
 
-    import texture.ModelLoader
     print("searching for models...")
-    texture.ModelLoader.loader.search_in_main_jar()
+    G.modelhandler.search()
+    texture.model.BlockState.BlockStateDefinition.from_directory("assets/minecraft/blockstates")
     print("finished!")
 
     import world.gen.WorldGenerationHandler
@@ -59,18 +59,10 @@ try:
     def setup():
         opengl_setup.setup()
         print("generating models...")
-        texture.ModelLoader.loader.build()
-        G.modelloader.from_data(
-            "missing_texture",
-            {
-                "parent": "block/cube_all",
-                "textures": {
-                    "all": "assets/missingtexture.png"
-                }
-            }
-        )
+        G.modelhandler.build()
         print("generating image atlases...")
-        texture.atlas.generator.build()
+        import texture.TextureAtlas
+        texture.TextureAtlas.handler.output()
         print("finished!")
 
     def run():
@@ -88,7 +80,7 @@ try:
         print("- Game Info Area -")
         print("------------------")
         print("blocks (loaded):\n -count: {}\n -blockmodel count: {}\n -injection class count: {}".format(
-            len(G.blockhandler.blockclasses), len(G.blockhandler.used_models), len(G.blockhandler.injectionclasses)
+            len(G.blockhandler.blockclasses), len(G.modelhandler.used_models), len(G.blockhandler.injectionclasses)
         ))
         print("items (loaded): count: {}".format(len(G.itemhandler.items)))
         print("commands (loaded):\n -count: {}".format(len(G.commandhandler.commands)))
@@ -106,10 +98,8 @@ try:
         print("----------------------------------------------")
         run()
 except:
-    import sys
-    import globals as G
-    if G.jar_archive:
-        G.jar_archive.close()
+    import ResourceLocator
+    ResourceLocator.close_all_resources()
     raise
 
 
@@ -117,5 +107,6 @@ if __name__ == "__main__":
     try:
         main()
     finally:
-        G.jar_archive.close()
+        import ResourceLocator
+        ResourceLocator.close_all_resources()
 

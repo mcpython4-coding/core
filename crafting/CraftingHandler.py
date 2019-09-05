@@ -42,23 +42,22 @@ class CraftingHandler:
             raise ValueError("can't load recipe. recipe class {} not arrival".format(name))
 
     def add_recipe_from_file(self, file: str):
-        self.add_recipe_from_data(ResourceLocator.ResourceLocator(file, load_as_json=True).data)
+        self.add_recipe_from_data(ResourceLocator.read(file, "json"))
 
     def load(self):
         print("loading recipes")
         i = 1
         errored = 0
-        for item in G.jar_archive.namelist():
-            if "data/minecraft/recipes/" in item and item.endswith(".json"):
-                print("\r -loading recipe {}".format(i), end="")
-                try:
-                    self.add_recipe_from_file(item)
-                except ValueError:
-                    errored += 1
-                except:
-                    print(item)
-                    raise
-                i += 1
+        for item in ResourceLocator.get_all_entrys("data/minecraft/recipes"):
+            print("\r -loading recipe {}".format(i), end="")
+            try:
+                self.add_recipe_from_file(item)
+            except ValueError:
+                errored += 1
+            except:
+                print(item)
+                raise
+            i += 1
         print("\nrecipes with errors: {}".format(errored) if errored else "")
 
 

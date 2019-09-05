@@ -18,20 +18,7 @@ def get_max_y(pos):
     return y + 2  # account for the distance from head to foot
 
 
-def cube_vertices(x, y, z, n, faces=(True, True, True, True, True, True)):
-    """ Return the vertices of the cube at position x, y, z with size 2*n.
-
-    """
-    top = [x - n, y + n, z - n, x - n, y + n, z + n, x + n, y + n, z + n, x + n, y + n, z - n] if faces[0] else []
-    bottom = [x - n, y - n, z - n, x + n, y - n, z - n, x + n, y - n, z + n, x - n, y - n, z + n] if faces[1] else []
-    left = [x - n, y - n, z - n, x - n, y - n, z + n, x - n, y + n, z + n, x - n, y + n, z - n] if faces[2] else []
-    right = [x + n, y - n, z + n, x + n, y - n, z - n, x + n, y + n, z - n, x + n, y + n, z + n] if faces[3] else []
-    front = [x - n, y - n, z + n, x + n, y - n, z + n, x + n, y + n, z + n, x - n, y + n, z + n] if faces[4] else []
-    back = [x + n, y - n, z - n, x - n, y - n, z - n, x - n, y + n, z - n, x + n, y + n, z - n] if faces[5] else []
-    return top + bottom + left + right + front + back
-
-
-def cube_vertices_2(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
+def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
     """ Return the vertices of the cube at position x, y, z with size 2*n.
 
     """
@@ -60,22 +47,8 @@ def tex_coord(x, y, n=16):
     return dx, dy, dx + m, dy, dx + m, dy + m, dx, dy + m
 
 
-def tex_coords(top, bottom, side):
-    """ Return a list of the texture squares for the top, bottom and side.
-
-    """
-    top = tex_coord(*top)
-    bottom = tex_coord(*bottom)
-    side = tex_coord(*side)
-    result = []
-    result.extend(top)
-    result.extend(bottom)
-    result.extend(side * 4)
-    return result
-
-
-def tex_coords_2(*args):
-    """ Return a list of the texture squares for the top, bottom and side.
+def tex_coords(*args):
+    """ Return a list of the texture squares for the top, bottom and sides.
 
     """
     args = list(args)
@@ -137,3 +110,36 @@ def sectorize(position):
     x, y, z = normalize(position)
     x, z = x // 16, z // 16
     return x, z
+
+
+# code from https://stackoverflow.com/questions/11557241/python-sorting-a-dependency-list
+def topological_sort(items):
+    """
+    'items' is an iterable of (item, dependencies) pairs, where 'dependencies'
+    is an iterable of the same type as 'items'.
+
+    If 'items' is a generator rather than a data structure, it should not be
+    empty. Passing an empty generator for 'items' (zero yields before return)
+    will cause topological_sort() to raise TopologicalSortFailure.
+
+    An empty iterable (e.g. list, tuple, set, ...) produces no items but
+    raises no exception.
+    """
+    provided = set()
+    while items:
+        remaining_items = []
+        emitted = False
+
+        for item, dependencies in items:
+            if provided.issuperset(dependencies):
+                yield item
+                provided.add(item)
+                emitted = True
+            else:
+                remaining_items.append( (item, dependencies) )
+
+        if not emitted:
+            raise ValueError()
+
+        items = remaining_items
+

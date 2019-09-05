@@ -11,7 +11,8 @@ import event.EventInfo
 import enum
 import pyglet
 from pyglet.window import mouse
-import texture.helpers
+import util.texture
+import ResourceLocator
 
 
 class ButtonMode(enum.Enum):
@@ -22,42 +23,42 @@ class ButtonMode(enum.Enum):
 
 IMAGE_DICT = {}  # ButtonMode -> [NW, NM, NE, MW, MM, ME, SW, SM, SE] as 10x10 images loaded in pyglet as corner
 
-button_file = texture.helpers.load_image("gui/widgets")
+button_file = ResourceLocator.read("gui/widgets", "pil")
 
 IMAGE_DICT[ButtonMode.ENABLED] = [
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 66, 10, 76))),  # NW
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 71, 10, 81))),  # NM
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 76, 10, 86))),  # NE
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (10, 66, 20, 76))),  # MW
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (10, 71, 20, 81))),  # MM
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (10, 76, 20, 86))),  # ME
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (190, 66, 200, 76))),  # SW
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (190, 71, 200, 81))),  # SM
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (190, 76, 200, 86)))  # SE
+    util.texture.to_pyglet_sprite(button_file.crop((0, 66, 10, 76))),  # NW
+    util.texture.to_pyglet_sprite(button_file.crop((0, 71, 10, 81))),  # NM
+    util.texture.to_pyglet_sprite(button_file.crop((0, 76, 10, 86))),  # NE
+    util.texture.to_pyglet_sprite(button_file.crop((10, 66, 20, 76))),  # MW
+    util.texture.to_pyglet_sprite(button_file.crop((10, 71, 20, 81))),  # MM
+    util.texture.to_pyglet_sprite(button_file.crop((10, 76, 20, 86))),  # ME
+    util.texture.to_pyglet_sprite(button_file.crop((190, 66, 200, 76))),  # SW
+    util.texture.to_pyglet_sprite(button_file.crop((190, 71, 200, 81))),  # SM
+    util.texture.to_pyglet_sprite(button_file.crop((190, 76, 200, 86)))  # SE
 ]
 
 IMAGE_DICT[ButtonMode.DISABLED] = [
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 46, 10, 56))),  # NW
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 51, 10, 61))),  # NM
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 56, 10, 66))),  # NE
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (10, 46, 20, 56))),  # MW
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (10, 51, 20, 61))),  # MM
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (10, 56, 20, 66))),  # ME
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (190, 46, 200, 56))),  # SW
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (190, 51, 200, 61))),  # SM
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (190, 56, 200, 66)))  # SE
+    util.texture.to_pyglet_sprite(button_file.crop((0, 46, 10, 56))),  # NW
+    util.texture.to_pyglet_sprite(button_file.crop((0, 51, 10, 61))),  # NM
+    util.texture.to_pyglet_sprite(button_file.crop((0, 56, 10, 66))),  # NE
+    util.texture.to_pyglet_sprite(button_file.crop((10, 46, 20, 56))),  # MW
+    util.texture.to_pyglet_sprite(button_file.crop((10, 51, 20, 61))),  # MM
+    util.texture.to_pyglet_sprite(button_file.crop((10, 56, 20, 66))),  # ME
+    util.texture.to_pyglet_sprite(button_file.crop((190, 46, 200, 56))),  # SW
+    util.texture.to_pyglet_sprite(button_file.crop((190, 51, 200, 61))),  # SM
+    util.texture.to_pyglet_sprite(button_file.crop((190, 56, 200, 66)))  # SE
 ]
 
 IMAGE_DICT[ButtonMode.HOVERING] = [
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 86, 10, 96))),  # NW
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 91, 10, 101))),  # NM
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (0, 96, 10, 106))),  # NE
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (10, 86, 20, 96))),  # MW
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (10, 91, 20, 101))),  # MM
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (10, 96, 20, 106))),  # ME
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (190, 86, 200, 96))),  # SW
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (190, 91, 200, 101))),  # SM
-    texture.helpers.to_pyglet_sprite(texture.helpers.get_image_part(button_file, (190, 96, 200, 106)))  # SE
+    util.texture.to_pyglet_sprite(button_file.crop((0, 86, 10, 96))),  # NW
+    util.texture.to_pyglet_sprite(button_file.crop((0, 91, 10, 101))),  # NM
+    util.texture.to_pyglet_sprite(button_file.crop((0, 96, 10, 106))),  # NE
+    util.texture.to_pyglet_sprite(button_file.crop((10, 86, 20, 96))),  # MW
+    util.texture.to_pyglet_sprite(button_file.crop((10, 91, 20, 101))),  # MM
+    util.texture.to_pyglet_sprite(button_file.crop((10, 96, 20, 106))),  # ME
+    util.texture.to_pyglet_sprite(button_file.crop((190, 86, 200, 96))),  # SW
+    util.texture.to_pyglet_sprite(button_file.crop((190, 91, 200, 101))),  # SM
+    util.texture.to_pyglet_sprite(button_file.crop((190, 96, 200, 106)))  # SE
 ]
 
 

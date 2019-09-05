@@ -19,6 +19,6 @@ class BlockGrassBlock(Block.Block):
     def get_name() -> str:
         return "minecraft:grass_block"
 
-    def get_model_name(self):
-        return "block/grass_block"
+    def get_model_state(self) -> dict:
+        return {"snowy": "false"}
 

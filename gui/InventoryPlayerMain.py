@@ -20,7 +20,7 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
 
     @staticmethod
     def get_config_file() -> str or None:
-        return G.local+"/assets/config/inventory/playerinventorymain.json"
+        return "assets/config/inventory/playerinventorymain.json"
 
     def on_create(self):
         inputs = [self.slots[40:42], self.slots[42:44]]

@@ -19,3 +19,6 @@ class EnumSide(enum.Enum):
 
 SIDE_ORDER = [EnumSide.U, EnumSide.D, EnumSide.E, EnumSide.W, EnumSide.N, EnumSide.S]
 
+NAMED_SIDES = {"up": EnumSide.U, "down": EnumSide.D, "north": EnumSide.N, "east": EnumSide.EAST,
+               "south": EnumSide.S, "west": EnumSide.W}
+

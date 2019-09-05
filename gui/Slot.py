@@ -9,7 +9,7 @@ import globals as G
 import pyglet
 import gui.ItemStack
 import item.ItemHandler
-import texture.helpers
+# import texture.helpers
 import ResourceLocator
 
 

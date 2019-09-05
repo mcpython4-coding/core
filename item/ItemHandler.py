@@ -7,7 +7,7 @@ minecraft by Mojang
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import item.Item
-import texture.helpers
+import util.texture
 import ResourceLocator
 
 
@@ -23,8 +23,8 @@ class ItemHandler:
         if itemclass.get_name() in self.items and not overwrite: return
         self.items[itemclass.get_name()] = itemclass
         self.items[itemclass.get_name().split(":")[-1]] = itemclass
-        self.pygletimagetable[itemclass.get_name()] = texture.helpers.to_pyglet_image(
-            itemclass.get_as_item_image(ResourceLocator.ResourceLocator(itemclass.get_item_image_location()).data))
+        self.pygletimagetable[itemclass.get_name()] = util.texture.to_pyglet_image(
+            itemclass.get_as_item_image(ResourceLocator.read(itemclass.get_item_image_location(), "pil")))
 
 
 G.itemhandler = ItemHandler()

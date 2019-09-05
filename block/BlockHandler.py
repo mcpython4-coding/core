@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import block.Block
 import block.IBlock
+import texture.model.ModelHandler
 
 
 class BlockHandler:
@@ -22,7 +23,6 @@ class BlockHandler:
 
         self.blocks = {}  # a name -> blockclass map
         self.blockclasses = []  # a list of blockclasses
-        self.used_models = []  # a list of models which should be loaded
         self.injectionclasses = {}  # a name -> injection class map
 
     def register(self, obj):
@@ -36,8 +36,6 @@ class BlockHandler:
             self.blockclasses.append(obj)  # add it to registry
             name = obj.get_name()
             self.blocks[name] = self.blocks[name.split(":")[-1]] = obj
-            self.used_models += obj.get_used_models()  # read used models
-            self.used_models = list(dict.fromkeys(self.used_models))
         elif issubclass(obj, block.IBlock.IBlock):
             self.injectionclasses[obj.get_extension_name()] = obj
         else:
@@ -61,7 +59,7 @@ def load():
     loads all blocks that should be loaded
     """
     import block.BlockFactory
-    block.BlockFactory.BlockFactory.from_directory(G.local+"/assets/factory/block")
+    block.BlockFactory.BlockFactory.from_directory("assets/factory/block")
 
     from . import (IFallingBlock)
 

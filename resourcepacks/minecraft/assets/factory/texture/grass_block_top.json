@@ -1,0 +1,8 @@
+{
+  "images": ["block/grass_block_top"],
+  "transforms": [
+    {"image": 0, "mode": "resize", "store": 0, "size": [64, 64]},
+    {"image": 0, "mode": "colorize", "store": 0, "color": [201, 248, 153]}
+  ],
+  "store": [{"id": 0, "location": "blocks/grass_block_top.png"}]
+}

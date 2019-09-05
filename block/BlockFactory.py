@@ -10,6 +10,7 @@ import block.Block
 import block.IBlock
 import os
 import json
+import ResourceLocator
 
 
 class BlockFactory:
@@ -26,11 +27,7 @@ class BlockFactory:
         generates blocks out of the .json files of the directory
         :param directory: the directory to search for
         """
-        for root, dirs, files in os.walk(directory, topdown=False):
-            for name in files:
-                file = os.path.join(root, name)
-                if file not in BlockFactory.FILES:  # check for "is loaded"
-                    BlockFactory.FILES.append(file)
+        BlockFactory.FILES += ResourceLocator.get_all_entrys(directory)
 
     @staticmethod
     def load():
@@ -41,8 +38,7 @@ class BlockFactory:
             if file in BlockFactory.loaded:  # check if block was created
                 continue
             BlockFactory.loaded.append(file)
-            with open(file) as f:
-                data = json.load(f)
+            data = ResourceLocator.read(file, "json")
             BlockFactory.create_block_normal(data.copy())
 
     @staticmethod
@@ -64,9 +60,8 @@ class BlockFactory:
             def get_name() -> str:
                 return data["name"]
 
-            def get_model_name(self):
-                return data["model"] if "model" in data else super().get_model_name()
-
             def is_brakeable(self) -> bool:
                 return data["brakeable"] if "brakeable" in data else super().is_brakeable()
+
+            def get_model_state(self) -> dict: return {} if "modelstate" not in data else data["modelstate"]
 

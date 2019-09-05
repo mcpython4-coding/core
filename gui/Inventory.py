@@ -9,7 +9,7 @@ import globals as G
 from state.ui import (UIPartImage)
 import pyglet
 import ResourceLocator
-import texture.helpers
+# import texture.helpers
 
 
 class Inventory:
@@ -41,7 +41,7 @@ class Inventory:
         reload the config file
         """
         if self.get_config_file():
-            self.config = ResourceLocator.ResourceLocator(self.get_config_file(), load_as_json=True).data
+            self.config = ResourceLocator.read(self.get_config_file(), "json")
         else:
             self.config = {}
             return
@@ -66,8 +66,7 @@ class Inventory:
         if "image_position" in self.config:
             self.position = self.config["image_position"]
         if "image_location" in self.config:
-            self.bgsprite = texture.helpers.to_pyglet_sprite(ResourceLocator.ResourceLocator(
-                self.config["image_location"]).data)
+            self.bgsprite = pyglet.sprite.Sprite(ResourceLocator.read(self.config["image_location"], "pyglet"))
         self.on_create()
 
     def on_create(self):

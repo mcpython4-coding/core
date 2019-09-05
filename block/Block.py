@@ -13,13 +13,6 @@ class Block:
     base class for all blocks
     """
 
-    @classmethod
-    def get_used_models(cls) -> list:
-        """
-        :return: a list of all model names which should be loaded for these block
-        """
-        return [cls.get_model_name(None)]
-
     def __init__(self, position, setted_to=None):
         """
         creates new Block
@@ -55,11 +48,6 @@ class Block:
         callen when the block is removed
         """
 
-    def get_model_name(self):
-        """
-        :return: the name of the model to use for these block
-        """
-
     def is_brakeable(self) -> bool:
         """
         :return: if the block is brakeable in gamemode 0
@@ -90,3 +78,5 @@ class Block:
         :return: if the side is solid or not
         """
         return True
+
+    def get_model_state(self) -> dict: return {}
