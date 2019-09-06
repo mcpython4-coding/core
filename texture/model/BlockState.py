@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import ResourceLocator
+import random
 
 
 class BlockStateDefinition:
@@ -66,7 +67,7 @@ class BlockState:
 
     def add_to_batch(self, position, batch):
         result = []
-        for model, config in self.models:
-            result += G.modelhandler.models[model].add_to_batch(position, batch, config)
+        model, config = random.choice(self.models)
+        result += G.modelhandler.models[model].add_to_batch(position, batch, config)
         return result
 

@@ -295,5 +295,12 @@ started these clone on 12th of July, 2019
 [uuk]: rewritten texture atlas system, rewritten texturefactory
 [github]: started day 21 as 5th of September, 2019
 [uuk]: worked on the rewrite (took me longer than expected due to some errors in model texture getting)
+[uuk]: implemented base log system  (#1)
+[uuk]: block states accept now rotations, the next will optimize it a bit
+[uuk]: increased texture atlas size to 64x64 images per atlas, and it is now possible to create some with custom size
+[uuk]: fixed bug: math.tex_coords has wrong texture order
+[github]: started day 22 as 6th of September, 2019
+[uuk]: fixed bug: BlockState draws all states which should be selected by random at once
 
-todo: implement rotations for block models, remap texture reference to map to an array of {<rotation>:<image>}
+todo: implement the other logs, planks, stripped logs, barks, stripped barks
+todo: implement gravel, andesite, diorite, granite (and also the polished form

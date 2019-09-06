@@ -27,7 +27,10 @@ class TextureAtlasGenerator:
             elif len(atlas.images) < 16 ** 2:
                 return atlas.add_image(image), atlas
         self.atlases.append(TextureAtlas())
-        return self.atlases[-1].add_image(image), self.atlases[-1]
+        images = [image]
+        for _ in range(3):
+            images.append(images[-1].rotate(90))
+        return tuple([self.atlases[-1].add_image(i) for i in images]), self.atlases[-1]
 
     def add_image_file(self, file: str) -> tuple:
         return self.add_image(ResourceLocator.read(file, "pil"))
@@ -36,12 +39,18 @@ class TextureAtlasGenerator:
         if not one_atlased:
             return [self.add_image(x) for x in images]
         images = [image.resize((64, 64)) for image in images]
+        rimages = []
+        for image in images:
+            r = [image]
+            for _ in range(3):
+                r.append(r[-1].rotate(90))
+            rimages.append(r)
         for atlas in self.atlases:
-            if atlas.is_free_for(images):
-                return [(atlas.add_image(image), atlas) for image in images]
+            if atlas.is_free_for(rimages):
+                return [([atlas.add_image(image) for image in imagel], atlas) for imagel in rimages]
         atlas = TextureAtlas()
         self.atlases.append(atlas)
-        return [(atlas.add_image(image), atlas) for image in images]
+        return [([atlas.add_image(image) for image in imagel], atlas) for imagel in rimages]
 
     def add_image_files(self, files: list, one_atlased=True) -> list:
         return self.add_images([ResourceLocator.read(x, "pil") for x in files], one_atlased=one_atlased)
@@ -55,8 +64,9 @@ class TextureAtlasGenerator:
 
 
 class TextureAtlas:
-    def __init__(self, size=(16*64, 16*64)):
-        self.texture = PIL.Image.new("RGBA", size)
+    def __init__(self, size=(64, 64)):
+        self.size = size
+        self.texture = PIL.Image.new("RGBA", (size[0] * 64, size[1] * 64))
         self.next_index = (0, 0)
         self.images = []
         self.imagelocations = []  # an image[-parallel (x, y)-list
@@ -67,10 +77,10 @@ class TextureAtlas:
         if image in self.images: return self.imagelocations[self.images.index(image)]
         self.images.append(image)
         x, y = self.next_index
-        self.texture.paste(image, (x*64, (15-y) * 64))
+        self.texture.paste(image, (x*64, (self.size[1]-y-1) * 64))
         pos = x, y
         x += 1
-        if x >= 16: x = 0; y += 1
+        if x >= self.size[0]: x = 0; y += 1
         self.next_index = (x, y)
         self.imagelocations.append(pos)
         return pos
@@ -79,7 +89,7 @@ class TextureAtlas:
         count = 0
         for image in images:
             if image not in self.images: count += 1
-        return count <= 16**2 - len(self.images)
+        return count <= self.size[0] * self.size[1] - len(self.images)
 
 
 handler = TextureAtlasGenerator()

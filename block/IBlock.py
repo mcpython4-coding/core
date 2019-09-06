@@ -83,12 +83,6 @@ class InjectAbleBlock(block.Block.Block):
     def on_delete(self):
         self.call_method("on_delete")
 
-    def get_model_name(self):
-        result = self.call_method("get_model_name")
-        for element in result:
-            if element is not None:
-                return element
-
     def is_brakeable(self) -> bool:
         result = self.call_method("is_brakeable")
         for element in result:
@@ -115,6 +109,13 @@ class InjectAbleBlock(block.Block.Block):
         for element in result:
             if element is not None:
                 return element
+
+    def get_model_state(self) -> dict:
+        m = {}
+        result = self.call_method("get_model_state")
+        for element in result:
+            m = {**m, **element}
+        return m
 
 
 class IBlock:

@@ -61,8 +61,8 @@ def load():
     import block.BlockFactory
     block.BlockFactory.BlockFactory.from_directory("assets/factory/block")
 
-    from . import (IFallingBlock)
+    from . import (IFallingBlock, ILog)
 
-    from . import (BlockGrassBlock, BlockDirt)
+    from . import (BlockGrassBlock, BlockDirt, BlockOakLog)
 
     block.BlockFactory.BlockFactory.load()

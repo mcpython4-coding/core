@@ -55,6 +55,7 @@ class BlockFactory:
             """
             # read injection classes
             INJECTION_CLASSES = data["injections"] if "injections" in data else []
+            print(INJECTION_CLASSES, data["name"])
 
             @staticmethod
             def get_name() -> str:

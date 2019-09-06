@@ -21,7 +21,7 @@ cleanup tasks (should be done regulary):
         could be parts of these generated on setup?
         is there code which should be as config / world config / world storage data stored?
 
-add logs & log base class
+add logs
 add trees to world gen
 add save / load of world
 add option for inventories to be visable when another is also visable
@@ -30,7 +30,7 @@ add loot tables for block drops
 
 todo: fix crafting shift click
 todo: fix bug: can't combine two itemstacks in inventory
-todo: fix bug: in some rare cases, you can walk through the corner into the block
+todo: fix bug: in some rare cases, you can walk through the corner into the block (see forgleman #104)
 todo: fix bug: in chat, " " and SHIFT are used for higher / lower position in gamemode 1
 todo: implement base_image to slot for base item & bind to armor & offhand slots
 
