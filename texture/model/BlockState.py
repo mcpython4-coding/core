@@ -14,7 +14,8 @@ class BlockStateDefinition:
     @staticmethod
     def from_directory(directory: str):
         for file in ResourceLocator.get_all_entrys(directory):
-            BlockStateDefinition.from_file(file)
+            if not file.endswith("/"):
+                BlockStateDefinition.from_file(file)
 
     @staticmethod
     def from_file(file: str):

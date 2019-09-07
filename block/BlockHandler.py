@@ -63,6 +63,7 @@ def load():
 
     from . import (IFallingBlock, ILog)
 
-    from . import (BlockGrassBlock, BlockDirt, BlockOakLog)
+    from . import (BlockGrassBlock, BlockDirt, BlockOakLog, BlockSpruceLog, BlockBirchLog, BlockJungleLog,
+                   BlockAcaciaLog, BlockDarkOakLog)
 
     block.BlockFactory.BlockFactory.load()

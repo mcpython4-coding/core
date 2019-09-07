@@ -20,7 +20,7 @@ class Dimension:
         self.worldgenerationconfig = genconfig
         self.worldgenerationconfigobjects = {}
         # normal batch
-        self.batches = [pyglet.graphics.Batch()]
+        self.batches = [pyglet.graphics.Batch() for _ in range(2)]  # normal, alpha
 
     def get_chunk(self, cx, cz, generate=True, create=True) -> world.Chunk.Chunk or None:
         if (cx, cz) not in self.chunks:
@@ -64,5 +64,10 @@ class Dimension:
                 chunk = self.get_chunk(cx, cz, create=False)
                 if chunk:
                     chunk.draw()
-        [x.draw() for x in self.batches]
+        self.batches[0].draw()
+
+        # draw with alpha
+        pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
+        pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
+        self.batches[1].draw()
 

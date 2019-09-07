@@ -11,8 +11,9 @@ import rendering.BoxModel
 
 
 class Model:
-    def __init__(self, data: dict):
+    def __init__(self, data: dict, name: str):
         self.data = data
+        self.name = name
         self.parent = data["parent"] if "parent" in data else None
         self.used_textures = {}
         self.texture_addresses = {}

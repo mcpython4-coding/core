@@ -1,0 +1,6 @@
+{
+    "parent": "block/leaves",
+    "textures": {
+        "all": "tmp/blocks/jungle_leaves.png"
+    }
+}

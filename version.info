@@ -301,6 +301,19 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: math.tex_coords has wrong texture order
 [github]: started day 22 as 6th of September, 2019
 [uuk]: fixed bug: BlockState draws all states which should be selected by random at once
+[uuk]: added spruce, birch, jungle, acacia & dark oak log; oak, spruce, birch, jungle, acacia & dark oak planks (#1)
+[uuk]: fixed bug: some faces of non-upper logs were rotated wrong due to an wrong texture rotation
+[github]: started day 23 as 7th of September, 2019
+[uuk]: speed up loading again
+[uuk]: added stripped logs, wood, stripped wood, leaves
+[uuk]: added BlockConfig for adding blocks with alpha (there is stored that they have alpha)
+[uuk]: added alpha-batch to rendering system
+[uuk]: added gravel, andesite, polished andesite, diorite, polished diorite, granite, polished granite
+[uuk]: blocklist of blockhandler is now sorted after name
 
-todo: implement the other logs, planks, stripped logs, barks, stripped barks
-todo: implement gravel, andesite, diorite, granite (and also the polished form
+todo: can we add slabs?
+todo: add tags & support crafting with them
+todo: fix bug: blocks can be placed at corners of other blocks
+todo: implement hitbox system
+todo: fix bug: falling blocks are falling after a few blocks strange
+todo: fix bug: crafting 2x2 seems to not work

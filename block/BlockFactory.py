@@ -55,7 +55,7 @@ class BlockFactory:
             """
             # read injection classes
             INJECTION_CLASSES = data["injections"] if "injections" in data else []
-            print(INJECTION_CLASSES, data["name"])
+            # print(INJECTION_CLASSES, data["name"])
 
             @staticmethod
             def get_name() -> str:
@@ -65,4 +65,6 @@ class BlockFactory:
                 return data["brakeable"] if "brakeable" in data else super().is_brakeable()
 
             def get_model_state(self) -> dict: return {} if "modelstate" not in data else data["modelstate"]
+
+            def is_solid_side(self, side) -> bool: return True if "solid" not in data else data["solid"]
 

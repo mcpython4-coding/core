@@ -20,8 +20,8 @@ import PIL.Image, PIL.ImageDraw
 os.makedirs(G.local+"/tmp/generated_items")
 
 
-SETUP_TIME = 3
-CLEANUP_TIME = 2
+SETUP_TIME = 2
+CLEANUP_TIME = 1
 
 
 class StateBlockItemGenerator(State.State):
@@ -32,6 +32,7 @@ class StateBlockItemGenerator(State.State):
     def __init__(self):
         State.State.__init__(self)
         self.blockindex = 0
+        G.blockhandler.blockclasses.sort(lambda x: x.get_name())
 
     def get_parts(self) -> list:
         return [StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False, activate_keyboard=False,
@@ -47,10 +48,10 @@ class StateBlockItemGenerator(State.State):
         G.world.get_active_dimension().add_block(
             (0, 0, 0), G.blockhandler.blockclasses[0].get_name(), block_update=False)
         G.window.set_caption("generating block item images | block: {} | {} / {}".format(
-            G.blockhandler.blockclasses[0].get_name(), 1, len(G.blockhandler.blockclasses)
+            "null", 0, len(G.blockhandler.blockclasses)
         ))
-        self.blockindex = 0
-        event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
+        self.blockindex = -1
+        # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
         event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
 
     def on_deactivate(self, new):

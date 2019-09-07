@@ -49,7 +49,8 @@ class ModelHandler:
         location = self.found_models[name]
         try:
             modeldata = ResourceLocator.read(location, "json")
-            self.models[name] = texture.model.Model.Model(modeldata.copy())
+            self.models[name] = texture.model.Model.Model(modeldata.copy(),
+                                                          "block/"+location.split("/")[-1].split(".")[0])
         except:
             print("error during loading model {} named {}".format(location, name))
             traceback.print_exc()

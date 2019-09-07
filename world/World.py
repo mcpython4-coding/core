@@ -24,7 +24,6 @@ class World:
         self.dimensions = {}
         self.add_dimension(0, config={"configname": "default_overworld"})
         self.active_dimension = 0
-        self.batch: pyglet.graphics.Batch = pyglet.graphics.Batch()
 
     def get_active_dimension(self) -> world.Dimension.Dimension:
         return self.dimensions[self.active_dimension]

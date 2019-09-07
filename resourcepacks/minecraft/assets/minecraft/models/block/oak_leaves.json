@@ -1,0 +1,6 @@
+{
+    "parent": "block/leaves",
+    "textures": {
+        "all": "tmp/blocks/oak_leaves.png"
+    }
+}

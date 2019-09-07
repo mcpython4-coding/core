@@ -9,20 +9,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import util.math
 import util.enums
 import pyglet
-
-"""
-{   
-    "from": [ 0, 0, 0 ],
-    "to": [ 16, 16, 16 ],
-    "faces": {
-        "down":  { "texture": "#down", "cullface": "down" },
-        "up":    { "texture": "#up", "cullface": "up" },
-        "north": { "texture": "#north", "cullface": "north" },
-        "south": { "texture": "#south", "cullface": "south" },
-        "west":  { "texture": "#west", "cullface": "west" },
-        "east":  { "texture": "#east", "cullface": "east" }
-    }
-}"""
+import block.BlockConfig
 
 
 class BoxModel:
@@ -53,8 +40,8 @@ class BoxModel:
                 for _ in range(rotation[0] // 90):
                     east, west, up, down = up, down, east, west
                     indexes[0] += 1; indexes[0] %= 4
-                    indexes[1] += 1; indexes[1] %= 4
                     indexes[2] += 1; indexes[2] %= 4
+                    indexes[3] += 1; indexes[1] %= 4
                     indexes[4] += 1; indexes[4] %= 4
             if rotation[1]:  # rotate around y
                 for _ in range(rotation[1] // 90):
@@ -65,15 +52,17 @@ class BoxModel:
                 for _ in range(rotation[2] // 90):
                     indexes[3] += 1; indexes[3] %= 4
                     indexes[5] += 1; indexes[5] %= 4
+                    indexes[1] += 1; indexes[1] %= 4
                     north, south, up, down = up, down, north, south
         rtextures = util.math.tex_coords(up[indexes[0]], down[indexes[1]], north[indexes[2]], east[indexes[3]],
                                          south[indexes[4]], west[indexes[4]], size=self.model.texture_atlas.size)
         result = []
         vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
                                          [True] * 6)
+        batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]
         for i in range(6):
             t = rtextures[i * 8:i * 8 + 8]
-            result.append(batch[0].add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group,
+            result.append(batch.add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group,
                                        ('v3f/static', vertex[i * 12:i * 12 + 12]),
                                        ('t2f/static', t)))
         return result
