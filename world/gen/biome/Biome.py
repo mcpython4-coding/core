@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
+import world.gen.feature.IOre as ores
 
 
 class Biome:
@@ -36,4 +37,17 @@ class Biome:
     @staticmethod
     def get_top_layer_configuration(height: int):
         return ["minecraft:dirt"] * (height - 1) + ["minecraft:grass_block"]
+
+    @staticmethod
+    def get_trees() -> list:
+        """
+        :return: an (IFeature, chance as n)[
+        """
+
+    @staticmethod
+    def get_ores() -> list:
+        """
+        :return: an IOre[
+        """
+        return [ores.CoalOre]
 

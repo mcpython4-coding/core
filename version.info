@@ -310,10 +310,11 @@ started these clone on 12th of July, 2019
 [uuk]: added alpha-batch to rendering system
 [uuk]: added gravel, andesite, polished andesite, diorite, polished diorite, granite, polished granite
 [uuk]: blocklist of blockhandler is now sorted after name
+[uuk]: added trees to world generation
 
 todo: can we add slabs?
 todo: add tags & support crafting with them
-todo: fix bug: blocks can be placed at corners of other blocks
 todo: implement hitbox system
+todo: fix bug: blocks can be placed at corners of other blocks
 todo: fix bug: falling blocks are falling after a few blocks strange
 todo: fix bug: crafting 2x2 seems to not work

@@ -32,7 +32,7 @@ class StateBlockItemGenerator(State.State):
     def __init__(self):
         State.State.__init__(self)
         self.blockindex = 0
-        G.blockhandler.blockclasses.sort(lambda x: x.get_name())
+        G.blockhandler.blockclasses.sort(key=lambda x: x.get_name())
 
     def get_parts(self) -> list:
         return [StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False, activate_keyboard=False,

@@ -38,8 +38,8 @@ class StateWorldGenerationConfig(State.State):
         G.world.add_dimension(0, {"configname": self.parts[3].textpages[self.parts[3].index]})
         print("generating world")
         G.worldgenerationhandler.enable_generation = True
-        for x in range(0, 1):
-            for z in range(0, 1):
+        for x in range(-1, 2):
+            for z in range(-1, 2):
                 chunk = G.world.dimensions[0].get_chunk(x, z, generate=False)
                 chunk.is_ready = False
                 G.worldgenerationhandler.generate_chunk(chunk)
