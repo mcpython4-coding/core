@@ -11,7 +11,7 @@ from chat.command.Command import ParseType, ParseMode, SubCommand, ParseBridge
 import gui.ItemStack
 
 
-@G.commandhandler
+@G.registry
 class CommandGive(chat.command.Command.Command):
     """
     class for /give command

@@ -10,7 +10,7 @@ import chat.command.Command
 from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 
 
-@G.commandhandler
+@G.registry
 class CommandKill(chat.command.Command.Command):
     """
     class for /kill command

@@ -10,7 +10,7 @@ import chat.command.Command
 from chat.command.Command import SubCommand, ParseBridge, ParseType, ParseMode
 
 
-@G.commandhandler
+@G.registry
 class CommandExecute(chat.command.Command.Command):
     """
     class for /execute command
@@ -83,7 +83,7 @@ class CommandExecute(chat.command.Command.Command):
                 index += 2
                 if position in G.world.world:
                     block = G.world.world[position]
-                    flag = block.get_name() == G.blockhandler.blocks[name].get_name()
+                    flag = block.get_name() == G.registry.get_by_name("block").get_attribute("blocks")[name].get_name()
                 else:
                     flag = name in ["air", "minecraft:air", None, 0]
             elif subcommand == "entity":

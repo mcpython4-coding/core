@@ -10,28 +10,28 @@ from . import Block
 from .ILog import ILog
 
 
-@G.blockhandler
+@G.registry
 class BlockAcaciaLog(ILog):
     @staticmethod
     def get_name() -> str:
         return "minecraft:acacia_log"
 
 
-@G.blockhandler
+@G.registry
 class BlockStrippedAcaciaLog(ILog):
     @staticmethod
     def get_name() -> str:
         return "minecraft:stripped_acacia_log"
 
 
-@G.blockhandler
+@G.registry
 class BlockAcaciaWood(ILog):
     @staticmethod
     def get_name() -> str:
         return "minecraft:acacia_wood"
 
 
-@G.blockhandler
+@G.registry
 class BlockStrippedAcaciaWood(ILog):
     @staticmethod
     def get_name() -> str:

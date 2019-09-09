@@ -10,7 +10,7 @@ import block.IBlock
 import event.TickHandler
 
 
-@G.blockhandler
+@G.registry
 class IFallingBlock(block.IBlock.IBlock):
     """
     base injection class for falling block

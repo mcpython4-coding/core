@@ -71,16 +71,16 @@ class CommandParser:
         active_entry = parsebridge
         values = []
         array = [parsebridge]
+        commandregistry = G.registry.get_by_name("command")
         while len(active_entry.sub_commands) > 0 and index < len(command):  # iterate over the whole command
             flag1 = False
             for subcommand in active_entry.sub_commands:  # go through all commands and check if valid
-                if not flag1 and G.commandhandler.commandentries[subcommand.type].is_valid(
+                if not flag1 and commandregistry.get_attribute("commandentries")[subcommand.type].is_valid(
                         command, index, subcommand.args, subcommand.kwargs):  # is valid
                     array.append((subcommand, active_entry.sub_commands.index(subcommand)))
                     active_entry = subcommand
-                    index, value = G.commandhandler.commandentries[subcommand.type].parse(command, index, info,
-                                                                                          subcommand.args,
-                                                                                          subcommand.kwargs)
+                    index, value = commandregistry.get_attribute("commandentries")[subcommand.type].parse(
+                        command, index, info, subcommand.args, subcommand.kwargs)
                     values.append(value)  # set value
                     flag1 = True
             if not flag1:

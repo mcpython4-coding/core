@@ -10,7 +10,7 @@ from . import Block
 from .ILog import ILog
 
 
-@G.blockhandler
+@G.registry
 class BlockOakLog(ILog):
     @staticmethod
     def get_name() -> str:

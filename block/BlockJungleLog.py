@@ -10,28 +10,28 @@ from . import Block
 from .ILog import ILog
 
 
-@G.blockhandler
+@G.registry
 class BlockJungleLog(ILog):
     @staticmethod
     def get_name() -> str:
         return "minecraft:jungle_log"
 
 
-@G.blockhandler
+@G.registry
 class BlockStrippedJungleLog(ILog):
     @staticmethod
     def get_name() -> str:
         return "minecraft:stripped_jungle_log"
 
 
-@G.blockhandler
+@G.registry
 class BlockJungleWood(ILog):
     @staticmethod
     def get_name() -> str:
         return "minecraft:jungle_wood"
 
 
-@G.blockhandler
+@G.registry
 class BlockStrippedJungleWood(ILog):
     @staticmethod
     def get_name() -> str:

@@ -32,7 +32,7 @@ class StateBlockItemGenerator(State.State):
     def __init__(self):
         State.State.__init__(self)
         self.blockindex = 0
-        G.blockhandler.blockclasses.sort(key=lambda x: x.get_name())
+        G.registry.get_by_name("block").registered_objects.sort(key=lambda x: x.get_name())
 
     def get_parts(self) -> list:
         return [StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False, activate_keyboard=False,
@@ -46,9 +46,9 @@ class StateBlockItemGenerator(State.State):
         G.window.position = (1.5, 2, 1.5)
         G.window.rotation = (-45, -45)
         G.world.get_active_dimension().add_block(
-            (0, 0, 0), G.blockhandler.blockclasses[0].get_name(), block_update=False)
+            (0, 0, 0), G.registry.get_by_name("block").registered_objects[0].get_name(), block_update=False)
         G.window.set_caption("generating block item images | block: {} | {} / {}".format(
-            "null", 0, len(G.blockhandler.blockclasses)
+            "null", 0, len(G.registry.get_by_name("block").registered_objects)
         ))
         self.blockindex = -1
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
@@ -60,19 +60,19 @@ class StateBlockItemGenerator(State.State):
 
     def add_new_screen(self):
         self.blockindex += 1
-        if self.blockindex >= len(G.blockhandler.blockclasses):
+        if self.blockindex >= len(G.registry.get_by_name("block").registered_objects):
             G.statehandler.switch_to("minecraft:startmenu")
             G.window.position = (0, 10, 0)
             G.window.rotation = (0, 0)
             G.world.get_active_dimension().remove_block((0, 0, 0))
             G.window.set_caption("Pyglet")
             return
-        # print(G.blockhandler.blockclasses[self.blockindex].get_name())
+        # print(G.registry.get_by_name("block").registered_objects[self.blockindex].get_name())
         G.world.get_active_dimension().hide_block((0, 0, 0))
         G.world.get_active_dimension().add_block(
-            (0, 0, 0), G.blockhandler.blockclasses[self.blockindex].get_name(), block_update=False)
+            (0, 0, 0), G.registry.get_by_name("block").registered_objects[self.blockindex].get_name(), block_update=False)
         G.window.set_caption("generating block item images | block: {} | {} / {}".format(
-            G.blockhandler.blockclasses[self.blockindex].get_name(), self.blockindex+1, len(G.blockhandler.blockclasses)
+            G.registry.get_by_name("block").registered_objects[self.blockindex].get_name(), self.blockindex+1, len(G.registry.get_by_name("block").registered_objects)
         ))
         # todo: add states
         event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
@@ -80,14 +80,14 @@ class StateBlockItemGenerator(State.State):
         G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
-        if self.blockindex >= len(G.blockhandler.blockclasses): return
-        blockname = G.blockhandler.blockclasses[self.blockindex].get_name()
+        if self.blockindex >= len(G.registry.get_by_name("block").registered_objects): return
+        blockname = G.registry.get_by_name("block").registered_objects[self.blockindex].get_name()
         file = "tmp/generated_items/{}.png".format("_".join(blockname.split(":")))
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
         image: PIL.Image.Image = ResourceLocator.read(file, "pil")
         image.crop((240, 129, 558, 447)).save(G.local + "/" + file)
 
-        @G.itemhandler
+        @G.registry
         class GeneratedItem(item.Item.Item):
             @staticmethod
             def get_name() -> str:

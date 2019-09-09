@@ -10,6 +10,7 @@ import util.texture
 import PIL.Image
 import ResourceLocator
 import os
+import event.Registry
 
 
 class ITextureChange:
@@ -24,8 +25,9 @@ class TextureFactory:
     def __init__(self):
         self.changer = {}
 
-    def __call__(self, obj: ITextureChange):
-        self.changer[obj.get_name()] = obj
+    @staticmethod
+    def add_transform(registry, obj: ITextureChange):
+        G.texturefactoryhandler.changer[obj.get_name()] = obj
 
     def transform(self, image, mode, *args, **kwargs):
         if mode not in self.changer:
@@ -63,9 +65,11 @@ class TextureFactory:
 
 
 G.texturefactoryhandler = TextureFactory()
+texturechanges = event.Registry.Registry("texturechanges", [ITextureChange], 
+                                         injection_function=TextureFactory.add_transform)
 
 
-@G.texturefactoryhandler
+@G.registry
 class TextureResize(ITextureChange):
     @staticmethod
     def get_name() -> str: return "resize"
@@ -75,7 +79,7 @@ class TextureResize(ITextureChange):
         return image.resize(size)
 
 
-@G.texturefactoryhandler
+@G.registry
 class TextureColorize(ITextureChange):
     @staticmethod
     def get_name() -> str: return "colorize"
@@ -85,7 +89,7 @@ class TextureColorize(ITextureChange):
         return util.texture.colorize(image, color)
 
 
-@G.texturefactoryhandler
+@G.registry
 class TextureCut(ITextureChange):
     @staticmethod
     def get_name() -> str: return "cut"

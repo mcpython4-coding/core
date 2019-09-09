@@ -10,54 +10,34 @@ import chat.command.Command
 import chat.command.CommandParser
 import chat.command.CommandEntry
 import chat.command.Selector
+import event.Registry
 
 
-class CommandHandler:
-    """
-    main registry for commands
-    """
-
-    def __init__(self):
-        self.commands = []
-        self.commandentries = {}
-        self.selectors = []
-
-    def add(self, command):
-        """
-        register an command to the registry
-        :param command: the command to add
-        :return: the command
-        """
-        return self(command)
-
-    def __call__(self, command):
-        """
-        register an command to the registry
-        :param command: the command to add
-        :return: the command
-        """
-        if issubclass(command, chat.command.Command.Command):  # is it an command
-            self.commands.append(command)
-            G.commandparser.add_command(command)
-        elif issubclass(command, chat.command.CommandEntry.CommandEntry):  # or an command entry
-            self.commandentries[command.ENTRY_NAME] = command
-        elif issubclass(command, chat.command.Selector.Selector):  # or an selector?
-            self.selectors.append(command)
-        else:
-            raise ValueError("can't register object {} to commandhandler".format(command))
-        return command
+def register_command(registry, command):
+    if issubclass(command, chat.command.Command.Command):  # is it an command
+        G.commandparser.add_command(command)
+    elif issubclass(command, chat.command.CommandEntry.CommandEntry):  # or an command entry
+        commandregistry.get_attribute("commandentries")[command.ENTRY_NAME] = command
+        # print(command)
+    elif issubclass(command, chat.command.Selector.Selector):  # or an selector?
+        commandregistry.get_attribute("selectors").append(command)
+    else:
+        raise ValueError("can't register object {} to commandhandler".format(command))
 
 
-G.commandhandler = CommandHandler()
-
-
-# load the stuff
+commandregistry = event.Registry.Registry("command", [chat.command.Command.Command,
+                                                      chat.command.CommandEntry.CommandEntry,
+                                                      chat.command.Selector.Selector],
+                                          injection_function=register_command)
+commandregistry.set_attribute("commandentries", {})
+commandregistry.set_attribute("selectors", [])
 
 chat.command.CommandEntry.load()
 chat.command.Selector.load()
 
 from . import (CommandGive, CommandGamemode, CommandExecute, CommandKill, CommandClear, CommandTeleport, CommandReload,
                CommandGenerate, CommandSetblock, CommandFill)
+
 # register these at the end:
 from . import CommandHelp
 

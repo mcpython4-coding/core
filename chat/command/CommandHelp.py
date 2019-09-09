@@ -10,7 +10,7 @@ import chat.command.Command
 from chat.command.Command import SubCommand, ParseType, ParseMode, ParseBridge
 
 
-@G.commandhandler
+@G.registry
 class CommandHelp(chat.command.Command.Command):
     """
     class for /help command
@@ -65,7 +65,7 @@ class CommandHelp(chat.command.Command.Command):
 
 # generate help pages
 PAGES = []
-for command in G.commandhandler.commands:
+for command, _ in G.commandparser.commandparsing.values():
     PAGES += command.get_help()
 
 PAGES.sort(key=lambda x: x[0])

@@ -11,7 +11,7 @@ from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 import util.math
 
 
-@G.commandhandler
+@G.registry
 class CommandGenerate(chat.command.Command.Command):
     """
     class for /generate command

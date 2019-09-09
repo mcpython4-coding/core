@@ -9,27 +9,23 @@ import globals as G
 import item.Item
 import util.texture
 import ResourceLocator
+import event.Registry
 
 
-class ItemHandler:
-    def __init__(self):
-        self.items = {}
-        self.pygletimagetable = {}
-
-    def register(self, itemclass: type(item.Item)):
-        self(itemclass)
-
-    def __call__(self, itemclass: type(item.Item), overwrite=True):
-        if itemclass.get_name() in self.items and not overwrite: return
-        self.items[itemclass.get_name()] = itemclass
-        self.items[itemclass.get_name().split(":")[-1]] = itemclass
-        self.pygletimagetable[itemclass.get_name()] = util.texture.to_pyglet_image(
-            itemclass.get_as_item_image(ResourceLocator.read(itemclass.get_item_image_location(), "pil")))
+def register_item(registry, itemclass):
+    itemtable = registry.get_attribute("items")
+    pygletimagetable = registry.get_attribute("pygletimagetable")
+    itemtable[itemclass.get_name()] = itemclass
+    itemtable[itemclass.get_name().split(":")[-1]] = itemclass
+    pygletimagetable[itemclass.get_name()] = util.texture.to_pyglet_image(
+        itemclass.get_as_item_image(ResourceLocator.read(itemclass.get_item_image_location(), "pil")))
 
 
-G.itemhandler = ItemHandler()
+items = event.Registry.Registry("item", [item.Item.Item], injection_function=register_item)
+items.set_attribute("items", {})
+items.set_attribute("pygletimagetable", {})
 
-from . import (Item, ItemFactory)
+from . import (ItemFactory)
 
 ItemFactory.ItemFactory.from_directory(G.local+"/assets/factory/item")
 

@@ -18,13 +18,11 @@ chat = None
 eventhandler = None
 tickhandler = None
 
-blockhandler = None
+registry = None
+commandparser = None
 statehandler = None
 texturefactoryhandler = None
 inventoryhandler = None
-itemhandler = None
-commandhandler = None
-commandparser = None
 worldgenerationhandler = None
 biomehandler = None
 craftinghandler = None

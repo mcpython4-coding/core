@@ -11,7 +11,7 @@ from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 import event.TickHandler
 
 
-@G.commandhandler
+@G.registry
 class CommandReload(chat.command.Command.Command):
     """
     class for /reload command

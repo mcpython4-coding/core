@@ -63,7 +63,7 @@ class Chunk:
             pos = (x + dx, y + dy, z + dz)
             block = self.dimension.get_block(pos)
             if not (block and (block.is_solid_side(config.FACE_NAMES[i]) if type(block) != str else
-                               G.blockhandler.blocks[block].is_solid_side(None, config.FACE_NAMES[i]))):
+                               G.registry.get_by_name("block").get_attribute("blocks")[block].is_solid_side(None, config.FACE_NAMES[i]))):
                 return True
         return False
 
@@ -98,7 +98,7 @@ class Chunk:
             blockobj = block_name
             blockobj.position = position
         else:
-            blockobj = G.blockhandler.blocks[block_name](position, *args, **kwargs)
+            blockobj = G.registry.get_by_name("block").get_attribute("blocks")[block_name](position, *args, **kwargs)
         self.world[position] = blockobj
         if immediate:
             if self.exposed(position):

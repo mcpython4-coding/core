@@ -74,8 +74,8 @@ class Slot:
         draws the slot
         """
         if self.itemstack.item and self.itemstack.item.get_item_image_location() != self.__last_itemfile:
-            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.itemhandler.pygletimagetable[
-                                                                         self.itemstack.item.get_name()])
+            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.registry.get_by_name("item").get_attribute(
+                "pygletimagetable")[self.itemstack.item.get_name()])
         elif not self.itemstack.item:
             self.sprite = None
         self.amount_lable.text = str(self.itemstack.amount)

@@ -27,7 +27,7 @@ class BlockStateDefinition:
 
     def __init__(self, data: dict, name: str):
         G.modelhandler.blockstates[name] = self
-        if name not in G.blockhandler.blocks: raise RuntimeError()
+        if name not in G.registry.get_by_name("block").get_attribute("blocks"): raise RuntimeError()
         self.states = []
         if "variants" in data:
             for element in data["variants"].keys():

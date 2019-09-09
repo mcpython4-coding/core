@@ -48,7 +48,7 @@ class BlockFactory:
         :param data: the data to use
         """
 
-        @G.blockhandler
+        @G.registry
         class BlockFactoried(block.Block.Block if "injections" not in data else block.IBlock.InjectAbleBlock):
             """
             block class created by BlockFactory

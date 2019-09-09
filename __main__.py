@@ -76,11 +76,12 @@ try:
         event.EventHandler.handler.call("game:startup")
         setup()
         event.EventHandler.handler.call("game:load_finished")
+        """
         print("------------------")
         print("- Game Info Area -")
         print("------------------")
         print("blocks (loaded):\n -count: {}\n -blockmodel count: {}\n -injection class count: {}".format(
-            len(G.blockhandler.blockclasses), len(G.modelhandler.used_models), len(G.blockhandler.injectionclasses)
+            len(G.registry.get_by_name("block").registered_objects), len(G.modelhandler.used_models), len(G.registry.get_by_name("block").get_attribute("injectionclasses"))
         ))
         print("items (loaded): count: {}".format(len(G.itemhandler.items)))
         print("commands (loaded):\n -count: {}".format(len(G.commandhandler.commands)))
@@ -92,7 +93,7 @@ try:
         print("states (loaded): count: {}".format(len(G.statehandler.states)))
         print("generation layers (loaded): count: {}".format(len(G.worldgenerationhandler.layers)))
         print("generation configurations (loaded): count: {}".format(len(G.worldgenerationhandler.configs)))
-        print("biomes (loaded): count: {}".format(len(G.biomehandler.biomes)))
+        print("biomes (loaded): count: {}".format(len(G.biomehandler.biomes)))"""
         print("----------------------------------------------")
         print("- END OF LOADING. NOW STARTING UPDATE CYCLUS -")
         print("----------------------------------------------")

@@ -42,7 +42,7 @@ class InjectAbleBlock(block.Block.Block):
         for iblock in cls.INJECTION_CLASSES:
             if type(iblock) == str:
                 # read the injection class from storage
-                iblock = G.blockhandler.injectionclasses[iblock]
+                iblock = G.registry.get_by_name("block").get_attribute("injectionclasses")[iblock]
             ext: dict = iblock.get_functions_to_inject()
             # iterate over all InjectionModes provided by this
             for mode in ext.keys():

@@ -10,7 +10,7 @@ import chat.command.Command
 from chat.command.Command import ParseBridge, ParseType, SubCommand, ParseMode
 
 
-@G.commandhandler
+@G.registry
 class CommandGamemode(chat.command.Command.Command):
     """
     class for /gamemode command

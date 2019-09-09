@@ -9,7 +9,7 @@ import globals as G
 from . import Block
 
 
-@G.blockhandler
+@G.registry
 class BlockGrassBlock(Block.Block):
     """
     base class for grass

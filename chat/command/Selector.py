@@ -23,7 +23,7 @@ class Selector:
 
 
 def load():
-    @G.commandhandler
+    @G.registry
     class SelfSelector(Selector):
         @staticmethod
         def is_valid(entry) -> bool:
@@ -33,7 +33,7 @@ def load():
         def parse(entry, config):
             return [config.entity]
 
-    @G.commandhandler
+    @G.registry
     class PlayerSelector(Selector):
         @staticmethod
         def is_valid(entry) -> bool:
@@ -44,9 +44,23 @@ def load():
             return [G.player]
 
     # todo: fully implement
-    @G.commandhandler
-    class RandomPlayerSelector(PlayerSelector): pass
+    @G.registry
+    class RandomPlayerSelector(Selector):
+        @staticmethod
+        def is_valid(entry) -> bool:
+            return entry == "@r"
 
-    @G.commandhandler
-    class AllPlayerSelector(PlayerSelector): pass
+        @staticmethod
+        def parse(entry, config):
+            return [G.player]
+
+    @G.registry
+    class AllPlayerSelector(Selector):
+        @staticmethod
+        def is_valid(entry) -> bool:
+            return entry == "@a"
+
+        @staticmethod
+        def parse(entry, config):
+            return [G.player]
 

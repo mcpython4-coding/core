@@ -43,7 +43,7 @@ class CommandEntry:
 
 
 def load():
-    @G.commandhandler
+    @G.registry
     class DefiniteString(CommandEntry):
         """
         Entry for definite string
@@ -57,7 +57,7 @@ def load():
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool: return entrylist[start] == arguments[0]
 
-    @G.commandhandler
+    @G.registry
     class IntEntry(CommandEntry):
         """
         entry for int
@@ -76,7 +76,7 @@ def load():
             except:
                 return False
 
-    @G.commandhandler
+    @G.registry
     class StringEntry(CommandEntry):
         """
         string entry
@@ -112,7 +112,7 @@ def load():
                 return True  # it does close
             return False  # it does NOT start
 
-    @G.commandhandler
+    @G.registry
     class FloatEntry(CommandEntry):
         """
         float entry
@@ -131,7 +131,7 @@ def load():
             except:
                 return False
             
-    @G.commandhandler
+    @G.registry
     class BlockNameEntry(CommandEntry):
         """
         blockname entry
@@ -145,9 +145,9 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in G.blockhandler.blocks  # is this block arrival?
+            return entrylist[start] in G.registry.get_by_name("block").get_attribute("blocks")  # is this block arrival?
         
-    @G.commandhandler
+    @G.registry
     class ItemNameEntry(CommandEntry):
         """
         itemname entry
@@ -161,9 +161,9 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in G.itemhandler.items  # is this item arrival?
+            return entrylist[start] in G.registry.get_by_name("item").get_attribute("items")  # is this item arrival?
         
-    @G.commandhandler
+    @G.registry
     class SelectorEntry(CommandEntry):
         """
         Selector entry
@@ -174,16 +174,17 @@ def load():
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
             entry = entrylist[start]
-            for selector in G.commandhandler.selectors:
+            for selector in G.registry.get_by_name("command").get_attribute("selectors"):
                 if selector.is_valid(entry):  # is this the selector we are searching for?
                     return start + 1, selector.parse(entry, info) 
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             entry = entrylist[start]
-            return any([x.is_valid(entry) for x in G.commandhandler.selectors])  # have we any valid selector?
+            # have we any valid selector?
+            return any([x.is_valid(entry) for x in G.registry.get_by_name("command").get_attribute("selectors")])
         
-    @G.commandhandler
+    @G.registry
     class PositionEntry(CommandEntry):
         """
         position entry
@@ -227,7 +228,7 @@ def load():
             except ValueError:
                 return False
             
-    @G.commandhandler
+    @G.registry
     class SelectDefinitedStringEntry(CommandEntry):
         """
         select definited stirng entry
@@ -243,7 +244,7 @@ def load():
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             return entrylist[start] in arguments  # check if should be used
         
-    @G.commandhandler
+    @G.registry
     class OpenEndUndefinitedStringEntry(CommandEntry):
         """
         open end undefinited stirng entry
