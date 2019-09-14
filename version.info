@@ -318,6 +318,9 @@ started these clone on 12th of July, 2019
 [uuk]: finished up above changes
 [uuk]: fixed bug: @a and @r were not registered correct
 [xkcdjerry]: removed old unused code in __main__->try->main
+[uuk]: added setup tasks
+[github]: started day 26 as 14th of September, 2019
+[uuk]: finished prebuild system to an runable point
 
 
 TODO: implement pre-build system (#1)

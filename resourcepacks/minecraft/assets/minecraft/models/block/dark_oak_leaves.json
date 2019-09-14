@@ -1,6 +1,6 @@
 {
     "parent": "block/leaves",
     "textures": {
-        "all": "tmp/blocks/dark_oak_leaves.png"
+        "all": "build/texture/blocks/dark_oak_leaves.png"
     }
 }

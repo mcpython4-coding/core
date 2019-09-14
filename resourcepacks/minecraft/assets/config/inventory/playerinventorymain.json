@@ -1,5 +1,5 @@
 {
-  "image_location": "tmp/gui/main.png",
+  "image_location": "build/texture/gui/main.png",
   "image_size": [
     352,
     332

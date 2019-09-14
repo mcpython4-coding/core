@@ -1,5 +1,5 @@
 {
-  "image_location": "tmp/gui/hotbar.png",
+  "image_location": "build/texture/gui/hotbar.png",
   "image_size": [364, 44],
   "window_anchor": "MD",
   "image_position": [0, 40],

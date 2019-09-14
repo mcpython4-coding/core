@@ -20,7 +20,8 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
 
     def __init__(self):
         gui.Inventory.Inventory.__init__(self)
-        self.selected_sprite = pyglet.sprite.Sprite(ResourceLocator.read("tmp/gui/selected_slot.png", "pyglet"))
+        self.selected_sprite = pyglet.sprite.Sprite(ResourceLocator.read("build/texture/gui/selected_slot.png",
+                                                                         "pyglet"))
 
     @staticmethod
     def get_config_file():

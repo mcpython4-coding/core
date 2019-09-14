@@ -52,12 +52,20 @@ try:
     globals.modelhandler.search()
     texture.model.BlockState.BlockStateDefinition.from_directory("assets/minecraft/blockstates")
     print("finished!")
-
     import world.gen.WorldGenerationHandler
 
 
     def setup():
+        import world.World
+        G.world = world.World.World()
+        import texture.model.BlockState
+        print("searching for models & blockstates...")
+        G.modelhandler.search()
+        texture.model.BlockState.BlockStateDefinition.from_directory("assets/minecraft/blockstates")
+        print("finished!")
+        
         opengl_setup.setup()
+
         print("generating models...")
         globals.modelhandler.build()
         print("generating image atlases...")
@@ -87,6 +95,13 @@ except BaseException:
 
 
 if __name__ == "__main__":
+    import sys
+
+    if "--rebuild" in sys.argv:
+        import setup as systemsetup
+
+        systemsetup.execute()
+    
     try:
         main()
     finally:
