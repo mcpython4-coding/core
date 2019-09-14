@@ -18,16 +18,16 @@ try:
     import rendering.window
 
     import os
-    import globals as G
+    import globals
 
-    while os.path.exists(G.local+"/tmp"):
+    while os.path.exists(globals.local + "/tmp"):
         try:
             import shutil
-            shutil.rmtree(G.local+"/tmp")
-        except:
+            shutil.rmtree(globals.local + "/tmp")
+        except (shutil.Error, ImportError):
             pass
 
-    os.makedirs(G.local+"/tmp")
+    os.makedirs(globals.local + "/tmp")
 
     import ResourceLocator
     ResourceLocator.load_resources()
@@ -36,10 +36,10 @@ try:
 
     print("generating textures...")
     import texture.factory
-    G.texturefactoryhandler.load()
+    globals.texturefactoryhandler.load()
 
     import world.World
-    G.world = world.World.World()
+    globals.world = world.World.World()
 
     import texture.model.ModelHandler
     import texture.model.BlockState
@@ -49,7 +49,7 @@ try:
     block.BlockHandler.load()
 
     print("searching for models...")
-    G.modelhandler.search()
+    globals.modelhandler.search()
     texture.model.BlockState.BlockStateDefinition.from_directory("assets/minecraft/blockstates")
     print("finished!")
 
@@ -59,7 +59,7 @@ try:
     def setup():
         opengl_setup.setup()
         print("generating models...")
-        G.modelhandler.build()
+        globals.modelhandler.build()
         print("generating image atlases...")
         import texture.TextureAtlas
         texture.TextureAtlas.handler.output()
@@ -76,29 +76,11 @@ try:
         event.EventHandler.handler.call("game:startup")
         setup()
         event.EventHandler.handler.call("game:load_finished")
-        """
-        print("------------------")
-        print("- Game Info Area -")
-        print("------------------")
-        print("blocks (loaded):\n -count: {}\n -blockmodel count: {}\n -injection class count: {}".format(
-            len(G.registry.get_by_name("block").registered_objects), len(G.modelhandler.used_models), len(G.registry.get_by_name("block").get_attribute("injectionclasses"))
-        ))
-        print("items (loaded): count: {}".format(len(G.itemhandler.items)))
-        print("commands (loaded):\n -count: {}".format(len(G.commandhandler.commands)))
-        print(("inventorys (loaded & created):\n -count: {}\n -opened: {}\n -slot count: {}\n -marked as always opened" +
-              ": {}").format(
-            len(G.inventoryhandler.inventorys), len(G.inventoryhandler.opened_inventorystack),
-            sum([len(inventory.slots) for inventory in G.inventoryhandler.inventorys]),
-            len(G.inventoryhandler.alwaysopened)))
-        print("states (loaded): count: {}".format(len(G.statehandler.states)))
-        print("generation layers (loaded): count: {}".format(len(G.worldgenerationhandler.layers)))
-        print("generation configurations (loaded): count: {}".format(len(G.worldgenerationhandler.configs)))
-        print("biomes (loaded): count: {}".format(len(G.biomehandler.biomes)))"""
         print("----------------------------------------------")
-        print("- END OF LOADING. NOW STARTING UPDATE CYCLUS -")
+        print("- END OF LOADING. NOW STARTING UPDATE CYCLES -")
         print("----------------------------------------------")
         run()
-except:
+except BaseException:
     import ResourceLocator
     ResourceLocator.close_all_resources()
     raise
@@ -110,4 +92,3 @@ if __name__ == "__main__":
     finally:
         import ResourceLocator
         ResourceLocator.close_all_resources()
-

@@ -1,6 +1,6 @@
-These is an tasklist covering all diffrent tasks these project has.
+These is an tasklist covering all different tasks these project has.
 
-cleanup tasks (should be done regulary):
+cleanup tasks (should be done regularly):
     document every change
     go to EVERY PYTHON FILE and do:
         have we unused imports? -> delete
@@ -10,9 +10,9 @@ cleanup tasks (should be done regulary):
         is every code reachable?
         have we outdated code which should be updated?
         is there an way for every interested function / field to overwrite
-        could this file splitted into diffrent?
-        could this class be splitted into seperated / super - child classes?
-        could this function be splitted into diffrent for better handling?
+        could this file split into different?
+        could this class be split into separate / super - child classes?
+        could this function be split into different for better handling?
         should be this function be part of the util-code?
         is there any library or any code around web that does this better / can replace this?
         should be some of these code be part of an load-event?
@@ -30,16 +30,16 @@ make an registry base class, an registry handler and registry locks
 add PlayerCreativeInventory, PlayerCreativeTab
 add BlockInventory-attribute to Block for auto-opening an inventory
 add /loot-command
-add can_brake-attribute to item to definite items that can brake blocks in gamemode 2
+add can_break-attribute to item to definite items that can break blocks in gamemode 2
 add the following block inventorys: crafting table, furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
-add Enchantment-baseclass with attribute is_combineable_with(...) -> bool & all enchanments
+add Enchantment-baseclass with attribute is_combine_able_with(...) -> bool & all enchantments
 add Tool-baseclass and Tool-durability
 optimize BlockItemGenerator to have shorter times
-add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload, /clone, /?
-add braketime-attribute to Block, use it in window brake system (also in StatePartGame)
+add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload, /clone
+add breaktime-attribute to Block, use it in window break system (also in StatePartGame)
 add datapacks with .mcfunction-files, add resourcelocator binding for recipes, add /function & /shedule -command
 fix missing resize of image-parts when using only a part of it
-make the following attributes as json-saved files: Block.is_brake_able, Block.brake_time, Item.tool_types, Item.max_durability, Item.braketime_of
+make the following attributes as json-saved files: Block.is_break_able, Block.break_time, Item.tool_types, Item.max_durability, Item.breaktime_of
 add update.py for downloading latest build of mcpython and unpacking it
 add ItemModelLoader
 add datapack, resourcepack (binding to resourcelocator)

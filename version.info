@@ -317,6 +317,8 @@ started these clone on 12th of July, 2019
 [github]: started day 25 as 9th of September, 2019
 [uuk]: finished up above changes
 [uuk]: fixed bug: @a and @r were not registered correct
+[xkcdjerry]: removed old unused code in __main__->try->main
+
 
 TODO: implement pre-build system (#1)
     add an new flag to startup: --rebuild
@@ -342,7 +344,7 @@ todo: add tags & support crafting with them
 todo: implement hitbox system
 todo: fix bug: blocks can be placed at corners of other blocks
     todo: fix bug: falling blocks are falling after a few blocks strange
-todo: fix bug: crafting seems to not work (example: andesite -> polished andesite)
+todo: fix bug: crafting seems to not work (example: andesite -> polished andesite)(even wood crafting does not work)
 todo: make resourcepacks fully functional: sorting
 todo: add save / load of world
 todo: add option for inventories to be visable when another is also visable

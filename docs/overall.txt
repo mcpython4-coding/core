@@ -1,0 +1,3 @@
+[comment] this folder has (or will eventually have) a folder system like to that of the mcpython-4-master
+[comment] a file's docs is in a folder of the same name, of a file with the same name(but with a different extension)
+todo: put docs for pre-build system here

@@ -1,0 +1,6 @@
+[comment] This a file for a lot of (sometimes long) requested stuff without cluttering up the version.info,
+[comment] tasks.list or the github issues with TODOs and feature requests
+
+[xkcdjerry] Please explain pre-build system (and just about everything) more thoroughly in the documents\
+[xkcdjerry] (It's a slow work, but I can help, and when It's finished, we can change it faster)
+[xkcdjerry] Please change the caption to minecraft4
