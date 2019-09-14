@@ -61,7 +61,7 @@ class World:
         for _ in range(max_distance * m):
             key = util.math.normalize((x, y, z))
             if key != previous and self.get_active_dimension().get_block(key):
-                mx, my, mz = (position[0] - key[0], position[1] - key[1], position[2] - key[2])
+                mx, my, mz = (previous[0] - key[0], previous[1] - key[1], previous[2] - key[2])
                 if abs(mx) + abs(my) + abs(mz) == 1:
                     return key, previous
             previous = key

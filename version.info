@@ -332,6 +332,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: combining two inventory slots gets the slot you have with your mouse lost
 [uuk]: fixed bug: sometimes, an chunk more than expected was generating
 [uuk]: fixed bug: blocks can be setted at corners of the blocks
+[uuk]: fixed bug: can't set blocks (sorry, I have not tested the above bug fix in the list)
 
 todo: fix bug: falling blocks are falling after a few blocks strange (is fall-function called multiple times?)
 
@@ -353,6 +354,7 @@ todo: add crafting shape recipes
 
 todo: add blocks: stone bricks, chiseled stone brick, cracked stone brick
 
+todo: add an option to toggle world generation size
 todo: add an back-button to world gen config
 todo: add some kind of info to screen for generation
 todo: add an quite game button to start screen
