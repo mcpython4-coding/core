@@ -11,6 +11,7 @@ import crafting.IRecipeType
 import crafting.GridRecipes
 import event.EventInfo
 import gui.Slot
+import gui.ItemStack
 
 
 class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
@@ -69,18 +70,16 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
             for recipe in G.craftinghandler.recipes["minecraft:crafting_shapeless"][len(used_slots)]:
                 used = used_slots.copy()
                 recipevalid = True
-                # print([[x.item.get_name() if x.item else None for x in using] for using in recipe.inputs])
+                # print(recipe.inputs, recipe.output)
                 for using in recipe.inputs:
                     # print(using)
                     if recipevalid:
                         flag = True
                         for itemstack in using[:]:
                             for slot in used:
-                                if flag and itemstack.item and slot.itemstack.item.get_name() == itemstack.item.\
-                                        get_name():
+                                if flag and slot.itemstack.get_item_name() == itemstack[0]:
                                     flag = False
                                     used.remove(slot)
-                                    # print(recipe, flag)
                         if flag:
                             recipevalid = False
                 if recipevalid:
@@ -98,11 +97,12 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
             for sx in range(ix):
                 for sy in range(iy):
                     slots, empty = self._get_slot_map((sx, sy), recipe.gridsize)
-                    if all([itemstack.amount == 0 for itemstack in empty]):  # is everything else empty?
+                    if all([itemstack.is_empty() for itemstack in empty]):  # is everything else empty?
                         flag = True
                         for ix in range(recipe.gridsize[0]):
                             for iy in range(recipe.gridsize[1]):
-                                if not any([x != slots[ix][iy] for x in recipe.grid[ix][iy]]):
+                                # todo: here is missing an tag check
+                                if not any([x[0] == slots[ix][iy].get_item_name() for x in recipe.grid[ix][iy]]):
                                     flag = False
                         if flag:
                             if write_slots_to_local:
@@ -114,7 +114,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         """
         gets the map of selected slots and an list of unused slots
         :param start: the start x, y
-        :param size: the size to search for
+        :param size: the size to search for as size x, size y -tuple
         :return: a (map, list) tuple
         """
         sx, sy = start
@@ -133,7 +133,8 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         if not self.active_recipe:
             self.slotoutputmap.itemstack.clean()
         else:
-            self.slotoutputmap.itemstack = self.active_recipe.output.copy()
+            self.slotoutputmap.set_itemstack(gui.ItemStack.ItemStack(self.active_recipe.output[0],
+                                                                     amount=self.active_recipe.output[1]), update=False)
         if self.lookover:
             self.lookover(self.active_recipe, self.used_input_slots, self.slotoutputmap)
 
@@ -152,13 +153,12 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
     def on_input_update(self, fromstack, tostack, x, y):
         self.check_recipe_state()
         self.update_output()
-        # print(self.active_recipe.output.amount)
+        # print(self.active_recipe.output if self.active_recipe else None)
 
     def on_output_update(self, fromstack, tostack):
         if not self.active_recipe: return
-        # print(self.slotoutputmap.itemstack.item.get_name() if self.slotoutputmap.itemstack.item else None)
-        if self.active_recipe.on_craft: self.active_recipe.on_craft()
-        if not self.slotoutputmap.itemstack.item:
+        if self.slotoutputmap.itemstack.is_empty():
+            if self.active_recipe.on_craft: self.active_recipe.on_craft()
             self.remove_one_input()
             self.check_recipe_state()
             self.update_output()
@@ -167,5 +167,4 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         startrecipe = self.active_recipe
         while self.active_recipe == startrecipe:
             G.player.add_to_free_place(self.slotoutputmap.itemstack)
-            self.slotoutputmap.itemstack.clean()
-            self.on_output_update(None, None)
+            self.slotoutputmap.itemstack = gui.ItemStack.ItemStack.get_empty()

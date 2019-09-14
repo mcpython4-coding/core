@@ -68,6 +68,11 @@ class CommandParser:
         :param info: the info to use
         :param index: the index to start on
         """
+        if len(command) == 1 and not all(
+                [subcommand.mode == chat.command.Command.ParseMode.OPTIONAL for subcommand in parsebridge.sub_commands]
+        ):
+            print("unable to parse command. please use /help command to get exact command syntax")
+            return None, None
         active_entry = parsebridge
         values = []
         array = [parsebridge]
@@ -86,6 +91,7 @@ class CommandParser:
             if not flag1:
                 if all([subcommand.mode == chat.command.Command.ParseMode.OPTIONAL for subcommand in
                         active_entry.sub_commands]):
+                    print([x.mode for x in active_entry.sub_commands])
                     return values, array
                 else:
                     print("[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}".
@@ -94,7 +100,10 @@ class CommandParser:
                                                                            active_entry.sub_commands]))
                     print("gotten values: {}".format(values))
                     return None, array
-        return values, array
+        if all([x.mode == chat.command.Command.ParseMode.OPTIONAL for x in active_entry.sub_commands]):
+            return values, array
+        print("command is not ended correct. please look at the command syntax.")
+        return None, array
 
 
 G.commandparser = CommandParser()

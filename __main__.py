@@ -48,19 +48,15 @@ try:
     import block.BlockHandler
     block.BlockHandler.load()
 
-    print("searching for models...")
-    globals.modelhandler.search()
-    texture.model.BlockState.BlockStateDefinition.from_directory("assets/minecraft/blockstates")
-    print("finished!")
     import world.gen.WorldGenerationHandler
 
 
     def setup():
         import world.World
-        G.world = world.World.World()
+        globals.world = world.World.World()
         import texture.model.BlockState
         print("searching for models & blockstates...")
-        G.modelhandler.search()
+        globals.modelhandler.search()
         texture.model.BlockState.BlockStateDefinition.from_directory("assets/minecraft/blockstates")
         print("finished!")
         

@@ -12,7 +12,7 @@ import gui.ItemStack
 
 def transform_to_itemstack(item, table: dict) -> list:
     if "item" in item:
-        return [gui.ItemStack.ItemStack(item["item"], amount=item["count"] if "count" in item else 1)]
+        return [(item["item"], item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
         # todo: implement
         return []
@@ -63,7 +63,7 @@ class GridShaped(crafting.IRecipeType.IRecipe):
         self.gridsize = (len(self.grid[0]), len(self.grid))
 
     def get_identification(self):
-        return ([self.output.item.get_name()] if self.output.item else []) + [(len(self.grid[0]), len(self.grid))]
+        return ([self.output[0]]) + [(len(self.grid[0]), len(self.grid))]
 
 
 @G.craftinghandler
@@ -101,5 +101,5 @@ class GridShapeless(crafting.IRecipeType.IRecipe):
         self.on_select = on_select
 
     def get_identification(self):
-        return ([self.output.item.get_name()] if self.output.item else []) + [len(self.inputs)]
+        return ([self.output[0]]) + [len(self.inputs)]
 

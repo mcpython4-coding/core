@@ -146,7 +146,7 @@ class StatePartGame(StatePart.StatePart):
             G.window.dy -= dt * GRAVITY
             G.window.dy = max(G.window.dy, -TERMINAL_VELOCITY)
             dy += G.window.dy * dt
-        else:
+        elif self.activate_keyboard:
             dy = dt*6 if G.window.keys[key.SPACE] else (-dt*6 if G.window.keys[key.LSHIFT] else 0)
         # collisions
         x, y, z = G.window.position
@@ -182,7 +182,7 @@ class StatePartGame(StatePart.StatePart):
             G.window.strafe[1] = -1
         elif symbol == key.D and not G.window.keys[key.A]:
             G.window.strafe[1] = 1
-        elif symbol == key.SPACE:
+        elif symbol == key.SPACE and G.player.inventorys["chat"] not in G.inventoryhandler.opened_inventorystack:
             if self.double_space_cooldown and time.time() - self.double_space_cooldown < 0.5 and G.player.gamemode == 1:
                 G.window.flying = not G.window.flying
                 self.double_space_cooldown = None

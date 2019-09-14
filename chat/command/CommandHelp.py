@@ -35,27 +35,23 @@ class CommandHelp(chat.command.Command.Command):
             if start < 0:
                 print("[CHAT][COMMANDPARSER][ERROR] value must be greater than 0")
                 return
-            # if start >= len(PAGES):
-            #    print("[CHAT][COMMANDPARSER][ERROR] value must be smaller than {}".
-            #          format((len(PAGES)+1)//LINES_PER_PAGE+1))
-            #    return
             if end >= len(PAGES):
                 end = len(PAGES)
-            pages = PAGES[start-1:end]
+            pages = PAGES[start-1 if start != 0 else 0:end]
             print("--------------" + "-" * len(str(page)))
             print("- HELP PAGE {} -".format(page))
             print("--------------" + "-" * len(str(page)))
-            print("\n".join([x[1] for x in pages]))
+            print("\n".join(pages))
         elif type(values[0]) == str:
             c: str = values[0]
             if c.startswith("/"): c = c[1:]
-            if c not in G.commandhandler.commands:
+            if c not in G.registry.get_by_name("command").get_attribute("commandentries"):
                 print("[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(c))
                 return
             print("------------------"+"-"*len(c))
             print("- HELP PAGE FOR {} -".format(c))
             print("------------------"+"-"*len(c))
-            print("\n".join([x[1] for x in G.commandhandler.commands[c].get_help()]))
+            print("\n".join(G.registry.get_by_name("command").get_attribute("commandentries")[c].get_help()))
 
     @staticmethod
     def get_help() -> list:
@@ -66,9 +62,10 @@ class CommandHelp(chat.command.Command.Command):
 # generate help pages
 PAGES = []
 for command, _ in G.commandparser.commandparsing.values():
-    PAGES += command.get_help()
+    h = command.get_help()
+    PAGES += h if type(h) == list else [h]
 
-PAGES.sort(key=lambda x: x[0])
+PAGES.sort(key=lambda x: x.split(" ")[0])
 
-LINES_PER_PAGE = 10
+LINES_PER_PAGE = 10  # an internal config, can be changed
 

@@ -321,39 +321,58 @@ started these clone on 12th of July, 2019
 [uuk]: added setup tasks
 [github]: started day 26 as 14th of September, 2019
 [uuk]: finished prebuild system to an runable point
+[uuk]: fixed bug: space / shift for flying works in chat
+[uuk]: fixed bug: /help-command does not work (#1)
+[uuk]: fixed bugs around command parsing which were causing /give and /give @s raising exceptions (#4)
+[uuk]: optimized crafting system & fixed bugs around it (#1)
+[uuk]: fixed bug: only-items were not loaded (this was the reason for recipes not working)
+[uuk]: fixed bug: ResourceLocator can't load right from item-directory
+[uuk]: fixed bug: block models are loaded twice -> less loading time
+[uuk]: fixed bug: shift-click on crafting output does delete all
+[uuk]: fixed bug: combining two inventory slots gets the slot you have with your mouse lost
+[uuk]: fixed bug: sometimes, an chunk more than expected was generating
+[uuk]: fixed bug: blocks can be setted at corners of the blocks
+
+todo: fix bug: falling blocks are falling after a few blocks strange (is fall-function called multiple times?)
+
+todo: optimize generating models & generating image atlases because they are taking to long to finish
+
+todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes
 
 
-TODO: implement pre-build system (#1)
-    add an new flag to startup: --rebuild
-    add an auto-valid-check which will rebuild parts automatically when changed
-    add event called system:rebuild which is callen when its time to rebuild
-    rewrite recipe loading & checking to NOT use ItemStack
-    create an build-folder for storing the stuff which was generated and some index files which store the state of the
-        system
-    compress block factory files, item factory files
-    add some kind of info for the player what is currently done
-    texture atlas will be pre-builded an named minecraft_1.png (mods will have [modname]_[n].png)
-    an global table called texturemap.json which links texture ids to atlases
-    models will be pre-prepared and stored in an format pointing by texture only to the texture id
-    crafting recipes will be also pre-prepared for better loading times & will be removed if invalid
+todo: are inventories cleared when world is cleared? -> add an inventory flag to weither clear it or not
+todo: add an event called on_world_leave, on_world_enter, on_world_clean
+
+todo: add an new selector @ same as @s
+
+todo: add an debug world generator which can be selected in system
+
+todo: add option to log what is registered for every registry
+
+todo: add crafting shape recipes
+
+todo: add blocks: stone bricks, chiseled stone brick, cracked stone brick
+
+todo: add an back-button to world gen config
+todo: add some kind of info to screen for generation
+todo: add an quite game button to start screen
+todo: add an button "go to github project" which opens the internet browser with an link to github
+todo: make the info label hideable by key combo
+todo: game info label is not good formatted (spacing)
+todo: make "/" open chat with "/" added by default (#1)
+todo: set the caption to something like "mcpython" and make every other caption base on it (may be an new set_caption-method?)
+
+todo: implement tags & bind to recipes
+todo: when player touches the ground, stop flying(or there will be that really weird thing when you touch down using
+    Shift and some time later, you want to jump, you just spring up and hang the air......) (#1)
 
 todo: split multi-registries into their parts
-todo: re-add info header on startup
 
 todo: add active index to chat so you can switch were you are editing
 
 todo: can we add slabs?
-todo: add tags & support crafting with them
-todo: implement hitbox system
-todo: fix bug: blocks can be placed at corners of other blocks
-    todo: fix bug: falling blocks are falling after a few blocks strange
-todo: fix bug: crafting seems to not work (example: andesite -> polished andesite)(even wood crafting does not work)
-todo: make resourcepacks fully functional: sorting
-todo: add save / load of world
+todo: make resourcepacks fully functional: sorting, auto-rebuild
 todo: add option for inventories to be visable when another is also visable
 todo: add loot tables (also for block drops)
-todo: fix crafting shift click
-todo: fix bug: can't combine two itemstacks in inventory
-todo: fix bug: in some rare cases, you can walk through the corner into the block (see forgleman #104)
-todo: fix bug: in chat, " " and SHIFT are used for higher / lower position in gamemode 1
 todo: implement base_image to slot for base item & bind to armor & offhand slots
+todo: move recipe loading to loading with looking at the blockhandler table

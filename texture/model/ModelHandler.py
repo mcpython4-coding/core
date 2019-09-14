@@ -32,6 +32,7 @@ class ModelHandler:
             used = used_models.pop(0)
             if used not in self.found_models:
                 print("model error: can't locate model for {}".format(used))
+                continue
             data = ResourceLocator.read(self.found_models[used], "json")
             if "parent" in data:
                 used_models.append(data["parent"])

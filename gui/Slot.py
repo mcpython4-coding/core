@@ -53,10 +53,10 @@ class Slot:
     def get_itemstack(self):
         return self.__itemstack
 
-    def set_itemstack(self, stack):
+    def set_itemstack(self, stack, update=True):
         old_itemstack = self.__itemstack
-        self.__itemstack = stack
-        if stack != old_itemstack and self.on_update:
+        self.__itemstack = stack if stack else gui.ItemStack.ItemStack.get_empty()
+        if stack != old_itemstack and self.on_update and update:
             [f(old_itemstack, stack) for f in self.on_update]
 
     itemstack = property(get_itemstack, set_itemstack)

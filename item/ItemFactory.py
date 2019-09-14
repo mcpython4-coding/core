@@ -10,6 +10,7 @@ import item.Item
 import os
 import json
 import PIL.Image
+import ResourceLocator
 
 
 class ItemFactory:
@@ -18,11 +19,9 @@ class ItemFactory:
 
     @staticmethod
     def from_directory(directory):
-        for root, dirs, files in os.walk(directory, topdown=False):
-            for name in files:
-                file = os.path.join(root, name)
-                if file not in ItemFactory.FILES:
-                    ItemFactory.FILES.append(file)
+        for file in ResourceLocator.get_all_entrys(directory):
+            if file not in ItemFactory.FILES:
+                ItemFactory.FILES.append(file)
 
     @staticmethod
     def load():
@@ -30,13 +29,12 @@ class ItemFactory:
             if file in ItemFactory.loaded:
                 continue
             ItemFactory.loaded.append(file)
-            with open(file) as f:
-                data = json.load(f)
+            data = ResourceLocator.read(file, "json")
             ItemFactory.create_item_normal(data.copy())
 
     @staticmethod
     def create_item_normal(data):
-        @G.itemhandler
+        @G.registry
         class GeneratedItem(item.Item.Item):
             @staticmethod
             def get_name() -> str:

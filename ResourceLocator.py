@@ -128,7 +128,7 @@ def close_all_resources():
     RESOURCE_LOCATIONS.clear()
 
 
-MC_IMAGE_LOCATIONS = ["block", "gui"]
+MC_IMAGE_LOCATIONS = ["block", "gui", "item"]
 
 
 def transform_name(file: str) -> str:

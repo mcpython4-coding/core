@@ -17,8 +17,12 @@ class ItemStack:
     def __init__(self, item_name_or_instance, amount=1):
         if issubclass(type(item_name_or_instance), item.Item.Item):
             self.item = item_name_or_instance
-        elif item_name_or_instance in G.registry.get_by_name("item").get_attribute("items"):
-            self.item = G.registry.get_by_name("item").get_attribute("items")[item_name_or_instance]()
+        elif type(item_name_or_instance) == str:
+            if item_name_or_instance in G.registry.get_by_name("item").get_attribute("items"):
+                self.item = G.registry.get_by_name("item").get_attribute("items")[item_name_or_instance]()
+            else:
+                print("can't find item named {}".format(item_name_or_instance))
+                self.item = None
         else:
             self.item = None
         self.amount = amount if self.item and 0 <= amount <= self.item.get_max_stack_size() else 0
@@ -47,4 +51,8 @@ class ItemStack:
     def __eq__(self, other):
         if not type(other) == ItemStack: return False
         return self.item == other.item and self.amount == other.amount
+
+    def is_empty(self): return self.amount == 0 or self.item is None
+
+    def get_item_name(self): return self.item.get_name() if self.item else None
 

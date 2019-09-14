@@ -18,6 +18,7 @@ class WorldGenerationHandler:
         self.features = {}
         self.configs = {}
         self.enable_generation = False
+        self.enable_auto_generation = False
 
     def setup_dimension(self, dimension, config=None):
         configname = dimension.worldgenerationconfig["configname"]

@@ -27,7 +27,7 @@ items.set_attribute("pygletimagetable", {})
 
 from . import (ItemFactory)
 
-ItemFactory.ItemFactory.from_directory(G.local+"/assets/factory/item")
+ItemFactory.ItemFactory.from_directory("assets/factory/item")
 
 ItemFactory.ItemFactory.load()
 

@@ -82,12 +82,17 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                 if modifiers & key.MOD_SHIFT and slot.on_shift_click:
                     slot.on_shift_click(x, y, button, modifiers)
                 else:
-                    if slot.itemstack.item and moving_slot.itemstack.item and slot.itemstack.item.get_name() == \
-                            moving_slot.itemstack.item.get_name():
-                        toadd = slot.itemstack.item.get_max_stack_size() - slot.itemstack.amount
-                        if toadd > moving_slot.amount: toadd = moving_slot.amount
-                        moving_slot.amount -= toadd
-                        slot.itemstack.amount = slot.itemstack.amount + toadd
+                    if slot.itemstack.get_item_name() == moving_slot.itemstack.get_item_name() and \
+                            slot.itemstack.get_item_name() is not None:
+                        eamount = slot.itemstack.amount
+                        ramount = moving_slot.itemstack.amount
+                        mstack = slot.itemstack.item.get_max_stack_size()
+                        if eamount == mstack: return
+                        possible = mstack - eamount
+                        if possible > ramount:
+                            possible = ramount
+                        slot.itemstack.amount += possible
+                        moving_slot.itemstack.amount -= possible
                         if moving_slot.amount <= 0:
                             moving_slot.itemstack.clean()
                     else:

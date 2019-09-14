@@ -10,6 +10,7 @@ import crafting.IRecipeType
 import json
 import ResourceLocator
 import item.ItemHandler
+import traceback
 
 
 class CraftingHandler:
@@ -48,6 +49,7 @@ class CraftingHandler:
         print("loading recipes")
         i = 1
         errored = 0
+        excepted = 0
         for item in ResourceLocator.get_all_entrys("data/minecraft/recipes"):
             print("\r -loading recipe {}".format(i), end="")
             try:
@@ -55,10 +57,12 @@ class CraftingHandler:
             except ValueError:
                 errored += 1
             except:
-                print(item)
-                raise
+                print("\rerror during loading recipe", item)
+                traceback.print_exc()
+                excepted += 1
             i += 1
-        print("\nrecipes with errors: {}".format(errored) if errored else "")
+        print("\nnot loadable recipes due to missing decoders: {}".format(errored) if errored else "")
+        if excepted: print("not loadable recipes due to loading exceptions: {}".format(excepted))
 
 
 G.craftinghandler = CraftingHandler()
