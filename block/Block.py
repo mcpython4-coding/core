@@ -13,7 +13,7 @@ class Block:
     base class for all blocks
     """
 
-    def __init__(self, position, setted_to=None):
+    def __init__(self, position, setted_to=None, state={}):
         """
         creates new Block
         :param position: the position to create the block on
@@ -22,6 +22,7 @@ class Block:
         self.position = position
         self.setted_to = setted_to
         self.on_create()
+        self.set_model_state(state)
 
     @staticmethod
     def get_name() -> str:
@@ -80,3 +81,8 @@ class Block:
         return True
 
     def get_model_state(self) -> dict: return {}
+
+    def set_model_state(self, state: dict): pass
+
+    @staticmethod
+    def get_all_model_states() -> list: return [{}]

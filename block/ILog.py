@@ -38,3 +38,19 @@ class ILog(block.Block.Block):
     def get_model_state(self):
         return {"axis": AXIS_MAP[self.axis]}
 
+    def set_model_state(self, state: dict):
+        if "axis" in state:
+            axis = state["axis"]
+            if axis == "x":
+                self.axis = LogAxis.X
+            elif axis == "y":
+                self.axis = LogAxis.Y
+            elif axis == "z":
+                self.axis = LogAxis.Z
+            else:
+                raise ValueError()
+
+    @staticmethod
+    def get_all_model_states() -> list:
+        return [{"axis": "x"}, {"axis": "y"}, {"axis": "z"}]
+

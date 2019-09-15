@@ -333,26 +333,17 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: sometimes, an chunk more than expected was generating
 [uuk]: fixed bug: blocks can be setted at corners of the blocks
 [uuk]: fixed bug: can't set blocks (sorry, I have not tested the above bug fix in the list)
+[uuk]: fixed bug: falling blocks were not falling correct
+[uuk]: fixed bug: inventory is not cleared when leaving world
+[uuk]: added @-selector which works the same as the @s-selector
+[uuk]: added debug world generator
 
-todo: fix bug: falling blocks are falling after a few blocks strange (is fall-function called multiple times?)
-
-todo: optimize generating models & generating image atlases because they are taking to long to finish
-
-todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes
-
-
-todo: are inventories cleared when world is cleared? -> add an inventory flag to weither clear it or not
-todo: add an event called on_world_leave, on_world_enter, on_world_clean
-
-todo: add an new selector @ same as @s
-
-todo: add an debug world generator which can be selected in system
 
 todo: add option to log what is registered for every registry
 
-todo: add crafting shape recipes
+todo: add crafting shaped recipes
 
-todo: add blocks: stone bricks, chiseled stone brick, cracked stone brick
+todo: add blocks: stone bricks, chiseled stone bricks, cracked stone bricks, barrier (with custom item image)
 
 todo: add an option to toggle world generation size
 todo: add an back-button to world gen config
@@ -378,3 +369,6 @@ todo: add option for inventories to be visable when another is also visable
 todo: add loot tables (also for block drops)
 todo: implement base_image to slot for base item & bind to armor & offhand slots
 todo: move recipe loading to loading with looking at the blockhandler table
+
+todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes
+todo: add an event called on_world_leave, on_world_enter, on_world_clean

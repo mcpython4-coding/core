@@ -69,6 +69,9 @@ try:
         texture.TextureAtlas.handler.output()
         print("finished!")
 
+        import world.gen.mode.DebugOverWorldGenerator
+        world.gen.mode.DebugOverWorldGenerator.blockinfo.construct()
+
     def run():
         import pyglet
         rendering.window.Window(width=800, height=600, caption='Pyglet', resizable=True)

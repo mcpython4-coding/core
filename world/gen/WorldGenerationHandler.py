@@ -40,8 +40,11 @@ class WorldGenerationHandler:
         print("generating", chunk.position)
         dimension = chunk.dimension
         configname = dimension.worldgenerationconfig["configname"]
-        m = len(self.configs[configname]["layers"])
-        for i, layername in enumerate(self.configs[configname]["layers"]):
+        config = self.configs[configname]
+        if "on_chunk_generate_pre" in config:
+            config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
+        m = len(config["layers"])
+        for i, layername in enumerate(config["layers"]):
             print("\rgenerating layer {} ({}/{})".format(layername, i+1, m), end="")
             layer = self.layers[layername]
             layer.add_generate_functions_to_chunk(dimension.worldgenerationconfigobjects[layername], chunk)
@@ -74,4 +77,4 @@ G.worldgenerationhandler = WorldGenerationHandler()
 
 from world.gen.layer import (DefaultBedrockLayer, DefaultLandMassLayer, DefaultTemperatureLayer, DefaultBiomeLayer,
                              DefaultHeightMapLayer, DefaultStonePlacementLayer, DefaultTopLayerLayer, DefaultTreeLayer)
-from world.gen.mode import DefaultOverWorldGenerator
+from world.gen.mode import DefaultOverWorldGenerator, DebugOverWorldGenerator

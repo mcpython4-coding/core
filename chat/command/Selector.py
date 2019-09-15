@@ -34,6 +34,11 @@ def load():
             return [config.entity]
 
     @G.registry
+    class SelectorEmpty(SelfSelector):
+        @staticmethod
+        def is_valid(entry) -> bool: return entry == "@"
+
+    @G.registry
     class PlayerSelector(Selector):
         @staticmethod
         def is_valid(entry) -> bool:

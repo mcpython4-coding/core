@@ -61,8 +61,11 @@ class World:
         for _ in range(max_distance * m):
             key = util.math.normalize((x, y, z))
             if key != previous and self.get_active_dimension().get_block(key):
-                mx, my, mz = (previous[0] - key[0], previous[1] - key[1], previous[2] - key[2])
-                if abs(mx) + abs(my) + abs(mz) == 1:
+                if previous is not None and key is not None:
+                    mx, my, mz = (previous[0] - key[0], previous[1] - key[1], previous[2] - key[2])
+                    if abs(mx) + abs(my) + abs(mz) == 1:
+                        return key, previous
+                else:
                     return key, previous
             previous = key
             x, y, z = x + dx / m, y + dy / m, z + dz / m
@@ -170,4 +173,5 @@ class World:
             dimension.chunks = {}
         if remove_dims:
             self.dimensions = {}
+        [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
 

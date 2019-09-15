@@ -30,6 +30,7 @@ add PlayerCreativeInventory, PlayerCreativeTab
 add /loot-command
 implement hitbox system
 todo: fix bug: in some rare cases, you can walk through the corner into the block (see forgleman #104)
+optimize generating models & generating image atlases because they are taking to long to finish
 add can_break-attribute to item to definite items that can break blocks in gamemode 2
 add the following block inventorys: crafting table, furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
 add Enchantment-baseclass with attribute is_combine_able_with(...) -> bool & all enchantments

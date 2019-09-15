@@ -166,3 +166,7 @@ class Inventory:
     def is_blocking_interactions(self) -> bool:
         return True
 
+    def on_world_cleared(self):
+        [slot.itemstack.clean() for slot in self.slots]
+        if self in G.inventoryhandler.opened_inventorystack: G.inventoryhandler.hide(self)
+
