@@ -4,6 +4,7 @@ cleanup tasks (should be done regularly):
     document every change
     go to EVERY PYTHON FILE and do:
         have we unused imports? -> delete
+        do we  have a new third-party-library not registered in the requirements.txt? -> add it
         look at EVERY name and check if it is good
         has every file, class & function an docstring?
         is the code with enough comments?
@@ -53,13 +54,13 @@ implement client/server by making an @client and @server notation system which w
 
 implement pre-build system:
     add an auto-valid-check which will rebuild parts automatically when changed
-    add event called system:rebuild which is callen when its time to rebuild
+    add event called system:rebuild which is called when it is its time to rebuild
     rewrite recipe loading & checking to NOT use ItemStack
     create an build-folder for storing the stuff which was generated and some index files which store the state of the
         system
     compress block factory files, item factory files
     add some kind of info for the player what is currently done
-    texture atlas will be pre-builded an named minecraft_1.png (mods will have [modname]_[n].png)
-    an global table called texturemap.json which links texture ids to atlases
+    texture atlas will be pre-builded in a file named minecraft_1.png (mods will have [modname]_[n].png)
+    create an global table called texturemap.json which links texture ids to atlases
     models will be pre-prepared and stored in an format pointing by texture only to the texture id
     crafting recipes will be also pre-prepared for better loading times & will be removed if invalid

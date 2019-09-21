@@ -331,12 +331,13 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: shift-click on crafting output does delete all
 [uuk]: fixed bug: combining two inventory slots gets the slot you have with your mouse lost
 [uuk]: fixed bug: sometimes, an chunk more than expected was generating
-[uuk]: fixed bug: blocks can be setted at corners of the blocks
+[uuk]: fixed bug: blocks can be set corners of the blocks
 [uuk]: fixed bug: can't set blocks (sorry, I have not tested the above bug fix in the list)
 [uuk]: fixed bug: falling blocks were not falling correct
 [uuk]: fixed bug: inventory is not cleared when leaving world
 [uuk]: added @-selector which works the same as the @s-selector
 [uuk]: added debug world generator
+[xkcdjerry]: added a requirements.txt for a quick-and-dirty pip download
 
 
 todo: add option to log what is registered for every registry
@@ -350,7 +351,7 @@ todo: add an back-button to world gen config
 todo: add some kind of info to screen for generation
 todo: add an quite game button to start screen
 todo: add an button "go to github project" which opens the internet browser with an link to github
-todo: make the info label hideable by key combo
+todo: make the info label hide-able by key combo
 todo: game info label is not good formatted (spacing)
 todo: make "/" open chat with "/" added by default (#1)
 todo: set the caption to something like "mcpython" and make every other caption base on it (may be an new set_caption-method?)
@@ -365,7 +366,7 @@ todo: add active index to chat so you can switch were you are editing
 
 todo: can we add slabs?
 todo: make resourcepacks fully functional: sorting, auto-rebuild
-todo: add option for inventories to be visable when another is also visable
+todo: add option for inventories to be visible when another is also visible
 todo: add loot tables (also for block drops)
 todo: implement base_image to slot for base item & bind to armor & offhand slots
 todo: move recipe loading to loading with looking at the blockhandler table
