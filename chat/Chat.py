@@ -21,12 +21,13 @@ class ChatInventory(gui.Inventory.Inventory):
 
     def on_create(self):
         self.lable = pyglet.text.Label(x=15, y=15)
+        self.ulable = pyglet.text.Label(x=15, y=14, text="_")
         self.enable_blink = True
-        self.blink_state = True
-        self.blink_start = time.time()
+        self.timer = time.time()
 
     def on_activate(self):
         G.chat.text = ""
+        G.chat.active_index = 0
         G.chat.has_entered_t = False
         G.eventhandler.activate_to_callback("user:keyboard:press", G.chat.on_key_press)
         G.eventhandler.activate_to_callback("user:keyboard:enter", G.chat.enter)
@@ -36,18 +37,18 @@ class ChatInventory(gui.Inventory.Inventory):
         G.eventhandler.deactivate_from_callback("user:keyboard:enter", G.chat.enter)
 
     def on_draw_background(self):
-        if time.time() - self.blink_start > 0.5:
-            self.blink_state = not self.blink_state
-            self.blink_start = time.time()
         wx, _ = G.window.get_size()
         util.opengl.draw_rectangle((10, 10), (wx - 20, 20), color=(.0, .0, .0))
 
     def on_draw_overlay(self):
         wx, _ = G.window.get_size()
         self.lable.text = G.chat.text
-        self.lable.text += " " if not self.blink_state else "_"
         while self.lable.content_width > wx - 20: self.lable.text = self.lable.text[1:]
         self.lable.draw()
+        if round((time.time() - self.timer) % 2) == 1:
+            self.lable.text = G.chat.text[len(G.chat.text)-len(self.lable.text):G.chat.active_index]
+            self.ulable.x = 15 + self.lable.content_width
+            self.ulable.draw()
 
 
 class Chat:
@@ -62,17 +63,18 @@ class Chat:
         self.text: str = ""
         self.history: list = []
         self.historyindex = -1
-        self.has_entered_t = False
+        self.active_index = 0
 
     def enter(self, text: str):
         """
         callen when text is entered
         :param text: the text that is entered
         """
-        if not self.has_entered_t and text == "t":  # check for t at beginning -> work-around after chat opening
-            self.has_entered_t = True
-            return
-        self.text += text
+        if self.text != "":
+            self.text = self.text[:self.active_index+1] + text + self.text[self.active_index+1:]
+        else:
+            self.text = text
+        self.active_index += len(text)
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -81,7 +83,8 @@ class Chat:
         :param modifiers: the modifiers that are used
         """
         if symbol == 65288:  # BACK
-            self.text = self.text[:-1]
+            self.text = self.text[:self.active_index] + self.text[self.active_index+1:]
+            self.active_index -= 1
         elif symbol == key.ENTER:  # execute command
             if self.text.startswith("/"):
                 # excute command
@@ -93,12 +96,18 @@ class Chat:
         elif symbol == key.UP and self.historyindex < len(self.history) - 1:  # go one item up in the history
             self.historyindex += 1
             self.text = self.history[self.historyindex]
+            self.active_index = len(self.text)
         elif symbol == key.DOWN and self.historyindex >= 0:  # go one item down in the history
             self.historyindex -= 1
             if self.historyindex != -1:
                 self.text = self.history[self.historyindex]
             else:
                 self.text = ""
+            self.active_index = len(self.text)
+        elif symbol == key.LEFT and self.active_index > 0: self.active_index -= 1
+        elif symbol == key.RIGHT and self.active_index < len(self.text) - 1: self.active_index += 1
+        else:
+            print(symbol)
 
     def close(self):
         """

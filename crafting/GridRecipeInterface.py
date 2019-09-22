@@ -51,6 +51,8 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         self.enabled = enabled
 
     def check_recipe_state(self):
+        """
+        todo: reactive when fixed
         for x in range(self.minsize[0], self.maxsize[0]+1):
             for y in range(self.minsize[1], self.maxsize[1]+1):
                 if (x, y) in G.craftinghandler.recipes["minecraft:crafting_shaped"]:
@@ -60,7 +62,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
                             if recipe.on_select:
                                 recipe.on_select()
                             # print(recipe)
-                            return
+                            return"""
         used_slots = []
         for row in self.slotinputmap:
             for slot in row:
