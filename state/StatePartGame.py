@@ -189,7 +189,7 @@ class StatePartGame(StatePart.StatePart):
             else:
                 if G.window.dy == 0:
                     G.window.dy = JUMP_SPEED
-        elif symbol in G.window.num_keys and G.player.gamemode in (0, 1):
+        elif symbol in G.window.num_keys and G.player.gamemode in (0, 1) and not modifiers & key.MOD_SHIFT:
             index = symbol - G.window.num_keys[0]
             G.player.set_active_inventory_slot(index)
 

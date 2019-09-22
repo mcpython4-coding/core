@@ -94,7 +94,6 @@ class StateBlockItemGenerator(State.State):
 
     @staticmethod
     def generate_item(blockname, file):
-        print(blockname)
 
         @G.registry
         class GeneratedItem(item.Item.Item):

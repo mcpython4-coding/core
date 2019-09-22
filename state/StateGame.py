@@ -11,6 +11,7 @@ import globals as G
 from pyglet.window import key
 import chat.Chat
 import json
+import event.TickHandler
 
 
 class StateGame(State.State):
@@ -50,7 +51,14 @@ class StateGame(State.State):
             else:
                 G.inventoryhandler.hide(G.player.inventorys["main"])
         elif symbol == key.T and G.window.exclusive:
-            G.inventoryhandler.show(G.player.inventorys["chat"])
+            event.TickHandler.handler.bind(self.open_chat, 2)
+        elif symbol == key._7 and modifiers & key.MOD_SHIFT:
+            event.TickHandler.handler.bind(self.open_chat, 2, args=["/"])
+
+    @staticmethod
+    def open_chat(enter=""):
+        G.inventoryhandler.show(G.player.inventorys["chat"])
+        G.chat.text = enter
 
 
 game = StateGame()
