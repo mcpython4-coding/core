@@ -1,4 +1,0 @@
-{
-  "name": "minecraft:sand",
-  "injections": ["falling_block"]
-}

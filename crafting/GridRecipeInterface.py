@@ -94,15 +94,16 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         if not recipe.enabled: return False
         if type(recipe) == crafting.GridRecipes.GridShaped:
             ix, iy = self.gridsize[0] - recipe.gridsize[0], self.gridsize[1] - recipe.gridsize[1]
-            for sx in range(ix):
-                for sy in range(iy):
+            for sx in range(ix+1):
+                for sy in range(iy+1):
                     slots, empty = self._get_slot_map((sx, sy), recipe.gridsize)
-                    if all([itemstack.is_empty() for itemstack in empty]):  # is everything else empty?
+                    if all([slot.itemstack.is_empty() for slot in empty]):  # is everything else empty?
                         flag = True
                         for ix in range(recipe.gridsize[0]):
                             for iy in range(recipe.gridsize[1]):
                                 # todo: here is missing an tag check
-                                if not any([x[0] == slots[ix][iy].get_item_name() for x in recipe.grid[ix][iy]]):
+                                if not any([x[0] == slots[ix][iy].itemstack.get_item_name() for x in
+                                            recipe.grid[ix][iy]]):
                                     flag = False
                         if flag:
                             if write_slots_to_local:
@@ -140,7 +141,11 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
 
     def remove_one_input(self):
         if type(self.active_recipe) == crafting.GridRecipes.GridShaped:
-            pass  # todo: implement
+            for x in range(self.active_recipe.gridsize[0]):
+                for y in range(self.active_recipe.gridsize[1]):
+                    self.used_input_slots[x][y].itemstack.amount -= 1
+                    if self.used_input_slots[x][y].itemstack.is_empty():
+                        self.used_input_slots[x][y].itemstack.clean()
         elif type(self.active_recipe) == crafting.GridRecipes.GridShapeless:
             # print(self.used_input_slots)
             for slot in self.used_input_slots:

@@ -13,6 +13,7 @@ import pyglet
 from pyglet.window import mouse
 import util.texture
 import ResourceLocator
+import traceback
 
 
 class ButtonMode(enum.Enum):
@@ -142,12 +143,17 @@ class UIPartButton(state.StatePart.StatePart):
         self.hovering = False
 
         self.lable = pyglet.text.Label(text=text)
+        self.active = False
 
     def activate(self):
+        if self.active: return
+        self.active = True
         for eventname, function in self.event_functions:
             G.eventhandler.activate_to_callback(eventname, function)
 
     def deactivate(self):
+        if not self.active: return
+        self.active = False
         for eventname, function in self.event_functions:
             G.eventhandler.deactivate_from_callback(eventname, function)
         self.hovering = False
@@ -260,6 +266,7 @@ class UIPartToggleButton(UIPartButton):
         self.hovering = False
 
         self.lable = pyglet.text.Label(text=self.text)
+        self.active = False
 
     def _generate_text(self):
         text = self.textpages[self.index]

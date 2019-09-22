@@ -11,6 +11,8 @@ import block.IBlock
 import os
 import json
 import ResourceLocator
+COLORS = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
+          "purple", "blue", "brown", "green", "red", "black"]
 
 
 class BlockFactory:
@@ -39,10 +41,34 @@ class BlockFactory:
                 continue
             BlockFactory.loaded.append(file)
             data = ResourceLocator.read(file, "json")
-            BlockFactory.create_block_normal(data.copy())
+            if type(data) == dict:
+                if "mode" not in data:
+                    BlockFactory.create_block_normal(data.copy())
+                elif data["mode"] == "multisameconfig":
+                    for name in data["names"]:
+                        config = data["config"].copy()
+                        config["name"] = name
+                        BlockFactory.create_block_normal(config)
+                elif data["mode"] == "colornamed":
+                    BlockFactory.create_block_normal_from_array([data["name"].format(color) for color in COLORS])
+                elif data["mode"] == "multisameconfig_colornamed":
+                    for color in COLORS:
+                        config = data["config"].copy()
+                        config["name"] = data["name"].format(color)
+                        BlockFactory.create_block_normal(config)
+            elif type(data) == list:
+                BlockFactory.create_block_normal_from_array(data.copy())
+
+    @classmethod
+    def create_block_normal_from_array(cls, data: list):
+        for entry in data:
+            if type(entry) == str:
+                cls.create_block_normal({"name": entry})
+            elif type(entry) == dict:
+                cls.create_block_normal(entry)
 
     @staticmethod
-    def create_block_normal(data):
+    def create_block_normal(data: dict):
         """
         creates an block based on input data
         :param data: the data to use

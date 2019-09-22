@@ -338,13 +338,19 @@ started these clone on 12th of July, 2019
 [uuk]: added @-selector which works the same as the @s-selector
 [uuk]: added debug world generator
 [xkcdjerry]: added a requirements.txt for a quick-and-dirty pip download
+[uuk]: fixed bug: middle-clicking on an not-filled slot in gamemode 1 gives an exception
+[uuk]: added blocks: stone bricks, red sand, concrete, concrete powder, wool
+[uuk]: optimized blockfactory by adding some more file modes & making one file out of more than one (planks, leaves, ...)
+[uuk]: fixed bug: build-folder is not cleared when rebuilding
 
 
-todo: add option to log what is registered for every registry
-
-todo: add crafting shaped recipes
-
-todo: add blocks: stone bricks, chiseled stone bricks, cracked stone bricks, barrier (with custom item image)
+todo: when on ground and in gamemode 1, stop flying
+todo: make "/" open chat with "/" added by default (#1)
+todo: add active index to chat so you can switch were you are editing
+todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
+todo: fix bug: player dies in debug world when on normal blocks
+todo: optimize item factory files like blocks were optimized
+todo: add tools
 
 todo: add an option to toggle world generation size
 todo: add an back-button to world gen config
@@ -353,12 +359,12 @@ todo: add an quite game button to start screen
 todo: add an button "go to github project" which opens the internet browser with an link to github
 todo: make the info label hide-able by key combo
 todo: game info label is not good formatted (spacing)
-todo: make "/" open chat with "/" added by default (#1)
 todo: set the caption to something like "mcpython" and make every other caption base on it (may be an new set_caption-method?)
+todo: make StateParts don't need implement their own hide / shown event bind functions
+
+todo: optimize loading by optimizing models & texture loading by adding into prebuild-system
 
 todo: implement tags & bind to recipes
-todo: when player touches the ground, stop flying(or there will be that really weird thing when you touch down using
-    Shift and some time later, you want to jump, you just spring up and hang the air......) (#1)
 
 todo: split multi-registries into their parts
 
@@ -373,3 +379,5 @@ todo: move recipe loading to loading with looking at the blockhandler table
 
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes
 todo: add an event called on_world_leave, on_world_enter, on_world_clean
+todo: add option to log what is registered for every registry
+todo: fix bug: shaped recipes are not working

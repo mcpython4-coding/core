@@ -32,12 +32,17 @@ class UIPartLable(state.StatePart.StatePart):
 
         self.event_functions = [("user:mouse:press", self.on_mouse_press),
                                 ("render:draw:2d", self.on_draw_2d)]
+        self.active = False
 
     def activate(self):
+        if self.active: return
+        self.active = True
         for eventname, function in self.event_functions:
             G.eventhandler.activate_to_callback(eventname, function)
 
     def deactivate(self):
+        if not self.active: return
+        self.active = False
         for eventname, function in self.event_functions:
             G.eventhandler.deactivate_from_callback(eventname, function)
 

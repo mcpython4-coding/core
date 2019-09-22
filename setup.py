@@ -38,10 +38,31 @@ class IPrepareAbleTask:
     @staticmethod
     def dump_data(directory: str): pass
 
+    @staticmethod
+    def uses_directory() -> bool: return True
+
 
 taskregistry = event.Registry.Registry("preparetasks", [IPrepareAbleTask])
 
 
+@G.registry
+class Cleanup(IPrepareAbleTask):
+    @staticmethod
+    def get_name() -> str: return "cleanup"
+
+    @staticmethod
+    def get_version() -> tuple: return 1, 0, 0
+
+    @staticmethod
+    def dump_data(directory: str):
+        shutil.rmtree(G.local+"/build")
+        os.makedirs(G.local+"/build")
+
+    @staticmethod
+    def uses_directory() -> bool: return False
+
+
+@G.registry
 class TextureFactoryGenerate(IPrepareAbleTask):
     @staticmethod
     def get_name() -> str:
@@ -53,6 +74,9 @@ class TextureFactoryGenerate(IPrepareAbleTask):
     @staticmethod
     def dump_data(directory: str):
         G.texturefactoryhandler.load()
+
+    @staticmethod
+    def uses_directory() -> bool: return False
 
 
 def execute():

@@ -16,11 +16,12 @@ import ResourceLocator
 import item.Item
 import event.TickHandler
 import PIL.Image, PIL.ImageDraw
+import sys
 
-os.makedirs(G.local+"/tmp/generated_items")
+if not os.path.isdir(G.local+"/build/generated_items"): os.makedirs(G.local+"/build/generated_items")
 
 
-SETUP_TIME = 2
+SETUP_TIME = 1
 CLEANUP_TIME = 1
 
 
@@ -58,14 +59,17 @@ class StateBlockItemGenerator(State.State):
         G.craftinghandler.load()
         G.world.cleanup()
 
+    def close(self):
+        G.statehandler.switch_to("minecraft:startmenu")
+        G.window.position = (0, 10, 0)
+        G.window.rotation = (0, 0)
+        G.world.get_active_dimension().remove_block((0, 0, 0))
+        G.window.set_caption("Pyglet")
+
     def add_new_screen(self):
         self.blockindex += 1
         if self.blockindex >= len(G.registry.get_by_name("block").registered_objects):
-            G.statehandler.switch_to("minecraft:startmenu")
-            G.window.position = (0, 10, 0)
-            G.window.rotation = (0, 0)
-            G.world.get_active_dimension().remove_block((0, 0, 0))
-            G.window.set_caption("Pyglet")
+            self.close()
             return
         # print(G.registry.get_by_name("block").registered_objects[self.blockindex].get_name())
         G.world.get_active_dimension().hide_block((0, 0, 0))
@@ -82,10 +86,15 @@ class StateBlockItemGenerator(State.State):
     def take_image(self, *args):
         if self.blockindex >= len(G.registry.get_by_name("block").registered_objects): return
         blockname = G.registry.get_by_name("block").registered_objects[self.blockindex].get_name()
-        file = "tmp/generated_items/{}.png".format("_".join(blockname.split(":")))
+        file = "build/generated_items/{}.png".format("_".join(blockname.split(":")))
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
         image: PIL.Image.Image = ResourceLocator.read(file, "pil")
         image.crop((240, 129, 558, 447)).save(G.local + "/" + file)
+        self.generate_item(blockname, file)
+
+    @staticmethod
+    def generate_item(blockname, file):
+        print(blockname)
 
         @G.registry
         class GeneratedItem(item.Item.Item):

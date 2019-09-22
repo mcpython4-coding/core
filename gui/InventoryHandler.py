@@ -24,6 +24,8 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                                 ("user:mouse:press", self.on_mouse_press),
                                 ("user:mouse:motion", self.on_mouse_motion)]
 
+        self.active = False
+
     def activate(self):
         for eventname, function in self.event_functions:
             G.eventhandler.activate_to_callback(eventname, function)
@@ -125,7 +127,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                 # threw one item
                 pass
         elif button == mouse.MIDDLE:
-            if G.player.gamemode == 1:
+            if G.player.gamemode == 1 and slot:
                 moving_slot.itemstack = slot.itemstack.copy()
                 moving_slot.itemstack.amount = moving_slot.itemstack.item.get_max_stack_size()
 
