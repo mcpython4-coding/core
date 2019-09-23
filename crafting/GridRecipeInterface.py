@@ -104,7 +104,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         # print(recipe.output)
         for pos in itemtable.keys():
             item = itemtable[pos]
-            if not any([item == x[0] for x in recipe.inputs[pos]]):
+            if not any([item == (x[0] if type(x) != str else x) for x in recipe.inputs[pos]]):
                 return False
         return True
     
@@ -113,7 +113,8 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         items = items[:]
         for initem in recipe.inputs:
             flag = True
-            for item, _ in initem:
+            for value in initem:
+                item, _ = (value, None) if type(value) == str else value
                 if flag and item in items:
                     items.remove(item)
                     flag = False
@@ -127,13 +128,13 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
             self.slotoutputmap.set_itemstack(gui.ItemStack.ItemStack(self.active_recipe.output[0],
                                                                      amount=self.active_recipe.output[1]), update=False)
 
-    def remove_one_input(self):
-        # removes from every input slot one item (callen when an item is crafted)
+    def remove_input(self, count=1):
+        # removes from every input slot count item (callen when an item is crafted)
         for row in self.slotinputmap:  # go over all slots
             for slot in row:
                 if not slot.itemstack.is_empty():  # check if the slot is used
-                    slot.itemstack.amount -= 1
-                    if slot.itemstack.amount == 0:
+                    slot.itemstack.amount -= count
+                    if slot.itemstack.amount <= 0:
                         slot.itemstack.clean()
 
     def on_input_update(self, player=False):
@@ -143,14 +144,32 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
     def on_output_update(self, player=False):
         if not self.active_recipe: return
         if self.slotoutputmap.itemstack.is_empty() and player:  # have we removed items?
-            self.remove_one_input()
+            self.remove_input()
             self.check_recipe_state()
             if all([all([slot.itemstack.is_empty() for slot in row]) for row in self.slotinputmap]):
                 self.active_recipe = None
             self.update_output()
 
     def on_output_shift_click(self, x, y, button, modifiers):
-        startrecipe = self.active_recipe
-        while self.active_recipe == startrecipe:
-            G.player.add_to_free_place(self.slotoutputmap.itemstack)
-            self.slotoutputmap.itemstack = gui.ItemStack.ItemStack.get_empty()
+        if not self.active_recipe: return
+        min_item_count = None
+        max_item_count = 0
+        for row in self.slotinputmap:
+            for slot in row:
+                if not slot.itemstack.is_empty():
+                    if min_item_count is None or slot.itemstack.amount < min_item_count:
+                        min_item_count = slot.itemstack.amount
+                    if max_item_count < slot.itemstack.amount:
+                        max_item_count = slot.itemstack.amount
+        output = [self.active_recipe.output[0], self.active_recipe.output[1] * min_item_count]
+        self.remove_input(count=min_item_count)
+        itemstacksize = gui.ItemStack.ItemStack(output[0]).item.get_max_stack_size()
+        while output[1] > itemstacksize:
+            G.player.add_to_free_place(gui.ItemStack.ItemStack(output[0], itemstacksize))
+            output[1] -= itemstacksize
+        G.player.add_to_free_place(gui.ItemStack.ItemStack(*output))
+        self.check_recipe_state()
+        self.update_output()
+        if max_item_count == min_item_count:
+            self.slotoutputmap.itemstack.clean()
+

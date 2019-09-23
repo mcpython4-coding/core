@@ -137,7 +137,7 @@ def topological_sort(items):
                 provided.add(item)
                 emitted = True
             else:
-                remaining_items.append( (item, dependencies) )
+                remaining_items.append((item, dependencies))
 
         if not emitted:
             raise ValueError()

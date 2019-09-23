@@ -26,6 +26,7 @@ inventoryhandler = None
 worldgenerationhandler = None
 biomehandler = None
 craftinghandler = None
+taghandler = None
 
 modelhandler = None
 

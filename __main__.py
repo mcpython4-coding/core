@@ -52,6 +52,7 @@ try:
 
 
     def setup():
+        import globals as G
         import world.World
         globals.world = world.World.World()
         import texture.model.BlockState
@@ -68,8 +69,12 @@ try:
         import texture.TextureAtlas
         texture.TextureAtlas.handler.output()
         print("finished!")
+        
+        print("loading tags...")
+        import tags.TagHandler
+        G.taghandler.load()
+        print("finished!")
 
-        import globals as G
         G.craftinghandler.load()
 
         import world.gen.mode.DebugOverWorldGenerator

@@ -348,12 +348,14 @@ started these clone on 12th of July, 2019
 [uuk]: reload-command will reload now also recipes
 [uuk]: moved recipe loading point to the startup-load so errors are shown before
 [uuk]: fixed bug: slot interaction events are not callen normally
+[uuk]: added tag system
+[uuk]: added tag system to crafting
+[uuk]: cleaned up 1.14.4.jar a bit so it is now smaller
+[uuk]: fixed bug: shift-click on output slot does not work
 
 reason for recipe output not reseted: not called with player=True?
 
 currently working on / planed:
-todo: add tags to crafting
-todo: add an check in loading if an recipe could be crafted & if the output is arrival (-> look also at the block table)
 
 issues to implement / fix
 todo: add toggleable auto-gen for current chunk (or chunks next to it)
@@ -362,7 +364,9 @@ todo: add barrier for gamemode 0 & 2 out of not-generated chunks -> generate if 
 
 todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
 todo: fix bug: player dies in debug world when on normal blocks
-todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn
+todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn (?)
+todo: fix bug: select in world gen config is not reseted
+todo: fix bug: player flying is not reseted when leaving world
 
 other tasks that should be done in near future
 todo: when on ground and in gamemode 1, stop flying
@@ -403,4 +407,6 @@ todo: implement base_image to slot for base item & bind to armor & offhand slots
 
 todo: add only rotated textures to texture atlas if needed (load from block states
 
-todo: add an task to pre-build: download minecraft jar
+todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
+
+todo: add an check in loading if an recipe could be crafted & if the output is arrival (-> look also at the block table)

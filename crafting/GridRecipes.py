@@ -20,8 +20,7 @@ def transform_to_itemstack(item, table: dict) -> list:
     if "item" in item:
         return [(item["item"], item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
-        # todo: implement
-        return []
+        return G.taghandler.taggroups["items"].tags["#"+item["tag"]].entries
     elif type(item) == list:  # have we an list of items?
         values = [transform_to_itemstack(x, table) for x in item]
         value = []
