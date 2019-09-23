@@ -16,22 +16,20 @@ import traceback
 class CraftingHandler:
     def __init__(self):
         self.recipeinfotable = {}
-        self.recipes = {}
+
+        # used for both shaped and shapeless recipes
+        # an used_items: int -> recipes: IRecipe[
+        self.crafting_recipes = {}
 
     def __call__(self, obj):
         if issubclass(obj, crafting.IRecipeType.IRecipe):
             self.recipeinfotable[obj.get_recipe_name()] = obj
-            self.recipes[obj.get_recipe_name()] = {}
         else:
             raise ValueError()
         return obj
 
     def add_recipe(self, recipe: crafting.IRecipeType.IRecipe):
-        i = recipe.get_identification()
-        if type(i) not in (tuple, list, set): i = [i]
-        for x in i:
-            if x not in self.recipes[recipe.get_recipe_name()]:  self.recipes[recipe.get_recipe_name()][x] = []
-            self.recipes[recipe.get_recipe_name()][x].append(recipe)
+        recipe.register()
 
     def add_recipe_from_data(self, data: dict):
         name = data["type"]
@@ -68,7 +66,4 @@ class CraftingHandler:
 G.craftinghandler = CraftingHandler()
 
 from . import (GridRecipes)
-
-
-# G.craftinghandler.load()
 

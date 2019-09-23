@@ -69,6 +69,9 @@ try:
         texture.TextureAtlas.handler.output()
         print("finished!")
 
+        import globals as G
+        G.craftinghandler.load()
+
         import world.gen.mode.DebugOverWorldGenerator
         world.gen.mode.DebugOverWorldGenerator.blockinfo.construct()
 

@@ -106,8 +106,8 @@ class Chat:
             self.active_index = len(self.text)
         elif symbol == key.LEFT and self.active_index > 0: self.active_index -= 1
         elif symbol == key.RIGHT and self.active_index < len(self.text) - 1: self.active_index += 1
-        else:
-            print(symbol)
+        # else:
+        #     print(symbol)
 
     def close(self):
         """

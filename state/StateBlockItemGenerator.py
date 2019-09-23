@@ -56,7 +56,6 @@ class StateBlockItemGenerator(State.State):
         event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
 
     def on_deactivate(self, new):
-        G.craftinghandler.load()
         G.world.cleanup()
 
     def close(self):

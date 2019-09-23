@@ -94,11 +94,14 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                         if possible > ramount:
                             possible = ramount
                         slot.itemstack.amount += possible
+                        slot.call_update(player=True)
                         moving_slot.itemstack.amount -= possible
                         if moving_slot.amount <= 0:
                             moving_slot.itemstack.clean()
                     else:
-                        slot.itemstack, moving_slot.itemstack = moving_slot.itemstack, slot.itemstack
+                        stack, mstack = slot.itemstack, moving_slot.itemstack
+                        moving_slot.itemstack = stack
+                        slot.set_itemstack(mstack, player=True)
             else:
                 # threw the item
                 pass
@@ -106,7 +109,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             if slot:
                 if not slot.itemstack.item:
                     if slot.interaction_mode[1]:
-                        slot.itemstack = moving_slot.itemstack.copy()
+                        slot.set_itemstack(moving_slot.itemstack.copy(), player=True)
                         slot.itemstack.amount = 1
                         moving_slot.itemstack.amount -= 1
                 elif not moving_slot.itemstack.item and slot.allow_half_getting:
@@ -118,11 +121,13 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                             slot.itemstack.clean()
                         if moving_slot.itemstack.amount == 0:
                             moving_slot.itemstack.clean()
+                        slot.call_update(player=True)
                 elif slot.itemstack.item.get_name() == moving_slot.itemstack.item.get_name() and \
                         slot.itemstack.amount < slot.itemstack.item.get_max_stack_size():
                     if slot.interaction_mode[1]:
                         slot.itemstack.amount += 1
                         moving_slot.itemstack.amount -= 1
+                        slot.call_update(player=True)
             else:
                 # threw one item
                 pass

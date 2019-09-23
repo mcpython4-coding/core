@@ -27,6 +27,8 @@ class CommandReload(chat.command.Command.Command):
             G.window.set_caption("preparing chunk {}/{} at {}".format(i+1, len(dim.chunks), chunk.position))
             chunk.update_visable()
         G.window.set_caption("finished!")
+        G.craftinghandler.recipes = {}
+        G.craftinghandler.load()
         event.TickHandler.handler.bind(G.window.set_caption, 20, args=["Pyglet"])
 
     @staticmethod

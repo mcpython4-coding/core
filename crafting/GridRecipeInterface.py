@@ -19,155 +19,134 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
     def get_name() -> str:
         return "minecraft:crafting_interface"
 
-    def __init__(self, slotinputmap, slotoutputmap, maxsize=None, minsize=None, validation=None, lookover=None,
-                 enabled=True):
+    def __init__(self, slotinputmap, slotoutputmap, maxsize=None, minsize=None, enabled=True,
+                 enable_shaped_recipes=True, enable_shapeless_recipes=True):
         """
         creates an new grid recipe interface
+        recipe order: first in, first checked
         :param slotinputmap: an Slot[[ for input
         :param slotoutputmap: an Slot for output
         :param maxsize: the max size for recipes. may be None for full grid size
         :param minsize: the min size for recipes. default is (1, 1)
-        :param validation: an function to validate an recipe to this interface. If None is set, only with above
-            informations is checked
-        :param lookover: an function which gets recipe, input slots & output stack and can modify them for special
-            reasons
         :param enabled: if recipes should be craftable
+        :param enable_shaped_recipes: if shaped recipes should be enabled
+        :param enable_shapeless_recipes: if shapeless recipes should be enabled
         """
         self.slotinputmap = slotinputmap
         self.slotoutputmap: gui.Slot.Slot = slotoutputmap
         self.gridsize = (len(slotinputmap[0]), len(slotinputmap))
         self.maxsize = maxsize if maxsize else self.gridsize
         self.minsize = minsize if minsize else (1, 1)
-        self.validate = validation
-        self.lookover = lookover
         for y, row in enumerate(slotinputmap):
             for x, slot in enumerate(row):
-                slot.on_update.append(event.EventInfo.CallbackHelper(self.on_input_update, args=[x, y]))
+                slot.on_update.append(event.EventInfo.CallbackHelper(self.on_input_update))
         slotoutputmap.on_update.append(event.EventInfo.CallbackHelper(self.on_output_update))
         slotoutputmap.allow_half_getting = False
         slotoutputmap.on_shift_click = self.on_output_shift_click
         self.active_recipe: crafting.IRecipeType.IRecipe = None
-        self.used_input_slots = None
-        self.enabled = enabled
+        self.shaped_enabled = enable_shaped_recipes and enabled
+        self.shapeless_enabled = enable_shapeless_recipes and enabled
 
     def check_recipe_state(self):
-        """
-        todo: reactive when fixed
-        for x in range(self.minsize[0], self.maxsize[0]+1):
-            for y in range(self.minsize[1], self.maxsize[1]+1):
-                if (x, y) in G.craftinghandler.recipes["minecraft:crafting_shaped"]:
-                    for recipe in G.craftinghandler.recipes["minecraft:crafting_shaped"][(x, y)]:
-                        if self._check_shaped_recipe(recipe):
-                            self.active_recipe = recipe
-                            if recipe.on_select:
-                                recipe.on_select()
-                            # print(recipe)
-                            return"""
-        used_slots = []
-        for row in self.slotinputmap:
-            for slot in row:
-                if slot.itemstack.item:
-                    used_slots.append(slot)
-        if len(used_slots) in G.craftinghandler.recipes["minecraft:crafting_shapeless"]:
-            for recipe in G.craftinghandler.recipes["minecraft:crafting_shapeless"][len(used_slots)]:
-                used = used_slots.copy()
-                recipevalid = True
-                # print(recipe.inputs, recipe.output)
-                for using in recipe.inputs:
-                    # print(using)
-                    if recipevalid:
-                        flag = True
-                        for itemstack in using[:]:
-                            for slot in used:
-                                if flag and slot.itemstack.get_item_name() == itemstack[0]:
-                                    flag = False
-                                    used.remove(slot)
-                        if flag:
-                            recipevalid = False
-                if recipevalid:
-                    self.active_recipe = recipe
-                    self.used_input_slots = used_slots
-                    # print(self.active_recipe, recipe, self.used_input_slots)
-                    return
+        # get info about the items which are in the interface
+        itemlenght = 0
+        itemtable = {}
+        shapelessitems = []
+        for y, row in enumerate(self.slotinputmap):
+            for x, slot in enumerate(row):
+                if not slot.itemstack.is_empty():
+                    itemlenght += 1
+                    itemtable[(x, y)] = slot.itemstack.get_item_name()
+                    shapelessitems.append(slot.itemstack.get_item_name())
+        if len(shapelessitems) == 0: return  # have we any item in the grid?
+        shapelessitems.sort()
+        itemtable = self._minimize_slotmap(itemtable)
+        if itemlenght not in G.craftinghandler.crafting_recipes: return
         self.active_recipe = None
-        self.used_input_slots = None
+        for recipe in G.craftinghandler.crafting_recipes[itemlenght]:
+            state = False
+            if issubclass(type(recipe), crafting.GridRecipes.GridShaped) and self.shaped_enabled:
+                state = self._check_shaped(recipe, itemtable)
+            elif issubclass(type(recipe), crafting.GridRecipes.GridShapeless) and self.shapeless_enabled:
+                state = self._check_shapeless(recipe, shapelessitems)
+            if state:
+                self.active_recipe = recipe
+                return
+        self.active_recipe = None
 
-    def _check_shaped_recipe(self, recipe: crafting.IRecipeType.IRecipe, write_slots_to_local=True) -> bool:
-        if not recipe.enabled: return False
-        if type(recipe) == crafting.GridRecipes.GridShaped:
-            ix, iy = self.gridsize[0] - recipe.gridsize[0], self.gridsize[1] - recipe.gridsize[1]
-            for sx in range(ix+1):
-                for sy in range(iy+1):
-                    slots, empty = self._get_slot_map((sx, sy), recipe.gridsize)
-                    if all([slot.itemstack.is_empty() for slot in empty]):  # is everything else empty?
-                        flag = True
-                        for ix in range(recipe.gridsize[0]):
-                            for iy in range(recipe.gridsize[1]):
-                                # todo: here is missing an tag check
-                                if not any([x[0] == slots[ix][iy].itemstack.get_item_name() for x in
-                                            recipe.grid[ix][iy]]):
-                                    flag = False
-                        if flag:
-                            if write_slots_to_local:
-                                self.used_input_slots = slots
-                            return True
-        return False
+    @staticmethod
+    def _minimize_slotmap(slotmap: dict) -> dict:
+        keys = list(slotmap.keys())
+        transform = keys.copy()
+        # check if everything in the top left corner
+        minx = min(keys, key=lambda x: x[0])[0]
+        miny = min(keys, key=lambda y: y[1])[1]
+        if minx == miny == 0:  # is it in the top left corner?
+            return slotmap
+        if minx > 0:  # move to left if not
+            for i, element in enumerate(transform):
+                transform[i] = (element[0] - minx, element[1])
+        if miny > 0:  # move up if not on top
+            for i, element in enumerate(transform):
+                transform[i] = (element[0], element[1]-miny)
+        new_map = {}
+        for i, key in enumerate(keys):  # transform the slot positions to the new positions
+            new_map[transform[i]] = slotmap[key]
+        return new_map
 
-    def _get_slot_map(self, start, size) -> tuple:
-        """
-        gets the map of selected slots and an list of unused slots
-        :param start: the start x, y
-        :param size: the size to search for as size x, size y -tuple
-        :return: a (map, list) tuple
-        """
-        sx, sy = start
-        ex, ey = size
-        used = [[None] * size[1]] * size[0]
-        unused = []
-        for x in range(self.gridsize[0]):
-            for y in range(self.gridsize[1]):
-                if x < sx or x >= sx + ex or y < sy or y >= sy + ey:
-                    unused.append(self.slotinputmap[x][y])
-                else:
-                    used[x][y] = self.slotinputmap[x][y]
-        return used, unused
+    @staticmethod
+    def _check_shaped(recipe: crafting.GridRecipes.GridShaped, itemtable: dict) -> bool:
+        # check if all necessary slots are used
+        if any([x not in itemtable for x in recipe.inputs.keys()]) or \
+                any([x not in recipe.inputs for x in itemtable.keys()]):
+            return False
+        # check every slot if the right item is in it
+        # print(recipe.output)
+        for pos in itemtable.keys():
+            item = itemtable[pos]
+            if not any([item == x[0] for x in recipe.inputs[pos]]):
+                return False
+        return True
+    
+    @staticmethod
+    def _check_shapeless(recipe: crafting.GridRecipes.GridShapeless, items: list) -> bool:
+        items = items[:]
+        for initem in recipe.inputs:
+            flag = True
+            for item, _ in initem:
+                if flag and item in items:
+                    items.remove(item)
+                    flag = False
+            if flag:
+                return False
+        return len(items) == 0
 
     def update_output(self):
-        if not self.active_recipe:
-            self.slotoutputmap.itemstack.clean()
-        else:
+        self.slotoutputmap.itemstack.clean()
+        if self.active_recipe:
             self.slotoutputmap.set_itemstack(gui.ItemStack.ItemStack(self.active_recipe.output[0],
                                                                      amount=self.active_recipe.output[1]), update=False)
-        if self.lookover:
-            self.lookover(self.active_recipe, self.used_input_slots, self.slotoutputmap)
 
     def remove_one_input(self):
-        if type(self.active_recipe) == crafting.GridRecipes.GridShaped:
-            for x in range(self.active_recipe.gridsize[0]):
-                for y in range(self.active_recipe.gridsize[1]):
-                    self.used_input_slots[x][y].itemstack.amount -= 1
-                    if self.used_input_slots[x][y].itemstack.is_empty():
-                        self.used_input_slots[x][y].itemstack.clean()
-        elif type(self.active_recipe) == crafting.GridRecipes.GridShapeless:
-            # print(self.used_input_slots)
-            for slot in self.used_input_slots:
-                slot.itemstack.amount -= 1
-                if slot.itemstack.amount == 0:
-                    slot.itemstack.clean()
-        else:
-            raise RuntimeError("recipe not valid")
+        # removes from every input slot one item (callen when an item is crafted)
+        for row in self.slotinputmap:  # go over all slots
+            for slot in row:
+                if not slot.itemstack.is_empty():  # check if the slot is used
+                    slot.itemstack.amount -= 1
+                    if slot.itemstack.amount == 0:
+                        slot.itemstack.clean()
 
-    def on_input_update(self, fromstack, tostack, x, y):
+    def on_input_update(self, player=False):
         self.check_recipe_state()
         self.update_output()
-        # print(self.active_recipe.output if self.active_recipe else None)
 
-    def on_output_update(self, fromstack, tostack):
+    def on_output_update(self, player=False):
         if not self.active_recipe: return
-        if self.slotoutputmap.itemstack.is_empty():
-            if self.active_recipe.on_craft: self.active_recipe.on_craft()
+        if self.slotoutputmap.itemstack.is_empty() and player:  # have we removed items?
             self.remove_one_input()
             self.check_recipe_state()
+            if all([all([slot.itemstack.is_empty() for slot in row]) for row in self.slotinputmap]):
+                self.active_recipe = None
             self.update_output()
 
     def on_output_shift_click(self, x, y, button, modifiers):

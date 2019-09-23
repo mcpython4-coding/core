@@ -17,6 +17,6 @@ class IRecipe:
     def from_data(cls, data: dict):
         return cls()
 
-    def get_identification(self):
-        raise NotImplementedError()
+    def register(self):
+        pass
 

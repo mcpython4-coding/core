@@ -343,16 +343,38 @@ started these clone on 12th of July, 2019
 [uuk]: optimized blockfactory by adding some more file modes & making one file out of more than one (planks, leaves, ...)
 [uuk]: fixed bug: build-folder is not cleared when rebuilding
 [uuk]: "/" will open the chat with "/" added to it (#1)
-[uuk]: added active index to chat so you can edit where you want
+[uuk]: added active index to chat so you can edit where you want (not complete working!)
+[uuk]: fixed shaped crafting recipes, reworked some recipe check parts to speed up (#9)
+[uuk]: reload-command will reload now also recipes
+[uuk]: moved recipe loading point to the startup-load so errors are shown before
+[uuk]: fixed bug: slot interaction events are not callen normally
 
+reason for recipe output not reseted: not called with player=True?
 
-todo: when on ground and in gamemode 1, stop flying
+currently working on / planed:
+todo: add tags to crafting
+todo: add an check in loading if an recipe could be crafted & if the output is arrival (-> look also at the block table)
+
+issues to implement / fix
+todo: add toggleable auto-gen for current chunk (or chunks next to it)
+todo: add barrier for gamemode 0 & 2 out of not-generated chunks -> generate if try to enter (#7)
+    -> in other gamemode 1 & 3, let the player in but generate the chunk
+
 todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
 todo: fix bug: player dies in debug world when on normal blocks
+todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn
+
+other tasks that should be done in near future
+todo: when on ground and in gamemode 1, stop flying
 todo: optimize item factory files like blocks were optimized
 todo: add tools
 todo: add item image atlases (see https://pyglet.readthedocs.io/en/stable/programming_guide/image.html)
+todo: close chat when player dies (maybe close all inventories?)
+todo: clear moving stack when player dies
+todo: remove xp when player dies, reset hunger & harts
+todo: move to pre-build: block item generation, recipe sorting, model sorting & generation, texture atlas generation
 
+an update to the system of states
 todo: add an option to toggle world generation size
 todo: add an back-button to world gen config
 todo: add some kind of info to screen for generation
@@ -362,25 +384,23 @@ todo: make the info label hide-able by key combo (maybe an StatePart which is ac
 todo: game info label is not good formatted (spacing)
 todo: set the caption to something like "mcpython" and make every other caption base on it (may be an new set_caption-method?)
 todo: make StateParts don't need implement their own hide / shown event bind functions
+todo: add an real start menu background & option background
+todo: add option to add own parts to state / make an IStateExtension-baseclass which can be assigned with any other
+    state and will help adding own element into it
 
-todo: optimize loading by optimizing models & texture loading by adding into prebuild-system
+other additions which could be usefull
 
-todo: implement tags & bind to recipes
+todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
+    barrier, buttons, presure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms
 
 todo: split multi-registries into their parts
 
-todo: add active index to chat so you can switch were you are editing
-
-todo: can we add slabs?
+todo: can we add slabs? -> make texture coord add by 1 to the real change
 todo: make resourcepacks fully functional: sorting, auto-rebuild
 todo: add option for inventories to be visible when another is also visible
 todo: add loot tables (also for block drops)
 todo: implement base_image to slot for base item & bind to armor & offhand slots
-todo: move recipe loading to loading with looking at the blockhandler table
 
-todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes
-todo: add an event called on_world_leave, on_world_enter, on_world_clean
-todo: add option to log what is registered for every registry
-todo: fix bug: shaped recipes are not working
+todo: add only rotated textures to texture atlas if needed (load from block states
 
-todo: make block item generation in an seperated window so other stuff can happen on the main during this time
+todo: add an task to pre-build: download minecraft jar

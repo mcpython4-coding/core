@@ -49,7 +49,6 @@ class Player:
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
         # if it is a repr of the gamemode, get the int gamemode
         # else, return the int
-        self.gamemode = gamemode
         if gamemode == 0:
             globals.window.flying = False
         elif gamemode == 1:
@@ -60,6 +59,7 @@ class Player:
             globals.window.flying = True
         else:
             raise ValueError("can't cast {} to valid gamemode".format(gamemode))
+        self.gamemode = gamemode
 
     def _get_needed_xp_for_next_level(self) -> int:
         if self.xp_level < 16:

@@ -53,11 +53,14 @@ class Slot:
     def get_itemstack(self):
         return self.__itemstack
 
-    def set_itemstack(self, stack, update=True):
-        old_itemstack = self.__itemstack
+    def set_itemstack(self, stack, update=True, player=False):
         self.__itemstack = stack if stack else gui.ItemStack.ItemStack.get_empty()
-        if stack != old_itemstack and self.on_update and update:
-            [f(old_itemstack, stack) for f in self.on_update]
+        if update:
+            self.call_update(player=player)
+
+    def call_update(self, player=False):
+        if not self.on_update: return
+        [f(player=player) for f in self.on_update]
 
     itemstack = property(get_itemstack, set_itemstack)
 
@@ -108,8 +111,8 @@ class SlotCopy:
         self.interaction_mode = [allow_player_remove, allow_player_insert, allow_player_add_to_free_place]
         self.allow_half_getting = allow_half_getting
 
-    def set_itemstack(self, itemstack: gui.ItemStack.ItemStack):
-        self.master.itemstack = itemstack
+    def set_itemstack(self, itemstack: gui.ItemStack.ItemStack, update=True, player=False):
+        self.master.set_itemstack(itemstack, update=update, player=player)
 
     def get_itemstack(self) -> gui.ItemStack.ItemStack:
         return self.master.itemstack
@@ -133,4 +136,6 @@ class SlotCopy:
         """
         if self.master.itemstack.amount > 1:
             self.master.amount_lable.draw()
+
+    def call_update(self, **kwargs): self.master.call_update(**kwargs)
 

@@ -11,6 +11,12 @@ import gui.ItemStack
 
 
 def transform_to_itemstack(item, table: dict) -> list:
+    """
+    transforms an item name from recipe to an valid item list to compare with
+    :param item: the itemname given
+    :param table: optional: an table of items which were decoded previous
+    :return: an transformed name list of (itemname, amount)
+    """
     if "item" in item:
         return [(item["item"], item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
@@ -35,35 +41,20 @@ class GridShaped(crafting.IRecipeType.IRecipe):
     def from_data(cls, data: dict):
         pattern = data["pattern"]
         table = {}
-        key: dict = data["key"]
-        for item in key.keys():
-            table[item] = transform_to_itemstack(key[item], table)
-        grid = [[None] * len(pattern)] * len(pattern[0])
+        for item in data["key"]:
+            table[item] = transform_to_itemstack(data["key"][item], table)
+        grid = {}
         for y, row in enumerate(pattern):
-            for x, item in enumerate(pattern[0]):
-                if item != " ": grid[x][y] = table[item]
+            for x, key in enumerate(row):
+                if key != " ": grid[(x, y)] = table[key]
         return cls(grid, transform_to_itemstack(data["result"], table)[0])
 
-    def __init__(self, grid: list, output: gui.ItemStack, xp=0, enabled=True, on_craft=None, on_select=None):
-        """
-        creates an new recipe instance
-        :param grid: the grid to use. is gui.ItemStack[[
-        :param output: the item to use as output
-        :param xp: the xp to give to player when crafted
-        :param enabled: if the recipe should be arrival
-        :param on_craft: function to be callen when item is crafted
-        :param on_select: function to be callen when the player tries to craft this recipe
-        """
-        self.grid = grid
+    def __init__(self, inputs, output):
+        self.inputs = inputs
         self.output = output
-        self.xp: float = xp
-        self.enabled = enabled
-        self.on_craft = on_craft
-        self.on_select = on_select
-        self.gridsize = (len(self.grid[0]), len(self.grid))
 
-    def get_identification(self):
-        return ([self.output[0]]) + [(len(self.grid[0]), len(self.grid))]
+    def register(self):
+        G.craftinghandler.crafting_recipes.setdefault(len(self.inputs), []).append(self)
 
 
 @G.craftinghandler
@@ -74,32 +65,13 @@ class GridShapeless(crafting.IRecipeType.IRecipe):
 
     @classmethod
     def from_data(cls, data: dict):
-        inputs = []
-        for item in data["ingredients"]:
-            inputs.append(transform_to_itemstack(item, {}))
-        output = transform_to_itemstack(data["result"], {})[0]
-        # if output.item and output.item.get_name() == "minecraft:redstone":
-        #     print(data["ingredients"], data["result"], output.amount)
-        return cls(inputs, output)
+        inputs = [transform_to_itemstack(x, {}) for x in data["ingredients"]]
+        return cls(inputs, transform_to_itemstack(data["result"], {})[0])
 
-    def __init__(self, inputs: list, output: gui.ItemStack.ItemStack, xp=0, enabled=True, on_craft=None,
-                 on_select=None):
-        """
-        creates an new recipe instance
-        :param inputs: an list of slots that should be used as inputs
-        :param output: the item to use as output
-        :param xp: the xp to give to player when crafted
-        :param enabled: if the recipe should be arrival
-        :param on_craft: function to be callen when item is crafted
-        :param on_select: function to be callen when the player tries to craft this recipe
-        """
+    def __init__(self, inputs, output):
         self.inputs = inputs
         self.output = output
-        self.xp = xp
-        self.enabled = enabled
-        self.on_craft = on_craft
-        self.on_select = on_select
 
-    def get_identification(self):
-        return ([self.output[0]]) + [len(self.inputs)]
+    def register(self):
+        G.craftinghandler.crafting_recipes.setdefault(len(self.inputs), []).append(self)
 

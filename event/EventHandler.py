@@ -90,7 +90,7 @@ class EventHandler:
                 function(*args, **kwargs)
             except:
                 if not flag_exc:
-                    print("exceptions during calling event named "+str(eventname)+":\ncallen over:")
+                    print("exceptions during calling event named '"+str(eventname)+"':\ncallen over:")
                     traceback.print_stack()
                     print("exceptions:")
                     flag_exc = True
