@@ -31,6 +31,7 @@ class CommandClear(chat.command.Command.Command):
                     slot.itemstack.clean()
             entity.xp = 0
             entity.xp_level = 0
+        G.inventoryhandler.moving_slot.itemstack.clean()
 
     @staticmethod
     def get_help() -> list:

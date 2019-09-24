@@ -25,13 +25,17 @@ class StateWorldGenerationConfig(State.State):
     def get_parts(self) -> list:
         return [UIPartLable.UIPartLable("World Generation Selection", (0, 200), anchor_lable="MM", anchor_window="MM",
                                         color=(0, 0, 0, 255)),
-                UIPartButton.UIPartToggleButton((300, 20), [0, 1, 2, 3], text_constructor="gamemode {}",
+                UIPartButton.UIPartToggleButton((320, 20), [0, 1, 2, 3], text_constructor="gamemode {}",
                                                 position=(0, 0), anchor_window="MM", anchor_button="MM"),
-                UIPartButton.UIPartButton((300, 20), "create world", (0, -50), anchor_button="MM", anchor_window="MM",
+                UIPartButton.UIPartButton((320, 20), "create world", (0, -50), anchor_button="MM", anchor_window="MM",
                                           on_press=self.on_new_world_press),
-                UIPartButton.UIPartToggleButton((300, 20), list(G.worldgenerationhandler.configs.keys()),
-                                                text_constructor="world generator {}", position=(0, 50),
-                                                anchor_window="MM", anchor_button="MM")]
+                UIPartButton.UIPartToggleButton((320, 20), list(G.worldgenerationhandler.configs.keys()),
+                                                text_constructor="world generator {}", position=(0, 70),
+                                                anchor_window="MM", anchor_button="MM"),
+                UIPartButton.UIPartToggleButton((150, 20), [True, False], text_constructor="enable auto gen: {}",
+                                                position=(85, 35), anchor_window="MM", anchor_button="MM"),
+                UIPartButton.UIPartToggleButton((150, 20), [True, False], text_constructor="enable barrier: {}",
+                                                position=(-85, 35), anchor_window="MM", anchor_button="MM")]
 
     def on_new_world_press(self, *args):
         G.world.cleanup(remove_dims=True)
@@ -43,9 +47,11 @@ class StateWorldGenerationConfig(State.State):
                 chunk = G.world.dimensions[0].get_chunk(x, z, generate=False)
                 chunk.is_ready = False
                 G.worldgenerationhandler.generate_chunk(chunk)
+                chunk.is_ready = True
         G.world.process_entire_queue()
         G.worldgenerationhandler.enable_generation = False
-        # todo: remove disable for auto-gen
+        G.world.config["enable_auto_gen"] = not bool(self.parts[4].index)
+        G.world.config["enable_world_barrier"] = not bool(self.parts[5].index)
         print("finished")
         G.statehandler.switch_to("minecraft:gameinfo")
         G.world.change_sectors(None, util.math.sectorize(G.window.position), immediate=True)
@@ -56,7 +62,9 @@ class StateWorldGenerationConfig(State.State):
         return [(self.on_key_press, "user:keyboard:press")]
 
     def on_activate(self, old):
-        pass
+        for part in self.parts:
+            if type(part) == UIPartButton.UIPartToggleButton:
+                part.index = 0
 
     def on_deactivate(self, new):
         pass

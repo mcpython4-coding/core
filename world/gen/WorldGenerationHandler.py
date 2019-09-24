@@ -18,7 +18,68 @@ class WorldGenerationHandler:
         self.features = {}
         self.configs = {}
         self.enable_generation = False
-        self.enable_auto_generation = False
+        self.runtimegenerationcache = [[], {}, {}]  # chunk order, chunk state, chunk data []
+
+    def add_chunk_to_generation_list(self, chunk, prior=False):
+        if prior:
+            if chunk in self.runtimegenerationcache[0]:
+                self.runtimegenerationcache[0].remove(chunk)
+            self.runtimegenerationcache[0].insert(0, chunk)
+        elif chunk not in self.runtimegenerationcache[0]:
+            self.runtimegenerationcache[0].append(chunk)
+            self.runtimegenerationcache[1][chunk.position] = -1
+            self.runtimegenerationcache[2][chunk.position] = None
+
+    def process_one_generation_task(self, chunk=None):
+        if chunk is None:
+            if len(self.runtimegenerationcache[0]) == 0: return False
+            chunk = self.runtimegenerationcache[0][0]
+        if type(chunk) in (tuple, list, set): chunk = G.world.get_active_dimension().get_chunk(chunk)
+        if not chunk.position in self.runtimegenerationcache[1]:
+            self.runtimegenerationcache[1][chunk.position] = -1
+            self.runtimegenerationcache[2][chunk.position] = None
+        step = self.runtimegenerationcache[1][chunk.position]
+        if step == -1:  # nothing done, so add layers and set to 0
+            self.runtimegenerationcache[1][chunk.position] = 0
+            dimension = chunk.dimension
+            configname = dimension.worldgenerationconfig["configname"]
+            config = self.configs[configname]
+            if "on_chunk_generate_pre" in config:
+                config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
+            self.runtimegenerationcache[2][chunk.position] = [self.layers[layername] for layername in config["layers"]]
+        elif step == 0:  # process layers
+            layer = self.runtimegenerationcache[2][chunk.position].pop(0)
+            if len(self.runtimegenerationcache[2][chunk.position]) == 0:
+                self.runtimegenerationcache[1][chunk.position] = 1
+            layer.add_generate_functions_to_chunk(chunk.dimension.worldgenerationconfigobjects[layer.get_name()], chunk)
+        elif step == 1:  # process chunk gen tasks
+            task = chunk.chunkgenerationtasks.pop(0)
+            if len(chunk.chunkgenerationtasks) == 0:
+                self.runtimegenerationcache[1][chunk.position] = 2
+            task[0](*task[1], **task[2])
+        elif step == 2:  # process block additions to the chunk
+            position = list(chunk.blockmap.keys())[0]
+            args, kwargs = chunk.blockmap[position]
+            del chunk.blockmap[position]
+            if len(chunk.blockmap) == 0:
+                self.runtimegenerationcache[1][chunk.position] = 3
+            chunk.add_block(*args, **kwargs)
+        elif step == 3:  # process show tasks
+            if len(chunk.show_tasks) == 0:
+                self.runtimegenerationcache[1][chunk.position] = 4
+                return
+            position = chunk.show_tasks.pop(0)
+            chunk.show_block(position)
+        elif step == 4:  # process hide tasks
+            if len(chunk.hide_tasks) == 0:
+                chunk.generated = True
+                self.runtimegenerationcache[0].remove(chunk)
+                del self.runtimegenerationcache[1][chunk.position]
+                del self.runtimegenerationcache[2][chunk.position]
+                print("finished generation of chunk", chunk.position)
+                return
+            position = chunk.hide_tasks.pop(0)
+            chunk.hide_block(position)
 
     def setup_dimension(self, dimension, config=None):
         configname = dimension.worldgenerationconfig["configname"]
@@ -34,9 +95,12 @@ class WorldGenerationHandler:
             dimension.worldgenerationconfigobjects[layername] = cconfig
             cconfig.layer = layer
 
-    def generate_chunk(self, chunk: world.Chunk.Chunk):
-        if not self.enable_generation or chunk.is_ready:
+    def generate_chunk(self, chunk: world.Chunk.Chunk, check=True, check_chunk=True):
+        if (not self.enable_generation or chunk.is_ready) and check:
             return
+        if check_chunk and chunk.generated:
+            return
+        chunk.generated = True
         print("generating", chunk.position)
         dimension = chunk.dimension
         configname = dimension.worldgenerationconfig["configname"]

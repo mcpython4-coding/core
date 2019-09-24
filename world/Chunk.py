@@ -32,9 +32,10 @@ class Chunk:
         self.hide_tasks = []
         self.chunkgenerationtasks = []
         self.blockmap = {}  # an map with position -> [arguments: list, optional_arguments: kwargs] generation code
-        self.is_ready = False  # todo: change to False after new world gen is introduced
+        self.is_ready = False
         self.visible = False
         self.loaded = True
+        self.generated = False
         self.attr = {}
         for attr in self.attributes.keys():
             self.attr[attr] = self.attributes[attr][1]

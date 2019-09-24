@@ -194,13 +194,22 @@ class Window(pyglet.window.Window):
                     op = list(np)
                     op[1] -= dy
                     op[i] += face[i]
-                    if not G.world.get_active_dimension().get_block(tuple(op)):
+                    chunk = G.world.get_active_dimension().get_chunk_for_position(tuple(op), generate=False)
+                    blockstate = chunk.get_block(tuple(op)) is not None
+                    if not chunk.generated:
+                        if G.world.config["enable_world_barrier"]:
+                            blockstate = True
+                    if not blockstate:
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
                         # You are colliding with the ground or ceiling, so stop
                         # falling / rising.
                         self.dy = 0
+                    if face == (0, -1, 0):
+                        G.window.flying = False
+                    if not chunk.generated and G.world.config["enable_auto_gen"]:
+                        G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
                     break
         return tuple(p)
 
@@ -366,8 +375,9 @@ class Window(pyglet.window.Window):
         vector = G.window.get_sight_vector()
         blockpos, previous = G.world.hit_test(G.window.position, vector)
         if blockpos:
-            self.label2.text = "block {} at {}".format(G.world.get_active_dimension().get_block(blockpos).get_name(),
-                                                       blockpos)
+            blockname = G.world.get_active_dimension().get_block(blockpos)
+            if type(blockname) != str: blockname = blockname.get_name()
+            self.label2.text = "block {} at {}".format(blockname, blockpos)
             self.label2.draw()
         if chunk:
             biomemap = chunk.get_value("biomemap")

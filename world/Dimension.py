@@ -27,8 +27,8 @@ class Dimension:
             if not create:
                 return
             self.chunks[(cx, cz)] = world.Chunk.Chunk(self, (cx, cz))
-            if generate and G.worldgenerationhandler.enable_auto_generation:
-                G.worldgenerationhandler.generate_chunk(self.chunks[(cx, cz)])
+            if generate:
+                G.worldgenerationhandler.add_chunk_to_generation_list(self.chunks[(cx, cz)])
         return self.chunks[(cx, cz)]
 
     def get_chunk_for_position(self, position, **kwargs) -> world.Chunk.Chunk or None:

@@ -24,6 +24,11 @@ class World:
         self.dimensions = {}
         self.add_dimension(0, config={"configname": "default_overworld"})
         self.active_dimension = 0
+        self.config = {}
+        self.reset_config()
+
+    def reset_config(self):
+        self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
 
     def get_active_dimension(self) -> world.Dimension.Dimension:
         return self.dimensions[self.active_dimension]
@@ -76,14 +81,14 @@ class World:
         drawn to the canvas.
 
         """
-        self.get_active_dimension().get_chunk(*sector).show()
+        self.get_active_dimension().get_chunk(*sector, generate=False).show()
 
     def hide_sector(self, sector, immediate=False):
         """ Ensure all blocks in the given sector that should be hidden are
         removed from the canvas.
 
         """
-        self.get_active_dimension().get_chunk(*sector).hide()
+        self.get_active_dimension().get_chunk(*sector, generate=False).hide()
 
     def change_sectors(self, before, after, immediate=False):
         """ Move from sector `before` to sector `after`. A sector is a
@@ -113,33 +118,10 @@ class World:
             self.show_sector(sector, immediate)
 
     def process_queue(self):
-        dim: world.Dimension.Dimension = self.get_active_dimension()
-        t = time.time()
-        for chunk in list(dim.chunks.values()):
-            for task in chunk.show_tasks:
-                chunk._show_block(task)
-                chunk.show_tasks.remove(task)
-                if time.time() - t > 0.02:
-                    return
-            for task in chunk.hide_tasks:
-                # print(task)
-                chunk._hide_block(task)
-                chunk.hide_tasks.remove(task)
-                if time.time() - t > 0.02:
-                    return
-            for task in chunk.chunkgenerationtasks:
-                task[0](*task[1], **task[2])
-                chunk.chunkgenerationtasks.remove(task)
-                if time.time() - t > 0.02:
-                    return
-            for position in list(chunk.blockmap.keys()):
-                args, kwargs = chunk.blockmap[position]
-                chunk.add_block(*args, **kwargs)
-                del chunk.blockmap[position]
-                if time.time() - t > 0.02:
-                    return
-            chunk.is_ready = \
-                len(chunk.show_tasks) == len(chunk.hide_tasks) == len(chunk.chunkgenerationtasks) == len(chunk.blockmap)
+        start = time.time()
+        while time.time() - start < 0.01:
+            result = G.worldgenerationhandler.process_one_generation_task()
+            if result is not None and not result: return
 
     def process_entire_queue(self):
         """ Process the entire queue with no breaks.
@@ -174,4 +156,5 @@ class World:
         if remove_dims:
             self.dimensions = {}
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
+        self.reset_config()
 
