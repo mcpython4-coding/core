@@ -27,6 +27,8 @@ try:
         except (shutil.Error, ImportError):
             pass
 
+    import globals as G
+
     os.makedirs(globals.local + "/tmp")
 
     import ResourceLocator
@@ -44,9 +46,19 @@ try:
     import texture.model.ModelHandler
     import texture.model.BlockState
 
+    print("loading tags...")
+    import tags.TagHandler
+
+    G.taghandler.load()
+    print("finished!")
+
     print("loading blocks...")
     import block.BlockHandler
     block.BlockHandler.load()
+
+    print("loading items...")
+    import item.ItemHandler
+    item.ItemHandler.load()
 
     import world.gen.WorldGenerationHandler
 
@@ -68,11 +80,6 @@ try:
         print("generating image atlases...")
         import texture.TextureAtlas
         texture.TextureAtlas.handler.output()
-        print("finished!")
-        
-        print("loading tags...")
-        import tags.TagHandler
-        G.taghandler.load()
         print("finished!")
 
         G.craftinghandler.load()

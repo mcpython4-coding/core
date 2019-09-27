@@ -21,7 +21,6 @@ class World:
     def __init__(self):
         G.world = self
         self.player = world.player.Player("unknown")
-        block.BlockHandler.load()
         self.dimensions = {}
         self.add_dimension(0, config={"configname": "default_overworld"})
         self.active_dimension = 0

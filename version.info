@@ -368,6 +368,13 @@ started these clone on 12th of July, 2019
 [uuk]: fixed some bugs around interaction with non-generated
 [uuk]: fixed bug: game crashes when in debug world and generating new chunks
 [uuk]: fixed bug: falling blocks are falling in debug world
+[uuk]: item factory optimized
+[uuk]: added new tag-type: "naming" storing at the moment color names
+[uuk]: moved the point were tags are loaded
+[uuk]: fixed bug: when deactivating world barrier, but auto gen is enabled, auto gen does NOT work
+[uuk]: items are now loaded by an function, not on import
+[uuk]: fixed bug: beetroot soup can be stacked up to 64
+[uuk]: optimize recipe lookup
 
 
 currently working on / planed for next commit:
@@ -380,7 +387,6 @@ todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & num
 todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions (?)
 
 other tasks that should be done in near future
-todo: when on ground and in gamemode 1, stop flying
 todo: optimize item factory files like blocks were optimized
 todo: add tools
 todo: add item image atlases (see https://pyglet.readthedocs.io/en/stable/programming_guide/image.html)

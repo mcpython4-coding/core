@@ -51,9 +51,13 @@ class GridShaped(crafting.IRecipeType.IRecipe):
     def __init__(self, inputs, output):
         self.inputs = inputs
         self.output = output
+        sx = max(self.inputs, key=lambda x: x[0])[0]
+        sy = max(self.inputs, key=lambda x: x[1])[1]
+        self.size = (sx, sy)
 
     def register(self):
-        G.craftinghandler.crafting_recipes.setdefault(len(self.inputs), []).append(self)
+        G.craftinghandler.crafting_recipes_shaped.setdefault(len(self.inputs), {}).setdefault(
+            self.size, []).append(self)
 
 
 @G.craftinghandler
@@ -72,5 +76,5 @@ class GridShapeless(crafting.IRecipeType.IRecipe):
         self.output = output
 
     def register(self):
-        G.craftinghandler.crafting_recipes.setdefault(len(self.inputs), []).append(self)
+        G.craftinghandler.crafting_recipes_shapeless.setdefault(len(self.inputs), []).append(self)
 

@@ -199,6 +199,8 @@ class Window(pyglet.window.Window):
                     if not chunk.generated:
                         if G.world.config["enable_world_barrier"]:
                             blockstate = True
+                        elif G.world.config["enable_auto_gen"] and not blockstate:
+                            G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
                     if not blockstate:
                         continue
                     p[i] -= (d - pad) * face[i]

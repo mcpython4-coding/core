@@ -1,0 +1,5 @@
+["minecraft:charcoal", {"name": "minecraft:clay", "image_file": "item/clay_ball"}, "minecraft:coal",
+  "minecraft:diamond", "minecraft:emerald",
+"minecraft:flint", "minecraft:glowstone_dust", "minecraft:gold_ingot", "minecraft:gold_nugget",
+"minecraft:iron_ingot", "minecraft:iron_nugget", "minecraft:lapis_lazuli", "minecraft:nether_brick",
+"minecraft:quartz", "minecraft:redstone"]

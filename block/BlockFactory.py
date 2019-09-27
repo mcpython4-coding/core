@@ -11,8 +11,7 @@ import block.IBlock
 import os
 import json
 import ResourceLocator
-COLORS = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
-          "purple", "blue", "brown", "green", "red", "black"]
+import tags.TagHandler
 
 
 class BlockFactory:
@@ -50,9 +49,11 @@ class BlockFactory:
                         config["name"] = name
                         BlockFactory.create_block_normal(config)
                 elif data["mode"] == "colornamed":
-                    BlockFactory.create_block_normal_from_array([data["name"].format(color) for color in COLORS])
+                    BlockFactory.create_block_normal_from_array([data["name"].format(color) for color in
+                                                                 G.taghandler.taggroups["naming"].tags[
+                                                                     "#minecraft:colors"].entries])
                 elif data["mode"] == "multisameconfig_colornamed":
-                    for color in COLORS:
+                    for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:
                         config = data["config"].copy()
                         config["name"] = data["name"].format(color)
                         BlockFactory.create_block_normal(config)

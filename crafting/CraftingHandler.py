@@ -17,9 +17,10 @@ class CraftingHandler:
     def __init__(self):
         self.recipeinfotable = {}
 
-        # used for both shaped and shapeless recipes
-        # an used_items: int -> recipes: IRecipe[
-        self.crafting_recipes = {}
+        # all shapeless recipes sorted after item count
+        self.crafting_recipes_shapeless = {}
+        # all shaped recipes sorted after item count and than size
+        self.crafting_recipes_shaped = {}
 
     def __call__(self, obj):
         if issubclass(obj, crafting.IRecipeType.IRecipe):

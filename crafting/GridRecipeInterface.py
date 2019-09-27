@@ -61,9 +61,17 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         if len(shapelessitems) == 0: return  # have we any item in the grid?
         shapelessitems.sort()
         itemtable = self._minimize_slotmap(itemtable)
-        if itemlenght not in G.craftinghandler.crafting_recipes: return
+        sx = max(itemtable, key=lambda x: x[0])[0]
+        sy = max(itemtable, key=lambda x: x[1])[1]
+        size = (sx, sy)
         self.active_recipe = None
-        for recipe in G.craftinghandler.crafting_recipes[itemlenght]:
+        recipes = []
+        if itemlenght in G.craftinghandler.crafting_recipes_shaped and size in G.craftinghandler.\
+                crafting_recipes_shaped[itemlenght]:
+            recipes += G.craftinghandler.crafting_recipes_shaped[itemlenght][size]
+        if itemlenght in G.craftinghandler.crafting_recipes_shapeless:
+            recipes += G.craftinghandler.crafting_recipes_shapeless[itemlenght]
+        for recipe in recipes:
             state = False
             if issubclass(type(recipe), crafting.GridRecipes.GridShaped) and self.shaped_enabled:
                 state = self._check_shaped(recipe, itemtable)

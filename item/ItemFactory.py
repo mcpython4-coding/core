@@ -30,10 +30,21 @@ class ItemFactory:
                 continue
             ItemFactory.loaded.append(file)
             data = ResourceLocator.read(file, "json")
-            ItemFactory.create_item_normal(data.copy())
+            if type(data) == dict:
+                if "mode" not in data:
+                    ItemFactory.create_item_normal(data.copy())
+                elif data["mode"] == "tagconstruct":
+                    [ItemFactory.create_item_normal(data["name"].format(x)) for x in G.taghandler.taggroups["naming"].
+                        tags[data["tagname"]].entries]
+            elif type(data) == list:
+                for entry in data:
+                    ItemFactory.create_item_normal(entry.copy() if type(entry) == dict else entry)
 
     @staticmethod
     def create_item_normal(data):
+        if type(data) == str:
+            data = {"name": data, "image_file": "item/{}".format(data.split(":")[1])}
+
         @G.registry
         class GeneratedItem(item.Item.Item):
             @staticmethod
@@ -49,7 +60,7 @@ class ItemFactory:
 
             @staticmethod
             def get_item_image_location() -> str:
-                return data["image_file"]
+                return data["image_file"] if "image_file" in data else "item/"+data["name"].split(":")[1]
 
             @staticmethod
             def get_as_item_image(image: PIL.Image.Image) -> PIL.Image.Image: return image.resize(

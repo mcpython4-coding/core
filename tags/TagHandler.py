@@ -14,14 +14,16 @@ import globals as G
 class TagHandler:
     def __init__(self):
         self.taggroups = {}  # name -> taggroup
+        self.taglocations = ["data/minecraft/tags/items", "data/minecraft/tags/naming"]
 
     def load(self):
-        for address in ResourceLocator.get_all_entrys("data/minecraft/tags/items"):
-            if address.endswith("/"): continue
-            data = ResourceLocator.read(address, "json")
-            # todo: implement overwrite & extend system
-            name = "#minecraft:{}".format(address.split("/")[-1].split(".")[0])
-            self.from_data(address.split("/")[-2], name, data)
+        for row in [ResourceLocator.get_all_entrys(x) for x in self.taglocations]:
+            for address in row:
+                if address.endswith("/"): continue
+                data = ResourceLocator.read(address, "json")
+                # todo: implement overwrite & extend system
+                name = "#minecraft:{}".format(address.split("/")[-1].split(".")[0])
+                self.from_data(address.split("/")[-2], name, data)
         for taggroup in self.taggroups.values():
             taggroup.build()
         # print(self.taggroups["items"].tags)

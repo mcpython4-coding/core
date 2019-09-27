@@ -1,0 +1,4 @@
+["minecraft:apple", "minecraft:baked_potato", "minecraft:beef", "minecraft:bread", "minecraft:cooked_chicken",
+"minecraft:cooked_cod", "minecraft:cooked_mutton", "minecraft:cooked_porkchop", "minecraft:cooked_rabbit",
+"minecraft:cooked_salmon", "minecraft:cookie", "minecraft:glistering_melon_slice", "minecraft:golden_apple",
+"minecraft:poisonous_potato", {"name": "minecraft:beetroot_soup", "stacksize": 1}]
