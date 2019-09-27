@@ -69,7 +69,7 @@ class StatePartGame(StatePart.StatePart):
             vector = G.window.get_sight_vector()
             blockpos, previous = G.world.hit_test(G.window.position, vector)
             if blockpos:
-                if blockpos != self.block_looking_at:
+                if blockpos != self.block_looking_at:  # have we changed the block we were looking at?
                     self.block_looking_at = blockpos
                     self.mouse_press_time = 0
 
@@ -83,8 +83,8 @@ class StatePartGame(StatePart.StatePart):
                             chunk.check_neighbors(blockpos)
                     elif G.player.gamemode == 0:
                         if self.mouse_press_time >= block.get_brake_time(item):
-                            G.player.add_to_free_place(gui.ItemStack.ItemStack(G.world.get_active_dimension().
-                                                                               get_block(blockpos).get_name()))
+                            G.player.add_to_free_place(gui.ItemStack.ItemStack(block.get_name() if type(block) != str
+                                                                               else block))
                             chunk.remove_block(blockpos)
                             chunk.check_neighbors(blockpos)
                     # todo: check if brakeable in gamemode 2
@@ -111,7 +111,8 @@ class StatePartGame(StatePart.StatePart):
                             slots.reverse()
                         for slot in slots:
                             if slot.itemstack.item and slot.itemstack.item.has_block() and \
-                                    slot.itemstack.item.get_block() == block.get_name():
+                                    slot.itemstack.item.get_block() == (block.get_name() if type(block) != str else
+                                                                        block):
                                 if inventoryname != "hotbar":
                                     selected_slot.itemstack, slot.itemstack = slot.itemstack, selected_slot.itemstack
                                 else:
@@ -119,7 +120,8 @@ class StatePartGame(StatePart.StatePart):
                                 return
                     if G.player.gamemode == 1:
                         old_itemstack = selected_slot.itemstack
-                        selected_slot.itemstack = gui.ItemStack.ItemStack(block.get_name())
+                        selected_slot.itemstack = gui.ItemStack.ItemStack(block.get_name() if type(block) != str
+                                                                          else block)
                         G.player.add_to_free_place(old_itemstack)
 
     def _update(self, dt):

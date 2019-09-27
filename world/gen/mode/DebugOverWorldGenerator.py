@@ -47,7 +47,7 @@ def chunk_generate(cx, cz, chunk):
         blockmap = blockinfo.TABLE[(cx, cz)]
         for x, z in blockmap.keys():
             block, state = blockmap[(x, z)]
-            chunk.add_add_block_gen_task((x, 10, z), block, kwargs={"state": state})
+            chunk.add_add_block_gen_task((x, 10, z), block, kwargs={"state": state}, block_update=False)
             heigthmap[(x, z)] = [(0, 10)]
 
 

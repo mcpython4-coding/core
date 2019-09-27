@@ -22,3 +22,11 @@ def draw_rectangle(position, size, color=(.0, .0, .0)):
     gl.glVertex2f(x+dx, y)
     gl.glEnd()
 
+
+def draw_line(f, t, color=(.0, .0, .0)):
+    gl.glColor3d(*color)
+    gl.glBegin(gl.GL_LINES)
+    gl.glVertex2f(*f)
+    gl.glVertex2f(*t)
+    gl.glEnd()
+

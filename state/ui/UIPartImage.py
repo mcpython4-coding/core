@@ -46,7 +46,7 @@ class UIPartLable(state.StatePart.StatePart):
         for eventname, function in self.event_functions:
             G.eventhandler.deactivate_from_callback(eventname, function)
 
-    def _get_button_base_positon(self):
+    def _get_image_base_positon(self):
         x, y = self.position
         wx, wy = G.window.get_size()
         bx, by = self.image.image.width, self.image.image.height
@@ -70,7 +70,7 @@ class UIPartLable(state.StatePart.StatePart):
 
     @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
-        mx, my = self._get_button_base_positon()
+        mx, my = self._get_image_base_positon()
         sx, sy = self.image.image.width, self.image.image.height
         self.press.area = ((mx, my), (mx+sx, my+sy))
         if self.press.equals(x, y, button, modifiers):
@@ -79,7 +79,7 @@ class UIPartLable(state.StatePart.StatePart):
 
     @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
-        x, y = self._get_button_base_positon()
+        x, y = self._get_image_base_positon()
         wx, wy = size = self.image.image.width, self.image.image.height
         self.image.position = (x + size[0] // 2 - wx // 2, y + size[1] // 2 - wy // 2)
         self.image.draw()

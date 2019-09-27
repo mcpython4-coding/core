@@ -361,21 +361,23 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: when looking on not-generated blocks, but one some which were added to the generation system, game
        gives an exception
 [uuk]: when on ground and in gamemode 1, flying will stop
+[uuk]: fixed some bugs around player killing & world leaving
+[uuk]: added progress bar to ui elements
+[uuk]: fixed bug: it was possible that blocks are generated during non-game states
+[uuk]: line width of focused block is now bigger
+[uuk]: fixed some bugs around interaction with non-generated
+[uuk]: fixed bug: game crashes when in debug world and generating new chunks
+[uuk]: fixed bug: falling blocks are falling in debug world
 
-reason for recipe output not reseted: not called with player=True?
 
 currently working on / planed for next commit:
-todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
-todo: fix bug: player flying is not reseted when leaving world
-todo: close chat when player dies (maybe close all inventories?)
-todo: remove xp when player dies, reset hunger & harts
 todo: fix bug: some recipes like log -> wood are not working!
-todo: fix bug: debug world is not fully generated
 
 issues to implement / fix
-todo: fix bug: player dies in debug world when on normal blocks
+todo: fix bug: player dies in debug world when on normal blocks (?)
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
         maybe due to an clear & draw error?
+todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions (?)
 
 other tasks that should be done in near future
 todo: when on ground and in gamemode 1, stop flying
@@ -397,6 +399,7 @@ todo: make StateParts don't need implement their own hide / shown event bind fun
 todo: add an real start menu background & option background
 todo: add option to add own parts to state / make an IStateExtension-baseclass which can be assigned with any other
     state and will help adding own element into it
+todo: add an generation screen for showing what is done at the moment
 
 other additions which could be usefull
 
@@ -416,3 +419,7 @@ todo: add only rotated textures to texture atlas if needed (load from block stat
 todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
 
 todo: add an check in loading if an recipe could be crafted & if the output is arrival (-> look also at the block table)
+
+todo: optimize recipe lookup by adding an sub-gridsize-table
+
+todo: fix height map generation

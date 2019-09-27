@@ -14,6 +14,7 @@ import world.Chunk
 import pyglet
 import time
 import world.gen.WorldGenerationHandler
+import state.StatePartGame
 
 
 class World:
@@ -118,6 +119,8 @@ class World:
             self.show_sector(sector, immediate)
 
     def process_queue(self):
+        if not any(type(x) == state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
+            return
         start = time.time()
         while time.time() - start < 0.01:
             result = G.worldgenerationhandler.process_one_generation_task()
@@ -157,4 +160,5 @@ class World:
             self.dimensions = {}
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
+        G.window.flying = False
 

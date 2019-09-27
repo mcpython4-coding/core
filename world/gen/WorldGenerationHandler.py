@@ -18,9 +18,12 @@ class WorldGenerationHandler:
         self.features = {}
         self.configs = {}
         self.enable_generation = False
-        self.runtimegenerationcache = [[], {}, {}]  # chunk order, chunk state, chunk data []
+        self.enable_auto_gen = False
+        self.runtimegenerationcache = [[], {}, {}]  # chunk order, chunk state, chunk gen data
 
     def add_chunk_to_generation_list(self, chunk, prior=False):
+        if not self.enable_auto_gen: return
+        if type(chunk) == tuple: chunk = G.world.get_active_dimension().get_chunk(*chunk)
         if prior:
             if chunk in self.runtimegenerationcache[0]:
                 self.runtimegenerationcache[0].remove(chunk)
@@ -35,7 +38,7 @@ class WorldGenerationHandler:
             if len(self.runtimegenerationcache[0]) == 0: return False
             chunk = self.runtimegenerationcache[0][0]
         if type(chunk) in (tuple, list, set): chunk = G.world.get_active_dimension().get_chunk(chunk)
-        if not chunk.position in self.runtimegenerationcache[1]:
+        if chunk.position not in self.runtimegenerationcache[1]:
             self.runtimegenerationcache[1][chunk.position] = -1
             self.runtimegenerationcache[2][chunk.position] = None
         step = self.runtimegenerationcache[1][chunk.position]
@@ -48,21 +51,24 @@ class WorldGenerationHandler:
                 config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
             self.runtimegenerationcache[2][chunk.position] = [self.layers[layername] for layername in config["layers"]]
         elif step == 0:  # process layers
-            layer = self.runtimegenerationcache[2][chunk.position].pop(0)
             if len(self.runtimegenerationcache[2][chunk.position]) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 1
+                return
+            layer = self.runtimegenerationcache[2][chunk.position].pop(0)
             layer.add_generate_functions_to_chunk(chunk.dimension.worldgenerationconfigobjects[layer.get_name()], chunk)
         elif step == 1:  # process chunk gen tasks
-            task = chunk.chunkgenerationtasks.pop(0)
             if len(chunk.chunkgenerationtasks) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 2
+                return
+            task = chunk.chunkgenerationtasks.pop(0)
             task[0](*task[1], **task[2])
         elif step == 2:  # process block additions to the chunk
+            if len(chunk.blockmap) == 0:
+                self.runtimegenerationcache[1][chunk.position] = 3
+                return
             position = list(chunk.blockmap.keys())[0]
             args, kwargs = chunk.blockmap[position]
             del chunk.blockmap[position]
-            if len(chunk.blockmap) == 0:
-                self.runtimegenerationcache[1][chunk.position] = 3
             chunk.add_block(*args, **kwargs)
         elif step == 3:  # process show tasks
             if len(chunk.show_tasks) == 0:

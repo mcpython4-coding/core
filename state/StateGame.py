@@ -33,10 +33,10 @@ class StateGame(State.State):
         return [(self.on_key_press, "user:keyboard:press")]
 
     def on_activate(self, old):
-        pass
+        G.worldgenerationhandler.enable_auto_gen = True
 
     def on_deactivate(self, new):
-        pass
+        G.worldgenerationhandler.enable_auto_gen = False
 
     @G.eventhandler("user:keyboard:press", callactive=False)
     def on_key_press(self, symbol, modifiers):

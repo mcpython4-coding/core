@@ -17,10 +17,10 @@ class UIPartLable(state.StatePart.StatePart):
                  anchor_lable="WS", anchor_window="WS", on_press=None, color=(0, 0, 0, 255), text_size=20):
         """
         creates an new UIPartButton
-        :param text: the text of the button
-        :param position: the position of the button
-        :param press: the EventInfo for mouse buttons and mods, no area
-        :param anchor_lable: the anchor on the button
+        :param text: the text of the lable
+        :param position: the position of the lable
+        :param press: the EventInfo for mouse lables and mods, no area
+        :param anchor_lable: the anchor on the lable
         :param anchor_window: the anchor on the window
         """
         self.text = text
@@ -51,7 +51,7 @@ class UIPartLable(state.StatePart.StatePart):
         for eventname, function in self.event_functions:
             G.eventhandler.deactivate_from_callback(eventname, function)
 
-    def _get_button_base_positon(self):
+    def _get_lable_base_positon(self):
         x, y = self.position
         wx, wy = G.window.get_size()
         bx, by = self.lable.content_width, self.lable.content_width
@@ -75,7 +75,7 @@ class UIPartLable(state.StatePart.StatePart):
 
     @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
-        mx, my = self._get_button_base_positon()
+        mx, my = self._get_lable_base_positon()
         sx, sy = self.lable.content_width, self.lable.content_width
         self.press.area = ((mx, my), (mx+sx, my+sy))
         if self.press.equals(x, y, button, modifiers):
@@ -84,7 +84,7 @@ class UIPartLable(state.StatePart.StatePart):
 
     @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
-        x, y = self._get_button_base_positon()
+        x, y = self._get_lable_base_positon()
         wx, wy = self.lable.content_width, self.lable.content_height
         size = self.lable.content_width, self.lable.content_width
         self.lable.x = x + size[0] // 2 - wx // 2

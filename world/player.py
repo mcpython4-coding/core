@@ -12,6 +12,7 @@ import gui.ItemStack
 import gui.Slot
 import chat.Chat
 import util.math
+import traceback
 
 
 class Player:
@@ -136,6 +137,12 @@ class Player:
         self.harts = 20
         self.hunger = 20
         globals.window.dy = 0
+        globals.chat.close()
+        self.xp = 0
+        self.xp_level = 0
+        self.harts = 20
+        self.hunger = 20
+        globals.window.flying = False
 
     def _get_position(self):
         return globals.window.position
