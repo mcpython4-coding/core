@@ -29,6 +29,7 @@ class CommandReload(chat.command.Command.Command):
         G.window.set_caption("finished!")
         G.craftinghandler.recipes = {}
         G.craftinghandler.load()
+        G.inventoryhandler.reload_config()
         event.TickHandler.handler.bind(G.window.set_caption, 20, args=["Pyglet"])
 
     @staticmethod

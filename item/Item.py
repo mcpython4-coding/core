@@ -44,3 +44,6 @@ class Item:
         if not issubclass(type(other), Item): return False
         return other.get_name() == self.get_name()
 
+    def on_player_interact(self, block, button, modifiers) -> bool:
+        return False
+

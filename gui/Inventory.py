@@ -170,3 +170,6 @@ class Inventory:
         [slot.itemstack.clean() for slot in self.slots]
         if self in G.inventoryhandler.opened_inventorystack: G.inventoryhandler.hide(self)
 
+    def get_interaction_slots(self):
+        return self.slots
+

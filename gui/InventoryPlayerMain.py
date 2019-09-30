@@ -43,15 +43,3 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
             G.player.add_to_free_place(itemstack)
         self.slots[45].itemstack.clean()
 
-    def on_draw_background(self):
-        pass
-
-    def on_draw_over_backgroundimage(self):
-        pass
-
-    def on_draw_over_image(self):
-        pass
-
-    def on_draw_overlay(self):
-        pass
-

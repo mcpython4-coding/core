@@ -25,6 +25,7 @@ items = event.Registry.Registry("item", [item.Item.Item], injection_function=reg
 items.set_attribute("items", {})
 items.set_attribute("pygletimagetable", {})
 
+
 def load():
     from . import (ItemFactory)
 

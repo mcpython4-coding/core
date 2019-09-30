@@ -375,22 +375,30 @@ started these clone on 12th of July, 2019
 [uuk]: items are now loaded by an function, not on import
 [uuk]: fixed bug: beetroot soup can be stacked up to 64
 [uuk]: optimize recipe lookup
+[uuk]: added crafting table
+[uuk]: added player interaction system
+[uuk]: pressing space & shift in gamemode 1 will now end in non-flying
+[uuk]: added crafting table inventory
+[uuk]: /reload-command will now reload also inventory config
+[uuk]: exception on combining two stacks
+[uuk]: rewritten SlotCopy
+[uuk]: added get_interaction_slots-method to inventory
 
 
 currently working on / planed for next commit:
-todo: fix bug: some recipes like log -> wood are not working!
-
-issues to implement / fix
-todo: fix bug: player dies in debug world when on normal blocks (?)
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
         maybe due to an clear & draw error?
-todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions (?)
+todo: fix bug: when opening crafting table with an block in the hand, the block is setted
+
+issues to implement / fix
+todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
+todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
 
 other tasks that should be done in near future
-todo: optimize item factory files like blocks were optimized
 todo: add tools
 todo: add item image atlases (see https://pyglet.readthedocs.io/en/stable/programming_guide/image.html)
 todo: move to pre-build: block item generation, recipe sorting, model sorting & generation, texture atlas generation
+todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
 
 an update to the system of states
 todo: add an option to toggle world generation size
@@ -422,10 +430,6 @@ todo: implement base_image to slot for base item & bind to armor & offhand slots
 
 todo: add only rotated textures to texture atlas if needed (load from block states
 
-todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
-
 todo: add an check in loading if an recipe could be crafted & if the output is arrival (-> look also at the block table)
-
-todo: optimize recipe lookup by adding an sub-gridsize-table
 
 todo: fix height map generation

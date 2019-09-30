@@ -143,6 +143,7 @@ class Player:
         self.harts = 20
         self.hunger = 20
         globals.window.flying = False
+        traceback.print_stack()
 
     def _get_position(self):
         return globals.window.position

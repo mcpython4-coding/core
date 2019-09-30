@@ -86,3 +86,7 @@ class Block:
 
     @staticmethod
     def get_all_model_states() -> list: return [{}]
+
+    def on_player_interact(self, itemstack, button, modifiers) -> bool:
+        return False
+

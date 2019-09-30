@@ -361,11 +361,11 @@ class Window(pyglet.window.Window):
             x, y, z = block
             vertex_data = cube_vertices(x, y, z, 0.51, 0.51, 0.51)
             glColor3d(0, 0, 0)
-            glLineWidth(1.5)
+            # glLineWidth(1.5)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-            glLineWidth(1)
+            # glLineWidth(1)
 
     def draw_label(self):
         """ Draw the label in the top left of the screen.

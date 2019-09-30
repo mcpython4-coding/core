@@ -31,10 +31,9 @@ implement hitbox system
 todo: fix bug: in some rare cases, you can walk through the corner into the block (see forgleman #104)
 optimize generating models & generating image atlases because they are taking to long to finish
 add can_break-attribute to item to definite items that can break blocks in gamemode 2
-add the following block inventorys: crafting table, furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
+add the following block inventorys: furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
 add Enchantment-baseclass with attribute is_combine_able_with(...) -> bool & all enchantments
 add Tool-baseclass and Tool-durability
-optimize BlockItemGenerator to have shorter times
 add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload (real command), /clone
 add breaktime-attribute to Block, use it in window break system (also in StatePartGame)
 add datapacks with .mcfunction-files, add resourcelocator binding for recipes, add /function & /shedule -command
@@ -55,10 +54,8 @@ may be implemented on another method:
 implement / finish pre-build system:
     add an auto-valid-check which will rebuild parts automatically when changed
     add event called system:rebuild which is called when it is its time to rebuild
-    rewrite recipe loading & checking to NOT use ItemStack
-    create an build-folder for storing the stuff which was generated and some index files which store the state of the
-        system
-    compress block factory files, item factory files
+    rewrite recipe loading
+    create some index files which store the state of the system
     add some kind of info for the player what is currently done
     texture atlas will be pre-builded in a file named minecraft_1.png (mods will have [modname]_[n].png)
     create an global table called texturemap.json which links texture ids to atlases

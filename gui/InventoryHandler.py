@@ -45,6 +45,10 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
 
     @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
+        # import block.BlockCraftingTable
+        # print(G.player.inventorys["main"].slots[0].itemstack.get_item_name())
+        # print(block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0].itemstack.get_item_name())
+        # print(G.player.inventorys["main"].slots[0] == block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0])
         if any([inventory.is_blocking_interactions() for inventory in G.inventoryhandler.opened_inventorystack]):
             G.window.set_exclusive_mouse(False)
             G.statehandler.states["minecraft:game"].parts[0].activate_keyboard = False
@@ -65,7 +69,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         """
         for inventory in G.inventoryhandler.opened_inventorystack:
             dx, dy = inventory._get_position()
-            for slot in inventory.slots:
+            for slot in inventory.get_interaction_slots():
                 sx, sy = slot.position
                 sx += dx
                 sy += dy
@@ -96,7 +100,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                         slot.itemstack.amount += possible
                         slot.call_update(player=True)
                         moving_slot.itemstack.amount -= possible
-                        if moving_slot.amount <= 0:
+                        if moving_slot.itemstack.amount <= 0:
                             moving_slot.itemstack.clean()
                     else:
                         stack, mstack = slot.itemstack, moving_slot.itemstack

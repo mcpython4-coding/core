@@ -148,7 +148,7 @@ class StatePartGame(StatePart.StatePart):
             G.window.dy -= dt * GRAVITY
             G.window.dy = max(G.window.dy, -TERMINAL_VELOCITY)
             dy += G.window.dy * dt
-        elif self.activate_keyboard:
+        elif self.activate_keyboard and not (G.window.keys[key.SPACE] and G.window.keys[key.LSHIFT]):
             dy = dt*6 if G.window.keys[key.SPACE] else (-dt*6 if G.window.keys[key.LSHIFT] else 0)
         # collisions
         x, y, z = G.window.position
@@ -162,7 +162,20 @@ class StatePartGame(StatePart.StatePart):
 
     @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
-        pass
+        if not self.activate_mouse: return
+        slot = G.player.get_active_inventory_slot()
+        vector = G.window.get_sight_vector()
+        blockpos, previous = G.world.hit_test(G.window.position, vector)
+        block = G.world.get_active_dimension().get_block(blockpos) if blockpos else None
+        cancel = False
+        if not slot.itemstack.is_empty():
+            if slot.itemstack.item.on_player_interact(block, button, modifiers):
+                cancel = True
+        if block:
+            if not cancel and block.on_player_interact(slot.itemstack, button, modifiers):
+                cancel = True
+        if cancel:
+            G.window.mouse_pressing[button] = False
 
     @G.eventhandler("user:mouse:motion", callactive=False)
     def on_mouse_motion(self, x, y, dx, dy):
