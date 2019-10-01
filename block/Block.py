@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import gui.ItemStack
+import item.ItemTool
 
 
 class Block:
@@ -66,11 +67,13 @@ class Block:
         callen when an near-by blockposition is updated by setting/removing an block
         """
 
-    def get_brake_time(self, item: gui.ItemStack) -> int:
+    def get_brake_time(self, itemstack: gui.ItemStack) -> int:
         """
-        :param item: the item that is used
+        :param itemstack: the item that is used
         :return: how long it takes to brake the block
         """
+        if itemstack.item and issubclass(type(itemstack.item), item.ItemTool.ItemTool):
+            return itemstack.item.get_brake_time_for(self)
         return 2
 
     def is_solid_side(self, side) -> bool:

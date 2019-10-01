@@ -31,12 +31,6 @@ class Item:
     def __init__(self):
         pass
 
-    def is_useable_on_block(self, blockinst) -> bool:
-        return False
-
-    def on_use_on_block(self, blockinst, triggered_by_item: bool):
-        pass
-
     def get_max_stack_size(self) -> int:
         return 64
 

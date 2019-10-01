@@ -17,8 +17,12 @@ def register_item(registry, itemclass):
     pygletimagetable = registry.get_attribute("pygletimagetable")
     itemtable[itemclass.get_name()] = itemclass
     itemtable[itemclass.get_name().split(":")[-1]] = itemclass
-    pygletimagetable[itemclass.get_name()] = util.texture.to_pyglet_image(
-        itemclass.get_as_item_image(ResourceLocator.read(itemclass.get_item_image_location(), "pil")))
+    try:
+        pygletimagetable[itemclass.get_name()] = util.texture.to_pyglet_image(
+            itemclass.get_as_item_image(ResourceLocator.read(itemclass.get_item_image_location(), "pil")))
+    except:
+        print(itemclass.get_item_image_location())
+        raise
 
 
 items = event.Registry.Registry("item", [item.Item.Item], injection_function=register_item)

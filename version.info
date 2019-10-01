@@ -384,7 +384,10 @@ started these clone on 12th of July, 2019
 [uuk]: rewritten SlotCopy
 [uuk]: added get_interaction_slots-method to inventory
 [uuk]: changed some code so you can direct walk into new chunks but you won't be able to see blocks under you (#7)
+[uuk]: added tools (#9)
 
+
+todo: fix crafting table
 
 currently working on / planed for next commit:
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
