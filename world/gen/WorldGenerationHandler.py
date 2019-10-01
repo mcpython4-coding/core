@@ -59,6 +59,7 @@ class WorldGenerationHandler:
         elif step == 1:  # process chunk gen tasks
             if len(chunk.chunkgenerationtasks) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 2
+                chunk.generated = True
                 return
             task = chunk.chunkgenerationtasks.pop(0)
             task[0](*task[1], **task[2])
@@ -74,11 +75,11 @@ class WorldGenerationHandler:
             if len(chunk.show_tasks) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 4
                 return
-            position = chunk.show_tasks.pop(0)
+            position = max(chunk.show_task, key=lambda x: x[1])
+            chunk.show_task.remove(position)
             chunk.show_block(position)
         elif step == 4:  # process hide tasks
             if len(chunk.hide_tasks) == 0:
-                chunk.generated = True
                 self.runtimegenerationcache[0].remove(chunk)
                 del self.runtimegenerationcache[1][chunk.position]
                 del self.runtimegenerationcache[2][chunk.position]

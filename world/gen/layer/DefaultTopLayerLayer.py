@@ -51,7 +51,10 @@ class DefaultTopLayerLayer(Layer):
             y = mheight - (height-i-1)
             block = chunk.get_block((x, y, z)) if chunk.is_position_blocked((x, y, z)) else None
             if block and (block if type(block) == str else block.get_name()) in ["minecraft:stone"]:
-                chunk.add_add_block_gen_task((x, y, z), decorators[i], immediate=i == height - 1)
+                if i == height - 1:
+                    chunk.add_block((x, y, z), decorators[i])
+                else:
+                    chunk.add_add_block_gen_task((x, y, z), decorators[i], immediate=i == height - 1)
 
 
 

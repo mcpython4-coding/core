@@ -383,12 +383,14 @@ started these clone on 12th of July, 2019
 [uuk]: exception on combining two stacks
 [uuk]: rewritten SlotCopy
 [uuk]: added get_interaction_slots-method to inventory
+[uuk]: changed some code so you can direct walk into new chunks but you won't be able to see blocks under you (#7)
 
 
 currently working on / planed for next commit:
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
         maybe due to an clear & draw error?
-todo: fix bug: when opening crafting table with an block in the hand, the block is setted
+todo: fix bug: when opening crafting table with an block in the hand, the block is setted as often as possible stopping
+    not when leaving mouse button -> something with the handle from mouse input
 
 issues to implement / fix
 todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
