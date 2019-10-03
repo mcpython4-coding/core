@@ -391,15 +391,16 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: world gen config is not resetted correctly
 [uuk]: hitcheck will now be every 0,05 blocks an check, not every 0,125 blocks, maybe fixing #7
 [uuk]: fixed bug: when opening the crafting table with an block in hand, it was setted to the block
+[uuk]: slot where mouse is on is now highlighted
+[uuk]: fixed bug: copy of hotbar slots in main inventory & slot of crafting table where offsetted by one pixel
+[uuk]: added empty slot image option (used for armor slots & offhand slot)
+[uuk]: added info lable for what is hold in hand over the hotbar
 
 
 currently working on / planed for next commit:
-
-todo: make inventory slot hovering over lighter so it is highlighted for user
-todo: add shift-click to inventories
-todo: add drag-support to slots (a list over what slots were hovered)
 todo: add bars for harts, hunger, xp, armor level
-todo: implement base_image to slot for base item & bind to armor & offhand slots
+todo: move to pre-build: block item generation, recipe sorting, model sorting & generation, texture atlas generation
+todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
 
 issues to implement / fix
 todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
@@ -410,8 +411,6 @@ todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & num
 other tasks that should be done in near future
 todo: add function to tools
 todo: add item image atlases (see https://pyglet.readthedocs.io/en/stable/programming_guide/image.html)
-todo: move to pre-build: block item generation, recipe sorting, model sorting & generation, texture atlas generation
-todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
 todo: add armor peaces
 todo: add brake animation on block
 todo: store braketime somewhere so the function is not callen every tick

@@ -75,6 +75,7 @@ class Window(pyglet.window.Window):
                                         color=(0, 0, 0, 255))
 
         self.mouse_pressing = {mouse.LEFT: False, mouse.RIGHT: False, mouse.MIDDLE: False}
+        self.mouse_position = (0, 0)
 
         # This call schedules the `update()` method to be called
         # TICKS_PER_SEC. This is the main game event loop.
@@ -260,6 +261,7 @@ class Window(pyglet.window.Window):
 
         """
         G.eventhandler.call("user:mouse:motion", x, y, dx, dy)
+        self.mouse_position = (x, y)
 
     def on_key_press(self, symbol, modifiers):
         """ Called when the player presses a key. See pyglet docs for key

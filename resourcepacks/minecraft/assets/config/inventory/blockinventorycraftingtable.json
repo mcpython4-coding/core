@@ -5,15 +5,15 @@
     332
   ],
   "slots": {
-    "0": {"position": [60, 267], "allow_player_add_to_free_place": false},
-    "1": {"position": [96, 267], "allow_player_add_to_free_place": false},
-    "2": {"position": [132, 267], "allow_player_add_to_free_place": false},
-    "3": {"position": [60, 231], "allow_player_add_to_free_place": false},
-    "4": {"position": [96, 231], "allow_player_add_to_free_place": false},
-    "5": {"position": [132, 231], "allow_player_add_to_free_place": false},
-    "6": {"position": [60, 195], "allow_player_add_to_free_place": false},
-    "7": {"position": [96, 195], "allow_player_add_to_free_place": false},
-    "8": {"position": [132, 195], "allow_player_add_to_free_place": false},
+    "0": {"position": [60, 266], "allow_player_add_to_free_place": false},
+    "1": {"position": [96, 266], "allow_player_add_to_free_place": false},
+    "2": {"position": [132, 266], "allow_player_add_to_free_place": false},
+    "3": {"position": [60, 230], "allow_player_add_to_free_place": false},
+    "4": {"position": [96, 230], "allow_player_add_to_free_place": false},
+    "5": {"position": [132, 230], "allow_player_add_to_free_place": false},
+    "6": {"position": [60, 194], "allow_player_add_to_free_place": false},
+    "7": {"position": [96, 194], "allow_player_add_to_free_place": false},
+    "8": {"position": [132, 194], "allow_player_add_to_free_place": false},
     "9": {"position": [247, 231], "allow_player_add_to_free_place": false, "allow_player_insert": false}
   }
 }

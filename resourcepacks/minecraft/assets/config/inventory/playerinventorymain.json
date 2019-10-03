@@ -6,31 +6,31 @@
   ],
   "slots": {
     "0": {
-      "position": [16, 17]
+      "position": [16, 16]
     },
     "1": {
-      "position": [52, 17]
+      "position": [52, 16]
     },
     "2": {
-      "position": [88, 17]
+      "position": [88, 16]
     },
     "3": {
-      "position": [124, 17]
+      "position": [124, 16]
     },
     "4": {
-      "position": [160, 17]
+      "position": [160, 16]
     },
     "5": {
-      "position": [196, 17]
+      "position": [196, 16]
     },
     "6": {
-      "position": [232, 17]
+      "position": [232, 16]
     },
     "7": {
-      "position": [268, 17]
+      "position": [268, 16]
     },
     "8": {
-      "position": [304, 17]
+      "position": [304, 16]
     },
 
     "9": {
@@ -119,19 +119,23 @@
 
     "36": {
       "position": [16, 176],
-      "allow_player_add_to_free_place": false
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_boots"
     },
     "37": {
       "position": [16, 212],
-      "allow_player_add_to_free_place": false
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_leggings"
     },
     "38": {
       "position": [16, 248],
-      "allow_player_add_to_free_place": false
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_chestplate"
     },
     "39": {
       "position": [16, 284],
-      "allow_player_add_to_free_place": false
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_helmet"
     },
 
     "40": {
@@ -158,7 +162,8 @@
 
     "45": {
       "position": [154, 176],
-      "allow_player_add_to_free_place": false
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_shield"
     }
   }
 }

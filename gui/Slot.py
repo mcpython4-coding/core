@@ -15,6 +15,9 @@ import ResourceLocator
 
 SLOT_WIDTH = 32
 
+PYGLET_IMAGE_HOVERING = pyglet.sprite.Sprite(
+    ResourceLocator.read("assets/minecraft/textures/gui/hotbar_selected.png", "pyglet"))
+
 
 class Slot:
     """
@@ -22,7 +25,8 @@ class Slot:
     """
 
     def __init__(self, itemstack=None, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
-                 allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None):
+                 allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None,
+                 empty_image=None):
         """
         creates an new slot
         :param itemstack: the itemstack to use
@@ -51,6 +55,7 @@ class Slot:
         self.on_shift_click = on_shift_click
         self.amount_lable = pyglet.text.Label()
         self.childs = []
+        self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
 
     def get_itemstack(self):
         return self.__itemstack
@@ -74,15 +79,21 @@ class Slot:
         """
         return SlotCopy(self, position=position)
 
-    def draw(self, dx=0, dy=0):
+    def draw(self, dx=0, dy=0, hovering=False):
         """
         draws the slot
         """
+        if hovering and self.interaction_mode[1]:
+            PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
+            PYGLET_IMAGE_HOVERING.draw()
         if self.__itemstack.item and self.__itemstack.item.get_item_image_location() != self.__last_itemfile:
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.registry.get_by_name("item").get_attribute(
                 "pygletimagetable")[self.__itemstack.item.get_name()])
         elif not self.__itemstack.item:
             self.sprite = None
+            if self.empty_image:
+                self.empty_image.position = (self.position[0] + dx, self.position[1] + dy)
+                self.empty_image.draw()
         self.amount_lable.text = str(self.__itemstack.amount)
         if self.sprite:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
@@ -132,10 +143,13 @@ class SlotCopy:
     def copy(self, position=(0, 0)):
         return self.master.copy(position=position)
 
-    def draw(self, dx=0, dy=0):
+    def draw(self, dx=0, dy=0, hovering=False):
         """
         draws the slot
         """
+        if hovering:
+            PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
+            PYGLET_IMAGE_HOVERING.draw()
         if self.itemstack.item and self.itemstack.item.get_item_image_location() != self.__last_itemfile:
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.registry.get_by_name("item").get_attribute(
                 "pygletimagetable")[self.itemstack.item.get_name()])

@@ -9,7 +9,7 @@ import globals as G
 from state.ui import (UIPartImage)
 import pyglet
 import ResourceLocator
-# import texture.helpers
+import util.texture
 
 
 class Inventory:
@@ -57,6 +57,10 @@ class Inventory:
                 self.slots[sid].interaction_mode[0] = entry["allow_player_remove"]
             if "allow_player_add_to_free_place" in entry:
                 self.slots[sid].interaction_mode[2] = entry["allow_player_add_to_free_place"]
+            if "empty_slot_image" in entry:
+                image = ResourceLocator.read(entry["empty_slot_image"], "pil")
+                image = util.texture.to_pyglet_image(image.resize((32, 32)))
+                self.slots[sid].empty_image = pyglet.sprite.Sprite(image)
         if "image_size" in self.config:
             self.bgimagesize = tuple(self.config["image_size"])
         if "image_anchor" in self.config:
@@ -126,7 +130,7 @@ class Inventory:
 
     def is_always_open(self) -> bool: return False
 
-    def draw(self):
+    def draw(self, hoveringslot=None):
         """
         draws the inventory
         """
@@ -137,7 +141,7 @@ class Inventory:
             self.bgsprite.draw()
         self.on_draw_over_backgroundimage()
         for slot in self.slots:
-            slot.draw(x, y)
+            slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
         for slot in self.slots:
             slot.draw_lable()

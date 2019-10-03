@@ -49,6 +49,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         # print(G.player.inventorys["main"].slots[0].itemstack.get_item_name())
         # print(block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0].itemstack.get_item_name())
         # print(G.player.inventorys["main"].slots[0] == block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0])
+        hoveringslot = self._get_slot_for(*G.window.mouse_position)
         if any([inventory.is_blocking_interactions() for inventory in G.inventoryhandler.opened_inventorystack]):
             G.window.set_exclusive_mouse(False)
             G.statehandler.states["minecraft:game"].parts[0].activate_keyboard = False
@@ -56,7 +57,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             G.statehandler.update_exclusive()
             G.statehandler.states["minecraft:game"].parts[0].activate_keyboard = True
         for inventory in G.inventoryhandler.opened_inventorystack:
-            inventory.draw()
+            inventory.draw(hoveringslot=hoveringslot)
         if G.inventoryhandler.moving_slot.itemstack.item:
             G.inventoryhandler.moving_slot.draw(0, 0)
 
