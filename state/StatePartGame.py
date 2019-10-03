@@ -33,6 +33,7 @@ class StatePartGame(StatePart.StatePart):
         self.glcolor3d = glcolor3d
         self.clearcolor = clearcolor
         self.double_space_cooldown = 0
+        self.set_cooldown = 0
 
         self.event_functions = [("gameloop:tick:end", self.on_update),
                                 ("user:mouse:press", self.on_mouse_press),
@@ -65,7 +66,7 @@ class StatePartGame(StatePart.StatePart):
             for _ in range(m):
                 self._update(dt / m)
 
-        if G.window.exclusive and any(G.window.mouse_pressing.values()):
+        if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
             vector = G.window.get_sight_vector()
             blockpos, previous = G.world.hit_test(G.window.position, vector)
             if blockpos:
@@ -175,6 +176,7 @@ class StatePartGame(StatePart.StatePart):
             if not cancel and block.on_player_interact(slot.itemstack, button, modifiers):
                 cancel = True
         if cancel:
+            self.set_cooldown = time.time()
             G.window.mouse_pressing[button] = False
 
     @G.eventhandler("user:mouse:motion", callactive=False)

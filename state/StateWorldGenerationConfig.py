@@ -65,6 +65,7 @@ class StateWorldGenerationConfig(State.State):
         for part in self.parts:
             if type(part) == UIPartButton.UIPartToggleButton:
                 part.index = 0
+                part._generate_text()
 
     def on_deactivate(self, new):
         pass

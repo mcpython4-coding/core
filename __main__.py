@@ -36,9 +36,9 @@ try:
 
     # import texture.atlas
 
-    print("generating textures...")
-    import texture.factory
-    globals.texturefactoryhandler.load()
+    # print("generating textures...")
+    # import texture.factory
+    # globals.texturefactoryhandler.load()
 
     import world.World
     globals.world = world.World.World()

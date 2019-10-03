@@ -59,7 +59,7 @@ class World:
             How many blocks away to search for a hit.
 
         """
-        m = 8
+        m = 20
         x, y, z = position
         dx, dy, dz = vector
         previous = None

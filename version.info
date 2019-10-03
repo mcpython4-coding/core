@@ -385,25 +385,36 @@ started these clone on 12th of July, 2019
 [uuk]: added get_interaction_slots-method to inventory
 [uuk]: changed some code so you can direct walk into new chunks but you won't be able to see blocks under you (#7)
 [uuk]: added tools (#9)
+[uuk]: fixed bug: stone tools were not added
+[uuk]: fixed bug: texture factory was generating without rebuild mode
+[uuk]: fixed bug: in crafting table, first slot was not used for crafting (so some recipes were not working)
+[uuk]: fixed bug: world gen config is not resetted correctly
+[uuk]: hitcheck will now be every 0,05 blocks an check, not every 0,125 blocks, maybe fixing #7
+[uuk]: fixed bug: when opening the crafting table with an block in hand, it was setted to the block
 
-
-todo: fix crafting table
 
 currently working on / planed for next commit:
-todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
-        maybe due to an clear & draw error?
-todo: fix bug: when opening crafting table with an block in the hand, the block is setted as often as possible stopping
-    not when leaving mouse button -> something with the handle from mouse input
+
+todo: make inventory slot hovering over lighter so it is highlighted for user
+todo: add shift-click to inventories
+todo: add drag-support to slots (a list over what slots were hovered)
+todo: add bars for harts, hunger, xp, armor level
+todo: implement base_image to slot for base item & bind to armor & offhand slots
 
 issues to implement / fix
 todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
 todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
+todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
+        maybe due to an clear & draw error?
 
 other tasks that should be done in near future
-todo: add tools
+todo: add function to tools
 todo: add item image atlases (see https://pyglet.readthedocs.io/en/stable/programming_guide/image.html)
 todo: move to pre-build: block item generation, recipe sorting, model sorting & generation, texture atlas generation
 todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
+todo: add armor peaces
+todo: add brake animation on block
+todo: store braketime somewhere so the function is not callen every tick
 
 an update to the system of states
 todo: add an option to toggle world generation size
@@ -420,20 +431,24 @@ todo: add option to add own parts to state / make an IStateExtension-baseclass w
     state and will help adding own element into it
 todo: add an generation screen for showing what is done at the moment
 
-other additions which could be usefull
+other additions which could be useful
+
+todo: make hitbox draw & check on BoxModels
+
+todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
 
 todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
     barrier, buttons, presure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms
 
+todo: add Plant-system, plant brake, plant base class, plant grow
+
 todo: split multi-registries into their parts
 
-todo: can we add slabs? -> make texture coord add by 1 to the real change
-todo: make resourcepacks fully functional: sorting, auto-rebuild
+todo: make resourcepacks fully functional: sorting(, auto-rebuild)
 todo: add option for inventories to be visible when another is also visible
 todo: add loot tables (also for block drops)
-todo: implement base_image to slot for base item & bind to armor & offhand slots
 
-todo: add only rotated textures to texture atlas if needed (load from block states
+todo: add only rotated textures to texture atlas if needed (load from block states)
 
 todo: add an check in loading if an recipe could be crafted & if the output is arrival (-> look also at the block table)
 

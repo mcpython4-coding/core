@@ -12,6 +12,7 @@ import crafting.GridRecipes
 import event.EventInfo
 import gui.Slot
 import gui.ItemStack
+import traceback
 
 
 class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
@@ -39,8 +40,8 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         self.minsize = minsize if minsize else (1, 1)
         for y, row in enumerate(slotinputmap):
             for x, slot in enumerate(row):
-                slot.on_update.append(event.EventInfo.CallbackHelper(self.on_input_update))
-        slotoutputmap.on_update.append(event.EventInfo.CallbackHelper(self.on_output_update))
+                slot.on_update.append(self.on_input_update)
+        slotoutputmap.on_update.append(self.on_output_update)
         slotoutputmap.allow_half_getting = False
         slotoutputmap.on_shift_click = self.on_output_shift_click
         self.active_recipe: crafting.IRecipeType.IRecipe = None
@@ -61,8 +62,8 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         if len(shapelessitems) == 0: return  # have we any item in the grid?
         shapelessitems.sort()
         itemtable = self._minimize_slotmap(itemtable)
-        sx = max(itemtable, key=lambda x: x[0])[0]
-        sy = max(itemtable, key=lambda x: x[1])[1]
+        sx = max(itemtable, key=lambda v: v[0])[0]
+        sy = max(itemtable, key=lambda v: v[1])[1]
         size = (sx, sy)
         self.active_recipe = None
         recipes = []

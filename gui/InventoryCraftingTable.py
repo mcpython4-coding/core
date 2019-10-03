@@ -23,7 +23,7 @@ class InventoryCraftingTable(gui.Inventory.Inventory):
         return "assets/config/inventory/blockinventorycraftingtable.json"
 
     def on_create(self):
-        inputs = [self.slots[1:3], self.slots[3:6], self.slots[6:9]]
+        inputs = [self.slots[:3], self.slots[3:6], self.slots[6:9]]
         self.recipeinterface = crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[9])
 
     def create_slots(self) -> list:

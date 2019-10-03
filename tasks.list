@@ -33,9 +33,8 @@ optimize generating models & generating image atlases because they are taking to
 add can_break-attribute to item to definite items that can break blocks in gamemode 2
 add the following block inventorys: furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
 add Enchantment-baseclass with attribute is_combine_able_with(...) -> bool & all enchantments
-add Tool-baseclass and Tool-durability
+add Tool-durability
 add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload (real command), /clone
-add breaktime-attribute to Block, use it in window break system (also in StatePartGame)
 add datapacks with .mcfunction-files, add resourcelocator binding for recipes, add /function & /shedule -command
 fix missing resize of image-parts when using only a part of it
 make the following attributes as json-saved files: Block.is_break_able, Block.break_time, Item.tool_types, Item.max_durability, Item.breaktime_of

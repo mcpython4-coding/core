@@ -113,8 +113,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             if slot:
                 if not slot.itemstack.item:
                     if slot.interaction_mode[1]:
-                        slot.set_itemstack(moving_slot.itemstack.copy(), player=True)
-                        slot.itemstack.amount = 1
+                        slot.set_itemstack(moving_slot.itemstack.copy().set_amount(1), player=True)
                         moving_slot.itemstack.amount -= 1
                 elif not moving_slot.itemstack.item and slot.allow_half_getting:
                     if slot.interaction_mode[0]:
