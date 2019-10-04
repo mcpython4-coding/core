@@ -26,6 +26,7 @@ import globals as G
 import event.Registry
 import os
 import shutil
+import texture.factory
 
 
 class IPrepareAbleTask:
@@ -55,7 +56,8 @@ class Cleanup(IPrepareAbleTask):
 
     @staticmethod
     def dump_data(directory: str):
-        shutil.rmtree(G.local+"/build")
+        if os.path.exists(G.local+"/build"):
+            shutil.rmtree(G.local+"/build")
         os.makedirs(G.local+"/build")
 
     @staticmethod

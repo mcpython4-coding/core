@@ -88,7 +88,10 @@ class ResourceDirectory(IResourceLocation):
         return os.path.isfile(os.path.join(self.path, filename))
 
     def read(self, filename: str, mode: str):
-        with open(os.path.join(self.path, filename), mode="rb") as f:
+        file = filename
+        if not os.path.exists(file):
+            file = self.path + ("" if filename.startswith("/") else "/") + filename
+        with open(file, mode="rb") as f:
             data: bytes = f.read()
         if mode is None: return data
         if mode == "json": return json.loads(data.decode("UTF-8"))

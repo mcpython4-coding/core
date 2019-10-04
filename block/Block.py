@@ -50,6 +50,12 @@ class Block:
         callen when the block is removed
         """
 
+    def get_inventories(self):
+        """
+        callen to get an list of inventories
+        """
+        return []
+
     def is_brakeable(self) -> bool:
         """
         :return: if the block is brakeable in gamemode 0

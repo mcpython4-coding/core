@@ -395,25 +395,40 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: copy of hotbar slots in main inventory & slot of crafting table where offsetted by one pixel
 [uuk]: added empty slot image option (used for armor slots & offhand slot)
 [uuk]: added info lable for what is hold in hand over the hotbar
+[uuk]: changed caption from "Pyglet" to "mcpython 4"
+[uuk]: fixed bug: can't rebuild
+[uuk]: fixed bug: when build-folder does not exists, rebuild were not possible
+[uuk]: BlockItemFactory is now part of the prebuild system
+[uuk]: added new command: "/iteminfo [hand/inventory/item <itemname>/block inventory <position>]" which gives info about items
+[uuk]: fixed bug: when has_block flag is setted for ItemFactory-file, block name is not defaulted to item name
+[uuk]: added inventory-getter to block
 
 
-currently working on / planed for next commit:
-todo: add bars for harts, hunger, xp, armor level
-todo: move to pre-build: block item generation, recipe sorting, model sorting & generation, texture atlas generation
-todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
+currently working on / planed for next commit(s):
+Item System Additions: Item Image Table as an build-located file with an index.json file
+PreGenerate additions: -TextureAtlas build-locate-move, index file
+                       -ModelHandler build-locate-move for preparing & indexing, index file
+                       -RecipeHandler build-locate for sorting, indexing, reachable checks
+
 
 issues to implement / fix
 todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
 todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
         maybe due to an clear & draw error?
+todo: fix bug: in some rare cases, mouse up is not handled an will cause blocks to be added until game close
+todo: fix bug: when resizing block item generation, items are not correctly generated
+todo: fix bug: moving slot is on first load somtimes not at mouse
+todo: fix bug: registries are not locked on startup
+todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor will be white
 
 other tasks that should be done in near future
 todo: add function to tools
 todo: add item image atlases (see https://pyglet.readthedocs.io/en/stable/programming_guide/image.html)
-todo: add armor peaces
-todo: add brake animation on block
+todo: add armor peaces, make armor slots only accept armor
+todo: add brake animation on block (draw with alpha over the block?)
 todo: store braketime somewhere so the function is not callen every tick
+todo: add bars for harts, hunger, xp, armor level
 
 an update to the system of states
 todo: add an option to toggle world generation size
@@ -431,6 +446,9 @@ todo: add option to add own parts to state / make an IStateExtension-baseclass w
 todo: add an generation screen for showing what is done at the moment
 
 other additions which could be useful
+
+todo: move to pre-build: block item factory, recipe sorting, model sorting & generation, texture atlas generation
+todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
 
 todo: make hitbox draw & check on BoxModels
 

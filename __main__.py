@@ -40,6 +40,13 @@ try:
     # import texture.factory
     # globals.texturefactoryhandler.load()
 
+    import sys
+
+    if "--rebuild" in sys.argv:
+        import setup as systemsetup
+
+        systemsetup.execute()
+
     import world.World
     globals.world = world.World.World()
 
@@ -89,7 +96,7 @@ try:
 
     def run():
         import pyglet
-        rendering.window.Window(width=800, height=600, caption='Pyglet', resizable=True)
+        rendering.window.Window(width=800, height=600, caption='mcpython 4', resizable=True)
         event.EventHandler.handler.call("game:gameloop_startup")
         pyglet.app.run()
 
@@ -110,11 +117,6 @@ except BaseException:
 
 if __name__ == "__main__":
     import sys
-
-    if "--rebuild" in sys.argv:
-        import setup as systemsetup
-
-        systemsetup.execute()
     
     try:
         main()

@@ -17,6 +17,8 @@ import item.Item
 import event.TickHandler
 import PIL.Image, PIL.ImageDraw
 import sys
+import json
+import item.ItemFactory
 
 if not os.path.isdir(G.local+"/build/generated_items"): os.makedirs(G.local+"/build/generated_items")
 
@@ -34,16 +36,22 @@ class StateBlockItemGenerator(State.State):
         State.State.__init__(self)
         self.blockindex = 0
         G.registry.get_by_name("block").registered_objects.sort(key=lambda x: x.get_name())
+        self.table = {}
 
     def get_parts(self) -> list:
+        kwargs = {}
+        if "--rebuild" in sys.argv: kwargs["glcolor3d"] = (1., 1., 1.)
         return [StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False, activate_keyboard=False,
                                             activate_focused_block=False, clearcolor=(1., 1., 1., 0.),
-                                            glcolor3d=(1., 1., 1.), activate_crosshair=False, activate_lable=False)]
+                                            activate_crosshair=False, activate_lable=False)]
 
     def get_event_functions(self) -> list:
         return []
 
     def on_activate(self, old):
+        if "--rebuild" not in sys.argv:
+            self.close()
+            return
         G.window.position = (1.5, 2, 1.5)
         G.window.rotation = (-45, -45)
         G.world.get_active_dimension().add_block(
@@ -57,6 +65,12 @@ class StateBlockItemGenerator(State.State):
 
     def on_deactivate(self, new):
         G.world.cleanup()
+        if "--rebuild" in sys.argv:
+            data = [{"name": key, "image_file": self.table[key], "has_block": True} for key in self.table.keys()]
+            with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
+                json.dump(data, f)
+            item.ItemFactory.ItemFactory.FILES.append(G.local+"/build/itemblockfactory.json")
+            item.ItemFactory.ItemFactory.load()
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -85,24 +99,13 @@ class StateBlockItemGenerator(State.State):
     def take_image(self, *args):
         if self.blockindex >= len(G.registry.get_by_name("block").registered_objects): return
         blockname = G.registry.get_by_name("block").registered_objects[self.blockindex].get_name()
-        file = "build/generated_items/{}.png".format("_".join(blockname.split(":")))
+        file = "build/generated_items/{}.png".format("__".join(blockname.split(":")))
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
         image: PIL.Image.Image = ResourceLocator.read(file, "pil")
         image.crop((240, 129, 558, 447)).save(G.local + "/" + file)
         self.generate_item(blockname, file)
 
-    @staticmethod
-    def generate_item(blockname, file):
-
-        @G.registry
-        class GeneratedItem(item.Item.Item):
-            @staticmethod
-            def get_name() -> str:
-                return blockname
-
-            @staticmethod
-            def get_item_image_location() -> str:
-                return file
+    def generate_item(self, blockname, file): self.table[blockname] = file
 
 
 blockitemgenerator = StateBlockItemGenerator()

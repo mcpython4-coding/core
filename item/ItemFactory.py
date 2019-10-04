@@ -11,6 +11,7 @@ import os
 import json
 import PIL.Image
 import ResourceLocator
+import sys
 
 
 class ItemFactory:
@@ -25,6 +26,9 @@ class ItemFactory:
 
     @staticmethod
     def load():
+        if "--rebuild" not in sys.argv:
+            ItemFactory.FILES.append(G.local + "/build/itemblockfactory.json")
+
         for file in ItemFactory.FILES:
             if file in ItemFactory.loaded:
                 continue
@@ -39,6 +43,7 @@ class ItemFactory:
             elif type(data) == list:
                 for entry in data:
                     ItemFactory.create_item_normal(entry.copy() if type(entry) == dict else entry)
+        ItemFactory.FILES = []
 
     @staticmethod
     def create_item_normal(data):
@@ -56,7 +61,8 @@ class ItemFactory:
                 return data["has_block"] if "has_block" in data else False
 
             def get_block(self) -> str:
-                return data["block"] if "block" in data else None
+                return data["block"] if "block" in data else (self.get_name() if "has_block" in data and
+                                                                                 data["has_block"] else None)
 
             @staticmethod
             def get_item_image_location() -> str:

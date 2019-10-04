@@ -26,3 +26,9 @@ class BlockCraftingTable(Block.Block):
         else:
             return False
 
+    def get_inventories(self):
+        """
+        callen to get an list of inventories
+        """
+        return [self.inventory]
+

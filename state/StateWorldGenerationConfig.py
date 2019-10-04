@@ -12,6 +12,7 @@ import globals as G
 from pyglet.window import key
 import util.math
 import world.gen.WorldGenerationHandler
+import pyglet
 
 
 class StateWorldGenerationConfig(State.State):
