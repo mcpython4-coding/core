@@ -402,10 +402,13 @@ started these clone on 12th of July, 2019
 [uuk]: added new command: "/iteminfo [hand/inventory/item <itemname>/block inventory <position>]" which gives info about items
 [uuk]: fixed bug: when has_block flag is setted for ItemFactory-file, block name is not defaulted to item name
 [uuk]: added inventory-getter to block
+[uuk]: items will now be using an TextureAtlas for holding all the item images. this will be generated only when in
+       rebuild mode
+[uuk]: made item image changeable from item's side
+[uuk]: items must provide all used images on class for ImageAtlas generation (default: default image)
 
 
 currently working on / planed for next commit(s):
-Item System Additions: Item Image Table as an build-located file with an index.json file
 PreGenerate additions: -TextureAtlas build-locate-move, index file
                        -ModelHandler build-locate-move for preparing & indexing, index file
                        -RecipeHandler build-locate for sorting, indexing, reachable checks

@@ -64,20 +64,24 @@ class TextureAtlasGenerator:
 
 
 class TextureAtlas:
-    def __init__(self, size=(64, 64)):
+    def __init__(self, size=(64, 64), image_size=(64, 64), add_missing_texture=True, pyglet_special_pos=True):
         self.size = size
-        self.texture = PIL.Image.new("RGBA", (size[0] * 64, size[1] * 64))
+        self.image_size = image_size
+        self.pyglet_special_pos = pyglet_special_pos
+        self.texture = PIL.Image.new("RGBA", (size[0] * image_size[0], size[1] * image_size[1]))
         self.next_index = (0, 0)
         self.images = []
         self.imagelocations = []  # an image[-parallel (x, y)-list
-        self.add_image(MISSING_TEXTURE)
+        if add_missing_texture: self.add_image(MISSING_TEXTURE)
         self.group = None
 
-    def add_image(self, image: PIL.Image.Image) -> tuple:
-        if image in self.images: return self.imagelocations[self.images.index(image)]
-        self.images.append(image)
+    def add_image(self, image: PIL.Image.Image, ind=None) -> tuple:
+        if ind is None: ind = image
+        if ind in self.images: return self.imagelocations[self.images.index(ind)]
+        self.images.append(ind)
         x, y = self.next_index
-        self.texture.paste(image, (x*64, (self.size[1]-y-1) * 64))
+        self.texture.paste(image, (x*self.image_size[0], (self.size[1]-y-1 if self.pyglet_special_pos else y) *
+                                   self.image_size[1]))
         pos = x, y
         x += 1
         if x >= self.size[0]: x = 0; y += 1

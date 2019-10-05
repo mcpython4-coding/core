@@ -61,7 +61,7 @@ class CommandItemInfo(chat.command.Command.Command):
             print("-has block: {}".format(itemstack.item.has_block()))
             if itemstack.item.has_block():
                 print("-blockname: {}".format(itemstack.item.get_block()))
-            print("-itemfile: '{}'".format(itemstack.item.get_item_image_location()))
+            print("-itemfile: '{}'".format(itemstack.item.get_default_item_image_location()))
             print("-max stack size: {}".format(itemstack.item.get_max_stack_size()))
 
     @staticmethod

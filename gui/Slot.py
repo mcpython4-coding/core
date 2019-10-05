@@ -43,12 +43,14 @@ class Slot:
         # self.itemstack.amount = 2
         self.position = position
         if self.__itemstack.item:
-            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.itemhandler.pygletimagetable[
-                                                                         self.__itemstack.item.get_name()])
+            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.__itemstack.item.get_name()][
+                self.__itemstack.item.get_active_image_location()]
+            image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
+            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         else:
             self.sprite = None
         self.amount_lable = pyglet.text.Label(text=str(self.__itemstack.amount))
-        self.__last_itemfile = self.__itemstack.item.get_item_image_location() if self.__itemstack.item else None
+        self.__last_itemfile = self.__itemstack.item.get_default_item_image_location() if self.__itemstack.item else None
         self.interaction_mode = [allow_player_remove, allow_player_insert, allow_player_add_to_free_place]
         self.on_update = [on_update] if on_update else []
         self.allow_half_getting = allow_half_getting
@@ -86,9 +88,11 @@ class Slot:
         if hovering and self.interaction_mode[1]:
             PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
             PYGLET_IMAGE_HOVERING.draw()
-        if self.__itemstack.item and self.__itemstack.item.get_item_image_location() != self.__last_itemfile:
-            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.registry.get_by_name("item").get_attribute(
-                "pygletimagetable")[self.__itemstack.item.get_name()])
+        if self.__itemstack.item and self.__itemstack.item.get_default_item_image_location() != self.__last_itemfile:
+            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.__itemstack.item.get_name()][
+                self.__itemstack.item.get_active_image_location()]
+            image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
+            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         elif not self.__itemstack.item:
             self.sprite = None
             if self.empty_image:
@@ -102,7 +106,7 @@ class Slot:
                 self.amount_lable.x = self.position[0] + SLOT_WIDTH + 2 + dx
                 self.amount_lable.y = self.position[1] - 2 + dy
                 self.amount_lable.draw()
-        self.__last_itemfile = self.__itemstack.item.get_item_image_location() if self.__itemstack.item else None
+        self.__last_itemfile = self.__itemstack.item.get_default_item_image_location() if self.__itemstack.item else None
 
     def draw_lable(self):
         """
@@ -118,11 +122,13 @@ class SlotCopy:
         self.master: Slot = master
         self.position = position
         if self.itemstack.item:
-            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.itemhandler.pygletimagetable[
-                                                                         self.itemstack.item.get_name()])
+            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.itemstack.item.get_name()][
+                self.itemstack.item.get_active_image_location()]
+            image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
+            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         else:
             self.sprite = None
-        self.__last_itemfile = self.itemstack.item.get_item_image_location() if self.itemstack.item else None
+        self.__last_itemfile = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None
         self.interaction_mode = [allow_player_remove, allow_player_insert, allow_player_add_to_free_place]
         self.on_update = [on_update] if on_update else []
         self.allow_half_getting = allow_half_getting
@@ -150,9 +156,11 @@ class SlotCopy:
         if hovering:
             PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
             PYGLET_IMAGE_HOVERING.draw()
-        if self.itemstack.item and self.itemstack.item.get_item_image_location() != self.__last_itemfile:
-            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(G.registry.get_by_name("item").get_attribute(
-                "pygletimagetable")[self.itemstack.item.get_name()])
+        if self.itemstack.item and self.itemstack.item.get_default_item_image_location() != self.__last_itemfile:
+            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.itemstack.item.get_name()][
+                self.itemstack.item.get_active_image_location()]
+            image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
+            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         elif not self.itemstack.item:
             self.sprite = None
         self.amount_lable.text = str(self.itemstack.amount)
@@ -163,7 +171,7 @@ class SlotCopy:
                 self.amount_lable.x = self.position[0] + SLOT_WIDTH + 2 + dx
                 self.amount_lable.y = self.position[1] - 2 + dy
                 self.amount_lable.draw()
-        self.__last_itemfile = self.itemstack.item.get_item_image_location() if self.itemstack.item else None
+        self.__last_itemfile = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None
 
     def draw_lable(self):
         if self.itemstack.amount > 1:

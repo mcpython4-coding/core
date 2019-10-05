@@ -67,6 +67,9 @@ try:
     import item.ItemHandler
     item.ItemHandler.load()
 
+    # if "--rebuild" not in sys.argv:
+    #     item.ItemHandler.build()
+
     import world.gen.WorldGenerationHandler
 
 

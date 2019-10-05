@@ -19,6 +19,7 @@ import PIL.Image, PIL.ImageDraw
 import sys
 import json
 import item.ItemFactory
+import item.ItemHandler
 
 if not os.path.isdir(G.local+"/build/generated_items"): os.makedirs(G.local+"/build/generated_items")
 
@@ -71,6 +72,7 @@ class StateBlockItemGenerator(State.State):
                 json.dump(data, f)
             item.ItemFactory.ItemFactory.FILES.append(G.local+"/build/itemblockfactory.json")
             item.ItemFactory.ItemFactory.load()
+            item.ItemHandler.build()
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")

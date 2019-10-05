@@ -10,6 +10,10 @@ import PIL.Image
 
 
 class Item:
+    @classmethod
+    def get_used_texture_files(cls):
+        return [cls.get_default_item_image_location()]
+
     @staticmethod
     def get_name() -> str:
         return "minecraft:unknown_item"
@@ -22,11 +26,11 @@ class Item:
         return self.get_name()
 
     @staticmethod
-    def get_item_image_location() -> str:
+    def get_default_item_image_location() -> str:
         raise NotImplementedError()
 
-    @staticmethod
-    def get_as_item_image(image: PIL.Image.Image) -> PIL.Image.Image: return image.resize((32, 32))
+    def get_active_image_location(self):
+        return self.get_default_item_image_location()
 
     def __init__(self):
         pass

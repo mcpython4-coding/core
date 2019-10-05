@@ -65,7 +65,7 @@ class ItemFactory:
                                                                                  data["has_block"] else None)
 
             @staticmethod
-            def get_item_image_location() -> str:
+            def get_default_item_image_location() -> str:
                 return data["image_file"] if "image_file" in data else "item/"+data["name"].split(":")[1]
 
             @staticmethod
