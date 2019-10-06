@@ -44,7 +44,7 @@ add ModInterface
 add time-system and /time-command
 add scoreboards
 add entitys with handler, add an batch to system for rendering them OR use seperated classes (branch created)
-make block item generation in an seperated window so other stuff can happen on the main during this time
+make block item generation in an separate window so other stuff can happen on the main during this time
 
 may be implemented on another method:
     implement client/server by making an @client and @server notation system which will decide returning an callable object

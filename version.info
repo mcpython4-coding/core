@@ -428,9 +428,9 @@ todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, b
 other tasks that should be done in near future
 todo: add function to tools
 todo: add item image atlases (see https://pyglet.readthedocs.io/en/stable/programming_guide/image.html)
-todo: add armor peaces, make armor slots only accept armor
+todo: add armor pieces, make armor slots only accept armor
 todo: add brake animation on block (draw with alpha over the block?)
-todo: store braketime somewhere so the function is not callen every tick
+todo: store breaketime somewhere so the function is not callen every tick
 todo: add bars for harts, hunger, xp, armor level
 
 an update to the system of states
@@ -458,7 +458,7 @@ todo: make hitbox draw & check on BoxModels
 todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
 
 todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
-    barrier, buttons, presure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms
+    barrier, buttons, pressure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms
 
 todo: add Plant-system, plant brake, plant base class, plant grow
 
