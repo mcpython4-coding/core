@@ -79,7 +79,7 @@ class StateBlockItemGenerator(State.State):
         G.window.position = (0, 10, 0)
         G.window.rotation = (0, 0)
         G.world.get_active_dimension().remove_block((0, 0, 0))
-        G.window.set_caption("Pyglet")
+        G.window.set_caption("mcpython 4")
 
     def add_new_screen(self):
         self.blockindex += 1

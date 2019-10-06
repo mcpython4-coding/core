@@ -406,13 +406,24 @@ started these clone on 12th of July, 2019
        rebuild mode
 [uuk]: made item image changeable from item's side
 [uuk]: items must provide all used images on class for ImageAtlas generation (default: default image)
+[uuk]: harts, hunger, xp & armor level is now displayed
+[uuk]: hotbar is now also displayed in escape state
+[uuk]: added new attributes to player: armor_toughness
+[uuk]: player will get now damage when under -10, not simple be killed
+
+todo: when spriting, hunger should go down if in gamemode 0 or 2
+todo: hearts should regenerate against hunger goes down
+todo: when no hunger points, hearts should go down
+todo: add fall damage
+todo: add damage when in an block in gamemode 0 or 2
+todo: add hart shake animation when less than 2 (up & down)
+todo: add "totem of undying" (only working if in hand or offhand, simply reset hearts and consume item)
+todo: make food eatable, values: https://minecraft.gamepedia.com/Hunger
+todo: add /experience-command
 
 
 currently working on / planed for next commit(s):
-PreGenerate additions: -TextureAtlas build-locate-move, index file
-                       -ModelHandler build-locate-move for preparing & indexing, index file
-                       -RecipeHandler build-locate for sorting, indexing, reachable checks
-
+todo: make food eatable & add to hunger bar
 
 issues to implement / fix
 todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
@@ -424,14 +435,15 @@ todo: fix bug: when resizing block item generation, items are not correctly gene
 todo: fix bug: moving slot is on first load somtimes not at mouse
 todo: fix bug: registries are not locked on startup
 todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor will be white
+todo: fix bug: caption is still not always mcpython 4
+todo: fix bug: cooldown's are not kept from different instances of StatePartGame, make them global!
 
 other tasks that should be done in near future
 todo: add function to tools
-todo: add item image atlases (see https://pyglet.readthedocs.io/en/stable/programming_guide/image.html)
-todo: add armor pieces, make armor slots only accept armor
+todo: add armor pieces, make armor slots only accept armor, set armor points to the value of armor (slot update!)
 todo: add brake animation on block (draw with alpha over the block?)
 todo: store breaketime somewhere so the function is not callen every tick
-todo: add bars for harts, hunger, xp, armor level
+todo: change crossshair to left-upper icon in gui/icons.png (not visable because it is white!)
 
 an update to the system of states
 todo: add an option to toggle world generation size
@@ -447,6 +459,9 @@ todo: add an real start menu background & option background
 todo: add option to add own parts to state / make an IStateExtension-baseclass which can be assigned with any other
     state and will help adding own element into it
 todo: add an generation screen for showing what is done at the moment
+todo: make player gamemode selection not gamemode, instead world mode defined by world generator
+todo: add option pages to escape state, link to issue tracker of github, etc.
+todo: add death screen
 
 other additions which could be useful
 
@@ -473,3 +488,7 @@ todo: add only rotated textures to texture atlas if needed (load from block stat
 todo: add an check in loading if an recipe could be crafted & if the output is arrival (-> look also at the block table)
 
 todo: fix height map generation
+
+todo: PreGenerate additions: -TextureAtlas build-locate-move, index file (like for items)
+                             -ModelHandler build-locate-move for preparing & indexing, index file
+                             -RecipeHandler build-locate for sorting, indexing, reachable checks

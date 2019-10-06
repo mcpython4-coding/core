@@ -34,6 +34,7 @@ class StatePartGame(StatePart.StatePart):
         self.clearcolor = clearcolor
         self.double_space_cooldown = 0
         self.set_cooldown = 0
+        self.void_damage_cooldown = 0
 
         self.event_functions = [("gameloop:tick:end", self.on_update),
                                 ("user:mouse:press", self.on_mouse_press),
@@ -158,8 +159,9 @@ class StatePartGame(StatePart.StatePart):
         else:
             x, y, z = x + dx, y + dy, z + dz
         G.window.position = (x, y, z)
-        if y < -10:
-            G.player.kill()
+        if y < -10 and time.time() - self.void_damage_cooldown > 0.25:
+            G.player.damage(1, check_gamemode=False)
+            self.void_damage_cooldown = time.time()
 
     @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):

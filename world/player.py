@@ -13,6 +13,7 @@ import gui.Slot
 import chat.Chat
 import util.math
 import traceback
+import ResourceLocator
 
 
 class Player:
@@ -29,10 +30,12 @@ class Player:
         self.name: str = name
         self.gamemode: int = -1
         self.set_gamemode(1)
-        self.harts: int = 20
+        self.hearts: int = 20
         self.hunger: int = 20
         self.xp: int = 0
         self.xp_level: int = 0
+        self.armor_level = 0
+        self.armor_toughness = 0
 
         self.inventorys: dict = {}
         self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
@@ -45,6 +48,18 @@ class Player:
         ]
 
         self.active_inventory_slot: int = 0
+
+        self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/hart.png", "pyglet"),
+                           ResourceLocator.read("build/texture/gui/icons/hart_half.png", "pyglet"),
+                           ResourceLocator.read("build/texture/gui/icons/hart_base.png", "pyglet")),
+                          (ResourceLocator.read("build/texture/gui/icons/hunger.png", "pyglet"),
+                           ResourceLocator.read("build/texture/gui/icons/hunger_half.png", "pyglet"),
+                           ResourceLocator.read("build/texture/gui/icons/hunger_base.png", "pyglet")),
+                          (ResourceLocator.read("build/texture/gui/icons/armor.png", "pyglet"),
+                           ResourceLocator.read("build/texture/gui/icons/armor_half.png", "pyglet"),
+                           ResourceLocator.read("build/texture/gui/icons/armor_base.png", "pyglet")),
+                          (ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
+                           ResourceLocator.read("build/texture/gui/icons/xp_bar.png", "pyglet"))]
 
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
@@ -134,16 +149,16 @@ class Player:
         print("[CHAT] player {} died".format(self.name))
         self.position = (0, util.math.get_max_y((0,0,0)), 0)
         self.active_inventory_slot = 0
-        self.harts = 20
-        self.hunger = 20
         globals.window.dy = 0
         globals.chat.close()
         self.xp = 0
         self.xp_level = 0
-        self.harts = 20
+        self.hearts = 20
         self.hunger = 20
         globals.window.flying = False
-        traceback.print_stack()
+        self.armor_level = 0
+        self.armor_toughness = 0
+        # todo: recalculate armor level!
 
     def _get_position(self):
         return globals.window.position
@@ -152,3 +167,14 @@ class Player:
         globals.window.position = position
 
     position = property(_get_position, _set_position)
+
+    def damage(self, hearts: int, check_gamemode=True):
+        """
+        damage the player and removes the given amount of hearts (two hearts are one full displayed hart)
+        """
+        hearts = hearts * (1 - min([20, max([self.armor_level / 5, self.armor_level -
+                                             hearts / (2 + self.armor_toughness / 4)])]))
+        if self.gamemode in [0, 2] or not check_gamemode:
+            self.hearts -= hearts
+            if self.hearts <= 0:
+                self.kill()

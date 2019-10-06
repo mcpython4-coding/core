@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import pyglet.gl as gl
+import pyglet
 import math
 
 

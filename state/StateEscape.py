@@ -11,6 +11,7 @@ import event.EventInfo
 import globals as G
 from pyglet.window import key
 import pyglet
+import state.StateGame
 
 
 class StateEscape(State.State):
@@ -30,8 +31,8 @@ class StateEscape(State.State):
                                           on_press=event.EventInfo.CallbackHelper(
                                               G.statehandler.switch_to, ["minecraft:game"], enable_extra_args=False)),
                 UIPartButton.UIPartButton((150, 25), "Back to startmenu", (0, 100), anchor_window="MM", anchor_button="MM",
-                                          on_press=self.start_menu_press)
-                ]
+                                          on_press=self.start_menu_press),
+                state.StateGame.game.parts[1]]
 
     def get_event_functions(self) -> list:
         return [(self.on_key_press, "user:keyboard:press"),

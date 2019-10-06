@@ -69,6 +69,56 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
             self.lable.y = 90
             self.lable.draw()
 
+        pyglet.gl.glColor3d(1., 1., 1.)
+        if G.player.gamemode in (0, 2):
+            self.draw_hearts(x, y)
+            self.draw_hunger(x, y)
+            self.draw_xp_level(x, y)
+            if G.player.armor_level > 0:
+                self.draw_armor(x, y)
+
+    def draw_hearts(self, hx, hy):
+        wx, _ = G.window.get_size()
+        x = wx // 2 - 10 * 16 - 22
+        y = hy + 75
+        hearts = round(G.player.hearts)
+        for _ in range(10):
+            G.player.iconparts[0][2].blit(x-1, y-1)
+            if hearts > 0:
+                G.player.iconparts[0][int(hearts == 1)].blit(x, y)
+                hearts -= 2
+            x += 16
+
+    def draw_hunger(self, hx, hy):
+        wx, _ = G.window.get_size()
+        x = wx // 2 + 22
+        y = hy + 75
+        hunger = round(G.player.hunger)
+        for _ in range(10):
+            G.player.iconparts[1][2].blit(x-3, y)
+            if hunger > 0:
+                G.player.iconparts[1][int(hunger == 1)].blit(x, y)
+                hunger -= 2
+            x += 16
+
+    def draw_xp_level(self, hx, hy):
+        wx, _ = G.window.get_size()
+        x = wx // 2 - 182
+        y = hy + 55
+        G.player.iconparts[3][0].blit(x, y)
+
+    def draw_armor(self, hx, hy):
+        wx, _ = G.window.get_size()
+        x = wx // 2 - 10 * 16 - 22
+        y = hy + 95
+        armor = round(G.player.armor_level)
+        for _ in range(10):
+            G.player.iconparts[2][2].blit(x - 1, y - 1)
+            if armor > 0:
+                G.player.iconparts[2][int(armor == 1)].blit(x, y)
+                armor -= 2
+            x += 16
+
     def is_closable_by_escape(self) -> bool: return False
 
     def is_always_open(self) -> bool: return True
