@@ -35,6 +35,8 @@ class StatePartGame(StatePart.StatePart):
         self.double_space_cooldown = 0
         self.set_cooldown = 0
         self.void_damage_cooldown = 0
+        self.regenerate_cooldown = 0
+        self.hunger_heart_cooldown = 0
 
         self.event_functions = [("gameloop:tick:end", self.on_update),
                                 ("user:mouse:press", self.on_mouse_press),
@@ -138,6 +140,8 @@ class StatePartGame(StatePart.StatePart):
         """
         speed = config.SPEED_DICT[G.player.gamemode][(0 if not G.window.keys[key.LSHIFT] else 1) +
                                                      (0 if not G.window.flying else 2)]
+        if G.player.gamemode in (0, 2) and G.window.keys[key.LSHIFT]:
+            G.player.hunger -= dt*0.2
         d = dt * speed  # distance covered this tick.
         dx, dy, dz = G.window.get_motion_vector()
         # New position in space, before accounting for gravity.
@@ -150,18 +154,38 @@ class StatePartGame(StatePart.StatePart):
             G.window.dy -= dt * GRAVITY
             G.window.dy = max(G.window.dy, -TERMINAL_VELOCITY)
             dy += G.window.dy * dt
+            if dy < 0:
+                G.player.fallen_height -= dy
         elif self.activate_keyboard and not (G.window.keys[key.SPACE] and G.window.keys[key.LSHIFT]):
             dy = dt*6 if G.window.keys[key.SPACE] else (-dt*6 if G.window.keys[key.LSHIFT] else 0)
         # collisions
         x, y, z = G.window.position
         if G.player.gamemode != 3:
+            oy = y
             x, y, z = G.window.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+            if y == oy and G.player.gamemode in (0, 2) and G.player.fallen_height > 3:
+                G.player.damage(G.player.fallen_height-3)
+                G.player.fallen_height = 0
         else:
             x, y, z = x + dx, y + dy, z + dz
         G.window.position = (x, y, z)
         if y < -10 and time.time() - self.void_damage_cooldown > 0.25:
             G.player.damage(1, check_gamemode=False)
             self.void_damage_cooldown = time.time()
+
+        if G.player.hearts < 20 and G.player.hunger > 4 and time.time() - self.regenerate_cooldown > 2:
+            G.player.damage(1)
+            G.player.hunger -= 0.5
+            self.regenerate_cooldown = time.time()
+
+        if G.player.hunger == 0 and time.time() - self.hunger_heart_cooldown > 1:
+            G.player.damage(1)
+            self.hunger_heart_cooldown = time.time()
+
+        nx, ny, nz = util.math.normalize(G.window.position)
+
+        if G.player.gamemode in (0, 2) and G.world.get_active_dimension().get_block((nx, ny, nz)):
+            G.player.damage(dt)
 
     @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):

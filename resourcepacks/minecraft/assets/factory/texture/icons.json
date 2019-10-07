@@ -16,7 +16,7 @@
     {"mode": "cut", "image": 0, "store": 6, "area": [16, 27, 25, 36]},
     {"mode": "resize", "image": 6, "store": 6, "size": [18, 18]},
 
-    {"mode": "cut", "image": 0, "store": 7, "area": [34, 9, 42, 18]},
+    {"mode": "cut", "image": 0, "store": 7, "area": [34, 9, 42, 19]},
     {"mode": "resize", "image": 7, "store": 7, "size": [16, 18]},
     {"mode": "cut", "image": 0, "store": 8, "area": [25, 9, 34, 18]},
     {"mode": "resize", "image": 8, "store": 8, "size": [16, 18]},

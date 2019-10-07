@@ -12,6 +12,7 @@ import gui.Slot
 import pyglet
 import ResourceLocator
 import time
+import util.opengl
 
 
 class InventoryPlayerHotbar(gui.Inventory.Inventory):
@@ -27,6 +28,8 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         self.last_index = 0
         self.last_item = None
         self.time_since_last_change = 0
+
+        self.xp_level_lable = pyglet.text.Label(color=(92, 133, 59), anchor_x="center")
 
     @staticmethod
     def get_config_file():
@@ -91,7 +94,7 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
 
     def draw_hunger(self, hx, hy):
         wx, _ = G.window.get_size()
-        x = wx // 2 + 22
+        x = wx // 2 + 22 + 10 * 16
         y = hy + 75
         hunger = round(G.player.hunger)
         for _ in range(10):
@@ -99,13 +102,20 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
             if hunger > 0:
                 G.player.iconparts[1][int(hunger == 1)].blit(x, y)
                 hunger -= 2
-            x += 16
+            x -= 16
 
     def draw_xp_level(self, hx, hy):
         wx, _ = G.window.get_size()
         x = wx // 2 - 182
         y = hy + 55
         G.player.iconparts[3][0].blit(x, y)
+        active_progress = G.player.xp / G.player.get_needed_xp_for_next_level()
+        G.player.iconparts[3][1].get_region(x=0, y=0, height=10, width=round(362*active_progress)+1).blit(x, y)
+        if G.player.xp_level != 0:
+            self.lable.x = wx // 2
+            self.lable.y = hy + 65
+            self.lable.text = str(G.player.xp_level)
+            self.lable.draw()
 
     def draw_armor(self, hx, hy):
         wx, _ = G.window.get_size()

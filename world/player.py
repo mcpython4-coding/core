@@ -37,6 +37,8 @@ class Player:
         self.armor_level = 0
         self.armor_toughness = 0
 
+        self.fallen_height = 0
+
         self.inventorys: dict = {}
         self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
         self.inventorys['main'] =  gui.InventoryPlayerMain.InventoryPlayerMain()
@@ -77,7 +79,7 @@ class Player:
             raise ValueError("can't cast {} to valid gamemode".format(gamemode))
         self.gamemode = gamemode
 
-    def _get_needed_xp_for_next_level(self) -> int:
+    def get_needed_xp_for_next_level(self) -> int:
         if self.xp_level < 16:
             return self.xp_level * 2 + 5
         elif self.xp_level < 30:
@@ -87,14 +89,14 @@ class Player:
 
     def add_xp(self, xp: int):
         while xp > 0:
-            if self.xp + xp < self._get_needed_xp_for_next_level():
+            if self.xp + xp < self.get_needed_xp_for_next_level():
                 self.xp += xp
                 return
-            elif xp > self._get_needed_xp_for_next_level():
-                xp -= self._get_needed_xp_for_next_level()
+            elif xp > self.get_needed_xp_for_next_level():
+                xp -= self.get_needed_xp_for_next_level()
                 self.xp_level += 1
             else:
-                xp = xp - (self._get_needed_xp_for_next_level() - self.xp)
+                xp = xp - (self.get_needed_xp_for_next_level() - self.xp)
                 self.xp_level += 1
 
     def add_xp_level(self, xp_levels: int):

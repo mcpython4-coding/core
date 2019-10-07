@@ -410,20 +410,18 @@ started these clone on 12th of July, 2019
 [uuk]: hotbar is now also displayed in escape state
 [uuk]: added new attributes to player: armor_toughness
 [uuk]: player will get now damage when under -10, not simple be killed
-
-todo: when spriting, hunger should go down if in gamemode 0 or 2
-todo: hearts should regenerate against hunger goes down
-todo: when no hunger points, hearts should go down
-todo: add fall damage
-todo: add damage when in an block in gamemode 0 or 2
-todo: add hart shake animation when less than 2 (up & down)
-todo: add "totem of undying" (only working if in hand or offhand, simply reset hearts and consume item)
-todo: make food eatable, values: https://minecraft.gamepedia.com/Hunger
-todo: add /experience-command
-
+[uuk]: updated pyglet to 1.4.5 and Pillow to 6.2.0
+[uuk]: added draws to xp of state
+[uuk]: fixed bug: full armor icon was cut wrong
+[uuk]: added /xp & /experience command
+[uuk]: different actions will now affect hearts and hunger
 
 currently working on / planed for next commit(s):
 todo: make food eatable & add to hunger bar
+todo: add armor pieces, make armor slots only accept armor, set armor points to the value of armor (slot update!)
+todo: fix bug: cooldown's are not kept from different instances of StatePartGame, make them global!
+todo: add "totem of undying" (only working if in hand or offhand, simply reset hearts and consume item)
+todo: make food eatable, values: https://minecraft.gamepedia.com/Hunger
 
 issues to implement / fix
 todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
@@ -433,17 +431,18 @@ todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & num
 todo: fix bug: in some rare cases, mouse up is not handled an will cause blocks to be added until game close
 todo: fix bug: when resizing block item generation, items are not correctly generated
 todo: fix bug: moving slot is on first load somtimes not at mouse
-todo: fix bug: registries are not locked on startup
 todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor will be white
 todo: fix bug: caption is still not always mcpython 4
-todo: fix bug: cooldown's are not kept from different instances of StatePartGame, make them global!
+todo: fix bug: can place blocks inside yourself
 
 other tasks that should be done in near future
 todo: add function to tools
-todo: add armor pieces, make armor slots only accept armor, set armor points to the value of armor (slot update!)
 todo: add brake animation on block (draw with alpha over the block?)
 todo: store breaketime somewhere so the function is not callen every tick
 todo: change crossshair to left-upper icon in gui/icons.png (not visable because it is white!)
+todo: rework event system to use some child event handler which can be easily assigned to event handler
+    (-> States & SubStates, inventories)
+todo: store how much xp is needed to next level (function is callen every draw by xp draw)
 
 an update to the system of states
 todo: add an option to toggle world generation size
@@ -492,3 +491,7 @@ todo: fix height map generation
 todo: PreGenerate additions: -TextureAtlas build-locate-move, index file (like for items)
                              -ModelHandler build-locate-move for preparing & indexing, index file
                              -RecipeHandler build-locate for sorting, indexing, reachable checks
+
+todo: add sneaking
+
+todo: add hart shake animation when less than 2 (up & down)
