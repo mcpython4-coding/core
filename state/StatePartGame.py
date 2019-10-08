@@ -14,11 +14,18 @@ import gui.ItemStack
 import config
 import util.math
 import time
+import item.ItemFood as ItemFood
+import math
 
 
 class StatePartGame(StatePart.StatePart):
     mouse_press_time = 0
     block_looking_at = None
+    double_space_cooldown = 0
+    set_cooldown = 0
+    void_damage_cooldown = 0
+    regenerate_cooldown = 0
+    hunger_heart_cooldown = 0
 
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
                  activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True, activate_lable=True,
@@ -32,11 +39,6 @@ class StatePartGame(StatePart.StatePart):
         self.active_lable = activate_lable
         self.glcolor3d = glcolor3d
         self.clearcolor = clearcolor
-        self.double_space_cooldown = 0
-        self.set_cooldown = 0
-        self.void_damage_cooldown = 0
-        self.regenerate_cooldown = 0
-        self.hunger_heart_cooldown = 0
 
         self.event_functions = [("gameloop:tick:end", self.on_update),
                                 ("user:mouse:press", self.on_mouse_press),
@@ -70,6 +72,13 @@ class StatePartGame(StatePart.StatePart):
                 self._update(dt / m)
 
         if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
+            if G.player.get_active_inventory_slot().itemstack.item and \
+                    issubclass(type(G.player.get_active_inventory_slot().itemstack.item), ItemFood.ItemFood):
+                itemfood = G.player.get_active_inventory_slot().itemstack.item
+                if itemfood.on_eat():
+                    self.set_cooldown = time.time() - 1
+                    return
+
             vector = G.window.get_sight_vector()
             blockpos, previous = G.world.hit_test(G.window.position, vector)
             if blockpos:
@@ -154,26 +163,23 @@ class StatePartGame(StatePart.StatePart):
             G.window.dy -= dt * GRAVITY
             G.window.dy = max(G.window.dy, -TERMINAL_VELOCITY)
             dy += G.window.dy * dt
-            if dy < 0:
-                G.player.fallen_height -= dy
         elif self.activate_keyboard and not (G.window.keys[key.SPACE] and G.window.keys[key.LSHIFT]):
             dy = dt*6 if G.window.keys[key.SPACE] else (-dt*6 if G.window.keys[key.LSHIFT] else 0)
         # collisions
         x, y, z = G.window.position
         if G.player.gamemode != 3:
-            oy = y
             x, y, z = G.window.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
-            if y == oy and G.player.gamemode in (0, 2) and G.player.fallen_height > 3:
-                G.player.damage(G.player.fallen_height-3)
-                G.player.fallen_height = 0
         else:
             x, y, z = x + dx, y + dy, z + dz
+        if G.window.dy < 0 and G.player.fallen_since_y is None:
+            G.player.fallen_since_y = G.window.position[1]
         G.window.position = (x, y, z)
         if y < -10 and time.time() - self.void_damage_cooldown > 0.25:
             G.player.damage(1, check_gamemode=False)
             self.void_damage_cooldown = time.time()
 
-        if G.player.hearts < 20 and G.player.hunger > 4 and time.time() - self.regenerate_cooldown > 2:
+        if G.player.hearts < 20 and G.player.hunger > 4 and time.time() - self.regenerate_cooldown > 2 and \
+                G.player.gamemode in (0, 2):
             G.player.damage(1)
             G.player.hunger -= 0.5
             self.regenerate_cooldown = time.time()
@@ -182,7 +188,8 @@ class StatePartGame(StatePart.StatePart):
             G.player.damage(1)
             self.hunger_heart_cooldown = time.time()
 
-        nx, ny, nz = util.math.normalize(G.window.position)
+        nx, _, nz = util.math.normalize(G.window.position)
+        ny = math.ceil(G.window.position[1]) + 1
 
         if G.player.gamemode in (0, 2) and G.world.get_active_dimension().get_block((nx, ny, nz)):
             G.player.damage(dt)

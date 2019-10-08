@@ -36,7 +36,7 @@ chat.command.CommandEntry.load()
 chat.command.Selector.load()
 
 from . import (CommandGive, CommandGamemode, CommandExecute, CommandKill, CommandClear, CommandTeleport, CommandReload,
-               CommandGenerate, CommandSetblock, CommandFill, CommandItemInfo, CommandXp)
+               CommandGenerate, CommandSetblock, CommandFill, CommandItemInfo, CommandXp, CommandRegistryInfo)
 
 # register these at the end:
 from . import CommandHelp

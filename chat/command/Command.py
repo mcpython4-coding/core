@@ -23,6 +23,7 @@ class ParseType(enum.Enum):
     POSITION = 7  # an position. may be selector
     SELECT_DEFINITED_STRING = 8  # an selection of diffrent strings out of an list
     OPEN_END_UNDEFINITED_STRING = 9  # an variable list of strings
+    STRING_WITHOUT_QUOTES = 10
 
 
 class ParseMode(enum.Enum):

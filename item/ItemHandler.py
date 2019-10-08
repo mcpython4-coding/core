@@ -99,6 +99,8 @@ items.set_attribute("itemindextable", {})
 def load():
     load_data()
 
+    import item.ItemFood
+
     from . import (ItemFactory)
 
     ItemFactory.ItemFactory.from_directory("assets/factory/item")

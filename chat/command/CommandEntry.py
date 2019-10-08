@@ -113,6 +113,21 @@ def load():
             return False  # it does NOT start
 
     @G.registry
+    class StringWithoutQuotesEntry(CommandEntry):
+        """
+        string entry
+        """
+
+        ENTRY_NAME = ParseType.STRING_WITHOUT_QUOTES
+
+        @staticmethod
+        def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
+            return start + 1, entrylist[start]
+
+        @staticmethod
+        def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool: return True
+
+    @G.registry
     class FloatEntry(CommandEntry):
         """
         float entry

@@ -211,6 +211,10 @@ class Window(pyglet.window.Window):
                         self.dy = 0
                     if face == (0, -1, 0):
                         G.window.flying = False
+                        if G.player.gamemode in (0, 2) and G.player.fallen_since_y is not None:
+                            dy = G.player.fallen_since_y - G.window.position[1] - 3
+                            if dy > 0: G.player.damage(dy)
+                            G.player.fallen_since_y = None
                     if not chunk.generated and G.world.config["enable_auto_gen"]:
                         G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
                     break

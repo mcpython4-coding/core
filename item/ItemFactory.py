@@ -17,6 +17,11 @@ import sys
 class ItemFactory:
     FILES = []
     loaded = []
+    EXTENSIONS = {}
+
+    @classmethod
+    def add_extension(cls, constructor, name):
+        cls.EXTENSIONS[name] = constructor
 
     @staticmethod
     def from_directory(directory):
@@ -34,24 +39,23 @@ class ItemFactory:
                 continue
             ItemFactory.loaded.append(file)
             data = ResourceLocator.read(file, "json")
-            if type(data) == dict:
-                if "mode" not in data:
-                    ItemFactory.create_item_normal(data.copy())
-                elif data["mode"] == "tagconstruct":
-                    [ItemFactory.create_item_normal(data["name"].format(x)) for x in G.taghandler.taggroups["naming"].
-                        tags[data["tagname"]].entries]
-            elif type(data) == list:
-                for entry in data:
-                    ItemFactory.create_item_normal(entry.copy() if type(entry) == dict else entry)
+            ItemFactory.load_from_data(data)
         ItemFactory.FILES = []
 
     @staticmethod
-    def create_item_normal(data):
+    def load_from_data(data):
         if type(data) == str:
             data = {"name": data, "image_file": "item/{}".format(data.split(":")[1])}
+        if type(data) == dict and "mode" in data:
+            ItemFactory.EXTENSIONS[data["mode"]](data)
+        elif type(data) == list:
+            [ItemFactory.load_from_data(d) for d in data]
+        else:
+            G.registry.register(ItemFactory.create_item_normal(data))
 
-        @G.registry
-        class GeneratedItem(item.Item.Item):
+    @staticmethod
+    def create_item_normal(data, base_class=item.Item.Item):
+        class GeneratedItem(base_class):
             @staticmethod
             def get_name() -> str:
                 return data["name"]
@@ -75,4 +79,38 @@ class ItemFactory:
 
             def get_max_stack_size(self) -> int:
                 return data["stacksize"] if "stacksize" in data else 64
+        return GeneratedItem
+
+
+def with_tag_construct(data):
+    [ItemFactory.load_from_data(data["name"].format(x)) for x in G.taghandler.taggroups["naming"].
+        tags[data["tagname"]].entries]
+
+
+ItemFactory.add_extension(with_tag_construct, 'tagconstruct')
+
+
+def with_multi_same_config(data):
+    for entry in data["entries"]:
+        if type(entry) == dict:
+            ItemFactory.load_from_data({**data["config"], **entry})
+        else:
+            ItemFactory.load_from_data({"name": entry, **data["config"]})
+
+
+ItemFactory.add_extension(with_multi_same_config, "mutlisameconfig")
+
+
+def with_custom_listed(data):
+    # an dict of entrielenght as str -> {<setted key>: <value>, <config key>: #<config entry id>}
+    construct: dict = data["construct"]
+    for entry in data["entries"]:
+        data = construct[str(len(entry))].copy()
+        for key in data.keys():
+            if data[key].startswith("#"):
+                data[key] = entry[int(data[key][1:])]
+        ItemFactory.create_item_normal(data)
+
+
+ItemFactory.add_extension(with_custom_listed, "custom_listed")
 

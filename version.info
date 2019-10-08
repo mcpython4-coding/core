@@ -415,13 +415,22 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: full armor icon was cut wrong
 [uuk]: added /xp & /experience command
 [uuk]: different actions will now affect hearts and hunger
+[uuk]: added Totem of Undying with functionality
+[uuk]: reworked parts of item factory to fit with extensions
+[uuk]: added food base class, ItemFactory can now use it
+[uuk]: added item for beetroot, beetroot soup, carrot, dried kelp, golden carrot, melon slice, potato, puffer fish,
+       pumpkin pie, rabbit stew, beef, chicken, cod, mutton, porkchop, rabbit
+[uuk]: added command: /registryinfo <name> [<attribute>]
+[uuk]: fixed bug: /xp command was missing help info
+[uuk]: made food eatable
+[uuk]: fixed bug: getting damage from standing still
+[uuk]: fixed bug: not all cooldowns were global and could be reseted for some reasons
 
 currently working on / planed for next commit(s):
-todo: make food eatable & add to hunger bar
-todo: add armor pieces, make armor slots only accept armor, set armor points to the value of armor (slot update!)
-todo: fix bug: cooldown's are not kept from different instances of StatePartGame, make them global!
-todo: add "totem of undying" (only working if in hand or offhand, simply reset hearts and consume item)
-todo: make food eatable, values: https://minecraft.gamepedia.com/Hunger
+todo: add object constructors which on you can call <item>.set_<attribute>(<value>).set_<...>.create()
+todo: make tools use ItemFactorie's extension manager
+todo: add armor to ItemFactorie's extension manager, look for tags for armor, add tag check possiblility to slots
+todo: rework factories to use constructors rather than direct class construction
 
 issues to implement / fix
 todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
@@ -429,22 +438,14 @@ todo: fix bug: stone blocks are shown during generation so they appear at not-wa
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
         maybe due to an clear & draw error?
 todo: fix bug: in some rare cases, mouse up is not handled an will cause blocks to be added until game close
-todo: fix bug: when resizing block item generation, items are not correctly generated
-todo: fix bug: moving slot is on first load somtimes not at mouse
+todo: fix bug: when resizing block item generation, items are not correctly generated (some resize & crop fix)
+todo: fix bug: moving slot is on first load somtimes not at mouse (store mouse position and read before setting item)
 todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor will be white
-todo: fix bug: caption is still not always mcpython 4
-todo: fix bug: can place blocks inside yourself
+todo: fix bug: caption is still not always mcpython 4 (search for set_caption)
+todo: fix bug: can place blocks inside yourself (check if you are in the block)
+todo: fix bug: cursor in chat is after pressing back miss-placed
 
-other tasks that should be done in near future
-todo: add function to tools
-todo: add brake animation on block (draw with alpha over the block?)
-todo: store breaketime somewhere so the function is not callen every tick
-todo: change crossshair to left-upper icon in gui/icons.png (not visable because it is white!)
-todo: rework event system to use some child event handler which can be easily assigned to event handler
-    (-> States & SubStates, inventories)
-todo: store how much xp is needed to next level (function is callen every draw by xp draw)
-
-an update to the system of states
+an update to the system of states (this should come after above item improvements & bug fixes)
 todo: add an option to toggle world generation size
 todo: add an back-button to world gen config
 todo: add some kind of info to screen for generation
@@ -461,6 +462,15 @@ todo: add an generation screen for showing what is done at the moment
 todo: make player gamemode selection not gamemode, instead world mode defined by world generator
 todo: add option pages to escape state, link to issue tracker of github, etc.
 todo: add death screen
+
+other tasks that should be done in near future
+todo: add brake animation on block (draw with alpha over the block?)
+todo: store breaketime somewhere so the function is not callen every tick
+todo: change crossshair to left-upper icon in gui/icons.png (not visable because it is white!)
+todo: rework event system to use some child event handler which can be easily assigned to event handler
+    (-> States & SubStates, inventories)
+todo: store how much xp is needed to next level (function is callen every draw by xp draw)
+todo: make command input errors better
 
 other additions which could be useful
 

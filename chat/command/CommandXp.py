@@ -48,5 +48,6 @@ class CommandClear(chat.command.Command.Command):
 
     @staticmethod
     def get_help() -> list:
-        return ["/xp "]
+        return ["/xp add <selector> <level> [points|levels]: add xp to entity",
+                "/xp set <selector> <level> [points|levels]: set xp level of entity"]
 

@@ -37,11 +37,11 @@ class Player:
         self.armor_level = 0
         self.armor_toughness = 0
 
-        self.fallen_height = 0
+        self.fallen_since_y = -1 
 
         self.inventorys: dict = {}
         self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
-        self.inventorys['main'] =  gui.InventoryPlayerMain.InventoryPlayerMain()
+        self.inventorys['main'] = gui.InventoryPlayerMain.InventoryPlayerMain()
         self.inventorys['chat'] = chat.Chat.ChatInventory()
 
         self.inventory_order: list = [  # an ([inventoryindexname], [reversed slots}) list
@@ -146,7 +146,18 @@ class Player:
     def get_active_inventory_slot(self):
         return self.inventorys["hotbar"].slots[self.active_inventory_slot]
 
-    def kill(self):
+    def kill(self, test_totem=True):
+        if test_totem:
+            if self.get_active_inventory_slot().itemstack.get_item_name() == "minecraft:totem_of_undying":
+                self.get_active_inventory_slot().itemstack.clean()
+                self.hearts = 20
+                self.hunger = 20
+                return
+            elif self.inventorys["main"].slots[45].itemstack.get_item_name() == "minecraft:totem_of_undying":
+                self.inventorys["main"].slots[45].itemstack.clean()
+                self.hearts = 20
+                self.hunger = 20
+                return
         globals.commandparser.parse("/clear")
         print("[CHAT] player {} died".format(self.name))
         self.position = (0, util.math.get_max_y((0,0,0)), 0)
@@ -174,6 +185,7 @@ class Player:
         """
         damage the player and removes the given amount of hearts (two hearts are one full displayed hart)
         """
+        traceback.print_stack()
         hearts = hearts * (1 - min([20, max([self.armor_level / 5, self.armor_level -
                                              hearts / (2 + self.armor_toughness / 4)])]))
         if self.gamemode in [0, 2] or not check_gamemode:

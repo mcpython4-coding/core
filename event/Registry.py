@@ -43,6 +43,9 @@ class RegistryHandler:
             if registry.name == name: return registry
         return None
 
+    def register(self, *args, **kwargs):
+        return self(*args, **kwargs)
+
 
 G.registry = RegistryHandler()
 
@@ -65,8 +68,12 @@ class Registry:
     def is_valid(self, obj):
         if self.locked: return False
         if self.classbased:
-            return (self.check_function and self.check_function(obj)) or any(
-                [issubclass(obj, x) for x in self.inject_base_classes])
+            try:
+                return (self.check_function and self.check_function(obj)) or any(
+                    [issubclass(obj, x) for x in self.inject_base_classes])
+            except:
+                print("error during adding object", obj, "to registries")
+                raise
         else:
             t = type(obj)
             return (self.check_function and self.check_function(obj)) or any(
