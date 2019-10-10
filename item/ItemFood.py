@@ -6,9 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
-import item.ItemFactory
 import item.Item
-import random
 
 
 class ItemFood(item.Item.Item):
@@ -24,14 +22,4 @@ class ItemFood(item.Item.Item):
 
     def get_eat_hunger_addition(self) -> int:
         raise NotImplementedError()
-
-
-def construct_food(data: dict):
-    class ConstructedFood(item.ItemFactory.ItemFactory.create_item_normal(data, base_class=ItemFood)):
-        def get_eat_hunger_addition(self) -> int:
-            return data["hunger_restore"] if type(data["hunger_restore"]) in (int, float) else \
-                random.randint(*data["hunger_restore"])
-
-
-item.ItemFactory.ItemFactory.add_extension(construct_food, "food")
 

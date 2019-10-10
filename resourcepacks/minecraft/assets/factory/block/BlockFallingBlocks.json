@@ -1,5 +1,0 @@
-{
-  "mode": "multisameconfig",
-  "names": ["minecraft:sand", "minecraft:gravel", "minecraft:red_sand"],
-  "config": {"injections": ["falling_block"]}
-}

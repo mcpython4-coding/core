@@ -6,8 +6,6 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals
-import gui.InventoryPlayerHotbar
-import gui.InventoryPlayerMain
 import gui.ItemStack
 import gui.Slot
 import chat.Chat
@@ -40,9 +38,6 @@ class Player:
         self.fallen_since_y = -1 
 
         self.inventorys: dict = {}
-        self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
-        self.inventorys['main'] = gui.InventoryPlayerMain.InventoryPlayerMain()
-        self.inventorys['chat'] = chat.Chat.ChatInventory()
 
         self.inventory_order: list = [  # an ([inventoryindexname], [reversed slots}) list
             ("hotbar", False),
@@ -50,6 +45,16 @@ class Player:
         ]
 
         self.active_inventory_slot: int = 0
+
+        self.iconparts = []
+
+    def create_inventories(self):
+        import gui.InventoryPlayerHotbar
+        import gui.InventoryPlayerMain
+
+        self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
+        self.inventorys['main'] = gui.InventoryPlayerMain.InventoryPlayerMain()
+        self.inventorys['chat'] = chat.Chat.ChatInventory()
 
         self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/hart.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/hart_half.png", "pyglet"),
@@ -62,6 +67,9 @@ class Player:
                            ResourceLocator.read("build/texture/gui/icons/armor_base.png", "pyglet")),
                           (ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/xp_bar.png", "pyglet"))]
+
+        import block.BlockCraftingTable, gui.InventoryCraftingTable
+        block.BlockCraftingTable.BlockCraftingTable.inventory = gui.InventoryCraftingTable.InventoryCraftingTable()
 
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
@@ -185,7 +193,6 @@ class Player:
         """
         damage the player and removes the given amount of hearts (two hearts are one full displayed hart)
         """
-        traceback.print_stack()
         hearts = hearts * (1 - min([20, max([self.armor_level / 5, self.armor_level -
                                              hearts / (2 + self.armor_toughness / 4)])]))
         if self.gamemode in [0, 2] or not check_gamemode:

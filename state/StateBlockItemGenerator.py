@@ -18,7 +18,7 @@ import event.TickHandler
 import PIL.Image, PIL.ImageDraw
 import sys
 import json
-import item.ItemFactory
+import factory.ItemFactory
 import item.ItemHandler
 
 if not os.path.isdir(G.local+"/build/generated_items"): os.makedirs(G.local+"/build/generated_items")
@@ -37,7 +37,7 @@ class StateBlockItemGenerator(State.State):
         State.State.__init__(self)
         self.blockindex = 0
         G.registry.get_by_name("block").registered_objects.sort(key=lambda x: x.get_name())
-        self.table = {}
+        self.table = []
 
     def get_parts(self) -> list:
         kwargs = {}
@@ -67,11 +67,8 @@ class StateBlockItemGenerator(State.State):
     def on_deactivate(self, new):
         G.world.cleanup()
         if "--rebuild" in sys.argv:
-            data = [{"name": key, "image_file": self.table[key], "has_block": True} for key in self.table.keys()]
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
-                json.dump(data, f)
-            item.ItemFactory.ItemFactory.FILES.append(G.local+"/build/itemblockfactory.json")
-            item.ItemFactory.ItemFactory.load()
+                json.dump(self.table, f)
             item.ItemHandler.build()
 
     def close(self):
@@ -107,7 +104,9 @@ class StateBlockItemGenerator(State.State):
         image.crop((240, 129, 558, 447)).save(G.local + "/" + file)
         self.generate_item(blockname, file)
 
-    def generate_item(self, blockname, file): self.table[blockname] = file
+    def generate_item(self, blockname, file):
+        self.table.append([blockname, file])
+        factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True).finish()
 
 
 blockitemgenerator = StateBlockItemGenerator()

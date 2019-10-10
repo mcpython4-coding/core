@@ -13,7 +13,7 @@ import gui.InventoryCraftingTable
 
 @G.registry
 class BlockCraftingTable(Block.Block):
-    inventory = gui.InventoryCraftingTable.InventoryCraftingTable()
+    inventory = None
 
     @staticmethod
     def get_name() -> str:

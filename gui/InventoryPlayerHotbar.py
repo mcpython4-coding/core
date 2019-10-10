@@ -66,12 +66,6 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
             self.last_index = G.player.active_inventory_slot
             self.last_item = selected_slot.itemstack.get_item_name()
 
-        if selected_slot.itemstack.get_item_name() and time.time() - self.time_since_last_change <= 5.:
-            self.lable.text = str(selected_slot.itemstack.get_item_name())
-            self.lable.x = round(G.window.get_size()[0] // 2 - self.lable.content_width // 2)
-            self.lable.y = 90
-            self.lable.draw()
-
         pyglet.gl.glColor3d(1., 1., 1.)
         if G.player.gamemode in (0, 2):
             self.draw_hearts(x, y)
@@ -79,6 +73,12 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
             self.draw_xp_level(x, y)
             if G.player.armor_level > 0:
                 self.draw_armor(x, y)
+
+        if selected_slot.itemstack.get_item_name() and time.time() - self.time_since_last_change <= 5.:
+            self.lable.text = str(selected_slot.itemstack.get_item_name())
+            self.lable.x = round(G.window.get_size()[0] // 2 - self.lable.content_width // 2)
+            self.lable.y = 90
+            self.lable.draw()
 
     def draw_hearts(self, hx, hy):
         wx, _ = G.window.get_size()

@@ -1,5 +1,0 @@
-{
-  "mode": "multisameconfig_colornamed",
-  "name": "minecraft:{}_concrete_powder",
-  "config": {"injections": ["falling_block"]}
-}

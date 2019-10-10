@@ -92,6 +92,8 @@ try:
         texture.TextureAtlas.handler.output()
         print("finished!")
 
+        G.player.create_inventories()
+
         G.craftinghandler.load()
 
         import world.gen.mode.DebugOverWorldGenerator

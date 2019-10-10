@@ -425,12 +425,19 @@ started these clone on 12th of July, 2019
 [uuk]: made food eatable
 [uuk]: fixed bug: getting damage from standing still
 [uuk]: fixed bug: not all cooldowns were global and could be reseted for some reasons
+[uuk]: rewritten block & item factory, no json files are needed now
+[uuk]: implemented new storage for block items
+[uuk]: fixed bug: cooked porkchop was not loaded correct
+[uuk]: added new items: cooked beef, tropical fish, experience bottle
+[uuk]: deleted old block injection system
+[uuk]: added new blocks: terracotta
+[uuk]: added new naming tags: treetypes, oretypes
+[uuk]: fixed bug: info lable for item is drawn behind icons for hearts & hunger
+[uuk]: moved log blocks to block factory
 
 currently working on / planed for next commit(s):
-todo: add object constructors which on you can call <item>.set_<attribute>(<value>).set_<...>.create()
-todo: make tools use ItemFactorie's extension manager
-todo: add armor to ItemFactorie's extension manager, look for tags for armor, add tag check possiblility to slots
-todo: rework factories to use constructors rather than direct class construction
+todo: add armor to ItemFactory interface, look for tags for armor, add tag check possiblility to slots
+todo: add Tool-durability, Tool brake time, Block Hardness, Tool Levels
 
 issues to implement / fix
 todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
@@ -443,7 +450,8 @@ todo: fix bug: moving slot is on first load somtimes not at mouse (store mouse p
 todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor will be white
 todo: fix bug: caption is still not always mcpython 4 (search for set_caption)
 todo: fix bug: can place blocks inside yourself (check if you are in the block)
-todo: fix bug: cursor in chat is after pressing back miss-placed
+todo: fix bug: cursor in chat is after pressing back miss-placed, after entering command also
+todo: fix bug: when eating, items are NOT removed
 
 an update to the system of states (this should come after above item improvements & bug fixes)
 todo: add an option to toggle world generation size
@@ -482,7 +490,8 @@ todo: make hitbox draw & check on BoxModels
 todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
 
 todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
-    barrier, buttons, pressure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms
+    barrier, buttons, pressure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms,
+    sandstones (also red variants)
 
 todo: add Plant-system, plant brake, plant base class, plant grow
 
@@ -505,3 +514,5 @@ todo: PreGenerate additions: -TextureAtlas build-locate-move, index file (like f
 todo: add sneaking
 
 todo: add hart shake animation when less than 2 (up & down)
+
+todo: after python 3.8 came out (may be on the 14th of October, 2019), use multiproccessing & shared memory for world gen

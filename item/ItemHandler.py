@@ -16,6 +16,7 @@ import os
 import PIL.Image
 import pyglet
 import sys
+import factory.ItemFactory
 
 
 TEXTURE_ATLASES = []
@@ -53,6 +54,12 @@ def load_data():
                     atlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.local + "/build/itematlases/" + file),
                                                          *atlas.size)
         items.set_attribute("itemindextable", indextable["loaded_item_file_names"])
+        if "--rebuild" not in sys.argv:
+            with open(G.local+"/build/itemblockfactory.json") as f:
+                data = json.load(f)
+            for entry in data:
+                factory.ItemFactory.ItemFactory().setName(entry[0]).setHasBlockFlag(True).setDefaultItemFile(entry[1]).\
+                    finish()
 
 
 def add_to_image_atlas(textureatlas, image, file):
@@ -101,9 +108,5 @@ def load():
 
     import item.ItemFood
 
-    from . import (ItemFactory)
-
-    ItemFactory.ItemFactory.from_directory("assets/factory/item")
-
-    ItemFactory.ItemFactory.load()
+    from . import (Items)
 

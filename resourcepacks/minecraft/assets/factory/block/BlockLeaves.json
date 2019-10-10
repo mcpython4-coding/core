@@ -1,6 +1,0 @@
-{
-  "mode": "multisameconfig",
-  "names": ["minecraft:acacia_leaves", "minecraft:birch_leaves", "minecraft:dark_oak_leaves", "minecraft:jungle_leaves",
-            "minecraft:oak_leaves", "minecraft:spruce_leaves"],
-  "config": {"solid": false}
-}
