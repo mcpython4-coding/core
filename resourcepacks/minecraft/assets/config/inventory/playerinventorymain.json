@@ -120,22 +120,26 @@
     "36": {
       "position": [16, 176],
       "allow_player_add_to_free_place": false,
-      "empty_slot_image": "item/empty_armor_slot_boots"
+      "empty_slot_image": "item/empty_armor_slot_boots",
+      "allowed_tags": ["#minecraft:ArmorBoots"]
     },
     "37": {
       "position": [16, 212],
       "allow_player_add_to_free_place": false,
-      "empty_slot_image": "item/empty_armor_slot_leggings"
+      "empty_slot_image": "item/empty_armor_slot_leggings",
+      "allowed_tags": ["#minecraft:ArmorLeggings"]
     },
     "38": {
       "position": [16, 248],
       "allow_player_add_to_free_place": false,
-      "empty_slot_image": "item/empty_armor_slot_chestplate"
+      "empty_slot_image": "item/empty_armor_slot_chestplate",
+      "allowed_tags": ["#minecraft:ArmorChestplate"]
     },
     "39": {
       "position": [16, 284],
       "allow_player_add_to_free_place": false,
-      "empty_slot_image": "item/empty_armor_slot_helmet"
+      "empty_slot_image": "item/empty_armor_slot_helmet",
+      "allowed_tags": ["#minecraft:ArmorHelmet"]
     },
 
     "40": {

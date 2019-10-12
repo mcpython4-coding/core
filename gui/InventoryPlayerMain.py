@@ -11,6 +11,7 @@ import gui.Slot
 import gui.ItemStack
 import crafting.CraftingHandler
 import crafting.GridRecipeInterface
+import item.ItemArmor
 
 
 class InventoryPlayerMain(gui.Inventory.Inventory):
@@ -30,10 +31,20 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
         return [G.player.inventorys["hotbar"].slots[i].copy() for i in range(9)] + \
                [gui.Slot.Slot() for _ in range(27)] + \
-               [gui.Slot.Slot(allow_player_add_to_free_place=False) for _ in range(10)]
+               [gui.Slot.Slot(allow_player_add_to_free_place=False, on_update=self.armor_update) for _ in range(4)] + \
+               [gui.Slot.Slot(allow_player_add_to_free_place=False) for _ in range(6)]
 
     def on_activate(self):
         pass
+
+    def armor_update(self, player=None):
+        # todo: add toughness
+        points = 0
+        for slot in self.slots[35:40]:
+            if slot.itemstack.item:
+                if issubclass(type(slot.itemstack.item), item.ItemArmor.ItemArmor):
+                    points += slot.itemstack.item.getDefensePoints()
+        G.player.armor_level = points
 
     def on_deactivate(self):
         for slot in self.slots[40:45]:

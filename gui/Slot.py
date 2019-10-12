@@ -26,7 +26,7 @@ class Slot:
 
     def __init__(self, itemstack=None, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
                  allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None,
-                 empty_image=None):
+                 empty_image=None, allowed_item_tags=None):
         """
         creates an new slot
         :param itemstack: the itemstack to use
@@ -58,6 +58,7 @@ class Slot:
         self.amount_lable = pyglet.text.Label()
         self.childs = []
         self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
+        self.allowed_item_tags = allowed_item_tags
 
     def get_itemstack(self):
         return self.__itemstack
@@ -134,6 +135,14 @@ class SlotCopy:
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
         self.amount_lable = pyglet.text.Label()
+
+    def get_allowed_item_tags(self):
+        return self.master.allowed_item_tags
+
+    def set_allowed_item_tags(self, tags: list):
+        self.master.allowed_item_tags = tags
+
+    allowed_item_tags = property(get_allowed_item_tags, set_allowed_item_tags)
 
     def get_itemstack(self):
         return self.master.itemstack

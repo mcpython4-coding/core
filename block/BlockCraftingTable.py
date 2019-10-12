@@ -9,6 +9,7 @@ import globals as G
 from . import Block
 from pyglet.window import mouse, key
 import gui.InventoryCraftingTable
+import item.ItemTool
 
 
 @G.registry
@@ -31,4 +32,13 @@ class BlockCraftingTable(Block.Block):
         callen to get an list of inventories
         """
         return [self.inventory]
+
+    def get_hardness(self):
+        return 2.5
+
+    def get_minimum_tool_level(self):
+        return 0
+
+    def get_best_tools(self):
+        return [item.ItemTool.ToolType.AXE]
 

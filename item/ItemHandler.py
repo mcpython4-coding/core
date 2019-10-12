@@ -94,7 +94,7 @@ def register_item(registry, itemclass):
             for i, image in enumerate(images):
                 table[itemclass.get_name()][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
     except:
-        print(itemclass.get_used_texture_files())
+        print(itemclass.get_name(), itemclass.get_used_texture_files())
         raise
 
 

@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import factory.ItemFactory
 import globals as G
 import random
+from item.ItemTool import ToolType
 
 
 arrow = factory.ItemFactory.ItemFactory().setName("minecraft:arrow").finish()
@@ -101,12 +102,44 @@ totem_of_undying = factory.ItemFactory.ItemFactory().setName("minecraft:totem_of
 tropical_fish = factory.ItemFactory.ItemFactory().setName("minecraft:tropical_fish").setFoodValue(1).finish()
 wheat = factory.ItemFactory.ItemFactory().setName("minecraft:wheat").finish()
 
-# create tools, todo: customize for tool info
-MATERIALS = ["wooden", "stone", "iron", "golden", "diamond"]
-for material in MATERIALS:
-    for entry in G.taghandler.taggroups["naming"].tags["#minecraft:tooltypes"].entries:
-        factory.ItemFactory.ItemFactory().setName("minecraft:{}_{}".format(material, entry)).finish()
+
+shears = factory.ItemFactory.ItemFactory().setName("minecraft:shears").setToolType([ToolType.SHEAR]).setToolBrakeMutli(
+    5).finish()
+for tooltype, toolname in [(ToolType.PICKAXE, "pickaxe"), (ToolType.AXE, "axe"), (ToolType.SWORD, "sword"),
+                           (ToolType.HOE, "hoe"), (ToolType.SHOVEL, "shovel")]:
+    factory.ItemFactory.ItemFactory().setName("minecraft:wooden_{}".format(toolname)).setToolType([tooltype]).\
+        setToolBrakeMutli(2).setToolLevel(1).finish()
+    factory.ItemFactory.ItemFactory().setName("minecraft:stone_{}".format(toolname)).setToolType([tooltype]). \
+        setToolBrakeMutli(4).setToolLevel(2).finish()
+    factory.ItemFactory.ItemFactory().setName("minecraft:iron_{}".format(toolname)).setToolType([tooltype]). \
+        setToolBrakeMutli(6).setToolLevel(4).finish()
+    factory.ItemFactory.ItemFactory().setName("minecraft:golden_{}".format(toolname)).setToolType([tooltype]). \
+        setToolBrakeMutli(8).setToolLevel(5).finish()
+    factory.ItemFactory.ItemFactory().setName("minecraft:diamond_{}".format(toolname)).setToolType([tooltype]). \
+        setToolBrakeMutli(12).setToolLevel(3).finish()
 
 for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:
     factory.ItemFactory.ItemFactory().setName("minecraft:{}_dye".format(color))
+
+gold_helmet = factory.ItemFactory.ItemFactory().setName("minecraft:golden_helmet").setArmorPoints(2).finish()
+gold_chestplate = factory.ItemFactory.ItemFactory().setName("minecraft:golden_chestplate").setArmorPoints(5).finish()
+gold_leggings = factory.ItemFactory.ItemFactory().setName("minecraft:golden_leggings").setArmorPoints(3).finish()
+gold_boots = factory.ItemFactory.ItemFactory().setName("minecraft:golden_boots").setArmorPoints(1).finish()
+
+chainmail_helmet = factory.ItemFactory.ItemFactory().setName("minecraft:chainmail_helmet").setArmorPoints(2).finish()
+chainmail_chestplate = factory.ItemFactory.ItemFactory().setName("minecraft:chainmail_chestplate").setArmorPoints(5).\
+    finish()
+chainmail_leggings = factory.ItemFactory.ItemFactory().setName("minecraft:chainmail_leggings").setArmorPoints(4).\
+    finish()
+chainmail_boots = factory.ItemFactory.ItemFactory().setName("minecraft:chainmail_boots").setArmorPoints(1).finish()
+
+iron_helmet = factory.ItemFactory.ItemFactory().setName("minecraft:iron_helmet").setArmorPoints(2).finish()
+iron_chestplate = factory.ItemFactory.ItemFactory().setName("minecraft:iron_chestplate").setArmorPoints(6).finish()
+iron_leggings = factory.ItemFactory.ItemFactory().setName("minecraft:iron_leggings").setArmorPoints(5).finish()
+iron_boots = factory.ItemFactory.ItemFactory().setName("minecraft:iron_boots").setArmorPoints(2).finish()
+
+diamond_helmet = factory.ItemFactory.ItemFactory().setName("minecraft:diamond_helmet").setArmorPoints(3).finish()
+diamond_chestplate = factory.ItemFactory.ItemFactory().setName("minecraft:diamond_chestplate").setArmorPoints(8).finish()
+diamond_leggings = factory.ItemFactory.ItemFactory().setName("minecraft:diamond_leggings").setArmorPoints(6).finish()
+diamond_boots = factory.ItemFactory.ItemFactory().setName("minecraft:diamond_boots").setArmorPoints(3).finish()
 

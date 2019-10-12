@@ -15,6 +15,7 @@ import config
 import util.math
 import time
 import item.ItemFood as ItemFood
+import item.ItemTool as ItemTool
 import math
 
 
@@ -26,6 +27,26 @@ class StatePartGame(StatePart.StatePart):
     void_damage_cooldown = 0
     regenerate_cooldown = 0
     hunger_heart_cooldown = 0
+    braketime = None
+
+    @classmethod
+    def calculate_new_braketime(cls):
+        vector = G.window.get_sight_vector()
+        blockpos, previous = G.world.hit_test(G.window.position, vector)
+        block = G.world.get_active_dimension().get_block(blockpos) if blockpos else None
+        if not block:
+            cls.braketime = None  # no braketime because no block
+        else:
+            hardness = block.get_hardness()
+            itemstack = G.player.get_active_inventory_slot().itemstack
+            istool = itemstack.item and issubclass(type(itemstack.item), ItemTool.ItemTool)
+            toollevel = itemstack.item.get_tool_level() if istool else 0
+            if not istool or not any([x in block.get_best_tools() for x in itemstack.item.get_tool_type()]):
+                cls.braketime = (1.5 if block.get_minimum_tool_level() <= toollevel else 5) * hardness
+            else:
+                cls.braketime = (1.5 if block.get_minimum_tool_level() <= toollevel else 5) * hardness / \
+                                itemstack.item.get_speed_multiplyer()
+            # todo: add factor when not on ground, when in water (when its added)
 
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
                  activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True, activate_lable=True,
@@ -86,6 +107,9 @@ class StatePartGame(StatePart.StatePart):
                     self.block_looking_at = blockpos
                     self.mouse_press_time = 0
 
+                if not self.braketime:
+                    self.calculate_new_braketime()
+
                 if G.window.mouse_pressing[mouse.LEFT] and G.world.get_active_dimension().get_block(blockpos):
                     block = G.world.get_active_dimension().get_block(blockpos)
                     chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(blockpos))
@@ -95,7 +119,7 @@ class StatePartGame(StatePart.StatePart):
                             chunk.remove_block(blockpos)
                             chunk.check_neighbors(blockpos)
                     elif G.player.gamemode == 0:
-                        if self.mouse_press_time >= block.get_brake_time(item):
+                        if self.mouse_press_time >= self.braketime:
                             G.player.add_to_free_place(gui.ItemStack.ItemStack(block.get_name() if type(block) != str
                                                                                else block))
                             chunk.remove_block(blockpos)
@@ -136,6 +160,8 @@ class StatePartGame(StatePart.StatePart):
                         selected_slot.itemstack = gui.ItemStack.ItemStack(block.get_name() if type(block) != str
                                                                           else block)
                         G.player.add_to_free_place(old_itemstack)
+                        if G.window.mouse_pressing[mouse.LEFT]:
+                            self.calculate_new_braketime()
 
     def _update(self, dt):
         """ Private implementation of the `update()` method. This is where most
@@ -211,6 +237,8 @@ class StatePartGame(StatePart.StatePart):
         if cancel:
             self.set_cooldown = time.time()
             G.window.mouse_pressing[button] = False
+        else:
+            self.calculate_new_braketime()
 
     @G.eventhandler("user:mouse:motion", callactive=False)
     def on_mouse_motion(self, x, y, dx, dy):
@@ -220,6 +248,8 @@ class StatePartGame(StatePart.StatePart):
             x, y = x + dx * m, y + dy * m
             y = max(-90, min(90, y))
             G.window.rotation = (x, y)
+            if G.window.mouse_pressing[mouse.LEFT]:
+                self.calculate_new_braketime()
 
     @G.eventhandler("user:keyboard:press", callactive=False)
     def on_key_press(self, symbol, modifiers):
@@ -242,6 +272,8 @@ class StatePartGame(StatePart.StatePart):
         elif symbol in G.window.num_keys and G.player.gamemode in (0, 1) and not modifiers & key.MOD_SHIFT:
             index = symbol - G.window.num_keys[0]
             G.player.set_active_inventory_slot(index)
+            if G.window.mouse_pressing[mouse.LEFT]:
+                self.calculate_new_braketime()
 
     @G.eventhandler("user:keyboard:release", callactive=False)
     def on_key_release(self, symbol, modifiers):
@@ -262,6 +294,8 @@ class StatePartGame(StatePart.StatePart):
         if self.activate_mouse:
             G.player.active_inventory_slot -= scroll_y
             G.player.active_inventory_slot = round(abs(G.player.active_inventory_slot % 9))
+            if G.window.mouse_pressing[mouse.LEFT]:
+                self.calculate_new_braketime()
 
     @G.eventhandler("render:draw:3d", callactive=False)
     def on_draw_3d(self):

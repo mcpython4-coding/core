@@ -6,6 +6,17 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import item.Item
+import enum
+
+
+class ToolType(enum.Enum):
+    HAND = 0
+    PICKAXE = 1
+    AXE = 2
+    SHOVEL = 3
+    SHEAR = 4
+    SWORD = 5  # not real an tool, but internally handled as one of it
+    HOE = 6  # not real an tool, but internally handled as one of it
 
 
 class ItemTool(item.Item.Item):
@@ -27,6 +38,12 @@ class ItemTool(item.Item.Item):
         if not issubclass(type(other), ItemTool): return False
         return other.get_name() == self.get_name()
 
-    def get_brake_time_for(self, block):
-        pass
+    def get_tool_level(self):
+        return 0
+
+    def get_tool_type(self):
+        return []
+
+    def get_speed_multiplyer(self, itemstack):
+        return 1
 

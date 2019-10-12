@@ -7,6 +7,8 @@ minecraft by Mojang
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import item.Item
 import item.ItemFood
+import item.ItemTool
+import item.ItemArmor
 import globals as G
 
 
@@ -26,6 +28,13 @@ class ItemFactory:
         self.eat_callback = None
 
         self.baseclass = [item.Item.Item]
+
+        self.tool_level = 0
+        self.tool_type = []
+        self.tool_speed_multi = 1
+        self.tool_speed_callback = None
+
+        self.armor_points = 0
 
     def finish(self, register=True):
         master = self
@@ -75,6 +84,23 @@ class ItemFactory:
                     return True
 
                 def get_eat_hunger_addition(self) -> int: return master.hungerregen
+
+        if item.ItemTool.ItemTool in self.baseclass:  # is an tool
+            class ConstructedItem(ConstructedItem):
+                def get_tool_level(self):
+                    return master.tool_level
+
+                def get_tool_type(self):
+                    return master.tool_type
+
+                def get_speed_multiplyer(self, itemstack):
+                    return master.tool_speed_multi if not master.tool_speed_callback else master.tool_speed_callback(
+                        itemstack)
+
+        if master.armor_points:
+            class ConstructedItem(ConstructedItem):
+                def getDefensePoints(self):
+                    return master.armor_points
 
         if register: G.registry.register(ConstructedItem)
 
@@ -145,5 +171,35 @@ class ItemFactory:
         if item.ItemFood.ItemFood not in self.baseclass:
             self.baseclass.append(item.ItemFood.ItemFood)
         self.eat_callback = function
+        return self
+
+    def setToolLevel(self, level: int):
+        self.tool_level = level
+        if item.ItemTool.ItemTool not in self.baseclass:
+            self.baseclass.append(item.ItemTool.ItemTool)
+        return self
+
+    def setToolType(self, tooltype: list):
+        self.tool_type = tooltype
+        if item.ItemTool.ItemTool not in self.baseclass:
+            self.baseclass.append(item.ItemTool.ItemTool)
+        return self
+
+    def setToolBrakeMutli(self, multi: float):
+        self.tool_speed_multi = multi
+        if item.ItemTool.ItemTool not in self.baseclass:
+            self.baseclass.append(item.ItemTool.ItemTool)
+        return self
+
+    def setToolBrakeMultiCallback(self, function):
+        self.tool_speed_callback = function
+        if item.ItemTool.ItemTool not in self.baseclass:
+            self.baseclass.append(item.ItemTool.ItemTool)
+        return self
+
+    def setArmorPoints(self, points: int):
+        self.armor_points = points
+        if item.ItemArmor.ItemArmor not in self.baseclass:
+            self.baseclass.append(item.ItemArmor.ItemArmor)
         return self
 

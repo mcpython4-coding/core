@@ -13,9 +13,7 @@ import block.ILog as ILog
 import util.enums
 
 
-# todo: implement inventory opening notations (also
-# todo: implement log notations
-# todo: implement falling notations
+# todo: implement inventory opening notations
 
 
 class BlockFactory:
@@ -30,8 +28,10 @@ class BlockFactory:
         self.randomupdate_callback = None
         self.update_callback = None
         self.interaction_callback = None
+        self.hardness = 1
+        self.minmum_toollevel = 0
+        self.besttools = []
 
-        self.custombraketimefunction = None
         self.customsolidsidefunction = None
         self.custommodelstatefunction = None
 
@@ -67,6 +67,15 @@ class BlockFactory:
                     baseclass.on_delete(self)
                 if master.delete_callback: master.delete_callback(self)
 
+            def get_hardness(self):
+                return master.hardness
+
+            def get_minimum_tool_level(self):
+                return master.minmum_toollevel
+
+            def get_best_tools(self):
+                return master.besttools
+
         if self.solid_faces:
             class ConstructedBlock(ConstructedBlock):
                 def is_solid_side(self, side) -> bool: return master.solid_faces
@@ -84,11 +93,6 @@ class BlockFactory:
                     for baseclass in master.baseclass:
                         baseclass.on_block_update(self)
                     master.update_callback(self)
-
-        if master.custombraketimefunction:
-            class ConstructedBlock(ConstructedBlock):
-                def get_brake_time(self, itemstack: gui.ItemStack) -> int:
-                    return master.custombraketimefunction(self, itemstack)
 
         if master.custommodelstatefunction:
             class ConstructedBlock(ConstructedBlock):
@@ -120,24 +124,20 @@ class BlockFactory:
         self.brakeable = state
         return self
 
-    def setRandomUpdateCallback(self, function):  # todo: use extension class only if arrival function
+    def setRandomUpdateCallback(self, function):
         self.randomupdate_callback = function
         return self
 
-    def setUpdateCallback(self, function):  # todo: use extension class only if arrival function
+    def setUpdateCallback(self, function):
         self.update_callback = function
         return self
 
-    def setCustomBrakeTimeFunction(self, function):  # todo: use extension class only if arrival function
-        self.custombraketimefunction = function
-        return self
-
-    def setCustomSolidSideFunction(self, function):   # todo: use extension class only if arrival function
+    def setCustomSolidSideFunction(self, function):
         self.customsolidsidefunction = function
         if self.solid_faces: self.solid_faces = {}  # only one at a time is allowed
         return self
 
-    def setSolidSideTableEntry(self, side, state: bool):  # todo: use extension class only if arrival function
+    def setSolidSideTableEntry(self, side, state: bool):
         if self.solid_faces is None: self.solid_faces = {}
         if self.customsolidsidefunction: self.customsolidsidefunction = None  # only one at a time is allowed
         self.solid_faces[side] = state
@@ -168,5 +168,17 @@ class BlockFactory:
         self.islog = True
         if ILog.ILog not in self.baseclass:
             self.baseclass.append(ILog.ILog)
+        return self
+
+    def setHardness(self, value: float):
+        self.hardness = value
+        return self
+
+    def setMinimumToolLevel(self, value: int):
+        self.minmum_toollevel = value
+        return self
+
+    def setBestTools(self, tools):
+        self.besttools = tools
         return self
 

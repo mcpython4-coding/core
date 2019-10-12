@@ -73,15 +73,6 @@ class Block:
         callen when an near-by blockposition is updated by setting/removing an block
         """
 
-    def get_brake_time(self, itemstack: gui.ItemStack) -> int:
-        """
-        :param itemstack: the item that is used
-        :return: how long it takes to brake the block
-        """
-        if itemstack.item and issubclass(type(itemstack.item), item.ItemTool.ItemTool):
-            return itemstack.item.get_brake_time_for(self)
-        return 2
-
     def is_solid_side(self, side) -> bool:
         """
         :param side: the side that is asked for
@@ -98,4 +89,13 @@ class Block:
 
     def on_player_interact(self, itemstack, button, modifiers) -> bool:
         return False
+
+    def get_hardness(self):
+        return 1
+
+    def get_minimum_tool_level(self):
+        return 0
+
+    def get_best_tools(self):
+        return []
 

@@ -63,6 +63,11 @@ class CommandItemInfo(chat.command.Command.Command):
                 print("-blockname: {}".format(itemstack.item.get_block()))
             print("-itemfile: '{}'".format(itemstack.item.get_default_item_image_location()))
             print("-max stack size: {}".format(itemstack.item.get_max_stack_size()))
+            tags = []
+            for tag in G.taghandler.taggroups["items"].tags.values():
+                if itemstack.item.get_name() in tag.entries:
+                    tags.append(tag.name)
+            print(" -tags: {}".format(tags))
 
     @staticmethod
     def get_help() -> list:

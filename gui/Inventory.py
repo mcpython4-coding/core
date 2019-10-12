@@ -39,6 +39,7 @@ class Inventory:
     def reload_config(self):
         """
         reload the config file
+        todo: make public
         """
         if self.get_config_file():
             self.config = ResourceLocator.read(self.get_config_file(), "json")
@@ -61,6 +62,8 @@ class Inventory:
                 image = ResourceLocator.read(entry["empty_slot_image"], "pil")
                 image = util.texture.to_pyglet_image(image.resize((32, 32)))
                 self.slots[sid].empty_image = pyglet.sprite.Sprite(image)
+            if "allowed_tags" in entry:
+                self.slots[sid].allowed_item_tags = entry["allowed_tags"]
         if "image_size" in self.config:
             self.bgimagesize = tuple(self.config["image_size"])
         if "image_anchor" in self.config:

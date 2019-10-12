@@ -16,6 +16,7 @@ import gui.Slot
 class OpenedInventoryStatePart(state.StatePart.StatePart):
     """
     class for inventories as state
+    todo: make A LOT OF THINGS public
     """
 
     def __init__(self):
@@ -103,17 +104,21 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                         moving_slot.itemstack.amount -= possible
                         if moving_slot.itemstack.amount <= 0:
                             moving_slot.itemstack.clean()
-                    else:
+                    elif slot.allowed_item_tags is None or moving_slot.itemstack.get_item_name() is None or \
+                            any([moving_slot.itemstack.get_item_name() in
+                                 G.taghandler.taggroups["items"].tags[x].entries for x in slot.allowed_item_tags]):
                         stack, mstack = slot.itemstack, moving_slot.itemstack
                         moving_slot.itemstack = stack
                         slot.set_itemstack(mstack, player=True)
             else:
-                # threw the item
+                # todo: threw the itemstack
                 pass
         elif button == mouse.RIGHT:
             if slot:
                 if not slot.itemstack.item:
-                    if slot.interaction_mode[1]:
+                    if slot.interaction_mode[1] and slot.allowed_item_tags is None or \
+                            any([moving_slot.itemstack.get_item_name() in
+                                 G.taghandler.taggroups["items"].tags[x].entries for x in slot.allowed_item_tags]):
                         slot.set_itemstack(moving_slot.itemstack.copy().set_amount(1), player=True)
                         moving_slot.itemstack.amount -= 1
                 elif not moving_slot.itemstack.item and slot.allow_half_getting:
@@ -133,7 +138,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                         moving_slot.itemstack.amount -= 1
                         slot.call_update(player=True)
             else:
-                # threw one item
+                # todo: threw one item
                 pass
         elif button == mouse.MIDDLE:
             if G.player.gamemode == 1 and slot:

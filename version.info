@@ -434,17 +434,22 @@ started these clone on 12th of July, 2019
 [uuk]: added new naming tags: treetypes, oretypes
 [uuk]: fixed bug: info lable for item is drawn behind icons for hearts & hunger
 [uuk]: moved log blocks to block factory
+[uuk]: tool system is now working as excpected, brake time is now cached
+[uuk]: added more quartz blocks, smooth stone, stone brick variants
+[uuk]: added shears
+[uuk]: added armor, excluding leather armor
+[uuk]: added tags for armor
+[uuk]: slots can be now configurated to only allow special item tags, this is now used in armor slots
+[uuk]: added tags to /iteminfo
 
 currently working on / planed for next commit(s):
-todo: add armor to ItemFactory interface, look for tags for armor, add tag check possiblility to slots
-todo: add Tool-durability, Tool brake time, Block Hardness, Tool Levels
-
 issues to implement / fix
 todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
 todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
         maybe due to an clear & draw error?
 todo: fix bug: in some rare cases, mouse up is not handled an will cause blocks to be added until game close
+    (after closing crafting table)
 todo: fix bug: when resizing block item generation, items are not correctly generated (some resize & crop fix)
 todo: fix bug: moving slot is on first load somtimes not at mouse (store mouse position and read before setting item)
 todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor will be white
@@ -452,6 +457,9 @@ todo: fix bug: caption is still not always mcpython 4 (search for set_caption)
 todo: fix bug: can place blocks inside yourself (check if you are in the block)
 todo: fix bug: cursor in chat is after pressing back miss-placed, after entering command also
 todo: fix bug: when eating, items are NOT removed
+todo: fix bug: falling blocks are sometimes not falling correct
+todo: fix bug: player is getting damage for no reason
+todo: fix bug: armor bar items are not correct
 
 an update to the system of states (this should come after above item improvements & bug fixes)
 todo: add an option to toggle world generation size
@@ -479,6 +487,8 @@ todo: rework event system to use some child event handler which can be easily as
     (-> States & SubStates, inventories)
 todo: store how much xp is needed to next level (function is callen every draw by xp draw)
 todo: make command input errors better
+todo: add Tool & Armor-durability
+todo: add leather armor
 
 other additions which could be useful
 
