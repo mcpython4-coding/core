@@ -9,7 +9,7 @@ import math
 import util.enums
 
 
-TICKS_PER_SEC = 60
+TICKS_PER_SEC = 30
 
 WALKING_SPEED = 5
 SPRINTING_SPEED = 8
@@ -26,7 +26,7 @@ SPEED_DICT = {
 }
 
 GRAVITY = 20.0
-MAX_JUMP_HEIGHT = 1.0 # About the height of a block.
+MAX_JUMP_HEIGHT = 1.0  # About the height of a block.
 # To derive the formula for calculating jump speed, first solve
 #    v_t = v_0 + a * t
 # for the time at which you achieve maximum height, where a is the acceleration
@@ -38,8 +38,6 @@ JUMP_SPEED = math.sqrt(2 * GRAVITY * MAX_JUMP_HEIGHT)
 TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
-
-TEXTURE_PATH = 'assets/texture.png'
 
 FACES = [
     (0, 1, 0),

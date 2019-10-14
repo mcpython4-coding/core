@@ -441,54 +441,80 @@ started these clone on 12th of July, 2019
 [uuk]: added tags for armor
 [uuk]: slots can be now configurated to only allow special item tags, this is now used in armor slots
 [uuk]: added tags to /iteminfo
+[uuk]: fixed bug: when resizing the window when running with --rebuild flag, block item images get wrong
+        -> fix: window is NOT resizeable in this time
+[uuk]: fixed bug: sometimes when --rebuild flag running, block item images gets everywhere (0, 0, 0, 0) as color
+[uuk]: fixed bug: slot at mouse at at first get not at mouse
+[uuk]: fixed bug: when ones left the last position in chat, it was NOT possible to reach there anymore
+[uuk]: fixed bug: can set blocks inside yourself
+[uuk]: fixed bug: armor icons where not correct
+[uuk]: fixed bug: falling blocks where not sending blockupdates to surrounding blocks
+[uuk]: fixed bug: regenerating was dealing damage instead of giving hearts back, so
+[uuk]: fixed bug: collision detection with blocks to get damage was wrong
+[uuk]: fixed bug: hunger icons where not correct
+[uuk]: fixed bug: physics were running when on down tps to slow so collision issues occurred
+[uuk]: slowed down intern clock speed to increase fps
+[uuk]: fixed bug: when eating, items were no consumed
 
-currently working on / planed for next commit(s):
+
 issues to implement / fix
-todo: fix bug: player dies in debug world when on normal blocks -> error in check function y < -10 somehow
-todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
+todo: fix bug: in some rare cases, mouse up is not handled an will cause blocks to be added until game close
+    (after closing crafting table) (?)
+todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions (no high priority)
+todo: fix bug: when jumping in an block from downwards, you get damage
+todo: fix bug: when jumping into an non-full block, getting damage
+todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor is white
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
         maybe due to an clear & draw error?
-todo: fix bug: in some rare cases, mouse up is not handled an will cause blocks to be added until game close
-    (after closing crafting table)
-todo: fix bug: when resizing block item generation, items are not correctly generated (some resize & crop fix)
-todo: fix bug: moving slot is on first load somtimes not at mouse (store mouse position and read before setting item)
-todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor will be white
-todo: fix bug: caption is still not always mcpython 4 (search for set_caption)
-todo: fix bug: can place blocks inside yourself (check if you are in the block)
-todo: fix bug: cursor in chat is after pressing back miss-placed, after entering command also
-todo: fix bug: when eating, items are NOT removed
-todo: fix bug: falling blocks are sometimes not falling correct
-todo: fix bug: player is getting damage for no reason
-todo: fix bug: armor bar items are not correct
+todo: fix bug: falling blocks are NOT updating visable state
 
-an update to the system of states (this should come after above item improvements & bug fixes)
+currently working on / planed for next commit(s):
+
+an update to the system of states (this should come after above bug fixes)
+
+-preparations:
+todo: look around which functions do a lot of states need / what could be simplified
+todo: make StateParts don't need implement their own hide / shown event bind functions
+todo: add ability to add sub-parts to parts
+todo: make it possible to use static StateParts so no global StatePart cache is needed
+todo: rework event system to use some child event handler which can be easily assigned to event handler
+    (-> States & SubStates, inventories)
+
+-gui elements:
+todo: add slider, checkbox, text field
+
+-world gen state:
 todo: add an option to toggle world generation size
 todo: add an back-button to world gen config
 todo: add some kind of info to screen for generation
+todo: make player gamemode selection not gamemode, instead world mode defined by world generator
+todo: make the player select the seed for world
+todo: make the player select name of world
+
+todo: add some kind of custom World Generation generator: options for biome selection per dimension, structures
+todo: make this save/load-able from .json files stored in presets/<filename>.json
+
+-start screen
 todo: add an quite game button to start screen
 todo: add an button "go to github project" which opens the internet browser with an link to github
+todo: add an real start menu background & option background
+
+-inter-game state
 todo: make the info label hide-able by key combo (maybe an StatePart which is activated & deactivated?)
 todo: game info label is not good formatted (spacing)
-todo: set the caption to something like "mcpython" and make every other caption base on it (may be an new set_caption-method?)
-todo: make StateParts don't need implement their own hide / shown event bind functions
-todo: add an real start menu background & option background
-todo: add option to add own parts to state / make an IStateExtension-baseclass which can be assigned with any other
-    state and will help adding own element into it
-todo: add an generation screen for showing what is done at the moment
-todo: make player gamemode selection not gamemode, instead world mode defined by world generator
-todo: add option pages to escape state, link to issue tracker of github, etc.
 todo: add death screen
+todo: change crossshair to left-upper icon in gui/icons.png (not visable because it is white!)
 
 other tasks that should be done in near future
 todo: add brake animation on block (draw with alpha over the block?)
-todo: store breaketime somewhere so the function is not callen every tick
-todo: change crossshair to left-upper icon in gui/icons.png (not visable because it is white!)
-todo: rework event system to use some child event handler which can be easily assigned to event handler
-    (-> States & SubStates, inventories)
 todo: store how much xp is needed to next level (function is callen every draw by xp draw)
 todo: make command input errors better
 todo: add Tool & Armor-durability
 todo: add leather armor
+todo: add language files, bind to buttons
+todo: add Language Selection State
+todo: add hovering info to items, make them use Language files
+todo: increase fps during blocks falling
 
 other additions which could be useful
 
@@ -521,8 +547,9 @@ todo: PreGenerate additions: -TextureAtlas build-locate-move, index file (like f
                              -ModelHandler build-locate-move for preparing & indexing, index file
                              -RecipeHandler build-locate for sorting, indexing, reachable checks
 
-todo: add sneaking
+todo: add sneaking, make collide function check for it
 
-todo: add hart shake animation when less than 2 (up & down)
+todo: add hart shake animation when less than 2 (up & down movement)
 
 todo: after python 3.8 came out (may be on the 14th of October, 2019), use multiproccessing & shared memory for world gen
+    (kind of local one-client-one-server system)

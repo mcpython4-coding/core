@@ -76,7 +76,8 @@ class Chunk:
     def is_position_blocked(self, position):
         return position in self.world or position in self.blockmap
 
-    def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[], kwargs={}):
+    def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True, blockupdateself=True,
+                  args=[], kwargs={}):
         """ Add a block with the given `texture` and `position` to the world.
 
         Parameters
@@ -105,20 +106,20 @@ class Chunk:
             if self.exposed(position):
                 self.show_block(position)
             if block_update:
-                self.on_block_updated(position)
+                self.on_block_updated(position, itself=blockupdateself)
             self.check_neighbors(position)
 
-    def on_block_updated(self, position):
+    def on_block_updated(self, position, itself=True):
         x, y, z = position
         for dx in range(-1, 2):
             for dy in range(-1, 2):
                 for dz in range(-1, 2):
-                    if [dx, dy, dz].count(0) >= 2:
+                    if [dx, dy, dz].count(0) >= 2 and not (not itself and dx == dy == dz == 0):
                         b: Block.Block = self.dimension.get_block((x+dx, y+dy, z+dz))
                         if b and type(b) != str:
                             b.on_block_update()
 
-    def remove_block(self, position, immediate=True, block_update=True):
+    def remove_block(self, position, immediate=True, block_update=True, blockupdateself=True):
         """ Remove the block at the given `position`.
 
         Parameters
@@ -138,7 +139,7 @@ class Chunk:
             if position in self.shown:
                 self.hide_block(position)
             if block_update:
-                self.on_block_updated(position)
+                self.on_block_updated(position, itself=blockupdateself)
             self.check_neighbors(position)
         del self.world[position]
 

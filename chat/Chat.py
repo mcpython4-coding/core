@@ -20,10 +20,14 @@ class ChatInventory(gui.Inventory.Inventory):
     """
 
     def on_create(self):
-        self.lable = pyglet.text.Label(x=15, y=15)
-        self.ulable = pyglet.text.Label(x=15, y=14, text="_")
+        self.lable = pyglet.text.HTMLLabel("", x=15, y=15)
         self.enable_blink = True
         self.timer = time.time()
+
+    def update_text(self, text, underline_index):
+        if len(text) <= underline_index: text += "_"
+        self.lable.text = "<font color='white'>"+text[:underline_index]+"<u>{}</u>".format(
+            text[underline_index])+text[1+underline_index:]+"</font>"
 
     def on_activate(self):
         G.chat.text = ""
@@ -41,14 +45,11 @@ class ChatInventory(gui.Inventory.Inventory):
         util.opengl.draw_rectangle((10, 10), (wx - 20, 20), color=(.0, .0, .0))
 
     def on_draw_overlay(self):
-        wx, _ = G.window.get_size()
-        self.lable.text = G.chat.text
-        while self.lable.content_width > wx - 20: self.lable.text = self.lable.text[1:]
+        if (round(time.time() - self.timer) % 2) == 1:
+            self.update_text(G.chat.text, G.chat.active_index)
+        else:
+            self.lable.text = "<font color='white'>"+G.chat.text+"</font>"
         self.lable.draw()
-        if round((time.time() - self.timer) % 2) == 1:
-            self.lable.text = G.chat.text[len(G.chat.text)-len(self.lable.text):G.chat.active_index]
-            self.ulable.x = 15 + self.lable.content_width
-            self.ulable.draw()
 
 
 class Chat:
@@ -70,6 +71,10 @@ class Chat:
         callen when text is entered
         :param text: the text that is entered
         """
+        if text == "<":
+            text = "&#60"
+        if text == ">":
+            text = "&#63"
         if self.text != "":
             self.text = self.text[:self.active_index+1] + text + self.text[self.active_index+1:]
         else:
@@ -105,15 +110,14 @@ class Chat:
                 self.text = ""
             self.active_index = len(self.text)
         elif symbol == key.LEFT and self.active_index > 0: self.active_index -= 1
-        elif symbol == key.RIGHT and self.active_index < len(self.text) - 1: self.active_index += 1
-        # else:
-        #     print(symbol)
+        elif symbol == key.RIGHT and self.active_index < len(self.text): self.active_index += 1
 
     def close(self):
         """
         closes the chat
         """
         G.inventoryhandler.hide(G.player.inventorys["chat"])
+        self.active_index = 0
 
 
 G.chat = Chat()

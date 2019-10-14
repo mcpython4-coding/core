@@ -98,7 +98,7 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         y = hy + 75
         hunger = round(G.player.hunger)
         for _ in range(10):
-            G.player.iconparts[1][2].blit(x-3, y)
+            G.player.iconparts[1][2].blit(x+1, y)
             if hunger > 0:
                 G.player.iconparts[1][int(hunger == 1)].blit(x, y)
                 hunger -= 2
@@ -123,7 +123,7 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         y = hy + 95
         armor = round(G.player.armor_level)
         for _ in range(10):
-            G.player.iconparts[2][2].blit(x - 1, y - 1)
+            G.player.iconparts[2][2].blit(x, y)
             if armor > 0:
                 G.player.iconparts[2][int(armor == 1)].blit(x, y)
                 armor -= 2

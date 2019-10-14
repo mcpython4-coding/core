@@ -87,7 +87,7 @@ class StatePartGame(StatePart.StatePart):
             self.mouse_press_time += dt
 
         if self.activate_physics:
-            m = 8
+            m = round(dt * config.TICKS_PER_SEC * 8)
             dt = min(dt, 0.2)
             for _ in range(m):
                 self._update(dt / m)
@@ -98,6 +98,9 @@ class StatePartGame(StatePart.StatePart):
                 itemfood = G.player.get_active_inventory_slot().itemstack.item
                 if itemfood.on_eat():
                     self.set_cooldown = time.time() - 1
+                    G.player.get_active_inventory_slot().itemstack.amount -= 1
+                    if G.player.get_active_inventory_slot().itemstack.amount == 0:
+                        G.player.get_active_inventory_slot().itemstack.clean()
                     return
 
             vector = G.window.get_sight_vector()
@@ -113,7 +116,6 @@ class StatePartGame(StatePart.StatePart):
                 if G.window.mouse_pressing[mouse.LEFT] and G.world.get_active_dimension().get_block(blockpos):
                     block = G.world.get_active_dimension().get_block(blockpos)
                     chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(blockpos))
-                    item = G.player.get_active_inventory_slot().itemstack
                     if G.player.gamemode == 1:
                         if self.mouse_press_time >= 0.10:
                             chunk.remove_block(blockpos)
@@ -129,14 +131,18 @@ class StatePartGame(StatePart.StatePart):
                     slot = G.player.get_active_inventory_slot()
                     if slot.itemstack.item and slot.itemstack.item.has_block() and self.mouse_press_time > 0.12 and \
                             G.player.gamemode in (0, 1):
-                        G.world.get_active_dimension().add_block(
-                            previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos})
-                        if G.player.gamemode == 0:
-                            slot.itemstack.amount -= 1
-                            if slot.itemstack.amount == 0:
-                                slot.itemstack.clean()
-                        self.mouse_press_time = 0
-                        # todo: check if setable in gamemode 2
+                        x, y, z = previous
+                        px, _, pz = util.math.normalize(G.window.position)
+                        py = math.ceil(G.window.position[1])
+                        if not (x == px and z == pz and py-1 <= y <= py):
+                            G.world.get_active_dimension().add_block(
+                                previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos})
+                            if G.player.gamemode == 0:
+                                slot.itemstack.amount -= 1
+                                if slot.itemstack.amount == 0:
+                                    slot.itemstack.clean()
+                            self.mouse_press_time = 0
+                            # todo: check if setable in gamemode 2
                 if G.window.mouse_pressing[mouse.MIDDLE] and blockpos and self.mouse_press_time > 0.1:
                     self.mouse_press_time = 0
                     block = G.world.get_active_dimension().get_block(blockpos)
@@ -206,7 +212,7 @@ class StatePartGame(StatePart.StatePart):
 
         if G.player.hearts < 20 and G.player.hunger > 4 and time.time() - self.regenerate_cooldown > 2 and \
                 G.player.gamemode in (0, 2):
-            G.player.damage(1)
+            G.player.hearts += 1
             G.player.hunger -= 0.5
             self.regenerate_cooldown = time.time()
 
@@ -215,7 +221,7 @@ class StatePartGame(StatePart.StatePart):
             self.hunger_heart_cooldown = time.time()
 
         nx, _, nz = util.math.normalize(G.window.position)
-        ny = math.ceil(G.window.position[1]) + 1
+        ny = math.ceil(G.window.position[1])
 
         if G.player.gamemode in (0, 2) and G.world.get_active_dimension().get_block((nx, ny, nz)):
             G.player.damage(dt)

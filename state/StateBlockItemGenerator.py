@@ -50,6 +50,10 @@ class StateBlockItemGenerator(State.State):
         return []
 
     def on_activate(self, old):
+        G.window.set_size(800, 600)
+        G.window.set_minimum_size(800, 600)
+        G.window.set_maximum_size(800, 600)
+        G.window.set_size(800, 600)
         if "--rebuild" not in sys.argv:
             self.close()
             return
@@ -70,6 +74,8 @@ class StateBlockItemGenerator(State.State):
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
                 json.dump(self.table, f)
             item.ItemHandler.build()
+        G.window.set_minimum_size(1, 1)
+        G.window.set_maximum_size(100000, 100000)  # only here for making resizing possible again
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -88,11 +94,11 @@ class StateBlockItemGenerator(State.State):
         G.world.get_active_dimension().add_block(
             (0, 0, 0), G.registry.get_by_name("block").registered_objects[self.blockindex].get_name(), block_update=False)
         G.window.set_caption("generating block item images | block: {} | {} / {}".format(
-            G.registry.get_by_name("block").registered_objects[self.blockindex].get_name(), self.blockindex+1, len(G.registry.get_by_name("block").registered_objects)
+            G.registry.get_by_name("block").registered_objects[self.blockindex].get_name(), self.blockindex+1,
+            len(G.registry.get_by_name("block").registered_objects)
         ))
         # todo: add states
         event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
-        event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
         G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
@@ -101,8 +107,12 @@ class StateBlockItemGenerator(State.State):
         file = "build/generated_items/{}.png".format("__".join(blockname.split(":")))
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
         image: PIL.Image.Image = ResourceLocator.read(file, "pil")
+        if image.getbbox() is None:
+            event.TickHandler.handler.bind(self.take_image, 2)
+            return
         image.crop((240, 129, 558, 447)).save(G.local + "/" + file)
         self.generate_item(blockname, file)
+        event.TickHandler.handler.bind(self.add_new_screen, CLEANUP_TIME)
 
     def generate_item(self, blockname, file):
         self.table.append([blockname, file])

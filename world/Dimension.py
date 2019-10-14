@@ -40,12 +40,15 @@ class Dimension:
         chunk = self.get_chunk_for_position(position, generate=False)
         return chunk.get_block(position)
 
-    def add_block(self, position: tuple, blockname: str, immediate=True, block_update=True, args=[], kwargs={}):
+    def add_block(self, position: tuple, blockname: str, immediate=True, block_update=True, blockupdateself=True,
+                  args=[], kwargs={}):
         self.get_chunk_for_position(position).add_block(position, blockname, immediate=immediate,
-                                                        block_update=block_update, args=args, kwargs=kwargs)
+                                                        block_update=block_update, args=args, kwargs=kwargs,
+                                                        blockupdateself=blockupdateself)
 
-    def remove_block(self, position: tuple, immediate=True, block_update=True):
-        self.get_chunk_for_position(position).remove_block(position, immediate=immediate, block_update=block_update)
+    def remove_block(self, position: tuple, immediate=True, block_update=True, blockupdateself=True):
+        self.get_chunk_for_position(position).remove_block(position, immediate=immediate, block_update=block_update,
+                                                           blockupdateself=blockupdateself)
 
     def check_neighbors(self, position): self.get_chunk_for_position(position).check_neighbors(position)
 

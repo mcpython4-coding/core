@@ -61,6 +61,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             inventory.draw(hoveringslot=hoveringslot)
         if G.inventoryhandler.moving_slot.itemstack.item:
             G.inventoryhandler.moving_slot.draw(0, 0)
+        G.inventoryhandler.moving_slot.position = G.window.mouse_position
 
     def _get_slot_for(self, x, y) -> gui.Slot.Slot or None:
         """
@@ -151,7 +152,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
 
     @G.eventhandler("user:mouse:motion", callactive=False)
     def on_mouse_motion(self, x, y, dx, dy):
-        G.inventoryhandler.moving_slot.position = (x, y)
+        pass
 
 
 class InventoryHandler:

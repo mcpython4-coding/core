@@ -21,8 +21,8 @@ class IFallingBlock(block.Block.Block):
 
     def on_block_update(self):
         x, y, z = self.position
-        block = G.world.get_active_dimension().get_block((x, y - 1, z))
-        if not block and event.TickHandler.handler.active_tick - self.fall_cooldown >= 10:
+        blockinst = G.world.get_active_dimension().get_block((x, y - 1, z))
+        if not blockinst and event.TickHandler.handler.active_tick - self.fall_cooldown >= 10:
             self.fall_cooldown = event.TickHandler.handler.active_tick
             event.TickHandler.handler.bind(self.fall, 10, args=[self])
 
@@ -33,7 +33,10 @@ class IFallingBlock(block.Block.Block):
         """
         x, y, z = self.position
         if not check or not G.world.get_active_dimension().get_block((x, y - 1, z)):
-            G.world.get_active_dimension().remove_block(self.position, block_update=False)
-            G.world.get_active_dimension().add_block((x, y - 1, z), self, block_update=False)
+            G.world.get_active_dimension().remove_block(self.position, blockupdateself=False)
+            chunk = G.world.get_active_dimension().get_chunk_for_position(self.position)
+            chunk.on_block_updated(self.position)
+            if y == 0: return
+            G.world.get_active_dimension().add_block((x, y - 1, z), self, blockupdateself=False)
             self.on_block_update()
 
