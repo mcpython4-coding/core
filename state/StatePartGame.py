@@ -51,6 +51,7 @@ class StatePartGame(StatePart.StatePart):
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
                  activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True, activate_lable=True,
                  clearcolor=(0.5, 0.69, 1.0, 1)):
+        super().__init__()
         self.activate_physics = activate_physics
         self.activate_mouse = activate_mouse
         self.activate_keyboard = activate_keyboard
@@ -61,28 +62,21 @@ class StatePartGame(StatePart.StatePart):
         self.glcolor3d = glcolor3d
         self.clearcolor = clearcolor
 
-        self.event_functions = [("gameloop:tick:end", self.on_update),
-                                ("user:mouse:press", self.on_mouse_press),
-                                ("user:mouse:motion", self.on_mouse_motion),
-                                ("user:keyboard:press", self.on_key_press),
-                                ("user:keyboard:release", self.on_key_release),
-                                ("render:draw:3d", self.on_draw_3d),
-                                ("render:draw:2d", self.on_draw_2d),
-                                ("user:mouse:scroll", self.on_mouse_scroll)]
+    def bind_to_eventbus(self):
+        state = self.master[0]
+        state.eventbus.subscribe("gameloop:tick:end", self.on_update)
+        state.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
+        state.eventbus.subscribe("user:mouse:motion", self.on_mouse_motion)
+        state.eventbus.subscribe("user:keyboard:press", self.on_key_press)
+        state.eventbus.subscribe("user:keyboard:release", self.on_key_release)
+        state.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
+        state.eventbus.subscribe("render:draw:3d", self.on_draw_3d)
+        state.eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
-    def activate(self):
-        for k in G.window.mouse_pressing:
-            G.window.mouse_pressing[k] = False
-        for eventname, function in self.event_functions:
-            G.eventhandler.activate_to_callback(eventname, function)
-
-    def deactivate(self):
-        for eventname, function in self.event_functions:
-            G.eventhandler.deactivate_from_callback(eventname, function)
-        G.window.strafe = [0, 0]
-
-    @G.eventhandler("gameloop:tick:end", callactive=False)
     def on_update(self, dt):
+        # todo: split up into different functions for different parts, may be an physics calculation system somewhere
+        #   else, maybe an own event bus for block interaction which sends the key as eventname and as args the other
+        #   stuff
         if any(G.window.mouse_pressing.values()):
             self.mouse_press_time += dt
 
@@ -226,7 +220,6 @@ class StatePartGame(StatePart.StatePart):
         if G.player.gamemode in (0, 2) and G.world.get_active_dimension().get_block((nx, ny, nz)):
             G.player.damage(dt)
 
-    @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
         if not self.activate_mouse: return
         slot = G.player.get_active_inventory_slot()
@@ -246,7 +239,6 @@ class StatePartGame(StatePart.StatePart):
         else:
             self.calculate_new_braketime()
 
-    @G.eventhandler("user:mouse:motion", callactive=False)
     def on_mouse_motion(self, x, y, dx, dy):
         if G.window.exclusive and self.activate_mouse:
             m = 0.15
@@ -257,7 +249,6 @@ class StatePartGame(StatePart.StatePart):
             if G.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_braketime()
 
-    @G.eventhandler("user:keyboard:press", callactive=False)
     def on_key_press(self, symbol, modifiers):
         if not self.activate_keyboard: return
         if symbol == key.W and not G.window.keys[key.S]:
@@ -281,7 +272,6 @@ class StatePartGame(StatePart.StatePart):
             if G.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_braketime()
 
-    @G.eventhandler("user:keyboard:release", callactive=False)
     def on_key_release(self, symbol, modifiers):
         if not self.activate_keyboard: return
         if symbol == key.W:
@@ -295,7 +285,6 @@ class StatePartGame(StatePart.StatePart):
         elif symbol == key.SPACE:
             self.double_space_cooldown = time.time()
 
-    @G.eventhandler("user:mouse:scroll", callactive=False)
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         if self.activate_mouse:
             G.player.active_inventory_slot -= scroll_y
@@ -303,7 +292,6 @@ class StatePartGame(StatePart.StatePart):
             if G.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_braketime()
 
-    @G.eventhandler("render:draw:3d", callactive=False)
     def on_draw_3d(self):
         pyglet.gl.glClearColor(*self.clearcolor)
         pyglet.gl.glColor3d(*self.glcolor3d)
@@ -312,7 +300,6 @@ class StatePartGame(StatePart.StatePart):
             if self.activate_focused_block_draw and G.player.gamemode != 3:
                 G.window.draw_focused_block()
 
-    @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
         if self.active_lable:
             G.window.draw_label()

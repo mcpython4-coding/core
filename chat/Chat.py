@@ -12,6 +12,7 @@ import pyglet
 from pyglet.window import key
 import time
 import chat.command.CommandHandler
+import event.EventHandler
 
 
 class ChatInventory(gui.Inventory.Inventory):
@@ -26,6 +27,8 @@ class ChatInventory(gui.Inventory.Inventory):
 
     def update_text(self, text, underline_index):
         if len(text) <= underline_index: text += "_"
+        if len(text) <= underline_index:
+            self.lable.text = text
         self.lable.text = "<font color='white'>"+text[:underline_index]+"<u>{}</u>".format(
             text[underline_index])+text[1+underline_index:]+"</font>"
 
@@ -33,12 +36,12 @@ class ChatInventory(gui.Inventory.Inventory):
         G.chat.text = ""
         G.chat.active_index = 0
         G.chat.has_entered_t = False
-        G.eventhandler.activate_to_callback("user:keyboard:press", G.chat.on_key_press)
-        G.eventhandler.activate_to_callback("user:keyboard:enter", G.chat.enter)
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("user:keyboard:press", G.chat.on_key_press)
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("user:keyboard:enter", G.chat.enter)
 
     def on_deactivate(self):
-        G.eventhandler.deactivate_from_callback("user:keyboard:press", G.chat.on_key_press)
-        G.eventhandler.deactivate_from_callback("user:keyboard:enter", G.chat.enter)
+        event.EventHandler.PUBLIC_EVENT_BUS.desubscribe("user:keyboard:press", G.chat.on_key_press)
+        event.EventHandler.PUBLIC_EVENT_BUS.desubscribe("user:keyboard:enter", G.chat.enter)
 
     def on_draw_background(self):
         wx, _ = G.window.get_size()

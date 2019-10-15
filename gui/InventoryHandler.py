@@ -20,31 +20,20 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
     """
 
     def __init__(self):
-        self.event_functions = [("user:keyboard:press", self.on_key_press),
-                                ("render:draw:2d", self.on_draw_2d),
-                                ("user:mouse:press", self.on_mouse_press),
-                                ("user:mouse:motion", self.on_mouse_motion)]
+        super().__init__()
 
         self.active = False
 
-    def activate(self):
-        for eventname, function in self.event_functions:
-            G.eventhandler.activate_to_callback(eventname, function)
+    def bind_to_eventbus(self):
+        self.master[0].eventbus.subscribe("user:keyboard:press", self.on_key_press)
+        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
+        self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
 
-    def deactivate(self):
-        for eventname, function in self.event_functions:
-            G.eventhandler.deactivate_from_callback(eventname, function)
-
-    def get_event_functions(self) -> list:
-        return [(self.on_key_press, "user:keyboard:press"),
-                (self.on_draw_2d, "render:draw:2d")]
-
-    @G.eventhandler("user:keyboard:press", callactive=False)
-    def on_key_press(self, symbol, modifiers):
+    @staticmethod
+    def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
             G.inventoryhandler.remove_one_from_stack()
 
-    @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
         # import block.BlockCraftingTable
         # print(G.player.inventorys["main"].slots[0].itemstack.get_item_name())
@@ -80,8 +69,8 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                     return slot
         return None
 
-    @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
+        # todo: split up into seperated functions / onto an intern event bus
         if G.window.exclusive: return
         slot: gui.Slot.Slot = self._get_slot_for(x, y)
         moving_slot: gui.Slot.Slot = G.inventoryhandler.moving_slot
@@ -149,10 +138,6 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         if moving_slot.itemstack.amount == 0:
             moving_slot.itemstack.clean()
             moving_slot.amount = 0
-
-    @G.eventhandler("user:mouse:motion", callactive=False)
-    def on_mouse_motion(self, x, y, dx, dy):
-        pass
 
 
 class InventoryHandler:

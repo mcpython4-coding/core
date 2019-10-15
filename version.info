@@ -455,6 +455,8 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: physics were running when on down tps to slow so collision issues occurred
 [uuk]: slowed down intern clock speed to increase fps
 [uuk]: fixed bug: when eating, items were no consumed
+[uuk]: rewritten event system to support speed-assignment. Everything is now ordered in some so called EventBuses
+[uuk]: implemented custom event bus to every created state, updated states to use this
 
 
 issues to implement / fix
@@ -471,14 +473,6 @@ todo: fix bug: falling blocks are NOT updating visable state
 currently working on / planed for next commit(s):
 
 an update to the system of states (this should come after above bug fixes)
-
--preparations:
-todo: look around which functions do a lot of states need / what could be simplified
-todo: make StateParts don't need implement their own hide / shown event bind functions
-todo: add ability to add sub-parts to parts
-todo: make it possible to use static StateParts so no global StatePart cache is needed
-todo: rework event system to use some child event handler which can be easily assigned to event handler
-    (-> States & SubStates, inventories)
 
 -gui elements:
 todo: add slider, checkbox, text field
@@ -517,6 +511,8 @@ todo: add hovering info to items, make them use Language files
 todo: increase fps during blocks falling
 
 other additions which could be useful
+
+todo: add logging system, add crashlogs, add runtime exceptions, make tool to localize traceback strings from G.local
 
 todo: move to pre-build: block item factory, recipe sorting, model sorting & generation, texture atlas generation
 todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)

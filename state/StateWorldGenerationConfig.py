@@ -17,11 +17,9 @@ import pyglet
 
 class StateWorldGenerationConfig(State.State):
     @staticmethod
-    def get_name():
-        return "minecraft:world_generation_config"
+    def get_name(): return "minecraft:world_generation_config"
 
-    def __init__(self):
-        State.State.__init__(self)
+    def __init__(self): State.State.__init__(self)
 
     def get_parts(self) -> list:
         return [UIPartLable.UIPartLable("World Generation Selection", (0, 200), anchor_lable="MM", anchor_window="MM",
@@ -59,20 +57,18 @@ class StateWorldGenerationConfig(State.State):
         G.window.position = 0, util.math.get_max_y((0, 0, 0)), 0
         G.player.set_gamemode(self.parts[1].index)
 
-    def get_event_functions(self) -> list:
-        return [(self.on_key_press, "user:keyboard:press")]
-
-    def on_activate(self, old):
+    def on_activate(self):
+        super().on_activate()
         for part in self.parts:
             if type(part) == UIPartButton.UIPartToggleButton:
                 part.index = 0
                 part._generate_text()
 
-    def on_deactivate(self, new):
-        pass
+    def bind_to_eventbus(self):
+        self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
-    @G.eventhandler("user:keyboard:press", callactive=False)
-    def on_key_press(self, symbol, modifiers):
+    @staticmethod
+    def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
             G.statehandler.switch_to("minecraft:startmenu")
 

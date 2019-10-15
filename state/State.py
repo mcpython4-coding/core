@@ -20,16 +20,33 @@ class State:
     def __init__(self):
         self.parts = self.get_parts()
         G.statehandler.add_state(self)
+        self.eventbus = G.eventhandler.create_bus(active=False)
+        self.bind_to_eventbus()
+        for statepart in self.parts:
+            statepart.master = [self]  # StateParts get an list of steps to get to them as an list
+            statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
+
+    def activate(self):
+        self.eventbus.activate()
+        self.on_activate()
+        for statepart in self.parts:
+            statepart.activate()
+
+    def deactivate(self):
+        self.eventbus.deactivate()
+        self.on_deactivate()
+        for statepart in self.parts:
+            statepart.deactivate()
+
+    def bind_to_eventbus(self):
+        pass
 
     def get_parts(self) -> list:
         return []
 
-    def get_event_functions(self) -> list:
-        return []
-
-    def on_activate(self, old):
+    def on_activate(self):
         pass
 
-    def on_deactivate(self, new):
+    def on_deactivate(self):
         pass
 

@@ -23,6 +23,7 @@ class UIPartLable(state.StatePart.StatePart):
         :param anchor_lable: the anchor on the lable
         :param anchor_window: the anchor on the window
         """
+        super().__init__()
         self.text = text
         self.position = position
         self.press: event.EventInfo.MousePressEventInfo = press
@@ -33,23 +34,12 @@ class UIPartLable(state.StatePart.StatePart):
 
         self.on_press = on_press
 
-        self.event_functions = [("user:mouse:press", self.on_mouse_press),
-                                ("render:draw:2d", self.on_draw_2d)]
-
         self.lable = pyglet.text.Label(text=text)
         self.active = False
 
-    def activate(self):
-        if self.active: return
-        self.active = True
-        for eventname, function in self.event_functions:
-            G.eventhandler.activate_to_callback(eventname, function)
-
-    def deactivate(self):
-        if not self.active: return
-        self.active = False
-        for eventname, function in self.event_functions:
-            G.eventhandler.deactivate_from_callback(eventname, function)
+    def bind_to_eventbus(self):
+        self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
+        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
     def _get_lable_base_positon(self):
         x, y = self.position
@@ -73,7 +63,6 @@ class UIPartLable(state.StatePart.StatePart):
             y = wy - abs(y)
         return x, y
 
-    @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self._get_lable_base_positon()
         sx, sy = self.lable.content_width, self.lable.content_width
@@ -82,7 +71,6 @@ class UIPartLable(state.StatePart.StatePart):
             if self.on_press:
                 self.on_press(x, y)
 
-    @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
         x, y = self._get_lable_base_positon()
         wx, wy = self.lable.content_width, self.lable.content_height

@@ -59,7 +59,6 @@ class Registry:
         self.injection_function = injection_function
         self.allow_argumented_injection = allow_argumented_injection
         self.registered_objects = []
-        G.eventhandler.add_event_name("registry:{}:on_object_register".format(name))
         self.locked = False
         self.classbased = classbased
         G.registry.registries.append(self)

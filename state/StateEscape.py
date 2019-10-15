@@ -38,24 +38,22 @@ class StateEscape(State.State):
         return [(self.on_key_press, "user:keyboard:press"),
                 (self.on_draw_2d_pre, "render:draw:2d:background")]
 
+    def bind_to_eventbus(self):
+        self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
+        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
+
     @staticmethod
     def start_menu_press(x, y):
         G.world.cleanup()
         G.statehandler.switch_to("minecraft:startmenu")
 
-    def on_activate(self, old):
-        pass
-
-    def on_deactivate(self, new):
-        pass
-
-    @G.eventhandler("user:keyboard:press", callactive=False)
-    def on_key_press(self, symbol, modifiers):
+    @staticmethod
+    def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
             G.statehandler.switch_to("minecraft:game")
 
-    @G.eventhandler("render:draw:2d:background", callactive=False)
-    def on_draw_2d_pre(self):
+    @staticmethod
+    def on_draw_2d_pre():
         pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
 
 

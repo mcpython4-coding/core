@@ -26,6 +26,7 @@ class UIPartProgressBar(state.StatePart.StatePart):
         :param anchor_pgb: the anchor on the progress bar
         :param anchor_window: the anchor on the window
         """
+        super().__init__()
         self.position = position
         self.size = size
         self.color = color
@@ -37,20 +38,10 @@ class UIPartProgressBar(state.StatePart.StatePart):
 
         self.lable = pyglet.text.Label(text=text)
 
-        self.event_functions = [("render:draw:2d", self.on_draw_2d)]
         self.active = False
 
-    def activate(self):
-        if self.active: return
-        self.active = True
-        for eventname, function in self.event_functions:
-            G.eventhandler.activate_to_callback(eventname, function)
-
-    def deactivate(self):
-        if not self.active: return
-        self.active = False
-        for eventname, function in self.event_functions:
-            G.eventhandler.deactivate_from_callback(eventname, function)
+    def bind_to_eventbus(self):
+        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
     def _get_pgb_base_positon(self):
         x, y = self.position
@@ -74,7 +65,6 @@ class UIPartProgressBar(state.StatePart.StatePart):
             y = wy - abs(y)
         return x, y
 
-    @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
         x, y = self._get_pgb_base_positon()
         sx, sy = self.size

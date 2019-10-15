@@ -123,6 +123,7 @@ class UIPartButton(state.StatePart.StatePart):
         :param anchor_button: the anchor on the button
         :param anchor_window: the anchor on the window
         """
+        super().__init__()
         self.size = size
         self.text = text
         self.position = position
@@ -134,10 +135,6 @@ class UIPartButton(state.StatePart.StatePart):
         self.on_hover = on_hover
         self.on_try_press = on_try_press
 
-        self.event_functions = [("user:mouse:press", self.on_mouse_press),
-                                ("user:mouse:motion", self.on_mouse_motion),
-                                ("render:draw:2d", self.on_draw_2d)]
-
         self.enabled = enabled
         self.has_hovering_state = has_hovering_state
         self.hovering = False
@@ -145,17 +142,13 @@ class UIPartButton(state.StatePart.StatePart):
         self.lable = pyglet.text.Label(text=text)
         self.active = False
 
-    def activate(self):
-        if self.active: return
-        self.active = True
-        for eventname, function in self.event_functions:
-            G.eventhandler.activate_to_callback(eventname, function)
+    def bind_to_eventbus(self):
+        self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
+        self.master[0].eventbus.subscribe("user:mouse:motion", self.on_mouse_motion)
+        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
     def deactivate(self):
-        if not self.active: return
-        self.active = False
-        for eventname, function in self.event_functions:
-            G.eventhandler.deactivate_from_callback(eventname, function)
+        super().deactivate()
         self.hovering = False
 
     def _get_button_base_positon(self):
@@ -180,7 +173,6 @@ class UIPartButton(state.StatePart.StatePart):
             y = wy - abs(y)
         return x, y
 
-    @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self._get_button_base_positon()
         sx, sy = self.size
@@ -192,7 +184,6 @@ class UIPartButton(state.StatePart.StatePart):
             if self.on_try_press:
                 self.on_try_press(x, y)
 
-    @G.eventhandler("user:mouse:motion", callactive=False)
     def on_mouse_motion(self, x, y, dx, dy):
         mx, my = self._get_button_base_positon()
         sx, sy = self.size
@@ -203,7 +194,6 @@ class UIPartButton(state.StatePart.StatePart):
         else:
             self.hovering = False
 
-    @G.eventhandler("render:draw:2d", callactive=False)
     def on_draw_2d(self):
         mode = ButtonMode.DISABLED if not self.enabled else (
             ButtonMode.HOVERING if self.hovering and self.has_hovering_state else ButtonMode.ENABLED
@@ -241,6 +231,7 @@ class UIPartToggleButton(UIPartButton):
         :param text_constructor: an string.format(item) or an function(item: str) -> str entry
         :param start: where in the array to start from
         """
+        state.StatePart.StatePart.__init__(self)
         self.size = size
         self.textpages = textpossibilitys
         self.textconstructor = text_constructor
@@ -277,7 +268,6 @@ class UIPartToggleButton(UIPartButton):
         else:
             self.text = text
 
-    @G.eventhandler("user:mouse:press", callactive=False)
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self._get_button_base_positon()
         sx, sy = self.size

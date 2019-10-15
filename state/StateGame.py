@@ -17,30 +17,23 @@ import pyglet
 
 class StateGame(State.State):
     @staticmethod
-    def get_name():
-        return "minecraft:game"
+    def get_name(): return "minecraft:game"
 
     @staticmethod
-    def is_mouse_exclusive():
-        return True
+    def is_mouse_exclusive(): return True
 
-    def __init__(self):
-        State.State.__init__(self)
+    def __init__(self): State.State.__init__(self)
 
-    def get_parts(self) -> list:
-        return [StatePartGame.StatePartGame(), gui.InventoryHandler.OpenedInventoryStatePart()]
+    def get_parts(self) -> list: return [StatePartGame.StatePartGame(), gui.InventoryHandler.OpenedInventoryStatePart()]
 
-    def get_event_functions(self) -> list:
-        return [(self.on_key_press, "user:keyboard:press"),
-                (self.on_draw_2d_pre, "render:draw:2d:background")]
+    def on_activate(self): G.worldgenerationhandler.enable_auto_gen = True
 
-    def on_activate(self, old):
-        G.worldgenerationhandler.enable_auto_gen = True
+    def on_deactivate(self): G.worldgenerationhandler.enable_auto_gen = False
 
-    def on_deactivate(self, new):
-        G.worldgenerationhandler.enable_auto_gen = False
+    def bind_to_eventbus(self):
+        self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
+        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
 
-    @G.eventhandler("user:keyboard:press", callactive=False)
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE and G.window.exclusive:
             G.statehandler.switch_to("minecraft:escape_state")
@@ -62,9 +55,8 @@ class StateGame(State.State):
         G.inventoryhandler.show(G.player.inventorys["chat"])
         G.chat.text = enter
 
-    @G.eventhandler("render:draw:2d:background", callactive=False)
-    def on_draw_2d_pre(self):
-        pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
+    @staticmethod
+    def on_draw_2d_pre(): pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
 
 
 game = StateGame()

@@ -46,10 +46,7 @@ class StateBlockItemGenerator(State.State):
                                             activate_focused_block=False, clearcolor=(1., 1., 1., 0.),
                                             activate_crosshair=False, activate_lable=False)]
 
-    def get_event_functions(self) -> list:
-        return []
-
-    def on_activate(self, old):
+    def on_activate(self):
         G.window.set_size(800, 600)
         G.window.set_minimum_size(800, 600)
         G.window.set_maximum_size(800, 600)
@@ -68,7 +65,7 @@ class StateBlockItemGenerator(State.State):
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
         event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
 
-    def on_deactivate(self, new):
+    def on_deactivate(self):
         G.world.cleanup()
         if "--rebuild" in sys.argv:
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:

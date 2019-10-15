@@ -102,14 +102,14 @@ try:
     def run():
         import pyglet
         rendering.window.Window(width=800, height=600, caption='mcpython 4', resizable=True)
-        event.EventHandler.handler.call("game:gameloop_startup")
+        G.eventhandler.call("game:gameloop_startup")
         pyglet.app.run()
 
 
     def main():
-        event.EventHandler.handler.call("game:startup")
+        G.eventhandler.call("game:startup")
         setup()
-        event.EventHandler.handler.call("game:load_finished")
+        G.eventhandler.call("game:load_finished")
         print("----------------------------------------------")
         print("- END OF LOADING. NOW STARTING UPDATE CYCLES -")
         print("----------------------------------------------")

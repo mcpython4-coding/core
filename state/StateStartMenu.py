@@ -14,32 +14,24 @@ import util.math
 
 class StateStartMenu(state.State.State):
     @staticmethod
-    def get_name():
-        return "minecraft:startmenu"
+    def get_name(): return "minecraft:startmenu"
 
-    def __init__(self):
-        state.State.State.__init__(self)
+    def __init__(self): state.State.State.__init__(self)
 
     def get_parts(self) -> list:
         return [UIPartLable.UIPartLable("Start Menu", (0, 100), anchor_window="MM", anchor_lable="MM"),
                 UIPartButton.UIPartButton((200, 15), "Single Player", (0, 0), anchor_window="MM", anchor_button="MM",
                                           on_press=self.on_new_game_press)]
 
+    def bind_to_eventbus(self):
+        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
+
     @staticmethod
     def on_new_game_press(x, y):
         G.statehandler.switch_to("minecraft:world_generation_config")
 
-    def get_event_functions(self) -> list:
-        return [(self.on_draw_2d_pre, "render:draw:2d:background")]
-
-    def on_activate(self, old):
-        pass
-
-    def on_deactivate(self, new):
-        pass
-
-    @G.eventhandler("render:draw:2d:background", callactive=False)
-    def on_draw_2d_pre(self):
+    @staticmethod
+    def on_draw_2d_pre():
         pyglet.gl.glClearColor(1., 1., 1., 1.)
 
 

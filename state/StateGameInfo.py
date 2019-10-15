@@ -14,20 +14,18 @@ import ResourceLocator
 from pyglet.window import key, mouse
 
 
+# todo: use pyglet.image.Image.get_region(area)
 sprite = util.texture.to_pyglet_sprite(ResourceLocator.read("gui/demo_background", mode="pil").crop((0, 0, 248, 166)))
 
 
 class StateGameInfo(state.State.State):
     @staticmethod
-    def get_name():
-        return "minecraft:gameinfo"
+    def get_name(): return "minecraft:gameinfo"
 
     @staticmethod
-    def is_mouse_exclusive():
-        return False
+    def is_mouse_exclusive(): return False
 
-    def __init__(self):
-        state.State.State.__init__(self)
+    def __init__(self): state.State.State.__init__(self)
 
     def get_parts(self) -> list:
         return [state.StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False,
@@ -46,23 +44,17 @@ class StateGameInfo(state.State.State):
                 UIPartLable.UIPartLable("OF THE GITHUB PROJECT",
                                         (0, -20), anchor_lable="MM", anchor_window="MM", text_size=10)]
 
-    def get_event_functions(self) -> list:
-        return [(self.on_key_press, "user:keyboard:press"),
-                (self.on_mouse_press, "user:mouse:press")]
+    def bind_to_eventbus(self):
+        self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
+        self.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
 
-    def on_activate(self, old):
-        pass
-
-    def on_deactivate(self, new):
-        pass
-
-    @G.eventhandler("user:keyboard:press", callactive=False)
-    def on_key_press(self, symbol, modifiers):
+    @staticmethod
+    def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
             G.statehandler.switch_to("minecraft:game")
 
-    @G.eventhandler("user:mouse:press", callactive=False)
-    def on_mouse_press(self, x, y, button, modifiers):
+    @staticmethod
+    def on_mouse_press(x, y, button, modifiers):
         G.statehandler.switch_to("minecraft:game")
 
 
