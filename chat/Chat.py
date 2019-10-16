@@ -29,8 +29,12 @@ class ChatInventory(gui.Inventory.Inventory):
         if len(text) <= underline_index: text += "_"
         if len(text) <= underline_index:
             self.lable.text = text
-        self.lable.text = "<font color='white'>"+text[:underline_index]+"<u>{}</u>".format(
-            text[underline_index])+text[1+underline_index:]+"</font>"
+            return
+        try:
+            self.lable.text = "<font color='white'>"+text[:underline_index]+"<u>{}</u>".format(
+                text[underline_index])+text[1+underline_index:]+"</font>"
+        except IndexError:
+            self.lable.text = text
 
     def on_activate(self):
         G.chat.text = ""

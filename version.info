@@ -457,12 +457,22 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: when eating, items were no consumed
 [uuk]: rewritten event system to support speed-assignment. Everything is now ordered in some so called EventBuses
 [uuk]: implemented custom event bus to every created state, updated states to use this
+[uuk]: added progressbar to BlockItemFactory
+[uuk]: fixed some bugs around progress bar rendering
+[uuk]: new world generation config screen
+
+
+add an display attribute to WorldGenConfig
+add an dimension attribute to WorldGenConfig -> sort after dimension
+add an toggle button for all possible WorldGenConfigs
+
+change world generation to be based on a given seed
 
 
 issues to implement / fix
 todo: fix bug: in some rare cases, mouse up is not handled an will cause blocks to be added until game close
     (after closing crafting table) (?)
-todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions (no high priority)
+todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
 todo: fix bug: when jumping in an block from downwards, you get damage
 todo: fix bug: when jumping into an non-full block, getting damage
 todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor is white
@@ -472,14 +482,13 @@ todo: fix bug: falling blocks are NOT updating visable state
 
 currently working on / planed for next commit(s):
 
-an update to the system of states (this should come after above bug fixes)
+an update to the system of states
 
 -gui elements:
 todo: add slider, checkbox, text field
 
--world gen state:
+-world gen state: (complete overhaul)
 todo: add an option to toggle world generation size
-todo: add an back-button to world gen config
 todo: add some kind of info to screen for generation
 todo: make player gamemode selection not gamemode, instead world mode defined by world generator
 todo: make the player select the seed for world
@@ -490,7 +499,7 @@ todo: make this save/load-able from .json files stored in presets/<filename>.jso
 
 -start screen
 todo: add an quite game button to start screen
-todo: add an button "go to github project" which opens the internet browser with an link to github
+todo: add an button "go to github project" which opens the internet browser with an link to github (see util/callbacks)
 todo: add an real start menu background & option background
 
 -inter-game state
@@ -499,16 +508,21 @@ todo: game info label is not good formatted (spacing)
 todo: add death screen
 todo: change crossshair to left-upper icon in gui/icons.png (not visable because it is white!)
 
+-config screen
+todo: add config screen with back button, reset button
+todo: add config page system, add pages for: player name, movement speeds, gravity, max jump height, jump speed,
+    player height
+
 other tasks that should be done in near future
 todo: add brake animation on block (draw with alpha over the block?)
-todo: store how much xp is needed to next level (function is callen every draw by xp draw)
+todo: cache how much xp is needed to next level (function is callen every draw by xp draw -> decrease FPS)
 todo: make command input errors better
 todo: add Tool & Armor-durability
 todo: add leather armor
-todo: add language files, bind to buttons
+todo: add language files, bind to buttons & lables
 todo: add Language Selection State
 todo: add hovering info to items, make them use Language files
-todo: increase fps during blocks falling
+todo: increase fps during blocks falling (or another reason for decreased FPS)
 
 other additions which could be useful
 
@@ -521,13 +535,22 @@ todo: make hitbox draw & check on BoxModels
 
 todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
 
+todo: implement area draw for BoxModel faces (so not the whole image is drawn, only the needed part)
 todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
     barrier, buttons, pressure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms,
     sandstones (also red variants)
 
-todo: add Plant-system, plant brake, plant base class, plant grow
+todo: add Plant-system, plant brake, plant base class (normal & double), plant grow,
+    tweak model system to support plant models
+todo: add flowers & bind to world generation as an seperated layer
 
+todo: add an loading event bus for loading events, move every load entry to this bus, add an
+    event/RegistryLoadingHandler for doing stuff on this event bus, every single entry should be loaded at its own,
+    create an system which tries to notate stuff found on event bus to G.registry & only opens the used registries
+todo: every loading stage should have the following parts: prepare, instance registrate, function based registrate,
+    finish
 todo: split multi-registries into their parts
+todo: add event which is called when state is changed
 
 todo: make resourcepacks fully functional: sorting(, auto-rebuild)
 todo: add option for inventories to be visible when another is also visible

@@ -6,7 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 from . import State, StatePartGame
-from .ui import UIPartButton, UIPartLable
+from .ui import UIPartProgressBar
 import event.EventInfo
 import globals as G
 from pyglet.window import key
@@ -44,7 +44,16 @@ class StateBlockItemGenerator(State.State):
         if "--rebuild" in sys.argv: kwargs["glcolor3d"] = (1., 1., 1.)
         return [StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False, activate_keyboard=False,
                                             activate_focused_block=False, clearcolor=(1., 1., 1., 0.),
-                                            activate_crosshair=False, activate_lable=False)]
+                                            activate_crosshair=False, activate_lable=False),
+                UIPartProgressBar.UIPartProgressBar((10, 10), (G.window.get_size()[0]-20, 20), progress_items=len(
+                    G.registry.get_by_name("block").registered_objects), status=1, text="0/{}: {}".format(len(
+                        G.registry.get_by_name("block").registered_objects), None))]
+
+    def bind_to_eventbus(self):
+        self.eventbus.subscribe("user:window:resize", self.on_resize)
+
+    def on_resize(self, w, h):
+        self.parts[1].size = (w-20, 20)
 
     def on_activate(self):
         G.window.set_size(800, 600)
@@ -58,9 +67,6 @@ class StateBlockItemGenerator(State.State):
         G.window.rotation = (-45, -45)
         G.world.get_active_dimension().add_block(
             (0, 0, 0), G.registry.get_by_name("block").registered_objects[0].get_name(), block_update=False)
-        G.window.set_caption("generating block item images | block: {} | {} / {}".format(
-            "null", 0, len(G.registry.get_by_name("block").registered_objects)
-        ))
         self.blockindex = -1
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
         event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
@@ -79,21 +85,19 @@ class StateBlockItemGenerator(State.State):
         G.window.position = (0, 10, 0)
         G.window.rotation = (0, 0)
         G.world.get_active_dimension().remove_block((0, 0, 0))
-        G.window.set_caption("mcpython 4")
 
     def add_new_screen(self):
         self.blockindex += 1
         if self.blockindex >= len(G.registry.get_by_name("block").registered_objects):
             self.close()
             return
-        # print(G.registry.get_by_name("block").registered_objects[self.blockindex].get_name())
         G.world.get_active_dimension().hide_block((0, 0, 0))
         G.world.get_active_dimension().add_block(
             (0, 0, 0), G.registry.get_by_name("block").registered_objects[self.blockindex].get_name(), block_update=False)
-        G.window.set_caption("generating block item images | block: {} | {} / {}".format(
-            G.registry.get_by_name("block").registered_objects[self.blockindex].get_name(), self.blockindex+1,
-            len(G.registry.get_by_name("block").registered_objects)
-        ))
+        self.parts[1].progress = self.blockindex+1
+        self.parts[1].text = "{}/{}: {}".format(self.blockindex+1, len(
+            G.registry.get_by_name("block").registered_objects), G.registry.get_by_name("block").
+                                                registered_objects[self.blockindex].get_name())
         # todo: add states
         event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
         G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True

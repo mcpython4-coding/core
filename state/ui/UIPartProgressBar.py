@@ -14,7 +14,7 @@ import util.opengl
 
 class UIPartProgressBar(state.StatePart.StatePart):
     def __init__(self, position, size, color=(1., 0., 0.), progress_items=None, status=0, text="", anchor_pgb="WS",
-                 anchor_window="WS"):
+                 anchor_window="WS", text_color=(0, 0, 0, 255)):
         """
         creates an new UIPartProgressBar
         :param position: the position to create on
@@ -36,7 +36,7 @@ class UIPartProgressBar(state.StatePart.StatePart):
         self.anchor_pgb = anchor_pgb
         self.anchor_window = anchor_window
 
-        self.lable = pyglet.text.Label(text=text)
+        self.lable = pyglet.text.Label(text=text, color=text_color, font_size=size[1] - 10)
 
         self.active = False
 
@@ -74,10 +74,12 @@ class UIPartProgressBar(state.StatePart.StatePart):
         util.opengl.draw_line((x,    y+sy), (x+sx, y+sy))
 
         sx = round(self.progress / self.progress_max * sx)
-        util.opengl.draw_rectangle((x+3, y+3), (x+sx-6, y+self.size[1]-6), color=self.color)
+        util.opengl.draw_rectangle((x+2, y+3), (x+sx-16, y+self.size[1]-15), color=self.color)
 
         self.lable.text = self.text
 
-        self.lable.x = x + (self.size[0] - self.lable.content_height) // 2
-        self.lable.y = y + (self.size[1] - self.lable.content_height) // 2
+        self.lable.x = x + (self.size[0] - self.lable.content_width) // 2
+        self.lable.y = y + (self.size[1] - self.lable.content_height) // 2 + 5
+
+        self.lable.draw()
 
