@@ -6,11 +6,13 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 from . import State, StatePartGame
-from .ui import UIPartButton, UIPartLable
+from .ui import UIPartButton, UIPartTextInput
+from .ui.UIPartTextInput import INT_PATTERN
 import globals as G
 import util.math
 from pyglet.window import key
 import pyglet
+import random
 
 
 class StateWorldGenerationConfig(State.State):
@@ -20,10 +22,18 @@ class StateWorldGenerationConfig(State.State):
     def __init__(self): State.State.__init__(self)
 
     def get_parts(self) -> list:
-        return [UIPartButton.UIPartButton((200, 20), "BACK", (-220, 20), anchor_window="MD",
+        return [UIPartButton.UIPartButton((300, 20), "BACK", (-320, 20), anchor_window="MD",
                                           on_press=self.on_back_press),
-                UIPartButton.UIPartButton((200, 20), "GENERATE", (20, 20), anchor_window="MD",
-                                          on_press=self.on_generate_press)]
+                UIPartButton.UIPartButton((300, 20), "GENERATE", (20, 20), anchor_window="MD",
+                                          on_press=self.on_generate_press),
+                UIPartTextInput.UIPartTextInput((300, 40), (20, 50), anchor_window="MD",
+                                                empty_overlay_text="enter seed or leave blank for random"),
+                UIPartTextInput.UIPartTextInput((300, 40), (-320, 50), anchor_window="MD",
+                                                empty_overlay_text="enter player name"),
+                UIPartTextInput.UIPartTextInput((300, 40), (-320, 100), anchor_window="MD", pattern=INT_PATTERN,
+                                                empty_overlay_text="enter world size x, default is 3"),
+                UIPartTextInput.UIPartTextInput((300, 40), (20, 100), anchor_window="MD", pattern=INT_PATTERN,
+                                                empty_overlay_text="enter world size y, default is 3")]
 
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -31,10 +41,15 @@ class StateWorldGenerationConfig(State.State):
     def on_generate_press(self, x, y):
         G.world.cleanup(remove_dims=True)
         G.world.add_dimension(0, {"configname": "default_overworld"})
-        area = [-1, 2, -1, 2]
+        sx = self.parts[4].entered_text; sx = 3 if sx == "" else int(sx)
+        sy = self.parts[4].entered_text; sy = 3 if sy == "" else int(sy)
         G.worldgenerationhandler.enable_generation = True
-        for cx in range(*area[:2]):
-            for cz in range(*area[2:]):
+        fx = sx // 2
+        fy = sy // 2
+        ffx = sx - fx
+        ffy = sy - fy
+        for cx in range(-fx, ffx):
+            for cz in range(-fy, ffy):
                 chunk = G.world.dimensions[0].get_chunk(cx, cz, generate=False)
                 chunk.is_ready = False
                 G.worldgenerationhandler.generate_chunk(chunk)
@@ -42,6 +57,17 @@ class StateWorldGenerationConfig(State.State):
         G.window.position = (0, util.math.get_max_y((0, 0, 0)), 0)
         G.world.config["enable_auto_gen"] = True
         G.world.config["enable_world_barrier"] = True
+        G.player.name = self.parts[3].entered_text
+        if G.player.name == "": G.player.name = "unknown"
+        seed = self.parts[2].entered_text
+        if seed != "":
+            try:
+                seed = int(seed)
+            except ValueError:
+                seed = int.from_bytes(seed.encode("UTF-8"), "big")
+        else:
+            seed = random.randint(-100000, 100000)
+        G.world.config["seed"] = seed
         G.statehandler.switch_to("minecraft:gameinfo")
 
     def bind_to_eventbus(self):
@@ -56,6 +82,11 @@ class StateWorldGenerationConfig(State.State):
     @staticmethod
     def on_draw_2d_pre():
         pyglet.gl.glClearColor(1., 1., 1., 1.)
+
+    def on_activate(self):
+        for part in self.parts:
+            if issubclass(type(part), UIPartTextInput.UIPartTextInput):
+                part.reset()
 
 
 escape = StateWorldGenerationConfig()

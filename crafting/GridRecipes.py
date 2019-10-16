@@ -53,11 +53,11 @@ class GridShaped(crafting.IRecipeType.IRecipe):
         self.output = output
         sx = max(self.inputs, key=lambda x: x[0])[0]
         sy = max(self.inputs, key=lambda x: x[1])[1]
-        self.size = (sx, sy)
+        self.bboxsize = (sx, sy)
 
     def register(self):
         G.craftinghandler.crafting_recipes_shaped.setdefault(len(self.inputs), {}).setdefault(
-            self.size, []).append(self)
+            self.bboxsize, []).append(self)
 
 
 @G.craftinghandler

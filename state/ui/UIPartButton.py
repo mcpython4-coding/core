@@ -13,7 +13,7 @@ import pyglet
 from pyglet.window import mouse
 import util.texture
 import ResourceLocator
-import traceback
+from . import UIPart
 
 
 class ButtonMode(enum.Enum):
@@ -110,7 +110,7 @@ def draw_button(position, size, mode):
     images[2].draw()
 
 
-class UIPartButton(state.StatePart.StatePart):
+class UIPartButton(UIPart.UIPart):
     def __init__(self, size, text, position, press=event.EventInfo.MousePressEventInfo(pyglet.window.mouse.LEFT),
                  anchor_button="WS", anchor_window="WS", on_press=None, on_hover=None, on_try_press=None,
                  enabled=True, has_hovering_state=True):
@@ -123,13 +123,9 @@ class UIPartButton(state.StatePart.StatePart):
         :param anchor_button: the anchor on the button
         :param anchor_window: the anchor on the window
         """
-        super().__init__()
-        self.size = size
+        super().__init__(position, size, anchor_element=anchor_button, anchor_window=anchor_window)
         self.text = text
-        self.position = position
         self.press: event.EventInfo.MousePressEventInfo = press
-        self.anchor_button = anchor_button
-        self.anchor_window = anchor_window
 
         self.on_press = on_press
         self.on_hover = on_hover
@@ -151,31 +147,9 @@ class UIPartButton(state.StatePart.StatePart):
         super().deactivate()
         self.hovering = False
 
-    def _get_button_base_positon(self):
-        x, y = self.position
-        wx, wy = G.window.get_size()
-        bx, by = self.size
-        if self.anchor_button[0] == "M":
-            x -= bx // 2
-        elif self.anchor_button[0] == "E":
-            x = bx - abs(x)
-        if self.anchor_button[1] == "M":
-            y -= by // 2
-        elif self.anchor_button[1] == "N":
-            y = by - abs(y)
-        if self.anchor_window[0] == "M":
-            x += wx // 2
-        elif self.anchor_window[0] == "E":
-            x = wx - abs(x)
-        if self.anchor_window[1] == "M":
-            y += wy // 2
-        elif self.anchor_window[1] == "N":
-            y = wy - abs(y)
-        return x, y
-
     def on_mouse_press(self, x, y, button, modifiers):
-        mx, my = self._get_button_base_positon()
-        sx, sy = self.size
+        mx, my = self.get_real_position()
+        sx, sy = self.bboxsize
         self.press.area = ((mx, my), (mx+sx, my+sy))
         if self.press.equals(x, y, button, modifiers):
             if self.on_press:
@@ -185,8 +159,8 @@ class UIPartButton(state.StatePart.StatePart):
                 self.on_try_press(x, y)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        mx, my = self._get_button_base_positon()
-        sx, sy = self.size
+        mx, my = self.get_real_position()
+        sx, sy = self.bboxsize
         if 0 <= x - mx <= sx and 0 <= y - my <= sy:
             if self.on_hover:
                 self.on_hover(x, y)
@@ -198,13 +172,13 @@ class UIPartButton(state.StatePart.StatePart):
         mode = ButtonMode.DISABLED if not self.enabled else (
             ButtonMode.HOVERING if self.hovering and self.has_hovering_state else ButtonMode.ENABLED
         )
-        x, y = self._get_button_base_positon()
-        draw_button((x, y), self.size, mode)
+        x, y = self.get_real_position()
+        draw_button((x, y), self.bboxsize, mode)
         self.lable.text = self.text
         wx, wy = self.lable.content_width, self.lable.content_height
-        self.lable.x = x + self.size[0] // 2 - wx // 2
-        self.lable.y = y + self.size[1] // 2 - wy // 3
-        self.lable.font_size = self.size[1] // 2.0
+        self.lable.x = x + self.bboxsize[0] // 2 - wx // 2
+        self.lable.y = y + self.bboxsize[1] // 2 - wy // 3
+        self.lable.font_size = self.bboxsize[1] // 2.0
         self.lable.draw()
 
 
@@ -231,18 +205,14 @@ class UIPartToggleButton(UIPartButton):
         :param text_constructor: an string.format(item) or an function(item: str) -> str entry
         :param start: where in the array to start from
         """
-        state.StatePart.StatePart.__init__(self)
-        self.size = size
+        UIPart.UIPart.__init__(self, position, size, anchor_element=anchor_button, anchor_window=anchor_window)
         self.textpages = textpossibilitys
         self.textconstructor = text_constructor
         self.index = start
         self.text = ""
         self._generate_text()
-        self.position = position
         self.toggle: event.EventInfo.MousePressEventInfo = toggle
         self.retoggle: event.EventInfo.MousePressEventInfo = retoggle
-        self.anchor_button = anchor_button
-        self.anchor_window = anchor_window
 
         self.on_toggle = on_toggle
         self.on_hover = on_hover
@@ -269,7 +239,7 @@ class UIPartToggleButton(UIPartButton):
             self.text = text
 
     def on_mouse_press(self, x, y, button, modifiers):
-        mx, my = self._get_button_base_positon()
+        mx, my = self.get_real_position()
         sx, sy = self.size
         self.toggle.area = self.retoggle.area = ((mx, my), (mx + sx, my + sy))
         if self.toggle.equals(x, y, button, modifiers):

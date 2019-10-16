@@ -460,13 +460,19 @@ started these clone on 12th of July, 2019
 [uuk]: added progressbar to BlockItemFactory
 [uuk]: fixed some bugs around progress bar rendering
 [uuk]: new world generation config screen
+[uuk]: created UI base class
+[uuk]: added new UI element: TextInput
+[uuk]: fixed typos in UIPartImage
+[uuk]: added new world config entries: world size, player name, world seed
 
+
+change button draw to use image.get_region() instead of pillow's crop function
 
 add an display attribute to WorldGenConfig
 add an dimension attribute to WorldGenConfig -> sort after dimension
 add an toggle button for all possible WorldGenConfigs
 
-change world generation to be based on a given seed
+change world generation to be based on a given seed (all maps!)
 
 
 issues to implement / fix

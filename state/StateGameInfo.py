@@ -30,7 +30,7 @@ class StateGameInfo(state.State.State):
     def get_parts(self) -> list:
         return [state.StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False,
                                                   activate_keyboard=False, activate_focused_block=False),
-                UIPartImage.UIPartLable(sprite, (0, 0), anchor_window="MM", anchor_lable="MM"),
+                UIPartImage.UIPartImage(sprite, (0, 0), anchor_window="MM", anchor_image="MM"),
                 UIPartLable.UIPartLable("These Game is written", (0, 40), anchor_lable="MM", anchor_window="MM",
                                         text_size=10),
                 UIPartLable.UIPartLable("completely in python", (0, 30), anchor_lable="MM", anchor_window="MM",

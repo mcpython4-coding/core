@@ -31,3 +31,12 @@ def draw_line(f, t, color=(.0, .0, .0)):
     gl.glVertex2f(*t)
     gl.glEnd()
 
+
+def draw_line_rectangle(position, size, color=(0., 0., 0.)):
+    x, y = position
+    sx, sy = size
+    draw_line((x, y), (x, y + sy + 1), color=color)
+    draw_line((x, y), (x + sx, y), color=color)
+    draw_line((x + sx, y), (x + sx, y + sy), color=color)
+    draw_line((x, y + sy), (x + sx, y + sy), color=color)
+
