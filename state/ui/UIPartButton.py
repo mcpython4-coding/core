@@ -5,15 +5,20 @@ original game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
-import state.StatePart
-import globals as G
 import event.EventInfo
 import enum
 import pyglet
 from pyglet.window import mouse
-import util.texture
 import ResourceLocator
 from . import UIPart
+import globals as G
+import util.opengl
+
+image = ResourceLocator.read("gui/widgets", "pyglet")
+disabled = image.get_region(2, 256-46-18, 196, 15)
+enabled = image.get_region(2, 256-66-18, 196, 15)
+hovering = image.get_region(2, 256-86-18, 196, 15)
+disabled.save(G.local+"/tmp/test.png")
 
 
 class ButtonMode(enum.Enum):
@@ -22,92 +27,25 @@ class ButtonMode(enum.Enum):
     HOVERING = 2
 
 
-IMAGE_DICT = {}  # ButtonMode -> [NW, NM, NE, MW, MM, ME, SW, SM, SE] as 10x10 images loaded in pyglet as corner
-
-button_file = ResourceLocator.read("gui/widgets", "pil")
-
-IMAGE_DICT[ButtonMode.ENABLED] = [
-    util.texture.to_pyglet_sprite(button_file.crop((0, 66, 10, 76))),  # NW
-    util.texture.to_pyglet_sprite(button_file.crop((0, 71, 10, 81))),  # NM
-    util.texture.to_pyglet_sprite(button_file.crop((0, 76, 10, 86))),  # NE
-    util.texture.to_pyglet_sprite(button_file.crop((10, 66, 20, 76))),  # MW
-    util.texture.to_pyglet_sprite(button_file.crop((10, 71, 20, 81))),  # MM
-    util.texture.to_pyglet_sprite(button_file.crop((10, 76, 20, 86))),  # ME
-    util.texture.to_pyglet_sprite(button_file.crop((190, 66, 200, 76))),  # SW
-    util.texture.to_pyglet_sprite(button_file.crop((190, 71, 200, 81))),  # SM
-    util.texture.to_pyglet_sprite(button_file.crop((190, 76, 200, 86)))  # SE
-]
-
-IMAGE_DICT[ButtonMode.DISABLED] = [
-    util.texture.to_pyglet_sprite(button_file.crop((0, 46, 10, 56))),  # NW
-    util.texture.to_pyglet_sprite(button_file.crop((0, 51, 10, 61))),  # NM
-    util.texture.to_pyglet_sprite(button_file.crop((0, 56, 10, 66))),  # NE
-    util.texture.to_pyglet_sprite(button_file.crop((10, 46, 20, 56))),  # MW
-    util.texture.to_pyglet_sprite(button_file.crop((10, 51, 20, 61))),  # MM
-    util.texture.to_pyglet_sprite(button_file.crop((10, 56, 20, 66))),  # ME
-    util.texture.to_pyglet_sprite(button_file.crop((190, 46, 200, 56))),  # SW
-    util.texture.to_pyglet_sprite(button_file.crop((190, 51, 200, 61))),  # SM
-    util.texture.to_pyglet_sprite(button_file.crop((190, 56, 200, 66)))  # SE
-]
-
-IMAGE_DICT[ButtonMode.HOVERING] = [
-    util.texture.to_pyglet_sprite(button_file.crop((0, 86, 10, 96))),  # NW
-    util.texture.to_pyglet_sprite(button_file.crop((0, 91, 10, 101))),  # NM
-    util.texture.to_pyglet_sprite(button_file.crop((0, 96, 10, 106))),  # NE
-    util.texture.to_pyglet_sprite(button_file.crop((10, 86, 20, 96))),  # MW
-    util.texture.to_pyglet_sprite(button_file.crop((10, 91, 20, 101))),  # MM
-    util.texture.to_pyglet_sprite(button_file.crop((10, 96, 20, 106))),  # ME
-    util.texture.to_pyglet_sprite(button_file.crop((190, 86, 200, 96))),  # SW
-    util.texture.to_pyglet_sprite(button_file.crop((190, 91, 200, 101))),  # SM
-    util.texture.to_pyglet_sprite(button_file.crop((190, 96, 200, 106)))  # SE
-]
+IMAGES = {ButtonMode.DISABLED: disabled, ButtonMode.ENABLED: enabled, ButtonMode.HOVERING: hovering}
 
 
 def draw_button(position, size, mode):
-    if mode not in IMAGE_DICT:
+    if mode not in IMAGES:
         mode = ButtonMode.DISABLED
-    images = IMAGE_DICT[mode]
-    x, y = position
-    dx, dy = size
-
-    # middle
-
-    mx, my = size[0] % 10 // 2, size[1] % 10 // 2
-
-    for rx in range(size[0] // 10):
-        rx *= 10
-        rx += mx
-        for ry in range(size[1] // 10):
-            ry *= 10
-            ry += my
-            images[4].position = (rx+x, ry+y)
-            images[4].draw()
-
-    for rx in range(size[0] // 10):
-        rx *= 10
-        images[5].position = (x+rx, y)
-        images[5].draw()
-        images[3].position = (x+rx, y+size[1]-10)
-        images[3].draw()
-
-    for ry in range(size[1] // 10):
-        ry *= 10
-        images[1].position = (x, y+ry)
-        images[1].draw()
-        images[7].position = (x+size[0]-10, y+ry)
-        images[7].draw()
-
-    # corners
-    dx -= 10
-    dy -= 10
-    images[6].position = (x+dx, y+dy)
-    images[6].draw()
-    images[8].position = (x+dx, y)
-    images[8].draw()
-    images[0].position = (x, y+dy)
-    images[0].draw()
-    images[2].position = position
-    images[2].draw()
+    sourceimage: pyglet.image.AbstractImage = IMAGES[mode]
+    w = size[0] // sourceimage.width
+    h = size[1] // sourceimage.height
+    pyglet.gl.glColor3d(255, 255, 255)
+    for x in range(w+1):
+        i = sourceimage if x != w else sourceimage.get_region(0, 0, size[0] % sourceimage.width, sourceimage.height)
+        for y in range(h+1):
+            ii = i if y != h else i.get_region(0, 0, i.width, size[1] % sourceimage.height)
+            try:
+                ii.blit(x * sourceimage.width + position[0], y * sourceimage.height + position[1])
+            except ZeroDivisionError: pass
+            except TypeError: pass
+    util.opengl.draw_line_rectangle(position, size, (0, 0, 0))
 
 
 class UIPartButton(UIPart.UIPart):
@@ -240,7 +178,7 @@ class UIPartToggleButton(UIPartButton):
 
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()
-        sx, sy = self.size
+        sx, sy = self.bboxsize
         self.toggle.area = self.retoggle.area = ((mx, my), (mx + sx, my + sy))
         if self.toggle.equals(x, y, button, modifiers):
             self.index += 1

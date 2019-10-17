@@ -464,15 +464,20 @@ started these clone on 12th of July, 2019
 [uuk]: added new UI element: TextInput
 [uuk]: fixed typos in UIPartImage
 [uuk]: added new world config entries: world size, player name, world seed
+[uuk]: changed the way how buttons are drawn
+[uuk]: re-added barrier & auto gen config options
+[uuk]: fixed bug: when using the ToggleButton, game crashed
 
 
-change button draw to use image.get_region() instead of pillow's crop function
+add language files, bind to buttons & lables, make some special format for it
 
 add an display attribute to WorldGenConfig
 add an dimension attribute to WorldGenConfig -> sort after dimension
 add an toggle button for all possible WorldGenConfigs
 
 change world generation to be based on a given seed (all maps!)
+
+add an generation display
 
 
 issues to implement / fix
@@ -485,6 +490,7 @@ todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, b
 todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
         maybe due to an clear & draw error?
 todo: fix bug: falling blocks are NOT updating visable state
+todo: fix bug: lags when changing chunks
 
 currently working on / planed for next commit(s):
 
@@ -494,10 +500,8 @@ an update to the system of states
 todo: add slider, checkbox, text field
 
 -world gen state: (complete overhaul)
-todo: add an option to toggle world generation size
 todo: add some kind of info to screen for generation
 todo: make player gamemode selection not gamemode, instead world mode defined by world generator
-todo: make the player select the seed for world
 todo: make the player select name of world
 
 todo: add some kind of custom World Generation generator: options for biome selection per dimension, structures
@@ -518,6 +522,7 @@ todo: change crossshair to left-upper icon in gui/icons.png (not visable because
 todo: add config screen with back button, reset button
 todo: add config page system, add pages for: player name, movement speeds, gravity, max jump height, jump speed,
     player height
+todo: add Language Selection page
 
 other tasks that should be done in near future
 todo: add brake animation on block (draw with alpha over the block?)
@@ -525,8 +530,6 @@ todo: cache how much xp is needed to next level (function is callen every draw b
 todo: make command input errors better
 todo: add Tool & Armor-durability
 todo: add leather armor
-todo: add language files, bind to buttons & lables
-todo: add Language Selection State
 todo: add hovering info to items, make them use Language files
 todo: increase fps during blocks falling (or another reason for decreased FPS)
 

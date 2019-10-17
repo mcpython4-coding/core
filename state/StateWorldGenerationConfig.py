@@ -33,7 +33,11 @@ class StateWorldGenerationConfig(State.State):
                 UIPartTextInput.UIPartTextInput((300, 40), (-320, 100), anchor_window="MD", pattern=INT_PATTERN,
                                                 empty_overlay_text="enter world size x, default is 3"),
                 UIPartTextInput.UIPartTextInput((300, 40), (20, 100), anchor_window="MD", pattern=INT_PATTERN,
-                                                empty_overlay_text="enter world size y, default is 3")]
+                                                empty_overlay_text="enter world size y, default is 3"),
+                UIPartButton.UIPartToggleButton((300, 20), [True, False], (-320, 150), anchor_window="MD",
+                                                text_constructor="Auto Generation: {}"),
+                UIPartButton.UIPartToggleButton((300, 20), [True, False], (20, 150), anchor_window="MD",
+                                                text_constructor="World Barrier: {}")]
 
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -55,8 +59,8 @@ class StateWorldGenerationConfig(State.State):
                 G.worldgenerationhandler.generate_chunk(chunk)
                 chunk.is_ready = True
         G.window.position = (0, util.math.get_max_y((0, 0, 0)), 0)
-        G.world.config["enable_auto_gen"] = True
-        G.world.config["enable_world_barrier"] = True
+        G.world.config["enable_auto_gen"] = self.parts[6].textpages[self.parts[6].index]
+        G.world.config["enable_world_barrier"] = self.parts[7].textpages[self.parts[7].index]
         G.player.name = self.parts[3].entered_text
         if G.player.name == "": G.player.name = "unknown"
         seed = self.parts[2].entered_text
