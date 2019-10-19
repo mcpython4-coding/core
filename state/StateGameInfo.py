@@ -28,21 +28,15 @@ class StateGameInfo(state.State.State):
     def __init__(self): state.State.State.__init__(self)
 
     def get_parts(self) -> list:
-        return [state.StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False,
-                                                  activate_keyboard=False, activate_focused_block=False),
-                UIPartImage.UIPartImage(sprite, (0, 0), anchor_window="MM", anchor_image="MM"),
-                UIPartLable.UIPartLable("These Game is written", (0, 40), anchor_lable="MM", anchor_window="MM",
-                                        text_size=10),
-                UIPartLable.UIPartLable("completely in python", (0, 30), anchor_lable="MM", anchor_window="MM",
-                                        text_size=10),
-                UIPartLable.UIPartLable("DO NOT REPORT ANY BUG",
-                                        (0, 15), anchor_lable="MM", anchor_window="MM", text_size=10),
-                UIPartLable.UIPartLable("TO THE MOJANG BUG TRACKER.",
-                                        (0, 5), anchor_lable="MM", anchor_window="MM", text_size=10),
-                UIPartLable.UIPartLable("GO TO THE BUG TRACKER",
-                                        (0, -10), anchor_lable="MM", anchor_window="MM", text_size=10),
-                UIPartLable.UIPartLable("OF THE GITHUB PROJECT",
-                                        (0, -20), anchor_lable="MM", anchor_window="MM", text_size=10)]
+        parts = [state.StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False,
+                                                   activate_keyboard=False, activate_focused_block=False),
+                 UIPartImage.UIPartImage(sprite, (0, 0), anchor_window="MM", anchor_image="MM")]
+        y = 40
+        for i in range(7):
+            parts.append(UIPartLable.UIPartLable("#*special.gameinfo.line{}*#".format(i+1),
+                                                 (0, y), anchor_lable="MM", anchor_window="MM", text_size=10))
+            y -= 12
+        return parts
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)

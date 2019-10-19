@@ -13,7 +13,7 @@ import random
 class BlockStateDefinition:
     @staticmethod
     def from_directory(directory: str):
-        for file in ResourceLocator.get_all_entrys(directory):
+        for file in ResourceLocator.get_all_entries(directory):
             if not file.endswith("/"):
                 BlockStateDefinition.from_file(file)
 

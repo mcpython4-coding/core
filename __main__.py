@@ -24,7 +24,7 @@ try:
         try:
             import shutil
             shutil.rmtree(globals.local + "/tmp")
-        except (shutil.Error, ImportError):
+        except (shutil.Error, ImportError, FileNotFoundError):
             pass
 
     import globals as G
@@ -78,6 +78,8 @@ try:
         import world.World
         globals.world = world.World.World()
         import texture.model.BlockState
+        import Language
+        Language.load()
         print("searching for models & blockstates...")
         globals.modelhandler.search()
         texture.model.BlockState.BlockStateDefinition.from_directory("assets/minecraft/blockstates")

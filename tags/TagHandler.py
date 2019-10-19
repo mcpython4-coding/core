@@ -17,7 +17,7 @@ class TagHandler:
         self.taglocations = ["data/minecraft/tags/items", "data/minecraft/tags/naming"]
 
     def load(self):
-        for row in [ResourceLocator.get_all_entrys(x) for x in self.taglocations]:
+        for row in [ResourceLocator.get_all_entries(x) for x in self.taglocations]:
             for address in row:
                 if address.endswith("/"): continue
                 data = ResourceLocator.read(address, "json")

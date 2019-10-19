@@ -11,6 +11,7 @@ import event.EventInfo
 import pyglet
 from pyglet.window import mouse
 from . import UIPart
+import Language
 
 
 class UIPartLable(UIPart.UIPart):
@@ -59,5 +60,6 @@ class UIPartLable(UIPart.UIPart):
         self.lable.y = y + size[1] // 2 - wy // 2
         self.lable.color = self.color
         self.lable.font_size = self.text_size
+        self.lable.text = Language.decode(self.text)
         self.lable.draw()
 

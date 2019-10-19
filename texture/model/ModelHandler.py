@@ -21,7 +21,7 @@ class ModelHandler:
         self.blockstates = {}
 
     def search(self):
-        found_models = ResourceLocator.get_all_entrys("assets/minecraft/models/block")
+        found_models = ResourceLocator.get_all_entries("assets/minecraft/models/block")
         for model in found_models:
             self.found_models["block/"+model.split("/")[-1].split(".")[0]] = model
 

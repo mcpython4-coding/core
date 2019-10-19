@@ -19,9 +19,9 @@ class StateStartMenu(state.State.State):
     def __init__(self): state.State.State.__init__(self)
 
     def get_parts(self) -> list:
-        return [UIPartLable.UIPartLable("Start Menu", (0, 100), anchor_window="MM", anchor_lable="MM"),
-                UIPartButton.UIPartButton((200, 15), "Single Player", (0, 0), anchor_window="MM", anchor_button="MM",
-                                          on_press=self.on_new_game_press)]
+        return [UIPartLable.UIPartLable("#*menu.game*#", (0, 100), anchor_window="MM", anchor_lable="MM"),
+                UIPartButton.UIPartButton((200, 15), "#*menu.singleplayer*#", (0, 0), anchor_window="MM",
+                                          anchor_button="MM", on_press=self.on_new_game_press)]
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)

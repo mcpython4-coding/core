@@ -49,7 +49,7 @@ class CraftingHandler:
         i = 1
         errored = 0
         excepted = 0
-        for item in ResourceLocator.get_all_entrys("data/minecraft/recipes"):
+        for item in ResourceLocator.get_all_entries("data/minecraft/recipes"):
             print("\r -loading recipe {}".format(i), end="")
             try:
                 self.add_recipe_from_file(item)

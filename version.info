@@ -467,9 +467,14 @@ started these clone on 12th of July, 2019
 [uuk]: changed the way how buttons are drawn
 [uuk]: re-added barrier & auto gen config options
 [uuk]: fixed bug: when using the ToggleButton, game crashed
+[uuk]: added Language data, auto loading & connected to various lables, buttons & text field empty text
+[uuk]: fixed bug: UIPartLable's text was NOT updating when setting its text
+[uuk]: added special mode to ResourceLocator to get all data from all possible locations, not only the first on list
+[uuk]: added custom language file for translations which are not minecraft-sourced
+[uuk]: Escape State has now an "Go to github project" - button
+[uuk]: sometimes, game crashes when tmp-folder is opened in an file explorer
+[uuk]: fixed bug: buttons where miss-drawn
 
-
-add language files, bind to buttons & lables, make some special format for it
 
 add an display attribute to WorldGenConfig
 add an dimension attribute to WorldGenConfig -> sort after dimension
@@ -509,7 +514,6 @@ todo: make this save/load-able from .json files stored in presets/<filename>.jso
 
 -start screen
 todo: add an quite game button to start screen
-todo: add an button "go to github project" which opens the internet browser with an link to github (see util/callbacks)
 todo: add an real start menu background & option background
 
 -inter-game state
@@ -532,6 +536,28 @@ todo: add Tool & Armor-durability
 todo: add leather armor
 todo: add hovering info to items, make them use Language files
 todo: increase fps during blocks falling (or another reason for decreased FPS)
+
+
+an update to the world generation system
+
+HeightMapLayer:
+    Optimize, maybe use more than one noise function
+
+BiomeMapLayer:
+    Optimize for using mutated variants, better biome borders!
+
+Biomes:
+    add more biomes
+
+Decorators:
+    fix tree generation, add generation for all trees
+    add structure loader from nbt, create command to save an area as an nbt file, maybe add than structure blocks
+    add flower generation system
+    add Ore Generation System
+    add cave & vein generation system
+    add dungeon, mansion, dessert temple, jungle temple, village, ship wrack, mineshaft buildings
+
+
 
 other additions which could be useful
 

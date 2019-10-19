@@ -45,6 +45,7 @@ class ResourceZipFile(IResourceLocation):
 
     def __init__(self, path: str):
         self.archive = zipfile.ZipFile(path)
+        self.path = path
 
     def is_in_path(self, filename: str) -> bool:
         return filename in self.archive.namelist()
@@ -146,6 +147,14 @@ def exists(file):
 
 
 def read(file, mode=None):
+    if file.startswith("@"):  # special resource notation, can be used for accessing special ResourceLocations
+        data = file.split("|")
+        resource = data[0][1:]
+        file = "|".join(data[1:])
+        for x in RESOURCE_LOCATIONS:
+            if x.path == resource:
+                return x.read(file, mode)
+        raise RuntimeError("can't find resource named {}".format(resource))
     if not exists(file):
         file = transform_name(file)
     for x in RESOURCE_LOCATIONS:
@@ -157,9 +166,21 @@ def read(file, mode=None):
                 raise
 
 
-def get_all_entrys(directory: str) -> list:
+def get_all_entries(directory: str) -> list:
     result = []
     for x in RESOURCE_LOCATIONS:
         result += x.get_all_entrys_in_directory(directory)
+    return result
+
+
+def get_all_entries_special(directory: str) -> list:
+    """
+    returns all entries found with their corresponding '@[path]:file'-notation
+    :param directory: the directory to searc from
+    :return: an list of found resources
+    """
+    result = []
+    for x in RESOURCE_LOCATIONS:
+        result += ["@{}|{}".format(x.path, s) for s in x.get_all_entrys_in_directory(directory)]
     return result
 

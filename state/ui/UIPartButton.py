@@ -13,12 +13,13 @@ import ResourceLocator
 from . import UIPart
 import globals as G
 import util.opengl
+import Language
 
 image = ResourceLocator.read("gui/widgets", "pyglet")
 disabled = image.get_region(2, 256-46-18, 196, 15)
-enabled = image.get_region(2, 256-66-18, 196, 15)
+enabled = image.get_region(2, 256-66-17, 196, 14)
 hovering = image.get_region(2, 256-86-18, 196, 15)
-disabled.save(G.local+"/tmp/test.png")
+#  enabled.save(G.local+"/tmp/test.png")  # only for debugging reasons
 
 
 class ButtonMode(enum.Enum):
@@ -112,7 +113,7 @@ class UIPartButton(UIPart.UIPart):
         )
         x, y = self.get_real_position()
         draw_button((x, y), self.bboxsize, mode)
-        self.lable.text = self.text
+        self.lable.text = Language.decode(self.text)
         wx, wy = self.lable.content_width, self.lable.content_height
         self.lable.x = x + self.bboxsize[0] // 2 - wx // 2
         self.lable.y = y + self.bboxsize[1] // 2 - wy // 3
@@ -170,11 +171,11 @@ class UIPartToggleButton(UIPartButton):
     def _generate_text(self):
         text = self.textpages[self.index]
         if type(self.textconstructor) == str:
-            self.text = self.textconstructor.format(text)
+            self.text = Language.decode(self.textconstructor.format(text))
         elif callable(self.textconstructor):
-            self.text = self.textconstructor(text)
+            self.text = Language.decode(self.textconstructor(text))
         else:
-            self.text = text
+            self.text = Language.decode(text)
 
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()

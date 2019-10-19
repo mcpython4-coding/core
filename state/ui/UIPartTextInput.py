@@ -11,9 +11,11 @@ import pyglet.window.key
 import time
 import util.opengl
 import pyglet
+import Language
 
 ALL_PATTERN = None
 INT_PATTERN = "-0123456789."
+INT_PATTERN_POSITIVE = INT_PATTERN[1:]
 
 
 class UIPartTextInput(UIPart.UIPart):
@@ -36,7 +38,7 @@ class UIPartTextInput(UIPart.UIPart):
         self.lable.x, self.lable.y = x + 5, y + self.bboxsize[1] // 2
         if not self.selected and self.entered_text == "":
             if self.empty_overlay_text != "":
-                self.lable.text = self.empty_overlay_text
+                self.lable.text = Language.decode(self.empty_overlay_text)
                 self.lable.color = (150, 150, 150, 255)
                 self.lable.font_size = self.bboxsize[1] // 4
         else:

@@ -22,22 +22,24 @@ class StateWorldGenerationConfig(State.State):
     def __init__(self): State.State.__init__(self)
 
     def get_parts(self) -> list:
-        return [UIPartButton.UIPartButton((300, 20), "BACK", (-320, 20), anchor_window="MD",
+        return [UIPartButton.UIPartButton((300, 20), "#*gui.back*#", (-320, 20), anchor_window="MD",
                                           on_press=self.on_back_press),
-                UIPartButton.UIPartButton((300, 20), "GENERATE", (20, 20), anchor_window="MD",
+                UIPartButton.UIPartButton((300, 20), "#*multiplayer.status.finished*#", (20, 20), anchor_window="MD",
                                           on_press=self.on_generate_press),
                 UIPartTextInput.UIPartTextInput((300, 40), (20, 50), anchor_window="MD",
-                                                empty_overlay_text="enter seed or leave blank for random"),
+                                                empty_overlay_text="#*special.worldgeneration.seed_empty*#"),
                 UIPartTextInput.UIPartTextInput((300, 40), (-320, 50), anchor_window="MD",
-                                                empty_overlay_text="enter player name"),
+                                                empty_overlay_text="#*special.worldgeneration.playername_empty*#"),
                 UIPartTextInput.UIPartTextInput((300, 40), (-320, 100), anchor_window="MD", pattern=INT_PATTERN,
-                                                empty_overlay_text="enter world size x, default is 3"),
+                                                empty_overlay_text="#*special.worldgeneration.worldsize|x|3*#"),
                 UIPartTextInput.UIPartTextInput((300, 40), (20, 100), anchor_window="MD", pattern=INT_PATTERN,
-                                                empty_overlay_text="enter world size y, default is 3"),
-                UIPartButton.UIPartToggleButton((300, 20), [True, False], (-320, 150), anchor_window="MD",
-                                                text_constructor="Auto Generation: {}"),
-                UIPartButton.UIPartToggleButton((300, 20), [True, False], (20, 150), anchor_window="MD",
-                                                text_constructor="World Barrier: {}")]
+                                                empty_overlay_text="#*special.worldgeneration.worldsize|y|3*#"),
+                UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
+                                                (-320, 150), anchor_window="MD",
+                                                text_constructor="#*special.worldgeneration.enable_auo_gen*#: {}"),
+                UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
+                                                (20, 150), anchor_window="MD",
+                                                text_constructor="#*special.worldgeneration.enable_barrier*#: {}")]
 
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -59,8 +61,9 @@ class StateWorldGenerationConfig(State.State):
                 G.worldgenerationhandler.generate_chunk(chunk)
                 chunk.is_ready = True
         G.window.position = (0, util.math.get_max_y((0, 0, 0)), 0)
-        G.world.config["enable_auto_gen"] = self.parts[6].textpages[self.parts[6].index]
-        G.world.config["enable_world_barrier"] = self.parts[7].textpages[self.parts[7].index]
+        G.world.config["enable_auto_gen"] = self.parts[6].textpages[self.parts[6].index] == "#*special.value.true*#"
+        G.world.config["enable_world_barrier"] = \
+            self.parts[7].textpages[self.parts[7].index] == "#*special.value.true*#"
         G.player.name = self.parts[3].entered_text
         if G.player.name == "": G.player.name = "unknown"
         seed = self.parts[2].entered_text
