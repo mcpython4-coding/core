@@ -24,7 +24,7 @@ try:
         try:
             import shutil
             shutil.rmtree(globals.local + "/tmp")
-        except (shutil.Error, ImportError, FileNotFoundError):
+        except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
             pass
 
     import globals as G

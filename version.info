@@ -474,20 +474,25 @@ started these clone on 12th of July, 2019
 [uuk]: Escape State has now an "Go to github project" - button
 [uuk]: sometimes, game crashes when tmp-folder is opened in an file explorer
 [uuk]: fixed bug: buttons where miss-drawn
+[uuk]: added quit-game button to start screen
+[uuk]: changed crosshairs texture to mc texture
+[uuk]: fixed bug: when pressing an mouse button while looking in an generating chunk let the game crash
+[uuk]: when leaving main game state and pressing an button, button unpressing in the non-main-game-state was not handled
+       so bugs around it where occurring
+[uuk]: added tab-support to TextFields
+
 
 
 add an display attribute to WorldGenConfig
 add an dimension attribute to WorldGenConfig -> sort after dimension
 add an toggle button for all possible WorldGenConfigs
 
-change world generation to be based on a given seed (all maps!)
+change world generation to be based on a given seed (all generation layers!)
 
 add an generation display
 
 
 issues to implement / fix
-todo: fix bug: in some rare cases, mouse up is not handled an will cause blocks to be added until game close
-    (after closing crafting table) (?)
 todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
 todo: fix bug: when jumping in an block from downwards, you get damage
 todo: fix bug: when jumping into an non-full block, getting damage
@@ -496,37 +501,36 @@ todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & num
         maybe due to an clear & draw error?
 todo: fix bug: falling blocks are NOT updating visable state
 todo: fix bug: lags when changing chunks
+todo: fix bug: when looking at the corner of an block, the focus is on the block behind rather on the block viewed at
 
 currently working on / planed for next commit(s):
 
 an update to the system of states
 
 -gui elements:
-todo: add slider, checkbox, text field
+todo: add slider, checkbox
 
 -world gen state: (complete overhaul)
 todo: add some kind of info to screen for generation
 todo: make player gamemode selection not gamemode, instead world mode defined by world generator
-todo: make the player select name of world
+todo: make the player select name of world, maybe change from player name to world name, set it into caption
 
 todo: add some kind of custom World Generation generator: options for biome selection per dimension, structures
 todo: make this save/load-able from .json files stored in presets/<filename>.json
 
 -start screen
-todo: add an quite game button to start screen
 todo: add an real start menu background & option background
 
 -inter-game state
 todo: make the info label hide-able by key combo (maybe an StatePart which is activated & deactivated?)
-todo: game info label is not good formatted (spacing)
 todo: add death screen
-todo: change crossshair to left-upper icon in gui/icons.png (not visable because it is white!)
 
 -config screen
 todo: add config screen with back button, reset button
 todo: add config page system, add pages for: player name, movement speeds, gravity, max jump height, jump speed,
     player height
 todo: add Language Selection page
+todo: add key bind option page
 
 other tasks that should be done in near future
 todo: add brake animation on block (draw with alpha over the block?)
@@ -539,6 +543,7 @@ todo: increase fps during blocks falling (or another reason for decreased FPS)
 
 
 an update to the world generation system
+Try to look into minecraft's 1.14.4 world generation (uuk: I have written an small tool for helping looking into source)
 
 HeightMapLayer:
     Optimize, maybe use more than one noise function

@@ -230,7 +230,7 @@ class StatePartGame(StatePart.StatePart):
         if not slot.itemstack.is_empty():
             if slot.itemstack.item.on_player_interact(block, button, modifiers):
                 cancel = True
-        if block:
+        if block and type(block) != str:
             if not cancel and block.on_player_interact(slot.itemstack, button, modifiers):
                 cancel = True
         if cancel:

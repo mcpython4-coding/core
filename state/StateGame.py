@@ -13,6 +13,7 @@ import chat.Chat
 import json
 import event.TickHandler
 import pyglet
+from pyglet.window import mouse
 
 
 class StateGame(State.State):
@@ -28,7 +29,9 @@ class StateGame(State.State):
 
     def on_activate(self): G.worldgenerationhandler.enable_auto_gen = True
 
-    def on_deactivate(self): G.worldgenerationhandler.enable_auto_gen = False
+    def on_deactivate(self):
+        G.worldgenerationhandler.enable_auto_gen = False
+        G.window.mouse_pressing = {mouse.LEFT: False, mouse.RIGHT: False, mouse.MIDDLE: False}
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)

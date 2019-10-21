@@ -12,6 +12,7 @@ import time
 import util.opengl
 import pyglet
 import Language
+import state.StatePart
 
 ALL_PATTERN = None
 INT_PATTERN = "-0123456789."
@@ -90,4 +91,22 @@ class UIPartTextInput(UIPart.UIPart):
 
     def reset(self): self.entered_text = self.default_text
 
+
+class TextInputTabHandler(state.StatePart.StatePart):
+    def __init__(self, textinputs: list):
+        super().__init__()
+        self.textinputs = textinputs
+
+    def bind_to_eventbus(self):
+        super().bind_to_eventbus()
+        self.master[0].eventbus.subscribe("user:keyboard:press", self.on_key_press)
+
+    def on_key_press(self, button, mod):
+        if button == pyglet.window.key.TAB:
+            for i, uiparttextinput in enumerate(self.textinputs):
+                if uiparttextinput.selected:
+                    uiparttextinput.selected = False
+                    self.textinputs[i+1 if i+1 < len(self.textinputs) else 0].selected = True
+                    return
+            self.textinputs[0].selected = True
 

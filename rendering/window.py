@@ -14,6 +14,8 @@ import time
 import globals as G
 import state.StateHandler
 import util.math
+import ResourceLocator
+import util.texture
 
 
 class Window(pyglet.window.Window):
@@ -52,9 +54,6 @@ class Window(pyglet.window.Window):
         # Which sector the player is currently in.
         self.sector = None
 
-        # The crosshairs at the center of the screen.
-        self.reticle = None
-
         # Velocity in the y (upward) direction.
         self.dy = 0
 
@@ -85,6 +84,9 @@ class Window(pyglet.window.Window):
 
         self.keys = key.KeyStateHandler()
         self.push_handlers(self.keys)
+
+        self.CROSSHAIRS_TEXTURE = util.texture.to_pyglet_image(
+            ResourceLocator.read("gui/icons", "pil").crop((0, 0, 15, 15)).resize((30, 30)))
 
     def set_exclusive_mouse(self, exclusive):
         """ If `exclusive` is True, the game will capture the mouse, if False
@@ -301,14 +303,6 @@ class Window(pyglet.window.Window):
         """
         # label
         self.label.y = height - 10
-        # reticle
-        if self.reticle:
-            self.reticle.delete()
-        x, y = self.width // 2, self.height // 2
-        n = 10
-        self.reticle = pyglet.graphics.vertex_list(4,
-            ('v2i', (x - n, y, x + n, y, x, y - n, x, y + n))
-        )
         G.eventhandler.call("user:window:resize", width, height)
 
     def set_2d(self):
@@ -399,8 +393,10 @@ class Window(pyglet.window.Window):
         """ Draw the crosshairs in the center of the screen.
 
         """
-        glColor3d(0, 0, 0)
-        self.reticle.draw(GL_LINES)
+        pyglet.gl.glColor3d(255, 255, 255)
+        wx, wy = self.get_size()
+        self.CROSSHAIRS_TEXTURE.blit(wx//2-self.CROSSHAIRS_TEXTURE.width//2,
+                                     wy//2-self.CROSSHAIRS_TEXTURE.height//2)
 
     def on_text(self, text):
         G.eventhandler.call("user:keyboard:enter", text)

@@ -22,24 +22,28 @@ class StateWorldGenerationConfig(State.State):
     def __init__(self): State.State.__init__(self)
 
     def get_parts(self) -> list:
-        return [UIPartButton.UIPartButton((300, 20), "#*gui.back*#", (-320, 20), anchor_window="MD",
-                                          on_press=self.on_back_press),
-                UIPartButton.UIPartButton((300, 20), "#*multiplayer.status.finished*#", (20, 20), anchor_window="MD",
-                                          on_press=self.on_generate_press),
-                UIPartTextInput.UIPartTextInput((300, 40), (20, 50), anchor_window="MD",
+        parts = [UIPartButton.UIPartButton((300, 20), "#*gui.back*#", (-320, 20), anchor_window="MD",
+                                           on_press=self.on_back_press),
+                 UIPartButton.UIPartButton((300, 20), "#*multiplayer.status.finished*#", (20, 20), anchor_window="MD",
+                                           on_press=self.on_generate_press),
+                 UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
+                                                 (-320, 150), anchor_window="MD",
+                                                 text_constructor="#*special.worldgeneration.enable_auo_gen*#: {}"),
+                 UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
+                                                 (20, 150), anchor_window="MD",
+                                                 text_constructor="#*special.worldgeneration.enable_barrier*#: {}")]
+        text = [UIPartTextInput.UIPartTextInput((300, 40), (20, 50), anchor_window="MD",
                                                 empty_overlay_text="#*special.worldgeneration.seed_empty*#"),
                 UIPartTextInput.UIPartTextInput((300, 40), (-320, 50), anchor_window="MD",
                                                 empty_overlay_text="#*special.worldgeneration.playername_empty*#"),
                 UIPartTextInput.UIPartTextInput((300, 40), (-320, 100), anchor_window="MD", pattern=INT_PATTERN,
                                                 empty_overlay_text="#*special.worldgeneration.worldsize|x|3*#"),
                 UIPartTextInput.UIPartTextInput((300, 40), (20, 100), anchor_window="MD", pattern=INT_PATTERN,
-                                                empty_overlay_text="#*special.worldgeneration.worldsize|y|3*#"),
-                UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
-                                                (-320, 150), anchor_window="MD",
-                                                text_constructor="#*special.worldgeneration.enable_auo_gen*#: {}"),
-                UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
-                                                (20, 150), anchor_window="MD",
-                                                text_constructor="#*special.worldgeneration.enable_barrier*#: {}")]
+                                                empty_overlay_text="#*special.worldgeneration.worldsize|y|3*#")]
+
+        parts.append(UIPartTextInput.TextInputTabHandler([text[2], text[3], text[1], text[0]]))
+
+        return parts + text
 
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -47,8 +51,8 @@ class StateWorldGenerationConfig(State.State):
     def on_generate_press(self, x, y):
         G.world.cleanup(remove_dims=True)
         G.world.add_dimension(0, {"configname": "default_overworld"})
-        sx = self.parts[4].entered_text; sx = 3 if sx == "" else int(sx)
-        sy = self.parts[4].entered_text; sy = 3 if sy == "" else int(sy)
+        sx = self.parts[7].entered_text; sx = 3 if sx == "" else int(sx)
+        sy = self.parts[8].entered_text; sy = 3 if sy == "" else int(sy)
         G.worldgenerationhandler.enable_generation = True
         fx = sx // 2
         fy = sy // 2
@@ -61,12 +65,12 @@ class StateWorldGenerationConfig(State.State):
                 G.worldgenerationhandler.generate_chunk(chunk)
                 chunk.is_ready = True
         G.window.position = (0, util.math.get_max_y((0, 0, 0)), 0)
-        G.world.config["enable_auto_gen"] = self.parts[6].textpages[self.parts[6].index] == "#*special.value.true*#"
+        G.world.config["enable_auto_gen"] = self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
         G.world.config["enable_world_barrier"] = \
-            self.parts[7].textpages[self.parts[7].index] == "#*special.value.true*#"
-        G.player.name = self.parts[3].entered_text
+            self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
+        G.player.name = self.parts[6].entered_text
         if G.player.name == "": G.player.name = "unknown"
-        seed = self.parts[2].entered_text
+        seed = self.parts[5].entered_text
         if seed != "":
             try:
                 seed = int(seed)
