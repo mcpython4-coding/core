@@ -480,7 +480,45 @@ started these clone on 12th of July, 2019
 [uuk]: when leaving main game state and pressing an button, button unpressing in the non-main-game-state was not handled
        so bugs around it where occurring
 [uuk]: added tab-support to TextFields
+[uuk]: added mod-folder with load events
+[uuk]: EventBus can have now EventBuses as children, so they can be deactivated all at once
+[uuk]: EventBus accepts now an subscribeinfo
+[uuk]: added Mod-class, ModLoader-class, ModDependency-class, mods-folder
+[uuk]: fixed bug: ProgressBar was not working
+[uuk]: added ModLoading-state with progress bar
+[uuk]: everything uses now loading events rather than direct load calls from __main__.py
+[uuk]: InventoryPlayerMain requires now an InventoryPlayerHotbar-instance to create
+[uuk]: moved pre-build to post-window-create as an loading phase
+[uuk]: moved item atlas loading to resource-loading phase
+[uuk]: fixed bug: when errors occure with texture side loading, game crashes when block is setted
+[uuk]: changed intern ResourceLocation-lookup to be reverse-ordered to make adding mods easier
+[uuk]: with "--addmoddir <moddir>" you can add custom mod directories
+[uuk]: with "--addmodfile <modfile>" you can add custom mods from other locations
 
+move command loading to phases
+move command entry loading to phases
+move command selector loading to phases
+move GenerationDecorator's to loading
+RecipeLoading & BlockStateLoading & BlockModelLoading & BlockModelBaking, should be stage-mod-started,
+    mod should say where to look for & should be splitted up into different entries
+add an blocklist somewhere in build-folder which would activated BlockItemFactory for non-generated blocks if needed
+add exclude mod flag to sys.argv
+add arguments to sys.argv to provide additions resource folders & locations
+
+add an dimension registry where you can get for every new world an new dim id provided there.
+You should be able to set the id to an value, but also get an new value. It should be handled with an
+    DimensionDefinition, which also links the WorldGenerationConfig, the name, ...
+Make this config public so mods can modify them
+
+idea for loading visualisation:
+    some fancy area in which every mod has after his file size  an area which is colored afer its loading stage.
+    the color is calculated over step / max steps * 255 * random weight per mod per color for r, g, b; a is 255 always
+    every area has an lable with the mod name in its representative text size (box height)
+    the mcpython-mod is also displayed. Its file size is calculated over G.local-size - sum of mod file sizes
+    the progress bar indicates what step is executed at the moment
+    an lable is needed for what mod is loaded & how far we are in it. may be progressbar, may be full to less
+
+todo: fix bug: grass block texture up & down is sometimes missing texture
 
 
 add an display attribute to WorldGenConfig
@@ -563,6 +601,9 @@ Decorators:
     add dungeon, mansion, dessert temple, jungle temple, village, ship wrack, mineshaft buildings
 
 
+Debug World Generator:
+    add an custom-eventbus for WorldGenerators for handling events only if world generator is selected
+    in this state, deactivate block addition & removal!
 
 other additions which could be useful
 

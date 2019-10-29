@@ -20,8 +20,7 @@ import sys
 import json
 import factory.ItemFactory
 import item.ItemHandler
-
-if not os.path.isdir(G.local+"/build/generated_items"): os.makedirs(G.local+"/build/generated_items")
+import mod.ModMcpython
 
 
 SETUP_TIME = 1
@@ -56,6 +55,7 @@ class StateBlockItemGenerator(State.State):
         self.parts[1].size = (w-20, 20)
 
     def on_activate(self):
+        if not os.path.isdir(G.local + "/build/generated_items"): os.makedirs(G.local + "/build/generated_items")
         G.window.set_size(800, 600)
         G.window.set_minimum_size(800, 600)
         G.window.set_maximum_size(800, 600)
@@ -74,6 +74,7 @@ class StateBlockItemGenerator(State.State):
     def on_deactivate(self):
         G.world.cleanup()
         if "--rebuild" in sys.argv:
+            factory.ItemFactory.ItemFactory.process()
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
                 json.dump(self.table, f)
             item.ItemHandler.build()
@@ -120,5 +121,13 @@ class StateBlockItemGenerator(State.State):
         factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True).finish()
 
 
-blockitemgenerator = StateBlockItemGenerator()
+blockitemgenerator = None
+
+
+def create():
+    global blockitemgenerator
+    blockitemgenerator = StateBlockItemGenerator()
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
 

@@ -148,7 +148,7 @@ class Window(pyglet.window.Window):
 
         """
         G.eventhandler.call("gameloop:tick:start", dt)
-        if dt > 3:
+        if dt > 3 and G.statehandler.active_state.get_name() not in ["minecraft:modloading"]:
             print("[warning] running behind normal tick, did you overload game? missing " +
                   str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
         self.world.process_queue()

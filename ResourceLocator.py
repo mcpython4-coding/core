@@ -15,8 +15,10 @@ functions to access data:
         assets/minecraft/textures/block/dirt.png)
     exists(filename: str) -> bool: returns if an directory exists somewhere
     read(filename: str, mode=select from None for bytes, "json", "pil", "pyglet") -> object: loads the file
+    
+How mods do interact with these?
+    Mod files are automatically added to these system to make it easier to add own resources
 """
-
 import globals as G
 import zipfile
 import json
@@ -121,9 +123,9 @@ def load_resources():
                 flag = False
         if flag:
             raise RuntimeError("can't load path {}".format(file))
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))
+    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.14.4.jar"))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local+"/resourcepacks/minecraft"))
-    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local+"/resourcepacks/1.14.4.jar"))
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))
 
 
 def close_all_resources():
@@ -157,7 +159,9 @@ def read(file, mode=None):
         raise RuntimeError("can't find resource named {}".format(resource))
     if not exists(file):
         file = transform_name(file)
-    for x in RESOURCE_LOCATIONS:
+    loc = RESOURCE_LOCATIONS
+    loc.reverse()
+    for x in loc:
         if x.is_in_path(file):
             try:
                 return x.read(file, mode)
@@ -168,7 +172,9 @@ def read(file, mode=None):
 
 def get_all_entries(directory: str) -> list:
     result = []
-    for x in RESOURCE_LOCATIONS:
+    loc = RESOURCE_LOCATIONS
+    loc.reverse()
+    for x in loc:
         result += x.get_all_entrys_in_directory(directory)
     return result
 

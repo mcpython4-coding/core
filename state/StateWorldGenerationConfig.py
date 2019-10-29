@@ -13,6 +13,7 @@ import util.math
 from pyglet.window import key
 import pyglet
 import random
+import mod.ModMcpython
 
 
 class StateWorldGenerationConfig(State.State):
@@ -100,5 +101,13 @@ class StateWorldGenerationConfig(State.State):
                 part.reset()
 
 
-escape = StateWorldGenerationConfig()
+worldgenerationconfig = None
+
+
+def create():
+    global worldgenerationconfig
+    worldgenerationconfig = StateWorldGenerationConfig()
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
 

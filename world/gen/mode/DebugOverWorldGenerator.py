@@ -9,6 +9,7 @@ import globals as G
 import event.Registry
 import math
 import util.math
+import mod.ModMcpython
 
 
 class blockinfo:
@@ -54,4 +55,6 @@ def chunk_generate(cx, cz, chunk):
 config = {"layers": [], "on_chunk_generate_pre": chunk_generate}
 
 G.worldgenerationhandler.register_world_gen_config("debug_overworld", config)
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:post", blockinfo.construct, info="constructing debug world info")
 

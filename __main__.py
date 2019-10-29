@@ -34,6 +34,12 @@ try:
     import ResourceLocator
     ResourceLocator.load_resources()
 
+    import mod.ModLoader
+
+    G.modloader.look_out()
+
+    G.modloader.sort_mods()
+
     # import texture.atlas
 
     # print("generating textures...")
@@ -42,10 +48,7 @@ try:
 
     import sys
 
-    if "--rebuild" in sys.argv:
-        import setup as systemsetup
-
-        systemsetup.execute()
+    import setup as systemsetup
 
     import world.World
     globals.world = world.World.World()
@@ -53,23 +56,9 @@ try:
     import texture.model.ModelHandler
     import texture.model.BlockState
 
-    print("loading tags...")
     import tags.TagHandler
-
-    G.taghandler.load()
-    print("finished!")
-
-    print("loading blocks...")
     import block.BlockHandler
-    block.BlockHandler.load()
-
-    print("loading items...")
     import item.ItemHandler
-    item.ItemHandler.load()
-
-    # if "--rebuild" not in sys.argv:
-    #     item.ItemHandler.build()
-
     import world.gen.WorldGenerationHandler
 
 
@@ -79,27 +68,10 @@ try:
         globals.world = world.World.World()
         import texture.model.BlockState
         import Language
-        Language.load()
-        print("searching for models & blockstates...")
-        globals.modelhandler.search()
-        texture.model.BlockState.BlockStateDefinition.from_directory("assets/minecraft/blockstates")
-        print("finished!")
-        
+
         opengl_setup.setup()
 
-        print("generating models...")
-        globals.modelhandler.build()
-        print("generating image atlases...")
-        import texture.TextureAtlas
-        texture.TextureAtlas.handler.output()
-        print("finished!")
-
-        G.player.create_inventories()
-
-        G.craftinghandler.load()
-
         import world.gen.mode.DebugOverWorldGenerator
-        world.gen.mode.DebugOverWorldGenerator.blockinfo.construct()
 
     def run():
         import pyglet
@@ -111,12 +83,8 @@ try:
     def main():
         G.eventhandler.call("game:startup")
         setup()
-        G.eventhandler.call("game:load_finished")
-        print("----------------------------------------------")
-        print("- END OF LOADING. NOW STARTING UPDATE CYCLES -")
-        print("----------------------------------------------")
         run()
-except BaseException:
+except Exception:
     import ResourceLocator
     ResourceLocator.close_all_resources()
     raise

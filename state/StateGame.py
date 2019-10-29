@@ -14,6 +14,7 @@ import json
 import event.TickHandler
 import pyglet
 from pyglet.window import mouse
+import mod.ModMcpython
 
 
 class StateGame(State.State):
@@ -62,5 +63,13 @@ class StateGame(State.State):
     def on_draw_2d_pre(): pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
 
 
-game = StateGame()
+game = None
+
+
+def create():
+    global game
+    game = StateGame()
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
 

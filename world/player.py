@@ -12,6 +12,7 @@ import chat.Chat
 import util.math
 import traceback
 import ResourceLocator
+import mod.ModMcpython
 
 
 class Player:
@@ -39,7 +40,7 @@ class Player:
 
         self.inventorys: dict = {}
 
-        self.inventory_order: list = [  # an ([inventoryindexname], [reversed slots}) list
+        self.inventory_order: list = [  # an ([inventoryindexname: str], [reversed slots: bool}) list
             ("hotbar", False),
             ("main", False)
         ]
@@ -48,12 +49,15 @@ class Player:
 
         self.iconparts = []
 
+        mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
+                                                    info="setting up player inventory")
+
     def create_inventories(self):
         import gui.InventoryPlayerHotbar
         import gui.InventoryPlayerMain
 
-        self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
-        self.inventorys['main'] = gui.InventoryPlayerMain.InventoryPlayerMain()
+        hotbar = self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
+        self.inventorys['main'] = gui.InventoryPlayerMain.InventoryPlayerMain(hotbar)
         self.inventorys['chat'] = chat.Chat.ChatInventory()
 
         self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/hart.png", "pyglet"),

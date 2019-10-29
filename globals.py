@@ -30,3 +30,5 @@ taghandler = None
 
 modelhandler = None
 
+modloader = None
+

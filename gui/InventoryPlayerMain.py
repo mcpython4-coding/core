@@ -19,6 +19,10 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
     inventory class for the main part of the inventory
     """
 
+    def __init__(self, hotbar):
+        self.hotbar = hotbar
+        super().__init__()
+
     @staticmethod
     def get_config_file() -> str or None:
         return "assets/config/inventory/playerinventorymain.json"
@@ -29,7 +33,7 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
 
     def create_slots(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
-        return [G.player.inventorys["hotbar"].slots[i].copy() for i in range(9)] + \
+        return [self.hotbar.slots[i].copy() for i in range(9)] + \
                [gui.Slot.Slot() for _ in range(27)] + \
                [gui.Slot.Slot(allow_player_add_to_free_place=False, on_update=self.armor_update) for _ in range(4)] + \
                [gui.Slot.Slot(allow_player_add_to_free_place=False) for _ in range(6)]

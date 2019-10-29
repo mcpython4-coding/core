@@ -28,11 +28,13 @@ class BoxModel:
                 self.faces[util.enums.NAMED_SIDES[facename]] = model.get_texture_position(addr)
 
     def add_to_batch(self, position, batch, rotation):
+        # print(self.faces)
         x, y, z = position
         x += self.boxposition[0]
         y += self.boxposition[1]
         z += self.boxposition[2]
-        up, down, north, east, south, west = tuple([self.faces[x] for x in util.enums.SIDE_ORDER])
+        up, down, north, east, south, west = tuple([self.faces[x] if self.faces[x] is not None else [(0, 0)] * 4
+                                                    for x in util.enums.SIDE_ORDER])
         indexes = [0] * 6
         if any(rotation):
             # print(rotation)

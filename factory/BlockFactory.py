@@ -40,6 +40,11 @@ class BlockFactory:
         self.baseclass = [block.Block.Block]
 
     def finish(self, register=True):
+        modname, blockname = tuple(self.name.split(":"))
+        G.modloader.mods[modname].eventbus.subscribe("stage:block:load", self._finish, register,
+                                                     info="loading block {}".format(blockname))
+
+    def _finish(self, register):
 
         class baseclass(object): pass
 

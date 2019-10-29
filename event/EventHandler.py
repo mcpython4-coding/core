@@ -40,4 +40,5 @@ class EventHandler:
 G.eventhandler = EventHandler()
 
 PUBLIC_EVENT_BUS = G.eventhandler.create_bus(crash_on_error=False)
+LOADING_EVENT_BUS = G.eventhandler.create_bus()
 

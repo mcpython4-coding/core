@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import ResourceLocator
 import globals as G
 import os
+import mod.ModMcpython
 
 
 LANGUAGES = {}
@@ -35,6 +36,10 @@ def decode(s: str):
 
 class Language:
     @classmethod
+    def from_file(cls, file: str):
+        Language.from_data(file.split("/")[-1].split(".")[0], ResourceLocator.read(file, "json").copy())
+
+    @classmethod
     def from_data(cls, filex: str, data: dict):
         if filex in LANGUAGES:
             LANGUAGES[filex].table = {**LANGUAGES[filex].table, **data}
@@ -52,12 +57,12 @@ class Language:
         return self.table[key] if key in self.table else key
 
 
-def load():
-    print("loading languages...")
-    files = ResourceLocator.get_all_entries_special("assets/minecraft/lang")
-    m = len(files)
-    for i, file in enumerate(files):
-        if file.endswith(".json"):  # new language format
-            print(file, "({}/{})".format(i+1, m), end="\r")
-            Language.from_data(file.split("/")[-1].split(".")[0], ResourceLocator.read(file, "json"))
+files = ResourceLocator.get_all_entries_special("assets/minecraft/lang")
+m = len(files)
+for i, f in enumerate(files):
+    if f.endswith(".json"):  # new language format
+        mod.ModMcpython.mcpython.eventbus.subscribe("stage:language", Language.from_file, f[:],
+                                                    info="loading language file {}".format(f))
+
+# todo: move to an load-function over "assets/minecraft/lang" or "minecraft", add support for old format
 

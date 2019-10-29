@@ -17,6 +17,7 @@ import PIL.Image
 import pyglet
 import sys
 import factory.ItemFactory
+import mod.ModMcpython
 
 
 TEXTURE_ATLASES = []
@@ -103,10 +104,10 @@ items.set_attribute("items", {})
 items.set_attribute("itemindextable", {})
 
 
-def load():
-    load_data()
+import item.ItemFood
 
-    import item.ItemFood
+from . import (Items)
 
-    from . import (Items)
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:additional_resources", load_data, info="loading prepared item data")
 

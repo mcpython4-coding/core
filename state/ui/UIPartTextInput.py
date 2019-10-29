@@ -32,7 +32,7 @@ class UIPartTextInput(UIPart.UIPart):
         self.lable = pyglet.text.Label(color=(255, 255, 255, 255), anchor_y='center')
         self.empty_overlay_text = empty_overlay_text
 
-        self.update_lable()
+        # self.update_lable()
 
     def update_lable(self):
         x, y = self.get_real_position()

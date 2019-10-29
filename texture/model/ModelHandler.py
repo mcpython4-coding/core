@@ -11,6 +11,7 @@ import util.math
 import texture.model.Model
 import texture.TextureAtlas
 import traceback
+import mod.ModMcpython
 
 
 class ModelHandler:
@@ -69,4 +70,10 @@ class ModelHandler:
 
 
 G.modelhandler = ModelHandler()
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_search", G.modelhandler.search,
+                                            info="searching for block models")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake", G.modelhandler.build,
+                                            info="baking block models")
 

@@ -41,7 +41,9 @@ class UIPartProgressBar(UIPart.UIPart):
         self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
     def on_draw_2d(self):
-        util.opengl.draw_line_rectangle(self.get_real_position(), self.bboxsize)
+        x, y = self.get_real_position()
+        util.opengl.draw_line_rectangle((x, y), self.bboxsize)
+        sx, sy = self.bboxsize
 
         sx = round(self.progress / self.progress_max * sx)
         util.opengl.draw_rectangle((x+2, y+3), (x+sx-16, y+self.bboxsize[1]-15), color=self.color)

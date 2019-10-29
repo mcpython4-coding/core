@@ -11,6 +11,7 @@ import json
 import ResourceLocator
 import item.ItemHandler
 import traceback
+import mod.ModMcpython
 
 
 class CraftingHandler:
@@ -45,6 +46,9 @@ class CraftingHandler:
         self.add_recipe_from_data(ResourceLocator.read(file, "json"))
 
     def load(self):
+        # todo: add an entry list for where to load and than an load event
+        # todo: split up into seperated entries
+
         print("loading recipes")
         i = 1
         errored = 0
@@ -66,5 +70,13 @@ class CraftingHandler:
 
 G.craftinghandler = CraftingHandler()
 
-from . import (GridRecipes)
+
+def load_recipe_providers():
+    from . import (GridRecipes)
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipe:groups", load_recipe_providers,
+                                            info="loading crafting recipe groups")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipes", G.craftinghandler.load,
+                                            info="loading crafting recipes")
 

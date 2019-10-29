@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import block.Block
 import event.Registry
+import mod.ModMcpython
 
 
 def register_block(registry, blockclass):
@@ -30,9 +31,11 @@ def load():
     """
     loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
     """
-
-    from . import (IFallingBlock, ILog)
-
     from . import (BlockGrassBlock, BlockDirt, BlockCraftingTable)
 
-    from . import Blocks
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:load", load, info="loading special blocks")
+
+
+from . import (IFallingBlock, ILog)
+from . import Blocks

@@ -10,9 +10,18 @@ import item.ItemFood
 import item.ItemTool
 import item.ItemArmor
 import globals as G
+import mod.ModMcpython
+import sys
 
 
 class ItemFactory:
+    TASKS = []
+
+    @classmethod
+    def process(cls):
+        for itemfactory, flag in cls.TASKS:
+            itemfactory._finish(flag)
+
     def __init__(self):
         self.name = None
         self.itemfile = None
@@ -37,6 +46,14 @@ class ItemFactory:
         self.armor_points = 0
 
     def finish(self, register=True):
+        modname, itemname = tuple(self.name.split(":"))
+        if "--rebuild" not in sys.argv:
+            G.modloader.mods[modname].eventbus.subscribe("stage:item:load", self._finish, register,
+                                                         info="loading item named {}".format(itemname))
+        else:
+            self.TASKS.append((self, register))
+
+    def _finish(self, register):
         master = self
 
         class baseclass(object): pass

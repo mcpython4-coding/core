@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import ResourceLocator
 import random
+import mod.ModMcpython
 
 
 class BlockStateDefinition:
@@ -71,4 +72,8 @@ class BlockState:
         model, config = random.choice(self.models)
         result += G.modelhandler.models[model].add_to_batch(position, batch, config)
         return result
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
+                                            "assets/minecraft/blockstates", info="searching for block states")
 

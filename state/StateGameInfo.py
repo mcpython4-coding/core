@@ -12,6 +12,7 @@ from state.ui import UIPartButton, UIPartImage, UIPartLable
 import util.texture
 import ResourceLocator
 from pyglet.window import key, mouse
+import mod.ModMcpython
 
 
 # todo: use pyglet.image.Image.get_region(area)
@@ -52,5 +53,13 @@ class StateGameInfo(state.State.State):
         G.statehandler.switch_to("minecraft:game")
 
 
-gameinfo = StateGameInfo()
+gameinfo = None
+
+
+def create():
+    global gameinfo
+    gameinfo = StateGameInfo()
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
 

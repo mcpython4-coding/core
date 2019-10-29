@@ -13,6 +13,7 @@ from pyglet.window import key
 import pyglet
 import state.StateGame
 import util.callbacks
+import mod.ModMcpython
 
 
 class StateEscape(State.State):
@@ -61,5 +62,13 @@ class StateEscape(State.State):
         pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
 
 
-escape = StateEscape()
+escape = None
+
+
+def create():
+    global escape
+    escape = StateEscape()
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
 

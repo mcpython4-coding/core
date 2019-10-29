@@ -27,6 +27,8 @@ import event.Registry
 import os
 import shutil
 import texture.factory
+import mod.ModMcpython
+import sys
 
 
 class IPrepareAbleTask:
@@ -46,39 +48,39 @@ class IPrepareAbleTask:
 taskregistry = event.Registry.Registry("preparetasks", [IPrepareAbleTask])
 
 
-@G.registry
-class Cleanup(IPrepareAbleTask):
-    @staticmethod
-    def get_name() -> str: return "cleanup"
+def add():
+    @G.registry
+    class Cleanup(IPrepareAbleTask):
+        @staticmethod
+        def get_name() -> str: return "cleanup"
 
-    @staticmethod
-    def get_version() -> tuple: return 1, 0, 0
+        @staticmethod
+        def get_version() -> tuple: return 1, 0, 0
 
-    @staticmethod
-    def dump_data(directory: str):
-        if os.path.exists(G.local+"/build"):
-            shutil.rmtree(G.local+"/build")
-        os.makedirs(G.local+"/build")
+        @staticmethod
+        def dump_data(directory: str):
+            while os.path.exists(G.local+"/build"):
+                shutil.rmtree(G.local+"/build")
+            os.makedirs(G.local+"/build")
 
-    @staticmethod
-    def uses_directory() -> bool: return False
+        @staticmethod
+        def uses_directory() -> bool: return False
 
+    @G.registry
+    class TextureFactoryGenerate(IPrepareAbleTask):
+        @staticmethod
+        def get_name() -> str:
+            return "texturefactory:prepare"
 
-@G.registry
-class TextureFactoryGenerate(IPrepareAbleTask):
-    @staticmethod
-    def get_name() -> str:
-        return "texturefactory:prepare"
+        @staticmethod
+        def get_version() -> tuple: return 1, 0, 0
 
-    @staticmethod
-    def get_version() -> tuple: return 1, 0, 0
+        @staticmethod
+        def dump_data(directory: str):
+            G.texturefactoryhandler.load()
 
-    @staticmethod
-    def dump_data(directory: str):
-        G.texturefactoryhandler.load()
-
-    @staticmethod
-    def uses_directory() -> bool: return False
+        @staticmethod
+        def uses_directory() -> bool: return False
 
 
 def execute():
@@ -88,4 +90,10 @@ def execute():
         if iprepareabletask.uses_directory(): os.makedirs(directory)
         iprepareabletask.dump_data(directory)
 
+
+# todo: split up into different sub-calls
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", add, info="adding prebuild tasks")
+
+if "--rebuild" in sys.argv:
+    mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:do", execute, info="doing prebuild tasks")
 

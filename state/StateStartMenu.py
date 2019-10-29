@@ -10,6 +10,7 @@ from state.ui import (UIPartLable, UIPartButton, UIPartProgressBar)
 import globals as G
 import pyglet
 import util.math
+import mod.ModMcpython
 
 
 class StateStartMenu(state.State.State):
@@ -41,5 +42,13 @@ class StateStartMenu(state.State.State):
         pyglet.gl.glClearColor(1., 1., 1., 1.)
 
 
-startmenu = StateStartMenu()
+startmenu = None
+
+
+def create():
+    global startmenu
+    startmenu = StateStartMenu()
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
 

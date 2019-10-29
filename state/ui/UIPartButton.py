@@ -19,7 +19,7 @@ image = ResourceLocator.read("gui/widgets", "pyglet")
 disabled = image.get_region(2, 256-46-17, 196, 15)
 enabled = image.get_region(2, 256-66-17, 196, 14)
 hovering = image.get_region(2, 256-86-17, 196, 15)
-#  enabled.save(G.local+"/tmp/test.png")  # only for debugging reasons
+#  enabled.save(G.local+"/tmp/testmod.png")  # only for debugging reasons
 
 
 class ButtonMode(enum.Enum):
@@ -149,7 +149,6 @@ class UIPartToggleButton(UIPartButton):
         self.textconstructor = text_constructor
         self.index = start
         self.text = ""
-        self._generate_text()
         self.toggle: event.EventInfo.MousePressEventInfo = toggle
         self.retoggle: event.EventInfo.MousePressEventInfo = retoggle
 
@@ -198,4 +197,8 @@ class UIPartToggleButton(UIPartButton):
         else:
             if self.on_try_press:
                 self.on_try_press(x, y)
+
+    def on_draw_2d(self):
+        if self.text == "": self._generate_text()
+        super().on_draw_2d()
 
