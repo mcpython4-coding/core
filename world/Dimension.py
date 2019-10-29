@@ -10,6 +10,50 @@ import world.Chunk
 import util.math
 import pyglet
 import block.Block
+import mod.ModMcpython
+
+
+class DimensionDefinition:
+    def __init__(self, name: str, config: dict):
+        self.name = name
+        self.id = None
+        self.config = config
+
+    def setStaticId(self, dimid):
+        self.id = dimid
+        return self
+
+
+class DimensionHandler:
+    def __init__(self):
+        self.dimensions = {}
+        self.unfinisheddims = []
+        mod.ModMcpython.mcpython.eventbus.subscribe("stage:post", self.finish)
+
+    def finish(self):
+        i = 0
+        for dim in self.unfinisheddims:
+            while i in self.unfinisheddims: i += 1
+            dim.id = i
+            self.add_dimension(dim)
+
+    def add_default_dimensions(self):
+        self.add_dimension(DimensionDefinition("overworld", {"configname": "default_overworld"}).setStaticId(0))
+
+    def add_dimension(self, dim: DimensionDefinition):
+        if dim.id is None:
+            self.unfinisheddims.append(dim)
+        else:
+            self.dimensions[dim.id] = dim
+
+    def init_dims(self):
+        for dim in self.dimensions.values():
+            G.world.add_dimension(dim.id, dim.config)
+
+
+G.dimensionhandler = DimensionHandler()
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:dimension", G.dimensionhandler.add_default_dimensions)
 
 
 class Dimension:

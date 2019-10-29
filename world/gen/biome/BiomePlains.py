@@ -10,7 +10,6 @@ from . import Biome
 import world.gen.feature.OakTreeFeature
 
 
-@G.biomehandler
 class Plains(Biome.Biome):
     @staticmethod
     def get_name() -> str:
@@ -33,5 +32,5 @@ class Plains(Biome.Biome):
         return [(world.gen.feature.OakTreeFeature.OakTreeNormalFeature, 600)]
 
 
-G.biomehandler.add_biome_to_dim(0, "minecraft:plains")
+G.biomehandler.register(Plains, [0])
 

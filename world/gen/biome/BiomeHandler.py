@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
+import mod.ModMcpython
 
 
 class BiomeHandler:
@@ -14,8 +15,10 @@ class BiomeHandler:
         self.biomes = {}
         self.biometable = {}  # {dim: int -> {landmass: str -> {temperature: int -> [biomename with weights]}}}}
 
-    def register(self, biome):
+    def register(self, biome, dimensions=[]):
         self(biome)
+        for dim in dimensions:
+            self.add_biome_to_dim(dim, biome.get_name())
 
     def __call__(self, biome):
         if biome in self.biomes.values():
@@ -74,5 +77,10 @@ class BiomeHandler:
 
 G.biomehandler = BiomeHandler()
 
-from . import (BiomePlains)
+
+def load():
+    from . import (BiomePlains)
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:worldgen:biomes", load, info="loading biomes")
 

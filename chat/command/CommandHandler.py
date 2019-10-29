@@ -11,6 +11,7 @@ import chat.command.CommandParser
 import chat.command.CommandEntry
 import chat.command.Selector
 import event.Registry
+import mod.ModMcpython
 
 
 def register_command(registry, command):
@@ -32,12 +33,16 @@ commandregistry = event.Registry.Registry("command", [chat.command.Command.Comma
 commandregistry.set_attribute("commandentries", {})
 commandregistry.set_attribute("selectors", [])
 
-chat.command.CommandEntry.load()
-chat.command.Selector.load()
 
-from . import (CommandGive, CommandGamemode, CommandExecute, CommandKill, CommandClear, CommandTeleport, CommandReload,
-               CommandGenerate, CommandSetblock, CommandFill, CommandItemInfo, CommandXp, CommandRegistryInfo)
+def load_commands():
+    from . import (CommandGive, CommandGamemode, CommandExecute, CommandKill, CommandClear, CommandTeleport, CommandReload,
+                   CommandGenerate, CommandSetblock, CommandFill, CommandItemInfo, CommandXp, CommandRegistryInfo)
 
-# register these at the end:
-from . import CommandHelp
+    # register these at the end:
+    from . import CommandHelp
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:commands", load_commands, info="loading commands")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:command:entries", chat.command.CommandEntry.load)
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:command:selectors", chat.command.Selector.load)
 

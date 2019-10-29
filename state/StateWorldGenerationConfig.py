@@ -51,7 +51,7 @@ class StateWorldGenerationConfig(State.State):
 
     def on_generate_press(self, x, y):
         G.world.cleanup(remove_dims=True)
-        G.world.add_dimension(0, {"configname": "default_overworld"})
+        G.dimensionhandler.init_dims()
         sx = self.parts[7].entered_text; sx = 3 if sx == "" else int(sx)
         sy = self.parts[8].entered_text; sy = 3 if sy == "" else int(sy)
         G.worldgenerationhandler.enable_generation = True

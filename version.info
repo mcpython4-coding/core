@@ -494,11 +494,12 @@ started these clone on 12th of July, 2019
 [uuk]: changed intern ResourceLocation-lookup to be reverse-ordered to make adding mods easier
 [uuk]: with "--addmoddir <moddir>" you can add custom mod directories
 [uuk]: with "--addmodfile <modfile>" you can add custom mods from other locations
+[uuk]: loading events are now covering now also commands and world generation elements
+[uuk]: added dimension registry
+[uuk]: fixed bug: BiomeHandler was only loaded by WorldGenBiomeLayer which can end in some strange behaviour
+[uuk]: fixed bug: mods where not loaded
+[uuk]: fixed bug: loading bar was offsetted
 
-move command loading to phases
-move command entry loading to phases
-move command selector loading to phases
-move GenerationDecorator's to loading
 RecipeLoading & BlockStateLoading & BlockModelLoading & BlockModelBaking, should be stage-mod-started,
     mod should say where to look for & should be splitted up into different entries
 add an blocklist somewhere in build-folder which would activated BlockItemFactory for non-generated blocks if needed
@@ -511,7 +512,8 @@ You should be able to set the id to an value, but also get an new value. It shou
 Make this config public so mods can modify them
 
 idea for loading visualisation:
-    some fancy area in which every mod has after his file size  an area which is colored afer its loading stage.
+    some fancy area in which every mod has after his file size or another parameter an area which is colored after its
+        loading stage.
     the color is calculated over step / max steps * 255 * random weight per mod per color for r, g, b; a is 255 always
     every area has an lable with the mod name in its representative text size (box height)
     the mcpython-mod is also displayed. Its file size is calculated over G.local-size - sum of mod file sizes
@@ -519,6 +521,7 @@ idea for loading visualisation:
     an lable is needed for what mod is loaded & how far we are in it. may be progressbar, may be full to less
 
 todo: fix bug: grass block texture up & down is sometimes missing texture
+todo: fix bug: grass top texture is not colored
 
 
 add an display attribute to WorldGenConfig

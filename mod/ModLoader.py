@@ -56,6 +56,14 @@ class LoadingStages:
     INVENTORIES = LoadingStage("stage:inventories")  
     STATEPARTS = LoadingStage("stage:stateparts")  
     STATES = LoadingStage("stage:states")
+    COMMAND_ENTRIES = LoadingStage("stage:command:entries")
+    COMMANDS = LoadingStage("stage:commands")
+    COMMAND_SELECTORS = LoadingStage("stage:command:selectors")
+    BIOMES = LoadingStage("stage:worldgen:biomes")
+    WORLDGENFEATURE = LoadingStage("stage:worldgen:feature")
+    WORLDGENLAYER = LoadingStage("stage:worldgen:layer")
+    WORLDGENMODE = LoadingStage("stage:worldgen:mode")
+    DIMENSIONS = LoadingStage("stage:dimension")
 
     BLOCKSTATE_NOTATE = LoadingStage("stage:model:blockstate_search")
     MODEL_NOTATE = LoadingStage("stage:model:model_search")
@@ -70,6 +78,9 @@ LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, Loadin
                  LoadingStages.TAGS, LoadingStages.BLOCK_BASES, LoadingStages.BLOCKS, LoadingStages.BLOCKS_OVERWRITE,
                  LoadingStages.ITEM_BASES, LoadingStages.ITEMS, LoadingStages.ITEMS_OVERWRITE, LoadingStages.LANGUAGE,
                  LoadingStages.RECIPE_GROUPS, LoadingStages.RECIPES, LoadingStages.INVENTORIES,
+                 LoadingStages.COMMAND_ENTRIES, LoadingStages.COMMANDS, LoadingStages.COMMAND_SELECTORS,
+                 LoadingStages.BIOMES, LoadingStages.WORLDGENFEATURE, LoadingStages.BIOMES, LoadingStages.WORLDGENLAYER,
+                 LoadingStages.WORLDGENMODE, LoadingStages.DIMENSIONS,
                  LoadingStages.STATEPARTS, LoadingStages.STATES, LoadingStages.MODEL_NOTATE,
                  LoadingStages.BLOCKSTATE_NOTATE, LoadingStages.MODEL_BAKE, LoadingStages.TEXTURE_ATLAS_BAKE,
                  LoadingStages.POST]
@@ -100,9 +111,8 @@ class ModLoader:
             else:
                 i += 1
         for loc in locs:
-            modlocations += [loc+"/"+x for x in os.listdir(loc)]
-        for entry in modlocations:
-            file = G.local+"/mods/{}".format(entry)
+            modlocations += [os.path.join(loc, x) for x in os.listdir(loc)]
+        for file in modlocations:
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)

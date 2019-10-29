@@ -22,7 +22,7 @@ class World:
         G.world = self
         self.player = world.player.Player("unknown")
         self.dimensions = {}
-        self.add_dimension(0, config={"configname": "default_overworld"})
+        self.add_dimension(0, {'configname': None})
         self.active_dimension = 0
         self.config = {}
         self.reset_config()

@@ -34,7 +34,7 @@ class StateModLoading(State.State):
 
     def on_draw_2d_pre(self):
         pyglet.gl.glClearColor(255, 255, 255, 255)
-        self.parts[0].bboxsize = (G.window.get_size()[0]-60, 20)
+        self.parts[0].bboxsize = (G.window.get_size()[0]-40, 20)
 
     def on_update(self, dt):
         G.modloader.process()

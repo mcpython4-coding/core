@@ -27,6 +27,7 @@ worldgenerationhandler = None
 biomehandler = None
 craftinghandler = None
 taghandler = None
+dimensionhandler = None
 
 modelhandler = None
 

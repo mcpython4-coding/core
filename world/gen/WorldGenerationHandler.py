@@ -10,6 +10,7 @@ import world.gen.layer.Layer
 import world.gen.mode
 import world.Dimension
 import world.Chunk
+import mod.ModMcpython
 
 
 class WorldGenerationHandler:
@@ -90,6 +91,7 @@ class WorldGenerationHandler:
 
     def setup_dimension(self, dimension, config=None):
         configname = dimension.worldgenerationconfig["configname"]
+        if configname is None: return  # empty dimension
         for layername in self.configs[configname]["layers"]:
             layer = self.layers[layername]
             if config is None or layername not in config:
@@ -146,6 +148,15 @@ class WorldGenerationHandler:
 
 G.worldgenerationhandler = WorldGenerationHandler()
 
-from world.gen.layer import (DefaultBedrockLayer, DefaultLandMassLayer, DefaultTemperatureLayer, DefaultBiomeLayer,
-                             DefaultHeightMapLayer, DefaultStonePlacementLayer, DefaultTopLayerLayer, DefaultTreeLayer)
-from world.gen.mode import DefaultOverWorldGenerator, DebugOverWorldGenerator
+
+def load_layers():
+    from world.gen.layer import (DefaultBedrockLayer, DefaultLandMassLayer, DefaultTemperatureLayer, DefaultBiomeLayer,
+                                 DefaultHeightMapLayer, DefaultStonePlacementLayer, DefaultTopLayerLayer, DefaultTreeLayer)
+
+
+def load_modes():
+    from world.gen.mode import DefaultOverWorldGenerator, DebugOverWorldGenerator
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:worldgen:layer", load_layers, info="loading generation layers")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:worldgen:mode", load_modes, info="loading generation modes")

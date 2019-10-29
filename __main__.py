@@ -61,6 +61,8 @@ try:
     import item.ItemHandler
     import world.gen.WorldGenerationHandler
 
+    import world.gen.biome.BiomeHandler
+
 
     def setup():
         import globals as G
