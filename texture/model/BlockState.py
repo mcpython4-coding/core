@@ -12,14 +12,22 @@ import mod.ModMcpython
 
 
 class BlockStateDefinition:
+    TO_CREATE = set()
+
     @staticmethod
     def from_directory(directory: str):
         for file in ResourceLocator.get_all_entries(directory):
             if not file.endswith("/"):
                 BlockStateDefinition.from_file(file)
 
-    @staticmethod
-    def from_file(file: str):
+    @classmethod
+    def from_file(cls, file: str):
+        mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_create", cls._from_file, file,
+                                                    info="loading block state {}".format(file))
+        cls.TO_CREATE.add(file)
+
+    @classmethod
+    def _from_file(cls, file: str):
         try:
             return BlockStateDefinition(ResourceLocator.read(file, "json"), "minecraft:"+file.split("/")[-1].split(".")
                                         [0])

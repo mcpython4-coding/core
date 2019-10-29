@@ -9,7 +9,6 @@ from . import State, StatePartGame
 from .ui import UIPartProgressBar
 import event.EventInfo
 import globals as G
-from pyglet.window import key
 import pyglet
 import os
 import ResourceLocator
@@ -40,7 +39,7 @@ class StateBlockItemGenerator(State.State):
 
     def get_parts(self) -> list:
         kwargs = {}
-        if "--rebuild" in sys.argv: kwargs["glcolor3d"] = (1., 1., 1.)
+        if G.prebuilding: kwargs["glcolor3d"] = (1., 1., 1.)
         return [StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False, activate_keyboard=False,
                                             activate_focused_block=False, clearcolor=(1., 1., 1., 0.),
                                             activate_crosshair=False, activate_lable=False),
@@ -60,7 +59,7 @@ class StateBlockItemGenerator(State.State):
         G.window.set_minimum_size(800, 600)
         G.window.set_maximum_size(800, 600)
         G.window.set_size(800, 600)
-        if "--rebuild" not in sys.argv:
+        if not G.prebuilding:
             self.close()
             return
         G.window.position = (1.5, 2, 1.5)
@@ -73,7 +72,7 @@ class StateBlockItemGenerator(State.State):
 
     def on_deactivate(self):
         G.world.cleanup()
-        if "--rebuild" in sys.argv:
+        if G.prebuilding:
             factory.ItemFactory.ItemFactory.process()
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
                 json.dump(self.table, f)

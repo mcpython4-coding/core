@@ -94,6 +94,6 @@ def execute():
 # todo: split up into different sub-calls
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", add, info="adding prebuild tasks")
 
-if "--rebuild" in sys.argv:
+if G.prebuilding:
     mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:do", execute, info="doing prebuild tasks")
 

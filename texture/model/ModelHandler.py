@@ -20,11 +20,19 @@ class ModelHandler:
         self.used_models = []
         self.found_models = {}
         self.blockstates = {}
+        self.lookup_locations = []
+
+    def add_from_mod(self, modname):
+        self.lookup_locations.append("assets/{}/models/block".format(modname))
 
     def search(self):
-        found_models = ResourceLocator.get_all_entries("assets/minecraft/models/block")
-        for model in found_models:
-            self.found_models["block/"+model.split("/")[-1].split(".")[0]] = model
+        for location in self.lookup_locations:
+            found_models = ResourceLocator.get_all_entries(location)
+            for model in found_models:
+                s = model.split("/")
+                name = "block/"+s[-1].split(".")[0] if "minecraft" in s else "{}:block/{}".format(
+                    s[s.index("block")-2], s[-1].split(".")[0])
+                self.found_models[name] = model
 
     def build(self):
         used_models = self.used_models[:]
@@ -44,7 +52,9 @@ class ModelHandler:
         sorted_models = util.math.topological_sort(dependencied_list)
         sorted_models = list(set(sorted_models))
         for x in sorted_models:
-            self.load_model(x)
+            # todo: move to mod event bus
+            mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake", self.load_model, x,
+                                                        info="baking model {}".format(x))
 
     def load_model(self, name: str):
         if name in self.models: return
@@ -72,8 +82,10 @@ class ModelHandler:
 G.modelhandler = ModelHandler()
 
 
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_search", G.modelhandler.search,
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, "minecraft",
                                             info="searching for block models")
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake", G.modelhandler.build,
-                                            info="baking block models")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_create", G.modelhandler.search,
+                                            info="loading found models")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake_prepare", G.modelhandler.build,
+                                            info="filtering models")
 

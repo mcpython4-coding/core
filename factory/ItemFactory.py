@@ -47,7 +47,7 @@ class ItemFactory:
 
     def finish(self, register=True):
         modname, itemname = tuple(self.name.split(":"))
-        if "--rebuild" not in sys.argv:
+        if not G.prebuilding:
             G.modloader.mods[modname].eventbus.subscribe("stage:item:load", self._finish, register,
                                                          info="loading item named {}".format(itemname))
         else:

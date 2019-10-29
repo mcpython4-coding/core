@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import event.EventBus
 import event.EventHandler
+import traceback
 
 
 class ModDependency:

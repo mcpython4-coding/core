@@ -29,6 +29,9 @@ try:
 
     import globals as G
 
+    if not os.path.exists(G.local+"/build"):
+        G.prebuilding = True
+
     os.makedirs(globals.local + "/tmp")
 
     import ResourceLocator
@@ -39,12 +42,6 @@ try:
     G.modloader.look_out()
 
     G.modloader.sort_mods()
-
-    # import texture.atlas
-
-    # print("generating textures...")
-    # import texture.factory
-    # globals.texturefactoryhandler.load()
 
     import sys
 

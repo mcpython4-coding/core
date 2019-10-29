@@ -51,11 +51,11 @@ def load_data():
                 atlas.texture = image
                 atlas.images = indextable[file]["loaded_item_file_names"]
                 TEXTURE_ATLASES.append(atlas)
-                if "--rebuild" not in sys.argv:
+                if not G.prebuilding:
                     atlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.local + "/build/itematlases/" + file),
                                                          *atlas.size)
         items.set_attribute("itemindextable", indextable["loaded_item_file_names"])
-        if "--rebuild" not in sys.argv:
+        if not G.prebuilding:
             with open(G.local+"/build/itemblockfactory.json") as f:
                 data = json.load(f)
             for entry in data:

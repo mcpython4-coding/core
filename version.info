@@ -499,17 +499,20 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: BiomeHandler was only loaded by WorldGenBiomeLayer which can end in some strange behaviour
 [uuk]: fixed bug: mods where not loaded
 [uuk]: fixed bug: loading bar was offsetted
+[uuk]: reworked recipe loading to support mod-based injection from outer files (based on mod name)
+[uuk]: fixed bug: duplicate mod message was using "{}" in output rather than the real mod name
+[uuk]: fixed bug: mod sorter uses library rather than util.math
+[uuk]: fixed bug: mod errors were logged with two "-" in front
+[uuk]: reworked model & blockstate system to support modifications
+[uuk]: system will now create models outside of "minecraft"-namspace with "<namespace>:block/<blockname>"
+[uuk]: prebuild system is now based on an flag on globals
+[uuk]: if build-folder gets deleted, the system will now automatically rebuild
 
-RecipeLoading & BlockStateLoading & BlockModelLoading & BlockModelBaking, should be stage-mod-started,
-    mod should say where to look for & should be splitted up into different entries
 add an blocklist somewhere in build-folder which would activated BlockItemFactory for non-generated blocks if needed
+change rebuild-system to have an constant in globals.py rather than an sys.argv-flag
+add an mod-version-list to auto-rebuild if an mod has changed its version
 add exclude mod flag to sys.argv
 add arguments to sys.argv to provide additions resource folders & locations
-
-add an dimension registry where you can get for every new world an new dim id provided there.
-You should be able to set the id to an value, but also get an new value. It should be handled with an
-    DimensionDefinition, which also links the WorldGenerationConfig, the name, ...
-Make this config public so mods can modify them
 
 idea for loading visualisation:
     some fancy area in which every mod has after his file size or another parameter an area which is colored after its
@@ -518,10 +521,16 @@ idea for loading visualisation:
     every area has an lable with the mod name in its representative text size (box height)
     the mcpython-mod is also displayed. Its file size is calculated over G.local-size - sum of mod file sizes
     the progress bar indicates what step is executed at the moment
-    an lable is needed for what mod is loaded & how far we are in it. may be progressbar, may be full to less
+    an lable is needed for what mod is loaded & how far we are in it. may be progressbar, may be full to less, may
+        be other color
 
+both of these bugs appear somehow random, maybe raising conditions? (for example in ResourceLocator?)
 todo: fix bug: grass block texture up & down is sometimes missing texture
 todo: fix bug: grass top texture is not colored
+
+todo: fix bug: crafting somehow ends sometimes in the double amount than usually
+    (for example, crafting of crafting table)
+todo: fix bug: crafting system seems to load only one mod. maybe raising conditions
 
 
 add an display attribute to WorldGenConfig

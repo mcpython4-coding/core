@@ -22,6 +22,7 @@ class CraftingHandler:
         self.crafting_recipes_shapeless = {}
         # all shaped recipes sorted after item count and than size
         self.crafting_recipes_shaped = {}
+        self.loaded_mod_dirs = []
 
     def __call__(self, obj):
         if issubclass(obj, crafting.IRecipeType.IRecipe):
@@ -43,29 +44,19 @@ class CraftingHandler:
             raise ValueError("can't load recipe. recipe class {} not arrival".format(name))
 
     def add_recipe_from_file(self, file: str):
-        self.add_recipe_from_data(ResourceLocator.read(file, "json"))
+        try:
+            self.add_recipe_from_data(ResourceLocator.read(file, "json"))
+        except ValueError:
+            pass
 
-    def load(self):
-        # todo: add an entry list for where to load and than an load event
-        # todo: split up into seperated entries
-
-        print("loading recipes")
-        i = 1
-        errored = 0
-        excepted = 0
-        for item in ResourceLocator.get_all_entries("data/minecraft/recipes"):
-            print("\r -loading recipe {}".format(i), end="")
-            try:
-                self.add_recipe_from_file(item)
-            except ValueError:
-                errored += 1
-            except:
-                print("\rerror during loading recipe", item)
-                traceback.print_exc()
-                excepted += 1
-            i += 1
-        print("\nnot loadable recipes due to missing decoders: {}".format(errored) if errored else "")
-        if excepted: print("not loadable recipes due to loading exceptions: {}".format(excepted))
+    def load(self, modname):
+        if modname in self.loaded_mod_dirs:
+            print("ERROR: mod '{}' has tried to load crafting recipes twice or more".format(modname))
+            return  # make sure to load only ones!
+        self.loaded_mod_dirs.append(modname)
+        for itemname in ResourceLocator.get_all_entries("data/{}/recipes".format(modname)):
+            mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipe:bake", self.add_recipe_from_file, itemname,
+                                                        info="loading crafting recipe from {}".format(itemname))
 
 
 G.craftinghandler = CraftingHandler()
@@ -77,6 +68,6 @@ def load_recipe_providers():
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipe:groups", load_recipe_providers,
                                             info="loading crafting recipe groups")
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipes", G.craftinghandler.load,
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipes", G.craftinghandler.load, "minecraft",
                                             info="loading crafting recipes")
 

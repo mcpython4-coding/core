@@ -19,7 +19,7 @@ image = ResourceLocator.read("gui/widgets", "pyglet")
 disabled = image.get_region(2, 256-46-17, 196, 15)
 enabled = image.get_region(2, 256-66-17, 196, 14)
 hovering = image.get_region(2, 256-86-17, 196, 15)
-#  enabled.save(G.local+"/tmp/testmod.png")  # only for debugging reasons
+#  enabled.save(G.local+"/tmp/minecraft.png")  # only for debugging reasons
 
 
 class ButtonMode(enum.Enum):

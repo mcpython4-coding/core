@@ -16,6 +16,7 @@ import importlib
 import toposort
 import time
 import state.StateModLoading
+import util.math
 
 
 class LoadingStage:
@@ -52,7 +53,8 @@ class LoadingStages:
     ITEMS_OVERWRITE = LoadingStage("stage:item:overwrite")  
     LANGUAGE = LoadingStage("stage:language")  
     RECIPE_GROUPS = LoadingStage("stage:recipe:groups")  
-    RECIPES = LoadingStage("stage:recipes")  
+    RECIPES = LoadingStage("stage:recipes")
+    RECIPE_BAKE = LoadingStage("stage:recipe:bake")
     INVENTORIES = LoadingStage("stage:inventories")  
     STATEPARTS = LoadingStage("stage:stateparts")  
     STATES = LoadingStage("stage:states")
@@ -66,7 +68,10 @@ class LoadingStages:
     DIMENSIONS = LoadingStage("stage:dimension")
 
     BLOCKSTATE_NOTATE = LoadingStage("stage:model:blockstate_search")
+    BLOCKSTATE_CREATE = LoadingStage("stage:model:blockstate_create")
     MODEL_NOTATE = LoadingStage("stage:model:model_search")
+    MODEL_CREATE = LoadingStage("stage:model:model_create")
+    MODEL_BAKE_PREPARE = LoadingStage("stage:model:model_bake_prepare")
     MODEL_BAKE = LoadingStage("stage:model:model_bake")
     TEXTURE_ATLAS_BAKE = LoadingStage("stage:textureatlas:bake")
 
@@ -77,12 +82,15 @@ LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, Loadin
                  LoadingStages.PREBUILD_DO, LoadingStages.EXTRA_RESOURCE_LOCATIONS, LoadingStages.TAG_GROUPS,
                  LoadingStages.TAGS, LoadingStages.BLOCK_BASES, LoadingStages.BLOCKS, LoadingStages.BLOCKS_OVERWRITE,
                  LoadingStages.ITEM_BASES, LoadingStages.ITEMS, LoadingStages.ITEMS_OVERWRITE, LoadingStages.LANGUAGE,
-                 LoadingStages.RECIPE_GROUPS, LoadingStages.RECIPES, LoadingStages.INVENTORIES,
+                 LoadingStages.RECIPE_GROUPS, LoadingStages.RECIPES, LoadingStages.RECIPE_BAKE,
+                 LoadingStages.INVENTORIES,
                  LoadingStages.COMMAND_ENTRIES, LoadingStages.COMMANDS, LoadingStages.COMMAND_SELECTORS,
                  LoadingStages.BIOMES, LoadingStages.WORLDGENFEATURE, LoadingStages.BIOMES, LoadingStages.WORLDGENLAYER,
                  LoadingStages.WORLDGENMODE, LoadingStages.DIMENSIONS,
-                 LoadingStages.STATEPARTS, LoadingStages.STATES, LoadingStages.MODEL_NOTATE,
-                 LoadingStages.BLOCKSTATE_NOTATE, LoadingStages.MODEL_BAKE, LoadingStages.TEXTURE_ATLAS_BAKE,
+                 LoadingStages.STATEPARTS, LoadingStages.STATES, LoadingStages.MODEL_NOTATE, LoadingStages.MODEL_CREATE,
+                 LoadingStages.BLOCKSTATE_NOTATE, LoadingStages.BLOCKSTATE_CREATE,
+                 LoadingStages.MODEL_BAKE_PREPARE, LoadingStages.MODEL_BAKE,
+                 LoadingStages.TEXTURE_ATLAS_BAKE,
                  LoadingStages.POST]
 
 
@@ -146,9 +154,11 @@ class ModLoader:
         errors = []
         for mod in self.found_mods:
             if mod.name in modinfo:
-                errors.append("-Mod {} has more than one version in the folder. Please load only every mod ONES")
+                errors.append(
+                    "-Mod {} has more than one version in the folder. Please load only every mod ONES".format(mod.name))
+                errors.append(" found in: {}".format(mod.path))
             else:
-                modinfo[mod.name] = set()
+                modinfo[mod.name] = []
         for mod in self.found_mods:
             depends = mod.dependinfo[0][:]
             for depend in depends:
@@ -160,20 +170,16 @@ class ModLoader:
         for mod in self.found_mods:
             for depend in mod.dependinfo[4]:
                 if depend.name in modinfo and depend.name not in modinfo[mod.name]:
-                    modinfo[mod.name].add(depend.name)
+                    modinfo[mod.name].append(depend.name)
             for depend in mod.dependinfo[3]:
                 if depend.name in modinfo and mod.name not in modinfo[depend.name]:
-                    modinfo[depend.name].add(mod.name)
+                    modinfo[depend.name].append(mod.name)
         if len(errors) > 0:
             print("errors with mods:")
-            print(" -", end="")
+            print(" ", end="")
             print(*errors, sep="\n -")
             sys.exit(-1)
-        sets = toposort.toposort(modinfo)
-        sort = []
-        for entry in sets:
-            sort += list(entry)
-        self.modorder = sort
+        self.modorder = list(util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
 
     def process(self):
         start = time.time()
