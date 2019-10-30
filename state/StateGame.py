@@ -46,8 +46,10 @@ class StateGame(State.State):
         elif symbol == key.E:
             if not G.player.inventorys["main"] in G.inventoryhandler.opened_inventorystack:
                 if G.window.exclusive:
+                    G.eventhandler.call("on_player_inventory_open")
                     G.inventoryhandler.show(G.player.inventorys["main"])
             else:
+                G.eventhandler.call("on_player_inventory_close")
                 G.inventoryhandler.hide(G.player.inventorys["main"])
         elif symbol == key.T and G.window.exclusive:
             event.TickHandler.handler.bind(self.open_chat, 2)

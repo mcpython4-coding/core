@@ -59,18 +59,7 @@ class StateWorldGenerationConfig(State.State):
         fy = sy // 2
         ffx = sx - fx
         ffy = sy - fy
-        for cx in range(-fx, ffx):
-            for cz in range(-fy, ffy):
-                chunk = G.world.dimensions[0].get_chunk(cx, cz, generate=False)
-                chunk.is_ready = False
-                G.worldgenerationhandler.generate_chunk(chunk)
-                chunk.is_ready = True
-        G.window.position = (0, util.math.get_max_y((0, 0, 0)), 0)
-        G.world.config["enable_auto_gen"] = self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
-        G.world.config["enable_world_barrier"] = \
-            self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
-        G.player.name = self.parts[6].entered_text
-        if G.player.name == "": G.player.name = "unknown"
+        G.eventhandler.call("on_world_generation_prepared")
         seed = self.parts[5].entered_text
         if seed != "":
             try:
@@ -80,7 +69,22 @@ class StateWorldGenerationConfig(State.State):
         else:
             seed = random.randint(-100000, 100000)
         G.world.config["seed"] = seed
+        G.eventhandler.call("on_world_generation_started")
+        for cx in range(-fx, ffx):
+            for cz in range(-fy, ffy):
+                chunk = G.world.dimensions[0].get_chunk(cx, cz, generate=False)
+                chunk.is_ready = False
+                G.worldgenerationhandler.generate_chunk(chunk)
+                chunk.is_ready = True
+        G.eventhandler.call("on_game_generation_finished")
+        G.window.position = (0, util.math.get_max_y((0, 0, 0)), 0)
+        G.world.config["enable_auto_gen"] = self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
+        G.world.config["enable_world_barrier"] = \
+            self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
+        G.player.name = self.parts[6].entered_text
+        if G.player.name == "": G.player.name = "unknown"
         G.statehandler.switch_to("minecraft:gameinfo")
+        G.eventhandler.call("on_game_enter")
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
@@ -90,6 +94,8 @@ class StateWorldGenerationConfig(State.State):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             self.on_back_press(0, 0)
+        elif symbol == key.ENTER:
+            self.on_generate_press(0, 0)
 
     @staticmethod
     def on_draw_2d_pre():

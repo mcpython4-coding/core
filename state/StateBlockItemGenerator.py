@@ -35,6 +35,7 @@ class StateBlockItemGenerator(State.State):
         State.State.__init__(self)
         self.blockindex = 0
         G.registry.get_by_name("block").registered_objects.sort(key=lambda x: x.get_name())
+        self.tasks = []
         self.table = []
 
     def get_parts(self) -> list:
@@ -54,25 +55,32 @@ class StateBlockItemGenerator(State.State):
         self.parts[1].size = (w-20, 20)
 
     def on_activate(self):
+        self.tasks = [x.get_name() for x in G.registry.get_by_name("block").registered_objects]
         if not os.path.isdir(G.local + "/build/generated_items"): os.makedirs(G.local + "/build/generated_items")
+        if not G.prebuilding:
+            with open(G.local+"/build/itemblockfactory.json", mode="r") as f:
+                self.table = json.load(f)
+            items = G.registry.get_by_name("item").get_attribute("items")
+            for task in self.tasks[:]:
+                if task in items:
+                    self.tasks.remove(task)
+        if len(self.tasks) == 0:
+            self.close()
+            return
         G.window.set_size(800, 600)
         G.window.set_minimum_size(800, 600)
         G.window.set_maximum_size(800, 600)
         G.window.set_size(800, 600)
-        if not G.prebuilding:
-            self.close()
-            return
         G.window.position = (1.5, 2, 1.5)
         G.window.rotation = (-45, -45)
-        G.world.get_active_dimension().add_block(
-            (0, 0, 0), G.registry.get_by_name("block").registered_objects[0].get_name(), block_update=False)
+        G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[0], block_update=False)
         self.blockindex = -1
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
         event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
 
     def on_deactivate(self):
         G.world.cleanup()
-        if G.prebuilding:
+        if len(self.tasks) > 0:
             factory.ItemFactory.ItemFactory.process()
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
                 json.dump(self.table, f)
@@ -88,30 +96,27 @@ class StateBlockItemGenerator(State.State):
 
     def add_new_screen(self):
         self.blockindex += 1
-        if self.blockindex >= len(G.registry.get_by_name("block").registered_objects):
+        if self.blockindex >= len(self.tasks):
             self.close()
             return
         G.world.get_active_dimension().hide_block((0, 0, 0))
-        G.world.get_active_dimension().add_block(
-            (0, 0, 0), G.registry.get_by_name("block").registered_objects[self.blockindex].get_name(), block_update=False)
+        G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
         self.parts[1].progress = self.blockindex+1
-        self.parts[1].text = "{}/{}: {}".format(self.blockindex+1, len(
-            G.registry.get_by_name("block").registered_objects), G.registry.get_by_name("block").
-                                                registered_objects[self.blockindex].get_name())
+        self.parts[1].text = "{}/{}: {}".format(self.blockindex+1, len(self.tasks), self.tasks[self.blockindex])
         # todo: add states
         event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
         G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
-        if self.blockindex >= len(G.registry.get_by_name("block").registered_objects): return
-        blockname = G.registry.get_by_name("block").registered_objects[self.blockindex].get_name()
+        if self.blockindex >= len(self.tasks): return
+        blockname = self.tasks[self.blockindex]
         file = "build/generated_items/{}.png".format("__".join(blockname.split(":")))
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
         image: PIL.Image.Image = ResourceLocator.read(file, "pil")
-        if image.getbbox() is None:
-            event.TickHandler.handler.bind(self.take_image, 2)
+        if image.getbbox() is None:  # there was an error, retry todo: add an security check after [x] tries, skip
+            event.TickHandler.handler.bind(self.take_image, 1)
             return
-        image.crop((240, 129, 558, 447)).save(G.local + "/" + file)
+        image.crop((240, 129, 558, 447)).save(G.local + "/" + file)  # todo: make dynamic based on window size
         self.generate_item(blockname, file)
         event.TickHandler.handler.bind(self.add_new_screen, CLEANUP_TIME)
 

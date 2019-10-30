@@ -22,15 +22,22 @@ import util.math
 class LoadingStage:
     def __init__(self, *eventnames):
         self.eventnames = eventnames
+        self.running_event_names = eventnames
+        self.progress = 0
+        self.max_progress = 0
 
     def call_one(self, mod):
-        if len(self.eventnames) == 0: return False
-        eventname = self.eventnames[0]
+        if len(self.running_event_names) == 0: return False
+        eventname = self.running_event_names[0]
         try:
             data = mod.eventbus.call_as_stack(eventname)
+            self.progress += 1
+            if self.running_event_names[0] in mod.eventbus.eventsubscribtions:
+                self.max_progress = self.progress + len(mod.eventbus.eventsubscribtions[self.running_event_names[0]])
             return data[0][1] if len(data) > 0 else False
         except RuntimeError:
-            self.eventnames = self.eventnames[1:]
+            self.running_event_names = self.running_event_names[1:]
+            self.progress = 0
             return self.call_one(mod)
 
 
@@ -85,7 +92,7 @@ LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, Loadin
                  LoadingStages.RECIPE_GROUPS, LoadingStages.RECIPES, LoadingStages.RECIPE_BAKE,
                  LoadingStages.INVENTORIES,
                  LoadingStages.COMMAND_ENTRIES, LoadingStages.COMMANDS, LoadingStages.COMMAND_SELECTORS,
-                 LoadingStages.BIOMES, LoadingStages.WORLDGENFEATURE, LoadingStages.BIOMES, LoadingStages.WORLDGENLAYER,
+                 LoadingStages.BIOMES, LoadingStages.WORLDGENFEATURE, LoadingStages.WORLDGENLAYER,
                  LoadingStages.WORLDGENMODE, LoadingStages.DIMENSIONS,
                  LoadingStages.STATEPARTS, LoadingStages.STATES, LoadingStages.MODEL_NOTATE, LoadingStages.MODEL_CREATE,
                  LoadingStages.BLOCKSTATE_NOTATE, LoadingStages.BLOCKSTATE_CREATE,
@@ -103,6 +110,10 @@ class ModLoader:
         self.active_loading_stage = 0
         self.active_loading_mod = 0
         self.active_loading_mod_item_lenght = 0
+        self.lasttime_mods = {}
+        if os.path.exists(G.local+"/mods.json"):
+            with open(G.local+"/mods.json") as f:
+                self.lasttime_mods = json.load(f)
 
     def look_out(self):
         modlocations = []
@@ -120,6 +131,18 @@ class ModLoader:
                 i += 1
         for loc in locs:
             modlocations += [os.path.join(loc, x) for x in os.listdir(loc)]
+        i = 0
+        while i < len(sys.argv):
+            element = sys.argv[i]
+            if element == "--removemodfile":
+                file = sys.argv[i+1]
+                if file in modlocations:
+                    modlocations.remove(file)
+                else:
+                    print("[WARNING] it was attempted to remove mod {} which was not found in file system".format(file))
+                for _ in range(2): sys.argv.pop(i)
+            else:
+                i += 1
         for file in modlocations:
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
@@ -127,22 +150,56 @@ class ModLoader:
                     ResourceLocator.RESOURCE_LOCATIONS.append(ResourceLocator.ResourceZipFile(file))
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
-                        with f.open("mod.json", mode="r") as sf:
-                            data = json.load(sf)
-                        for location in data["main files"]:
-                            importlib.import_module(location)
+                        try:
+                            with f.open("mod.json", mode="r") as sf:
+                                data = json.load(sf)
+                            if "main files" in data:
+                                for location in data["main files"]:
+                                    importlib.import_module(location)
+                            else:
+                                print("[ERROR] mod.json of {} does NOT contain 'main files'-attribute".format(file))
+                        except FileNotFoundError:
+                            print("[WARNING] can't locate mod.json file in mod at {}".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
-                    importlib.import_module("mods."+entry.split(".")[0])
+                    importlib.import_module("mods."+file.split(".")[0])
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
                 ResourceLocator.RESOURCE_LOCATIONS.append(ResourceLocator.ResourceDirectory(file))
                 self.active_directory = file
-                with open(file+"/mod.json") as sf:
-                    data = json.load(sf)
-                for location in data["main files"]:
-                    importlib.import_module(location)
+                if os.path.exists(file+"/mod.json"):
+                    with open(file+"/mod.json") as sf:
+                        data = json.load(sf)
+                    if "main files" in data:
+                        for location in data["main files"]:
+                            importlib.import_module(location)
+                    else:
+                        print("[ERROR] mod.json of {} does NOT contain an 'main files'-attribute".format(file))
+                else:
+                    print("[WARNING] can't locate mod.json file for mod at {}".format(file))
+        i = 0
+        while i < len(sys.argv):
+            element = sys.argv[i]
+            if element == "--removemod":
+                name = sys.argv[i+1]
+                if name in self.mods:
+                    del self.mods[name]
+                else:
+                    print("[WARNING] it was attempted to remove mod {} which was not registered".format(name))
+                for _ in range(2): sys.argv.pop(i)
+            else:
+                i += 1
         print("found mods: {}".format(len(self.found_mods)))
+        for modname in self.lasttime_mods.keys():
+            if modname not in self.mods or self.mods[modname].version != self.lasttime_mods[modname]:
+                # we have an mod which was previous loaded and not now or which was loaded before in another version
+                G.prebuilding = True
+        for modname in self.mods.keys():
+            if modname not in self.lasttime_mods:
+                # we have an mod which was loaded not previous but now
+                G.prebuilding = True
+        with open(G.local + "/mods.json", mode="w") as f:
+            json.dump({modinst.name: modinst.version for modinst in self.mods.values()}, f)
 
     def add_to_add(self, mod):
         self.mods[mod.name] = mod
@@ -180,13 +237,24 @@ class ModLoader:
             print(*errors, sep="\n -")
             sys.exit(-1)
         self.modorder = list(util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
+        print("mod loading order: ")
+        print(" -", "\n - ".join(["{} ({})".format(name, self.mods[name].version) for name in self.modorder]))
 
     def process(self):
         start = time.time()
+        state.StateModLoading.modloading.parts[1].progress_max = len(self.modorder)
         while time.time() - start < 0.2:
             modname = self.modorder[self.active_loading_mod]
             mod = self.mods[modname]
-            result = LOADING_ORDER[self.active_loading_stage].call_one(mod)
+            stage: LoadingStage = LOADING_ORDER[self.active_loading_stage]
+            result = stage.call_one(mod)
+            state.StateModLoading.modloading.parts[2].progress = stage.progress + 1
+            state.StateModLoading.modloading.parts[2].progress_max = stage.max_progress
+            eventname = stage.running_event_names[0] if len(stage.running_event_names) > 0 else None
+            state.StateModLoading.modloading.parts[2].text = mod.eventbus.eventsubscribtions[eventname][0][3] if \
+                eventname in mod.eventbus.eventsubscribtions and len(
+                    mod.eventbus.eventsubscribtions[eventname]) > 0 else "null"
+            state.StateModLoading.modloading.parts[2].text += " ({}/{})".format(stage.progress, stage.max_progress)
             if result == False:  # finished with mod
                 self.active_loading_mod += 1
                 if self.active_loading_mod >= len(self.modorder):
@@ -197,8 +265,15 @@ class ModLoader:
                         return
                     state.StateModLoading.modloading.parts[0].progress = self.active_loading_stage + 1
                     state.StateModLoading.modloading.parts[0].progress_max = len(LOADING_ORDER)
-                    state.StateModLoading.modloading.parts[0].text = ", ".join(list(
-                        LOADING_ORDER[self.active_loading_stage].eventnames))
+                    state.StateModLoading.modloading.parts[0].text = ", ".join(list(stage.eventnames))
+                    state.StateModLoading.modloading.parts[1].progress = self.active_loading_mod + 1
+                    state.StateModLoading.modloading.parts[1].text = "{}: {} / {}".format(
+                        self.modorder[self.active_loading_mod], self.active_loading_mod+1, len(self.modorder))
+                else:
+                    stage.running_event_names = LOADING_ORDER[self.active_loading_stage].eventnames
+                    state.StateModLoading.modloading.parts[1].progress = self.active_loading_mod + 1
+                    state.StateModLoading.modloading.parts[1].text = "{}: {} / {}".format(
+                        self.modorder[self.active_loading_mod], self.active_loading_mod + 1, len(self.modorder))
 
 
 G.modloader = ModLoader()

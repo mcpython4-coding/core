@@ -22,7 +22,9 @@ class StateModLoading(State.State):
         State.State.__init__(self)
 
     def get_parts(self) -> list:
-        return [UIPartProgressBar.UIPartProgressBar((10, 10), (20, 20), status=1)]
+        return [UIPartProgressBar.UIPartProgressBar((10, 10), (20, 20), status=1, color=(1., 0., 0.)),  # stage
+                UIPartProgressBar.UIPartProgressBar((10, 40), (20, 20), status=1, color=(0., 0., 1.)),  # mod
+                UIPartProgressBar.UIPartProgressBar((10, 70), (20, 20), status=1, color=(0., 1., 0.))]  # item
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:window:resize", self.on_resize)
@@ -30,11 +32,13 @@ class StateModLoading(State.State):
         self.eventbus.subscribe("gameloop:tick:end", self.on_update)
 
     def on_resize(self, w, h):
-        self.parts[0].size = (w-80, 20)
+        for part in self.parts:
+            part.bboxsize = (w, h)
 
     def on_draw_2d_pre(self):
         pyglet.gl.glClearColor(255, 255, 255, 255)
-        self.parts[0].bboxsize = (G.window.get_size()[0]-40, 20)
+        for part in self.parts:
+            part.bboxsize = (G.window.get_size()[0]-40, 20)
 
     def on_update(self, dt):
         G.modloader.process()

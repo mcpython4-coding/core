@@ -45,10 +45,15 @@ class UIPartProgressBar(UIPart.UIPart):
         util.opengl.draw_line_rectangle((x, y), self.bboxsize)
         sx, sy = self.bboxsize
 
-        sx = round(self.progress / self.progress_max * sx)
-        util.opengl.draw_rectangle((x+2, y+3), (x+sx-16, y+self.bboxsize[1]-15), color=self.color)
+        if self.progress > self.progress_max: self.progress = self.progress_max
+
+        sx = round(sx * self.progress / self.progress_max)
+        util.opengl.draw_rectangle((x+2, y+3), (sx-4, self.bboxsize[1]-5), color=self.color)
 
         self.lable.text = self.text
+
+        self.lable.font_size = self.bboxsize[1] - 10
+        while self.lable.content_width > self.bboxsize[0]: self.lable.font_size -= 1
 
         self.lable.x = x + (self.bboxsize[0] - self.lable.content_width) // 2
         self.lable.y = y + (self.bboxsize[1] - self.lable.content_height) // 2 + 5

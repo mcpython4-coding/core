@@ -26,6 +26,7 @@ import PIL.Image
 import pyglet.image
 import os
 import util.texture
+import sys
 
 
 class IResourceLocation:
@@ -126,6 +127,18 @@ def load_resources():
     RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.14.4.jar"))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local+"/resourcepacks/minecraft"))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))
+    i = 0
+    while i < len(sys.argv):
+        element = sys.argv[i]
+        if element == "--addresourcepath":
+            path = sys.argv[i+1]
+            if zipfile.is_zipfile(path):
+                RESOURCE_LOCATIONS.append(ResourceZipFile(path))
+            else:
+                RESOURCE_LOCATIONS.append(ResourceDirectory(path))
+            i += 2
+        else:
+            i += 1
 
 
 def close_all_resources():

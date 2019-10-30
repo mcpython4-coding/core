@@ -69,13 +69,16 @@ class ModelHandler:
             traceback.print_stack()
 
     def add_to_batch(self, block, position, batch):
+        if block.get_name() not in self.blockstates:
+            raise ValueError("block state not found for block '{}' at {}".format(block.get_name(), position))
         blockstatedefinition = self.blockstates[block.get_name()]
         blockstate = blockstatedefinition.get_state_for(block.get_model_state())
 
         try:
             return blockstate.add_to_batch(position, batch)
         except:
-            print(blockstatedefinition.states, block.get_name(), block.get_model_state())
+            print("information to the show-error:",  blockstatedefinition.states, block.get_name(),
+                  block.get_model_state())
             raise
 
 

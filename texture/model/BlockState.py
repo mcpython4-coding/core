@@ -9,6 +9,10 @@ import globals as G
 import ResourceLocator
 import random
 import mod.ModMcpython
+import traceback
+
+
+class BlockStateNotNeeded(Exception): pass
 
 
 class BlockStateDefinition:
@@ -29,14 +33,18 @@ class BlockStateDefinition:
     @classmethod
     def _from_file(cls, file: str):
         try:
-            return BlockStateDefinition(ResourceLocator.read(file, "json"), "minecraft:"+file.split("/")[-1].split(".")
-                                        [0])
-        except RuntimeError:
-            return None
+            s = file.split("/")
+            modname = s[s.index("blockstates")-1]
+            return BlockStateDefinition(ResourceLocator.read(file, "json"), "{}:{}".format(
+                modname, s[-1].split(".")[0]))
+        except BlockStateNotNeeded: pass
+        except:
+            print("error during loading model from file {}".format(file))
+            traceback.print_exc()
 
     def __init__(self, data: dict, name: str):
+        if name not in G.registry.get_by_name("block").get_attribute("blocks"): raise BlockStateNotNeeded()
         G.modelhandler.blockstates[name] = self
-        if name not in G.registry.get_by_name("block").get_attribute("blocks"): raise RuntimeError()
         self.states = []
         if "variants" in data:
             for element in data["variants"].keys():
@@ -76,8 +84,11 @@ class BlockState:
         return model, {"rotation": rotations}
 
     def add_to_batch(self, position, batch):
+        # todo: add some more functionality to this
         result = []
         model, config = random.choice(self.models)
+        if model not in G.modelhandler.models:
+            raise ValueError("can't find model named '{}' to add at {}".format(model, position))
         result += G.modelhandler.models[model].add_to_batch(position, batch, config)
         return result
 

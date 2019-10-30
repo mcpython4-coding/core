@@ -507,12 +507,35 @@ started these clone on 12th of July, 2019
 [uuk]: system will now create models outside of "minecraft"-namspace with "<namespace>:block/<blockname>"
 [uuk]: prebuild system is now based on an flag on globals
 [uuk]: if build-folder gets deleted, the system will now automatically rebuild
+[uuk]: reworked BlockItemGenerator to auto-build when blocks are missing (for example if block is added by an new mod
+       version)
+[uuk]: fixed bug: .py file-only mods could NOT be loaded
+[uuk]: fixed bug: if more than one mod had subscribed to one loading event, only the first mod get the event called due
+       to an missing reset of the LoadingStage
+[uuk]: error handling in BlockState-loading & BlockState-showing is now better
+[uuk]: fixed bug: BlockState's were loaded always into "minecraft:<blockname without namespace>"
+[uuk]: improved TestMod by various examples. The time of these part is limited until documentation is started
+[uuk]: fixed some bugs around chat, don't know since when they are in the game
+[uuk]: added two new loading bars: mod & event part
+[uuk]: fixed some bugs around loading bars
+[uuk]: progress bar will now auto-decrease values bigger than max progress
+[uuk]: changed some behind-the-screen parts of ItemFactory to create items better
+[uuk]: game will automatically rebuild when mod was changed
+[uuk]: added three new sys.argv parameters: --removemodfile <name> to remove an mod file
+                                            --removemod <name> to remove an mod by name
+                                            --addresourcepath <path> to add an new path to the resource system
+[uuk]: added security check if mod.json-file does exists
+[uuk]: added security checks for entries in mod.json file
+[uuk]: added loading order info with mod version to log
+[uuk]: enter will now generate the world
+[uuk]: added some runtime-based special events
+[uuk]: fixed bug: when generating, seed was not set yet
+[uuk]: these game has now an real version starting at snapshot 19w44a
 
-add an blocklist somewhere in build-folder which would activated BlockItemFactory for non-generated blocks if needed
-change rebuild-system to have an constant in globals.py rather than an sys.argv-flag
-add an mod-version-list to auto-rebuild if an mod has changed its version
-add exclude mod flag to sys.argv
-add arguments to sys.argv to provide additions resource folders & locations
+fix bug: chat seems not working due to multiple additions of the same character
+
+move mod loading to Mod-instanced-attribute-system
+add mod.toml support (which is mc-forge format) & old format!
 
 idea for loading visualisation:
     some fancy area in which every mod has after his file size or another parameter an area which is colored after its

@@ -14,6 +14,7 @@ import mod.ModMcpython
 import sys
 
 
+# todo: add ItemFactoryHandler which make it possible to add custom functions & custom class constructing
 class ItemFactory:
     TASKS = []
 
@@ -58,10 +59,18 @@ class ItemFactory:
 
         class baseclass(object): pass
 
+        if self.itemfile is None:
+            self.itemfile = "item/"+self.name.split(":")[1]
+            if self.itemfile not in self.used_itemfiles:
+                self.used_itemfiles.append(self.itemfile)
+        if self.blockname is None and self.has_block:
+            self.blockname = self.name
+
+        # go over the whole list and create every time an new sub-class based on old and item of list
         for cls in self.baseclass:
             class baseclass(baseclass, cls): pass
 
-        class ConstructedItem(baseclass):
+        class ConstructedItem(baseclass):  # and now insert these class into the ConstructedItem-class
             @classmethod
             def get_used_texture_files(cls): return master.used_itemfiles
 
@@ -87,7 +96,7 @@ class ItemFactory:
                 return master.interaction_callback(block, button, modifiers) if master.interaction_callback else False
 
         if item.ItemFood.ItemFood in self.baseclass:  # is food stuff active?
-            class ConstructedItem(ConstructedItem):
+            class ConstructedItem(ConstructedItem):  # so construct an new class with additional functions
                 def on_eat(self):
                     """
                     callen when the player eats the item
@@ -103,7 +112,7 @@ class ItemFactory:
                 def get_eat_hunger_addition(self) -> int: return master.hungerregen
 
         if item.ItemTool.ItemTool in self.baseclass:  # is an tool
-            class ConstructedItem(ConstructedItem):
+            class ConstructedItem(ConstructedItem):  # so construct an new class with additional functions
                 def get_tool_level(self):
                     return master.tool_level
 
@@ -121,9 +130,7 @@ class ItemFactory:
 
         if register: G.registry.register(ConstructedItem)
 
-        return ConstructedItem
-
-    def setBaseClass(self, baseclass):
+    def setBaseClass(self, baseclass):   # overwrites all previous base classes and replace them with the new(s)
         self.baseclass = baseclass if type(baseclass) == list else [baseclass]
         return self
 
@@ -136,12 +143,6 @@ class ItemFactory:
 
     def setName(self, name: str):
         self.name = name
-        if self.itemfile is None:
-            self.itemfile = "item/"+name.split(":")[1]
-            if self.itemfile not in self.used_itemfiles:
-                self.used_itemfiles.append(self.itemfile)
-        if self.blockname is None:
-            self.blockname = name
         return self
 
     def setDefaultItemFile(self, itemfile: str):
