@@ -531,11 +531,26 @@ started these clone on 12th of July, 2019
 [uuk]: added some runtime-based special events
 [uuk]: fixed bug: when generating, seed was not set yet
 [uuk]: these game has now an real version starting at snapshot 19w44a
+[uuk]: fixed bug: ModLoader was importing library 'toposort' which was never used
+[uuk]: fixed bug: ResourceLocator did NOT allow notations like testmod:block/test
+[uuk]: added security function when item atlas image index gets deleted, but the other stuff not
+[uuk]: added security function when block item factory index gets deleted, but the other stuff not
+[uuk]: fixed bug: dependency system was crashing
+[uuk]: made mod dependency errors better
+[uuk]: texturefactory accepts now also an data object besides an file-string
+[uuk]: ModelHandler & BlockState-systems accept now data-object beside file-strings
+[uuk]: added basic system: features. These file contains a class which can hold features added by mods which can be used
+       by other mods. This removes need for every mod to check registries for possible strange-named objects or cross-
+       -mod compatibility. This makes it also possible to extract information what is arrival for other mods
+[uuk]: added new function to block: get_provided_slots(side) which can be used to give information on which side
+       which slots of the inventory(s) should be arrival
 
 fix bug: chat seems not working due to multiple additions of the same character
 
 move mod loading to Mod-instanced-attribute-system
 add mod.toml support (which is mc-forge format) & old format!
+add some form of mod display screen
+add attribute to blocks on which side which slots can be used as in/out
 
 idea for loading visualisation:
     some fancy area in which every mod has after his file size or another parameter an area which is colored after its
@@ -553,7 +568,6 @@ todo: fix bug: grass top texture is not colored
 
 todo: fix bug: crafting somehow ends sometimes in the double amount than usually
     (for example, crafting of crafting table)
-todo: fix bug: crafting system seems to load only one mod. maybe raising conditions
 
 
 add an display attribute to WorldGenConfig
@@ -660,9 +674,6 @@ todo: add Plant-system, plant brake, plant base class (normal & double), plant g
     tweak model system to support plant models
 todo: add flowers & bind to world generation as an seperated layer
 
-todo: add an loading event bus for loading events, move every load entry to this bus, add an
-    event/RegistryLoadingHandler for doing stuff on this event bus, every single entry should be loaded at its own,
-    create an system which tries to notate stuff found on event bus to G.registry & only opens the used registries
 todo: every loading stage should have the following parts: prepare, instance registrate, function based registrate,
     finish
 todo: split multi-registries into their parts

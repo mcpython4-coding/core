@@ -40,7 +40,7 @@ def build():
 def load_data():
     if not os.path.exists(G.local+"/build/itematlases"):
         os.makedirs(G.local+"/build/itematlases")
-    else:
+    elif os.path.exists(G.local + "/build/itematlases/index.json"):
         with open(G.local+"/build/itematlases/index.json") as f:
             indextable = json.load(f)
         for file in os.listdir(G.local+"/build/itematlases"):

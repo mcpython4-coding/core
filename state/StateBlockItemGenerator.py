@@ -58,8 +58,9 @@ class StateBlockItemGenerator(State.State):
         self.tasks = [x.get_name() for x in G.registry.get_by_name("block").registered_objects]
         if not os.path.isdir(G.local + "/build/generated_items"): os.makedirs(G.local + "/build/generated_items")
         if not G.prebuilding:
-            with open(G.local+"/build/itemblockfactory.json", mode="r") as f:
-                self.table = json.load(f)
+            if os.path.exists(G.local+"/build/itemblockfactory.json"):
+                with open(G.local+"/build/itemblockfactory.json", mode="r") as f:
+                    self.table = json.load(f)
             items = G.registry.get_by_name("item").get_attribute("items")
             for task in self.tasks[:]:
                 if task in items:

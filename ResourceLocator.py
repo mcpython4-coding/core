@@ -151,8 +151,12 @@ MC_IMAGE_LOCATIONS = ["block", "gui", "item"]
 
 
 def transform_name(file: str) -> str:
-    if any([file.startswith(x) for x in MC_IMAGE_LOCATIONS]):
-        f = "assets/minecraft/textures/{}/{}.png".format(file.split("/")[0], "/".join(file.split("/")[1:]))
+    f = file.split(":")
+    if any([f[-1].startswith(x) for x in MC_IMAGE_LOCATIONS]):
+        if len(f) == 1:
+            f = "assets/minecraft/textures/{}/{}.png".format(f[0].split("/")[0], "/".join(f[0].split("/")[1:]))
+        else:
+            f = "assets/{}/textures/{}/{}".format(f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:]))
         return f
     raise NotImplementedError("can't transform name {} to valid path".format(file))
 

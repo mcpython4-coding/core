@@ -99,3 +99,6 @@ class Block:
     def get_best_tools(self):
         return []
 
+    def get_provided_slots(self, side):
+        return []
+

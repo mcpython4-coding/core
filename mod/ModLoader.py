@@ -13,7 +13,6 @@ import zipfile
 import sys
 import json
 import importlib
-import toposort
 import time
 import state.StateModLoading
 import util.math
@@ -157,9 +156,9 @@ class ModLoader:
                                 for location in data["main files"]:
                                     importlib.import_module(location)
                             else:
-                                print("[ERROR] mod.json of {} does NOT contain 'main files'-attribute".format(file))
+                                print("[ERROR] mod.json of '{}' does NOT contain 'main files'-attribute".format(file))
                         except FileNotFoundError:
-                            print("[WARNING] can't locate mod.json file in mod at {}".format(file))
+                            print("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
                     importlib.import_module("mods."+file.split(".")[0])
@@ -174,9 +173,9 @@ class ModLoader:
                         for location in data["main files"]:
                             importlib.import_module(location)
                     else:
-                        print("[ERROR] mod.json of {} does NOT contain an 'main files'-attribute".format(file))
+                        print("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
                 else:
-                    print("[WARNING] can't locate mod.json file for mod at {}".format(file))
+                    print("[WARNING] can't locate mod.json file for mod at '{}'".format(file))
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
@@ -185,7 +184,7 @@ class ModLoader:
                 if name in self.mods:
                     del self.mods[name]
                 else:
-                    print("[WARNING] it was attempted to remove mod {} which was not registered".format(name))
+                    print("[WARNING] it was attempted to remove mod '{}' which was not registered".format(name))
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
@@ -212,7 +211,8 @@ class ModLoader:
         for mod in self.found_mods:
             if mod.name in modinfo:
                 errors.append(
-                    "-Mod {} has more than one version in the folder. Please load only every mod ONES".format(mod.name))
+                    "-Mod '{}' has more than one version in the folder. Please load only every mod ONES".format(
+                        mod.name))
                 errors.append(" found in: {}".format(mod.path))
             else:
                 modinfo[mod.name] = []
@@ -220,10 +220,10 @@ class ModLoader:
             depends = mod.dependinfo[0][:]
             for depend in depends:
                 if not depend.arrival():
-                    errors.append("-Mod {} needs mod {} which is not provided".format(mod.name, depend))
+                    errors.append("-Mod '{}' needs mod '{}' which is not provided".format(mod.name, depend))
             for depend in mod.dependinfo[2]:
                 if depend.arrival():
-                    errors.append("-Mod {} is incompatible with {}".format(mod.name, depend))
+                    errors.append("-Mod '{}' is incompatible with '{}'".format(mod.name, depend))
         for mod in self.found_mods:
             for depend in mod.dependinfo[4]:
                 if depend.name in modinfo and depend.name not in modinfo[mod.name]:
@@ -234,7 +234,7 @@ class ModLoader:
         if len(errors) > 0:
             print("errors with mods:")
             print(" ", end="")
-            print(*errors, sep="\n -")
+            print(*errors, sep="\n ")
             sys.exit(-1)
         self.modorder = list(util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
         print("mod loading order: ")
@@ -255,7 +255,7 @@ class ModLoader:
                 eventname in mod.eventbus.eventsubscribtions and len(
                     mod.eventbus.eventsubscribtions[eventname]) > 0 else "null"
             state.StateModLoading.modloading.parts[2].text += " ({}/{})".format(stage.progress, stage.max_progress)
-            if result == False:  # finished with mod
+            if result is False:  # finished with mod
                 self.active_loading_mod += 1
                 if self.active_loading_mod >= len(self.modorder):
                     self.active_loading_mod = 0

@@ -26,7 +26,7 @@ class ModDependency:
     def arrival(self) -> bool:
         if self.name not in G.modloader.mods: return False
         if self.versions is None: return True
-        real_mod = G.modloader[self.name]
+        real_mod = G.modloader.mods[self.name]
         if self.versions == real_mod.version: return True
         if type(self.versions) == list:
             if real_mod.version in self.versions: return bool(real_mod[0])
@@ -43,7 +43,8 @@ class ModDependency:
             return self.name
         elif type(self.versions) == str:
             if self.versions[0]:
-                return "{} in any of the following versions: ".format(self.name) + ", ".join(self.versions)
+                return "{} in any of the following versions: ".format(self.name) + (", ".join(self.versions) if type(
+                    self.versions) != str else self.versions)
             else:
                 return "{} in none any of the following versions: ".format(self.name) + ", ".join(self.versions[1:])
         else:

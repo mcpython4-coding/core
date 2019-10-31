@@ -35,8 +35,9 @@ class TextureFactory:
         texturechange: ITextureChange = self.changer[mode]
         return texturechange.convert(image, *args, **kwargs)
 
-    def apply_from_file(self, file):
-        data = ResourceLocator.read(file, "json")
+    def apply_from_file(self, file): self.apply_from_data(ResourceLocator.read(file, "json"))
+
+    def apply_from_data(self, data: dict):
         images = [ResourceLocator.read(x, "pil") for x in data["images"]]
         if "space" in data: images += [None] * data["space"]
         for entry in data["transforms"]:

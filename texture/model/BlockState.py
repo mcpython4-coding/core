@@ -42,6 +42,20 @@ class BlockStateDefinition:
             print("error during loading model from file {}".format(file))
             traceback.print_exc()
 
+    @classmethod
+    def from_data(cls, name, data):
+        mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_create", cls._from_data, name, data,
+                                                    info="loading block state {}".format(name))
+
+    @classmethod
+    def _from_data(cls, name, data):
+        try:
+            return BlockStateDefinition(data, name)
+        except BlockStateNotNeeded: pass
+        except:
+            print("error during loading model for {} from data {}".format(name, data))
+            traceback.print_exc()
+
     def __init__(self, data: dict, name: str):
         if name not in G.registry.get_by_name("block").get_attribute("blocks"): raise BlockStateNotNeeded()
         G.modelhandler.blockstates[name] = self

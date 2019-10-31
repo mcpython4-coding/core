@@ -34,6 +34,9 @@ class ModelHandler:
                     s[s.index("block")-2], s[-1].split(".")[0])
                 self.found_models[name] = model
 
+    def add_from_data(self, name, data):
+        self.found_models[name] = data
+
     def build(self):
         used_models = self.used_models[:]
         dependencied_list = []
@@ -42,7 +45,11 @@ class ModelHandler:
             if used not in self.found_models:
                 print("model error: can't locate model for {}".format(used))
                 continue
-            data = ResourceLocator.read(self.found_models[used], "json")
+            file = self.found_models[used]
+            if type(file) == str:
+                data = ResourceLocator.read(file, "json")
+            else:
+                data = file
             if "parent" in data:
                 used_models.append(data["parent"])
                 depend = [data["parent"]]
