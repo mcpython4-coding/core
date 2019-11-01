@@ -544,23 +544,15 @@ started these clone on 12th of July, 2019
        -mod compatibility. This makes it also possible to extract information what is arrival for other mods
 [uuk]: added new function to block: get_provided_slots(side) which can be used to give information on which side
        which slots of the inventory(s) should be arrival
+[uuk]: fixed bug: ModelHandler-datainjection failed
+[uuk]: fixed bug: world was created twice during startup which ended up into errors all around the system
+[uuk]: fixed bug: README was linking to wrong repo
+[uuk]: added wood & stone slabs
+[uuk]: fixed model system for non-full blocks
+[uuk]: texture util of math accepts now an texture region in which 0 is the one side and 1 the other
+[uuk]: hit_test returns now also the actual hit position, not only the block in which was lended
 
-fix bug: chat seems not working due to multiple additions of the same character
-
-move mod loading to Mod-instanced-attribute-system
-add mod.toml support (which is mc-forge format) & old format!
-add some form of mod display screen
-add attribute to blocks on which side which slots can be used as in/out
-
-idea for loading visualisation:
-    some fancy area in which every mod has after his file size or another parameter an area which is colored after its
-        loading stage.
-    the color is calculated over step / max steps * 255 * random weight per mod per color for r, g, b; a is 255 always
-    every area has an lable with the mod name in its representative text size (box height)
-    the mcpython-mod is also displayed. Its file size is calculated over G.local-size - sum of mod file sizes
-    the progress bar indicates what step is executed at the moment
-    an lable is needed for what mod is loaded & how far we are in it. may be progressbar, may be full to less, may
-        be other color
+add Hitbox-system, bind to hit_test, add check in user add block if an block is at the given position
 
 both of these bugs appear somehow random, maybe raising conditions? (for example in ResourceLocator?)
 todo: fix bug: grass block texture up & down is sometimes missing texture
@@ -568,6 +560,9 @@ todo: fix bug: grass top texture is not colored
 
 todo: fix bug: crafting somehow ends sometimes in the double amount than usually
     (for example, crafting of crafting table)
+
+todo: fix bug: when removing "<" or ">" from chat, some strange things happen
+todo: fix bug: when entering code for html-special-chars, the special char is displayed in chat
 
 
 add an display attribute to WorldGenConfig

@@ -3,7 +3,7 @@ these is the fourth version of an minecraft-like, python-written game based on f
 
 **Like it?**
 
-Watch us and submit to it at www.github.com/uuk0/mcpython-4 
+Watch us and submit to it at https://github.com/mcpython4-coding/core 
 
 How to setup?
 -----------------------------------------------------------------------------------------------------

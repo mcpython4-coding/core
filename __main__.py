@@ -47,9 +47,6 @@ try:
 
     import setup as systemsetup
 
-    import world.World
-    globals.world = world.World.World()
-
     import texture.model.ModelHandler
     import texture.model.BlockState
 

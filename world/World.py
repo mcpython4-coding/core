@@ -69,12 +69,12 @@ class World:
                 if previous is not None and key is not None:
                     mx, my, mz = (previous[0] - key[0], previous[1] - key[1], previous[2] - key[2])
                     if abs(mx) + abs(my) + abs(mz) == 1:
-                        return key, previous
+                        return key, previous, (x, y, z)
                 else:
-                    return key, previous
+                    return key, previous, (x, y, z)
             previous = key
             x, y, z = x + dx / m, y + dy / m, z + dz / m
-        return None, None
+        return None, None, None
 
     def show_sector(self, sector, immediate=False):
         """ Ensure all blocks in the given sector that should be shown are

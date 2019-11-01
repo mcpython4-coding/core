@@ -377,7 +377,7 @@ class Window(pyglet.window.Window):
         self.label.text = '%02d (%.2f, %.2f, %.2f), gamemode %01d' % (
             pyglet.clock.get_fps(), x, y, z, G.player.gamemode)
         vector = G.window.get_sight_vector()
-        blockpos, previous = G.world.hit_test(G.window.position, vector)
+        blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str: blockname = blockname.get_name()

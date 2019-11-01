@@ -38,7 +38,7 @@ def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True
     return top + bottom + left + right + front + back
 
 
-def tex_coord(x, y, size=(32, 32)):
+def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1)):
     """ Return the bounding vertices of the texture square.
 
     """
@@ -46,25 +46,27 @@ def tex_coord(x, y, size=(32, 32)):
     my = 1. / size[1]
     dx = x * mx
     dy = y * my
-    return dx, dy, dx + mx, dy, dx + mx, dy + my, dx, dy + my
+    bx, by, ex, ey = region[0] / size[0], region[1] / size[1], (1 - region[2]) / size[0], (1 - region[3]) / size[1]
+    return dx + bx, dy + by, dx + mx - ex, dy + by, dx + mx + ex, dy + my - ey, dx + bx, dy + my - ey
 
 
-def tex_coords(*args, size=(32, 32)):
+def tex_coords(*args, size=(32, 32), tex_region=None):
     """ Return a list of the texture squares for the top, bottom and sides.
 
     """
+    if tex_region is None: tex_region = [(0, 0, 1, 1)] * 6
     args = list(args)
     for i, arg in enumerate(args):
         if arg is None:
             arg = (0, 0)
         args[i] = arg
     top, bottom, N, S, E, W = tuple(args)
-    top = tex_coord(*top, size=size)
-    bottom = tex_coord(*bottom, size=size)
-    n = tex_coord(*N, size=size)
-    e = tex_coord(*E, size=size)
-    s = tex_coord(*S, size=size)
-    w = tex_coord(*W, size=size)
+    top = tex_coord(*top, size=size, region=tex_region[0])
+    bottom = tex_coord(*bottom, size=size, region=tex_region[1])
+    n = tex_coord(*N, size=size, region=tex_region[2])
+    e = tex_coord(*E, size=size, region=tex_region[3])
+    s = tex_coord(*S, size=size, region=tex_region[4])
+    w = tex_coord(*W, size=size, region=tex_region[5])
     result = []
     result.extend(top)
     result.extend(bottom)

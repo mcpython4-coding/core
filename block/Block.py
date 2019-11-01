@@ -14,16 +14,19 @@ class Block:
     base class for all blocks
     """
 
-    def __init__(self, position, setted_to=None, state={}):
+    def __init__(self, position, setted_to=None, state=None, real_hit=None):
         """
         creates new Block
         :param position: the position to create the block on
         :param setted_to: when the block is setted to an block, these parameter contains where
+        :param real_hit: were the block the user set to was hit on
         """
         self.position = position
         self.setted_to = setted_to
+        self.real_hit = real_hit
         self.on_create()
-        self.set_model_state(state)
+        if state is not None:
+            self.set_model_state(state)
 
     @staticmethod
     def get_name() -> str:
@@ -87,7 +90,7 @@ class Block:
     @staticmethod
     def get_all_model_states() -> list: return [{}]
 
-    def on_player_interact(self, itemstack, button, modifiers) -> bool:
+    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
         return False
 
     def get_hardness(self):

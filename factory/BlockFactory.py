@@ -11,6 +11,7 @@ import block.Block
 import block.IFallingBlock as FallingBlock
 import block.ILog as ILog
 import util.enums
+import block.ISlab as ISlab
 
 
 # todo: implement inventory opening notations
@@ -106,7 +107,7 @@ class BlockFactory:
 
         if master.interaction_callback:
             class ConstructedBlock(ConstructedBlock):
-                def on_player_interact(self, itemstack, button, modifiers) -> bool:
+                def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
                     return master.interaction_callback(self, itemstack, button, modifiers)
 
         if register: G.registry.register(ConstructedBlock)
@@ -173,6 +174,11 @@ class BlockFactory:
         self.islog = True
         if ILog.ILog not in self.baseclass:
             self.baseclass.append(ILog.ILog)
+        return self
+
+    def setSlab(self):
+        if ISlab.ISlab not in self.baseclass:
+            self.baseclass.append(ISlab.ISlab)
         return self
 
     def setHardness(self, value: float):

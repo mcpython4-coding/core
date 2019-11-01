@@ -32,7 +32,7 @@ class StatePartGame(StatePart.StatePart):
     @classmethod
     def calculate_new_braketime(cls):
         vector = G.window.get_sight_vector()
-        blockpos, previous = G.world.hit_test(G.window.position, vector)
+        blockpos = G.world.hit_test(G.window.position, vector)[0]
         block = G.world.get_active_dimension().get_block(blockpos) if blockpos else None
         if not block:
             cls.braketime = None  # no braketime because no block
@@ -98,7 +98,7 @@ class StatePartGame(StatePart.StatePart):
                     return
 
             vector = G.window.get_sight_vector()
-            blockpos, previous = G.world.hit_test(G.window.position, vector)
+            blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
             if blockpos:
                 if blockpos != self.block_looking_at:  # have we changed the block we were looking at?
                     self.block_looking_at = blockpos
@@ -130,7 +130,8 @@ class StatePartGame(StatePart.StatePart):
                         py = math.ceil(G.window.position[1])
                         if not (x == px and z == pz and py-1 <= y <= py):
                             G.world.get_active_dimension().add_block(
-                                previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos})
+                                previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos,
+                                                                                   "real_hit": hitpos})
                             if G.player.gamemode == 0:
                                 slot.itemstack.amount -= 1
                                 if slot.itemstack.amount == 0:
@@ -224,14 +225,14 @@ class StatePartGame(StatePart.StatePart):
         if not self.activate_mouse: return
         slot = G.player.get_active_inventory_slot()
         vector = G.window.get_sight_vector()
-        blockpos, previous = G.world.hit_test(G.window.position, vector)
+        blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
         block = G.world.get_active_dimension().get_block(blockpos) if blockpos else None
         cancel = False
         if not slot.itemstack.is_empty():
             if slot.itemstack.item.on_player_interact(block, button, modifiers):
                 cancel = True
         if block and type(block) != str:
-            if not cancel and block.on_player_interact(slot.itemstack, button, modifiers):
+            if not cancel and block.on_player_interact(slot.itemstack, button, modifiers, hitpos):
                 cancel = True
         if cancel:
             self.set_cooldown = time.time()

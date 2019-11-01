@@ -60,6 +60,8 @@ def load_blocks():
             ToolType.AXE]).setLog().finish()
         factory.BlockFactory.BlockFactory().setName("minecraft:stripped_{}_wood".format(tree)).setHardness(2).setBestTools([
             ToolType.AXE]).setLog().finish()
+        factory.BlockFactory.BlockFactory().setName("minecraft:{}_slab".format(tree)).setSlab().setBestTools(
+            [ToolType.AXE]).setHardness(2).finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:coal_block").setHardness(5).setBestTools([ToolType.PICKAXE]).\
         setMinimumToolLevel(1).finish()
@@ -105,6 +107,23 @@ def load_blocks():
             [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
         factory.BlockFactory.BlockFactory().setName("minecraft:polished_{}".format(stonetype)).setHardness(1.5).\
             setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
+        factory.BlockFactory.BlockFactory().setName("minecraft:{}_slab".format(stonetype)).setHardness(2).\
+            setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
+        factory.BlockFactory.BlockFactory().setName("minecraft:polished_{}_slab".format(stonetype)).setHardness(2). \
+            setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
+
+    factory.BlockFactory.BlockFactory().setName("minecraft:stone_slab").setHardness(2). \
+        setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_stone_slab").setHardness(2). \
+        setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:cobblestone_slab").setHardness(2). \
+        setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:mossy_cobblestone_slab").setHardness(2). \
+        setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:stone_brick_slab").setHardness(2). \
+        setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_brick_slab").setHardness(2). \
+        setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")
