@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 
 import globals as G
 import config
+import math
 
 
 def get_max_y(pos):
@@ -93,6 +94,16 @@ def normalize(position):
     try:
         x, y, z = position if type(position) == tuple else tuple(position)
         x, y, z = (int(round(x)), int(round(y)), int(round(z)))
+        return x, y, z
+    except:
+        print(position)
+        raise
+
+
+def normalize_ceil(position):
+    try:
+        x, y, z = position if type(position) == tuple else tuple(position)
+        x, y, z = (int(math.ceil(x)), int(math.ceil(y)), int(math.ceil(z)))
         return x, y, z
     except:
         print(position)

@@ -62,18 +62,20 @@ class World:
         m = 20
         x, y, z = position
         dx, dy, dz = vector
+        dx /= m
+        dy /= m
+        dz /= m
         previous = None
         for _ in range(max_distance * m):
             key = util.math.normalize((x, y, z))
-            if key != previous and self.get_active_dimension().get_block(key):
-                if previous is not None and key is not None:
-                    mx, my, mz = (previous[0] - key[0], previous[1] - key[1], previous[2] - key[2])
-                    if abs(mx) + abs(my) + abs(mz) == 1:
-                        return key, previous, (x, y, z)
-                else:
-                    return key, previous, (x, y, z)
-            previous = key
-            x, y, z = x + dx / m, y + dy / m, z + dz / m
+            blocki = self.get_active_dimension().get_block(key)
+            if blocki and type(blocki) != str and blocki.get_view_bbox().test_point_hit((x, y, z), blocki.position):
+                return key, previous, (x, y, z)
+            if key != previous:
+                previous = key
+            x += dx
+            y += dy
+            z += dz
         return None, None, None
 
     def show_sector(self, sector, immediate=False):

@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import gui.ItemStack
 import item.ItemTool
+import block.BoundingBox
 
 
 class Block:
@@ -104,4 +105,7 @@ class Block:
 
     def get_provided_slots(self, side):
         return []
+
+    def get_view_bbox(self):
+        return block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
 

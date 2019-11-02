@@ -10,12 +10,20 @@ import block.Block
 import event.TickHandler
 import enum
 import util.enums
+import block.BoundingBox
 
 
 class SlabModes(enum.Enum):
     TOP = 1
     BOTTOM = 2
     DOUBLE = 3
+
+
+BBOX_DICT = {
+    SlabModes.TOP: block.BoundingBox.BoundingBox((1, 0.5, 1), (0, 0.5, 0)),
+    SlabModes.BOTTOM: block.BoundingBox.BoundingBox((1, 0.5, 1)),
+    SlabModes.DOUBLE: block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
+}
 
 
 class ISlab(block.Block.Block):
@@ -47,4 +55,6 @@ class ISlab(block.Block.Block):
     def is_solid_side(self, side) -> bool:
         if self.type == SlabModes.DOUBLE: return True
         return False
+
+    def get_view_bbox(self): return BBOX_DICT[self.type]
 

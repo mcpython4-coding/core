@@ -128,7 +128,8 @@ class StatePartGame(StatePart.StatePart):
                         x, y, z = previous
                         px, _, pz = util.math.normalize(G.window.position)
                         py = math.ceil(G.window.position[1])
-                        if not (x == px and z == pz and py-1 <= y <= py):
+                        if not (x == px and z == pz and py-1 <= y <= py) and not G.world.get_active_dimension().\
+                                get_block(previous):
                             G.world.get_active_dimension().add_block(
                                 previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos,
                                                                                    "real_hit": hitpos})

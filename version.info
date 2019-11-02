@@ -551,8 +551,16 @@ started these clone on 12th of July, 2019
 [uuk]: fixed model system for non-full blocks
 [uuk]: texture util of math accepts now an texture region in which 0 is the one side and 1 the other
 [uuk]: hit_test returns now also the actual hit position, not only the block in which was lended
+[uuk]: added BoundingBox-system used now in hit_test
+[uuk]: slab has now an proper hitbox
+[uuk]: updated pillow to 6.2.1 to enable python 3.8 support
+[uuk]: fixed bug: in some rare cases, blocks could be replaced by player without giving item back
+[uuk]: added normalize_ceil-method
 
-add Hitbox-system, bind to hit_test, add check in user add block if an block is at the given position
+TODO: FIX BUG: FPS GO FAST DOWN WHEN ENTERING GAME
+
+
+add an optional entry to mod.json-file which is an modname: mainfile[ which will load the mainfiles if mod is found
 
 both of these bugs appear somehow random, maybe raising conditions? (for example in ResourceLocator?)
 todo: fix bug: grass block texture up & down is sometimes missing texture
@@ -563,6 +571,11 @@ todo: fix bug: crafting somehow ends sometimes in the double amount than usually
 
 todo: fix bug: when removing "<" or ">" from chat, some strange things happen
 todo: fix bug: when entering code for html-special-chars, the special char is displayed in chat
+
+todo: fix bug: chat & inventory can be opened at the same time
+
+add some form of "fast-load" with modified loading phases to speed up
+-> for example, you can select recipes to be NOT loaded, items not loaded, blocks not loaded, language data not loaded...
 
 
 add an display attribute to WorldGenConfig
