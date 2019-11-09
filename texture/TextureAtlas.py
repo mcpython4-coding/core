@@ -65,7 +65,7 @@ class TextureAtlasGenerator:
 
 
 class TextureAtlas:
-    def __init__(self, size=(64, 64), image_size=(64, 64), add_missing_texture=True, pyglet_special_pos=True):
+    def __init__(self, size=(16, 16), image_size=(64, 64), add_missing_texture=True, pyglet_special_pos=True):
         self.size = size
         self.image_size = image_size
         self.pyglet_special_pos = pyglet_special_pos

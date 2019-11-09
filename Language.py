@@ -24,7 +24,7 @@ def decode(s: str):
     """
     decodes an special string to an translated one
     :param s: an string defining it
-    :return: the formated string
+    :return: the formatted string
     """
     while s.count("#*") > 0 and s.count("*#") > 0:
         start = s.index("#*")
@@ -57,12 +57,16 @@ class Language:
         return self.table[key] if key in self.table else key
 
 
-files = ResourceLocator.get_all_entries_special("assets/minecraft/lang")
-m = len(files)
-for i, f in enumerate(files):
-    if f.endswith(".json"):  # new language format
-        mod.ModMcpython.mcpython.eventbus.subscribe("stage:language", Language.from_file, f[:],
-                                                    info="loading language file {}".format(f))
+def from_directory(directory, modname):
+    files = ResourceLocator.get_all_entries_special(directory)
+    m = len(files)
+    for i, f in enumerate(files):
+        if f.endswith(".json"):  # new language format
+            G.modloader.mods[modname].eventbus.subscribe("stage:language", Language.from_file, f[:],
+                                                         info="loading language file {}".format(f))
+
+
+from_directory("assets/minecraft/lang", "minecraft")
 
 # todo: move to an load-function over "assets/minecraft/lang" or "minecraft", add support for old format
 

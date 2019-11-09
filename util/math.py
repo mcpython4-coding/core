@@ -78,6 +78,9 @@ def tex_coords(*args, size=(32, 32), tex_region=None):
     return result
 
 
+def tex_coord_factor(fx, fy, tx, ty): return fx, fy, tx, fy, tx, ty, fx, ty
+
+
 def normalize(position):
     """ Accepts `position` of arbitrary precision and returns the block
     containing that position.

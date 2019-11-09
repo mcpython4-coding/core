@@ -147,7 +147,7 @@ def close_all_resources():
     RESOURCE_LOCATIONS.clear()
 
 
-MC_IMAGE_LOCATIONS = ["block", "gui", "item"]
+MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity"]
 
 
 def transform_name(file: str) -> str:
@@ -176,6 +176,9 @@ def read(file, mode=None):
         raise RuntimeError("can't find resource named {}".format(resource))
     if not exists(file):
         file = transform_name(file)
+    if os.path.exists(G.local+"/"+file):  # special, local-only location
+        if mode == "pil":
+            return PIL.Image.open(G.local+"/"+file)
     loc = RESOURCE_LOCATIONS
     loc.reverse()
     for x in loc:
@@ -185,6 +188,7 @@ def read(file, mode=None):
             except:
                 # print(file)
                 raise
+    raise ValueError("can't find resource {} in any path".format(file))
 
 
 def get_all_entries(directory: str) -> list:
@@ -206,4 +210,17 @@ def get_all_entries_special(directory: str) -> list:
     for x in RESOURCE_LOCATIONS:
         result += ["@{}|{}".format(x.path, s) for s in x.get_all_entrys_in_directory(directory)]
     return result
+
+
+def add_resources_by_modname(modname, pathname):
+    from texture.model.BlockState import BlockStateDefinition
+    import Language
+    import crafting.CraftingHandler
+    G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,
+                                                 info="loading crafting recipes")
+    G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
+                                                 info="searching for block models")
+    G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
+                                                 "assets/minecraft/blockstates", info="searching for block states")
+    Language.from_directory("assets/{}/lang".format(pathname), modname)
 

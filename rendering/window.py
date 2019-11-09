@@ -88,6 +88,9 @@ class Window(pyglet.window.Window):
         self.CROSSHAIRS_TEXTURE = util.texture.to_pyglet_image(
             ResourceLocator.read("gui/icons", "pil").crop((0, 0, 15, 15)).resize((30, 30)))
 
+    def reset_caption(self):
+        self.set_caption("mcpython 4 - {}".format(G.modloader.mods["minecraft"].version))
+
     def set_exclusive_mouse(self, exclusive):
         """ If `exclusive` is True, the game will capture the mouse, if False
         the game will ignore the mouse.
@@ -337,6 +340,8 @@ class Window(pyglet.window.Window):
         glRotatef(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
         x, y, z = self.position
         glTranslatef(-x, -y, -z)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 
     def on_draw(self):
         """ Called by pyglet to draw the canvas.

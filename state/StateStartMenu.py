@@ -28,6 +28,7 @@ class StateStartMenu(state.State.State):
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
+        self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
     @staticmethod
     def on_new_game_press(x, y):
@@ -38,8 +39,12 @@ class StateStartMenu(state.State.State):
         G.window.close()
 
     @staticmethod
-    def on_draw_2d_pre():
-        pyglet.gl.glClearColor(1., 1., 1., 1.)
+    def on_draw_2d_pre(): pyglet.gl.glClearColor(1., 1., 1., 1.)
+
+    @staticmethod
+    def on_key_press(key, modifier):
+        if key == pyglet.window.key.ENTER:
+            G.statehandler.switch_to("minecraft:world_generation_config")
 
 
 startmenu = None

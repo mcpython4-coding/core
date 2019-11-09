@@ -18,7 +18,7 @@ class ITextureChange:
     def get_name() -> str: raise NotImplementedError()
 
     @staticmethod
-    def convert(image: PIL.Image.Image, *args, **kwargs) -> PIL.Image.Image: raise NotImplementedError()
+    def convert(images: list, image: PIL.Image.Image, *args, **kwargs) -> PIL.Image.Image: raise NotImplementedError()
 
 
 class TextureFactory:
@@ -29,13 +29,14 @@ class TextureFactory:
     def add_transform(registry, obj: ITextureChange):
         G.texturefactoryhandler.changer[obj.get_name()] = obj
 
-    def transform(self, image, mode, *args, **kwargs):
+    def transform(self, images: list, image, mode, *args, **kwargs):
         if mode not in self.changer:
             raise ValueError("unknown task named '{}'. please use only registered tasks".format(mode))
         texturechange: ITextureChange = self.changer[mode]
-        return texturechange.convert(image, *args, **kwargs)
+        return texturechange.convert(images, image, *args, **kwargs)
 
-    def apply_from_file(self, file): self.apply_from_data(ResourceLocator.read(file, "json"))
+    def apply_from_file(self, file):
+        self.apply_from_data(ResourceLocator.read(file, "json"))
 
     def apply_from_data(self, data: dict):
         images = [ResourceLocator.read(x, "pil") for x in data["images"]]
@@ -48,11 +49,11 @@ class TextureFactory:
             entry.pop("store")
             entry.pop("mode")
             if type(image) == list:
-                if type(out) != list: raise ValueError("can't cast file {} to valid results".format(file))
+                if type(out) != list: raise ValueError("can't cast data {} to valid results".format(data))
                 for i, e in enumerate(image):
-                    images[out[i]] = self.transform(images[e], mode, **entry)
+                    images[out[i]] = self.transform(images, images[e], mode, **entry)
             else:
-                images[out] = self.transform(images[image], mode, **entry)
+                images[out] = self.transform(images, images[image], mode, **entry)
         for store in data["store"]:
             f = G.local+"/build/texture/"+store["location"]
             d = os.path.dirname(f)
@@ -76,7 +77,7 @@ class TextureResize(ITextureChange):
     def get_name() -> str: return "resize"
 
     @staticmethod
-    def convert(image: PIL.Image.Image, size=None) -> PIL.Image.Image:
+    def convert(images: list, image: PIL.Image.Image, size=None) -> PIL.Image.Image:
         return image.resize(size)
 
 
@@ -86,7 +87,7 @@ class TextureColorize(ITextureChange):
     def get_name() -> str: return "colorize"
 
     @staticmethod
-    def convert(image: PIL.Image.Image, color=None) -> PIL.Image.Image:
+    def convert(images: list, image: PIL.Image.Image, color=None) -> PIL.Image.Image:
         return util.texture.colorize(image, color)
 
 
@@ -96,6 +97,30 @@ class TextureCut(ITextureChange):
     def get_name() -> str: return "cut"
 
     @staticmethod
-    def convert(image: PIL.Image.Image, area=None) -> PIL.Image.Image:
+    def convert(images: list, image: PIL.Image.Image, area=None) -> PIL.Image.Image:
         return image.crop(area)
+
+
+@G.registry
+class TextureRebase(ITextureChange):
+    @staticmethod
+    def get_name() -> str: return "rebase"
+
+    @staticmethod
+    def convert(images: list, image: PIL.Image.Image, size=None, position=(0, 0)) -> PIL.Image.Image:
+        base = PIL.Image.new("RGBA", size)
+        base.paste(image, position)
+        return base
+
+
+@G.registry
+class TextureCombine(ITextureChange):
+    @staticmethod
+    def get_name() -> str: return "combine"
+
+    @staticmethod
+    def convert(images: list, image: PIL.Image.Image, base=None, position=(0, 0)) -> PIL.Image.Image:
+        imageb: PIL.Image.Image = images[base].copy()
+        imageb.paste(image, position)
+        return imageb
 

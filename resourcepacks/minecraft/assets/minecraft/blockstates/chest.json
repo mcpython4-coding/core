@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "side=NORTH": { "model": "block/chest_normal" },
+        "side=SOUTH": { "model": "block/chest_normal", "y": 180 },
+        "side=WEST":  { "model": "block/chest_normal", "y": 270 },
+        "side=EAST":  { "model": "block/chest_normal", "y": 90 }
+    }
+}

@@ -70,9 +70,9 @@ class BoxModel:
         batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]
         for i in range(6):
             t = rtextures[i * 8:i * 8 + 8]
-            result.append(batch.add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group,
-                                       ('v3f/static', vertex[i * 12:i * 12 + 12]),
-                                       ('t2f/static', t)))
+            v = vertex[i * 12:i * 12 + 12]
+            result.append(batch.add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),
+                                    ('t2f/static', t)))
         return result
 
     def copy(self, new_model=None):

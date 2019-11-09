@@ -71,7 +71,7 @@ try:
 
     def run():
         import pyglet
-        rendering.window.Window(width=800, height=600, caption='mcpython 4', resizable=True)
+        rendering.window.Window(width=800, height=600, caption='mcpython 4', resizable=True).reset_caption()
         G.eventhandler.call("game:gameloop_startup")
         pyglet.app.run()
 

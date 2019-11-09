@@ -30,7 +30,7 @@ class CommandReload(chat.command.Command.Command):
         G.craftinghandler.recipes = {}
         G.craftinghandler.load()
         G.inventoryhandler.reload_config()
-        event.TickHandler.handler.bind(G.window.set_caption, 20, args=["mcpython 4"])
+        event.TickHandler.handler.bind(G.window.reset_caption, 20)
 
     @staticmethod
     def get_help() -> list:

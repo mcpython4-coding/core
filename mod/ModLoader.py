@@ -161,7 +161,7 @@ class ModLoader:
                             print("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
-                    importlib.import_module("mods."+file.split(".")[0])
+                    importlib.import_module("mods."+file.split("/")[-1].split("\\")[-1].split(".")[0])
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
                 ResourceLocator.RESOURCE_LOCATIONS.append(ResourceLocator.ResourceDirectory(file))

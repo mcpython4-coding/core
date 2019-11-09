@@ -40,6 +40,11 @@ class BlockFactory:
 
         self.baseclass = [block.Block.Block]
 
+    def copy(self):
+        block = BlockFactory()
+        block.__dict__ = self.__dict__
+        return block
+
     def finish(self, register=True):
         modname, blockname = tuple(self.name.split(":"))
         G.modloader.mods[modname].eventbus.subscribe("stage:block:load", self._finish, register,

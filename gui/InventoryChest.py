@@ -11,36 +11,26 @@ import gui.Slot
 import gui.ItemStack
 import crafting.CraftingHandler
 import crafting.GridRecipeInterface
+import gui.ItemStack
 
 
-class InventoryCraftingTable(gui.Inventory.Inventory):
+class InventoryChest(gui.Inventory.Inventory):
     """
-    inventory class for the crafting table
+    inventory class for chest
     """
 
     @staticmethod
     def get_config_file() -> str or None:
-        return "assets/config/inventory/blockinventorycraftingtable.json"
+        return "assets/config/inventory/blockinventorychest.json"
 
     def on_create(self):
-        inputs = [self.slots[:3], self.slots[3:6], self.slots[6:9]]
-        self.recipeinterface = crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[9])
+        pass
 
     def create_slots(self) -> list:
-        # 36 slots of main, 9 crafting grid, 1 crafting output
-        # base_slots = G.player.inventorys["main"].slots[:36]
-        return [gui.Slot.Slot() for _ in range(10)]
-
-    def on_deactivate(self):
-        for slot in self.slots[:-1]:
-            G.player.add_to_free_place(slot.itemstack)
-            slot.itemstack.clean()
-        self.slots[-1].itemstack.clean()
+        # 3 rows of 9 slots of storage
+        return [gui.Slot.Slot() for _ in range(9*3)]
 
     def draw(self, hoveringslot=None):
-        """
-        draws the inventory
-        """
         self.on_draw_background()
         x, y = self._get_position()
         if self.bgsprite:

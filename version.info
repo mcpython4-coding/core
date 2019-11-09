@@ -556,8 +556,49 @@ started these clone on 12th of July, 2019
 [uuk]: updated pillow to 6.2.1 to enable python 3.8 support
 [uuk]: fixed bug: in some rare cases, blocks could be replaced by player without giving item back
 [uuk]: added normalize_ceil-method
+[uuk]: added chest
+[uuk]: fixed bug: when closing crafting table inventory, also output-slot is added back to inventory
+[uuk]: added chest inventory using shulkerbox-texture because less work to do with this texture
+[uuk]: added ICustomBlockRenderer-class for creating own rendering systems for blocks
+[uuk]: fixed texture bugs around corners of blocks by using an separated OpenGL-option
+[uuk]: fixed bug: when selecting an block when digging strait down, the black outline is drawn incorrect
+[uuk]: added new texture task: "rebase", "combine"
+[uuk]: fixed bug: link to github-project was wrong
+[uuk]: caption of window now includes the version of the game
+[uuk]: added helper function to ResourceLocator to load everything possible by modname using also alternative dirs
+[uuk]: TextureAtlasSize is now on default 16x16 instead of 64x64
+[uuk]: fixed bug: can't load .py-file only-mods
+[uuk]: ENTER in start menu will now send user to world gen config
 
-TODO: FIX BUG: FPS GO FAST DOWN WHEN ENTERING GAME
+todo: how about using also the cristmas variants of chests?
+todo: add ender chests (player-instance-based, link to it, usingSingleChestRenderer)
+todo: add "lock" of chest
+
+todo: add some form of debug profile which will calculate how much time each called event over the eventbus takes
+todo: add some form of debug profile which will say which loading stage is taking how long
+TODO: FIX BUG: FPS GO FAST DOWN WHEN ENTERING GAME -> use above system to tell what's using the time
+
+todo: unload BlockStates which are never used by caching used block states and than loading only needed
+todo: add check for which texture rotations from an block are used and remove all unused, empty texture references
+    should be replaced by an None-entry
+todo: make texture coords than static
+
+todo: make rotation based on OpenGL rather than texture rotating & side changing
+todo: with this, fix bug that when an blockstate is rotated, its relative position & size is not
+todo: make factories extendable!
+todo: add support for old language format
+
+todo: add support for mcmod.json-file
+
+todo: allow mod dependencies to be string-only for checking against only an mod (background auto-instance create)
+
+todo: implement an mod which tests the system for low fps reasons (overwriting event bus system)
+
+todo: add config system for mods
+
+todo: make BlockItemFactory an state which can be accessed during runtime so that an command can be implemented named
+    /rebuilditemtexture
+todo: make BlockItemFactory use an special dim so no special cleaning is needed
 
 
 add an optional entry to mod.json-file which is an modname: mainfile[ which will load the mainfiles if mod is found

@@ -24,7 +24,7 @@ class BoundingBox:
         x += self.relposition[0] - 0.5 + (self.size[0] / 2)
         y += self.relposition[1] - 0.5 + (self.size[1] / 2)
         z += self.relposition[2] - 0.5 + (self.size[2] / 2)
-        vertex_data = util.math.cube_vertices(x, y, z, *[f/2+0.01 for f in self.size])
+        vertex_data = util.math.cube_vertices(x, y, z, *[f/2+0.005 for f in self.size])
         pyglet.gl.glColor3d(0, 0, 0)
         # glLineWidth(1.5)
         pyglet.gl.glPolygonMode(pyglet.gl.GL_FRONT_AND_BACK, pyglet.gl.GL_LINE)
