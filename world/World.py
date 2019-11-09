@@ -15,6 +15,7 @@ import pyglet
 import time
 import world.gen.WorldGenerationHandler
 import state.StatePartGame
+import gui.Inventory
 
 
 class World:
@@ -162,4 +163,5 @@ class World:
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
         G.window.flying = False
+        for inv in G.player.inventorys.values(): inv.clear()
 

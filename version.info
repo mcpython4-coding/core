@@ -569,22 +569,40 @@ started these clone on 12th of July, 2019
 [uuk]: TextureAtlasSize is now on default 16x16 instead of 64x64
 [uuk]: fixed bug: can't load .py-file only-mods
 [uuk]: ENTER in start menu will now send user to world gen config
+[uuk]: added an debug-profile to EventBus activated by the flag "--debugevents" stored in an flag in globals
+[uuk]: optimized StatePartGame.on_update-method and separated logical parts them from each other
+[uuk]: improved performance in physics handling
+[uuk]: fixed some bugs around chests, including some texture bugs
+[uuk]: fixed wrong operator in util.math.tex_coord
+[uuk]: updated pyglet to 1.4.6
+[uuk]: improved rendered texture quality
+[uuk]: fixed some bugs around StateBlockItemGenerator
+[uuk]: added christmas-variant of chest
+[uuk]: added ender chest
+[uuk]: Inventory has now an clear method
 
-todo: how about using also the cristmas variants of chests?
-todo: add ender chests (player-instance-based, link to it, usingSingleChestRenderer)
-todo: add "lock" of chest
+todo: fix bug: chests are not visable when rebuilding
+todo: add shulker boxes
 
-todo: add some form of debug profile which will calculate how much time each called event over the eventbus takes
-todo: add some form of debug profile which will say which loading stage is taking how long
-TODO: FIX BUG: FPS GO FAST DOWN WHEN ENTERING GAME -> use above system to tell what's using the time
+todo: rewrite collision system to be based on an new set of BoundingBoxes
+
+todo: make shift-click do NOT open inventories like crafting table & chest
 
 todo: unload BlockStates which are never used by caching used block states and than loading only needed
-todo: add check for which texture rotations from an block are used and remove all unused, empty texture references
-    should be replaced by an None-entry
-todo: make texture coords than static
 
-todo: make rotation based on OpenGL rather than texture rotating & side changing
-todo: with this, fix bug that when an blockstate is rotated, its relative position & size is not
+todo: cube rotation update:
+    Make math.cube_vertices return relative coords which are than added ontop on base position during runtime
+    Use math.cube_vertices with an rotated parameter to rotate the cube by using some math transforms
+    Add an optional marker for blockstates which indicate that they re-do every show the cube verices
+    Otherwise, cache them at BlockState
+    Remove rotated textures from texture atlas
+    Make an new render element: BoxFace which is an static class which displays one face of the cube.
+    This makes not-6-sided cube-like structures possible
+
+    goal:
+        todo: make rotation based on OpenGL rather than texture rotating & side changing
+        todo: with this, fix bug that when an blockstate is rotated, its relative position & size is not
+
 todo: make factories extendable!
 todo: add support for old language format
 
@@ -592,13 +610,13 @@ todo: add support for mcmod.json-file
 
 todo: allow mod dependencies to be string-only for checking against only an mod (background auto-instance create)
 
-todo: implement an mod which tests the system for low fps reasons (overwriting event bus system)
-
 todo: add config system for mods
 
 todo: make BlockItemFactory an state which can be accessed during runtime so that an command can be implemented named
     /rebuilditemtexture
 todo: make BlockItemFactory use an special dim so no special cleaning is needed
+
+todo: add missing texture when model was not loadable
 
 
 add an optional entry to mod.json-file which is an modname: mainfile[ which will load the mainfiles if mod is found
@@ -614,6 +632,8 @@ todo: fix bug: when removing "<" or ">" from chat, some strange things happen
 todo: fix bug: when entering code for html-special-chars, the special char is displayed in chat
 
 todo: fix bug: chat & inventory can be opened at the same time
+
+todo: fix bug: when pressing ENTER in other states than chat, chat is getting ENTER as execute line
 
 add some form of "fast-load" with modified loading phases to speed up
 -> for example, you can select recipes to be NOT loaded, items not loaded, blocks not loaded, language data not loaded...
@@ -705,6 +725,9 @@ Debug World Generator:
 
 other additions which could be useful
 
+todo: add command to change block state
+todo: add command to change block inventory
+
 todo: add logging system, add crashlogs, add runtime exceptions, make tool to localize traceback strings from G.local
 
 todo: move to pre-build: block item factory, recipe sorting, model sorting & generation, texture atlas generation
@@ -714,7 +737,6 @@ todo: make hitbox draw & check on BoxModels
 
 todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
 
-todo: implement area draw for BoxModel faces (so not the whole image is drawn, only the needed part)
 todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
     barrier, buttons, pressure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms,
     sandstones (also red variants)
@@ -726,7 +748,6 @@ todo: add flowers & bind to world generation as an seperated layer
 todo: every loading stage should have the following parts: prepare, instance registrate, function based registrate,
     finish
 todo: split multi-registries into their parts
-todo: add event which is called when state is changed
 
 todo: make resourcepacks fully functional: sorting(, auto-rebuild)
 todo: add option for inventories to be visible when another is also visible
@@ -748,3 +769,5 @@ todo: add hart shake animation when less than 2 (up & down movement)
 
 todo: after python 3.8 came out (may be on the 14th of October, 2019), use multiproccessing & shared memory for world gen
     (kind of local one-client-one-server system)
+
+todo: add "lock" of chest

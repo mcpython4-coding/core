@@ -40,20 +40,24 @@ def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True
 
 
 def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1)):
-    """ Return the bounding vertices of the texture square.
-
+    """
+    Return the bounding vertices of the texture square.
+    :param x: the texture atlas entry to use
+    :param y: the texture atlas entry to use
+    :param size: the size of the texture atlas used
+    :param region: the texture region to use. (0, 0, 1, 1) is full texture atlas texture size
     """
     mx = 1. / size[0]
     my = 1. / size[1]
     dx = x * mx
     dy = y * my
     bx, by, ex, ey = region[0] / size[0], region[1] / size[1], (1 - region[2]) / size[0], (1 - region[3]) / size[1]
-    return dx + bx, dy + by, dx + mx - ex, dy + by, dx + mx + ex, dy + my - ey, dx + bx, dy + my - ey
+    return dx + bx, dy + by, dx + mx - ex, dy + by, dx + mx - ex, dy + my - ey, dx + bx, dy + my - ey
 
 
 def tex_coords(*args, size=(32, 32), tex_region=None):
-    """ Return a list of the texture squares for the top, bottom and sides.
-
+    """
+    Return a list of the texture squares for the top, bottom and sides.
     """
     if tex_region is None: tex_region = [(0, 0, 1, 1)] * 6
     args = list(args)

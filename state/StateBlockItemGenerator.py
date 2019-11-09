@@ -37,6 +37,7 @@ class StateBlockItemGenerator(State.State):
         G.registry.get_by_name("block").registered_objects.sort(key=lambda x: x.get_name())
         self.tasks = []
         self.table = []
+        self.last_image = None
 
     def get_parts(self) -> list:
         kwargs = {}
@@ -94,6 +95,7 @@ class StateBlockItemGenerator(State.State):
         G.window.position = (0, 10, 0)
         G.window.rotation = (0, 0)
         G.world.get_active_dimension().remove_block((0, 0, 0))
+        self.last_image = None
 
     def add_new_screen(self):
         self.blockindex += 1
@@ -114,10 +116,16 @@ class StateBlockItemGenerator(State.State):
         file = "build/generated_items/{}.png".format("__".join(blockname.split(":")))
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
         image: PIL.Image.Image = ResourceLocator.read(file, "pil")
-        if image.getbbox() is None:  # there was an error, retry todo: add an security check after [x] tries, skip
+        if image.getbbox() is None or len(image.histogram()) <= 1:
+            # there was an error, retry todo: add an security check after [x] tries, skip
             event.TickHandler.handler.bind(self.take_image, 1)
             return
-        image.crop((240, 129, 558, 447)).save(G.local + "/" + file)  # todo: make dynamic based on window size
+        image = image.crop((240, 129, 558, 447))  # todo: make dynamic based on window size
+        image.save(G.local + "/" + file)
+        if image == self.last_image:
+            event.TickHandler.handler.bind(self.take_image, 1)
+            return
+        self.last_image = image
         self.generate_item(blockname, file)
         event.TickHandler.handler.bind(self.add_new_screen, CLEANUP_TIME)
 

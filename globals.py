@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import os, sys
 
 prebuilding = "--rebuild" in sys.argv
+debugevents = "--debugevents" in sys.argv
 
 local = os.path.dirname(__file__)
 
@@ -34,4 +35,6 @@ dimensionhandler = None
 modelhandler = None
 
 modloader = None
+
+NEXT_EVENT_BUS_ID = 0
 

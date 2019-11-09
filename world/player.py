@@ -55,10 +55,12 @@ class Player:
     def create_inventories(self):
         import gui.InventoryPlayerHotbar
         import gui.InventoryPlayerMain
+        import gui.InventoryChest
 
         hotbar = self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
         self.inventorys['main'] = gui.InventoryPlayerMain.InventoryPlayerMain(hotbar)
         self.inventorys['chat'] = chat.Chat.ChatInventory()
+        self.inventorys["enderchest"] = gui.InventoryChest.InventoryChest()
 
         self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/hart.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/hart_half.png", "pyglet"),

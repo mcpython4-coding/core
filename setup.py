@@ -60,7 +60,10 @@ def add():
         @staticmethod
         def dump_data(directory: str):
             while os.path.exists(G.local+"/build"):
-                shutil.rmtree(G.local+"/build")
+                try:
+                    shutil.rmtree(G.local+"/build")
+                except PermissionError:
+                    pass
             os.makedirs(G.local+"/build")
 
         @staticmethod

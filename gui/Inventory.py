@@ -180,3 +180,6 @@ class Inventory:
     def get_interaction_slots(self):
         return self.slots
 
+    def clear(self):
+        for slot in self.slots: slot.itemstack.clean()
+

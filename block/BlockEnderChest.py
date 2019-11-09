@@ -11,17 +11,11 @@ from pyglet.window import mouse, key
 import item.ItemTool
 import util.enums
 import block.BoundingBox
-from datetime import datetime
-
-
-BBOX = block.BoundingBox.BoundingBox((14/16, 14/16, 14/16), (1/16, 1/16, 1/16))
+from block.BlockChest import BBOX
 
 
 @G.registry
 class BlockChest(Block.Block):
-    now = datetime.now()
-    is_christmas = 24 <= now.day <= 26 and now.month == 12
-
     def on_create(self):
         self.front_side = util.enums.EnumSide.N
         if self.real_hit:
@@ -35,11 +29,11 @@ class BlockChest(Block.Block):
             elif dz < 0 and abs(dx) < abs(dz):
                 self.front_side = util.enums.EnumSide.W
         import gui.InventoryChest
-        self.inventory = gui.InventoryChest.InventoryChest()
+        self.inventory = G.player.inventorys["enderchest"]
 
     @staticmethod
     def get_name() -> str:
-        return "minecraft:chest"
+        return "minecraft:enderchest"
 
     def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
@@ -58,7 +52,7 @@ class BlockChest(Block.Block):
         return 0
 
     def get_best_tools(self):
-        return [item.ItemTool.ToolType.AXE]
+        return [item.ItemTool.ToolType.PICKAXE]
 
     def get_provided_slots(self, side): return self.inventory.slots
 
@@ -67,7 +61,7 @@ class BlockChest(Block.Block):
             self.front_side = util.enums.EnumSide[state["side"]]
 
     def get_model_state(self) -> dict:
-        return {"side": self.front_side.name, "type": "normal" if not self.is_christmas else "christmas"}
+        return {"side": self.front_side.name}
 
     @staticmethod
     def get_all_model_states() -> list:

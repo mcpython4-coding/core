@@ -65,6 +65,10 @@ class StatePartGame(StatePart.StatePart):
     def bind_to_eventbus(self):
         state = self.master[0]
         state.eventbus.subscribe("gameloop:tick:end", self.on_update)
+        state.eventbus.subscribe("gameloop:tick:end", self.on_physics_update)
+        state.eventbus.subscribe("gameloop:tick:end", self.on_left_click_interaction_update)
+        state.eventbus.subscribe("gameloop:tick:end", self.on_right_click_interaction_update)
+        state.eventbus.subscribe("gameloop:tick:end", self.on_middle_click_interaction_update)
         state.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         state.eventbus.subscribe("user:mouse:motion", self.on_mouse_motion)
         state.eventbus.subscribe("user:keyboard:press", self.on_key_press)
@@ -74,18 +78,48 @@ class StatePartGame(StatePart.StatePart):
         state.eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
     def on_update(self, dt):
-        # todo: split up into different functions for different parts, may be an physics calculation system somewhere
-        #   else, maybe an own event bus for block interaction which sends the key as eventname and as args the other
-        #   stuff
+        # do counting stuff
         if any(G.window.mouse_pressing.values()):
             self.mouse_press_time += dt
 
-        if self.activate_physics:
-            m = round(dt * config.TICKS_PER_SEC * 8)
-            dt = min(dt, 0.2)
-            for _ in range(m):
-                self._update(dt / m)
+        if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
+            vector = G.window.get_sight_vector()
+            blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
+            if blockpos:
+                if blockpos != self.block_looking_at:  # have we changed the block we were looking at?
+                    self.block_looking_at = blockpos
+                    self.mouse_press_time = 0
 
+            if not self.braketime:
+                self.calculate_new_braketime()
+
+    def on_physics_update(self, dt):
+        if not self.activate_physics: return
+        m = 8
+        dt = min(dt, 0.2)
+        for _ in range(m):
+            self._update(dt / m)
+
+    def on_left_click_interaction_update(self, dt):
+        if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
+            vector = G.window.get_sight_vector()
+            blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
+            if G.window.mouse_pressing[mouse.LEFT] and G.world.get_active_dimension().get_block(blockpos):
+                block = G.world.get_active_dimension().get_block(blockpos)
+                chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(blockpos))
+                if G.player.gamemode == 1:
+                    if self.mouse_press_time >= 0.10:
+                        chunk.remove_block(blockpos)
+                        chunk.check_neighbors(blockpos)
+                elif G.player.gamemode == 0:
+                    if self.mouse_press_time >= self.braketime:
+                        G.player.add_to_free_place(gui.ItemStack.ItemStack(block.get_name() if type(block) != str
+                                                                           else block))
+                        chunk.remove_block(blockpos)
+                        chunk.check_neighbors(blockpos)
+                # todo: check if brakeable in gamemode 2
+
+    def on_right_click_interaction_update(self, dt):
         if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
             if G.player.get_active_inventory_slot().itemstack.item and \
                     issubclass(type(G.player.get_active_inventory_slot().itemstack.item), ItemFood.ItemFood):
@@ -96,31 +130,9 @@ class StatePartGame(StatePart.StatePart):
                     if G.player.get_active_inventory_slot().itemstack.amount == 0:
                         G.player.get_active_inventory_slot().itemstack.clean()
                     return
-
             vector = G.window.get_sight_vector()
             blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
             if blockpos:
-                if blockpos != self.block_looking_at:  # have we changed the block we were looking at?
-                    self.block_looking_at = blockpos
-                    self.mouse_press_time = 0
-
-                if not self.braketime:
-                    self.calculate_new_braketime()
-
-                if G.window.mouse_pressing[mouse.LEFT] and G.world.get_active_dimension().get_block(blockpos):
-                    block = G.world.get_active_dimension().get_block(blockpos)
-                    chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(blockpos))
-                    if G.player.gamemode == 1:
-                        if self.mouse_press_time >= 0.10:
-                            chunk.remove_block(blockpos)
-                            chunk.check_neighbors(blockpos)
-                    elif G.player.gamemode == 0:
-                        if self.mouse_press_time >= self.braketime:
-                            G.player.add_to_free_place(gui.ItemStack.ItemStack(block.get_name() if type(block) != str
-                                                                               else block))
-                            chunk.remove_block(blockpos)
-                            chunk.check_neighbors(blockpos)
-                    # todo: check if brakeable in gamemode 2
                 if G.window.mouse_pressing[mouse.RIGHT] and previous:
                     slot = G.player.get_active_inventory_slot()
                     if slot.itemstack.item and slot.itemstack.item.has_block() and self.mouse_press_time > 0.12 and \
@@ -139,31 +151,36 @@ class StatePartGame(StatePart.StatePart):
                                     slot.itemstack.clean()
                             self.mouse_press_time = 0
                             # todo: check if setable in gamemode 2
-                if G.window.mouse_pressing[mouse.MIDDLE] and blockpos and self.mouse_press_time > 0.1:
-                    self.mouse_press_time = 0
-                    block = G.world.get_active_dimension().get_block(blockpos)
-                    selected_slot = G.player.get_active_inventory_slot()
-                    for inventoryname, reverse in G.player.inventory_order:
-                        inventory = G.player.inventorys[inventoryname]
-                        slots: list = inventory.slots
-                        if reverse:
-                            slots.reverse()
-                        for slot in slots:
-                            if slot.itemstack.item and slot.itemstack.item.has_block() and \
-                                    slot.itemstack.item.get_block() == (block.get_name() if type(block) != str else
-                                                                        block):
-                                if inventoryname != "hotbar":
-                                    selected_slot.itemstack, slot.itemstack = slot.itemstack, selected_slot.itemstack
-                                else:
-                                    G.player.set_active_inventory_slot(slots.index(slot))
-                                return
-                    if G.player.gamemode == 1:
-                        old_itemstack = selected_slot.itemstack
-                        selected_slot.itemstack = gui.ItemStack.ItemStack(block.get_name() if type(block) != str
-                                                                          else block)
-                        G.player.add_to_free_place(old_itemstack)
-                        if G.window.mouse_pressing[mouse.LEFT]:
-                            self.calculate_new_braketime()
+
+    def on_middle_click_interaction_update(self, dt):
+        if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
+            vector = G.window.get_sight_vector()
+            blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
+            if G.window.mouse_pressing[mouse.MIDDLE] and blockpos and self.mouse_press_time > 0.1:
+                self.mouse_press_time = 0
+                block = G.world.get_active_dimension().get_block(blockpos)
+                selected_slot = G.player.get_active_inventory_slot()
+                for inventoryname, reverse in G.player.inventory_order:
+                    inventory = G.player.inventorys[inventoryname]
+                    slots: list = inventory.slots
+                    if reverse:
+                        slots.reverse()
+                    for slot in slots:
+                        if slot.itemstack.item and slot.itemstack.item.has_block() and \
+                                slot.itemstack.item.get_block() == (block.get_name() if type(block) != str else
+                        block):
+                            if inventoryname != "hotbar":
+                                selected_slot.itemstack, slot.itemstack = slot.itemstack, selected_slot.itemstack
+                            else:
+                                G.player.set_active_inventory_slot(slots.index(slot))
+                            return
+                if G.player.gamemode == 1:
+                    old_itemstack = selected_slot.itemstack
+                    selected_slot.itemstack = gui.ItemStack.ItemStack(block.get_name() if type(block) != str
+                                                                      else block)
+                    G.player.add_to_free_place(old_itemstack)
+                    if G.window.mouse_pressing[mouse.LEFT]:
+                        self.calculate_new_braketime()
 
     def _update(self, dt):
         """ Private implementation of the `update()` method. This is where most

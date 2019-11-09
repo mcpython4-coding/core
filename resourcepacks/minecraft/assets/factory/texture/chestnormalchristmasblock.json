@@ -1,5 +1,5 @@
 {
-  "images": ["entity/chest/normal"],
+  "images": ["entity/chest/christmas"],
   "space": 9,
   "transforms": [
     {"mode": "cut", "image": 0, "store": 1, "area": [14, 0, 28, 14]},
@@ -22,10 +22,10 @@
     {"mode": "combine", "image": 7, "base": 8, "store": 9, "position": [1, 1]}
   ],
   "store": [
-    {"id": 1, "location": "blocks/chest/chest_normal_top.png"},
-    {"id": 2, "location": "blocks/chest/chest_normal_bottom_inner.png"},
-    {"id": 5, "location": "blocks/chest/chest_normal_side.png"},
-    {"id": 6, "location": "blocks/chest/chest_normal_top_inner.png"},
-    {"id": 9, "location": "blocks/chest/chest_normal_front.png"}
+    {"id": 1, "location": "blocks/chest/chest_normal_christmas_top.png"},
+    {"id": 2, "location": "blocks/chest/chest_normal_christmas_bottom_inner.png"},
+    {"id": 5, "location": "blocks/chest/chest_normal_christmas_side.png"},
+    {"id": 6, "location": "blocks/chest/chest_normal_christmas_top_inner.png"},
+    {"id": 9, "location": "blocks/chest/chest_normal_christmas_front.png"}
   ]
 }

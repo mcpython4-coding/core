@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import traceback
 import sys
+import time
 
 
 class EventBus:
@@ -21,6 +22,10 @@ class EventBus:
         self.extra_arguments = (args, kwargs)
         self.crash_on_error = crash_on_error
         self.subbusses = []
+        self.id = G.NEXT_EVENT_BUS_ID
+        G.NEXT_EVENT_BUS_ID += 1
+        if G.debugevents:
+            with open(G.local+"/debug/eventbus_{}.txt".format(self.id), mode="w") as f: f.write("//debug profile")
 
     def subscribe(self, eventname: str, function, *args, info="", **kwargs):
         """
@@ -32,6 +37,9 @@ class EventBus:
         :param info: an info to give for the caller
         """
         self.eventsubscribtions.setdefault(eventname, []).append((function, args, kwargs, info))
+        if G.debugevents:
+            with open(G.local+"/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
+                f.write("\nevent subscription of {}".format(function))
 
     def desubscribe(self, eventname: str, function):
         """
@@ -45,6 +53,9 @@ class EventBus:
                 raise ValueError("can't find function")
             return
         self.eventsubscribtions[eventname].remove(function)
+        if G.debugevents:
+            with open(G.local+"/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
+                f.write("\nevent desubscription of {}".format(function))
 
     def call(self, eventname, *args, **kwargs):
         """
@@ -58,9 +69,12 @@ class EventBus:
         if eventname not in self.eventsubscribtions: return result
         exception_occ = False
         for function, eargs, ekwargs, info in self.eventsubscribtions[eventname]:
+            dif = "Exception"
             try:
+                start = time.time()
                 result.append((function(*list(args)+list(self.extra_arguments[0])+list(eargs),
                                **{**kwargs, **self.extra_arguments[1], **ekwargs}), info))
+                dif = time.time() - start
             except SystemExit: raise
             except:
                 if not exception_occ:
@@ -72,6 +86,9 @@ class EventBus:
                 print("during calling function:", function, "with arguments:", list(args)+list(
                     self.extra_arguments[0])+list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs}, sep="\n")
                 print("function info:", info)
+            if G.debugevents:
+                with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
+                    f.write("\nevent call of {} takes {}s until finish".format(function, dif))
         if exception_occ and self.crash_on_error:
             print("\nout of the above reasons, the game has crashes")
             sys.exit(-1)
@@ -80,8 +97,13 @@ class EventBus:
     def call_until_equal(self, eventname, value, *args, default_value=None, **kwargs):
         if eventname not in self.eventsubscribtions: return default_value
         for function, eargs, ekwargs in self.eventsubscribtions[eventname]:
+            start = time.time()
             result = function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
                               **{**kwargs, **self.extra_arguments[1], **ekwargs})
+            dif = time.time() - start
+            if G.debugevents:
+                with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
+                    f.write("\nevent call of {} takes {}s until finish".format(function, dif))
             if result == value:
                 return result
         return default_value
@@ -89,8 +111,13 @@ class EventBus:
     def call_until_getting_value(self, eventname, *args, default_value=None, **kwargs):
         if eventname not in self.eventsubscribtions: return default_value
         for function, eargs, ekwargs in self.eventsubscribtions[eventname]:
+            start = time.time()
             result = function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
                               **{**kwargs, **self.extra_arguments[1], **ekwargs})
+            dif = time.time() - start
+            if G.debugevents:
+                with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
+                    f.write("\nevent call of {} takes {}s until finish".format(function, dif))
             if result is not None:
                 return result
         return default_value
@@ -98,8 +125,13 @@ class EventBus:
     def call_until_not_equal(self, eventname, value, *args, default_value=None, **kwargs):
         if eventname not in self.eventsubscribtions: return default_value
         for function, eargs, ekwargs in self.eventsubscribtions[eventname]:
+            start = time.time()
             result = function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
                               **{**kwargs, **self.extra_arguments[1], **ekwargs})
+            dif = time.time() - start
+            if G.debugevents:
+                with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
+                    f.write("\nevent call of {} takes {}s until finish".format(function, dif))
             if result != value:
                 return result
         return default_value
@@ -128,6 +160,7 @@ class EventBus:
         exception_occ = False
         for _ in range(amount):
             function, eargs, ekwargs, info = self.eventsubscribtions[eventname].pop(0)
+            start = time.time()
             try:
                 result.append((function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
                                         **{**kwargs, **self.extra_arguments[1], **ekwargs}), info))
@@ -141,6 +174,10 @@ class EventBus:
                 print("during calling function:", function, "with arguments:", list(args) + list(
                     self.extra_arguments[0]) + list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs}, sep="\n")
                 print("function info:", info)
+            dif = time.time() - start
+            if G.debugevents:
+                with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
+                    f.write("\nevent call of {} takes {}s until finish".format(function, dif))
         if exception_occ and self.crash_on_error:
             print("\nout of the above reasons, the game has crashes")
             sys.exit(-1)
