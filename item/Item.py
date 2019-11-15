@@ -40,8 +40,13 @@ class Item:
 
     def __eq__(self, other):
         if not issubclass(type(other), Item): return False
-        return other.get_name() == self.get_name()
+        return other.get_name() == self.get_name() and other.get_data() == self.get_data()
 
     def on_player_interact(self, block, button, modifiers) -> bool:
         return False
+
+    def on_set_from_item(self, block):
+        pass
+
+    def get_data(self): return None
 

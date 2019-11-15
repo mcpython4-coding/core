@@ -31,7 +31,8 @@ def load():
     """
     loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
     """
-    from . import (BlockGrassBlock, BlockDirt, BlockCraftingTable, BlockChest, BlockEnderChest)
+    from . import (BlockGrassBlock, BlockDirt, BlockCraftingTable, BlockChest, BlockEnderChest,
+                   BlockShulkerBox)
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:load", load, info="loading special blocks")

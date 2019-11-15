@@ -62,6 +62,8 @@ class StateBlockItemGenerator(State.State):
             if os.path.exists(G.local+"/build/itemblockfactory.json"):
                 with open(G.local+"/build/itemblockfactory.json", mode="r") as f:
                     self.table = json.load(f)
+            else:  # make sure it is was reset
+                self.table = []
             items = G.registry.get_by_name("item").get_attribute("items")
             for task in self.tasks[:]:
                 if task in items:
@@ -131,7 +133,10 @@ class StateBlockItemGenerator(State.State):
 
     def generate_item(self, blockname, file):
         self.table.append([blockname, file])
-        factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True).finish()
+        obj = factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True)
+        block = G.world.get_active_dimension().get_block((0, 0, 0))
+        if type(block) != str: block.modify_block_item(obj)
+        obj.finish()
 
 
 blockitemgenerator = None

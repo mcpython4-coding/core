@@ -580,13 +580,36 @@ started these clone on 12th of July, 2019
 [uuk]: added christmas-variant of chest
 [uuk]: added ender chest
 [uuk]: Inventory has now an clear method
+[uuk]: added on_request_item_for_block-function of Block & on_set_from_item-function of Item to manipulate data
+[uuk]: Slot has now an can_set_item-function which is used rather than direct check
+[uuk]: added shulker boxes
+[uuk]: fixed bug: crash when loading an mod-zipfile without an mod.json file due to wrong exception handling
+[uuk]: mod-file based mods are stored now as imported files in G.modloader.mods[<modname>].package
+[uuk]: fixed some bugs around loading things with ResourceLocator due to the reverse of the location list on every read
+       these fixes various bugs around uncolored textures or texture overwrites & not rendering blocks
+[uuk]: fixed crash due to two models pointing to same block
+[uuk]: updated pyglet to 1.4.7
+[uuk]: added System for configuration the BlockItem from block's side to make some changes to it
+[uuk]: blocks have now an system for modifying what's stored as BlockItem making some cool things possible
+       this will also be called in normal mode to re-add the item properties
+[uuk]: fixed bug: middle-click on an empty slot was crashing the game
+[uuk]: fixed bug: middle-click with item on mouse overwrites the item on mouse
 
-todo: fix bug: chests are not visable when rebuilding
-todo: add shulker boxes
 
-todo: rewrite collision system to be based on an new set of BoundingBoxes
+todo: add on_request_item_for_block-function of Block & on_set_from_item-function of Item to factories
+todo: add STR+middle click support
+todo: make when shulker box is broken the item data
+todo: add colored shulker boxes
+todo: add blocking for opening chest & shulker boxes when block above
 
-todo: make shift-click do NOT open inventories like crafting table & chest
+todo: add recipe factory
+
+todo: add STRG+V keycombo in chat
+todo: add TAB+SHIFT support to text field interaction
+
+todo: make loading stages combined into main stages, add group names to loading stages
+
+todo: rewrite collision system to be based on an new set of BoundingBoxes collided with an player bbox
 
 todo: unload BlockStates which are never used by caching used block states and than loading only needed
 
@@ -609,6 +632,10 @@ todo: add support for old language format
 todo: add support for mcmod.json-file
 
 todo: allow mod dependencies to be string-only for checking against only an mod (background auto-instance create)
+todo: make mod version tuple of variable length so "[1.0.0" is possible. by this, "[<...>" means include and upper,
+    "]<...>" exclude and upper, "<...>]" include until, "<...>[" exclude until and "<1. or 2.>|<3. or 4.>" an range
+    and various combinations with "&" between and "/" for excluding an version(range)
+todo: add API-checker and API guideline
 
 todo: add config system for mods
 
@@ -616,14 +643,10 @@ todo: make BlockItemFactory an state which can be accessed during runtime so tha
     /rebuilditemtexture
 todo: make BlockItemFactory use an special dim so no special cleaning is needed
 
-todo: add missing texture when model was not loadable
+todo: add missing texture when model / texture was not loadable
 
 
 add an optional entry to mod.json-file which is an modname: mainfile[ which will load the mainfiles if mod is found
-
-both of these bugs appear somehow random, maybe raising conditions? (for example in ResourceLocator?)
-todo: fix bug: grass block texture up & down is sometimes missing texture
-todo: fix bug: grass top texture is not colored
 
 todo: fix bug: crafting somehow ends sometimes in the double amount than usually
     (for example, crafting of crafting table)
@@ -634,6 +657,8 @@ todo: fix bug: when entering code for html-special-chars, the special char is di
 todo: fix bug: chat & inventory can be opened at the same time
 
 todo: fix bug: when pressing ENTER in other states than chat, chat is getting ENTER as execute line
+
+todo: fix bug: some custom-colored blocks are NOT colored
 
 add some form of "fast-load" with modified loading phases to speed up
 -> for example, you can select recipes to be NOT loaded, items not loaded, blocks not loaded, language data not loaded...

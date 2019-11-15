@@ -51,7 +51,7 @@ class BlockStateDefinition:
     def _from_data(cls, name, data):
         try:
             return BlockStateDefinition(data, name)
-        except BlockStateNotNeeded: pass
+        except BlockStateNotNeeded: pass  # do we need this model?
         except:
             print("error during loading model for {} from data {}".format(name, data))
             traceback.print_exc()

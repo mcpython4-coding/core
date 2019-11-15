@@ -16,7 +16,7 @@ import gui.Slot
 class OpenedInventoryStatePart(state.StatePart.StatePart):
     """
     class for inventories as state
-    todo: make A LOT OF THINGS public
+    todo: make A LOT OF THINGS public and static
     """
 
     def __init__(self):
@@ -94,21 +94,19 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                         moving_slot.itemstack.amount -= possible
                         if moving_slot.itemstack.amount <= 0:
                             moving_slot.itemstack.clean()
-                    elif slot.allowed_item_tags is None or moving_slot.itemstack.get_item_name() is None or \
-                            any([moving_slot.itemstack.get_item_name() in
-                                 G.taghandler.taggroups["items"].tags[x].entries for x in slot.allowed_item_tags]):
-                        stack, mstack = slot.itemstack, moving_slot.itemstack
-                        moving_slot.itemstack = stack
-                        slot.set_itemstack(mstack, player=True)
+                    else:
+                        flag = slot.can_set_item(moving_slot.itemstack)
+                        if flag:
+                            stack, mstack = slot.itemstack, moving_slot.itemstack
+                            moving_slot.itemstack = stack
+                            slot.set_itemstack(mstack, player=True)
             else:
                 # todo: threw the itemstack
                 pass
         elif button == mouse.RIGHT:
             if slot:
                 if not slot.itemstack.item:
-                    if slot.interaction_mode[1] and slot.allowed_item_tags is None or \
-                            any([moving_slot.itemstack.get_item_name() in
-                                 G.taghandler.taggroups["items"].tags[x].entries for x in slot.allowed_item_tags]):
+                    if slot.interaction_mode[1] and slot.can_set_item(moving_slot.itemstack):
                         slot.set_itemstack(moving_slot.itemstack.copy().set_amount(1), player=True)
                         moving_slot.itemstack.amount -= 1
                 elif not moving_slot.itemstack.item and slot.allow_half_getting:
@@ -131,13 +129,13 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                 # todo: threw one item
                 pass
         elif button == mouse.MIDDLE:
-            if G.player.gamemode == 1 and slot:
+            if G.player.gamemode == 1 and slot and slot.itemstack.get_item_name() and not \
+                    moving_slot.itemstack.get_item_name():
                 moving_slot.itemstack = slot.itemstack.copy()
                 moving_slot.itemstack.amount = moving_slot.itemstack.item.get_max_stack_size()
 
         if moving_slot.itemstack.amount == 0:
             moving_slot.itemstack.clean()
-            moving_slot.amount = 0
 
 
 class InventoryHandler:

@@ -59,8 +59,11 @@ def load_data():
             with open(G.local+"/build/itemblockfactory.json") as f:
                 data = json.load(f)
             for entry in data:
-                factory.ItemFactory.ItemFactory().setName(entry[0]).setHasBlockFlag(True).setDefaultItemFile(entry[1]).\
-                    finish()
+                name = entry[0]
+                obj = factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(entry[1])
+                block = G.registry.get_by_name("block").get_attribute("blocks")[name]
+                block.modify_block_item(obj)
+                obj.finish()
 
 
 def add_to_image_atlas(textureatlas, image, file):
@@ -104,10 +107,15 @@ items.set_attribute("items", {})
 items.set_attribute("itemindextable", {})
 
 
+def load_items():
+    pass
+
+
 import item.ItemFood
 
 from . import (Items)
 
 
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:additional_resources", load_data, info="loading prepared item data")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:overwrite", load_data, info="loading prepared item data")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:item:load", load_items, info="loading items")
 

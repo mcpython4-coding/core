@@ -111,3 +111,9 @@ class Block:
 
     def get_custom_block_renderer(self): return None
 
+    def on_request_item_for_block(self, itemstack):
+        pass
+
+    @classmethod
+    def modify_block_item(cls, itemconstructor): pass
+

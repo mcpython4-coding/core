@@ -90,6 +90,9 @@ class ModelHandler:
         blockstatedefinition = self.blockstates[block.get_name()]
         blockstate = blockstatedefinition.get_state_for(block.get_model_state())
 
+        if not blockstate:
+            blockstate = None  # todo: add missing texture!
+
         try:
             return data + blockstate.add_to_batch(position, batch)
         except:

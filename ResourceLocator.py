@@ -123,10 +123,10 @@ def load_resources():
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
-            raise RuntimeError("can't load path {}".format(file))
-    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.14.4.jar"))
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local+"/resourcepacks/minecraft"))
+            raise RuntimeError("can't load path {}. No valid format found!".format(file))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))
+    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.14.4.jar"))
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
@@ -179,7 +179,7 @@ def read(file, mode=None):
     if os.path.exists(G.local+"/"+file):  # special, local-only location
         if mode == "pil":
             return PIL.Image.open(G.local+"/"+file)
-    loc = RESOURCE_LOCATIONS
+    loc = RESOURCE_LOCATIONS[:]
     loc.reverse()
     for x in loc:
         if x.is_in_path(file):

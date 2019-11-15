@@ -66,6 +66,7 @@ class Mod:
         self.dependinfo = [[] for _ in range(5)]  # need, possible, not possible, before, after
         self.path = None
         self.version = version
+        self.package = None
         G.modloader.add_to_add(self)
 
     def add_dependency(self, depend):

@@ -11,6 +11,7 @@ import gui.ItemStack
 import item.ItemHandler
 # import texture.helpers
 import ResourceLocator
+import traceback
 
 
 SLOT_WIDTH = 32
@@ -26,7 +27,7 @@ class Slot:
 
     def __init__(self, itemstack=None, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
                  allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None,
-                 empty_image=None, allowed_item_tags=None):
+                 empty_image=None, allowed_item_tags=None, allowed_item_test=None):
         """
         creates an new slot
         :param itemstack: the itemstack to use
@@ -59,6 +60,7 @@ class Slot:
         self.childs = []
         self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
         self.allowed_item_tags = allowed_item_tags
+        self.allowed_item_func = allowed_item_test
 
     def get_itemstack(self):
         return self.__itemstack
@@ -115,6 +117,20 @@ class Slot:
         """
         if self.__itemstack.amount > 1:
             self.amount_lable.draw()
+
+    def can_set_item(self, itemstack) -> bool:
+        itemname = itemstack.get_item_name()
+        flag1 = self.allowed_item_tags is not None
+        flag2 = flag1 and any([itemname in G.taghandler.taggroups["items"].tags[x].entries for x in
+                              self.allowed_item_tags])
+        flag3 = self.allowed_item_func is not None
+        flag4 = flag3 and self.allowed_item_func(itemstack)
+        try:
+            return (flag1 and flag2) or (flag3 and flag4) or not (flag1 or flag3)
+        except:
+            print("[GUI][ERROR] error during executing check func '{}'".format(self.allowed_item_func))
+            traceback.print_exc()
+            return False
 
 
 class SlotCopy:
@@ -185,4 +201,6 @@ class SlotCopy:
     def draw_lable(self):
         if self.itemstack.amount > 1:
             self.amount_lable.draw()
+
+    def can_set_item(self, itemstack) -> bool: return self.master.can_set_item(itemstack)
 

@@ -110,6 +110,7 @@ class ModLoader:
         self.active_loading_mod = 0
         self.active_loading_mod_item_lenght = 0
         self.lasttime_mods = {}
+        self.found_mod_instances = []
         if os.path.exists(G.local+"/mods.json"):
             with open(G.local+"/mods.json") as f:
                 self.lasttime_mods = json.load(f)
@@ -143,6 +144,7 @@ class ModLoader:
             else:
                 i += 1
         for file in modlocations:
+            self.found_mod_instances = []
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
@@ -157,11 +159,12 @@ class ModLoader:
                                     importlib.import_module(location)
                             else:
                                 print("[ERROR] mod.json of '{}' does NOT contain 'main files'-attribute".format(file))
-                        except FileNotFoundError:
+                        except KeyError:
                             print("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
-                    importlib.import_module("mods."+file.split("/")[-1].split("\\")[-1].split(".")[0])
+                    data = importlib.import_module("mods."+file.split("/")[-1].split("\\")[-1].split(".")[0])
+                    for modinst in self.found_mod_instances: modinst.package = data
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
                 ResourceLocator.RESOURCE_LOCATIONS.append(ResourceLocator.ResourceDirectory(file))
@@ -204,6 +207,7 @@ class ModLoader:
         self.mods[mod.name] = mod
         self.found_mods.append(mod)
         mod.path = self.active_directory
+        self.found_mod_instances.append(mod)
 
     def sort_mods(self):
         modinfo = {}
