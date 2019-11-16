@@ -602,11 +602,9 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: when copying an shulker box with mouse-middle-click, shulker box was like an colored ender chest
 [uuk]: added middle-click support to chest
 [uuk]: chests are now not openable when block ontop
+[uuk]: added factories for recipes & models
+[uuk]: added CTRL+V-combo to chat, for that the library clipboard is needed
 
-
-todo: add recipe factory, model factory, blockstate factory
-
-todo: add STRG+V keycombo in chat
 todo: add TAB+SHIFT support to text field interaction
 
 todo: make loading stages combined into main stages, add group names to loading stages

@@ -14,6 +14,7 @@ import time
 import chat.command.CommandHandler
 import event.EventHandler
 import event.EventBus
+import clipboard
 
 
 class ChatInventory(gui.Inventory.Inventory):
@@ -120,6 +121,8 @@ class Chat:
             self.active_index = len(self.text)
         elif symbol == key.LEFT and self.active_index > 0: self.active_index -= 1
         elif symbol == key.RIGHT and self.active_index < len(self.text): self.active_index += 1
+        elif symbol == key.V and modifiers & key.MOD_CTRL:  # insert text from clipboard
+            self.enter(clipboard.paste())
 
     def close(self):
         """
