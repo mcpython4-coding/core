@@ -51,7 +51,18 @@ def create_shulker_box(name):
         def modify_block_item(cls, itemconstructor: factory.ItemFactory.ItemFactory):
             itemconstructor.setMaxStackSize(1)
             itemconstructor.baseclass.append(item.IShulkerBoxLikeItem.IShulkerBoxLikeItem)
+            itemconstructor.setCustomFromItemFunction(cls.set_block_data)
+
+        @classmethod
+        def set_block_data(cls, iteminst, block):
+            if hasattr(iteminst, "inventory"):
+                block.inventory = iteminst.inventory.copy()
+
+        def on_request_item_for_block(self, itemstack):
+            itemstack.item.inventory = self.inventory.copy()
 
 
 create_shulker_box("shulker_box")
+for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:
+    create_shulker_box("{}_shulker_box".format(color))
 

@@ -35,6 +35,7 @@ class BlockFactory:
 
         self.customsolidsidefunction = None
         self.custommodelstatefunction = None
+        self.customitemstackmodifcationfunction = None
 
         self.islog = False
 
@@ -114,6 +115,11 @@ class BlockFactory:
             class ConstructedBlock(ConstructedBlock):
                 def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
                     return master.interaction_callback(self, itemstack, button, modifiers)
+
+        if master.customitemstackmodifcationfunction:
+            class ConstructedBlock(ConstructedBlock):
+                def on_request_item_for_block(self, itemstack):
+                    master.customitemstackmodifcationfunction(self, itemstack)
 
         if register: G.registry.register(ConstructedBlock)
 
@@ -196,5 +202,9 @@ class BlockFactory:
 
     def setBestTools(self, tools):
         self.besttools = tools
+        return self
+
+    def setCustomItemstackModificationFunction(self, function):
+        self.customitemstackmodifcationfunction = function
         return self
 

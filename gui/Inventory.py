@@ -183,3 +183,9 @@ class Inventory:
     def clear(self):
         for slot in self.slots: slot.itemstack.clean()
 
+    def copy(self):
+        obj = self.__class__()
+        for i in range(3*9):
+            obj.slots[i].itemstack = self.slots[i].itemstack.copy()
+        return obj
+

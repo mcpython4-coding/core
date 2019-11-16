@@ -594,15 +594,17 @@ started these clone on 12th of July, 2019
        this will also be called in normal mode to re-add the item properties
 [uuk]: fixed bug: middle-click on an empty slot was crashing the game
 [uuk]: fixed bug: middle-click with item on mouse overwrites the item on mouse
+[uuk]: block & item factory have now an method for setting the on_request_item_for_block-function of Block &
+       on_set_from_item-function of Item
+[uuk]: when working with shulker boxes, the data in inventory gets NOT deleted and is rather send to the block / item
+       created
+[uuk]: implemented colored shulker box
+[uuk]: fixed bug: when copying an shulker box with mouse-middle-click, shulker box was like an colored ender chest
+[uuk]: added middle-click support to chest
+[uuk]: chests are now not openable when block ontop
 
 
-todo: add on_request_item_for_block-function of Block & on_set_from_item-function of Item to factories
-todo: add STR+middle click support
-todo: make when shulker box is broken the item data
-todo: add colored shulker boxes
-todo: add blocking for opening chest & shulker boxes when block above
-
-todo: add recipe factory
+todo: add recipe factory, model factory, blockstate factory
 
 todo: add STRG+V keycombo in chat
 todo: add TAB+SHIFT support to text field interaction

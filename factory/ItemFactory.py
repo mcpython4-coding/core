@@ -32,6 +32,7 @@ class ItemFactory:
         self.stacksize = 64
         self.creation_callback = None
         self.interaction_callback = None
+        self.customfromitemfunction = None
 
         # food related stuff
         self.hungerregen = None
@@ -94,6 +95,10 @@ class ItemFactory:
 
             def on_player_interact(self, block, button, modifiers) -> bool:
                 return master.interaction_callback(block, button, modifiers) if master.interaction_callback else False
+
+            def on_set_from_item(self, block):
+                if master.customfromitemfunction:
+                    master.customfromitemfunction(self, block)
 
         if item.ItemFood.ItemFood in self.baseclass:  # is food stuff active?
             class ConstructedItem(ConstructedItem):  # so construct an new class with additional functions
@@ -219,5 +224,9 @@ class ItemFactory:
         self.armor_points = points
         if item.ItemArmor.ItemArmor not in self.baseclass:
             self.baseclass.append(item.ItemArmor.ItemArmor)
+        return self
+
+    def setCustomFromItemFunction(self, function):
+        self.customfromitemfunction = function
         return self
 

@@ -62,8 +62,8 @@ def add():
             while os.path.exists(G.local+"/build"):
                 try:
                     shutil.rmtree(G.local+"/build")
-                except PermissionError:
-                    pass
+                except PermissionError: pass
+                except OSError: pass
             os.makedirs(G.local+"/build")
 
         @staticmethod

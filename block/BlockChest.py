@@ -12,6 +12,8 @@ import item.ItemTool
 import util.enums
 import block.BoundingBox
 from datetime import datetime
+import pyglet
+import util.enums
 
 
 BBOX = block.BoundingBox.BoundingBox((14/16, 14/16, 14/16), (1/16, 1/16, 1/16))
@@ -41,8 +43,13 @@ class BlockChest(Block.Block):
     def get_name() -> str:
         return "minecraft:chest"
 
+    def can_open_inventory(self) -> bool:
+        x, y, z = self.position
+        blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
+        return blockinst is None or not blockinst.is_solid_side(util.enums.EnumSide.DOWN)
+
     def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
-        if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
+        if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT and self.can_open_inventory():
             G.inventoryhandler.show(self.inventory)
             return True
         else:
@@ -77,4 +84,14 @@ class BlockChest(Block.Block):
     def get_view_bbox(self): return BBOX
 
     def is_solid_side(self, side) -> bool: return False
+
+    @classmethod
+    def set_block_data(cls, iteminst, block):
+        if hasattr(iteminst, "inventory"):
+            block.inventory = iteminst.inventory.copy()
+
+    def on_request_item_for_block(self, itemstack):
+        if G.window.keys[pyglet.window.key.LCTRL] and G.player.gamemode == 1 and G.window.mouse_pressing[
+                pyglet.window.mouse.MIDDLE]:
+            itemstack.item.inventory = self.inventory.copy()
 
