@@ -221,6 +221,7 @@ def add_resources_by_modname(modname, pathname):
     G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
                                                  info="searching for block models")
     G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
-                                                 "assets/minecraft/blockstates", info="searching for block states")
+                                                 "assets/{}/blockstates".format(modname),
+                                                 info="searching for block states")
     Language.from_directory("assets/{}/lang".format(pathname), modname)
 
