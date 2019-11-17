@@ -28,7 +28,8 @@ class LoadingStageStatus(enum.Enum):
 
 
 class LoadingStage:
-    def __init__(self, *eventnames):
+    def __init__(self, name, *eventnames):
+        self.name = name
         self.active_event_name = None
         self.active_mod_index = 0
         self.eventnames = list(eventnames)
@@ -73,42 +74,39 @@ class LoadingStage:
 
 
 class LoadingStages:
-    PREPARE = LoadingStage("stage:prepare")
-    ADD_LOADING_STAGES = LoadingStage("stage:addition_of_stages")
+    PREPARE = LoadingStage("preparation phase", "stage:prepare")
+    ADD_LOADING_STAGES = LoadingStage("loading stage register phase", "stage:addition_of_stages")
 
-    PREBUILD_TASKS = LoadingStage("stage:prebuild:addition")
-    PREBUILD_DO = LoadingStage("stage:prebuild:do")
+    PREBUILD = LoadingStage("prebuilding", "stage:prebuild:addition", "stage:prebuild:do")
 
-    EXTRA_RESOURCE_LOCATIONS = LoadingStage("stage:additional_resources")
+    EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
-    TAGS = LoadingStage("stage:tag:group", "stage:tag:load")
-    BLOCKS = LoadingStage("stage:block:base", "stage:block:load", "stage:block:overwrite")
-    ITEMS = LoadingStage("stage:item:base", "stage:item:load", "stage:item:overwrite")
-    LANGUAGE = LoadingStage("stage:language")  
-    RECIPE = LoadingStage("stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
-    INVENTORIES = LoadingStage("stage:inventories")
-    STATES = LoadingStage("stage:stateparts", "stage:states")
-    COMMANDS = LoadingStage("stage:command:entries", "stage:commands", "stage:command:selectors")
-    BIOMES = LoadingStage("stage:worldgen:biomes")
-    WORLDGENFEATURE = LoadingStage("stage:worldgen:feature")
-    WORLDGENLAYER = LoadingStage("stage:worldgen:layer")
-    WORLDGENMODE = LoadingStage("stage:worldgen:mode")
-    DIMENSIONS = LoadingStage("stage:dimension")
+    TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
+    BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:load", "stage:block:overwrite")
+    ITEMS = LoadingStage("item loading phase", "stage:item:base", "stage:item:load", "stage:item:overwrite")
+    LANGUAGE = LoadingStage("language file loading", "stage:language")
+    RECIPE = LoadingStage("recipe loading phase", "stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
+    INVENTORIES = LoadingStage("inventory loading phase", "stage:inventories")
+    STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states")
+    COMMANDS = LoadingStage("command loading phase", "stage:command:entries", "stage:commands",
+                            "stage:command:selectors")
+    WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
+                            "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
 
-    BLOCKSTATE = LoadingStage("stage:model:blockstate_search", "stage:model:blockstate_create")
-    BLOCK_MODEL = LoadingStage("stage:model:model_search", "stage:model:model_create")
+    BLOCKSTATE = LoadingStage("blockstate loading phase", "stage:model:blockstate_search",
+                              "stage:model:blockstate_create")
+    BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_create")
 
-    BAKE = LoadingStage("stage:model:model_bake_prepare", "stage:model:model_bake", "stage:textureatlas:bake")
+    BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake", "stage:textureatlas:bake")
 
-    POST = LoadingStage("stage:post")
+    POST = LoadingStage("finishing up", "stage:post")
 
 
-LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.PREBUILD_TASKS,
-                 LoadingStages.PREBUILD_DO, LoadingStages.EXTRA_RESOURCE_LOCATIONS,
+LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.PREBUILD,
+                 LoadingStages.EXTRA_RESOURCE_LOCATIONS,
                  LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.LANGUAGE,
                  LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
-                 LoadingStages.BIOMES, LoadingStages.WORLDGENFEATURE, LoadingStages.WORLDGENLAYER,
-                 LoadingStages.WORLDGENMODE, LoadingStages.DIMENSIONS, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
+                 LoadingStages.WORLDGEN, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
                  LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.POST]
 
 
@@ -303,9 +301,8 @@ class ModLoader:
         index = stage.running_event_names.index(stage.active_event_name)+1 if stage.active_event_name in \
                                                                               stage.running_event_names else 0
         astate.parts[0].text = "{} ({}/{}) in {} ({}/{})".format(
-            stage.active_event_name, index,
-            len(stage.running_event_names), None, self.active_loading_stage+1, len(LOADING_ORDER)
-        )
+            stage.active_event_name, index, len(stage.running_event_names), stage.name, self.active_loading_stage+1,
+            len(LOADING_ORDER))
 
 
 G.modloader = ModLoader()

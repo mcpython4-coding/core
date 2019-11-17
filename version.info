@@ -611,6 +611,8 @@ started these clone on 12th of July, 2019
 [uuk]: exception handle when block is not arrival anymore in ItemHandler's load function
 [uuk]: fixed progress bar rendering out of bounding box due to wrong size calculation
 [uuk]: Loading Stages are now combined into groups, but no events are removed
+[uuk]: LoadingStages have now an name
+[uuk]: combined some stages event more
 
 todo: rewrite collision system to be based on an new set of BoundingBoxes collided with an player bbox
 
@@ -661,6 +663,8 @@ todo: fix bug: chat & inventory can be opened at the same time
 todo: fix bug: when pressing ENTER in other states than chat, chat is getting ENTER as execute line
 
 todo: fix bug: some custom-colored blocks are NOT colored
+
+todo: fix bug: mouse middle click gives always the item, not only if not in inventory
 
 add some form of "fast-load" with modified loading phases to speed up
 -> for example, you can select recipes to be NOT loaded, items not loaded, blocks not loaded, language data not loaded...
