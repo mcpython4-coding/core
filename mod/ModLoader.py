@@ -16,28 +16,60 @@ import importlib
 import time
 import state.StateModLoading
 import util.math
+import mod.Mod
+import enum
+
+
+class LoadingStageStatus(enum.Enum):
+    WORKING = 0
+    MOD_CHANGED = 1
+    EVENT_CHANGED = 2
+    FINISHED = 3
 
 
 class LoadingStage:
     def __init__(self, *eventnames):
-        self.eventnames = eventnames
+        self.active_event_name = None
+        self.active_mod_index = 0
+        self.eventnames = list(eventnames)
         self.running_event_names = eventnames
         self.progress = 0
         self.max_progress = 0
 
-    def call_one(self, mod):
-        if len(self.running_event_names) == 0: return False
-        eventname = self.running_event_names[0]
+    def call_one(self) -> LoadingStageStatus:
+        if self.active_mod_index >= len(G.modloader.mods):
+            self.active_mod_index = 0
+            if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
+            self.active_event_name = self.eventnames.pop(0)
+            modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
+            self.max_progress = len(modinst.eventbus.eventsubscribtions[self.active_event_name])
+            return LoadingStageStatus.EVENT_CHANGED
+        if self.active_event_name is None:
+            if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
+            self.active_event_name = self.eventnames.pop(0)
+        modname = G.modloader.modorder[self.active_mod_index]
+        modinst: mod.Mod.Mod = G.modloader.mods[modname]
         try:
-            data = mod.eventbus.call_as_stack(eventname)
-            self.progress += 1
-            if self.running_event_names[0] in mod.eventbus.eventsubscribtions:
-                self.max_progress = self.progress + len(mod.eventbus.eventsubscribtions[self.running_event_names[0]])
-            return data[0][1] if len(data) > 0 else False
+            modinst.eventbus.call_as_stack(self.active_event_name)
         except RuntimeError:
-            self.running_event_names = self.running_event_names[1:]
-            self.progress = 0
-            return self.call_one(mod)
+            self.active_mod_index += 1
+            if self.active_mod_index >= len(G.modloader.mods):
+                self.active_mod_index = 0
+                if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
+                self.active_event_name = self.eventnames.pop(0)
+                modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
+                if self.active_event_name in modinst.eventbus.eventsubscribtions:
+                    self.max_progress = len(modinst.eventbus.eventsubscribtions[self.active_event_name])
+                else:
+                    self.max_progress = 0
+                return LoadingStageStatus.EVENT_CHANGED
+            modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
+            if self.active_event_name in modinst.eventbus.eventsubscribtions:
+                self.max_progress = len(modinst.eventbus.eventsubscribtions[self.active_event_name])
+            else:
+                self.max_progress = 0
+            return LoadingStageStatus.MOD_CHANGED
+        return LoadingStageStatus.WORKING
 
 
 class LoadingStages:
@@ -49,55 +81,35 @@ class LoadingStages:
 
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("stage:additional_resources")
 
-    TAG_GROUPS = LoadingStage("stage:tag:group")  
-    TAGS = LoadingStage("stage:tag:load")  
-    BLOCK_BASES = LoadingStage("stage:block:base")  
-    BLOCKS = LoadingStage("stage:block:load")  
-    BLOCKS_OVERWRITE = LoadingStage("stage:block:overwrite")  
-    ITEM_BASES = LoadingStage("stage:item:base")  
-    ITEMS = LoadingStage("stage:item:load")  
-    ITEMS_OVERWRITE = LoadingStage("stage:item:overwrite")  
+    TAGS = LoadingStage("stage:tag:group", "stage:tag:load")
+    BLOCKS = LoadingStage("stage:block:base", "stage:block:load", "stage:block:overwrite")
+    ITEMS = LoadingStage("stage:item:base", "stage:item:load", "stage:item:overwrite")
     LANGUAGE = LoadingStage("stage:language")  
-    RECIPE_GROUPS = LoadingStage("stage:recipe:groups")  
-    RECIPES = LoadingStage("stage:recipes")
-    RECIPE_BAKE = LoadingStage("stage:recipe:bake")
-    INVENTORIES = LoadingStage("stage:inventories")  
-    STATEPARTS = LoadingStage("stage:stateparts")  
-    STATES = LoadingStage("stage:states")
-    COMMAND_ENTRIES = LoadingStage("stage:command:entries")
-    COMMANDS = LoadingStage("stage:commands")
-    COMMAND_SELECTORS = LoadingStage("stage:command:selectors")
+    RECIPE = LoadingStage("stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
+    INVENTORIES = LoadingStage("stage:inventories")
+    STATES = LoadingStage("stage:stateparts", "stage:states")
+    COMMANDS = LoadingStage("stage:command:entries", "stage:commands", "stage:command:selectors")
     BIOMES = LoadingStage("stage:worldgen:biomes")
     WORLDGENFEATURE = LoadingStage("stage:worldgen:feature")
     WORLDGENLAYER = LoadingStage("stage:worldgen:layer")
     WORLDGENMODE = LoadingStage("stage:worldgen:mode")
     DIMENSIONS = LoadingStage("stage:dimension")
 
-    BLOCKSTATE_NOTATE = LoadingStage("stage:model:blockstate_search")
-    BLOCKSTATE_CREATE = LoadingStage("stage:model:blockstate_create")
-    MODEL_NOTATE = LoadingStage("stage:model:model_search")
-    MODEL_CREATE = LoadingStage("stage:model:model_create")
-    MODEL_BAKE_PREPARE = LoadingStage("stage:model:model_bake_prepare")
-    MODEL_BAKE = LoadingStage("stage:model:model_bake")
-    TEXTURE_ATLAS_BAKE = LoadingStage("stage:textureatlas:bake")
+    BLOCKSTATE = LoadingStage("stage:model:blockstate_search", "stage:model:blockstate_create")
+    BLOCK_MODEL = LoadingStage("stage:model:model_search", "stage:model:model_create")
+
+    BAKE = LoadingStage("stage:model:model_bake_prepare", "stage:model:model_bake", "stage:textureatlas:bake")
 
     POST = LoadingStage("stage:post")
 
 
 LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.PREBUILD_TASKS,
-                 LoadingStages.PREBUILD_DO, LoadingStages.EXTRA_RESOURCE_LOCATIONS, LoadingStages.TAG_GROUPS,
-                 LoadingStages.TAGS, LoadingStages.BLOCK_BASES, LoadingStages.BLOCKS, LoadingStages.BLOCKS_OVERWRITE,
-                 LoadingStages.ITEM_BASES, LoadingStages.ITEMS, LoadingStages.ITEMS_OVERWRITE, LoadingStages.LANGUAGE,
-                 LoadingStages.RECIPE_GROUPS, LoadingStages.RECIPES, LoadingStages.RECIPE_BAKE,
-                 LoadingStages.INVENTORIES,
-                 LoadingStages.COMMAND_ENTRIES, LoadingStages.COMMANDS, LoadingStages.COMMAND_SELECTORS,
+                 LoadingStages.PREBUILD_DO, LoadingStages.EXTRA_RESOURCE_LOCATIONS,
+                 LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.LANGUAGE,
+                 LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
                  LoadingStages.BIOMES, LoadingStages.WORLDGENFEATURE, LoadingStages.WORLDGENLAYER,
-                 LoadingStages.WORLDGENMODE, LoadingStages.DIMENSIONS,
-                 LoadingStages.STATEPARTS, LoadingStages.STATES, LoadingStages.MODEL_NOTATE, LoadingStages.MODEL_CREATE,
-                 LoadingStages.BLOCKSTATE_NOTATE, LoadingStages.BLOCKSTATE_CREATE,
-                 LoadingStages.MODEL_BAKE_PREPARE, LoadingStages.MODEL_BAKE,
-                 LoadingStages.TEXTURE_ATLAS_BAKE,
-                 LoadingStages.POST]
+                 LoadingStages.WORLDGENMODE, LoadingStages.DIMENSIONS, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
+                 LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.POST]
 
 
 class ModLoader:
@@ -107,8 +119,6 @@ class ModLoader:
         self.modorder = []
         self.active_directory = None
         self.active_loading_stage = 0
-        self.active_loading_mod = 0
-        self.active_loading_mod_item_lenght = 0
         self.lasttime_mods = {}
         self.found_mod_instances = []
         if os.path.exists(G.local+"/mods.json"):
@@ -246,38 +256,56 @@ class ModLoader:
 
     def process(self):
         start = time.time()
-        state.StateModLoading.modloading.parts[1].progress_max = len(self.modorder)
+        astate: state.StateModLoading.StateModLoading = G.statehandler.active_state
+        astate.parts[0].progress_max = len(LOADING_ORDER)
+        astate.parts[1].progress_max = len(self.mods)
         while time.time() - start < 0.2:
-            modname = self.modorder[self.active_loading_mod]
-            mod = self.mods[modname]
-            stage: LoadingStage = LOADING_ORDER[self.active_loading_stage]
-            result = stage.call_one(mod)
-            state.StateModLoading.modloading.parts[2].progress = stage.progress + 1
-            state.StateModLoading.modloading.parts[2].progress_max = stage.max_progress
-            eventname = stage.running_event_names[0] if len(stage.running_event_names) > 0 else None
-            state.StateModLoading.modloading.parts[2].text = mod.eventbus.eventsubscribtions[eventname][0][3] if \
-                eventname in mod.eventbus.eventsubscribtions and len(
-                    mod.eventbus.eventsubscribtions[eventname]) > 0 else "null"
-            state.StateModLoading.modloading.parts[2].text += " ({}/{})".format(stage.progress, stage.max_progress)
-            if result is False:  # finished with mod
-                self.active_loading_mod += 1
-                if self.active_loading_mod >= len(self.modorder):
-                    self.active_loading_mod = 0
-                    self.active_loading_stage += 1
-                    if self.active_loading_stage >= len(LOADING_ORDER):
-                        G.statehandler.switch_to("minecraft:blockitemgenerator")
-                        return
-                    state.StateModLoading.modloading.parts[0].progress = self.active_loading_stage + 1
-                    state.StateModLoading.modloading.parts[0].progress_max = len(LOADING_ORDER)
-                    state.StateModLoading.modloading.parts[0].text = ", ".join(list(stage.eventnames))
-                    state.StateModLoading.modloading.parts[1].progress = self.active_loading_mod + 1
-                    state.StateModLoading.modloading.parts[1].text = "{}: {} / {}".format(
-                        self.modorder[self.active_loading_mod], self.active_loading_mod+1, len(self.modorder))
+            stage = LOADING_ORDER[self.active_loading_stage]
+            status = stage.call_one()
+            if status == LoadingStageStatus.WORKING:
+                astate.parts[2].progress += 1
+                self.update_pgb_text()
+            elif status == LoadingStageStatus.MOD_CHANGED:
+                astate.parts[2].progress_max = stage.max_progress
+                astate.parts[2].progress = 0
+                self.update_pgb_text()
+            elif status == LoadingStageStatus.EVENT_CHANGED:
+                self.update_pgb_text()
+                astate.parts[2].progress_max = stage.max_progress
+                astate.parts[2].progress = 0
+            elif status == LoadingStageStatus.FINISHED:
+                self.active_loading_stage += 1
+                if self.active_loading_stage >= len(LOADING_ORDER):
+                    G.statehandler.switch_to("minecraft:blockitemgenerator")
+                    return
+                astate.parts[0].progress += 1
+                astate.parts[2].progress = 0
+                new_stage = LOADING_ORDER[self.active_loading_stage]
+                if new_stage.eventnames[0] in self.mods[self.modorder[0]].eventbus.eventsubscribtions:
+                    astate.parts[2].progress_max = len(self.mods[self.modorder[0]].eventbus.eventsubscribtions[
+                                                           new_stage.eventnames[0]])
                 else:
-                    stage.running_event_names = LOADING_ORDER[self.active_loading_stage].eventnames
-                    state.StateModLoading.modloading.parts[1].progress = self.active_loading_mod + 1
-                    state.StateModLoading.modloading.parts[1].text = "{}: {} / {}".format(
-                        self.modorder[self.active_loading_mod], self.active_loading_mod + 1, len(self.modorder))
+                    astate.parts[2].progress_max = 0
+                self.update_pgb_text()
+
+    def update_pgb_text(self):
+        stage = LOADING_ORDER[self.active_loading_stage]
+        astate: state.StateModLoading.StateModLoading = G.statehandler.active_state
+        modinst: mod.Mod.Mod = self.mods[self.modorder[stage.active_mod_index]]
+        if stage.active_event_name in modinst.eventbus.eventsubscribtions and \
+                len(modinst.eventbus.eventsubscribtions[stage.active_event_name]) > 0:
+            f, _, _, text = modinst.eventbus.eventsubscribtions[stage.active_event_name][0]
+        else:
+            f, text = None, ""
+        astate.parts[2].text = text if text is not None else "function {}".format(f)
+        astate.parts[1].text = "{} ({}/{})".format(modinst.name, stage.active_mod_index+1, len(self.mods))
+        astate.parts[1].progress = stage.active_mod_index + 1
+        index = stage.running_event_names.index(stage.active_event_name)+1 if stage.active_event_name in \
+                                                                              stage.running_event_names else 0
+        astate.parts[0].text = "{} ({}/{}) in {} ({}/{})".format(
+            stage.active_event_name, index,
+            len(stage.running_event_names), None, self.active_loading_stage+1, len(LOADING_ORDER)
+        )
 
 
 G.modloader = ModLoader()

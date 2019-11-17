@@ -27,7 +27,7 @@ class EventBus:
         if G.debugevents:
             with open(G.local+"/debug/eventbus_{}.txt".format(self.id), mode="w") as f: f.write("//debug profile")
 
-    def subscribe(self, eventname: str, function, *args, info="", **kwargs):
+    def subscribe(self, eventname: str, function, *args, info=None, **kwargs):
         """
         add an function to the event bus by event name. If event name does NOT exists, it will be created localy
         :param eventname: the event to listen to on this bis
@@ -154,7 +154,8 @@ class EventBus:
 
     def call_as_stack(self, eventname, *args, amount=1, **kwargs):
         result = []
-        if eventname not in self.eventsubscribtions: return result
+        if eventname not in self.eventsubscribtions:
+            raise RuntimeError("event bus has no notation for this event")
         if len(self.eventsubscribtions[eventname]) < amount:
             raise RuntimeError("can't run event. EventBus is for this event empty")
         exception_occ = False

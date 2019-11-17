@@ -608,10 +608,9 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: when entering an real HTML-character sequenz to the chat, it is displayed as html rather as raw string
 [uuk]: fixed bug: chars used for "<" and ">" were only strange removeable
 [uuk]: TAB+SHIFT is now arrival to switch between text fields
-
-todo: add TAB+SHIFT support to text field interaction
-
-todo: make loading stages combined into main stages, add group names to loading stages
+[uuk]: exception handle when block is not arrival anymore in ItemHandler's load function
+[uuk]: fixed progress bar rendering out of bounding box due to wrong size calculation
+[uuk]: Loading Stages are now combined into groups, but no events are removed
 
 todo: rewrite collision system to be based on an new set of BoundingBoxes collided with an player bbox
 
