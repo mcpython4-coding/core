@@ -61,9 +61,13 @@ def load_data():
             for entry in data:
                 name = entry[0]
                 obj = factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(entry[1])
-                block = G.registry.get_by_name("block").get_attribute("blocks")[name]
-                block.modify_block_item(obj)
-                obj.finish()
+                blocktable = G.registry.get_by_name("block").get_attribute("blocks")
+                if name in blocktable:
+                    block = blocktable[name]
+                    block.modify_block_item(obj)
+                    obj.finish()
+                else:
+                    print("[ERROR] during constructing block item for {}: Failed to find block".format(name))
 
 
 def add_to_image_atlas(textureatlas, image, file):
