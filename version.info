@@ -604,6 +604,9 @@ started these clone on 12th of July, 2019
 [uuk]: chests are now not openable when block ontop
 [uuk]: added factories for recipes & models
 [uuk]: added CTRL+V-combo to chat, for that the library clipboard is needed
+[uuk]: fixed bug: ResourceLocator's mod asset loader helper function failed to load block states
+[uuk]: fixed bug: when entering an real HTML-character sequenz to the chat, it is displayed as html rather as raw string
+[uuk]: fixed bug: chars used for "<" and ">" were only strange removeable
 
 todo: add TAB+SHIFT support to text field interaction
 
@@ -651,7 +654,6 @@ add an optional entry to mod.json-file which is an modname: mainfile[ which will
 todo: fix bug: crafting somehow ends sometimes in the double amount than usually
     (for example, crafting of crafting table)
 
-todo: fix bug: when removing "<" or ">" from chat, some strange things happen
 todo: fix bug: when entering code for html-special-chars, the special char is displayed in chat
 
 todo: fix bug: chat & inventory can be opened at the same time

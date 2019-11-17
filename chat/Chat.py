@@ -36,8 +36,10 @@ class ChatInventory(gui.Inventory.Inventory):
             self.lable.text = text
             return
         try:
-            self.lable.text = "<font color='white'>"+text[:underline_index]+"<u>{}</u>".format(
-                text[underline_index])+text[1+underline_index:]+"</font>"
+            text1 = text[:underline_index].replace("<", "&#60;").replace(">", "&#62;").replace("\\", "&#92;")
+            text2 = text[underline_index].replace("<", "&#60;").replace(">", "&#62;").replace("\\", "&#92;")
+            text3 = text[1+underline_index:].replace("<", "&#60;").replace(">", "&#62;").replace("\\", "&#92;")
+            self.lable.text = "<font color='white'>"+text1+"<u>{}</u>".format(text2)+text3+"</font>"
         except IndexError:
             self.lable.text = text
 
@@ -55,10 +57,12 @@ class ChatInventory(gui.Inventory.Inventory):
         util.opengl.draw_rectangle((10, 10), (wx - 20, 20), color=(.0, .0, .0))
 
     def on_draw_overlay(self):
+        text = G.chat.text
         if (round(time.time() - self.timer) % 2) == 1:
-            self.update_text(G.chat.text, G.chat.active_index)
+            self.update_text(text, G.chat.active_index)
         else:
-            self.lable.text = "<font color='white'>"+G.chat.text+"</font>"
+            self.lable.text = "<font color='white'>"+text.replace("<", "&#60").replace(">", "&#62").replace(
+                "\\", "&#92")+"</font>"
         self.lable.draw()
 
 
@@ -74,17 +78,13 @@ class Chat:
         self.text: str = ""
         self.history: list = []
         self.historyindex = -1
-        self.active_index = 0
+        self.active_index = -1
 
     def enter(self, text: str):
         """
         callen when text is entered
         :param text: the text that is entered
         """
-        if text == "<":
-            text = "&#60"
-        if text == ">":
-            text = "&#63"
         if self.text != "":
             self.text = self.text[:self.active_index+1] + text + self.text[self.active_index+1:]
         else:
