@@ -607,6 +607,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: ResourceLocator's mod asset loader helper function failed to load block states
 [uuk]: fixed bug: when entering an real HTML-character sequenz to the chat, it is displayed as html rather as raw string
 [uuk]: fixed bug: chars used for "<" and ">" were only strange removeable
+[uuk]: TAB+SHIFT is now arrival to switch between text fields
 
 todo: add TAB+SHIFT support to text field interaction
 

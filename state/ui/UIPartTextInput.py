@@ -106,7 +106,10 @@ class TextInputTabHandler(state.StatePart.StatePart):
             for i, uiparttextinput in enumerate(self.textinputs):
                 if uiparttextinput.selected:
                     uiparttextinput.selected = False
-                    self.textinputs[i+1 if i+1 < len(self.textinputs) else 0].selected = True
+                    reindex = i+1 if not mod & pyglet.window.key.MOD_SHIFT else i-1
+                    if reindex < 0: reindex = len(self.textinputs) - 1
+                    if reindex >= len(self.textinputs): reindex = 0
+                    self.textinputs[reindex].selected = True
                     return
             self.textinputs[0].selected = True
 
