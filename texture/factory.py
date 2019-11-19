@@ -61,8 +61,8 @@ class TextureFactory:
             images[store["id"]].save(f)
 
     def load(self):
-        entrys = ResourceLocator.get_all_entries("assets/factory/texture")
-        for entry in entrys:
+        entries = ResourceLocator.get_all_entries_special("assets/factory/texture")
+        for entry in entries:
             self.apply_from_file(entry)
 
 

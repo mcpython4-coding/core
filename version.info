@@ -613,8 +613,7 @@ started these clone on 12th of July, 2019
 [uuk]: Loading Stages are now combined into groups, but no events are removed
 [uuk]: LoadingStages have now an name
 [uuk]: combined some stages event more
-
-todo: rewrite collision system to be based on an new set of BoundingBoxes collided with an player bbox
+[uuk]: texture factory will now use ALL possible definition files instead of only the first
 
 todo: unload BlockStates which are never used by caching used block states and than loading only needed
 
