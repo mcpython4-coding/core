@@ -614,21 +614,36 @@ started these clone on 12th of July, 2019
 [uuk]: LoadingStages have now an name
 [uuk]: combined some stages event more
 [uuk]: texture factory will now use ALL possible definition files instead of only the first
+[uuk]: removed custom block renderers, model factory, BoxModel, texture folder
 
-todo: unload BlockStates which are never used by caching used block states and than loading only needed
+planed for this branch:
+    rewrite model system:
+    - remove everything referencing to the model system including also custom block renderers
+    - make cube vertex system based on one sidegenerator taking an rotation and side using relative coord to block
+        center and doing some math on showing
+    - make tex coord cached on model generation
+    - make model system extendable
+    - make texture factory part of rebuild system building into build/textureatlases/<modname>.png
+        using custom atlas sized for using by count of files per mod
+    - make blockstate system compatibly with forge blockstate files
 
-todo: cube rotation update:
-    Make math.cube_vertices return relative coords which are than added ontop on base position during runtime
-    Use math.cube_vertices with an rotated parameter to rotate the cube by using some math transforms
-    Add an optional marker for blockstates which indicate that they re-do every show the cube verices
-    Otherwise, cache them at BlockState
-    Remove rotated textures from texture atlas
-    Make an new render element: BoxFace which is an static class which displays one face of the cube.
-    This makes not-6-sided cube-like structures possible
+    rewrite gui rendering system
+    - make most of the cut-texture tasks based on % of image in image.get_region()
+    - make an event for texture_update which is called when intern an texture pack change occured and should be used
+        for doing things like re-loading textures for guis, buttons...
 
-    goal:
-        todo: make rotation based on OpenGL rather than texture rotating & side changing
-        todo: with this, fix bug that when an blockstate is rotated, its relative position & size is not
+    rewrite item rendering system
+    - make items use some better system for rendering
+    - make item hand rendering possible
+
+    add particles
+    - add particle rendering
+
+    add entity-like rendering
+    - add support for rendering rotated boxes outside of block instances working towards entities
+
+    re-add texture factory as part of factory following its stile using some getter function for making it possible to
+        change them during runtime
 
 todo: make factories extendable!
 todo: add support for old language format
@@ -726,6 +741,8 @@ todo: add Tool & Armor-durability
 todo: add leather armor
 todo: add hovering info to items, make them use Language files
 todo: increase fps during blocks falling (or another reason for decreased FPS)
+
+todo: unload BlockStates which are never used by caching used block states and than loading only needed
 
 
 an update to the world generation system
