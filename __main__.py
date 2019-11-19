@@ -6,6 +6,10 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 
+print("[DEVELOPMENT][WARNING] these branch is worked on and may be not runnable at all. Please do only report bugs on "
+      "features which have been finished in this branch.")
+input("you have written above notice and you are sure to run the program: ")
+
 try:
     print("---------------------")
     print("- Game Loading Area -")

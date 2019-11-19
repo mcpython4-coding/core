@@ -615,6 +615,7 @@ started these clone on 12th of July, 2019
 [uuk]: combined some stages event more
 [uuk]: texture factory will now use ALL possible definition files instead of only the first
 [uuk]: removed custom block renderers, model factory, BoxModel, texture folder
+[uuk]: until this branch is stable again, an printed header in log will warn the user for very unstable branch
 
 planed for this branch:
     rewrite model system:
