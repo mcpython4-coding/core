@@ -623,6 +623,7 @@ started these clone on 12th of July, 2019
 [uuk]: ResourceLocator will now not try to load texture's system
 [uuk]: added basic file structure for new block rendering system
 [uuk]: added Model-class-structure, added IModelDecoder-baseclass
+[uuk]: added base class for everything renderable
 
 planed for this branch:
     rewrite model system:

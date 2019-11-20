@@ -1,10 +1,11 @@
+import rendering.IRenderAbleComponent
 
 
-class BoxModel:
+class BoxModel(rendering.IRenderAbleComponent.IRenderAbleComponent):
     pass
 
 
-class BoxModelRevision:
+class BoxModelRevision(rendering.IRenderAbleComponent.IRenderAbleComponentRevision):
     """
     an renderable instance of an BoxModel containing information like rotation, relative position...
     """
