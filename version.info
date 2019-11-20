@@ -620,6 +620,9 @@ started these clone on 12th of July, 2019
 [uuk]: removed handler references from rendering systems out of globals.py
 [uuk]: removed all imports of rendering system files
 [uuk]: removed functionality from example mod
+[uuk]: ResourceLocator will now not try to load texture's system
+[uuk]: added basic file structure for new block rendering system
+[uuk]: added Model-class-structure, added IModelDecoder-baseclass
 
 planed for this branch:
     rewrite model system:

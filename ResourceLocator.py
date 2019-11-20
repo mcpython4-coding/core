@@ -213,15 +213,17 @@ def get_all_entries_special(directory: str) -> list:
 
 
 def add_resources_by_modname(modname, pathname):
-    from texture.model.BlockState import BlockStateDefinition
+    # todo: update
+    print("[RESOURCELOCATOR][DEVELOPMENT][ERROR] function add_resources_by_modname is not finished yet")
+    # from texture.model.BlockState import BlockStateDefinition
     import Language
     import crafting.CraftingHandler
     G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,
                                                  info="loading crafting recipes")
-    G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
-                                                 info="searching for block models")
-    G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
-                                                 "assets/{}/blockstates".format(modname),
-                                                 info="searching for block states")
+    # G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
+    #                                              info="searching for block models")
+    # G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
+    #                                              "assets/{}/blockstates".format(modname),
+    #                                              info="searching for block states")
     Language.from_directory("assets/{}/lang".format(pathname), modname)
 
