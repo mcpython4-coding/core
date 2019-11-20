@@ -20,6 +20,8 @@ class BoundingBox:
         return dx <= x and dy <= y and dz <= z
 
     def draw_outline(self, position):
+        # todo: update to latest system
+        pass
         x, y, z = position
         x += self.relposition[0] - 0.5 + (self.size[0] / 2)
         y += self.relposition[1] - 0.5 + (self.size[1] / 2)

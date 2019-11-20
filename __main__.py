@@ -51,9 +51,6 @@ try:
 
     import setup as systemsetup
 
-    import texture.model.ModelHandler
-    import texture.model.BlockState
-
     import tags.TagHandler
     import block.BlockHandler
     import item.ItemHandler
@@ -66,7 +63,6 @@ try:
         import globals as G
         import world.World
         globals.world = world.World.World()
-        import texture.model.BlockState
         import Language
 
         opengl_setup.setup()

@@ -616,6 +616,10 @@ started these clone on 12th of July, 2019
 [uuk]: texture factory will now use ALL possible definition files instead of only the first
 [uuk]: removed custom block renderers, model factory, BoxModel, texture folder
 [uuk]: until this branch is stable again, an printed header in log will warn the user for very unstable branch
+[uuk]: removed rebuild task for texture factory
+[uuk]: removed handler references from rendering systems out of globals.py
+[uuk]: removed all imports of rendering system files
+[uuk]: removed functionality from example mod
 
 planed for this branch:
     rewrite model system:
@@ -626,6 +630,8 @@ planed for this branch:
     - make texture factory part of rebuild system building into build/textureatlases/<modname>.png
         using custom atlas sized for using by count of files per mod
     - make blockstate system compatibly with forge blockstate files
+    - make missing texture & missing model's defaults when not loadable
+    - make bounding box render again using cached vertex coord on which look position is than added on
 
     rewrite gui rendering system
     - make most of the cut-texture tasks based on % of image in image.get_region()
@@ -644,6 +650,8 @@ planed for this branch:
 
     re-add texture factory as part of factory following its stile using some getter function for making it possible to
         change them during runtime
+
+    update example mod to newest system
 
 todo: make factories extendable!
 todo: add support for old language format

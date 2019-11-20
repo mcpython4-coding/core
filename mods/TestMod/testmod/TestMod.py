@@ -24,7 +24,7 @@ def inject():  # special method called when system is ready for accepting these 
 # todo: add example item class, crafting recipes
 
 
-testmod.eventbus.subscribe("stage:prepare", inject, info="adding event subscriptions")
+# testmod.eventbus.subscribe("stage:prepare", inject, info="adding event subscriptions")
 
 
 def create_example_block():
@@ -39,7 +39,7 @@ def create_example_item():
 
 
 # stage:block:base for factory work, stage:block:load for direct class work
-testmod.eventbus.subscribe("stage:block:base", create_example_block, info="creating example block")
+# testmod.eventbus.subscribe("stage:block:base", create_example_block, info="creating example block")
 # stage:item:base for factory work, stage:item:load for direct class work
-testmod.eventbus.subscribe("stage:item:base", create_example_item, info="creating example item")
+# testmod.eventbus.subscribe("stage:item:base", create_example_item, info="creating example item")
 

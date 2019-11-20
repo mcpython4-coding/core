@@ -26,7 +26,6 @@ import globals as G
 import event.Registry
 import os
 import shutil
-import texture.factory
 import mod.ModMcpython
 import sys
 
@@ -65,22 +64,6 @@ def add():
                 except PermissionError: pass
                 except OSError: pass
             os.makedirs(G.local+"/build")
-
-        @staticmethod
-        def uses_directory() -> bool: return False
-
-    @G.registry
-    class TextureFactoryGenerate(IPrepareAbleTask):
-        @staticmethod
-        def get_name() -> str:
-            return "texturefactory:prepare"
-
-        @staticmethod
-        def get_version() -> tuple: return 1, 0, 0
-
-        @staticmethod
-        def dump_data(directory: str):
-            G.texturefactoryhandler.load()
 
         @staticmethod
         def uses_directory() -> bool: return False
