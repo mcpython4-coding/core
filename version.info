@@ -624,6 +624,7 @@ started these clone on 12th of July, 2019
 [uuk]: added basic file structure for new block rendering system
 [uuk]: added Model-class-structure, added IModelDecoder-baseclass
 [uuk]: added base class for everything renderable
+[uuk]: added IBlockStateDecoder-baseclass
 
 planed for this branch:
     rewrite model system:

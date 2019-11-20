@@ -17,7 +17,13 @@ class IModelDecoder:
 
 
 class DefaultMcModelDecoder(IModelDecoder):
-    pass
+    @classmethod
+    def is_valid(cls, data) -> bool:
+        raise NotImplementedError()
+
+    @classmethod
+    def to_model(cls, data):
+        raise NotImplementedError()
 
 
 MODEL_DECODERS = [DefaultMcModelDecoder]  # priority: first in list, first checked
@@ -25,6 +31,9 @@ MODEL_DECODERS = [DefaultMcModelDecoder]  # priority: first in list, first check
 
 class Model(rendering.IRenderAbleComponent.IRenderAbleComponent):
     def __init__(self, name):
+        self.name = name
+
+    def add_renderable_component(self, component):
         pass
 
 
