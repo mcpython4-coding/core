@@ -619,7 +619,6 @@ started these clone on 12th of July, 2019
 
 planed for this branch:
     rewrite model system:
-    - remove everything referencing to the model system including also custom block renderers
     - make cube vertex system based on one sidegenerator taking an rotation and side using relative coord to block
         center and doing some math on showing
     - make tex coord cached on model generation

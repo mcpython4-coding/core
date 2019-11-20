@@ -12,7 +12,10 @@ import math
 
 
 def get_max_y(pos):
-    """gets the max y at a x,y,z or x,z pos"""
+    """
+    gets the max y at a x,y,z or x,z pos
+    todo: move to dimension class
+    """
     x, y, z = normalize(pos if len(pos) == 3 else (pos[0], 0, pos[1]))
     chunk = G.world.get_active_dimension().get_chunk_for_position(pos)
     heightmap = chunk.get_value('heightmap')
@@ -20,23 +23,29 @@ def get_max_y(pos):
     return y + config.PLAYER_HEIGHT  # account for the distance from head to foot
 
 
-def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
-    """ Return the vertices of the cube at position x, y, z with size 2*n.
-
+def rotate_vector(vector, rotation):
     """
-    top = [x - nx, y + ny, z - nz, x - nx, y + ny, z + nz, x + nx, y + ny, z + nz, x + nx, y + ny, z - nz] if faces[0] \
-        else []
-    bottom = [x - nx, y - ny, z - nz, x + nx, y - ny, z - nz, x + nx, y - ny, z + nz, x - nx, y - ny, z + nz] if \
-        faces[1] else []
-    left = [x - nx, y - ny, z - nz, x - nx, y - ny, z + nz, x - nx, y + ny, z + nz, x - nx, y + ny, z - nz] if \
-        faces[2] else []
-    right = [x + nx, y - ny, z + nz, x + nx, y - ny, z - nz, x + nx, y + ny, z - nz, x + nx, y + ny, z + nz] if \
-        faces[3] else []
-    front = [x - nx, y - ny, z + nz, x + nx, y - ny, z + nz, x + nx, y + ny, z + nz, x - nx, y + ny, z + nz] if \
-        faces[4] else []
-    back = [x + nx, y - ny, z - nz, x - nx, y - ny, z - nz, x - nx, y + ny, z - nz, x + nx, y + ny, z - nz] if \
-        faces[5] else []
-    return top + bottom + left + right + front + back
+    will rotate the given vector with rotation
+    :param vector: the vector to rotate, as tuple[3] float
+    :param rotation: how much to rotate, as tuple[3] float in math.pi
+    :return: the rotated vector
+    """
+    x, y, z = rotate_around_x(vector, rotation[0])
+    y, z, x = rotate_around_x((y, z, x), rotation[1])
+    z, x, y = rotate_around_x((z, x, y), rotation[2])
+    return x, y, z
+
+
+def rotate_around_x(vector, rotation):
+    x, y, z = vector
+    return x, y*math.cos(rotation)-z*math.sin(rotation), y*math.sin(rotation) + z * math.cos(rotation)
+
+
+def cube_face(size, rotation):
+    sx, sy = size
+    sx /= 2; sy /= 2
+    faces = [(-sx, 0, -sy), (-sx, 0, sy), (sx, 0, sy), (sx, 0, -sy)]
+    return [rotate_vector(vector, rotation) for vector in faces]
 
 
 def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1)):
