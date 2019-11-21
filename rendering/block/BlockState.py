@@ -1,6 +1,8 @@
+import globals as G
 import ResourceLocator
 import os
 import rendering.IRenderAbleComponent
+import event.Registry
 
 
 class IBlockStateDecoder:
@@ -68,8 +70,10 @@ class BlockState(rendering.IRenderAbleComponent.IRenderAbleComponent):
     def from_data(cls, data, name):
         for decoder in BLOCKSTATES_DECODERS:
             if decoder.is_valid(data):
-                blockstate = decoder.decode(data, name)
-                # todo: add to some registry
+                G.registry.register(decoder.decode(data, name))
+
+    def __init__(self, name):
+        self.name = name
 
 
 class IBlockStateContainer(rendering.IRenderAbleComponent.IRenderAbleComponentRevision):
@@ -86,4 +90,15 @@ class DefaultBlockStateContainer(IBlockStateContainer):
     """
     base class for every basic blockstate containing only an finite list of BoxModels and depending NOT on another state
     """
+
+
+def add_blockstate(registry, blockstate):
+    registry.get_attribute("table")[blockstate.name] = blockstate
+
+
+blockstateutil = event.Registry.Registry(
+    "blockstateutil", inject_base_classes=[IBlockStateContainer, IBlockStateDecoder])
+blockstates = event.Registry.Registry("blockstates", injection_function=add_blockstate, inject_base_classes=[
+    BlockState])
+blockstates.set_attribute("table", {})
 

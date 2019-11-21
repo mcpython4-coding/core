@@ -627,6 +627,8 @@ started these clone on 12th of July, 2019
 [uuk]: added IBlockStateDecoder-baseclass
 [uuk]: added base interaction with BlockState-decoders
 [uuk]: added IBlockStateContainer-baseclass, added DefaultBlockStateContainer-baseclass
+[uuk]: added blockstate registry
+[uuk]: added exception when NO registry was found for an object
 
 planed for this branch:
     rewrite model system:
@@ -639,6 +641,7 @@ planed for this branch:
     - make blockstate system compatibly with forge blockstate files
     - make missing texture & missing model's defaults when not loadable
     - make bounding box render again using cached vertex coord on which look position is than added on
+    - re-add factories for model & blockstate, make them saveable to file
 
     rewrite gui rendering system
     - make most of the cut-texture tasks based on % of image in image.get_region()
@@ -647,10 +650,10 @@ planed for this branch:
 
     rewrite item rendering system
     - make items use some better system for rendering
-    - make item hand rendering possible
+    - make item hand rendering possible (?)
 
     add particles
-    - add particle rendering
+    - add particle rendering, use separated batch
 
     add entity-like rendering
     - add support for rendering rotated boxes outside of block instances working towards entities
@@ -678,6 +681,9 @@ todo: make BlockItemFactory an state which can be accessed during runtime so tha
 todo: make BlockItemFactory use an special dim so no special cleaning is needed
 
 todo: add missing texture when model / texture was not loadable
+
+todo: add API system, add some form of registry & loading stage which is arrival with API, add API version check,
+        add annotation system
 
 
 add an optional entry to mod.json-file which is an modname: mainfile[ which will load the mainfiles if mod is found
