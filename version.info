@@ -625,6 +625,8 @@ started these clone on 12th of July, 2019
 [uuk]: added Model-class-structure, added IModelDecoder-baseclass
 [uuk]: added base class for everything renderable
 [uuk]: added IBlockStateDecoder-baseclass
+[uuk]: added base interaction with BlockState-decoders
+[uuk]: added IBlockStateContainer-baseclass, added DefaultBlockStateContainer-baseclass
 
 planed for this branch:
     rewrite model system:
