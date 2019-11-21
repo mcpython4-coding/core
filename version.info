@@ -629,6 +629,9 @@ started these clone on 12th of July, 2019
 [uuk]: added IBlockStateContainer-baseclass, added DefaultBlockStateContainer-baseclass
 [uuk]: added blockstate registry
 [uuk]: added exception when NO registry was found for an object
+[uuk]: added Model-system
+[uuk]: added model registry
+[uuk]: added body classes for OBJ & B3D block models
 
 planed for this branch:
     rewrite model system:

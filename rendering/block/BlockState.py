@@ -71,6 +71,7 @@ class BlockState(rendering.IRenderAbleComponent.IRenderAbleComponent):
         for decoder in BLOCKSTATES_DECODERS:
             if decoder.is_valid(data):
                 G.registry.register(decoder.decode(data, name))
+                return
 
     def __init__(self, name):
         self.name = name
