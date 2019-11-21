@@ -174,3 +174,13 @@ def topological_sort(items):
 
         items = remaining_items
 
+
+
+def next_power_of_2(x):
+    """
+    code from https://stackoverflow.com/questions/14267555/find-the-smallest-power-of-2-greater-than-n-in-python
+    :param x: the smallest value to search for
+    :return: the next power of 2 greater or equal to x
+    """
+    return 1 if x == 0 else 2**(x - 1).bit_length()
+

@@ -632,6 +632,7 @@ started these clone on 12th of July, 2019
 [uuk]: added Model-system
 [uuk]: added model registry
 [uuk]: added body classes for OBJ & B3D block models
+[uuk]: added TextureAtlas-class
 
 planed for this branch:
     rewrite model system:
@@ -665,6 +666,10 @@ planed for this branch:
         change them during runtime
 
     update example mod to newest system
+
+todo: add own nbt decoder & encoder, see
+    http://web.archive.org/web/20110729004616/http://www.minecraft.net:80/docs/NBT.txt
+    https://minecraft.gamepedia.com/NBT_format
 
 todo: make factories extendable!
 todo: add support for old language format
