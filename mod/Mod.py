@@ -9,6 +9,7 @@ import globals as G
 import event.EventBus
 import event.EventHandler
 import traceback
+import texture.TextureAtlas
 
 
 class ModDependency:
@@ -67,6 +68,7 @@ class Mod:
         self.path = None
         self.version = version
         self.package = None
+        self.blocktextureatlas = texture.TextureAtlas.BlockTextureAtlas(name)
         G.modloader.add_to_add(self)
 
     def add_dependency(self, depend):

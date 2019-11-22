@@ -635,6 +635,8 @@ started these clone on 12th of July, 2019
 [uuk]: added TextureAtlas-class
 [uuk]: removed all blocks except bedrock, brick, stone, dirt & grass for test reasons in the future
 [uuk]: fixed OSError when adding some images to TextureAtlas
+[uuk]: every mod has now an BlockTextureAtlas-instance
+[uuk]: BlockTextureAtlas will now check on texture size to prevent errors due to oversize images
 
 planed for this branch:
     rewrite model system:

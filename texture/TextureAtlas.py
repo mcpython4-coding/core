@@ -73,6 +73,8 @@ class BlockTextureAtlas:
 
     def add_image(self, image: PIL.Image.Image) -> TextureAtlasReference:
         if image in self.images: return self.imagerefs[self.images.index(image)]
+        s = image.size[0]
+        if s > self.max_image_size[0] or s > self.max_image_size[1]: self.max_image_size = (s, s)
         reference = TextureAtlasReference(self)
         self.images.append(image)
         self.imagerefs.append(reference)
