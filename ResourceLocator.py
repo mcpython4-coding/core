@@ -115,7 +115,7 @@ RESOURCE_LOCATIONS = []
 def load_resources():
     close_all_resources()
     for file in os.listdir(G.local+"/resourcepacks"):
-        if file in ["1.14.4.jar", "minecraft"]: continue
+        if file in ["1.15-pre1.jar", "minecraft"]: continue
         file = G.local+"/resourcepacks/" + file
         flag = True
         for source in RESOURCE_LOADER:
@@ -126,7 +126,7 @@ def load_resources():
             raise RuntimeError("can't load path {}. No valid format found!".format(file))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))
-    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.14.4.jar"))
+    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.15-pre1.jar"))
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]

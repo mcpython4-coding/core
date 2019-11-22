@@ -637,6 +637,8 @@ started these clone on 12th of July, 2019
 [uuk]: fixed OSError when adding some images to TextureAtlas
 [uuk]: every mod has now an BlockTextureAtlas-instance
 [uuk]: BlockTextureAtlas will now check on texture size to prevent errors due to oversize images
+[uuk]: updated textures to 1.15-pre1, preparing for 1.15 textures. For that, ui.Button was slightly changed
+[uuk]: implemented from_directory-methods of Model & BlockState
 
 planed for this branch:
     rewrite model system:
@@ -654,6 +656,7 @@ planed for this branch:
 
     rewrite gui rendering system
     - make most of the cut-texture tasks based on % of image in image.get_region()
+    - make gui resize with window size (avg factor)
     - make an event for texture_update which is called when intern an texture pack change occured and should be used
         for doing things like re-loading textures for guis, buttons...
 
@@ -671,6 +674,10 @@ planed for this branch:
         change them during runtime
 
     update example mod to newest system
+
+    block item system (maybe new branch):
+        make an batch for inventory blocks & also the normal items (seperated)
+        make both batches draw when item images should be drawn, including the right rendering mode & perspective
 
 todo: add own nbt decoder & encoder, see
     http://web.archive.org/web/20110729004616/http://www.minecraft.net:80/docs/NBT.txt

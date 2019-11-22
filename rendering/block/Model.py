@@ -8,6 +8,7 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import globals as G
 import rendering.IRenderAbleComponent
 import event.Registry
+import os
 
 
 class IModelDecoder:
@@ -57,14 +58,20 @@ MODEL_DECODERS = [DefaultMcModelDecoder]  # priority: first in list, first check
 class Model(rendering.IRenderAbleComponent.IRenderAbleComponent):
     @classmethod
     def from_mod(cls, modname: str):
-        pass
+        cls.from_directory("assets/{}/models/block".format(modname), modname=modname)
 
     @classmethod
-    def from_directory(cls, directory: str, include_sub_dirs=True):
-        pass
+    def from_directory(cls, directory: str, include_sub_dirs=True, modname=None):
+        if include_sub_dirs:
+            for root, dirs, files in os.walk(directory, topdown=False):
+                for name in files:
+                    cls.from_file(os.path.join(root, name), modname=modname)
+        else:
+            for name in os.listdir(directory):
+                cls.from_file(os.path.join(directory, name), modname=modname)
 
     @classmethod
-    def from_file(cls, file: str):
+    def from_file(cls, file: str, modname=None):
         pass
 
     @classmethod

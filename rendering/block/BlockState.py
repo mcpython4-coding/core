@@ -60,9 +60,12 @@ class BlockState(rendering.IRenderAbleComponent.IRenderAbleComponent):
     @classmethod
     def from_directory(cls, directory: str, include_sub_dirs=True):
         if include_sub_dirs:
-            pass
+            for root, dirs, files in os.walk(directory, topdown=False):
+                for name in files:
+                    cls.from_file(os.path.join(root, name))
         else:
-            pass
+            for name in os.listdir(directory):
+                cls.from_file(os.path.join(directory, name))
 
     @classmethod
     def from_file(cls, file: str, modname=None, filename=None):

@@ -46,7 +46,7 @@ def draw_button(position, size, mode):
                 ii.blit(x * sourceimage.width + position[0], y * sourceimage.height + position[1])
             except ZeroDivisionError: pass
             except TypeError: pass
-    util.opengl.draw_line_rectangle(position, size, (0, 0, 0))
+    util.opengl.draw_line_rectangle(position, size, (1, 1, 1) if mode == ButtonMode.HOVERING else (0, 0, 0))
 
 
 class UIPartButton(UIPart.UIPart):
