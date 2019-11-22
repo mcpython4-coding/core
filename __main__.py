@@ -9,6 +9,32 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 print("[DEVELOPMENT][WARNING] these branch is worked on and may be not runnable at all. Please do only report bugs on "
       "features which have been finished in this branch.")
 input("you have written above notice and you are sure to run the program: ")
+import globals
+import sys
+import ResourceLocator
+import os
+
+while os.path.exists(globals.local + "/tmp"):
+    try:
+        import shutil
+
+        shutil.rmtree(globals.local + "/tmp")
+    except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
+        pass
+
+import texture.TextureAtlas
+
+ResourceLocator.load_resources()
+
+atlas = texture.TextureAtlas.BlockTextureAtlas("minecraft")
+for file in ResourceLocator.get_all_entries("assets/minecraft/textures/block"):
+    if file.endswith(".png"):
+        try:
+            atlas.add_image(ResourceLocator.read(file, "pil"))
+        except OSError: pass
+atlas.finish()
+sys.exit(-1)
+
 
 try:
     print("---------------------")

@@ -633,9 +633,12 @@ started these clone on 12th of July, 2019
 [uuk]: added model registry
 [uuk]: added body classes for OBJ & B3D block models
 [uuk]: added TextureAtlas-class
+[uuk]: removed all blocks except bedrock, brick, stone, dirt & grass for test reasons in the future
+[uuk]: fixed OSError when adding some images to TextureAtlas
 
 planed for this branch:
     rewrite model system:
+    - add animated textures!
     - make cube vertex system based on one sidegenerator taking an rotation and side using relative coord to block
         center and doing some math on showing
     - make tex coord cached on model generation

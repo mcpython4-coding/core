@@ -15,6 +15,10 @@ def load_blocks():
     bedrock = factory.BlockFactory.BlockFactory().setName("minecraft:bedrock").setBrakeAbleFlag(False).finish()
     bricks = factory.BlockFactory.BlockFactory().setName("minecraft:bricks").setHardness(2).setBestTools(
         [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
+    stone = factory.BlockFactory.BlockFactory().setName("minecraft:stone").setHardness(1.5).setBestTools(
+        [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
+
+    return
     cobblestone = factory.BlockFactory.BlockFactory().setHardness(2).setBestTools([ToolType.PICKAXE]).\
         setMinimumToolLevel(1).setName("minecraft:cobblestone")
     gravel = factory.BlockFactory.BlockFactory().setName("minecraft:gravel").setHardness(0.6).setBestTools(
@@ -23,8 +27,6 @@ def load_blocks():
         [ToolType.SHOVEL]).setFallable().finish()
     sand = factory.BlockFactory.BlockFactory().setName("minecraft:sand").setHardness(0.5).setBestTools(
         [ToolType.SHOVEL]).setFallable().finish()
-    stone = factory.BlockFactory.BlockFactory().setName("minecraft:stone").setHardness(1.5).setBestTools(
-        [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
     smooth_stone = factory.BlockFactory.BlockFactory().setName("minecraft:smooth_stone").setHardness(1.5).setBestTools(
         [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
     stone_bricks = factory.BlockFactory.BlockFactory().setName("minecraft:stone_bricks").setHardness(1.5).setBestTools(

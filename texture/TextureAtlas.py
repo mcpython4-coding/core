@@ -88,6 +88,9 @@ class BlockTextureAtlas:
         m = util.math.next_power_of_2(round(math.sqrt(s) + 1))
         self.atlas = TextureAtlas((m, m), self.max_image_size)
         for i, image in enumerate(self.images):
-            self.imagerefs[i].position = self.atlas.add_image(image)
+            try:
+                self.imagerefs[i].position = self.atlas.add_image(image.resize(self.max_image_size))
+            except OSError:
+                print("[TEXTUREATLAS][ERROR] OSError during trying to add image")
         self.atlas.image.save(G.local+"/tmp/textureatlases/atlas_{}.png".format(self.modname))
 
