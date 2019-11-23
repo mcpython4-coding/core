@@ -639,6 +639,7 @@ started these clone on 12th of July, 2019
 [uuk]: BlockTextureAtlas will now check on texture size to prevent errors due to oversize images
 [uuk]: updated textures to 1.15-pre1, preparing for 1.15 textures. For that, ui.Button was slightly changed
 [uuk]: implemented from_directory-methods of Model & BlockState
+[uuk]: removed BlockConfig-system
 
 planed for this branch:
     rewrite model system:
