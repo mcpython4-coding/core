@@ -69,4 +69,6 @@ def from_directory(directory, modname):
 from_directory("assets/minecraft/lang", "minecraft")
 
 # todo: move to an load-function over "assets/minecraft/lang" or "minecraft", add support for old format
+# todo: make load of only the active language and load others when needed -> reduce RAM usage
+# todo: make an sys.argv option to disable loading & translating
 

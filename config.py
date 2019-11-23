@@ -56,7 +56,6 @@ for e in _ADVANCED_FACES:
             for x in m:
                 if any(m): ADVANCED_FACES.append(x)
 del _ADVANCED_FACES
-# print(ADVANCED_FACES)
 
 FACE_NAMES = [util.enums.EnumSide.U, util.enums.EnumSide.D,
               util.enums.EnumSide.N, util.enums.EnumSide.E, util.enums.EnumSide.S, util.enums.EnumSide.W]

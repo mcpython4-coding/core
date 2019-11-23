@@ -16,7 +16,11 @@ class FeatureTable:
         self.table.setdefault(name, [info, None])
 
     def set_attribute(self, name, data):
-        self.table[name][1] = data
+        if self.table[name][1] is None:
+            self.table[name][1] = data
+            return data
+        else:
+            return self.table[name][1]
 
 
 ITEMS = FeatureTable("items")

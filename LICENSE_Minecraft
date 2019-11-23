@@ -1,0 +1,7 @@
+Minecraft - the game this program is trying to replicate in python.
+Most of the assets are from the corresponding minecraft.jar from mojang's download server.
+Modifications were only made to remove the unneeded java code files.
+All assets, including these in the directory called minecraft in resourcepacks-folder, and the concept of the game are
+licenced under the EULA of mojang found under https://account.mojang.com/documents/minecraft_eula
+
+THIS IS NO OFFICIAL MINECRAFT PRODUCT. THESE PROJECT IS NOT DONE BY MOJANG AND HAS NO CONNECTION TO THEM BESIDE THE ASSETS.
