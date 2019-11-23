@@ -1,3 +1,15 @@
 This file is about things that should be removed in the future.
 This is an reminder-file for when to remove them & what.
 So, here follows an list of deprecation's:
+
+since 23th of november, 2019:
+    Language.get(key, formatting=None):
+        uses an key-splitting method. This should be removed and replaced by formatting.
+        replace all internal calls from state lables, ... when removing this behaviour
+
+        removal: until next ~2 snapshot
+
+    Language.decode(s: str):
+        use function translate rather than this function
+
+        removal: until next ~2 snapshot

@@ -12,15 +12,17 @@ class FeatureTable:
         self.name = name
         self.table = {}
 
-    def add_holder(self, name, info):
-        self.table.setdefault(name, [info, None])
+    def add_holder(self, name, info): self.table.setdefault(name, [info, None])
 
     def set_attribute(self, name, data):
+        if name not in self.table: raise ValueError("Can't write value. Key '{}' not found".format(name))
         if self.table[name][1] is None:
             self.table[name][1] = data
             return data
         else:
             return self.table[name][1]
+
+    def exists_in_table(self, name): return name in self.table and self.table[name][1] is not None
 
 
 ITEMS = FeatureTable("items")

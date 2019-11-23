@@ -620,43 +620,51 @@ started these clone on 12th of July, 2019
 [uuk]: version name is stored in globals
 [uuk]: header is now using version
 [uuk]: removed local doc-folder because documentation has been moved
+[uuk]: again, improvements to some files during writing the documentation
+[uuk]: TICKS_PER_SEC=20 (minecraft tick rate) instead of 30
+[uuk]: features.py support now check for exists & will error check for name
+[uuk]: Language.get accepts now an formatting-parameter which should replace the old syntax
+[uuk]: Language.decode was renamed to Language.translate. Old is still arrival for some time
+[uuk]: Language.Language.from_file accepts now an name-parameter replacing name generation
+[uuk]: added Language.from_mod_name(<modname>)-method
 
-todo: unload BlockStates which are never used by caching used block states and than loading only needed
+for rendering update:
+    todo: add missing texture when model / texture was not loadable
+    todo: move opengl_setup to rendering
+    todo: fix bug: some custom-colored blocks are NOT colored
+    todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
+    todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
+            maybe due to an clear & draw error?
+    todo: fix bug: lags when changing chunks
+    todo: add brake animation on block (draw with alpha over the block?)
+    todo: add hovering info to items, make them use Language files
+    todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
+    todo: tweak model system to support plant models
+    todo: add "lock" of chest
 
-todo: cube rotation update:
-    Make math.cube_vertices return relative coords which are than added ontop on base position during runtime
-    Use math.cube_vertices with an rotated parameter to rotate the cube by using some math transforms
-    Add an optional marker for blockstates which indicate that they re-do every show the cube verices
-    Otherwise, cache them at BlockState
-    Remove rotated textures from texture atlas
-    Make an new render element: BoxFace which is an static class which displays one face of the cube.
-    This makes not-6-sided cube-like structures possible
-
-    goal:
-        todo: make rotation based on OpenGL rather than texture rotating & side changing
-        todo: with this, fix bug that when an blockstate is rotated, its relative position & size is not
 
 todo: make factories extendable!
 todo: add support for old language format
 
-todo: move mod.json to build folder, move opengl_setup to rendering
+todo: make the game run faster when missing ticks rather then running only slow
+
+todo: move mod.json to build folder
 todo: what to do about requests.txt & tasks.list
 
-todo: add support for mcmod.json-file
+todo: add support for mcmod.json-file & mod.toml
 
 todo: allow mod dependencies to be string-only for checking against only an mod (background auto-instance create)
 todo: make mod version tuple of variable length so "[1.0.0" is possible. by this, "[<...>" means include and upper,
     "]<...>" exclude and upper, "<...>]" include until, "<...>[" exclude until and "<1. or 2.>|<3. or 4.>" an range
     and various combinations with "&" between and "/" for excluding an version(range)
-todo: add API-checker and API guideline
+todo: add API-checker and API guideline for mods
 
 todo: add config system for mods
 
-todo: make BlockItemFactory an state which can be accessed during runtime so that an command can be implemented named
-    /rebuilditemtexture
-todo: make BlockItemFactory use an special dim so no special cleaning is needed
-
-todo: add missing texture when model / texture was not loadable
+maybe unnecessary because of the rendering update:
+    todo: make BlockItemFactory an state which can be accessed during runtime so that an command can be implemented named
+        /rebuilditemtexture -> also when texture pack changes!
+    todo: make BlockItemFactory use an special dim so no special cleaning is needed
 
 
 add an optional entry to mod.json-file which is an modname: mainfile[ which will load the mainfiles if mod is found
@@ -670,9 +678,9 @@ todo: fix bug: chat & inventory can be opened at the same time
 
 todo: fix bug: when pressing ENTER in other states than chat, chat is getting ENTER as execute line
 
-todo: fix bug: some custom-colored blocks are NOT colored
-
 todo: fix bug: mouse middle click gives always the item, not only if not in inventory
+
+todo: fix bug: /reload crashes the game
 
 add some form of "fast-load" with modified loading phases to speed up
 -> for example, you can select recipes to be NOT loaded, items not loaded, blocks not loaded, language data not loaded...
@@ -688,14 +696,10 @@ add an generation display
 
 
 issues to implement / fix
-todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
 todo: fix bug: when jumping in an block from downwards, you get damage
 todo: fix bug: when jumping into an non-full block, getting damage
-todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor is white
-todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
-        maybe due to an clear & draw error?
+todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor is white (?)
 todo: fix bug: falling blocks are NOT updating visable state
-todo: fix bug: lags when changing chunks
 todo: fix bug: when looking at the corner of an block, the focus is on the block behind rather on the block viewed at
 
 currently working on / planed for next commit(s):
@@ -728,12 +732,10 @@ todo: add Language Selection page
 todo: add key bind option page
 
 other tasks that should be done in near future
-todo: add brake animation on block (draw with alpha over the block?)
 todo: cache how much xp is needed to next level (function is callen every draw by xp draw -> decrease FPS)
 todo: make command input errors better
 todo: add Tool & Armor-durability
 todo: add leather armor
-todo: add hovering info to items, make them use Language files
 todo: increase fps during blocks falling (or another reason for decreased FPS)
 
 
@@ -770,18 +772,16 @@ todo: add command to change block inventory
 todo: add logging system, add crashlogs, add runtime exceptions, make tool to localize traceback strings from G.local
 
 todo: move to pre-build: block item factory, recipe sorting, model sorting & generation, texture atlas generation
-todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
+todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files) OR add some form of asset
+    index where these things are located in
 
 todo: make hitbox draw & check on BoxModels
-
-todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
 
 todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
     barrier, buttons, pressure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms,
     sandstones (also red variants)
 
-todo: add Plant-system, plant brake, plant base class (normal & double), plant grow,
-    tweak model system to support plant models
+todo: add Plant-system, plant brake, plant base class (normal & double), plant grow
 todo: add flowers & bind to world generation as an seperated layer
 
 todo: every loading stage should have the following parts: prepare, instance registrate, function based registrate,
@@ -792,7 +792,6 @@ todo: make resourcepacks fully functional: sorting(, auto-rebuild)
 todo: add option for inventories to be visible when another is also visible
 todo: add loot tables (also for block drops)
 
-todo: add only rotated textures to texture atlas if needed (load from block states)
 
 todo: add an check in loading if an recipe could be crafted & if the output is arrival (-> look also at the block table)
 
@@ -808,5 +807,3 @@ todo: add hart shake animation when less than 2 (up & down movement)
 
 todo: after python 3.8 came out (may be on the 14th of October, 2019), use multiproccessing & shared memory for world gen
     (kind of local one-client-one-server system)
-
-todo: add "lock" of chest
