@@ -108,11 +108,14 @@ class ResourceDirectory(IResourceLocation):
         return [directory + "/" + x for x in os.listdir(self.path + "/" + directory)]
 
 
-RESOURCE_LOADER = [ResourceZipFile, ResourceDirectory]
+RESOURCE_PACK_LOADERS = RESOURCE_LOADER = [ResourceZipFile, ResourceDirectory]
 RESOURCE_LOCATIONS = []
 
 
-def load_resources():
+def load_resources(): load_resource_packs()
+
+
+def load_resource_packs():
     close_all_resources()
     for file in os.listdir(G.local+"/resourcepacks"):
         if file in ["1.14.4.jar", "minecraft"]: continue
@@ -123,7 +126,7 @@ def load_resources():
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
-            raise RuntimeError("can't load path {}. No valid format found!".format(file))
+            print("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))
     RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.14.4.jar"))
@@ -161,8 +164,16 @@ def transform_name(file: str) -> str:
     raise NotImplementedError("can't transform name {} to valid path".format(file))
 
 
-def exists(file):
-    return any([x.is_in_path(file) for x in RESOURCE_LOCATIONS])
+def exists(file, transform=True):
+    for x in RESOURCE_LOCATIONS:
+        if x.is_in_path(file):
+            return True
+    if transform:
+        try:
+            return exists(transform_name(file), transform=False)
+        except NotImplementedError:
+            pass
+    return False
 
 
 def read(file, mode=None):
@@ -174,7 +185,7 @@ def read(file, mode=None):
             if x.path == resource:
                 return x.read(file, mode)
         raise RuntimeError("can't find resource named {}".format(resource))
-    if not exists(file):
+    if not exists(file, transform=False):
         file = transform_name(file)
     if os.path.exists(G.local+"/"+file):  # special, local-only location
         if mode == "pil":
@@ -197,7 +208,7 @@ def get_all_entries(directory: str) -> list:
     loc.reverse()
     for x in loc:
         result += x.get_all_entrys_in_directory(directory)
-    return result
+    return list(set(result))
 
 
 def get_all_entries_special(directory: str) -> list:

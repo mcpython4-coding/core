@@ -627,6 +627,7 @@ started these clone on 12th of July, 2019
 [uuk]: Language.decode was renamed to Language.translate. Old is still arrival for some time
 [uuk]: Language.Language.from_file accepts now an name-parameter replacing name generation
 [uuk]: added Language.from_mod_name(<modname>)-method
+[uuk]: again, improvements to some files during writing the documentation
 
 for rendering update:
     todo: add missing texture when model / texture was not loadable

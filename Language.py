@@ -78,7 +78,7 @@ def from_directory(directory: str, modname: str):
 def from_mod_name(modname: str): from_directory("assets/{}/lang".format(modname), modname)
 
 
-from_directory("assets/minecraft/lang", "minecraft")
+from_mod_name("minecraft")
 
 # todo: move to an load-function over "assets/minecraft/lang" or "minecraft", add support for old format
 # todo: make load of only the active language and load others when needed -> reduce RAM usage

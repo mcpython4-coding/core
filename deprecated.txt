@@ -13,3 +13,23 @@ since 23th of november, 2019:
         use function translate rather than this function
 
         removal: until next ~2 snapshot
+
+since 24th of november, 2019:
+    ResourceLocator.RESOURCE_PACK_LOADERS, former ResourceLocator.RESOURCE_LOADER
+        removal: until next ~2 snapshot
+
+    ResourceLoader.load_resources()
+        use load_resource_packs instead, removal: until next ~2 snapshot
+
+    setup.IPrepareAbleTask.uses_directory()
+        use variable USES_DIRECTORY instead, removal: until next ~2 snapshot
+
+        todo: deprecate get_name of the task
+
+    block.Block.Block.on_create()
+        use __init__ with super call instead
+        removal: until next ~2 snapshot
+
+    block.Block.Block.on_delete()
+        use on_remove instead
+        removal: until next ~2 snapshot

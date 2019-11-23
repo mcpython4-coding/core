@@ -25,14 +25,13 @@ def setup_fog():
     # the denser the fog in the fog range.
     glFogf(GL_FOG_START, 20.0)
     glFogf(GL_FOG_END, 60.0)
+    # todo: add option for sight range and add to this
 
 
 def setup():
     """ Basic OpenGL configuration.
 
     """
-    # Set the color of "clear", i.e. the sky, in rgba.
-    # glClearColor(0.5, 0.69, 1.0, 1)
     # Enable culling (not rendering) of back-facing facets -- facets that aren't
     # visible to you.
     glEnable(GL_CULL_FACE)
