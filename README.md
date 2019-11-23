@@ -7,9 +7,9 @@ Watch us and submit to it at https://github.com/mcpython4-coding/core .
 
 How to setup?
 -----------------------------------------------------------------------------------------------------
-Download any python 3.x version (x>=4) & install it.
+Download any python 3.x version (x>=4) & Install it.
 
-Download these project, unzip it, open a console in its directory and type:
+Download this project, unzip it, open a console in its directory and type:
 
 ```shell script
 pip install -r requirements.txt
