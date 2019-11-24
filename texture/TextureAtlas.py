@@ -5,94 +5,101 @@ original game by forgleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
-import globals as G
 import PIL.Image
-from collections import Counter
-import math
+import ResourceLocator
+import globals as G
+import pyglet
 import os
-import util.math
+import mod.ModMcpython
 
 
-os.makedirs(G.local+"/tmp/textureatlases")
+MISSING_TEXTURE = ResourceLocator.read("assets/missingtexture.png", "pil").resize((64, 64))
+
+
+class TextureAtlasGenerator:
+    def __init__(self):
+        self.atlases = [TextureAtlas()]
+
+    def add_image(self, image: PIL.Image.Image) -> tuple:
+        image = image.resize((64, 64))
+        for atlas in self.atlases:
+            if image in atlas.images:
+                return atlas.add_image(image), atlas
+            elif len(atlas.images) < 16 ** 2:
+                return atlas.add_image(image), atlas
+        self.atlases.append(TextureAtlas())
+        images = [image]
+        for _ in range(3):
+            images.append(images[-1].rotate(90))
+        return tuple([self.atlases[-1].add_image(i) for i in images]), self.atlases[-1]
+
+    def add_image_file(self, file: str) -> tuple:
+        return self.add_image(ResourceLocator.read(file, "pil"))
+
+    def add_images(self, images: list, one_atlased=True) -> list:
+        if not one_atlased:
+            return [self.add_image(x) for x in images]
+        images = [image.resize((64, 64)) for image in images]
+        rimages = []
+        for image in images:
+            r = [image]
+            for _ in range(3):
+                r.append(r[-1].rotate(90))
+            rimages.append(r)
+        for atlas in self.atlases:
+            if atlas.is_free_for(rimages):
+                return [([atlas.add_image(image) for image in imagel], atlas) for imagel in rimages]
+        atlas = TextureAtlas()
+        self.atlases.append(atlas)
+        return [([atlas.add_image(image) for image in imagel], atlas) for imagel in rimages]
+
+    def add_image_files(self, files: list, one_atlased=True) -> list:
+        return self.add_images([ResourceLocator.read(x, "pil") for x in files], one_atlased=one_atlased)
+
+    def output(self):
+        os.makedirs(G.local+"/tmp/textureatlases")
+        for i, atlas in enumerate(self.atlases):
+            location = G.local+"/tmp/textureatlases/atlas_{}.png".format(i+1)
+            atlas.texture.save(location)
+            atlas.group = pyglet.graphics.TextureGroup(pyglet.image.load(location).get_texture())
 
 
 class TextureAtlas:
-    def __init__(self, image_table_count, image_size, base_color=(0, 0, 0, 0)):
-        self.image = PIL.Image.new("RGBA", [round(image_table_count[i] * image_size[i]) for i in range(2)], base_color)
-        self.image_table_count = image_table_count
+    def __init__(self, size=(16, 16), image_size=(64, 64), add_missing_texture=True, pyglet_special_pos=True):
+        self.size = size
         self.image_size = image_size
+        self.pyglet_special_pos = pyglet_special_pos
+        self.texture = PIL.Image.new("RGBA", (size[0] * image_size[0], size[1] * image_size[1]))
+        self.next_index = (0, 0)
         self.images = []
-        self.imagepositions = []
-        self.next_image_index = -1, 0
+        self.imagelocations = []  # an image[-parallel (x, y)-list
+        if add_missing_texture: self.add_image(MISSING_TEXTURE)
+        self.group = None
 
-    def add_image(self, image: PIL.Image.Image) -> tuple:
-        if image in self.images:
-            return self.imagepositions[self.images.index(image)]
-        sx, sy = self.image_size
-        cx, cy = self.image_table_count
-        x, y = self.next_image_index
+    def add_image(self, image: PIL.Image.Image, ind=None) -> tuple:
+        if ind is None: ind = image
+        if ind in self.images: return self.imagelocations[self.images.index(ind)]
+        self.images.append(ind)
+        x, y = self.next_index
+        self.texture.paste(image, (x*self.image_size[0], (self.size[1]-y-1 if self.pyglet_special_pos else y) *
+                                   self.image_size[1]))
+        pos = x, y
         x += 1
-        if x >= cx:
-            x = 0
-            y += 1
-        if y >= cy: raise ValueError("unsupported operation on texture atlas. texture atlas is full")
-        px, py = x * sx, y * sy
-        try:
-            self.image.paste(image, (px, py))
-        except OSError: pass
-        self.images.append(image)
-        self.imagepositions.append((x, y))
-        self.next_image_index = (x, y)
-        return x, y
+        if x >= self.size[0]: x = 0; y += 1
+        self.next_index = (x, y)
+        self.imagelocations.append(pos)
+        return pos
+
+    def is_free_for(self, images: list) -> bool:
+        count = 0
+        for image in images:
+            if image not in self.images: count += 1
+        return count <= self.size[0] * self.size[1] - len(self.images)
 
 
-class TextureAtlasReference:
-    def __init__(self, atlas):
-        self.atlas = atlas
-        self.position = None
+handler = TextureAtlasGenerator()
 
 
-class TextureAtlasReferenceList:
-    def __init__(self, atlas):
-        self.atlas = atlas
-        self.array = None
-
-
-class BlockTextureAtlas:
-    """
-    base class for an block texture atlas based on mod name
-    todo: make prebuilded & load from index file
-    """
-
-    def __init__(self, modname, max_image_size=(64, 64)):
-        self.max_image_size = max_image_size
-        self.modname = modname
-        self.atlas = None
-        self.images = []
-        self.imagerefs = []
-
-    def add_image(self, image: PIL.Image.Image) -> TextureAtlasReference:
-        if image in self.images: return self.imagerefs[self.images.index(image)]
-        s = image.size[0]
-        if s > self.max_image_size[0] or s > self.max_image_size[1]: self.max_image_size = (s, s)
-        reference = TextureAtlasReference(self)
-        self.images.append(image)
-        self.imagerefs.append(reference)
-        return reference
-
-    def add_image_array(self, images: list) -> TextureAtlasReferenceList:
-        reference = TextureAtlasReferenceList(self)
-        reference.array = [self.add_image(i) for i in images]
-        return reference
-
-    def finish(self):
-        s = len(self.images)
-        m = util.math.next_power_of_2(round(math.sqrt(s) + 1))
-        self.atlas = TextureAtlas((m, m), self.max_image_size)
-        for i, image in enumerate(self.images):
-            try:
-                self.imagerefs[i].position = self.atlas.add_image(image.resize(self.max_image_size))
-            except OSError:
-                print("[TEXTUREATLAS][ERROR] OSError during trying to add image")
-        self.atlas.image.save(G.local+"/tmp/textureatlases/atlas_{}.png".format(self.modname))
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:textureatlas:bake", handler.output,
+                                            info="building texture atlases...")
 

@@ -31,8 +31,6 @@ def load():
     """
     loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
     """
-    from . import (BlockGrassBlock, BlockDirt)
-    return
     from . import (BlockGrassBlock, BlockDirt, BlockCraftingTable, BlockChest, BlockEnderChest,
                    BlockShulkerBox)
 

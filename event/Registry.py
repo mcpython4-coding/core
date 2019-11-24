@@ -37,7 +37,6 @@ class RegistryHandler:
                 if registry.is_valid(args[0]):
                     registry.register(args[0])
                     return args[0]
-            raise ValueError("can't register value {}. no registry found for it!".format(args[0]))
 
     def get_by_name(self, name: str):
         for registry in self.registries:

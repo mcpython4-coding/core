@@ -1,0 +1,31 @@
+{
+  "images": ["entity/chest/christmas"],
+  "space": 9,
+  "transforms": [
+    {"mode": "cut", "image": 0, "store": 1, "area": [14, 0, 28, 14]},
+    {"mode": "rebase", "image": 1, "store": 1, "size": [16, 16], "position": [1, 1]},
+
+    {"mode": "cut", "image": 0, "store": 2, "area": [28, 0, 42, 14]},
+    {"mode": "rebase", "image": 2, "store": 2, "size": [16, 16], "position": [1, 1]},
+
+    {"mode": "cut", "image": 0, "store": 3, "area": [0, 14, 14, 19]},
+    {"mode": "cut", "image": 0, "store": 4, "area": [0, 33, 14, 43]},
+    {"mode": "rebase", "image": 4, "store": 4, "size": [16, 16], "position": [1, 5]},
+    {"mode": "combine", "image": 3, "base": 4, "store": 5, "position": [1, 1]},
+
+    {"mode": "cut", "image": 0, "store": 6, "area": [14, 18, 28, 32]},
+    {"mode": "rebase", "image": 6, "store": 6, "size": [16, 16], "position": [1, 1]},
+
+    {"mode": "cut", "image": 0, "store": 7, "area": [14, 14, 28, 19]},
+    {"mode": "cut", "image": 0, "store": 8, "area": [14, 33, 28, 43]},
+    {"mode": "rebase", "image": 8, "store": 8, "size": [16, 16], "position": [1, 5]},
+    {"mode": "combine", "image": 7, "base": 8, "store": 9, "position": [1, 1]}
+  ],
+  "store": [
+    {"id": 1, "location": "blocks/chest/chest_normal_christmas_top.png"},
+    {"id": 2, "location": "blocks/chest/chest_normal_christmas_bottom_inner.png"},
+    {"id": 5, "location": "blocks/chest/chest_normal_christmas_side.png"},
+    {"id": 6, "location": "blocks/chest/chest_normal_christmas_top_inner.png"},
+    {"id": 9, "location": "blocks/chest/chest_normal_christmas_front.png"}
+  ]
+}

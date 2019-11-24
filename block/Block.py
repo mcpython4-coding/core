@@ -112,6 +112,8 @@ class Block:
     def get_view_bbox(self):
         return block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
 
+    def get_custom_block_renderer(self): return None
+
     def on_request_item_for_block(self, itemstack):
         pass
 

@@ -10,6 +10,7 @@ import item.Item
 import util.texture
 import ResourceLocator
 import event.Registry
+import texture.TextureAtlas
 import json
 import os
 import PIL.Image
@@ -26,7 +27,6 @@ def build():
     print("building item texture atlases...")
     indexdata = {}
     for i, textureatlas in enumerate(TEXTURE_ATLASES):
-        # todo: update to latest
         file = "atlas_{}.png".format(i)
         textureatlas.texture.save(G.local+"/build/itematlases/"+file)
         textureatlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.local+"/build/itematlases/"+file),
@@ -45,8 +45,15 @@ def load_data():
             indextable = json.load(f)
         for file in os.listdir(G.local+"/build/itematlases"):
             if not file.endswith(".json") and file in indextable:
-                # todo: recreate texture atlas
-                pass
+                atlas = texture.TextureAtlas.TextureAtlas(size=indextable[file]["size"], image_size=(32, 32),
+                                                          add_missing_texture=False, pyglet_special_pos=False)
+                image = PIL.Image.open(G.local+"/build/itematlases/"+file)
+                atlas.texture = image
+                atlas.images = indextable[file]["loaded_item_file_names"]
+                TEXTURE_ATLASES.append(atlas)
+                if not G.prebuilding:
+                    atlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.local + "/build/itematlases/" + file),
+                                                         *atlas.size)
         items.set_attribute("itemindextable", indextable["loaded_item_file_names"])
         if not G.prebuilding:
             with open(G.local+"/build/itemblockfactory.json") as f:
@@ -81,7 +88,6 @@ def register_item(registry, itemclass):
         files = itemclass.get_used_texture_files()
         images = [ResourceLocator.read(file, "pil").resize((32, 32)) for file in files]
         locations = []
-        # todo: update to search for mod atlas
         flag = True
         for textureatlas in TEXTURE_ATLASES:
             if textureatlas.is_free_for(files):
@@ -90,7 +96,11 @@ def register_item(registry, itemclass):
                 flag = False
                 break
         if flag:
-            pass
+            textureatlas = texture.TextureAtlas.TextureAtlas(add_missing_texture=False, image_size=(32, 32),
+                                                             pyglet_special_pos=False, size=(16, 16))
+            TEXTURE_ATLASES.append(textureatlas)
+            for i, image in enumerate(images):
+                table[itemclass.get_name()][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
     except:
         print(itemclass.get_name(), itemclass.get_used_texture_files())
         raise

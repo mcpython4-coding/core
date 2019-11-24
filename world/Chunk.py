@@ -201,7 +201,7 @@ class Chunk:
 
         """
         # print("showing", position)
-        self.shown[position] = []  # G.modelhandler.add_to_batch(block, position, self.dimension.batches)
+        self.shown[position] = G.modelhandler.add_to_batch(block, position, self.dimension.batches)
         # print(self.world[position], self.shown[position])
 
     def hide_block(self, position, immediate=True):

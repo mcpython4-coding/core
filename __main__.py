@@ -6,10 +6,6 @@ minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 
-print("[DEVELOPMENT][WARNING] these branch is worked on and may be not runnable at all. Please do only report bugs on "
-      "features which have been finished in this branch.")
-input("you have written above notice and you are sure to run the program: ")
-
 try:
     import globals as G
     version = G.VERSION.upper()
@@ -57,6 +53,9 @@ try:
 
     import setup as systemsetup
 
+    import texture.model.ModelHandler
+    import texture.model.BlockState
+
     import tags.TagHandler
     import block.BlockHandler
     import item.ItemHandler
@@ -69,6 +68,7 @@ try:
         import globals as G
         import world.World
         globals.world = world.World.World()
+        import texture.model.BlockState
         import Language
 
         opengl_setup.setup()

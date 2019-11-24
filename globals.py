@@ -26,12 +26,15 @@ tickhandler = None
 registry = None
 commandparser = None
 statehandler = None
+texturefactoryhandler = None
 inventoryhandler = None
 worldgenerationhandler = None
 biomehandler = None
 craftinghandler = None
 taghandler = None
 dimensionhandler = None
+
+modelhandler = None
 
 modloader = None
 
