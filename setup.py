@@ -26,6 +26,7 @@ import globals as G
 import event.Registry
 import os
 import shutil
+import texture.factory
 import mod.ModMcpython
 import sys
 
@@ -35,13 +36,12 @@ class IPrepareAbleTask:
     def get_name() -> str: raise NotImplementedError()
 
     @staticmethod
-    def get_version() -> tuple: raise NotImplementedError()
-
-    @staticmethod
     def dump_data(directory: str): pass
 
-    @staticmethod
+    @staticmethod  # todo: remove
     def uses_directory() -> bool: return True
+
+    USES_DIRECTORY = uses_directory()
 
 
 taskregistry = event.Registry.Registry("preparetasks", [IPrepareAbleTask])
@@ -54,9 +54,6 @@ def add():
         def get_name() -> str: return "cleanup"
 
         @staticmethod
-        def get_version() -> tuple: return 1, 0, 0
-
-        @staticmethod
         def dump_data(directory: str):
             while os.path.exists(G.local+"/build"):
                 try:
@@ -65,15 +62,27 @@ def add():
                 except OSError: pass
             os.makedirs(G.local+"/build")
 
+        USES_DIRECTORY = False
+
+    @G.registry
+    class TextureFactoryGenerate(IPrepareAbleTask):
         @staticmethod
-        def uses_directory() -> bool: return False
+        def get_name() -> str:
+            return "texturefactory:prepare"
+
+        @staticmethod
+        def dump_data(directory: str):
+            G.texturefactoryhandler.load()
+
+        USES_DIRECTORY = False
 
 
 def execute():
     for iprepareabletask in taskregistry.registered_objects:
         directory = G.local+"/build/"+iprepareabletask.get_name()
-        if os.path.exists(directory): shutil.rmtree(directory)
-        if iprepareabletask.uses_directory(): os.makedirs(directory)
+        if iprepareabletask.USES_DIRECTORY:
+            if os.path.exists(directory): shutil.rmtree(directory)
+            os.makedirs(directory)
         iprepareabletask.dump_data(directory)
 
 

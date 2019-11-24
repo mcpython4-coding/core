@@ -614,97 +614,58 @@ started these clone on 12th of July, 2019
 [uuk]: LoadingStages have now an name
 [uuk]: combined some stages event more
 [uuk]: texture factory will now use ALL possible definition files instead of only the first
-[uuk]: removed custom block renderers, model factory, BoxModel, texture folder
-[uuk]: until this branch is stable again, an printed header in log will warn the user for very unstable branch
-[uuk]: removed rebuild task for texture factory
-[uuk]: removed handler references from rendering systems out of globals.py
-[uuk]: removed all imports of rendering system files
-[uuk]: removed functionality from example mod
-[uuk]: ResourceLocator will now not try to load texture's system
-[uuk]: added basic file structure for new block rendering system
-[uuk]: added Model-class-structure, added IModelDecoder-baseclass
-[uuk]: added base class for everything renderable
-[uuk]: added IBlockStateDecoder-baseclass
-[uuk]: added base interaction with BlockState-decoders
-[uuk]: added IBlockStateContainer-baseclass, added DefaultBlockStateContainer-baseclass
-[uuk]: added blockstate registry
-[uuk]: added exception when NO registry was found for an object
-[uuk]: added Model-system
-[uuk]: added model registry
-[uuk]: added body classes for OBJ & B3D block models
-[uuk]: added TextureAtlas-class
-[uuk]: removed all blocks except bedrock, brick, stone, dirt & grass for test reasons in the future
-[uuk]: fixed OSError when adding some images to TextureAtlas
-[uuk]: every mod has now an BlockTextureAtlas-instance
-[uuk]: BlockTextureAtlas will now check on texture size to prevent errors due to oversize images
-[uuk]: updated textures to 1.15-pre1, preparing for 1.15 textures. For that, ui.Button was slightly changed
-[uuk]: implemented from_directory-methods of Model & BlockState
-[uuk]: removed BlockConfig-system
+[uuk]: improvements to some files during writing the documentation
+[uuk]: added deprecated.txt file
+[uuk]: included an LICENSE_Minecraft file to make clear what we are using and what not
+[uuk]: version name is stored in globals
+[uuk]: header is now using version
+[uuk]: removed local doc-folder because documentation has been moved
+[uuk]: again, improvements to some files during writing the documentation
+[uuk]: TICKS_PER_SEC=20 (minecraft tick rate) instead of 30
+[uuk]: features.py support now check for exists & will error check for name
+[uuk]: Language.get accepts now an formatting-parameter which should replace the old syntax
+[uuk]: Language.decode was renamed to Language.translate. Old is still arrival for some time
+[uuk]: Language.Language.from_file accepts now an name-parameter replacing name generation
+[uuk]: added Language.from_mod_name(<modname>)-method
+[uuk]: again, improvements to some files during writing the documentation
 
-planed for this branch:
-    rewrite model system:
-    - add animated textures!
-    - make cube vertex system based on one sidegenerator taking an rotation and side using relative coord to block
-        center and doing some math on showing
-    - make tex coord cached on model generation
-    - make model system extendable
-    - make texture factory part of rebuild system building into build/textureatlases/<modname>.png
-        using custom atlas sized for using by count of files per mod
-    - make blockstate system compatibly with forge blockstate files
-    - make missing texture & missing model's defaults when not loadable
-    - make bounding box render again using cached vertex coord on which look position is than added on
-    - re-add factories for model & blockstate, make them saveable to file
+for rendering update:
+    todo: add missing texture when model / texture was not loadable
+    todo: move opengl_setup to rendering
+    todo: fix bug: some custom-colored blocks are NOT colored
+    todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
+    todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
+            maybe due to an clear & draw error?
+    todo: fix bug: lags when changing chunks
+    todo: add brake animation on block (draw with alpha over the block?)
+    todo: add hovering info to items, make them use Language files
+    todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
+    todo: tweak model system to support plant models
+    todo: add "lock" of chest
 
-    rewrite gui rendering system
-    - make most of the cut-texture tasks based on % of image in image.get_region()
-    - make gui resize with window size (avg factor)
-    - make an event for texture_update which is called when intern an texture pack change occured and should be used
-        for doing things like re-loading textures for guis, buttons...
-
-    rewrite item rendering system
-    - make items use some better system for rendering
-    - make item hand rendering possible (?)
-
-    add particles
-    - add particle rendering, use separated batch
-
-    add entity-like rendering
-    - add support for rendering rotated boxes outside of block instances working towards entities
-
-    re-add texture factory as part of factory following its stile using some getter function for making it possible to
-        change them during runtime
-
-    update example mod to newest system
-
-    block item system (maybe new branch):
-        make an batch for inventory blocks & also the normal items (seperated)
-        make both batches draw when item images should be drawn, including the right rendering mode & perspective
-
-todo: add own nbt decoder & encoder, see
-    http://web.archive.org/web/20110729004616/http://www.minecraft.net:80/docs/NBT.txt
-    https://minecraft.gamepedia.com/NBT_format
 
 todo: make factories extendable!
 todo: add support for old language format
 
-todo: add support for mcmod.json-file
+todo: make the game run faster when missing ticks rather then running only slow
+
+todo: move mod.json to build folder
+todo: what to do about requests.txt & tasks.list
+
+todo: add support for mcmod.json-file & mod.toml
 
 todo: allow mod dependencies to be string-only for checking against only an mod (background auto-instance create)
 todo: make mod version tuple of variable length so "[1.0.0" is possible. by this, "[<...>" means include and upper,
     "]<...>" exclude and upper, "<...>]" include until, "<...>[" exclude until and "<1. or 2.>|<3. or 4.>" an range
     and various combinations with "&" between and "/" for excluding an version(range)
-todo: add API-checker and API guideline
+todo: add API-checker and API guideline for mods
 
 todo: add config system for mods
 
-todo: make BlockItemFactory an state which can be accessed during runtime so that an command can be implemented named
-    /rebuilditemtexture
-todo: make BlockItemFactory use an special dim so no special cleaning is needed
-
-todo: add missing texture when model / texture was not loadable
-
-todo: add API system, add some form of registry & loading stage which is arrival with API, add API version check,
-        add annotation system
+maybe unnecessary because of the rendering update:
+    todo: make BlockItemFactory an state which can be accessed during runtime so that an command can be implemented named
+        /rebuilditemtexture -> also when texture pack changes!
+    todo: make BlockItemFactory use an special dim so no special cleaning is needed
 
 
 add an optional entry to mod.json-file which is an modname: mainfile[ which will load the mainfiles if mod is found
@@ -718,9 +679,9 @@ todo: fix bug: chat & inventory can be opened at the same time
 
 todo: fix bug: when pressing ENTER in other states than chat, chat is getting ENTER as execute line
 
-todo: fix bug: some custom-colored blocks are NOT colored
-
 todo: fix bug: mouse middle click gives always the item, not only if not in inventory
+
+todo: fix bug: /reload crashes the game
 
 add some form of "fast-load" with modified loading phases to speed up
 -> for example, you can select recipes to be NOT loaded, items not loaded, blocks not loaded, language data not loaded...
@@ -736,14 +697,10 @@ add an generation display
 
 
 issues to implement / fix
-todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
 todo: fix bug: when jumping in an block from downwards, you get damage
 todo: fix bug: when jumping into an non-full block, getting damage
-todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor is white
-todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
-        maybe due to an clear & draw error?
+todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor is white (?)
 todo: fix bug: falling blocks are NOT updating visable state
-todo: fix bug: lags when changing chunks
 todo: fix bug: when looking at the corner of an block, the focus is on the block behind rather on the block viewed at
 
 currently working on / planed for next commit(s):
@@ -776,15 +733,11 @@ todo: add Language Selection page
 todo: add key bind option page
 
 other tasks that should be done in near future
-todo: add brake animation on block (draw with alpha over the block?)
 todo: cache how much xp is needed to next level (function is callen every draw by xp draw -> decrease FPS)
 todo: make command input errors better
 todo: add Tool & Armor-durability
 todo: add leather armor
-todo: add hovering info to items, make them use Language files
 todo: increase fps during blocks falling (or another reason for decreased FPS)
-
-todo: unload BlockStates which are never used by caching used block states and than loading only needed
 
 
 an update to the world generation system
@@ -820,18 +773,16 @@ todo: add command to change block inventory
 todo: add logging system, add crashlogs, add runtime exceptions, make tool to localize traceback strings from G.local
 
 todo: move to pre-build: block item factory, recipe sorting, model sorting & generation, texture atlas generation
-todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files)
+todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files) OR add some form of asset
+    index where these things are located in
 
 todo: make hitbox draw & check on BoxModels
-
-todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
 
 todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
     barrier, buttons, pressure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms,
     sandstones (also red variants)
 
-todo: add Plant-system, plant brake, plant base class (normal & double), plant grow,
-    tweak model system to support plant models
+todo: add Plant-system, plant brake, plant base class (normal & double), plant grow
 todo: add flowers & bind to world generation as an seperated layer
 
 todo: every loading stage should have the following parts: prepare, instance registrate, function based registrate,
@@ -842,7 +793,6 @@ todo: make resourcepacks fully functional: sorting(, auto-rebuild)
 todo: add option for inventories to be visible when another is also visible
 todo: add loot tables (also for block drops)
 
-todo: add only rotated textures to texture atlas if needed (load from block states)
 
 todo: add an check in loading if an recipe could be crafted & if the output is arrival (-> look also at the block table)
 
@@ -858,5 +808,3 @@ todo: add hart shake animation when less than 2 (up & down movement)
 
 todo: after python 3.8 came out (may be on the 14th of October, 2019), use multiproccessing & shared memory for world gen
     (kind of local one-client-one-server system)
-
-todo: add "lock" of chest

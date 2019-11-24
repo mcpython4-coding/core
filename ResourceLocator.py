@@ -108,14 +108,17 @@ class ResourceDirectory(IResourceLocation):
         return [directory + "/" + x for x in os.listdir(self.path + "/" + directory)]
 
 
-RESOURCE_LOADER = [ResourceZipFile, ResourceDirectory]
+RESOURCE_PACK_LOADERS = RESOURCE_LOADER = [ResourceZipFile, ResourceDirectory]
 RESOURCE_LOCATIONS = []
 
 
-def load_resources():
+def load_resources(): load_resource_packs()
+
+
+def load_resource_packs():
     close_all_resources()
     for file in os.listdir(G.local+"/resourcepacks"):
-        if file in ["1.15-pre1.jar", "minecraft"]: continue
+        if file in ["1.14.4.jar", "minecraft"]: continue
         file = G.local+"/resourcepacks/" + file
         flag = True
         for source in RESOURCE_LOADER:
@@ -123,10 +126,10 @@ def load_resources():
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
-            raise RuntimeError("can't load path {}. No valid format found!".format(file))
+            print("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))
-    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.15-pre1.jar"))
+    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.14.4.jar"))
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
@@ -161,8 +164,16 @@ def transform_name(file: str) -> str:
     raise NotImplementedError("can't transform name {} to valid path".format(file))
 
 
-def exists(file):
-    return any([x.is_in_path(file) for x in RESOURCE_LOCATIONS])
+def exists(file, transform=True):
+    for x in RESOURCE_LOCATIONS:
+        if x.is_in_path(file):
+            return True
+    if transform:
+        try:
+            return exists(transform_name(file), transform=False)
+        except NotImplementedError:
+            pass
+    return False
 
 
 def read(file, mode=None):
@@ -174,7 +185,7 @@ def read(file, mode=None):
             if x.path == resource:
                 return x.read(file, mode)
         raise RuntimeError("can't find resource named {}".format(resource))
-    if not exists(file):
+    if not exists(file, transform=False):
         file = transform_name(file)
     if os.path.exists(G.local+"/"+file):  # special, local-only location
         if mode == "pil":
@@ -197,7 +208,7 @@ def get_all_entries(directory: str) -> list:
     loc.reverse()
     for x in loc:
         result += x.get_all_entrys_in_directory(directory)
-    return result
+    return list(set(result))
 
 
 def get_all_entries_special(directory: str) -> list:
@@ -213,17 +224,15 @@ def get_all_entries_special(directory: str) -> list:
 
 
 def add_resources_by_modname(modname, pathname):
-    # todo: update
-    print("[RESOURCELOCATOR][DEVELOPMENT][ERROR] function add_resources_by_modname is not finished yet")
-    # from texture.model.BlockState import BlockStateDefinition
+    from texture.model.BlockState import BlockStateDefinition
     import Language
     import crafting.CraftingHandler
     G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,
                                                  info="loading crafting recipes")
-    # G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
-    #                                              info="searching for block models")
-    # G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
-    #                                              "assets/{}/blockstates".format(modname),
-    #                                              info="searching for block states")
-    Language.from_directory("assets/{}/lang".format(pathname), modname)
+    G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
+                                                 info="searching for block models")
+    G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
+                                                 "assets/{}/blockstates".format(modname),
+                                                 info="searching for block states")
+    Language.from_mod_name(modname)
 

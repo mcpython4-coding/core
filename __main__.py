@@ -11,9 +11,25 @@ print("[DEVELOPMENT][WARNING] these branch is worked on and may be not runnable 
 input("you have written above notice and you are sure to run the program: ")
 
 try:
-    print("---------------------")
-    print("- Game Loading Area -")
-    print("---------------------")
+    import globals as G
+    version = G.VERSION.upper()
+    print("---------------"+"-"*len(version))
+    print("- MCPYTHON 4 {} -".format(version))
+    print("---------------"+"-"*len(version))
+
+    import globals
+    import os
+    import shutil
+
+    # todo: add security check after 10 tries -> crash
+
+    while os.path.exists(globals.local + "/tmp"):
+        try:
+            shutil.rmtree(globals.local + "/tmp")
+        except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
+            pass
+
+    os.makedirs(globals.local + "/tmp")
 
     import event.EventHandler
 
@@ -22,21 +38,11 @@ try:
     import rendering.window
 
     import os
-    import globals
-
-    while os.path.exists(globals.local + "/tmp"):
-        try:
-            import shutil
-            shutil.rmtree(globals.local + "/tmp")
-        except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
-            pass
 
     import globals as G
 
-    if not os.path.exists(G.local+"/build"):
-        G.prebuilding = True
-
-    os.makedirs(globals.local + "/tmp")
+    # check if build folder exists, if not, we need to create its content
+    if not os.path.exists(G.local+"/build"): G.prebuilding = True
 
     import ResourceLocator
     ResourceLocator.load_resources()
@@ -71,7 +77,8 @@ try:
 
     def run():
         import pyglet
-        rendering.window.Window(width=800, height=600, caption='mcpython 4', resizable=True).reset_caption()
+        # todo: move size to config.py
+        rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
         G.eventhandler.call("game:gameloop_startup")
         pyglet.app.run()
 
@@ -80,7 +87,7 @@ try:
         G.eventhandler.call("game:startup")
         setup()
         run()
-except Exception:
+except:
     import ResourceLocator
     ResourceLocator.close_all_resources()
     raise

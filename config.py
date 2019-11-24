@@ -9,7 +9,7 @@ import math
 import util.enums
 
 
-TICKS_PER_SEC = 30
+TICKS_PER_SEC = 20
 
 WALKING_SPEED = 5
 SPRINTING_SPEED = 8
@@ -26,6 +26,7 @@ SPEED_DICT = {
 }
 
 GRAVITY = 20.0
+TERMINAL_VELOCITY = 50
 MAX_JUMP_HEIGHT = 1.0  # About the height of a block.
 # To derive the formula for calculating jump speed, first solve
 #    v_t = v_0 + a * t
@@ -35,7 +36,6 @@ MAX_JUMP_HEIGHT = 1.0  # About the height of a block.
 # Use t and the desired MAX_JUMP_HEIGHT to solve for v_0 (jump speed) in
 #    s = s_0 + v_0 * t + (a * t^2) / 2
 JUMP_SPEED = math.sqrt(2 * GRAVITY * MAX_JUMP_HEIGHT)
-TERMINAL_VELOCITY = 50
 
 PLAYER_HEIGHT = 2
 
@@ -56,11 +56,11 @@ for e in _ADVANCED_FACES:
             for x in m:
                 if any(m): ADVANCED_FACES.append(x)
 del _ADVANCED_FACES
-# print(ADVANCED_FACES)
 
 FACE_NAMES = [util.enums.EnumSide.U, util.enums.EnumSide.D,
               util.enums.EnumSide.N, util.enums.EnumSide.E, util.enums.EnumSide.S, util.enums.EnumSide.W]
 
+# todo: decide if needed
 REVERSED_FACE_NAMES = [util.enums.EnumSide.D, util.enums.EnumSide.U,
                        util.enums.EnumSide.S, util.enums.EnumSide.W, util.enums.EnumSide.N, util.enums.EnumSide.E]
 

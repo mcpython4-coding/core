@@ -28,8 +28,7 @@ add save / load of world
 add PlayerCreativeInventory, PlayerCreativeTab
 add /loot-command
 implement hitbox system
-todo: fix bug: in some rare cases, you can walk through the corner into the block (see forgleman #104)
-optimize generating models & generating image atlases because they are taking to long to finish
+todo: fix bug: in some rare cases, you can walk through the corner into the block (see forgleman #104) -> hitbox update
 add can_break-attribute to item to definite items that can break blocks in gamemode 2
 add the following block inventorys: furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
 add Enchantment-baseclass with attribute is_combine_able_with(...) -> bool & all enchantments
@@ -37,11 +36,11 @@ add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload (
 add gamerules, /gamerule command
 add datapacks with .mcfunction-files, add resourcelocator binding for recipes, add /function & /shedule -command
 make the following attributes as json-saved files: Block.is_break_able, Block.break_time, Item.tool_types, Item.max_durability, Item.breaktime_of
-add ItemModelLoader
+add ItemModelLoader -> rendering update
 add time-system and /time-command
 add scoreboards
-add entitys with handler, add an batch to system for rendering them OR use seperated classes (branch created)
-make block item generation in an separate window so other stuff can happen on the main during this time
+add entitys with handler, add an batch to system for rendering them OR use seperated classes -> rendering update
+make block item generation in an separate window so other stuff can happen on the main during this time -> rendering update
 add difficulty attribute to world
 add effects & bind to various items
 
@@ -60,11 +59,9 @@ implement / finish pre-build system:
     models will be pre-prepared and stored in an format pointing by texture only to the texture id
     crafting recipes will be also pre-prepared for better loading times & will be removed if invalid
 
-move mod loading to Mod-instanced-attribute-system
-add mod.toml support (which is mc-forge format) & old format!
 add some form of mod display screen
 
-idea for loading visualisation:
+idea for loading visualisation (upgrade):
     some fancy area in which every mod has after his file size or another parameter an area which is colored after its
         loading stage.
     the color is calculated over step / max steps * 255 * random weight per mod per color for r, g, b; a is 255 always

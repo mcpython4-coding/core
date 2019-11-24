@@ -25,12 +25,12 @@ class Block:
         self.position = position
         self.setted_to = setted_to
         self.real_hit = real_hit
-        self.on_create()
+        self.on_create()  # todo: remove
         if state is not None:
             self.set_model_state(state)
 
     @staticmethod
-    def get_name() -> str:
+    def get_name() -> str:  # todo: change it to constant
         """
         :return: the name of the block
         """
@@ -44,15 +44,18 @@ class Block:
         """
         pass
 
-    def on_create(self):
+    def on_create(self):  # todo: remove
         """
         callen when the block is created
         """
 
-    def on_delete(self):
+    def on_delete(self): pass  # todo: remove
+
+    def on_remove(self):
         """
         callen when the block is removed
         """
+        self.on_delete()
 
     def get_inventories(self):
         """
@@ -60,7 +63,7 @@ class Block:
         """
         return []
 
-    def is_brakeable(self) -> bool:
+    def is_brakeable(self) -> bool:  # todo: make to constant
         """
         :return: if the block is brakeable in gamemode 0
         """
@@ -89,7 +92,7 @@ class Block:
     def set_model_state(self, state: dict): pass
 
     @staticmethod
-    def get_all_model_states() -> list: return [{}]
+    def get_all_model_states() -> list: return [{}]  # todo: make attribute
 
     def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
         return False
