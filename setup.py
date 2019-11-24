@@ -41,7 +41,7 @@ class IPrepareAbleTask:
     @staticmethod  # todo: remove
     def uses_directory() -> bool: return True
 
-    USES_DIRECTORY = uses_directory()
+    USES_DIRECTORY = True
 
 
 taskregistry = event.Registry.Registry("preparetasks", [IPrepareAbleTask])
