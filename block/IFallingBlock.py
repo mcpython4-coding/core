@@ -22,9 +22,12 @@ class IFallingBlock(block.Block.Block):
     def on_block_update(self):
         x, y, z = self.position
         blockinst = G.world.get_active_dimension().get_block((x, y - 1, z))
-        if not blockinst and event.TickHandler.handler.active_tick - self.fall_cooldown >= 10:
-            self.fall_cooldown = event.TickHandler.handler.active_tick
-            event.TickHandler.handler.bind(self.fall, 10, args=[self])
+        if not blockinst:
+            if event.TickHandler.handler.active_tick - self.fall_cooldown >= 10:
+                self.fall_cooldown = event.TickHandler.handler.active_tick
+                event.TickHandler.handler.bind(self.fall, 10, args=[self])
+            else:
+                event.TickHandler.handler.bind(self.on_block_update, 4)
 
     def fall(self, check=True):
         """

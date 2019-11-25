@@ -78,7 +78,7 @@ class Inventory:
 
     def on_create(self):
         """
-        callen when the inventory is created
+        called when the inventory is created
         """
 
     def create_slots(self) -> list:
@@ -121,12 +121,12 @@ class Inventory:
 
     def on_activate(self):
         """
-        callen when the inventory is shown
+        called when the inventory is shown
         """
 
     def on_deactivate(self):
         """
-        callen when the inventory is hidden
+        called when the inventory is hidden
         """
 
     def is_closable_by_escape(self) -> bool: return True

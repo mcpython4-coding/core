@@ -136,9 +136,9 @@ class UIPartToggleButton(UIPartButton):
         :param retoggle: the EventInfo for mouse buttons and mods, no area to define, toggle backwards
         :param anchor_button: the anchor on the button
         :param anchor_window: the anchor on the window
-        :param on_toggle: callen when the button toggles, parameters: (from: str, to: str, direction: int, position:tuple)
-        :param on_hover: callen when the mouse is over the button
-        :param on_try_press: callen when button is disabled and the user presses the button
+        :param on_toggle: called when the button toggles, parameters: (from: str, to: str, direction: int, position:tuple)
+        :param on_hover: called when the mouse is over the button
+        :param on_try_press: called when button is disabled and the user presses the button
         :param enabled: button should be clickable?
         :param has_hovering_state: if the button gets blue when mouse is over it
         :param text_constructor: an string.format(item) or an function(item: str) -> str entry

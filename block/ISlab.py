@@ -28,7 +28,7 @@ BBOX_DICT = {
 
 class ISlab(block.Block.Block):
     """
-    base class for logs
+    base class for slabs
     """
 
     def on_create(self):
@@ -53,8 +53,7 @@ class ISlab(block.Block.Block):
         return False
 
     def is_solid_side(self, side) -> bool:
-        if self.type == SlabModes.DOUBLE: return True
-        return False
+        return self.type == SlabModes.DOUBLE
 
     def get_view_bbox(self): return BBOX_DICT[self.type]
 

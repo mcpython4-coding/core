@@ -68,7 +68,7 @@ started these clone on 12th of July, 2019
 [uuk]: removed textures from system
 [uuk]: removed texture group of model, we are using now texture atlas system
 [uuk]: added ModelLoader
-[uuk]: setup() was callen twice in __main__.py
+[uuk]: setup() was called twice in __main__.py
 [github]: started day 5 as 16th of July, 2019
 [uuk]: fixed bugs around Model system
 [uuk]: added missingtexture-image
@@ -85,7 +85,7 @@ started these clone on 12th of July, 2019
 [uuk]: added assets/models/block_modified-folder for giving the game alternative models to load (used for grass at the moment)
 [uuk]: added texture/factory for classes working with images from pre-definited files
 [uuk]: added the following blocks: bedrock, cobblestone
-[uuk]: made stone brakeable
+[uuk]: made stone breakable
 [uuk]: added some kind of info state
 [uuk]: added UIPartImage
 [github]: started day 7 as 18th of July, 2019
@@ -347,7 +347,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed shaped crafting recipes, reworked some recipe check parts to speed up (#9)
 [uuk]: reload-command will reload now also recipes
 [uuk]: moved recipe loading point to the startup-load so errors are shown before
-[uuk]: fixed bug: slot interaction events are not callen normally
+[uuk]: fixed bug: slot interaction events are not called normally
 [uuk]: added tag system
 [uuk]: added tag system to crafting
 [uuk]: cleaned up 1.14.4.jar a bit so it is now smaller
@@ -628,6 +628,11 @@ started these clone on 12th of July, 2019
 [uuk]: Language.Language.from_file accepts now an name-parameter replacing name generation
 [uuk]: added Language.from_mod_name(<modname>)-method
 [uuk]: again, improvements to some files during writing the documentation
+[uuk]: fixed some typos in the code
+[uuk]: removed outdated block/AcaciaLog-file
+[uuk]: fixed bug: sand was not falling correct
+[uuk]: TickHandler will calculated now on call all ticks needed up to this point, not only one, may affect
+       performance
 
 for rendering update:
     todo: add missing texture when model / texture was not loadable
@@ -635,19 +640,17 @@ for rendering update:
     todo: fix bug: some custom-colored blocks are NOT colored
     todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
     todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
-            maybe due to an clear & draw error?
+            maybe due to an clear & draw error? (?)
     todo: fix bug: lags when changing chunks
     todo: add brake animation on block (draw with alpha over the block?)
     todo: add hovering info to items, make them use Language files
     todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
-    todo: tweak model system to support plant models
+    todo: tweak model system to support plant models (not needed due to rewrite of it)
     todo: add "lock" of chest
 
 
 todo: make factories extendable!
 todo: add support for old language format
-
-todo: make the game run faster when missing ticks rather then running only slow
 
 todo: move mod.json to build folder
 todo: what to do about requests.txt & tasks.list
@@ -733,7 +736,7 @@ todo: add Language Selection page
 todo: add key bind option page
 
 other tasks that should be done in near future
-todo: cache how much xp is needed to next level (function is callen every draw by xp draw -> decrease FPS)
+todo: cache how much xp is needed to next level (function is called every draw by xp draw -> decrease FPS)
 todo: make command input errors better
 todo: add Tool & Armor-durability
 todo: add leather armor
@@ -775,8 +778,6 @@ todo: add logging system, add crashlogs, add runtime exceptions, make tool to lo
 todo: move to pre-build: block item factory, recipe sorting, model sorting & generation, texture atlas generation
 todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files) OR add some form of asset
     index where these things are located in
-
-todo: make hitbox draw & check on BoxModels
 
 todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
     barrier, buttons, pressure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms,

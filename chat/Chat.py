@@ -82,7 +82,7 @@ class Chat:
 
     def enter(self, text: str):
         """
-        callen when text is entered
+        called when text is entered
         :param text: the text that is entered
         """
         if self.text != "":
@@ -93,7 +93,7 @@ class Chat:
 
     def on_key_press(self, symbol, modifiers):
         """
-        callen when an key is pressed
+        called when an key is pressed
         :param symbol: the symbol that is pressed
         :param modifiers: the modifiers that are used
         """

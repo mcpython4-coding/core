@@ -35,9 +35,9 @@ class Slot:
         :param allow_player_remove: if the player is allowed to remove items out of it
         :param allow_player_insert: if the player is allowed to insert items into it
         :param allow_player_add_to_free_place: if items can be added direct to system
-        :param on_update: callen when the slot is updated
+        :param on_update: called when the slot is updated
         :param allow_half_getting: can the player get only the half of the items out of the slot?
-        :param on_shift_click: callen when shift-clicked on the block
+        :param on_shift_click: called when shift-clicked on the block
         """
         self.__itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
         # self.itemstack.item = G.itemhandler.items["minecraft:stone"]()

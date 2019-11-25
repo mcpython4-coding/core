@@ -138,7 +138,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
                                                                      amount=self.active_recipe.output[1]), update=False)
 
     def remove_input(self, count=1):
-        # removes from every input slot count item (callen when an item is crafted)
+        # removes from every input slot count item (called when an item is crafted)
         for row in self.slotinputmap:  # go over all slots
             for slot in row:
                 if not slot.itemstack.is_empty():  # check if the slot is used

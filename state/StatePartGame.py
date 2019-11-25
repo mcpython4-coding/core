@@ -119,7 +119,7 @@ class StatePartGame(StatePart.StatePart):
                         G.player.add_to_free_place(itemstack)
                         chunk.remove_block(blockpos)
                         chunk.check_neighbors(blockpos)
-                # todo: check if brakeable in gamemode 2
+                # todo: check if breakable in gamemode 2
 
     def on_right_click_interaction_update(self, dt):
         if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
@@ -145,7 +145,7 @@ class StatePartGame(StatePart.StatePart):
                         if not (x == px and z == pz and py-1 <= y <= py) and not G.world.get_active_dimension().\
                                 get_block(previous):
                             G.world.get_active_dimension().add_block(
-                                previous, slot.itemstack.item.get_block(), kwargs={"setted_to": blockpos,
+                                previous, slot.itemstack.item.get_block(), kwargs={"set_to": blockpos,
                                                                                    "real_hit": hitpos})
                             slot.itemstack.item.on_set_from_item(G.world.get_active_dimension().get_block(previous))
                             if G.player.gamemode == 0:
