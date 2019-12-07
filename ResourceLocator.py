@@ -27,6 +27,7 @@ import pyglet.image
 import os
 import util.texture
 import sys
+import config
 
 
 class IResourceLocation:
@@ -118,7 +119,7 @@ def load_resources(): load_resource_packs()
 def load_resource_packs():
     close_all_resources()
     for file in os.listdir(G.local+"/resourcepacks"):
-        if file in ["1.14.4.jar", "minecraft"]: continue
+        if file in ["{}.jar".format(config.MC_VERSION_BASE), "minecraft"]: continue
         file = G.local+"/resourcepacks/" + file
         flag = True
         for source in RESOURCE_LOADER:
@@ -127,9 +128,9 @@ def load_resource_packs():
                 flag = False
         if flag:
             print("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))
-    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.14.4.jar"))
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))  # the special extension dir
+    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(config.MC_VERSION_BASE)))
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
@@ -165,6 +166,14 @@ def transform_name(file: str) -> str:
 
 
 def exists(file, transform=True):
+    if file.startswith("@"):  # special resource notation, can be used for accessing special ResourceLocations
+        data = file.split("|")
+        resource = data[0][1:]
+        file = "|".join(data[1:])
+        for x in RESOURCE_LOCATIONS:
+            if x.path == resource:
+                return x.is_in_path(file)
+        raise RuntimeError("can't find resource named {}".format(resource))
     for x in RESOURCE_LOCATIONS:
         if x.is_in_path(file):
             return True

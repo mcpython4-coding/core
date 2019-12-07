@@ -47,7 +47,7 @@ class UIPartProgressBar(UIPart.UIPart):
 
         if self.progress > self.progress_max: self.progress = self.progress_max
 
-        sx = (sx-4) * self.progress // self.progress_max
+        sx = (sx-4) * self.progress // (self.progress_max if self.progress_max != 0 else 1)
         util.opengl.draw_rectangle((x+2, y+3), (sx, self.bboxsize[1]-5), color=self.color)
 
         self.lable.text = self.text

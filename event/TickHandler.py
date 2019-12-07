@@ -24,6 +24,7 @@ class TickHandler:
         self.results = {}
         pyglet.clock.schedule_interval(self.tick, 1/20)
         self.lost_time = 0
+        self.enable_tick_skipping = False
 
     def tick(self, dt):
         """
@@ -41,6 +42,9 @@ class TickHandler:
                     if ticketid:
                         self.results[ticketid] = result
                         ticketupdate(self, ticketid, function, args, kwargs)
+                if not self.enable_tick_skipping:
+                    self.lost_time = 0
+                    return
         # pyglet.clock.schedule(self.send_random_ticks)
 
     def bind(self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}):

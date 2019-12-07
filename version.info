@@ -633,6 +633,13 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: sand was not falling correct
 [uuk]: TickHandler will calculated now on call all ticks needed up to this point, not only one, may affect
        performance
+[uuk]: fixed exists-function-bug in ResourceLocator with @<resoure path>-notation
+[uuk]: version name will now be stored in config.py rather than in globals.py
+[uuk]: added security for non-visible blocks in StateBlockItemGenerator
+[uuk]: fixed rare crash when showing an empty progress bar (max items == 0)
+[uuk]: added an option to TickHandler for disabling tick-skipping
+[uuk]: fixed bug: blockitemfactory in debug mode was not working when missing ticks
+
 
 for rendering update:
     todo: add missing texture when model / texture was not loadable

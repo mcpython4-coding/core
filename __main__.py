@@ -7,8 +7,8 @@ minecraft by Mojang
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 
 try:
-    import globals as G
-    version = G.VERSION.upper()
+    import config
+    version = config.FULL_VERSION_NAME.upper()
     print("---------------"+"-"*len(version))
     print("- MCPYTHON 4 {} -".format(version))
     print("---------------"+"-"*len(version))
