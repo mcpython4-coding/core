@@ -25,7 +25,8 @@ G.taghandler = TagHandler()
 
 
 def on_group_add():
-    G.taghandler.taglocations += ["data/minecraft/tags/items", "data/minecraft/tags/naming"]
+    G.taghandler.taglocations += ["data/minecraft/tags/items", "data/minecraft/tags/naming",
+                                  "data/minecraft/tags/blocks"]
 
 
 def check_tags():

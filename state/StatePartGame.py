@@ -310,7 +310,7 @@ class StatePartGame(StatePart.StatePart):
             self.double_space_cooldown = time.time()
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        if self.activate_mouse:
+        if self.activate_mouse and G.window.exclusive:
             G.player.active_inventory_slot -= scroll_y
             G.player.active_inventory_slot = round(abs(G.player.active_inventory_slot % 9))
             if G.window.mouse_pressing[mouse.LEFT]:

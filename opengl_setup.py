@@ -47,6 +47,9 @@ def setup():
 
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+    pyglet.image.Texture.default_min_filter = GL_NEAREST
+    pyglet.image.Texture.default_mag_filter = GL_NEAREST
     
     setup_fog()
 

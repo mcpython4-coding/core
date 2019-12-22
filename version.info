@@ -639,6 +639,15 @@ started these clone on 12th of July, 2019
 [uuk]: fixed rare crash when showing an empty progress bar (max items == 0)
 [uuk]: added an option to TickHandler for disabling tick-skipping
 [uuk]: fixed bug: blockitemfactory in debug mode was not working when missing ticks
+[uuk]: enabled block tag loading
+[uuk]: added new helper functions: get_tags_for(obj), provides_object_tag(obj, tag), provides_object_any_tag(obj, tags)
+[uuk]: improved feature-system
+[uuk]: added features.get_attribute(name)-function
+[uuk]: added boolean command entry
+[uuk]: fixed bug: chat was opened by "/" when already open
+[uuk]: fixed bug: scrolling in hotbar was possible in chat
+[uuk]: fixed bug: in external files added by "--addmoddir" single-file mods let the game crash
+[uuk]: improvements to texture edge rendering
 
 
 for rendering update:
@@ -816,3 +825,6 @@ todo: add hart shake animation when less than 2 (up & down movement)
 
 todo: after python 3.8 came out (may be on the 14th of October, 2019), use multiproccessing & shared memory for world gen
     (kind of local one-client-one-server system)
+
+todo: wherever an block instance is given over, send an dimension also with to prevent searching only in active
+    dimension

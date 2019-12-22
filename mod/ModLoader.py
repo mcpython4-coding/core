@@ -132,6 +132,7 @@ class ModLoader:
             if element == "--addmoddir":
                 locs.append(sys.argv[i+1])
                 for _ in range(2): sys.argv.pop(i)
+                sys.path.append(locs[-1])
             elif element == "--addmodfile":
                 modlocations.append(sys.argv[i+1])
                 for _ in range(2): sys.argv.pop(i)
@@ -171,7 +172,10 @@ class ModLoader:
                             print("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
-                    data = importlib.import_module("mods."+file.split("/")[-1].split("\\")[-1].split(".")[0])
+                    try:
+                        data = importlib.import_module("mods."+file.split("/")[-1].split("\\")[-1].split(".")[0])
+                    except ModuleNotFoundError:
+                        data = importlib.import_module(file.split("/")[-1].split("\\")[-1].split(".")[0])
                     for modinst in self.found_mod_instances: modinst.package = data
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)

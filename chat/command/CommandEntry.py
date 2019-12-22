@@ -246,7 +246,7 @@ def load():
     @G.registry
     class SelectDefinitedStringEntry(CommandEntry):
         """
-        select definited stirng entry
+        select definite string entry
         """
 
         ENTRY_NAME = ParseType.SELECT_DEFINITED_STRING
@@ -258,11 +258,11 @@ def load():
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             return entrylist[start] in arguments  # check if should be used
-        
+
     @G.registry
-    class OpenEndUndefinitedStringEntry(CommandEntry):
+    class OpenEndUndefinedStringEntry(CommandEntry):
         """
-        open end undefinited stirng entry
+        open end undefined string entry
         """
 
         ENTRY_NAME = ParseType.OPEN_END_UNDEFINITED_STRING
@@ -274,5 +274,20 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return (kwargs["min"] if "min" in kwargs else 0) <= len(entrylist) - start + 1  # if lenght is in range
+            return (kwargs["min"] if "min" in kwargs else 0) <= len(entrylist) - start + 1  # if length is in range
+
+    @G.registry
+    class BooleanEntry(CommandEntry):
+        TABLE = [("true", "True"), ("false", "False")]
+
+        ENTRY_NAME = ParseType.BOOLEAN
+
+        @staticmethod
+        def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
+            return start + 1, entrylist[start] in BooleanEntry.TABLE[0]
+
+        @staticmethod
+        def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
+            return any([entrylist[start] in array for array in BooleanEntry.TABLE])
+
 

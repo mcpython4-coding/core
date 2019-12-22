@@ -26,7 +26,8 @@ class StateGame(State.State):
 
     def __init__(self): State.State.__init__(self)
 
-    def get_parts(self) -> list: return [StatePartGame.StatePartGame(), gui.InventoryHandler.OpenedInventoryStatePart()]
+    def get_parts(self) -> list:
+        return [StatePartGame.StatePartGame(), gui.InventoryHandler.inventory_part]
 
     def on_activate(self): G.worldgenerationhandler.enable_auto_gen = True
 
@@ -53,7 +54,7 @@ class StateGame(State.State):
                 G.inventoryhandler.hide(G.player.inventorys["main"])
         elif symbol == key.T and G.window.exclusive:
             event.TickHandler.handler.bind(self.open_chat, 2)
-        elif symbol == key._7 and modifiers & key.MOD_SHIFT:
+        elif symbol == key._7 and modifiers & key.MOD_SHIFT and G.window.exclusive:
             event.TickHandler.handler.bind(self.open_chat, 2, args=["/"])
 
     @staticmethod
