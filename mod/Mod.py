@@ -70,6 +70,8 @@ class Mod:
         G.modloader.add_to_add(self)
 
     def add_dependency(self, depend):
+        if type(depend) == str:
+            depend = ModDependency(*depend.split("|"))
         self.dependinfo[0].append(depend)
         self.dependinfo[4].append(depend)
 

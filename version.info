@@ -648,22 +648,27 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: scrolling in hotbar was possible in chat
 [uuk]: fixed bug: in external files added by "--addmoddir" single-file mods let the game crash
 [uuk]: improvements to texture edge rendering
+[uuk]: ModLoader's "main files"-mod.json-attribute accepts now also an simple string
+[uuk]: Mod's add_dependency accepts now strings in format "<modname>" or "<modname>|<version>"
+[uuk]: fixed bug: couldn't load custom tags from mods due to a mod-name cast error
+[uuk]: added support for replacing & extending tags
+[uuk]: fixed bug: mod-special resourcelocations like testmod:block/test failed due to missing ".png" ending
+[uuk]: fixed bug: progress bar of blockitemfactory was maxed to block count rather than the actual block count
+[uuk]: moved crafting-recipe loading to mod-special events rather to all-mcpython
+[uuk]: fixed some crafting system related bugs
+[uuk]: added --debugrecipes-flag which provides more detailed what was wrong with recipe loading
+[uuk]: added auto-remove for unnecessary recipes due to missing items -> remove of the error message on craft when
+       output was not arrival
+[uuk]: added recipe group name alias system
+[uuk]: recipe loading system will now automatically remove items from item tags when not arrival during runtime
+[uuk]: added spawnpoint-system with random position in (0, 0) - (15, 15)
+[uuk]: fixed bug: get_max_y() was crashing with an (x, z)-vector rather than how the doc states doing its job
+[uuk]: when an block gets removed from registry, not found message is now displayed only on first run, for further loads,
+       data gets deleted
+[uuk]: BlockConfig can now read from different files -> mods can add own additions
 
 
-for rendering update:
-    todo: add missing texture when model / texture was not loadable
-    todo: move opengl_setup to rendering
-    todo: fix bug: some custom-colored blocks are NOT colored
-    todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
-    todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
-            maybe due to an clear & draw error? (?)
-    todo: fix bug: lags when changing chunks
-    todo: add brake animation on block (draw with alpha over the block?)
-    todo: add hovering info to items, make them use Language files
-    todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
-    todo: tweak model system to support plant models (not needed due to rewrite of it)
-    todo: add "lock" of chest
-
+todo: fix bug: blockitem generator if adding during non-rebuilding fails in this season to add items
 
 todo: make factories extendable!
 todo: add support for old language format
@@ -673,13 +678,14 @@ todo: what to do about requests.txt & tasks.list
 
 todo: add support for mcmod.json-file & mod.toml
 
-todo: allow mod dependencies to be string-only for checking against only an mod (background auto-instance create)
 todo: make mod version tuple of variable length so "[1.0.0" is possible. by this, "[<...>" means include and upper,
     "]<...>" exclude and upper, "<...>]" include until, "<...>[" exclude until and "<1. or 2.>|<3. or 4.>" an range
     and various combinations with "&" between and "/" for excluding an version(range)
 todo: add API-checker and API guideline for mods
 
 todo: add config system for mods
+
+todo: move has_block-attribute of item to table from item-name to block-name
 
 maybe unnecessary because of the rendering update:
     todo: make BlockItemFactory an state which can be accessed during runtime so that an command can be implemented named

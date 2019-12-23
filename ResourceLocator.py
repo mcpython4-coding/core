@@ -160,7 +160,7 @@ def transform_name(file: str) -> str:
         if len(f) == 1:
             f = "assets/minecraft/textures/{}/{}.png".format(f[0].split("/")[0], "/".join(f[0].split("/")[1:]))
         else:
-            f = "assets/{}/textures/{}/{}".format(f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:]))
+            f = "assets/{}/textures/{}/{}.png".format(f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:]))
         return f
     raise NotImplementedError("can't transform name {} to valid path".format(file))
 

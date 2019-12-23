@@ -61,7 +61,7 @@ def load_data():
         if not G.prebuilding:
             with open(G.local+"/build/itemblockfactory.json") as f:
                 data = json.load(f)
-            for entry in data:
+            for entry in data[:]:
                 name = entry[0]
                 obj = factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(entry[1])
                 blocktable = G.registry.get_by_name("block").get_attribute("blocks")
@@ -71,6 +71,9 @@ def load_data():
                     obj.finish()
                 else:
                     print("[ERROR] during constructing block item for {}: Failed to find block".format(name))
+                    data.remove(entry)
+            with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
+                json.dump(data, f)
 
 
 def add_to_image_atlas(textureatlas, image, file):

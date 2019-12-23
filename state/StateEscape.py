@@ -39,10 +39,6 @@ class StateEscape(State.State):
                         util.callbacks.open_github_project, enable_extra_args=False)),
                 state.StateGame.game.parts[1]]
 
-    def get_event_functions(self) -> list:
-        return [(self.on_key_press, "user:keyboard:press"),
-                (self.on_draw_2d_pre, "render:draw:2d:background")]
-
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)

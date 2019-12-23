@@ -10,7 +10,7 @@ import globals as G
 
 class IRecipe:
     @staticmethod
-    def get_recipe_name() -> str:
+    def get_recipe_names() -> list:
         raise NotImplementedError()
 
     @classmethod

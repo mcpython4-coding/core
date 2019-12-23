@@ -162,6 +162,7 @@ class Player:
 
     def kill(self, test_totem=True):
         if test_totem:
+            # todo: add effects
             if self.get_active_inventory_slot().itemstack.get_item_name() == "minecraft:totem_of_undying":
                 self.get_active_inventory_slot().itemstack.clean()
                 self.hearts = 20
@@ -174,7 +175,8 @@ class Player:
                 return
         globals.commandparser.parse("/clear")
         print("[CHAT] player {} died".format(self.name))
-        self.position = (0, util.math.get_max_y((0,0,0)), 0)
+        self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
+                         globals.world.spawnpoint[1])
         self.active_inventory_slot = 0
         globals.window.dy = 0
         globals.chat.close()

@@ -15,8 +15,11 @@ class TagGroup:
         self.tags = {}
         self.cache = {}
 
-    def add_from_data(self, tagname: str, data: dict):
-        self.tags.setdefault(tagname, tags.Tag.Tag.from_data(self, tagname, data))
+    def add_from_data(self, tagname: str, data: dict, replace=True):
+        if replace:
+            self.tags.setdefault(tagname, tags.Tag.Tag.from_data(self, tagname, data))
+        else:
+            self.tags.setdefault(tagname, tags.Tag.Tag(self, tagname, [])).entries.extend(data["values"])
 
     def build(self):
         depend_list = []

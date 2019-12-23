@@ -72,6 +72,7 @@ class StateBlockItemGenerator(State.State):
         if len(self.tasks) == 0:
             self.close()
             return
+        self.parts[1].progress_max = len(self.tasks)
         G.window.set_size(800, 600)
         G.window.set_minimum_size(800, 600)
         G.window.set_maximum_size(800, 600)

@@ -185,7 +185,8 @@ class ModLoader:
                     with open(file+"/mod.json") as sf:
                         data = json.load(sf)
                     if "main files" in data:
-                        for location in data["main files"]:
+                        files = data["main files"]
+                        for location in (files if type(files) == list else [files]):
                             importlib.import_module(location)
                     else:
                         print("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
