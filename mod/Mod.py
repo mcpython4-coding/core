@@ -29,7 +29,7 @@ class ModDependency:
         real_mod = G.modloader.mods[self.name]
         if self.versions == real_mod.version: return True
         if type(self.versions) == list:
-            if real_mod.version in self.versions: return bool(real_mod[0])
+            if real_mod.version in self.versions: return True
         return False
 
     def get_version(self):

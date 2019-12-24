@@ -87,7 +87,7 @@ class ResourceDirectory(IResourceLocation):
         return os.path.isdir(path)
 
     def __init__(self, path: str):
-        self.path = path
+        self.path = path.replace("\\", "/")
 
     def is_in_path(self, filename: str) -> bool:
         return os.path.isfile(os.path.join(self.path, filename))
@@ -106,7 +106,15 @@ class ResourceDirectory(IResourceLocation):
 
     def get_all_entrys_in_directory(self, directory: str) -> list:
         if not os.path.isdir(self.path + "/" + directory): return []
-        return [directory + "/" + x for x in os.listdir(self.path + "/" + directory)]
+        file_list = []
+        for root, dirs, files in os.walk(self.path+"/"+directory):
+            for name in files:
+                file = os.path.join(root, name).replace("\\", "/")
+                file_list.append("/".join(file.split("/")[self.path.count("/")+1:]))
+            for name in dirs:
+                file = os.path.join(root, name).replace("\\", "/")
+                file_list.append("/".join(file.split("/")[self.path.count("/") + 1:]) + "/")
+        return file_list
 
 
 RESOURCE_PACK_LOADERS = [ResourceZipFile, ResourceDirectory]

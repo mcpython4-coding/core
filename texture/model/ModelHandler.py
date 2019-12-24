@@ -21,6 +21,7 @@ class ModelHandler:
         self.found_models = {}
         self.blockstates = {}
         self.lookup_locations = []
+        self.dependence_list = []
 
     def add_from_mod(self, modname):
         self.lookup_locations.append("assets/{}/models/block".format(modname))
@@ -38,31 +39,37 @@ class ModelHandler:
     def add_from_data(self, name, data):
         self.found_models[name] = data
 
-    def build(self):
-        used_models = self.used_models[:]
-        dependencied_list = []
-        while len(used_models) > 0:
-            used = used_models.pop(0)
-            if used not in self.found_models:
-                print("model error: can't locate model for {}".format(used))
-                continue
-            file = self.found_models[used]
-            if type(file) == str:
-                data = ResourceLocator.read(file, "json")
-            else:
-                data = file
-            if "parent" in data:
-                used_models.append(data["parent"])
-                depend = [data["parent"]]
-            else:
-                depend = []
-            dependencied_list.append((used, depend))
-        sorted_models = util.math.topological_sort(dependencied_list)
+    def build(self): [self.__let_subscribe_to_build(model) for model in self.used_models]
+
+    def __let_subscribe_to_build(self, model):
+        modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
+        G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake_prepare", self.special_build, model,
+                                                     info="filtering models")
+
+    def special_build(self, used):
+        if used not in self.found_models:
+            print("model error: can't locate model for {}".format(used))
+            return
+        file = self.found_models[used]
+        if type(file) == str:
+            data = ResourceLocator.read(file, "json")
+        else:
+            data = file
+        if "parent" in data:
+            self.__let_subscribe_to_build(data["parent"])
+            depend = [data["parent"]]
+        else:
+            depend = []
+        self.dependence_list.append((used, depend))
+
+    def process_models(self):
+        sorted_models = util.math.topological_sort(self.dependence_list)
         sorted_models = list(set(sorted_models))
+        self.dependence_list = []  # decrease memory usage
         for x in sorted_models:
-            # todo: move to mod event bus
-            mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake", self.load_model, x,
-                                                        info="baking model {}".format(x))
+            modname = x.split(":")[0] if x.count(":") == 1 else "minecraft"
+            G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake", self.load_model, x,
+                                                         info="baking model {}".format(x))
 
     def load_model(self, name: str):
         if name in self.models: return
@@ -111,4 +118,6 @@ mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_create", G.modelh
                                             info="loading found models")
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake_prepare", G.modelhandler.build,
                                             info="filtering models")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake:prepare", G.modelhandler.process_models,
+                                            info="preparing model data")
 

@@ -672,10 +672,16 @@ started these clone on 12th of July, 2019
 [uuk]: cleaned up some files
 [uuk]: removed most of the entries in deprecated.txt
 [uuk]: new snapshot: 19w52a
-
-
-todo: merge into release-branch
-todo: when developing further, bring config.VERSION_TYPE to "dev"
+[uuk]: added security-check when mods-folder does NOT exists
+[uuk]: BlockState-loading & Model-loading is now mod-specific
+[uuk]: added new internal loading events: "stage:model:model_bake_lookup" & "stage:model:model_bake:prepare"
+[uuk]: added support for mods.toml-files, for that, the library "toml" is needed
+[uuk]: updated pyglet to 1.4.8
+[uuk]: fixed bug: list of dependencies failed to work
+[uuk]: added data from minecraft forge 1.14.4
+[uuk]: ResourceLocator's directory method uses now os.walk rather than os.listdir, fixing incompatibilities between
+       source-mods & zipped-mods
+[uuk]: tag handler accepts now sub-direction-tag-storing
 
 
 todo: fix bug: blockitem generator if adding during non-rebuilding fails in the active season to add the items
@@ -686,7 +692,7 @@ todo: add support for old language format
 todo: move mod.json to build folder
 todo: what to do about requests.txt & tasks.list
 
-todo: add support for mcmod.json-file & mod.toml
+todo: add support for mcmod.json-file
 
 todo: make mod version tuple of variable length so "[1.0.0" is possible. by this, "[<...>" means include and upper,
     "]<...>" exclude and upper, "<...>]" include until, "<...>[" exclude until and "<1. or 2.>|<3. or 4.>" an range

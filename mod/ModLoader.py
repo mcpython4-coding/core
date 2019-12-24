@@ -18,6 +18,12 @@ import state.StateModLoading
 import util.math
 import mod.Mod
 import enum
+import toml
+import config
+
+
+if not os.path.exists(G.local+"/mods"):
+    os.makedirs(G.local+"/mods")
 
 
 class LoadingStageStatus(enum.Enum):
@@ -97,7 +103,8 @@ class LoadingStages:
                               "stage:model:blockstate_create")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_create")
 
-    BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake", "stage:textureatlas:bake")
+    BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",
+                        "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake")
 
     POST = LoadingStage("finishing up", "stage:post")
 
@@ -153,7 +160,7 @@ class ModLoader:
             else:
                 i += 1
         for file in modlocations:
-            self.found_mod_instances = []
+            self.found_mod_instances.clear()
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
@@ -161,15 +168,12 @@ class ModLoader:
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
                         try:
-                            with f.open("mod.json", mode="r") as sf:
-                                data = json.load(sf)
-                            if "main files" in data:
-                                for location in data["main files"]:
-                                    importlib.import_module(location)
-                            else:
-                                print("[ERROR] mod.json of '{}' does NOT contain 'main files'-attribute".format(file))
+                            with f.open("mod.json", mode="r") as sf: self.load_mods_json(sf.read(), file)
                         except KeyError:
-                            print("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
+                            try:
+                                with f.open("mod.toml", mode="r") as sf: self.load_mods_toml(sf.read(), file)
+                            except KeyError:
+                                print("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
                     try:
@@ -182,14 +186,9 @@ class ModLoader:
                 ResourceLocator.RESOURCE_LOCATIONS.insert(0, ResourceLocator.ResourceDirectory(file))
                 self.active_directory = file
                 if os.path.exists(file+"/mod.json"):
-                    with open(file+"/mod.json") as sf:
-                        data = json.load(sf)
-                    if "main files" in data:
-                        files = data["main files"]
-                        for location in (files if type(files) == list else [files]):
-                            importlib.import_module(location)
-                    else:
-                        print("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
+                    with open(file+"/mod.json") as sf: self.load_mods_json(sf.read(), file+"/mods.json")
+                elif os.path.exists(file+"/mods.toml"):
+                    with open(file+"/mods.toml") as sf: self.load_mods_toml(sf.read(), file+"/mods.toml")
                 else:
                     print("[WARNING] can't locate mod.json file for mod at '{}'".format(file))
         i = 0
@@ -215,6 +214,48 @@ class ModLoader:
                 G.prebuilding = True
         with open(G.local + "/mods.json", mode="w") as f:
             json.dump({modinst.name: modinst.version for modinst in self.mods.values()}, f)
+
+    def load_mods_json(self, data: str, file: str):
+        self.load_from_decoded_json(json.loads(data), file)
+
+    @staticmethod
+    def load_from_decoded_json(data: dict, file: str):
+        if "main files" in data:
+            files = data["main files"]
+            for location in (files if type(files) == list else [files]):
+                importlib.import_module(location)
+        else:
+            print("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
+
+    def load_mods_toml(self, data: str, file):
+        data = toml.loads(data)
+        if 'modLoader' in data:
+            if data['modLoader'] == "javafml":
+                print("[SOURCE][FATAL] found java mod. As an mod-author, please upgrade to python as javafml")
+                sys.exit(-1)
+        if 'loaderVersion' in data:
+            if data['loaderVersion'].startswith("["):
+                print("[SOURCE][FATAL] found forge-version indicator")
+                sys.exit(-1)
+            version = data["loaderVersion"]
+            if version.endswith("["):
+                mc_version = config.VERSION_ORDER[config.VERSION_ORDER.index(version[:-1]):]
+            elif version.count("[") == version.count("]") == 0:
+                mc_version = version.split("|")
+            else:
+                print("[SOURCE][FATAL] can't decode version id '{}'".format(version))
+                sys.exit(-1)
+        else:
+            mc_version = None
+        self.load_from_decoded_json({"main files": [e["importable"] for e in data['main_files']]}, file)
+        for modinstance in self.found_mod_instances:
+            modinstance.add_dependency(mod.Mod.ModDependency("minecraft", mc_version))
+        for modname in data['dependencies']:
+            for dependency in data['dependencies'][modname]:
+                dependname = dependency["modId"]
+                if dependname != "forge":
+                    self.mods[modname].add_dependency(dependname)
+                    # todo: add version loader
 
     def add_to_add(self, mod):
         self.mods[mod.name] = mod

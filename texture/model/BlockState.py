@@ -19,15 +19,15 @@ class BlockStateDefinition:
     TO_CREATE = set()
 
     @staticmethod
-    def from_directory(directory: str):
+    def from_directory(directory: str, modname: str):
         for file in ResourceLocator.get_all_entries(directory):
             if not file.endswith("/"):
-                BlockStateDefinition.from_file(file)
+                BlockStateDefinition.from_file(file, modname)
 
     @classmethod
-    def from_file(cls, file: str):
-        mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_create", cls._from_file, file,
-                                                    info="loading block state {}".format(file))
+    def from_file(cls, file: str, modname: str):
+        G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_create", cls._from_file, file,
+                                                     info="loading block state {}".format(file))
         cls.TO_CREATE.add(file)
 
     @classmethod
@@ -108,5 +108,6 @@ class BlockState:
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
-                                            "assets/minecraft/blockstates", info="searching for block states")
+                                            "assets/minecraft/blockstates", "minecraft",
+                                            info="searching for block states")
 
