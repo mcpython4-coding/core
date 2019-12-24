@@ -7,8 +7,6 @@ minecraft by Mojang
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import os, sys
 
-VERSION = "snapshot 19w46b"
-
 prebuilding = "--rebuild" in sys.argv
 debugevents = "--debugevents" in sys.argv
 

@@ -68,7 +68,7 @@ started these clone on 12th of July, 2019
 [uuk]: removed textures from system
 [uuk]: removed texture group of model, we are using now texture atlas system
 [uuk]: added ModelLoader
-[uuk]: setup() was callen twice in __main__.py
+[uuk]: setup() was called twice in __main__.py
 [github]: started day 5 as 16th of July, 2019
 [uuk]: fixed bugs around Model system
 [uuk]: added missingtexture-image
@@ -85,7 +85,7 @@ started these clone on 12th of July, 2019
 [uuk]: added assets/models/block_modified-folder for giving the game alternative models to load (used for grass at the moment)
 [uuk]: added texture/factory for classes working with images from pre-definited files
 [uuk]: added the following blocks: bedrock, cobblestone
-[uuk]: made stone brakeable
+[uuk]: made stone breakable
 [uuk]: added some kind of info state
 [uuk]: added UIPartImage
 [github]: started day 7 as 18th of July, 2019
@@ -347,7 +347,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed shaped crafting recipes, reworked some recipe check parts to speed up (#9)
 [uuk]: reload-command will reload now also recipes
 [uuk]: moved recipe loading point to the startup-load so errors are shown before
-[uuk]: fixed bug: slot interaction events are not callen normally
+[uuk]: fixed bug: slot interaction events are not called normally
 [uuk]: added tag system
 [uuk]: added tag system to crafting
 [uuk]: cleaned up 1.14.4.jar a bit so it is now smaller
@@ -624,44 +624,79 @@ started these clone on 12th of July, 2019
 [uuk]: TICKS_PER_SEC=20 (minecraft tick rate) instead of 30
 [uuk]: features.py support now check for exists & will error check for name
 [uuk]: Language.get accepts now an formatting-parameter which should replace the old syntax
-[uuk]: Language.decode was renamed to Language.translate. Old is still arrival for some time
+[uuk]: Language.translate was renamed to Language.translate. Old is still arrival for some time
 [uuk]: Language.Language.from_file accepts now an name-parameter replacing name generation
 [uuk]: added Language.from_mod_name(<modname>)-method
 [uuk]: again, improvements to some files during writing the documentation
+[uuk]: fixed some typos in the code
+[uuk]: removed outdated block/AcaciaLog-file
+[uuk]: fixed bug: sand was not falling correct
+[uuk]: TickHandler will calculated now on call all ticks needed up to this point, not only one, may affect
+       performance
+[uuk]: fixed exists-function-bug in ResourceLocator with @<resoure path>-notation
+[uuk]: version name will now be stored in config.py rather than in globals.py
+[uuk]: added security for non-visible blocks in StateBlockItemGenerator
+[uuk]: fixed rare crash when showing an empty progress bar (max items == 0)
+[uuk]: added an option to TickHandler for disabling tick-skipping
+[uuk]: fixed bug: blockitemfactory in debug mode was not working when missing ticks
+[uuk]: enabled block tag loading
+[uuk]: added new helper functions: get_tags_for(obj), provides_object_tag(obj, tag), provides_object_any_tag(obj, tags)
+[uuk]: improved feature-system
+[uuk]: added features.get_attribute(name)-function
+[uuk]: added boolean command entry
+[uuk]: fixed bug: chat was opened by "/" when already open
+[uuk]: fixed bug: scrolling in hotbar was possible in chat
+[uuk]: fixed bug: in external files added by "--addmoddir" single-file mods let the game crash
+[uuk]: improvements to texture edge rendering
+[uuk]: ModLoader's "main files"-mod.json-attribute accepts now also an simple string
+[uuk]: Mod's add_dependency accepts now strings in format "<modname>" or "<modname>|<version>"
+[uuk]: fixed bug: couldn't load custom tags from mods due to a mod-name cast error
+[uuk]: added support for replacing & extending tags
+[uuk]: fixed bug: mod-special resourcelocations like testmod:block/test failed due to missing ".png" ending
+[uuk]: fixed bug: progress bar of blockitemfactory was maxed to block count rather than the actual block count
+[uuk]: moved crafting-recipe loading to mod-special events rather to all-mcpython
+[uuk]: fixed some crafting system related bugs
+[uuk]: added --debugrecipes-flag which provides more detailed what was wrong with recipe loading
+[uuk]: added auto-remove for unnecessary recipes due to missing items -> remove of the error message on craft when
+       output was not arrival
+[uuk]: added recipe group name alias system
+[uuk]: recipe loading system will now automatically remove items from item tags when not arrival during runtime
+[uuk]: added spawnpoint-system with random position in (0, 0) - (15, 15)
+[uuk]: fixed bug: get_max_y() was crashing with an (x, z)-vector rather than how the doc states doing its job
+[uuk]: when an block gets removed from registry, not found message is now displayed only on first run, for further loads,
+       data gets deleted
+[uuk]: BlockConfig can now read from different files -> mods can add own additions
+[uuk]: other relation-functions for mods accept now also strings like add_dependency
+[uuk]: tweaked resource loading order, fixing various bugs around order-related things
+[uuk]: implemented error-handling for BlockItemGenerator
+[uuk]: cleaned up some files
+[uuk]: removed most of the entries in deprecated.txt
+[uuk]: new snapshot: 19w52a
+
 [uuk]: fixed bug: game was not runnable
 
-for rendering update:
-    todo: add missing texture when model / texture was not loadable
-    todo: move opengl_setup to rendering
-    todo: fix bug: some custom-colored blocks are NOT colored
-    todo: fix bug: stone blocks are shown during generation so they appear at not-wanted positions
-    todo: fix bug: somehow, block (?) items get alpha-data in hotbar sometimes & number of items is not drawn,
-            maybe due to an clear & draw error?
-    todo: fix bug: lags when changing chunks
-    todo: add brake animation on block (draw with alpha over the block?)
-    todo: add hovering info to items, make them use Language files
-    todo: can we color grass during runtime (OpenGL function?) so we don't need an pre-generated texture?
-    todo: tweak model system to support plant models
-    todo: add "lock" of chest
+todo: merge into release-branch
+todo: when developing further, bring config.VERSION_TYPE to "dev"
 
+
+todo: fix bug: blockitem generator if adding during non-rebuilding fails in the active season to add the items
 
 todo: make factories extendable!
 todo: add support for old language format
-
-todo: make the game run faster when missing ticks rather then running only slow
 
 todo: move mod.json to build folder
 todo: what to do about requests.txt & tasks.list
 
 todo: add support for mcmod.json-file & mod.toml
 
-todo: allow mod dependencies to be string-only for checking against only an mod (background auto-instance create)
 todo: make mod version tuple of variable length so "[1.0.0" is possible. by this, "[<...>" means include and upper,
     "]<...>" exclude and upper, "<...>]" include until, "<...>[" exclude until and "<1. or 2.>|<3. or 4.>" an range
     and various combinations with "&" between and "/" for excluding an version(range)
 todo: add API-checker and API guideline for mods
 
 todo: add config system for mods
+
+todo: move has_block-attribute of item to table from item-name to block-name
 
 maybe unnecessary because of the rendering update:
     todo: make BlockItemFactory an state which can be accessed during runtime so that an command can be implemented named
@@ -683,6 +718,8 @@ todo: fix bug: when pressing ENTER in other states than chat, chat is getting EN
 todo: fix bug: mouse middle click gives always the item, not only if not in inventory
 
 todo: fix bug: /reload crashes the game
+
+todo: fix bug: sand is not falling when lowest block of an tower is broken
 
 add some form of "fast-load" with modified loading phases to speed up
 -> for example, you can select recipes to be NOT loaded, items not loaded, blocks not loaded, language data not loaded...
@@ -734,7 +771,7 @@ todo: add Language Selection page
 todo: add key bind option page
 
 other tasks that should be done in near future
-todo: cache how much xp is needed to next level (function is callen every draw by xp draw -> decrease FPS)
+todo: cache how much xp is needed to next level (function is called every draw by xp draw -> decrease FPS)
 todo: make command input errors better
 todo: add Tool & Armor-durability
 todo: add leather armor
@@ -777,8 +814,6 @@ todo: move to pre-build: block item factory, recipe sorting, model sorting & gen
 todo: add an task to pre-build: download minecraft jar & do cleanup (remove .class files) OR add some form of asset
     index where these things are located in
 
-todo: make hitbox draw & check on BoxModels
-
 todo: add blocks: slabs, stairs, fences, walls, signs, trapdoors, doors, saplings, barrel, chest, crafting table,
     barrier, buttons, pressure plates, carpet, ice, glass, stained glass, stained glass pane, bookshelf, mushrooms,
     sandstones (also red variants)
@@ -809,3 +844,6 @@ todo: add hart shake animation when less than 2 (up & down movement)
 
 todo: after python 3.8 came out (may be on the 14th of October, 2019), use multiproccessing & shared memory for world gen
     (kind of local one-client-one-server system)
+
+todo: wherever an block instance is given over, send an dimension also with to prevent searching only in active
+    dimension

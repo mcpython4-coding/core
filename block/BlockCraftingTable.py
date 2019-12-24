@@ -29,7 +29,7 @@ class BlockCraftingTable(Block.Block):
 
     def get_inventories(self):
         """
-        callen to get an list of inventories
+        called to get an list of inventories
         """
         return [self.inventory]
 

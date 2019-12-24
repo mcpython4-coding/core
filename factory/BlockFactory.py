@@ -20,7 +20,7 @@ import block.ISlab as ISlab
 class BlockFactory:
     def __init__(self):
         self.name = None
-        self.brakeable = True
+        self.breakable = True
         self.modelstates = [{}]
         self.solid_faces = None
 
@@ -64,7 +64,7 @@ class BlockFactory:
             @staticmethod
             def get_name() -> str: return master.name
 
-            def is_brakeable(self) -> bool: return master.brakeable
+            def is_breakable(self) -> bool: return master.breakable
 
             @staticmethod
             def get_all_model_states(): return self.modelstates
@@ -138,7 +138,7 @@ class BlockFactory:
         return self
 
     def setBrakeAbleFlag(self, state: bool):
-        self.brakeable = state
+        self.breakable = state
         return self
 
     def setRandomUpdateCallback(self, function):

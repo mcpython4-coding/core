@@ -20,13 +20,13 @@ import json
 import factory.ItemFactory
 import item.ItemHandler
 import mod.ModMcpython
-
-
-SETUP_TIME = 1
-CLEANUP_TIME = 1
+import traceback
 
 
 class StateBlockItemGenerator(State.State):
+    SETUP_TIME = 1
+    CLEANUP_TIME = 1
+
     @staticmethod
     def get_name():
         return "minecraft:blockitemgenerator"
@@ -38,6 +38,8 @@ class StateBlockItemGenerator(State.State):
         self.tasks = []
         self.table = []
         self.last_image = None
+        self.tries = 0
+        self.failed_counter = 0
 
     def get_parts(self) -> list:
         kwargs = {}
@@ -71,26 +73,32 @@ class StateBlockItemGenerator(State.State):
         if len(self.tasks) == 0:
             self.close()
             return
+        self.parts[1].progress_max = len(self.tasks)
         G.window.set_size(800, 600)
         G.window.set_minimum_size(800, 600)
         G.window.set_maximum_size(800, 600)
         G.window.set_size(800, 600)
         G.window.position = (1.5, 2, 1.5)
         G.window.rotation = (-45, -45)
-        G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[0], block_update=False)
         self.blockindex = -1
+        try:
+            G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[0], block_update=False)
+        except ValueError:
+            self.blockindex = 0
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
-        event.TickHandler.handler.bind(self.add_new_screen, SETUP_TIME+CLEANUP_TIME)
+        event.TickHandler.handler.enable_tick_skipping = False
+        event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME+self.CLEANUP_TIME)
 
     def on_deactivate(self):
         G.world.cleanup()
         if len(self.tasks) > 0:
-            factory.ItemFactory.ItemFactory.process()
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
                 json.dump(self.table, f)
+            factory.ItemFactory.ItemFactory.process()
             item.ItemHandler.build()
         G.window.set_minimum_size(1, 1)
         G.window.set_maximum_size(100000, 100000)  # only here for making resizing possible again
+        event.TickHandler.handler.enable_tick_skipping = True
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -105,11 +113,19 @@ class StateBlockItemGenerator(State.State):
             self.close()
             return
         G.world.get_active_dimension().hide_block((0, 0, 0))
-        G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
+        try:
+            G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
+        except ValueError:
+            print("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with following exception".
+                  format(self.tasks[self.blockindex]))
+            self.blockindex += 1
+            event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
+            traceback.print_exc()
+            return
         self.parts[1].progress = self.blockindex+1
         self.parts[1].text = "{}/{}: {}".format(self.blockindex+1, len(self.tasks), self.tasks[self.blockindex])
         # todo: add states
-        event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
+        event.TickHandler.handler.bind(self.take_image, self.SETUP_TIME)
         G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
@@ -119,17 +135,39 @@ class StateBlockItemGenerator(State.State):
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
         image: PIL.Image.Image = ResourceLocator.read(file, "pil")
         if image.getbbox() is None or len(image.histogram()) <= 1:
-            # there was an error, retry todo: add an security check after [x] tries, skip
             event.TickHandler.handler.bind(self.take_image, 1)
+            self._error_counter(image, blockname)
             return
         image = image.crop((240, 129, 558, 447))  # todo: make dynamic based on window size
         image.save(G.local + "/" + file)
         if image == self.last_image:
-            event.TickHandler.handler.bind(self.take_image, 1)
+            self._error_counter(image, blockname)
             return
         self.last_image = image
         self.generate_item(blockname, file)
-        event.TickHandler.handler.bind(self.add_new_screen, CLEANUP_TIME)
+        event.TickHandler.handler.bind(self.add_new_screen, self.CLEANUP_TIME)
+
+    def _error_counter(self, image, blockname):
+        if self.tries >= 10:
+            print("[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
+                self.tasks[self.blockindex]))
+            self.last_image = image
+            file = G.local + "/tmp/blockitemgenerator_fail_{}_of_{}.png".format(
+                self.failed_counter, self.tasks[self.blockindex].replace(":", "__"))
+            image.save(file)
+            print("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(file))
+            file = "assets/missingtexture.png"  # use missing texture instead
+            self.generate_item(blockname, file)
+            event.TickHandler.handler.bind(G.world.get_active_dimension().remove_block, 4, args=[(0, 0, 0)])
+            event.TickHandler.handler.bind(self.add_new_screen, 10)
+            self.blockindex += 1
+            self.failed_counter += 1
+            if self.failed_counter % 3 == 0 and self.SETUP_TIME <= 10:
+                self.SETUP_TIME += 1
+                self.CLEANUP_TIME += 1
+            return
+        event.TickHandler.handler.bind(self.take_image, 1)
+        self.tries += 1
 
     def generate_item(self, blockname, file):
         self.table.append([blockname, file])
@@ -137,6 +175,7 @@ class StateBlockItemGenerator(State.State):
         block = G.world.get_active_dimension().get_block((0, 0, 0))
         if type(block) != str: block.modify_block_item(obj)
         obj.finish()
+        self.tries = 0
 
 
 blockitemgenerator = None

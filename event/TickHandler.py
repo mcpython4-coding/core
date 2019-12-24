@@ -23,6 +23,8 @@ class TickHandler:
         self.next_ticket_id = 0
         self.results = {}
         pyglet.clock.schedule_interval(self.tick, 1/20)
+        self.lost_time = 0
+        self.enable_tick_skipping = False
 
     def tick(self, dt):
         """
@@ -30,13 +32,19 @@ class TickHandler:
         :param dt: the time that came after the last event
         """
         self.active_tick += 1
+        self.lost_time += dt
         # execute functions
-        if self.active_tick in self.tick_array:
-            for ticketid, function, args, kwargs, ticketupdate in self.tick_array[self.active_tick]:
-                result = function(*args, **kwargs)
-                if ticketid:
-                    self.results[ticketid] = result
-                    ticketupdate(self, ticketid, function, args, kwargs)
+        while self.lost_time > 1 / 20:
+            self.lost_time -= 1 / 20
+            if self.active_tick in self.tick_array:
+                for ticketid, function, args, kwargs, ticketupdate in self.tick_array[self.active_tick]:
+                    result = function(*args, **kwargs)
+                    if ticketid:
+                        self.results[ticketid] = result
+                        ticketupdate(self, ticketid, function, args, kwargs)
+                if not self.enable_tick_skipping:
+                    self.lost_time = 0
+                    return
         # pyglet.clock.schedule(self.send_random_ticks)
 
     def bind(self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}):

@@ -17,15 +17,19 @@ class TagHandler:
         self.taggroups = {}  # name -> taggroup
         self.taglocations = []
 
-    def from_data(self, taggroup: str, tagname: str, data: dict):
-        self.taggroups.setdefault(taggroup, tags.TagGroup.TagGroup(taggroup)).add_from_data(tagname, data)
+    def from_data(self, taggroup: str, tagname: str, data: dict, replace=True):
+        self.taggroups.setdefault(taggroup, tags.TagGroup.TagGroup(taggroup)).add_from_data(tagname, data, replace)
+
+    def add_locations(self, locations: list):
+        self.taglocations += locations
 
 
 G.taghandler = TagHandler()
 
 
 def on_group_add():
-    G.taghandler.taglocations += ["data/minecraft/tags/items", "data/minecraft/tags/naming"]
+    G.taghandler.taglocations += ["data/minecraft/tags/items", "data/minecraft/tags/naming",
+                                  "data/minecraft/tags/blocks"]
 
 
 def check_tags():
@@ -33,9 +37,10 @@ def check_tags():
         for address in row:
             if address.endswith("/"): continue
             data = ResourceLocator.read(address, "json")
-            # todo: implement overwrite & extend system
-            name = "#minecraft:{}".format(address.split("/")[-1].split(".")[0])
-            G.taghandler.from_data(address.split("/")[-2], name, data)
+            s = address.split("/")
+            modname = s[s.index("data")+1]
+            name = "#{}:{}".format(modname, s[-1].split(".")[0])
+            G.taghandler.from_data(address.split("/")[-2], name, data, data["replace"] if "replace" in data else True)
     for taggroup in G.taghandler.taggroups.values():
         mod.ModMcpython.mcpython.eventbus.subscribe("stage:tag:load", taggroup.build, info="loading taggroup {}".
                                                     format(taggroup.name))

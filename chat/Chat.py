@@ -15,6 +15,7 @@ import chat.command.CommandHandler
 import event.EventHandler
 import event.EventBus
 import clipboard
+import traceback
 
 
 class ChatInventory(gui.Inventory.Inventory):
@@ -44,12 +45,16 @@ class ChatInventory(gui.Inventory.Inventory):
             self.lable.text = text
 
     def on_activate(self):
+        # print("opening chat")
+        # traceback.print_stack()
         G.chat.text = ""
         G.chat.active_index = 0
         G.chat.has_entered_t = False
         self.eventbus.activate()
 
     def on_deactivate(self):
+        # print("closing chat")
+        # traceback.print_stack()
         self.eventbus.deactivate()
 
     def on_draw_background(self):
@@ -82,18 +87,15 @@ class Chat:
 
     def enter(self, text: str):
         """
-        callen when text is entered
+        called when text is entered
         :param text: the text that is entered
         """
-        if self.text != "":
-            self.text = self.text[:self.active_index+1] + text + self.text[self.active_index+1:]
-        else:
-            self.text = text
+        self.text = self.text[:self.active_index+1] + text + self.text[self.active_index+1:]
         self.active_index += len(text)
 
     def on_key_press(self, symbol, modifiers):
         """
-        callen when an key is pressed
+        called when an key is pressed
         :param symbol: the symbol that is pressed
         :param modifiers: the modifiers that are used
         """

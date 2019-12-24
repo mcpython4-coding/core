@@ -104,7 +104,7 @@ class ItemFactory:
             class ConstructedItem(ConstructedItem):  # so construct an new class with additional functions
                 def on_eat(self):
                     """
-                    callen when the player eats the item
+                    called when the player eats the item
                     :return: if the item was eaten or not
                     """
                     if master.eat_callback and master.eat_callback():

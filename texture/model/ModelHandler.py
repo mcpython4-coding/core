@@ -32,6 +32,7 @@ class ModelHandler:
                 s = model.split("/")
                 name = "block/"+s[-1].split(".")[0] if "minecraft" in s else "{}:block/{}".format(
                     s[s.index("block")-2], s[-1].split(".")[0])
+                # if "sand" in model: print(model, name)
                 self.found_models[name] = model
 
     def add_from_data(self, name, data):

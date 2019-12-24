@@ -27,6 +27,7 @@ import pyglet.image
 import os
 import util.texture
 import sys
+import config
 
 
 class IResourceLocation:
@@ -108,33 +109,27 @@ class ResourceDirectory(IResourceLocation):
         return [directory + "/" + x for x in os.listdir(self.path + "/" + directory)]
 
 
-RESOURCE_PACK_LOADERS = RESOURCE_LOADER = [ResourceZipFile, ResourceDirectory]
+RESOURCE_PACK_LOADERS = [ResourceZipFile, ResourceDirectory]
 RESOURCE_LOCATIONS = []
-
-
-def load_resources(): load_resource_packs()
 
 
 def load_resource_packs():
     close_all_resources()
     for file in os.listdir(G.local+"/resourcepacks"):
-        if file in ["1.14.4.jar", "minecraft"]: continue
+        if file in ["{}.jar".format(config.MC_VERSION_BASE), "minecraft"]: continue
         file = G.local+"/resourcepacks/" + file
         flag = True
-        for source in RESOURCE_LOADER:
+        for source in RESOURCE_PACK_LOADERS:
             if flag and source.is_valid(file):
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
             print("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))
-    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/1.14.4.jar"))
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
         if element == "--addresourcepath":
-            path = sys.argv[i+1]
+            path = sys.argv[i + 1]
             if zipfile.is_zipfile(path):
                 RESOURCE_LOCATIONS.append(ResourceZipFile(path))
             else:
@@ -142,6 +137,9 @@ def load_resource_packs():
             i += 2
         else:
             i += 1
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))  # the special extension dir
+    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(config.MC_VERSION_BASE)))
 
 
 def close_all_resources():
@@ -159,12 +157,20 @@ def transform_name(file: str) -> str:
         if len(f) == 1:
             f = "assets/minecraft/textures/{}/{}.png".format(f[0].split("/")[0], "/".join(f[0].split("/")[1:]))
         else:
-            f = "assets/{}/textures/{}/{}".format(f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:]))
+            f = "assets/{}/textures/{}/{}.png".format(f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:]))
         return f
     raise NotImplementedError("can't transform name {} to valid path".format(file))
 
 
 def exists(file, transform=True):
+    if file.startswith("@"):  # special resource notation, can be used for accessing special ResourceLocations
+        data = file.split("|")
+        resource = data[0][1:]
+        file = "|".join(data[1:])
+        for x in RESOURCE_LOCATIONS:
+            if x.path == resource:
+                return x.is_in_path(file)
+        raise RuntimeError("can't find resource named {}".format(resource))
     for x in RESOURCE_LOCATIONS:
         if x.is_in_path(file):
             return True
@@ -191,7 +197,6 @@ def read(file, mode=None):
         if mode == "pil":
             return PIL.Image.open(G.local+"/"+file)
     loc = RESOURCE_LOCATIONS[:]
-    loc.reverse()
     for x in loc:
         if x.is_in_path(file):
             try:

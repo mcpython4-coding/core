@@ -39,7 +39,7 @@ class UIPartTextInput(UIPart.UIPart):
         self.lable.x, self.lable.y = x + 5, y + self.bboxsize[1] // 2
         if not self.selected and self.entered_text == "":
             if self.empty_overlay_text != "":
-                self.lable.text = Language.decode(self.empty_overlay_text)
+                self.lable.text = Language.translate(self.empty_overlay_text)
                 self.lable.color = (150, 150, 150, 255)
                 self.lable.font_size = self.bboxsize[1] // 4
         else:

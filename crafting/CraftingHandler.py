@@ -12,6 +12,7 @@ import ResourceLocator
 import item.ItemHandler
 import traceback
 import mod.ModMcpython
+import sys
 
 
 class CraftingHandler:
@@ -26,7 +27,7 @@ class CraftingHandler:
 
     def __call__(self, obj):
         if issubclass(obj, crafting.IRecipeType.IRecipe):
-            self.recipeinfotable[obj.get_recipe_name()] = obj
+            [self.recipeinfotable.setdefault(name, obj) for name in obj.get_recipe_names()]
         else:
             raise ValueError()
         return obj
@@ -38,16 +39,18 @@ class CraftingHandler:
         name = data["type"]
         if name in self.recipeinfotable:
             recipe = self.recipeinfotable[name].from_data(data)
+            if recipe is None:
+                return 0
             self.add_recipe(recipe)
             return recipe
         else:
-            raise ValueError("can't load recipe. recipe class {} not arrival".format(name))
+            return None
 
     def add_recipe_from_file(self, file: str):
-        try:
-            self.add_recipe_from_data(ResourceLocator.read(file, "json"))
-        except ValueError:
-            pass
+        data = ResourceLocator.read(file, "json")
+        result = self.add_recipe_from_data(data)
+        if result is None and "--debugrecipes" in sys.argv:
+            print("error in decoding recipe from file {}: type '{}' not found".format(file, data["type"]))
 
     def load(self, modname):
         if modname in self.loaded_mod_dirs:
@@ -55,8 +58,8 @@ class CraftingHandler:
             return  # make sure to load only ones!
         self.loaded_mod_dirs.append(modname)
         for itemname in ResourceLocator.get_all_entries("data/{}/recipes".format(modname)):
-            mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipe:bake", self.add_recipe_from_file, itemname,
-                                                        info="loading crafting recipe from {}".format(itemname))
+            G.modloader.mods[modname].eventbus.subscribe("stage:recipe:bake", self.add_recipe_from_file, itemname,
+                                                         info="loading crafting recipe from {}".format(itemname))
 
 
 G.craftinghandler = CraftingHandler()

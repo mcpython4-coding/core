@@ -31,7 +31,7 @@ class EventBus:
         """
         add an function to the event bus by event name. If event name does NOT exists, it will be created localy
         :param eventname: the event to listen to on this bis
-        :param function: the function that should be callen when event is sended
+        :param function: the function that should be called when event is sended
         :param args: the args to give
         :param kwargs: the kwargs to give
         :param info: an info to give for the caller

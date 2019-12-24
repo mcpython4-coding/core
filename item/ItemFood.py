@@ -12,7 +12,7 @@ import item.Item
 class ItemFood(item.Item.Item):
     def on_eat(self):
         """
-        callen when the player eats the item
+        called when the player eats the item
         :return: if the item was eaten or not
         """
         if G.player.hunger == 20:

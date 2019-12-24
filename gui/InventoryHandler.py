@@ -138,6 +138,9 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             moving_slot.itemstack.clean()
 
 
+inventory_part = OpenedInventoryStatePart()
+
+
 class InventoryHandler:
     """
     main class for registrating inventories

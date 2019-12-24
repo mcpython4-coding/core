@@ -16,12 +16,14 @@ import time
 import world.gen.WorldGenerationHandler
 import state.StatePartGame
 import gui.Inventory
+import random
 
 
 class World:
     def __init__(self):
         G.world = self
         self.player = world.player.Player("unknown")
+        self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         self.dimensions = {}
         self.add_dimension(0, {'configname': None})
         self.active_dimension = 0
@@ -164,4 +166,5 @@ class World:
         self.reset_config()
         G.window.flying = False
         for inv in G.player.inventorys.values(): inv.clear()
+        self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
 

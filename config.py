@@ -8,6 +8,13 @@ blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
 import math
 import util.enums
 
+MC_VERSION_BASE = "1.14.4"
+VERSION_TYPE = "snapshot"
+VERSION_NAME = "19w52a"
+
+FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
+    VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)
+
 
 TICKS_PER_SEC = 20
 

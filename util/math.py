@@ -14,7 +14,7 @@ import math
 def get_max_y(pos):
     """gets the max y at a x,y,z or x,z pos"""
     x, y, z = normalize(pos if len(pos) == 3 else (pos[0], 0, pos[1]))
-    chunk = G.world.get_active_dimension().get_chunk_for_position(pos)
+    chunk = G.world.get_active_dimension().get_chunk_for_position((x, y, z))
     heightmap = chunk.get_value('heightmap')
     y = heightmap[x, z][0][1]
     return y + config.PLAYER_HEIGHT  # account for the distance from head to foot

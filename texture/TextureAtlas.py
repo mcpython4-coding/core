@@ -72,7 +72,7 @@ class TextureAtlas:
         self.texture = PIL.Image.new("RGBA", (size[0] * image_size[0], size[1] * image_size[1]))
         self.next_index = (0, 0)
         self.images = []
-        self.imagelocations = []  # an image[-parallel (x, y)-list
+        self.imagelocations = []  # an images[-parallel (x, y)-list
         if add_missing_texture: self.add_image(MISSING_TEXTURE)
         self.group = None
 

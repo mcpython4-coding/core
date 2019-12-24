@@ -15,15 +15,15 @@ class Block:
     base class for all blocks
     """
 
-    def __init__(self, position, setted_to=None, state=None, real_hit=None):
+    def __init__(self, position, set_to=None, state=None, real_hit=None):
         """
         creates new Block
         :param position: the position to create the block on
-        :param setted_to: when the block is setted to an block, these parameter contains where
+        :param set_to: when the block is setted to an block, these parameter contains where
         :param real_hit: were the block the user set to was hit on
         """
         self.position = position
-        self.setted_to = setted_to
+        self.set_to = set_to
         self.real_hit = real_hit
         self.on_create()  # todo: remove
         if state is not None:
@@ -39,45 +39,45 @@ class Block:
     @staticmethod
     def on_register(registry):
         """
-        callen when the block is registered to any registry
+        called when the block is registered to any registry
         :param registry: the registry it registered to
         """
         pass
 
     def on_create(self):  # todo: remove
         """
-        callen when the block is created
+        called when the block is created
         """
 
     def on_delete(self): pass  # todo: remove
 
     def on_remove(self):
         """
-        callen when the block is removed
+        called when the block is removed
         """
         self.on_delete()
 
     def get_inventories(self):
         """
-        callen to get an list of inventories
+        called to get an list of inventories
         """
         return []
 
-    def is_brakeable(self) -> bool:  # todo: make to constant
+    def is_breakable(self) -> bool:  # todo: make to constant
         """
-        :return: if the block is brakeable in gamemode 0
+        :return: if the block is breakable in gamemode 0
         """
         return True
 
     def on_random_update(self):
         """
-        callen on random update
+        called on random update
         todo: re-activate
         """
 
     def on_block_update(self):
         """
-        callen when an near-by blockposition is updated by setting/removing an block
+        called when an near-by block-position is updated by setting/removing an block
         """
 
     def is_solid_side(self, side) -> bool:

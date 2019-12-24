@@ -18,9 +18,15 @@ def transform_to_itemstack(item, table: dict) -> list:
     :return: an transformed name list of (itemname, amount)
     """
     if "item" in item:
-        return [(item["item"], item["count"] if "count" in item else 1)]
+        itemname = item["item"]
+        if itemname not in G.registry.get_by_name("item").get_attribute("items"): return []
+        return [(itemname, item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
-        return G.taghandler.taggroups["items"].tags["#"+item["tag"]].entries
+        entries = G.taghandler.taggroups["items"].tags["#"+item["tag"]].entries
+        for item in entries[:]:
+            if item not in G.registry.get_by_name("item").get_attribute("items"):
+                entries.remove(item)
+        return entries
     elif type(item) == list:  # have we an list of items?
         values = [transform_to_itemstack(x, table) for x in item]
         value = []
@@ -33,20 +39,24 @@ def transform_to_itemstack(item, table: dict) -> list:
 @G.craftinghandler
 class GridShaped(crafting.IRecipeType.IRecipe):
     @staticmethod
-    def get_recipe_name() -> str:
-        return "minecraft:crafting_shaped"
+    def get_recipe_names() -> list:
+        return ["minecraft:crafting_shaped", "crafting_shaped"]
 
     @classmethod
     def from_data(cls, data: dict):
         pattern = data["pattern"]
         table = {}
         for item in data["key"]:
-            table[item] = transform_to_itemstack(data["key"][item], table)
+            item_list = transform_to_itemstack(data["key"][item], table)
+            if len(item_list) == 0: return
+            table[item] = item_list
         grid = {}
         for y, row in enumerate(pattern):
             for x, key in enumerate(row):
                 if key != " ": grid[(x, y)] = table[key]
-        return cls(grid, transform_to_itemstack(data["result"], table)[0])
+        out = transform_to_itemstack(data["result"], table)
+        if len(out) == 0: return
+        return cls(grid, out[0])
 
     def __init__(self, inputs, output):
         self.inputs = inputs
@@ -63,13 +73,15 @@ class GridShaped(crafting.IRecipeType.IRecipe):
 @G.craftinghandler
 class GridShapeless(crafting.IRecipeType.IRecipe):
     @staticmethod
-    def get_recipe_name() -> str:
-        return "minecraft:crafting_shapeless"
+    def get_recipe_names() -> list:
+        return ["minecraft:crafting_shapeless", "crafting_shapeless"]
 
     @classmethod
     def from_data(cls, data: dict):
         inputs = [transform_to_itemstack(x, {}) for x in data["ingredients"]]
-        return cls(inputs, transform_to_itemstack(data["result"], {})[0])
+        out = transform_to_itemstack(data["result"], {})
+        if any([len(x) == 0 for x in inputs]) or len(out) == 0: return
+        return cls(inputs, out[0])
 
     def __init__(self, inputs, output):
         self.inputs = inputs

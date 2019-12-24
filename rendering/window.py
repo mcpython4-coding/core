@@ -89,7 +89,7 @@ class Window(pyglet.window.Window):
             ResourceLocator.read("gui/icons", "pil").crop((0, 0, 15, 15)).resize((30, 30)))
 
     def reset_caption(self):
-        self.set_caption("mcpython 4 - {}".format(G.modloader.mods["minecraft"].version))
+        self.set_caption("mcpython 4 - {}".format(config.FULL_VERSION_NAME))
 
     def set_exclusive_mouse(self, exclusive):
         """ If `exclusive` is True, the game will capture the mouse, if False

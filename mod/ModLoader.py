@@ -132,6 +132,7 @@ class ModLoader:
             if element == "--addmoddir":
                 locs.append(sys.argv[i+1])
                 for _ in range(2): sys.argv.pop(i)
+                sys.path.append(locs[-1])
             elif element == "--addmodfile":
                 modlocations.append(sys.argv[i+1])
                 for _ in range(2): sys.argv.pop(i)
@@ -156,7 +157,7 @@ class ModLoader:
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
-                    ResourceLocator.RESOURCE_LOCATIONS.append(ResourceLocator.ResourceZipFile(file))
+                    ResourceLocator.RESOURCE_LOCATIONS.insert(0, ResourceLocator.ResourceZipFile(file))
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
                         try:
@@ -171,17 +172,21 @@ class ModLoader:
                             print("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
-                    data = importlib.import_module("mods."+file.split("/")[-1].split("\\")[-1].split(".")[0])
+                    try:
+                        data = importlib.import_module("mods."+file.split("/")[-1].split("\\")[-1].split(".")[0])
+                    except ModuleNotFoundError:
+                        data = importlib.import_module(file.split("/")[-1].split("\\")[-1].split(".")[0])
                     for modinst in self.found_mod_instances: modinst.package = data
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
-                ResourceLocator.RESOURCE_LOCATIONS.append(ResourceLocator.ResourceDirectory(file))
+                ResourceLocator.RESOURCE_LOCATIONS.insert(0, ResourceLocator.ResourceDirectory(file))
                 self.active_directory = file
                 if os.path.exists(file+"/mod.json"):
                     with open(file+"/mod.json") as sf:
                         data = json.load(sf)
                     if "main files" in data:
-                        for location in data["main files"]:
+                        files = data["main files"]
+                        for location in (files if type(files) == list else [files]):
                             importlib.import_module(location)
                     else:
                         print("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))

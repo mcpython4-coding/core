@@ -113,7 +113,7 @@ class UIPartButton(UIPart.UIPart):
         )
         x, y = self.get_real_position()
         draw_button((x, y), self.bboxsize, mode)
-        self.lable.text = Language.decode(self.text)
+        self.lable.text = Language.translate(self.text)
         wx, wy = self.lable.content_width, self.lable.content_height
         self.lable.x = x + self.bboxsize[0] // 2 - wx // 2
         self.lable.y = y + self.bboxsize[1] // 2 - wy // 3
@@ -136,9 +136,9 @@ class UIPartToggleButton(UIPartButton):
         :param retoggle: the EventInfo for mouse buttons and mods, no area to define, toggle backwards
         :param anchor_button: the anchor on the button
         :param anchor_window: the anchor on the window
-        :param on_toggle: callen when the button toggles, parameters: (from: str, to: str, direction: int, position:tuple)
-        :param on_hover: callen when the mouse is over the button
-        :param on_try_press: callen when button is disabled and the user presses the button
+        :param on_toggle: called when the button toggles, parameters: (from: str, to: str, direction: int, position:tuple)
+        :param on_hover: called when the mouse is over the button
+        :param on_try_press: called when button is disabled and the user presses the button
         :param enabled: button should be clickable?
         :param has_hovering_state: if the button gets blue when mouse is over it
         :param text_constructor: an string.format(item) or an function(item: str) -> str entry
@@ -170,11 +170,11 @@ class UIPartToggleButton(UIPartButton):
     def _generate_text(self):
         text = self.textpages[self.index]
         if type(self.textconstructor) == str:
-            self.text = Language.decode(self.textconstructor.format(text))
+            self.text = Language.translate(self.textconstructor.format(text))
         elif callable(self.textconstructor):
-            self.text = Language.decode(self.textconstructor(text))
+            self.text = Language.translate(self.textconstructor(text))
         else:
-            self.text = Language.decode(text)
+            self.text = Language.translate(text)
 
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()

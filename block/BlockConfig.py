@@ -25,7 +25,7 @@ class BlockConfigEntry:
 ENTRYS = {}
 
 
-for file in ResourceLocator.get_all_entries("assets/config/block"):
+for file in ResourceLocator.get_all_entries_special("assets/config/block"):
     name = file.split("/")[-1].split(".")[0]
     if name not in ENTRYS:
         ENTRYS[name] = BlockConfigEntry(name)

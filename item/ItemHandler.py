@@ -18,6 +18,7 @@ import pyglet
 import sys
 import factory.ItemFactory
 import mod.ModMcpython
+import traceback
 
 
 TEXTURE_ATLASES = []
@@ -31,7 +32,8 @@ def build():
         textureatlas.texture.save(G.local+"/build/itematlases/"+file)
         textureatlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.local+"/build/itematlases/"+file),
                                                       *textureatlas.size)
-        indexdata[file] = {"size": textureatlas.size, "loaded_item_file_names": textureatlas.images}
+        indexdata[file] = {"size": textureatlas.size, "loaded_item_file_names": textureatlas.images,
+                           "locations": textureatlas.imagelocations}
     indexdata["loaded_item_file_names"] = items.get_attribute("itemindextable")
     with open(G.local + "/build/itematlases/index.json", mode="w") as f:
         json.dump(indexdata, f)
@@ -50,6 +52,7 @@ def load_data():
                 image = PIL.Image.open(G.local+"/build/itematlases/"+file)
                 atlas.texture = image
                 atlas.images = indextable[file]["loaded_item_file_names"]
+                atlas.imagelocations = indextable[file]["locations"]
                 TEXTURE_ATLASES.append(atlas)
                 if not G.prebuilding:
                     atlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.local + "/build/itematlases/" + file),
@@ -58,7 +61,7 @@ def load_data():
         if not G.prebuilding:
             with open(G.local+"/build/itemblockfactory.json") as f:
                 data = json.load(f)
-            for entry in data:
+            for entry in data[:]:
                 name = entry[0]
                 obj = factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(entry[1])
                 blocktable = G.registry.get_by_name("block").get_attribute("blocks")
@@ -68,6 +71,9 @@ def load_data():
                     obj.finish()
                 else:
                     print("[ERROR] during constructing block item for {}: Failed to find block".format(name))
+                    data.remove(entry)
+            with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
+                json.dump(data, f)
 
 
 def add_to_image_atlas(textureatlas, image, file):
