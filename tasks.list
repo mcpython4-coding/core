@@ -1,35 +1,12 @@
 These is an tasklist covering all different tasks these project has
 It is like an collection with tasks which have not thought over when to be implement
 
-cleanup tasks (should be done regularly):
-    document every change
-    go to EVERY PYTHON FILE and do:
-        have we unused imports? -> delete
-        do we  have a new third-party-library not registered in the requirements.txt? -> add it
-        look at EVERY name and check if it is good
-        has every file, class & function an docstring?
-        is the code with enough comments?
-        is every code reachable?
-        have we outdated code which should be updated?
-        is there an way for every interested function / field to overwrite
-        could this file split into different?
-        could this class be split into separate / super - child classes?
-        could this function be split into different for better handling?
-        should be this function be part of the util-code?
-        is there any library or any code around web that does this better / can replace this?
-        should be some of these code be part of an load-event?
-        should be any of this classes/objects/functions be part of an registry?
-        are here any texture-generating codes which can be represented by texture generator code?
-        could be parts of these generated on setup?
-        is there code which should be as config / world config / world storage data stored?
 
-add more biomes
 add save / load of world
-add PlayerCreativeInventory, PlayerCreativeTab
 add /loot-command
 todo: fix bug: in some rare cases, you can walk through the corner into the block (see forgleman #104) -> hitbox update
 add can_break-attribute to item to definite items that can break blocks in gamemode 2
-add the following block inventorys: furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
+add the following block inventories with blocks: furnes and furnes-like inventorys, brewing stand, anvil, enchantment table
 add Enchantment-baseclass with attribute is_combine_able_with(...) -> bool & all enchantments
 add commands: /me, /say, /msg, /tellraw, /title, /replaceitem, /debug, /reload (real command), /clone
 add gamerules, /gamerule command
@@ -38,7 +15,6 @@ make the following attributes as json-saved files: Block.is_break_able, Block.br
 add time-system and /time-command
 add scoreboards
 add difficulty attribute to world
-add effects & bind to various items
 
 may be implemented on another method:
     implement client/server by making an @client and @server notation system which will decide returning an callable object
@@ -53,16 +29,4 @@ implement / finish pre-build system:
     texture atlas will be pre-builded in a file named minecraft_1.png (mods will have [modname]_[n].png)
     create an global table called texturemap.json which links texture ids to atlases
     models will be pre-prepared and stored in an format pointing by texture only to the texture id
-    crafting recipes will be also pre-prepared for better loading times & will be removed if invalid
-
-add some form of mod display screen
-
-idea for loading visualisation (upgrade):
-    some fancy area in which every mod has after his file size or another parameter an area which is colored after its
-        loading stage.
-    the color is calculated over step / max steps * 255 * random weight per mod per color for r, g, b; a is 255 always
-    every area has an lable with the mod name in its representative text size (box height)
-    the mcpython-mod is also displayed. Its file size is calculated over G.local-size - sum of mod file sizes
-    the progress bar indicates what step is executed at the moment
-    an lable is needed for what mod is loaded & how far we are in it. may be progressbar, may be full to less, may
-        be other color
+    crafting recipes will be also pre-prepared for better loading times

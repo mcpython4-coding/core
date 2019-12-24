@@ -157,7 +157,7 @@ class ModLoader:
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
-                    ResourceLocator.RESOURCE_LOCATIONS.append(ResourceLocator.ResourceZipFile(file))
+                    ResourceLocator.RESOURCE_LOCATIONS.insert(0, ResourceLocator.ResourceZipFile(file))
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
                         try:
@@ -179,7 +179,7 @@ class ModLoader:
                     for modinst in self.found_mod_instances: modinst.package = data
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
-                ResourceLocator.RESOURCE_LOCATIONS.append(ResourceLocator.ResourceDirectory(file))
+                ResourceLocator.RESOURCE_LOCATIONS.insert(0, ResourceLocator.ResourceDirectory(file))
                 self.active_directory = file
                 if os.path.exists(file+"/mod.json"):
                     with open(file+"/mod.json") as sf:

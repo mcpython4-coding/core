@@ -109,11 +109,8 @@ class ResourceDirectory(IResourceLocation):
         return [directory + "/" + x for x in os.listdir(self.path + "/" + directory)]
 
 
-RESOURCE_PACK_LOADERS = RESOURCE_LOADER = [ResourceZipFile, ResourceDirectory]
+RESOURCE_PACK_LOADERS = [ResourceZipFile, ResourceDirectory]
 RESOURCE_LOCATIONS = []
-
-
-def load_resources(): load_resource_packs()
 
 
 def load_resource_packs():
@@ -122,20 +119,17 @@ def load_resource_packs():
         if file in ["{}.jar".format(config.MC_VERSION_BASE), "minecraft"]: continue
         file = G.local+"/resourcepacks/" + file
         flag = True
-        for source in RESOURCE_LOADER:
+        for source in RESOURCE_PACK_LOADERS:
             if flag and source.is_valid(file):
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
             print("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))  # the special extension dir
-    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(config.MC_VERSION_BASE)))
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
         if element == "--addresourcepath":
-            path = sys.argv[i+1]
+            path = sys.argv[i + 1]
             if zipfile.is_zipfile(path):
                 RESOURCE_LOCATIONS.append(ResourceZipFile(path))
             else:
@@ -143,6 +137,9 @@ def load_resource_packs():
             i += 2
         else:
             i += 1
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))  # the special extension dir
+    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(config.MC_VERSION_BASE)))
 
 
 def close_all_resources():
@@ -200,7 +197,6 @@ def read(file, mode=None):
         if mode == "pil":
             return PIL.Image.open(G.local+"/"+file)
     loc = RESOURCE_LOCATIONS[:]
-    loc.reverse()
     for x in loc:
         if x.is_in_path(file):
             try:

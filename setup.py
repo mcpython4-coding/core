@@ -38,9 +38,6 @@ class IPrepareAbleTask:
     @staticmethod
     def dump_data(directory: str): pass
 
-    @staticmethod  # todo: remove
-    def uses_directory() -> bool: return True
-
     USES_DIRECTORY = True
 
 

@@ -20,6 +20,7 @@ import json
 import factory.ItemFactory
 import item.ItemHandler
 import mod.ModMcpython
+import traceback
 
 
 class StateBlockItemGenerator(State.State):
@@ -79,8 +80,11 @@ class StateBlockItemGenerator(State.State):
         G.window.set_size(800, 600)
         G.window.position = (1.5, 2, 1.5)
         G.window.rotation = (-45, -45)
-        G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[0], block_update=False)
         self.blockindex = -1
+        try:
+            G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[0], block_update=False)
+        except ValueError:
+            self.blockindex = 0
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
         event.TickHandler.handler.enable_tick_skipping = False
         event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME+self.CLEANUP_TIME)
@@ -109,7 +113,15 @@ class StateBlockItemGenerator(State.State):
             self.close()
             return
         G.world.get_active_dimension().hide_block((0, 0, 0))
-        G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
+        try:
+            G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
+        except ValueError:
+            print("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with following exception".
+                  format(self.tasks[self.blockindex]))
+            self.blockindex += 1
+            event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
+            traceback.print_exc()
+            return
         self.parts[1].progress = self.blockindex+1
         self.parts[1].text = "{}/{}: {}".format(self.blockindex+1, len(self.tasks), self.tasks[self.blockindex])
         # todo: add states

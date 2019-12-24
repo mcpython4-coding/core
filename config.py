@@ -9,8 +9,8 @@ import math
 import util.enums
 
 MC_VERSION_BASE = "1.14.4"
-VERSION_TYPE = "dev"
-VERSION_NAME = "19w46b"
+VERSION_TYPE = "snapshot"
+VERSION_NAME = "19w52a"
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)

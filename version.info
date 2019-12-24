@@ -624,7 +624,7 @@ started these clone on 12th of July, 2019
 [uuk]: TICKS_PER_SEC=20 (minecraft tick rate) instead of 30
 [uuk]: features.py support now check for exists & will error check for name
 [uuk]: Language.get accepts now an formatting-parameter which should replace the old syntax
-[uuk]: Language.decode was renamed to Language.translate. Old is still arrival for some time
+[uuk]: Language.translate was renamed to Language.translate. Old is still arrival for some time
 [uuk]: Language.Language.from_file accepts now an name-parameter replacing name generation
 [uuk]: added Language.from_mod_name(<modname>)-method
 [uuk]: again, improvements to some files during writing the documentation
@@ -666,9 +666,19 @@ started these clone on 12th of July, 2019
 [uuk]: when an block gets removed from registry, not found message is now displayed only on first run, for further loads,
        data gets deleted
 [uuk]: BlockConfig can now read from different files -> mods can add own additions
+[uuk]: other relation-functions for mods accept now also strings like add_dependency
+[uuk]: tweaked resource loading order, fixing various bugs around order-related things
+[uuk]: implemented error-handling for BlockItemGenerator
+[uuk]: cleaned up some files
+[uuk]: removed most of the entries in deprecated.txt
+[uuk]: new snapshot: 19w52a
 
 
-todo: fix bug: blockitem generator if adding during non-rebuilding fails in this season to add items
+todo: merge into release-branch
+todo: when developing further, bring config.VERSION_TYPE to "dev"
+
+
+todo: fix bug: blockitem generator if adding during non-rebuilding fails in the active season to add the items
 
 todo: make factories extendable!
 todo: add support for old language format
@@ -707,6 +717,8 @@ todo: fix bug: when pressing ENTER in other states than chat, chat is getting EN
 todo: fix bug: mouse middle click gives always the item, not only if not in inventory
 
 todo: fix bug: /reload crashes the game
+
+todo: fix bug: sand is not falling when lowest block of an tower is broken
 
 add some form of "fast-load" with modified loading phases to speed up
 -> for example, you can select recipes to be NOT loaded, items not loaded, blocks not loaded, language data not loaded...

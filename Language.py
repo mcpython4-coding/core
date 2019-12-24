@@ -15,17 +15,8 @@ ACTIVE_LANGUAGE = "en_us"  # change this for having another language
 
 
 def get(key, formatting=None):
-    if key.count("|") > 0:
-        warnings.warn("deprecated using '|' in key", DeprecationWarning)
-    # todo: key "|" split remove
-    values = key.split("|")
-    return LANGUAGES[ACTIVE_LANGUAGE].read_value(values[0]).format(*values[1:]+list(
+    return LANGUAGES[ACTIVE_LANGUAGE].read_value(key).format(*list(
         formatting) if formatting is not None else [])
-
-
-def decode(s: str):
-    warnings.warn("deprecated", DeprecationWarning)
-    return translate(s)
 
 
 def translate(s: str):

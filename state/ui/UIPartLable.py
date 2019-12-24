@@ -60,6 +60,6 @@ class UIPartLable(UIPart.UIPart):
         self.lable.y = y + size[1] // 2 - wy // 2
         self.lable.color = self.color
         self.lable.font_size = self.text_size
-        self.lable.text = Language.decode(self.text)
+        self.lable.text = Language.translate(self.text)
         self.lable.draw()
 

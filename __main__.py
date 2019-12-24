@@ -41,7 +41,7 @@ try:
     if not os.path.exists(G.local+"/build"): G.prebuilding = True
 
     import ResourceLocator
-    ResourceLocator.load_resources()
+    ResourceLocator.load_resource_packs()
 
     import mod.ModLoader
 
