@@ -78,17 +78,17 @@ class EventBus:
             except SystemExit: raise
             except:
                 if not exception_occ:
-                    print("EXCEPTION DURING CALLING EVENT {} OVER ".format(eventname))
+                    print("EXCEPTION DURING CALLING EVENT '{}' OVER ".format(eventname))
                     traceback.print_stack()
                     exception_occ = True
                 print("exception:")
                 traceback.print_exc()
-                print("during calling function:", function, "with arguments:", list(args)+list(
-                    self.extra_arguments[0])+list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs}, sep="\n")
-                print("function info:", info)
+                print("during calling function: {} with arguments: {}".format(function, list(args)+list(
+                    self.extra_arguments[0])+list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs}, sep="\n"))
+                print("function info: '{}'".format(info))
             if G.debugevents:
                 with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
-                    f.write("\nevent call of {} takes {}s until finish".format(function, dif))
+                    f.write("\nevent call of '{}' takes {}s until finish".format(function, dif))
         if exception_occ and self.crash_on_error:
             print("\nout of the above reasons, the game has crashes")
             sys.exit(-1)

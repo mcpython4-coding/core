@@ -1,5 +1,5 @@
-Pillow==6.2.1
-pyglet==1.4.8
+Pillow==7.0.0
+pyglet==1.4.10
 opensimplex==0.2
 clipboard==0.0.4
 toml==0.10.0

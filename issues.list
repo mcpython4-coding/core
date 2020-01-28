@@ -1,0 +1,89 @@
+
+issue 9:
+    when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
+        Item-instances
+    this issue occurs only in the first run with the new block
+
+issue 10:
+    in python 3.8, a lot of exceptions of the following style are printed out when closing the window:
+        Exception ignored in: <function WeakMethod.__new__.<locals>._cb at 0x0F426D18>
+        Traceback (most recent call last):
+          File "C:\Python\core\3.8.1\lib\weakref.py", line 58, in _cb
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\event.py", line 364, in _remove_handler
+          File "C:\Python\core\3.8.1\lib\weakref.py", line 74, in __eq__
+        TypeError: isinstance() arg 2 must be a type or tuple of types
+
+    possible fix: implement overwriting file for pyglet/event.py to fix this issue from pyglet side
+
+issue 11:
+    textures are blurry on the sides after upgrading pillow
+
+    possible fix: use correct scaling mode
+
+issue 12:
+    when pressing ENTER in start menu, an message called "[CHAT] " is printed out for no reason
+
+    possible fix: check chat system for some non-state related linking
+    possible cause: back in the past, chat keys were input twice. In this time, things may have changed
+
+issue 13:
+    game CRASHES when hovering over an button in start menu with following exception:
+          File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 100, in <module>
+            main()
+          File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 89, in main
+            run()
+          File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 83, in run
+            pyglet.app.run()
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\__init__.py", line 144, in run
+            event_loop.run()
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 175, in run
+            self._run()
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 187, in _run
+            timeout = self.idle()
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 314, in idle
+            window.dispatch_event('on_draw')
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\window\__init__.py", line 1330, in dispatch_event
+            if EventDispatcher.dispatch_event(self, *args) != False:
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\event.py", line 423, in dispatch_event
+            if getattr(self, event_type)(*args):
+          File "C:\Users\baulu\PycharmProjects\core\rendering\window.py", line 355, in on_draw
+            G.eventhandler.call("render:draw:2d")
+          File "C:\Users\baulu\PycharmProjects\core\event\EventHandler.py", line 35, in call
+            results += bus.call(eventname, *args, *kwargs)
+          File "C:\Users\baulu\PycharmProjects\core\event\EventBus.py", line 82, in call
+            traceback.print_stack()
+        Traceback (most recent call last):
+          File "C:\Users\baulu\PycharmProjects\core\event\EventBus.py", line 75, in call
+            result.append((function(*list(args)+list(self.extra_arguments[0])+list(eargs),
+          File "C:\Users\baulu\PycharmProjects\core\state\ui\UIPartButton.py", line 115, in on_draw_2d
+            draw_button((x, y), self.bboxsize, mode)
+          File "C:\Users\baulu\PycharmProjects\core\state\ui\UIPartButton.py", line 46, in draw_button
+            ii.blit(x * sourceimage.width + position[0], y * sourceimage.height + position[1])
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\image\__init__.py", line 909, in blit
+            self.get_texture().blit(x, y, z, width, height)
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\image\__init__.py", line 840, in get_texture
+            self._current_texture = self.create_texture(Texture, rectangle, force_rectangle)
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\image\__init__.py", line 832, in create_texture
+            self.blit_to_texture(texture.target, texture.level,
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\image\__init__.py", line 1000, in blit_to_texture
+            glTexSubImage2D(target, level,
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\gl\lib.py", line 106, in errcheck
+            raise GLException(msg)
+        pyglet.gl.lib.GLException: b'invalid value'
+
+    called by: UIPartButton.on_draw_2d, arguments: [], event name: render:draw:2d
+
+
+todo: fix bug: crafting somehow ends sometimes in the double amount than usually
+    (for example, crafting of crafting table)
+todo: fix bug: when entering code for html-special-chars, the special char is displayed in chat
+todo: fix bug: chat & inventory can be opened at the same time
+todo: fix bug: mouse middle click gives always the item, not only if not in inventory
+todo: fix bug: /reload crashes the game
+todo: fix bug: sand is not falling when lowest block of an tower is broken
+todo: fix bug: when jumping in an block from downwards, you get damage
+todo: fix bug: when jumping into an non-full block, getting damage
+todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor is white (?)
+todo: fix bug: falling blocks are NOT updating visable state
+todo: fix bug: when looking at the corner of an block, the focus is on the block behind rather on the block viewed at
+todo: fix bug: in some rare cases, you can walk through the corner into the block (see forgleman #104) -> hitbox update
