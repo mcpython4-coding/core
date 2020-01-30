@@ -1,10 +1,14 @@
 
+[issue 1-8 are part of github-only]
+
 issue 9:
     when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
         Item-instances
     this issue occurs only in the first run with the new block
 
 issue 10:
+    occurs since: upgrade to python 3.8, release date of it
+
     in python 3.8, a lot of exceptions of the following style are printed out when closing the window:
         Exception ignored in: <function WeakMethod.__new__.<locals>._cb at 0x0F426D18>
         Traceback (most recent call last):
@@ -16,11 +20,15 @@ issue 10:
     possible fix: implement overwriting file for pyglet/event.py to fix this issue from pyglet side
 
 issue 11:
+    occurs since: pillow upgrade on 28th of January, 2020
+
     textures are blurry on the sides after upgrading pillow
 
     possible fix: use correct scaling mode
 
 issue 12:
+    occurs since: properly since chat was changed
+
     when pressing ENTER in start menu, an message called "[CHAT] " is printed out for no reason
 
     possible fix: check chat system for some non-state related linking
@@ -73,17 +81,124 @@ issue 13:
 
     called by: UIPartButton.on_draw_2d, arguments: [], event name: render:draw:2d
 
+issue 14:
+    occurs since: unknown, found on 29th of January, 2020
+
+    game crash in BlockItemGenerator after some images were failed to generate:
+         Traceback (most recent call last):
+          File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 100, in <module>
+            main()
+          File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 89, in main
+            run()
+          File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 83, in run
+            pyglet.app.run()
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\__init__.py", line 144, in run
+            event_loop.run()
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 175, in run
+            self._run()
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 187, in _run
+            timeout = self.idle()
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 308, in idle
+            redraw_all = self.clock.call_scheduled_functions(dt)
+          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\clock.py", line 333, in call_scheduled_functions
+            item.func(now - item.last_ts, *item.args, **item.kwargs)
+          File "C:\Users\baulu\PycharmProjects\core\event\TickHandler.py", line 41, in tick
+            result = function(*args, **kwargs)
+          File "C:\Users\baulu\PycharmProjects\core\state\StateBlockItemGenerator.py", line 144, in take_image
+            self._error_counter(image, blockname)
+          File "C:\Users\baulu\PycharmProjects\core\state\StateBlockItemGenerator.py", line 160, in _error_counter
+            self.generate_item(blockname, file)
+          File "C:\Users\baulu\PycharmProjects\core\state\StateBlockItemGenerator.py", line 176, in generate_item
+            if type(block) != str: block.modify_block_item(obj)
+        AttributeError: 'NoneType' object has no attribute 'modify_block_item'
+
+issue 16:
+    bug: random ticks are never called
+    since: random ticks were disabled
+    possible fix: implement an call_in_active_tick-method to TickHandler & use it for random ticks
+
+issue 17:
+    bug: when entering special html codes into chat, they are used rather than the blank string
+    since: chat is using html label
+    possible fix: rewrite chat to exclude these characters
+
+issue 18:
+    bug: loading bar is offset
+    since: various loading bar changes
+    possible fix: update loading bar system
+
+issue 19:
+    bug: crash when entering /reload command
+      File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 100, in <module>
+        main()
+      File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 89, in main
+        run()
+      File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 83, in run
+        pyglet.app.run()
+      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\__init__.py", line 144, in run
+        event_loop.run()
+      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 175, in run
+        self._run()
+      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 188, in _run
+        platform_event_loop.step(timeout)
+      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\win32.py", line 120, in step
+        _user32.DispatchMessageW(ctypes.byref(msg))
+      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\window\win32\__init__.py", line 665, in f
+        result = event_handler(msg, wParam, lParam)
+      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\window\win32\__init__.py", line 736, in _event_key
+        self.dispatch_event(ev, symbol, modifiers)
+      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\window\__init__.py", line 1330, in dispatch_event
+        if EventDispatcher.dispatch_event(self, *args) != False:
+      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\event.py", line 423, in dispatch_event
+        if getattr(self, event_type)(*args):
+      File "C:\Users\baulu\PycharmProjects\core\rendering\window.py", line 287, in on_key_press
+        G.eventhandler.call("user:keyboard:press", symbol, modifiers)
+      File "C:\Users\baulu\PycharmProjects\core\event\EventHandler.py", line 35, in call
+        results += bus.call(eventname, *args, *kwargs)
+      File "C:\Users\baulu\PycharmProjects\core\event\EventBus.py", line 82, in call
+        traceback.print_stack()
+    Traceback (most recent call last):
+      File "C:\Users\baulu\PycharmProjects\core\event\EventBus.py", line 75, in call
+        result.append((function(*list(args)+list(self.extra_arguments[0])+list(eargs),
+      File "C:\Users\baulu\PycharmProjects\core\chat\Chat.py", line 108, in on_key_press
+        G.commandparser.parse(self.text)
+      File "C:\Users\baulu\PycharmProjects\core\chat\command\CommandParser.py", line 59, in parse
+        command.parse(values, trace, info)
+      File "C:\Users\baulu\PycharmProjects\core\chat\command\CommandReload.py", line 31, in parse
+        G.craftinghandler.load()
+    TypeError: load() missing 1 required positional argument: 'modname'
+  possible fix: rework /reload command to use this function correct
+
+issue 20:
+    bug: reloading on every game load
+    since: mods.json file was moved to build/-folder
+    possible fix strategy: search where it adds the mods.json content
+
+issue 21:
+    bug: loading hangs in BlockItemFactory when leaving window during working
+    possible fix strategy: use debug mode of running to reproduce
+
+issue 22:
+    bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
+         is removed, it all updates following bug 23
+
+issue 23:
+    bug: when sand is falling, it falls more than 1 block at a time, see issue 22 for reproducing
+
+issue 24:
+    bug: hit-box of blocks are at the corners not working [see fogleman #104]
+    possible fix: rework whole hit-box system
+
+issue 25:
+    bug: crafting does not work for e.g. oak log
+    possible strategy for solving: search where recipe checks fails
+
 
 todo: fix bug: crafting somehow ends sometimes in the double amount than usually
     (for example, crafting of crafting table)
-todo: fix bug: when entering code for html-special-chars, the special char is displayed in chat
 todo: fix bug: chat & inventory can be opened at the same time
 todo: fix bug: mouse middle click gives always the item, not only if not in inventory
-todo: fix bug: /reload crashes the game
-todo: fix bug: sand is not falling when lowest block of an tower is broken
 todo: fix bug: when jumping in an block from downwards, you get damage
 todo: fix bug: when jumping into an non-full block, getting damage
 todo: fix bug: when NOT rebuilding and entering the world, in first esc-state, bgcolor is white (?)
-todo: fix bug: falling blocks are NOT updating visable state
 todo: fix bug: when looking at the corner of an block, the focus is on the block behind rather on the block viewed at
-todo: fix bug: in some rare cases, you can walk through the corner into the block (see forgleman #104) -> hitbox update

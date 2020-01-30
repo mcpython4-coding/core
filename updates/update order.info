@@ -1,0 +1,20 @@
+
+
+loot table update
+
+rendering update [1]
+-> generation update according to the latest changes of it
+-> modding update related
+
+rendering update [2]
+-> generation update [1]
+-> modding update related
+-> water update [1]
+
+rendering update [3]
+-> entity update
+  -> modding update related
+
+generation update
+-> nether & end update
+

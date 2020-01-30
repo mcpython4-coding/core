@@ -1,0 +1,15 @@
+This is an complete overhaul of the branch currently used:
+- Part 1: block rendering reimplementation:
+    - add an new attribute / class for storing face info of block
+    - implement system to rotate vertices & face names
+    - implement system to show/hide separated faces
+    - rework TextureAtlas system to NOT add rotated variants, rather rotate with above system
+    - redo custom block rendering, maybe add some form of registry for it
+    - redo alpha drawing
+
+    - implement system to colorize blocks based on an attribute to the rendering system
+        [maybe an custom block renderer?]
+    - implement this to grass block
+
+
+- Part 2:

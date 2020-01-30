@@ -126,8 +126,8 @@ class ModLoader:
         self.active_loading_stage = 0
         self.lasttime_mods = {}
         self.found_mod_instances = []
-        if os.path.exists(G.local+"/mods.json"):
-            with open(G.local+"/mods.json") as f:
+        if os.path.exists(G.local+"/build/mods.json"):
+            with open(G.local+"/build/mods.json") as f:
                 self.lasttime_mods = json.load(f)
 
     def look_out(self):
@@ -186,7 +186,7 @@ class ModLoader:
                 ResourceLocator.RESOURCE_LOCATIONS.insert(0, ResourceLocator.ResourceDirectory(file))
                 self.active_directory = file
                 if os.path.exists(file+"/mod.json"):
-                    with open(file+"/mod.json") as sf: self.load_mods_json(sf.read(), file+"/mods.json")
+                    with open(file+"/mod.json") as sf: self.load_mods_json(sf.read(), file+"/mod.json")
                 elif os.path.exists(file+"/mods.toml"):
                     with open(file+"/mods.toml") as sf: self.load_mods_toml(sf.read(), file+"/mods.toml")
                 else:
@@ -209,11 +209,12 @@ class ModLoader:
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
                 G.prebuilding = True
         for modname in self.mods.keys():
-            if modname not in self.lasttime_mods:
+            if modname not in self.lasttime_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
                 G.prebuilding = True
-        with open(G.local + "/mods.json", mode="w") as f:
-            json.dump({modinst.name: modinst.version for modinst in self.mods.values()}, f)
+        with open(G.local + "/build/mods.json", mode="w") as f:
+            m = {modinst.name: modinst.version for modinst in self.mods.values()}
+            json.dump(m, f)
 
     def load_mods_json(self, data: str, file: str):
         self.load_from_decoded_json(json.loads(data), file)

@@ -690,8 +690,20 @@ started these clone on 12th of July, 2019
 [uuk]: game testing, more bugs found :-(
 [uuk]: upgraded libraries to latest versions
 [uuk]: improved exception handling in EventBus
+[uuk]: added updates-folder with an file for every planed update
+[uuk]: moved licences from sub-projects to licences-folder
+[uuk]: moved mods.json-file into build-folder
+[uuk]: added new file: fixed issues.list filled with all fixed issues since this addition
+[uuk]: fixed bug 15
+
+hot-fixes until merge onto master: 11, 13, 20
 
 
 tasks:
+- write an changelog.txt file and move everything from here to it
 - add exception handles to all calling functions of EventBus
+- do code cleanup everywhere, write docs
+- write logging system [with on_exception-method which is called when an exception occurs -> writes relative profile to
+        logging file], rework every print()-statement
+- clean up loading stage info messages, skip mods in progress system if no event handler was registered
 

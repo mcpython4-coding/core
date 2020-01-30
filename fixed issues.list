@@ -1,0 +1,3 @@
+
+
+issue 15: mod loading was loading mods.json rather than mod.json in some special cases
