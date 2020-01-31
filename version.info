@@ -693,10 +693,12 @@ started these clone on 12th of July, 2019
 [uuk]: added updates-folder with an file for every planed update
 [uuk]: moved licences from sub-projects to licences-folder
 [uuk]: moved mods.json-file into build-folder
-[uuk]: added new file: fixed issues.list filled with all fixed issues since this addition
+[uuk]: added new file: issues.list filled with all fixed issues since this addition
 [uuk]: fixed bug 15
+[uuk]: fixed bug 11, 27, 20
+[uuk]: reworked some recipe loading parts for fixing bug 20
 
-hot-fixes until merge onto master: 11, 13, 20
+hot-fixes until merge onto master: 13
 
 
 tasks:
@@ -706,4 +708,6 @@ tasks:
 - write logging system [with on_exception-method which is called when an exception occurs -> writes relative profile to
         logging file], rework every print()-statement
 - clean up loading stage info messages, skip mods in progress system if no event handler was registered
+- search for typos
+- create an list of all events ever called with an description what they do
 

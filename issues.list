@@ -9,22 +9,15 @@ issue 9:
 issue 10:
     occurs since: upgrade to python 3.8, release date of it
 
-    in python 3.8, a lot of exceptions of the following style are printed out when closing the window:
+    in python 3.8.1, a lot of exceptions of the following style are printed out when closing the window:
         Exception ignored in: <function WeakMethod.__new__.<locals>._cb at 0x0F426D18>
         Traceback (most recent call last):
-          File "C:\Python\core\3.8.1\lib\weakref.py", line 58, in _cb
-          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\event.py", line 364, in _remove_handler
-          File "C:\Python\core\3.8.1\lib\weakref.py", line 74, in __eq__
+          File "<path to your python>\lib\weakref.py", line 58, in _cb
+          File "<path to your python>\lib\site-packages\pyglet\event.py", line 364, in _remove_handler
+          File "<path to your python>\lib\weakref.py", line 74, in __eq__
         TypeError: isinstance() arg 2 must be a type or tuple of types
 
     possible fix: implement overwriting file for pyglet/event.py to fix this issue from pyglet side
-
-issue 11:
-    occurs since: pillow upgrade on 28th of January, 2020
-
-    textures are blurry on the sides after upgrading pillow
-
-    possible fix: use correct scaling mode
 
 issue 12:
     occurs since: properly since chat was changed
@@ -127,53 +120,6 @@ issue 18:
     since: various loading bar changes
     possible fix: update loading bar system
 
-issue 19:
-    bug: crash when entering /reload command
-      File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 100, in <module>
-        main()
-      File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 89, in main
-        run()
-      File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 83, in run
-        pyglet.app.run()
-      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\__init__.py", line 144, in run
-        event_loop.run()
-      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 175, in run
-        self._run()
-      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 188, in _run
-        platform_event_loop.step(timeout)
-      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\win32.py", line 120, in step
-        _user32.DispatchMessageW(ctypes.byref(msg))
-      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\window\win32\__init__.py", line 665, in f
-        result = event_handler(msg, wParam, lParam)
-      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\window\win32\__init__.py", line 736, in _event_key
-        self.dispatch_event(ev, symbol, modifiers)
-      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\window\__init__.py", line 1330, in dispatch_event
-        if EventDispatcher.dispatch_event(self, *args) != False:
-      File "C:\Python\core\3.8.1\lib\site-packages\pyglet\event.py", line 423, in dispatch_event
-        if getattr(self, event_type)(*args):
-      File "C:\Users\baulu\PycharmProjects\core\rendering\window.py", line 287, in on_key_press
-        G.eventhandler.call("user:keyboard:press", symbol, modifiers)
-      File "C:\Users\baulu\PycharmProjects\core\event\EventHandler.py", line 35, in call
-        results += bus.call(eventname, *args, *kwargs)
-      File "C:\Users\baulu\PycharmProjects\core\event\EventBus.py", line 82, in call
-        traceback.print_stack()
-    Traceback (most recent call last):
-      File "C:\Users\baulu\PycharmProjects\core\event\EventBus.py", line 75, in call
-        result.append((function(*list(args)+list(self.extra_arguments[0])+list(eargs),
-      File "C:\Users\baulu\PycharmProjects\core\chat\Chat.py", line 108, in on_key_press
-        G.commandparser.parse(self.text)
-      File "C:\Users\baulu\PycharmProjects\core\chat\command\CommandParser.py", line 59, in parse
-        command.parse(values, trace, info)
-      File "C:\Users\baulu\PycharmProjects\core\chat\command\CommandReload.py", line 31, in parse
-        G.craftinghandler.load()
-    TypeError: load() missing 1 required positional argument: 'modname'
-  possible fix: rework /reload command to use this function correct
-
-issue 20:
-    bug: reloading on every game load
-    since: mods.json file was moved to build/-folder
-    possible fix strategy: search where it adds the mods.json content
-
 issue 21:
     bug: loading hangs in BlockItemFactory when leaving window during working
     possible fix strategy: use debug mode of running to reproduce
@@ -192,6 +138,16 @@ issue 24:
 issue 25:
     bug: crafting does not work for e.g. oak log
     possible strategy for solving: search where recipe checks fails
+
+issue 26:
+    bug: when for some reason, exceptions in removing directories fails, it does NOT stop
+    since: removing folders in try-except block
+    fix: add some counter, crash if an value is reached
+
+issue 28:
+    bug: /reload does not update visible state of blocks
+    since: unknown, found after fixing issue 19
+    fix: debug what is wrong
 
 
 todo: fix bug: crafting somehow ends sometimes in the double amount than usually

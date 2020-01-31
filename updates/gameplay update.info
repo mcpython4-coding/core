@@ -1,0 +1,4 @@
+
+add shift-click & drag-click to inventories
+add middle-click to slots
+add special slots: infinite, custom stack size, cleanup, copy [store an copy of the item, do not consume it]

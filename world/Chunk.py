@@ -249,9 +249,12 @@ class Chunk:
         elif hide:
             self.show_block(position)
 
-    def update_visable(self, hide=True):
+    def update_visable(self, hide=True, immediate=False):
         for position in self.world.keys():
-            self.chunkgenerationtasks.append([self.update_visable_block, [position], {"hide": hide}])
+            if immediate:
+                self.chunkgenerationtasks.append([self.update_visable_block, [position], {"hide": hide}])
+            else:
+                self.update_visable_block(position, hide=hide)
 
     def hide_all(self, immediate=True):
         for position in self.shown.copy():

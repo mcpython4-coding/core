@@ -17,8 +17,6 @@ try:
     import os
     import shutil
 
-    # todo: add security check after 10 tries -> crash
-
     while os.path.exists(globals.local + "/tmp"):
         try:
             shutil.rmtree(globals.local + "/tmp")
@@ -38,7 +36,8 @@ try:
     import globals as G
 
     # check if build folder exists, if not, we need to create its content
-    if not os.path.exists(G.local+"/build"): G.prebuilding = True
+    if not os.path.exists(G.local+"/build"):
+        G.prebuilding = True
 
     import ResourceLocator
     ResourceLocator.load_resource_packs()
@@ -80,14 +79,18 @@ try:
         # todo: move size to config.py
         rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
         G.eventhandler.call("game:gameloop_startup")
-        pyglet.app.run()
+        try:
+            pyglet.app.run()
+        except:
+            # todo: implement crash logging
+            raise
 
 
     def main():
         G.eventhandler.call("game:startup")
         setup()
         run()
-except:
+except:  # when we crash on loading, make sure that all resources are closed
     import ResourceLocator
     ResourceLocator.close_all_resources()
     raise

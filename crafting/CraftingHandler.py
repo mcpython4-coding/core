@@ -23,7 +23,7 @@ class CraftingHandler:
         self.crafting_recipes_shapeless = {}
         # all shaped recipes sorted after item count and than size
         self.crafting_recipes_shaped = {}
-        self.loaded_mod_dirs = []
+        self.loaded_mod_dirs = set()
 
     def __call__(self, obj):
         if issubclass(obj, crafting.IRecipeType.IRecipe):
@@ -32,7 +32,8 @@ class CraftingHandler:
             raise ValueError()
         return obj
 
-    def add_recipe(self, recipe: crafting.IRecipeType.IRecipe):
+    @staticmethod
+    def add_recipe(recipe: crafting.IRecipeType.IRecipe):
         recipe.register()
 
     def add_recipe_from_data(self, data: dict):
@@ -52,14 +53,36 @@ class CraftingHandler:
         if result is None and "--debugrecipes" in sys.argv:
             print("error in decoding recipe from file {}: type '{}' not found".format(file, data["type"]))
 
-    def load(self, modname):
-        if modname in self.loaded_mod_dirs:
+    def load(self, modname, check_mod_dirs=True, load_direct=False):
+        if modname in self.loaded_mod_dirs and check_mod_dirs:
             print("ERROR: mod '{}' has tried to load crafting recipes twice or more".format(modname))
             return  # make sure to load only ones!
-        self.loaded_mod_dirs.append(modname)
+        self.loaded_mod_dirs.add(modname)
         for itemname in ResourceLocator.get_all_entries("data/{}/recipes".format(modname)):
-            G.modloader.mods[modname].eventbus.subscribe("stage:recipe:bake", self.add_recipe_from_file, itemname,
-                                                         info="loading crafting recipe from {}".format(itemname))
+            if load_direct:
+                G.modloader.mods[modname].eventbus.subscribe("stage:recipe:bake", self.add_recipe_from_file, itemname,
+                                                             info="loading crafting recipe from {}".format(itemname))
+            else:
+                self.add_recipe_from_file(itemname)
+
+    def reload_crafting_recipes(self):
+        G.eventhandler.call("craftinghandler:reload:prepare")
+
+        # all shapeless recipes sorted after item count
+        self.crafting_recipes_shapeless = {}
+        # all shaped recipes sorted after item count and than size
+        self.crafting_recipes_shaped = {}
+
+        G.eventhandler.call("craftinghandler:reload:start")
+
+        for i, modname in enumerate(list(self.loaded_mod_dirs)):
+            print("\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(modname, i+1,
+                                                                                        len(self.loaded_mod_dirs)),
+                  end="")
+            self.load(modname, check_mod_dirs=False, load_direct=False)
+        print()
+
+        G.eventhandler.call("craftinghandler:reload:finish")
 
 
 G.craftinghandler = CraftingHandler()

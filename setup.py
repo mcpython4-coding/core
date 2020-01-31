@@ -81,6 +81,7 @@ def execute():
             if os.path.exists(directory): shutil.rmtree(directory)
             os.makedirs(directory)
         iprepareabletask.dump_data(directory)
+    G.eventhandler.call("prebuilding:finished")
 
 
 # todo: split up into different sub-calls

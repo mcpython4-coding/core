@@ -78,7 +78,7 @@ class TextureResize(ITextureChange):
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, size=None) -> PIL.Image.Image:
-        return image.resize(size)
+        return image.resize(size, PIL.Image.NEAREST)  # todo: implement option to choose mode
 
 
 @G.registry

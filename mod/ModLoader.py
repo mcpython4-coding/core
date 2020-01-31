@@ -129,8 +129,11 @@ class ModLoader:
         if os.path.exists(G.local+"/build/mods.json"):
             with open(G.local+"/build/mods.json") as f:
                 self.lasttime_mods = json.load(f)
+        elif not G.prebuilding:
+            print("[WARNING] can't locate mods.json in build-folder. This may be an error")
 
     def look_out(self):
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("prebuilding:finished", self.write_mod_info)
         modlocations = []
         locs = [G.local+"/mods"]
         i = 0
@@ -212,6 +215,8 @@ class ModLoader:
             if modname not in self.lasttime_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
                 G.prebuilding = True
+
+    def write_mod_info(self):
         with open(G.local + "/build/mods.json", mode="w") as f:
             m = {modinst.name: modinst.version for modinst in self.mods.values()}
             json.dump(m, f)

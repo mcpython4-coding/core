@@ -22,15 +22,16 @@ class CommandReload(chat.command.Command.Command):
 
     @staticmethod
     def parse(values: list, modes: list, info):
+        G.eventhandler.call("command:reload:start")
         dim = G.world.get_active_dimension()
         for i, chunk in enumerate(list(dim.chunks.values())):  # iterate over all active chunks
             G.window.set_caption("preparing chunk {}/{} at {}".format(i+1, len(dim.chunks), chunk.position))
-            chunk.update_visable()
+            chunk.update_visable(immediate=True)
         G.window.set_caption("finished!")
-        G.craftinghandler.recipes = {}
-        G.craftinghandler.load()
+        G.craftinghandler.reload_crafting_recipes()
         G.inventoryhandler.reload_config()
         event.TickHandler.handler.bind(G.window.reset_caption, 20)
+        G.eventhandler.call("command:reload:end")
 
     @staticmethod
     def get_help() -> list:

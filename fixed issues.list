@@ -1,3 +1,7 @@
-
+a list of all fixed issues, in order of fixing
 
 issue 15: mod loading was loading mods.json rather than mod.json in some special cases
+issue 11: block textures are blurry; fixed on: 31.01.2020 by uuk; occur since library update
+issue 27: TextureFactory generates blurry images; fixed on: 31.01.2020 by uuk; occur since library update
+issue 20: mod list was not proper saved; fixed on: 31.01.2020 by uuk; occur since mod list move
+issue 19: /reload command was not working; fixed on: 31.01.2020 by uuk; occur since: mod loading introduction
