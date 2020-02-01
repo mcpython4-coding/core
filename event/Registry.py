@@ -1,11 +1,12 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
+import logger
 
 
 class RegistryInjectionHolder:
@@ -63,6 +64,7 @@ class Registry:
         self.classbased = classbased
         G.registry.registries.append(self)
         self.values = {}
+        self.CANCEL_REGISTRATION = False
 
     def is_valid(self, obj):
         if self.locked: return False
@@ -71,7 +73,7 @@ class Registry:
                 return (self.check_function and self.check_function(obj)) or any(
                     [issubclass(obj, x) for x in self.inject_base_classes])
             except:
-                print("error during adding object", obj, "to registries")
+                logger.println("error during adding object {} to registries".format(obj))
                 raise
         else:
             t = type(obj)
@@ -80,9 +82,11 @@ class Registry:
 
     def register(self, obj):
         if self.locked: raise ValueError("can't register an object to an locked registry")
+        self.CANCEL_REGISTRATION = False
+        G.eventhandler.call("registry:{}:on_object_register".format(self.name), self, obj)
+        if self.CANCEL_REGISTRATION: return
         self.registered_objects.append(obj)
         if self.injection_function: self.injection_function(self, obj)
-        G.eventhandler.call("registry:{}:on_object_register".format(self.name))
 
     def lock(self): self.locked = True
 

@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import PIL.Image
 import ResourceLocator
 import globals as G
@@ -21,7 +21,7 @@ class TextureAtlasGenerator:
         self.atlases = [TextureAtlas()]
 
     def add_image(self, image: PIL.Image.Image) -> tuple:
-        image = image.resize((64, 64))
+        image = image.resize((64, 64), PIL.Image.NEAREST)
         for atlas in self.atlases:
             if image in atlas.images:
                 return atlas.add_image(image), atlas
@@ -39,7 +39,7 @@ class TextureAtlasGenerator:
     def add_images(self, images: list, one_atlased=True) -> list:
         if not one_atlased:
             return [self.add_image(x) for x in images]
-        images = [image.resize((64, 64)) for image in images]
+        images = [image.resize((64, 64), PIL.Image.NEAREST) for image in images]
         rimages = []
         for image in images:
             r = [image]

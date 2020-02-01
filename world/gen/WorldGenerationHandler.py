@@ -1,16 +1,17 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import world.gen.layer.Layer
 import world.gen.mode
 import world.Dimension
 import world.Chunk
 import mod.ModMcpython
+import logger
 
 
 class WorldGenerationHandler:
@@ -84,7 +85,8 @@ class WorldGenerationHandler:
                 self.runtimegenerationcache[0].remove(chunk)
                 del self.runtimegenerationcache[1][chunk.position]
                 del self.runtimegenerationcache[2][chunk.position]
-                print("finished generation of chunk", chunk.position)
+                logger.println("finished generation of chunk", chunk.position)
+                G.eventhandler.call("worldgen:chunk:finished", chunk)
                 return
             position = chunk.hide_tasks.pop(0)
             chunk.hide_block(position)
@@ -110,7 +112,7 @@ class WorldGenerationHandler:
         if check_chunk and chunk.generated:
             return
         chunk.generated = True
-        print("generating", chunk.position)
+        logger.println("generating", chunk.position)
         dimension = chunk.dimension
         configname = dimension.worldgenerationconfig["configname"]
         config = self.configs[configname]
@@ -118,14 +120,15 @@ class WorldGenerationHandler:
             config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
         m = len(config["layers"])
         for i, layername in enumerate(config["layers"]):
-            print("\rgenerating layer {} ({}/{})".format(layername, i+1, m), end="")
+            logger.println("\rgenerating layer {} ({}/{})".format(layername, i+1, m), end="")
             layer = self.layers[layername]
             layer.add_generate_functions_to_chunk(dimension.worldgenerationconfigobjects[layername], chunk)
             G.world.process_entire_queue()
-        print("\r", end="")
+        logger.println("\r", end="")
+        G.eventhandler.call("worldgen:chunk:finished", chunk)
 
     def register_layer(self, layer: world.gen.layer.Layer.Layer):
-        # print(layer, layer.get_name())
+        # logger.println(layer, layer.get_name())
         self.layers[layer.get_name()] = layer
 
     def register_feature(self, decorator):

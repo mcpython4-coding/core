@@ -1,12 +1,13 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import chat.command.Command
+import logger
 
 
 class ParsingCommandInfo:
@@ -33,6 +34,8 @@ class CommandParser:
 
     def __init__(self):
         self.commandparsing = {}  # start -> (Command, ParseBridge)
+        self.CANCEL_REGISTER = False
+        self.CANCEL_COMMAND_EXECUTE = False
 
     def add_command(self, command: chat.command.Command):
         """
@@ -40,6 +43,9 @@ class CommandParser:
         :param command: the command to add
         """
         parsebridge = chat.command.Command.ParseBridge(command)
+        self.CANCEL_REGISTER = False
+        G.eventhandler.call("command:parse_bridge:setup", command, parsebridge)
+        if self.CANCEL_REGISTER: return
         for entry in ([parsebridge.main_entry] if type(parsebridge.main_entry) == str else parsebridge.main_entry):
             self.commandparsing[entry] = (command, parsebridge)
 
@@ -49,16 +55,19 @@ class CommandParser:
         :param command: the command to parse
         :param info: the info to use. can be None if one should be generated
         """
-        splitted = command.split(" ") if type(command) == str else list(command)
-        pre = splitted[0]
+        split = command.split(" ") if type(command) == str else list(command)
+        pre = split[0]
         if not info: info = ParsingCommandInfo()
+        self.CANCEL_COMMAND_EXECUTE = False
+        G.eventhandler.call("command:execute_command", info, command, split)
+        if self.CANCEL_COMMAND_EXECUTE: return
         if pre[1:] in self.commandparsing:  # is it registered?
             command, parsebridge = self.commandparsing[pre[1:]]
-            values, trace = self._convert_to_values(splitted, parsebridge, info)
+            values, trace = self._convert_to_values(split, parsebridge, info)
             if values is None: return
             command.parse(values, trace, info)
         else:
-            print("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
+            logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
 
     def _convert_to_values(self, command, parsebridge, info, index=1) -> tuple:
         """
@@ -71,7 +80,7 @@ class CommandParser:
         if len(command) == 1 and not all(
                 [subcommand.mode == chat.command.Command.ParseMode.OPTIONAL for subcommand in parsebridge.sub_commands]
         ):
-            print("unable to parse command. please use /help command to get exact command syntax")
+            logger.println("unable to parse command. please use /help command to get exact command syntax")
             return None, None
         active_entry = parsebridge
         values = []
@@ -91,18 +100,18 @@ class CommandParser:
             if not flag1:
                 if all([subcommand.mode == chat.command.Command.ParseMode.OPTIONAL for subcommand in
                         active_entry.sub_commands]):
-                    print([x.mode for x in active_entry.sub_commands])
+                    logger.println([x.mode for x in active_entry.sub_commands])
                     return values, array
                 else:
-                    print("[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}".
+                    logger.println("[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}".
                           format(len(array)+1))
-                    print("missing one of the following entrys: {}".format([subcommand.type for subcommand in
+                    logger.println("missing one of the following entrys: {}".format([subcommand.type for subcommand in
                                                                            active_entry.sub_commands]))
-                    print("gotten values: {}".format(values))
+                    logger.println("gotten values: {}".format(values))
                     return None, array
         if all([x.mode == chat.command.Command.ParseMode.OPTIONAL for x in active_entry.sub_commands]):
             return values, array
-        print("command is not ended correct. please look at the command syntax.")
+        logger.println("command is not ended correct. please look at the command syntax.")
         return None, array
 
 

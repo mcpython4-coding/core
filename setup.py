@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 """
 what does this system do?
     as mentioned in #1 (may be closed when you read this), game loading takes / have taken for some reasons on some
@@ -29,6 +29,7 @@ import shutil
 import texture.factory
 import mod.ModMcpython
 import sys
+import json
 
 
 class IPrepareAbleTask:
@@ -52,11 +53,14 @@ def add():
 
         @staticmethod
         def dump_data(directory: str):
-            while os.path.exists(G.local+"/build"):
+            for _ in range(10):
                 try:
                     shutil.rmtree(G.local+"/build")
+                    break
                 except PermissionError: pass
                 except OSError: pass
+            else:
+                raise IOError("can't remove 'build'-folder. please make sure that no file is opened")
             os.makedirs(G.local+"/build")
 
         USES_DIRECTORY = False
@@ -75,16 +79,26 @@ def add():
 
 
 def execute():
+    with open(G.local+"/build/info.json", mode="w") as f:
+        json.dump({"finished": False}, f)
     for iprepareabletask in taskregistry.registered_objects:
         directory = G.local+"/build/"+iprepareabletask.get_name()
         if iprepareabletask.USES_DIRECTORY:
             if os.path.exists(directory): shutil.rmtree(directory)
             os.makedirs(directory)
         iprepareabletask.dump_data(directory)
+    G.eventhandler.call("prebuilding:finished")
 
 
 # todo: split up into different sub-calls
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", add, info="adding prebuild tasks")
+
+if not os.path.exists(G.local+"/build/info.json"): G.prebuilding = True
+else:
+    with open(G.local+"/build/info.json") as f:
+        data = json.load(f)
+    if not data["finished"]:
+        G.prebuilding = True
 
 if G.prebuilding:
     mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:do", execute, info="doing prebuild tasks")

@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import event.EventHandler
 import globals as G
 import os
@@ -18,13 +18,14 @@ import state.StateModLoading
 import util.math
 import mod.Mod
 import enum
+import toml
+import config
+import logger
+from util.enums import LoadingStageStatus
 
 
-class LoadingStageStatus(enum.Enum):
-    WORKING = 0
-    MOD_CHANGED = 1
-    EVENT_CHANGED = 2
-    FINISHED = 3
+if not os.path.exists(G.local+"/mods"):
+    os.makedirs(G.local+"/mods")
 
 
 class LoadingStage:
@@ -43,7 +44,7 @@ class LoadingStage:
             if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
             self.active_event_name = self.eventnames.pop(0)
             modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
-            self.max_progress = len(modinst.eventbus.eventsubscribtions[self.active_event_name])
+            self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
             return LoadingStageStatus.EVENT_CHANGED
         if self.active_event_name is None:
             if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
@@ -59,14 +60,14 @@ class LoadingStage:
                 if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
                 self.active_event_name = self.eventnames.pop(0)
                 modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
-                if self.active_event_name in modinst.eventbus.eventsubscribtions:
-                    self.max_progress = len(modinst.eventbus.eventsubscribtions[self.active_event_name])
+                if self.active_event_name in modinst.eventbus.event_subscriptions:
+                    self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
                 else:
                     self.max_progress = 0
                 return LoadingStageStatus.EVENT_CHANGED
             modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
-            if self.active_event_name in modinst.eventbus.eventsubscribtions:
-                self.max_progress = len(modinst.eventbus.eventsubscribtions[self.active_event_name])
+            if self.active_event_name in modinst.eventbus.event_subscriptions:
+                self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
             else:
                 self.max_progress = 0
             return LoadingStageStatus.MOD_CHANGED
@@ -82,7 +83,8 @@ class LoadingStages:
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
     TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
-    BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:load", "stage:block:overwrite")
+    BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:load", "stage:block:overwrite",
+                          "stage:block:block_config")
     ITEMS = LoadingStage("item loading phase", "stage:item:base", "stage:item:load", "stage:item:overwrite")
     LANGUAGE = LoadingStage("language file loading", "stage:language")
     RECIPE = LoadingStage("recipe loading phase", "stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
@@ -97,7 +99,8 @@ class LoadingStages:
                               "stage:model:blockstate_create")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_create")
 
-    BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake", "stage:textureatlas:bake")
+    BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",
+                        "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake")
 
     POST = LoadingStage("finishing up", "stage:post")
 
@@ -119,11 +122,14 @@ class ModLoader:
         self.active_loading_stage = 0
         self.lasttime_mods = {}
         self.found_mod_instances = []
-        if os.path.exists(G.local+"/mods.json"):
-            with open(G.local+"/mods.json") as f:
+        if os.path.exists(G.local+"/build/mods.json"):
+            with open(G.local+"/build/mods.json") as f:
                 self.lasttime_mods = json.load(f)
+        elif not G.prebuilding:
+            logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
 
     def look_out(self):
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("prebuilding:finished", self.write_mod_info)
         modlocations = []
         locs = [G.local+"/mods"]
         i = 0
@@ -148,12 +154,12 @@ class ModLoader:
                 if file in modlocations:
                     modlocations.remove(file)
                 else:
-                    print("[WARNING] it was attempted to remove mod {} which was not found in file system".format(file))
+                    logger.println("[WARNING] it was attempted to remove mod {} which was not found in file system".format(file))
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
         for file in modlocations:
-            self.found_mod_instances = []
+            self.found_mod_instances.clear()
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
@@ -161,15 +167,12 @@ class ModLoader:
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
                         try:
-                            with f.open("mod.json", mode="r") as sf:
-                                data = json.load(sf)
-                            if "main files" in data:
-                                for location in data["main files"]:
-                                    importlib.import_module(location)
-                            else:
-                                print("[ERROR] mod.json of '{}' does NOT contain 'main files'-attribute".format(file))
+                            with f.open("mod.json", mode="r") as sf: self.load_mods_json(sf.read(), file)
                         except KeyError:
-                            print("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
+                            try:
+                                with f.open("mod.toml", mode="r") as sf: self.load_mods_toml(sf.read(), file)
+                            except KeyError:
+                                logger.println("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
                     try:
@@ -182,16 +185,11 @@ class ModLoader:
                 ResourceLocator.RESOURCE_LOCATIONS.insert(0, ResourceLocator.ResourceDirectory(file))
                 self.active_directory = file
                 if os.path.exists(file+"/mod.json"):
-                    with open(file+"/mod.json") as sf:
-                        data = json.load(sf)
-                    if "main files" in data:
-                        files = data["main files"]
-                        for location in (files if type(files) == list else [files]):
-                            importlib.import_module(location)
-                    else:
-                        print("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
+                    with open(file+"/mod.json") as sf: self.load_mods_json(sf.read(), file+"/mod.json")
+                elif os.path.exists(file+"/mods.toml"):
+                    with open(file+"/mods.toml") as sf: self.load_mods_toml(sf.read(), file+"/mods.toml")
                 else:
-                    print("[WARNING] can't locate mod.json file for mod at '{}'".format(file))
+                    logger.println("[WARNING] can't locate mod.json file for mod at '{}'".format(file))
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
@@ -200,23 +198,69 @@ class ModLoader:
                 if name in self.mods:
                     del self.mods[name]
                 else:
-                    print("[WARNING] it was attempted to remove mod '{}' which was not registered".format(name))
+                    logger.println("[WARNING] it was attempted to remove mod '{}' which was not registered".format(name))
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
-        print("found mods: {}".format(len(self.found_mods)))
+        logger.println("found mods: {}".format(len(self.found_mods)))
         for modname in self.lasttime_mods.keys():
             if modname not in self.mods or self.mods[modname].version != self.lasttime_mods[modname]:
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
                 G.prebuilding = True
         for modname in self.mods.keys():
-            if modname not in self.lasttime_mods:
+            if modname not in self.lasttime_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
                 G.prebuilding = True
-        with open(G.local + "/mods.json", mode="w") as f:
-            json.dump({modinst.name: modinst.version for modinst in self.mods.values()}, f)
+
+    def write_mod_info(self):
+        with open(G.local + "/build/mods.json", mode="w") as f:
+            m = {modinst.name: modinst.version for modinst in self.mods.values()}
+            json.dump(m, f)
+
+    def load_mods_json(self, data: str, file: str):
+        self.load_from_decoded_json(json.loads(data), file)
+
+    @staticmethod
+    def load_from_decoded_json(data: dict, file: str):
+        if "main files" in data:
+            files = data["main files"]
+            for location in (files if type(files) == list else [files]):
+                importlib.import_module(location)
+        else:
+            logger.println("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
+
+    def load_mods_toml(self, data: str, file):
+        data = toml.loads(data)
+        if 'modLoader' in data:
+            if data['modLoader'] == "javafml":
+                logger.println("[SOURCE][FATAL] found java mod. As an mod-author, please upgrade to python as javafml")
+                sys.exit(-1)
+        if 'loaderVersion' in data:
+            if data['loaderVersion'].startswith("["):
+                logger.println("[SOURCE][FATAL] found forge-version indicator")
+                sys.exit(-1)
+            version = data["loaderVersion"]
+            if version.endswith("["):
+                mc_version = config.VERSION_ORDER[config.VERSION_ORDER.index(version[:-1]):]
+            elif version.count("[") == version.count("]") == 0:
+                mc_version = version.split("|")
+            else:
+                logger.println("[SOURCE][FATAL] can't decode version id '{}'".format(version))
+                sys.exit(-1)
+        else:
+            mc_version = None
+        self.load_from_decoded_json({"main files": [e["importable"] for e in data['main_files']]}, file)
+        for modinstance in self.found_mod_instances:
+            modinstance.add_dependency(mod.Mod.ModDependency("minecraft", mc_version))
+        for modname in data['dependencies']:
+            for dependency in data['dependencies'][modname]:
+                dependname = dependency["modId"]
+                if dependname != "forge":
+                    self.mods[modname].add_dependency(dependname)
+                    # todo: add version loader
 
     def add_to_add(self, mod):
+        G.eventhandler.call("modloader:mod_found", mod)
         self.mods[mod.name] = mod
         self.found_mods.append(mod)
         mod.path = self.active_directory
@@ -228,7 +272,7 @@ class ModLoader:
         for mod in self.found_mods:
             if mod.name in modinfo:
                 errors.append(
-                    "-Mod '{}' has more than one version in the folder. Please load only every mod ONES".format(
+                    " -Mod '{}' has more than one version in the folder. Please load only every mod ONES".format(
                         mod.name))
                 errors.append(" found in: {}".format(mod.path))
             else:
@@ -237,10 +281,10 @@ class ModLoader:
             depends = mod.dependinfo[0][:]
             for depend in depends:
                 if not depend.arrival():
-                    errors.append("-Mod '{}' needs mod '{}' which is not provided".format(mod.name, depend))
+                    errors.append("- Mod '{}' needs mod '{}' which is not provided".format(mod.name, depend))
             for depend in mod.dependinfo[2]:
                 if depend.arrival():
-                    errors.append("-Mod '{}' is incompatible with '{}'".format(mod.name, depend))
+                    errors.append("- Mod '{}' is incompatible with '{}'".format(mod.name, depend))
         for mod in self.found_mods:
             for depend in mod.dependinfo[4]:
                 if depend.name in modinfo and depend.name not in modinfo[mod.name]:
@@ -249,13 +293,13 @@ class ModLoader:
                 if depend.name in modinfo and mod.name not in modinfo[depend.name]:
                     modinfo[depend.name].append(mod.name)
         if len(errors) > 0:
-            print("errors with mods:")
-            print(" ", end="")
-            print(*errors, sep="\n ")
+            logger.println("errors with mods:")
+            logger.println(" ", end="")
+            logger.println(*errors, sep="\n ")
             sys.exit(-1)
         self.modorder = list(util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
-        print("mod loading order: ")
-        print(" -", "\n - ".join(["{} ({})".format(name, self.mods[name].version) for name in self.modorder]))
+        logger.println("mod loading order: ")
+        logger.println(" -", "\n - ".join(["{} ({})".format(name, self.mods[name].version) for name in self.modorder]))
 
     def process(self):
         start = time.time()
@@ -284,8 +328,8 @@ class ModLoader:
                 astate.parts[0].progress += 1
                 astate.parts[2].progress = 0
                 new_stage = LOADING_ORDER[self.active_loading_stage]
-                if new_stage.eventnames[0] in self.mods[self.modorder[0]].eventbus.eventsubscribtions:
-                    astate.parts[2].progress_max = len(self.mods[self.modorder[0]].eventbus.eventsubscribtions[
+                if new_stage.eventnames[0] in self.mods[self.modorder[0]].eventbus.event_subscriptions:
+                    astate.parts[2].progress_max = len(self.mods[self.modorder[0]].eventbus.event_subscriptions[
                                                            new_stage.eventnames[0]])
                 else:
                     astate.parts[2].progress_max = 0
@@ -295,9 +339,9 @@ class ModLoader:
         stage = LOADING_ORDER[self.active_loading_stage]
         astate: state.StateModLoading.StateModLoading = G.statehandler.active_state
         modinst: mod.Mod.Mod = self.mods[self.modorder[stage.active_mod_index]]
-        if stage.active_event_name in modinst.eventbus.eventsubscribtions and \
-                len(modinst.eventbus.eventsubscribtions[stage.active_event_name]) > 0:
-            f, _, _, text = modinst.eventbus.eventsubscribtions[stage.active_event_name][0]
+        if stage.active_event_name in modinst.eventbus.event_subscriptions and \
+                len(modinst.eventbus.event_subscriptions[stage.active_event_name]) > 0:
+            f, _, _, text = modinst.eventbus.event_subscriptions[stage.active_event_name][0]
         else:
             f, text = None, ""
         astate.parts[2].text = text if text is not None else "function {}".format(f)

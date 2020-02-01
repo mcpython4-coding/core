@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import util.texture
 import PIL.Image
@@ -78,7 +78,7 @@ class TextureResize(ITextureChange):
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, size=None) -> PIL.Image.Image:
-        return image.resize(size)
+        return image.resize(size, PIL.Image.NEAREST)  # todo: implement option to choose mode
 
 
 @G.registry

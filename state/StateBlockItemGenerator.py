@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 from . import State, StatePartGame
 from .ui import UIPartProgressBar
 import event.EventInfo
@@ -21,6 +21,7 @@ import factory.ItemFactory
 import item.ItemHandler
 import mod.ModMcpython
 import traceback
+import logger
 
 
 class StateBlockItemGenerator(State.State):
@@ -99,6 +100,8 @@ class StateBlockItemGenerator(State.State):
         G.window.set_minimum_size(1, 1)
         G.window.set_maximum_size(100000, 100000)  # only here for making resizing possible again
         event.TickHandler.handler.enable_tick_skipping = True
+        with open(G.local + "/build/info.json", mode="w") as f:
+            json.dump({"finished": True}, f)
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -116,7 +119,7 @@ class StateBlockItemGenerator(State.State):
         try:
             G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
         except ValueError:
-            print("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with following exception".
+            logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with following exception".
                   format(self.tasks[self.blockindex]))
             self.blockindex += 1
             event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
@@ -149,13 +152,13 @@ class StateBlockItemGenerator(State.State):
 
     def _error_counter(self, image, blockname):
         if self.tries >= 10:
-            print("[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
+            logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
                 self.tasks[self.blockindex]))
             self.last_image = image
             file = G.local + "/tmp/blockitemgenerator_fail_{}_of_{}.png".format(
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__"))
             image.save(file)
-            print("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(file))
+            logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(file))
             file = "assets/missingtexture.png"  # use missing texture instead
             self.generate_item(blockname, file)
             event.TickHandler.handler.bind(G.world.get_active_dimension().remove_block, 4, args=[(0, 0, 0)])
@@ -173,7 +176,7 @@ class StateBlockItemGenerator(State.State):
         self.table.append([blockname, file])
         obj = factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True)
         block = G.world.get_active_dimension().get_block((0, 0, 0))
-        if type(block) != str: block.modify_block_item(obj)
+        if type(block) != str and block is not None: block.modify_block_item(obj)
         obj.finish()
         self.tries = 0
 

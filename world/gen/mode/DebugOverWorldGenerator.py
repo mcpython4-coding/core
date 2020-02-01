@@ -1,15 +1,16 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import event.Registry
 import math
 import util.math
 import mod.ModMcpython
+import event.EventHandler
 
 
 class blockinfo:
@@ -42,19 +43,24 @@ class blockinfo:
                 rx = -hsize
 
 
-def chunk_generate(cx, cz, chunk):
+def chunk_generate(chunk):
+    cx, cz = chunk.position
+    if G.world.get_active_dimension().worldgenerationconfig["configname"] != "debug_overworld": return
+
     if (cx, cz) in blockinfo.TABLE:
         heigthmap = chunk.get_value("heightmap")
         blockmap = blockinfo.TABLE[(cx, cz)]
         for x, z in blockmap.keys():
             block, state = blockmap[(x, z)]
-            chunk.add_add_block_gen_task((x, 10, z), block, kwargs={"state": state}, block_update=False)
+            block = chunk.add_block((x, 10, z), block, block_update=False)
+            block.set_model_state(state)
             heigthmap[(x, z)] = [(0, 10)]
 
 
-config = {"layers": [], "on_chunk_generate_pre": chunk_generate}
+config = {"layers": []}
 
 G.worldgenerationhandler.register_world_gen_config("debug_overworld", config)
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:post", blockinfo.construct, info="constructing debug world info")
+event.EventHandler.PUBLIC_EVENT_BUS.subscribe("worldgen:chunk:finished", chunk_generate)
 

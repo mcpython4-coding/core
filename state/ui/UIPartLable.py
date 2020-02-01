@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import state.StatePart
 import globals as G
 import event.EventInfo
@@ -26,6 +26,7 @@ class UIPartLable(UIPart.UIPart):
         :param anchor_window: the anchor on the window
         """
         super().__init__(position, 0, anchor_window=anchor_window, anchor_element=anchor_lable)
+        if len(color) != 4: raise ValueError("color must be an tuple of (r, g, b, a)")
         self.text = text
         self.press: event.EventInfo.MousePressEventInfo = press
         self.color = color
@@ -56,6 +57,7 @@ class UIPartLable(UIPart.UIPart):
         x, y = self.get_real_position()
         wx, wy = self.lable.content_width, self.lable.content_height
         size = self.lable.content_width, self.lable.content_width
+        # todo: check for change in window size
         self.lable.x = x + size[0] // 2 - wx // 2
         self.lable.y = y + size[1] // 2 - wy // 2
         self.lable.color = self.color

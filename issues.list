@@ -1,0 +1,70 @@
+
+[issue 1-8 are part of github-only]
+
+issue 9:
+    when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
+        Item-instances
+    this issue occurs only in the first run with the new block
+
+issue 10:
+    occurs since: upgrade to python 3.8, release date of it
+
+    in python 3.8.1, a lot of exceptions of the following style are printed out when closing the window:
+        Exception ignored in: <function WeakMethod.__new__.<locals>._cb at 0x0F426D18>
+        Traceback (most recent call last):
+          File "%python%\lib\weakref.py", line 58, in _cb
+          File "%python%\lib\site-packages\pyglet\event.py", line 364, in _remove_handler
+          File "%python%\lib\weakref.py", line 74, in __eq__
+        TypeError: isinstance() arg 2 must be a type or tuple of types
+
+    possible fix: implement overwriting file for pyglet/event.py to fix this issue from pyglet side
+
+issue 16:
+    bug: random ticks are never called
+    since: random ticks were disabled
+    possible fix: implement an call_in_active_tick-method to TickHandler & use it for random ticks
+
+issue 21:
+    bug: loading hangs in BlockItemFactory when leaving window during working
+    possible fix strategy: use debug mode of running to reproduce
+
+issue 22:
+    bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
+         is removed, it all updates following bug 23
+
+issue 23:
+    bug: when sand is falling, it falls more than 1 block at a time, see issue 22 for reproducing
+
+issue 24:
+    bug: hit-box of blocks are at the corners not working [see fogleman #104]
+    possible fix: rework whole hit-box system
+
+issue 28:
+    bug: /reload does not update visible state of blocks
+    since: unknown, found after fixing issue 19
+    fix: debug what is wrong
+
+issue 33:
+    bug: mouse middle click on blocks gives always the block, not only if not existent in inventory
+    since: unknown
+    fix: see Player.add_to_free_place-method
+
+issue 34:
+    bug: jumping from downwards into an block, you get damage
+    since: block damage was introduced
+    fix: rewrite collision system
+
+issue 35:
+    bug: going inside an non-full block will give you damage
+    since: block damage was introduced
+    fix: check for solid block
+
+issue 39:
+    bug: leaves are handled solid
+    fix: check where is decided if show block -> check if is_solid_face is used correctly
+
+issue 40:
+    bug: after closing inventory after crafting, every new close, the last output is added to inventory a new time
+    fix: make sure to really clean up the crafting slots
+
+[41]

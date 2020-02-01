@@ -1,22 +1,24 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
 import globals as G
 import config
 import math
+import logger
 
 
 def get_max_y(pos):
-    """gets the max y at a x,y,z or x,z pos"""
+    """gets the max y at a x,y,z or x,z pos
+    todo: move to Chunk-class"""
     x, y, z = normalize(pos if len(pos) == 3 else (pos[0], 0, pos[1]))
     chunk = G.world.get_active_dimension().get_chunk_for_position((x, y, z))
     heightmap = chunk.get_value('heightmap')
-    y = heightmap[x, z][0][1]
+    y = heightmap[x, z][0][1] if (x, z) in heightmap else 0
     return y + config.PLAYER_HEIGHT  # account for the distance from head to foot
 
 
@@ -103,7 +105,7 @@ def normalize(position):
         x, y, z = (int(round(x)), int(round(y)), int(round(z)))
         return x, y, z
     except:
-        print(position)
+        logger.println(position)
         raise
 
 
@@ -113,7 +115,7 @@ def normalize_ceil(position):
         x, y, z = (int(math.ceil(x)), int(math.ceil(y)), int(math.ceil(z)))
         return x, y, z
     except:
-        print(position)
+        logger.println(position)
         raise
 
 

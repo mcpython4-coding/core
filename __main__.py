@@ -1,35 +1,38 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
+
+import logger
 
 try:
     import config
     version = config.FULL_VERSION_NAME.upper()
-    print("---------------"+"-"*len(version))
-    print("- MCPYTHON 4 {} -".format(version))
-    print("---------------"+"-"*len(version))
+    logger.println("---------------"+"-"*len(version))
+    logger.println("- MCPYTHON 4 {} -".format(version))
+    logger.println("---------------"+"-"*len(version))
 
     import globals
     import os
     import shutil
 
-    # todo: add security check after 10 tries -> crash
-
-    while os.path.exists(globals.local + "/tmp"):
+    for _ in range(10):
         try:
             shutil.rmtree(globals.local + "/tmp")
+            break
         except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
             pass
+    else:
+        raise IOError("can't delete directory 'tmp'. please make sure that you have no files opened in this directory")
 
     os.makedirs(globals.local + "/tmp")
 
     import event.EventHandler
 
-    import opengl_setup
+    from rendering import config
 
     import rendering.window
 
@@ -38,7 +41,8 @@ try:
     import globals as G
 
     # check if build folder exists, if not, we need to create its content
-    if not os.path.exists(G.local+"/build"): G.prebuilding = True
+    if not os.path.exists(G.local+"/build"):
+        G.prebuilding = True
 
     import ResourceLocator
     ResourceLocator.load_resource_packs()
@@ -53,8 +57,8 @@ try:
 
     import setup as systemsetup
 
-    import texture.model.ModelHandler
-    import texture.model.BlockState
+    import rendering.model.ModelHandler
+    import rendering.model.BlockState
 
     import tags.TagHandler
     import block.BlockHandler
@@ -68,10 +72,10 @@ try:
         import globals as G
         import world.World
         globals.world = world.World.World()
-        import texture.model.BlockState
+        import rendering.model.BlockState
         import Language
 
-        opengl_setup.setup()
+        config.setup()
 
         import world.gen.mode.DebugOverWorldGenerator
 
@@ -80,24 +84,33 @@ try:
         # todo: move size to config.py
         rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
         G.eventhandler.call("game:gameloop_startup")
-        pyglet.app.run()
+        try:
+            pyglet.app.run()
+        except:
+            # todo: implement crash logging
+            raise
 
 
     def main():
         G.eventhandler.call("game:startup")
         setup()
         run()
-except:
+except:  # when we crash on loading, make sure that all resources are closed
     import ResourceLocator
     ResourceLocator.close_all_resources()
+    logger.write_exception()
     raise
 
 
 if __name__ == "__main__":
-    import sys
-    
+
     try:
         main()
+    except SystemExit: pass  # sys.exit() was called
+    except:
+        logger.write_exception()
+        raise
     finally:
         import ResourceLocator
         ResourceLocator.close_all_resources()
+        G.eventhandler.call("game:close")

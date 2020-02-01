@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 from . import State, StatePartGame
 from .ui import UIPartButton, UIPartTextInput
 from .ui.UIPartTextInput import INT_PATTERN
@@ -14,6 +14,7 @@ from pyglet.window import key
 import pyglet
 import random
 import mod.ModMcpython
+import state.StatePartConfigBackground
 
 
 class StateWorldGenerationConfig(State.State):
@@ -44,7 +45,7 @@ class StateWorldGenerationConfig(State.State):
 
         parts.append(UIPartTextInput.TextInputTabHandler([text[2], text[3], text[1], text[0]]))
 
-        return parts + text
+        return parts + text + [state.StatePartConfigBackground.StatePartConfigBackground()]
 
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")

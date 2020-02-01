@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import pyglet
 import util.math
@@ -25,6 +25,7 @@ class TickHandler:
         pyglet.clock.schedule_interval(self.tick, 1/20)
         self.lost_time = 0
         self.enable_tick_skipping = False
+        self.instant_ticks = False
 
     def tick(self, dt):
         """
@@ -57,9 +58,12 @@ class TickHandler:
         :param args: the args to give
         :param kwargs: the kwargs to give
         """
+        if self.instant_ticks:
+            function(*args, **kwargs)
+            return
         if isdelta:
             tick += self.active_tick
-        # print(function, tick, self.active_tick)
+        # logger.println(function, tick, self.active_tick)
         if tick not in self.tick_array: self.tick_array[tick] = []
         if ticketfunction:
             ticketid = self.next_ticket_id
@@ -69,22 +73,21 @@ class TickHandler:
         self.tick_array[tick].append((ticketid, function, args, kwargs, ticketfunction))
 
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
-        self.bind(function, tick*2, *args, **kwargs)
+        self.bind(function, tick * 2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
         cx, cz = util.math.sectorize(G.window.position)
-        for dx in range(-config.RANDOM_TICK_RANGE, config.RANDOM_TICK_RANGE+1):
-            for dz in range(-config.RANDOM_TICK_RANGE, config.RANDOM_TICK_RANGE+1):
+        for dx in range(-config.RANDOM_TICK_RANGE, config.RANDOM_TICK_RANGE + 1):
+            for dz in range(-config.RANDOM_TICK_RANGE, config.RANDOM_TICK_RANGE + 1):
                 if dx ** 2 + dz ** 2 <= config.RANDOM_TICK_RANGE ** 2:
                     x = cx + dx
                     z = cz + dz
                     for dy in range(16):
                         for _ in range(config.RANDOM_TICK_SPEED):
                             ddx, ddy, ddz = random.randint(0, 15), random.randint(0, 255), random.randint(0, 15)
-                            position = (x+ddx, ddy, z+ddz)
+                            position = (x + ddx, ddy, z + ddz)
                             if position in G.world.world:
                                 G.world.world[position].on_random_update()
 
 
 handler = G.tickhandler = TickHandler()
-

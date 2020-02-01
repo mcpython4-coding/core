@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import gui.Inventory
 import state.StatePart
@@ -36,9 +36,9 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
 
     def on_draw_2d(self):
         # import block.BlockCraftingTable
-        # print(G.player.inventorys["main"].slots[0].itemstack.get_item_name())
-        # print(block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0].itemstack.get_item_name())
-        # print(G.player.inventorys["main"].slots[0] == block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0])
+        # logger.println(G.player.inventorys["main"].slots[0].itemstack.get_item_name())
+        # logger.println(block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0].itemstack.get_item_name())
+        # logger.println(G.player.inventorys["main"].slots[0] == block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0])
         hoveringslot = self._get_slot_for(*G.window.mouse_position)
         if any([inventory.is_blocking_interactions() for inventory in G.inventoryhandler.opened_inventorystack]):
             G.window.set_exclusive_mouse(False)
@@ -175,6 +175,7 @@ class InventoryHandler:
         if inventory in self.opened_inventorystack: return
         self.opened_inventorystack.append(inventory)
         inventory.on_activate()
+        G.eventhandler.call("inventory:show", inventory)
 
     def hide(self, inventory):
         """
@@ -185,6 +186,7 @@ class InventoryHandler:
         if inventory in self.alwaysopened: return
         inventory.on_deactivate()
         self.opened_inventorystack.remove(inventory)
+        G.eventhandler.call("inventory:hide", inventory)
 
     def remove_one_from_stack(self):
         """

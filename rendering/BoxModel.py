@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
 import util.math
 import util.enums
@@ -33,7 +33,7 @@ class BoxModel:
                 self.faces[util.enums.NAMED_SIDES[facename]] = model.get_texture_position(addr)
 
     def add_to_batch(self, position, batch, rotation):
-        # print(self.faces)
+        # logger.println(self.faces)
         x, y, z = position
         x += self.boxposition[0] - 0.5 + self.rposition[0]
         y += self.boxposition[1] - 0.5 + self.rposition[1]
@@ -42,7 +42,7 @@ class BoxModel:
                                                     for x in util.enums.SIDE_ORDER])
         indexes = [0] * 6
         if any(rotation):
-            # print(rotation)
+            # logger.println(rotation)
             if rotation[0]:  # rotate around x
                 for _ in range(rotation[0] // 90):
                     east, west, up, down = up, down, east, west

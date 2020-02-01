@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import pyglet
 import block.Block as Block
@@ -91,7 +91,7 @@ class Chunk:
         """
         if position != util.math.normalize(position):
             raise ValueError("position {} is no valid block position".format(position))
-        # print("adding", block_name, "at", position)
+        # logger.println("adding", block_name, "at", position)
         if position in self.world:
             self.remove_block(position, immediate=immediate, block_update=block_update)
         if position[1] < 0 or position[1] > 255: return
@@ -108,6 +108,7 @@ class Chunk:
             if block_update:
                 self.on_block_updated(position, itself=blockupdateself)
             self.check_neighbors(position)
+        return blockobj
 
     def on_block_updated(self, position, itself=True):
         x, y, z = position
@@ -130,7 +131,7 @@ class Chunk:
             Whether or not to immediately remove block from canvas.
 
         """
-        # print("removing", self.world[position] if position in self.world else None, "at", position)
+        # logger.println("removing", self.world[position] if position in self.world else None, "at", position)
         if position not in self.world: return
         if issubclass(type(position), Block.Block):
             position = position.position
@@ -200,9 +201,9 @@ class Chunk:
         block: the blockinstance to show
 
         """
-        # print("showing", position)
+        # logger.println("showing", position)
         self.shown[position] = G.modelhandler.add_to_batch(block, position, self.dimension.batches)
-        # print(self.world[position], self.shown[position])
+        # logger.println(self.world[position], self.shown[position])
 
     def hide_block(self, position, immediate=True):
         """ Hide the block at the given `position`. Hiding does not remove the
@@ -231,7 +232,7 @@ class Chunk:
         """ Private implementation of the 'hide_block()` method.
 
         """
-        # print("hiding", self.tmpworld[position], "at", position, "with", self.tmpworld[position].shown_data)
+        # logger.println("hiding", self.tmpworld[position], "at", position, "with", self.tmpworld[position].shown_data)
         [x.delete() for x in self.shown[position]]
         del self.shown[position]
 
@@ -249,9 +250,12 @@ class Chunk:
         elif hide:
             self.show_block(position)
 
-    def update_visable(self, hide=True):
+    def update_visable(self, hide=True, immediate=False):
         for position in self.world.keys():
-            self.chunkgenerationtasks.append([self.update_visable_block, [position], {"hide": hide}])
+            if immediate:
+                self.chunkgenerationtasks.append([self.update_visable_block, [position], {"hide": hide}])
+            else:
+                self.update_visable_block(position, hide=hide)
 
     def hide_all(self, immediate=True):
         for position in self.shown.copy():

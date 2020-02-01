@@ -1,0 +1,24 @@
+a list of all fixed issues, in order of fixing
+
+issue 15: mod loading was loading mods.json rather than mod.json in some special cases
+issue 11: block textures are blurry; fixed on: 31.01.2020 by uuk; occur since library update
+issue 27: TextureFactory generates blurry images; fixed on: 31.01.2020 by uuk; occur since library update
+issue 20: mod list was not proper saved; fixed on: 31.01.2020 by uuk; occur since mod list move
+issue 19: /reload command was not working; fixed on: 31.01.2020 by uuk; occur since: mod loading introduction
+issue 18: loading bar was offset; fixed on: 01.02.2020 by uuk; occur since: progress bar fixes
+issue 29: DebugWorldGenerator was not working; fixed on: 01.02.2020; occur since: event removal of generation system
+issue 30: game crashes if an value is accessed in HeightMap without set it in advance
+issue 31: event "worldgen:chunk:finished" was only called in dynamic generated chunks; fixed on: 01.02.2020 by uuk;
+          occur since: introduction of this event
+issue 32: EnderChest was not working in debug world; fixed on: 01.02.2002 by uuk; occur since: introduction of chest
+issue 37: Exception printer was crashing; fixed on: 01.02.2020 by uuk; occur since: logging introduction
+issue 38: drawing of buttons was wrong; fixed on: 01.02.2020 by uuk; occur since: upgrade of resources to 1.15.2
+issue 13: game crashes on hovering above button; fixed on: 01.02.2020 by uuk
+issue 12: chat event bus was created active and not closed until user closes the real chat leading to unwanted behaviour
+          fixed on: 01.02.2020 by uuk; occur since: EventBus introduction
+issue 14: raw crash in BlockItemFactory due to None-block-instance; fixed on: 01.02.2020 by uuk
+issue 17: html character information was displayed in chat as the character itself instead of the blank text, fixed on:
+          01.02.2020 by uuk
+issue 41: chat index pointer was not correct; fixed on: 01.02.2020 by uuk
+issue 26: when an file is opened in an directory to remove, it fails to remove it and loops infinitely,
+          fixed on: 01.02.2020 by uuk; occur since: introduction of removing these things under try-except

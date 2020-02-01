@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals
 import gui.ItemStack
 import gui.Slot
@@ -13,6 +13,7 @@ import util.math
 import traceback
 import ResourceLocator
 import mod.ModMcpython
+import logger
 
 
 class Player:
@@ -174,7 +175,7 @@ class Player:
                 self.hunger = 20
                 return
         globals.commandparser.parse("/clear")
-        print("[CHAT] player {} died".format(self.name))
+        logger.println("[CHAT] player {} died".format(self.name))
         self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
                          globals.world.spawnpoint[1])
         self.active_inventory_slot = 0
@@ -187,6 +188,7 @@ class Player:
         globals.window.flying = False
         self.armor_level = 0
         self.armor_toughness = 0
+        globals.eventhandler.call("player:die", self)
         # todo: recalculate armor level!
 
     def _get_position(self):

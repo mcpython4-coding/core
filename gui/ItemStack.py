@@ -1,12 +1,13 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import item.Item
+import logger
 
 
 class ItemStack:
@@ -21,7 +22,7 @@ class ItemStack:
             if item_name_or_instance in G.registry.get_by_name("item").get_attribute("items"):
                 self.item = G.registry.get_by_name("item").get_attribute("items")[item_name_or_instance]()
             else:
-                print("can't find item named {}".format(item_name_or_instance))
+                logger.println("can't find item named {}".format(item_name_or_instance))
                 self.item = None
         else:
             self.item = None

@@ -1,0 +1,34 @@
+Changelog since cleanup-branch of 31.01.2020
+
+
+changelog of cleanup-branch version 1 [merged on 01.02.2020 onto master]:
+    - added an file called "events.list" storing every event ever called
+    - added loading event called "stage:block:block_config" called to register block config entries
+    - split up ICustomBlockRenderer into IStaticCustomBlockRenderer and IObjectedCustomBlockRenderer
+    - add new events: "command:clear:start", "command:clear:end", "command:give:start", "command:give:end",
+                      "command:help:generate_pages", "command:parse_bridge:setup", "command:execute_command",
+                      "command:registryinfo:parse", "chat:text_enter", "inventory:show", "modloader:mod_found",
+                      "itemhandler:build:atlases:save", "itemhandler:build:atlases:load", "state:switch:pre",
+                      "state:switch:post", "modelhandler:searched", "worldgen:chunk:finished", "player:die",
+                      "world:reset_config", "dimension:chane:pre", "dimension:chane:post", "world:clean", "game:close",
+                      "resources:load", "resources:close"
+    - deprecated call_until_equal, call_until_getting_value and call_until_not_equal of EventBus, use call_until instead
+    - added instant_ticks-attribute to TickHandler
+    - updated textures to 1.15.2
+    - added new run option: --debug-world which sets the world generator to debug
+    - added logger system
+    - moved some project file
+    - added real config background
+    - added system to check if prebuilding was interrupted before in which case prebuilding would activate again
+    - chat accepts now the DELETE key, the END key and the BEGIN key
+    - fixed bugs:
+        - loading bar was offset
+        - debug world generator was not working
+        - chests & ender chests were not working in debug world
+        - game was crashing when hovering over an button
+        - chat was "open" until first opening
+        - raw crash in BlockItemGenerator
+        - chat marker for active writing position was not correct drawn
+        - chat was doing bad stuff with strings like "&#38;"
+        - possible infinite loop in deleting directories when files where opened
+

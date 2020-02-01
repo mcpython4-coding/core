@@ -1,16 +1,17 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import world.Chunk
 import util.math
 import pyglet
 import block.Block
 import mod.ModMcpython
+import sys
 
 
 class DimensionDefinition:
@@ -38,7 +39,8 @@ class DimensionHandler:
             self.add_dimension(dim)
 
     def add_default_dimensions(self):
-        self.add_dimension(DimensionDefinition("overworld", {"configname": "default_overworld"}).setStaticId(0))
+        self.add_dimension(DimensionDefinition("overworld", {"configname": (
+            "default_overworld" if "--debug-world" not in sys.argv else "debug_overworld")}).setStaticId(0))
 
     def add_dimension(self, dim: DimensionDefinition):
         if dim.id is None:
@@ -86,9 +88,9 @@ class Dimension:
 
     def add_block(self, position: tuple, blockname: str, immediate=True, block_update=True, blockupdateself=True,
                   args=[], kwargs={}):
-        self.get_chunk_for_position(position).add_block(position, blockname, immediate=immediate,
-                                                        block_update=block_update, args=args, kwargs=kwargs,
-                                                        blockupdateself=blockupdateself)
+        return self.get_chunk_for_position(position).add_block(position, blockname, immediate=immediate,
+                                                               block_update=block_update, args=args, kwargs=kwargs,
+                                                               blockupdateself=blockupdateself)
 
     def remove_block(self, position: tuple, immediate=True, block_update=True, blockupdateself=True):
         self.get_chunk_for_position(position).remove_block(position, immediate=immediate, block_update=block_update,

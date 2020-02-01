@@ -1,12 +1,12 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
-import texture.model.Model
+import rendering.model.Model
 
 
 class ModelFactory:
@@ -36,4 +36,4 @@ class ModelFactory:
         data = {"parent": self.parent}
         if len(self.elements) > 0: data["elements"] = self.elements
         if len(self.textures) > 0: data["textures"] = self.textures
-        G.modelhandler.models[self.name] = texture.model.Model.Model(data, self.name)
+        G.modelhandler.models[self.name] = rendering.model.Model.Model(data, self.name)

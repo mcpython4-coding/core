@@ -1,16 +1,17 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import math
 import util.enums
 
-MC_VERSION_BASE = "1.14.4"
-VERSION_TYPE = "snapshot"
-VERSION_NAME = "19w52a"
+MC_VERSION_BASE = "1.15.2"
+VERSION_TYPE = "snapshot"  # todo: revert to "dev" when developing further
+VERSION_NAME = "20w05a"
+VERSION_ORDER = ["19w52a", "20w05a"]  # list of all versions since 19w52a to indicate order
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)

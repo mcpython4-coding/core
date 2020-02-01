@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import item.Item
 import util.texture
@@ -19,13 +19,15 @@ import sys
 import factory.ItemFactory
 import mod.ModMcpython
 import traceback
+import logger
 
 
 TEXTURE_ATLASES = []
 
 
 def build():
-    print("building item texture atlases...")
+    logger.println("building item texture atlases...")
+    G.eventhandler.call("itemhandler:build:atlases:save")
     indexdata = {}
     for i, textureatlas in enumerate(TEXTURE_ATLASES):
         file = "atlas_{}.png".format(i)
@@ -40,6 +42,7 @@ def build():
 
 
 def load_data():
+    G.eventhandler.call("itemhandler:build:atlases:load")
     if not os.path.exists(G.local+"/build/itematlases"):
         os.makedirs(G.local+"/build/itematlases")
     elif os.path.exists(G.local + "/build/itematlases/index.json"):
@@ -70,7 +73,7 @@ def load_data():
                     block.modify_block_item(obj)
                     obj.finish()
                 else:
-                    print("[ERROR] during constructing block item for {}: Failed to find block".format(name))
+                    logger.println("[ERROR] during constructing block item for {}: Failed to find block".format(name))
                     data.remove(entry)
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
                 json.dump(data, f)
@@ -84,7 +87,6 @@ def add_to_image_atlas(textureatlas, image, file):
 
 def register_item(registry, itemclass):
     itemtable = registry.get_attribute("items")
-    # pygletimagetable = registry.get_attribute("pygletimagetable")
     itemtable[itemclass.get_name()] = itemclass
     itemtable[itemclass.get_name().split(":")[-1]] = itemclass
     if itemclass.get_name() in items.get_attribute("itemindextable"): return
@@ -93,7 +95,6 @@ def register_item(registry, itemclass):
     try:
         files = itemclass.get_used_texture_files()
         images = [ResourceLocator.read(file, "pil").resize((32, 32)) for file in files]
-        locations = []
         flag = True
         for textureatlas in TEXTURE_ATLASES:
             if textureatlas.is_free_for(files):
@@ -108,7 +109,7 @@ def register_item(registry, itemclass):
             for i, image in enumerate(images):
                 table[itemclass.get_name()][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
     except:
-        print(itemclass.get_name(), itemclass.get_used_texture_files())
+        logger.println(itemclass.get_name(), itemclass.get_used_texture_files())
         raise
 
 

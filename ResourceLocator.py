@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 """
 specifications for the resource loader system
 
@@ -23,11 +23,11 @@ import globals as G
 import zipfile
 import json
 import PIL.Image
-import pyglet.image
 import os
 import util.texture
 import sys
 import config
+import logger
 
 
 class IResourceLocation:
@@ -87,7 +87,7 @@ class ResourceDirectory(IResourceLocation):
         return os.path.isdir(path)
 
     def __init__(self, path: str):
-        self.path = path
+        self.path = path.replace("\\", "/")
 
     def is_in_path(self, filename: str) -> bool:
         return os.path.isfile(os.path.join(self.path, filename))
@@ -106,7 +106,15 @@ class ResourceDirectory(IResourceLocation):
 
     def get_all_entrys_in_directory(self, directory: str) -> list:
         if not os.path.isdir(self.path + "/" + directory): return []
-        return [directory + "/" + x for x in os.listdir(self.path + "/" + directory)]
+        file_list = []
+        for root, dirs, files in os.walk(self.path+"/"+directory):
+            for name in files:
+                file = os.path.join(root, name).replace("\\", "/")
+                file_list.append("/".join(file.split("/")[self.path.count("/")+1:]))
+            for name in dirs:
+                file = os.path.join(root, name).replace("\\", "/")
+                file_list.append("/".join(file.split("/")[self.path.count("/") + 1:]) + "/")
+        return file_list
 
 
 RESOURCE_PACK_LOADERS = [ResourceZipFile, ResourceDirectory]
@@ -124,7 +132,7 @@ def load_resource_packs():
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
-            print("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
+            logger.println("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
@@ -140,12 +148,14 @@ def load_resource_packs():
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))  # the special extension dir
     RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(config.MC_VERSION_BASE)))
+    G.eventhandler.call("resources:load")
 
 
 def close_all_resources():
     for item in RESOURCE_LOCATIONS:
         item.close()
     RESOURCE_LOCATIONS.clear()
+    G.eventhandler.call("resources:close")
 
 
 MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity"]
@@ -202,7 +212,7 @@ def read(file, mode=None):
             try:
                 return x.read(file, mode)
             except:
-                # print(file)
+                # logger.println(file)
                 raise
     raise ValueError("can't find resource {} in any path".format(file))
 
@@ -229,9 +239,8 @@ def get_all_entries_special(directory: str) -> list:
 
 
 def add_resources_by_modname(modname, pathname):
-    from texture.model.BlockState import BlockStateDefinition
+    from rendering.model.BlockState import BlockStateDefinition
     import Language
-    import crafting.CraftingHandler
     G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,
                                                  info="loading crafting recipes")
     G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,

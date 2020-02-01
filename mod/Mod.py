@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import event.EventBus
 import event.EventHandler
@@ -29,7 +29,7 @@ class ModDependency:
         real_mod = G.modloader.mods[self.name]
         if self.versions == real_mod.version: return True
         if type(self.versions) == list:
-            if real_mod.version in self.versions: return bool(real_mod[0])
+            if real_mod.version in self.versions: return True
         return False
 
     def get_version(self):

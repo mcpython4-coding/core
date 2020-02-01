@@ -1,10 +1,10 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import event.EventInfo
 import enum
 import pyglet
@@ -14,18 +14,13 @@ from . import UIPart
 import globals as G
 import util.opengl
 import Language
+from util.enums import ButtonMode
 
 image = ResourceLocator.read("gui/widgets", "pyglet")
-disabled = image.get_region(2, 256-46-17, 196, 15)
+disabled = image.get_region(2, 256-46-17, 196, 14)
 enabled = image.get_region(2, 256-66-17, 196, 14)
-hovering = image.get_region(2, 256-86-17, 196, 15)
-#  enabled.save(G.local+"/tmp/minecraft.png")  # only for debugging reasons
-
-
-class ButtonMode(enum.Enum):
-    DISABLED = 0
-    ENABLED = 1
-    HOVERING = 2
+hovering = image.get_region(2, 256-86-17, 196, 14)
+# enabled.save(G.local+"/tmp/minecraft.png")  # only for debugging reasons
 
 
 IMAGES = {ButtonMode.DISABLED: disabled, ButtonMode.ENABLED: enabled, ButtonMode.HOVERING: hovering}
@@ -46,7 +41,7 @@ def draw_button(position, size, mode):
                 ii.blit(x * sourceimage.width + position[0], y * sourceimage.height + position[1])
             except ZeroDivisionError: pass
             except TypeError: pass
-    util.opengl.draw_line_rectangle(position, size, (0, 0, 0))
+    util.opengl.draw_line_rectangle(position, size, (0, 0, 0) if mode != ButtonMode.HOVERING else (255, 255, 255))
 
 
 class UIPartButton(UIPart.UIPart):
