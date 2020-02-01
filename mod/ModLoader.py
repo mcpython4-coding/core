@@ -21,17 +21,11 @@ import enum
 import toml
 import config
 import logger
+from util.enums import LoadingStageStatus
 
 
 if not os.path.exists(G.local+"/mods"):
     os.makedirs(G.local+"/mods")
-
-
-class LoadingStageStatus(enum.Enum):
-    WORKING = 0
-    MOD_CHANGED = 1
-    EVENT_CHANGED = 2
-    FINISHED = 3
 
 
 class LoadingStage:

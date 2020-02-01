@@ -29,7 +29,7 @@ try:
 
     import event.EventHandler
 
-    import opengl_setup
+    from rendering import config
 
     import rendering.window
 
@@ -54,8 +54,8 @@ try:
 
     import setup as systemsetup
 
-    import texture.model.ModelHandler
-    import texture.model.BlockState
+    import rendering.model.ModelHandler
+    import rendering.model.BlockState
 
     import tags.TagHandler
     import block.BlockHandler
@@ -69,10 +69,10 @@ try:
         import globals as G
         import world.World
         globals.world = world.World.World()
-        import texture.model.BlockState
+        import rendering.model.BlockState
         import Language
 
-        opengl_setup.setup()
+        config.setup()
 
         import world.gen.mode.DebugOverWorldGenerator
 
@@ -100,8 +100,7 @@ except:  # when we crash on loading, make sure that all resources are closed
 
 
 if __name__ == "__main__":
-    import sys
-    
+
     try:
         main()
     except SystemExit: pass  # sys.exit() was called

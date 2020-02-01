@@ -8,8 +8,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import ResourceLocator
 import util.math
-import texture.model.Model
-import texture.TextureAtlas
+import rendering.model.Model
 import traceback
 import mod.ModMcpython
 import logger
@@ -79,10 +78,10 @@ class ModelHandler:
         try:
             if type(location) == str:
                 modeldata = ResourceLocator.read(location, "json")
-                self.models[name] = texture.model.Model.Model(modeldata.copy(),
-                                                              "block/"+location.split("/")[-1].split(".")[0])
+                self.models[name] = rendering.model.Model.Model(modeldata.copy(),
+                                                              "block/" + location.split("/")[-1].split(".")[0])
             else:
-                self.models[name] = texture.model.Model.Model(location.copy(), name)
+                self.models[name] = rendering.model.Model.Model(location.copy(), name)
         except:
             logger.println("error during loading model {} named {}".format(location, name))
             traceback.print_exc()

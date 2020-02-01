@@ -714,14 +714,13 @@ started these clone on 12th of July, 2019
 [uuk]: add_block will now return block instance
 [uuk]: added logging system, which also escapes the local files for privacy
 [uuk]: G.local will contain now only "/" instead of "\\" on windows
+[uuk]: moved the following files: opengl_setup.py to rendering/setup.py, texture/model to rendering/model
+[uuk]: moved most of the enums to util/enums.py
 
 hot-fixes until merge onto master: 13
 
 
 tasks:
-- add exception handles to all calling functions of EventBus
-- do code cleanup everywhere, write docs
 - clean up loading stage info messages, skip mods in progress system if no event handler was registered
 - search for typos and fix them
-- move all enums to util/enums
 

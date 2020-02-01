@@ -23,7 +23,6 @@ import globals as G
 import zipfile
 import json
 import PIL.Image
-import pyglet.image
 import os
 import util.texture
 import sys
@@ -240,9 +239,8 @@ def get_all_entries_special(directory: str) -> list:
 
 
 def add_resources_by_modname(modname, pathname):
-    from texture.model.BlockState import BlockStateDefinition
+    from rendering.model.BlockState import BlockStateDefinition
     import Language
-    import crafting.CraftingHandler
     G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,
                                                  info="loading crafting recipes")
     G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,

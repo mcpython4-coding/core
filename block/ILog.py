@@ -9,12 +9,7 @@ import globals as G
 import block.Block
 import event.TickHandler
 import enum
-
-
-class LogAxis(enum.Enum):
-    X = 0
-    Y = 1
-    Z = 2
+from util.enums import LogAxis
 
 
 class ILog(block.Block.Block):

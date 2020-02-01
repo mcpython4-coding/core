@@ -11,12 +11,7 @@ import event.TickHandler
 import enum
 import util.enums
 import block.BoundingBox
-
-
-class SlabModes(enum.Enum):
-    TOP = 1
-    BOTTOM = 2
-    DOUBLE = 3
+from util.enums import SlabModes
 
 
 BBOX_DICT = {

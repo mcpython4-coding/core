@@ -17,6 +17,7 @@ changelog of cleanup-branch phase 1:
     - updated textures to 1.15.2
     - added new run option: --debug-world which sets the world generator to debug
     - added logger system
+    - moved some project file
     - fixed bugs:
         - loading bar was offset
         - debug world generator was not working

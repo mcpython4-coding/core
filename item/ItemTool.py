@@ -7,16 +7,7 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import item.Item
 import enum
-
-
-class ToolType(enum.Enum):
-    HAND = 0
-    PICKAXE = 1
-    AXE = 2
-    SHOVEL = 3
-    SHEAR = 4
-    SWORD = 5  # not real an tool, but internally handled as one of it
-    HOE = 6  # not real an tool, but internally handled as one of it
+from util.enums import ToolType
 
 
 class ItemTool(item.Item.Item):
