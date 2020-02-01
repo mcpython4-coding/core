@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -57,7 +57,7 @@ class Window(pyglet.window.Window):
         # Velocity in the y (upward) direction.
         self.dy = 0
 
-        # Convenience list of num keys.
+        # Convenience list of num keys, todo: move to config.py
         self.num_keys = [
             key._1, key._2, key._3, key._4, key._5,
             key._6, key._7, key._8, key._9]
@@ -73,6 +73,7 @@ class Window(pyglet.window.Window):
                                         x=10, y=self.height - 22, anchor_x='left', anchor_y='top',
                                         color=(0, 0, 0, 255))
 
+        # storing mouse information
         self.mouse_pressing = {mouse.LEFT: False, mouse.RIGHT: False, mouse.MIDDLE: False}
         self.mouse_position = (0, 0)
 
@@ -114,7 +115,7 @@ class Window(pyglet.window.Window):
         dy = math.sin(math.radians(y))
         dx = math.cos(math.radians(x - 90)) * m
         dz = math.sin(math.radians(x - 90)) * m
-        return (dx, dy, dz)
+        return dx, dy, dz
 
     def get_motion_vector(self):
         """ Returns the current motion vector indicating the velocity of the
@@ -151,6 +152,7 @@ class Window(pyglet.window.Window):
 
         """
         G.eventhandler.call("gameloop:tick:start", dt)
+        # todo: change to attribute in State-class
         if dt > 3 and G.statehandler.active_state.get_name() not in ["minecraft:modloading"]:
             print("[warning] running behind normal tick, did you overload game? missing " +
                   str(dt - 1.0 / TICKS_PER_SEC)+" seconds")

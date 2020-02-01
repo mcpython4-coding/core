@@ -1,0 +1,81 @@
+
+commands:
+    "command:clear:start": called by command "/clear" on beginning to clearing inventory, cancelable in
+        CommandClear-class, [cancels the real "clear", but will call all following subscribers]
+    "command:clear:end": called by command "/clear" on end of clearing inventory
+    "command:give:start": called by command "/give" on beginning of adding items, called with ItemStack-parameter,
+        cancelable in CommandGive-class [cancels the "real" giving, but will call all following subscribers]
+    "command:help:generate_pages": called on CommandHelp's page generation, called with the page list as an parameter
+    "command:registryinfo:parse": called by command "/registryinfo" on executing the command. cancelable in
+        CommandRegistryInfo-class [cancels the "normal" parser, but will call all following subscribers]
+    "command:reload:start": called by command "/reload" on executing the command. cancelable in CommandReload-class
+        [cancels the "normal" reload, but will call all following subscribers]
+    "command:reload:end": called after successful execution of "/reload" command
+
+    "command:parse_bridge:setup": called by ParseBridge when an new event was registered, called with command and
+        ParseBridge-object, cancelable in G.commandparser.CANCEL_REGISTER [cancels the annotation into the system,
+        but will call all following subscribers]
+    "command:execute_command": called by ParseBridge when an command is executed, called with CommandInfo,
+        string command and split command, cancelable in G.commandparser.CANCEL_COMMAND_EXECUTE [cancels the execution,
+        but will call all following subscribers]
+
+    "chat:text_enter": called by chat when ENTER is pressed, cancelable in G.chat [cancels the execution, but will call
+        all following subscribers]
+
+crafting:
+    "craftinghandler:reload:start": called on beginning to reload recipes
+    "craftinghandler:reload:finish": called on end of reloading recipes
+
+registry:
+    "registry:{registry name}:on_object_register": called when an object is registered
+
+inventory:
+    "inventory:show": called by InventoryHandler with the inventory if its shown
+    "inventory:hide": called by InventoryHandler with the inventory if its hidden
+
+items:
+    "itemhandler:build:atlases:save": called by ItemHandler when the table of item data is saved
+    "itemhandler:build:atlases:load": called by ItemHandler when the table of item data is loaded
+
+mod loader:
+    "modloader:mod_found": called by ModLoader when an mod-instance was created
+
+interaction:
+    "gameloop:tick:start": called on beginning of every tick with the elapsed time since last tick
+    "gameloop:tick:end": called on end of every tick with the elapsed time since the last tick
+    "user:mouse:press": called with x, y, button and modifiers when the user presses the mouse
+    "user:mouse:release": called with x, y, button and modifiers when the user releases the mouse
+    "user:mouse:drag": called with x, y, dx, dy, buttons and modifiers when the user drags the mouse
+    "user:mouse:scroll": called with x, y, scroll_x and scroll_y when the user scrolls the mouse wheel
+    "user:mouse:motion": called with x, y, dx, dy when the user moves the mouse
+    "user:keyboard:press": called with symbol and modifiers when the user presses an key on the keyboard
+    "user:keyboard:release": called with symbol and modifiers when the user releases an key on the keyboard
+    "user:window:resize": called with the new size as x and y when the user resize the window
+    "render:draw:3d": called to draw in 3d
+    "render:draw:2d:background", "render:draw:2d" and "render:draw:2d:overlay": called to draw 2d, called in the order
+        listed here
+    "user:keyboard:enter": called with the text if the player enters an text
+
+states:
+    "state:switch:pre": called by StateHandler before the state is switched, cancelable
+    "state:switch:post": called by StateHandler after the state is switched
+
+rendering:
+    "modelhandler:searched": called by ModelHandler after lookup for models
+
+world generation:
+    "worldgen:chunk:finished": called by WorldGenerationHandler when an chunk was finished in generation
+
+game play:
+    "player:die": called by player when it is killed
+    "world:reset_config": called when the world config should be reset
+    "dimension:chane:pre": called before the dimension is changed, cancelable
+    "dimension:chane:post": called after the dimension is changed
+    "world:clean": called to clean up the whole world
+    "game:gameloop_startup": called direct after the window was created
+    "game:startup": called direct before the main gameloop starts
+    "game:close": called at the last possible spot before the game closes
+    "resources:load": called when the resourelocations are loaded
+    "resources:close": called when all resourcelocations are closed
+    "prebuilding:finished": called after prebuilding is finished
+

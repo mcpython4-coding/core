@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -175,6 +175,7 @@ class InventoryHandler:
         if inventory in self.opened_inventorystack: return
         self.opened_inventorystack.append(inventory)
         inventory.on_activate()
+        G.eventhandler.call("inventory:show", inventory)
 
     def hide(self, inventory):
         """
@@ -185,6 +186,7 @@ class InventoryHandler:
         if inventory in self.alwaysopened: return
         inventory.on_deactivate()
         self.opened_inventorystack.remove(inventory)
+        G.eventhandler.call("inventory:hide", inventory)
 
     def remove_one_from_stack(self):
         """

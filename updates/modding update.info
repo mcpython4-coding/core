@@ -5,3 +5,4 @@ remove mod.json support, port everything to mods.toml
 implement auto-all-py import system which replaces the main-files entry in the mod.json
 add memory usage bar into mod loading
 
+make cancelable events only call when canceled one entry

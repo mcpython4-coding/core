@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -59,7 +59,7 @@ class CraftingHandler:
             return  # make sure to load only ones!
         self.loaded_mod_dirs.add(modname)
         for itemname in ResourceLocator.get_all_entries("data/{}/recipes".format(modname)):
-            if load_direct:
+            if not load_direct:
                 G.modloader.mods[modname].eventbus.subscribe("stage:recipe:bake", self.add_recipe_from_file, itemname,
                                                              info="loading crafting recipe from {}".format(itemname))
             else:
@@ -79,7 +79,7 @@ class CraftingHandler:
             print("\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(modname, i+1,
                                                                                         len(self.loaded_mod_dirs)),
                   end="")
-            self.load(modname, check_mod_dirs=False, load_direct=False)
+            self.load(modname, check_mod_dirs=False, load_direct=True)
         print()
 
         G.eventhandler.call("craftinghandler:reload:finish")

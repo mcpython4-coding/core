@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -187,6 +187,7 @@ class Player:
         globals.window.flying = False
         self.armor_level = 0
         self.armor_toughness = 0
+        globals.eventhandler.call("player:die", self)
         # todo: recalculate armor level!
 
     def _get_position(self):

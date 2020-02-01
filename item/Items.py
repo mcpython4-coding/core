@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -51,11 +51,9 @@ def load_item():
     ender_pearl = factory.ItemFactory.ItemFactory().setName("minecraft:ender_pearl").finish()
     ender_eye = factory.ItemFactory.ItemFactory().setName("minecraft:ender_eye").finish()
 
-
     def lambda_add_random_xp():
         G.player.add_xp(random.randint(3, 11))
         return True
-
 
     experience_bottle = factory.ItemFactory.ItemFactory().setName("minecraft:experience_bottle").setEatCallback(
         lambda_add_random_xp).setFoodValue(0).finish()
@@ -103,7 +101,6 @@ def load_item():
     totem_of_undying = factory.ItemFactory.ItemFactory().setName("minecraft:totem_of_undying").finish()
     tropical_fish = factory.ItemFactory.ItemFactory().setName("minecraft:tropical_fish").setFoodValue(1).finish()
     wheat = factory.ItemFactory.ItemFactory().setName("minecraft:wheat").finish()
-
 
     shears = factory.ItemFactory.ItemFactory().setName("minecraft:shears").setToolType([ToolType.SHEAR]).setToolBrakeMutli(
         5).finish()

@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -148,12 +148,14 @@ def load_resource_packs():
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))  # the special extension dir
     RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(config.MC_VERSION_BASE)))
+    G.eventhandler.call("resources:load")
 
 
 def close_all_resources():
     for item in RESOURCE_LOCATIONS:
         item.close()
     RESOURCE_LOCATIONS.clear()
+    G.eventhandler.call("resources:close")
 
 
 MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity"]

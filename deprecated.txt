@@ -10,3 +10,12 @@ since 24th of november, 2019:
     block.Block.Block.on_delete()
         use on_remove instead
         removal: until next ~1 snapshot
+
+since 31th of january, 2020:
+    block.ICustomBlockRenderer.ICustomBlockRenderer
+        use block.ICustomBlockRenderer.IStaticCustomBlockRenderer class instead
+        removal: with rendering update
+
+    event.EventBus.EventBus.call_until_equal, call_until_getting_value, call_until_not_equal
+        use event.EventBus.call_until instead
+        removal: in modding update

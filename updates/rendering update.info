@@ -11,5 +11,6 @@ This is an complete overhaul of the branch currently used:
         [maybe an custom block renderer?]
     - implement this to grass block
 
-
-- Part 2:
+beside this:
+    - make text in chat selectable, implement STRG+X
+    - add mc icon

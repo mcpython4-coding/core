@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -29,9 +29,11 @@ class World:
         self.active_dimension = 0
         self.config = {}
         self.reset_config()
+        self.CANCEL_DIM_CHANGE = False
 
     def reset_config(self):
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
+        G.eventhandler.call("world:reset_config")
 
     def get_active_dimension(self) -> world.Dimension.Dimension:
         return self.dimensions[self.active_dimension]
@@ -42,10 +44,14 @@ class World:
         return dim
 
     def join_dimension(self, id):
+        self.CANCEL_DIM_CHANGE = False
+        G.eventhandler.call("dimension:chane:pre", id)
+        if self.CANCEL_DIM_CHANGE: return
         sector = util.math.sectorize(G.window.position)
         self.change_sectors(sector, None)
         self.active_dimension = id
         self.change_sectors(None, sector)
+        G.eventhandler.call("dimension:chane:post", id)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -167,4 +173,5 @@ class World:
         G.window.flying = False
         for inv in G.player.inventorys.values(): inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
+        G.eventhandler.call("world:clean")
 

@@ -1,0 +1,19 @@
+Changelog since cleanup-branch of 31.01.2020
+
+
+changelog of cleanup-branch phase 1:
+    - added an file called "events.list" storing every event ever called
+    - added loading event called "stage:block:block_config" called to register block config entries
+    - split up ICustomBlockRenderer into IStaticCustomBlockRenderer and IObjectedCustomBlockRenderer
+    - add new events: "command:clear:start", "command:clear:end", "command:give:start", "command:give:end",
+                      "command:help:generate_pages", "command:parse_bridge:setup", "command:execute_command",
+                      "command:registryinfo:parse", "chat:text_enter", "inventory:show", "modloader:mod_found",
+                      "itemhandler:build:atlases:save", "itemhandler:build:atlases:load", "state:switch:pre",
+                      "state:switch:post", "modelhandler:searched", "worldgen:chunk:finished", "player:die",
+                      "world:reset_config", "dimension:chane:pre", "dimension:chane:post", "world:clean", "game:close",
+                      "resources:load", "resources:close"
+    - deprecated call_until_equal, call_until_getting_value and call_until_not_equal of EventBus, use call_until instead
+    - added instant_ticks-attribute to TickHandler
+    - fixed bugs:
+        - loading bar was offset
+

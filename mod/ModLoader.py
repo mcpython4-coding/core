@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -49,7 +49,7 @@ class LoadingStage:
             if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
             self.active_event_name = self.eventnames.pop(0)
             modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
-            self.max_progress = len(modinst.eventbus.eventsubscribtions[self.active_event_name])
+            self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
             return LoadingStageStatus.EVENT_CHANGED
         if self.active_event_name is None:
             if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
@@ -65,14 +65,14 @@ class LoadingStage:
                 if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
                 self.active_event_name = self.eventnames.pop(0)
                 modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
-                if self.active_event_name in modinst.eventbus.eventsubscribtions:
-                    self.max_progress = len(modinst.eventbus.eventsubscribtions[self.active_event_name])
+                if self.active_event_name in modinst.eventbus.event_subscriptions:
+                    self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
                 else:
                     self.max_progress = 0
                 return LoadingStageStatus.EVENT_CHANGED
             modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
-            if self.active_event_name in modinst.eventbus.eventsubscribtions:
-                self.max_progress = len(modinst.eventbus.eventsubscribtions[self.active_event_name])
+            if self.active_event_name in modinst.eventbus.event_subscriptions:
+                self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
             else:
                 self.max_progress = 0
             return LoadingStageStatus.MOD_CHANGED
@@ -88,7 +88,8 @@ class LoadingStages:
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
     TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
-    BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:load", "stage:block:overwrite")
+    BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:load", "stage:block:overwrite",
+                          "stage:block:block_config")
     ITEMS = LoadingStage("item loading phase", "stage:item:base", "stage:item:load", "stage:item:overwrite")
     LANGUAGE = LoadingStage("language file loading", "stage:language")
     RECIPE = LoadingStage("recipe loading phase", "stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
@@ -264,6 +265,7 @@ class ModLoader:
                     # todo: add version loader
 
     def add_to_add(self, mod):
+        G.eventhandler.call("modloader:mod_found", mod)
         self.mods[mod.name] = mod
         self.found_mods.append(mod)
         mod.path = self.active_directory
@@ -275,7 +277,7 @@ class ModLoader:
         for mod in self.found_mods:
             if mod.name in modinfo:
                 errors.append(
-                    "-Mod '{}' has more than one version in the folder. Please load only every mod ONES".format(
+                    " -Mod '{}' has more than one version in the folder. Please load only every mod ONES".format(
                         mod.name))
                 errors.append(" found in: {}".format(mod.path))
             else:
@@ -284,10 +286,10 @@ class ModLoader:
             depends = mod.dependinfo[0][:]
             for depend in depends:
                 if not depend.arrival():
-                    errors.append("-Mod '{}' needs mod '{}' which is not provided".format(mod.name, depend))
+                    errors.append("- Mod '{}' needs mod '{}' which is not provided".format(mod.name, depend))
             for depend in mod.dependinfo[2]:
                 if depend.arrival():
-                    errors.append("-Mod '{}' is incompatible with '{}'".format(mod.name, depend))
+                    errors.append("- Mod '{}' is incompatible with '{}'".format(mod.name, depend))
         for mod in self.found_mods:
             for depend in mod.dependinfo[4]:
                 if depend.name in modinfo and depend.name not in modinfo[mod.name]:
@@ -331,8 +333,8 @@ class ModLoader:
                 astate.parts[0].progress += 1
                 astate.parts[2].progress = 0
                 new_stage = LOADING_ORDER[self.active_loading_stage]
-                if new_stage.eventnames[0] in self.mods[self.modorder[0]].eventbus.eventsubscribtions:
-                    astate.parts[2].progress_max = len(self.mods[self.modorder[0]].eventbus.eventsubscribtions[
+                if new_stage.eventnames[0] in self.mods[self.modorder[0]].eventbus.event_subscriptions:
+                    astate.parts[2].progress_max = len(self.mods[self.modorder[0]].eventbus.event_subscriptions[
                                                            new_stage.eventnames[0]])
                 else:
                     astate.parts[2].progress_max = 0
@@ -342,9 +344,9 @@ class ModLoader:
         stage = LOADING_ORDER[self.active_loading_stage]
         astate: state.StateModLoading.StateModLoading = G.statehandler.active_state
         modinst: mod.Mod.Mod = self.mods[self.modorder[stage.active_mod_index]]
-        if stage.active_event_name in modinst.eventbus.eventsubscribtions and \
-                len(modinst.eventbus.eventsubscribtions[stage.active_event_name]) > 0:
-            f, _, _, text = modinst.eventbus.eventsubscribtions[stage.active_event_name][0]
+        if stage.active_event_name in modinst.eventbus.event_subscriptions and \
+                len(modinst.eventbus.event_subscriptions[stage.active_event_name]) > 0:
+            f, _, _, text = modinst.eventbus.event_subscriptions[stage.active_event_name][0]
         else:
             f, text = None, ""
         astate.parts[2].text = text if text is not None else "function {}".format(f)

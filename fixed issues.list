@@ -5,3 +5,4 @@ issue 11: block textures are blurry; fixed on: 31.01.2020 by uuk; occur since li
 issue 27: TextureFactory generates blurry images; fixed on: 31.01.2020 by uuk; occur since library update
 issue 20: mod list was not proper saved; fixed on: 31.01.2020 by uuk; occur since mod list move
 issue 19: /reload command was not working; fixed on: 31.01.2020 by uuk; occur since: mod loading introduction
+issue 18: loading bar was offset; fixed on: 01.02.2020 by uuk; occur since: progress bar fixes

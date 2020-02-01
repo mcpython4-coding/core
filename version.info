@@ -13,7 +13,7 @@ started these clone on 12th of July, 2019
         will give you an workaround
 [uuk]: removed compatibility to python 2
 [uuk]: when starting, mouse will NOT be locked anymore
-[uuk]: splitted everything into single files
+[uuk]: split everything into single files
 [uuk]: added warning msg when update is called to less
 [uuk]: new chunk format: (x, z) instead of (x, 0, z)
 [uuk]: added event/EventHandler
@@ -182,7 +182,7 @@ started these clone on 12th of July, 2019
 [github]: started day 14 as 18th of August, 2019
 [uuk]: added the following blocks: coal ore, iron ore, gold ore, emerald ore, redstone ore, diamond ore, lapis ore
 [uuk]: fixed bug: ItemStone-class still exists outside the generation system
-[uuk]: splitted model into Chunk, Dimension & World, removed Model, renamed globals model to world
+[uuk]: split model into Chunk, Dimension & World, removed Model, renamed globals model to world
 [uuk]: implemented some kind of Dimension-system
 [uuk]: moved some code for adding / removing blocks around
 [uuk]: fixed bug: braking "void" raises an exception due to an missed check
@@ -697,12 +697,22 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug 15
 [uuk]: fixed bug 11, 27, 20
 [uuk]: reworked some recipe loading parts for fixing bug 20
+[uuk]: added an changelog.txt file, storing an overview what has changed
+[uuk]: added new loading stage: "stage:block:block_config"
+[uuk]: ICustomBlockRenderer is decreased, use IStaticCustomBlockRenderer instead
+[uuk]: new variant of ICustomBlockRenderer called IObjectedCustomBlockRenderer
+[uuk]: added new events: "command:clear:start", "command:clear:end"
+[uuk]: fixed miss-spell in licence header
+[uuk]: depcreased call_until_equal, call_until_getting_value, call_until_not_equal of EventBus, use EventBus.call_until
+       instead
+[uuk]: changed signature of event "registry:{}:on_object_register" from (,) to (Registry, Object)
+[uuk]: added instant_ticks-attribute to TickHandler
+[uuk]: fixed bug 18
 
 hot-fixes until merge onto master: 13
 
 
 tasks:
-- write an changelog.txt file and move everything from here to it
 - add exception handles to all calling functions of EventBus
 - do code cleanup everywhere, write docs
 - write logging system [with on_exception-method which is called when an exception occurs -> writes relative profile to
@@ -710,4 +720,6 @@ tasks:
 - clean up loading stage info messages, skip mods in progress system if no event handler was registered
 - search for typos
 - create an list of all events ever called with an description what they do
+- update textures to 1.15.2
+- move all enums to util/enums
 

@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -16,13 +16,18 @@ class CommandReload(chat.command.Command.Command):
     """
     class for /reload command
     """
+
+    CANCEL_RELOAD = False
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "reload"
 
-    @staticmethod
-    def parse(values: list, modes: list, info):
+    @classmethod
+    def parse(cls, values: list, modes: list, info):
+        cls.CANCEL_RELOAD = False
         G.eventhandler.call("command:reload:start")
+        if cls.CANCEL_RELOAD: return
         dim = G.world.get_active_dimension()
         for i, chunk in enumerate(list(dim.chunks.values())):  # iterate over all active chunks
             G.window.set_caption("preparing chunk {}/{} at {}".format(i+1, len(dim.chunks), chunk.position))

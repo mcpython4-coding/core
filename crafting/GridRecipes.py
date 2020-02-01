@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -10,7 +10,7 @@ import globals as G
 import gui.ItemStack
 
 
-def transform_to_itemstack(item, table: dict) -> list:
+def transform_to_item_stack(item, table: dict) -> list:
     """
     transforms an item name from recipe to an valid item list to compare with
     :param item: the itemname given
@@ -28,7 +28,7 @@ def transform_to_itemstack(item, table: dict) -> list:
                 entries.remove(item)
         return entries
     elif type(item) == list:  # have we an list of items?
-        values = [transform_to_itemstack(x, table) for x in item]
+        values = [transform_to_item_stack(x, table) for x in item]
         value = []
         for v in values: value += v
         return value
@@ -47,14 +47,14 @@ class GridShaped(crafting.IRecipeType.IRecipe):
         pattern = data["pattern"]
         table = {}
         for item in data["key"]:
-            item_list = transform_to_itemstack(data["key"][item], table)
+            item_list = transform_to_item_stack(data["key"][item], table)
             if len(item_list) == 0: return
             table[item] = item_list
         grid = {}
         for y, row in enumerate(pattern):
             for x, key in enumerate(row):
                 if key != " ": grid[(x, y)] = table[key]
-        out = transform_to_itemstack(data["result"], table)
+        out = transform_to_item_stack(data["result"], table)
         if len(out) == 0: return
         return cls(grid, out[0])
 
@@ -78,8 +78,8 @@ class GridShapeless(crafting.IRecipeType.IRecipe):
 
     @classmethod
     def from_data(cls, data: dict):
-        inputs = [transform_to_itemstack(x, {}) for x in data["ingredients"]]
-        out = transform_to_itemstack(data["result"], {})
+        inputs = [transform_to_item_stack(x, {}) for x in data["ingredients"]]
+        out = transform_to_item_stack(data["result"], {})
         if any([len(x) == 0 for x in inputs]) or len(out) == 0: return
         return cls(inputs, out[0])
 

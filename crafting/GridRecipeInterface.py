@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -20,30 +20,30 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
     def get_name() -> str:
         return "minecraft:crafting_interface"
 
-    def __init__(self, slotinputmap, slotoutputmap, maxsize=None, minsize=None, enabled=True,
+    def __init__(self, slot_input_map, slot_output_map, maxsize=None, minsize=None, enabled=True,
                  enable_shaped_recipes=True, enable_shapeless_recipes=True):
         """
         creates an new grid recipe interface
         recipe order: first in, first checked
-        :param slotinputmap: an Slot[[ for input
-        :param slotoutputmap: an Slot for output
+        :param slot_input_map: an Slot[[ for input
+        :param slot_output_map: an Slot for output
         :param maxsize: the max size for recipes. may be None for full grid size
         :param minsize: the min size for recipes. default is (1, 1)
         :param enabled: if recipes should be craftable
         :param enable_shaped_recipes: if shaped recipes should be enabled
         :param enable_shapeless_recipes: if shapeless recipes should be enabled
         """
-        self.slotinputmap = slotinputmap
-        self.slotoutputmap: gui.Slot.Slot = slotoutputmap
-        self.gridsize = (len(slotinputmap[0]), len(slotinputmap))
-        self.maxsize = maxsize if maxsize else self.gridsize
+        self.slot_input_map = slot_input_map
+        self.slot_output_map: gui.Slot.Slot = slot_output_map
+        self.grid_size = (len(slot_input_map[0]), len(slot_input_map))
+        self.maxsize = maxsize if maxsize else self.grid_size
         self.minsize = minsize if minsize else (1, 1)
-        for y, row in enumerate(slotinputmap):
+        for y, row in enumerate(slot_input_map):
             for x, slot in enumerate(row):
                 slot.on_update.append(self.on_input_update)
-        slotoutputmap.on_update.append(self.on_output_update)
-        slotoutputmap.allow_half_getting = False
-        slotoutputmap.on_shift_click = self.on_output_shift_click
+        slot_output_map.on_update.append(self.on_output_update)
+        slot_output_map.allow_half_getting = False
+        slot_output_map.on_shift_click = self.on_output_shift_click
         self.active_recipe: crafting.IRecipeType.IRecipe = None
         self.shaped_enabled = enable_shaped_recipes and enabled
         self.shapeless_enabled = enable_shapeless_recipes and enabled
@@ -53,7 +53,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         itemlenght = 0
         itemtable = {}
         shapelessitems = []
-        for y, row in enumerate(self.slotinputmap):
+        for y, row in enumerate(self.slot_input_map):
             for x, slot in enumerate(row):
                 if not slot.itemstack.is_empty():
                     itemlenght += 1
@@ -132,14 +132,15 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         return len(items) == 0
 
     def update_output(self):
-        self.slotoutputmap.itemstack.clean()
+        self.slot_output_map.itemstack.clean()
         if self.active_recipe:
-            self.slotoutputmap.set_itemstack(gui.ItemStack.ItemStack(self.active_recipe.output[0],
-                                                                     amount=self.active_recipe.output[1]), update=False)
+            self.slot_output_map.set_itemstack(gui.ItemStack.ItemStack(self.active_recipe.output[0],
+                                                                       amount=self.active_recipe.output[1]),
+                                               update=False)
 
     def remove_input(self, count=1):
         # removes from every input slot count item (called when an item is crafted)
-        for row in self.slotinputmap:  # go over all slots
+        for row in self.slot_input_map:  # go over all slots
             for slot in row:
                 if not slot.itemstack.is_empty():  # check if the slot is used
                     slot.itemstack.amount -= count
@@ -152,10 +153,10 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
 
     def on_output_update(self, player=False):
         if not self.active_recipe: return
-        if self.slotoutputmap.itemstack.is_empty() and player:  # have we removed items?
+        if self.slot_output_map.itemstack.is_empty() and player:  # have we removed items?
             self.remove_input()
             self.check_recipe_state()
-            if all([all([slot.itemstack.is_empty() for slot in row]) for row in self.slotinputmap]):
+            if all([all([slot.itemstack.is_empty() for slot in row]) for row in self.slot_input_map]):
                 self.active_recipe = None
             self.update_output()
 
@@ -163,7 +164,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         if not self.active_recipe: return
         min_item_count = None
         max_item_count = 0
-        for row in self.slotinputmap:
+        for row in self.slot_input_map:
             for slot in row:
                 if not slot.itemstack.is_empty():
                     if min_item_count is None or slot.itemstack.amount < min_item_count:
@@ -180,5 +181,5 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         self.check_recipe_state()
         self.update_output()
         if max_item_count == min_item_count:
-            self.slotoutputmap.itemstack.clean()
+            self.slot_output_map.itemstack.clean()
 

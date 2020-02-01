@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -11,9 +11,9 @@ from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 
 
 @G.registry
-class CommandKill(chat.command.Command.Command):
+class CommandTeleport(chat.command.Command.Command):
     """
-    class for /setblock command
+    class for /teleport command
     """
 
     @staticmethod
@@ -33,7 +33,6 @@ class CommandKill(chat.command.Command.Command):
                 for entity in values[0]:
                     entity.position = tuple(values[1][0])
         else:  # tp [position]
-            # print(values)
             G.window.position = tuple(values[0][0])
 
     @staticmethod

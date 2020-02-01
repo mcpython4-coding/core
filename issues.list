@@ -115,11 +115,6 @@ issue 17:
     since: chat is using html label
     possible fix: rewrite chat to exclude these characters
 
-issue 18:
-    bug: loading bar is offset
-    since: various loading bar changes
-    possible fix: update loading bar system
-
 issue 21:
     bug: loading hangs in BlockItemFactory when leaving window during working
     possible fix strategy: use debug mode of running to reproduce

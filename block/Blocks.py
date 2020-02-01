@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -102,7 +102,7 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:lapis_ore").setHardness(3).setBestTools([ToolType.PICKAXE]).\
         setMinimumToolLevel(2).finish()  # minimum: stone, missing: not gold
 
-    for stonetype in ["granite", "andesite", "diorite"]:
+    for stonetype in ["granite", "andesite", "diorite"]:  # todo: move to tag
         factory.BlockFactory.BlockFactory().setName("minecraft:{}".format(stonetype)).setHardness(1.5).setBestTools(
             [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
         factory.BlockFactory.BlockFactory().setName("minecraft:polished_{}".format(stonetype)).setHardness(1.5).\

@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -84,6 +84,7 @@ class Chat:
         self.history: list = []
         self.historyindex = -1
         self.active_index = -1
+        self.CANCEL_INPUT = False
 
     def enter(self, text: str):
         """
@@ -103,6 +104,12 @@ class Chat:
             self.text = self.text[:self.active_index] + self.text[self.active_index+1:]
             self.active_index -= 1
         elif symbol == key.ENTER:  # execute command
+            self.CANCEL_INPUT = False
+            G.eventhandler.call("chat:text_enter", self.text)
+            if self.CANCEL_INPUT:
+                self.history.insert(0, self.text)
+                self.close()
+                return
             if self.text.startswith("/"):
                 # excute command
                 G.commandparser.parse(self.text)

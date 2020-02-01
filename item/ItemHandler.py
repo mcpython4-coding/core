@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -26,6 +26,7 @@ TEXTURE_ATLASES = []
 
 def build():
     print("building item texture atlases...")
+    G.eventhandler.call("itemhandler:build:atlases:save")
     indexdata = {}
     for i, textureatlas in enumerate(TEXTURE_ATLASES):
         file = "atlas_{}.png".format(i)
@@ -40,6 +41,7 @@ def build():
 
 
 def load_data():
+    G.eventhandler.call("itemhandler:build:atlases:load")
     if not os.path.exists(G.local+"/build/itematlases"):
         os.makedirs(G.local+"/build/itematlases")
     elif os.path.exists(G.local + "/build/itematlases/index.json"):
@@ -84,7 +86,6 @@ def add_to_image_atlas(textureatlas, image, file):
 
 def register_item(registry, itemclass):
     itemtable = registry.get_attribute("items")
-    # pygletimagetable = registry.get_attribute("pygletimagetable")
     itemtable[itemclass.get_name()] = itemclass
     itemtable[itemclass.get_name().split(":")[-1]] = itemclass
     if itemclass.get_name() in items.get_attribute("itemindextable"): return
@@ -93,7 +94,6 @@ def register_item(registry, itemclass):
     try:
         files = itemclass.get_used_texture_files()
         images = [ResourceLocator.read(file, "pil").resize((32, 32)) for file in files]
-        locations = []
         flag = True
         for textureatlas in TEXTURE_ATLASES:
             if textureatlas.is_free_for(files):

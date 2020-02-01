@@ -1,7 +1,7 @@
 """mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry
 
-original game by forgleman licenced under MIT-licence
+original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
@@ -85,6 +85,7 @@ class WorldGenerationHandler:
                 del self.runtimegenerationcache[1][chunk.position]
                 del self.runtimegenerationcache[2][chunk.position]
                 print("finished generation of chunk", chunk.position)
+                G.eventhandler.call("worldgen:chunk:finished", chunk)
                 return
             position = chunk.hide_tasks.pop(0)
             chunk.hide_block(position)
