@@ -100,6 +100,8 @@ class StateBlockItemGenerator(State.State):
         G.window.set_minimum_size(1, 1)
         G.window.set_maximum_size(100000, 100000)  # only here for making resizing possible again
         event.TickHandler.handler.enable_tick_skipping = True
+        with open(G.local + "/build/info.json", mode="w") as f:
+            json.dump({"finished": True}, f)
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")

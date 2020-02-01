@@ -29,6 +29,7 @@ import shutil
 import texture.factory
 import mod.ModMcpython
 import sys
+import json
 
 
 class IPrepareAbleTask:
@@ -75,6 +76,8 @@ def add():
 
 
 def execute():
+    with open(G.local+"/build/info.json", mode="w") as f:
+        json.dump({"finished": False}, f)
     for iprepareabletask in taskregistry.registered_objects:
         directory = G.local+"/build/"+iprepareabletask.get_name()
         if iprepareabletask.USES_DIRECTORY:
@@ -86,6 +89,13 @@ def execute():
 
 # todo: split up into different sub-calls
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", add, info="adding prebuild tasks")
+
+if not os.path.exists(G.local+"/build/info.json"): G.prebuilding = True
+else:
+    with open(G.local+"/build/info.json") as f:
+        data = json.load(f)
+    if not data["finished"]:
+        G.prebuilding = True
 
 if G.prebuilding:
     mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:do", execute, info="doing prebuild tasks")

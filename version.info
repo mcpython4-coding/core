@@ -719,4 +719,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 13, 37, 38
 [uuk]: implemented option background
 [uuk]: merged cleanups-branch onto master
+[uuk]: added new flag stored in build/info.json for indicating if prebuild system had finished or not
 
