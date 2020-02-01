@@ -12,9 +12,9 @@ issue 10:
     in python 3.8.1, a lot of exceptions of the following style are printed out when closing the window:
         Exception ignored in: <function WeakMethod.__new__.<locals>._cb at 0x0F426D18>
         Traceback (most recent call last):
-          File "<path to your python>\lib\weakref.py", line 58, in _cb
-          File "<path to your python>\lib\site-packages\pyglet\event.py", line 364, in _remove_handler
-          File "<path to your python>\lib\weakref.py", line 74, in __eq__
+          File "%python%\lib\weakref.py", line 58, in _cb
+          File "%python%\lib\site-packages\pyglet\event.py", line 364, in _remove_handler
+          File "%python%\lib\weakref.py", line 74, in __eq__
         TypeError: isinstance() arg 2 must be a type or tuple of types
 
     possible fix: implement overwriting file for pyglet/event.py to fix this issue from pyglet side
@@ -32,29 +32,29 @@ issue 14:
 
     game crash in BlockItemGenerator after some images were failed to generate:
          Traceback (most recent call last):
-          File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 100, in <module>
+          File "%project%/__main__.py", line 100, in <module>
             main()
-          File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 89, in main
+          File "%project%/__main__.py", line 89, in main
             run()
-          File "C:/Users/baulu/PycharmProjects/core/__main__.py", line 83, in run
+          File "%project%/__main__.py", line 83, in run
             pyglet.app.run()
-          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\__init__.py", line 144, in run
+          File "%python%\lib\site-packages\pyglet\app\__init__.py", line 144, in run
             event_loop.run()
-          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 175, in run
+          File "%python%\lib\site-packages\pyglet\app\base.py", line 175, in run
             self._run()
-          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 187, in _run
+          File "%python%\lib\site-packages\pyglet\app\base.py", line 187, in _run
             timeout = self.idle()
-          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\app\base.py", line 308, in idle
+          File "%python%\lib\site-packages\pyglet\app\base.py", line 308, in idle
             redraw_all = self.clock.call_scheduled_functions(dt)
-          File "C:\Python\core\3.8.1\lib\site-packages\pyglet\clock.py", line 333, in call_scheduled_functions
+          File "%python%\lib\site-packages\pyglet\clock.py", line 333, in call_scheduled_functions
             item.func(now - item.last_ts, *item.args, **item.kwargs)
-          File "C:\Users\baulu\PycharmProjects\core\event\TickHandler.py", line 41, in tick
+          File "%project%\event\TickHandler.py", line 41, in tick
             result = function(*args, **kwargs)
-          File "C:\Users\baulu\PycharmProjects\core\state\StateBlockItemGenerator.py", line 144, in take_image
+          File "%project%\state\StateBlockItemGenerator.py", line 144, in take_image
             self._error_counter(image, blockname)
-          File "C:\Users\baulu\PycharmProjects\core\state\StateBlockItemGenerator.py", line 160, in _error_counter
+          File "%project%\state\StateBlockItemGenerator.py", line 160, in _error_counter
             self.generate_item(blockname, file)
-          File "C:\Users\baulu\PycharmProjects\core\state\StateBlockItemGenerator.py", line 176, in generate_item
+          File "%project%\state\StateBlockItemGenerator.py", line 176, in generate_item
             if type(block) != str: block.modify_block_item(obj)
         AttributeError: 'NoneType' object has no attribute 'modify_block_item'
 
@@ -119,3 +119,7 @@ issue 36:
 issue 39:
     bug: leaves are handled solid
     fix: check where is decided if show block -> check if is_solid_face is used correctly
+
+issue 40:
+    bug: after closing inventory after crafting, every new close, the last output is added to inventory a new time
+    fix: make sure to really clean up the crafting slots

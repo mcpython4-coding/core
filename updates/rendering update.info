@@ -14,3 +14,4 @@ This is an complete overhaul of the branch currently used:
 beside this:
     - make text in chat selectable, implement STRG+X
     - add mc icon
+    - add F3-screen with extra info if the chunk is fully generated or not
