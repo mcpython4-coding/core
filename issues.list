@@ -67,4 +67,5 @@ issue 40:
     bug: after closing inventory after crafting, every new close, the last output is added to inventory a new time
     fix: make sure to really clean up the crafting slots
 
-[41]
+issue 42:
+    bug: crafting system does not work in rebuild mode

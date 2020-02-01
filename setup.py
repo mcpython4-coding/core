@@ -79,6 +79,8 @@ def add():
 
 
 def execute():
+    if not os.path.exists(G.local+"/build"):
+        os.makedirs(G.local+"/build")
     with open(G.local+"/build/info.json", mode="w") as f:
         json.dump({"finished": False}, f)
     for iprepareabletask in taskregistry.registered_objects:

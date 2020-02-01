@@ -139,8 +139,8 @@ class Chat:
                 self.active_index = 0
         elif symbol == key.V and modifiers & key.MOD_CTRL:  # insert text from clipboard
             self.enter(clipboard.paste())
-        else:
-            print(symbol, modifiers)
+        # else:
+            # print(symbol, modifiers)
 
     def close(self):
         """
