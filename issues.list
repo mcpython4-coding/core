@@ -19,54 +19,10 @@ issue 10:
 
     possible fix: implement overwriting file for pyglet/event.py to fix this issue from pyglet side
 
-issue 12:
-    occurs since: properly since chat was changed
-
-    when pressing ENTER in start menu, an message called "[CHAT] " is printed out for no reason
-
-    possible fix: check chat system for some non-state related linking
-    possible cause: back in the past, chat keys were input twice. In this time, things may have changed
-
-issue 14:
-    occurs since: unknown, found on 29th of January, 2020
-
-    game crash in BlockItemGenerator after some images were failed to generate:
-         Traceback (most recent call last):
-          File "%project%/__main__.py", line 100, in <module>
-            main()
-          File "%project%/__main__.py", line 89, in main
-            run()
-          File "%project%/__main__.py", line 83, in run
-            pyglet.app.run()
-          File "%python%\lib\site-packages\pyglet\app\__init__.py", line 144, in run
-            event_loop.run()
-          File "%python%\lib\site-packages\pyglet\app\base.py", line 175, in run
-            self._run()
-          File "%python%\lib\site-packages\pyglet\app\base.py", line 187, in _run
-            timeout = self.idle()
-          File "%python%\lib\site-packages\pyglet\app\base.py", line 308, in idle
-            redraw_all = self.clock.call_scheduled_functions(dt)
-          File "%python%\lib\site-packages\pyglet\clock.py", line 333, in call_scheduled_functions
-            item.func(now - item.last_ts, *item.args, **item.kwargs)
-          File "%project%\event\TickHandler.py", line 41, in tick
-            result = function(*args, **kwargs)
-          File "%project%\state\StateBlockItemGenerator.py", line 144, in take_image
-            self._error_counter(image, blockname)
-          File "%project%\state\StateBlockItemGenerator.py", line 160, in _error_counter
-            self.generate_item(blockname, file)
-          File "%project%\state\StateBlockItemGenerator.py", line 176, in generate_item
-            if type(block) != str: block.modify_block_item(obj)
-        AttributeError: 'NoneType' object has no attribute 'modify_block_item'
-
 issue 16:
     bug: random ticks are never called
     since: random ticks were disabled
     possible fix: implement an call_in_active_tick-method to TickHandler & use it for random ticks
-
-issue 17:
-    bug: when entering special html codes into chat, they are used rather than the blank string
-    since: chat is using html label
-    possible fix: rewrite chat to exclude these characters
 
 issue 21:
     bug: loading hangs in BlockItemFactory when leaving window during working
@@ -82,15 +38,6 @@ issue 23:
 issue 24:
     bug: hit-box of blocks are at the corners not working [see fogleman #104]
     possible fix: rework whole hit-box system
-
-issue 25:
-    bug: crafting does not work for e.g. oak log
-    possible strategy for solving: search where recipe checks fails
-
-issue 26:
-    bug: when for some reason, exceptions in removing directories fails, it does NOT stop
-    since: removing folders in try-except block
-    fix: add some counter, crash if an value is reached
 
 issue 28:
     bug: /reload does not update visible state of blocks
@@ -112,10 +59,6 @@ issue 35:
     since: block damage was introduced
     fix: check for solid block
 
-issue 36:
-    bug: at some corners of blocks, HitBox fails in some cases to select the right block
-    since: HitBox implementation
-
 issue 39:
     bug: leaves are handled solid
     fix: check where is decided if show block -> check if is_solid_face is used correctly
@@ -123,3 +66,5 @@ issue 39:
 issue 40:
     bug: after closing inventory after crafting, every new close, the last output is added to inventory a new time
     fix: make sure to really clean up the crafting slots
+
+[41]

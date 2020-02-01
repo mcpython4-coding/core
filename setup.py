@@ -53,11 +53,14 @@ def add():
 
         @staticmethod
         def dump_data(directory: str):
-            while os.path.exists(G.local+"/build"):
+            for _ in range(10):
                 try:
                     shutil.rmtree(G.local+"/build")
+                    break
                 except PermissionError: pass
                 except OSError: pass
+            else:
+                raise IOError("can't remove 'build'-folder. please make sure that no file is opened")
             os.makedirs(G.local+"/build")
 
         USES_DIRECTORY = False

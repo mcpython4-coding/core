@@ -19,9 +19,16 @@ changelog of cleanup-branch version 1 [merged on 01.02.2020 onto master]:
     - added logger system
     - moved some project file
     - added real config background
+    - added system to check if prebuilding was interrupted before in which case prebuilding would activate again
+    - chat accepts now the DELETE key, the END key and the BEGIN key
     - fixed bugs:
         - loading bar was offset
         - debug world generator was not working
         - chests & ender chests were not working in debug world
         - game was crashing when hovering over an button
+        - chat was "open" until first opening
+        - raw crash in BlockItemGenerator
+        - chat marker for active writing position was not correct drawn
+        - chat was doing bad stuff with strings like "&#38;"
+        - possible infinite loop in deleting directories when files where opened
 

@@ -28,34 +28,29 @@ class ChatInventory(gui.Inventory.Inventory):
         self.lable = pyglet.text.HTMLLabel("", x=15, y=15)
         self.enable_blink = True
         self.timer = time.time()
-        self.eventbus = G.eventhandler.create_bus()
+        self.eventbus = G.eventhandler.create_bus(active=False)
         self.eventbus.subscribe("user:keyboard:press", G.chat.on_key_press)
         self.eventbus.subscribe("user:keyboard:enter", G.chat.enter)
 
     def update_text(self, text, underline_index):
-        if len(text) <= underline_index: text += "_"
-        if len(text) <= underline_index:
-            self.lable.text = text
+        if len(text) < underline_index:
+            self.lable.text = "<font color='white'>"+text+"_</font>"
             return
         try:
             text1 = text[:underline_index].replace("<", "&#60;").replace(">", "&#62;").replace("\\", "&#92;")
             text2 = text[underline_index].replace("<", "&#60;").replace(">", "&#62;").replace("\\", "&#92;")
             text3 = text[1+underline_index:].replace("<", "&#60;").replace(">", "&#62;").replace("\\", "&#92;")
-            self.lable.text = "<font color='white'>"+text1+"<u>{}</u>".format(text2)+text3+"</font>"
+            self.lable.text = "<font color='white'>{}<u>{}</u>{}</font>".format(text1, text2, text3)
         except IndexError:
-            self.lable.text = text
+            self.lable.text = "<font color='white'>"+text+"_</font>"
 
     def on_activate(self):
-        # logger.println("opening chat")
-        # traceback.print_stack()
         G.chat.text = ""
         G.chat.active_index = 0
         G.chat.has_entered_t = False
         self.eventbus.activate()
 
     def on_deactivate(self):
-        # logger.println("closing chat")
-        # traceback.print_stack()
         self.eventbus.deactivate()
 
     def on_draw_background(self):
@@ -65,10 +60,10 @@ class ChatInventory(gui.Inventory.Inventory):
     def on_draw_overlay(self):
         text = G.chat.text
         if (round(time.time() - self.timer) % 2) == 1:
-            self.update_text(text, G.chat.active_index)
+            self.update_text(text.replace("&", "&#38;"), G.chat.active_index)
         else:
             self.lable.text = "<font color='white'>"+text.replace("<", "&#60").replace(">", "&#62").replace(
-                "\\", "&#92")+"</font>"
+                "\\", "&#92").replace("&", "&#38;")+"</font>"
         self.lable.draw()
 
 
@@ -104,6 +99,10 @@ class Chat:
         if symbol == 65288:  # BACK
             self.text = self.text[:self.active_index] + self.text[self.active_index+1:]
             self.active_index -= 1
+        elif symbol == key.DELETE and self.active_index < len(self.text):
+            self.text = self.text[:self.active_index+1] + self.text[self.active_index+2:]
+        elif symbol == 65360: self.active_index = 0   # begin key
+        elif symbol == key.END: self.active_index = len(self.text)
         elif symbol == key.ENTER:  # execute command
             self.CANCEL_INPUT = False
             G.eventhandler.call("chat:text_enter", self.text)
@@ -113,7 +112,7 @@ class Chat:
                 self.close()
                 return
             if self.text.startswith("/"):
-                # excute command
+                # execute command
                 G.commandparser.parse(self.text)
             else:
                 logger.println("[CHAT] {}".format(self.text))
@@ -130,10 +129,18 @@ class Chat:
             else:
                 self.text = ""
             self.active_index = len(self.text)
-        elif symbol == key.LEFT and self.active_index > 0: self.active_index -= 1
-        elif symbol == key.RIGHT and self.active_index < len(self.text): self.active_index += 1
+        elif symbol == key.LEFT:
+            self.active_index -= 1
+            if self.active_index < 0:
+                self.active_index = len(self.text) + self.active_index + 1
+        elif symbol == key.RIGHT:
+            self.active_index += 1
+            if self.active_index > len(self.text):
+                self.active_index = 0
         elif symbol == key.V and modifiers & key.MOD_CTRL:  # insert text from clipboard
             self.enter(clipboard.paste())
+        else:
+            print(symbol, modifiers)
 
     def close(self):
         """

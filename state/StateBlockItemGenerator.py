@@ -176,7 +176,7 @@ class StateBlockItemGenerator(State.State):
         self.table.append([blockname, file])
         obj = factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True)
         block = G.world.get_active_dimension().get_block((0, 0, 0))
-        if type(block) != str: block.modify_block_item(obj)
+        if type(block) != str and block is not None: block.modify_block_item(obj)
         obj.finish()
         self.tries = 0
 
