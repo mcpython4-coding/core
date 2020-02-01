@@ -4,7 +4,7 @@ authors: uuk, xkcdjerry
 original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import world.gen.layer.Layer
 import world.gen.mode
@@ -124,6 +124,7 @@ class WorldGenerationHandler:
             layer.add_generate_functions_to_chunk(dimension.worldgenerationconfigobjects[layername], chunk)
             G.world.process_entire_queue()
         print("\r", end="")
+        G.eventhandler.call("worldgen:chunk:finished", chunk)
 
     def register_layer(self, layer: world.gen.layer.Layer.Layer):
         # print(layer, layer.get_name())

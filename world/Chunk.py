@@ -4,7 +4,7 @@ authors: uuk, xkcdjerry
 original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import pyglet
 import block.Block as Block
@@ -108,6 +108,7 @@ class Chunk:
             if block_update:
                 self.on_block_updated(position, itself=blockupdateself)
             self.check_neighbors(position)
+        return blockobj
 
     def on_block_updated(self, position, itself=True):
         x, y, z = position

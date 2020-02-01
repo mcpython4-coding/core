@@ -144,6 +144,8 @@ issue 28:
     since: unknown, found after fixing issue 19
     fix: debug what is wrong
 
+[29 - 32]
+
 
 todo: fix bug: crafting somehow ends sometimes in the double amount than usually
     (for example, crafting of crafting table)

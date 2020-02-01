@@ -4,11 +4,11 @@ authors: uuk, xkcdjerry
 original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import math
 import util.enums
 
-MC_VERSION_BASE = "1.14.4"
+MC_VERSION_BASE = "1.15.2"
 VERSION_TYPE = "dev"
 VERSION_NAME = "19w52a"
 VERSION_ORDER = ["19w52a"]  # list of all versions since 19w52a to indicate order

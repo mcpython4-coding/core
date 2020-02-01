@@ -14,6 +14,10 @@ changelog of cleanup-branch phase 1:
                       "resources:load", "resources:close"
     - deprecated call_until_equal, call_until_getting_value and call_until_not_equal of EventBus, use call_until instead
     - added instant_ticks-attribute to TickHandler
+    - updated textures to 1.15.2
+    - added new run option: --debug-world which sets the world generator to debug
     - fixed bugs:
         - loading bar was offset
+        - debug world generator was not working
+        - chests & ender chests were not working in debug world
 

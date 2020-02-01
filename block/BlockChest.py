@@ -4,7 +4,7 @@ authors: uuk, xkcdjerry
 original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
-blocks based on 1.14.4.jar of minecraft, downloaded on 20th of July, 2019"""
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 from . import Block
 from pyglet.window import mouse, key
@@ -71,7 +71,11 @@ class BlockChest(Block.Block):
 
     def set_model_state(self, state: dict):
         if "side" in state:
-            self.front_side = util.enums.EnumSide[state["side"]]
+            face = state["side"]
+            if type(face) == str:
+                self.front_side = util.enums.EnumSide[state["side"]]
+            else:
+                self.front_side = face
 
     def get_model_state(self) -> dict:
         return {"side": self.front_side.name, "type": "normal" if not self.is_christmas else "christmas"}

@@ -2,7 +2,7 @@
   "images": ["entity/chest/normal"],
   "space": 9,
   "transforms": [
-    {"mode": "cut", "image": 0, "store": 1, "area": [14, 0, 28, 14]},
+    {"mode": "cut", "image": 0, "store": 1, "area": [28, 0, 42, 14]},
     {"mode": "rebase", "image": 1, "store": 1, "size": [16, 16], "position": [1, 1]},
 
     {"mode": "cut", "image": 0, "store": 2, "area": [28, 0, 42, 14]},

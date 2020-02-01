@@ -708,6 +708,10 @@ started these clone on 12th of July, 2019
 [uuk]: changed signature of event "registry:{}:on_object_register" from (,) to (Registry, Object)
 [uuk]: added instant_ticks-attribute to TickHandler
 [uuk]: fixed bug 18
+[uuk]: updated textures to 1.15.2, for that, the chest textures have to be changed
+[uuk]: added --debug-world option
+[uuk]: fixed bug 29, 30, 31, 32
+[uuk]: add_block will now return block instance
 
 hot-fixes until merge onto master: 13
 
@@ -718,8 +722,6 @@ tasks:
 - write logging system [with on_exception-method which is called when an exception occurs -> writes relative profile to
         logging file], rework every print()-statement
 - clean up loading stage info messages, skip mods in progress system if no event handler was registered
-- search for typos
-- create an list of all events ever called with an description what they do
-- update textures to 1.15.2
+- search for typos and fix them
 - move all enums to util/enums
 
