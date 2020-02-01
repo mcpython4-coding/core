@@ -718,4 +718,5 @@ started these clone on 12th of July, 2019
 [uuk]: moved most of the enums to util/enums.py
 [uuk]: fixed issue 13, 37, 38
 [uuk]: implemented option background
+[uuk]: merged cleanups-branch onto master
 
