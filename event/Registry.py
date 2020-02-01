@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
+import logger
 
 
 class RegistryInjectionHolder:
@@ -72,7 +73,7 @@ class Registry:
                 return (self.check_function and self.check_function(obj)) or any(
                     [issubclass(obj, x) for x in self.inject_base_classes])
             except:
-                print("error during adding object {} to registries".format(obj))
+                logger.println("error during adding object {} to registries".format(obj))
                 raise
         else:
             t = type(obj)

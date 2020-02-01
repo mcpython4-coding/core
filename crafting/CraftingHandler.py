@@ -13,6 +13,7 @@ import item.ItemHandler
 import traceback
 import mod.ModMcpython
 import sys
+import logger
 
 
 class CraftingHandler:
@@ -51,11 +52,11 @@ class CraftingHandler:
         data = ResourceLocator.read(file, "json")
         result = self.add_recipe_from_data(data)
         if result is None and "--debugrecipes" in sys.argv:
-            print("error in decoding recipe from file {}: type '{}' not found".format(file, data["type"]))
+            logger.println("error in decoding recipe from file {}: type '{}' not found".format(file, data["type"]))
 
     def load(self, modname, check_mod_dirs=True, load_direct=False):
         if modname in self.loaded_mod_dirs and check_mod_dirs:
-            print("ERROR: mod '{}' has tried to load crafting recipes twice or more".format(modname))
+            logger.println("ERROR: mod '{}' has tried to load crafting recipes twice or more".format(modname))
             return  # make sure to load only ones!
         self.loaded_mod_dirs.add(modname)
         for itemname in ResourceLocator.get_all_entries("data/{}/recipes".format(modname)):
@@ -76,11 +77,11 @@ class CraftingHandler:
         G.eventhandler.call("craftinghandler:reload:start")
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
-            print("\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(modname, i+1,
+            logger.println("\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(modname, i+1,
                                                                                         len(self.loaded_mod_dirs)),
                   end="")
             self.load(modname, check_mod_dirs=False, load_direct=True)
-        print()
+        logger.println()
 
         G.eventhandler.call("craftinghandler:reload:finish")
 

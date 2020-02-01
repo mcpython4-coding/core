@@ -36,9 +36,9 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
 
     def on_draw_2d(self):
         # import block.BlockCraftingTable
-        # print(G.player.inventorys["main"].slots[0].itemstack.get_item_name())
-        # print(block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0].itemstack.get_item_name())
-        # print(G.player.inventorys["main"].slots[0] == block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0])
+        # logger.println(G.player.inventorys["main"].slots[0].itemstack.get_item_name())
+        # logger.println(block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0].itemstack.get_item_name())
+        # logger.println(G.player.inventorys["main"].slots[0] == block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0])
         hoveringslot = self._get_slot_for(*G.window.mouse_position)
         if any([inventory.is_blocking_interactions() for inventory in G.inventoryhandler.opened_inventorystack]):
             G.window.set_exclusive_mouse(False)

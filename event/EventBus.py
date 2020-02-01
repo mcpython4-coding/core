@@ -9,6 +9,7 @@ import globals as G
 import traceback
 import sys
 import time
+import logger
 
 
 class EventBus:
@@ -78,19 +79,20 @@ class EventBus:
             except SystemExit: raise
             except:
                 if not exception_occ:
-                    print("EXCEPTION DURING CALLING EVENT '{}' OVER ".format(event_name))
+                    logger.println("EXCEPTION DURING CALLING EVENT '{}' OVER ".format(event_name))
                     traceback.print_stack()
                     exception_occ = True
-                print("exception:")
+                logger.println("exception:")
                 traceback.print_exc()
-                print("during calling function: {} with arguments: {}".format(function, list(args)+list(
+                logger.write_exception()
+                logger.println("during calling function: {} with arguments: {}".format(function, list(args)+list(
                     self.extra_arguments[0])+list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs}, sep="\n"))
-                print("function info: '{}'".format(info))
+                logger.println("function info: '{}'".format(info))
             if G.debugevents:
                 with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
                     f.write("\nevent call of '{}' takes {}s until finish".format(function, dif))
         if exception_occ and self.crash_on_error:
-            print("\nout of the above reasons, the game has crashes")
+            logger.println("\nout of the above reasons, the game has crashes")
             sys.exit(-1)
         return result
 
@@ -110,14 +112,19 @@ class EventBus:
         if event_name not in self.event_subscriptions: return None
         for function, eargs, ekwargs in self.event_subscriptions[event_name]:
             start = time.time()
-            result = function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
-                              **{**kwargs, **self.extra_arguments[1], **ekwargs})
-            dif = time.time() - start
-            if G.debugevents:
-                with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
-                    f.write("\nevent call of {} takes {}s until finish".format(function, dif))
-            if check_function(result):
-                return result
+            try:
+                result = function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
+                                  **{**kwargs, **self.extra_arguments[1], **ekwargs})
+                dif = time.time() - start
+                if G.debugevents:
+                    with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
+                        f.write("\nevent call of {} takes {}s until finish".format(function, dif))
+                if check_function(result):
+                    return result
+            except SystemExit: raise
+            except:
+                logger.write_exception()
+                raise
         return None
 
     def activate(self):
@@ -151,20 +158,21 @@ class EventBus:
                                         **{**kwargs, **self.extra_arguments[1], **ekwargs}), info))
             except:
                 if not exception_occ:
-                    print("EXCEPTION DURING CALLING EVENT {} OVER ".format(eventname))
+                    logger.println("EXCEPTION DURING CALLING EVENT {} OVER ".format(eventname))
                     traceback.print_stack()
                     exception_occ = True
-                print("exception:")
+                logger.println("exception:")
                 traceback.print_exc()
-                print("during calling function:", function, "with arguments:", list(args) + list(
+                logger.write_exception()
+                logger.println("during calling function:", function, "with arguments:", list(args) + list(
                     self.extra_arguments[0]) + list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs}, sep="\n")
-                print("function info:", info)
+                logger.println("function info:", info)
             dif = time.time() - start
             if G.debugevents:
                 with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
                     f.write("\nevent call of {} takes {}s until finish".format(function, dif))
         if exception_occ and self.crash_on_error:
-            print("\nout of the above reasons, the game has crashes")
+            logger.println("\nout of the above reasons, the game has crashes")
             sys.exit(-1)
         return result
 

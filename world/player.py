@@ -13,6 +13,7 @@ import util.math
 import traceback
 import ResourceLocator
 import mod.ModMcpython
+import logger
 
 
 class Player:
@@ -174,7 +175,7 @@ class Player:
                 self.hunger = 20
                 return
         globals.commandparser.parse("/clear")
-        print("[CHAT] player {} died".format(self.name))
+        logger.println("[CHAT] player {} died".format(self.name))
         self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
                          globals.world.spawnpoint[1])
         self.active_inventory_slot = 0

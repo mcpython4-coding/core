@@ -12,6 +12,7 @@ import item.ItemHandler
 # import texture.helpers
 import ResourceLocator
 import traceback
+import logger
 
 
 SLOT_WIDTH = 32
@@ -128,7 +129,7 @@ class Slot:
         try:
             return (flag1 and flag2) or (flag3 and flag4) or not (flag1 or flag3)
         except:
-            print("[GUI][ERROR] error during executing check func '{}'".format(self.allowed_item_func))
+            logger.println("[GUI][ERROR] error during executing check func '{}'".format(self.allowed_item_func))
             traceback.print_exc()
             return False
 

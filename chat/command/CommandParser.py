@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import chat.command.Command
+import logger
 
 
 class ParsingCommandInfo:
@@ -66,7 +67,7 @@ class CommandParser:
             if values is None: return
             command.parse(values, trace, info)
         else:
-            print("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
+            logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
 
     def _convert_to_values(self, command, parsebridge, info, index=1) -> tuple:
         """
@@ -79,7 +80,7 @@ class CommandParser:
         if len(command) == 1 and not all(
                 [subcommand.mode == chat.command.Command.ParseMode.OPTIONAL for subcommand in parsebridge.sub_commands]
         ):
-            print("unable to parse command. please use /help command to get exact command syntax")
+            logger.println("unable to parse command. please use /help command to get exact command syntax")
             return None, None
         active_entry = parsebridge
         values = []
@@ -99,18 +100,18 @@ class CommandParser:
             if not flag1:
                 if all([subcommand.mode == chat.command.Command.ParseMode.OPTIONAL for subcommand in
                         active_entry.sub_commands]):
-                    print([x.mode for x in active_entry.sub_commands])
+                    logger.println([x.mode for x in active_entry.sub_commands])
                     return values, array
                 else:
-                    print("[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}".
+                    logger.println("[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}".
                           format(len(array)+1))
-                    print("missing one of the following entrys: {}".format([subcommand.type for subcommand in
+                    logger.println("missing one of the following entrys: {}".format([subcommand.type for subcommand in
                                                                            active_entry.sub_commands]))
-                    print("gotten values: {}".format(values))
+                    logger.println("gotten values: {}".format(values))
                     return None, array
         if all([x.mode == chat.command.Command.ParseMode.OPTIONAL for x in active_entry.sub_commands]):
             return values, array
-        print("command is not ended correct. please look at the command syntax.")
+        logger.println("command is not ended correct. please look at the command syntax.")
         return None, array
 
 

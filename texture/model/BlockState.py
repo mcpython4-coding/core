@@ -10,6 +10,7 @@ import ResourceLocator
 import random
 import mod.ModMcpython
 import traceback
+import logger
 
 
 class BlockStateNotNeeded(Exception): pass
@@ -39,7 +40,7 @@ class BlockStateDefinition:
                 modname, s[-1].split(".")[0]))
         except BlockStateNotNeeded: pass
         except:
-            print("error during loading model from file {}".format(file))
+            logger.println("error during loading model from file {}".format(file))
             traceback.print_exc()
 
     @classmethod
@@ -53,7 +54,7 @@ class BlockStateDefinition:
             return BlockStateDefinition(data, name)
         except BlockStateNotNeeded: pass  # do we need this model?
         except:
-            print("error during loading model for {} from data {}".format(name, data))
+            logger.println("error during loading model for {} from data {}".format(name, data))
             traceback.print_exc()
 
     def __init__(self, data: dict, name: str):

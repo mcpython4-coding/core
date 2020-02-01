@@ -9,6 +9,7 @@ import globals as G
 import chat.command.Command
 from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 import gui.ItemStack
+import logger
 
 
 @G.registry
@@ -31,14 +32,14 @@ class CommandItemInfo(chat.command.Command.Command):
     def parse(values: list, modes: list, info):
         if modes[1][1] == 0:  # hand
             itemstack = G.player.get_active_inventory_slot().itemstack
-            print("info to item hold in hand")
+            logger.println("info to item hold in hand")
             CommandItemInfo.print_info(itemstack)
         elif modes[1][1] == 1:  # inventory
             for inventorykey in G.player.inventorys.keys():
-                print("info to inventory {} of player".format(inventorykey))
+                logger.println("info to inventory {} of player".format(inventorykey))
                 for i, slot in enumerate(G.player.inventorys[inventorykey].slots):
                     if not slot.itemstack.is_empty():
-                        print("slot {}".format(i+1))
+                        logger.println("slot {}".format(i+1))
                         CommandItemInfo.print_info(slot.itemstack)
         elif modes[1][1] == 2:  # from item name
             stack = gui.ItemStack.ItemStack(values[1])
@@ -47,27 +48,27 @@ class CommandItemInfo(chat.command.Command.Command):
             block = G.world.get_active_dimension().get_block(values[2])
             if type(block) == str: return
             for i, inventory in enumerate(block.get_inventories()):
-                print("inventory {}".format(i+1))
+                logger.println("inventory {}".format(i+1))
                 for si, slot in enumerate(inventory.slots):
                     if not slot.itemstack.is_empty():
-                        print("slot {}".format(si+1))
+                        logger.println("slot {}".format(si+1))
                         CommandItemInfo.print_info(slot.itemstack)
 
     @staticmethod
     def print_info(itemstack):
-        print("-amount: {}".format(itemstack.amount))
-        print("-itemname: '{}'".format(itemstack.get_item_name()))
+        logger.println("-amount: {}".format(itemstack.amount))
+        logger.println("-itemname: '{}'".format(itemstack.get_item_name()))
         if itemstack.item:
-            print("-has block: {}".format(itemstack.item.has_block()))
+            logger.println("-has block: {}".format(itemstack.item.has_block()))
             if itemstack.item.has_block():
-                print("-blockname: {}".format(itemstack.item.get_block()))
-            print("-itemfile: '{}'".format(itemstack.item.get_default_item_image_location()))
-            print("-max stack size: {}".format(itemstack.item.get_max_stack_size()))
+                logger.println("-blockname: {}".format(itemstack.item.get_block()))
+            logger.println("-itemfile: '{}'".format(itemstack.item.get_default_item_image_location()))
+            logger.println("-max stack size: {}".format(itemstack.item.get_max_stack_size()))
             tags = []
             for tag in G.taghandler.taggroups["items"].tags.values():
                 if itemstack.item.get_name() in tag.entries:
                     tags.append(tag.name)
-            print(" -tags: {}".format(tags))
+            logger.println(" -tags: {}".format(tags))
 
     @staticmethod
     def get_help() -> list:

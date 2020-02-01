@@ -33,25 +33,25 @@ class CommandHelp(chat.command.Command.Command):
             start = (page - 1) * LINES_PER_PAGE
             end = start + LINES_PER_PAGE - 1
             if start < 0:
-                print("[CHAT][COMMANDPARSER][ERROR] value must be greater than 0")
+                logger.println("[CHAT][COMMANDPARSER][ERROR] value must be greater than 0")
                 return
             if end >= len(PAGES):
                 end = len(PAGES)
             pages = PAGES[start-1 if start != 0 else 0:end]
-            print("--------------" + "-" * len(str(page)))
-            print("- HELP PAGE {} -".format(page))
-            print("--------------" + "-" * len(str(page)))
-            print("\n".join(pages))
+            logger.println("--------------" + "-" * len(str(page)))
+            logger.println("- HELP PAGE {} -".format(page))
+            logger.println("--------------" + "-" * len(str(page)))
+            logger.println("\n".join(pages))
         elif type(values[0]) == str:
             c: str = values[0]
             if c.startswith("/"): c = c[1:]
             if c not in G.registry.get_by_name("command").get_attribute("commandentries"):
-                print("[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(c))
+                logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(c))
                 return
-            print("------------------"+"-"*len(c))
-            print("- HELP PAGE FOR {} -".format(c))
-            print("------------------"+"-"*len(c))
-            print("\n".join(G.registry.get_by_name("command").get_attribute("commandentries")[c].get_help()))
+            logger.println("------------------"+"-"*len(c))
+            logger.println("- HELP PAGE FOR {} -".format(c))
+            logger.println("------------------"+"-"*len(c))
+            logger.println("\n".join(G.registry.get_by_name("command").get_attribute("commandentries")[c].get_help()))
 
     @staticmethod
     def get_help() -> list:

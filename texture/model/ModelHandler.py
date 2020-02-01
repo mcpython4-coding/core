@@ -12,6 +12,7 @@ import texture.model.Model
 import texture.TextureAtlas
 import traceback
 import mod.ModMcpython
+import logger
 
 
 class ModelHandler:
@@ -33,7 +34,7 @@ class ModelHandler:
                 s = model.split("/")
                 name = "block/"+s[-1].split(".")[0] if "minecraft" in s else "{}:block/{}".format(
                     s[s.index("block")-2], s[-1].split(".")[0])
-                # if "sand" in model: print(model, name)
+                # if "sand" in model: logger.println(model, name)
                 self.found_models[name] = model
         G.eventhandler.call("modelhandler:searched")
 
@@ -49,7 +50,7 @@ class ModelHandler:
 
     def special_build(self, used):
         if used not in self.found_models:
-            print("model error: can't locate model for {}".format(used))
+            logger.println("model error: can't locate model for {}".format(used))
             return
         file = self.found_models[used]
         if type(file) == str:
@@ -83,7 +84,7 @@ class ModelHandler:
             else:
                 self.models[name] = texture.model.Model.Model(location.copy(), name)
         except:
-            print("error during loading model {} named {}".format(location, name))
+            logger.println("error during loading model {} named {}".format(location, name))
             traceback.print_exc()
             traceback.print_stack()
 
@@ -105,7 +106,7 @@ class ModelHandler:
         try:
             return data + blockstate.add_to_batch(position, batch)
         except:
-            print("information to the show-error:",  blockstatedefinition.states, block.get_name(),
+            logger.println("information to the show-error:",  blockstatedefinition.states, block.get_name(),
                   block.get_model_state())
             raise
 

@@ -16,6 +16,7 @@ changelog of cleanup-branch phase 1:
     - added instant_ticks-attribute to TickHandler
     - updated textures to 1.15.2
     - added new run option: --debug-world which sets the world generator to debug
+    - added logger system
     - fixed bugs:
         - loading bar was offset
         - debug world generator was not working

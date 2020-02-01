@@ -33,7 +33,7 @@ class BoxModel:
                 self.faces[util.enums.NAMED_SIDES[facename]] = model.get_texture_position(addr)
 
     def add_to_batch(self, position, batch, rotation):
-        # print(self.faces)
+        # logger.println(self.faces)
         x, y, z = position
         x += self.boxposition[0] - 0.5 + self.rposition[0]
         y += self.boxposition[1] - 0.5 + self.rposition[1]
@@ -42,7 +42,7 @@ class BoxModel:
                                                     for x in util.enums.SIDE_ORDER])
         indexes = [0] * 6
         if any(rotation):
-            # print(rotation)
+            # logger.println(rotation)
             if rotation[0]:  # rotate around x
                 for _ in range(rotation[0] // 90):
                     east, west, up, down = up, down, east, west

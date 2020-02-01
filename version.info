@@ -712,6 +712,8 @@ started these clone on 12th of July, 2019
 [uuk]: added --debug-world option
 [uuk]: fixed bug 29, 30, 31, 32
 [uuk]: add_block will now return block instance
+[uuk]: added logging system, which also escapes the local files for privacy
+[uuk]: G.local will contain now only "/" instead of "\\" on windows
 
 hot-fixes until merge onto master: 13
 
@@ -719,8 +721,6 @@ hot-fixes until merge onto master: 13
 tasks:
 - add exception handles to all calling functions of EventBus
 - do code cleanup everywhere, write docs
-- write logging system [with on_exception-method which is called when an exception occurs -> writes relative profile to
-        logging file], rework every print()-statement
 - clean up loading stage info messages, skip mods in progress system if no event handler was registered
 - search for typos and fix them
 - move all enums to util/enums

@@ -55,7 +55,6 @@ def chunk_generate(chunk):
             block = chunk.add_block((x, 10, z), block, block_update=False)
             block.set_model_state(state)
             heigthmap[(x, z)] = [(0, 10)]
-            print((x, 10, z), block)
 
 
 config = {"layers": []}

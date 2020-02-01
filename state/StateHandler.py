@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 from . import State
+import logger
 
 
 class StateHandler:
@@ -16,6 +17,7 @@ class StateHandler:
         self.CANCEL_SWITCH_STATE = False
 
     def switch_to(self, statename: str or None):
+        if statename not in self.states: return
         self.CANCEL_SWITCH_STATE = False
         G.eventhandler.call("state:switch:pre", statename)
         if self.CANCEL_SWITCH_STATE: return
@@ -24,6 +26,7 @@ class StateHandler:
         self.active_state = self.states[statename]
         self.active_state.activate()
         G.eventhandler.call("state:switch:post", statename)
+        logger.println("[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename), write_into_console=False)
 
     def add_state(self, state: State.State):
         self.states[state.get_name()] = state

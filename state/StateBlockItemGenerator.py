@@ -21,6 +21,7 @@ import factory.ItemFactory
 import item.ItemHandler
 import mod.ModMcpython
 import traceback
+import logger
 
 
 class StateBlockItemGenerator(State.State):
@@ -116,7 +117,7 @@ class StateBlockItemGenerator(State.State):
         try:
             G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
         except ValueError:
-            print("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with following exception".
+            logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with following exception".
                   format(self.tasks[self.blockindex]))
             self.blockindex += 1
             event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
@@ -149,13 +150,13 @@ class StateBlockItemGenerator(State.State):
 
     def _error_counter(self, image, blockname):
         if self.tries >= 10:
-            print("[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
+            logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
                 self.tasks[self.blockindex]))
             self.last_image = image
             file = G.local + "/tmp/blockitemgenerator_fail_{}_of_{}.png".format(
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__"))
             image.save(file)
-            print("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(file))
+            logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(file))
             file = "assets/missingtexture.png"  # use missing texture instead
             self.generate_item(blockname, file)
             event.TickHandler.handler.bind(G.world.get_active_dimension().remove_block, 4, args=[(0, 0, 0)])

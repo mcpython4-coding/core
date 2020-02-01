@@ -9,6 +9,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import config
 import math
+import logger
 
 
 def get_max_y(pos):
@@ -104,7 +105,7 @@ def normalize(position):
         x, y, z = (int(round(x)), int(round(y)), int(round(z)))
         return x, y, z
     except:
-        print(position)
+        logger.println(position)
         raise
 
 
@@ -114,7 +115,7 @@ def normalize_ceil(position):
         x, y, z = (int(math.ceil(x)), int(math.ceil(y)), int(math.ceil(z)))
         return x, y, z
     except:
-        print(position)
+        logger.println(position)
         raise
 
 

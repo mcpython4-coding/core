@@ -28,6 +28,7 @@ import os
 import util.texture
 import sys
 import config
+import logger
 
 
 class IResourceLocation:
@@ -132,7 +133,7 @@ def load_resource_packs():
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
-            print("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
+            logger.println("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
@@ -212,7 +213,7 @@ def read(file, mode=None):
             try:
                 return x.read(file, mode)
             except:
-                # print(file)
+                # logger.println(file)
                 raise
     raise ValueError("can't find resource {} in any path".format(file))
 

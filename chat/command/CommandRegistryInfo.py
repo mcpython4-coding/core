@@ -8,6 +8,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import chat.command.Command
 from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
+import logger
 
 
 @G.registry
@@ -31,14 +32,14 @@ class CommandRegistryInfo(chat.command.Command.Command):
         if cls.CANCEL_REGISTRY_INFO: return
         registry = G.registry.get_by_name(values[0])
         if len(values) == 1:
-            print("values in registry {}".format(values[0]))
+            logger.println("values in registry {}".format(values[0]))
             for element in registry.registered_objects:
                 if hasattr(element, "get_name"):
-                    print(element.get_name(), element)
+                    logger.println(element.get_name(), element)
                 else:
-                    print(element)
+                    logger.println(element)
         else:
-            print(registry.get_attribute(values[1]))
+            logger.println(registry.get_attribute(values[1]))
 
     @staticmethod
     def get_help() -> list:

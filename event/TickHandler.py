@@ -63,7 +63,7 @@ class TickHandler:
             return
         if isdelta:
             tick += self.active_tick
-        # print(function, tick, self.active_tick)
+        # logger.println(function, tick, self.active_tick)
         if tick not in self.tick_array: self.tick_array[tick] = []
         if ticketfunction:
             ticketid = self.next_ticket_id

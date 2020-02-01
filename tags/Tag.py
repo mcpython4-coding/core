@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import mod.ModMcpython
+import logger
 
 
 class Tag:
@@ -35,7 +36,7 @@ class Tag:
             if entry.startswith("#"):
                 if entry not in self.master.tags:
                     if self.load_tries > 4:
-                        print("[TAG][FATAL] failed to load tag {} as tag {} was not found".format(self.name, entry))
+                        logger.println("[TAG][FATAL] failed to load tag {} as tag {} was not found".format(self.name, entry))
                         self.load_tries = 0
                         old_entries.remove(entry)
                         continue

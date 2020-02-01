@@ -20,6 +20,7 @@ import mod.Mod
 import enum
 import toml
 import config
+import logger
 
 
 if not os.path.exists(G.local+"/mods"):
@@ -131,7 +132,7 @@ class ModLoader:
             with open(G.local+"/build/mods.json") as f:
                 self.lasttime_mods = json.load(f)
         elif not G.prebuilding:
-            print("[WARNING] can't locate mods.json in build-folder. This may be an error")
+            logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
 
     def look_out(self):
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("prebuilding:finished", self.write_mod_info)
@@ -159,7 +160,7 @@ class ModLoader:
                 if file in modlocations:
                     modlocations.remove(file)
                 else:
-                    print("[WARNING] it was attempted to remove mod {} which was not found in file system".format(file))
+                    logger.println("[WARNING] it was attempted to remove mod {} which was not found in file system".format(file))
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
@@ -177,7 +178,7 @@ class ModLoader:
                             try:
                                 with f.open("mod.toml", mode="r") as sf: self.load_mods_toml(sf.read(), file)
                             except KeyError:
-                                print("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
+                                logger.println("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
                     try:
@@ -194,7 +195,7 @@ class ModLoader:
                 elif os.path.exists(file+"/mods.toml"):
                     with open(file+"/mods.toml") as sf: self.load_mods_toml(sf.read(), file+"/mods.toml")
                 else:
-                    print("[WARNING] can't locate mod.json file for mod at '{}'".format(file))
+                    logger.println("[WARNING] can't locate mod.json file for mod at '{}'".format(file))
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
@@ -203,11 +204,11 @@ class ModLoader:
                 if name in self.mods:
                     del self.mods[name]
                 else:
-                    print("[WARNING] it was attempted to remove mod '{}' which was not registered".format(name))
+                    logger.println("[WARNING] it was attempted to remove mod '{}' which was not registered".format(name))
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
-        print("found mods: {}".format(len(self.found_mods)))
+        logger.println("found mods: {}".format(len(self.found_mods)))
         for modname in self.lasttime_mods.keys():
             if modname not in self.mods or self.mods[modname].version != self.lasttime_mods[modname]:
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
@@ -232,17 +233,17 @@ class ModLoader:
             for location in (files if type(files) == list else [files]):
                 importlib.import_module(location)
         else:
-            print("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
+            logger.println("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
 
     def load_mods_toml(self, data: str, file):
         data = toml.loads(data)
         if 'modLoader' in data:
             if data['modLoader'] == "javafml":
-                print("[SOURCE][FATAL] found java mod. As an mod-author, please upgrade to python as javafml")
+                logger.println("[SOURCE][FATAL] found java mod. As an mod-author, please upgrade to python as javafml")
                 sys.exit(-1)
         if 'loaderVersion' in data:
             if data['loaderVersion'].startswith("["):
-                print("[SOURCE][FATAL] found forge-version indicator")
+                logger.println("[SOURCE][FATAL] found forge-version indicator")
                 sys.exit(-1)
             version = data["loaderVersion"]
             if version.endswith("["):
@@ -250,7 +251,7 @@ class ModLoader:
             elif version.count("[") == version.count("]") == 0:
                 mc_version = version.split("|")
             else:
-                print("[SOURCE][FATAL] can't decode version id '{}'".format(version))
+                logger.println("[SOURCE][FATAL] can't decode version id '{}'".format(version))
                 sys.exit(-1)
         else:
             mc_version = None
@@ -298,13 +299,13 @@ class ModLoader:
                 if depend.name in modinfo and mod.name not in modinfo[depend.name]:
                     modinfo[depend.name].append(mod.name)
         if len(errors) > 0:
-            print("errors with mods:")
-            print(" ", end="")
-            print(*errors, sep="\n ")
+            logger.println("errors with mods:")
+            logger.println(" ", end="")
+            logger.println(*errors, sep="\n ")
             sys.exit(-1)
         self.modorder = list(util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
-        print("mod loading order: ")
-        print(" -", "\n - ".join(["{} ({})".format(name, self.mods[name].version) for name in self.modorder]))
+        logger.println("mod loading order: ")
+        logger.println(" -", "\n - ".join(["{} ({})".format(name, self.mods[name].version) for name in self.modorder]))
 
     def process(self):
         start = time.time()

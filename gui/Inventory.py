@@ -50,7 +50,7 @@ class Inventory:
             sid = int(slotid)
             entry = self.config["slots"][slotid]
             if "position" in entry:
-                # print(sid, entry)
+                # logger.println(sid, entry)
                 self.slots[sid].position = tuple(entry["position"])
             if "allow_player_insert" in entry:
                 self.slots[sid].interaction_mode[1] = entry["allow_player_insert"]

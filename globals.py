@@ -10,7 +10,7 @@ import os, sys
 prebuilding = "--rebuild" in sys.argv
 debugevents = "--debugevents" in sys.argv
 
-local = os.path.dirname(__file__)
+local = os.path.dirname(__file__).replace("\\", "/")
 
 window = None
 world = None

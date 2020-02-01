@@ -60,6 +60,6 @@ class Model:
             fname = name[1:]
             if fname in self.texture_addresses: return self.texture_addresses[fname]
             if fname in self.texturerename: return self.get_texture_position(self.texturerename[fname])
-        # print(name, self.used_textures, self.texturerename)
+        # logger.println(name, self.used_textures, self.texturerename)
 
 

@@ -6,12 +6,14 @@ minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
+import logger
+
 try:
     import config
     version = config.FULL_VERSION_NAME.upper()
-    print("---------------"+"-"*len(version))
-    print("- MCPYTHON 4 {} -".format(version))
-    print("---------------"+"-"*len(version))
+    logger.println("---------------"+"-"*len(version))
+    logger.println("- MCPYTHON 4 {} -".format(version))
+    logger.println("---------------"+"-"*len(version))
 
     import globals
     import os
@@ -93,6 +95,7 @@ try:
 except:  # when we crash on loading, make sure that all resources are closed
     import ResourceLocator
     ResourceLocator.close_all_resources()
+    logger.write_exception()
     raise
 
 
@@ -101,6 +104,10 @@ if __name__ == "__main__":
     
     try:
         main()
+    except SystemExit: pass  # sys.exit() was called
+    except:
+        logger.write_exception()
+        raise
     finally:
         import ResourceLocator
         ResourceLocator.close_all_resources()

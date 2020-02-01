@@ -91,7 +91,7 @@ class Chunk:
         """
         if position != util.math.normalize(position):
             raise ValueError("position {} is no valid block position".format(position))
-        # print("adding", block_name, "at", position)
+        # logger.println("adding", block_name, "at", position)
         if position in self.world:
             self.remove_block(position, immediate=immediate, block_update=block_update)
         if position[1] < 0 or position[1] > 255: return
@@ -131,7 +131,7 @@ class Chunk:
             Whether or not to immediately remove block from canvas.
 
         """
-        # print("removing", self.world[position] if position in self.world else None, "at", position)
+        # logger.println("removing", self.world[position] if position in self.world else None, "at", position)
         if position not in self.world: return
         if issubclass(type(position), Block.Block):
             position = position.position
@@ -201,9 +201,9 @@ class Chunk:
         block: the blockinstance to show
 
         """
-        # print("showing", position)
+        # logger.println("showing", position)
         self.shown[position] = G.modelhandler.add_to_batch(block, position, self.dimension.batches)
-        # print(self.world[position], self.shown[position])
+        # logger.println(self.world[position], self.shown[position])
 
     def hide_block(self, position, immediate=True):
         """ Hide the block at the given `position`. Hiding does not remove the
@@ -232,7 +232,7 @@ class Chunk:
         """ Private implementation of the 'hide_block()` method.
 
         """
-        # print("hiding", self.tmpworld[position], "at", position, "with", self.tmpworld[position].shown_data)
+        # logger.println("hiding", self.tmpworld[position], "at", position, "with", self.tmpworld[position].shown_data)
         [x.delete() for x in self.shown[position]]
         del self.shown[position]
 

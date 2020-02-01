@@ -16,6 +16,7 @@ import state.StateHandler
 import util.math
 import ResourceLocator
 import util.texture
+import logger
 
 
 class Window(pyglet.window.Window):
@@ -154,7 +155,7 @@ class Window(pyglet.window.Window):
         G.eventhandler.call("gameloop:tick:start", dt)
         # todo: change to attribute in State-class
         if dt > 3 and G.statehandler.active_state.get_name() not in ["minecraft:modloading"]:
-            print("[warning] running behind normal tick, did you overload game? missing " +
+            logger.println("[warning] running behind normal tick, did you overload game? missing " +
                   str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
         self.world.process_queue()
         sector = sectorize(self.position)

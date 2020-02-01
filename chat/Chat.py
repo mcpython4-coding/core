@@ -16,6 +16,7 @@ import event.EventHandler
 import event.EventBus
 import clipboard
 import traceback
+import logger
 
 
 class ChatInventory(gui.Inventory.Inventory):
@@ -45,7 +46,7 @@ class ChatInventory(gui.Inventory.Inventory):
             self.lable.text = text
 
     def on_activate(self):
-        # print("opening chat")
+        # logger.println("opening chat")
         # traceback.print_stack()
         G.chat.text = ""
         G.chat.active_index = 0
@@ -53,7 +54,7 @@ class ChatInventory(gui.Inventory.Inventory):
         self.eventbus.activate()
 
     def on_deactivate(self):
-        # print("closing chat")
+        # logger.println("closing chat")
         # traceback.print_stack()
         self.eventbus.deactivate()
 
@@ -106,6 +107,7 @@ class Chat:
         elif symbol == key.ENTER:  # execute command
             self.CANCEL_INPUT = False
             G.eventhandler.call("chat:text_enter", self.text)
+            logger.println("[CHAT][INFO] entered text: '{}'".format(self.text), write_into_console=False)
             if self.CANCEL_INPUT:
                 self.history.insert(0, self.text)
                 self.close()
@@ -114,7 +116,7 @@ class Chat:
                 # excute command
                 G.commandparser.parse(self.text)
             else:
-                print("[CHAT] {}".format(self.text))
+                logger.println("[CHAT] {}".format(self.text))
             self.history.insert(0, self.text)
             self.close()
         elif symbol == key.UP and self.historyindex < len(self.history) - 1:  # go one item up in the history

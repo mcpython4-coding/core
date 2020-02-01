@@ -19,7 +19,7 @@ def register_command(registry, command):
         G.commandparser.add_command(command)
     elif issubclass(command, chat.command.CommandEntry.CommandEntry):  # or an command entry
         commandregistry.get_attribute("commandentries")[command.ENTRY_NAME] = command
-        # print(command)
+        # logger.println(command)
     elif issubclass(command, chat.command.Selector.Selector):  # or an selector?
         commandregistry.get_attribute("selectors").append(command)
     else:

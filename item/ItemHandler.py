@@ -19,13 +19,14 @@ import sys
 import factory.ItemFactory
 import mod.ModMcpython
 import traceback
+import logger
 
 
 TEXTURE_ATLASES = []
 
 
 def build():
-    print("building item texture atlases...")
+    logger.println("building item texture atlases...")
     G.eventhandler.call("itemhandler:build:atlases:save")
     indexdata = {}
     for i, textureatlas in enumerate(TEXTURE_ATLASES):
@@ -72,7 +73,7 @@ def load_data():
                     block.modify_block_item(obj)
                     obj.finish()
                 else:
-                    print("[ERROR] during constructing block item for {}: Failed to find block".format(name))
+                    logger.println("[ERROR] during constructing block item for {}: Failed to find block".format(name))
                     data.remove(entry)
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
                 json.dump(data, f)
@@ -108,7 +109,7 @@ def register_item(registry, itemclass):
             for i, image in enumerate(images):
                 table[itemclass.get_name()][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
     except:
-        print(itemclass.get_name(), itemclass.get_used_texture_files())
+        logger.println(itemclass.get_name(), itemclass.get_used_texture_files())
         raise
 
 

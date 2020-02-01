@@ -110,7 +110,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
                 any([x not in recipe.inputs for x in itemtable.keys()]):
             return False
         # check every slot if the right item is in it
-        # print(recipe.output)
+        # logger.println(recipe.output)
         for pos in itemtable.keys():
             item = itemtable[pos]
             if not any([item == (x[0] if type(x) != str else x) for x in recipe.inputs[pos]]):
