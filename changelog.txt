@@ -18,8 +18,10 @@ changelog of cleanup-branch phase 1:
     - added new run option: --debug-world which sets the world generator to debug
     - added logger system
     - moved some project file
+    - added real config background
     - fixed bugs:
         - loading bar was offset
         - debug world generator was not working
         - chests & ender chests were not working in debug world
+        - game was crashing when hovering over an button
 

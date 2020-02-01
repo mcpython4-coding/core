@@ -26,6 +26,7 @@ class UIPartLable(UIPart.UIPart):
         :param anchor_window: the anchor on the window
         """
         super().__init__(position, 0, anchor_window=anchor_window, anchor_element=anchor_lable)
+        if len(color) != 4: raise ValueError("color must be an tuple of (r, g, b, a)")
         self.text = text
         self.press: event.EventInfo.MousePressEventInfo = press
         self.color = color
@@ -56,6 +57,7 @@ class UIPartLable(UIPart.UIPart):
         x, y = self.get_real_position()
         wx, wy = self.lable.content_width, self.lable.content_height
         size = self.lable.content_width, self.lable.content_width
+        # todo: check for change in window size
         self.lable.x = x + size[0] // 2 - wx // 2
         self.lable.y = y + size[1] // 2 - wy // 2
         self.lable.color = self.color

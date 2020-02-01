@@ -11,6 +11,7 @@ import globals as G
 import pyglet
 import util.math
 import mod.ModMcpython
+import state.StatePartConfigBackground
 
 
 class StateStartMenu(state.State.State):
@@ -20,11 +21,13 @@ class StateStartMenu(state.State.State):
     def __init__(self): state.State.State.__init__(self)
 
     def get_parts(self) -> list:
-        return [UIPartLable.UIPartLable("#*menu.game*#", (0, 100), anchor_window="MM", anchor_lable="MM"),
+        return [UIPartLable.UIPartLable("#*menu.game*#", (0, 100), anchor_window="MM", anchor_lable="MM",
+                                        color=(255, 255, 255, 255)),
                 UIPartButton.UIPartButton((200, 15), "#*menu.singleplayer*#", (0, 0), anchor_window="MM",
                                           anchor_button="MM", on_press=self.on_new_game_press),
                 UIPartButton.UIPartButton((200, 15), "#*menu.quit*#", (0, -20), anchor_window="MM",
-                                          anchor_button="MM", on_press=self.on_quit_game_press)]
+                                          anchor_button="MM", on_press=self.on_quit_game_press),
+                state.StatePartConfigBackground.StatePartConfigBackground()]
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)

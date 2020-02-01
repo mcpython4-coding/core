@@ -10,4 +10,7 @@ issue 29: DebugWorldGenerator was not working; fixed on: 01.02.2020; occur since
 issue 30: game crashes if an value is accessed in HeightMap without set it in advance
 issue 31: event "worldgen:chunk:finished" was only called in dynamic generated chunks; fixed on: 01.02.2020 by uuk;
           occur since: introduction of this event
-issue 32: EnderChest was not working in debug world
+issue 32: EnderChest was not working in debug world; fixed on: 01.02.2002 by uuk; occur since: introduction of chest
+issue 37: Exception printer was crashing; fixed on: 01.02.2020 by uuk; occur since: logging introduction
+issue 38: drawing of buttons was wrong; fixed on: 01.02.2020 by uuk; occur since: upgrade of resources to 1.15.2
+issue 13: game crashes on hovering above button; fixed on: 01.02.2020 by uuk

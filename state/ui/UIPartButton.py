@@ -17,10 +17,10 @@ import Language
 from util.enums import ButtonMode
 
 image = ResourceLocator.read("gui/widgets", "pyglet")
-disabled = image.get_region(2, 256-46-17, 196, 15)
+disabled = image.get_region(2, 256-46-17, 196, 14)
 enabled = image.get_region(2, 256-66-17, 196, 14)
-hovering = image.get_region(2, 256-86-17, 196, 15)
-#  enabled.save(G.local+"/tmp/minecraft.png")  # only for debugging reasons
+hovering = image.get_region(2, 256-86-17, 196, 14)
+# enabled.save(G.local+"/tmp/minecraft.png")  # only for debugging reasons
 
 
 IMAGES = {ButtonMode.DISABLED: disabled, ButtonMode.ENABLED: enabled, ButtonMode.HOVERING: hovering}
@@ -41,7 +41,7 @@ def draw_button(position, size, mode):
                 ii.blit(x * sourceimage.width + position[0], y * sourceimage.height + position[1])
             except ZeroDivisionError: pass
             except TypeError: pass
-    util.opengl.draw_line_rectangle(position, size, (0, 0, 0))
+    util.opengl.draw_line_rectangle(position, size, (0, 0, 0) if mode != ButtonMode.HOVERING else (255, 255, 255))
 
 
 class UIPartButton(UIPart.UIPart):

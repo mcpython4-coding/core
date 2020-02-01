@@ -25,5 +25,4 @@ def write_exception(*info):
     println(*info, write_into_console=False)
     data = traceback.format_exc().replace("\\", "/").replace(G.local, "%LOCAL%").replace(inter_home, "%PYTHON%")
     println(data, write_into_console=False)
-    logger.println(G.local)
 

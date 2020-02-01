@@ -14,6 +14,7 @@ from pyglet.window import key
 import pyglet
 import random
 import mod.ModMcpython
+import state.StatePartConfigBackground
 
 
 class StateWorldGenerationConfig(State.State):
@@ -44,7 +45,7 @@ class StateWorldGenerationConfig(State.State):
 
         parts.append(UIPartTextInput.TextInputTabHandler([text[2], text[3], text[1], text[0]]))
 
-        return parts + text
+        return parts + text + [state.StatePartConfigBackground.StatePartConfigBackground()]
 
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")

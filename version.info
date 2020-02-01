@@ -716,11 +716,6 @@ started these clone on 12th of July, 2019
 [uuk]: G.local will contain now only "/" instead of "\\" on windows
 [uuk]: moved the following files: opengl_setup.py to rendering/setup.py, texture/model to rendering/model
 [uuk]: moved most of the enums to util/enums.py
-
-hot-fixes until merge onto master: 13
-
-
-tasks:
-- clean up loading stage info messages, skip mods in progress system if no event handler was registered
-- search for typos and fix them
+[uuk]: fixed issue 13, 37, 38
+[uuk]: implemented option background
 
