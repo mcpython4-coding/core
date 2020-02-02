@@ -1,12 +1,6 @@
 This is an complete overhaul of the branch currently used:
-- Part 1: block rendering reimplementation:
-    - add an new attribute / class for storing face info of block
-    - implement system to rotate vertices & face names
-    - implement system to show/hide separated faces
-    - rework TextureAtlas system to NOT add rotated variants, rather rotate with above system
-    - redo custom block rendering, maybe add some form of registry for it
-    - redo alpha drawing
 
+Part 2:
     - implement system to colorize blocks based on an attribute to the rendering system
         [maybe an custom block renderer?]
     - implement this to grass block
@@ -15,3 +9,4 @@ beside this:
     - make text in chat selectable, implement STRG+X
     - add mc icon
     - add F3-screen with extra info if the chunk is fully generated or not
+    - redo alpha drawing

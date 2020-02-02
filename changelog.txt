@@ -1,6 +1,10 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
+changelog of rendering-branch version 1
+
+
+
 changelog of cleanup-branch version 1 [merged on 01.02.2020 onto master and on the same day onto release]:
     - added an file called "events.list" storing every event ever called
     - added loading event called "stage:block:block_config" called to register block config entries
