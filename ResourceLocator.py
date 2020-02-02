@@ -155,7 +155,8 @@ def close_all_resources():
     for item in RESOURCE_LOCATIONS:
         item.close()
     RESOURCE_LOCATIONS.clear()
-    G.eventhandler.call("resources:close")
+    if G.eventhandler:
+        G.eventhandler.call("resources:close")
 
 
 MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity"]

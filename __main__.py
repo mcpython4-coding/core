@@ -19,14 +19,15 @@ try:
     import os
     import shutil
 
-    for _ in range(10):
-        try:
-            shutil.rmtree(globals.local + "/tmp")
-            break
-        except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
-            pass
-    else:
-        raise IOError("can't delete directory 'tmp'. please make sure that you have no files opened in this directory")
+    if os.path.exists(globals.local + "/tmp"):
+        for _ in range(10):
+            try:
+                shutil.rmtree(globals.local + "/tmp")
+                break
+            except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
+                pass
+        else:
+            raise IOError("can't delete directory 'tmp'. please make sure that you have no files opened in this directory")
 
     os.makedirs(globals.local + "/tmp")
 
