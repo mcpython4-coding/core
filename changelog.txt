@@ -2,7 +2,10 @@ Changelog since cleanup-branch of 31.01.2020
 
 
 changelog of rendering-branch version 1
-
+    - changed the way how block faces are stored
+    - removed custom block renderers for the moment
+    - crashes on mod bus do not crash the game any more
+    - blocks are now rendered face-by-face instead of all faces at ones
 
 
 changelog of cleanup-branch version 1 [merged on 01.02.2020 onto master and on the same day onto release]:

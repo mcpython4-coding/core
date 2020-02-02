@@ -22,3 +22,5 @@ issue 17: html character information was displayed in chat as the character itse
 issue 41: chat index pointer was not correct; fixed on: 01.02.2020 by uuk
 issue 26: when an file is opened in an directory to remove, it fails to remove it and loops infinitely,
           fixed on: 01.02.2020 by uuk; occur since: introduction of removing these things under try-except
+issue 43: missing texture was resized incorrectly; fixed on 02.02.2020 by uuk; occur since: library update
+issue 39: leaves were handled solid in rendering; fixed on: 02.02.2020 by uuk

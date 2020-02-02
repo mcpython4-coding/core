@@ -45,11 +45,11 @@ class Model:
             for element in data["elements"]:
                 self.boxmodels.append(rendering.BoxModel.BoxModel(element, self))
 
-    def add_to_batch(self, position, batch, config) -> list:
+    def add_face_to_batch(self, position, batch, config, face):
         if not self.drawable: raise NotImplementedError("can't draw an model which has not definined textures")
         data = []
         for boxmodel in self.boxmodels:
-            data += boxmodel.add_to_batch(position, batch, config["rotation"])
+            data += boxmodel.add_face_to_batch(position, batch, config["rotation"], face)
         return data
 
     def get_texture_position(self, name: str) -> tuple:

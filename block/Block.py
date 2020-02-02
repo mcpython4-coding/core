@@ -8,6 +8,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import gui.ItemStack
 import item.ItemTool
 import block.BoundingBox
+import block.BlockFaceState
 
 
 class Block:
@@ -26,8 +27,9 @@ class Block:
         self.set_to = set_to
         self.real_hit = real_hit
         self.on_create()  # todo: remove
-        if state is not None:
-            self.set_model_state(state)
+        if state is not None: self.set_model_state(state)
+        self.face_state = block.BlockFaceState.BlockFaceState(self)
+        self.block_state = None
 
     @staticmethod
     def get_name() -> str:  # todo: change it to constant

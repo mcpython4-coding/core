@@ -12,6 +12,7 @@ from util.math import *
 import config
 from typing import Dict, List
 import util.math
+import util.enums
 
 
 class Chunk:
@@ -60,13 +61,29 @@ class Chunk:
 
         """
         x, y, z = position
-        for i, (dx, dy, dz) in enumerate(config.FACES):
+        for face in util.enums.EnumSide.iterate():
+            dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)
             block = self.dimension.get_block(pos)
-            if not (block and (block.is_solid_side(config.FACE_NAMES[i]) if type(block) != str else
-                               G.registry.get_by_name("block").get_attribute("blocks")[block].is_solid_side(None, config.FACE_NAMES[i]))):
+            if not (block and (block.is_solid_side(face) if type(block) != str else G.registry.get_by_name("block").
+                    get_attribute("blocks")[block].is_solid_side(None, face))):
                 return True
         return False
+
+    def exposed_faces(self, position):
+        x, y, z = position
+        faces = {}
+        blockinst = self.world[position]
+        for face in util.enums.EnumSide.iterate():
+            dx, dy, dz = face.relative
+            pos = (x + dx, y + dy, z + dz)
+            block = self.dimension.get_block(pos)
+            if block is None: faces[face] = True
+            elif type(block) == str: faces[face] = False  # todo: add an callback when the block is ready
+            elif not block.is_solid_side(face.invert()): faces[face] = True
+            elif not blockinst.is_solid_side(face): faces[face] = True
+            else: faces[face] = False
+        return faces
 
     def add_add_block_gen_task(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[],
                                kwargs={}):
@@ -131,17 +148,15 @@ class Chunk:
             Whether or not to immediately remove block from canvas.
 
         """
-        # logger.println("removing", self.world[position] if position in self.world else None, "at", position)
         if position not in self.world: return
         if issubclass(type(position), Block.Block):
             position = position.position
         self.world[position].on_delete()
         if immediate:
-            if position in self.shown:
-                self.hide_block(position)
             if block_update:
                 self.on_block_updated(position, itself=blockupdateself)
             self.check_neighbors(position)
+        self.world[position].face_state.hide_all()
         del self.world[position]
 
     def check_neighbors(self, position):
@@ -152,18 +167,13 @@ class Chunk:
 
         """
         x, y, z = position
-        for dx, dy, dz in config.FACES:
+        for face in util.enums.EnumSide.iterate():
+            dx, dy, dz = face.relative
             key = (x + dx, y + dy, z + dz)
             b = self.dimension.get_block(key)
-            chunk = self.dimension.get_chunk_for_position(key, generate=False)
-            if not b:
-                continue
-            if self.exposed(key):
-                if key not in chunk.shown:
-                    chunk.show_block(key)
-            else:
-                if key in chunk.shown:
-                    chunk.hide_block(key)
+            # chunk = self.dimension.get_chunk_for_position(key, generate=False)
+            if b is None or type(b) == str: continue
+            b.face_state.update()
 
     def show_block(self, position, immediate=True):
         """ Show the block at the given `position`. This method assumes the
@@ -180,8 +190,8 @@ class Chunk:
         if type(position) == Block.Block:
             position = position.position
         if position not in self.world: return
-        if position in self.shown:
-            self.hide_block(position)
+        # if position in self.shown:
+        #     self.hide_block(position)
         self.shown[position] = []
         if immediate:
             self._show_block(position, self.world[position])
@@ -201,6 +211,8 @@ class Chunk:
         block: the blockinstance to show
 
         """
+        self.world[position].face_state.update()
+        return
         # logger.println("showing", position)
         self.shown[position] = G.modelhandler.add_to_batch(block, position, self.dimension.batches)
         # logger.println(self.world[position], self.shown[position])
@@ -219,7 +231,7 @@ class Chunk:
         """
         if type(position) == Block.Block:
             position = position.position
-        if position not in self.shown: return
+        # if position not in self.shown: return
         if immediate:
             self._hide_block(position)
         else:
@@ -232,9 +244,8 @@ class Chunk:
         """ Private implementation of the 'hide_block()` method.
 
         """
-        # logger.println("hiding", self.tmpworld[position], "at", position, "with", self.tmpworld[position].shown_data)
-        [x.delete() for x in self.shown[position]]
-        del self.shown[position]
+        if position not in self.world: return
+        self.world[position].face_state.hide_all()
 
     def show(self):
         self.visible = True

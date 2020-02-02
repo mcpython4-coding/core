@@ -724,6 +724,12 @@ started these clone on 12th of July, 2019
 [uuk]: added support for DELETE, END and BEGIN in chat
 [uuk]: when you change cursor position by arrow-keys in chat, you will now go around if you go to far
 [uuk]: fixed an small bug when build-folder does not exists
+[uuk]: added new class: BlockFaceState
+[uuk]: removed ICustomBlockRenderer-class
+[uuk]: game is now not crashing on every exception
+[uuk]: changed the way how faces are handled
+[uuk]: fixed bug 39, 43
+
 
 - Part 1: block rendering reimplementation:
     - add an new attribute / class for storing face info of block

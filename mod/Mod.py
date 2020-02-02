@@ -62,7 +62,8 @@ class Mod:
         :param name: the name of the mod
         """
         self.name = name
-        self.eventbus: event.EventBus.EventBus = event.EventHandler.LOADING_EVENT_BUS.create_sub_bus()
+        self.eventbus: event.EventBus.EventBus = event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
+            crash_on_error=False)
         self.dependinfo = [[] for _ in range(5)]  # need, possible, not possible, before, after
         self.path = None
         self.version = version

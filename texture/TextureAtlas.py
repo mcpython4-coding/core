@@ -13,7 +13,7 @@ import os
 import mod.ModMcpython
 
 
-MISSING_TEXTURE = ResourceLocator.read("assets/missingtexture.png", "pil").resize((64, 64))
+MISSING_TEXTURE = ResourceLocator.read("assets/missingtexture.png", "pil").resize((64, 64), PIL.Image.NEAREST)
 
 
 class TextureAtlasGenerator:

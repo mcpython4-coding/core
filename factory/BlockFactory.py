@@ -177,7 +177,7 @@ class BlockFactory:
         return self
 
     def setAllSideSolid(self, state):
-        for face in util.enums.SIDE_ORDER:
+        for face in util.enums.EnumSide.iterate():
             self.setSolidSideTableEntry(face, state)
         return self
 

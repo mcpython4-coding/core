@@ -27,19 +27,20 @@ class BoxModel:
         NS = (data["from"][0] / 16, data["from"][1] / 16, data["to"][0] / 16, data["to"][1] / 16)
         EW = (data["from"][2] / 16, data["from"][1] / 16, data["to"][2] / 16, data["to"][1] / 16)
         self.texregion = [UD, UD, NS, EW, NS, EW]
-        for facename in util.enums.NAMED_SIDES.keys():
+        for face in util.enums.EnumSide.iterate():
+            facename = face.normal_name
             if facename in data["faces"]:
                 addr = data["faces"][facename]["texture"]
-                self.faces[util.enums.NAMED_SIDES[facename]] = model.get_texture_position(addr)
+                self.faces[util.enums.EnumSide[facename.upper()]] = model.get_texture_position(addr)
 
-    def add_to_batch(self, position, batch, rotation):
+    def add_to_batch(self, position, batch, rotation, active_faces=None):
         # logger.println(self.faces)
         x, y, z = position
         x += self.boxposition[0] - 0.5 + self.rposition[0]
         y += self.boxposition[1] - 0.5 + self.rposition[1]
         z += self.boxposition[2] - 0.5 + self.rposition[2]
         up, down, north, east, south, west = tuple([self.faces[x] if self.faces[x] is not None else [(0, 0)] * 4
-                                                    for x in util.enums.SIDE_ORDER])
+                                                    for x in util.enums.EnumSide.iterate()])
         indexes = [0] * 6
         if any(rotation):
             # logger.println(rotation)
@@ -69,11 +70,17 @@ class BoxModel:
                                          [True] * 6)
         batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]
         for i in range(6):
-            t = rtextures[i * 8:i * 8 + 8]
-            v = vertex[i * 12:i * 12 + 12]
-            result.append(batch.add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),
-                                    ('t2f/static', t)))
+            if active_faces is None or (active_faces[i] if type(active_faces) == list else (
+                    i not in active_faces or active_faces[i])):
+                t = rtextures[i * 8:i * 8 + 8]
+                v = vertex[i * 12:i * 12 + 12]
+                result.append(batch.add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),
+                                        ('t2f/static', t)))
         return result
+
+    def add_face_to_batch(self, position, batch, rotation, face):
+        return self.add_to_batch(position, batch, rotation, active_faces={i: x == face for i, x in enumerate(
+            util.enums.EnumSide.iterate())})
 
     def copy(self, new_model=None):
         return BoxModel(self.data, new_model if new_model else self.model)

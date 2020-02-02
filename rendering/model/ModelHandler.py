@@ -87,27 +87,17 @@ class ModelHandler:
             traceback.print_exc()
             traceback.print_stack()
 
-    def add_to_batch(self, block, position, batch):
-        data = []
-        icustomblockrenderer = block.get_custom_block_renderer()
-        if icustomblockrenderer is not None:
-            data = icustomblockrenderer.show(block, position, batch)
-            if not icustomblockrenderer.is_using_beside_model(block):
-                return data
-        if block.get_name() not in self.blockstates:
-            raise ValueError("block state not found for block '{}' at {}".format(block.get_name(), position))
+    def add_face_to_batch(self, block, face, batches) -> list:
+        blockstate = self.get_block_state_for_block(block)
+        # todo: add custom block renderer check
+        if blockstate is None: return []  # todo: add missing texture
+        return blockstate.add_face_to_batch(block, batches, face)
+
+    def get_block_state_for_block(self, block):
         blockstatedefinition = self.blockstates[block.get_name()]
         blockstate = blockstatedefinition.get_state_for(block.get_model_state())
-
-        if not blockstate:
-            blockstate = None  # todo: add missing texture!
-
-        try:
-            return data + blockstate.add_to_batch(position, batch)
-        except:
-            logger.println("information to the show-error:",  blockstatedefinition.states, block.get_name(),
-                  block.get_model_state())
-            raise
+        if not blockstate: return None
+        return blockstatedefinition.get_state_for(block.get_model_state())
 
 
 G.modelhandler = ModelHandler()

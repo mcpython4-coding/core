@@ -98,13 +98,15 @@ class BlockState:
                      data["z"] if "z" in data else 0)
         return model, {"rotation": rotations}
 
-    def add_to_batch(self, position, batch):
+    def add_face_to_batch(self, block, batch, face):
         # todo: add some more functionality to this
+        if block.block_state is None:
+            block.block_state = random.randint(1, len(self.models)) - 1
         result = []
-        model, config = random.choice(self.models)
+        model, config = self.models[block.block_state]
         if model not in G.modelhandler.models:
-            raise ValueError("can't find model named '{}' to add at {}".format(model, position))
-        result += G.modelhandler.models[model].add_to_batch(position, batch, config)
+            raise ValueError("can't find model named '{}' to add at {}".format(model, block.position))
+        result += G.modelhandler.models[model].add_face_to_batch(block.position, batch, config, face)
         return result
 
 
