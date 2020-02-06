@@ -302,6 +302,7 @@ class ModLoader:
         logger.println(" -", "\n - ".join(["{} ({})".format(name, self.mods[name].version) for name in self.modorder]))
 
     def process(self):
+        if self.active_loading_stage >= len(LOADING_ORDER): return
         start = time.time()
         astate: state.StateModLoading.StateModLoading = G.statehandler.active_state
         astate.parts[0].progress_max = len(LOADING_ORDER)

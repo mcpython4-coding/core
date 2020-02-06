@@ -73,7 +73,8 @@ class Chunk:
     def exposed_faces(self, position):
         x, y, z = position
         faces = {}
-        blockinst = self.world[position]
+        blockinst = self.get_block(position)
+        if blockinst is None or type(blockinst) == str: return {x: True for x in util.enums.EnumSide.iterate()}
         for face in util.enums.EnumSide.iterate():
             dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)

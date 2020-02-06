@@ -58,4 +58,5 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
             slot.itemstack = gui.ItemStack.ItemStack.get_empty()
             G.player.add_to_free_place(itemstack)
         self.slots[45].itemstack.clean()
+        G.statehandler.active_state.parts[0].activate_mouse = True
 

@@ -90,7 +90,8 @@ class BlockFactory:
 
         if self.solid_faces:
             class ConstructedBlock(ConstructedBlock):
-                def is_solid_side(self, side) -> bool: return master.solid_faces
+                def is_solid_side(self, side) -> bool:
+                    return master.solid_faces[side] if side in master.solid_faces else False
         elif self.customsolidsidefunction:
             class ConstructedBlock(ConstructedBlock):
                 def is_solid_side(self, side) -> bool: return master.customsolidsidefunction(self, side)

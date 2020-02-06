@@ -189,6 +189,8 @@ class Player:
         self.armor_level = 0
         self.armor_toughness = 0
         globals.eventhandler.call("player:die", self)
+        self.reset_moving_slot()
+        globals.inventoryhandler.close_all_inventories()
         # todo: recalculate armor level!
 
     def _get_position(self):
@@ -209,3 +211,7 @@ class Player:
             self.hearts -= hearts
             if self.hearts <= 0:
                 self.kill()
+
+    def reset_moving_slot(self):
+        self.add_to_free_place(globals.inventoryhandler.moving_slot.itemstack.copy())
+        globals.inventoryhandler.moving_slot.itemstack.clean()

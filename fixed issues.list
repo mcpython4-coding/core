@@ -25,3 +25,15 @@ issue 26: when an file is opened in an directory to remove, it fails to remove i
 issue 43: missing texture was resized incorrectly; fixed on 02.02.2020 by uuk; occur since: library update
 issue 39: leaves were handled solid in rendering; fixed on: 02.02.2020 by uuk
 issue 49: game crashed when selecting an unknown registry in /registryinfo-command
+issue 48: event calling order was creating issues when e.g. pressing an button and the event changes the state and
+          the new state is handling the interaction also; fixed on: 06.02.2020 by uuk; occur since: EventBus introduction
+issue 47: moving slot not reset when closing various inventories; fixed on: 06.02.2020 by uuk; occur since:
+          introduction of inventories & the affected inventories
+issue 51: game may crash when creating an second world in an game instance; fixed on: 06.02.2020 by uuk; occur since:
+          face rendering update
+issue 52: inventories were not closed when player died; fixed on: 06.02.2020 by uuk; occur since: introduction of player
+          dies & player inventory
+issue 44: block inventory interaction was not blocked when opening e.g. the player main inventory; fixed on: 06.02.2020
+          by uuk
+issue 39: BlockFactory was comparing the solid face state wrong; fixed on: 06.02.2020 by uuk
+issue 54: hit-box was in some cases not visible; fixed on: 06.02.2020 by uuk

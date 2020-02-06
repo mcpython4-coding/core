@@ -36,6 +36,7 @@ class InventoryCraftingTable(gui.Inventory.Inventory):
             G.player.add_to_free_place(slot.itemstack)
             slot.itemstack.clean()
         self.slots[-1].itemstack.clean()
+        G.player.reset_moving_slot()
 
     def draw(self, hoveringslot=None):
         """

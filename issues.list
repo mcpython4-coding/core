@@ -1,5 +1,5 @@
 
-[issue 1-8 are part of github-only]
+[issue 1-8 are part of github-only and are mostly fixed at the moment]
 
 issue 9:
     when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
@@ -59,10 +59,6 @@ issue 35:
     since: block damage was introduced
     fix: check for solid block
 
-issue 39:
-    bug: leaves are handled solid
-    fix: check where is decided if show block -> check if is_solid_face is used correctly
-
 issue 40:
     bug: after closing inventory after crafting, every new close, the last output is added to inventory a new time
     fix: make sure to really clean up the crafting slots
@@ -70,19 +66,17 @@ issue 40:
 issue 42:
     bug: crafting system does not work in rebuild mode
 
-issue 44:
-    bug: when in inventory, you can still interact with other blocks which open e.g. crafting tables
-
 issue 45:
     bug: info screen, second line is orientated from bottom rather from top
 
 issue 46:
     bug: crafting table can't craft chest
 
-issue 47:
-    bug: when closing crafting table, the moving slot is not reset
+issue 50:
+    bug: in chat, sometimes you see the html strings in an not-html formatting
 
-issue 48:
-    bug: when pressing an button in escape screen, you will interact with blocks
+issue 53:
+    bug: grass block texture top & leaves textures is not colored
+    since: rendering update - faces
 
-[49]
+[54]
