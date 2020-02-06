@@ -10,6 +10,7 @@ import util.math
 import util.enums
 import pyglet
 import block.BlockConfig
+import config
 
 
 class BoxModel:
@@ -39,8 +40,9 @@ class BoxModel:
         x += self.boxposition[0] - 0.5 + self.rposition[0]
         y += self.boxposition[1] - 0.5 + self.rposition[1]
         z += self.boxposition[2] - 0.5 + self.rposition[2]
-        up, down, north, east, south, west = tuple([self.faces[x] if self.faces[x] is not None else [(0, 0)] * 4
-                                                    for x in util.enums.EnumSide.iterate()])
+        up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else [(0, 0)] * 4
+                                                            for x in util.enums.EnumSide.iterate()])
+        deactive = [x[0] == (0, 0) or x is None for x in array]
         indexes = [0] * 6
         if any(rotation):
             # logger.println(rotation)
@@ -72,6 +74,7 @@ class BoxModel:
         for i in range(6):
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
+                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and deactive[i]: continue
                 t = rtextures[i * 8:i * 8 + 8]
                 v = vertex[i * 12:i * 12 + 12]
                 result.append(batch.add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),

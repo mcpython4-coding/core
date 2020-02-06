@@ -27,9 +27,13 @@ class TagHandler:
 G.taghandler = TagHandler()
 
 
+def add_from_location(loc: str):
+    G.taghandler.taglocations += [x.format(loc) for x in ["data/{}/tags/items", "data/{}/tags/naming",
+                                                          "data/{}/tags/blocks"]]
+
 def on_group_add():
-    G.taghandler.taglocations += ["data/minecraft/tags/items", "data/minecraft/tags/naming",
-                                  "data/minecraft/tags/blocks", "data/forge/tags/items", "data/forge/tags/blocks"]
+    add_from_location("minecraft")
+    add_from_location("forge")
 
 
 def check_tags():

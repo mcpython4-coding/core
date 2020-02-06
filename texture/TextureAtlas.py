@@ -21,7 +21,7 @@ class TextureAtlasGenerator:
         self.atlases = [TextureAtlas()]
 
     def add_image(self, image: PIL.Image.Image) -> tuple:
-        image = image.resize((64, 64), PIL.Image.NEAREST)
+        image = image.crop((0, 0, image.size[0], image.size[0])).resize((64, 64), PIL.Image.NEAREST)
         for atlas in self.atlases:
             if image in atlas.images:
                 return atlas.add_image(image), atlas
@@ -39,7 +39,8 @@ class TextureAtlasGenerator:
     def add_images(self, images: list, one_atlased=True) -> list:
         if not one_atlased:
             return [self.add_image(x) for x in images]
-        images = [image.resize((64, 64), PIL.Image.NEAREST) for image in images]
+        images = [image.crop((0, 0, image.size[0], image.size[0])).resize(
+            (64, 64), PIL.Image.NEAREST) for image in images]
         rimages = []
         for image in images:
             r = [image]

@@ -239,10 +239,12 @@ def get_all_entries_special(directory: str) -> list:
     return result
 
 
-def add_resources_by_modname(modname, pathname):
+def add_resources_by_modname(modname, pathname=None):
+    if pathname is None: pathname = modname
     from rendering.model.BlockState import BlockStateDefinition
     import Language
     import crafting.CraftingHandler
+    import tags.TagHandler
     G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,
                                                  info="loading crafting recipes for mod {}".format(modname))
     G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
@@ -250,5 +252,7 @@ def add_resources_by_modname(modname, pathname):
     G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
                                                  "assets/{}/blockstates".format(pathname), modname,
                                                  info="searching for block states for mod {}".format(modname))
+    G.modloader.mods[modname].eventbus.subscribe("stage:tag:group", lambda: tags.TagHandler.add_from_location(pathname),
+                                                 info="adding tag groups for mod {}".format(modname))
     Language.from_mod_name(modname)
 

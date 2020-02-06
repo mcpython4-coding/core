@@ -729,12 +729,10 @@ started these clone on 12th of July, 2019
 [uuk]: game is now not crashing on every exception
 [uuk]: changed the way how faces are handled
 [uuk]: fixed bug 39, 43
-
-
-- Part 1: block rendering reimplementation:
-    - add an new attribute / class for storing face info of block
-    - move rendering to face-based not block-based
-    - implement system to rotate vertices & face names
-    - rework TextureAtlas system to NOT add rotated variants, rather rotate with above system
-    - redo custom block rendering, maybe add some form of registry for it
+[uuk]: textures for blocks will now accept only squares. If no provided, an square with side length in x-direction is
+       created
+[uuk]: added "bg_image_pos" attribute to inventory config to move background relative to the slots
+[uuk]: ResourceLocator.add_resources_by_modname's directory parameter is now optional
+[uuk]: added USE_MISSING_TEXTURES_ON_MISS_TEXTURE-attribute to config which removes the missing texture on None-faces
+[uuk]: ResourceLocator.add_resources_by_modname will now also load blocks
 

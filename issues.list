@@ -70,4 +70,19 @@ issue 40:
 issue 42:
     bug: crafting system does not work in rebuild mode
 
-[43]
+issue 44:
+    bug: when in inventory, you can still interact with other blocks which open e.g. crafting tables
+
+issue 45:
+    bug: info screen, second line is orientated from bottom rather from top
+
+issue 46:
+    bug: crafting table can't craft chest
+
+issue 47:
+    bug: when closing crafting table, the moving slot is not reset
+
+issue 48:
+    bug: when pressing an button in escape screen, you will interact with blocks
+
+[49]

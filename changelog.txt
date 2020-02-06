@@ -1,6 +1,14 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
+changelog of by-the-way things
+    - block textures are now cut out to squares making animated textures load only the first texture, but not the whole
+    - inventory config has now an option to offset the background
+    - ResourceLocator.add_resources_by_modname's directory parameter is now optional
+    - added config for USE_MISSING_TEXTURES_ON_MISS_TEXTURE
+    - ResourceLocator.add_resources_by_modname will now also load tags
+
+
 changelog of rendering-branch version 1
     - changed the way how block faces are stored
     - removed custom block renderers for the moment
@@ -8,7 +16,9 @@ changelog of rendering-branch version 1
     - blocks are now rendered face-by-face instead of all faces at ones
 
 
-changelog of cleanup-branch version 1 [merged on 01.02.2020 onto master and on the same day onto release]:
+changelog of snapshot 20w05a [released on 01.02.2020]
+    - todo: complete this changelog
+    based on: cleanup-branch version 1 [merged on 01.02.2020 onto master]:
     - added an file called "events.list" storing every event ever called
     - added loading event called "stage:block:block_config" called to register block config entries
     - split up ICustomBlockRenderer into IStaticCustomBlockRenderer and IObjectedCustomBlockRenderer
@@ -38,4 +48,6 @@ changelog of cleanup-branch version 1 [merged on 01.02.2020 onto master and on t
         - chat marker for active writing position was not correct drawn
         - chat was doing bad stuff with strings like "&#38;"
         - possible infinite loop in deleting directories when files where opened
+
+todo: add an changelog for past versions
 
