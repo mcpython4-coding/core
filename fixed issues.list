@@ -37,3 +37,12 @@ issue 44: block inventory interaction was not blocked when opening e.g. the play
           by uuk
 issue 39: BlockFactory was comparing the solid face state wrong; fixed on: 06.02.2020 by uuk
 issue 54: hit-box was in some cases not visible; fixed on: 06.02.2020 by uuk
+issue 56: RecipeLoader was trying to load directories as recipe json's which lead to an exception;
+          fixed on: 07.02.2020 by uuk
+issue 57: ModelHandler was unable to load from sub-directories due to an internal miss-cast; fixed on: 07.02.2020 by uuk
+issue 53: various colored textures were not colored due to an miss-load of the models; fixed on: 07.02.2020 by uuk;
+          occur since: texture update to 1.15.2
+issue 59: fixed TickHandler.send_random_ticks-function crashing when being called; fixed on: 08.02.2020 by uuk;
+          occur since: change in world storage
+issue 16: random ticks are never called; fixed on: 08.02.2020 by uuk; occur since: the function-call was removed
+issue 60: random tick config was not correct; fixed on: 08.02.2020 by uuk

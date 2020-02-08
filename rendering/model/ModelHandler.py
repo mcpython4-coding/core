@@ -31,9 +31,10 @@ class ModelHandler:
             found_models = ResourceLocator.get_all_entries(location)
             for model in found_models:
                 s = model.split("/")
-                name = "block/"+s[-1].split(".")[0] if "minecraft" in s else "{}:block/{}".format(
-                    s[s.index("block")-2], s[-1].split(".")[0])
-                # if "sand" in model: logger.println(model, name)
+                mod_fix = s[s.index("block")-2]
+                address_fix = "/".join(s[s.index("block")+1:])
+                name = ("" if mod_fix == "minecraft" else mod_fix+":") + "block/" + ".".join(
+                    address_fix.split(".")[:-1])
                 self.found_models[name] = model
         G.eventhandler.call("modelhandler:searched")
 

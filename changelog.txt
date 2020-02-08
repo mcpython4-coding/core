@@ -14,6 +14,14 @@ changelog of rendering-branch version 1
     - removed custom block renderers for the moment
     - crashes on mod bus do not crash the game any more
     - blocks are now rendered face-by-face instead of all faces at ones
+    - added new blocks: brick slab, stained glass, carpets
+    - rendering support for "uv" coordinates
+    - TextureAtlas will now resize automatically to new size if needed
+    - added grass <-> dirt
+    fixed bugs:
+        - exceptions when trying to load recipes from an namespace with sub-recipe-folders
+        - models in sub-directories where not loadable
+        - fixed random updates
 
 
 changelog of snapshot 20w05a [released on 01.02.2020]

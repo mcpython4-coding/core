@@ -7,13 +7,13 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 from . import Block
+import util.enums
 
 
 @G.registry
 class BlockGrassBlock(Block.Block):
     """
     base class for grass
-    todo: add -> dirt convert
     """
     @staticmethod
     def get_name() -> str:
@@ -21,4 +21,11 @@ class BlockGrassBlock(Block.Block):
 
     def get_model_state(self) -> dict:
         return {"snowy": "false"}
+
+    def on_random_update(self):
+        x, y, z = self.position
+        blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
+        if blockinst is not None and type(blockinst) != str:
+            if blockinst.is_solid_side(util.enums.EnumSide.UP) or blockinst.is_solid_side(util.enums.EnumSide.DOWN):
+                G.world.get_active_dimension().add_block(self.position, "minecraft:dirt")
 

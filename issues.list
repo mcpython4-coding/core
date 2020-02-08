@@ -19,11 +19,6 @@ issue 10:
 
     possible fix: implement overwriting file for pyglet/event.py to fix this issue from pyglet side
 
-issue 16:
-    bug: random ticks are never called
-    since: random ticks were disabled
-    possible fix: implement an call_in_active_tick-method to TickHandler & use it for random ticks
-
 issue 21:
     bug: loading hangs in BlockItemFactory when leaving window during working
     possible fix strategy: use debug mode of running to reproduce
@@ -75,8 +70,11 @@ issue 46:
 issue 50:
     bug: in chat, sometimes you see the html strings in an not-html formatting
 
-issue 53:
-    bug: grass block texture top & leaves textures is not colored
-    since: rendering update - faces
+issue 55:
+    bug: alpha textures are rendered not behind alpha-textures
+    since: alpha rendering was implemented
 
-[54]
+issue 58:
+    bug: in some cases, you mouse up is not registered when closing e.g. crafting table
+
+[59 - 60]

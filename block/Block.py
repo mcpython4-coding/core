@@ -74,7 +74,6 @@ class Block:
     def on_random_update(self):
         """
         called on random update
-        todo: re-activate
         """
 
     def on_block_update(self):

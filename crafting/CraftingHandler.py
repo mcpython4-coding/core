@@ -60,6 +60,7 @@ class CraftingHandler:
             return  # make sure to load only ones!
         self.loaded_mod_dirs.add(modname)
         for itemname in ResourceLocator.get_all_entries("data/{}/recipes".format(modname)):
+            if itemname.endswith("/"): continue
             if not load_direct:
                 G.modloader.mods[modname].eventbus.subscribe("stage:recipe:bake", self.add_recipe_from_file, itemname,
                                                              info="loading crafting recipe from {}".format(itemname))

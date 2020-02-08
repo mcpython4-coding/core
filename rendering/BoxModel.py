@@ -13,6 +13,9 @@ import block.BlockConfig
 import config
 
 
+UV_ORDER = ["up", "down", "north", "east", "south", "west"]
+
+
 class BoxModel:
     def __init__(self, data: dict, model):
         self.data = data
@@ -33,6 +36,9 @@ class BoxModel:
             if facename in data["faces"]:
                 addr = data["faces"][facename]["texture"]
                 self.faces[util.enums.EnumSide[facename.upper()]] = model.get_texture_position(addr)
+                if "uv" in data["faces"][facename]:
+                    uvfx, uvfy, uvtx, uvty = tuple(data["faces"][facename]["uv"])
+                    self.texregion[UV_ORDER.index(facename)] = (uvfx/16, 1-uvfy/16, uvtx/16, 1-uvty/16)
 
     def add_to_batch(self, position, batch, rotation, active_faces=None):
         # logger.println(self.faces)

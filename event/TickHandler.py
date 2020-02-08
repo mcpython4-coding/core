@@ -46,7 +46,7 @@ class TickHandler:
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
                     return
-        # pyglet.clock.schedule(self.send_random_ticks)
+        pyglet.clock.schedule_once(self.send_random_ticks, 0)
 
     def bind(self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}):
         """
@@ -86,8 +86,9 @@ class TickHandler:
                         for _ in range(config.RANDOM_TICK_SPEED):
                             ddx, ddy, ddz = random.randint(0, 15), random.randint(0, 255), random.randint(0, 15)
                             position = (x + ddx, ddy, z + ddz)
-                            if position in G.world.world:
-                                G.world.world[position].on_random_update()
+                            blockinst = G.world.get_active_dimension().get_block(position)
+                            if blockinst is not None and type(blockinst) != str:
+                                blockinst.on_random_update()
 
 
 handler = G.tickhandler = TickHandler()

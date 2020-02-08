@@ -146,8 +146,8 @@ def load_resource_packs():
         else:
             i += 1
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))  # the special extension dir
     RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(config.MC_VERSION_BASE)))
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))  # the special extension dir
     G.eventhandler.call("resources:load")
 
 

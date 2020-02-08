@@ -157,6 +157,7 @@ class Chunk:
             if block_update:
                 self.on_block_updated(position, itself=blockupdateself)
             self.check_neighbors(position)
+        if position not in self.world: return
         self.world[position].face_state.hide_all()
         del self.world[position]
 

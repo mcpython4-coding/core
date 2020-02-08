@@ -23,6 +23,22 @@ import config
 import logger
 from util.enums import LoadingStageStatus
 
+# information for modders: this file contains every event called on the system
+# you may NOT do any job beside registration to events outside of the loading events
+# WARNING: violating this may cause problems
+# WARNING: when your stage crashes, game may not
+# WARNING: split up where possible to make showing progress bars easier
+# WARNING: the order in which is loaded may change from version to version and from mod list to mod list
+
+# For people who want to add their own loading stages: make sure to add them to LOADING_ORDER-list
+# For people who want to tweak the order of loading: make sure to check if another mod has modified the same array
+# For people who want to remove loading stages: make sure they really exists
+
+# For people who are trying to resolve issues: make sure that you have a) subscribed to the event over the eventbus
+#   of your mod [<modname>.eventbus] and have spelled the event correctly
+
+# For people which bring their own assets with them: please, if you are not familiar with the whole asset loading
+#   system, use the ResourceLocator.add_resources_by_modname-function to notate your loading to the right events
 
 if not os.path.exists(G.local+"/mods"):
     os.makedirs(G.local+"/mods")

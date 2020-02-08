@@ -11,3 +11,4 @@ beside this:
     - add F3-screen with extra info if the chunk is fully generated or not
     - redo alpha drawing
     - add an interface to transform an block model into an BoundingBox system
+    - make loading events split up for the different mods & models [e.g. model filtering]

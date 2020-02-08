@@ -21,7 +21,7 @@ class TextureAtlasGenerator:
         self.atlases = [TextureAtlas()]
 
     def add_image(self, image: PIL.Image.Image) -> tuple:
-        image = image.crop((0, 0, image.size[0], image.size[0])).resize((64, 64), PIL.Image.NEAREST)
+        image = image.crop((0, 0, image.size[0], image.size[0]))
         for atlas in self.atlases:
             if image in atlas.images:
                 return atlas.add_image(image), atlas
@@ -39,8 +39,7 @@ class TextureAtlasGenerator:
     def add_images(self, images: list, one_atlased=True) -> list:
         if not one_atlased:
             return [self.add_image(x) for x in images]
-        images = [image.crop((0, 0, image.size[0], image.size[0])).resize(
-            (64, 64), PIL.Image.NEAREST) for image in images]
+        images = [image.crop((0, 0, image.size[0], image.size[0])) for image in images]
         rimages = []
         for image in images:
             r = [image]
@@ -80,6 +79,12 @@ class TextureAtlas:
     def add_image(self, image: PIL.Image.Image, ind=None) -> tuple:
         if ind is None: ind = image
         if ind in self.images: return self.imagelocations[self.images.index(ind)]
+        if image.size[0] > self.image_size[0] or image.size[1] > self.image_size[1]:
+            self.image_size = image.size[0], image.size[0]
+            self.texture = self.texture.resize(tuple(
+                [self.size[i] * self.image_size[i] for i in range(2)]), PIL.Image.NEAREST)
+        else:
+            image = image.resize(self.image_size, PIL.Image.NEAREST)
         self.images.append(ind)
         x, y = self.next_index
         self.texture.paste(image, (x*self.image_size[0], (self.size[1]-y-1 if self.pyglet_special_pos else y) *

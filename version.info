@@ -737,4 +737,9 @@ started these clone on 12th of July, 2019
 [uuk]: ResourceLocator.add_resources_by_modname will now also load blocks
 [uuk]: fixed issue 39, 44, 47, 48, 51, 52, 54
 [uuk]: StateHandler.switch_state will change the state after 1 tick instead of instant resolving event order exceptions
+[uuk]: added new blocks: brick slab, stained glass, carpets
+[uuk]: fixed issue 16, 53, 56, 57, 59, 60
+[uuk]: added support of "uv"-attribute for elements of models
+[uuk]: TextureAtlas will now auto-resize images if needed
+[uuk]: added dirt <-> grass block convert
 
