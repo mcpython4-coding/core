@@ -99,3 +99,6 @@ class BlockChest(Block.Block):
                 pyglet.window.mouse.MIDDLE]:
             itemstack.item.inventory = self.inventory.copy()
 
+    def on_remove(self):
+        G.inventoryhandler.hide(self.inventory)
+

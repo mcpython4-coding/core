@@ -100,6 +100,7 @@ except:  # when we crash on loading, make sure that all resources are closed
     import ResourceLocator
     ResourceLocator.close_all_resources()
     logger.write_exception()
+    logger.add_funny_line()
     raise
 
 
@@ -110,6 +111,7 @@ if __name__ == "__main__":
     except SystemExit: pass  # sys.exit() was called
     except:
         logger.write_exception()
+        logger.add_funny_line()
         raise
     finally:
         import ResourceLocator

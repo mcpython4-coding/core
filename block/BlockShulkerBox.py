@@ -61,6 +61,9 @@ def create_shulker_box(name):
         def on_request_item_for_block(self, itemstack):
             itemstack.item.inventory = self.inventory.copy()
 
+        def on_remove(self):
+            G.inventoryhandler.hide(self.inventory)
+
 
 create_shulker_box("shulker_box")
 for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:

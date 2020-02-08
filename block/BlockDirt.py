@@ -22,14 +22,19 @@ class BlockDirt(Block.Block):
 
     def on_random_update(self):
         x, y, z = self.position
-        for dx in range(-1, 2):
-            for dy in range(-1, 2):
-                for dz in range(-1, 2):
-                    position = (x+dx, y+dy, z+dz)
-                    blockinst = G.world.get_active_dimension().get_block(position)
-                    if blockinst is not None:
-                        if blockinst == "minecraft:grass_block" or (
-                                type(blockinst) != str and blockinst.get_name() == "minecraft:grass_block"):
-                            G.world.get_active_dimension().add_block(self.position, "minecraft:grass_block")
-                            return
+        for dy in range(y+1, 256):
+            blockinst = G.world.get_active_dimension().get_block((x, dy, z))
+            if blockinst is not None:
+                break
+        else:
+            for dx in range(-1, 2):
+                for dy in range(-1, 2):
+                    for dz in range(-1, 2):
+                        position = (x+dx, y+dy, z+dz)
+                        blockinst = G.world.get_active_dimension().get_block(position)
+                        if blockinst is not None:
+                            if blockinst == "minecraft:grass_block" or (
+                                    type(blockinst) != str and blockinst.get_name() == "minecraft:grass_block"):
+                                G.world.get_active_dimension().add_block(self.position, "minecraft:grass_block")
+                                return
 

@@ -19,7 +19,7 @@ class BackgroundHandler:
     background_raw: PIL.Image.Image = ResourceLocator.read(
         "assets/minecraft/textures/gui/options_background.png", "pil")
     background_size = (32, 32)
-    background_image = util.texture.to_pyglet_image(background_raw.resize(background_size))
+    background_image = util.texture.to_pyglet_image(background_raw.resize(background_size, PIL.Image.NEAREST))
 
     old_win_size = None
 

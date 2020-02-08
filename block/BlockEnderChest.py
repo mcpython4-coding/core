@@ -76,3 +76,6 @@ class BlockChest(Block.Block):
 
     def is_solid_side(self, side) -> bool: return False
 
+    def on_remove(self):
+        G.inventoryhandler.hide(self.inventory)
+

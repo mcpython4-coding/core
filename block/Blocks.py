@@ -129,6 +129,21 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_brick_slab").setHardness(2). \
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
 
+    factory.BlockFactory.BlockFactory().setName("minecraft:chiseled_red_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:chiseled_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:cut_red_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:cut_red_sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:cut_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:cut_sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:red_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:red_sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_red_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_red_sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_sandstone_slab").setSlab().finish()
+
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")
 

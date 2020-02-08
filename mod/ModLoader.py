@@ -113,7 +113,8 @@ class LoadingStages:
 
     BLOCKSTATE = LoadingStage("blockstate loading phase", "stage:model:blockstate_search",
                               "stage:model:blockstate_create")
-    BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_create")
+    BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_search:intern",
+                               "stage:model:model_create")
 
     BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",
                         "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake")

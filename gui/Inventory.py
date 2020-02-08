@@ -10,6 +10,7 @@ from state.ui import (UIPartImage)
 import pyglet
 import ResourceLocator
 import util.texture
+import PIL.Image
 
 
 class Inventory:
@@ -61,7 +62,7 @@ class Inventory:
                 self.slots[sid].interaction_mode[2] = entry["allow_player_add_to_free_place"]
             if "empty_slot_image" in entry:
                 image = ResourceLocator.read(entry["empty_slot_image"], "pil")
-                image = util.texture.to_pyglet_image(image.resize((32, 32)))
+                image = util.texture.to_pyglet_image(image.resize((32, 32), PIL.Image.NEAREST))
                 self.slots[sid].empty_image = pyglet.sprite.Sprite(image)
             if "allowed_tags" in entry:
                 self.slots[sid].allowed_item_tags = entry["allowed_tags"]

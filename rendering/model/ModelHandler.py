@@ -46,7 +46,7 @@ class ModelHandler:
     def __let_subscribe_to_build(self, model):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
         G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake_prepare", self.special_build, model,
-                                                     info="filtering models")
+                                                     info="filtering model {}".format(model))
 
     def special_build(self, used):
         if used not in self.found_models:

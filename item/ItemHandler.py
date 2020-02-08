@@ -94,7 +94,7 @@ def register_item(registry, itemclass):
     table.setdefault(itemclass.get_name(), {})
     try:
         files = itemclass.get_used_texture_files()
-        images = [ResourceLocator.read(file, "pil").resize((32, 32)) for file in files]
+        images = [ResourceLocator.read(file, "pil").resize((32, 32), PIL.Image.NEAREST) for file in files]
         flag = True
         for textureatlas in TEXTURE_ATLASES:
             if textureatlas.is_free_for(files):

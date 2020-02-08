@@ -46,3 +46,10 @@ issue 59: fixed TickHandler.send_random_ticks-function crashing when being calle
           occur since: change in world storage
 issue 16: random ticks are never called; fixed on: 08.02.2020 by uuk; occur since: the function-call was removed
 issue 60: random tick config was not correct; fixed on: 08.02.2020 by uuk
+issue 61: dirt would convert in any case to grass, not only if no solid block is above; fixed on: 08.02.2020 by uuk;
+          occur since: introduction of dirt -> grass convert
+issue 62: crafting table, shulker box, ender chest and chest inventory stayed open when block is removed;
+          fixed on: 08.02.2020 by uuk
+issue 63: various parts were not resized correctly leading into blurry textures; fixed on: 08.02.2020 by uuk
+issue 42 & 64: crafting was in some cases not working; fixed on: 08.02.2020 by uuk; occur since: recipe cleanup
+               when items are missing was introduced

@@ -1,12 +1,23 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
-changelog of by-the-way things
+changelog of by-the-way things, developed in master-branch until next snapshot
     - block textures are now cut out to squares making animated textures load only the first texture, but not the whole
     - inventory config has now an option to offset the background
     - ResourceLocator.add_resources_by_modname's directory parameter is now optional
     - added config for USE_MISSING_TEXTURES_ON_MISS_TEXTURE
     - ResourceLocator.add_resources_by_modname will now also load tags
+    - added new blocks: brick slab, stained glass, carpets, sandstone
+    - rendering support for "uv" coordinates
+    - TextureAtlas will now resize automatically to new size if needed
+    - added grass <-> dirt convert
+    - log contains now some os-specific information
+    fixed bugs:
+        - exceptions when trying to load recipes from an namespace with sub-recipe-folders
+        - models in sub-directories where not loadable
+        - fixed random updates
+        - block inventories were not closed when block holding the inventory was removed
+        - some textures were blurry
 
 
 changelog of rendering-branch version 1
@@ -14,14 +25,6 @@ changelog of rendering-branch version 1
     - removed custom block renderers for the moment
     - crashes on mod bus do not crash the game any more
     - blocks are now rendered face-by-face instead of all faces at ones
-    - added new blocks: brick slab, stained glass, carpets
-    - rendering support for "uv" coordinates
-    - TextureAtlas will now resize automatically to new size if needed
-    - added grass <-> dirt
-    fixed bugs:
-        - exceptions when trying to load recipes from an namespace with sub-recipe-folders
-        - models in sub-directories where not loadable
-        - fixed random updates
 
 
 changelog of snapshot 20w05a [released on 01.02.2020]
@@ -57,5 +60,5 @@ changelog of snapshot 20w05a [released on 01.02.2020]
         - chat was doing bad stuff with strings like "&#38;"
         - possible infinite loop in deleting directories when files where opened
 
-todo: add an changelog for past versions
+todo: add an changelog for past version(s)
 

@@ -742,4 +742,7 @@ started these clone on 12th of July, 2019
 [uuk]: added support of "uv"-attribute for elements of models
 [uuk]: TextureAtlas will now auto-resize images if needed
 [uuk]: added dirt <-> grass block convert
+[uuk]: fixed issue 42, 46, 61, 62, 63
+[uuk]: added an header to every log indicating some information about the os
+[uuk]: added sandstone variant-blocks
 

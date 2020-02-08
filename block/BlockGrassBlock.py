@@ -24,8 +24,13 @@ class BlockGrassBlock(Block.Block):
 
     def on_random_update(self):
         x, y, z = self.position
-        blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
-        if blockinst is not None and type(blockinst) != str:
-            if blockinst.is_solid_side(util.enums.EnumSide.UP) or blockinst.is_solid_side(util.enums.EnumSide.DOWN):
-                G.world.get_active_dimension().add_block(self.position, "minecraft:dirt")
+        for dy in range(y+1, 256):
+            blockinst = G.world.get_active_dimension().get_block((x, dy, z))
+            if blockinst is not None:
+                break
+        else:
+            blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
+            if blockinst is not None and type(blockinst) != str:
+                if blockinst.is_solid_side(util.enums.EnumSide.UP) or blockinst.is_solid_side(util.enums.EnumSide.DOWN):
+                    G.world.get_active_dimension().add_block(self.position, "minecraft:dirt")
 

@@ -17,6 +17,7 @@ import util.math
 import ResourceLocator
 import util.texture
 import logger
+import PIL.Image
 
 
 class Window(pyglet.window.Window):
@@ -88,7 +89,7 @@ class Window(pyglet.window.Window):
         self.push_handlers(self.keys)
 
         self.CROSSHAIRS_TEXTURE = util.texture.to_pyglet_image(
-            ResourceLocator.read("gui/icons", "pil").crop((0, 0, 15, 15)).resize((30, 30)))
+            ResourceLocator.read("gui/icons", "pil").crop((0, 0, 15, 15)).resize((30, 30), PIL.Image.NEAREST))
 
     def reset_caption(self):
         self.set_caption("mcpython 4 - {}".format(config.FULL_VERSION_NAME))

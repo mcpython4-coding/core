@@ -42,3 +42,6 @@ class BlockCraftingTable(Block.Block):
     def get_best_tools(self):
         return [item.ItemTool.ToolType.AXE]
 
+    def on_remove(self):
+        G.inventoryhandler.hide(self.inventory)
+
