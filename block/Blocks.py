@@ -40,6 +40,8 @@ def load_blocks():
     terracotta = factory.BlockFactory.BlockFactory().setName("minecraft:terracotta").setHardness(1.25).\
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
 
+    factory.BlockFactory.BlockFactory().setName("minecraft:glass").setAllSideSolid(False).finish()
+
     for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_concrete".format(color)).setHardness(1.8).setBestTools(
             [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()

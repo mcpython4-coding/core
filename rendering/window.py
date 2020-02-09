@@ -20,6 +20,7 @@ import logger
 import PIL.Image
 import psutil
 import event.EventHandler
+import event.TickHandler
 
 
 class Window(pyglet.window.Window):
@@ -174,11 +175,11 @@ class Window(pyglet.window.Window):
         # todo: change to attribute in State-class
         if dt > 3 and G.statehandler.active_state.get_name() not in ["minecraft:modloading"]:
             logger.println("[warning] running behind normal tick, did you overload game? missing " +
-                  str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
+                           str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
         self.world.process_queue()
         sector = sectorize(self.position)
         if sector != self.sector:
-            G.world.change_sectors(self.sector, sector)
+            pyglet.clock.schedule_once(lambda _: G.world.change_sectors(self.sector, sector), 0.1)
             if self.sector is None:
                 G.world.process_entire_queue()
             self.sector = sector

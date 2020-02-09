@@ -751,4 +751,8 @@ started these clone on 12th of July, 2019
 [uuk]: added in-game cpu & memory usage info
 [uuk]: implemented HotKey-system with events (hotkeys: F3+A, F3+C, F3+C for 10s, F3+D, F3+I, F3+N, F3+T)
 [uuk]: added security option for gamemode-3 not flying
+[uuk]: fixed issue 10, 33, 40, [47], 58, 64, 65, 67, 68, 69, 70, 71, 72
+[uuk]: speed up sector changing
+[uuk]: changed Item.get_data signature to only return dict-objects, not any type of object
+[uuk]: added glass-block
 

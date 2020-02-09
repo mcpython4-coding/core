@@ -32,10 +32,10 @@ class InventoryCraftingTable(gui.Inventory.Inventory):
         return [gui.Slot.Slot() for _ in range(10)]
 
     def on_deactivate(self):
+        self.slots[-1].itemstack.clean()
         for slot in self.slots[:-1]:
             G.player.add_to_free_place(slot.itemstack)
             slot.itemstack.clean()
-        self.slots[-1].itemstack.clean()
         G.player.reset_moving_slot()
 
     def draw(self, hoveringslot=None):

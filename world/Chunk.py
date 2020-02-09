@@ -152,7 +152,7 @@ class Chunk:
         if position not in self.world: return
         if issubclass(type(position), Block.Block):
             position = position.position
-        self.world[position].on_delete()
+        self.world[position].on_remove()
         if immediate:
             if block_update:
                 self.on_block_updated(position, itself=blockupdateself)

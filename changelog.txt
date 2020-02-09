@@ -7,7 +7,7 @@ changelog of by-the-way things, developed in master-branch until next snapshot
     - ResourceLocator.add_resources_by_modname's directory parameter is now optional
     - added config for USE_MISSING_TEXTURES_ON_MISS_TEXTURE
     - ResourceLocator.add_resources_by_modname will now also load tags
-    - added new blocks: brick slab, stained glass, carpets, sandstone
+    - added new blocks: brick slab, glass, stained glass, carpets, sandstone
     - rendering support for "uv" coordinates
     - TextureAtlas will now resize automatically to new size if needed
     - added grass <-> dirt convert
@@ -22,6 +22,11 @@ changelog of by-the-way things, developed in master-branch until next snapshot
         - block inventories were not closed when block holding the inventory was removed
         - some textures were blurry
         - info label in-game were drawn offset in resized windows
+        - various crashes & exceptions in log
+        - mouse button up is in some cases not handled correctly
+        - closing crafting tables could duplicate output
+        - when braking an chest, items were deleted
+        - on_remove function was not called correctly when an block was removed
 
 
 changelog of rendering-branch version 1

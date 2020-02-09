@@ -42,7 +42,7 @@ class ChatInventory(gui.Inventory.Inventory):
                                                                                 text[underline_index],
                                                                                 text[1+underline_index:])
         except IndexError:
-            self.lable.text = "<font color='white'>"+text+"_</font>"
+            self.lable.text = "<font color='white'>"+text+"<u> </u></font>"
 
     def on_activate(self):
         G.chat.text = ""

@@ -20,5 +20,6 @@
   "block/brown_stained_glass",
   "block/green_stained_glass",
   "block/red_stained_glass",
-  "block/black_stained_glass"
+  "block/black_stained_glass",
+  "block/glass"
 ]

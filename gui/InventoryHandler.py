@@ -115,8 +115,8 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                         if moving_slot.itemstack.amount == 0:
                             moving_slot.itemstack.clean()
                         slot.call_update(player=True)
-                elif slot.itemstack.item.get_name() == moving_slot.itemstack.item.get_name() and \
-                        slot.itemstack.amount < slot.itemstack.item.get_max_stack_size():
+                elif not slot.itemstack.is_empty() and slot.itemstack.get_item_name() == moving_slot.itemstack.\
+                        get_item_name() and slot.itemstack.amount < slot.itemstack.item.get_max_stack_size():
                     if slot.interaction_mode[1]:
                         slot.itemstack.amount += 1
                         moving_slot.itemstack.amount -= 1

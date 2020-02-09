@@ -82,7 +82,7 @@ class StatePartGame(StatePart.StatePart):
                 cls.braketime = (1.5 if block.get_minimum_tool_level() <= toollevel else 5) * hardness
             else:
                 cls.braketime = (1.5 if block.get_minimum_tool_level() <= toollevel else 5) * hardness / \
-                                itemstack.item.get_speed_multiplyer()
+                                itemstack.item.get_speed_multiplyer(itemstack)
             # todo: add factor when not on ground, when in water (when its added)
 
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
@@ -90,7 +90,7 @@ class StatePartGame(StatePart.StatePart):
                  clearcolor=(0.5, 0.69, 1.0, 1), active_hotkeys=ALL_KEY_COMBOS):
         super().__init__()
         self.activate_physics = activate_physics
-        self.activate_mouse = activate_mouse
+        self.__activate_mouse = activate_mouse
         self.activate_keyboard = activate_keyboard
         self.activate_3d_draw = activate_3d_draw
         self.activate_focused_block_draw = activate_focused_block
@@ -99,6 +99,17 @@ class StatePartGame(StatePart.StatePart):
         self.glcolor3d = glcolor3d
         self.clearcolor = clearcolor
         self.active_hotkeys = active_hotkeys
+
+    def set_mouse_active(self, active: bool):
+        self.__activate_mouse = active
+        if not active:
+            [G.window.mouse_pressing.__setitem__(x, False) for x in G.window.mouse_pressing.keys()]
+        else:
+            G.player.reset_moving_slot()
+
+    def get_mouse_active(self): return self.__activate_mouse
+
+    activate_mouse = property(get_mouse_active, set_mouse_active)
 
     def bind_to_eventbus(self):
         state = self.master[0]
@@ -206,7 +217,6 @@ class StatePartGame(StatePart.StatePart):
                 itemstack = gui.ItemStack.ItemStack(block.get_name() if type(block) != str else block)
                 block = chunk.get_block(blockpos)
                 if block: block.on_request_item_for_block(itemstack)
-                G.player.add_to_free_place(itemstack)
                 selected_slot = G.player.get_active_inventory_slot()
                 for inventoryname, reverse in G.player.inventory_order:
                     inventory = G.player.inventorys[inventoryname]

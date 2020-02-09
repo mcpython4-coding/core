@@ -28,7 +28,7 @@ issue 49: game crashed when selecting an unknown registry in /registryinfo-comma
 issue 48: event calling order was creating issues when e.g. pressing an button and the event changes the state and
           the new state is handling the interaction also; fixed on: 06.02.2020 by uuk; occur since: EventBus introduction
 issue 47: moving slot not reset when closing various inventories; fixed on: 06.02.2020 by uuk; occur since:
-          introduction of inventories & the affected inventories
+          introduction of inventories & the affected inventories; fixed again on 09.02.2020 by uuk
 issue 51: game may crash when creating an second world in an game instance; fixed on: 06.02.2020 by uuk; occur since:
           face rendering update
 issue 52: inventories were not closed when player died; fixed on: 06.02.2020 by uuk; occur since: introduction of player
@@ -54,3 +54,14 @@ issue 63: various parts were not resized correctly leading into blurry textures;
 issue 42 & 64: crafting was in some cases not working; fixed on: 08.02.2020 by uuk; occur since: recipe cleanup
                when items are missing was introduced
 issue 45: info label in game was not always correct arranged; fixed on: 09.02.2020 by uuk
+issue 68: game crashes in InventoryHandler, line 118; fixed on: 09.02.2020 by uuk
+issue 69: game crashes in tool braketime calculation; fixed on: 09.02.2020 by uuk
+issue 70: change_sectors was crashing when sectors were in order to show; fixed on: 09.02.2020 by uuk
+issue 58: mouse button up is not registered in some cases; fixed on: 09.02.2020 by uuk
+issue 33: mouse middle click was giving you always in any gamemode the item and checking than if it was in your
+          inventory; fixed on: 09.02.2020 by uuk
+issue 10: pyglet gives out exceptions on window close; fixed on: 09.02.2020 by uuk; occur since: python 3.8
+issue 40: when closing crafting table gui, last output may get duplicated; fixed on: 09.02.2020 by uuk
+issue 71: when removing an chest, the items in the chest got deleted; fixed on: 09.02.2020 by uuk
+issue 72: chunk's remove_block function was calling wrong block event; fixed on: 09.02.2020 by uuk
+issue 64: slab side texture was upside-down; fixed on: 09.02.2020 by uuk; occur since: UV-introduction
