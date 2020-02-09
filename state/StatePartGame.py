@@ -17,6 +17,43 @@ import time
 import item.ItemFood as ItemFood
 import item.ItemTool as ItemTool
 import math
+import enum
+
+
+class HotKeys(enum.Enum):
+    # from https://minecraft.gamepedia.com/Debug_screen
+
+    RELOAD_CHUNKS = ([key.F3, key.A], "hotkey:chunk_reload")
+    GAME_CRASH = ([key.F3, key.C], "hotkey:game_crash", 10)
+    GET_PLAYER_POSITION = ([key.F3, key.C], "hotkey:get_player_position")
+    CLEAR_CHAT = ([key.F3, key.D], "hotkey:clear_chat")
+    COPY_BLOCK_OR_ENTITY_DATA = ([key.F3, key.I], "hotkey:copy_block_or_entity_data")
+    TOGGLE_GAMEMODE_1_3 = ([key.F3, key.N], "hotkey:gamemode_1-3_toggle")
+    RELOAD_TEXTURES = ([key.F3, key.T], "hotkey:reload_textures")
+
+    def __init__(self, keys, event, min_press=0):
+        self.keys = keys
+        self.event = event
+        self.active = False
+        self.min_press = min_press
+        self.press_start = 0
+
+    def check(self):
+        status = all([G.window.keys[symbol] for symbol in self.keys])
+        if self.active and not status:
+            self.active = False
+            if time.time() - self.press_start < self.min_press: return
+            G.eventhandler.call(self.event)
+        if not self.active and status:
+            self.active = True
+            self.press_start = time.time()
+
+    def blocks(self, symbol, mods) -> bool:
+        return symbol in self.keys and self.check()  # is this key a) affected by this and b) is our combo active
+
+
+ALL_KEY_COMBOS = [HotKeys.RELOAD_CHUNKS, HotKeys.GAME_CRASH, HotKeys.GET_PLAYER_POSITION, HotKeys.CLEAR_CHAT,
+                  HotKeys.COPY_BLOCK_OR_ENTITY_DATA, HotKeys.TOGGLE_GAMEMODE_1_3, HotKeys.RELOAD_TEXTURES]
 
 
 class StatePartGame(StatePart.StatePart):
@@ -50,7 +87,7 @@ class StatePartGame(StatePart.StatePart):
 
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
                  activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True, activate_lable=True,
-                 clearcolor=(0.5, 0.69, 1.0, 1)):
+                 clearcolor=(0.5, 0.69, 1.0, 1), active_hotkeys=ALL_KEY_COMBOS):
         super().__init__()
         self.activate_physics = activate_physics
         self.activate_mouse = activate_mouse
@@ -61,6 +98,7 @@ class StatePartGame(StatePart.StatePart):
         self.active_lable = activate_lable
         self.glcolor3d = glcolor3d
         self.clearcolor = clearcolor
+        self.active_hotkeys = active_hotkeys
 
     def bind_to_eventbus(self):
         state = self.master[0]
@@ -78,9 +116,11 @@ class StatePartGame(StatePart.StatePart):
         state.eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
     def on_update(self, dt):
-        # do counting stuff
-        if any(G.window.mouse_pressing.values()):
-            self.mouse_press_time += dt
+        for hotkey in self.active_hotkeys:
+            hotkey.check()
+
+        # do counting stuff  todo: change to per-mouse-button
+        if any(G.window.mouse_pressing.values()): self.mouse_press_time += dt
 
         if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
             vector = G.window.get_sight_vector()
@@ -275,6 +315,12 @@ class StatePartGame(StatePart.StatePart):
 
     def on_key_press(self, symbol, modifiers):
         if not self.activate_keyboard: return
+
+        # does an hotkey override this key?
+        for hotkey in self.active_hotkeys:
+            if hotkey.blocks(symbol, modifiers):
+                return
+
         if symbol == key.W and not G.window.keys[key.S]:
             G.window.strafe[0] = -1
         elif symbol == key.S and not G.window.keys[key.W]:

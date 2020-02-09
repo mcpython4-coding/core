@@ -12,12 +12,16 @@ changelog of by-the-way things, developed in master-branch until next snapshot
     - TextureAtlas will now resize automatically to new size if needed
     - added grass <-> dirt convert
     - log contains now some os-specific information
+    - changes the way how html characters are escaped
+    - added some memory & cpu usage information
+    - added hot-keys: F3+A, F3+C, F3+C for 10s, F3+D, F3+I, F3+N and F3+T
     fixed bugs:
         - exceptions when trying to load recipes from an namespace with sub-recipe-folders
         - models in sub-directories where not loadable
         - fixed random updates
         - block inventories were not closed when block holding the inventory was removed
         - some textures were blurry
+        - info label in-game were drawn offset in resized windows
 
 
 changelog of rendering-branch version 1

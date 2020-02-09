@@ -10,10 +10,10 @@ import gui.ItemStack
 import gui.Slot
 import chat.Chat
 import util.math
-import traceback
 import ResourceLocator
 import mod.ModMcpython
 import logger
+import event.EventHandler
 
 
 class Player:
@@ -52,6 +52,16 @@ class Player:
 
         mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
                                                     info="setting up player inventory")
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:get_player_position", self.hotkey_get_position)
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:gamemode_1-3_toggle", self.toggle_gamemode)
+
+    def hotkey_get_position(self):
+        import clipboard
+        clipboard.copy("/tp @p {} {} {}".format(*globals.window.position))
+
+    def toggle_gamemode(self):
+        if self.gamemode == 1: self.set_gamemode(3)
+        elif self.gamemode == 3: self.set_gamemode(1)
 
     def create_inventories(self):
         import gui.InventoryPlayerHotbar

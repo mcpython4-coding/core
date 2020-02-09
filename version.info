@@ -745,4 +745,10 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 42, 46, 61, 62, 63
 [uuk]: added an header to every log indicating some information about the os
 [uuk]: added sandstone variant-blocks
+[uuk]: changed chat character escaping to use html.escape(...)
+[uuk]: added memory usage bar; for this, the library psutil is now required
+[uuk]: fixed issue 45
+[uuk]: added in-game cpu & memory usage info
+[uuk]: implemented HotKey-system with events (hotkeys: F3+A, F3+C, F3+C for 10s, F3+D, F3+I, F3+N, F3+T)
+[uuk]: added security option for gamemode-3 not flying
 

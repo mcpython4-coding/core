@@ -58,9 +58,6 @@ issue 40:
     bug: after closing inventory after crafting, every new close, the last output is added to inventory a new time
     fix: make sure to really clean up the crafting slots
 
-issue 45:
-    bug: info screen, second line is orientated from bottom rather from top
-
 issue 50:
     bug: in chat, sometimes you see the html strings in an not-html formatting
 
@@ -77,4 +74,11 @@ issue 64:
 
 issue 65:
     bug: grass block top color is wrong
+
+issue 66:
+    bug: generation code is somehow overwriting existing chunks
+    reproducing: generate new chunks -> will be hidden & blocks will be replaced with stone
+
+issue 67:
+    bug: when having an big world generated, chunk changing makes big lags
 

@@ -53,3 +53,4 @@ issue 62: crafting table, shulker box, ender chest and chest inventory stayed op
 issue 63: various parts were not resized correctly leading into blurry textures; fixed on: 08.02.2020 by uuk
 issue 42 & 64: crafting was in some cases not working; fixed on: 08.02.2020 by uuk; occur since: recipe cleanup
                when items are missing was introduced
+issue 45: info label in game was not always correct arranged; fixed on: 09.02.2020 by uuk
