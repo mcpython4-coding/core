@@ -26,6 +26,9 @@ TEXTURE_ATLASES = []
 
 
 def build():
+    if not os.path.exists(G.local+"/build/itematlases"):
+        os.makedirs(G.local+"/build/itematlases")
+
     logger.println("building item texture atlases...")
     G.eventhandler.call("itemhandler:build:atlases:save")
     indexdata = {}
@@ -41,7 +44,8 @@ def build():
         json.dump(indexdata, f)
 
 
-def load_data():
+def load_data(from_block_item_generator=False):
+    if G.prebuilding and not from_block_item_generator: return
     G.eventhandler.call("itemhandler:build:atlases:load")
     if not os.path.exists(G.local+"/build/itematlases"):
         os.makedirs(G.local+"/build/itematlases")

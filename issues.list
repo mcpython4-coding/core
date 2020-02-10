@@ -49,5 +49,7 @@ issue 73:
     fix: change check-function to include all 4 textures
     other fix: change texture atlas to be dynamically changed in size, per mod name created
 
-[74]
+issue 75:
+    bug: ender chest & christmas chest texture is wrong on top
+    since: texture update to 1.15.2
 

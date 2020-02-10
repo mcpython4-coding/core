@@ -11,7 +11,7 @@ import rendering.BoxModel
 
 
 class Model:
-    def __init__(self, data: dict, name: str):
+    def __init__(self, data: dict, name: str, modname: str):
         self.data = data
         self.name = name
         self.parent = data["parent"] if "parent" in data else None
@@ -35,7 +35,7 @@ class Model:
                     self.texturerename[name] = texture
         toadd = []
         for name in self.used_textures: toadd.append((name, self.used_textures[name]))
-        add = textureatlas.handler.add_image_files([x[1] for x in toadd])
+        add = textureatlas.handler.add_image_files([x[1] for x in toadd], modname)
         self.texture_atlas = None
         for i, (name, _) in enumerate(toadd):
             self.texture_addresses[name] = add[i][0]

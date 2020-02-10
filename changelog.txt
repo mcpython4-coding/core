@@ -1,6 +1,9 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
+changelog of master-branch
+    - changed TextureAtlas-block-addition system to be based on mod-based/texture size-based atlases
+
 changelog of snapshot 20w07a [released on 10.02.2020]
     based on: rendering update branch 1 & changes to master-branch
     - block textures are now cut out to squares making animated textures load only the first texture, but not the whole

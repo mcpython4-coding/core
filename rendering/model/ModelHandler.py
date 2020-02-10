@@ -80,9 +80,13 @@ class ModelHandler:
             if type(location) == str:
                 modeldata = ResourceLocator.read(location, "json")
                 self.models[name] = rendering.model.Model.Model(modeldata.copy(),
-                                                              "block/" + location.split("/")[-1].split(".")[0])
+                                                                "block/" + location.split("/")[-1].split(".")[0],
+                                                                name.split(":")[0] if name.count(":") == 1 else
+                                                                "minecraft")
             else:
-                self.models[name] = rendering.model.Model.Model(location.copy(), name)
+                self.models[name] = rendering.model.Model.Model(location.copy(), name,
+                                                                name.split(":")[0] if name.count(":") == 1 else
+                                                                "minecraft")
         except:
             logger.println("error during loading model {} named {}".format(location, name))
             traceback.print_exc()

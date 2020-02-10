@@ -62,6 +62,8 @@ states:
 
 rendering:
     "modelhandler:searched": called by ModelHandler after lookup for models
+    "textures:atlas:build:pre": called before TextureAtlases for blocks are saved
+    "textures:atlas:build:post": called after TextureAtlases for blocks were saved
 
 world generation:
     "worldgen:chunk:finished": called by WorldGenerationHandler when an chunk was finished in generation

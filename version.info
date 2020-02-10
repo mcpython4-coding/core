@@ -762,4 +762,6 @@ started these clone on 12th of July, 2019
 [uuk]: chat has now transparency
 [github] released snapshot 20w07a
 [uuk] updated changelog.txt to include fully release of snapshot 20w05a
+[uuk]: changed the way how TextureAtlases for blocks are created
+[uuk]: default gamemode in debug world is now 3
 

@@ -79,15 +79,16 @@ class StateBlockItemGenerator(State.State):
                 with open(G.local+"/build/itemblockfactory.json", mode="r") as f:
                     self.table = json.load(f)
             else:  # make sure it is was reset
-                self.table = []
+                self.table.clear()
             items = G.registry.get_by_name("item").get_attribute("items")
             for task in self.tasks[:]:
                 if task in items:
                     self.tasks.remove(task)
-        if len(self.tasks) == 0:
+        if len(self.tasks) == 0:  # we have nothing to do
             self.close()
             return
         self.parts[1].progress_max = len(self.tasks)
+        self.parts[1].progress = 1
         G.window.set_size(800, 600)
         G.window.set_minimum_size(800, 600)
         G.window.set_maximum_size(800, 600)
@@ -105,11 +106,11 @@ class StateBlockItemGenerator(State.State):
 
     def on_deactivate(self):
         G.world.cleanup()
-        if len(self.tasks) > 0:
-            with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
-                json.dump(self.table, f)
-            factory.ItemFactory.ItemFactory.process()
-            item.ItemHandler.build()
+        with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
+            json.dump(self.table, f)
+        factory.ItemFactory.ItemFactory.process()
+        item.ItemHandler.build()
+        item.ItemHandler.load_data(from_block_item_generator=True)
         G.window.set_minimum_size(1, 1)
         G.window.set_maximum_size(100000, 100000)  # only here for making resizing possible again
         event.TickHandler.handler.enable_tick_skipping = True
@@ -132,8 +133,8 @@ class StateBlockItemGenerator(State.State):
         try:
             G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
         except ValueError:
-            logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with following exception".
-                  format(self.tasks[self.blockindex]))
+            logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
+                           "following exception".format(self.tasks[self.blockindex]))
             self.blockindex += 1
             event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
             traceback.print_exc()

@@ -28,7 +28,8 @@ try:
             except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
                 pass
         else:
-            raise IOError("can't delete directory 'tmp'. please make sure that you have no files opened in this directory")
+            raise IOError(
+                "can't delete directory 'tmp'. please make sure that you have no files opened in this directory")
 
     os.makedirs(globals.local + "/tmp")
 
