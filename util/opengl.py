@@ -13,7 +13,10 @@ import math
 def draw_rectangle(position, size, color=(.0, .0, .0)):
     x, y = position
     dx, dy = size
-    gl.glColor3d(*color)
+    if len(color) == 3:
+        gl.glColor3d(*color)
+    else:
+        gl.glColor4d(*color)
     gl.glBegin(gl.GL_TRIANGLES)
     gl.glVertex2f(x, y+dy)
     gl.glVertex2f(x, y)

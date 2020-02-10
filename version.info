@@ -755,4 +755,7 @@ started these clone on 12th of July, 2019
 [uuk]: speed up sector changing
 [uuk]: changed Item.get_data signature to only return dict-objects, not any type of object
 [uuk]: added glass-block
+[uuk]: fixed issue 50, 74
+[uuk]: util.opengl's draw_rectangle-function accepts now also alpha-colors
+[uuk]: chat has now transparency
 

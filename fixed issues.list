@@ -65,3 +65,5 @@ issue 40: when closing crafting table gui, last output may get duplicated; fixed
 issue 71: when removing an chest, the items in the chest got deleted; fixed on: 09.02.2020 by uuk
 issue 72: chunk's remove_block function was calling wrong block event; fixed on: 09.02.2020 by uuk
 issue 64: slab side texture was upside-down; fixed on: 09.02.2020 by uuk; occur since: UV-introduction
+issue 74: chunk's cursor remove-function is offset by one char to the right; fixed on: 09.02.2020 by uuk
+issue 50: in chat, sometimes some special chars are displayed not-html; fixed on: 09.02.2020 by uuk

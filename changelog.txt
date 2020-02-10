@@ -27,6 +27,7 @@ changelog of by-the-way things, developed in master-branch until next snapshot
         - closing crafting tables could duplicate output
         - when braking an chest, items were deleted
         - on_remove function was not called correctly when an block was removed
+        - chat was in some cases not displaying text correctly
 
 
 changelog of rendering-branch version 1

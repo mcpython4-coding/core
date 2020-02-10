@@ -42,7 +42,7 @@ class ChatInventory(gui.Inventory.Inventory):
                                                                                 text[underline_index],
                                                                                 text[1+underline_index:])
         except IndexError:
-            self.lable.text = "<font color='white'>"+text+"<u> </u></font>"
+            self.lable.text = "<font color='white'>"+text+"<span>&#95;</span></font>"
 
     def on_activate(self):
         G.chat.text = ""
@@ -55,7 +55,7 @@ class ChatInventory(gui.Inventory.Inventory):
 
     def on_draw_background(self):
         wx, _ = G.window.get_size()
-        util.opengl.draw_rectangle((10, 10), (wx - 20, 20), color=(.0, .0, .0))
+        util.opengl.draw_rectangle((10, 10), (wx - 20, 20), color=(.0, .0, .0, .8))
 
     def on_draw_overlay(self):
         text = html.escape(G.chat.text)
@@ -97,10 +97,10 @@ class Chat:
         :param modifiers: the modifiers that are used
         """
         if symbol == 65288:  # BACK
-            self.text = self.text[:self.active_index] + self.text[self.active_index+1:]
+            self.text = self.text[:self.active_index-1] + self.text[self.active_index:]
             self.active_index -= 1
         elif symbol == key.DELETE and self.active_index < len(self.text):
-            self.text = self.text[:self.active_index+1] + self.text[self.active_index+2:]
+            self.text = self.text[:self.active_index] + self.text[self.active_index+1:]
         elif symbol == 65360: self.active_index = 0   # begin key
         elif symbol == key.END: self.active_index = len(self.text)
         elif symbol == key.ENTER:  # execute command

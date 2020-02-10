@@ -36,9 +36,6 @@ issue 35:
     since: block damage was introduced
     fix: check for solid block
 
-issue 50:
-    bug: in chat, sometimes you see the html strings in an not-html formatting
-
 issue 55:
     bug: alpha textures are rendered not behind alpha-textures
     since: alpha rendering was implemented
@@ -50,4 +47,7 @@ issue 66:
 issue 73:
     bug: last texture per TextureAtlas in rotated variant is not added to any other atlas
     fix: change check-function to include all 4 textures
+    other fix: change texture atlas to be dynamically changed in size, per mod name created
+
+[74]
 
