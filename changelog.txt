@@ -3,7 +3,7 @@ Changelog since cleanup-branch of 31.01.2020
 
 changelog of master-branch
     - changed TextureAtlas-block-addition system to be based on mod-based/texture size-based atlases
-    - added furnace with inventory
+    - new blocks: furnace with inventory & crafting, barrel
     - added key "E" to close various inventories
     fixed bugs:
         - game crashes when using "/tp <position>"-command

@@ -14,6 +14,12 @@ class BlockFurnace(block.Block.Block):
         self.facing = "north"
         self.active = False
         self.inventory = gui.InventoryFurnace.InventoryFurnace(self)
+        if self.set_to is not None:
+            dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
+            if dx > 0:   self.facing = "south"
+            elif dx < 0: self.facing = "north"
+            elif dz > 0: self.facing = "west"
+            elif dz < 0: self.facing = "east"
 
     def get_model_state(self) -> dict:
         return {"facing": self.facing, "lit": str(self.active).lower()}

@@ -187,6 +187,7 @@ class StateBlockItemGenerator(State.State):
         self.tries += 1
 
     def generate_item(self, blockname, file):
+        if blockname in G.registry.get_by_name("item").get_attribute("items"): return
         self.table.append([blockname, file])
         obj = factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True)
         block = G.world.get_active_dimension().get_block((0, 0, 0))

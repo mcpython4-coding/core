@@ -726,6 +726,7 @@ started these clone on 12th of July, 2019
 [uuk]: when you change cursor position by arrow-keys in chat, you will now go around if you go to far
 [uuk]: fixed an small bug when build-folder does not exists
 [github] released snapshot 20w05a
+
 [uuk]: added new class: BlockFaceState
 [uuk]: removed ICustomBlockRenderer-class
 [uuk]: game is now not crashing on every exception
@@ -761,6 +762,7 @@ started these clone on 12th of July, 2019
 [uuk]: util.opengl's draw_rectangle-function accepts now also alpha-colors
 [uuk]: chat has now transparency
 [github] released snapshot 20w07a
+
 [uuk] updated changelog.txt to include fully release of snapshot 20w05a
 [uuk]: changed the way how TextureAtlases for blocks are created
 [uuk]: default gamemode in debug world is now 3
@@ -770,4 +772,6 @@ started these clone on 12th of July, 2019
 [uuk]: most inventories can now be closed by key.E
 [uuk]: added optional FUEL attribute to item, added ItemFactory method for it for setting this value
 [uuk]: added mossy cobblestone block
+[uuk]: made furnace oriented after player hit pos
+[uuk]: added barrel
 

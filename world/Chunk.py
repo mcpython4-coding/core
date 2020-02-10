@@ -118,7 +118,11 @@ class Chunk:
             blockobj = block_name
             blockobj.position = position
         else:
-            blockobj = G.registry.get_by_name("block").get_attribute("blocks")[block_name](position, *args, **kwargs)
+            table = G.registry.get_by_name("block").get_attribute("blocks")
+            if block_name not in table:
+                logger.println("[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(block_name))
+                return
+            blockobj = table[block_name](position, *args, **kwargs)
         self.world[position] = blockobj
         if immediate:
             if self.exposed(position):

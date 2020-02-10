@@ -204,7 +204,7 @@ class StatePartGame(StatePart.StatePart):
                                 if slot.itemstack.amount == 0:
                                     slot.itemstack.clean()
                             self.mouse_press_time = 0
-                            # todo: check if setable in gamemode 2
+                            # todo: check if set-able in gamemode 2
 
     def on_middle_click_interaction_update(self, dt):
         if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
