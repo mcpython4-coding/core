@@ -172,6 +172,13 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:smooth_sandstone").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:smooth_sandstone_slab").setSlab().finish()
 
+    factory.BlockFactory.BlockFactory().setName("minecraft:dark_prismarine").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:dark_prismarine_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:prismarine").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:prismarine_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:prismarine_bricks").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:prismarine_brick_slab").setSlab().finish()
+
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")
 
