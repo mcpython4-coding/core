@@ -44,6 +44,7 @@ def load_blocks():
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:bone_block").setLog().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:bookshelf").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_bricks").finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:ice").setSpeedMultiplier(1.4).setAllSideSolid(False).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:packed_ice").setSpeedMultiplier(1.8).setAllSideSolid(
@@ -133,6 +134,8 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:lapis_ore").setHardness(3).setBestTools([ToolType.PICKAXE]).\
         setMinimumToolLevel(2).finish()  # minimum: stone, missing: not gold
     factory.BlockFactory.BlockFactory().setName("minecraft:clay").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:glowstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:magma_block").finish()
 
     for stonetype in ["granite", "andesite", "diorite"]:  # todo: move to tag
         factory.BlockFactory.BlockFactory().setName("minecraft:{}".format(stonetype)).setHardness(1.5).setBestTools(
@@ -156,6 +159,7 @@ def load_blocks():
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_brick_slab").setHardness(2). \
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_brick_slab").setSlab().finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:chiseled_red_sandstone").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:chiseled_sandstone").finish()
@@ -180,6 +184,10 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:prismarine_brick_slab").setSlab().finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:dried_kelp_block").finish()
+
+    factory.BlockFactory.BlockFactory().setName("minecraft:end_stone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:end_stone_brick_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:end_stone_bricks").finish()
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")
