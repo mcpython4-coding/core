@@ -42,6 +42,14 @@ def load_blocks():
     terracotta = factory.BlockFactory.BlockFactory().setName("minecraft:terracotta").setHardness(1.25).\
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
 
+    factory.BlockFactory.BlockFactory().setName("minecraft:ice").setSpeedMultiplier(1.4).setAllSideSolid(False).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:packed_ice").setSpeedMultiplier(1.8).setAllSideSolid(
+        False).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:frosted_ice").setSpeedMultiplier(1.4).\
+        setCustomModelStateFunction(lambda _: {"age": "0"}).setAllSideSolid(False).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:blue_ice").setSpeedMultiplier(2.2).setAllSideSolid(
+        False).finish()
+
     factory.BlockFactory.BlockFactory().setName("minecraft:glass").setAllSideSolid(False).finish()
 
     for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:

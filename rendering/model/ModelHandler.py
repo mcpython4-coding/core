@@ -95,7 +95,8 @@ class ModelHandler:
     def add_face_to_batch(self, block, face, batches) -> list:
         blockstate = self.get_block_state_for_block(block)
         # todo: add custom block renderer check
-        if blockstate is None: return []  # todo: add missing texture
+        if blockstate is None:
+            return self.blockstates["minecraft:missing_texture"].get_state_for({})
         return blockstate.add_face_to_batch(block, batches, face)
 
     def get_block_state_for_block(self, block):

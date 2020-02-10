@@ -774,4 +774,6 @@ started these clone on 12th of July, 2019
 [uuk]: added mossy cobblestone block
 [uuk]: made furnace oriented after player hit pos
 [uuk]: added barrel
+[uuk]: added ice variants
+[uuk]: added CUSTOM_WALING_SPEED_MULTIPLIER-attribute to Block used by ice
 

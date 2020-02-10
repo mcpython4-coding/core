@@ -16,6 +16,8 @@ class Block:
     base class for all blocks
     """
 
+    CUSTOM_WALING_SPEED_MULTIPLIER = None  # used when the player walks in an different speed on this block
+
     def __init__(self, position, set_to=None, state=None, real_hit=None):
         """
         creates new Block

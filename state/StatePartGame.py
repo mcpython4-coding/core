@@ -188,7 +188,7 @@ class StatePartGame(StatePart.StatePart):
             if blockpos:
                 if G.window.mouse_pressing[mouse.RIGHT] and previous:
                     slot = G.player.get_active_inventory_slot()
-                    if slot.itemstack.item and slot.itemstack.item.has_block() and self.mouse_press_time > 0.12 and \
+                    if slot.itemstack.item and slot.itemstack.item.has_block() and self.mouse_press_time > 0.10 and \
                             G.player.gamemode in (0, 1):
                         x, y, z = previous
                         px, _, pz = util.math.normalize(G.window.position)
@@ -249,6 +249,11 @@ class StatePartGame(StatePart.StatePart):
         """
         speed = config.SPEED_DICT[G.player.gamemode][(0 if not G.window.keys[key.LSHIFT] else 1) +
                                                      (0 if not G.window.flying else 2)]
+        if not G.window.flying and G.window.dy == 0:
+            x, y, z = util.math.normalize(G.window.position)
+            block_inst = G.world.get_active_dimension().get_block((x, y-2, z))
+            if block_inst is not None and block_inst.CUSTOM_WALING_SPEED_MULTIPLIER is not None:
+                speed *= block_inst.CUSTOM_WALING_SPEED_MULTIPLIER
         if G.player.gamemode in (0, 2) and G.window.keys[key.LSHIFT]:
             G.player.hunger -= dt*0.2
         d = dt * speed  # distance covered this tick.

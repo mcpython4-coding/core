@@ -32,6 +32,7 @@ class BlockFactory:
         self.hardness = 1
         self.minmum_toollevel = 0
         self.besttools = []
+        self.speed_multiplier = None
 
         self.customsolidsidefunction = None
         self.custommodelstatefunction = None
@@ -62,6 +63,8 @@ class BlockFactory:
         master = self
 
         class ConstructedBlock(baseclass):
+            CUSTOM_WALING_SPEED_MULTIPLIER = self.speed_multiplier
+
             @staticmethod
             def get_name() -> str: return master.name
 
@@ -223,5 +226,9 @@ class BlockFactory:
 
     def setCustomBlockItemModification(self, function):
         self.customblockitemmodificationfunction = function
+        return self
+
+    def setSpeedMultiplier(self, factor):
+        self.speed_multiplier = factor
         return self
 
