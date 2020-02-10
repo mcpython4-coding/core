@@ -26,6 +26,7 @@ class TickHandler:
         self.lost_time = 0
         self.enable_tick_skipping = False
         self.instant_ticks = False
+        self.enable_random_ticks = True
 
     def tick(self, dt):
         """
@@ -46,7 +47,8 @@ class TickHandler:
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
                     return
-        pyglet.clock.schedule_once(self.send_random_ticks, 0)
+        if self.enable_random_ticks:
+            pyglet.clock.schedule_once(self.send_random_ticks, 0)
 
     def bind(self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}):
         """

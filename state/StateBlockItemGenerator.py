@@ -72,6 +72,7 @@ class StateBlockItemGenerator(State.State):
         self.parts[1].size = (w-20, 20)
 
     def on_activate(self):
+        G.tickhandler.enable_random_ticks = False
         self.tasks = [x.get_name() for x in G.registry.get_by_name("block").registered_objects]
         if not os.path.isdir(G.local + "/build/generated_items"): os.makedirs(G.local + "/build/generated_items")
         if not G.prebuilding:
@@ -116,6 +117,7 @@ class StateBlockItemGenerator(State.State):
         event.TickHandler.handler.enable_tick_skipping = True
         with open(G.local + "/build/info.json", mode="w") as f:
             json.dump({"finished": True}, f)
+        G.tickhandler.enable_random_ticks = True
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")
