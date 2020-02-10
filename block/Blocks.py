@@ -179,6 +179,8 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:prismarine_bricks").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:prismarine_brick_slab").setSlab().finish()
 
+    factory.BlockFactory.BlockFactory().setName("minecraft:dried_kelp_block").finish()
+
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")
 

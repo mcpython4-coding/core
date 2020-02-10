@@ -778,5 +778,5 @@ started these clone on 12th of July, 2019
 [uuk]: added CUSTOM_WALING_SPEED_MULTIPLIER-attribute to Block used by ice
 [uuk]: added bone block, bookshelf, coral blocks (with dead variants)
 [uuk]: added option to TickHandler to enable/disable random ticks [used in BlockItemGenerator]
-[uuk]: added pumpkin, carved pumpkin, melon, clay, coarse dirt, prismarine blocks
+[uuk]: added pumpkin, carved pumpkin, melon, clay, coarse dirt, prismarine blocks, dried kelp block
 
