@@ -128,6 +128,7 @@ def load_blocks():
         [ToolType.PICKAXE]).setMinimumToolLevel(1).setLog().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:smooth_quartz").setHardness(0.8).setBestTools(
         [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_quartz_slab").setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:quartz_slab").setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:nether_quartz_ore").setHardness(3).setBestTools(
         [ToolType.PICKAXE]).finish()
@@ -200,6 +201,7 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:netherrack").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:red_nether_brick_slab").setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:red_nether_bricks").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:soul_sand").setSpeedMultiplier(0.5).finish()
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")

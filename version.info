@@ -780,5 +780,5 @@ started these clone on 12th of July, 2019
 [uuk]: added option to TickHandler to enable/disable random ticks [used in BlockItemGenerator]
 [uuk]: added pumpkin, carved pumpkin, melon, clay, coarse dirt, prismarine blocks, dried kelp block, end stones,
              glowstone, magma block, mossy stone bricks, nether bricks, nether wart block, netherrack, obsidian,
-             purpur blocks, quartz slab, red nether bricks
+             purpur blocks, quartz slab, red nether bricks, smooth quartz slab, soul sand
 
