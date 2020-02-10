@@ -19,6 +19,7 @@ def load_blocks():
         [ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
     cobblestone = factory.BlockFactory.BlockFactory().setHardness(2).setBestTools([ToolType.PICKAXE]).\
         setMinimumToolLevel(1).setName("minecraft:cobblestone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:coarse_dirt").finish()
     mossy_cobblestone = factory.BlockFactory.BlockFactory().setHardness(2).setBestTools([ToolType.PICKAXE]).\
         setMinimumToolLevel(1).setName("minecraft:mossy_cobblestone").finish()
     gravel = factory.BlockFactory.BlockFactory().setName("minecraft:gravel").setHardness(0.6).setBestTools(
@@ -131,6 +132,7 @@ def load_blocks():
         setMinimumToolLevel(2).finish()  # minimum: stone, missing: not gold
     factory.BlockFactory.BlockFactory().setName("minecraft:lapis_ore").setHardness(3).setBestTools([ToolType.PICKAXE]).\
         setMinimumToolLevel(2).finish()  # minimum: stone, missing: not gold
+    factory.BlockFactory.BlockFactory().setName("minecraft:clay").finish()
 
     for stonetype in ["granite", "andesite", "diorite"]:  # todo: move to tag
         factory.BlockFactory.BlockFactory().setName("minecraft:{}".format(stonetype)).setHardness(1.5).setBestTools(
