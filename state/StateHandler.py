@@ -8,6 +8,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 from . import State
 import logger
+import event.TickHandler
 
 
 class StateHandler:
@@ -17,6 +18,9 @@ class StateHandler:
         self.CANCEL_SWITCH_STATE = False
 
     def switch_to(self, statename: str or None):
+        event.TickHandler.handler.bind(self._switch_to, 1, args=(statename,))
+
+    def _switch_to(self, statename):
         if statename not in self.states: return
         self.CANCEL_SWITCH_STATE = False
         G.eventhandler.call("state:switch:pre", statename)

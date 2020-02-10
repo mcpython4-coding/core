@@ -79,3 +79,12 @@ game play:
     "resources:close": called when all resourcelocations are closed
     "prebuilding:finished": called after prebuilding is finished
 
+hotkeys:
+    "hotkey:chunk_reload": called with key combo F3+A, used to reload all chunks
+    "hotkey:game_crash": called with key combo F3+C for at least 10s, used to crash the game
+    "hotkey:get_player_position": called with key combo F3+C for less than 10s, used to get player position
+    "hotkey:clear_chat": called with key combo F3+D, used to clear the chat(history)
+    "hotkey:copy_block_or_entity_data": called with key combo F3+I, used to get the block data to clipboard
+    "hotkey:gamemode_1-3_toggle": called with key combo F3+N, used to toggle gamemode
+    "hotkey:reload_textures": called with key combo F3+T, used to reload textures
+

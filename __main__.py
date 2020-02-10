@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
 import logger
+import pyglet_fix
 
 try:
     import config
@@ -19,14 +20,15 @@ try:
     import os
     import shutil
 
-    for _ in range(10):
-        try:
-            shutil.rmtree(globals.local + "/tmp")
-            break
-        except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
-            pass
-    else:
-        raise IOError("can't delete directory 'tmp'. please make sure that you have no files opened in this directory")
+    if os.path.exists(globals.local + "/tmp"):
+        for _ in range(10):
+            try:
+                shutil.rmtree(globals.local + "/tmp")
+                break
+            except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
+                pass
+        else:
+            raise IOError("can't delete directory 'tmp'. please make sure that you have no files opened in this directory")
 
     os.makedirs(globals.local + "/tmp")
 
@@ -99,6 +101,7 @@ except:  # when we crash on loading, make sure that all resources are closed
     import ResourceLocator
     ResourceLocator.close_all_resources()
     logger.write_exception()
+    logger.add_funny_line()
     raise
 
 
@@ -109,6 +112,7 @@ if __name__ == "__main__":
     except SystemExit: pass  # sys.exit() was called
     except:
         logger.write_exception()
+        logger.add_funny_line()
         raise
     finally:
         import ResourceLocator

@@ -31,4 +31,15 @@ Please run the project with:
 python __main__.py --rebuild
 ```
  It will take longer than normal but will invalidate the cache and rebuild.
+ 
+ 
+ 
+ I came across some weired looking blocks, but I can find them only rar in the world
+-----------------------------------------------------------------------------------------------------
+It is possible to create an so-called debug world. This world contains every possible block state of every block in the game in one big world.
+For enabling this world generator, run the game with:
+```shell script
+python __main__.py --debug-world
+```
+This can be combined with the "--rebuild"-flag to do both at a time 
 

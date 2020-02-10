@@ -1,3 +1,10 @@
+"""mcpython - a minecraft clone written in python licenced under MIT-licence
+authors: uuk, xkcdjerry
+
+original game by fogleman licenced under MIT-licence
+minecraft by Mojang
+
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import state.StatePart
 import pyglet
 import PIL.Image
@@ -12,7 +19,7 @@ class BackgroundHandler:
     background_raw: PIL.Image.Image = ResourceLocator.read(
         "assets/minecraft/textures/gui/options_background.png", "pil")
     background_size = (32, 32)
-    background_image = util.texture.to_pyglet_image(background_raw.resize(background_size))
+    background_image = util.texture.to_pyglet_image(background_raw.resize(background_size, PIL.Image.NEAREST))
 
     old_win_size = None
 

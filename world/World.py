@@ -124,9 +124,9 @@ class World:
         show = after_set - before_set
         hide = before_set - after_set
         for sector in hide:
-            self.hide_sector(sector, immediate)
+            pyglet.clock.schedule_once(lambda _: self.hide_sector(sector, immediate), 0.1)
         for sector in show:
-            self.show_sector(sector, immediate)
+            pyglet.clock.schedule_once(lambda _: self.show_sector(sector, immediate), 0.1)
 
     def process_queue(self):
         if not any(type(x) == state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):

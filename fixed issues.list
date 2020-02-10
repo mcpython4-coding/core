@@ -22,3 +22,48 @@ issue 17: html character information was displayed in chat as the character itse
 issue 41: chat index pointer was not correct; fixed on: 01.02.2020 by uuk
 issue 26: when an file is opened in an directory to remove, it fails to remove it and loops infinitely,
           fixed on: 01.02.2020 by uuk; occur since: introduction of removing these things under try-except
+issue 43: missing texture was resized incorrectly; fixed on 02.02.2020 by uuk; occur since: library update
+issue 39: leaves were handled solid in rendering; fixed on: 02.02.2020 by uuk
+issue 49: game crashed when selecting an unknown registry in /registryinfo-command
+issue 48: event calling order was creating issues when e.g. pressing an button and the event changes the state and
+          the new state is handling the interaction also; fixed on: 06.02.2020 by uuk; occur since: EventBus introduction
+issue 47: moving slot not reset when closing various inventories; fixed on: 06.02.2020 by uuk; occur since:
+          introduction of inventories & the affected inventories; fixed again on 09.02.2020 by uuk
+issue 51: game may crash when creating an second world in an game instance; fixed on: 06.02.2020 by uuk; occur since:
+          face rendering update
+issue 52: inventories were not closed when player died; fixed on: 06.02.2020 by uuk; occur since: introduction of player
+          dies & player inventory
+issue 44: block inventory interaction was not blocked when opening e.g. the player main inventory; fixed on: 06.02.2020
+          by uuk
+issue 39: BlockFactory was comparing the solid face state wrong; fixed on: 06.02.2020 by uuk
+issue 54: hit-box was in some cases not visible; fixed on: 06.02.2020 by uuk
+issue 56: RecipeLoader was trying to load directories as recipe json's which lead to an exception;
+          fixed on: 07.02.2020 by uuk
+issue 57: ModelHandler was unable to load from sub-directories due to an internal miss-cast; fixed on: 07.02.2020 by uuk
+issue 53: various colored textures were not colored due to an miss-load of the models; fixed on: 07.02.2020 by uuk;
+          occur since: texture update to 1.15.2
+issue 59: fixed TickHandler.send_random_ticks-function crashing when being called; fixed on: 08.02.2020 by uuk;
+          occur since: change in world storage
+issue 16: random ticks are never called; fixed on: 08.02.2020 by uuk; occur since: the function-call was removed
+issue 60: random tick config was not correct; fixed on: 08.02.2020 by uuk
+issue 61: dirt would convert in any case to grass, not only if no solid block is above; fixed on: 08.02.2020 by uuk;
+          occur since: introduction of dirt -> grass convert
+issue 62: crafting table, shulker box, ender chest and chest inventory stayed open when block is removed;
+          fixed on: 08.02.2020 by uuk
+issue 63: various parts were not resized correctly leading into blurry textures; fixed on: 08.02.2020 by uuk
+issue 42 & 64: crafting was in some cases not working; fixed on: 08.02.2020 by uuk; occur since: recipe cleanup
+               when items are missing was introduced
+issue 45: info label in game was not always correct arranged; fixed on: 09.02.2020 by uuk
+issue 68: game crashes in InventoryHandler, line 118; fixed on: 09.02.2020 by uuk
+issue 69: game crashes in tool braketime calculation; fixed on: 09.02.2020 by uuk
+issue 70: change_sectors was crashing when sectors were in order to show; fixed on: 09.02.2020 by uuk
+issue 58: mouse button up is not registered in some cases; fixed on: 09.02.2020 by uuk
+issue 33: mouse middle click was giving you always in any gamemode the item and checking than if it was in your
+          inventory; fixed on: 09.02.2020 by uuk
+issue 10: pyglet gives out exceptions on window close; fixed on: 09.02.2020 by uuk; occur since: python 3.8
+issue 40: when closing crafting table gui, last output may get duplicated; fixed on: 09.02.2020 by uuk
+issue 71: when removing an chest, the items in the chest got deleted; fixed on: 09.02.2020 by uuk
+issue 72: chunk's remove_block function was calling wrong block event; fixed on: 09.02.2020 by uuk
+issue 64: slab side texture was upside-down; fixed on: 09.02.2020 by uuk; occur since: UV-introduction
+issue 74: chunk's cursor remove-function is offset by one char to the right; fixed on: 09.02.2020 by uuk
+issue 50: in chat, sometimes some special chars are displayed not-html; fixed on: 09.02.2020 by uuk

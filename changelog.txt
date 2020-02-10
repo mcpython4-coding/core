@@ -1,7 +1,45 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
-changelog of cleanup-branch version 1 [merged on 01.02.2020 onto master and on the same day onto release]:
+changelog of by-the-way things, developed in master-branch until next snapshot
+    - block textures are now cut out to squares making animated textures load only the first texture, but not the whole
+    - inventory config has now an option to offset the background
+    - ResourceLocator.add_resources_by_modname's directory parameter is now optional
+    - added config for USE_MISSING_TEXTURES_ON_MISS_TEXTURE
+    - ResourceLocator.add_resources_by_modname will now also load tags
+    - added new blocks: brick slab, glass, stained glass, carpets, sandstone
+    - rendering support for "uv" coordinates
+    - TextureAtlas will now resize automatically to new size if needed
+    - added grass <-> dirt convert
+    - log contains now some os-specific information
+    - changes the way how html characters are escaped
+    - added some memory & cpu usage information
+    - added hot-keys: F3+A, F3+C, F3+C for 10s, F3+D, F3+I, F3+N and F3+T
+    fixed bugs:
+        - exceptions when trying to load recipes from an namespace with sub-recipe-folders
+        - models in sub-directories where not loadable
+        - fixed random updates
+        - block inventories were not closed when block holding the inventory was removed
+        - some textures were blurry
+        - info label in-game were drawn offset in resized windows
+        - various crashes & exceptions in log
+        - mouse button up is in some cases not handled correctly
+        - closing crafting tables could duplicate output
+        - when braking an chest, items were deleted
+        - on_remove function was not called correctly when an block was removed
+        - chat was in some cases not displaying text correctly
+
+
+changelog of rendering-branch version 1
+    - changed the way how block faces are stored
+    - removed custom block renderers for the moment
+    - crashes on mod bus do not crash the game any more
+    - blocks are now rendered face-by-face instead of all faces at ones
+
+
+changelog of snapshot 20w05a [released on 01.02.2020]
+    - todo: complete this changelog
+    based on: cleanup-branch version 1 [merged on 01.02.2020 onto master]:
     - added an file called "events.list" storing every event ever called
     - added loading event called "stage:block:block_config" called to register block config entries
     - split up ICustomBlockRenderer into IStaticCustomBlockRenderer and IObjectedCustomBlockRenderer
@@ -31,4 +69,6 @@ changelog of cleanup-branch version 1 [merged on 01.02.2020 onto master and on t
         - chat marker for active writing position was not correct drawn
         - chat was doing bad stuff with strings like "&#38;"
         - possible infinite loop in deleting directories when files where opened
+
+todo: add an changelog for past version(s)
 

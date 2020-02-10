@@ -48,5 +48,5 @@ class Item:
     def on_set_from_item(self, block):
         pass
 
-    def get_data(self): return None
+    def get_data(self) -> dict: return {}
 

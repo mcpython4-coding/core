@@ -15,6 +15,7 @@ import pyglet
 import random
 import mod.ModMcpython
 import state.StatePartConfigBackground
+import logger
 
 
 class StateWorldGenerationConfig(State.State):
@@ -78,6 +79,7 @@ class StateWorldGenerationConfig(State.State):
                 G.worldgenerationhandler.generate_chunk(chunk)
                 chunk.is_ready = True
         G.eventhandler.call("on_game_generation_finished")
+        logger.println("[WORLDGENERATION] finished world generation")
         G.window.position = (G.world.spawnpoint[0], util.math.get_max_y(G.world.spawnpoint), G.world.spawnpoint[1])
         G.world.config["enable_auto_gen"] = self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
         G.world.config["enable_world_barrier"] = \

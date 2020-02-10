@@ -10,6 +10,7 @@ from state.ui import (UIPartImage)
 import pyglet
 import ResourceLocator
 import util.texture
+import PIL.Image
 
 
 class Inventory:
@@ -30,6 +31,7 @@ class Inventory:
         self.bganchor = "MM"
         self.windowanchor = "MM"
         self.position = (0, 0)
+        self.bg_image_pos = (0, 0)
         G.inventoryhandler.add(self)
         self.slots = self.create_slots()
         self.config = {}
@@ -60,7 +62,7 @@ class Inventory:
                 self.slots[sid].interaction_mode[2] = entry["allow_player_add_to_free_place"]
             if "empty_slot_image" in entry:
                 image = ResourceLocator.read(entry["empty_slot_image"], "pil")
-                image = util.texture.to_pyglet_image(image.resize((32, 32)))
+                image = util.texture.to_pyglet_image(image.resize((32, 32), PIL.Image.NEAREST))
                 self.slots[sid].empty_image = pyglet.sprite.Sprite(image)
             if "allowed_tags" in entry:
                 self.slots[sid].allowed_item_tags = entry["allowed_tags"]
@@ -74,6 +76,8 @@ class Inventory:
             self.position = self.config["image_position"]
         if "image_location" in self.config:
             self.bgsprite = pyglet.sprite.Sprite(ResourceLocator.read(self.config["image_location"], "pyglet"))
+        if "bg_image_pos" in self.config:
+            self.bg_image_pos = tuple(self.config["bg_image_pos"])
         self.on_create()
 
     def on_create(self):
@@ -140,7 +144,7 @@ class Inventory:
         self.on_draw_background()
         x, y = self._get_position()
         if self.bgsprite:
-            self.bgsprite.position = (x, y)
+            self.bgsprite.position = (x + self.bg_image_pos[0], y + self.bg_image_pos[1])
             self.bgsprite.draw()
         self.on_draw_over_backgroundimage()
         for slot in self.slots:

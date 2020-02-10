@@ -17,6 +17,7 @@ import event.EventBus
 import clipboard
 import traceback
 import logger
+import html
 
 
 class ChatInventory(gui.Inventory.Inventory):
@@ -37,12 +38,11 @@ class ChatInventory(gui.Inventory.Inventory):
             self.lable.text = "<font color='white'>"+text+"_</font>"
             return
         try:
-            text1 = text[:underline_index].replace("<", "&#60;").replace(">", "&#62;").replace("\\", "&#92;")
-            text2 = text[underline_index].replace("<", "&#60;").replace(">", "&#62;").replace("\\", "&#92;")
-            text3 = text[1+underline_index:].replace("<", "&#60;").replace(">", "&#62;").replace("\\", "&#92;")
-            self.lable.text = "<font color='white'>{}<u>{}</u>{}</font>".format(text1, text2, text3)
+            self.lable.text = "<font color='white'>{}<u>{}</u>{}</font>".format(text[:underline_index],
+                                                                                text[underline_index],
+                                                                                text[1+underline_index:])
         except IndexError:
-            self.lable.text = "<font color='white'>"+text+"_</font>"
+            self.lable.text = "<font color='white'>"+text+"<span>&#95;</span></font>"
 
     def on_activate(self):
         G.chat.text = ""
@@ -55,15 +55,14 @@ class ChatInventory(gui.Inventory.Inventory):
 
     def on_draw_background(self):
         wx, _ = G.window.get_size()
-        util.opengl.draw_rectangle((10, 10), (wx - 20, 20), color=(.0, .0, .0))
+        util.opengl.draw_rectangle((10, 10), (wx - 20, 20), color=(.0, .0, .0, .8))
 
     def on_draw_overlay(self):
-        text = G.chat.text
+        text = html.escape(G.chat.text)
         if (round(time.time() - self.timer) % 2) == 1:
-            self.update_text(text.replace("&", "&#38;"), G.chat.active_index)
+            self.update_text(text, G.chat.active_index)
         else:
-            self.lable.text = "<font color='white'>"+text.replace("<", "&#60").replace(">", "&#62").replace(
-                "\\", "&#92").replace("&", "&#38;")+"</font>"
+            self.lable.text = "<font color='white'>"+text+"</font>"
         self.lable.draw()
 
 
@@ -81,6 +80,7 @@ class Chat:
         self.historyindex = -1
         self.active_index = -1
         self.CANCEL_INPUT = False
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:clear_chat", self.clear)
 
     def enter(self, text: str):
         """
@@ -97,10 +97,10 @@ class Chat:
         :param modifiers: the modifiers that are used
         """
         if symbol == 65288:  # BACK
-            self.text = self.text[:self.active_index] + self.text[self.active_index+1:]
+            self.text = self.text[:self.active_index-1] + self.text[self.active_index:]
             self.active_index -= 1
         elif symbol == key.DELETE and self.active_index < len(self.text):
-            self.text = self.text[:self.active_index+1] + self.text[self.active_index+2:]
+            self.text = self.text[:self.active_index] + self.text[self.active_index+1:]
         elif symbol == 65360: self.active_index = 0   # begin key
         elif symbol == key.END: self.active_index = len(self.text)
         elif symbol == key.ENTER:  # execute command
@@ -148,6 +148,9 @@ class Chat:
         """
         G.inventoryhandler.hide(G.player.inventorys["chat"])
         self.active_index = 0
+
+    def clear(self):
+        self.history.clear()
 
 
 G.chat = Chat()

@@ -1,3 +1,4 @@
+psutil==5.6.7
 Pillow==7.0.0
 pyglet==1.4.10
 opensimplex==0.2

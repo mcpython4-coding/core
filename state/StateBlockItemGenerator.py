@@ -22,6 +22,8 @@ import item.ItemHandler
 import mod.ModMcpython
 import traceback
 import logger
+import state.StateModLoading
+import psutil
 
 
 class StateBlockItemGenerator(State.State):
@@ -50,10 +52,21 @@ class StateBlockItemGenerator(State.State):
                                             activate_crosshair=False, activate_lable=False),
                 UIPartProgressBar.UIPartProgressBar((10, 10), (G.window.get_size()[0]-20, 20), progress_items=len(
                     G.registry.get_by_name("block").registered_objects), status=1, text="0/{}: {}".format(len(
-                        G.registry.get_by_name("block").registered_objects), None))]
+                        G.registry.get_by_name("block").registered_objects), None)),
+                state.StateModLoading.modloading.parts[3]]
+
+    def on_draw_2d_pre(self):
+        self.parts[2].position = (10, G.window.get_size()[1] - 40)
+        process = psutil.Process()
+        with process.oneshot():
+            self.parts[2].progress = process.memory_info().rss
+        self.parts[2].text = "Memory usage: {}MB/{}MB ({}%)".format(
+            self.parts[2].progress // 2 ** 20, self.parts[2].progress_max // 2 ** 20,
+            round(self.parts[2].progress / self.parts[2].progress_max * 10000) / 100)
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:window:resize", self.on_resize)
+        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
 
     def on_resize(self, w, h):
         self.parts[1].size = (w-20, 20)

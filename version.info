@@ -724,4 +724,38 @@ started these clone on 12th of July, 2019
 [uuk]: added support for DELETE, END and BEGIN in chat
 [uuk]: when you change cursor position by arrow-keys in chat, you will now go around if you go to far
 [uuk]: fixed an small bug when build-folder does not exists
+[uuk]: added new class: BlockFaceState
+[uuk]: removed ICustomBlockRenderer-class
+[uuk]: game is now not crashing on every exception
+[uuk]: changed the way how faces are handled
+[uuk]: fixed bug 39, 43
+[uuk]: textures for blocks will now accept only squares. If no provided, an square with side length in x-direction is
+       created
+[uuk]: added "bg_image_pos" attribute to inventory config to move background relative to the slots
+[uuk]: ResourceLocator.add_resources_by_modname's directory parameter is now optional
+[uuk]: added USE_MISSING_TEXTURES_ON_MISS_TEXTURE-attribute to config which removes the missing texture on None-faces
+[uuk]: ResourceLocator.add_resources_by_modname will now also load blocks
+[uuk]: fixed issue 39, 44, 47, 48, 51, 52, 54
+[uuk]: StateHandler.switch_state will change the state after 1 tick instead of instant resolving event order exceptions
+[uuk]: added new blocks: brick slab, stained glass, carpets
+[uuk]: fixed issue 16, 53, 56, 57, 59, 60
+[uuk]: added support of "uv"-attribute for elements of models
+[uuk]: TextureAtlas will now auto-resize images if needed
+[uuk]: added dirt <-> grass block convert
+[uuk]: fixed issue 42, 46, 61, 62, 63
+[uuk]: added an header to every log indicating some information about the os
+[uuk]: added sandstone variant-blocks
+[uuk]: changed chat character escaping to use html.escape(...)
+[uuk]: added memory usage bar; for this, the library psutil is now required
+[uuk]: fixed issue 45
+[uuk]: added in-game cpu & memory usage info
+[uuk]: implemented HotKey-system with events (hotkeys: F3+A, F3+C, F3+C for 10s, F3+D, F3+I, F3+N, F3+T)
+[uuk]: added security option for gamemode-3 not flying
+[uuk]: fixed issue 10, 33, 40, [47], 58, 64, 65, 67, 68, 69, 70, 71, 72
+[uuk]: speed up sector changing
+[uuk]: changed Item.get_data signature to only return dict-objects, not any type of object
+[uuk]: added glass-block
+[uuk]: fixed issue 50, 74
+[uuk]: util.opengl's draw_rectangle-function accepts now also alpha-colors
+[uuk]: chat has now transparency
 

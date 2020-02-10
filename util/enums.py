@@ -9,18 +9,38 @@ import enum
 
 
 class EnumSide(enum.Enum):
-    TOP = UP = U = 0
-    BOTTOM = DOWN = D = 1
-    NORTH = N = 2
-    EAST = E = 3
-    SOUTH = S = 4
-    WEST = W = 5
+    TOP = UP = U = (0, 1, 0, "up")
+    BOTTOM = DOWN = D = (0, -1, 0, "down")
+    NORTH = N = (-1, 0, 0, "north")
+    EAST = E = (0, 0, 1, "east")
+    SOUTH = S = (1, 0, 0, "south")
+    WEST = W = (0, 0, -1, "west")
+
+    def __init__(self, dx, dy, dz, normal_name):
+        self.relative = self.dx, self.dy, self.dz = dx, dy, dz
+        self.normal_name = normal_name
+
+    def invert(self):
+        if self == EnumSide.U: return EnumSide.D
+        if self == EnumSide.D: return EnumSide.U
+        if self == EnumSide.N: return EnumSide.S
+        if self == EnumSide.S: return EnumSide.S
+        if self == EnumSide.E: return EnumSide.W
+        if self == EnumSide.W: return EnumSide.E
+        raise ValueError("can't convert '{}' to inverted variant".format(self))
+
+    def __eq__(self, other):
+        return type(self) == type(other) and self.relative == other.relative
+
+    @classmethod
+    def iterate(cls):
+        return FACE_ORDER
+
+    def __hash__(self):
+        return hash(self.relative)
 
 
-SIDE_ORDER = [EnumSide.U, EnumSide.D, EnumSide.E, EnumSide.W, EnumSide.N, EnumSide.S]
-
-NAMED_SIDES = {"up": EnumSide.U, "down": EnumSide.D, "north": EnumSide.N, "east": EnumSide.EAST,
-               "south": EnumSide.S, "west": EnumSide.W}
+FACE_ORDER = [EnumSide.UP, EnumSide.DOWN, EnumSide.NORTH, EnumSide.SOUTH, EnumSide.EAST, EnumSide.WEST]
 
 
 class LogAxis(enum.Enum):

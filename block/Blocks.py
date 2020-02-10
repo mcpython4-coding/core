@@ -15,6 +15,8 @@ def load_blocks():
     bedrock = factory.BlockFactory.BlockFactory().setName("minecraft:bedrock").setBrakeAbleFlag(False).finish()
     bricks = factory.BlockFactory.BlockFactory().setName("minecraft:bricks").setHardness(2).setBestTools(
         [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
+    brick_slab = factory.BlockFactory.BlockFactory().setName("minecraft:brick_slab").setHardness(2).setBestTools(
+        [ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
     cobblestone = factory.BlockFactory.BlockFactory().setHardness(2).setBestTools([ToolType.PICKAXE]).\
         setMinimumToolLevel(1).setName("minecraft:cobblestone")
     gravel = factory.BlockFactory.BlockFactory().setName("minecraft:gravel").setHardness(0.6).setBestTools(
@@ -38,6 +40,8 @@ def load_blocks():
     terracotta = factory.BlockFactory.BlockFactory().setName("minecraft:terracotta").setHardness(1.25).\
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
 
+    factory.BlockFactory.BlockFactory().setName("minecraft:glass").setAllSideSolid(False).finish()
+
     for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_concrete".format(color)).setHardness(1.8).setBestTools(
             [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
@@ -47,6 +51,8 @@ def load_blocks():
             [ToolType.SHEAR]).finish()
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_terracotta".format(color)).setHardness(1.25).\
             setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
+        factory.BlockFactory.BlockFactory().setName("minecraft:{}_stained_glass".format(color)).setAllSideSolid(False).\
+            finish()
 
     for tree in G.taghandler.taggroups["naming"].tags["#minecraft:treetypes"].entries:
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_leaves".format(tree)).setAllSideSolid(False).finish()
@@ -124,6 +130,21 @@ def load_blocks():
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_brick_slab").setHardness(2). \
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
+
+    factory.BlockFactory.BlockFactory().setName("minecraft:chiseled_red_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:chiseled_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:cut_red_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:cut_red_sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:cut_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:cut_sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:red_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:red_sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_red_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_red_sandstone_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_sandstone").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:smooth_sandstone_slab").setSlab().finish()
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")

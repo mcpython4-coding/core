@@ -17,6 +17,10 @@ import util.math
 import ResourceLocator
 import util.texture
 import logger
+import PIL.Image
+import psutil
+import event.EventHandler
+import event.TickHandler
 
 
 class Window(pyglet.window.Window):
@@ -73,6 +77,12 @@ class Window(pyglet.window.Window):
         self.label2 = pyglet.text.Label('', font_name='Arial', font_size=10,
                                         x=10, y=self.height - 22, anchor_x='left', anchor_y='top',
                                         color=(0, 0, 0, 255))
+        self.label3 = pyglet.text.Label('', font_name='Arial', font_size=10,
+                                        x=self.width - 10, y=self.height - 34, anchor_x='right', anchor_y='top',
+                                        color=(0, 0, 0, 255))
+
+        self.cpu_usage = psutil.cpu_percent(interval=None)
+        self.cpu_usage_timer = 0
 
         # storing mouse information
         self.mouse_pressing = {mouse.LEFT: False, mouse.RIGHT: False, mouse.MIDDLE: False}
@@ -88,7 +98,10 @@ class Window(pyglet.window.Window):
         self.push_handlers(self.keys)
 
         self.CROSSHAIRS_TEXTURE = util.texture.to_pyglet_image(
-            ResourceLocator.read("gui/icons", "pil").crop((0, 0, 15, 15)).resize((30, 30)))
+            ResourceLocator.read("gui/icons", "pil").crop((0, 0, 15, 15)).resize((30, 30), PIL.Image.NEAREST))
+
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:game_crash", self.close)
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:copy_block_or_entity_data", self.get_block_entity_info)
 
     def reset_caption(self):
         self.set_caption("mcpython 4 - {}".format(config.FULL_VERSION_NAME))
@@ -153,14 +166,20 @@ class Window(pyglet.window.Window):
 
         """
         G.eventhandler.call("gameloop:tick:start", dt)
+
+        self.cpu_usage_timer += dt
+        if self.cpu_usage_timer > config.CPU_USAGE_REFRESH_TIME:
+            self.cpu_usage = psutil.cpu_percent(interval=None)
+            self.cpu_usage_timer = 0
+
         # todo: change to attribute in State-class
         if dt > 3 and G.statehandler.active_state.get_name() not in ["minecraft:modloading"]:
             logger.println("[warning] running behind normal tick, did you overload game? missing " +
-                  str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
+                           str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
         self.world.process_queue()
         sector = sectorize(self.position)
         if sector != self.sector:
-            G.world.change_sectors(self.sector, sector)
+            pyglet.clock.schedule_once(lambda _: G.world.change_sectors(self.sector, sector), 0.1)
             if self.sector is None:
                 G.world.process_entire_queue()
             self.sector = sector
@@ -309,6 +328,9 @@ class Window(pyglet.window.Window):
         """
         # label
         self.label.y = height - 10
+        self.label2.y = height - 22
+        self.label3.x = width - 10
+        self.label3.y = height - 34
         G.eventhandler.call("user:window:resize", width, height)
 
     def set_2d(self):
@@ -385,11 +407,33 @@ class Window(pyglet.window.Window):
             if type(blockname) != str: blockname = blockname.get_name()
             self.label2.text = "block {} at {}".format(blockname, blockpos)
             self.label2.draw()
+            self.label3.y = self.height - 34
+        else:
+            self.label3.y = self.height - 22
         if chunk:
             biomemap = chunk.get_value("biomemap")
             if (nx, nz) in biomemap:
                 self.label.text += ", biome: "+str(biomemap[(nx, nz)])
         self.label.draw()
+        process = psutil.Process()
+        mem_info = process.memory_info()
+        used_m = mem_info.rss
+        total_m = psutil.virtual_memory().total
+        with process.oneshot():
+            self.label3.text = "CPU usage: {}%; Memory usage: {}MB/{}MB ({}%)".format(
+                self.cpu_usage, used_m//2**20, total_m//2**20, round(used_m/total_m*10000)/100)
+        self.label3.draw()
+
+    def get_block_entity_info(self):
+        import clipboard
+        nx, ny, nz = util.math.normalize(self.position)
+        chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(self.position), create=False)
+        vector = G.window.get_sight_vector()
+        blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
+        if blockpos:
+            blockname = G.world.get_active_dimension().get_block(blockpos)
+            if type(blockname) != str: blockname = blockname.get_name()
+            clipboard.copy(blockname)
 
     def draw_reticle(self):
         """ Draw the crosshairs in the center of the screen.

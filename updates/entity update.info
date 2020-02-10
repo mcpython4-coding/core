@@ -1,2 +1,3 @@
 
 entities must include an kill-method
+use https://docs.python.org/3/library/uuid.html for uuid generating with function uuid.uuid4()

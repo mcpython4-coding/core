@@ -1,0 +1,34 @@
+add end dimension:
+    - add blocks & items [if not implemented until then]:
+        - end stone & variants
+        - purpur block & variants
+        - end portal frame & block
+        - ender pearl & eye
+        - iron bars
+        - chorus plant & flower
+        - dragon egg
+        - glass & colored glass
+        - brewing stand
+        - end rod
+        - dragon head
+    - add entities [if not implemented until then]:
+        - ender man
+        - ender mite
+        - silver fish
+        - ender dragon
+        - shulker
+    - add rendering for:
+        - portal beam
+        - shulker protectile
+    - implement dimension entry
+    - add world generator
+    - add feature generator for:
+        - obsidian pillars
+        - portal to overworld & outer end
+        - corus flower
+    - add structures:
+        - end city
+        - end ship
+    - add biome selector & biomes:
+        - central island
+        - outer islands

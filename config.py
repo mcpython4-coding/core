@@ -9,7 +9,7 @@ import math
 import util.enums
 
 MC_VERSION_BASE = "1.15.2"
-VERSION_TYPE = "snapshot"  # todo: revert to "dev" when developing further
+VERSION_TYPE = "dev"
 VERSION_NAME = "20w05a"
 VERSION_ORDER = ["19w52a", "20w05a"]  # list of all versions since 19w52a to indicate order
 
@@ -30,7 +30,7 @@ SPEED_DICT = {
     0: [WALKING_SPEED, SPRINTING_SPEED],
     1: [WALKING_SPEED, SPRINTING_SPEED, FLYING_SPEED, FLYING_SPRINTING_SPEED],
     2: [WALKING_SPEED, SPRINTING_SPEED],
-    3: [None, None, GAMEMODE_3_SPEED, GAMEMODE_3_SPRINTING_SPEED]
+    3: [0, 0, GAMEMODE_3_SPEED, GAMEMODE_3_SPRINTING_SPEED]
 }
 
 GRAVITY = 20.0
@@ -47,14 +47,6 @@ JUMP_SPEED = math.sqrt(2 * GRAVITY * MAX_JUMP_HEIGHT)
 
 PLAYER_HEIGHT = 2
 
-FACES = [
-    (0, 1, 0),
-    (0, -1, 0),
-    (-1, 0, 0),
-    (1, 0, 0),
-    (0, 0, 1),
-    (0, 0, -1),
-]
 
 _ADVANCED_FACES = [[[(x, y, z) for z in range(-1, 2)] for y in range(-1, 2)] for x in range(-1, 2)]
 ADVANCED_FACES = []
@@ -65,14 +57,11 @@ for e in _ADVANCED_FACES:
                 if any(m): ADVANCED_FACES.append(x)
 del _ADVANCED_FACES
 
-FACE_NAMES = [util.enums.EnumSide.U, util.enums.EnumSide.D,
-              util.enums.EnumSide.N, util.enums.EnumSide.E, util.enums.EnumSide.S, util.enums.EnumSide.W]
 
-# todo: decide if needed
-REVERSED_FACE_NAMES = [util.enums.EnumSide.D, util.enums.EnumSide.U,
-                       util.enums.EnumSide.S, util.enums.EnumSide.W, util.enums.EnumSide.N, util.enums.EnumSide.E]
+RANDOM_TICK_SPEED = 3
+RANDOM_TICK_RANGE = 2
 
+USE_MISSING_TEXTURES_ON_MISS_TEXTURE = True
 
-RANDOM_TICK_SPEED = 1
-RANDOM_TICK_RANGE = 0
+CPU_USAGE_REFRESH_TIME = 0.8
 

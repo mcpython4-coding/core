@@ -9,6 +9,8 @@ import globals as G
 import chat.command.Command
 from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 import event.TickHandler
+import event.EventHandler
+import gc
 
 
 @G.registry
@@ -25,20 +27,32 @@ class CommandReload(chat.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
+        cls.reload()
+
+    @classmethod
+    def reload(cls):
         cls.CANCEL_RELOAD = False
         G.eventhandler.call("command:reload:start")
         if cls.CANCEL_RELOAD: return
-        dim = G.world.get_active_dimension()
-        for i, chunk in enumerate(list(dim.chunks.values())):  # iterate over all active chunks
-            G.window.set_caption("preparing chunk {}/{} at {}".format(i+1, len(dim.chunks), chunk.position))
-            chunk.update_visable(immediate=True)
-        G.window.set_caption("finished!")
         G.craftinghandler.reload_crafting_recipes()
         G.inventoryhandler.reload_config()
         event.TickHandler.handler.bind(G.window.reset_caption, 20)
         G.eventhandler.call("command:reload:end")
+        gc.collect()
 
     @staticmethod
     def get_help() -> list:
         return ["/reload: reloads the world"]
+
+
+def reload_chunks():
+    dim = G.world.get_active_dimension()
+    for i, chunk in enumerate(list(dim.chunks.values())):  # iterate over all active chunks
+        G.window.set_caption("preparing chunk {}/{} at {}".format(i + 1, len(dim.chunks), chunk.position))
+        chunk.update_visable(immediate=True)
+    G.window.set_caption("finished!")
+
+
+event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:chunk_reload", reload_chunks)
+event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:reload_textures", CommandReload.reload)
 

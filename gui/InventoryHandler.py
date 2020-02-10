@@ -35,10 +35,6 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             G.inventoryhandler.remove_one_from_stack()
 
     def on_draw_2d(self):
-        # import block.BlockCraftingTable
-        # logger.println(G.player.inventorys["main"].slots[0].itemstack.get_item_name())
-        # logger.println(block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0].itemstack.get_item_name())
-        # logger.println(G.player.inventorys["main"].slots[0] == block.BlockCraftingTable.BlockCraftingTable.inventory.slots[0])
         hoveringslot = self._get_slot_for(*G.window.mouse_position)
         if any([inventory.is_blocking_interactions() for inventory in G.inventoryhandler.opened_inventorystack]):
             G.window.set_exclusive_mouse(False)
@@ -119,8 +115,8 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                         if moving_slot.itemstack.amount == 0:
                             moving_slot.itemstack.clean()
                         slot.call_update(player=True)
-                elif slot.itemstack.item.get_name() == moving_slot.itemstack.item.get_name() and \
-                        slot.itemstack.amount < slot.itemstack.item.get_max_stack_size():
+                elif not slot.itemstack.is_empty() and slot.itemstack.get_item_name() == moving_slot.itemstack.\
+                        get_item_name() and slot.itemstack.amount < slot.itemstack.item.get_max_stack_size():
                     if slot.interaction_mode[1]:
                         slot.itemstack.amount += 1
                         moving_slot.itemstack.amount -= 1
@@ -200,11 +196,12 @@ class InventoryHandler:
                 self.hide(inventory)
                 return inventory
 
-    def close_all_inventorys(self):
+    def close_all_inventories(self):
         """
         close all inventories
         """
         for inventory in self.opened_inventorystack:
+            if inventory in self.alwaysopened: continue
             self.hide(inventory)
 
 
