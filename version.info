@@ -682,6 +682,7 @@ started these clone on 12th of July, 2019
 [uuk]: ResourceLocator's directory method uses now os.walk rather than os.listdir, fixing incompatibilities between
        source-mods & zipped-mods
 [uuk]: tag handler accepts now sub-direction-tag-storing
+[github]
 [uuk]: started cleaning up stuff
 [uuk]: moved issues out of this files into issues.list-file
 [uuk]: removed all todo's from this file
@@ -724,6 +725,7 @@ started these clone on 12th of July, 2019
 [uuk]: added support for DELETE, END and BEGIN in chat
 [uuk]: when you change cursor position by arrow-keys in chat, you will now go around if you go to far
 [uuk]: fixed an small bug when build-folder does not exists
+[github] released snapshot 20w05a
 [uuk]: added new class: BlockFaceState
 [uuk]: removed ICustomBlockRenderer-class
 [uuk]: game is now not crashing on every exception
@@ -758,4 +760,6 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 50, 74
 [uuk]: util.opengl's draw_rectangle-function accepts now also alpha-colors
 [uuk]: chat has now transparency
+[github] released snapshot 20w07a
+[uuk] updated changelog.txt to include fully release of snapshot 20w05a
 
