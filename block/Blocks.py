@@ -41,6 +41,8 @@ def load_blocks():
         1.5).setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
     terracotta = factory.BlockFactory.BlockFactory().setName("minecraft:terracotta").setHardness(1.25).\
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:bone_block").setLog().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:bookshelf").finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:ice").setSpeedMultiplier(1.4).setAllSideSolid(False).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:packed_ice").setSpeedMultiplier(1.8).setAllSideSolid(
