@@ -189,6 +189,11 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:end_stone_brick_slab").setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:end_stone_bricks").finish()
 
+    factory.BlockFactory.BlockFactory().setName("minecraft:nether_brick_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:nether_bricks").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:nether_wart_block").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:netherrack").finish()
+
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")
 
