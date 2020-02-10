@@ -5,7 +5,8 @@ changelog of master-branch
     - changed TextureAtlas-block-addition system to be based on mod-based/texture size-based atlases
     - new blocks: furnace with inventory & crafting, barrel, ice variants, bone block, book shelf, coral blocks,
                   pumpkin, carved pumpkin, melon, clay, coarse dirt, prismarin blocks, dried kelp block, end stones,
-                  glowstone, magma block, mossy stone bricks, nether bricks, nether wart block, netherrack
+                  glowstone, magma block, mossy stone bricks, nether bricks, nether wart block, netherrack,
+                  purpur blocks, quartz slab, red nether bricks
     - added key "E" to close various inventories
     - Block-class has now an CUSTOM_WALING_SPEED_MULTIPLIER-attribute used for custom waling speeds ontop of blocks
     fixed bugs:

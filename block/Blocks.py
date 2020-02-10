@@ -45,6 +45,7 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:bone_block").setLog().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:bookshelf").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_bricks").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:obsidian").finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:ice").setSpeedMultiplier(1.4).setAllSideSolid(False).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:packed_ice").setSpeedMultiplier(1.8).setAllSideSolid(
@@ -127,6 +128,7 @@ def load_blocks():
         [ToolType.PICKAXE]).setMinimumToolLevel(1).setLog().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:smooth_quartz").setHardness(0.8).setBestTools(
         [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:quartz_slab").setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:nether_quartz_ore").setHardness(3).setBestTools(
         [ToolType.PICKAXE]).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:lapis_block").setHardness(3).setBestTools([ToolType.PICKAXE]).\
@@ -188,11 +190,16 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:end_stone").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:end_stone_brick_slab").setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:end_stone_bricks").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:purpur_block").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:purpur_pillar").setLog().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:purpur_slab").setSlab().finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:nether_brick_slab").setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:nether_bricks").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:nether_wart_block").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:netherrack").finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:red_nether_brick_slab").setSlab().finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:red_nether_bricks").finish()
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")
