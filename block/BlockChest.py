@@ -106,3 +106,7 @@ class BlockChest(Block.Block):
         G.inventoryhandler.hide(self.inventory)
         del self.inventory
 
+    @classmethod
+    def modify_block_item(cls, itemfactory):
+        itemfactory.setFuelLevel(15)
+

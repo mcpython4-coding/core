@@ -45,3 +45,7 @@ class BlockCraftingTable(Block.Block):
     def on_remove(self):
         G.inventoryhandler.hide(self.inventory)
 
+    @classmethod
+    def modify_block_item(cls, itemfactory):
+        itemfactory.setFuelLevel(15)
+

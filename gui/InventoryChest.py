@@ -12,6 +12,8 @@ import gui.ItemStack
 import crafting.CraftingHandler
 import crafting.GridRecipeInterface
 import gui.ItemStack
+import pyglet
+import event.EventHandler
 
 
 class InventoryChest(gui.Inventory.Inventory):
@@ -23,8 +25,13 @@ class InventoryChest(gui.Inventory.Inventory):
     def get_config_file() -> str or None:
         return "assets/config/inventory/blockinventorychest.json"
 
-    def on_create(self):
-        pass
+    def on_activate(self):
+        super().on_activate()
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("user:keyboard:press", self.on_key_press)
+
+    def on_deactivate(self):
+        super().on_deactivate()
+        event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
 
     def create_slots(self) -> list:
         # 3 rows of 9 slots of storage
@@ -40,10 +47,13 @@ class InventoryChest(gui.Inventory.Inventory):
         for slot in G.player.inventorys["main"].slots[:36] + self.slots:
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
-        for slot in self.slots:
+        for slot in G.player.inventorys["main"].slots[:36] + self.slots:
             slot.draw_lable()
         self.on_draw_overlay()
 
     def get_interaction_slots(self):
         return G.player.inventorys["main"].slots[:36] + self.slots
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == pyglet.window.key.E: G.inventoryhandler.hide(self)
 

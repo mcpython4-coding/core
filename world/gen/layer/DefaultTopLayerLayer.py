@@ -22,8 +22,7 @@ class DefaultTopLayerLayer(Layer):
             config.size = 3
 
     @staticmethod
-    def get_name() -> str:
-        return "toplayer_default"
+    def get_name() -> str: return "top_layer_default"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):

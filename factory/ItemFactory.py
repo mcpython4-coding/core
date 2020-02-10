@@ -47,6 +47,8 @@ class ItemFactory:
 
         self.armor_points = 0
 
+        self.fuel_level = None
+
     def finish(self, register=True):
         modname, itemname = tuple(self.name.split(":"))
         if not G.prebuilding:
@@ -132,6 +134,10 @@ class ItemFactory:
             class ConstructedItem(ConstructedItem):
                 def getDefensePoints(self):
                     return master.armor_points
+
+        if master.fuel_level is not None:
+            class ConstructedItem(ConstructedItem):
+                FUEL = master.fuel_level
 
         if register: G.registry.register(ConstructedItem)
 
@@ -228,5 +234,9 @@ class ItemFactory:
 
     def setCustomFromItemFunction(self, function):
         self.customfromitemfunction = function
+        return self
+
+    def setFuelLevel(self, level):
+        self.fuel_level = level
         return self
 

@@ -85,7 +85,7 @@ class WorldGenerationHandler:
                 self.runtimegenerationcache[0].remove(chunk)
                 del self.runtimegenerationcache[1][chunk.position]
                 del self.runtimegenerationcache[2][chunk.position]
-                logger.println("finished generation of chunk", chunk.position)
+                logger.println("finished generation of chunk {}/{}".format(*chunk.position))
                 G.eventhandler.call("worldgen:chunk:finished", chunk)
                 return
             position = chunk.hide_tasks.pop(0)

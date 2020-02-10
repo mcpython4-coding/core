@@ -31,6 +31,10 @@ def create_carpet(carpet_color: str):
 
         def get_view_bbox(self): return carpet_bbox
 
+        @classmethod
+        def modify_block_item(cls, itemfactory):
+            itemfactory.setFuelLevel(3.35)
+
 
 for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:
     create_carpet(color)

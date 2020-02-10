@@ -36,6 +36,7 @@ class BlockFactory:
         self.customsolidsidefunction = None
         self.custommodelstatefunction = None
         self.customitemstackmodifcationfunction = None
+        self.customblockitemmodificationfunction = None
 
         self.islog = False
 
@@ -67,7 +68,12 @@ class BlockFactory:
             def is_breakable(self) -> bool: return master.breakable
 
             @staticmethod
-            def get_all_model_states(): return self.modelstates
+            def get_all_model_states():
+                states = self.modelstates.copy()
+                [states.extend(e.get_all_model_states()) for e in self.baseclass]
+                if states.count({}) != len(states):
+                    while {} in states: states.remove({})
+                return states
 
             def on_create(self):
                 for baseclass in master.baseclass:
@@ -121,6 +127,12 @@ class BlockFactory:
             class ConstructedBlock(ConstructedBlock):
                 def on_request_item_for_block(self, itemstack):
                     master.customitemstackmodifcationfunction(self, itemstack)
+
+        if master.customblockitemmodificationfunction:
+            class ConstructedBlock(ConstructedBlock):
+                @classmethod
+                def modify_block_item(cls, itemconstructor):
+                    master.customblockitemmodificationfunction(cls, itemconstructor)
 
         if register: G.registry.register(ConstructedBlock)
 
@@ -207,5 +219,9 @@ class BlockFactory:
 
     def setCustomItemstackModificationFunction(self, function):
         self.customitemstackmodifcationfunction = function
+        return self
+
+    def setCustomBlockItemModification(self, function):
+        self.customblockitemmodificationfunction = function
         return self
 

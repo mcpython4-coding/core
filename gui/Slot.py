@@ -122,8 +122,8 @@ class Slot:
     def can_set_item(self, itemstack) -> bool:
         itemname = itemstack.get_item_name()
         flag1 = self.allowed_item_tags is not None
-        flag2 = flag1 and any([itemname in G.taghandler.taggroups["items"].tags[x].entries for x in
-                              self.allowed_item_tags])
+        flag2 = flag1 and (any([itemname in G.taghandler.taggroups["items"].tags[x].entries for x in
+                                self.allowed_item_tags]) or itemstack.get_item_name() is None)
         flag3 = self.allowed_item_func is not None
         flag4 = flag3 and self.allowed_item_func(itemstack)
         try:

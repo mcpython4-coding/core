@@ -24,6 +24,9 @@ class CraftingHandler:
         self.crafting_recipes_shapeless = {}
         # all shaped recipes sorted after item count and than size
         self.crafting_recipes_shaped = {}
+        # all smelting outputs sorted after ingredient
+        self.furnace_recipes = {}
+
         self.loaded_mod_dirs = set()
 
     def __call__(self, obj):
@@ -74,13 +77,14 @@ class CraftingHandler:
         self.crafting_recipes_shapeless = {}
         # all shaped recipes sorted after item count and than size
         self.crafting_recipes_shaped = {}
+        # all smelting outputs sorted after ingredient
+        self.furnace_recipes = {}
 
         G.eventhandler.call("craftinghandler:reload:start")
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
-            logger.println("\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(modname, i+1,
-                                                                                        len(self.loaded_mod_dirs)),
-                  end="")
+            logger.println("\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
+                modname, i+1, len(self.loaded_mod_dirs)), end="")
             self.load(modname, check_mod_dirs=False, load_direct=True)
         logger.println()
 
@@ -91,7 +95,7 @@ G.craftinghandler = CraftingHandler()
 
 
 def load_recipe_providers():
-    from . import (GridRecipes)
+    from . import (GridRecipes, FurnaceCrafting)
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipe:groups", load_recipe_providers,

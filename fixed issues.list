@@ -67,3 +67,10 @@ issue 72: chunk's remove_block function was calling wrong block event; fixed on:
 issue 64: slab side texture was upside-down; fixed on: 09.02.2020 by uuk; occur since: UV-introduction
 issue 74: chunk's cursor remove-function is offset by one char to the right; fixed on: 09.02.2020 by uuk
 issue 50: in chat, sometimes some special chars are displayed not-html; fixed on: 09.02.2020 by uuk
+issue 76: /tp [position] crashes the game; fixed on: 10.02.2020 by uuk
+issue 77: BlockFactory doesn't use get_all_model_states of super classes; fixed on: 10.02.2020 by uuk
+issue 78: debug generator does not use all possible states; fixed on: 10.02.2020 by uuk
+issue 79: BlockFaceState.update updates only visible state, not texture of faces; fixed on: 10.02.2020 by uuk
+issue 81: you can't move items out of an slot with item-tag-limitation; fixed on: 10.02.2020 by uuk
+issue 82: in some inventories, slot label draw priority was wrong; fixed on: 10.02.2020 by uuk
+issue 83: cobblestone was never created; fixed on: 10.02.2020 by uuk

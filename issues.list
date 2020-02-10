@@ -53,3 +53,7 @@ issue 75:
     bug: ender chest & christmas chest texture is wrong on top
     since: texture update to 1.15.2
 
+issue 80:
+    bug: in some cases, mouse button up is still not handled
+
+[81 - 83]

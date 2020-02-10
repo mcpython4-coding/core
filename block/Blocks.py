@@ -18,7 +18,9 @@ def load_blocks():
     brick_slab = factory.BlockFactory.BlockFactory().setName("minecraft:brick_slab").setHardness(2).setBestTools(
         [ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
     cobblestone = factory.BlockFactory.BlockFactory().setHardness(2).setBestTools([ToolType.PICKAXE]).\
-        setMinimumToolLevel(1).setName("minecraft:cobblestone")
+        setMinimumToolLevel(1).setName("minecraft:cobblestone").finish()
+    mossy_cobblestone = factory.BlockFactory.BlockFactory().setHardness(2).setBestTools([ToolType.PICKAXE]).\
+        setMinimumToolLevel(1).setName("minecraft:mossy_cobblestone").finish()
     gravel = factory.BlockFactory.BlockFactory().setName("minecraft:gravel").setHardness(0.6).setBestTools(
         [ToolType.SHOVEL]).setFallable().finish()
     red_sand = factory.BlockFactory.BlockFactory().setName("minecraft:red_sand").setHardness(0.5).setBestTools(
@@ -48,7 +50,8 @@ def load_blocks():
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_concrete_powder".format(color)).setHardness(0.5).\
             setBestTools([ToolType.SHOVEL]).setFallable().finish()
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_wool".format(color)).setHardness(0.8).setBestTools(
-            [ToolType.SHEAR]).finish()
+            [ToolType.SHEAR]).setCustomBlockItemModification(
+            lambda _, itemfactory: itemfactory.setFuelLevel(5)).finish()
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_terracotta".format(color)).setHardness(1.25).\
             setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_stained_glass".format(color)).setAllSideSolid(False).\
@@ -57,20 +60,26 @@ def load_blocks():
     for tree in G.taghandler.taggroups["naming"].tags["#minecraft:treetypes"].entries:
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_leaves".format(tree)).setAllSideSolid(False).finish()
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_planks".format(tree)).setHardness(2).setBestTools([
-            ToolType.AXE]).finish()
-        factory.BlockFactory.BlockFactory().setName("minecraft:{}_log".format(tree)).setLog().setHardness(2).setBestTools([
-            ToolType.AXE]).finish()
-        factory.BlockFactory.BlockFactory().setName("minecraft:{}_wood".format(tree)).setLog().setHardness(2).setBestTools([
-            ToolType.AXE]).finish()
-        factory.BlockFactory.BlockFactory().setName("minecraft:stripped_{}_log".format(tree)).setHardness(2).setBestTools([
-            ToolType.AXE]).setLog().finish()
-        factory.BlockFactory.BlockFactory().setName("minecraft:stripped_{}_wood".format(tree)).setHardness(2).setBestTools([
-            ToolType.AXE]).setLog().finish()
+            ToolType.AXE]).setCustomBlockItemModification(lambda _, itemfactory: itemfactory.setFuelLevel(15)).finish()
+        factory.BlockFactory.BlockFactory().setName("minecraft:{}_log".format(tree)).setLog().setHardness(2).\
+            setBestTools([ToolType.AXE]).setCustomBlockItemModification(
+            lambda _, itemfactory: itemfactory.setFuelLevel(15)).finish()
+        factory.BlockFactory.BlockFactory().setName("minecraft:{}_wood".format(tree)).setLog().setHardness(2)\
+            .setBestTools([ToolType.AXE]).setCustomBlockItemModification(
+            lambda _, itemfactory: itemfactory.setFuelLevel(15)).finish()
+        factory.BlockFactory.BlockFactory().setName("minecraft:stripped_{}_log".format(tree)).setHardness(2).\
+            setBestTools([ToolType.AXE]).setLog().setCustomBlockItemModification(
+            lambda _, itemfactory: itemfactory.setFuelLevel(15)).finish()
+        factory.BlockFactory.BlockFactory().setName("minecraft:stripped_{}_wood".format(tree)).setHardness(2).\
+            setBestTools([ToolType.AXE]).setLog().setCustomBlockItemModification(
+            lambda _, itemfactory: itemfactory.setFuelLevel(15)).finish()
         factory.BlockFactory.BlockFactory().setName("minecraft:{}_slab".format(tree)).setSlab().setBestTools(
-            [ToolType.AXE]).setHardness(2).finish()
+            [ToolType.AXE]).setHardness(2).setCustomBlockItemModification(
+            lambda _, itemfactory: itemfactory.setFuelLevel(7.5)).finish()
 
-    factory.BlockFactory.BlockFactory().setName("minecraft:coal_block").setHardness(5).setBestTools([ToolType.PICKAXE]).\
-        setMinimumToolLevel(1).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:coal_block").setHardness(5).setBestTools(
+        [ToolType.PICKAXE]).setMinimumToolLevel(1).setCustomBlockItemModification(
+        lambda _, itemfactory: itemfactory.setFuelLevel(800)).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:coal_ore").setHardness(3).setBestTools([ToolType.PICKAXE]).\
         setMinimumToolLevel(1).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:diamond_block").setHardness(5).setBestTools([ToolType.PICKAXE]).\

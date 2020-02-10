@@ -764,4 +764,10 @@ started these clone on 12th of July, 2019
 [uuk] updated changelog.txt to include fully release of snapshot 20w05a
 [uuk]: changed the way how TextureAtlases for blocks are created
 [uuk]: default gamemode in debug world is now 3
+[uuk]: fixed issue 76, 77, 78, 79, 81, 82, 83
+[uuk]: changed "toplayer_default" to "top_layer_default"
+[uuk]: added furnace with inventory and crafting
+[uuk]: most inventories can now be closed by key.E
+[uuk]: added optional FUEL attribute to item, added ItemFactory method for it for setting this value
+[uuk]: added mossy cobblestone block
 
