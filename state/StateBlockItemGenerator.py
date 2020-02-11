@@ -103,7 +103,8 @@ class StateBlockItemGenerator(State.State):
             self.blockindex = 0
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
         event.TickHandler.handler.enable_tick_skipping = False
-        event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME+self.CLEANUP_TIME)
+        pyglet.clock.schedule_once(self.add_new_screen, (self.SETUP_TIME+self.CLEANUP_TIME)/20)
+        # event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME+self.CLEANUP_TIME)
 
     def on_deactivate(self):
         G.world.cleanup()
@@ -126,7 +127,7 @@ class StateBlockItemGenerator(State.State):
         G.world.get_active_dimension().remove_block((0, 0, 0))
         self.last_image = None
 
-    def add_new_screen(self):
+    def add_new_screen(self, *args):
         self.blockindex += 1
         if self.blockindex >= len(self.tasks):
             self.close()
@@ -138,13 +139,15 @@ class StateBlockItemGenerator(State.State):
             logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                            "following exception".format(self.tasks[self.blockindex]))
             self.blockindex += 1
-            event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
+            pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)
+            # event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
             traceback.print_exc()
             return
         self.parts[1].progress = self.blockindex+1
         self.parts[1].text = "{}/{}: {}".format(self.blockindex+1, len(self.tasks), self.tasks[self.blockindex])
         # todo: add states
-        event.TickHandler.handler.bind(self.take_image, self.SETUP_TIME)
+        pyglet.clock.schedule_once(self.take_image, self.SETUP_TIME / 20)
+        # event.TickHandler.handler.bind(self.take_image, self.SETUP_TIME)
         G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
@@ -154,7 +157,8 @@ class StateBlockItemGenerator(State.State):
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
         image: PIL.Image.Image = ResourceLocator.read(file, "pil")
         if image.getbbox() is None or len(image.histogram()) <= 1:
-            event.TickHandler.handler.bind(self.take_image, 1)
+            pyglet.clock.schedule_once(self.take_image, 0.05)
+            # event.TickHandler.handler.bind(self.take_image, 1)
             self._error_counter(image, blockname)
             return
         image = image.crop((240, 129, 558, 447))  # todo: make dynamic based on window size
@@ -164,7 +168,8 @@ class StateBlockItemGenerator(State.State):
             return
         self.last_image = image
         self.generate_item(blockname, file)
-        event.TickHandler.handler.bind(self.add_new_screen, self.CLEANUP_TIME)
+        pyglet.clock.schedule_once(self.add_new_screen, self.CLEANUP_TIME/20)
+        # event.TickHandler.handler.bind(self.add_new_screen, self.CLEANUP_TIME)
 
     def _error_counter(self, image, blockname):
         if self.tries >= 10:
@@ -178,14 +183,16 @@ class StateBlockItemGenerator(State.State):
             file = "assets/missingtexture.png"  # use missing texture instead
             self.generate_item(blockname, file)
             event.TickHandler.handler.bind(G.world.get_active_dimension().remove_block, 4, args=[(0, 0, 0)])
-            event.TickHandler.handler.bind(self.add_new_screen, 10)
+            pyglet.clock.schedule_once(self.add_new_screen, 0.5)
+            # event.TickHandler.handler.bind(self.add_new_screen, 10)
             self.blockindex += 1
             self.failed_counter += 1
             if self.failed_counter % 3 == 0 and self.SETUP_TIME <= 10:
                 self.SETUP_TIME += 1
                 self.CLEANUP_TIME += 1
             return
-        event.TickHandler.handler.bind(self.take_image, 1)
+        pyglet.clock.schedule_once(self.take_image, 0.05)
+        # event.TickHandler.handler.bind(self.take_image, 1)
         self.tries += 1
 
     def generate_item(self, blockname, file):

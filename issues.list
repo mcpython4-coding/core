@@ -6,10 +6,6 @@ issue 9:
         Item-instances
     this issue occurs only in the first run with the new block
 
-issue 21:
-    bug: loading hangs in BlockItemFactory when leaving window during working
-    possible fix strategy: use debug mode of running to reproduce
-
 issue 22:
     bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
          is removed, it all updates following bug 23
@@ -56,4 +52,4 @@ issue 75:
 issue 80:
     bug: in some cases, mouse button up is still not handled
 
-[81 - 83]
+[81 - 84]

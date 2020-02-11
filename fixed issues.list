@@ -74,3 +74,5 @@ issue 79: BlockFaceState.update updates only visible state, not texture of faces
 issue 81: you can't move items out of an slot with item-tag-limitation; fixed on: 10.02.2020 by uuk
 issue 82: in some inventories, slot label draw priority was wrong; fixed on: 10.02.2020 by uuk
 issue 83: cobblestone was never created; fixed on: 10.02.2020 by uuk
+issue 21: BlockItemFactory hangs in generating items; fixed on: 10.02.2020 by uuk
+issue 83: fixed bug: clay ball and clay block item generation interfere each other

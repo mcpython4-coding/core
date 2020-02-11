@@ -33,7 +33,7 @@ def load_item():
     charcoal = factory.ItemFactory.ItemFactory().setName("minecraft:charcoal").setFuelLevel(80).finish()
     chicken = factory.ItemFactory.ItemFactory().setName("minecraft:chicken").setFoodValue(2).finish()
     chorus_fruit = factory.ItemFactory.ItemFactory().setName("minecraft:chorus_fruit").finish()
-    clay = factory.ItemFactory.ItemFactory().setDefaultItemFile("item/clay_ball").setName("minecraft:clay").finish()
+    clay = clay_ball = factory.ItemFactory.ItemFactory().setName("minecraft:clay_ball").finish()
     coal = factory.ItemFactory.ItemFactory().setName("minecraft:coal").setFuelLevel(80).finish()
     cod = factory.ItemFactory.ItemFactory().setName("minecraft:cod").setFoodValue(2).finish()
     cooked_beef = factory.ItemFactory.ItemFactory().setName("minecraft:cooked_beef").setFoodValue(8).finish()
