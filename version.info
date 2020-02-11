@@ -782,5 +782,7 @@ started these clone on 12th of July, 2019
              glowstone, magma block, mossy stone bricks, nether bricks, nether wart block, netherrack, obsidian,
              purpur blocks, quartz slab, red nether bricks, smooth quartz slab, soul sand [using the speed attribute]
 [uuk]: hopefully fixed 21
-[uuk]: fixed issue 83
+[uuk]: fixed issue 83, 84, 85, 86
+[uuk]: new loading events: "stage:mod:init", "stage:block:factory:prepare", "stage:block:factory_usage",
+       "stage:item:factory:prepare", "stage:item:factory_usage"
 

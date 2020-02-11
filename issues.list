@@ -40,11 +40,6 @@ issue 66:
     bug: generation code is somehow overwriting existing chunks
     reproducing: generate new chunks -> will be hidden & blocks will be replaced with stone
 
-issue 73:
-    bug: last texture per TextureAtlas in rotated variant is not added to any other atlas
-    fix: change check-function to include all 4 textures
-    other fix: change texture atlas to be dynamically changed in size, per mod name created
-
 issue 75:
     bug: ender chest & christmas chest texture is wrong on top
     since: texture update to 1.15.2
@@ -52,4 +47,4 @@ issue 75:
 issue 80:
     bug: in some cases, mouse button up is still not handled
 
-[81 - 84]
+[81 - 85]

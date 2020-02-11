@@ -19,3 +19,9 @@ since 31th of january, 2020:
     event.EventBus.EventBus.call_until_equal, call_until_getting_value, call_until_not_equal
         use event.EventBus.call_until instead
         removal: in modding update
+
+since 11th of february, 2020:
+    loading phases:
+        "stage:prepare"
+        "stage:block:base"
+        "stage:item:base"

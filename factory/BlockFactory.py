@@ -50,6 +50,7 @@ class BlockFactory:
 
     def finish(self, register=True):
         modname, blockname = tuple(self.name.split(":"))
+        if modname not in G.modloader.mods: modname = "minecraft"
         G.modloader.mods[modname].eventbus.subscribe("stage:block:load", self._finish, register,
                                                      info="loading block {}".format(blockname))
 

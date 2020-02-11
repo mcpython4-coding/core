@@ -91,7 +91,7 @@ class LoadingStage:
 
 
 class LoadingStages:
-    PREPARE = LoadingStage("preparation phase", "stage:prepare")
+    PREPARE = LoadingStage("preparation phase", "stage:prepare", "stage:mod:init")
     ADD_LOADING_STAGES = LoadingStage("loading stage register phase", "stage:addition_of_stages")
 
     PREBUILD = LoadingStage("prebuilding", "stage:prebuild:addition", "stage:prebuild:do")
@@ -99,9 +99,11 @@ class LoadingStages:
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
     TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
-    BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:load", "stage:block:overwrite",
+    BLOCKS = LoadingStage("block loading phase", "stage:block:factory:prepare", "stage:block:factory_usage",
+                          "stage:block:base", "stage:block:load", "stage:block:overwrite",
                           "stage:block:block_config")
-    ITEMS = LoadingStage("item loading phase", "stage:item:base", "stage:item:load", "stage:item:overwrite")
+    ITEMS = LoadingStage("item loading phase", "stage:item:factory:prepare", "stage:item:factory_usage",
+                         "stage:item:base", "stage:item:load", "stage:item:overwrite")
     LANGUAGE = LoadingStage("language file loading", "stage:language")
     RECIPE = LoadingStage("recipe loading phase", "stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
     INVENTORIES = LoadingStage("inventory loading phase", "stage:inventories")
@@ -242,7 +244,11 @@ class ModLoader:
         if "main files" in data:
             files = data["main files"]
             for location in (files if type(files) == list else [files]):
-                importlib.import_module(location)
+                try:
+                    importlib.import_module(location)
+                except ModuleNotFoundError:
+                    logger.println("[MODLOADER][ERROR] can't load mod file {}".format(location))
+                    return
         else:
             logger.println("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
 
