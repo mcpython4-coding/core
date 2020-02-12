@@ -7,7 +7,7 @@ Watch us and submit to it at https://github.com/mcpython4-coding/core .
 
 How to setup?
 -----------------------------------------------------------------------------------------------------
-Install any python 3.x version .
+Install any version of python3.
 
 Download this project, unzip it, open a console in its directory and type:
 
