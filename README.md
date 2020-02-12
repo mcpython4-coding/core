@@ -34,7 +34,7 @@ python __main__.py --rebuild
  
  
  
- I came across some weired looking blocks, but I can find them only rar in the world
+ I came across some weired looking blocks, but in the world they are very rare
 -----------------------------------------------------------------------------------------------------
 It is possible to create an so-called debug world. This world contains every possible block state of every block in the game in one big world.
 For enabling this world generator, run the game with:
