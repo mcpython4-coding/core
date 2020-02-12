@@ -7,13 +7,23 @@ Watch us and submit to it at https://github.com/mcpython4-coding/core .
 
 How to setup?
 -----------------------------------------------------------------------------------------------------
-Download any python 3.x version (x>=4) & Install it.
+Install any python 3.x version .
 
 Download this project, unzip it, open a console in its directory and type:
 
 ```shell script
 pip install -r requirements.txt
 ```
+The pip/python command crashes!
+----------------------------------------------------------------------------------------------------
+(This is under the assumption that you have already install python)
+If python crashes with an error that says something about syntax,than you have got the wrong version:use python 3,not 2.
+(On Linux/UNIX,this can be done by replacing python with python3 and pip with pip3 in the bash commands)
+If only the pip command crashes, then you have'nt installed pip!This is only a problem on Linux/UNIX, a qick fix is to use
+```bash
+sudo apt-get install python3-pip
+```
+If both fails with error like "command not found",then it means you've not added python to PATH(This is a problem only on Windows).The fast fix is to run the install file again,click Modfiy then Add to PATH,and the click OK.
 
 How to run?
 -----------------------------------------------------------------------------------------------------
@@ -41,5 +51,5 @@ For enabling this world generator, run the game with:
 ```shell script
 python __main__.py --debug-world
 ```
-This can be combined with the "--rebuild"-flag to do both at a time 
+This can be combined with the "--rebuild"-flag to do both at the same time.
 
