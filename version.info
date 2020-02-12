@@ -785,4 +785,8 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 83, 84, 85, 86
 [uuk]: new loading events: "stage:mod:init", "stage:block:factory:prepare", "stage:block:factory_usage",
        "stage:item:factory:prepare", "stage:item:factory_usage"
+[uuk]: made furnace interface more general
+[uuk]: added blast furnace & smoker
+[uuk]: fixed issue 87, 88, 89
+[uuk]: added shift-click support to furnace gui slots
 

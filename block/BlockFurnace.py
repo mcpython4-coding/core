@@ -13,6 +13,8 @@ import gui.InventoryFurnace
 
 @G.registry
 class BlockFurnace(block.Block.Block):
+    FURNACE_RECIPES = ["minecraft:smelting"]
+
     @staticmethod
     def get_name(): return "minecraft:furnace"
 
@@ -20,7 +22,7 @@ class BlockFurnace(block.Block.Block):
         super().__init__(*args, **kwargs)
         self.facing = "north"
         self.active = False
-        self.inventory = gui.InventoryFurnace.InventoryFurnace(self)
+        self.inventory = gui.InventoryFurnace.InventoryFurnace(self, self.FURNACE_RECIPES)
         if self.set_to is not None:
             dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
             if dx > 0:   self.facing = "south"
@@ -60,3 +62,18 @@ class BlockFurnace(block.Block.Block):
         G.inventoryhandler.hide(self.inventory)
         del self.inventory
 
+
+@G.registry
+class BlastFurnace(BlockFurnace):
+    @staticmethod
+    def get_name(): return "minecraft:blast_furnace"
+
+    FURNACE_RECIPES = ["minecraft:blasting"]
+
+
+@G.registry
+class Smoker(BlockFurnace):
+    @staticmethod
+    def get_name(): return "minecraft:smoker"
+
+    FURNACE_RECIPES = ["minecraft:smoking"]

@@ -133,6 +133,9 @@ class Player:
         :param itemstack: the itemstack to add
         :return: either successful or not
         """
+        # have we an slot?
+        if type(itemstack) == gui.Slot.Slot: itemstack = itemstack.itemstack
+
         if not itemstack.item or itemstack.amount == 0:
             return True
         for inventory_name, reverse in self.inventory_order:

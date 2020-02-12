@@ -89,7 +89,7 @@ class Slot:
         """
         draws the slot
         """
-        if hovering and self.interaction_mode[1]:
+        if hovering:
             PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
             PYGLET_IMAGE_HOVERING.draw()
         if self.__itemstack.item and self.__itemstack.item.get_default_item_image_location() != self.__last_itemfile:

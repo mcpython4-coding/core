@@ -78,4 +78,7 @@ issue 21: BlockItemFactory hangs in generating items; fixed on: 11.02.2020 by uu
 issue 83: clay ball and clay block item generation interfere each other; fixed on: 11.02.2020 by uuk
 issue 84: ModLoader crashes when mod.json links to an not-existing python file; fixed on: 11.02.2020 by uuk
 issue 85: game crashes when using an not-modname prefix for block names; fixed on: 11.02.2020 by uuk
-issue 86: game crashes when using an not-modname prefix in an model name
+issue 86: game crashes when using an not-modname prefix in an model name; fixed on: 11.02.2020 by uuk
+issue 87: furnace has sometimes double the speed than normal; fixed on: 12.02.2020 by uuk
+issue 88: slots with no player interact where not highlighted when hovering over them; fixed on: 12.02.2020 by uuk
+issue 89: furnace time was not exact to what in recipe specified; fixed on: 12.02.2020 by uuk
