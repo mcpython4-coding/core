@@ -75,7 +75,7 @@ class StatePartGame(StatePart.StatePart):
             cls.braketime = None  # no braketime because no block
         else:
             hardness = block.get_hardness()
-            itemstack = G.player.get_active_inventory_slot().itemstack
+            itemstack = G.player.get_active_inventory_slot().get_itemstack()
             istool = itemstack.item and issubclass(type(itemstack.item), ItemTool.ItemTool)
             toollevel = itemstack.item.get_tool_level() if istool else 0
             if not istool or not any([x in block.get_best_tools() for x in itemstack.item.get_tool_type()]):
@@ -174,21 +174,21 @@ class StatePartGame(StatePart.StatePart):
 
     def on_right_click_interaction_update(self, dt):
         if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
-            if G.player.get_active_inventory_slot().itemstack.item and \
-                    issubclass(type(G.player.get_active_inventory_slot().itemstack.item), ItemFood.ItemFood):
-                itemfood = G.player.get_active_inventory_slot().itemstack.item
+            if G.player.get_active_inventory_slot().get_itemstack().item and \
+                    issubclass(type(G.player.get_active_inventory_slot().get_itemstack().item), ItemFood.ItemFood):
+                itemfood = G.player.get_active_inventory_slot().get_itemstack().item
                 if itemfood.on_eat():
                     self.set_cooldown = time.time() - 1
-                    G.player.get_active_inventory_slot().itemstack.amount -= 1
-                    if G.player.get_active_inventory_slot().itemstack.amount == 0:
-                        G.player.get_active_inventory_slot().itemstack.clean()
+                    G.player.get_active_inventory_slot().get_itemstack().add_amount(-1)
+                    if G.player.get_active_inventory_slot().get_itemstack().amount == 0:
+                        G.player.get_active_inventory_slot().get_itemstack().clean()
                     return
             vector = G.window.get_sight_vector()
             blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
             if blockpos:
                 if G.window.mouse_pressing[mouse.RIGHT] and previous:
                     slot = G.player.get_active_inventory_slot()
-                    if slot.itemstack.item and slot.itemstack.item.has_block() and self.mouse_press_time > 0.10 and \
+                    if slot.get_itemstack().item and slot.get_itemstack().item.has_block() and self.mouse_press_time > 0.10 and \
                             G.player.gamemode in (0, 1):
                         x, y, z = previous
                         px, _, pz = util.math.normalize(G.window.position)
@@ -196,13 +196,10 @@ class StatePartGame(StatePart.StatePart):
                         if not (x == px and z == pz and py-1 <= y <= py) and not G.world.get_active_dimension().\
                                 get_block(previous):
                             G.world.get_active_dimension().add_block(
-                                previous, slot.itemstack.item.get_block(), kwargs={"set_to": blockpos,
+                                previous, slot.get_itemstack().item.get_block(), kwargs={"set_to": blockpos,
                                                                                    "real_hit": hitpos})
-                            slot.itemstack.item.on_set_from_item(G.world.get_active_dimension().get_block(previous))
-                            if G.player.gamemode == 0:
-                                slot.itemstack.amount -= 1
-                                if slot.itemstack.amount == 0:
-                                    slot.itemstack.clean()
+                            slot.get_itemstack().item.on_set_from_item(G.world.get_active_dimension().get_block(previous))
+                            if G.player.gamemode == 0: slot.get_itemstack().add_amount(-1)
                             self.mouse_press_time = 0
                             # todo: check if set-able in gamemode 2
 
@@ -224,16 +221,18 @@ class StatePartGame(StatePart.StatePart):
                     if reverse:
                         slots.reverse()
                     for slot in slots:
-                        if slot.itemstack.item and slot.itemstack.item.has_block() and \
-                                slot.itemstack.item == itemstack.item:
+                        if slot.get_itemstack().item and slot.get_itemstack().item.has_block() and \
+                                slot.get_itemstack().item == itemstack.item:
                             if inventoryname != "hotbar":
-                                selected_slot.itemstack, slot.itemstack = slot.itemstack, selected_slot.itemstack
+                                sslot = selected_slot.get_itemstack()
+                                selected_slot.set_itemstack(slot.get_itemstack())
+                                slot.set_itemstack(sslot)
                             else:
                                 G.player.set_active_inventory_slot(slots.index(slot))
                             return
                 if G.player.gamemode == 1:
-                    old_itemstack = selected_slot.itemstack
-                    selected_slot.itemstack = itemstack
+                    old_itemstack = selected_slot.get_itemstack()
+                    selected_slot.set_itemstack(itemstack)
                     G.player.add_to_free_place(old_itemstack)
                     if G.window.mouse_pressing[mouse.LEFT]: self.calculate_new_braketime()
 
@@ -252,7 +251,8 @@ class StatePartGame(StatePart.StatePart):
         if not G.window.flying and G.window.dy == 0:
             x, y, z = util.math.normalize(G.window.position)
             block_inst = G.world.get_active_dimension().get_block((x, y-2, z))
-            if block_inst is not None and block_inst.CUSTOM_WALING_SPEED_MULTIPLIER is not None:
+            if block_inst is not None and type(block_inst) != str and \
+                    block_inst.CUSTOM_WALING_SPEED_MULTIPLIER is not None:
                 speed *= block_inst.CUSTOM_WALING_SPEED_MULTIPLIER
         if G.player.gamemode in (0, 2) and G.window.keys[key.LSHIFT]:
             G.player.hunger -= dt*0.2
@@ -306,11 +306,11 @@ class StatePartGame(StatePart.StatePart):
         blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
         block = G.world.get_active_dimension().get_block(blockpos) if blockpos else None
         cancel = False
-        if not slot.itemstack.is_empty():
-            if slot.itemstack.item.on_player_interact(block, button, modifiers):
+        if not slot.get_itemstack().is_empty():
+            if slot.get_itemstack().item.on_player_interact(block, button, modifiers):
                 cancel = True
         if block and type(block) != str:
-            if not cancel and block.on_player_interact(slot.itemstack, button, modifiers, hitpos):
+            if not cancel and block.on_player_interact(slot.get_itemstack(), button, modifiers, hitpos):
                 cancel = True
         if cancel:
             self.set_cooldown = time.time()

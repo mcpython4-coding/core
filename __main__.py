@@ -86,6 +86,8 @@ try:
         import pyglet
         # todo: move size to config.py
         rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
+        G.window.set_icon(ResourceLocator.read("icon_16x16.png", "pyglet"),
+                          ResourceLocator.read("icon_32x32.png", "pyglet"))
         G.eventhandler.call("game:gameloop_startup")
         try:
             pyglet.app.run()

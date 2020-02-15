@@ -101,8 +101,8 @@ class BlockChest(Block.Block):
 
     def on_remove(self):
         for slot in self.inventory.slots:
-            G.player.add_to_free_place(slot.itemstack.copy())
-            slot.itemstack.clean()
+            G.player.add_to_free_place(slot.get_itemstack().copy())
+            slot.get_itemstack().clean()
         G.inventoryhandler.hide(self.inventory)
         del self.inventory
 

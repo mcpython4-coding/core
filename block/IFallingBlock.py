@@ -37,9 +37,11 @@ class IFallingBlock(block.Block.Block):
         x, y, z = self.position
         if not check or not G.world.get_active_dimension().get_block((x, y - 1, z)):
             G.world.get_active_dimension().remove_block(self.position, blockupdateself=False)
+            G.world.get_active_dimension().check_neighbors(self.position)
             chunk = G.world.get_active_dimension().get_chunk_for_position(self.position)
             chunk.on_block_updated(self.position)
             if y == 0: return
             G.world.get_active_dimension().add_block((x, y - 1, z), self, blockupdateself=False)
             self.on_block_update()
+            G.world.get_active_dimension().check_neighbors(self.position)
 

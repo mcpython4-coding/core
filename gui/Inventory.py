@@ -151,7 +151,7 @@ class Inventory:
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
         for slot in self.slots:
-            slot.draw_lable()
+            slot.draw_lable(x, y)
         self.on_draw_overlay()
 
     def on_draw_background(self):
@@ -178,18 +178,18 @@ class Inventory:
         return True
 
     def on_world_cleared(self):
-        [slot.itemstack.clean() for slot in self.slots]
+        [slot.get_itemstack().clean() for slot in self.slots]
         if self in G.inventoryhandler.opened_inventorystack: G.inventoryhandler.hide(self)
 
     def get_interaction_slots(self):
         return self.slots
 
     def clear(self):
-        for slot in self.slots: slot.itemstack.clean()
+        for slot in self.slots: slot.get_itemstack().clean()
 
     def copy(self):
         obj = self.__class__()
         for i in range(3*9):
-            obj.slots[i].itemstack = self.slots[i].itemstack.copy()
+            obj.slots[i].set_itemstack(self.slots[i].get_itemstack().copy())
         return obj
 

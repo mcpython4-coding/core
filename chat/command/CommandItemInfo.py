@@ -31,16 +31,16 @@ class CommandItemInfo(chat.command.Command.Command):
     @staticmethod
     def parse(values: list, modes: list, info):
         if modes[1][1] == 0:  # hand
-            itemstack = G.player.get_active_inventory_slot().itemstack
+            itemstack = G.player.get_active_inventory_slot().get_itemstack()
             logger.println("info to item hold in hand")
             CommandItemInfo.print_info(itemstack)
         elif modes[1][1] == 1:  # inventory
             for inventorykey in G.player.inventorys.keys():
                 logger.println("info to inventory {} of player".format(inventorykey))
                 for i, slot in enumerate(G.player.inventorys[inventorykey].slots):
-                    if not slot.itemstack.is_empty():
+                    if not slot.get_itemstack().is_empty():
                         logger.println("slot {}".format(i+1))
-                        CommandItemInfo.print_info(slot.itemstack)
+                        CommandItemInfo.print_info(slot.get_itemstack())
         elif modes[1][1] == 2:  # from item name
             stack = gui.ItemStack.ItemStack(values[1])
             CommandItemInfo.print_info(stack)
@@ -50,9 +50,9 @@ class CommandItemInfo(chat.command.Command.Command):
             for i, inventory in enumerate(block.get_inventories()):
                 logger.println("inventory {}".format(i+1))
                 for si, slot in enumerate(inventory.slots):
-                    if not slot.itemstack.is_empty():
+                    if not slot.get_itemstack().is_empty():
                         logger.println("slot {}".format(si+1))
-                        CommandItemInfo.print_info(slot.itemstack)
+                        CommandItemInfo.print_info(slot.get_itemstack())
 
     @staticmethod
     def print_info(itemstack):

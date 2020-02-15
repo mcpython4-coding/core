@@ -39,10 +39,10 @@ class InventoryCraftingTable(gui.Inventory.Inventory):
 
     def on_deactivate(self):
         super().on_deactivate()
-        self.slots[-1].itemstack.clean()
+        self.slots[-1].get_itemstack().clean()
         for slot in self.slots[:-1]:
-            G.player.add_to_free_place(slot.itemstack)
-            slot.itemstack.clean()
+            G.player.add_to_free_place(slot.get_itemstack())
+            slot.get_itemstack().clean()
         G.player.reset_moving_slot()
         event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
 
@@ -60,7 +60,7 @@ class InventoryCraftingTable(gui.Inventory.Inventory):
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
         for slot in G.player.inventorys["main"].slots[:36] + self.slots:
-            slot.draw_lable()
+            slot.draw_lable(x, y)
         self.on_draw_overlay()
 
     def get_interaction_slots(self):

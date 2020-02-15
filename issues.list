@@ -18,8 +18,8 @@ issue 24:
     possible fix: rework whole hit-box system of blocks [AABBs?]
 
 issue 28:
-    bug: F3+A does not reload the world
-    since: unknown, found after fixing issue 19 & implementing hotkeys
+    bug: F3+A does not reload the world correctly
+    since: unknown, found after fixing issue 19 & implementing hot-keys
     fix: debug what is wrong
 
 issue 34:
@@ -36,10 +36,6 @@ issue 55:
     bug: alpha textures are rendered not behind alpha-textures
     since: alpha rendering was implemented
 
-issue 66:
-    bug: generation code is somehow overwriting existing chunks
-    reproducing: generate new chunks -> will be hidden & blocks will be replaced with stone
-
 issue 75:
     bug: ender chest & christmas chest texture is wrong on top
     since: texture update to 1.15.2
@@ -47,4 +43,4 @@ issue 75:
 issue 80:
     bug: in some cases, mouse button up is still not handled
 
-[81 - 87]
+[81 - 93]

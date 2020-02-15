@@ -56,7 +56,7 @@ class InventoryBarrel(gui.Inventory.Inventory):
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
         for slot in G.player.inventorys["main"].slots[:36] + self.slots:
-            slot.draw_lable()
+            slot.draw_lable(x, y)
         self.on_draw_overlay()
 
     def get_interaction_slots(self):

@@ -44,7 +44,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             G.statehandler.states["minecraft:game"].parts[0].activate_keyboard = True
         for inventory in G.inventoryhandler.opened_inventorystack:
             inventory.draw(hoveringslot=hoveringslot)
-        if G.inventoryhandler.moving_slot.itemstack.item:
+        if G.inventoryhandler.moving_slot.get_itemstack().item:
             G.inventoryhandler.moving_slot.draw(0, 0)
         G.inventoryhandler.moving_slot.position = G.window.mouse_position
 
@@ -71,67 +71,67 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         slot: gui.Slot.Slot = self._get_slot_for(x, y)
         moving_slot: gui.Slot.Slot = G.inventoryhandler.moving_slot
         if button == mouse.LEFT:
-            if slot and (slot.interaction_mode[0] or not slot.itemstack.item) and (slot.interaction_mode[1] or not
-                                                                                   moving_slot.itemstack.item):
+            if slot and (slot.interaction_mode[0] or not slot.get_itemstack().item) and (slot.interaction_mode[1] or not
+                                                                                         moving_slot.get_itemstack().item):
                 if modifiers & key.MOD_SHIFT and slot.on_shift_click:
                     slot.on_shift_click(slot, x, y, button, modifiers)
                 else:
-                    if slot.itemstack.get_item_name() == moving_slot.itemstack.get_item_name() and \
-                            slot.itemstack.get_item_name() is not None:
-                        eamount = slot.itemstack.amount
-                        ramount = moving_slot.itemstack.amount
-                        mstack = slot.itemstack.item.get_max_stack_size()
+                    if slot.get_itemstack().get_item_name() == moving_slot.get_itemstack().get_item_name() and \
+                            slot.get_itemstack().get_item_name() is not None:
+                        eamount = slot.get_itemstack().amount
+                        ramount = moving_slot.get_itemstack().amount
+                        mstack = slot.get_itemstack().item.get_max_stack_size()
                         if eamount == mstack: return
                         possible = mstack - eamount
                         if possible > ramount:
                             possible = ramount
-                        slot.itemstack.amount += possible
+                        slot.get_itemstack().add_amount(possible)
                         slot.call_update(player=True)
-                        moving_slot.itemstack.amount -= possible
-                        if moving_slot.itemstack.amount <= 0:
-                            moving_slot.itemstack.clean()
+                        moving_slot.get_itemstack().add_amount(-possible)
+                        if moving_slot.get_itemstack().amount <= 0:
+                            moving_slot.get_itemstack().clean()
                     else:
-                        flag = slot.can_set_item(moving_slot.itemstack)
+                        flag = slot.can_set_item(moving_slot.get_itemstack())
                         if flag:
-                            stack, mstack = slot.itemstack, moving_slot.itemstack
-                            moving_slot.itemstack = stack
+                            stack, mstack = slot.get_itemstack(), moving_slot.get_itemstack()
+                            moving_slot.set_itemstack(stack)
                             slot.set_itemstack(mstack, player=True)
             else:
                 # todo: threw the itemstack
                 pass
         elif button == mouse.RIGHT:
             if slot:
-                if not slot.itemstack.item:
-                    if slot.interaction_mode[1] and slot.can_set_item(moving_slot.itemstack):
-                        slot.set_itemstack(moving_slot.itemstack.copy().set_amount(1), player=True)
-                        moving_slot.itemstack.amount -= 1
-                elif not moving_slot.itemstack.item and slot.allow_half_getting:
+                if not slot.get_itemstack().item:
+                    if slot.interaction_mode[1] and slot.can_set_item(moving_slot.get_itemstack()):
+                        slot.set_itemstack(moving_slot.get_itemstack().copy().set_amount(1), player=True)
+                        moving_slot.get_itemstack().add_amount(-1)
+                elif not moving_slot.get_itemstack().item and slot.allow_half_getting:
                     if slot.interaction_mode[0]:
-                        moving_slot.itemstack = slot.itemstack.copy()
-                        slot.itemstack.amount //= 2
-                        moving_slot.itemstack.amount = abs(moving_slot.itemstack.amount - slot.itemstack.amount)
-                        if slot.itemstack.amount == 0:
-                            slot.itemstack.clean()
-                        if moving_slot.itemstack.amount == 0:
-                            moving_slot.itemstack.clean()
+                        moving_slot.set_itemstack(slot.get_itemstack().copy())
+                        slot.get_itemstack().amount //= 2
+                        moving_slot.get_itemstack().set_amount(abs(moving_slot.get_itemstack().amount - slot.get_itemstack().amount))
+                        if slot.get_itemstack().amount == 0:
+                            slot.get_itemstack().clean()
+                        if moving_slot.get_itemstack().amount == 0:
+                            moving_slot.get_itemstack().clean()
                         slot.call_update(player=True)
-                elif not slot.itemstack.is_empty() and slot.itemstack.get_item_name() == moving_slot.itemstack.\
-                        get_item_name() and slot.itemstack.amount < slot.itemstack.item.get_max_stack_size():
+                elif not slot.get_itemstack().is_empty() and slot.get_itemstack().get_item_name() == moving_slot.get_itemstack().\
+                        get_item_name() and slot.get_itemstack().amount < slot.get_itemstack().item.get_max_stack_size():
                     if slot.interaction_mode[1]:
-                        slot.itemstack.amount += 1
-                        moving_slot.itemstack.amount -= 1
+                        slot.get_itemstack().add_amount(1)
+                        moving_slot.get_itemstack().add_amount(-1)
                         slot.call_update(player=True)
             else:
                 # todo: threw one item
                 pass
         elif button == mouse.MIDDLE:
-            if G.player.gamemode == 1 and slot and slot.itemstack.get_item_name() and not \
-                    moving_slot.itemstack.get_item_name():
-                moving_slot.itemstack = slot.itemstack.copy()
-                moving_slot.itemstack.amount = moving_slot.itemstack.item.get_max_stack_size()
+            if G.player.gamemode == 1 and slot and slot.get_itemstack().get_item_name() and not \
+                    moving_slot.get_itemstack().get_item_name():
+                moving_slot.set_itemstack(slot.get_itemstack().copy())
+                moving_slot.get_itemstack().set_amount(moving_slot.get_itemstack().item.get_max_stack_size())
 
-        if moving_slot.itemstack.amount == 0:
-            moving_slot.itemstack.clean()
+        if moving_slot.get_itemstack().amount == 0:
+            moving_slot.get_itemstack().clean()
 
 
 inventory_part = OpenedInventoryStatePart()

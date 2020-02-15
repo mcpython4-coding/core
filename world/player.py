@@ -134,7 +134,7 @@ class Player:
         :return: either successful or not
         """
         # have we an slot?
-        if type(itemstack) == gui.Slot.Slot: itemstack = itemstack.itemstack
+        if type(itemstack) == gui.Slot.Slot: itemstack = itemstack.get_itemstack()
 
         if not itemstack.item or itemstack.amount == 0:
             return True
@@ -144,17 +144,17 @@ class Player:
             if reverse:
                 slots.reverse()
             for slot in slots:
-                if slot.itemstack.item and slot.itemstack.item.get_name() == itemstack.item.get_name() and \
+                if slot.get_itemstack().item and slot.get_itemstack().item.get_name() == itemstack.item.get_name() and \
                         slot.interaction_mode[2]:
-                    if slot.itemstack.item and slot.itemstack.amount + itemstack.amount <= itemstack.item. \
+                    if slot.get_itemstack().item and slot.get_itemstack().amount + itemstack.amount <= itemstack.item. \
                             get_max_stack_size():
-                        slot.itemstack.amount += itemstack.amount
+                        slot.get_itemstack().add_amount(itemstack.amount)
                         return True
                     else:
-                        m = slot.itemstack.item.get_max_stack_size()
-                        delta = m - slot.itemstack.amount
-                        slot.itemstack.amount = m
-                        itemstack.amount -= delta
+                        m = slot.get_itemstack().item.get_max_stack_size()
+                        delta = m - slot.get_itemstack().amount
+                        slot.get_itemstack.set_amount(m)
+                        itemstack.add_amount(-delta)
                 if itemstack.amount <= 0:
                     return True
         for inventory_name, reverse in self.inventory_order:
@@ -163,8 +163,8 @@ class Player:
             if reverse:
                 slots.reverse()
             for slot in slots:
-                if not slot.itemstack.item and slot.interaction_mode[2]:
-                    slot.itemstack = itemstack
+                if not slot.get_itemstack().item and slot.interaction_mode[2]:
+                    slot.set_itemstack(itemstack)
                     return True
         return False
 
@@ -177,13 +177,13 @@ class Player:
     def kill(self, test_totem=True):
         if test_totem:
             # todo: add effects
-            if self.get_active_inventory_slot().itemstack.get_item_name() == "minecraft:totem_of_undying":
-                self.get_active_inventory_slot().itemstack.clean()
+            if self.get_active_inventory_slot().get_itemstack().get_item_name() == "minecraft:totem_of_undying":
+                self.get_active_inventory_slot().get_itemstack().clean()
                 self.hearts = 20
                 self.hunger = 20
                 return
-            elif self.inventorys["main"].slots[45].itemstack.get_item_name() == "minecraft:totem_of_undying":
-                self.inventorys["main"].slots[45].itemstack.clean()
+            elif self.inventorys["main"].slots[45].get_itemstack().get_item_name() == "minecraft:totem_of_undying":
+                self.inventorys["main"].slots[45].get_itemstack().clean()
                 self.hearts = 20
                 self.hunger = 20
                 return
@@ -226,5 +226,5 @@ class Player:
                 self.kill()
 
     def reset_moving_slot(self):
-        self.add_to_free_place(globals.inventoryhandler.moving_slot.itemstack.copy())
-        globals.inventoryhandler.moving_slot.itemstack.clean()
+        self.add_to_free_place(globals.inventoryhandler.moving_slot.get_itemstack().copy())
+        globals.inventoryhandler.moving_slot.get_itemstack().clean()
