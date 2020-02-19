@@ -239,13 +239,40 @@ class ModLoader:
     def load_mods_json(self, data: str, file: str):
         self.load_from_decoded_json(json.loads(data), file)
 
+    @classmethod
+    def load_from_decoded_json(cls, data: dict, file: str):
+        if "version" not in data:
+            logger.println("[MODLOADER][WARN] found out-dated mod.json format for file at {}".format(file))
+            logger.println("[MODLOADER][WARN] support WILL BE DROPPED IN THE FUTURE")
+            logger.println("[MODLOADER] please inform the mod developer that he has to change the mod.json")
+            cls._load_from_old_json(data, file)
+        else:
+            version = data["version"]
+            # old: "1.0.0" without "version" entry is loaded abovWQe
+            if version == "1.1.0":  # 1.1.0: latest
+                loader = data["loader"] if "loader" in data else "python:default"
+                # todo: add registry for loaders
+                if loader == "python:default":
+                    if "load:files" in data:
+                        files = data["load:files"]
+                        for location in (files if type(files) == list else [files]):
+                            try:
+                                importlib.import_module(location.replace("/", ".").replace("\\", "."))
+                            except ModuleNotFoundError:
+                                logger.println("[MODLOADER][ERROR] can't load mod file {}".format(location))
+                                return
+                else:
+                    logger.println("[MODLOADER][ERROR] found mod.json ({}) which is not using any supported loader"
+                                   " ({})".format(file, loader))
+                    G.window.close()
+
     @staticmethod
-    def load_from_decoded_json(data: dict, file: str):
+    def _load_from_old_json(data: dict, file: str):
         if "main files" in data:
             files = data["main files"]
             for location in (files if type(files) == list else [files]):
                 try:
-                    importlib.import_module(location)
+                    importlib.import_module(location.replace("/", ".").replace("\\", "."))
                 except ModuleNotFoundError:
                     logger.println("[MODLOADER][ERROR] can't load mod file {}".format(location))
                     return

@@ -17,8 +17,11 @@ class StateHandler:
         self.states = {}
         self.CANCEL_SWITCH_STATE = False
 
-    def switch_to(self, statename: str or None):
-        event.TickHandler.handler.bind(self._switch_to, 1, args=(statename,))
+    def switch_to(self, statename: str or None, immediate=True):
+        if immediate:
+            self._switch_to(statename)
+        else:
+            event.TickHandler.handler.bind(self._switch_to, 1, args=(statename,))
 
     def _switch_to(self, statename):
         if statename not in self.states: return

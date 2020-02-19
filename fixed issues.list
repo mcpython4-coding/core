@@ -88,3 +88,8 @@ issue 66: generation added blocks are not correctly overwritten when adding bloc
 issue 91: falling blocks are not updating neighbor's face visible state; fixed on: 14.02.2020 by uuk
 issue 92: SlotCopy was not using correct label configuration; fixed on: 14.02.2020 by uuk
 issue 93: Slots label was offset in some special cases; fixed on: 14.02.2020 by uuk
+issue 94: mossy stone brick slab failed to generate block-item for due to double register; fixed on: 16.02.2020 by uuk
+issue 99: various exceptions when interacting with slots; fixed on: 18.02.2020 by uuk; e.g.:
+      File "%game%\crafting\GridRecipeInterface.py", line 146, in remove_input
+        slot.get_itemstack().amount.add_amount(-count)
+      AttributeError: 'int' object has no attribute 'add_amount'

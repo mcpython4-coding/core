@@ -22,7 +22,7 @@ class FixedEventDispatcher(pyglet.event.EventDispatcher):
             try:
                 flag = frame[name] == handler
             except TypeError:
-                flag = False
+                flag = False  # todo: check if this is the right state in this case!
             if name in frame and flag:
                 del frame[name]
                 if not frame:

@@ -5,22 +5,26 @@ issue 9:
     when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
         Item-instances
     this issue occurs only in the first run with the new block
+    possible fix: create item tables only when BlockItemFactory has finished
+    better fix: remove BlockItemGenerator & replace by drawing of the corresponding block in the slot in 3d
 
 issue 22:
     bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
          is removed, it all updates following bug 23
+    strategy: debug where block updates are called & why the block is not updated correct
 
 issue 23:
     bug: when sand is falling, it falls more than 1 block at a time, see issue 22 for reproducing
+    possible reason: fall is active two times in TickHandler
 
 issue 24:
     bug: hit-box of blocks are at the corners not working [see fogleman #104]
-    possible fix: rework whole hit-box system of blocks [AABBs?]
+    possible fix: rework whole hit-box system (of blocks) [AABBs?]
 
 issue 28:
     bug: F3+A does not reload the world correctly
     since: unknown, found after fixing issue 19 & implementing hot-keys
-    fix: debug what is wrong
+    possible fix: rewrite this part of Chunk's method's
 
 issue 34:
     bug: jumping from downwards into an block, you get damage
@@ -31,16 +35,45 @@ issue 35:
     bug: going inside an non-full block will give you damage
     since: block damage was introduced
     fix: check for solid block
+    better fix: use rewritten collision system based on AABB's to determine if you are in an block
 
 issue 55:
     bug: alpha textures are rendered not behind alpha-textures
     since: alpha rendering was implemented
+    possible fix: disable depth test & order faces by ourselves OR change rendering mode
 
 issue 75:
     bug: ender chest & christmas chest texture is wrong on top
     since: texture update to 1.15.2
+    possible fix: update texture coord system
+    better fix: update models to use correct UV's
+    even better fix: implement CustomBlockRenderer for rendering it
 
 issue 80:
     bug: in some cases, mouse button up is still not handled
 
-[81 - 93]
+issue 95:
+    bug: in some cases, blocks are added double in debug world
+    found: during testing mod block system loading, maybe when new during not pre-build phase
+    possible fix: make sure that every block is added ones into debug world list
+    better fix: find reason for duplication
+    even better fix: add an IRegisterAble-object base class containing an NAME attribute and an TYPE attribute,
+       change event.Registry to register this types, add an option to override existing objects, otherwise add error msg
+       and crash. Make sure that it is past-compatible
+
+issue 96:
+    bug: SlotCopy does not always work correctly
+    possible fix: rewrite SlotCopy
+
+issue 97:
+    bug: slots in hotbar can be highlighted
+    possible fix: add new attribute to Slot which disables the hovering rendering
+
+issue 98:
+    bug: when moving & reinserting an item in hotbar from player inventory main the item in the hotbar is not rendered
+    possible fix: see issue 96
+
+issue 100:
+    bug: fps counter is constantly changing making it hard to read from
+    possible fix: implement some average fps system
+

@@ -47,12 +47,12 @@ class StateEscape(State.State):
     def start_menu_press(x, y):
         G.world.cleanup()
         G.eventhandler.call("on_game_leave")
-        G.statehandler.switch_to("minecraft:startmenu")
+        G.statehandler.switch_to("minecraft:startmenu", immediate=False)
 
     @staticmethod
     def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
-            G.statehandler.switch_to("minecraft:game")
+            G.statehandler.switch_to("minecraft:game", immediate=False)
 
     @staticmethod
     def on_draw_2d_pre():

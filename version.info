@@ -792,4 +792,9 @@ started these clone on 12th of July, 2019
 [uuk]: added the other assets not included in the jar file of minecraft, making the language files arrival again
 [uuk]: added icon of window
 [uuk]: fixed issue 66, 90, 91, 92, 93
+[uuk]: added add_load_default_resources-method to mod
+[uuk]: fixed issue 94, 99
+[uuk]: changed mod.json-file format, support for old format is not completely dropped at the moment, but may be in the
+       future
+[uuk]: changed StateHandler.switch_state to have an immediate-parameter which is default True
 

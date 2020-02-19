@@ -74,7 +74,11 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             if slot and (slot.interaction_mode[0] or not slot.get_itemstack().item) and (slot.interaction_mode[1] or not
                                                                                          moving_slot.get_itemstack().item):
                 if modifiers & key.MOD_SHIFT and slot.on_shift_click:
-                    slot.on_shift_click(slot, x, y, button, modifiers)
+                    try:
+                        slot.on_shift_click(slot, x, y, button, modifiers)
+                    except:
+                        print("error during executing function {}".format(slot.on_shift_click))
+                        raise
                 else:
                     if slot.get_itemstack().get_item_name() == moving_slot.get_itemstack().get_item_name() and \
                             slot.get_itemstack().get_item_name() is not None:

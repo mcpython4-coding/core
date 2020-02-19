@@ -143,7 +143,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         for row in self.slot_input_map:  # go over all slots
             for slot in row:
                 if not slot.get_itemstack().is_empty():  # check if the slot is used
-                    slot.get_itemstack().amount.add_amount(-count)
+                    slot.get_itemstack().add_amount(-count)
                     if slot.get_itemstack().amount <= 0:
                         slot.get_itemstack().clean()
 

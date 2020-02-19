@@ -86,7 +86,7 @@ class StateWorldGenerationConfig(State.State):
             self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
         G.player.name = self.parts[6].entered_text
         if G.player.name == "": G.player.name = "unknown"
-        G.statehandler.switch_to("minecraft:gameinfo")
+        G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
         G.eventhandler.call("on_game_enter")
 
     def bind_to_eventbus(self):

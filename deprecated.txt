@@ -25,3 +25,6 @@ since 11th of february, 2020:
         "stage:prepare"
         "stage:block:base"
         "stage:item:base"
+
+since 19th of february, 2020:
+    ModLoader mod.json format 1.0.0

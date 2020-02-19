@@ -162,7 +162,6 @@ def load_blocks():
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_brick_slab").setHardness(2). \
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).setSlab().finish()
-    factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_brick_slab").setSlab().finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:chiseled_red_sandstone").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:chiseled_sandstone").finish()
