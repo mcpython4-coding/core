@@ -77,8 +77,7 @@ class ItemFactory:
             @classmethod
             def get_used_texture_files(cls): return master.used_itemfiles
 
-            @staticmethod
-            def get_name() -> str: return master.name
+            NAME = master.name
 
             @staticmethod
             def has_block() -> bool: return master.has_block

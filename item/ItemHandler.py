@@ -91,11 +91,11 @@ def add_to_image_atlas(textureatlas, image, file):
 
 def register_item(registry, itemclass):
     itemtable = registry.get_attribute("items")
-    itemtable[itemclass.get_name()] = itemclass
-    itemtable[itemclass.get_name().split(":")[-1]] = itemclass
-    if itemclass.get_name() in items.get_attribute("itemindextable"): return
+    itemtable[itemclass.NAME] = itemclass
+    itemtable[itemclass.NAME.split(":")[-1]] = itemclass
+    if itemclass.NAME in items.get_attribute("itemindextable"): return
     table = items.get_attribute("itemindextable")
-    table.setdefault(itemclass.get_name(), {})
+    table.setdefault(itemclass.NAME, {})
     try:
         files = itemclass.get_used_texture_files()
         images = [ResourceLocator.read(file, "pil").resize((32, 32), PIL.Image.NEAREST) for file in files]
@@ -103,7 +103,7 @@ def register_item(registry, itemclass):
         for textureatlas in TEXTURE_ATLASES:
             if textureatlas.is_free_for(files):
                 for i, image in enumerate(images):
-                    table[itemclass.get_name()][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
+                    table[itemclass.NAME][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
                 flag = False
                 break
         if flag:
@@ -111,9 +111,9 @@ def register_item(registry, itemclass):
                                                              pyglet_special_pos=False, size=(16, 16))
             TEXTURE_ATLASES.append(textureatlas)
             for i, image in enumerate(images):
-                table[itemclass.get_name()][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
+                table[itemclass.NAME][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
     except:
-        logger.println(itemclass.get_name(), itemclass.get_used_texture_files())
+        logger.println(itemclass.NAME, itemclass.get_used_texture_files())
         raise
 
 

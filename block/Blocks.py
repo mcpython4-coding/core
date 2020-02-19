@@ -44,7 +44,6 @@ def load_blocks():
         setBestTools([ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:bone_block").setLog().finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:bookshelf").finish()
-    factory.BlockFactory.BlockFactory().setName("minecraft:mossy_stone_bricks").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:obsidian").finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:ice").setSpeedMultiplier(1.4).setAllSideSolid(False).finish()

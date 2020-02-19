@@ -16,9 +16,7 @@ class BlockDirt(Block.Block):
     todo: implement -> grass convert
     """
 
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:dirt"
+    NAME = "minecraft:dirt"
 
     def on_random_update(self):
         x, y, z = self.position
@@ -34,7 +32,7 @@ class BlockDirt(Block.Block):
                         blockinst = G.world.get_active_dimension().get_block(position)
                         if blockinst is not None:
                             if blockinst == "minecraft:grass_block" or (
-                                    type(blockinst) != str and blockinst.get_name() == "minecraft:grass_block"):
+                                    type(blockinst) != str and blockinst.NAME == "minecraft:grass_block"):
                                 G.world.get_active_dimension().add_block(self.position, "minecraft:grass_block")
                                 return
 

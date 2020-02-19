@@ -9,9 +9,7 @@ import globals as G
 
 
 class State:
-    @staticmethod
-    def get_name():
-        raise NotImplementedError()
+    NAME = ""
 
     @staticmethod
     def is_mouse_exclusive():

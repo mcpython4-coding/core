@@ -20,8 +20,7 @@ sprite = util.texture.to_pyglet_sprite(ResourceLocator.read("gui/demo_background
 
 
 class StateGameInfo(state.State.State):
-    @staticmethod
-    def get_name(): return "minecraft:gameinfo"
+    NAME = "minecraft:gameinfo"
 
     @staticmethod
     def is_mouse_exclusive(): return False

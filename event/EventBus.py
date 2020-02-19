@@ -96,18 +96,6 @@ class EventBus:
             sys.exit(-1)
         return result
 
-    def call_until_equal(self, eventname, value, *args, default_value=None, **kwargs):
-        value = self.call_until(eventname, lambda x: x == value, *args, **kwargs)
-        return value if value is not None else default_value
-
-    def call_until_getting_value(self, eventname, *args, default_value=None, **kwargs):
-        value = self.call_until(eventname, lambda x: x is not None, *args, **kwargs)
-        return value if value is not None else default_value
-
-    def call_until_not_equal(self, eventname, value, *args, default_value=None, **kwargs):
-        value = self.call_until(eventname, lambda x: x != value, *args, **kwargs)
-        return value if value is not None else default_value
-
     def call_until(self, event_name, check_function, *args, **kwargs):
         if event_name not in self.event_subscriptions: return None
         for function, eargs, ekwargs in self.event_subscriptions[event_name]:

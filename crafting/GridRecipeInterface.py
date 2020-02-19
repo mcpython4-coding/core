@@ -16,9 +16,7 @@ import traceback
 
 
 class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:crafting_interface"
+    NAME = "minecraft:crafting_interface"
 
     def __init__(self, slot_input_map, slot_output_map, maxsize=None, minsize=None, enabled=True,
                  enable_shaped_recipes=True, enable_shapeless_recipes=True):

@@ -22,7 +22,7 @@ class blockinfo:
         BLOCKS: event.Registry.Registry = G.registry.get_by_name("block")
 
         blocktable = BLOCKS.registered_objects
-        blocktable.sort(key=lambda x: x.get_name())
+        blocktable.sort(key=lambda x: x.NAME)
         blocklist = []
         for block in blocktable:
             for state in block.get_all_model_states():
@@ -36,7 +36,7 @@ class blockinfo:
         for block, state in blocklist:
             x, y = rx * 4, ry * 4
             chunk = util.math.sectorize((x, 0, y))
-            cls.TABLE.setdefault(chunk, {})[(x, y)] = (block.get_name(), state)
+            cls.TABLE.setdefault(chunk, {})[(x, y)] = (block.NAME, state)
             rx += 1
             if x >= hsize:
                 ry += 1

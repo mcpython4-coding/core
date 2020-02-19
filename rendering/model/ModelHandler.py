@@ -101,7 +101,7 @@ class ModelHandler:
         return blockstate.add_face_to_batch(block, batches, face)
 
     def get_block_state_for_block(self, block):
-        blockstatedefinition = self.blockstates[block.get_name()]
+        blockstatedefinition = self.blockstates[block.NAME]
         blockstate = blockstatedefinition.get_state_for(block.get_model_state())
         if not blockstate: return None
         return blockstatedefinition.get_state_for(block.get_model_state())

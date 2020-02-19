@@ -57,7 +57,7 @@ class WorldGenerationHandler:
                 self.runtimegenerationcache[1][chunk.position] = 1
                 return
             layer = self.runtimegenerationcache[2][chunk.position].pop(0)
-            layer.add_generate_functions_to_chunk(chunk.dimension.worldgenerationconfigobjects[layer.get_name()], chunk)
+            layer.add_generate_functions_to_chunk(chunk.dimension.worldgenerationconfigobjects[layer.NAME], chunk)
         elif step == 1:  # process chunk gen tasks
             if len(chunk.chunkgenerationtasks) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 2
@@ -129,7 +129,7 @@ class WorldGenerationHandler:
 
     def register_layer(self, layer: world.gen.layer.Layer.Layer):
         # logger.println(layer, layer.get_name())
-        self.layers[layer.get_name()] = layer
+        self.layers[layer.NAME] = layer
 
     def register_feature(self, decorator):
         pass

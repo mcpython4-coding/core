@@ -26,9 +26,7 @@ class DefaultTemperatureLayer(Layer):
         if not hasattr(config, "size"):
             config.size = 2
 
-    @staticmethod
-    def get_name() -> str:
-        return "temperaturemap"
+    NAME = "temperaturemap"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):

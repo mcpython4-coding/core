@@ -144,7 +144,7 @@ class Player:
             if reverse:
                 slots.reverse()
             for slot in slots:
-                if slot.get_itemstack().item and slot.get_itemstack().item.get_name() == itemstack.item.get_name() and \
+                if not slot.get_itemstack().is_empty() and slot.get_itemstack().get_item_name() == itemstack.get_item_name() and \
                         slot.interaction_mode[2]:
                     if slot.get_itemstack().item and slot.get_itemstack().amount + itemstack.amount <= itemstack.item. \
                             get_max_stack_size():

@@ -36,7 +36,7 @@ class StateHandler:
         logger.println("[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename), write_into_console=False)
 
     def add_state(self, state: State.State):
-        self.states[state.get_name()] = state
+        self.states[state.NAME] = state
 
     def update_exclusive(self):
         G.window.set_exclusive_mouse(self.active_state.is_mouse_exclusive())

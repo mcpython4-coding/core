@@ -24,7 +24,8 @@ class BlockChest(Block.Block):
     now = datetime.now()
     is_christmas = 24 <= now.day <= 26 and now.month == 12
 
-    def on_create(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.front_side = util.enums.EnumSide.N
         if self.real_hit:
             dx, dz = self.real_hit[0] - self.position[0], self.real_hit[1] - self.position[1]
@@ -39,9 +40,7 @@ class BlockChest(Block.Block):
         import gui.InventoryChest
         self.inventory = gui.InventoryChest.InventoryChest()
 
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:chest"
+    NAME = "minecraft:chest"
 
     def can_open_inventory(self) -> bool:
         x, y, z = self.position

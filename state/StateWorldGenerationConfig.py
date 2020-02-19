@@ -19,8 +19,7 @@ import logger
 
 
 class StateWorldGenerationConfig(State.State):
-    @staticmethod
-    def get_name(): return "minecraft:world_generation_config"
+    NAME = "minecraft:world_generation_config"
 
     def __init__(self): State.State.__init__(self)
 

@@ -2,24 +2,6 @@ This file is about things that should be removed in the future.
 This is an reminder-file for when to remove them & what.
 So, here follows an list of deprecation's:
 
-since 24th of november, 2019:
-    block.Block.Block.on_create()
-        use __init__ with super call instead
-        removal: until next ~1 snapshot
-
-    block.Block.Block.on_delete()
-        use on_remove instead
-        removal: until next ~1 snapshot
-
-since 31th of january, 2020:
-    block.ICustomBlockRenderer.ICustomBlockRenderer
-        use block.ICustomBlockRenderer.IStaticCustomBlockRenderer class instead
-        removal: with rendering update
-
-    event.EventBus.EventBus.call_until_equal, call_until_getting_value, call_until_not_equal
-        use event.EventBus.call_until instead
-        removal: in modding update
-
 since 11th of february, 2020:
     loading phases:
         "stage:prepare"
@@ -28,3 +10,5 @@ since 11th of february, 2020:
 
 since 19th of february, 2020:
     ModLoader mod.json format 1.0.0
+    Item.get_name, Block.get_name, State.get_name
+    Inventory.on_create

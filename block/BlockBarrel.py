@@ -31,9 +31,7 @@ class BlockBarrel(Block.Block):
             elif dy > 0: self.facing = "down"
             elif dy < 0: self.facing = "up"
 
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:barrel"
+    NAME = "minecraft:barrel"
 
     def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:

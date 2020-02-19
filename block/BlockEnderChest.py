@@ -16,7 +16,8 @@ from block.BlockChest import BBOX
 
 @G.registry
 class BlockChest(Block.Block):
-    def on_create(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.front_side = util.enums.EnumSide.N
         if self.real_hit:
             dx, dz = self.real_hit[0] - self.position[0], self.real_hit[1] - self.position[1]
@@ -31,9 +32,7 @@ class BlockChest(Block.Block):
         import gui.InventoryChest
         self.inventory = G.player.inventorys["enderchest"]
 
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:enderchest"
+    NAME = "minecraft:enderchest"
 
     def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:

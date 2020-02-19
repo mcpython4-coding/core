@@ -15,8 +15,7 @@ import gui.InventoryFurnace
 class BlockFurnace(block.Block.Block):
     FURNACE_RECIPES = ["minecraft:smelting"]
 
-    @staticmethod
-    def get_name(): return "minecraft:furnace"
+    NAME = "minecraft:furnace"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -65,15 +64,13 @@ class BlockFurnace(block.Block.Block):
 
 @G.registry
 class BlastFurnace(BlockFurnace):
-    @staticmethod
-    def get_name(): return "minecraft:blast_furnace"
+    NAME = "minecraft:blast_furnace"
 
     FURNACE_RECIPES = ["minecraft:blasting"]
 
 
 @G.registry
 class Smoker(BlockFurnace):
-    @staticmethod
-    def get_name(): return "minecraft:smoker"
+    NAME = "minecraft:smoker"
 
     FURNACE_RECIPES = ["minecraft:smoking"]

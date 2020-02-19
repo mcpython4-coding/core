@@ -18,9 +18,7 @@ class DefaultStonePlacementLayer(Layer):
         if not hasattr(config, "bedrockchance"):
             config.bedrockchance = 3
 
-    @staticmethod
-    def get_name() -> str:
-        return "stone_default"
+    NAME = "stone_default"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):

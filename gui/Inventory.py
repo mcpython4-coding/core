@@ -80,7 +80,7 @@ class Inventory:
             self.bg_image_pos = tuple(self.config["bg_image_pos"])
         self.on_create()
 
-    def on_create(self):
+    def on_create(self):  # todo: remove
         """
         called when the inventory is created
         """

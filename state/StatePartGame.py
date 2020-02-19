@@ -164,7 +164,7 @@ class StatePartGame(StatePart.StatePart):
                         chunk.check_neighbors(blockpos)
                 elif G.player.gamemode == 0:
                     if self.mouse_press_time >= self.braketime:
-                        itemstack = gui.ItemStack.ItemStack(block.get_name() if type(block) != str else block)
+                        itemstack = gui.ItemStack.ItemStack(block.NAME if type(block) != str else block)
                         block = chunk.get_block(blockpos)
                         if block: block.on_request_item_for_block(itemstack)
                         G.player.add_to_free_place(itemstack)
@@ -211,7 +211,7 @@ class StatePartGame(StatePart.StatePart):
                 chunk = G.world.get_active_dimension().get_chunk_for_position(blockpos)
                 self.mouse_press_time = 0
                 block = G.world.get_active_dimension().get_block(blockpos)
-                itemstack = gui.ItemStack.ItemStack(block.get_name() if type(block) != str else block)
+                itemstack = gui.ItemStack.ItemStack(block.NAME if type(block) != str else block)
                 block = chunk.get_block(blockpos)
                 if block: block.on_request_item_for_block(itemstack)
                 selected_slot = G.player.get_active_inventory_slot()

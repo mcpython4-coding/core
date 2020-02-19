@@ -27,9 +27,7 @@ class DefaultLandMassLayer(Layer):
         if not hasattr(config, "size"):
             config.size = 1
 
-    @staticmethod
-    def get_name() -> str:
-        return "landmass_default"
+    NAME = "landmass_default"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):

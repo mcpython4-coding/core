@@ -83,7 +83,7 @@ class CommandExecute(chat.command.Command.Command):
                 index += 2
                 if position in G.world.world:
                     block = G.world.world[position]
-                    flag = block.get_name() == G.registry.get_by_name("block").get_attribute("blocks")[name].get_name()
+                    flag = block.NAME == G.registry.get_by_name("block").get_attribute("blocks")[name].NAME
                 else:
                     flag = name in ["air", "minecraft:air", None, 0]
             elif subcommand == "entity":

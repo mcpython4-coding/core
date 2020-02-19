@@ -797,4 +797,13 @@ started these clone on 12th of July, 2019
 [uuk]: changed mod.json-file format, support for old format is not completely dropped at the moment, but may be in the
        future
 [uuk]: changed StateHandler.switch_state to have an immediate-parameter which is default True
+[uuk]: defaulted USE_MISSING_TEXTURES_ON_MISS_TEXTURE to False
+[uuk]: fixed issue 101
+[uuk]: moved name of item, block, IRecipeInterface, IPrepareAbleTask, ITextureChange, Biome, Layer & state to NAME
+       attribute at block [WARNING: this is an braking change]
+[uuk]: removed Block.on_create & Block.on_delete methodes
+[uuk]: removed EventBus.call_until_not_equal, EventBus.call_until_getting_value & EventBus.call_until_equal
+
+todo: add attribute to block to set state for BlockItemGenerator
+todo: make sure that block & item registry is de-duplicated after registration ended
 

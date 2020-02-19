@@ -18,8 +18,7 @@ import mod.ModMcpython
 
 
 class StateGame(State.State):
-    @staticmethod
-    def get_name(): return "minecraft:game"
+    NAME = "minecraft:game"
 
     @staticmethod
     def is_mouse_exclusive(): return True

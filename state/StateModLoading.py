@@ -15,9 +15,7 @@ import psutil
 
 
 class StateModLoading(State.State):
-    @staticmethod
-    def get_name():
-        return "minecraft:modloading"
+    NAME = "minecraft:modloading"
 
     def __init__(self):
         State.State.__init__(self)

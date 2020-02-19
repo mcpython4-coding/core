@@ -19,7 +19,7 @@ def place_default(x: int, y: int, z: int, sx: int, sy: int, sz: int, blocks: lis
                 if dx ** 2 / sx ** 2 + dy ** 2 / sy ** 2 + dz ** 2 / sz ** 2 <= 1:
                     rx, ry, rz = dx + x, dy + y, dz + z
                     block = dimension.get_block((rx, ry, rz))
-                    name = block.get_name() if block else None
+                    name = block.NAME if block else None
                     if name in replace:
                         dimension.get_chunk_for_position((rx, ry, rz)).add_add_block_gen_task(
                             (rx, ry, rz), random.choice(blocks))

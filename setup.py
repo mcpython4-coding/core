@@ -33,8 +33,7 @@ import json
 
 
 class IPrepareAbleTask:
-    @staticmethod
-    def get_name() -> str: raise NotImplementedError()
+    NAME = "minecraft:unknown_preapreable_task"
 
     @staticmethod
     def dump_data(directory: str): pass
@@ -48,8 +47,7 @@ taskregistry = event.Registry.Registry("preparetasks", [IPrepareAbleTask])
 def add():
     @G.registry
     class Cleanup(IPrepareAbleTask):
-        @staticmethod
-        def get_name() -> str: return "cleanup"
+        NAME = "cleanup"
 
         @staticmethod
         def dump_data(directory: str):
@@ -67,9 +65,7 @@ def add():
 
     @G.registry
     class TextureFactoryGenerate(IPrepareAbleTask):
-        @staticmethod
-        def get_name() -> str:
-            return "texturefactory:prepare"
+        NAME = "texturefactory:prepare"
 
         @staticmethod
         def dump_data(directory: str):
@@ -84,7 +80,7 @@ def execute():
     with open(G.local+"/build/info.json", mode="w") as f:
         json.dump({"finished": False}, f)
     for iprepareabletask in taskregistry.registered_objects:
-        directory = G.local+"/build/"+iprepareabletask.get_name()
+        directory = G.local+"/build/"+iprepareabletask.NAME
         if iprepareabletask.USES_DIRECTORY:
             if os.path.exists(directory): shutil.rmtree(directory)
             os.makedirs(directory)

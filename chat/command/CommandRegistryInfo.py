@@ -39,6 +39,8 @@ class CommandRegistryInfo(chat.command.Command.Command):
             for element in registry.registered_objects:
                 if hasattr(element, "get_name"):
                     logger.println(element.get_name(), element)
+                elif hasattr(element, "NAME"):
+                    logger.println(element.NAME, element)
                 else:
                     logger.println(element)
         else:

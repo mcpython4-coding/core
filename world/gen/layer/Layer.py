@@ -22,9 +22,7 @@ class Layer:
     def normalize_config(config: LayerConfig):
         pass
 
-    @staticmethod
-    def get_name() -> str:
-        raise NotImplementedError()
+    NAME = "minecraft:unknown_layer"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):

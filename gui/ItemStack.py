@@ -55,7 +55,7 @@ class ItemStack:
 
     def is_empty(self): return self.amount == 0 or self.item is None
 
-    def get_item_name(self): return self.item.get_name() if self.item else None
+    def get_item_name(self): return self.item.NAME if self.item else None
 
     def set_amount(self, amount):
         self.amount = amount

@@ -16,7 +16,8 @@ class IFallingBlock(block.Block.Block):
     base injection class for falling block
     """
 
-    def on_create(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.fall_cooldown = event.TickHandler.handler.active_tick - 10
 
     def on_block_update(self):

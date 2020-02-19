@@ -66,8 +66,7 @@ class BlockFactory:
         class ConstructedBlock(baseclass):
             CUSTOM_WALING_SPEED_MULTIPLIER = self.speed_multiplier
 
-            @staticmethod
-            def get_name() -> str: return master.name
+            NAME = master.name
 
             def is_breakable(self) -> bool: return master.breakable
 
@@ -79,14 +78,15 @@ class BlockFactory:
                     while {} in states: states.remove({})
                 return states
 
-            def on_create(self):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
                 for baseclass in master.baseclass:
-                    baseclass.on_create(self)
+                    baseclass.__init__(self, *args, **kwargs)
                 if master.create_callback: master.create_callback(self)
 
-            def on_delete(self):
+            def on_remove(self):
                 for baseclass in master.baseclass:
-                    baseclass.on_delete(self)
+                    baseclass.on_remove(self)
                 if master.delete_callback: master.delete_callback(self)
 
             def get_hardness(self):

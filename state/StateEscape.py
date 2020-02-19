@@ -17,9 +17,7 @@ import mod.ModMcpython
 
 
 class StateEscape(State.State):
-    @staticmethod
-    def get_name():
-        return "minecraft:escape_state"
+    NAME = "minecraft:escape_state"
 
     def __init__(self):
         State.State.__init__(self)

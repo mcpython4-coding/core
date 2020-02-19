@@ -30,14 +30,12 @@ class StateBlockItemGenerator(State.State):
     SETUP_TIME = 1
     CLEANUP_TIME = 1
 
-    @staticmethod
-    def get_name():
-        return "minecraft:blockitemgenerator"
+    NAME = "minecraft:blockitemgenerator"
 
     def __init__(self):
         State.State.__init__(self)
         self.blockindex = 0
-        G.registry.get_by_name("block").registered_objects.sort(key=lambda x: x.get_name())
+        G.registry.get_by_name("block").registered_objects.sort(key=lambda x: x.NAME)
         self.tasks = []
         self.table = []
         self.last_image = None
@@ -73,7 +71,7 @@ class StateBlockItemGenerator(State.State):
 
     def on_activate(self):
         G.tickhandler.enable_random_ticks = False
-        self.tasks = [x.get_name() for x in G.registry.get_by_name("block").registered_objects]
+        self.tasks = [x.NAME for x in G.registry.get_by_name("block").registered_objects]
         if not os.path.isdir(G.local + "/build/generated_items"): os.makedirs(G.local + "/build/generated_items")
         if not G.prebuilding:
             if os.path.exists(G.local+"/build/itemblockfactory.json"):

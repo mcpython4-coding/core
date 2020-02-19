@@ -9,6 +9,10 @@ changelog of master-branch
                   purpur blocks, quartz slab, red nether bricks, smooth quartz slab, soul sand
     - added key "E" to close various inventories
     - Block-class has now an CUSTOM_WALING_SPEED_MULTIPLIER-attribute used for custom waling speeds ontop of blocks
+    - changed mod.json format to have an "version"-attribute & an "loader"-attribute
+    - USE_MISSING_TEXTURES_ON_MISS_TEXTURE config option is now False by default
+    - changed some get_name-methodes to NAME-attribute
+    - removed some deprecated things
     fixed bugs:
         - game crashes when using "/tp <position>"-command
         - debug world doesn't use the block state definition correctly

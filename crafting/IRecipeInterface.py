@@ -9,7 +9,5 @@ import globals as G
 
 
 class IRecipeInterface:
-    @staticmethod
-    def get_name() -> str:
-        raise NotImplementedError()
+    NAME = "minecraft:unknown_recipe_interface"
 

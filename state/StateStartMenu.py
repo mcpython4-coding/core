@@ -15,8 +15,7 @@ import state.StatePartConfigBackground
 
 
 class StateStartMenu(state.State.State):
-    @staticmethod
-    def get_name(): return "minecraft:startmenu"
+    NAME = "minecraft:startmenu"
 
     def __init__(self): state.State.State.__init__(self)
 

@@ -14,7 +14,7 @@ import mod.ModMcpython
 def register_block(registry, blockclass):
     if issubclass(blockclass, block.Block.Block):
         blockclass.on_register(block_registry)  # call event function
-        name = blockclass.get_name()
+        name = blockclass.NAME
         block_registry.get_attribute("blocks")[name] = block_registry.get_attribute("blocks")[name.split(":")[-1]] = \
             blockclass
         return

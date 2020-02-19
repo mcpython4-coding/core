@@ -93,3 +93,4 @@ issue 99: various exceptions when interacting with slots; fixed on: 18.02.2020 b
       File "%game%\crafting\GridRecipeInterface.py", line 146, in remove_input
         slot.get_itemstack().amount.add_amount(-count)
       AttributeError: 'int' object has no attribute 'add_amount'
+issue 101: mossy stone bricks-Block was created twice

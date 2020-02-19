@@ -10,9 +10,7 @@ import world.gen.feature.IOre as ores
 
 
 class Biome:
-    @staticmethod
-    def get_name() -> str:
-        raise NotImplementedError()
+    NAME = "minecraft:unknown_biome"
 
     @staticmethod
     def get_temperature() -> float:

@@ -17,7 +17,8 @@ class ILog(block.Block.Block):
     base class for logs
     """
 
-    def on_create(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.axis = LogAxis.Y
         if self.set_to:
             dx, dy, dz = abs(self.set_to[0] - self.position[0]), abs(self.set_to[1] - self.position[0]), \

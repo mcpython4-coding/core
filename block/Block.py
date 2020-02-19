@@ -17,6 +17,7 @@ class Block:
     """
 
     CUSTOM_WALING_SPEED_MULTIPLIER = None  # used when the player walks in an different speed on this block
+    NAME = "minecraft:missing_name"
 
     def __init__(self, position, set_to=None, state=None, real_hit=None):
         """
@@ -28,17 +29,12 @@ class Block:
         self.position = position
         self.set_to = set_to
         self.real_hit = real_hit
-        self.on_create()  # todo: remove
         if state is not None: self.set_model_state(state)
         self.face_state = block.BlockFaceState.BlockFaceState(self)
         self.block_state = None
 
-    @staticmethod
-    def get_name() -> str:  # todo: change it to constant
-        """
-        :return: the name of the block
-        """
-        return "minecraft:missing_name"
+    @classmethod
+    def get_name(cls) -> str: return cls.NAME
 
     @staticmethod
     def on_register(registry):
@@ -48,18 +44,10 @@ class Block:
         """
         pass
 
-    def on_create(self):  # todo: remove
-        """
-        called when the block is created
-        """
-
-    def on_delete(self): pass  # todo: remove
-
     def on_remove(self):
         """
         called when the block is removed
         """
-        self.on_delete()
 
     def get_inventories(self):
         """

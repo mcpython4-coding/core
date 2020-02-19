@@ -11,9 +11,7 @@ import world.gen.feature.OakTreeFeature
 
 
 class Plains(Biome.Biome):
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:plains"
+    NAME = "minecraft:plains"
 
     @staticmethod
     def get_temperature() -> float:

@@ -14,9 +14,7 @@ import world.Chunk
 
 @G.worldgenerationhandler
 class DefaultTreeLayer(Layer):
-    @staticmethod
-    def get_name() -> str:
-        return "tree_default"
+    NAME = "tree_default"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):

@@ -66,7 +66,7 @@ class CommandItemInfo(chat.command.Command.Command):
             logger.println("-max stack size: {}".format(itemstack.item.get_max_stack_size()))
             tags = []
             for tag in G.taghandler.taggroups["items"].tags.values():
-                if itemstack.item.get_name() in tag.entries:
+                if itemstack.item.NAME in tag.entries:
                     tags.append(tag.name)
             logger.println(" -tags: {}".format(tags))
 

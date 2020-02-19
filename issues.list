@@ -77,3 +77,5 @@ issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
 
+[101]
+

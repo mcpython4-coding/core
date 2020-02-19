@@ -22,9 +22,7 @@ class DefaultHeightMapLayer(Layer):
         if not hasattr(config, "size"):
             config.size = 2
 
-    @staticmethod
-    def get_name() -> str:
-        return "heightmap_default"
+    NAME = "heightmap_default"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):

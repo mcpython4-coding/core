@@ -14,8 +14,7 @@ import event.Registry
 
 
 class ITextureChange:
-    @staticmethod
-    def get_name() -> str: raise NotImplementedError()
+    NAME = "minecraft:unknown_texture_change"
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, *args, **kwargs) -> PIL.Image.Image: raise NotImplementedError()
@@ -27,7 +26,7 @@ class TextureFactory:
 
     @staticmethod
     def add_transform(registry, obj: ITextureChange):
-        G.texturefactoryhandler.changer[obj.get_name()] = obj
+        G.texturefactoryhandler.changer[obj.NAME] = obj
 
     def transform(self, images: list, image, mode, *args, **kwargs):
         if mode not in self.changer:
@@ -73,8 +72,7 @@ texturechanges = event.Registry.Registry("texturechanges", [ITextureChange],
 
 @G.registry
 class TextureResize(ITextureChange):
-    @staticmethod
-    def get_name() -> str: return "resize"
+    NAME = "resize"
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, size=None) -> PIL.Image.Image:
@@ -83,8 +81,7 @@ class TextureResize(ITextureChange):
 
 @G.registry
 class TextureColorize(ITextureChange):
-    @staticmethod
-    def get_name() -> str: return "colorize"
+    NAME = "colorize"
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, color=None) -> PIL.Image.Image:
@@ -93,8 +90,7 @@ class TextureColorize(ITextureChange):
 
 @G.registry
 class TextureCut(ITextureChange):
-    @staticmethod
-    def get_name() -> str: return "cut"
+    NAME = "cut"
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, area=None) -> PIL.Image.Image:
@@ -103,8 +99,7 @@ class TextureCut(ITextureChange):
 
 @G.registry
 class TextureRebase(ITextureChange):
-    @staticmethod
-    def get_name() -> str: return "rebase"
+    NAME = "rebase"
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, size=None, position=(0, 0)) -> PIL.Image.Image:
@@ -115,8 +110,7 @@ class TextureRebase(ITextureChange):
 
 @G.registry
 class TextureCombine(ITextureChange):
-    @staticmethod
-    def get_name() -> str: return "combine"
+    NAME = "combine"
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, base=None, position=(0, 0)) -> PIL.Image.Image:

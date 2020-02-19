@@ -45,7 +45,7 @@ class Slot:
         # self.itemstack.amount = 2
         self.position = position
         if self.__itemstack.item:
-            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.__itemstack.item.get_name()][
+            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.__itemstack.get_item_name()][
                 self.__itemstack.item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
@@ -93,7 +93,7 @@ class Slot:
             PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
             PYGLET_IMAGE_HOVERING.draw()
         if self.__itemstack.item and self.__itemstack.item.get_default_item_image_location() != self.__last_itemfile:
-            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.__itemstack.item.get_name()][
+            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.__itemstack.get_item_name()][
                 self.__itemstack.item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
@@ -144,7 +144,7 @@ class SlotCopy:
         self.master: Slot = master
         self.position = position
         if self.get_itemstack().item:
-            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.get_itemstack().item.get_name()][
+            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.get_itemstack().get_item_name()][
                 self.get_itemstack().item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
@@ -186,12 +186,12 @@ class SlotCopy:
         if hovering:
             PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
             PYGLET_IMAGE_HOVERING.draw()
-        if self.itemstack.item and self.itemstack.item.get_default_item_image_location() != self.__last_itemfile:
-            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.itemstack.item.get_name()][
+        if not self.itemstack.is_empty() and self.itemstack.item.get_default_item_image_location() != self.__last_itemfile:
+            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.itemstack.get_item_name()][
                 self.itemstack.item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
-        elif not self.itemstack.item:
+        elif self.itemstack.is_empty():
             self.sprite = None
         if self.sprite:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)

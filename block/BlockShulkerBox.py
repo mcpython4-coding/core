@@ -18,13 +18,12 @@ def create_shulker_box(name):
 
     @G.registry
     class BlockShulkerBox(Block.Block):
-        def on_create(self):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
             import gui.InventoryShulkerBox
             self.inventory = gui.InventoryShulkerBox.InventoryShulkerBox()
 
-        @staticmethod
-        def get_name() -> str:
-            return "minecraft:{}".format(name)
+        NAME = "minecraft:{}".format(name)
 
         def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
             if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:

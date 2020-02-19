@@ -15,9 +15,7 @@ class BlockGrassBlock(Block.Block):
     """
     base class for grass
     """
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:grass_block"
+    NAME = "minecraft:grass_block"
 
     def get_model_state(self) -> dict:
         return {"snowy": "false"}

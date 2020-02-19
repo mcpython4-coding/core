@@ -10,20 +10,21 @@ import PIL.Image
 
 
 class Item:
+    NAME = "minecraft:unknown_item"
+
     @classmethod
     def get_used_texture_files(cls):
         return [cls.get_default_item_image_location()]
 
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:unknown_item"
+    @classmethod
+    def get_name(cls) -> str: return cls.NAME
 
     @staticmethod
     def has_block() -> bool:
         return True
 
     def get_block(self) -> str:
-        return self.get_name()
+        return self.NAME
 
     @staticmethod
     def get_default_item_image_location() -> str:
@@ -40,7 +41,7 @@ class Item:
 
     def __eq__(self, other):
         if not issubclass(type(other), Item): return False
-        return other.get_name() == self.get_name() and other.get_data() == self.get_data()
+        return other.NAME == self.NAME and other.get_data() == self.get_data()
 
     def on_player_interact(self, block, button, modifiers) -> bool:
         return False
