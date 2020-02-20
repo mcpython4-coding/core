@@ -80,9 +80,8 @@ class TextureAtlas:
         self.image_size = image_size
         self.pyglet_special_pos = pyglet_special_pos
         self.texture = PIL.Image.new("RGBA", (size[0] * image_size[0], size[1] * image_size[1]))
-        self.free_space = []
-        for x in range(self.size[0]): self.free_space.extend([(x, y) for y in range(self.size[1])])
-        random.shuffle(self.free_space)
+        self.free_space = set()
+        for x in range(self.size[0]): self.free_space.update(set([(x, y) for y in range(self.size[1])]))
         self.images = []
         self.imagelocations = []  # an images[-parallel (x, y)-list
         if add_missing_texture: self.add_image(MISSING_TEXTURE, position=(0, 0))
@@ -106,11 +105,10 @@ class TextureAtlas:
             for x in range(sx * 2):
                 for y in range(sy * 2):
                     if x >= sx or y >= sy:
-                        self.free_space.append((x, y))
-            random.shuffle(self.free_space)
+                        self.free_space.add((x, y))
         self.images.append(ind)
         if position is None or position not in self.free_space:
-            x, y = self.free_space.pop(0)
+            x, y = self.free_space.pop()
         else:
             x, y = position
             self.free_space.remove(position)

@@ -22,6 +22,7 @@ changelog of master-branch
         - crash when not arrival python file is linked from mod.json file
         - crash when block-name-prefix is no mod-prefix
         - crash when model-name-prefix is no mod-prefix
+        - some chest textures were not drawn correct
 
 changelog of snapshot 20w07a [released on 10.02.2020]
     based on: rendering update branch 1 & changes to master-branch

@@ -4,7 +4,7 @@
     "block/spruce_leaves"
   ],
   "transforms": [
-    {"image": [0, 1, 2, 3, 4, 5], "mode": "resize", "store": [0, 1, 2, 3, 4, 5], "size": [64, 64]},
+    {"image": [0, 1, 2, 3, 4, 5], "mode": "resize", "store": [0, 1, 2, 3, 4, 5], "size": [16, 16]},
     {"image": 0, "mode": "colorize", "store": 0, "color": [201, 248, 153]},
     {"image": 1, "mode": "colorize", "store": 1, "color": [201, 248, 153]},
     {"image": 2, "mode": "colorize", "store": 2, "color": [201, 248, 153]},

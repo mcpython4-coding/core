@@ -47,6 +47,20 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
     def on_deactivate(self):
         pass
 
+    def draw(self, hoveringslot=None):
+        self.on_draw_background()
+        x, y = self._get_position()
+        if self.bgsprite:
+            self.bgsprite.position = (x + self.bg_image_pos[0], y + self.bg_image_pos[1])
+            self.bgsprite.draw()
+        self.on_draw_over_backgroundimage()
+        for slot in self.slots:
+            slot.draw(x, y)  # change to default implementation: do NOT render hovering entry
+        self.on_draw_over_image()
+        for slot in self.slots:
+            slot.draw_lable(x, y)
+        self.on_draw_overlay()
+
     def on_draw_over_image(self):
         x, y = G.player.get_active_inventory_slot().position
         dx, dy = tuple(self.config["selected_delta"]) if "selected_delta" in self.config else (8, 8)

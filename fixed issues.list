@@ -93,4 +93,6 @@ issue 99: various exceptions when interacting with slots; fixed on: 18.02.2020 b
       File "%game%\crafting\GridRecipeInterface.py", line 146, in remove_input
         slot.get_itemstack().amount.add_amount(-count)
       AttributeError: 'int' object has no attribute 'add_amount'
-issue 101: mossy stone bricks-Block was created twice
+issue 101: mossy stone bricks-Block was created twice; fixed on: 19.02.2020 by uuk
+issue 97: hotbar slots are highlighted when hovering over them; fixed on: 20.02.2020 by uuk
+issue 75: some chest textures were not used correctly; fixed on: 20.02.2020 by uuk

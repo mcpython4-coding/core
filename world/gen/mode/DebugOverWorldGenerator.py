@@ -13,7 +13,7 @@ import mod.ModMcpython
 import event.EventHandler
 
 
-class blockinfo:
+class Blockinfo:
 
     TABLE = {}  # {chunk: tuple<x, z> -> {position<x,z> -> blockname}}
 
@@ -22,7 +22,6 @@ class blockinfo:
         BLOCKS: event.Registry.Registry = G.registry.get_by_name("block")
 
         blocktable = list(BLOCKS.registered_object_map.values())
-        blocktable.sort()
         blocktable.sort(key=lambda x: x.NAME)
         blocklist = []
         for block in blocktable:
@@ -48,9 +47,9 @@ def chunk_generate(chunk):
     cx, cz = chunk.position
     if G.world.get_active_dimension().worldgenerationconfig["configname"] != "debug_overworld": return
 
-    if (cx, cz) in blockinfo.TABLE:
+    if (cx, cz) in Blockinfo.TABLE:
         heigthmap = chunk.get_value("heightmap")
-        blockmap = blockinfo.TABLE[(cx, cz)]
+        blockmap = Blockinfo.TABLE[(cx, cz)]
         for x, z in blockmap.keys():
             block, state = blockmap[(x, z)]
             block = chunk.add_block((x, 10, z), block, block_update=False)
@@ -66,6 +65,6 @@ config = {"layers": []}
 
 G.worldgenerationhandler.register_world_gen_config("debug_overworld", config)
 
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:post", blockinfo.construct, info="constructing debug world info")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:post", Blockinfo.construct, info="constructing debug world info")
 event.EventHandler.PUBLIC_EVENT_BUS.subscribe("worldgen:chunk:finished", chunk_generate)
 

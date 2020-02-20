@@ -809,4 +809,6 @@ started these clone on 12th of July, 2019
 [uuk]: deprecated a lot of functions
 [uuk]: added Item.set_data(data)-method to Item corresponding to Item.get_data()
 [uuk]: command /registryinfo includes now also the key the item was registered under
+[uuk]: fixed issue 75, 97
+[uuk]: changed some internals on TextureAtlas system
 
