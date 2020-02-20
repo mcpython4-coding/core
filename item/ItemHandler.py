@@ -39,7 +39,7 @@ def build():
                                                       *textureatlas.size)
         indexdata[file] = {"size": textureatlas.size, "loaded_item_file_names": textureatlas.images,
                            "locations": textureatlas.imagelocations}
-    indexdata["loaded_item_file_names"] = items.get_attribute("itemindextable")
+    indexdata["loaded_item_file_names"] = items.itemindextable
     with open(G.local + "/build/itematlases/index.json", mode="w") as f:
         json.dump(indexdata, f)
 
@@ -64,14 +64,14 @@ def load_data(from_block_item_generator=False):
                 if not G.prebuilding:
                     atlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.local + "/build/itematlases/" + file),
                                                          *atlas.size)
-        items.set_attribute("itemindextable", indextable["loaded_item_file_names"])
+        items.itemindextable = indextable["loaded_item_file_names"]
         if not G.prebuilding:
             with open(G.local+"/build/itemblockfactory.json") as f:
                 data = json.load(f)
             for entry in data[:]:
                 name = entry[0]
                 obj = factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(entry[1])
-                blocktable = G.registry.get_by_name("block").get_attribute("blocks")
+                blocktable = G.registry.get_by_name("block").registered_object_map
                 if name in blocktable:
                     block = blocktable[name]
                     block.modify_block_item(obj)
@@ -90,11 +90,9 @@ def add_to_image_atlas(textureatlas, image, file):
 
 
 def register_item(registry, itemclass):
-    itemtable = registry.get_attribute("items")
-    itemtable[itemclass.NAME] = itemclass
-    itemtable[itemclass.NAME.split(":")[-1]] = itemclass
-    if itemclass.NAME in items.get_attribute("itemindextable"): return
-    table = items.get_attribute("itemindextable")
+    items.registered_object_map[itemclass.NAME.split(":")[-1]] = itemclass
+    if itemclass.NAME in items.itemindextable: return
+    table = items.itemindextable
     table.setdefault(itemclass.NAME, {})
     try:
         files = itemclass.get_used_texture_files()
@@ -117,9 +115,8 @@ def register_item(registry, itemclass):
         raise
 
 
-items = event.Registry.Registry("item", [item.Item.Item], injection_function=register_item)
-items.set_attribute("items", {})
-items.set_attribute("itemindextable", {})
+items = event.Registry.Registry("item", ["minecraft:item"], injection_function=register_item)
+items.itemindextable = {}
 
 
 def load_items():

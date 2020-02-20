@@ -21,7 +21,8 @@ class blockinfo:
     def construct(cls):
         BLOCKS: event.Registry.Registry = G.registry.get_by_name("block")
 
-        blocktable = BLOCKS.registered_objects
+        blocktable = list(BLOCKS.registered_object_map.values())
+        blocktable.sort()
         blocktable.sort(key=lambda x: x.NAME)
         blocklist = []
         for block in blocktable:

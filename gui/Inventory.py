@@ -85,7 +85,7 @@ class Inventory:
         called when the inventory is created
         """
 
-    def create_slots(self) -> list:
+    def create_slots(self) -> list:  # todo: remove
         """
         creates the slots
         :return: the slots the inventory uses
@@ -117,10 +117,10 @@ class Inventory:
             y = wy - abs(y)
         return x, y
 
-    def activate(self):
+    def activate(self):  # todo: remove
         G.inventoryhandler.show(self)
 
-    def deactivate(self):
+    def deactivate(self):  # todo: remove
         G.inventoryhandler.hide(self)
 
     def on_activate(self):

@@ -19,6 +19,8 @@ class CommandReload(chat.command.Command.Command):
     class for /reload command
     """
 
+    NAME = "minecraft:reload"
+
     CANCEL_RELOAD = False
 
     @staticmethod

@@ -89,11 +89,11 @@ class CommandParser:
         while len(active_entry.sub_commands) > 0 and index < len(command):  # iterate over the whole command
             flag1 = False
             for subcommand in active_entry.sub_commands:  # go through all commands and check if valid
-                if not flag1 and commandregistry.get_attribute("commandentries")[subcommand.type].is_valid(
+                if not flag1 and commandregistry.commandentries[subcommand.type].is_valid(
                         command, index, subcommand.args, subcommand.kwargs):  # is valid
                     array.append((subcommand, active_entry.sub_commands.index(subcommand)))
                     active_entry = subcommand
-                    index, value = commandregistry.get_attribute("commandentries")[subcommand.type].parse(
+                    index, value = commandregistry.commandentries[subcommand.type].parse(
                         command, index, info, subcommand.args, subcommand.kwargs)
                     values.append(value)  # set value
                     flag1 = True

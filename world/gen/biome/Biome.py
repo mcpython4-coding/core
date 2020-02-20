@@ -7,9 +7,10 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import world.gen.feature.IOre as ores
+import event.Registry
 
 
-class Biome:
+class Biome(event.Registry.IRegistryContent):
     NAME = "minecraft:unknown_biome"
 
     @staticmethod

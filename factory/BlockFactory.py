@@ -33,6 +33,7 @@ class BlockFactory:
         self.minmum_toollevel = 0
         self.besttools = []
         self.speed_multiplier = None
+        self.block_item_generator_state = None
 
         self.customsolidsidefunction = None
         self.custommodelstatefunction = None
@@ -67,6 +68,8 @@ class BlockFactory:
             CUSTOM_WALING_SPEED_MULTIPLIER = self.speed_multiplier
 
             NAME = master.name
+
+            BLOCK_ITEM_GENERATOR_STATE = master.block_item_generator_state
 
             def is_breakable(self) -> bool: return master.breakable
 
@@ -231,5 +234,9 @@ class BlockFactory:
 
     def setSpeedMultiplier(self, factor):
         self.speed_multiplier = factor
+        return self
+
+    def setBlockItemGeneratorState(self, state: dict):
+        self.block_item_generator_state = state
         return self
 

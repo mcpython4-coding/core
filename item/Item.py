@@ -7,10 +7,11 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import PIL.Image
+import event.Registry
 
 
-class Item:
-    NAME = "minecraft:unknown_item"
+class Item(event.Registry.IRegistryContent):
+    TYPE = "minecraft:item"
 
     @classmethod
     def get_used_texture_files(cls):
@@ -36,7 +37,7 @@ class Item:
     def __init__(self):
         pass
 
-    def get_max_stack_size(self) -> int:
+    def get_max_stack_size(self) -> int:  # todo: make attribute
         return 64
 
     def __eq__(self, other):
@@ -50,4 +51,6 @@ class Item:
         pass
 
     def get_data(self) -> dict: return {}
+
+    def set_data(self, data: dict): pass
 

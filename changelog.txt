@@ -13,6 +13,7 @@ changelog of master-branch
     - USE_MISSING_TEXTURES_ON_MISS_TEXTURE config option is now False by default
     - changed some get_name-methodes to NAME-attribute
     - removed some deprecated things
+    - changed how things are registered, THIS IS AN BRAKING CHANGE!
     fixed bugs:
         - game crashes when using "/tp <position>"-command
         - debug world doesn't use the block state definition correctly

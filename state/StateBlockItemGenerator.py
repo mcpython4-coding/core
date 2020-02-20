@@ -35,7 +35,6 @@ class StateBlockItemGenerator(State.State):
     def __init__(self):
         State.State.__init__(self)
         self.blockindex = 0
-        G.registry.get_by_name("block").registered_objects.sort(key=lambda x: x.NAME)
         self.tasks = []
         self.table = []
         self.last_image = None
@@ -49,8 +48,8 @@ class StateBlockItemGenerator(State.State):
                                             activate_focused_block=False, clearcolor=(1., 1., 1., 0.),
                                             activate_crosshair=False, activate_lable=False),
                 UIPartProgressBar.UIPartProgressBar((10, 10), (G.window.get_size()[0]-20, 20), progress_items=len(
-                    G.registry.get_by_name("block").registered_objects), status=1, text="0/{}: {}".format(len(
-                        G.registry.get_by_name("block").registered_objects), None)),
+                    G.registry.get_by_name("block").registered_object_map.values()), status=1, text="0/{}: {}".format(
+                    len(G.registry.get_by_name("block").registered_object_map), None)),
                 state.StateModLoading.modloading.parts[3]]
 
     def on_draw_2d_pre(self):
@@ -71,7 +70,7 @@ class StateBlockItemGenerator(State.State):
 
     def on_activate(self):
         G.tickhandler.enable_random_ticks = False
-        self.tasks = [x.NAME for x in G.registry.get_by_name("block").registered_objects]
+        self.tasks = list(G.registry.get_by_name("block").registered_object_map.keys())
         if not os.path.isdir(G.local + "/build/generated_items"): os.makedirs(G.local + "/build/generated_items")
         if not G.prebuilding:
             if os.path.exists(G.local+"/build/itemblockfactory.json"):
@@ -79,7 +78,7 @@ class StateBlockItemGenerator(State.State):
                     self.table = json.load(f)
             else:  # make sure it is was reset
                 self.table.clear()
-            items = G.registry.get_by_name("item").get_attribute("items")
+            items = G.registry.get_by_name("item").registered_object_map
             for task in self.tasks[:]:
                 if task in items:
                     self.tasks.remove(task)
@@ -194,7 +193,7 @@ class StateBlockItemGenerator(State.State):
         self.tries += 1
 
     def generate_item(self, blockname, file):
-        if blockname in G.registry.get_by_name("item").get_attribute("items"): return
+        if blockname in G.registry.get_by_name("item").registered_object_map: return
         self.table.append([blockname, file])
         obj = factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True)
         block = G.world.get_active_dimension().get_block((0, 0, 0))

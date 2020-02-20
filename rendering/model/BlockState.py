@@ -58,7 +58,7 @@ class BlockStateDefinition:
             traceback.print_exc()
 
     def __init__(self, data: dict, name: str):
-        if name not in G.registry.get_by_name("block").get_attribute("blocks"): raise BlockStateNotNeeded()
+        if name not in G.registry.get_by_name("block").registered_object_map: raise BlockStateNotNeeded()
         G.modelhandler.blockstates[name] = self
         self.states = []
         if "variants" in data:

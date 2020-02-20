@@ -16,6 +16,8 @@ class CommandTeleport(chat.command.Command.Command):
     class for /teleport command
     """
 
+    NAME = "minecraft:teleport"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = ["tp", "teleport"]  # both are valid

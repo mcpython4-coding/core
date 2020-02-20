@@ -15,16 +15,12 @@ def register_block(registry, blockclass):
     if issubclass(blockclass, block.Block.Block):
         blockclass.on_register(block_registry)  # call event function
         name = blockclass.NAME
-        block_registry.get_attribute("blocks")[name] = block_registry.get_attribute("blocks")[name.split(":")[-1]] = \
-            blockclass
-        return
-    registry.registered_objects.remove(blockclass)  # todo: when registry is seperated, remove this
+        block_registry.full_table[name] = blockclass
+        block_registry.full_table[name.split(":")[-1]] = blockclass
 
 
-block_registry = event.Registry.Registry("block", inject_base_classes=[block.Block.Block],
-                                         injection_function=register_block)
-block_registry.set_attribute("blocks", {})
-block_registry.set_attribute("injectionclasses", {})
+block_registry = event.Registry.Registry("block", ["minecraft:block_registry"], injection_function=register_block)
+block_registry.full_table = {}  # an table of localized & un-localized block names
 
 
 def load():

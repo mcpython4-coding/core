@@ -16,6 +16,8 @@ class CommandClear(chat.command.Command.Command):
     command /clear
     """
 
+    NAME = "minecraft:clear"
+
     CANCEL_CLEAR = False  # cancel the clear-execute
 
     @staticmethod

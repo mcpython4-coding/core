@@ -17,6 +17,8 @@ class CommandSetblock(chat.command.Command.Command):
     class for /setblock command
     """
 
+    NAME = "minecraft:setblock"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "setblock"

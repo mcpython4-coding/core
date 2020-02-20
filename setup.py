@@ -30,10 +30,11 @@ import texture.factory
 import mod.ModMcpython
 import sys
 import json
+import event.Registry
 
 
-class IPrepareAbleTask:
-    NAME = "minecraft:unknown_preapreable_task"
+class IPrepareAbleTask(event.Registry.IRegistryContent):
+    TYPE = "minecraft:prebuild_task"
 
     @staticmethod
     def dump_data(directory: str): pass
@@ -41,7 +42,7 @@ class IPrepareAbleTask:
     USES_DIRECTORY = True
 
 
-taskregistry = event.Registry.Registry("preparetasks", [IPrepareAbleTask])
+taskregistry = event.Registry.Registry("preparetasks", ["minecraft:prebuild_task"])
 
 
 def add():
@@ -79,7 +80,7 @@ def execute():
         os.makedirs(G.local+"/build")
     with open(G.local+"/build/info.json", mode="w") as f:
         json.dump({"finished": False}, f)
-    for iprepareabletask in taskregistry.registered_objects:
+    for iprepareabletask in taskregistry.registered_object_map.values():
         directory = G.local+"/build/"+iprepareabletask.NAME
         if iprepareabletask.USES_DIRECTORY:
             if os.path.exists(directory): shutil.rmtree(directory)

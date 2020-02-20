@@ -6,11 +6,10 @@ minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
+import event.Registry
 
 
-class State:
-    NAME = ""
-
+class State(event.Registry.IRegistryContent):
     @staticmethod
     def is_mouse_exclusive():
         return False
@@ -42,9 +41,9 @@ class State:
     def get_parts(self) -> list:
         return []
 
-    def on_activate(self):
+    def on_activate(self):  # todo: remove
         pass
 
-    def on_deactivate(self):
+    def on_deactivate(self):  # todo: remove
         pass
 

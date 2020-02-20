@@ -12,3 +12,8 @@ since 19th of february, 2020:
     ModLoader mod.json format 1.0.0
     Item.get_name, Block.get_name, State.get_name
     Inventory.on_create
+    Block.is_breakable, Block.get_all_model_states, Block.get_hardness, Block.get_minimum_tool_level,
+        Block.get_best_tools, Block.get_custom_block_renderer, Block.modify_block_item
+    Inventory.create_slots, Inventory.activate, Inventory.deactivate
+    Item.get_max_stack_size
+    State.on_activate, State.on_deactivate

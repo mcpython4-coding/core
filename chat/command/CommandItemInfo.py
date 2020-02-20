@@ -18,6 +18,8 @@ class CommandItemInfo(chat.command.Command.Command):
     class for /iteminfo command
     """
 
+    NAME = "minecraft:iteminfo"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "iteminfo"

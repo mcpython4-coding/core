@@ -66,7 +66,7 @@ class Chunk:
             pos = (x + dx, y + dy, z + dz)
             block = self.dimension.get_block(pos)
             if not (block and (block.is_solid_side(face) if type(block) != str else G.registry.get_by_name("block").
-                    get_attribute("blocks")[block].is_solid_side(None, face))):
+                    registered_object_map[block].is_solid_side(None, face))):
                 return True
         return False
 
@@ -120,7 +120,7 @@ class Chunk:
             blockobj = block_name
             blockobj.position = position
         else:
-            table = G.registry.get_by_name("block").get_attribute("blocks")
+            table = G.registry.get_by_name("block").registered_object_map
             if block_name not in table:
                 logger.println("[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(block_name))
                 return

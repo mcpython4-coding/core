@@ -16,6 +16,8 @@ class CommandExecute(chat.command.Command.Command):
     class for /execute command
     """
 
+    NAME = "minecraft:execute"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         # missing: align, anchored, facing, in
@@ -83,7 +85,7 @@ class CommandExecute(chat.command.Command.Command):
                 index += 2
                 if position in G.world.world:
                     block = G.world.world[position]
-                    flag = block.NAME == G.registry.get_by_name("block").get_attribute("blocks")[name].NAME
+                    flag = block.NAME == G.registry.get_by_name("block").registered_object_map[name].NAME
                 else:
                     flag = name in ["air", "minecraft:air", None, 0]
             elif subcommand == "entity":

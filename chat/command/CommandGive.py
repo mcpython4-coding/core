@@ -17,6 +17,8 @@ class CommandGive(chat.command.Command.Command):
     class for /give command
     """
 
+    NAME = "minecraft:give"
+
     CANCEL_GIVE = False
 
     @staticmethod

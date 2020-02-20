@@ -17,13 +17,14 @@ class CommandRegistryInfo(chat.command.Command.Command):
     command /registryinfo
     """
 
+    NAME = "minecraft:registry_info"
+
     CANCEL_REGISTRY_INFO = False
 
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "registryinfo"
-        parsebridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES).add_subcommand(
-            SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL)))
+        parsebridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES))
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -36,15 +37,9 @@ class CommandRegistryInfo(chat.command.Command.Command):
             return
         if len(values) == 1:
             logger.println("values in registry {}".format(values[0]))
-            for element in registry.registered_objects:
-                if hasattr(element, "get_name"):
-                    logger.println(element.get_name(), element)
-                elif hasattr(element, "NAME"):
-                    logger.println(element.NAME, element)
-                else:
-                    logger.println(element)
-        else:
-            logger.println(registry.get_attribute(values[1]))
+            for key in registry.registered_object_map.keys():
+                element = registry.registered_object_map[key]
+                logger.println(key, element, element.INFO)
 
     @staticmethod
     def get_help() -> list:

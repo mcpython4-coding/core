@@ -11,10 +11,11 @@ import PIL.Image
 import ResourceLocator
 import os
 import event.Registry
+import event.Registry
 
 
-class ITextureChange:
-    NAME = "minecraft:unknown_texture_change"
+class ITextureChange(event.Registry.IRegistryContent):
+    TYPE = "minecraft:texture_change"
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, *args, **kwargs) -> PIL.Image.Image: raise NotImplementedError()
@@ -66,7 +67,7 @@ class TextureFactory:
 
 
 G.texturefactoryhandler = TextureFactory()
-texturechanges = event.Registry.Registry("texturechanges", [ITextureChange], 
+texturechanges = event.Registry.Registry("texturechanges", ["minecraft:texture_change"],
                                          injection_function=TextureFactory.add_transform)
 
 

@@ -15,6 +15,9 @@ class CommandFill(chat.command.Command.Command):
     """
     class for /fill command
     """
+
+    NAME = "minecraft:fill"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "fill"

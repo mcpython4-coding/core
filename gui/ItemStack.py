@@ -19,8 +19,8 @@ class ItemStack:
         if issubclass(type(item_name_or_instance), item.Item.Item):
             self.item = item_name_or_instance
         elif type(item_name_or_instance) == str:
-            if item_name_or_instance in G.registry.get_by_name("item").get_attribute("items"):
-                self.item = G.registry.get_by_name("item").get_attribute("items")[item_name_or_instance]()
+            if item_name_or_instance in G.registry.get_by_name("item").registered_object_map:
+                self.item = G.registry.get_by_name("item").registered_object_map[item_name_or_instance]()
             else:
                 logger.println("can't find item named {}".format(item_name_or_instance))
                 self.item = None
