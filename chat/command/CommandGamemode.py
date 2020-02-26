@@ -15,6 +15,9 @@ class CommandGamemode(chat.command.Command.Command):
     """
     class for /gamemode command
     """
+
+    NAME = "minecraft:gamemode"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.add_subcommand(SubCommand(ParseType.SELECT_DEFINITED_STRING, "0", "1", "2", "3", "survival",

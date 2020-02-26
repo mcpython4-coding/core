@@ -66,7 +66,7 @@ class Chunk:
             pos = (x + dx, y + dy, z + dz)
             block = self.dimension.get_block(pos)
             if not (block and (block.is_solid_side(face) if type(block) != str else G.registry.get_by_name("block").
-                    get_attribute("blocks")[block].is_solid_side(None, face))):
+                    registered_object_map[block].is_solid_side(None, face))):
                 return True
         return False
 
@@ -112,13 +112,19 @@ class Chunk:
         # logger.println("adding", block_name, "at", position)
         if position in self.world:
             self.remove_block(position, immediate=immediate, block_update=block_update)
+        if position in self.blockmap:
+            del self.blockmap[position]
         if position[1] < 0 or position[1] > 255: return
         if block_name in [None, "air", "minecraft:air"]: return
         if issubclass(type(block_name), Block.Block):
             blockobj = block_name
             blockobj.position = position
         else:
-            blockobj = G.registry.get_by_name("block").get_attribute("blocks")[block_name](position, *args, **kwargs)
+            table = G.registry.get_by_name("block").registered_object_map
+            if block_name not in table:
+                logger.println("[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(block_name))
+                return
+            blockobj = table[block_name](position, *args, **kwargs)
         self.world[position] = blockobj
         if immediate:
             if self.exposed(position):
@@ -149,6 +155,7 @@ class Chunk:
             Whether or not to immediately remove block from canvas.
 
         """
+        if position in self.blockmap: del self.blockmap[position]
         if position not in self.world: return
         if issubclass(type(position), Block.Block):
             position = position.position

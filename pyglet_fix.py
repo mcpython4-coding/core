@@ -1,3 +1,10 @@
+"""mcpython - a minecraft clone written in python licenced under MIT-licence
+authors: uuk, xkcdjerry
+
+original game by fogleman licenced under MIT-licence
+minecraft by Mojang
+
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import pyglet.event
 
 
@@ -15,7 +22,7 @@ class FixedEventDispatcher(pyglet.event.EventDispatcher):
             try:
                 flag = frame[name] == handler
             except TypeError:
-                flag = False
+                flag = False  # todo: check if this is the right state in this case!
             if name in frame and flag:
                 del frame[name]
                 if not frame:

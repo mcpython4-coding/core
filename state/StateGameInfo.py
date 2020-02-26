@@ -20,8 +20,7 @@ sprite = util.texture.to_pyglet_sprite(ResourceLocator.read("gui/demo_background
 
 
 class StateGameInfo(state.State.State):
-    @staticmethod
-    def get_name(): return "minecraft:gameinfo"
+    NAME = "minecraft:gameinfo"
 
     @staticmethod
     def is_mouse_exclusive(): return False
@@ -45,12 +44,12 @@ class StateGameInfo(state.State.State):
 
     @staticmethod
     def on_key_press(symbol, modifiers):
-        if symbol == key.ESCAPE:
-            G.statehandler.switch_to("minecraft:game")
+        if symbol == key.ESCAPE or symbol == key.E:
+            G.statehandler.switch_to("minecraft:game", immediate=False)
 
     @staticmethod
     def on_mouse_press(x, y, button, modifiers):
-        G.statehandler.switch_to("minecraft:game")
+        G.statehandler.switch_to("minecraft:game", immediate=False)
 
 
 gameinfo = None

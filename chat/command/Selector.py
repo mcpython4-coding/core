@@ -6,12 +6,15 @@ minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
+import event.Registry
 
 
-class Selector:
+class Selector(event.Registry.IRegistryContent):
     """
     selector base class
     """
+
+    TYPE = "minecraft:selector"
 
     @staticmethod
     def is_valid(entry) -> bool:
@@ -25,6 +28,8 @@ class Selector:
 def load():
     @G.registry
     class SelfSelector(Selector):
+        NAME = "minecraft:@s"
+
         @staticmethod
         def is_valid(entry) -> bool:
             return entry == "@s"
@@ -35,11 +40,15 @@ def load():
 
     @G.registry
     class SelectorEmpty(SelfSelector):
+        NAME = "minecraft:@"
+
         @staticmethod
         def is_valid(entry) -> bool: return entry == "@"
 
     @G.registry
     class PlayerSelector(Selector):
+        NAME = "minecraft:@p"
+
         @staticmethod
         def is_valid(entry) -> bool:
             return entry == "@p"
@@ -51,6 +60,8 @@ def load():
     # todo: fully implement
     @G.registry
     class RandomPlayerSelector(Selector):
+        NAME = "minecraft:@r"
+
         @staticmethod
         def is_valid(entry) -> bool:
             return entry == "@r"
@@ -61,6 +72,8 @@ def load():
 
     @G.registry
     class AllPlayerSelector(Selector):
+        NAME = "minecraft:@a"
+
         @staticmethod
         def is_valid(entry) -> bool:
             return entry == "@a"

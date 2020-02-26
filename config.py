@@ -10,8 +10,8 @@ import util.enums
 
 MC_VERSION_BASE = "1.15.2"
 VERSION_TYPE = "snapshot"
-VERSION_NAME = "20w07a"
-VERSION_ORDER = ["19w52a", "20w05a", "20w07a"]  # list of all versions since 19w52a to indicate order
+VERSION_NAME = "20w08a"
+VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w08a"]  # list of all versions since 19w52a to indicate order
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)
@@ -61,7 +61,7 @@ del _ADVANCED_FACES
 RANDOM_TICK_SPEED = 3
 RANDOM_TICK_RANGE = 2
 
-USE_MISSING_TEXTURES_ON_MISS_TEXTURE = True
+USE_MISSING_TEXTURES_ON_MISS_TEXTURE = False
 
 CPU_USAGE_REFRESH_TIME = 0.8
 

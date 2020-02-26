@@ -15,6 +15,9 @@ class CommandFill(chat.command.Command.Command):
     """
     class for /fill command
     """
+
+    NAME = "minecraft:fill"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "fill"
@@ -37,7 +40,7 @@ class CommandFill(chat.command.Command.Command):
             for y in range(round(fy), round(ty)+1):
                 for z in range(round(fz), round(tz)+1):
                     block = dimension.get_block((x, y, z))
-                    if not replace or (block and block.get_name() == replace):  # check for replace block
+                    if not replace or (block and block.NAME == replace):  # check for replace block
                         dimension.add_block((x, y, z), values[2])
 
     @staticmethod

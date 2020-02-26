@@ -19,8 +19,7 @@ import logger
 
 
 class StateWorldGenerationConfig(State.State):
-    @staticmethod
-    def get_name(): return "minecraft:world_generation_config"
+    NAME = "minecraft:world_generation_config"
 
     def __init__(self): State.State.__init__(self)
 
@@ -86,7 +85,7 @@ class StateWorldGenerationConfig(State.State):
             self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
         G.player.name = self.parts[6].entered_text
         if G.player.name == "": G.player.name = "unknown"
-        G.statehandler.switch_to("minecraft:gameinfo")
+        G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
         G.eventhandler.call("on_game_enter")
 
     def bind_to_eventbus(self):

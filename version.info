@@ -682,6 +682,7 @@ started these clone on 12th of July, 2019
 [uuk]: ResourceLocator's directory method uses now os.walk rather than os.listdir, fixing incompatibilities between
        source-mods & zipped-mods
 [uuk]: tag handler accepts now sub-direction-tag-storing
+[github]
 [uuk]: started cleaning up stuff
 [uuk]: moved issues out of this files into issues.list-file
 [uuk]: removed all todo's from this file
@@ -724,6 +725,8 @@ started these clone on 12th of July, 2019
 [uuk]: added support for DELETE, END and BEGIN in chat
 [uuk]: when you change cursor position by arrow-keys in chat, you will now go around if you go to far
 [uuk]: fixed an small bug when build-folder does not exists
+[github] released snapshot 20w05a
+
 [uuk]: added new class: BlockFaceState
 [uuk]: removed ICustomBlockRenderer-class
 [uuk]: game is now not crashing on every exception
@@ -758,4 +761,55 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 50, 74
 [uuk]: util.opengl's draw_rectangle-function accepts now also alpha-colors
 [uuk]: chat has now transparency
+[github] released snapshot 20w07a
+
+[uuk] updated changelog.txt to include fully release of snapshot 20w05a
+[uuk]: changed the way how TextureAtlases for blocks are created
+[uuk]: default gamemode in debug world is now 3
+[uuk]: fixed issue 76, 77, 78, 79, 81, 82, 83
+[uuk]: changed "toplayer_default" to "top_layer_default"
+[uuk]: added furnace with inventory and crafting
+[uuk]: most inventories can now be closed by key.E
+[uuk]: added optional FUEL attribute to item, added ItemFactory method for it for setting this value
+[uuk]: added mossy cobblestone block
+[uuk]: made furnace oriented after player hit pos
+[uuk]: added barrel
+[uuk]: added ice variants
+[uuk]: added CUSTOM_WALING_SPEED_MULTIPLIER-attribute to Block used by ice
+[uuk]: added bone block, bookshelf, coral blocks (with dead variants)
+[uuk]: added option to TickHandler to enable/disable random ticks [used in BlockItemGenerator]
+[uuk]: added pumpkin, carved pumpkin, melon, clay, coarse dirt, prismarine blocks, dried kelp block, end stones,
+             glowstone, magma block, mossy stone bricks, nether bricks, nether wart block, netherrack, obsidian,
+             purpur blocks, quartz slab, red nether bricks, smooth quartz slab, soul sand [using the speed attribute]
+[uuk]: hopefully fixed 21
+[uuk]: fixed issue 83, 84, 85, 86
+[uuk]: new loading events: "stage:mod:init", "stage:block:factory:prepare", "stage:block:factory_usage",
+       "stage:item:factory:prepare", "stage:item:factory_usage"
+[uuk]: made furnace interface more general
+[uuk]: added blast furnace & smoker
+[uuk]: fixed issue 87, 88, 89
+[uuk]: added shift-click support to furnace gui slots
+[uuk]: added the other assets not included in the jar file of minecraft, making the language files arrival again
+[uuk]: added icon of window
+[uuk]: fixed issue 66, 90, 91, 92, 93
+[uuk]: added add_load_default_resources-method to mod
+[uuk]: fixed issue 94, 99
+[uuk]: changed mod.json-file format, support for old format is not completely dropped at the moment, but may be in the
+       future
+[uuk]: changed StateHandler.switch_state to have an immediate-parameter which is default True
+[uuk]: defaulted USE_MISSING_TEXTURES_ON_MISS_TEXTURE to False
+[uuk]: fixed issue 101
+[uuk]: moved name of item, block, IRecipeInterface, IPrepareAbleTask, ITextureChange, Biome, Layer & state to NAME
+       attribute at block [WARNING: this is an braking change]
+[uuk]: removed Block.on_create & Block.on_delete methodes
+[uuk]: removed EventBus.call_until_not_equal, EventBus.call_until_getting_value & EventBus.call_until_equal
+[uuk]: added BLOCK_ITEM_GENERATOR_STATE-attribute to Block used for setting an block state used in BlockItemGenerator
+[uuk]: changed registry-system to be based on IRegistryContent-objects [another braking change], every object MUST have
+       now an unique identifier stored in NAME
+[uuk]: deprecated a lot of functions
+[uuk]: added Item.set_data(data)-method to Item corresponding to Item.get_data()
+[uuk]: command /registryinfo includes now also the key the item was registered under
+[uuk]: fixed issue 75, 97
+[uuk]: changed some internals on TextureAtlas system
+[github]: released 20w09a
 

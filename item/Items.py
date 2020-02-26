@@ -21,20 +21,20 @@ def load_item():
     beetroot_soup = factory.ItemFactory.ItemFactory().setName("minecraft:beetroot_soup").setFoodValue(6).setMaxStackSize(
         1).finish()
     blaze_powder = factory.ItemFactory.ItemFactory().setName("minecraft:blaze_powder").finish()
-    blaze_rod = factory.ItemFactory.ItemFactory().setName("minecraft:blaze_rod").finish()
+    blaze_rod = factory.ItemFactory.ItemFactory().setName("minecraft:blaze_rod").setFuelLevel(120).finish()
     bone = factory.ItemFactory.ItemFactory().setName("minecraft:bone").finish()
     bone_meal = factory.ItemFactory.ItemFactory().setName("minecraft:bone_meal").finish()
     book = factory.ItemFactory.ItemFactory().setName("minecraft:book").finish()
-    bowl = factory.ItemFactory.ItemFactory().setName("minecraft:bowl").finish()
+    bowl = factory.ItemFactory.ItemFactory().setName("minecraft:bowl").setFuelLevel(5).finish()
     bread = factory.ItemFactory.ItemFactory().setName("minecraft:bread").setFoodValue(5).finish()
     brick = factory.ItemFactory.ItemFactory().setName("minecraft:brick").finish()
     broken_elytra = factory.ItemFactory.ItemFactory().setName("minecraft:broken_elytra").finish()
     carrot = factory.ItemFactory.ItemFactory().setName("minecraft:carrot").setFoodValue(3).finish()
-    charcoal = factory.ItemFactory.ItemFactory().setName("minecraft:charcoal").finish()
+    charcoal = factory.ItemFactory.ItemFactory().setName("minecraft:charcoal").setFuelLevel(80).finish()
     chicken = factory.ItemFactory.ItemFactory().setName("minecraft:chicken").setFoodValue(2).finish()
     chorus_fruit = factory.ItemFactory.ItemFactory().setName("minecraft:chorus_fruit").finish()
-    clay = factory.ItemFactory.ItemFactory().setDefaultItemFile("item/clay_ball").setName("minecraft:clay").finish()
-    coal = factory.ItemFactory.ItemFactory().setName("minecraft:coal").finish()
+    clay = clay_ball = factory.ItemFactory.ItemFactory().setName("minecraft:clay_ball").finish()
+    coal = factory.ItemFactory.ItemFactory().setName("minecraft:coal").setFuelLevel(80).finish()
     cod = factory.ItemFactory.ItemFactory().setName("minecraft:cod").setFoodValue(2).finish()
     cooked_beef = factory.ItemFactory.ItemFactory().setName("minecraft:cooked_beef").setFoodValue(8).finish()
     cooked_chicken = factory.ItemFactory.ItemFactory().setName("minecraft:cooked_chicken").setFoodValue(6).finish()
@@ -94,7 +94,7 @@ def load_item():
     rotten_flesh = factory.ItemFactory.ItemFactory().setName("minecraft:rotten_flesh").setFoodValue(4).finish()
     shulker_shell = factory.ItemFactory.ItemFactory().setName("minecraft:shulker_shell").finish()
     slime_ball = factory.ItemFactory.ItemFactory().setName("minecraft:slime_ball").finish()
-    stick = factory.ItemFactory.ItemFactory().setName("minecraft:stick").finish()
+    stick = factory.ItemFactory.ItemFactory().setName("minecraft:stick").setFuelLevel(5).finish()
     string = factory.ItemFactory.ItemFactory().setName("minecraft:string").finish()
     sugar = factory.ItemFactory.ItemFactory().setName("minecraft:sugar").finish()
     spider_eye = factory.ItemFactory.ItemFactory().setName("minecraft:spider_eye").setFoodValue(2).finish()
@@ -107,7 +107,7 @@ def load_item():
     for tooltype, toolname in [(ToolType.PICKAXE, "pickaxe"), (ToolType.AXE, "axe"), (ToolType.SWORD, "sword"),
                                (ToolType.HOE, "hoe"), (ToolType.SHOVEL, "shovel")]:
         factory.ItemFactory.ItemFactory().setName("minecraft:wooden_{}".format(toolname)).setToolType([tooltype]).\
-            setToolBrakeMutli(2).setToolLevel(1).finish()
+            setToolBrakeMutli(2).setToolLevel(1).setFuelLevel(10).finish()
         factory.ItemFactory.ItemFactory().setName("minecraft:stone_{}".format(toolname)).setToolType([tooltype]). \
             setToolBrakeMutli(4).setToolLevel(2).finish()
         factory.ItemFactory.ItemFactory().setName("minecraft:iron_{}".format(toolname)).setToolType([tooltype]). \

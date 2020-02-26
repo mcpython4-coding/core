@@ -16,6 +16,8 @@ class CommandClear(chat.command.Command.Command):
     command /clear
     """
 
+    NAME = "minecraft:clear"
+
     CANCEL_CLEAR = False  # cancel the clear-execute
 
     @staticmethod
@@ -33,10 +35,10 @@ class CommandClear(chat.command.Command.Command):
             for inventory in (entity.inventorys if type(entity.inventorys) in [list, set, tuple] else (
                               [entity.inventorys] if type(entity.inventorys) != dict else entity.inventorys.values())):
                 for slot in inventory.slots:
-                    slot.itemstack.clean()
+                    slot.get_itemstack().clean()
             entity.xp = 0
             entity.xp_level = 0
-        G.inventoryhandler.moving_slot.itemstack.clean()
+        G.inventoryhandler.moving_slot.get_itemstack().clean()
         G.eventhandler.call("command:clear:end")
 
     @staticmethod

@@ -6,9 +6,10 @@ minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
+import event.Registry
 
 
-class IFeature:
+class IFeature(event.Registry.Registry):
     @staticmethod
     def place(dimension, x, y, z, **config):
         pass

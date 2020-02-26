@@ -21,9 +21,7 @@ class DefaultTopLayerLayer(Layer):
         if not hasattr(config, "size"):
             config.size = 3
 
-    @staticmethod
-    def get_name() -> str:
-        return "toplayer_default"
+    NAME = "top_layer_default"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):
@@ -50,7 +48,7 @@ class DefaultTopLayerLayer(Layer):
         for i in range(height):
             y = mheight - (height-i-1)
             block = chunk.get_block((x, y, z)) if chunk.is_position_blocked((x, y, z)) else None
-            if block and (block if type(block) == str else block.get_name()) in ["minecraft:stone"]:
+            if block and (block if type(block) == str else block.NAME) in ["minecraft:stone"]:
                 if i == height - 1:
                     chunk.add_block((x, y, z), decorators[i])
                 else:

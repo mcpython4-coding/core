@@ -16,6 +16,8 @@ class CommandTeleport(chat.command.Command.Command):
     class for /teleport command
     """
 
+    NAME = "minecraft:teleport"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = ["tp", "teleport"]  # both are valid
@@ -33,7 +35,7 @@ class CommandTeleport(chat.command.Command.Command):
                 for entity in values[0]:
                     entity.position = tuple(values[1][0])
         else:  # tp [position]
-            G.window.position = tuple(values[0][0])
+            G.window.position = tuple(values[0])
 
     @staticmethod
     def get_help() -> list:

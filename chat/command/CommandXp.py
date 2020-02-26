@@ -16,6 +16,8 @@ class CommandXp(chat.command.Command.Command):
     command /xp
     """
 
+    NAME = "minecraft:xp"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = ["xp", "experience"]

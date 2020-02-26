@@ -67,3 +67,32 @@ issue 72: chunk's remove_block function was calling wrong block event; fixed on:
 issue 64: slab side texture was upside-down; fixed on: 09.02.2020 by uuk; occur since: UV-introduction
 issue 74: chunk's cursor remove-function is offset by one char to the right; fixed on: 09.02.2020 by uuk
 issue 50: in chat, sometimes some special chars are displayed not-html; fixed on: 09.02.2020 by uuk
+issue 76: /tp [position] crashes the game; fixed on: 10.02.2020 by uuk
+issue 77: BlockFactory doesn't use get_all_model_states of super classes; fixed on: 10.02.2020 by uuk
+issue 78: debug generator does not use all possible states; fixed on: 10.02.2020 by uuk
+issue 79: BlockFaceState.update updates only visible state, not texture of faces; fixed on: 10.02.2020 by uuk
+issue 81: you can't move items out of an slot with item-tag-limitation; fixed on: 10.02.2020 by uuk
+issue 82: in some inventories, slot label draw priority was wrong; fixed on: 10.02.2020 by uuk
+issue 83: cobblestone was never created; fixed on: 10.02.2020 by uuk
+issue 21: BlockItemFactory hangs in generating items; fixed on: 11.02.2020 by uuk
+issue 83: clay ball and clay block item generation interfere each other; fixed on: 11.02.2020 by uuk
+issue 84: ModLoader crashes when mod.json links to an not-existing python file; fixed on: 11.02.2020 by uuk
+issue 85: game crashes when using an not-modname prefix for block names; fixed on: 11.02.2020 by uuk
+issue 86: game crashes when using an not-modname prefix in an model name; fixed on: 11.02.2020 by uuk
+issue 87: furnace has sometimes double the speed than normal; fixed on: 12.02.2020 by uuk
+issue 88: slots with no player interact where not highlighted when hovering over them; fixed on: 12.02.2020 by uuk
+issue 89: furnace time was not exact to what in recipe specified; fixed on: 12.02.2020 by uuk
+issue 90: exceptions when walking into not-generated chunks; fixed on: 14.02.2020 by uuk
+issue 66: generation added blocks are not correctly overwritten when adding blocks via normal method; fixed on:
+          14.02.2020 by uuk
+issue 91: falling blocks are not updating neighbor's face visible state; fixed on: 14.02.2020 by uuk
+issue 92: SlotCopy was not using correct label configuration; fixed on: 14.02.2020 by uuk
+issue 93: Slots label was offset in some special cases; fixed on: 14.02.2020 by uuk
+issue 94: mossy stone brick slab failed to generate block-item for due to double register; fixed on: 16.02.2020 by uuk
+issue 99: various exceptions when interacting with slots; fixed on: 18.02.2020 by uuk; e.g.:
+      File "%game%\crafting\GridRecipeInterface.py", line 146, in remove_input
+        slot.get_itemstack().amount.add_amount(-count)
+      AttributeError: 'int' object has no attribute 'add_amount'
+issue 101: mossy stone bricks-Block was created twice; fixed on: 19.02.2020 by uuk
+issue 97: hotbar slots are highlighted when hovering over them; fixed on: 20.02.2020 by uuk
+issue 75: some chest textures were not used correctly; fixed on: 20.02.2020 by uuk

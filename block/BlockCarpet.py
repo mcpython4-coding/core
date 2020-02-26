@@ -17,8 +17,7 @@ carpet_bbox = block.BoundingBox.BoundingBox((1, 1/16, 1))
 def create_carpet(carpet_color: str):
     @G.registry
     class Carpet(block.Block.Block):
-        @staticmethod
-        def get_name() -> str: return "minecraft:{}_carpet".format(carpet_color)
+        NAME = "minecraft:{}_carpet".format(carpet_color)
 
         def on_block_update(self):
             x, y, z = self.position
@@ -30,6 +29,10 @@ def create_carpet(carpet_color: str):
         def is_solid_side(self, side) -> bool: return side == util.enums.EnumSide.DOWN
 
         def get_view_bbox(self): return carpet_bbox
+
+        @classmethod
+        def modify_block_item(cls, itemfactory):
+            itemfactory.setFuelLevel(3.35)
 
 
 for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:

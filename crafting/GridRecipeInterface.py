@@ -16,9 +16,7 @@ import traceback
 
 
 class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:crafting_interface"
+    NAME = "minecraft:crafting_interface"
 
     def __init__(self, slot_input_map, slot_output_map, maxsize=None, minsize=None, enabled=True,
                  enable_shaped_recipes=True, enable_shapeless_recipes=True):
@@ -55,10 +53,10 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         shapelessitems = []
         for y, row in enumerate(self.slot_input_map):
             for x, slot in enumerate(row):
-                if not slot.itemstack.is_empty():
+                if not slot.get_itemstack().is_empty():
                     itemlenght += 1
-                    itemtable[(x, y)] = slot.itemstack.get_item_name()
-                    shapelessitems.append(slot.itemstack.get_item_name())
+                    itemtable[(x, y)] = slot.get_itemstack().get_item_name()
+                    shapelessitems.append(slot.get_itemstack().get_item_name())
         if len(shapelessitems) == 0: return  # have we any item in the grid?
         shapelessitems.sort()
         itemtable = self._minimize_slotmap(itemtable)
@@ -132,7 +130,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         return len(items) == 0
 
     def update_output(self):
-        self.slot_output_map.itemstack.clean()
+        self.slot_output_map.get_itemstack().clean()
         if self.active_recipe:
             self.slot_output_map.set_itemstack(gui.ItemStack.ItemStack(self.active_recipe.output[0],
                                                                        amount=self.active_recipe.output[1]),
@@ -142,10 +140,10 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         # removes from every input slot count item (called when an item is crafted)
         for row in self.slot_input_map:  # go over all slots
             for slot in row:
-                if not slot.itemstack.is_empty():  # check if the slot is used
-                    slot.itemstack.amount -= count
-                    if slot.itemstack.amount <= 0:
-                        slot.itemstack.clean()
+                if not slot.get_itemstack().is_empty():  # check if the slot is used
+                    slot.get_itemstack().add_amount(-count)
+                    if slot.get_itemstack().amount <= 0:
+                        slot.get_itemstack().clean()
 
     def on_input_update(self, player=False):
         self.check_recipe_state()
@@ -153,10 +151,10 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
 
     def on_output_update(self, player=False):
         if not self.active_recipe: return
-        if self.slot_output_map.itemstack.is_empty() and player:  # have we removed items?
+        if self.slot_output_map.get_itemstack().is_empty() and player:  # have we removed items?
             self.remove_input()
             self.check_recipe_state()
-            if all([all([slot.itemstack.is_empty() for slot in row]) for row in self.slot_input_map]):
+            if all([all([slot.get_itemstack().is_empty() for slot in row]) for row in self.slot_input_map]):
                 self.active_recipe = None
             self.update_output()
 
@@ -166,11 +164,11 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         max_item_count = 0
         for row in self.slot_input_map:
             for slot in row:
-                if not slot.itemstack.is_empty():
-                    if min_item_count is None or slot.itemstack.amount < min_item_count:
-                        min_item_count = slot.itemstack.amount
-                    if max_item_count < slot.itemstack.amount:
-                        max_item_count = slot.itemstack.amount
+                if not slot.get_itemstack().is_empty():
+                    if min_item_count is None or slot.get_itemstack().amount < min_item_count:
+                        min_item_count = slot.get_itemstack().amount
+                    if max_item_count < slot.get_itemstack().amount:
+                        max_item_count = slot.get_itemstack().amount
         output = [self.active_recipe.output[0], self.active_recipe.output[1] * min_item_count]
         self.remove_input(count=min_item_count)
         itemstacksize = gui.ItemStack.ItemStack(output[0]).item.get_max_stack_size()
@@ -181,5 +179,5 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         self.check_recipe_state()
         self.update_output()
         if max_item_count == min_item_count:
-            self.slot_output_map.itemstack.clean()
+            self.slot_output_map.get_itemstack().clean()
 

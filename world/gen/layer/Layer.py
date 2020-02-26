@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
+import event.Registry
 
 
 class LayerConfig:
@@ -17,14 +18,12 @@ class LayerConfig:
         self.dimension = None
 
 
-class Layer:
+class Layer(event.Registry.Registry):
     @staticmethod
     def normalize_config(config: LayerConfig):
         pass
 
-    @staticmethod
-    def get_name() -> str:
-        raise NotImplementedError()
+    NAME = "minecraft:unknown_layer"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, chunk):

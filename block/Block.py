@@ -9,12 +9,18 @@ import gui.ItemStack
 import item.ItemTool
 import block.BoundingBox
 import block.BlockFaceState
+import event.Registry
 
 
-class Block:
+class Block(event.Registry.IRegistryContent):
     """
     base class for all blocks
     """
+
+    CUSTOM_WALING_SPEED_MULTIPLIER = None  # used when the player walks in an different speed on this block
+    TYPE = "minecraft:block_registry"
+
+    BLOCK_ITEM_GENERATOR_STATE = None
 
     def __init__(self, position, set_to=None, state=None, real_hit=None):
         """
@@ -26,38 +32,14 @@ class Block:
         self.position = position
         self.set_to = set_to
         self.real_hit = real_hit
-        self.on_create()  # todo: remove
         if state is not None: self.set_model_state(state)
         self.face_state = block.BlockFaceState.BlockFaceState(self)
         self.block_state = None
-
-    @staticmethod
-    def get_name() -> str:  # todo: change it to constant
-        """
-        :return: the name of the block
-        """
-        return "minecraft:missing_name"
-
-    @staticmethod
-    def on_register(registry):
-        """
-        called when the block is registered to any registry
-        :param registry: the registry it registered to
-        """
-        pass
-
-    def on_create(self):  # todo: remove
-        """
-        called when the block is created
-        """
-
-    def on_delete(self): pass  # todo: remove
 
     def on_remove(self):
         """
         called when the block is removed
         """
-        self.on_delete()
 
     def get_inventories(self):
         """
@@ -98,13 +80,13 @@ class Block:
     def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
         return False
 
-    def get_hardness(self):
+    def get_hardness(self):  # todo: make attribute
         return 1
 
-    def get_minimum_tool_level(self):
+    def get_minimum_tool_level(self):  # todo: make attribute
         return 0
 
-    def get_best_tools(self):
+    def get_best_tools(self):  # todo: make attribute
         return []
 
     def get_provided_slots(self, side):
@@ -113,11 +95,11 @@ class Block:
     def get_view_bbox(self):
         return block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
 
-    def get_custom_block_renderer(self): return None
+    def get_custom_block_renderer(self): return None  # todo: make attribute
 
     def on_request_item_for_block(self, itemstack):
         pass
 
     @classmethod
-    def modify_block_item(cls, itemconstructor): pass
+    def modify_block_item(cls, itemconstructor): pass  # todo: add an event for this
 

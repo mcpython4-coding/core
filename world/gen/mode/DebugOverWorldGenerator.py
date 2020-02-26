@@ -13,7 +13,7 @@ import mod.ModMcpython
 import event.EventHandler
 
 
-class blockinfo:
+class Blockinfo:
 
     TABLE = {}  # {chunk: tuple<x, z> -> {position<x,z> -> blockname}}
 
@@ -21,8 +21,8 @@ class blockinfo:
     def construct(cls):
         BLOCKS: event.Registry.Registry = G.registry.get_by_name("block")
 
-        blocktable = BLOCKS.registered_objects
-        blocktable.sort(key=lambda x: x.get_name())
+        blocktable = list(BLOCKS.registered_object_map.values())
+        blocktable.sort(key=lambda x: x.NAME)
         blocklist = []
         for block in blocktable:
             for state in block.get_all_model_states():
@@ -36,7 +36,7 @@ class blockinfo:
         for block, state in blocklist:
             x, y = rx * 4, ry * 4
             chunk = util.math.sectorize((x, 0, y))
-            cls.TABLE.setdefault(chunk, {})[(x, y)] = (block.get_name(), state)
+            cls.TABLE.setdefault(chunk, {})[(x, y)] = (block.NAME, state)
             rx += 1
             if x >= hsize:
                 ry += 1
@@ -47,20 +47,24 @@ def chunk_generate(chunk):
     cx, cz = chunk.position
     if G.world.get_active_dimension().worldgenerationconfig["configname"] != "debug_overworld": return
 
-    if (cx, cz) in blockinfo.TABLE:
+    if (cx, cz) in Blockinfo.TABLE:
         heigthmap = chunk.get_value("heightmap")
-        blockmap = blockinfo.TABLE[(cx, cz)]
+        blockmap = Blockinfo.TABLE[(cx, cz)]
         for x, z in blockmap.keys():
             block, state = blockmap[(x, z)]
             block = chunk.add_block((x, 10, z), block, block_update=False)
             block.set_model_state(state)
+            block.face_state.update()
             heigthmap[(x, z)] = [(0, 10)]
+
+    if G.player.gamemode != 3: G.player.set_gamemode(3)
+    G.window.flying = True
 
 
 config = {"layers": []}
 
 G.worldgenerationhandler.register_world_gen_config("debug_overworld", config)
 
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:post", blockinfo.construct, info="constructing debug world info")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:post", Blockinfo.construct, info="constructing debug world info")
 event.EventHandler.PUBLIC_EVENT_BUS.subscribe("worldgen:chunk:finished", chunk_generate)
 

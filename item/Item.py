@@ -7,23 +7,25 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import PIL.Image
+import event.Registry
 
 
-class Item:
+class Item(event.Registry.IRegistryContent):
+    TYPE = "minecraft:item"
+
     @classmethod
     def get_used_texture_files(cls):
         return [cls.get_default_item_image_location()]
 
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:unknown_item"
+    @classmethod
+    def get_name(cls) -> str: return cls.NAME
 
     @staticmethod
     def has_block() -> bool:
         return True
 
     def get_block(self) -> str:
-        return self.get_name()
+        return self.NAME
 
     @staticmethod
     def get_default_item_image_location() -> str:
@@ -35,12 +37,12 @@ class Item:
     def __init__(self):
         pass
 
-    def get_max_stack_size(self) -> int:
+    def get_max_stack_size(self) -> int:  # todo: make attribute
         return 64
 
     def __eq__(self, other):
         if not issubclass(type(other), Item): return False
-        return other.get_name() == self.get_name() and other.get_data() == self.get_data()
+        return other.NAME == self.NAME and other.get_data() == self.get_data()
 
     def on_player_interact(self, block, button, modifiers) -> bool:
         return False
@@ -49,4 +51,6 @@ class Item:
         pass
 
     def get_data(self) -> dict: return {}
+
+    def set_data(self, data: dict): pass
 

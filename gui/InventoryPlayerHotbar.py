@@ -47,6 +47,20 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
     def on_deactivate(self):
         pass
 
+    def draw(self, hoveringslot=None):
+        self.on_draw_background()
+        x, y = self._get_position()
+        if self.bgsprite:
+            self.bgsprite.position = (x + self.bg_image_pos[0], y + self.bg_image_pos[1])
+            self.bgsprite.draw()
+        self.on_draw_over_backgroundimage()
+        for slot in self.slots:
+            slot.draw(x, y)  # change to default implementation: do NOT render hovering entry
+        self.on_draw_over_image()
+        for slot in self.slots:
+            slot.draw_lable(x, y)
+        self.on_draw_overlay()
+
     def on_draw_over_image(self):
         x, y = G.player.get_active_inventory_slot().position
         dx, dy = tuple(self.config["selected_delta"]) if "selected_delta" in self.config else (8, 8)
@@ -61,10 +75,10 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         selected_slot = G.player.get_active_inventory_slot()
 
         if self.last_index != G.player.active_inventory_slot or \
-                selected_slot.itemstack.get_item_name() != self.last_item:
+                selected_slot.get_itemstack().get_item_name() != self.last_item:
             self.time_since_last_change = time.time()
             self.last_index = G.player.active_inventory_slot
-            self.last_item = selected_slot.itemstack.get_item_name()
+            self.last_item = selected_slot.get_itemstack().get_item_name()
 
         pyglet.gl.glColor3d(1., 1., 1.)
         if G.player.gamemode in (0, 2):
@@ -74,8 +88,8 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
             if G.player.armor_level > 0:
                 self.draw_armor(x, y)
 
-        if selected_slot.itemstack.get_item_name() and time.time() - self.time_since_last_change <= 5.:
-            self.lable.text = str(selected_slot.itemstack.get_item_name())
+        if selected_slot.get_itemstack().get_item_name() and time.time() - self.time_since_last_change <= 5.:
+            self.lable.text = str(selected_slot.get_itemstack().get_item_name())
             self.lable.x = round(G.window.get_size()[0] // 2 - self.lable.content_width // 2)
             self.lable.y = 90
             self.lable.draw()

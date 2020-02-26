@@ -30,14 +30,11 @@ class StateBlockItemGenerator(State.State):
     SETUP_TIME = 1
     CLEANUP_TIME = 1
 
-    @staticmethod
-    def get_name():
-        return "minecraft:blockitemgenerator"
+    NAME = "minecraft:blockitemgenerator"
 
     def __init__(self):
         State.State.__init__(self)
         self.blockindex = 0
-        G.registry.get_by_name("block").registered_objects.sort(key=lambda x: x.get_name())
         self.tasks = []
         self.table = []
         self.last_image = None
@@ -51,8 +48,8 @@ class StateBlockItemGenerator(State.State):
                                             activate_focused_block=False, clearcolor=(1., 1., 1., 0.),
                                             activate_crosshair=False, activate_lable=False),
                 UIPartProgressBar.UIPartProgressBar((10, 10), (G.window.get_size()[0]-20, 20), progress_items=len(
-                    G.registry.get_by_name("block").registered_objects), status=1, text="0/{}: {}".format(len(
-                        G.registry.get_by_name("block").registered_objects), None)),
+                    G.registry.get_by_name("block").registered_object_map.values()), status=1, text="0/{}: {}".format(
+                    len(G.registry.get_by_name("block").registered_object_map), None)),
                 state.StateModLoading.modloading.parts[3]]
 
     def on_draw_2d_pre(self):
@@ -72,22 +69,24 @@ class StateBlockItemGenerator(State.State):
         self.parts[1].size = (w-20, 20)
 
     def on_activate(self):
-        self.tasks = [x.get_name() for x in G.registry.get_by_name("block").registered_objects]
+        G.tickhandler.enable_random_ticks = False
+        self.tasks = list(G.registry.get_by_name("block").registered_object_map.keys())
         if not os.path.isdir(G.local + "/build/generated_items"): os.makedirs(G.local + "/build/generated_items")
         if not G.prebuilding:
             if os.path.exists(G.local+"/build/itemblockfactory.json"):
                 with open(G.local+"/build/itemblockfactory.json", mode="r") as f:
                     self.table = json.load(f)
             else:  # make sure it is was reset
-                self.table = []
-            items = G.registry.get_by_name("item").get_attribute("items")
+                self.table.clear()
+            items = G.registry.get_by_name("item").registered_object_map
             for task in self.tasks[:]:
                 if task in items:
                     self.tasks.remove(task)
-        if len(self.tasks) == 0:
+        if len(self.tasks) == 0:  # we have nothing to do
             self.close()
             return
         self.parts[1].progress_max = len(self.tasks)
+        self.parts[1].progress = 1
         G.window.set_size(800, 600)
         G.window.set_minimum_size(800, 600)
         G.window.set_maximum_size(800, 600)
@@ -101,20 +100,22 @@ class StateBlockItemGenerator(State.State):
             self.blockindex = 0
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
         event.TickHandler.handler.enable_tick_skipping = False
-        event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME+self.CLEANUP_TIME)
+        pyglet.clock.schedule_once(self.add_new_screen, (self.SETUP_TIME+self.CLEANUP_TIME)/20)
+        # event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME+self.CLEANUP_TIME)
 
     def on_deactivate(self):
         G.world.cleanup()
-        if len(self.tasks) > 0:
-            with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
-                json.dump(self.table, f)
-            factory.ItemFactory.ItemFactory.process()
-            item.ItemHandler.build()
+        with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
+            json.dump(self.table, f)
+        factory.ItemFactory.ItemFactory.process()
+        item.ItemHandler.build()
+        item.ItemHandler.load_data(from_block_item_generator=True)
         G.window.set_minimum_size(1, 1)
         G.window.set_maximum_size(100000, 100000)  # only here for making resizing possible again
         event.TickHandler.handler.enable_tick_skipping = True
         with open(G.local + "/build/info.json", mode="w") as f:
             json.dump({"finished": True}, f)
+        G.tickhandler.enable_random_ticks = True
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -123,7 +124,7 @@ class StateBlockItemGenerator(State.State):
         G.world.get_active_dimension().remove_block((0, 0, 0))
         self.last_image = None
 
-    def add_new_screen(self):
+    def add_new_screen(self, *args):
         self.blockindex += 1
         if self.blockindex >= len(self.tasks):
             self.close()
@@ -132,16 +133,18 @@ class StateBlockItemGenerator(State.State):
         try:
             G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
         except ValueError:
-            logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with following exception".
-                  format(self.tasks[self.blockindex]))
+            logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
+                           "following exception".format(self.tasks[self.blockindex]))
             self.blockindex += 1
-            event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
+            pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)
+            # event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
             traceback.print_exc()
             return
         self.parts[1].progress = self.blockindex+1
         self.parts[1].text = "{}/{}: {}".format(self.blockindex+1, len(self.tasks), self.tasks[self.blockindex])
         # todo: add states
-        event.TickHandler.handler.bind(self.take_image, self.SETUP_TIME)
+        pyglet.clock.schedule_once(self.take_image, self.SETUP_TIME / 20)
+        # event.TickHandler.handler.bind(self.take_image, self.SETUP_TIME)
         G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
@@ -151,7 +154,8 @@ class StateBlockItemGenerator(State.State):
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
         image: PIL.Image.Image = ResourceLocator.read(file, "pil")
         if image.getbbox() is None or len(image.histogram()) <= 1:
-            event.TickHandler.handler.bind(self.take_image, 1)
+            pyglet.clock.schedule_once(self.take_image, 0.05)
+            # event.TickHandler.handler.bind(self.take_image, 1)
             self._error_counter(image, blockname)
             return
         image = image.crop((240, 129, 558, 447))  # todo: make dynamic based on window size
@@ -161,7 +165,8 @@ class StateBlockItemGenerator(State.State):
             return
         self.last_image = image
         self.generate_item(blockname, file)
-        event.TickHandler.handler.bind(self.add_new_screen, self.CLEANUP_TIME)
+        pyglet.clock.schedule_once(self.add_new_screen, self.CLEANUP_TIME/20)
+        # event.TickHandler.handler.bind(self.add_new_screen, self.CLEANUP_TIME)
 
     def _error_counter(self, image, blockname):
         if self.tries >= 10:
@@ -175,17 +180,20 @@ class StateBlockItemGenerator(State.State):
             file = "assets/missingtexture.png"  # use missing texture instead
             self.generate_item(blockname, file)
             event.TickHandler.handler.bind(G.world.get_active_dimension().remove_block, 4, args=[(0, 0, 0)])
-            event.TickHandler.handler.bind(self.add_new_screen, 10)
+            pyglet.clock.schedule_once(self.add_new_screen, 0.5)
+            # event.TickHandler.handler.bind(self.add_new_screen, 10)
             self.blockindex += 1
             self.failed_counter += 1
             if self.failed_counter % 3 == 0 and self.SETUP_TIME <= 10:
                 self.SETUP_TIME += 1
                 self.CLEANUP_TIME += 1
             return
-        event.TickHandler.handler.bind(self.take_image, 1)
+        pyglet.clock.schedule_once(self.take_image, 0.05)
+        # event.TickHandler.handler.bind(self.take_image, 1)
         self.tries += 1
 
     def generate_item(self, blockname, file):
+        if blockname in G.registry.get_by_name("item").registered_object_map: return
         self.table.append([blockname, file])
         obj = factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True)
         block = G.world.get_active_dimension().get_block((0, 0, 0))

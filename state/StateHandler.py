@@ -17,8 +17,11 @@ class StateHandler:
         self.states = {}
         self.CANCEL_SWITCH_STATE = False
 
-    def switch_to(self, statename: str or None):
-        event.TickHandler.handler.bind(self._switch_to, 1, args=(statename,))
+    def switch_to(self, statename: str or None, immediate=True):
+        if immediate:
+            self._switch_to(statename)
+        else:
+            event.TickHandler.handler.bind(self._switch_to, 1, args=(statename,))
 
     def _switch_to(self, statename):
         if statename not in self.states: return
@@ -33,7 +36,7 @@ class StateHandler:
         logger.println("[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename), write_into_console=False)
 
     def add_state(self, state: State.State):
-        self.states[state.get_name()] = state
+        self.states[state.NAME] = state
 
     def update_exclusive(self):
         G.window.set_exclusive_mouse(self.active_state.is_mouse_exclusive())

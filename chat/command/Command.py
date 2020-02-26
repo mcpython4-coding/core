@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import enum
+import event.Registry
 
 
 class ParseType(enum.Enum):
@@ -88,7 +89,9 @@ class ParseBridge:
         return self
 
 
-class Command:
+class Command(event.Registry.IRegistryContent):
+    TYPE = "minecraft:command"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         """

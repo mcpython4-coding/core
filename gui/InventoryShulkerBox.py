@@ -7,6 +7,9 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import gui.InventoryChest
 import item.IShulkerBoxLikeItem
+import pyglet
+import event.EventHandler
+import globals as G
 
 
 class InventoryShulkerBox(gui.InventoryChest.InventoryChest):
@@ -20,4 +23,15 @@ class InventoryShulkerBox(gui.InventoryChest.InventoryChest):
         if itemstack.item and issubclass(type(itemstack.item), item.IShulkerBoxLikeItem.IShulkerBoxLikeItem):
             return not itemstack.item.is_blocked_in(self)
         return True
+
+    def on_activate(self):
+        super().on_activate()
+        event.EventHandler.PUBLIC_EVENT_BUS.subscribe("user:keyboard:press", self.on_key_press)
+
+    def on_deactivate(self):
+        super().on_deactivate()
+        event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == pyglet.window.key.E: G.inventoryhandler.hide(self)
 

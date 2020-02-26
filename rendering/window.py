@@ -173,7 +173,7 @@ class Window(pyglet.window.Window):
             self.cpu_usage_timer = 0
 
         # todo: change to attribute in State-class
-        if dt > 3 and G.statehandler.active_state.get_name() not in ["minecraft:modloading"]:
+        if dt > 3 and G.statehandler.active_state.NAME not in ["minecraft:modloading"]:
             logger.println("[warning] running behind normal tick, did you overload game? missing " +
                            str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
         self.world.process_queue()
@@ -404,7 +404,7 @@ class Window(pyglet.window.Window):
         blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
-            if type(blockname) != str: blockname = blockname.get_name()
+            if type(blockname) != str: blockname = blockname.NAME
             self.label2.text = "block {} at {}".format(blockname, blockpos)
             self.label2.draw()
             self.label3.y = self.height - 34
@@ -432,7 +432,7 @@ class Window(pyglet.window.Window):
         blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
-            if type(blockname) != str: blockname = blockname.get_name()
+            if type(blockname) != str: blockname = blockname.NAME
             clipboard.copy(blockname)
 
     def draw_reticle(self):

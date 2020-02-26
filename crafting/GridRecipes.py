@@ -36,7 +36,7 @@ def transform_to_item_stack(item, table: dict) -> list:
         for v in values: value += v
         return value
     else:
-        raise NotImplementedError("can't cast "+str(item)+" to valid itemlist")
+        raise NotImplementedError("can't cast '"+str(item)+"' to valid itemlist")
 
 
 @G.craftinghandler

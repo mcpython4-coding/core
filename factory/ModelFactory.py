@@ -36,4 +36,4 @@ class ModelFactory:
         data = {"parent": self.parent}
         if len(self.elements) > 0: data["elements"] = self.elements
         if len(self.textures) > 0: data["textures"] = self.textures
-        G.modelhandler.models[self.name] = rendering.model.Model.Model(data, self.name)
+        G.modelhandler.models[self.name] = rendering.model.Model.Model(data, self.name, self.name.split(":")[0])

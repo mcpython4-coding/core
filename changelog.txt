@@ -1,7 +1,31 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
-changelog of by-the-way things, developed in master-branch until next snapshot
+changelog of master-branch
+    - changed TextureAtlas-block-addition system to be based on mod-based/texture size-based atlases
+    - new blocks: furnace with inventory & crafting, barrel, ice variants, bone block, book shelf, coral blocks,
+                  pumpkin, carved pumpkin, melon, clay, coarse dirt, prismarin blocks, dried kelp block, end stones,
+                  glowstone, magma block, mossy stone bricks, nether bricks, nether wart block, netherrack,
+                  purpur blocks, quartz slab, red nether bricks, smooth quartz slab, soul sand
+    - added key "E" to close various inventories
+    - Block-class has now an CUSTOM_WALING_SPEED_MULTIPLIER-attribute used for custom waling speeds ontop of blocks
+    - changed mod.json format to have an "version"-attribute & an "loader"-attribute
+    - USE_MISSING_TEXTURES_ON_MISS_TEXTURE config option is now False by default
+    - changed some get_name-methodes to NAME-attribute
+    - removed some deprecated things
+    - changed how things are registered, THIS IS AN BRAKING CHANGE!
+    fixed bugs:
+        - game crashes when using "/tp <position>"-command
+        - debug world doesn't use the block state definition correctly
+        - can't get items out of an tag-handled slot
+        - cobblestone was not arrival
+        - crash when not arrival python file is linked from mod.json file
+        - crash when block-name-prefix is no mod-prefix
+        - crash when model-name-prefix is no mod-prefix
+        - some chest textures were not drawn correct
+
+changelog of snapshot 20w07a [released on 10.02.2020]
+    based on: rendering update branch 1 & changes to master-branch
     - block textures are now cut out to squares making animated textures load only the first texture, but not the whole
     - inventory config has now an option to offset the background
     - ResourceLocator.add_resources_by_modname's directory parameter is now optional
@@ -15,6 +39,11 @@ changelog of by-the-way things, developed in master-branch until next snapshot
     - changes the way how html characters are escaped
     - added some memory & cpu usage information
     - added hot-keys: F3+A, F3+C, F3+C for 10s, F3+D, F3+I, F3+N and F3+T
+    - changed the way how block faces are stored
+    - removed custom block renderers for the moment
+    - crashes on mod bus do not crash the game any more
+    - blocks are now rendered face-by-face instead of all faces at ones
+
     fixed bugs:
         - exceptions when trying to load recipes from an namespace with sub-recipe-folders
         - models in sub-directories where not loadable
@@ -29,16 +58,7 @@ changelog of by-the-way things, developed in master-branch until next snapshot
         - on_remove function was not called correctly when an block was removed
         - chat was in some cases not displaying text correctly
 
-
-changelog of rendering-branch version 1
-    - changed the way how block faces are stored
-    - removed custom block renderers for the moment
-    - crashes on mod bus do not crash the game any more
-    - blocks are now rendered face-by-face instead of all faces at ones
-
-
 changelog of snapshot 20w05a [released on 01.02.2020]
-    - todo: complete this changelog
     based on: cleanup-branch version 1 [merged on 01.02.2020 onto master]:
     - added an file called "events.list" storing every event ever called
     - added loading event called "stage:block:block_config" called to register block config entries
@@ -59,6 +79,9 @@ changelog of snapshot 20w05a [released on 01.02.2020]
     - added real config background
     - added system to check if prebuilding was interrupted before in which case prebuilding would activate again
     - chat accepts now the DELETE key, the END key and the BEGIN key
+    - better exception handling
+    - upgraded libraries
+
     - fixed bugs:
         - loading bar was offset
         - debug world generator was not working
@@ -69,6 +92,7 @@ changelog of snapshot 20w05a [released on 01.02.2020]
         - chat marker for active writing position was not correct drawn
         - chat was doing bad stuff with strings like "&#38;"
         - possible infinite loop in deleting directories when files where opened
+        - mod list storage was not correctly saved
 
 todo: add an changelog for past version(s)
 

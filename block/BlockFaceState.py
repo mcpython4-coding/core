@@ -30,6 +30,7 @@ class BlockFaceState:
     def update(self):
         state = G.world.get_active_dimension().get_chunk_for_position(self.block.position).exposed_faces(
             self.block.position)
+        self.hide_all()
         for key in state.keys():
             if state[key]: self.show_face(key)
             else: self.hide_face(key)

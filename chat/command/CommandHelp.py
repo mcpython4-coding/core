@@ -16,6 +16,8 @@ class CommandHelp(chat.command.Command.Command):
     class for /help command
     """
 
+    NAME = "minecraft:help"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = ["help", "?"]
@@ -45,13 +47,13 @@ class CommandHelp(chat.command.Command.Command):
         elif type(values[0]) == str:
             c: str = values[0]
             if c.startswith("/"): c = c[1:]
-            if c not in G.registry.get_by_name("command").get_attribute("commandentries"):
+            if c not in G.registry.get_by_name("command").commandentries:
                 logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(c))
                 return
             logger.println("------------------"+"-"*len(c))
             logger.println("- HELP PAGE FOR {} -".format(c))
             logger.println("------------------"+"-"*len(c))
-            logger.println("\n".join(G.registry.get_by_name("command").get_attribute("commandentries")[c].get_help()))
+            logger.println("\n".join(G.registry.get_by_name("command").commandentries[c].get_help()))
 
     @staticmethod
     def get_help() -> list:

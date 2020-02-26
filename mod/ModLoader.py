@@ -91,7 +91,7 @@ class LoadingStage:
 
 
 class LoadingStages:
-    PREPARE = LoadingStage("preparation phase", "stage:prepare")
+    PREPARE = LoadingStage("preparation phase", "stage:prepare", "stage:mod:init")
     ADD_LOADING_STAGES = LoadingStage("loading stage register phase", "stage:addition_of_stages")
 
     PREBUILD = LoadingStage("prebuilding", "stage:prebuild:addition", "stage:prebuild:do")
@@ -99,9 +99,11 @@ class LoadingStages:
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
     TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
-    BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:load", "stage:block:overwrite",
+    BLOCKS = LoadingStage("block loading phase", "stage:block:factory:prepare", "stage:block:factory_usage",
+                          "stage:block:base", "stage:block:load", "stage:block:overwrite",
                           "stage:block:block_config")
-    ITEMS = LoadingStage("item loading phase", "stage:item:base", "stage:item:load", "stage:item:overwrite")
+    ITEMS = LoadingStage("item loading phase", "stage:item:factory:prepare", "stage:item:factory_usage",
+                         "stage:item:base", "stage:item:load", "stage:item:overwrite")
     LANGUAGE = LoadingStage("language file loading", "stage:language")
     RECIPE = LoadingStage("recipe loading phase", "stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
     INVENTORIES = LoadingStage("inventory loading phase", "stage:inventories")
@@ -237,12 +239,43 @@ class ModLoader:
     def load_mods_json(self, data: str, file: str):
         self.load_from_decoded_json(json.loads(data), file)
 
+    @classmethod
+    def load_from_decoded_json(cls, data: dict, file: str):
+        if "version" not in data:
+            logger.println("[MODLOADER][WARN] found out-dated mod.json format for file at {}".format(file))
+            logger.println("[MODLOADER][WARN] support WILL BE DROPPED IN THE FUTURE")
+            logger.println("[MODLOADER] please inform the mod developer that he has to change the mod.json")
+            cls._load_from_old_json(data, file)
+        else:
+            version = data["version"]
+            # old: "1.0.0" without "version" entry is loaded abovWQe
+            if version == "1.1.0":  # 1.1.0: latest
+                loader = data["loader"] if "loader" in data else "python:default"
+                # todo: add registry for loaders
+                if loader == "python:default":
+                    if "load:files" in data:
+                        files = data["load:files"]
+                        for location in (files if type(files) == list else [files]):
+                            try:
+                                importlib.import_module(location.replace("/", ".").replace("\\", "."))
+                            except ModuleNotFoundError:
+                                logger.println("[MODLOADER][ERROR] can't load mod file {}".format(location))
+                                return
+                else:
+                    logger.println("[MODLOADER][ERROR] found mod.json ({}) which is not using any supported loader"
+                                   " ({})".format(file, loader))
+                    G.window.close()
+
     @staticmethod
-    def load_from_decoded_json(data: dict, file: str):
+    def _load_from_old_json(data: dict, file: str):
         if "main files" in data:
             files = data["main files"]
             for location in (files if type(files) == list else [files]):
-                importlib.import_module(location)
+                try:
+                    importlib.import_module(location.replace("/", ".").replace("\\", "."))
+                except ModuleNotFoundError:
+                    logger.println("[MODLOADER][ERROR] can't load mod file {}".format(location))
+                    return
         else:
             logger.println("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
 

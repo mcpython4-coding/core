@@ -16,6 +16,8 @@ class CommandKill(chat.command.Command.Command):
     class for /kill command
     """
 
+    NAME = "minecraft:kill"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "kill"

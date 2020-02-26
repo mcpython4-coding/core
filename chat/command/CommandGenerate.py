@@ -16,6 +16,8 @@ class CommandGenerate(chat.command.Command.Command):
     """
     class for /generate command
     """
+    NAME = "minecraft:generate"
+
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "generate"

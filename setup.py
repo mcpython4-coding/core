@@ -30,11 +30,11 @@ import texture.factory
 import mod.ModMcpython
 import sys
 import json
+import event.Registry
 
 
-class IPrepareAbleTask:
-    @staticmethod
-    def get_name() -> str: raise NotImplementedError()
+class IPrepareAbleTask(event.Registry.IRegistryContent):
+    TYPE = "minecraft:prebuild_task"
 
     @staticmethod
     def dump_data(directory: str): pass
@@ -42,14 +42,13 @@ class IPrepareAbleTask:
     USES_DIRECTORY = True
 
 
-taskregistry = event.Registry.Registry("preparetasks", [IPrepareAbleTask])
+taskregistry = event.Registry.Registry("preparetasks", ["minecraft:prebuild_task"])
 
 
 def add():
     @G.registry
     class Cleanup(IPrepareAbleTask):
-        @staticmethod
-        def get_name() -> str: return "cleanup"
+        NAME = "cleanup"
 
         @staticmethod
         def dump_data(directory: str):
@@ -67,9 +66,7 @@ def add():
 
     @G.registry
     class TextureFactoryGenerate(IPrepareAbleTask):
-        @staticmethod
-        def get_name() -> str:
-            return "texturefactory:prepare"
+        NAME = "texturefactory:prepare"
 
         @staticmethod
         def dump_data(directory: str):
@@ -83,8 +80,8 @@ def execute():
         os.makedirs(G.local+"/build")
     with open(G.local+"/build/info.json", mode="w") as f:
         json.dump({"finished": False}, f)
-    for iprepareabletask in taskregistry.registered_objects:
-        directory = G.local+"/build/"+iprepareabletask.get_name()
+    for iprepareabletask in taskregistry.registered_object_map.values():
+        directory = G.local+"/build/"+iprepareabletask.NAME
         if iprepareabletask.USES_DIRECTORY:
             if os.path.exists(directory): shutil.rmtree(directory)
             os.makedirs(directory)

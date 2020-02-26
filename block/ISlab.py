@@ -26,7 +26,8 @@ class ISlab(block.Block.Block):
     base class for slabs
     """
 
-    def on_create(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if self.real_hit and self.real_hit[1] - self.position[1] > 0:
             self.type = SlabModes.TOP
         else:

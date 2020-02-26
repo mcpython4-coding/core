@@ -32,10 +32,13 @@ class BlockFactory:
         self.hardness = 1
         self.minmum_toollevel = 0
         self.besttools = []
+        self.speed_multiplier = None
+        self.block_item_generator_state = None
 
         self.customsolidsidefunction = None
         self.custommodelstatefunction = None
         self.customitemstackmodifcationfunction = None
+        self.customblockitemmodificationfunction = None
 
         self.islog = False
 
@@ -48,6 +51,7 @@ class BlockFactory:
 
     def finish(self, register=True):
         modname, blockname = tuple(self.name.split(":"))
+        if modname not in G.modloader.mods: modname = "minecraft"
         G.modloader.mods[modname].eventbus.subscribe("stage:block:load", self._finish, register,
                                                      info="loading block {}".format(blockname))
 
@@ -61,22 +65,31 @@ class BlockFactory:
         master = self
 
         class ConstructedBlock(baseclass):
-            @staticmethod
-            def get_name() -> str: return master.name
+            CUSTOM_WALING_SPEED_MULTIPLIER = self.speed_multiplier
+
+            NAME = master.name
+
+            BLOCK_ITEM_GENERATOR_STATE = master.block_item_generator_state
 
             def is_breakable(self) -> bool: return master.breakable
 
             @staticmethod
-            def get_all_model_states(): return self.modelstates
+            def get_all_model_states():
+                states = self.modelstates.copy()
+                [states.extend(e.get_all_model_states()) for e in self.baseclass]
+                if states.count({}) != len(states):
+                    while {} in states: states.remove({})
+                return states
 
-            def on_create(self):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
                 for baseclass in master.baseclass:
-                    baseclass.on_create(self)
+                    baseclass.__init__(self, *args, **kwargs)
                 if master.create_callback: master.create_callback(self)
 
-            def on_delete(self):
+            def on_remove(self):
                 for baseclass in master.baseclass:
-                    baseclass.on_delete(self)
+                    baseclass.on_remove(self)
                 if master.delete_callback: master.delete_callback(self)
 
             def get_hardness(self):
@@ -121,6 +134,12 @@ class BlockFactory:
             class ConstructedBlock(ConstructedBlock):
                 def on_request_item_for_block(self, itemstack):
                     master.customitemstackmodifcationfunction(self, itemstack)
+
+        if master.customblockitemmodificationfunction:
+            class ConstructedBlock(ConstructedBlock):
+                @classmethod
+                def modify_block_item(cls, itemconstructor):
+                    master.customblockitemmodificationfunction(cls, itemconstructor)
 
         if register: G.registry.register(ConstructedBlock)
 
@@ -207,5 +226,17 @@ class BlockFactory:
 
     def setCustomItemstackModificationFunction(self, function):
         self.customitemstackmodifcationfunction = function
+        return self
+
+    def setCustomBlockItemModification(self, function):
+        self.customblockitemmodificationfunction = function
+        return self
+
+    def setSpeedMultiplier(self, factor):
+        self.speed_multiplier = factor
+        return self
+
+    def setBlockItemGeneratorState(self, state: dict):
+        self.block_item_generator_state = state
         return self
 

@@ -7,14 +7,15 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 from chat.command.Command import ParseType
+import event.Registry
 
 
-class CommandEntry:
+class CommandEntry(event.Registry.IRegistryContent):
     """
     an parseable command entry
     """
 
-    ENTRY_NAME = None  # the name of the entry
+    TYPE = "minecraft:command_entry"
 
     @staticmethod
     def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
@@ -49,7 +50,7 @@ def load():
         Entry for definite string
         """
 
-        ENTRY_NAME = ParseType.DEFINIED_STRING
+        NAME = ParseType.DEFINIED_STRING
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple: return start + 1, entrylist[start]
@@ -63,7 +64,7 @@ def load():
         entry for int
         """
 
-        ENTRY_NAME = ParseType.INT
+        NAME = ParseType.INT
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple: return start + 1, int(entrylist[start])
@@ -82,7 +83,7 @@ def load():
         string entry
         """
 
-        ENTRY_NAME = ParseType.STRING
+        NAME = ParseType.STRING
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
@@ -118,7 +119,7 @@ def load():
         string entry
         """
 
-        ENTRY_NAME = ParseType.STRING_WITHOUT_QUOTES
+        NAME = ParseType.STRING_WITHOUT_QUOTES
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
@@ -133,7 +134,7 @@ def load():
         float entry
         """
 
-        ENTRY_NAME = ParseType.FLOAT
+        NAME = ParseType.FLOAT
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple: return start + 1, float(entrylist[start])
@@ -152,7 +153,7 @@ def load():
         blockname entry
         """
 
-        ENTRY_NAME = ParseType.BLOCKNAME
+        NAME = ParseType.BLOCKNAME
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
@@ -160,7 +161,7 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in G.registry.get_by_name("block").get_attribute("blocks")  # is this block arrival?
+            return entrylist[start] in G.registry.get_by_name("block").registered_object_map  # is this block arrival?
         
     @G.registry
     class ItemNameEntry(CommandEntry):
@@ -168,7 +169,7 @@ def load():
         itemname entry
         """
 
-        ENTRY_NAME = ParseType.ITEMNAME
+        NAME = ParseType.ITEMNAME
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
@@ -176,7 +177,7 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in G.registry.get_by_name("item").get_attribute("items")  # is this item arrival?
+            return entrylist[start] in G.registry.get_by_name("item").registered_object_map  # is this item arrival?
         
     @G.registry
     class SelectorEntry(CommandEntry):
@@ -184,12 +185,12 @@ def load():
         Selector entry
         """
 
-        ENTRY_NAME = ParseType.SELECTOR
+        NAME = ParseType.SELECTOR
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
             entry = entrylist[start]
-            for selector in G.registry.get_by_name("command").get_attribute("selectors"):
+            for selector in G.registry.get_by_name("command").selectors:
                 if selector.is_valid(entry):  # is this the selector we are searching for?
                     return start + 1, selector.parse(entry, info) 
 
@@ -197,7 +198,7 @@ def load():
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             entry = entrylist[start]
             # have we any valid selector?
-            return any([x.is_valid(entry) for x in G.registry.get_by_name("command").get_attribute("selectors")])
+            return any([x.is_valid(entry) for x in G.registry.get_by_name("command").selectors])
         
     @G.registry
     class PositionEntry(CommandEntry):
@@ -205,7 +206,7 @@ def load():
         position entry
         """
 
-        ENTRY_NAME = ParseType.POSITION
+        NAME = ParseType.POSITION
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
@@ -249,7 +250,7 @@ def load():
         select definite string entry
         """
 
-        ENTRY_NAME = ParseType.SELECT_DEFINITED_STRING
+        NAME = ParseType.SELECT_DEFINITED_STRING
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
@@ -265,7 +266,7 @@ def load():
         open end undefined string entry
         """
 
-        ENTRY_NAME = ParseType.OPEN_END_UNDEFINITED_STRING
+        NAME = ParseType.OPEN_END_UNDEFINITED_STRING
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
@@ -280,7 +281,7 @@ def load():
     class BooleanEntry(CommandEntry):
         TABLE = [("true", "True"), ("false", "False")]
 
-        ENTRY_NAME = ParseType.BOOLEAN
+        NAME = ParseType.BOOLEAN
 
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:

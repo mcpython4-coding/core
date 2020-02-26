@@ -70,6 +70,12 @@ class Mod:
         self.package = None
         G.modloader.add_to_add(self)
 
+    def add_load_default_resources(self):
+        import ResourceLocator
+        self.eventbus.subscribe("stage:mod:init",
+                                lambda: ResourceLocator.add_resources_by_modname(self.name, self.name),
+                                info="adding resources")
+
     def add_dependency(self, depend):
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))

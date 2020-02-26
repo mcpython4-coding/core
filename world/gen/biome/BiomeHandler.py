@@ -18,12 +18,12 @@ class BiomeHandler:
     def register(self, biome, dimensions=[]):
         self(biome)
         for dim in dimensions:
-            self.add_biome_to_dim(dim, biome.get_name())
+            self.add_biome_to_dim(dim, biome.NAME)
 
     def __call__(self, biome):
         if biome in self.biomes.values():
             raise ValueError("can't add biome. biome is in biome registry")
-        self.biomes[biome.get_name()] = biome
+        self.biomes[biome.NAME] = biome
         self.registrylist.append(biome)
 
     def add_biome_to_dim(self, dim: int, biomename: str):

@@ -45,19 +45,19 @@ class Slot:
         # self.itemstack.amount = 2
         self.position = position
         if self.__itemstack.item:
-            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.__itemstack.item.get_name()][
+            pos, index = item.ItemHandler.items.itemindextable[self.__itemstack.get_item_name()][
                 self.__itemstack.item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         else:
             self.sprite = None
-        self.amount_lable = pyglet.text.Label(text=str(self.__itemstack.amount))
+        self.amount_label = pyglet.text.Label(text=str(self.__itemstack.amount), anchor_x="right")
         self.__last_itemfile = self.__itemstack.item.get_default_item_image_location() if self.__itemstack.item else None
         self.interaction_mode = [allow_player_remove, allow_player_insert, allow_player_add_to_free_place]
         self.on_update = [on_update] if on_update else []
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
-        self.amount_lable = pyglet.text.Label()
+        self.amount_label = pyglet.text.Label()
         self.childs = []
         self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
         self.allowed_item_tags = allowed_item_tags
@@ -89,41 +89,45 @@ class Slot:
         """
         draws the slot
         """
-        if hovering and self.interaction_mode[1]:
+        if hovering:
             PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
             PYGLET_IMAGE_HOVERING.draw()
         if self.__itemstack.item and self.__itemstack.item.get_default_item_image_location() != self.__last_itemfile:
-            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.__itemstack.item.get_name()][
+            pos, index = item.ItemHandler.items.itemindextable[self.__itemstack.get_item_name()][
                 self.__itemstack.item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
+            self.__last_itemfile = self.__itemstack.item.get_default_item_image_location() if self.__itemstack.item \
+                else None
         elif not self.__itemstack.item:
             self.sprite = None
             if self.empty_image:
                 self.empty_image.position = (self.position[0] + dx, self.position[1] + dy)
                 self.empty_image.draw()
-        self.amount_lable.text = str(self.__itemstack.amount)
+        self.amount_label.text = str(self.__itemstack.amount)
         if self.sprite:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.sprite.draw()
             if self.__itemstack.amount != 1:
-                self.amount_lable.x = self.position[0] + SLOT_WIDTH + 2 + dx
-                self.amount_lable.y = self.position[1] - 2 + dy
-                self.amount_lable.draw()
-        self.__last_itemfile = self.__itemstack.item.get_default_item_image_location() if self.__itemstack.item else None
+                self.amount_label.x = self.position[0] + SLOT_WIDTH + dx
+                self.amount_label.y = self.position[1] - dy
+                self.amount_label.draw()
 
-    def draw_lable(self):
+    def draw_lable(self, x, y):
         """
         these code draws only the lable, before, normal draw should be executed for correcrt setup
         """
         if self.__itemstack.amount > 1:
-            self.amount_lable.draw()
+            self.amount_label.text = str(self.__itemstack.amount)
+            self.amount_label.x = self.position[0] + SLOT_WIDTH + x
+            self.amount_label.y = self.position[1] - y
+            self.amount_label.draw()
 
     def can_set_item(self, itemstack) -> bool:
         itemname = itemstack.get_item_name()
         flag1 = self.allowed_item_tags is not None
-        flag2 = flag1 and any([itemname in G.taghandler.taggroups["items"].tags[x].entries for x in
-                              self.allowed_item_tags])
+        flag2 = flag1 and (any([itemname in G.taghandler.taggroups["items"].tags[x].entries for x in
+                                self.allowed_item_tags]) or itemstack.get_item_name() is None)
         flag3 = self.allowed_item_func is not None
         flag4 = flag3 and self.allowed_item_func(itemstack)
         try:
@@ -139,9 +143,9 @@ class SlotCopy:
                  allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None):
         self.master: Slot = master
         self.position = position
-        if self.itemstack.item:
-            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.itemstack.item.get_name()][
-                self.itemstack.item.get_active_image_location()]
+        if self.get_itemstack().item:
+            pos, index = item.ItemHandler.items.itemindextable[self.get_itemstack().get_item_name()][
+                self.get_itemstack().item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         else:
@@ -151,7 +155,7 @@ class SlotCopy:
         self.on_update = [on_update] if on_update else []
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
-        self.amount_lable = pyglet.text.Label()
+        self.amount_lable = pyglet.text.Label(text=str(self.master.itemstack.amount), anchor_x="right")
 
     def get_allowed_item_tags(self):
         return self.master.allowed_item_tags
@@ -182,25 +186,28 @@ class SlotCopy:
         if hovering:
             PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
             PYGLET_IMAGE_HOVERING.draw()
-        if self.itemstack.item and self.itemstack.item.get_default_item_image_location() != self.__last_itemfile:
-            pos, index = item.ItemHandler.items.get_attribute("itemindextable")[self.itemstack.item.get_name()][
+        if not self.itemstack.is_empty() and self.itemstack.item.get_default_item_image_location() != self.__last_itemfile:
+            pos, index = item.ItemHandler.items.itemindextable[self.itemstack.get_item_name()][
                 self.itemstack.item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
-        elif not self.itemstack.item:
+        elif self.itemstack.is_empty():
             self.sprite = None
-        self.amount_lable.text = str(self.itemstack.amount)
         if self.sprite:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.sprite.draw()
             if self.itemstack.amount != 1:
-                self.amount_lable.x = self.position[0] + SLOT_WIDTH + 2 + dx
-                self.amount_lable.y = self.position[1] - 2 + dy
+                self.amount_lable.text = str(self.itemstack.amount)
+                self.amount_lable.x = self.position[0] + SLOT_WIDTH
+                self.amount_lable.y = self.position[1] - dy
                 self.amount_lable.draw()
         self.__last_itemfile = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None
 
-    def draw_lable(self):
+    def draw_lable(self, x, y):
         if self.itemstack.amount > 1:
+            self.amount_lable.text = str(self.itemstack.amount)
+            self.amount_lable.x = self.position[0] + SLOT_WIDTH + x
+            self.amount_lable.y = self.position[1] + y
             self.amount_lable.draw()
 
     def can_set_item(self, itemstack) -> bool: return self.master.can_set_item(itemstack)

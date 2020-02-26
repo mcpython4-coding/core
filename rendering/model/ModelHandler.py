@@ -45,6 +45,7 @@ class ModelHandler:
 
     def __let_subscribe_to_build(self, model):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
+        if modname not in G.modloader.mods: modname = "minecraft"
         G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake_prepare", self.special_build, model,
                                                      info="filtering model {}".format(model))
 
@@ -80,9 +81,13 @@ class ModelHandler:
             if type(location) == str:
                 modeldata = ResourceLocator.read(location, "json")
                 self.models[name] = rendering.model.Model.Model(modeldata.copy(),
-                                                              "block/" + location.split("/")[-1].split(".")[0])
+                                                                "block/" + location.split("/")[-1].split(".")[0],
+                                                                name.split(":")[0] if name.count(":") == 1 else
+                                                                "minecraft")
             else:
-                self.models[name] = rendering.model.Model.Model(location.copy(), name)
+                self.models[name] = rendering.model.Model.Model(location.copy(), name,
+                                                                name.split(":")[0] if name.count(":") == 1 else
+                                                                "minecraft")
         except:
             logger.println("error during loading model {} named {}".format(location, name))
             traceback.print_exc()
@@ -91,11 +96,12 @@ class ModelHandler:
     def add_face_to_batch(self, block, face, batches) -> list:
         blockstate = self.get_block_state_for_block(block)
         # todo: add custom block renderer check
-        if blockstate is None: return []  # todo: add missing texture
+        if blockstate is None:
+            return self.blockstates["minecraft:missing_texture"].get_state_for({})
         return blockstate.add_face_to_batch(block, batches, face)
 
     def get_block_state_for_block(self, block):
-        blockstatedefinition = self.blockstates[block.get_name()]
+        blockstatedefinition = self.blockstates[block.NAME]
         blockstate = blockstatedefinition.get_state_for(block.get_model_state())
         if not blockstate: return None
         return blockstatedefinition.get_state_for(block.get_model_state())

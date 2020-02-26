@@ -11,9 +11,7 @@ from util.enums import ToolType
 
 
 class ItemTool(item.Item.Item):
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:unknown_tool"
+    NAME = "minecraft:unknown_tool"
 
     @staticmethod
     def has_block() -> bool:
@@ -27,7 +25,7 @@ class ItemTool(item.Item.Item):
 
     def __eq__(self, other):
         if not issubclass(type(other), ItemTool): return False
-        return other.get_name() == self.get_name()
+        return other.NAME == self.NAME
 
     def get_tool_level(self):
         return 0

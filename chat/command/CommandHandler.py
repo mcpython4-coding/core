@@ -18,20 +18,18 @@ def register_command(registry, command):
     if issubclass(command, chat.command.Command.Command):  # is it an command
         G.commandparser.add_command(command)
     elif issubclass(command, chat.command.CommandEntry.CommandEntry):  # or an command entry
-        commandregistry.get_attribute("commandentries")[command.ENTRY_NAME] = command
-        # logger.println(command)
+        commandregistry.commandentries[command.NAME] = command
     elif issubclass(command, chat.command.Selector.Selector):  # or an selector?
-        commandregistry.get_attribute("selectors").append(command)
+        commandregistry.selector.append(command)
     else:
         raise ValueError("can't register object {} to commandhandler".format(command))
 
 
-commandregistry = event.Registry.Registry("command", [chat.command.Command.Command,
-                                                      chat.command.CommandEntry.CommandEntry,
-                                                      chat.command.Selector.Selector],
+commandregistry = event.Registry.Registry("command", ["minecraft:command", "minecraft:command_entry",
+                                                      "minecraft:selector"],
                                           injection_function=register_command)
-commandregistry.set_attribute("commandentries", {})
-commandregistry.set_attribute("selectors", [])
+commandregistry.commandentries = {}
+commandregistry.selector = []
 
 
 def load_commands():

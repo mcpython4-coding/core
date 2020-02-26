@@ -16,9 +16,7 @@ import item.ItemTool
 class BlockCraftingTable(Block.Block):
     inventory = None
 
-    @staticmethod
-    def get_name() -> str:
-        return "minecraft:crafting_table"
+    NAME = "minecraft:crafting_table"
 
     def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
@@ -44,4 +42,8 @@ class BlockCraftingTable(Block.Block):
 
     def on_remove(self):
         G.inventoryhandler.hide(self.inventory)
+
+    @classmethod
+    def modify_block_item(cls, itemfactory):
+        itemfactory.setFuelLevel(15)
 
