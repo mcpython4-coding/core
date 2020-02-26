@@ -41,8 +41,6 @@ class Slot:
         :param on_shift_click: called when shift-clicked on the block
         """
         self.__itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
-        # self.itemstack.item = G.itemhandler.items["minecraft:stone"]()
-        # self.itemstack.amount = 2
         self.position = position
         if self.__itemstack.item:
             pos, index = item.ItemHandler.items.itemindextable[self.__itemstack.get_item_name()][
@@ -51,14 +49,15 @@ class Slot:
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         else:
             self.sprite = None
-        self.amount_label = pyglet.text.Label(text=str(self.__itemstack.amount), anchor_x="right")
-        self.__last_itemfile = self.__itemstack.item.get_default_item_image_location() if self.__itemstack.item else None
+        self.amount_label = pyglet.text.Label(text=str(self.itemstack.amount), anchor_x="right")
+        self.__last_item_file = \
+            self.__itemstack.item.get_default_item_image_location() if self.__itemstack.item else None
         self.interaction_mode = [allow_player_remove, allow_player_insert, allow_player_add_to_free_place]
         self.on_update = [on_update] if on_update else []
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
         self.amount_label = pyglet.text.Label()
-        self.childs = []
+        self.children = []
         self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
         self.allowed_item_tags = allowed_item_tags
         self.allowed_item_func = allowed_item_test
@@ -92,14 +91,13 @@ class Slot:
         if hovering:
             PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
             PYGLET_IMAGE_HOVERING.draw()
-        if self.__itemstack.item and self.__itemstack.item.get_default_item_image_location() != self.__last_itemfile:
-            pos, index = item.ItemHandler.items.itemindextable[self.__itemstack.get_item_name()][
-                self.__itemstack.item.get_active_image_location()]
+        if not self.itemstack.is_empty() and (self.itemstack.item.get_default_item_image_location() !=
+                                              self.__last_item_file or self.sprite is None):
+            pos, index = item.ItemHandler.items.itemindextable[self.itemstack.get_item_name()][
+                self.itemstack.item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
-            self.__last_itemfile = self.__itemstack.item.get_default_item_image_location() if self.__itemstack.item \
-                else None
-        elif not self.__itemstack.item:
+        elif self.itemstack.is_empty():
             self.sprite = None
             if self.empty_image:
                 self.empty_image.position = (self.position[0] + dx, self.position[1] + dy)
@@ -108,19 +106,19 @@ class Slot:
         if self.sprite:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.sprite.draw()
-            if self.__itemstack.amount != 1:
-                self.amount_label.x = self.position[0] + SLOT_WIDTH + dx
-                self.amount_label.y = self.position[1] - dy
-                self.amount_label.draw()
+        self.__last_item_file = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None
 
     def draw_lable(self, x, y):
         """
         these code draws only the lable, before, normal draw should be executed for correcrt setup
         """
-        if self.__itemstack.amount > 1:
-            self.amount_label.text = str(self.__itemstack.amount)
-            self.amount_label.x = self.position[0] + SLOT_WIDTH + x
-            self.amount_label.y = self.position[1] - y
+        if self.itemstack.amount > 1:
+            # don't know why this is needed, but it is needed for fixing issue 106
+            self.amount_label.anchor_x = "right"
+
+            self.amount_label.text = str(self.itemstack.amount)
+            self.amount_label.x = self.sprite.x + SLOT_WIDTH
+            self.amount_label.y = self.sprite.y
             self.amount_label.draw()
 
     def can_set_item(self, itemstack) -> bool:
@@ -141,6 +139,8 @@ class Slot:
 class SlotCopy:
     def __init__(self, master, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
                  allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None):
+        # todo: add empty image
+        # todo: add options for item allowing
         self.master: Slot = master
         self.position = position
         if self.get_itemstack().item:
@@ -150,12 +150,12 @@ class SlotCopy:
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         else:
             self.sprite = None
-        self.__last_itemfile = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None
+        self.__last_item_file = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None
         self.interaction_mode = [allow_player_remove, allow_player_insert, allow_player_add_to_free_place]
         self.on_update = [on_update] if on_update else []
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
-        self.amount_lable = pyglet.text.Label(text=str(self.master.itemstack.amount), anchor_x="right")
+        self.amount_label = pyglet.text.Label(text=str(self.master.itemstack.amount), anchor_x="right")
 
     def get_allowed_item_tags(self):
         return self.master.allowed_item_tags
@@ -186,7 +186,8 @@ class SlotCopy:
         if hovering:
             PYGLET_IMAGE_HOVERING.position = (self.position[0] + dx, self.position[1] + dy)
             PYGLET_IMAGE_HOVERING.draw()
-        if not self.itemstack.is_empty() and self.itemstack.item.get_default_item_image_location() != self.__last_itemfile:
+        if not self.itemstack.is_empty() and (self.itemstack.item.get_default_item_image_location() !=
+                                              self.__last_item_file or self.sprite is None):
             pos, index = item.ItemHandler.items.itemindextable[self.itemstack.get_item_name()][
                 self.itemstack.item.get_active_image_location()]
             image = item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
@@ -196,19 +197,14 @@ class SlotCopy:
         if self.sprite:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.sprite.draw()
-            if self.itemstack.amount != 1:
-                self.amount_lable.text = str(self.itemstack.amount)
-                self.amount_lable.x = self.position[0] + SLOT_WIDTH
-                self.amount_lable.y = self.position[1] - dy
-                self.amount_lable.draw()
-        self.__last_itemfile = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None
+        self.__last_item_file = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None
 
     def draw_lable(self, x, y):
         if self.itemstack.amount > 1:
-            self.amount_lable.text = str(self.itemstack.amount)
-            self.amount_lable.x = self.position[0] + SLOT_WIDTH + x
-            self.amount_lable.y = self.position[1] + y
-            self.amount_lable.draw()
+            self.amount_label.text = str(self.itemstack.amount)
+            self.amount_label.x = self.sprite.x + SLOT_WIDTH
+            self.amount_label.y = self.sprite.y
+            self.amount_label.draw()
 
     def can_set_item(self, itemstack) -> bool: return self.master.can_set_item(itemstack)
 

@@ -115,7 +115,7 @@ class Chat:
                 # execute command
                 G.commandparser.parse(self.text)
             else:
-                logger.println("[CHAT] {}".format(self.text))
+                self.print_ln(self.text)
             self.history.insert(0, self.text)
             self.close()
         elif symbol == key.UP and self.historyindex < len(self.history) - 1:  # go one item up in the history
@@ -141,6 +141,9 @@ class Chat:
             self.enter(clipboard.paste())
         # else:
             # print(symbol, modifiers)
+
+    def print_ln(self, text: str):
+        logger.println("[CHAT] {}".format(text))
 
     def close(self):
         """

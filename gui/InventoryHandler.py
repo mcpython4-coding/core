@@ -45,8 +45,9 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         for inventory in G.inventoryhandler.opened_inventorystack:
             inventory.draw(hoveringslot=hoveringslot)
         if G.inventoryhandler.moving_slot.get_itemstack().item:
+            G.inventoryhandler.moving_slot.position = G.window.mouse_position
             G.inventoryhandler.moving_slot.draw(0, 0)
-        G.inventoryhandler.moving_slot.position = G.window.mouse_position
+            G.inventoryhandler.moving_slot.draw_lable(0, 0)
 
     def _get_slot_for(self, x, y) -> gui.Slot.Slot or None:
         """

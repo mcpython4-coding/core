@@ -153,7 +153,7 @@ class Player:
                     else:
                         m = slot.get_itemstack().item.get_max_stack_size()
                         delta = m - slot.get_itemstack().amount
-                        slot.get_itemstack.set_amount(m)
+                        slot.get_itemstack().set_amount(m)
                         itemstack.add_amount(-delta)
                 if itemstack.amount <= 0:
                     return True

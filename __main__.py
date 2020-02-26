@@ -33,6 +33,8 @@ try:
 
     os.makedirs(globals.local + "/tmp")
 
+    if not os.path.exists(globals.local + "/datapacks"): os.makedirs(globals.local + "/datapacks")
+
     import event.EventHandler
 
     from rendering import config

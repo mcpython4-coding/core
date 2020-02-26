@@ -811,4 +811,12 @@ started these clone on 12th of July, 2019
 [uuk]: command /registryinfo includes now also the key the item was registered under
 [uuk]: fixed issue 75, 97
 [uuk]: changed some internals on TextureAtlas system
+[uuk]: updated library pyglet to 1.5.0 and psutil to 5.7.0
+[uuk]: added datapack support with various helper events [the datapacks are stored globally, not per-world]
+[uuk]: added /function command
+[uuk]: fixed issue 103, 104, 105, 106, 107, 108
+[uuk]: removed duplicate draws for label in Slot and SlotCopy
+[uuk]: fixed inconsistent of code in SlotCopy vs. Slot
+[uuk]: added /datapack command; special command: /datapack release for releasing IO access to data packs [will also
+       un-load all datapacks] -> WARNING: behaviour in this case is NOT tested and may be very bad
 

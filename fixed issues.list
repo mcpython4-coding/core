@@ -96,3 +96,10 @@ issue 99: various exceptions when interacting with slots; fixed on: 18.02.2020 b
 issue 101: mossy stone bricks-Block was created twice; fixed on: 19.02.2020 by uuk
 issue 97: hotbar slots are highlighted when hovering over them; fixed on: 20.02.2020 by uuk
 issue 75: some chest textures were not used correctly; fixed on: 20.02.2020 by uuk
+issue 103: selectors can't be parsed; fixed on: 26.02.2020 by uuk
+issue 104: function add_to_free_place was crashing when trying to increase an amount in an slot;
+           fixed on: 26.02.2020 by uuk
+issue 105: sometimes, hotbar slots are NOT drawn in hotbar; fixed on: 26.02.2020 by uuk
+issue 106: in non-SlotCopy slots, amount lable is NOT (correctly) drawn; fixed on: 26.02.2020 by uuk
+issue 107: moving-slot lable was NOT drawn at right position; fixed on: 26.02.2020 by uuk
+issue 108: shift-clicking items from crafting output slot give an exceptions; fixed on: 26.02.2020 by uuk

@@ -45,15 +45,6 @@ issue 55:
 issue 80:
     bug: in some cases, mouse button up is still not handled
 
-issue 95: [may be fixed on 20.02.2020 during registry change; Please test and mark as fixed]
-    bug: in some cases, blocks are added double in debug world
-    found: during testing mod block system loading, maybe when new during not pre-build phase
-    possible fix: make sure that every block is added ones into debug world list
-    better fix: find reason for duplication
-    even better fix: add an IRegisterAble-object base class containing an NAME attribute and an TYPE attribute,
-       change event.Registry to register this types, add an option to override existing objects, otherwise add error msg
-       and crash. Make sure that it is past-compatible
-
 issue 96:
     bug: SlotCopy does not always work correctly
     possible fix: rewrite SlotCopy
@@ -66,8 +57,8 @@ issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
 
-[101]
-
 issue 102:
     bug: when re-building, carved pumpkin can't be build correct due to same image as pumpkin
     fix: add rotated image
+
+[103 - 108]
