@@ -19,15 +19,15 @@ def transform_to_item_stack(item, table: dict) -> list:
     """
     if "item" in item:
         itemname = item["item"]
-        if itemname not in G.registry.get_by_name("item").get_attribute("items"):
-            if itemname not in G.registry.get_by_name("block").get_attribute("blocks"):
+        if itemname not in G.registry.get_by_name("item").registered_object_map:
+            if itemname not in G.registry.get_by_name("block").registered_object_map:
                 return []
         return [(itemname, item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
         entries = G.taghandler.taggroups["items"].tags["#"+item["tag"]].entries
         for item in entries[:]:
-            if item not in G.registry.get_by_name("item").get_attribute("items"):
-                if item not in G.registry.get_by_name("block").get_attribute("blocks"):
+            if item not in G.registry.get_by_name("item").registered_object_map:
+                if item not in G.registry.get_by_name("block").registered_object_map:
                     entries.remove(item)
         return entries
     elif type(item) == list:  # have we an list of items?
