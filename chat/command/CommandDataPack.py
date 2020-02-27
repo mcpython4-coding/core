@@ -35,11 +35,11 @@ class CommandDatapack(chat.command.Command.Command):
         if values[0] == "enable":
             for datapack in chat.DataPack.datapackhandler.data_packs:
                 if datapack.name == values[1] and chat.DataPack.DataPackStatus.DEACTIVATED:
-                    datapack.status = chat.DataPack.DataPackStatus.ACTIVATED
+                    datapack.set_status(chat.DataPack.DataPackStatus.ACTIVATED)
         elif values[0] == "disable":
             for datapack in chat.DataPack.datapackhandler.data_packs:
                 if datapack.name == values[1] and chat.DataPack.DataPackStatus.ACTIVATED:
-                    datapack.status = chat.DataPack.DataPackStatus.DEACTIVATED
+                    datapack.set_status(chat.DataPack.DataPackStatus.DEACTIVATED)
         elif values[0] == "list":
             G.chat.print_ln("count: {}".format(len(chat.DataPack.datapackhandler.data_packs)))
             for datapack in chat.DataPack.datapackhandler.data_packs:

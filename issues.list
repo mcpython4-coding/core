@@ -59,6 +59,7 @@ issue 100:
 
 issue 102:
     bug: when re-building, carved pumpkin can't be build correct due to same image as pumpkin
-    fix: add rotated image
+    fix: add rotated state
 
-[103 - 108]
+issue 109:
+    bug: when closing main inventory after crafting [SHIFT-crafting], output is duplicated

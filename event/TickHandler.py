@@ -10,6 +10,7 @@ import pyglet
 import util.math
 import random
 import config
+import chat.DataPack
 
 
 class TickHandler:
@@ -49,6 +50,7 @@ class TickHandler:
                     return
         if self.enable_random_ticks:
             pyglet.clock.schedule_once(self.send_random_ticks, 0)
+        chat.DataPack.datapackhandler.try_call_function("#minecraft:tick")
 
     def bind(self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}):
         """

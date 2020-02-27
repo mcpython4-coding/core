@@ -6,6 +6,7 @@ import enum
 import logger
 import event.EventHandler
 import traceback
+import chat.command.CommandParser
 
 
 class DataPackStatus(enum.Enum):
@@ -50,7 +51,17 @@ class DataPackHandler:
         self.data_packs.clear()
         G.eventhandler.call("datapack:unload:post")
 
-    def try_call_function(self, name: str, info):
+    def try_call_function(self, name: str, info=None):
+        if info is None:
+            info = chat.command.CommandParser.ParsingCommandInfo()
+        if name.startswith("#"):  # an tag
+            try:
+                tag = G.taghandler.get_tag_for(name, "functions")
+            except ValueError:
+                return
+            for name in tag.entries:
+                self.try_call_function(name, info.copy())
+            return
         for datapack in self.data_packs:
             if datapack.status == DataPackStatus.ACTIVATED:
                 if name in datapack.function_table:
@@ -114,4 +125,12 @@ class DataPack:
         self.status = DataPackStatus.UNLOADED  # we have successfully unloaded the data-pack
         if self.access: self.access.close()
         self.access = None
+
+    def set_status(self, status: DataPackStatus):
+        if status == self.status: return
+        self.status = status
+        if status == DataPackStatus.ACTIVATED and self.access not in ResourceLocator.RESOURCE_LOCATIONS:
+            ResourceLocator.RESOURCE_LOCATIONS.append(self.access)
+        elif status == DataPackStatus.DEACTIVATED and self.access in ResourceLocator.RESOURCE_LOCATIONS:
+            ResourceLocator.RESOURCE_LOCATIONS.remove(self.access)
 

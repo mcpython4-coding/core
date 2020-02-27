@@ -89,6 +89,7 @@ class StateWorldGenerationConfig(State.State):
         G.player.name = self.parts[6].entered_text
         if G.player.name == "": G.player.name = "unknown"
         chat.DataPack.datapackhandler.reload()
+        chat.DataPack.datapackhandler.try_call_function("#minecraft:load")
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
         G.eventhandler.call("on_game_enter")
 

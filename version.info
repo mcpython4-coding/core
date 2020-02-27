@@ -819,4 +819,9 @@ started these clone on 12th of July, 2019
 [uuk]: fixed inconsistent of code in SlotCopy vs. Slot
 [uuk]: added /datapack command; special command: /datapack release for releasing IO access to data packs [will also
        un-load all datapacks] -> WARNING: behaviour in this case is NOT tested and may be very bad
+[uuk]: DataPack content will now be added to ResourceLocator's system when active
+[uuk]: recipes and tags will be loaded also from DataPacks now
+[uuk]: added reload-system to TagHandler
+[uuk]: function-tag will now be loaded also
+[uuk]: added support to execute function tags; added call for minecraft:tick and minecraft:load tag
 

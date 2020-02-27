@@ -1,0 +1,13 @@
+goal: make the code multiprocessing based
+
+
+possible processes:
+    - ProcessCom-class for providing an data pipeline between processes with various modes [e.g. python >= 3.8 ->
+            SharedMemory]
+    - system to share the world across the processes using shared memory or something like this
+
+    - main thread (in which pyglet runs)
+    - world thread (in which the whole world lives)
+    - generation thread(s): for generation code, maybe split up per-layer
+    - command execution: execute commands in separated
+
