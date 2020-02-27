@@ -824,4 +824,10 @@ started these clone on 12th of July, 2019
 [uuk]: added reload-system to TagHandler
 [uuk]: function-tag will now be loaded also
 [uuk]: added support to execute function tags; added call for minecraft:tick and minecraft:load tag
+[uuk]: added new commands: /clone, /tell, /msg, /w, /replaceitem
+[uuk]: added dummy entity class; used as base-class for player; made for future support for other entities
+
+todo: add game-rules with /gamerule command [see https://minecraft.gamepedia.com/Commands/gamerule]
+todo: add /locate and /locatebiome command [see https://minecraft.gamepedia.com/Commands/locate and
+                                                https://minecraft.gamepedia.com/Commands/locatebiome]
 

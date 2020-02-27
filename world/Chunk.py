@@ -281,6 +281,7 @@ class Chunk:
             self.hide_block(position, immediate=immediate)
 
     def get_block(self, position):
+        position = util.math.normalize(position)
         return self.blockmap[position][0][1] if position in self.blockmap else (self.world[position] if position in
                                                                                 self.world else None)
 
