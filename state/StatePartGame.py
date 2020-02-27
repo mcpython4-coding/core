@@ -167,7 +167,8 @@ class StatePartGame(StatePart.StatePart):
                         itemstack = gui.ItemStack.ItemStack(block.NAME if type(block) != str else block)
                         block = chunk.get_block(blockpos)
                         if block: block.on_request_item_for_block(itemstack)
-                        G.player.add_to_free_place(itemstack)
+                        if G.world.gamerulehandler.table["doTileDrops"].status.status:
+                            G.player.add_to_free_place(itemstack)
                         chunk.remove_block(blockpos)
                         chunk.check_neighbors(blockpos)
                 # todo: check if breakable in gamemode 2

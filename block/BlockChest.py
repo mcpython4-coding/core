@@ -99,6 +99,7 @@ class BlockChest(Block.Block):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_remove(self):
+        if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
         for slot in self.inventory.slots:
             G.player.add_to_free_place(slot.get_itemstack().copy())
             slot.get_itemstack().clean()

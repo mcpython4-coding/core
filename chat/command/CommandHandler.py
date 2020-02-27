@@ -36,7 +36,7 @@ def load_commands():
     from . import (CommandGive, CommandGamemode, CommandExecute, CommandKill, CommandClear, CommandTeleport,
                    CommandReload, CommandGenerate, CommandSetblock, CommandFill, CommandItemInfo, CommandXp,
                    CommandRegistryInfo, CommandFunction, CommandDataPack, CommandClone, CommandTell,
-                   CommandReplaceItem)
+                   CommandReplaceItem, CommandGameRule)
 
     # register this at the end
     from . import CommandHelp

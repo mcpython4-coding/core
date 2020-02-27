@@ -55,6 +55,7 @@ class BlockFurnace(block.Block.Block):
     def get_provided_slots(self, side): return self.inventory.slots
 
     def on_remove(self):
+        if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
         for slot in self.inventory.slots:
             G.player.add_to_free_place(slot.itemstack.copy())
             slot.itemstack.clean()

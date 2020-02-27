@@ -4,6 +4,8 @@ Changelog since cleanup-branch of 31.01.2020
 changelog of master branch
     - updated libraries
     - added datapack support
+    - added gamerules
+    - new commands: /clone, /tell, /replaceitem, /gamerule
     fixed bugs:
         - various exceptions from left-over things in the registry & slot changes from last snapshot
         - various issues with slot drawing

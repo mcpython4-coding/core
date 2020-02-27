@@ -193,8 +193,10 @@ class Player(Entity.Entity):
                 self.hearts = 20
                 self.hunger = 20
                 return
-        globals.commandparser.parse("/clear")
-        logger.println("[CHAT] player {} died".format(self.name))
+        if not globals.world.gamerulehandler.table["keepInventory"].status.status:
+            globals.commandparser.parse("/clear")
+        if globals.world.gamerulehandler.table["showDeathMessages"].status.status:
+            logger.println("[CHAT] player {} died".format(self.name))
         self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
                          globals.world.spawnpoint[1])
         self.active_inventory_slot = 0
@@ -211,6 +213,9 @@ class Player(Entity.Entity):
         self.reset_moving_slot()
         globals.inventoryhandler.close_all_inventories()
         # todo: recalculate armor level!
+
+        if not globals.world.gamerulehandler.table["doImmediateRespawn"].status.status:
+            globals.statehandler.switch_to("minecraft:escape_state")  # todo: add special state
 
     def _get_position(self):
         return globals.window.position

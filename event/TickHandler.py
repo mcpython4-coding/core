@@ -87,7 +87,7 @@ class TickHandler:
                     x = cx + dx
                     z = cz + dz
                     for dy in range(16):
-                        for _ in range(config.RANDOM_TICK_SPEED):
+                        for _ in range(G.world.gamerulehandler.table["randomTickSpeed"].status.status):
                             ddx, ddy, ddz = random.randint(0, 15), random.randint(0, 255), random.randint(0, 15)
                             position = (x + ddx, ddy, z + ddz)
                             blockinst = G.world.get_active_dimension().get_block(position)
