@@ -72,7 +72,7 @@ class ModelHandler:
         for x in sorted_models:
             modname = x.split(":")[0] if x.count(":") == 1 else "minecraft"
             G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake", self.load_model, x,
-                                                         info="baking model {}".format(x))
+                                                         info="baking model '{}'".format(x))
 
     def load_model(self, name: str):
         if name in self.models: return
@@ -105,7 +105,7 @@ G.modelhandler = ModelHandler()
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, "minecraft",
-                                            info="searching for block models")
+                                            info="searching for block models for minecraft")
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_create", G.modelhandler.search,
                                             info="loading found models")
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake_prepare", G.modelhandler.build,

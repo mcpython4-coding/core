@@ -16,6 +16,10 @@ class EnumSide(enum.Enum):
     SOUTH = S = (1, 0, 0, "south")
     WEST = W = (0, 0, -1, "west")
 
+    @classmethod
+    def iterate(cls):
+        return FACE_ORDER
+
     def __init__(self, dx, dy, dz, normal_name):
         self.relative = self.dx, self.dy, self.dz = dx, dy, dz
         self.normal_name = normal_name
@@ -32,15 +36,36 @@ class EnumSide(enum.Enum):
     def __eq__(self, other):
         return type(self) == type(other) and self.relative == other.relative
 
-    @classmethod
-    def iterate(cls):
-        return FACE_ORDER
-
     def __hash__(self):
         return hash(self.relative)
 
+    def rotate(self, rotation):
+        face = self
+        for i in range(3):
+            if face in ROTATE[i]:
+                index = ROTATE[i].index(face)
+                index += rotation[i] // 90
+                index %= 4
+                face = ROTATE[i][index]
+        return face
+
+    def rotate_reverse(self, rotation):
+        face = self
+        for i in range(3):
+            if face in ROTATE[i]:
+                index = ROTATE[i].index(face)
+                index -= rotation[i] // 90
+                index %= 4
+                face = ROTATE[i][index]
+        return face
+
 
 FACE_ORDER = [EnumSide.UP, EnumSide.DOWN, EnumSide.NORTH, EnumSide.SOUTH, EnumSide.EAST, EnumSide.WEST]
+
+# How to rotate the different faces?
+ROTATE = ([EnumSide.WEST, EnumSide.DOWN, EnumSide.EAST, EnumSide.UP],
+          [EnumSide.NORTH, EnumSide.EAST, EnumSide.SOUTH, EnumSide.WEST],
+          [EnumSide.NORTH, EnumSide.UP, EnumSide.SOUTH, EnumSide.DOWN])
 
 
 class LogAxis(enum.Enum):

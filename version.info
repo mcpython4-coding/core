@@ -834,4 +834,16 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 110
 [uuk]: added exception handle when item-files are not find
 [uuk]: added transform_to_hitbox-function to BoxModel system
+[uuk]: made rotations to models also affect the vertices of the models
+[uuk]: added fences for all wood types
+[uuk]: added function to EnumSide to get the face facing after an rotation
+[uuk]: TextureAtlasGenerator will now NOT add rotated variants to texture atlases
+[uuk]: changed order of block-updates to make sure that the block is removed when block updates for neighbors are called
+
+todo: implement real hit-box for fence
+todo: fix top texture of fence not rendering correctly
+
+new blocks in this snapshot:
+    todo: add walls [maybe add some extra ones which are NOT included in vanilla with config?],
+        anvils with inventory, glass pane, iron bars
 

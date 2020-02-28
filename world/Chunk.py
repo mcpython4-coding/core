@@ -148,24 +148,28 @@ class Chunk:
         """ Remove the block at the given `position`.
 
         Parameters
-        ----------
-        position : tuple of len 3
+        :param position: tuple of len 3
             The (x, y, z) position of the block to remove.
-        immediate : bool
+        :param immediate: bool
             Whether or not to immediately remove block from canvas.
-
+        :param block_update: bool
+            Whether an block-update should be called or not
+        :param blockupdateself:
+            Whether the block to remove should get an block-update or not
         """
         if position in self.blockmap: del self.blockmap[position]
         if position not in self.world: return
         if issubclass(type(position), Block.Block):
             position = position.position
         self.world[position].on_remove()
-        if immediate:
-            if block_update:
-                self.on_block_updated(position, itself=blockupdateself)
-            self.check_neighbors(position)
+        if blockupdateself:
+            self.world[position].on_block_update()
         self.world[position].face_state.hide_all()
         del self.world[position]
+        if immediate:
+            if block_update:
+                self.on_block_updated(position)
+            self.check_neighbors(position)
 
     def check_neighbors(self, position):
         """ Check all blocks surrounding `position` and ensure their visual
