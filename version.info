@@ -827,7 +827,11 @@ started these clone on 12th of July, 2019
 [uuk]: added new commands: /clone, /tell, /msg, /w, /replaceitem
 [uuk]: added dummy entity class; used as base-class for player; made for future support for other entities
 [uuk]: added gamerule system with /gamerule command
-
-todo: add /locate and /locatebiome command [see https://minecraft.gamepedia.com/Commands/locate and
-                                                https://minecraft.gamepedia.com/Commands/locatebiome]
+[uuk]: added support for custom block-state loaders, added support for "multipart"-models
+[uuk]: added new loading events: "stage:command:gamerules", "stage:blockstate:register_loaders",
+                                 "stage:block_boundingbox_get"
+[uuk]: added setDefaultModelState-function to BlockFactory
+[uuk]: fixed issue 110
+[uuk]: added exception handle when item-files are not find
+[uuk]: added transform_to_hitbox-function to BoxModel system
 

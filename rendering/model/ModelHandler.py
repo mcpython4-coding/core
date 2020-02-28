@@ -94,17 +94,11 @@ class ModelHandler:
             traceback.print_stack()
 
     def add_face_to_batch(self, block, face, batches) -> list:
-        blockstate = self.get_block_state_for_block(block)
+        blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
         if blockstate is None:
-            return self.blockstates["minecraft:missing_texture"].get_state_for({})
+            return self.blockstates["minecraft:missing_texture"].add_face_to_batch(block, batches, face)
         return blockstate.add_face_to_batch(block, batches, face)
-
-    def get_block_state_for_block(self, block):
-        blockstatedefinition = self.blockstates[block.NAME]
-        blockstate = blockstatedefinition.get_state_for(block.get_model_state())
-        if not blockstate: return None
-        return blockstatedefinition.get_state_for(block.get_model_state())
 
 
 G.modelhandler = ModelHandler()

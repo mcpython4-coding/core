@@ -109,17 +109,18 @@ class LoadingStages:
     INVENTORIES = LoadingStage("inventory loading phase", "stage:inventories")
     STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states")
     COMMANDS = LoadingStage("command loading phase", "stage:command:entries", "stage:commands",
-                            "stage:command:selectors")
+                            "stage:command:selectors", "stage:command:gamerules")
     WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
                             "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
 
-    BLOCKSTATE = LoadingStage("blockstate loading phase", "stage:model:blockstate_search",
-                              "stage:model:blockstate_create")
+    BLOCKSTATE = LoadingStage("blockstate loading phase", "stage:blockstate:register_loaders",
+                              "stage:model:blockstate_search", "stage:model:blockstate_create")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_search:intern",
                                "stage:model:model_create")
 
     BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",
-                        "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake")
+                        "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake",
+                        "stage:block_boundingbox_get")
 
     POST = LoadingStage("finishing up", "stage:post")
 

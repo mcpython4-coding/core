@@ -103,3 +103,4 @@ issue 105: sometimes, hotbar slots are NOT drawn in hotbar; fixed on: 26.02.2020
 issue 106: in non-SlotCopy slots, amount lable is NOT (correctly) drawn; fixed on: 26.02.2020 by uuk
 issue 107: moving-slot lable was NOT drawn at right position; fixed on: 26.02.2020 by uuk
 issue 108: shift-clicking items from crafting output slot give an exceptions; fixed on: 26.02.2020 by uuk
+issue 110: ItemFactory was not creating item-file location correctly for modded items; fixed on: 27.02.2020 by uuk

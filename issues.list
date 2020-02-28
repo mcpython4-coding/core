@@ -63,3 +63,5 @@ issue 102:
 
 issue 109:
     bug: when closing main inventory after crafting [SHIFT-crafting], output is duplicated
+
+[110]

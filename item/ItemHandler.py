@@ -96,7 +96,12 @@ def register_item(registry, itemclass):
     table.setdefault(itemclass.NAME, {})
     try:
         files = itemclass.get_used_texture_files()
-        images = [ResourceLocator.read(file, "pil").resize((32, 32), PIL.Image.NEAREST) for file in files]
+        try:
+            images = [ResourceLocator.read(file, "pil").resize((32, 32), PIL.Image.NEAREST) for file in files]
+        except ValueError:
+            images = [texture.TextureAtlas.MISSING_TEXTURE] * len(files)
+            traceback.print_exc()
+            print("during not finding files: {}".format(files))
         flag = True
         for textureatlas in TEXTURE_ATLASES:
             if textureatlas.is_free_for(files):

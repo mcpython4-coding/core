@@ -6,6 +6,8 @@ changelog of master branch
     - added datapack support
     - added gamerules
     - new commands: /clone, /tell, /replaceitem, /gamerule
+    - added multipart-block-model support
+    - added generator code for creating BoundingBox from BlockState
     fixed bugs:
         - various exceptions from left-over things in the registry & slot changes from last snapshot
         - various issues with slot drawing
