@@ -82,7 +82,7 @@ issue 86: game crashes when using an not-modname prefix in an model name; fixed 
 issue 87: furnace has sometimes double the speed than normal; fixed on: 12.02.2020 by uuk
 issue 88: slots with no player interact where not highlighted when hovering over them; fixed on: 12.02.2020 by uuk
 issue 89: furnace time was not exact to what in recipe specified; fixed on: 12.02.2020 by uuk
-issue 90: exceptions when walking into not-generated chunks; fixed on: 14.02.2020 by uuk
+issue 90: exceptions when walking into not-generated chunks; fixed on: 14.02.2020 by uuk; linked by issue #4
 issue 66: generation added blocks are not correctly overwritten when adding blocks via normal method; fixed on:
           14.02.2020 by uuk
 issue 91: falling blocks are not updating neighbor's face visible state; fixed on: 14.02.2020 by uuk
@@ -104,3 +104,7 @@ issue 106: in non-SlotCopy slots, amount lable is NOT (correctly) drawn; fixed o
 issue 107: moving-slot lable was NOT drawn at right position; fixed on: 26.02.2020 by uuk
 issue 108: shift-clicking items from crafting output slot give an exceptions; fixed on: 26.02.2020 by uuk
 issue 110: ItemFactory was not creating item-file location correctly for modded items; fixed on: 27.02.2020 by uuk
+issue 24: BoundingBox was not working correct in some edge-cases; fixed on: 28.02.2020 by uuk
+issue 111: can't rebuild due to self-calling function; fixed on: 29.02.2020 by uuk
+issue 112: BLOCK_ITEM_GENERATOR_STATE-attribute of block is ignored; fixed on: 29.02.2020 by uuk
+issue 121: player can't die correctly; fixed on: 01.03.2020 by uuk; caused by: Entity-dummy-class implementation

@@ -1,3 +1,10 @@
+"""mcpython - a minecraft clone written in python licenced under MIT-licence
+authors: uuk, xkcdjerry
+
+original game by fogleman licenced under MIT-licence
+minecraft by Mojang
+
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import block.Block
 import block.BoundingBox
 import globals as G
@@ -5,21 +12,26 @@ import util.enums
 
 
 class IFence(block.Block.Block):
+    """
+    Base class for every fence-like block. Expects
+    """
+
+    FENCE_TYPE_NAME = set()
+
+    BBOX = None
+
+    # todo: add bounding-box
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connections = {"north": False, "east": False, "south": False, "west": False}
         self.on_block_update()
-
-    def get_view_bbox(self):
-        return block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
 
     def get_model_state(self) -> dict:
         state = {key: str(self.connections[key]).lower() for key in self.connections}
         return state
 
     def on_block_update(self):
-        print(self.position)
-
         x, y, z = self.position
 
         block_north: block.Block.Block = G.world.get_active_dimension().get_block((x+1, y, z))
@@ -27,14 +39,10 @@ class IFence(block.Block.Block):
         block_south: block.Block.Block = G.world.get_active_dimension().get_block((x - 1, y, z))
         block_west: block.Block.Block = G.world.get_active_dimension().get_block((x, y, z - 1))
 
-        self.connections["east"] = block_north is not None and (type(block_north) != str and block_north.is_solid_side(
-            util.enums.EnumSide.SOUTH) or issubclass(type(block_north), IFence))
-        self.connections["south"] = block_east is not None and (type(block_east) != str and block_east.is_solid_side(
-            util.enums.EnumSide.WEST) or issubclass(type(block_east), IFence))
-        self.connections["west"] = block_south is not None and (type(block_south) != str and block_south.is_solid_side(
-            util.enums.EnumSide.NORTH) or issubclass(type(block_south), IFence))
-        self.connections["north"] = block_west is not None and (type(block_west) != str and block_west.is_solid_side(
-            util.enums.EnumSide.EAST) or issubclass(type(block_west), IFence))
+        self.connections["east"] = self.connects_to(util.enums.EnumSide.NORTH, block_north)
+        self.connections["south"] = self.connects_to(util.enums.EnumSide.EAST, block_east)
+        self.connections["west"] = self.connects_to(util.enums.EnumSide.SOUTH, block_south)
+        self.connections["north"] = self.connects_to(util.enums.EnumSide.WEST, block_west)
 
     def is_solid_side(self, side) -> bool: return False
 
@@ -53,33 +61,56 @@ class IFence(block.Block.Block):
                                        "south": str(bool(south)).lower(), "west": str(bool(west)).lower()})
         return states
 
+    def connects_to(self, face: util.enums.EnumSide, blockinstance: block.Block.Block):
+        if blockinstance is None or type(blockinstance) == str: return False
+        return blockinstance.is_solid_side(face.invert()) or (
+                issubclass(type(blockinstance), IFence) and len(self.FENCE_TYPE_NAME.intersection(
+                    blockinstance.FENCE_TYPE_NAME)) > 0)
+
+    BLOCK_ITEM_GENERATOR_STATE = {"east": "true", "west": "true"}
+
+
+class IWoodenFence(IFence):
+    """
+    Base class for every wooden fence; used to set the wooden fence flag for all children at ones
+    """
+
+    FENCE_TYPE_NAME = {"minecraft:wooden_fence"}
+
 
 @G.registry
-class AcaciaFence(IFence):
+class AcaciaFence(IWoodenFence):
     NAME = "minecraft:acacia_fence"
 
 
 @G.registry
-class BirchFence(IFence):
+class BirchFence(IWoodenFence):
     NAME = "minecraft:birch_fence"
 
 
 @G.registry
-class DarkOakFence(IFence):
+class DarkOakFence(IWoodenFence):
     NAME = "minecraft:dark_oak_fence"
 
 
 @G.registry
-class JungleFence(IFence):
+class JungleFence(IWoodenFence):
     NAME = "minecraft:jungle_fence"
 
 
 @G.registry
-class OakFence(IFence):
+class OakFence(IWoodenFence):
     NAME = "minecraft:oak_fence"
 
 
 @G.registry
-class SpruceFence(IFence):
+class SpruceFence(IWoodenFence):
     NAME = "minecraft:spruce_fence"
+
+
+@G.registry
+class NetherBrickFence(IFence):
+    NAME = "minecraft:nether_brick_fence"
+
+    FENCE_TYPE_NAME = {"minecraft:nether_fence"}
 

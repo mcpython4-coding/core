@@ -92,7 +92,7 @@ class Block(event.Registry.IRegistryContent):
     def get_provided_slots(self, side):
         return []
 
-    def get_view_bbox(self):
+    def get_view_bbox(self):  # todo: make attribute
         return block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
 
     def get_custom_block_renderer(self): return None  # todo: make attribute

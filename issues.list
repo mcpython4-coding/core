@@ -17,12 +17,8 @@ issue 23:
     bug: when sand is falling, it can fall more than 1 block at a time, see issue 22 for reproducing
     possible reason: fall is active two times in TickHandler
 
-issue 24:
-    bug: hit-box of blocks are at the corners not working [see fogleman #104]
-    possible fix: rework whole hit-box system (of blocks) [AABBs?]
-
 issue 28:
-    bug: F3+A does not reload the world correctly
+    bug: F3+A - hot-key does not reload the world correctly
     since: unknown, found after fixing issue 19 & implementing hot-keys
     possible fix: rewrite this part of Chunk's method's
 
@@ -64,4 +60,34 @@ issue 102:
 issue 109:
     bug: when closing main inventory after crafting [SHIFT-crafting], output is duplicated
 
-[110]
+issue 113:
+    bug: "uv-lock"-parameter is ignored in block-states
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 114:
+    bug: "OR"-option in multipart model is ignored
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 115:
+    bug: the system does NOT pick in multipart from the list of models
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 116:
+    bug: model picking from array in blockstates does not use "weight"-attribute
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 117:
+    bug: block models ignore rotation parameter for elements
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 118:
+    bug: block models ignore rescale parameter in elements
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 119:
+    bug: faces which are not specified are rendered with missing-texture
+
+issue 120:
+    bug: when falling into void and trying to die, you do not respawn
+
+[121]

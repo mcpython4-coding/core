@@ -193,12 +193,13 @@ class Player(Entity.Entity):
                 self.hearts = 20
                 self.hunger = 20
                 return
+        super().kill()  # todo: create an new entity for player
         if not globals.world.gamerulehandler.table["keepInventory"].status.status:
             globals.commandparser.parse("/clear")
         if globals.world.gamerulehandler.table["showDeathMessages"].status.status:
             logger.println("[CHAT] player {} died".format(self.name))
-        self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
-                         globals.world.spawnpoint[1])
+        globals.window.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
+                                   globals.world.spawnpoint[1])
         self.active_inventory_slot = 0
         globals.window.dy = 0
         globals.chat.close()

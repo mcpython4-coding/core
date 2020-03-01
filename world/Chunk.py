@@ -162,7 +162,7 @@ class Chunk:
         if issubclass(type(position), Block.Block):
             position = position.position
         self.world[position].on_remove()
-        if blockupdateself:
+        if block_update and blockupdateself:
             self.world[position].on_block_update()
         self.world[position].face_state.hide_all()
         del self.world[position]

@@ -95,7 +95,11 @@ class StateBlockItemGenerator(State.State):
         G.window.rotation = (-45, -45)
         self.blockindex = -1
         try:
-            G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[0], block_update=False)
+            blockinstance = G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex],
+                                                                     block_update=False)
+            if blockinstance.BLOCK_ITEM_GENERATOR_STATE is not None:
+                blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
+                blockinstance.face_state.update()
         except ValueError:
             self.blockindex = 0
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
@@ -131,7 +135,11 @@ class StateBlockItemGenerator(State.State):
             return
         G.world.get_active_dimension().hide_block((0, 0, 0))
         try:
-            G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex], block_update=False)
+            blockinstance = G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex],
+                                                                     block_update=False)
+            if blockinstance.BLOCK_ITEM_GENERATOR_STATE is not None:
+                blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
+                blockinstance.face_state.update()
         except ValueError:
             logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                            "following exception".format(self.tasks[self.blockindex]))

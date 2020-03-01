@@ -839,11 +839,26 @@ started these clone on 12th of July, 2019
 [uuk]: added function to EnumSide to get the face facing after an rotation
 [uuk]: TextureAtlasGenerator will now NOT add rotated variants to texture atlases
 [uuk]: changed order of block-updates to make sure that the block is removed when block updates for neighbors are called
+[uuk]: added GameRule "hitTestSteps" storing how many steps to use in hit_test of World
+[uuk]: fixed issue 24
+[uuk]: added walls, nether brick fence
+[uuk]: improved connection system for fences making "fence groups" possible
+[uuk]: changed the look of fences in BlockItemGenerator
 
-todo: implement real hit-box for fence
-todo: fix top texture of fence not rendering correctly
+todo: fix top texture of fence & wall not rendering correctly [uv's may be not loaded correctly]
 
-new blocks in this snapshot:
-    todo: add walls [maybe add some extra ones which are NOT included in vanilla with config?],
-        anvils with inventory, glass pane, iron bars
+new blocks planned for upcoming snapshot:
+    todo: anvils with inventory, glass pane, iron bars
+    todo: add an option to direct-draw models, not add them to batches
+
+    todo: fix issue 113-119 [if possible]
+
+    todo: implement possibility to add custom model loaders
+    todo: add tool for creating wall & fence models for mods
+
+    todo: fix BoundingBoxes of fences, walls, etc.
+    todo: move every G.window.position & G.window.rotation call to G.player.position & G.player.rotation
+
+    todo: give every block-instance, every gui, every item instance, ... an unique UUID
+    todo: make the player spawn-point random
 

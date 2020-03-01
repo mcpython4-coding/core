@@ -10,21 +10,31 @@ import pyglet.gl
 
 
 class BoundingBox:
-    def __init__(self, size, relposition=(0, 0, 0)):
+    def __init__(self, size, relposition=(0, 0, 0), rotation=(0, 0, 0)):
         self.size = size
         self.relposition = relposition
+        self.rotation = rotation
 
     def test_point_hit(self, point, boxposition):
-        x, y, z = tuple([r / 2 for r in self.size])
-        dx, dy, dz = tuple([abs(boxposition[i] + self.relposition[i] - point[i]) for i in range(3)])
-        return dx <= x and dy <= y and dz <= z
+        point = util.math.rotate_point(point, tuple([boxposition[i] + self.relposition[i] for i in range(3)]),
+                                       rotation=self.rotation)
+        x, y, z = point
+        sx, sy, sz = tuple([boxposition[i] - 0.5 + self.relposition[i] for i in range(3)])
+        ex, ey, ez = tuple([boxposition[i] - 0.5 + self.relposition[i] + self.size[i] for i in range(3)])
+        return sx <= x <= ex and sy <= y <= ey and sz <= z <= ez
 
     def draw_outline(self, position):
+        rot = tuple([-e for e in self.rotation])
         x, y, z = position
         x += self.relposition[0] - 0.5 + (self.size[0] / 2)
         y += self.relposition[1] - 0.5 + (self.size[1] / 2)
         z += self.relposition[2] - 0.5 + (self.size[2] / 2)
-        vertex_data = util.math.cube_vertices(x, y, z, *[f/2+0.001 for f in self.size])
+        vertex_data_ur = util.math.cube_vertices(0, 0, 0, *[f/2+0.001 for f in self.size])
+        vertex_data = []
+        for i in range(len(vertex_data_ur) // 3):
+            nx, ny, nz = x, y, z
+            rx, ry, rz = util.math.rotate_point(vertex_data_ur[i*3:i*3+3], (0, 0, 0), rot)
+            vertex_data.extend([nx+rx, ny+ry, nz+rz])
         pyglet.gl.glColor3d(0, 0, 0)
         pyglet.gl.glLineWidth(1.3)
         pyglet.gl.glPolygonMode(pyglet.gl.GL_FRONT_AND_BACK, pyglet.gl.GL_LINE)
@@ -41,8 +51,9 @@ class BoundingArea:
     def __init__(self):
         self.bboxes = []
 
-    def add_box(self, size, relposition=(0, 0, 0)):
-        self.bboxes.append(BoundingBox(size, relposition=relposition))
+    def add_box(self, size, relposition=(0, 0, 0), rotation=(0, 0, 0)):
+        self.bboxes.append(BoundingBox(size, relposition=relposition, rotation=rotation))
+        return self
 
     def test_point_hit(self, point, boxposition):
         for bbox in self.bboxes:

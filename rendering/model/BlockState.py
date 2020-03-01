@@ -76,7 +76,8 @@ class MultiPartDecoder(IBlockStateDecoder):
                 model = G.modelhandler.models[model]
                 for boxmodel in model.boxmodels:
                     bbox.bboxes.append(block.BoundingBox.BoundingBox(tuple([e / 16 for e in boxmodel.boxsize]),
-                                                                     tuple([e / 16 for e in boxmodel.rposition])))
+                                                                     tuple([e / 16 for e in boxmodel.rposition]),
+                                                                     rotation=config["rotation"]))
         return bbox
 
 
@@ -113,10 +114,13 @@ class DefaultDecoder(IBlockStateDecoder):
         bbox = block.BoundingBox.BoundingArea()
         for keymap, blockstate in self.states:
             if keymap == data:
-                model = G.modelhandler.models[blockstate.models[blockinstance.block_state][0]]
+                model, config = blockstate.models[blockinstance.block_state]
+                model = G.modelhandler.models[model]
                 for boxmodel in model.boxmodels:
+                    rotation = config["rotation"]
                     bbox.bboxes.append(block.BoundingBox.BoundingBox(tuple([e / 16 for e in boxmodel.boxsize]),
-                                                                     tuple([e / 16 for e in boxmodel.rposition])))
+                                                                     tuple([e / 16 for e in boxmodel.rposition]),
+                                                                     rotation=rotation))
         return bbox
 
 

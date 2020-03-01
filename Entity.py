@@ -10,8 +10,16 @@ import gui.ItemStack
 
 class Entity:
     """
-    dummy class for every entity
+    dummy class for every entity,
+    only used by the player at the moment
     """
+
+    @classmethod
+    def create_new(cls, position, *args, **kwargs):
+        # todo: implement system to really join world
+        entity = cls(*args, **kwargs)
+        entity.position = position
+        return entity
 
     def __init__(self):
         self.position = (0, 0, 0)
@@ -21,9 +29,17 @@ class Entity:
 
     def tell(self, msg: str): pass
 
-    def kill(self): pass
+    def kill(self):
+        # todo: invalidate uuid
+        # todo: drop items
+        # todo: remove from world
+        pass
 
     def add_to_free_place(self, itemstack: gui.ItemStack.ItemStack) -> bool: pass
 
     def damage(self, damage): pass
+
+    def draw(self): pass  # unused and never called at the moment
+
+    def tick(self): pass  # unused and never called at the moment
 

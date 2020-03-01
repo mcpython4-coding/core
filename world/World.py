@@ -71,7 +71,7 @@ class World:
             How many blocks away to search for a hit.
 
         """
-        m = 20
+        m = G.world.gamerulehandler.table["hitTestSteps"].status.status
         x, y, z = position
         dx, dy, dz = vector
         dx /= m

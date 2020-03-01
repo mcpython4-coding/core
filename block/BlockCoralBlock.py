@@ -18,7 +18,7 @@ class ICoralBlock(block.Block.Block):
 
 @G.registry
 class BrainCoralBlock(ICoralBlock):
-     NAME = "minecraft:brain_coral_block"
+    NAME = "minecraft:brain_coral_block"
 
 
 @G.registry
