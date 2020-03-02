@@ -844,11 +844,12 @@ started these clone on 12th of July, 2019
 [uuk]: added walls, nether brick fence
 [uuk]: improved connection system for fences making "fence groups" possible
 [uuk]: changed the look of fences in BlockItemGenerator
+[uuk]: faces showing to not generated chunks are now hidden
 
 todo: fix top texture of fence & wall not rendering correctly [uv's may be not loaded correctly]
 
-new blocks planned for upcoming snapshot:
-    todo: anvils with inventory, glass pane, iron bars
+new blocks planned for upcoming snapshot(s):
+    todo: glass pane, iron bars
     todo: add an option to direct-draw models, not add them to batches
 
     todo: fix issue 113-119 [if possible]
@@ -861,4 +862,9 @@ new blocks planned for upcoming snapshot:
 
     todo: give every block-instance, every gui, every item instance, ... an unique UUID
     todo: make the player spawn-point random
+
+    todo: reload hotkey command should reload models & blockstates & reactivate BlockItemGenerator over all blocks
+
+    todo: could we not pre-compress all item images created by BlockItemFactory into a set of image files
+    todo: could we compress the index files with pickle to make them smaller or use an nbt library to match mc's coding
 

@@ -14,6 +14,7 @@ import config
 
 
 UV_ORDER = ["up", "down", "north", "east", "south", "west"]
+UV_INDICES = [(0, 1, 2, 3), (0, 1, 2, 3)] + [(0, 1, 2, 3)] * 4   # representative for the order of uv insertion
 
 
 class BoxModel:
@@ -37,8 +38,9 @@ class BoxModel:
                 addr = data["faces"][facename]["texture"]
                 self.faces[util.enums.EnumSide[facename.upper()]] = model.get_texture_position(addr)
                 if "uv" in data["faces"][facename]:
-                    uvfx, uvfy, uvtx, uvty = tuple(data["faces"][facename]["uv"])
-                    self.texregion[UV_ORDER.index(facename)] = (uvfx/16, 1-uvfy/16, uvtx/16, 1-uvty/16)
+                    uvs = tuple(data["faces"][facename]["uv"])
+                    index = UV_ORDER.index(facename)
+                    self.texregion[index] = tuple([uvs[i]/16 for i in UV_INDICES[index]])
 
     def add_to_batch(self, position, batch, rotation, active_faces=None):
         x, y, z = position

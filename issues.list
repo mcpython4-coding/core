@@ -90,4 +90,7 @@ issue 119:
 issue 120:
     bug: when falling into void and trying to die, you do not respawn
 
-[121]
+issue 122:
+    bug: z-fighting at border between two fences
+
+[123]

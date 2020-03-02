@@ -69,6 +69,8 @@ class StateBlockItemGenerator(State.State):
         self.parts[1].size = (w-20, 20)
 
     def on_activate(self):
+        G.world.cleanup()
+        G.world.hide_faces_to_ungenerated_chunks = False
         G.tickhandler.enable_random_ticks = False
         self.tasks = list(G.registry.get_by_name("block").registered_object_map.keys())
         if not os.path.isdir(G.local + "/build/generated_items"): os.makedirs(G.local + "/build/generated_items")
@@ -99,7 +101,7 @@ class StateBlockItemGenerator(State.State):
                                                                      block_update=False)
             if blockinstance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
-                blockinstance.face_state.update()
+            blockinstance.face_state.update()
         except ValueError:
             self.blockindex = 0
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
@@ -120,6 +122,7 @@ class StateBlockItemGenerator(State.State):
         with open(G.local + "/build/info.json", mode="w") as f:
             json.dump({"finished": True}, f)
         G.tickhandler.enable_random_ticks = True
+        G.world.hide_faces_to_ungenerated_chunks = True
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -139,7 +142,7 @@ class StateBlockItemGenerator(State.State):
                                                                      block_update=False)
             if blockinstance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
-                blockinstance.face_state.update()
+            blockinstance.face_state.update()
         except ValueError:
             logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                            "following exception".format(self.tasks[self.blockindex]))

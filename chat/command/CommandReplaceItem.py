@@ -37,7 +37,7 @@ class CommandReplaceItem(chat.command.Command.Command):
         if values[0] == "block":
             block = G.world.get_active_dimension().get_block(values[1])
             if block is not None and type(block) != str:
-                if block.get_inventories() == 0:
+                if len(block.get_inventories()) == 0:
                     G.chat.print_ln("[ERROR] block does not have any inventory")
                     return
                 inventory = block.get_inventories()[0]

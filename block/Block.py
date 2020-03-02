@@ -22,7 +22,7 @@ class Block(event.Registry.IRegistryContent):
 
     BLOCK_ITEM_GENERATOR_STATE = None
 
-    def __init__(self, position, set_to=None, state=None, real_hit=None):
+    def __init__(self, position: tuple, set_to=None, real_hit=None, state=None):
         """
         creates new Block
         :param position: the position to create the block on
@@ -63,7 +63,7 @@ class Block(event.Registry.IRegistryContent):
         called when an near-by block-position is updated by setting/removing an block
         """
 
-    def is_solid_side(self, side) -> bool:
+    def is_solid_side(self, side) -> bool:  # todo: make attribute
         """
         :param side: the side that is asked for
         :return: if the side is solid or not
@@ -77,7 +77,7 @@ class Block(event.Registry.IRegistryContent):
     @staticmethod
     def get_all_model_states() -> list: return [{}]  # todo: make attribute
 
-    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:  # todo: include the player
         return False
 
     def get_hardness(self):  # todo: make attribute

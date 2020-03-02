@@ -64,10 +64,12 @@ class Chunk:
         for face in util.enums.EnumSide.iterate():
             dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)
-            block = self.dimension.get_block(pos)
-            if not (block and (block.is_solid_side(face) if type(block) != str else G.registry.get_by_name("block").
-                    registered_object_map[block].is_solid_side(None, face))):
-                return True
+            chunk = self.dimension.get_chunk_for_position(pos, generate=False)
+            if chunk.generated:
+                block = self.dimension.get_block(pos)
+                if not (block and (block.is_solid_side(face) if type(block) != str else G.registry.get_by_name("block").
+                        registered_object_map[block].is_solid_side(None, face))):
+                    return True
         return False
 
     def exposed_faces(self, position):
@@ -78,12 +80,16 @@ class Chunk:
         for face in util.enums.EnumSide.iterate():
             dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)
-            block = self.dimension.get_block(pos)
-            if block is None: faces[face] = True
-            elif type(block) == str: faces[face] = False  # todo: add an callback when the block is ready
-            elif not block.is_solid_side(face.invert()): faces[face] = True
-            elif not blockinst.is_solid_side(face): faces[face] = True
-            else: faces[face] = False
+            chunk = self.dimension.get_chunk_for_position(pos, generate=False)
+            if not chunk.generated and G.world.hide_faces_to_ungenerated_chunks:
+                faces[face] = False
+            else:
+                block = self.dimension.get_block(pos)
+                if block is None: faces[face] = True
+                elif type(block) == str: faces[face] = False  # todo: add an callback when the block is ready
+                elif not block.is_solid_side(face.invert()): faces[face] = True
+                elif not blockinst.is_solid_side(face): faces[face] = True
+                else: faces[face] = False
         return faces
 
     def add_add_block_gen_task(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[],
