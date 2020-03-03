@@ -14,7 +14,7 @@ import item.ItemTool
 
 @G.registry
 class BlockCraftingTable(Block.Block):
-    inventory = None
+    inventory = None  # todo: move to player to make multi-player possible
 
     NAME = "minecraft:crafting_table"
 
@@ -33,9 +33,6 @@ class BlockCraftingTable(Block.Block):
 
     def get_hardness(self):
         return 2.5
-
-    def get_minimum_tool_level(self):
-        return 0
 
     def get_best_tools(self):
         return [item.ItemTool.ToolType.AXE]

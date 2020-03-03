@@ -176,7 +176,7 @@ started these clone on 12th of July, 2019
 [uuk]: braking & setting blocks is now always when pressing mouse, not only on_press
 [uuk]: added brake-time-attribute to block, gamemode 1 is instant mining
 [uuk]: added events: user:mouse:release, user:mouse:drag
-[uuk]: added setted_to-attribute to Block
+[uuk]: added set_to-attribute to Block
 [github]: started day 13 as 17th of August, 2019
 [uuk]: added some interesting tasks
 [github]: started day 14 as 18th of August, 2019
@@ -388,11 +388,11 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: stone tools were not added
 [uuk]: fixed bug: texture factory was generating without rebuild mode
 [uuk]: fixed bug: in crafting table, first slot was not used for crafting (so some recipes were not working)
-[uuk]: fixed bug: world gen config is not resetted correctly
+[uuk]: fixed bug: world gen config is not reset correctly
 [uuk]: hitcheck will now be every 0,05 blocks an check, not every 0,125 blocks, maybe fixing #7
-[uuk]: fixed bug: when opening the crafting table with an block in hand, it was setted to the block
+[uuk]: fixed bug: when opening the crafting table with an block in hand, it was set to the block
 [uuk]: slot where mouse is on is now highlighted
-[uuk]: fixed bug: copy of hotbar slots in main inventory & slot of crafting table where offsetted by one pixel
+[uuk]: fixed bug: copy of hotbar slots in main inventory & slot of crafting table where offset by one pixel
 [uuk]: added empty slot image option (used for armor slots & offhand slot)
 [uuk]: added info lable for what is hold in hand over the hotbar
 [uuk]: changed caption from "Pyglet" to "mcpython 4"
@@ -400,7 +400,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: when build-folder does not exists, rebuild were not possible
 [uuk]: BlockItemFactory is now part of the prebuild system
 [uuk]: added new command: "/iteminfo [hand/inventory/item <itemname>/block inventory <position>]" which gives info about items
-[uuk]: fixed bug: when has_block flag is setted for ItemFactory-file, block name is not defaulted to item name
+[uuk]: fixed bug: when has_block flag is set for ItemFactory-file, block name is not defaulted to item name
 [uuk]: added inventory-getter to block
 [uuk]: items will now be using an TextureAtlas for holding all the item images. this will be generated only when in
        rebuild mode
@@ -490,7 +490,7 @@ started these clone on 12th of July, 2019
 [uuk]: InventoryPlayerMain requires now an InventoryPlayerHotbar-instance to create
 [uuk]: moved pre-build to post-window-create as an loading phase
 [uuk]: moved item atlas loading to resource-loading phase
-[uuk]: fixed bug: when errors occure with texture side loading, game crashes when block is setted
+[uuk]: fixed bug: when errors occure with texture side loading, game crashes when block is set
 [uuk]: changed intern ResourceLocation-lookup to be reverse-ordered to make adding mods easier
 [uuk]: with "--addmoddir <moddir>" you can add custom mod directories
 [uuk]: with "--addmodfile <modfile>" you can add custom mods from other locations
@@ -498,7 +498,7 @@ started these clone on 12th of July, 2019
 [uuk]: added dimension registry
 [uuk]: fixed bug: BiomeHandler was only loaded by WorldGenBiomeLayer which can end in some strange behaviour
 [uuk]: fixed bug: mods where not loaded
-[uuk]: fixed bug: loading bar was offsetted
+[uuk]: fixed bug: loading bar was offset
 [uuk]: reworked recipe loading to support mod-based injection from outer files (based on mod name)
 [uuk]: fixed bug: duplicate mod message was using "{}" in output rather than the real mod name
 [uuk]: fixed bug: mod sorter uses library rather than util.math

@@ -26,7 +26,7 @@ class Block(event.Registry.IRegistryContent):
         """
         creates new Block
         :param position: the position to create the block on
-        :param set_to: when the block is setted to an block, these parameter contains where
+        :param set_to: when the block is set to an block, these parameter contains where
         :param real_hit: were the block the user set to was hit on
         """
         self.position = position
