@@ -26,6 +26,7 @@ ENTRYS = {}
 
 
 for file in ResourceLocator.get_all_entries_special("assets/config/block"):
+    if file.endswith("/"): continue
     name = file.split("/")[-1].split(".")[0]
     if name not in ENTRYS: ENTRYS[name] = BlockConfigEntry(name)
     ENTRYS[name].add_data(ResourceLocator.read(file, mode="json"))

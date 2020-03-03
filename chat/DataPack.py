@@ -101,7 +101,7 @@ class DataPack:
                 logger.println("[DATAPACK][ERROR] datapack version '{}' can't be loaded".format(info["pack_format"]))
                 return
             self.description = info["description"]
-            for file in self.access.get_all_entrys_in_directory("data"):
+            for file in self.access.get_all_entries_in_directory("data"):
                 if file.endswith("/"): continue
                 split = file.split("/")
                 if "function" in file:

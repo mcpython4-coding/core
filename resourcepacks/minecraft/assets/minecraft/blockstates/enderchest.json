@@ -1,8 +1,0 @@
-{
-    "variants": {
-        "side=NORTH": { "model": "block/chest_ender" },
-        "side=SOUTH": { "model": "block/chest_ender", "y": 180 },
-        "side=WEST":  { "model": "block/chest_ender", "y": 270 },
-        "side=EAST":  { "model": "block/chest_ender", "y": 90 }
-    }
-}

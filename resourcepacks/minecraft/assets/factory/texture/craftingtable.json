@@ -1,9 +1,0 @@
-{
-  "images": ["gui/container/crafting_table"],
-  "space": 1,
-  "transforms": [
-    {"mode": "cut", "image": 0, "store": 1, "area": [0, 0, 176, 166]},
-    {"mode": "resize", "image": 1, "store": 1, "size": [352, 332]}
-  ],
-  "store": [{"id": 1, "location": "gui/crafting_table.png"}]
-}
