@@ -110,3 +110,6 @@ issue 112: BLOCK_ITEM_GENERATOR_STATE-attribute of block is ignored; fixed on: 2
 issue 121: player can't die correctly; fixed on: 01.03.2020 by uuk; caused by: Entity-dummy-class implementation
 issue 123: /replaceitem did crash when using on an non-inventory providing slot; fixed on: 02.03.2020 by uuk
 issue 124: carpet block was giving not the item back when the block under it is removed; fixed on: 03.03.2020 by uuk
+issue 125: when generating chunks in runtime, blocks are not shown until update; fixed on: 03.03.2020 by uuk; caused
+           by: implementation of face-hiding to not generated chunks; this chunks are marked as generated when
+           generation finished

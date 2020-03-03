@@ -845,6 +845,7 @@ started these clone on 12th of July, 2019
 [uuk]: improved connection system for fences making "fence groups" possible
 [uuk]: changed the look of fences in BlockItemGenerator
 [uuk]: faces showing to not generated chunks are now hidden
+[uuk]: fixed issue 125
 
 todo: fix top texture of fence & wall not rendering correctly [uv's may be not loaded correctly]
 

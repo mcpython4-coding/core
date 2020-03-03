@@ -65,7 +65,7 @@ class Chunk:
             dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)
             chunk = self.dimension.get_chunk_for_position(pos, generate=False)
-            if chunk.generated:
+            if chunk.loaded:
                 block = self.dimension.get_block(pos)
                 if not (block and (block.is_solid_side(face) if type(block) != str else G.registry.get_by_name("block").
                         registered_object_map[block].is_solid_side(None, face))):
@@ -81,7 +81,7 @@ class Chunk:
             dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)
             chunk = self.dimension.get_chunk_for_position(pos, generate=False)
-            if not chunk.generated and G.world.hide_faces_to_ungenerated_chunks:
+            if not chunk.loaded and G.world.hide_faces_to_ungenerated_chunks:
                 faces[face] = False
             else:
                 block = self.dimension.get_block(pos)
