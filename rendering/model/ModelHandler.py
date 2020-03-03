@@ -100,6 +100,13 @@ class ModelHandler:
             return self.blockstates["minecraft:missing_texture"].add_face_to_batch(block, batches, face)
         return blockstate.add_face_to_batch(block, batches, face)
 
+    def draw_face(self, block, face):
+        blockstate = self.blockstates[block.NAME]
+        # todo: add custom block renderer check
+        if blockstate is None:
+            self.blockstates["minecraft:missing_texture"].draw_face(block, face)
+        blockstate.draw_face(block, face)
+
 
 G.modelhandler = ModelHandler()
 

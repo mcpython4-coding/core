@@ -70,10 +70,42 @@ class BoxModel:
                                         ('t2f/static', t)))
         return result
 
+    def draw(self, position, rotation, active_faces=None):
+        x, y, z = position
+        x += self.boxposition[0] - 0.5 + self.rposition[0]
+        y += self.boxposition[1] - 0.5 + self.rposition[1]
+        z += self.boxposition[2] - 0.5 + self.rposition[2]
+        up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
+                                                            for x in util.enums.EnumSide.iterate()])
+        deactive = [x[0] == (0, 0) or x is None for x in array]
+        rtextures = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
+                                         tex_region=self.texregion)
+        vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
+                                         [True] * 6)
+        # todo: can we cache this -> better performance?
+        vertex_r = [util.math.rotate_point(vertex[i * 3:i * 3 + 3], position, rotation) for i in
+                    range(len(vertex) // 3)]
+        vertex.clear()
+        for element in vertex_r: vertex.extend(element)
+        for i in range(6):
+            if active_faces is None or (active_faces[i] if type(active_faces) == list else (
+                    i not in active_faces or active_faces[i])):
+                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and deactive[i]: continue
+                t = rtextures[i * 8:i * 8 + 8]
+                v = vertex[i * 12:i * 12 + 12]
+                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),
+                                        ('t2f/static', t))
+
     def add_face_to_batch(self, position, batch, rotation, face):
         if rotation == (90, 90, 0): rotation = (0, 0, 90)
         face = face.rotate(rotation)
         return self.add_to_batch(position, batch, rotation, active_faces={i: x == face for i, x in enumerate(
+            util.enums.EnumSide.iterate())})
+
+    def draw_face(self, position, rotation, face):
+        if rotation == (90, 90, 0): rotation = (0, 0, 90)
+        face = face.rotate(rotation)
+        return self.draw(position, rotation, active_faces={i: x == face for i, x in enumerate(
             util.enums.EnumSide.iterate())})
 
     def copy(self, new_model=None):

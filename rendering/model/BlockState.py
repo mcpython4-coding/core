@@ -35,6 +35,9 @@ class IBlockStateDecoder(event.Registry.IRegistryContent):
 
     def transform_to_hitbox(self, block): raise NotImplementedError()
 
+    def draw_face(self, block, face):
+        pass
+
 
 blockstatedecoderregistry = event.Registry.Registry("blockstates", ["minecraft:blockstate"])
 
@@ -80,6 +83,13 @@ class MultiPartDecoder(IBlockStateDecoder):
                                                                      rotation=config["rotation"]))
         return bbox
 
+    def draw_face(self, block, face):
+        state = block.get_model_state()
+        for entry in self.data["multipart"]:
+            if "when" not in entry or self._test_for(state, entry["when"]):
+                model, config = BlockState.decode_entry(entry["apply"])
+                G.modelhandler.models[model].draw_face(block.position, config, face)
+
 
 @G.registry
 class DefaultDecoder(IBlockStateDecoder):
@@ -122,6 +132,12 @@ class DefaultDecoder(IBlockStateDecoder):
                                                                      tuple([e / 16 for e in boxmodel.rposition]),
                                                                      rotation=rotation))
         return bbox
+
+    def draw_face(self, block, face):
+        data = block.get_model_state()
+        for keymap, blockstate in self.states:
+            if keymap == data:
+                blockstate.draw_face(block, face)
 
 
 """
@@ -194,6 +210,8 @@ class BlockStateDefinition:
 
     def add_face_to_batch(self, block, batch, face): return self.loader.add_face_to_batch(block, batch, face)
 
+    def draw_face(self, block, face): self.loader.draw_face(block, face)
+
 
 class BlockState:
     def __init__(self, data):
@@ -224,6 +242,14 @@ class BlockState:
             raise ValueError("can't find model named '{}' to add at {}".format(model, block.position))
         result += G.modelhandler.models[model].add_face_to_batch(block.position, batch, config, face)
         return result
+
+    def draw_face(self, block, face):
+        if block.block_state is None:
+            block.block_state = random.randint(1, len(self.models)) - 1
+        model, config = self.models[block.block_state]
+        if model not in G.modelhandler.models:
+            raise ValueError("can't find model named '{}' to draw at {}".format(model, block.position))
+        G.modelhandler.models[model].draw_face(block.position, config, face)
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,

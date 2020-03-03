@@ -847,10 +847,10 @@ started these clone on 12th of July, 2019
 [uuk]: faces showing to not generated chunks are now hidden
 [uuk]: fixed issue 125, 126
 [uuk]: changed the way how the extra assets are stored
+[uuk]: added draw()-method to BoxModel, BlockState, Model and ModelHandler
 
 new blocks planned for upcoming snapshot(s):
     todo: glass pane, iron bars
-    todo: add an option to direct-draw models, not add them to batches
     todo: re-implement custom renderers or implement an IBlockRenderer class, an IBatchBlockRenderer and
         IDynamicBlockRenderer providing the draw, show and hide functions
 

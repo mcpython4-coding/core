@@ -52,6 +52,11 @@ class Model:
             data += boxmodel.add_face_to_batch(position, batch, config["rotation"], face)
         return data
 
+    def draw_face(self, position, config, face):
+        if not self.drawable: raise NotImplementedError("can't draw an model which has not definined textures")
+        for boxmodel in self.boxmodels:
+            boxmodel.draw_face(position, config["rotation"], face)
+
     def get_texture_position(self, name: str) -> tuple:
         if not self.drawable: return 0, 0
         if name in self.texture_addresses: return self.texture_addresses[name]
