@@ -845,14 +845,14 @@ started these clone on 12th of July, 2019
 [uuk]: improved connection system for fences making "fence groups" possible
 [uuk]: changed the look of fences in BlockItemGenerator
 [uuk]: faces showing to not generated chunks are now hidden
-[uuk]: fixed issue 125
+[uuk]: fixed issue 125, 126
 [uuk]: changed the way how the extra assets are stored
-
-todo: fix top texture of fence & wall not rendering correctly [uv's may be not loaded correctly]
 
 new blocks planned for upcoming snapshot(s):
     todo: glass pane, iron bars
     todo: add an option to direct-draw models, not add them to batches
+    todo: re-implement custom renderers or implement an IBlockRenderer class, an IBatchBlockRenderer and
+        IDynamicBlockRenderer providing the draw, show and hide functions
 
     todo: fix issue 113-119 [if possible]
 

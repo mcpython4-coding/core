@@ -14,7 +14,7 @@ import config
 
 
 UV_ORDER = ["up", "down", "north", "east", "south", "west"]
-UV_INDICES = [(0, 1, 2, 3), (0, 1, 2, 3)] + [(0, 1, 2, 3)] * 4   # representative for the order of uv insertion
+UV_INDICES = [(1, 0, 3, 2), (1, 0, 3, 2)] + [(0, 1, 2, 3)] * 4   # representative for the order of uv insertion
 
 
 class BoxModel:
