@@ -9,9 +9,11 @@ import math
 import util.enums
 
 MC_VERSION_BASE = "1.15.2"
-VERSION_TYPE = "dev"
-VERSION_NAME = "20w09a"
-VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a"]  # list of all versions since 19w52a to indicate order
+VERSION_TYPE = "snapshot"
+VERSION_NAME = "20w10a"
+
+# list of all versions since 19w52a to indicate order
+VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a"]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)

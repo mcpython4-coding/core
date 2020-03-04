@@ -857,6 +857,7 @@ started these clone on 12th of July, 2019
 [uuk]: removed time stamp from logs reducing log size
 [uuk]: decreased asset file size by removing sound files
 [uuk]: added config option for fog distance
+[github]: released snapshot 20w10a
 
 new blocks planned for upcoming snapshot(s):
     todo: glass pane, iron bars

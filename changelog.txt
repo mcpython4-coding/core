@@ -1,7 +1,7 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
-changelog of master branch
+changelog of snapshot 20w10a [released on 04.03.2020]
     - updated libraries
     - added datapack support
     - added gamerules
