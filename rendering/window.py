@@ -358,7 +358,9 @@ class Window(pyglet.window.Window):
         glViewport(0, 0, max(1, viewport[0]), max(1, viewport[1]))
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(65.0, width / float(height), 0.1, 60.0)
+
+        # calculate far with rendering distance
+        gluPerspective(65.0, width / float(height), 0.1, config.FOG_DISTANCE+20)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         x, y = self.rotation
@@ -430,10 +432,8 @@ class Window(pyglet.window.Window):
 
     def get_block_entity_info(self):
         import clipboard
-        nx, ny, nz = util.math.normalize(self.position)
-        chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(self.position), create=False)
-        vector = G.window.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
+        vector = self.get_sight_vector()
+        blockpos, previous, hitpos = G.world.hit_test(self.position, vector)
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str: blockname = blockname.NAME

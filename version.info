@@ -848,6 +848,14 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 125, 126
 [uuk]: changed the way how the extra assets are stored
 [uuk]: added draw()-method to BoxModel, BlockState, Model and ModelHandler
+[uuk]: fix issue 127
+[uuk]: TickHandler has now an post-tick array which will execute functions afterwards which should be assigned to the
+       next tick [which may be the active one]. The array storing the functions is an list. Every function is executed
+       on next tick no matter the time needed to execute, the next tick MAY be the active one   1
+[uuk]: State-switching uses now this method
+[uuk]: removed time stamp from logs reducing log size
+[uuk]: decreased asset file size by removing sound files
+[uuk]: added config option for fog distance
 
 new blocks planned for upcoming snapshot(s):
     todo: glass pane, iron bars
@@ -862,11 +870,11 @@ new blocks planned for upcoming snapshot(s):
     todo: fix BoundingBoxes of fences, walls, etc.
     todo: move every G.window.position & G.window.rotation call to G.player.position & G.player.rotation
 
-    todo: give every block-instance, every gui, every item instance, ... an unique UUID
-    todo: make the player spawn-point random
+    todo: give every block-instance, every gui, every item instance, ... an unique UUID for identifying them
+    todo: make the player spawn-point random on every respawn
 
     todo: reload hotkey command should reload models & blockstates & reactivate BlockItemGenerator over all blocks
 
-    todo: could we not pre-compress all item images created by BlockItemFactory into a set of image files
+    todo: could we pre-compress all item images created by BlockItemFactory into a set of image files?
     todo: could we compress the index files with pickle to make them smaller or use an nbt library to match mc's coding
 

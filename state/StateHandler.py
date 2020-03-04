@@ -21,7 +21,7 @@ class StateHandler:
         if immediate:
             self._switch_to(statename)
         else:
-            event.TickHandler.handler.bind(self._switch_to, 1, args=(statename,))
+            event.TickHandler.handler.schedule_once(self._switch_to, statename)
 
     def _switch_to(self, statename):
         if statename not in self.states: return

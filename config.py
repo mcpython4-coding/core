@@ -64,3 +64,5 @@ USE_MISSING_TEXTURES_ON_MISS_TEXTURE = False
 
 CPU_USAGE_REFRESH_TIME = 0.8
 
+FOG_DISTANCE = 60  # something like view distance, but will no force the chunks to generate
+

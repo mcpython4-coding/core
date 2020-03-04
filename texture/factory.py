@@ -63,6 +63,7 @@ class TextureFactory:
     def load(self):
         entries = ResourceLocator.get_all_entries_special("assets/factory/texture")
         for entry in entries:
+            if entry.endswith("/"): continue
             self.apply_from_file(entry)
 
 

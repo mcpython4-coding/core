@@ -11,10 +11,17 @@ import warnings
 
 
 LANGUAGES = {}
-ACTIVE_LANGUAGE = "en_us"  # change this for having another language
+# change this for having another language, you have to include the needed lang files yourself :/
+ACTIVE_LANGUAGE = "en_us"
 
 
 def get(key, formatting=None):
+    """
+    get the translated name for an given key
+    :param key: the key to get
+    :param formatting: an list of formatting to use
+    :return:
+    """
     return LANGUAGES[ACTIVE_LANGUAGE].read_value(key).format(*list(
         formatting) if formatting is not None else [])
 
@@ -63,7 +70,7 @@ def from_directory(directory: str, modname: str):
     for i, f in enumerate(files):
         if f.endswith(".json"):  # new language format
             G.modloader.mods[modname].eventbus.subscribe("stage:language", Language.from_file, f[:],
-                                                         info="loading language file {}".format(f))
+                                                         info="loading language file {} ({}/{})".format(f, i+1, m))
 
 
 def from_mod_name(modname: str): from_directory("assets/{}/lang".format(modname), modname)
@@ -71,7 +78,7 @@ def from_mod_name(modname: str): from_directory("assets/{}/lang".format(modname)
 
 from_mod_name("minecraft")
 
-# todo: move to an load-function over "assets/minecraft/lang" or "minecraft", add support for old format
+# todo: move to an load-function over "assets/minecraft/lang" or "minecraft"
 # todo: make load of only the active language and load others when needed -> reduce RAM usage
 # todo: make an sys.argv option to disable loading & translating
 

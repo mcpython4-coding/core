@@ -28,6 +28,8 @@ class TickHandler:
         self.enable_tick_skipping = False
         self.instant_ticks = False
         self.enable_random_ticks = True
+        # an array of (function, args, kwargs) for functions which should be executed in near future
+        self.execute_array = []
 
     def tick(self, dt):
         """
@@ -50,7 +52,18 @@ class TickHandler:
                     return
         if self.enable_random_ticks:
             pyglet.clock.schedule_once(self.send_random_ticks, 0)
+        while len(self.execute_array) > 0:
+            func, args, kwargs = tuple(self.execute_array.pop(0))
+            func(*args, **kwargs)
         chat.DataPack.datapackhandler.try_call_function("#minecraft:tick")
+
+    def schedule_once(self, function, *args, **kwargs):
+        """
+        Will execute the function in near time. Helps when in an event and need to exchange stuff which might be
+        affected when calling further down the event stack
+        :param function: the function to call
+        """
+        self.execute_array.append((function, args, kwargs))
 
     def bind(self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}):
         """

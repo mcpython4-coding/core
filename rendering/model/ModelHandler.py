@@ -51,7 +51,7 @@ class ModelHandler:
 
     def special_build(self, used):
         if used not in self.found_models:
-            logger.println("model error: can't locate model for {}".format(used))
+            logger.println("model error: can't locate model for '{}'".format(used))
             return
         file = self.found_models[used]
         if type(file) == str:
@@ -89,7 +89,7 @@ class ModelHandler:
                                                                 name.split(":")[0] if name.count(":") == 1 else
                                                                 "minecraft")
         except:
-            logger.println("error during loading model {} named {}".format(location, name))
+            logger.println("error during loading model '{}' named '{}'".format(location, name))
             traceback.print_exc()
             traceback.print_stack()
 
