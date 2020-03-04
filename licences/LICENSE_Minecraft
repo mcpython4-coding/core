@@ -5,3 +5,9 @@ All assets, including these in the directory called minecraft in resourcepacks-f
 licenced under the EULA of mojang found under https://account.mojang.com/documents/minecraft_eula
 
 THIS IS NO OFFICIAL MINECRAFT PRODUCT. THESE PROJECT IS NOT DONE BY MOJANG AND HAS NO CONNECTION TO THEM BESIDE THE ASSETS.
+
+Following changes were made to the minecraft.jar:
+- removed every java code fragments
+- added assets downloaded by minecraft separately to the file
+- changed nether brick fence block state model to match the one of the other fences
+

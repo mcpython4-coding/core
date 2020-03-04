@@ -167,3 +167,28 @@ def topological_sort(items):
 
         items = remaining_items
 
+
+def rotate_point(point, origin, rotation):
+    # code translated from https://stackoverflow.com/questions/13275719/rotate-a-3d-point-around-another-one
+    x, y, z = point
+    ox, oy, oz = origin
+    rx, ry, rz = rotation
+    rx = math.pi * rx / 180
+    ry = math.pi * ry / 180
+    rz = math.pi * rz / 180
+    x -= ox; y -= oy; z -= oz
+
+    nx = x*math.cos(rz) - y*math.sin(rz)
+    ny = x*math.sin(rz) + y*math.cos(rz)
+    x, y = nx, ny
+
+    nx = x * math.cos(ry) - z * math.sin(ry)
+    nz = x * math.sin(ry) + z * math.cos(ry)
+    x, z = nx, nz
+
+    ny = y * math.cos(rx) - z * math.sin(rx)
+    nz = y * math.sin(rx) + z * math.cos(rx)
+    y, z = ny, nz
+
+    return x + ox, y + oy, z + oz
+

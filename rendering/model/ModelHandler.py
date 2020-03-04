@@ -47,11 +47,11 @@ class ModelHandler:
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
         if modname not in G.modloader.mods: modname = "minecraft"
         G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake_prepare", self.special_build, model,
-                                                     info="filtering model {}".format(model))
+                                                     info="filtering model '{}'".format(model))
 
     def special_build(self, used):
         if used not in self.found_models:
-            logger.println("model error: can't locate model for {}".format(used))
+            logger.println("model error: can't locate model for '{}'".format(used))
             return
         file = self.found_models[used]
         if type(file) == str:
@@ -72,7 +72,7 @@ class ModelHandler:
         for x in sorted_models:
             modname = x.split(":")[0] if x.count(":") == 1 else "minecraft"
             G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake", self.load_model, x,
-                                                         info="baking model {}".format(x))
+                                                         info="baking model '{}'".format(x))
 
     def load_model(self, name: str):
         if name in self.models: return
@@ -89,29 +89,30 @@ class ModelHandler:
                                                                 name.split(":")[0] if name.count(":") == 1 else
                                                                 "minecraft")
         except:
-            logger.println("error during loading model {} named {}".format(location, name))
+            logger.println("error during loading model '{}' named '{}'".format(location, name))
             traceback.print_exc()
             traceback.print_stack()
 
     def add_face_to_batch(self, block, face, batches) -> list:
-        blockstate = self.get_block_state_for_block(block)
+        blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
         if blockstate is None:
-            return self.blockstates["minecraft:missing_texture"].get_state_for({})
+            return self.blockstates["minecraft:missing_texture"].add_face_to_batch(block, batches, face)
         return blockstate.add_face_to_batch(block, batches, face)
 
-    def get_block_state_for_block(self, block):
-        blockstatedefinition = self.blockstates[block.NAME]
-        blockstate = blockstatedefinition.get_state_for(block.get_model_state())
-        if not blockstate: return None
-        return blockstatedefinition.get_state_for(block.get_model_state())
+    def draw_face(self, block, face):
+        blockstate = self.blockstates[block.NAME]
+        # todo: add custom block renderer check
+        if blockstate is None:
+            self.blockstates["minecraft:missing_texture"].draw_face(block, face)
+        blockstate.draw_face(block, face)
 
 
 G.modelhandler = ModelHandler()
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, "minecraft",
-                                            info="searching for block models")
+                                            info="searching for block models for minecraft")
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_create", G.modelhandler.search,
                                             info="loading found models")
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake_prepare", G.modelhandler.build,

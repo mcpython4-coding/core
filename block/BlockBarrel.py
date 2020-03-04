@@ -17,6 +17,8 @@ import gui.InventoryBarrel
 
 @G.registry
 class BlockBarrel(Block.Block):
+    NAME = "minecraft:barrel"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.facing = "up"
@@ -31,8 +33,6 @@ class BlockBarrel(Block.Block):
             elif dy > 0: self.facing = "down"
             elif dy < 0: self.facing = "up"
 
-    NAME = "minecraft:barrel"
-
     def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             G.inventoryhandler.show(self.inventory)
@@ -45,9 +45,6 @@ class BlockBarrel(Block.Block):
 
     def get_hardness(self):
         return 2.5
-
-    def get_minimum_tool_level(self):
-        return 0
 
     def get_best_tools(self):
         return [item.ItemTool.ToolType.AXE]
@@ -82,6 +79,7 @@ class BlockBarrel(Block.Block):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_remove(self):
+        if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
         for slot in self.inventory.slots:
             G.player.add_to_free_place(slot.itemstack.copy())
             slot.itemstack.clean()

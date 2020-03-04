@@ -176,7 +176,7 @@ started these clone on 12th of July, 2019
 [uuk]: braking & setting blocks is now always when pressing mouse, not only on_press
 [uuk]: added brake-time-attribute to block, gamemode 1 is instant mining
 [uuk]: added events: user:mouse:release, user:mouse:drag
-[uuk]: added setted_to-attribute to Block
+[uuk]: added set_to-attribute to Block
 [github]: started day 13 as 17th of August, 2019
 [uuk]: added some interesting tasks
 [github]: started day 14 as 18th of August, 2019
@@ -388,11 +388,11 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: stone tools were not added
 [uuk]: fixed bug: texture factory was generating without rebuild mode
 [uuk]: fixed bug: in crafting table, first slot was not used for crafting (so some recipes were not working)
-[uuk]: fixed bug: world gen config is not resetted correctly
+[uuk]: fixed bug: world gen config is not reset correctly
 [uuk]: hitcheck will now be every 0,05 blocks an check, not every 0,125 blocks, maybe fixing #7
-[uuk]: fixed bug: when opening the crafting table with an block in hand, it was setted to the block
+[uuk]: fixed bug: when opening the crafting table with an block in hand, it was set to the block
 [uuk]: slot where mouse is on is now highlighted
-[uuk]: fixed bug: copy of hotbar slots in main inventory & slot of crafting table where offsetted by one pixel
+[uuk]: fixed bug: copy of hotbar slots in main inventory & slot of crafting table where offset by one pixel
 [uuk]: added empty slot image option (used for armor slots & offhand slot)
 [uuk]: added info lable for what is hold in hand over the hotbar
 [uuk]: changed caption from "Pyglet" to "mcpython 4"
@@ -400,7 +400,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed bug: when build-folder does not exists, rebuild were not possible
 [uuk]: BlockItemFactory is now part of the prebuild system
 [uuk]: added new command: "/iteminfo [hand/inventory/item <itemname>/block inventory <position>]" which gives info about items
-[uuk]: fixed bug: when has_block flag is setted for ItemFactory-file, block name is not defaulted to item name
+[uuk]: fixed bug: when has_block flag is set for ItemFactory-file, block name is not defaulted to item name
 [uuk]: added inventory-getter to block
 [uuk]: items will now be using an TextureAtlas for holding all the item images. this will be generated only when in
        rebuild mode
@@ -490,7 +490,7 @@ started these clone on 12th of July, 2019
 [uuk]: InventoryPlayerMain requires now an InventoryPlayerHotbar-instance to create
 [uuk]: moved pre-build to post-window-create as an loading phase
 [uuk]: moved item atlas loading to resource-loading phase
-[uuk]: fixed bug: when errors occure with texture side loading, game crashes when block is setted
+[uuk]: fixed bug: when errors occure with texture side loading, game crashes when block is set
 [uuk]: changed intern ResourceLocation-lookup to be reverse-ordered to make adding mods easier
 [uuk]: with "--addmoddir <moddir>" you can add custom mod directories
 [uuk]: with "--addmodfile <modfile>" you can add custom mods from other locations
@@ -498,7 +498,7 @@ started these clone on 12th of July, 2019
 [uuk]: added dimension registry
 [uuk]: fixed bug: BiomeHandler was only loaded by WorldGenBiomeLayer which can end in some strange behaviour
 [uuk]: fixed bug: mods where not loaded
-[uuk]: fixed bug: loading bar was offsetted
+[uuk]: fixed bug: loading bar was offset
 [uuk]: reworked recipe loading to support mod-based injection from outer files (based on mod name)
 [uuk]: fixed bug: duplicate mod message was using "{}" in output rather than the real mod name
 [uuk]: fixed bug: mod sorter uses library rather than util.math
@@ -812,4 +812,70 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 75, 97
 [uuk]: changed some internals on TextureAtlas system
 [github]: released 20w09a
+[uuk]: updated library pyglet to 1.5.0 and psutil to 5.7.0
+[uuk]: added datapack support with various helper events [the datapacks are stored globally, not per-world]
+[uuk]: added /function command
+[uuk]: fixed issue 103, 104, 105, 106, 107, 108
+[uuk]: removed duplicate draws for label in Slot and SlotCopy
+[uuk]: fixed inconsistent of code in SlotCopy vs. Slot
+[uuk]: added /datapack command; special command: /datapack release for releasing IO access to data packs [will also
+       un-load all datapacks] -> WARNING: behaviour in this case is NOT tested and may be very bad
+[uuk]: DataPack content will now be added to ResourceLocator's system when active
+[uuk]: recipes and tags will be loaded also from DataPacks now
+[uuk]: added reload-system to TagHandler
+[uuk]: function-tag will now be loaded also
+[uuk]: added support to execute function tags; added call for minecraft:tick and minecraft:load tag
+[uuk]: added new commands: /clone, /tell, /msg, /w, /replaceitem
+[uuk]: added dummy entity class; used as base-class for player; made for future support for other entities
+[uuk]: added gamerule system with /gamerule command
+[uuk]: added support for custom block-state loaders, added support for "multipart"-models
+[uuk]: added new loading events: "stage:command:gamerules", "stage:blockstate:register_loaders",
+                                 "stage:block_boundingbox_get"
+[uuk]: added setDefaultModelState-function to BlockFactory
+[uuk]: fixed issue 110
+[uuk]: added exception handle when item-files are not find
+[uuk]: added transform_to_hitbox-function to BoxModel system
+[uuk]: made rotations to models also affect the vertices of the models
+[uuk]: added fences for all wood types
+[uuk]: added function to EnumSide to get the face facing after an rotation
+[uuk]: TextureAtlasGenerator will now NOT add rotated variants to texture atlases
+[uuk]: changed order of block-updates to make sure that the block is removed when block updates for neighbors are called
+[uuk]: added GameRule "hitTestSteps" storing how many steps to use in hit_test of World
+[uuk]: fixed issue 24
+[uuk]: added walls, nether brick fence
+[uuk]: improved connection system for fences making "fence groups" possible
+[uuk]: changed the look of fences in BlockItemGenerator
+[uuk]: faces showing to not generated chunks are now hidden
+[uuk]: fixed issue 125, 126
+[uuk]: changed the way how the extra assets are stored
+[uuk]: added draw()-method to BoxModel, BlockState, Model and ModelHandler
+[uuk]: fix issue 127
+[uuk]: TickHandler has now an post-tick array which will execute functions afterwards which should be assigned to the
+       next tick [which may be the active one]. The array storing the functions is an list. Every function is executed
+       on next tick no matter the time needed to execute, the next tick MAY be the active one   1
+[uuk]: State-switching uses now this method
+[uuk]: removed time stamp from logs reducing log size
+[uuk]: decreased asset file size by removing sound files
+[uuk]: added config option for fog distance
+
+new blocks planned for upcoming snapshot(s):
+    todo: glass pane, iron bars
+    todo: re-implement custom renderers or implement an IBlockRenderer class, an IBatchBlockRenderer and
+        IDynamicBlockRenderer providing the draw, show and hide functions
+
+    todo: fix issue 113-119 [if possible]
+
+    todo: implement possibility to add custom model loaders
+    todo: add tool for creating wall & fence models for mods
+
+    todo: fix BoundingBoxes of fences, walls, etc.
+    todo: move every G.window.position & G.window.rotation call to G.player.position & G.player.rotation
+
+    todo: give every block-instance, every gui, every item instance, ... an unique UUID for identifying them
+    todo: make the player spawn-point random on every respawn
+
+    todo: reload hotkey command should reload models & blockstates & reactivate BlockItemGenerator over all blocks
+
+    todo: could we pre-compress all item images created by BlockItemFactory into a set of image files?
+    todo: could we compress the index files with pickle to make them smaller or use an nbt library to match mc's coding
 

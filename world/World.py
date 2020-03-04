@@ -17,6 +17,7 @@ import world.gen.WorldGenerationHandler
 import state.StatePartGame
 import gui.Inventory
 import random
+import world.GameRule
 
 
 class World:
@@ -28,12 +29,16 @@ class World:
         self.add_dimension(0, {'configname': None})
         self.active_dimension = 0
         self.config = {}
+        self.gamerulehandler = None
         self.reset_config()
         self.CANCEL_DIM_CHANGE = False
+        self.hide_faces_to_ungenerated_chunks = True
 
     def reset_config(self):
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
         G.eventhandler.call("world:reset_config")
+        self.gamerulehandler = world.GameRule.GameRuleHandler(self)
+        self.hide_faces_to_ungenerated_chunks = True
 
     def get_active_dimension(self) -> world.Dimension.Dimension:
         return self.dimensions[self.active_dimension]
@@ -68,7 +73,7 @@ class World:
             How many blocks away to search for a hit.
 
         """
-        m = 20
+        m = G.world.gamerulehandler.table["hitTestSteps"].status.status
         x, y, z = position
         dx, dy, dz = vector
         dx /= m

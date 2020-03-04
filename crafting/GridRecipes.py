@@ -24,7 +24,10 @@ def transform_to_item_stack(item, table: dict) -> list:
                 return []
         return [(itemname, item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
-        entries = G.taghandler.taggroups["items"].tags["#"+item["tag"]].entries
+        try:
+            entries = G.taghandler.taggroups["items"].tags["#"+item["tag"]].entries
+        except:
+            raise ValueError("tag loading issue for recipe transform of {}".format(item))
         for item in entries[:]:
             if item not in G.registry.get_by_name("item").registered_object_map:
                 if item not in G.registry.get_by_name("block").registered_object_map:

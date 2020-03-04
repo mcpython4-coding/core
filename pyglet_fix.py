@@ -5,6 +5,7 @@ original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
+# LICENSE see licenses/LICENSE_pyglet
 import pyglet.event
 
 

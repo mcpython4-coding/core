@@ -24,6 +24,8 @@ class BlockChest(Block.Block):
     now = datetime.now()
     is_christmas = 24 <= now.day <= 26 and now.month == 12
 
+    NAME = "minecraft:chest"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.front_side = util.enums.EnumSide.N
@@ -39,8 +41,6 @@ class BlockChest(Block.Block):
                 self.front_side = util.enums.EnumSide.W
         import gui.InventoryChest
         self.inventory = gui.InventoryChest.InventoryChest()
-
-    NAME = "minecraft:chest"
 
     def can_open_inventory(self) -> bool:
         x, y, z = self.position
@@ -59,9 +59,6 @@ class BlockChest(Block.Block):
 
     def get_hardness(self):
         return 2.5
-
-    def get_minimum_tool_level(self):
-        return 0
 
     def get_best_tools(self):
         return [item.ItemTool.ToolType.AXE]
@@ -99,6 +96,7 @@ class BlockChest(Block.Block):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_remove(self):
+        if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
         for slot in self.inventory.slots:
             G.player.add_to_free_place(slot.get_itemstack().copy())
             slot.get_itemstack().clean()

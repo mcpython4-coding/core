@@ -184,6 +184,11 @@ class BlockFactory:
         self.custommodelstatefunction = function
         return self
 
+    def setDefaultModelState(self, state: dict):
+        def get_state(*_): return state
+        self.setCustomModelStateFunction(get_state)
+        return self
+
     def setAllModelStateInfo(self, modelstates):
         self.modelstates = modelstates
         return self

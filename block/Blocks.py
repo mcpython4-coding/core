@@ -50,13 +50,13 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:packed_ice").setSpeedMultiplier(1.8).setAllSideSolid(
         False).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:frosted_ice").setSpeedMultiplier(1.4).\
-        setCustomModelStateFunction(lambda _: {"age": "0"}).setAllSideSolid(False).finish()
+        setDefaultModelState({"age": "0"}).setAllSideSolid(False).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:blue_ice").setSpeedMultiplier(2.2).setAllSideSolid(
         False).finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:pumpkin").finish()
-    factory.BlockFactory.BlockFactory().setName("minecraft:carved_pumpkin").setCustomModelStateFunction(
-        lambda _: {"facing": "north"}).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:carved_pumpkin").setDefaultModelState(
+        {"facing": "north"}).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:melon").finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:glass").setAllSideSolid(False).finish()
@@ -120,7 +120,7 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:redstone_block").setHardness(5).setBestTools(
         [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:redstone_ore").setHardness(3).setBestTools([ToolType.PICKAXE]).\
-        setMinimumToolLevel(4).setCustomModelStateFunction(lambda *args: {"lit": "false"}).finish()  # minimum: iron
+        setMinimumToolLevel(4).setDefaultModelState({"lit": "false"}).finish()  # minimum: iron
     factory.BlockFactory.BlockFactory().setName("minecraft:quartz_block").setHardness(0.8).setBestTools(
         [ToolType.PICKAXE]).setMinimumToolLevel(1).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:chiseled_quartz_block").setHardness(0.8).setBestTools(

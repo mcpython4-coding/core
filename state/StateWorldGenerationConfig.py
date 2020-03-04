@@ -16,6 +16,7 @@ import random
 import mod.ModMcpython
 import state.StatePartConfigBackground
 import logger
+import chat.DataPack
 
 
 class StateWorldGenerationConfig(State.State):
@@ -50,7 +51,9 @@ class StateWorldGenerationConfig(State.State):
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")
 
-    def on_generate_press(self, x, y):
+    def on_generate_press(self, x, y): self.generate()
+
+    def generate(self):
         G.world.cleanup(remove_dims=True)
         G.dimensionhandler.init_dims()
         sx = self.parts[7].entered_text; sx = 3 if sx == "" else int(sx)
@@ -85,6 +88,8 @@ class StateWorldGenerationConfig(State.State):
             self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
         G.player.name = self.parts[6].entered_text
         if G.player.name == "": G.player.name = "unknown"
+        chat.DataPack.datapackhandler.reload()
+        chat.DataPack.datapackhandler.try_call_function("#minecraft:load")
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
         G.eventhandler.call("on_game_enter")
 

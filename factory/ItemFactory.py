@@ -63,7 +63,7 @@ class ItemFactory:
         class baseclass(object): pass
 
         if self.itemfile is None:
-            self.itemfile = "item/"+self.name.split(":")[1]
+            self.itemfile = "{}:item/{}".format(*self.name.split(":"))
             if self.itemfile not in self.used_itemfiles:
                 self.used_itemfiles.append(self.itemfile)
         if self.blockname is None and self.has_block:

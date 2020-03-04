@@ -40,7 +40,7 @@ class IResourceLocation:
 
     def close(self): pass
 
-    def get_all_entrys_in_directory(self, directory: str) -> list: raise NotImplementedError()
+    def get_all_entries_in_directory(self, directory: str) -> list: raise NotImplementedError()
 
 
 class ResourceZipFile(IResourceLocation):
@@ -71,7 +71,7 @@ class ResourceZipFile(IResourceLocation):
     def close(self):
         self.archive.close()
 
-    def get_all_entrys_in_directory(self, directory: str, go_sub=False) -> list:
+    def get_all_entries_in_directory(self, directory: str, go_sub=True) -> list:
         result = []
         for entry in self.archive.namelist():
             if entry.startswith(directory):
@@ -104,7 +104,7 @@ class ResourceDirectory(IResourceLocation):
         if mode == "pyglet":
             return util.texture.to_pyglet_image(self.read(filename, "pil"))
 
-    def get_all_entrys_in_directory(self, directory: str) -> list:
+    def get_all_entries_in_directory(self, directory: str) -> list:
         if not os.path.isdir(self.path + "/" + directory): return []
         file_list = []
         for root, dirs, files in os.walk(self.path+"/"+directory):
@@ -124,7 +124,7 @@ RESOURCE_LOCATIONS = []
 def load_resource_packs():
     close_all_resources()
     for file in os.listdir(G.local+"/resourcepacks"):
-        if file in ["{}.jar".format(config.MC_VERSION_BASE), "minecraft"]: continue
+        if file in ["{}.jar".format(config.MC_VERSION_BASE), "minecraft.zip"]: continue
         file = G.local+"/resourcepacks/" + file
         flag = True
         for source in RESOURCE_PACK_LOADERS:
@@ -147,7 +147,7 @@ def load_resource_packs():
             i += 1
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
     RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(config.MC_VERSION_BASE)))
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resourcepacks/minecraft"))  # the special extension dir
+    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/minecraft.zip"))  # the special extension file
     G.eventhandler.call("resources:load")
 
 
@@ -200,7 +200,11 @@ def read(file, mode=None):
         file = "|".join(data[1:])
         for x in RESOURCE_LOCATIONS:
             if x.path == resource:
-                return x.read(file, mode)
+                try:
+                    return x.read(file, mode)
+                except json.JSONDecodeError:
+                    print("json error in file {}".format(file))
+                    raise
         raise RuntimeError("can't find resource named {}".format(resource))
     if not exists(file, transform=False):
         file = transform_name(file)
@@ -223,7 +227,7 @@ def get_all_entries(directory: str) -> list:
     loc = RESOURCE_LOCATIONS
     loc.reverse()
     for x in loc:
-        result += x.get_all_entrys_in_directory(directory)
+        result += x.get_all_entries_in_directory(directory)
     return list(set(result))
 
 
@@ -235,7 +239,7 @@ def get_all_entries_special(directory: str) -> list:
     """
     result = []
     for x in RESOURCE_LOCATIONS:
-        result += ["@{}|{}".format(x.path, s) for s in x.get_all_entrys_in_directory(directory)]
+        result += ["@{}|{}".format(x.path, s) for s in x.get_all_entries_in_directory(directory)]
     return result
 
 

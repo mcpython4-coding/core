@@ -28,6 +28,11 @@ crafting:
 
 registry:
     "registry:{registry name}:on_object_register": called when an object is registered
+    "datapack:load": called when an new datapack is loaded with the datapack object
+    "datapack:unload:pre": called before datapacks are unloaded
+    "datapack:unload:post": called after the datapacks were unloaded
+    "datapack:reload": called after the datapack system was reloaded
+    "datapack:search": called when it is searched for datapacks
 
 inventory:
     "inventory:show": called by InventoryHandler with the inventory if its shown

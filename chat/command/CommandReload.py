@@ -11,6 +11,7 @@ from chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
 import event.TickHandler
 import event.EventHandler
 import gc
+import chat.DataPack
 
 
 @G.registry
@@ -36,11 +37,12 @@ class CommandReload(chat.command.Command.Command):
         cls.CANCEL_RELOAD = False
         G.eventhandler.call("command:reload:start")
         if cls.CANCEL_RELOAD: return
-        G.craftinghandler.reload_crafting_recipes()
-        G.inventoryhandler.reload_config()
-        event.TickHandler.handler.bind(G.window.reset_caption, 20)
+        chat.DataPack.datapackhandler.reload()  # reloads all data packs
+        G.taghandler.reload()  # reloads all tags
+        G.craftinghandler.reload_crafting_recipes()  # reloads all recipes
+        G.inventoryhandler.reload_config()  # reloads inventory configuration
         G.eventhandler.call("command:reload:end")
-        gc.collect()
+        gc.collect()  # make sure that memory was cleaned up
 
     @staticmethod
     def get_help() -> list:

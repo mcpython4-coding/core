@@ -190,7 +190,7 @@ def load():
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
             entry = entrylist[start]
-            for selector in G.registry.get_by_name("command").selectors:
+            for selector in G.registry.get_by_name("command").selector:
                 if selector.is_valid(entry):  # is this the selector we are searching for?
                     return start + 1, selector.parse(entry, info) 
 
@@ -198,7 +198,7 @@ def load():
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             entry = entrylist[start]
             # have we any valid selector?
-            return any([x.is_valid(entry) for x in G.registry.get_by_name("command").selectors])
+            return any([x.is_valid(entry) for x in G.registry.get_by_name("command").selector])
         
     @G.registry
     class PositionEntry(CommandEntry):

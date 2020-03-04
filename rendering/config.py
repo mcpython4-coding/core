@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 from pyglet.gl import *
+import config
 
 
 def setup_fog():
@@ -23,9 +24,8 @@ def setup_fog():
     glFogi(GL_FOG_MODE, GL_LINEAR)
     # How close and far away fog starts and ends. The closer the start and end,
     # the denser the fog in the fog range.
-    glFogf(GL_FOG_START, 20.0)
-    glFogf(GL_FOG_END, 60.0)
-    # todo: add option for sight range and add to this
+    glFogf(GL_FOG_START, config.FOG_DISTANCE)
+    glFogf(GL_FOG_END, 40.0+config.FOG_DISTANCE)
 
 
 def setup():

@@ -1,9 +1,0 @@
-{
-    "parent": "block/chest",
-    "textures": {
-        "up": "build/texture/blocks/chest/chest_ender_top.png",
-        "side": "build/texture/blocks/chest/chest_ender_side.png",
-        "down": "build/texture/blocks/chest/chest_ender_top.png",
-        "front": "build/texture/blocks/chest/chest_ender_front.png"
-    }
-}

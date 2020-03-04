@@ -158,7 +158,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
                 self.active_recipe = None
             self.update_output()
 
-    def on_output_shift_click(self, x, y, button, modifiers):
+    def on_output_shift_click(self, slot, x, y, button, modifiers):
         if not self.active_recipe: return
         min_item_count = None
         max_item_count = 0

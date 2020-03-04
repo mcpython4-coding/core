@@ -240,7 +240,8 @@ class Window(pyglet.window.Window):
                         G.window.flying = False
                         if G.player.gamemode in (0, 2) and G.player.fallen_since_y is not None:
                             dy = G.player.fallen_since_y - G.window.position[1] - 3
-                            if dy > 0: G.player.damage(dy)
+                            if dy > 0 and G.world.gamerulehandler.table["fallDamage"].status.status:
+                                G.player.damage(dy)
                             G.player.fallen_since_y = None
                     if not chunk.generated and G.world.config["enable_auto_gen"]:
                         G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
@@ -357,7 +358,9 @@ class Window(pyglet.window.Window):
         glViewport(0, 0, max(1, viewport[0]), max(1, viewport[1]))
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(65.0, width / float(height), 0.1, 60.0)
+
+        # calculate far with rendering distance
+        gluPerspective(65.0, width / float(height), 0.1, config.FOG_DISTANCE+20)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         x, y = self.rotation
@@ -397,6 +400,8 @@ class Window(pyglet.window.Window):
         """
         x, y, z = self.position
         nx, ny, nz = util.math.normalize(self.position)
+        if not G.world.gamerulehandler.table["showCoordinates"].status.status:
+            x = y = z = "?"
         chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(self.position), create=False)
         self.label.text = '%02d (%.2f, %.2f, %.2f), gamemode %01d' % (
             pyglet.clock.get_fps(), x, y, z, G.player.gamemode)
@@ -405,7 +410,8 @@ class Window(pyglet.window.Window):
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str: blockname = blockname.NAME
-            self.label2.text = "block {} at {}".format(blockname, blockpos)
+            self.label2.text = "block {} at {}".format(blockname, blockpos if not G.world.gamerulehandler.table[
+                "showCoordinates"].status.status else ("?", "?", "?"))
             self.label2.draw()
             self.label3.y = self.height - 34
         else:
@@ -426,10 +432,8 @@ class Window(pyglet.window.Window):
 
     def get_block_entity_info(self):
         import clipboard
-        nx, ny, nz = util.math.normalize(self.position)
-        chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(self.position), create=False)
-        vector = G.window.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
+        vector = self.get_sight_vector()
+        blockpos, previous, hitpos = G.world.hit_test(self.position, vector)
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str: blockname = blockname.NAME

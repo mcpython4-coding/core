@@ -17,12 +17,8 @@ issue 23:
     bug: when sand is falling, it can fall more than 1 block at a time, see issue 22 for reproducing
     possible reason: fall is active two times in TickHandler
 
-issue 24:
-    bug: hit-box of blocks are at the corners not working [see fogleman #104]
-    possible fix: rework whole hit-box system (of blocks) [AABBs?]
-
 issue 28:
-    bug: F3+A does not reload the world correctly
+    bug: F3+A - hot-key does not reload the world correctly
     since: unknown, found after fixing issue 19 & implementing hot-keys
     possible fix: rewrite this part of Chunk's method's
 
@@ -45,15 +41,6 @@ issue 55:
 issue 80:
     bug: in some cases, mouse button up is still not handled
 
-issue 95: [may be fixed on 20.02.2020 during registry change; Please test and mark as fixed]
-    bug: in some cases, blocks are added double in debug world
-    found: during testing mod block system loading, maybe when new during not pre-build phase
-    possible fix: make sure that every block is added ones into debug world list
-    better fix: find reason for duplication
-    even better fix: add an IRegisterAble-object base class containing an NAME attribute and an TYPE attribute,
-       change event.Registry to register this types, add an option to override existing objects, otherwise add error msg
-       and crash. Make sure that it is past-compatible
-
 issue 96:
     bug: SlotCopy does not always work correctly
     possible fix: rewrite SlotCopy
@@ -66,8 +53,44 @@ issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
 
-[101]
-
 issue 102:
     bug: when re-building, carved pumpkin can't be build correct due to same image as pumpkin
-    fix: add rotated image
+    fix: add rotated state
+
+issue 109:
+    bug: when closing main inventory after crafting [SHIFT-crafting], output is duplicated
+
+issue 113:
+    bug: "uv-lock"-parameter is ignored in block-states
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 114:
+    bug: "OR"-option in multipart model is ignored
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 115:
+    bug: the system does NOT pick in multipart from the list of models
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 116:
+    bug: model picking from array in blockstates does not use "weight"-attribute
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 117:
+    bug: block models ignore rotation parameter for elements
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 118:
+    bug: block models ignore rescale parameter in elements
+    fix: implement [see https://minecraft.gamepedia.com/Model]
+
+issue 119:
+    bug: faces which are not specified are rendered with missing-texture
+
+issue 120:
+    bug: when falling into void and trying to die, you do not respawn
+
+issue 122:
+    bug: z-fighting at border between two fences
+
+[123 - 127]

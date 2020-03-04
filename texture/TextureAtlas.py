@@ -24,15 +24,11 @@ class TextureAtlasGenerator:
     def add_image(self, image: PIL.Image.Image, modname: str) -> tuple:
         if modname not in self.atlases: self.atlases[modname] = [TextureAtlas()]
         image = image.crop((0, 0, image.size[0], image.size[0]))
-        images = [image]
-        for _ in range(3):
-            images.append(images[-1].rotate(90))
-        m_size = max(images, key=lambda a: a.size[0] * a.size[1]).size
         for atlas in self.atlases:
-            if atlas.image_size == m_size:
+            if atlas.image_size == image.size:
                 return atlas.add_image(image), atlas
         self.atlases[modname].append(TextureAtlas())
-        return tuple([self.atlases[-1].add_image(i) for i in images]), self.atlases[-1]
+        return self.atlases[modname][-1].add_image(image), self.atlases[-1]
 
     def add_image_file(self, file: str, modname: str) -> tuple:
         return self.add_image(ResourceLocator.read(file, "pil"), modname)
@@ -43,21 +39,13 @@ class TextureAtlasGenerator:
             return [self.add_image(x, modname) for x in images]
         if modname not in self.atlases: self.atlases[modname] = [TextureAtlas()]
         images = [image.crop((0, 0, image.size[0], image.size[0])) for image in images]
-        rimages = []
-        for image in images:
-            r = [image]
-            for _ in range(3):
-                r.append(r[-1].rotate(90))
-            rimages.append(r)
-        sum_images = []
-        [sum_images.extend(x) for x in rimages]
-        m_size = max(sum_images, key=lambda a: a.size[0] * a.size[1]).size
+        m_size = max(images, key=lambda a: a.size[0] * a.size[1]).size
         for atlas in self.atlases[modname]:
             if atlas.image_size == m_size:
-                return [([atlas.add_image(image) for image in imagel], atlas) for imagel in rimages]
+                return [(atlas.add_image(image), atlas) for image in images]
         atlas = TextureAtlas()
         self.atlases[modname].append(atlas)
-        return [([atlas.add_image(image) for image in imagel], atlas) for imagel in rimages]
+        return [(atlas.add_image(image), atlas) for image in images]
 
     def add_image_files(self, files: list, modname: str, one_atlased=True) -> list:
         return self.add_images([ResourceLocator.read(x, "pil") for x in files], modname, one_atlased=one_atlased)

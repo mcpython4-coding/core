@@ -165,10 +165,11 @@ class StatePartGame(StatePart.StatePart):
                 elif G.player.gamemode == 0:
                     if self.mouse_press_time >= self.braketime:
                         itemstack = gui.ItemStack.ItemStack(block.NAME if type(block) != str else block)
-                        block = chunk.get_block(blockpos)
                         if block: block.on_request_item_for_block(itemstack)
-                        G.player.add_to_free_place(itemstack)
+                        if G.world.gamerulehandler.table["doTileDrops"].status.status:
+                            G.player.add_to_free_place(itemstack)
                         chunk.remove_block(blockpos)
+                        chunk.on_block_updated(blockpos)
                         chunk.check_neighbors(blockpos)
                 # todo: check if breakable in gamemode 2
 
@@ -196,8 +197,8 @@ class StatePartGame(StatePart.StatePart):
                         if not (x == px and z == pz and py-1 <= y <= py) and not G.world.get_active_dimension().\
                                 get_block(previous):
                             G.world.get_active_dimension().add_block(
-                                previous, slot.get_itemstack().item.get_block(), kwargs={"set_to": blockpos,
-                                                                                   "real_hit": hitpos})
+                                previous, slot.get_itemstack().item.get_block(),
+                                kwargs={"set_to": blockpos, "real_hit": hitpos})
                             slot.get_itemstack().item.on_set_from_item(G.world.get_active_dimension().get_block(previous))
                             if G.player.gamemode == 0: slot.get_itemstack().add_amount(-1)
                             self.mouse_press_time = 0

@@ -14,9 +14,10 @@ import ResourceLocator
 import mod.ModMcpython
 import logger
 import event.EventHandler
+import Entity
 
 
-class Player:
+class Player(Entity.Entity):
     GAMEMODE_DICT: dict = {
         "survival": 0, "0": 0,
         "creative": 1, "1": 1,
@@ -25,7 +26,9 @@ class Player:
     }
 
     def __init__(self, name):
+        super().__init__()
         globals.player = self
+        self.position = property(self._get_position, self._set_position)
 
         self.name: str = name
         self.gamemode: int = -1
@@ -87,6 +90,9 @@ class Player:
 
         import block.BlockCraftingTable, gui.InventoryCraftingTable
         block.BlockCraftingTable.BlockCraftingTable.inventory = gui.InventoryCraftingTable.InventoryCraftingTable()
+
+        self.inventory_slots.clear()
+        [self.inventory_slots.extend(inventory.slots) for inventory in self.inventorys.values()]
 
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
@@ -153,7 +159,7 @@ class Player:
                     else:
                         m = slot.get_itemstack().item.get_max_stack_size()
                         delta = m - slot.get_itemstack().amount
-                        slot.get_itemstack.set_amount(m)
+                        slot.get_itemstack().set_amount(m)
                         itemstack.add_amount(-delta)
                 if itemstack.amount <= 0:
                     return True
@@ -187,10 +193,13 @@ class Player:
                 self.hearts = 20
                 self.hunger = 20
                 return
-        globals.commandparser.parse("/clear")
-        logger.println("[CHAT] player {} died".format(self.name))
-        self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
-                         globals.world.spawnpoint[1])
+        super().kill()  # todo: create an new entity for player
+        if not globals.world.gamerulehandler.table["keepInventory"].status.status:
+            globals.commandparser.parse("/clear")
+        if globals.world.gamerulehandler.table["showDeathMessages"].status.status:
+            logger.println("[CHAT] player {} died".format(self.name))
+        globals.window.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
+                                   globals.world.spawnpoint[1])
         self.active_inventory_slot = 0
         globals.window.dy = 0
         globals.chat.close()
@@ -206,13 +215,14 @@ class Player:
         globals.inventoryhandler.close_all_inventories()
         # todo: recalculate armor level!
 
+        if not globals.world.gamerulehandler.table["doImmediateRespawn"].status.status:
+            globals.statehandler.switch_to("minecraft:escape_state")  # todo: add special state
+
     def _get_position(self):
         return globals.window.position
 
     def _set_position(self, position):
         globals.window.position = position
-
-    position = property(_get_position, _set_position)
 
     def damage(self, hearts: int, check_gamemode=True):
         """
@@ -228,3 +238,6 @@ class Player:
     def reset_moving_slot(self):
         self.add_to_free_place(globals.inventoryhandler.moving_slot.get_itemstack().copy())
         globals.inventoryhandler.moving_slot.get_itemstack().clean()
+
+    def tell(self, msg: str):
+        globals.chat.print_ln(msg)

@@ -64,10 +64,12 @@ class Chunk:
         for face in util.enums.EnumSide.iterate():
             dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)
-            block = self.dimension.get_block(pos)
-            if not (block and (block.is_solid_side(face) if type(block) != str else G.registry.get_by_name("block").
-                    registered_object_map[block].is_solid_side(None, face))):
-                return True
+            chunk = self.dimension.get_chunk_for_position(pos, generate=False)
+            if chunk.loaded:
+                block = self.dimension.get_block(pos)
+                if not (block and (block.is_solid_side(face) if type(block) != str else G.registry.get_by_name("block").
+                        registered_object_map[block].is_solid_side(None, face))):
+                    return True
         return False
 
     def exposed_faces(self, position):
@@ -78,12 +80,16 @@ class Chunk:
         for face in util.enums.EnumSide.iterate():
             dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)
-            block = self.dimension.get_block(pos)
-            if block is None: faces[face] = True
-            elif type(block) == str: faces[face] = False  # todo: add an callback when the block is ready
-            elif not block.is_solid_side(face.invert()): faces[face] = True
-            elif not blockinst.is_solid_side(face): faces[face] = True
-            else: faces[face] = False
+            chunk = self.dimension.get_chunk_for_position(pos, generate=False)
+            if not chunk.loaded and G.world.hide_faces_to_ungenerated_chunks:
+                faces[face] = False
+            else:
+                block = self.dimension.get_block(pos)
+                if block is None: faces[face] = True
+                elif type(block) == str: faces[face] = False  # todo: add an callback when the block is ready
+                elif not block.is_solid_side(face.invert()): faces[face] = True
+                elif not blockinst.is_solid_side(face): faces[face] = True
+                else: faces[face] = False
         return faces
 
     def add_add_block_gen_task(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[],
@@ -148,25 +154,28 @@ class Chunk:
         """ Remove the block at the given `position`.
 
         Parameters
-        ----------
-        position : tuple of len 3
+        :param position: tuple of len 3
             The (x, y, z) position of the block to remove.
-        immediate : bool
+        :param immediate: bool
             Whether or not to immediately remove block from canvas.
-
+        :param block_update: bool
+            Whether an block-update should be called or not
+        :param blockupdateself:
+            Whether the block to remove should get an block-update or not
         """
         if position in self.blockmap: del self.blockmap[position]
         if position not in self.world: return
         if issubclass(type(position), Block.Block):
             position = position.position
         self.world[position].on_remove()
-        if immediate:
-            if block_update:
-                self.on_block_updated(position, itself=blockupdateself)
-            self.check_neighbors(position)
-        if position not in self.world: return
+        if block_update and blockupdateself:
+            self.world[position].on_block_update()
         self.world[position].face_state.hide_all()
         del self.world[position]
+        if immediate:
+            if block_update:
+                self.on_block_updated(position)
+            self.check_neighbors(position)
 
     def check_neighbors(self, position):
         """ Check all blocks surrounding `position` and ensure their visual
@@ -282,6 +291,7 @@ class Chunk:
             self.hide_block(position, immediate=immediate)
 
     def get_block(self, position):
+        position = util.math.normalize(position)
         return self.blockmap[position][0][1] if position in self.blockmap else (self.world[position] if position in
                                                                                 self.world else None)
 

@@ -14,6 +14,7 @@ import config
 
 
 UV_ORDER = ["up", "down", "north", "east", "south", "west"]
+UV_INDICES = [(1, 0, 3, 2), (1, 0, 3, 2)] + [(0, 1, 2, 3)] * 4   # representative for the order of uv insertion
 
 
 class BoxModel:
@@ -37,46 +38,28 @@ class BoxModel:
                 addr = data["faces"][facename]["texture"]
                 self.faces[util.enums.EnumSide[facename.upper()]] = model.get_texture_position(addr)
                 if "uv" in data["faces"][facename]:
-                    uvfx, uvfy, uvtx, uvty = tuple(data["faces"][facename]["uv"])
-                    self.texregion[UV_ORDER.index(facename)] = (uvfx/16, 1-uvfy/16, uvtx/16, 1-uvty/16)
+                    uvs = tuple(data["faces"][facename]["uv"])
+                    index = UV_ORDER.index(facename)
+                    self.texregion[index] = tuple([uvs[i]/16 for i in UV_INDICES[index]])
 
     def add_to_batch(self, position, batch, rotation, active_faces=None):
-        # logger.println(self.faces)
         x, y, z = position
         x += self.boxposition[0] - 0.5 + self.rposition[0]
         y += self.boxposition[1] - 0.5 + self.rposition[1]
         z += self.boxposition[2] - 0.5 + self.rposition[2]
-        up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else [(0, 0)] * 4
+        up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
                                                             for x in util.enums.EnumSide.iterate()])
-        deactive = [x[0] == (0, 0) or x is None for x in array]
-        indexes = [0] * 6
-        if any(rotation):
-            # logger.println(rotation)
-            if rotation[0]:  # rotate around x
-                for _ in range(rotation[0] // 90):
-                    east, west, up, down = up, down, east, west
-                    indexes[0] += 1; indexes[0] %= 4
-                    indexes[2] += 1; indexes[2] %= 4
-                    indexes[3] += 1; indexes[1] %= 4
-                    indexes[4] += 1; indexes[4] %= 4
-            if rotation[1]:  # rotate around y
-                for _ in range(rotation[1] // 90):
-                    indexes[0] += 1; indexes[0] %= 4
-                    indexes[1] += 1; indexes[0] %= 4
-                    north, east, south, west = east, south, west, north
-            if rotation[2]:  # rotate around z
-                for _ in range(rotation[2] // 90):
-                    indexes[3] += 1; indexes[3] %= 4
-                    indexes[5] += 1; indexes[5] %= 4
-                    indexes[1] += 1; indexes[1] %= 4
-                    north, south, up, down = up, down, north, south
-        rtextures = util.math.tex_coords(up[indexes[0]], down[indexes[1]], north[indexes[2]], east[indexes[3]],
-                                         south[indexes[4]], west[indexes[4]], size=self.model.texture_atlas.size,
+        deactive = [x == (0, 0) or x is None for x in array]
+        rtextures = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
                                          tex_region=self.texregion)
-        result = []
         vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
                                          [True] * 6)
+        # todo: can we cache this -> better performance?
+        vertex_r = [util.math.rotate_point(vertex[i*3:i*3+3], position, rotation) for i in range(len(vertex) // 3)]
+        vertex.clear()
+        for element in vertex_r: vertex.extend(element)
         batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]
+        result = []
         for i in range(6):
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
@@ -87,10 +70,44 @@ class BoxModel:
                                         ('t2f/static', t)))
         return result
 
+    def draw(self, position, rotation, active_faces=None):
+        x, y, z = position
+        x += self.boxposition[0] - 0.5 + self.rposition[0]
+        y += self.boxposition[1] - 0.5 + self.rposition[1]
+        z += self.boxposition[2] - 0.5 + self.rposition[2]
+        up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
+                                                            for x in util.enums.EnumSide.iterate()])
+        deactive = [x == (0, 0) or x is None for x in array]
+        rtextures = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
+                                         tex_region=self.texregion)
+        vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
+                                         [True] * 6)
+        # todo: can we cache this -> better performance?
+        vertex_r = [util.math.rotate_point(vertex[i * 3:i * 3 + 3], position, rotation) for i in
+                    range(len(vertex) // 3)]
+        vertex.clear()
+        for element in vertex_r: vertex.extend(element)
+        for i in range(6):
+            if active_faces is None or (active_faces[i] if type(active_faces) == list else (
+                    i not in active_faces or active_faces[i])):
+                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and deactive[i]: continue
+                t = rtextures[i * 8:i * 8 + 8]
+                v = vertex[i * 12:i * 12 + 12]
+                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),
+                                        ('t2f/static', t))
+
     def add_face_to_batch(self, position, batch, rotation, face):
+        if rotation == (90, 90, 0): rotation = (0, 0, 90)
+        face = face.rotate(rotation)
         return self.add_to_batch(position, batch, rotation, active_faces={i: x == face for i, x in enumerate(
             util.enums.EnumSide.iterate())})
 
+    def draw_face(self, position, rotation, face):
+        if rotation == (90, 90, 0): rotation = (0, 0, 90)
+        face = face.rotate(rotation)
+        return self.draw(position, rotation, active_faces={i: x == face for i, x in enumerate(
+            util.enums.EnumSide.iterate())})
+
     def copy(self, new_model=None):
-        return BoxModel(self.data, new_model if new_model else self.model)
+        return BoxModel(self.data, new_model if new_model is not None else self.model)
 
