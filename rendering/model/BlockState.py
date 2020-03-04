@@ -30,12 +30,13 @@ class IBlockStateDecoder(event.Registry.IRegistryContent):
         self.data = data
         self.block_state = block_state
 
-    def add_face_to_batch(self, block, batch, face):
-        return []
+    def add_face_to_batch(self, block, batch, face) -> list:
+        raise NotImplementedError()
 
-    def transform_to_hitbox(self, block): raise NotImplementedError()
+    def transform_to_hitbox(self, block):  # optional: transforms the BlockState into an BoundingBox-like objects
+        pass
 
-    def draw_face(self, block, face):
+    def draw_face(self, block, face):  # optional: draws the BlockState direct without an batch
         pass
 
 

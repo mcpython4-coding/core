@@ -200,7 +200,11 @@ def read(file, mode=None):
         file = "|".join(data[1:])
         for x in RESOURCE_LOCATIONS:
             if x.path == resource:
-                return x.read(file, mode)
+                try:
+                    return x.read(file, mode)
+                except json.JSONDecodeError:
+                    print("json error in file {}".format(file))
+                    raise
         raise RuntimeError("can't find resource named {}".format(resource))
     if not exists(file, transform=False):
         file = transform_name(file)

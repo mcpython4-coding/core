@@ -9,7 +9,9 @@ changelog of master branch
     - added multipart-block-model support
     - added generator code for creating BoundingBox from BlockState
     - BoxModels will now rotate properly relative to middle of block, not only changing textures
-    - added new blocks: fences and walls
+    - added new blocks: fences, walls
+    - TickHandler has now an function to tick an function as fast as possible
+    - added option for fog distance
     fixed bugs:
         - various exceptions from left-over things in the registry & slot changes from last snapshot
         - various issues with slot drawing

@@ -49,7 +49,7 @@ class BoxModel:
         z += self.boxposition[2] - 0.5 + self.rposition[2]
         up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
                                                             for x in util.enums.EnumSide.iterate()])
-        deactive = [x[0] == (0, 0) or x is None for x in array]
+        deactive = [x == (0, 0) or x is None for x in array]
         rtextures = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
                                          tex_region=self.texregion)
         vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
@@ -77,7 +77,7 @@ class BoxModel:
         z += self.boxposition[2] - 0.5 + self.rposition[2]
         up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
                                                             for x in util.enums.EnumSide.iterate()])
-        deactive = [x[0] == (0, 0) or x is None for x in array]
+        deactive = [x == (0, 0) or x is None for x in array]
         rtextures = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
                                          tex_region=self.texregion)
         vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
