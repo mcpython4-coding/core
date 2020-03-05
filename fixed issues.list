@@ -115,4 +115,10 @@ issue 125: when generating chunks in runtime, blocks are not shown until update;
            generation finished
 issue 126: top textures of BoxModel when using UV's were wrong; fixed on: 03.03.2020 by uuk
 issue 127: missing texture was always rendered, also when deactivated on missing faces; fixed on: 03.03.2020 by uuk
-issue 114: "OR"-condition in block models was not working: fixed on: 05.03.2020 by uuk
+issue 114: "OR"-condition in block models was not working; fixed on: 05.03.2020 by uuk
+issue 115: block-state multipart was not using multiple models when provided; fixed on: 05.03.2020 by uuk
+issue 128: game crashes when running in rebuild mode and an block-item fails to generate; fixed on: 05.03.2020 by uuk
+           [committed to release due to crash]
+issue 119: missing texture face rendering couldn't be deactivated; fixed on: 05.03.2020 by uuk
+issue 120: player can't die; fixed on: 05.03.2020 by uuk
+issue 117: "rotation" was not used by model-loader; fixed on: 05.03.2020 by uuk

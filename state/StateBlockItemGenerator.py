@@ -187,7 +187,7 @@ class StateBlockItemGenerator(State.State):
             logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
                 self.tasks[self.blockindex]))
             self.last_image = image
-            file = G.local + "/tmp/blockitemgenerator_fail_{}_of_{}.png".format(
+            file = G.local + "/build/blockitemgenerator_fail_{}_of_{}.png".format(
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__"))
             image.save(file)
             logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(file))

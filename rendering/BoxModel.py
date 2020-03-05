@@ -41,21 +41,31 @@ class BoxModel:
                     uvs = tuple(data["faces"][facename]["uv"])
                     index = UV_ORDER.index(facename)
                     self.texregion[index] = tuple([uvs[i]/16 for i in UV_INDICES[index]])
+        self.rotation = (0, 0, 0)
+        self.rotation_core = (0, 0, 0)
+        if "rotation" in data:
+            if "origin" in data["rotation"]:
+                self.rotation_core = data["rotation"]["origin"]
+            rot = [0, 0, 0]
+            rot["xyz".index(data["axis"])] = data["angle"]
+            self.rotation = tuple(rot)
 
     def add_to_batch(self, position, batch, rotation, active_faces=None):
         x, y, z = position
         x += self.boxposition[0] - 0.5 + self.rposition[0]
         y += self.boxposition[1] - 0.5 + self.rposition[1]
         z += self.boxposition[2] - 0.5 + self.rposition[2]
-        up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
-                                                            for x in util.enums.EnumSide.iterate()])
-        deactive = [x == (0, 0) or x is None for x in array]
+        up, down, north, east, south, west = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
+                                                    for x in util.enums.EnumSide.iterate()])
+        deactive = [x == (0, 0) or x is None for x in (up, down, north, east, south, west)]
         rtextures = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
                                          tex_region=self.texregion)
+        # todo: can we cache this -> better performance?
         vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
                                          [True] * 6)
-        # todo: can we cache this -> better performance?
         vertex_r = [util.math.rotate_point(vertex[i*3:i*3+3], position, rotation) for i in range(len(vertex) // 3)]
+        vertex_r = [util.math.rotate_point(e, tuple([position[i] + self.rotation_core[i] for i in range(3)]),
+                                           self.rotation) for e in vertex_r]
         vertex.clear()
         for element in vertex_r: vertex.extend(element)
         batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]

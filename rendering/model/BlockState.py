@@ -61,8 +61,18 @@ class MultiPartDecoder(IBlockStateDecoder):
         result = []
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
-                model, config = BlockState.decode_entry(entry["apply"])
-                result += G.modelhandler.models[model].add_face_to_batch(block.position, batch, config, face)
+                data = entry["apply"]
+                if type(data) == dict:
+                    model, config, _ = BlockState.decode_entry(data)
+                    result += G.modelhandler.models[model].add_face_to_batch(block.position, batch, config, face)
+                else:
+                    if block.block_state is None:
+                        entries = [BlockState.decode_entry(e) for e in data]
+                        model, config, _ = entry = random.choices(entries, weights=[e[2] for e in entries])[0]
+                        block.block_state = entries.index(entry)
+                    else:
+                        model, config, _ = BlockState.decode_entry(data[block.block_state])
+                    result += G.modelhandler.models[model].add_face_to_batch(block.position, batch, config, face)
         return result
 
     @classmethod
@@ -72,35 +82,61 @@ class MultiPartDecoder(IBlockStateDecoder):
                 if key == "OR":
                     condition = cls._test_for(state, part[key], use_or=True)
                 else:
-                    condition = key in state and state[key] == part[key]
+                    condition = key in state and (state[key] not in part[key].split("|") if type(part[key]) == str
+                                                  else state[key] == part[key])
                 if condition: return True
             else:
                 if key == "OR":
                     condition = not cls._test_for(state, part[key], use_or=True)
                 else:
-                    condition = key not in state or state[key] != part[key]
+                    condition = key not in state or (state[key] not in part[key].split("|") if type(part[key]) == str
+                                                     else state[key] == part[key])
                 if condition: return False
-        return use_or
+        return not use_or
 
     def transform_to_hitbox(self, blockinstance):
         state = blockinstance.get_model_state()
         bbox = block.BoundingBox.BoundingArea()
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
-                model, config = BlockState.decode_entry(entry["apply"])
-                model = G.modelhandler.models[model]
-                for boxmodel in model.boxmodels:
-                    bbox.bboxes.append(block.BoundingBox.BoundingBox(tuple([e / 16 for e in boxmodel.boxsize]),
-                                                                     tuple([e / 16 for e in boxmodel.rposition]),
-                                                                     rotation=config["rotation"]))
+                data = entry["apply"]
+                if type(data) == dict:
+                    model, config, _ = BlockState.decode_entry(data)
+                    model = G.modelhandler.models[model]
+                    for boxmodel in model.boxmodels:
+                        bbox.bboxes.append(block.BoundingBox.BoundingBox(tuple([e / 16 for e in boxmodel.boxsize]),
+                                                                         tuple([e / 16 for e in boxmodel.rposition]),
+                                                                         rotation=config["rotation"]))
+                else:
+                    if blockinstance.block_state is None:
+                        entries = [BlockState.decode_entry(e) for e in data]
+                        model, config, _ = entry = random.choices(entries, weights=[e[2] for e in entries])[0]
+                        block.block_state = entries.index(entry)
+                    else:
+                        model, config, _ = BlockState.decode_entry(data[blockinstance.block_state])
+                    model = G.modelhandler.models[model]
+                    for boxmodel in model.boxmodels:
+                        bbox.bboxes.append(block.BoundingBox.BoundingBox(tuple([e / 16 for e in boxmodel.boxsize]),
+                                                                         tuple([e / 16 for e in boxmodel.rposition]),
+                                                                         rotation=config["rotation"]))
         return bbox
 
     def draw_face(self, block, face):
         state = block.get_model_state()
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
-                model, config = BlockState.decode_entry(entry["apply"])
-                G.modelhandler.models[model].draw_face(block.position, config, face)
+                data = entry["apply"]
+                if type(data) == dict:
+                    model, config, _ = BlockState.decode_entry(data)
+                    G.modelhandler.models[model].draw_face(block.position, config, face)
+                else:
+                    if block.block_state is None:
+                        entries = [BlockState.decode_entry(e) for e in data]
+                        model, config, _ = entry = random.choices(entries, weights=[e[2] for e in entries])[0]
+                        block.block_state = entries.index(entry)
+                    else:
+                        model, config, _ = BlockState.decode_entry(data[block.block_state])
+                    G.modelhandler.models[model].draw_face(block.position, config, face)
 
 
 @G.registry
@@ -136,7 +172,7 @@ class DefaultDecoder(IBlockStateDecoder):
         bbox = block.BoundingBox.BoundingArea()
         for keymap, blockstate in self.states:
             if keymap == data:
-                model, config = blockstate.models[blockinstance.block_state]
+                model, config, _ = blockstate.models[blockinstance.block_state]
                 model = G.modelhandler.models[model]
                 for boxmodel in model.boxmodels:
                     rotation = config["rotation"]
@@ -243,13 +279,13 @@ class BlockState:
         G.modelhandler.used_models.append(model)
         rotations = (data["x"] if "x" in data else 0, data["y"] if "y" in data else 0,
                      data["z"] if "z" in data else 0)
-        return model, {"rotation": rotations}
+        return model, {"rotation": rotations}, 1 if "weight" not in data else data["weight"]
 
     def add_face_to_batch(self, block, batch, face):
         if block.block_state is None:
-            block.block_state = random.randint(1, len(self.models)) - 1
+            block.block_state = self.models.index(random.choices(self.models, [e[2] for e in self.models])[0])
         result = []
-        model, config = self.models[block.block_state]
+        model, config, _ = self.models[block.block_state]
         if model not in G.modelhandler.models:
             raise ValueError("can't find model named '{}' to add at {}".format(model, block.position))
         result += G.modelhandler.models[model].add_face_to_batch(block.position, batch, config, face)
@@ -257,8 +293,8 @@ class BlockState:
 
     def draw_face(self, block, face):
         if block.block_state is None:
-            block.block_state = random.randint(1, len(self.models)) - 1
-        model, config = self.models[block.block_state]
+            block.block_state = self.models.index(random.choices(self.models, [e[2] for e in self.models])[0])
+        model, config, _ = self.models[block.block_state]
         if model not in G.modelhandler.models:
             raise ValueError("can't find model named '{}' to draw at {}".format(model, block.position))
         G.modelhandler.models[model].draw_face(block.position, config, face)
