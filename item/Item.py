@@ -8,6 +8,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import PIL.Image
 import event.Registry
+import uuid
 
 
 class Item(event.Registry.IRegistryContent):
@@ -35,7 +36,7 @@ class Item(event.Registry.IRegistryContent):
         return self.get_default_item_image_location()
 
     def __init__(self):
-        pass
+        self.uuid = uuid.uuid4()
 
     def get_max_stack_size(self) -> int:  # todo: make attribute
         return 64

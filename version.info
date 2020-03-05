@@ -865,18 +865,6 @@ started these clone on 12th of July, 2019
 [uuk]: added support for "|"-splitting in multipart-models conditions
 [uuk]: BoxModels can now be rotated
 [uuk]: moved window.position and window.rotation to player.position and player.rotation
-
-new blocks planned for upcoming snapshot(s):
-    todo: implement possibility to add custom model loaders
-    todo: add tool for creating wall & fence models for mods
-
-    todo: fix BoundingBoxes of fences, walls, etc.
-
-    todo: give every block-instance, every gui, every item instance, ... an unique UUID for identifying them
-    todo: make the player spawn-point random on every respawn
-
-    todo: reload hotkey command should reload models & blockstates & reactivate BlockItemGenerator over all blocks
-
-    todo: could we pre-compress all item images created by BlockItemFactory into a set of image files?
-    todo: could we compress the index files with pickle to make them smaller or use an nbt library to match mc's coding
+[uuk]: added an helper function to ModelHandler for creating an bbox for an block-state
+[uuk]: added uuid's to block', items, guis, recipes
 

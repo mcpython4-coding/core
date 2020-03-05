@@ -65,6 +65,7 @@ class GridShaped(crafting.IRecipeType.IRecipe):
         return cls(grid, out[0])
 
     def __init__(self, inputs, output):
+        super().__init__()
         self.inputs = inputs
         self.output = output
         sx = max(self.inputs, key=lambda x: x[0])[0]
@@ -90,6 +91,7 @@ class GridShapeless(crafting.IRecipeType.IRecipe):
         return cls(inputs, out[0])
 
     def __init__(self, inputs, output):
+        super().__init__()
         self.inputs = inputs
         self.output = output
 

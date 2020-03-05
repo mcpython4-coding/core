@@ -10,6 +10,7 @@ import item.ItemTool
 import block.BoundingBox
 import block.BlockFaceState
 import event.Registry
+import uuid
 
 
 class Block(event.Registry.IRegistryContent):
@@ -35,6 +36,7 @@ class Block(event.Registry.IRegistryContent):
         if state is not None: self.set_model_state(state)
         self.face_state = block.BlockFaceState.BlockFaceState(self)
         self.block_state = None
+        self.uuid = uuid.uuid4()
 
     def on_remove(self):
         """

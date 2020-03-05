@@ -11,6 +11,7 @@ import pyglet
 import ResourceLocator
 import util.texture
 import PIL.Image
+import uuid
 
 
 class Inventory:
@@ -37,6 +38,7 @@ class Inventory:
         self.config = {}
         self.reload_config()
         self.on_create()
+        self.uuid = uuid.uuid4()
 
     def reload_config(self):
         """

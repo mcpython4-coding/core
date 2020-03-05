@@ -107,6 +107,9 @@ class ModelHandler:
             self.blockstates["minecraft:missing_texture"].draw_face(block, face)
         blockstate.draw_face(block, face)
 
+    def get_bbox(self, block):
+        return self.blockstates[block.NAME].loader.transform_to_hitbox(block)
+
 
 G.modelhandler = ModelHandler()
 

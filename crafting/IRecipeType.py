@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
+import uuid
 
 
 class IRecipe:
@@ -16,6 +17,9 @@ class IRecipe:
     @classmethod
     def from_data(cls, data: dict):
         return cls()
+
+    def __init__(self):
+        self.uuid = uuid.uuid4()
 
     def register(self):
         pass

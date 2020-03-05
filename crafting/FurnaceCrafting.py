@@ -23,6 +23,7 @@ class FurnesRecipe(crafting.IRecipeType.IRecipe):
         return cls(data["type"], inputs, result, data["experience"], data["cookingtime"] / 20)
 
     def __init__(self, t, i, o, xp, time):
+        super().__init__()
         self.input = i
         self.output = o
         self.xp = xp
