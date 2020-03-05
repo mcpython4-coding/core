@@ -18,7 +18,7 @@ class ParsingCommandInfo:
 
     def __init__(self, entity=None, position=None, dimension=None):
         self.entity = entity if entity else G.player
-        self.position = position if position else G.window.position
+        self.position = position if position else G.player.position
         self.dimension = dimension if dimension is not None else 0
 
     def copy(self):

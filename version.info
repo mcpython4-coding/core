@@ -864,15 +864,13 @@ started these clone on 12th of July, 2019
 [uuk]: added weight loader for model selection and added multi-model support in multipart
 [uuk]: added support for "|"-splitting in multipart-models conditions
 [uuk]: BoxModels can now be rotated
+[uuk]: moved window.position and window.rotation to player.position and player.rotation
 
 new blocks planned for upcoming snapshot(s):
-    todo: fix issue 113-119 [if possible]
-
     todo: implement possibility to add custom model loaders
     todo: add tool for creating wall & fence models for mods
 
     todo: fix BoundingBoxes of fences, walls, etc.
-    todo: move every G.window.position & G.window.rotation call to G.player.position & G.player.rotation
 
     todo: give every block-instance, every gui, every item instance, ... an unique UUID for identifying them
     todo: make the player spawn-point random on every respawn

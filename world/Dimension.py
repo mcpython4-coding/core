@@ -105,7 +105,7 @@ class Dimension:
         self.get_chunk_for_position(position).hide_block(position, immediate=immediate)
 
     def draw(self):
-        x, z = util.math.sectorize(G.window.position)
+        x, z = util.math.sectorize(G.player.position)
         pad = 4
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):

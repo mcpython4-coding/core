@@ -32,7 +32,7 @@ class CommandGenerate(chat.command.Command.Command):
             chunkf = tuple(values[:2])
             chunkt = tuple(values[2:]) if len(values) > 2 else chunkf
         else:
-            chunkf = chunkt = util.math.sectorize(G.window.position)
+            chunkf = chunkt = util.math.sectorize(G.player.position)
         fx, fz = chunkf
         tx, tz = chunkt
         if fx > tx: fx, tx = tx, fx

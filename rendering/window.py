@@ -44,18 +44,6 @@ class Window(pyglet.window.Window):
         # right, and 0 otherwise.
         self.strafe = [0, 0]
 
-        # Current (x, y, z) position in the world, specified with floats. Note
-        # that, perhaps unlike in math class, the y-axis is the vertical axis.
-        self.position = (0, 0, 0)
-
-        # First element is rotation of the player in the x-z plane (ground
-        # plane) measured from the z-axis down. The second is the rotation
-        # angle from the ground plane up. Rotation is in degrees.
-        #
-        # The vertical plane rotation ranges from -90 (looking straight down) to
-        # 90 (looking straight up). The horizontal rotation range is unbounded.
-        self.rotation = (0, 0)
-
         # Which sector the player is currently in.
         self.sector = None
 
@@ -119,7 +107,7 @@ class Window(pyglet.window.Window):
         the player is looking.
 
         """
-        x, y = self.rotation
+        x, y, _ = G.player.rotation
         # y ranges from -90 to 90, or -pi/2 to pi/2, so m ranges from 0 to 1 and
         # is 1 when looking ahead parallel to the ground and 0 when looking
         # straight up or down.
@@ -142,7 +130,7 @@ class Window(pyglet.window.Window):
 
         """
         if any(self.strafe):
-            x, y = self.rotation
+            x, y, _ = G.player.rotation
             strafe = math.degrees(math.atan2(*self.strafe))
             y_angle = math.radians(y)
             x_angle = math.radians(x + strafe)
@@ -177,7 +165,7 @@ class Window(pyglet.window.Window):
             logger.println("[warning] running behind normal tick, did you overload game? missing " +
                            str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
         self.world.process_queue()
-        sector = sectorize(self.position)
+        sector = sectorize(G.player.position)
         if sector != self.sector:
             pyglet.clock.schedule_once(lambda _: G.world.change_sectors(self.sector, sector), 0.1)
             if self.sector is None:
@@ -239,7 +227,7 @@ class Window(pyglet.window.Window):
                     if face == (0, -1, 0):
                         G.window.flying = False
                         if G.player.gamemode in (0, 2) and G.player.fallen_since_y is not None:
-                            dy = G.player.fallen_since_y - G.window.position[1] - 3
+                            dy = G.player.fallen_since_y - G.player.position[1] - 3
                             if dy > 0 and G.world.gamerulehandler.table["fallDamage"].status.status:
                                 G.player.damage(dy)
                             G.player.fallen_since_y = None
@@ -363,10 +351,10 @@ class Window(pyglet.window.Window):
         gluPerspective(65.0, width / float(height), 0.1, config.FOG_DISTANCE+20)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        x, y = self.rotation
+        x, y, _ = G.player.rotation
         glRotatef(x, 0, 1, 0)
         glRotatef(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
-        x, y, z = self.position
+        x, y, z = G.player.position
         glTranslatef(-x, -y, -z)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
@@ -389,7 +377,7 @@ class Window(pyglet.window.Window):
 
         """
         vector = self.get_sight_vector()
-        block = G.world.hit_test(self.position, vector)[0]
+        block = G.world.hit_test(G.player.position, vector)[0]
         if block:
             block = G.world.get_active_dimension().get_block(block)
             if block: block.get_view_bbox().draw_outline(block.position)
@@ -398,15 +386,15 @@ class Window(pyglet.window.Window):
         """ Draw the label in the top left of the screen.
 
         """
-        x, y, z = self.position
-        nx, ny, nz = util.math.normalize(self.position)
+        x, y, z = G.player.position
+        nx, ny, nz = util.math.normalize(G.player.position)
         if not G.world.gamerulehandler.table["showCoordinates"].status.status:
             x = y = z = "?"
-        chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(self.position), create=False)
+        chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(G.player.position), create=False)
         self.label.text = '%02d (%.2f, %.2f, %.2f), gamemode %01d' % (
             pyglet.clock.get_fps(), x, y, z, G.player.gamemode)
         vector = G.window.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(G.window.position, vector)
+        blockpos, previous, hitpos = G.world.hit_test(G.player.position, vector)
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str: blockname = blockname.NAME
@@ -433,7 +421,7 @@ class Window(pyglet.window.Window):
     def get_block_entity_info(self):
         import clipboard
         vector = self.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(self.position, vector)
+        blockpos, previous, hitpos = G.world.hit_test(G.player.position, vector)
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str: blockname = blockname.NAME

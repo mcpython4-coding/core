@@ -82,7 +82,7 @@ class StateWorldGenerationConfig(State.State):
                 chunk.is_ready = True
         G.eventhandler.call("on_game_generation_finished")
         logger.println("[WORLDGENERATION] finished world generation")
-        G.window.position = (G.world.spawnpoint[0], util.math.get_max_y(G.world.spawnpoint), G.world.spawnpoint[1])
+        G.player.position = (G.world.spawnpoint[0], util.math.get_max_y(G.world.spawnpoint), G.world.spawnpoint[1])
         G.world.config["enable_auto_gen"] = self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
         G.world.config["enable_world_barrier"] = \
             self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"

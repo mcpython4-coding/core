@@ -28,7 +28,6 @@ class Player(Entity.Entity):
     def __init__(self, name):
         super().__init__()
         globals.player = self
-        self.position = property(self._get_position, self._set_position)
 
         self.name: str = name
         self.gamemode: int = -1
@@ -140,7 +139,7 @@ class Player(Entity.Entity):
         :return: either successful or not
         """
         # have we an slot?
-        if type(itemstack) == gui.Slot.Slot: itemstack = itemstack.get_itemstack()
+        if type(itemstack) in (gui.Slot.Slot, gui.Slot.SlotCopy): itemstack = itemstack.get_itemstack()
 
         if not itemstack.item or itemstack.amount == 0:
             return True

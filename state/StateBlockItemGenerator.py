@@ -93,8 +93,8 @@ class StateBlockItemGenerator(State.State):
         G.window.set_minimum_size(800, 600)
         G.window.set_maximum_size(800, 600)
         G.window.set_size(800, 600)
-        G.window.position = (1.5, 2, 1.5)
-        G.window.rotation = (-45, -45)
+        G.player.position = (1.5, 2, 1.5)
+        G.player.rotation = (-45, -45, 0)
         self.blockindex = -1
         try:
             blockinstance = G.world.get_active_dimension().add_block((0, 0, 0), self.tasks[self.blockindex],
@@ -126,8 +126,8 @@ class StateBlockItemGenerator(State.State):
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")
-        G.window.position = (0, 10, 0)
-        G.window.rotation = (0, 0)
+        G.player.position = (0, 10, 0)
+        G.player.rotation = (0, 0, 0)
         G.world.get_active_dimension().remove_block((0, 0, 0))
         self.last_image = None
 

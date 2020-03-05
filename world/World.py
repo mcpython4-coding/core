@@ -52,7 +52,7 @@ class World:
         self.CANCEL_DIM_CHANGE = False
         G.eventhandler.call("dimension:chane:pre", id)
         if self.CANCEL_DIM_CHANGE: return
-        sector = util.math.sectorize(G.window.position)
+        sector = util.math.sectorize(G.player.position)
         self.change_sectors(sector, None)
         self.active_dimension = id
         self.change_sectors(None, sector)

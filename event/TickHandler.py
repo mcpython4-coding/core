@@ -93,7 +93,7 @@ class TickHandler:
         self.bind(function, tick * 2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
-        cx, cz = util.math.sectorize(G.window.position)
+        cx, cz = util.math.sectorize(G.player.position)
         for dx in range(-config.RANDOM_TICK_RANGE, config.RANDOM_TICK_RANGE + 1):
             for dz in range(-config.RANDOM_TICK_RANGE, config.RANDOM_TICK_RANGE + 1):
                 if dx ** 2 + dz ** 2 <= config.RANDOM_TICK_RANGE ** 2:
