@@ -65,11 +65,22 @@ class MultiPartDecoder(IBlockStateDecoder):
                 result += G.modelhandler.models[model].add_face_to_batch(block.position, batch, config, face)
         return result
 
-    @staticmethod
-    def _test_for(state, part):
+    @classmethod
+    def _test_for(cls, state, part, use_or=False):
         for key in part:
-            if key not in state or state[key] != part[key]: return False
-        return True
+            if use_or:
+                if key == "OR":
+                    condition = cls._test_for(state, part[key], use_or=True)
+                else:
+                    condition = key in state and state[key] == part[key]
+                if condition: return True
+            else:
+                if key == "OR":
+                    condition = not cls._test_for(state, part[key], use_or=True)
+                else:
+                    condition = key not in state or state[key] != part[key]
+                if condition: return False
+        return use_or
 
     def transform_to_hitbox(self, blockinstance):
         state = blockinstance.get_model_state()

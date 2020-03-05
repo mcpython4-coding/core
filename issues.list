@@ -41,11 +41,11 @@ issue 55:
 issue 80:
     bug: in some cases, mouse button up is still not handled
 
-issue 96:
+issue 96: [maybe fixed]
     bug: SlotCopy does not always work correctly
     possible fix: rewrite SlotCopy
 
-issue 98:
+issue 98: [maybe fixed]
     bug: when moving & reinserting an item in hotbar from player inventory main the item in the hotbar is not rendered
     possible fix: see issue 96
 
@@ -55,17 +55,14 @@ issue 100:
 
 issue 102:
     bug: when re-building, carved pumpkin can't be build correct due to same image as pumpkin
-    fix: add rotated state
+    fix: add rotated state to render in BlockStateGenerator OR change system to create it later when needed
 
 issue 109:
     bug: when closing main inventory after crafting [SHIFT-crafting], output is duplicated
+    possible reason: cleanup fails
 
 issue 113:
     bug: "uv-lock"-parameter is ignored in block-states
-    fix: implement [see https://minecraft.gamepedia.com/Model]
-
-issue 114:
-    bug: "OR"-option in multipart model is ignored
     fix: implement [see https://minecraft.gamepedia.com/Model]
 
 issue 115:

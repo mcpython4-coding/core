@@ -860,6 +860,7 @@ started these clone on 12th of July, 2019
 [github]: released snapshot 20w10a
 [uuk]: changed code from using the tmp-directory located in project-home to use the tempfile-library (see #5)
 [uuk]: re-implemented API for creating custom block renderers
+[uuk]: added support for using OR-condition in block models
 
 new blocks planned for upcoming snapshot(s):
     todo: fix issue 113-119 [if possible]
