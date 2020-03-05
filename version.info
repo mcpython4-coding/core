@@ -858,9 +858,9 @@ started these clone on 12th of July, 2019
 [uuk]: decreased asset file size by removing sound files
 [uuk]: added config option for fog distance
 [github]: released snapshot 20w10a
+[uuk]: changed code from using the tmp-directory located in project-home to use the tempfile-library (see #5)
 
 new blocks planned for upcoming snapshot(s):
-    todo: glass pane, iron bars
     todo: re-implement custom renderers or implement an IBlockRenderer class, an IBatchBlockRenderer and
         IDynamicBlockRenderer providing the draw, show and hide functions
 

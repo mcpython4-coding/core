@@ -5,12 +5,13 @@ original game by fogleman licenced under MIT-licence
 minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import os, sys
+import os, sys, tempfile
 
 prebuilding = "--rebuild" in sys.argv
 debugevents = "--debugevents" in sys.argv
 
 local = os.path.dirname(__file__).replace("\\", "/")
+tmp = tempfile.TemporaryDirectory()
 
 window = None
 world = None

@@ -31,13 +31,13 @@ def colorize(mask: PIL.Image.Image, color: tuple) -> PIL.Image.Image:
 
 
 def to_pyglet_image(image: PIL.Image.Image):
-    image.save(G.local+"/tmp/imagehelper_topyglet.png")
-    return pyglet.image.load(G.local+"/tmp/imagehelper_topyglet.png")
+    image.save(G.tmp.name+"/imagehelper_topyglet.png")
+    return pyglet.image.load(G.tmp.name+"/imagehelper_topyglet.png")
 
 
 def to_pillow_image(image: pyglet.image.AbstractImage):
-    image.save(G.local+"/tmp/imagehelper_topillow.png")
-    return PIL.Image.open(G.local+"/tmp/imagehelper_topillow.png")
+    image.save(G.tmp.name+"/imagehelper_topillow.png")
+    return PIL.Image.open(G.tmp.name+"/imagehelper_topillow.png")
 
 
 def to_pyglet_sprite(image: PIL.Image.Image):

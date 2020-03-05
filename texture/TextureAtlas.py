@@ -53,10 +53,10 @@ class TextureAtlasGenerator:
     def output(self):
         # todo: add per-mod, at end of every processing of models
         G.eventhandler.call("textures:atlas:build:pre")
-        os.makedirs(G.local+"/tmp/textureatlases")
+        os.makedirs(G.tmp.name+"/textureatlases")
         for modname in self.atlases:
             for i, atlas in enumerate(self.atlases[modname]):
-                location = G.local+"/tmp/textureatlases/atlas_{}_{}_{}x{}.png".format(modname, i, *atlas.image_size)
+                location = G.tmp.name+"/textureatlases/atlas_{}_{}_{}x{}.png".format(modname, i, *atlas.image_size)
                 atlas.texture.save(location)
                 atlas.group = pyglet.graphics.TextureGroup(pyglet.image.load(location).get_texture())
         G.eventhandler.call("textures:atlas:build:post")

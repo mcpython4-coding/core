@@ -60,9 +60,9 @@ class ResourceZipFile(IResourceLocation):
         elif mode == "json":
             return json.loads(self.archive.read(filename))
         elif mode == "pil":
-            with open(G.local+"/tmp/resource_output.png", mode="wb") as f:
+            with open(G.tmp.name+"/resource_output.png", mode="wb") as f:
                 f.write(self.archive.read(filename))
-            return PIL.Image.open(G.local+"/tmp/resource_output.png")
+            return PIL.Image.open(G.tmp.name+"/resource_output.png")
         elif mode == "pyglet":
             return util.texture.to_pyglet_image(self.read(filename, "pil"))
         else:

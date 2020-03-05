@@ -20,18 +20,6 @@ try:
     import os
     import shutil
 
-    if os.path.exists(globals.local + "/tmp"):
-        for _ in range(10):
-            try:
-                shutil.rmtree(globals.local + "/tmp")
-                break
-            except (shutil.Error, ImportError, FileNotFoundError, PermissionError):
-                pass
-        else:
-            raise IOError("can't delete directory 'tmp'. please make sure that you have no files opened in this directory")
-
-    os.makedirs(globals.local + "/tmp")
-
     if not os.path.exists(globals.local + "/datapacks"): os.makedirs(globals.local + "/datapacks")
 
     import event.EventHandler
@@ -106,6 +94,7 @@ except:  # when we crash on loading, make sure that all resources are closed
     ResourceLocator.close_all_resources()
     logger.write_exception()
     logger.add_funny_line()
+    G.tmp.cleanup()
     raise
 
 
@@ -117,8 +106,10 @@ if __name__ == "__main__":
     except:
         logger.write_exception()
         logger.add_funny_line()
+        G.tmp.cleanup()
         raise
     finally:
         import ResourceLocator
         ResourceLocator.close_all_resources()
         G.eventhandler.call("game:close")
+        G.tmp.cleanup()
