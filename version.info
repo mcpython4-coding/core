@@ -875,6 +875,7 @@ started these clone on 12th of July, 2019
 [uuk]: improved rendering performance
 [uuk]: changed strategy of world in-game generation system to generate first layers and than generate the rest
 [uuk]: new chunks added to generate have now the lowest generation priority rather than the highest
+[uuk]: added some (visual) parallelization to the in-game generation
 
 todo: add an indicator if the game is running -> do not run two instances at ones
 

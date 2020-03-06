@@ -67,6 +67,8 @@ class WorldGenerationHandler:
                 return
             task = chunk.chunkgenerationtasks.pop(0)
             task[0](*task[1], **task[2])
+            self.runtimegenerationcache[0].remove(chunk)
+            self.runtimegenerationcache[0].insert(-1, chunk)
         elif step == 2:  # process block additions to the chunk
             if len(chunk.blockmap) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 3
@@ -75,6 +77,8 @@ class WorldGenerationHandler:
             args, kwargs = chunk.blockmap[position]
             del chunk.blockmap[position]
             chunk.add_block(*args, **kwargs)
+            self.runtimegenerationcache[0].remove(chunk)
+            self.runtimegenerationcache[0].insert(-1, chunk)
         elif step == 3:  # process show tasks
             if len(chunk.show_tasks) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 4
