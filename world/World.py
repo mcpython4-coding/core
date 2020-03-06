@@ -18,6 +18,7 @@ import state.StatePartGame
 import gui.Inventory
 import random
 import world.GameRule
+import config
 
 
 class World:
@@ -106,7 +107,7 @@ class World:
         """
         self.get_active_dimension().get_chunk(*sector, generate=False).hide()
 
-    def change_sectors(self, before, after, immediate=False):
+    def change_sectors(self, before, after, immediate=False, generate_chunks=True):
         """ Move from sector `before` to sector `after`. A sector is a
         contiguous x, y sub-region of world. Sectors are used to speed up
         world rendering.
@@ -126,7 +127,8 @@ class World:
                     if after:
                         x, z = after
                         after_set.add((x + dx, z + dz))
-                    if abs(dx) <= 1 and abs(dz) <= 1 and self.config["enable_auto_gen"]:
+                    if generate_chunks and abs(dx) <= config.CHUNK_GENERATION_RANGE and \
+                            abs(dz) <= config.CHUNK_GENERATION_RANGE and self.config["enable_auto_gen"]:
                         x, z = after
                         chunk = self.get_active_dimension().get_chunk(x+dx, z+dz, generate=False)
                         if not chunk.generated:

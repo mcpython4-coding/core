@@ -6,6 +6,9 @@ changelog of master-branch
     - added support for OR-condition in block-states
     - block-states act when selecting from multiple models better
     - block models can now rotate themselves
+    - tweaked generation system to look more faster
+    - improved block-showing performance
+    - added config for height of world
 
 
 changelog of snapshot 20w10a [released on 04.03.2020]

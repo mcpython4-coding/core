@@ -876,6 +876,10 @@ started these clone on 12th of July, 2019
 [uuk]: changed strategy of world in-game generation system to generate first layers and than generate the rest
 [uuk]: new chunks added to generate have now the lowest generation priority rather than the highest
 [uuk]: added some (visual) parallelization to the in-game generation
+[uuk]: added config option for how far to generate new chunks
+[uuk]: the maximum of parallel generation chunks is now 4
+[uuk]: changed some internals on how new chunks generation tasks are stored
 
+todo: change generation system of WorldGenConfig to use the process_one_generation_task-function
 todo: add an indicator if the game is running -> do not run two instances at ones
 
