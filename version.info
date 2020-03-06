@@ -866,5 +866,6 @@ started these clone on 12th of July, 2019
 [uuk]: BoxModels can now be rotated
 [uuk]: moved window.position and window.rotation to player.position and player.rotation
 [uuk]: added an helper function to ModelHandler for creating an bbox for an block-state
-[uuk]: added uuid's to block', items, guis, recipes
+[uuk]: added uuid's to blocks, items, guis and recipes
+[uuk]: crafting table inventory is now stored at player, not the block class
 

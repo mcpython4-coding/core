@@ -69,11 +69,13 @@ class Player(Entity.Entity):
         import gui.InventoryPlayerHotbar
         import gui.InventoryPlayerMain
         import gui.InventoryChest
+        import gui.InventoryCraftingTable
 
         hotbar = self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
         self.inventorys['main'] = gui.InventoryPlayerMain.InventoryPlayerMain(hotbar)
         self.inventorys['chat'] = chat.Chat.ChatInventory()
         self.inventorys["enderchest"] = gui.InventoryChest.InventoryChest()
+        self.inventorys["crafting_table"] = gui.InventoryCraftingTable.InventoryCraftingTable()
 
         self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/hart.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/hart_half.png", "pyglet"),
@@ -86,9 +88,6 @@ class Player(Entity.Entity):
                            ResourceLocator.read("build/texture/gui/icons/armor_base.png", "pyglet")),
                           (ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/xp_bar.png", "pyglet"))]
-
-        import block.BlockCraftingTable, gui.InventoryCraftingTable
-        block.BlockCraftingTable.BlockCraftingTable.inventory = gui.InventoryCraftingTable.InventoryCraftingTable()
 
         self.inventory_slots.clear()
         [self.inventory_slots.extend(inventory.slots) for inventory in self.inventorys.values()]
