@@ -873,6 +873,8 @@ started these clone on 12th of July, 2019
 [uuk]: parent elements in block models are now correctly replaced instead of adding on top of the of the parent
 [uuk]: chunks are now generating in-game when close to the chunk, not when trying to enter it
 [uuk]: improved rendering performance
+[uuk]: changed strategy of world in-game generation system to generate first layers and than generate the rest
+[uuk]: new chunks added to generate have now the lowest generation priority rather than the highest
 
 todo: add an indicator if the game is running -> do not run two instances at ones
 

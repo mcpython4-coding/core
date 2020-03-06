@@ -31,7 +31,7 @@ class WorldGenerationHandler:
                 self.runtimegenerationcache[0].remove(chunk)
             self.runtimegenerationcache[0].insert(0, chunk)
         elif chunk not in self.runtimegenerationcache[0]:
-            self.runtimegenerationcache[0].append(chunk)
+            self.runtimegenerationcache[0].insert(-1, chunk)
             self.runtimegenerationcache[1][chunk.position] = -1
             self.runtimegenerationcache[2][chunk.position] = None
 
@@ -52,6 +52,8 @@ class WorldGenerationHandler:
             if "on_chunk_generate_pre" in config:
                 config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
             self.runtimegenerationcache[2][chunk.position] = [self.layers[layername] for layername in config["layers"]]
+            self.runtimegenerationcache[0].remove(chunk)
+            self.runtimegenerationcache[0].insert(-1, chunk)
         elif step == 0:  # process layers
             if len(self.runtimegenerationcache[2][chunk.position]) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 1
