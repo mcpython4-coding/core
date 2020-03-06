@@ -25,7 +25,7 @@ class WorldGenerationHandler:
         self.runtimegenerationcache = [[], {}, {}]  # chunk order, chunk state, chunk gen data
         self.tasks_to_generate = []
 
-    def add_chunk_to_generation_list(self, chunk, prior=False, force_generate=False):
+    def add_chunk_to_generation_list(self, chunk, prior=False, force_generate=False, generate_add=True):
         if not self.enable_auto_gen and not force_generate: return
         if type(chunk) == tuple: chunk = G.world.get_active_dimension().get_chunk(*chunk)
         if prior:
@@ -34,15 +34,16 @@ class WorldGenerationHandler:
             self.runtimegenerationcache[0].insert(0, chunk)
         elif chunk not in self.runtimegenerationcache[0]:
             self.tasks_to_generate.append(chunk)
-            if len(self.runtimegenerationcache[0]) == 0:
+            if len(self.runtimegenerationcache[0]) == 0 and generate_add:
                 self.process_one_generation_task()
 
-    def process_one_generation_task(self, chunk=None):
+    def process_one_generation_task(self, chunk=None, reorder=True):
         if chunk is None:
             if len(self.runtimegenerationcache[0]) == 0:
                 cx, cz = util.math.sectorize(G.player.position)
                 for _ in range(min(len(self.tasks_to_generate), 4)):
-                    chunk = min(self.tasks_to_generate, key=lambda c: abs((c.position[0] - cx) * (c.position[1] - cz)))
+                    chunk = min(self.tasks_to_generate,
+                                key=lambda c: ((c.position[0] - cx) ** 2 + (c.position[1] - cz) ** 2) ** 0.5)
                     self.tasks_to_generate.remove(chunk)
                     self.runtimegenerationcache[0].insert(-1, chunk)
                     self.runtimegenerationcache[1][chunk.position] = -1
@@ -64,8 +65,9 @@ class WorldGenerationHandler:
             if "on_chunk_generate_pre" in config:
                 config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
             self.runtimegenerationcache[2][chunk.position] = [self.layers[layername] for layername in config["layers"]]
-            self.runtimegenerationcache[0].remove(chunk)
-            self.runtimegenerationcache[0].insert(-1, chunk)
+            if reorder:
+                self.runtimegenerationcache[0].remove(chunk)
+                self.runtimegenerationcache[0].insert(-1, chunk)
         elif step == 0:  # process layers
             if len(self.runtimegenerationcache[2][chunk.position]) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 1
@@ -79,8 +81,9 @@ class WorldGenerationHandler:
                 return
             task = chunk.chunkgenerationtasks.pop(0)
             task[0](*task[1], **task[2])
-            self.runtimegenerationcache[0].remove(chunk)
-            self.runtimegenerationcache[0].insert(min(len(self.runtimegenerationcache[0])-1, 4), chunk)
+            if reorder:
+                self.runtimegenerationcache[0].remove(chunk)
+                self.runtimegenerationcache[0].insert(min(len(self.runtimegenerationcache[0])-1, 4), chunk)
         elif step == 2:  # process block additions to the chunk
             if len(chunk.blockmap) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 3
@@ -89,8 +92,9 @@ class WorldGenerationHandler:
             args, kwargs = chunk.blockmap[position]
             del chunk.blockmap[position]
             chunk.add_block(*args, **kwargs)
-            self.runtimegenerationcache[0].remove(chunk)
-            self.runtimegenerationcache[0].insert(min(len(self.runtimegenerationcache[0])-1, 4), chunk)
+            if reorder:
+                self.runtimegenerationcache[0].remove(chunk)
+                self.runtimegenerationcache[0].insert(min(len(self.runtimegenerationcache[0])-1, 4), chunk)
         elif step == 3:  # process show tasks
             if len(chunk.show_tasks) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 4

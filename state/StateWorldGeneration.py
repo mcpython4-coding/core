@@ -6,6 +6,7 @@ minecraft by Mojang
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 from . import State
+import state.ui.UIPartLable
 import globals as G
 import util.math
 from pyglet.window import key
@@ -16,15 +17,22 @@ import state.StatePartConfigBackground
 import logger
 import chat.DataPack
 import time
+import util.opengl
 
 
 class StateWorldGeneration(State.State):
     NAME = "minecraft:world_generation"
 
-    def __init__(self): State.State.__init__(self)
+    def __init__(self):
+        State.State.__init__(self)
+        self.status_table = {}
+        self.world_size = ((0, 0), (0, 0, 0, 0), 0)
+        self.finished_chunks = 0
 
     def get_parts(self) -> list:
-        return [state.StatePartConfigBackground.StatePartConfigBackground()]
+        return [state.StatePartConfigBackground.StatePartConfigBackground(),
+                state.ui.UIPartLable.UIPartLable("0%", (0, 50), anchor_lable="MM", anchor_window="MD",
+                                                 color=(255, 255, 255, 255))]
 
     def on_update(self, dt):
         start = time.time()
@@ -32,11 +40,24 @@ class StateWorldGeneration(State.State):
         while time.time() - start < 0.4 and flag:
             flag = G.worldgenerationhandler.process_one_generation_task()
             if flag is None: flag = True
+        for chunk in self.status_table:
+            if G.world.get_active_dimension().get_chunk(*chunk, generate=False) in \
+                    G.worldgenerationhandler.tasks_to_generate:
+                self.status_table[chunk] = 0
+                continue
+            if chunk not in G.worldgenerationhandler.runtimegenerationcache[1]:
+                if self.status_table[chunk] != 6:
+                    self.finished_chunks += 1
+                self.status_table[chunk] = 6
+                continue
+            self.status_table[chunk] = G.worldgenerationhandler.runtimegenerationcache[1][chunk] + 1
         if len(G.worldgenerationhandler.tasks_to_generate) == len(G.worldgenerationhandler.runtimegenerationcache[0]) \
                 == 0:
             G.statehandler.switch_to("minecraft:game")
+            self.finish()
 
     def on_activate(self):
+        self.status_table.clear()
         G.world.cleanup(remove_dims=True)
         G.dimensionhandler.init_dims()
         sx = G.statehandler.states["minecraft:world_generation_config"].parts[7].entered_text
@@ -59,11 +80,13 @@ class StateWorldGeneration(State.State):
             seed = random.randint(-100000, 100000)
         G.world.config["seed"] = seed
         G.eventhandler.call("on_world_generation_started")
+        self.world_size = ((sx, sy), (-fx, ffx-1, -fy, ffy-1), sx*sy)
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
-                G.worldgenerationhandler.add_chunk_to_generation_list((cx, cz), force_generate=True)
+                G.worldgenerationhandler.add_chunk_to_generation_list((cx, cz), force_generate=True, generate_add=False)
+                self.status_table[(cx, cz)] = 0
 
-    def on_deactivate(self):
+    def finish(self):
         self = G.statehandler.states["minecraft:world_generation_config"]
         G.eventhandler.call("on_game_generation_finished")
         logger.println("[WORLDGENERATION] finished world generation")
@@ -82,17 +105,28 @@ class StateWorldGeneration(State.State):
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
+        self.eventbus.subscribe("render:draw:2d", self.on_draw_2d_post)
         self.eventbus.subscribe("gameloop:tick:end", self.on_update)
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            G.world.cleanup()
-            G.statehandler.switch_to("minecraft:start_menu")
+            G.statehandler.switch_to("minecraft:startmenu")
+            G.tickhandler.schedule_once(G.world.cleanup)
+            logger.println("interrupted world generation by user")
 
-    @staticmethod
-    def on_draw_2d_pre():
-        pyglet.gl.glClearColor(1., 1., 1., 1.)
+    def on_draw_2d_post(self):
+        wx, wy = G.window.get_size()
+        mx, my = wx // 2, wy // 2
+        self.parts[1].text = "{}%".format(round(self.finished_chunks/self.world_size[2]*1000)/10)
+
+        for cx, cz in self.status_table:
+            status = self.status_table[(cx, cz)]
+            if 0 <= status <= 6:
+                factor = status / 6 * 255
+                color = (factor, factor, factor)
+            else:
+                color = (136, 0, 255)
+            util.opengl.draw_rectangle((mx+cx*10, my+cz*10), (10, 10), color)
 
 
 worldgeneration = None

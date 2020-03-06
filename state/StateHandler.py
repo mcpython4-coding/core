@@ -24,7 +24,9 @@ class StateHandler:
             event.TickHandler.handler.schedule_once(self._switch_to, statename)
 
     def _switch_to(self, statename):
-        if statename not in self.states: return
+        if statename not in self.states:
+            logger.println("[WARNING] state {} does not exists".format(statename))
+            return
         self.CANCEL_SWITCH_STATE = False
         G.eventhandler.call("state:switch:pre", statename)
         if self.CANCEL_SWITCH_STATE: return
