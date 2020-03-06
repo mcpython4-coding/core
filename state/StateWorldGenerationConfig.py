@@ -92,6 +92,7 @@ class StateWorldGenerationConfig(State.State):
         chat.DataPack.datapackhandler.try_call_function("#minecraft:load")
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
         G.eventhandler.call("on_game_enter")
+        G.world.change_sectors(None, util.math.sectorize(G.player.position))  # add surrounding chunks to list
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

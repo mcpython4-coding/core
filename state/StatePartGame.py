@@ -273,6 +273,7 @@ class StatePartGame(StatePart.StatePart):
             dy = dt*6 if G.window.keys[key.SPACE] else (-dt*6 if G.window.keys[key.LSHIFT] else 0)
         # collisions
         x, y, z = G.player.position
+        before = util.math.sectorize(G.player.position)
         if G.player.gamemode != 3:
             x, y, z = G.window.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
         else:
@@ -283,6 +284,10 @@ class StatePartGame(StatePart.StatePart):
         if y < -10 and time.time() - self.void_damage_cooldown > 0.25:
             G.player.damage(1, check_gamemode=False)
             self.void_damage_cooldown = time.time()
+
+        after = util.math.sectorize(G.player.position)
+        if before != after:
+            G.world.change_sectors(before, after)
 
         if G.player.hearts < 20 and G.player.hunger > 4 and time.time() - self.regenerate_cooldown > 2 and \
                 G.player.gamemode in (0, 2):

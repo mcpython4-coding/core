@@ -215,8 +215,8 @@ class Window(pyglet.window.Window):
                     if not chunk.generated:
                         if G.world.config["enable_world_barrier"]:
                             blockstate = True
-                        elif G.world.config["enable_auto_gen"] and not blockstate:
-                            G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
+                        # elif G.world.config["enable_auto_gen"] and not blockstate:
+                        #     G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
                     if not blockstate:
                         continue
                     p[i] -= (d - pad) * face[i]
@@ -231,8 +231,8 @@ class Window(pyglet.window.Window):
                             if dy > 0 and G.world.gamerulehandler.table["fallDamage"].status.status:
                                 G.player.damage(dy)
                             G.player.fallen_since_y = None
-                    if not chunk.generated and G.world.config["enable_auto_gen"]:
-                        G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
+                    # if not chunk.generated and G.world.config["enable_auto_gen"]:
+                    #     G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
                     break
         return tuple(p)
 

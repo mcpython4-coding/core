@@ -126,6 +126,11 @@ class World:
                     if after:
                         x, z = after
                         after_set.add((x + dx, z + dz))
+                    if abs(dx) <= 1 and abs(dz) <= 1 and self.config["enable_auto_gen"]:
+                        x, z = after
+                        chunk = self.get_active_dimension().get_chunk(x+dx, z+dz, generate=False)
+                        if not chunk.generated:
+                            G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
         show = after_set - before_set
         hide = before_set - after_set
         for sector in hide:
