@@ -159,7 +159,7 @@ def close_all_resources():
         G.eventhandler.call("resources:close")
 
 
-MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity"]
+MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity", "model"]
 
 
 def transform_name(file: str) -> str:

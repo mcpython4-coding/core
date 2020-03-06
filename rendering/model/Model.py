@@ -42,6 +42,7 @@ class Model:
             self.texture_atlas = add[i][1]
         self.boxmodels = [] if not self.parent else [x.copy(new_model=self) for x in self.parent.boxmodels]
         if "elements" in data:
+            self.boxmodels.clear()
             for element in data["elements"]:
                 self.boxmodels.append(rendering.BoxModel.BoxModel(element, self))
 

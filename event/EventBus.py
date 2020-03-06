@@ -10,6 +10,7 @@ import traceback
 import sys
 import time
 import logger
+import importlib
 
 
 class EventBus:
@@ -41,6 +42,9 @@ class EventBus:
         if G.debugevents:
             with open(G.local+"/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
                 f.write("\nevent subscription of {} to {}".format(function, eventname))
+
+    def subscribe_package_load(self, eventname, package):
+        self.subscribe(eventname, lambda *_: importlib.import_module(package))
 
     def unsubscribe(self, event_name: str, function):
         """

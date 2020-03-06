@@ -868,4 +868,9 @@ started these clone on 12th of July, 2019
 [uuk]: added an helper function to ModelHandler for creating an bbox for an block-state
 [uuk]: added uuid's to blocks, items, guis and recipes
 [uuk]: crafting table inventory is now stored at player, not the block class
+[uuk]: fixed issue 130
+[uuk]: added helper function subscribe_package_load to EventBus
+[uuk]: parent elements in block models are now correctly replaced instead of adding on top of the of the parent
+
+todo: add an indicator if the game is running -> do not run two instances at ones
 
