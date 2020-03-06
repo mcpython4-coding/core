@@ -185,5 +185,8 @@ class World:
         G.window.flying = False
         for inv in G.player.inventorys.values(): inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
+        G.worldgenerationhandler.tasks_to_generate.clear()
+        G.worldgenerationhandler.runtimegenerationcache.clear()
+        G.worldgenerationhandler.runtimegenerationcache = [[], {}, {}]
         G.eventhandler.call("world:clean")
 

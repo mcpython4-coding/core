@@ -879,6 +879,8 @@ started these clone on 12th of July, 2019
 [uuk]: added config option for how far to generate new chunks
 [uuk]: the maximum of parallel generation chunks is now 4
 [uuk]: changed some internals on how new chunks generation tasks are stored
+[uuk]: added new state StateWorldGeneration handling the first world generation
+[uuk]: World.cleanup removes now also the world generation tasks
 
 todo: change generation system of WorldGenConfig to use the process_one_generation_task-function
 todo: add an indicator if the game is running -> do not run two instances at ones

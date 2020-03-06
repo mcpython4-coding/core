@@ -25,8 +25,8 @@ class WorldGenerationHandler:
         self.runtimegenerationcache = [[], {}, {}]  # chunk order, chunk state, chunk gen data
         self.tasks_to_generate = []
 
-    def add_chunk_to_generation_list(self, chunk, prior=False):
-        if not self.enable_auto_gen: return
+    def add_chunk_to_generation_list(self, chunk, prior=False, force_generate=False):
+        if not self.enable_auto_gen and not force_generate: return
         if type(chunk) == tuple: chunk = G.world.get_active_dimension().get_chunk(*chunk)
         if prior:
             if chunk in self.runtimegenerationcache[0]:
@@ -34,6 +34,8 @@ class WorldGenerationHandler:
             self.runtimegenerationcache[0].insert(0, chunk)
         elif chunk not in self.runtimegenerationcache[0]:
             self.tasks_to_generate.append(chunk)
+            if len(self.runtimegenerationcache[0]) == 0:
+                self.process_one_generation_task()
 
     def process_one_generation_task(self, chunk=None):
         if chunk is None:
@@ -41,6 +43,7 @@ class WorldGenerationHandler:
                 cx, cz = util.math.sectorize(G.player.position)
                 for _ in range(min(len(self.tasks_to_generate), 4)):
                     chunk = min(self.tasks_to_generate, key=lambda c: abs((c.position[0] - cx) * (c.position[1] - cz)))
+                    self.tasks_to_generate.remove(chunk)
                     self.runtimegenerationcache[0].insert(-1, chunk)
                     self.runtimegenerationcache[1][chunk.position] = -1
                     self.runtimegenerationcache[2][chunk.position] = None
@@ -101,6 +104,7 @@ class WorldGenerationHandler:
                 del self.runtimegenerationcache[1][chunk.position]
                 del self.runtimegenerationcache[2][chunk.position]
                 logger.println("finished generation of chunk {}/{}".format(*chunk.position))
+                chunk.generated = True
                 G.eventhandler.call("worldgen:chunk:finished", chunk)
                 return
             position = chunk.hide_tasks.pop(0)
