@@ -68,3 +68,8 @@ CPU_USAGE_REFRESH_TIME = 0.8
 
 FOG_DISTANCE = 60  # something like view distance, but will no force the chunks to generate
 
+
+BIOME_HEIGHT_RANGE_MAP = {  # an dict of biomename: height range storing the internal height range
+    "minecraft:plains": (10, 30)
+}
+

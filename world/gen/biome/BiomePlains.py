@@ -8,6 +8,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 from . import Biome
 import world.gen.feature.OakTreeFeature
+import config
 
 
 class Plains(Biome.Biome):
@@ -23,7 +24,7 @@ class Plains(Biome.Biome):
 
     @staticmethod
     def get_height_range():
-        return [30, 50]
+        return config.BIOME_HEIGHT_RANGE_MAP["minecraft:plains"]
 
     @staticmethod
     def get_trees() -> list:

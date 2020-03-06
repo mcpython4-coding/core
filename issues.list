@@ -75,4 +75,5 @@ issue 122:
 issue 129:
     bug: some fence faces are not rendered
 
-[130]
+issue 131:
+    bug: slabs are upside-down
