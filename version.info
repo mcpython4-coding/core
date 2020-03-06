@@ -872,6 +872,7 @@ started these clone on 12th of July, 2019
 [uuk]: added helper function subscribe_package_load to EventBus
 [uuk]: parent elements in block models are now correctly replaced instead of adding on top of the of the parent
 [uuk]: chunks are now generating in-game when close to the chunk, not when trying to enter it
+[uuk]: improved rendering performance
 
 todo: add an indicator if the game is running -> do not run two instances at ones
 
