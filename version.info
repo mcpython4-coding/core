@@ -887,4 +887,5 @@ started these clone on 12th of July, 2019
        blocks
 [uuk]: improved rendering performance by caching the texture data
 [uuk]: removed log message when an chunk is finished in StateGeneration
+[uuk]: implemented rendering improvements also to direct-draw functions of BoxModel
 
