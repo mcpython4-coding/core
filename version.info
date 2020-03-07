@@ -889,12 +889,12 @@ started these clone on 12th of July, 2019
 [uuk]: removed log message when an chunk is finished in StateGeneration
 [uuk]: implemented rendering improvements also to direct-draw functions of BoxModel
 [uuk]: added SaveFile, IDataFixer and IDataSerializer-class
-[uuk]: added basic data serializers
+[uuk]: added data serializers for player data, inventory data, chunks
 
 plans for this branch:
     - implement an save system
 
-    - implement an mc-file converter
+    - implement an mc-file converter [use an DataFixer-like interface]
 
     - implement save screen
 

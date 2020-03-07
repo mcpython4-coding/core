@@ -18,6 +18,9 @@ class PlayerData(storage.serializer.IDataSerializer.IDataSerializer):
             G.player.xp_level = pd["xp level"]
             G.player.fallen_since_y = pd["fallen since y"]
             G.player.active_inventory_slot = pd["active inventory slot"]
+            G.player.position = pd["position"]
+            G.player.rotation = pd["rotation"]
+            G.world.join_dimension(pd["dimension"], save_current=False)
             for name in pd["inventory links"]:
                 savefile.read("minecraft:inventory", inventory=G.player.inventorys[name],
                               path="players/{}/inventory/{}".format(G.player.name, name))
@@ -29,6 +32,7 @@ class PlayerData(storage.serializer.IDataSerializer.IDataSerializer):
         data[G.player.name] = {
             "position": G.player.position,
             "rotation": G.player.rotation,
+            "dimension": G.world.active_dimension,
             "gamemode": G.player.gamemode,
             "hearts": G.player.hearts,
             "hunger": G.player.hunger,

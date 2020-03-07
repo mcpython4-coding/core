@@ -105,3 +105,16 @@ class Block(event.Registry.IRegistryContent):
     @classmethod
     def modify_block_item(cls, itemconstructor): pass  # todo: add an event for this
 
+    def save(self):
+        """
+        :return: an pickle-able object representing the whole block, not including inventories
+        """
+        return self.get_model_state()
+
+    def load(self, data):
+        """
+        loads block data
+        :param data:  the data saved by save()
+        """
+        self.set_model_state(data)
+

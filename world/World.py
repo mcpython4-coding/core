@@ -52,7 +52,7 @@ class World:
         G.worldgenerationhandler.setup_dimension(dim, config)
         return dim
 
-    def join_dimension(self, id):
+    def join_dimension(self, id, save_current=True):
         self.CANCEL_DIM_CHANGE = False
         G.eventhandler.call("dimension:chane:pre", id)
         if self.CANCEL_DIM_CHANGE: return
@@ -140,7 +140,11 @@ class World:
         hide = before_set - after_set
         for sector in hide:
             pyglet.clock.schedule_once(lambda _: self.hide_sector(sector, immediate), 0.1)
+            if G.world.get_active_dimension().get_chunk(*sector, generate=False).loaded:
+                G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
+                                            dimension=self.active_dimension, chunk=sector)
         for sector in show:
+            pyglet.clock.schedule_once(lambda _: self.show_sector(sector, immediate), 0.1)
             pyglet.clock.schedule_once(lambda _: self.show_sector(sector, immediate), 0.1)
 
     def process_queue(self):

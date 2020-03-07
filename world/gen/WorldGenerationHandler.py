@@ -36,6 +36,7 @@ class WorldGenerationHandler:
             self.tasks_to_generate.append(chunk)
             if len(self.runtimegenerationcache[0]) == 0 and generate_add:
                 self.process_one_generation_task()
+        chunk.loaded = True
 
     def process_one_generation_task(self, chunk=None, reorder=True, log_msg=True):
         if chunk is None:
@@ -109,8 +110,10 @@ class WorldGenerationHandler:
                 del self.runtimegenerationcache[2][chunk.position]
                 if log_msg:
                     logger.println("finished generation of chunk {}/{}".format(*chunk.position))
-                chunk.generated = True
                 G.eventhandler.call("worldgen:chunk:finished", chunk)
+                chunk.generated = True
+                G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
+                                            dimension=chunk.dimension.id, chunk=chunk.position)
                 return
             position = chunk.hide_tasks.pop(0)
             chunk.hide_block(position)
@@ -121,8 +124,8 @@ class WorldGenerationHandler:
         for layername in self.configs[configname]["layers"]:
             layer = self.layers[layername]
             if config is None or layername not in config:
-                cconfig = world.gen.layer.Layer.LayerConfig(**dimension.worldgenerationconfig[layername]
-                    if layername in dimension.worldgenerationconfig else {})
+                cconfig = world.gen.layer.Layer.LayerConfig(**(
+                    dimension.worldgenerationconfig[layername] if layername in dimension.worldgenerationconfig else {}))
                 cconfig.dimension = dimension.id
             else:
                 cconfig = config[layername]
@@ -135,7 +138,7 @@ class WorldGenerationHandler:
             return
         if check_chunk and chunk.generated:
             return
-        chunk.generated = True
+        chunk.loaded = True
         logger.println("generating", chunk.position)
         dimension = chunk.dimension
         configname = dimension.worldgenerationconfig["configname"]
@@ -150,6 +153,10 @@ class WorldGenerationHandler:
             G.world.process_entire_queue()
         logger.println("\r", end="")
         G.eventhandler.call("worldgen:chunk:finished", chunk)
+        chunk.generated = True
+        chunk.loaded = True
+        G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
+                                    dimension=chunk.dimension.id, chunk=chunk.position)
 
     def register_layer(self, layer: world.gen.layer.Layer.Layer):
         # logger.println(layer, layer.get_name())

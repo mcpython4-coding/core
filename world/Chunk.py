@@ -35,7 +35,7 @@ class Chunk:
         self.blockmap = {}  # an map with position -> [arguments: list, optional_arguments: kwargs] generation code
         self.is_ready = False
         self.visible = False
-        self.loaded = True
+        self.loaded = False
         self.generated = False
         self.attr = {}
         for attr in self.attributes.keys():
@@ -53,8 +53,8 @@ class Chunk:
         if not self.is_ready or len(self.chunkgenerationtasks) > 0: return
         if not self.visible: return
         if not self.loaded:
-            # todo: load chunk
-            return
+            G.tickhandler.schedule_once(G.world.savefile.read, "minecraft:chunk", dimension=self.dimension.id,
+                                        chunk=self.position)
 
     def exposed(self, position):
         """ Returns False is given `position` should be hidden, True otherwise.

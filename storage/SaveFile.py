@@ -46,6 +46,8 @@ class SaveFile:
         print("saving world...")
         self.dump(None, "minecraft:general")
         self.dump(None, "minecraft:player_data")
+        for chunk in G.world.get_active_dimension().chunks:
+            self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk)
         print("save complete!")
 
     def upgrade(self, part=None, version=None, **kwargs):

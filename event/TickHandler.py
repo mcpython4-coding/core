@@ -54,7 +54,11 @@ class TickHandler:
             pyglet.clock.schedule_once(self.send_random_ticks, 0)
         while len(self.execute_array) > 0:
             func, args, kwargs = tuple(self.execute_array.pop(0))
-            func(*args, **kwargs)
+            try:
+                func(*args, **kwargs)
+            except:
+                print(func, args, kwargs)
+                raise
         chat.DataPack.datapackhandler.try_call_function("#minecraft:tick")
 
     def schedule_once(self, function, *args, **kwargs):
