@@ -11,12 +11,14 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
         data = savefile.access_file_json("level.json")
         savefile.version = data["storage version"]
         G.player.name = data["player name"]
+        G.world.config = data["config"]
 
     @classmethod
     def save(cls, data, savefile):
         data = {
             "storage version": savefile.version,
-            "player name": G.player.name
+            "player name": G.player.name,
+            "config": G.world.config
         }
         savefile.dump_file_json("level.json", data)
 
