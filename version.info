@@ -883,6 +883,6 @@ started these clone on 12th of July, 2019
 [uuk]: World.cleanup removes now also the world generation tasks
 [uuk]: added chunk generation visualisation
 [uuk]: fixed issue 132
-
-todo: add an indicator if the game is running -> do not run two instances at ones
+[uuk]: improved rendering performance by sharing vertex data not only between every draw, but also between similar
+       blocks
 

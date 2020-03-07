@@ -76,5 +76,5 @@ BIOME_HEIGHT_RANGE_MAP = {  # an dict of biomename: height range storing the int
 
 # how far to generate chunks on sector change, in chunks from the chunk the player is in, in an square with
 # CHUNK_GENERATION_RANGE * 2 + 1 -size
-CHUNK_GENERATION_RANGE = 2
+CHUNK_GENERATION_RANGE = 1
 
