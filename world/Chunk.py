@@ -41,9 +41,7 @@ class Chunk:
         for attr in self.attributes.keys():
             self.attr[attr] = self.attributes[attr][1]
 
-    def set_value(self, name, value, authcode):
-        if authcode != self.attributes[name][2]:
-            raise ValueError("not able to set value. protection is not uncoverable")
+    def set_value(self, name, value, authcode=None):
         self.attr[name] = value
 
     def get_value(self, name):

@@ -30,7 +30,7 @@ class World:
         self.dimensions = {}
         self.add_dimension(0, {'configname': None})
         self.active_dimension = 0
-        self.config = {}
+        self.config = {}  # contains: seed
         self.gamerulehandler = None
         self.reset_config()
         self.CANCEL_DIM_CHANGE = False

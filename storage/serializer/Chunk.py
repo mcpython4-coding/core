@@ -25,6 +25,10 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             block = chunk_instance.add_block(position, d["name"])
             block.block_state = d["block_state"]
             block.load(d["custom"])
+        chunk_instance.set_value("landmassmap", data["maps"]["landmass"])
+        chunk_instance.set_value("temperaturemap", data["maps"]["temperature"])
+        chunk_instance.set_value("biomemap", data["maps"]["biome"])
+        chunk_instance.set_value("heightmap", data["maps"]["height"])
 
     @classmethod
     def save(cls, data, savefile, dimension: int, chunk: tuple):
@@ -42,13 +46,23 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             else:
                 blocks[position] = len(palette)
                 palette.append(block_data)
+        landmass_map = chunk_instance.get_value("landmassmap")
+        temperature_map = chunk_instance.get_value("temperaturemap")
+        biome_map = chunk_instance.get_value("biomemap")
+        height_map = chunk_instance.get_value("heightmap")
         data = {
             "version": savefile.version,
             "dimension": dimension,
             "position": chunk,
             "blocks": blocks,
             "block_palette": palette,
-            "generated": chunk_instance.generated
+            "generated": chunk_instance.generated,
+            "maps": {
+                "landmass": landmass_map,
+                "temperature": temperature_map,
+                "biome": biome_map,
+                "height": height_map
+            }
         }
         savefile.dump_file_pickle("dim/{}/{}_{}.chunk".format(dimension, *chunk), data)
 
