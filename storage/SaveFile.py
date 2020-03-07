@@ -4,6 +4,7 @@ import storage.serializer.IDataSerializer
 import json
 import pickle
 import os
+import logger
 
 """
 History of save versions:
@@ -13,11 +14,13 @@ History of save versions:
 
 LATEST_VERSION = 1
 
+G.STORAGE_VERSION = LATEST_VERSION
+
 
 class SaveFile:
     def __init__(self, directory_name):
         self.directory = G.local+"/saves/"+directory_name
-        self.version = None
+        self.version = LATEST_VERSION
 
     def load_world(self):
         G.world.cleanup()
@@ -40,8 +43,10 @@ class SaveFile:
         self.read("player_data")
 
     def save_world(self):
+        print("saving world...")
         self.dump(None, "minecraft:general")
-        # self.dump(None, "player_data")
+        self.dump(None, "minecraft:player_data")
+        print("save complete!")
 
     def upgrade(self, part=None, version=None, **kwargs):
         """
@@ -93,22 +98,45 @@ class SaveFile:
 
     def access_file_json(self, file):
         file = os.path.join(self.directory, file)
-        with open(file) as f: return json.load(f)
+        if not os.path.isfile(file): return None
+        try:
+            with open(file) as f: return json.load(f)
+        except json.decoder.JSONDecodeError:
+            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted")
+            return None
 
     def access_file_pickle(self, file):
         file = os.path.join(self.directory, file)
-        with open(file, mode="rb") as f: return pickle.load(f)
+        if not os.path.isfile(file): return None
+        try:
+            with open(file, mode="rb") as f: return pickle.load(f)
+        except pickle.UnpicklingError:
+            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted")
+            return None
+
+    def access_raw(self, file):
+        file = os.path.join(self.directory, file)
+        if not os.path.isfile(file): return None
+        with open(file, mode="rb") as f: return f.read()
 
     def dump_file_json(self, file, data):
         file = os.path.join(self.directory, file)
         d = os.path.dirname(file)
         if not os.path.isdir(d): os.makedirs(d)
-        with open(file, mode="w") as f: json.dump(data, f)
+        data = json.dumps(data)
+        with open(file, mode="w") as f: f.write(data)
 
     def dump_file_pickle(self, file, data):
         file = os.path.join(self.directory, file)
         d = os.path.dirname(file)
         if not os.path.isdir(d): os.makedirs(d)
-        with open(file, mode="wb") as f: return pickle.dump(data, f)
+        data = pickle.dumps(data)
+        with open(file, mode="wb") as f: return f.write(data)
+
+    def dump_raw(self, file, data):
+        file = os.path.join(self.directory, file)
+        d = os.path.dirname(file)
+        if not os.path.isdir(d): os.makedirs(d)
+        with open(file, mode="wb") as f: return f.write(data)
 
 

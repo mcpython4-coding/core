@@ -55,7 +55,6 @@ class StateWorldGeneration(State.State):
                 == 0:
             G.statehandler.switch_to("minecraft:game")
             self.finish()
-        G.world.savefile.save_world()
 
     def on_activate(self):
         self.status_table.clear()
@@ -102,6 +101,7 @@ class StateWorldGeneration(State.State):
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
         G.eventhandler.call("on_game_enter")
         G.world.change_sectors(None, util.math.sectorize(G.player.position))  # add surrounding chunks to list
+        G.world.savefile.save_world()
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

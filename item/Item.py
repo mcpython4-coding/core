@@ -51,7 +51,9 @@ class Item(event.Registry.IRegistryContent):
     def on_set_from_item(self, block):
         pass
 
-    def get_data(self) -> dict: return {}
+    # functions used by data serializers
 
-    def set_data(self, data: dict): pass
+    def get_data(self): return "no:data"
+
+    def set_data(self, data): pass
 

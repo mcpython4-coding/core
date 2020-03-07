@@ -889,6 +889,7 @@ started these clone on 12th of July, 2019
 [uuk]: removed log message when an chunk is finished in StateGeneration
 [uuk]: implemented rendering improvements also to direct-draw functions of BoxModel
 [uuk]: added SaveFile, IDataFixer and IDataSerializer-class
+[uuk]: added basic data serializers
 
 plans for this branch:
     - implement an save system

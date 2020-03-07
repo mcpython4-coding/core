@@ -19,7 +19,7 @@ dataserializerregistry = event.Registry.Registry("dataserializer", ["minecraft:d
 
 
 def load():
-    import storage.serializer.General
+    from storage.serializer import (General, PlayerData, Inventory)
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:serializer:parts", load)

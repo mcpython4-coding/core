@@ -13,6 +13,8 @@ debugevents = "--debugevents" in sys.argv
 local = os.path.dirname(__file__).replace("\\", "/")
 tmp = tempfile.TemporaryDirectory()
 
+STORAGE_VERSION = None
+
 window = None
 world = None
 player = None
