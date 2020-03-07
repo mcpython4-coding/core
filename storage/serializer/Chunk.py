@@ -25,6 +25,9 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             block = chunk_instance.add_block(position, d["name"])
             block.block_state = d["block_state"]
             block.load(d["custom"])
+            inventories = block.get_inventories()
+            for i, path in enumerate(d["inventories"]):
+                savefile.read("minecraft:inventory", inventory=inventories[i], path=path)
         chunk_instance.set_value("landmassmap", data["maps"]["landmass"])
         chunk_instance.set_value("temperaturemap", data["maps"]["temperature"])
         chunk_instance.set_value("biomemap", data["maps"]["biome"])
@@ -40,7 +43,12 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         for position in chunk_instance.world:
             block = chunk_instance.world[position]
             block_data = {"custom": block.save(), "name": block.NAME, "block_state": block.block_state,
-                          "faces": [block.face_state.faces[e] for e in util.enums.EnumSide.iterate()]}
+                          "faces": [block.face_state.faces[e] for e in util.enums.EnumSide.iterate()],
+                          "inventories": []}
+            for i, inventory in enumerate(block.get_inventories()):
+                path = "blockinv/{}_{}_{}/{}".format(*position, i)
+                savefile.dump(None, "minecraft:inventory", inventory=inventory, path=path)
+                block_data["inventories"].append(path)
             if block_data in palette:
                 blocks[position] = palette.index(block_data)
             else:
