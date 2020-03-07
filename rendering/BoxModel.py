@@ -62,7 +62,8 @@ class BoxModel:
         self.tex_data = None
         self.deactive = None
 
-        mod.ModMcpython.mcpython.eventbus.subscribe("stage:boxmodel:bake", self.build)
+        if model.drawable:
+            mod.ModMcpython.mcpython.eventbus.subscribe("stage:boxmodel:bake", self.build)
 
     def build(self):
         up, down, north, east, south, west = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
