@@ -64,18 +64,15 @@ class BoxModel:
                                          tex_region=self.texregion)
         # todo: can we cache this -> better performance?
         if rotation in self.rotated_vertices:
-            vertex_r = [(x + rx, y + ry, z + rz) for rx, ry, rz in self.rotated_vertices[rotation]]
+            vertex_r = [(e[0]+x, e[1]+y, e[2]+z) for e in self.rotated_vertices[rotation]]
         else:
-            vertex = util.math.cube_vertices(self.boxposition[0] - 0.5 + self.rposition[0],
-                                             self.boxposition[1] - 0.5 + self.rposition[1],
-                                             self.boxposition[2] - 0.5 + self.rposition[2],
-                                             self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
+            vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
                                              [True] * 6)
-            vertex_r = [util.math.rotate_point(vertex[i*3:i*3+3], (0, 0, 0), rotation) for i in range(len(vertex) // 3)]
-            vertex_r = [util.math.rotate_point(e, tuple([self.rotation_core[i] for i in range(3)]),
+            vertex_r = [util.math.rotate_point(vertex[i * 3:i * 3 + 3], position, rotation) for i in
+                        range(len(vertex) // 3)]
+            vertex_r = [util.math.rotate_point(e, tuple([position[i] + self.rotation_core[i] for i in range(3)]),
                                                self.rotation) for e in vertex_r]
-            self.rotated_vertices[rotation] = vertex_r
-            vertex_r = [(x + rx, y + ry, z + rz) for rx, ry, rz in vertex_r]
+            self.rotated_vertices[rotation] = [(e[0]-x, e[1]-y, e[2]-z) for e in vertex_r]
         vertex = []
         for element in vertex_r: vertex.extend(element)
         batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]

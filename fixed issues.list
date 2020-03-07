@@ -123,3 +123,4 @@ issue 119: missing texture face rendering couldn't be deactivated; fixed on: 05.
 issue 120: player can't die; fixed on: 05.03.2020 by uuk
 issue 117: "rotation" was not used by model-loader; fixed on: 05.03.2020 by uuk
 issue 130: merge-error in BlockDirt.py; fixed on: 06.03.2020 by uuk
+issue 132: rendering of not-full blocks was not correct due to vertex parsing error; fixed on: 07.03.2020 by uuk
