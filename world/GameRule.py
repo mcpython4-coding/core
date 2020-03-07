@@ -15,6 +15,17 @@ class GameRuleDataType:
 
     def copy(self): raise NotImplementedError()
 
+    def save(self):
+        """
+        :return: an json-able representation of this type
+        """
+
+    def load(self, data):
+        """
+        loads from previous saved data the gamerule
+        :param data: the data saved
+        """
+
 
 class GameRuleTypeBoolean(GameRuleDataType):
     @classmethod
@@ -27,6 +38,10 @@ class GameRuleTypeBoolean(GameRuleDataType):
         self.status = data in ("true", "1")
 
     def copy(self): return GameRuleTypeBoolean(str(self.status))
+
+    def save(self): return self.status
+
+    def load(self, data): self.status = data
 
 
 class GameRuleTypeInt(GameRuleDataType):
@@ -42,6 +57,10 @@ class GameRuleTypeInt(GameRuleDataType):
         self.status = int(data)
 
     def copy(self): return GameRuleTypeInt(str(self.status))
+
+    def save(self): return self.status
+
+    def load(self, data): self.status = data
 
 
 class GameRule(event.Registry.IRegistryContent):

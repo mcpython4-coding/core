@@ -52,7 +52,9 @@ class StateWorldGenerationConfig(State.State):
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")
 
-    def on_generate_press(self, x, y):  self.generate()
+    def on_generate_press(self, x, y):
+        G.world.cleanup(remove_dims=True)
+        self.generate()
 
     def generate(self):
         G.statehandler.switch_to("minecraft:world_generation")

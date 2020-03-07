@@ -41,11 +41,13 @@ class SaveFile:
 
         self.dump(None, "minecraft:general")
         self.read("minecraft:player_data")
+        self.read("minecraft:gamerule")
 
     def save_world(self):
         print("saving world...")
         self.dump(None, "minecraft:general")
         self.dump(None, "minecraft:player_data")
+        self.dump(None, "minecraft:gamerule")
         for chunk in G.world.get_active_dimension().chunks:
             self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk)
         print("save complete!")

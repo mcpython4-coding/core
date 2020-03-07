@@ -889,15 +889,17 @@ started these clone on 12th of July, 2019
 [uuk]: removed log message when an chunk is finished in StateGeneration
 [uuk]: implemented rendering improvements also to direct-draw functions of BoxModel
 [uuk]: added SaveFile, IDataFixer and IDataSerializer-class
-[uuk]: added data serializers for player data, inventory data, chunks
+[uuk]: added data serializers for player data, inventory data, chunks, game rule
 
 plans for this branch:
     - implement an save system
-    todo: add gamerules to saves
+    todo: add config for world (barrier, auto-gen) to saves [see world.config]
     todo: add seed to saves
     todo: add barrier & auto gen options to saves
     todo: add temperature, height and biome map to saves
+    todo: optimize loading to be also like the generation screen
     todo: add block-inventories to save files
+    todo: add version number to saves, check if newer version -> do NOT load
 
     - implement an mc-file converter [use an DataFixer-like interface]
 

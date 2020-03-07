@@ -58,7 +58,6 @@ class StateWorldGeneration(State.State):
 
     def on_activate(self):
         self.status_table.clear()
-        G.world.cleanup(remove_dims=True)
         G.dimensionhandler.init_dims()
         sx = G.statehandler.states["minecraft:world_generation_config"].parts[7].entered_text
         sx = 3 if sx == "" else int(sx)
