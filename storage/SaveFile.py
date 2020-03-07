@@ -40,7 +40,7 @@ class SaveFile:
             self.version = generaldatafixer.UPGRADES_TO
 
         self.dump(None, "minecraft:general")
-        self.read("player_data")
+        self.read("minecraft:player_data")
 
     def save_world(self):
         print("saving world...")

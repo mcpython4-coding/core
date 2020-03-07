@@ -59,7 +59,7 @@ class Player(Entity.Entity):
 
     def hotkey_get_position(self):
         import clipboard
-        clipboard.copy("/tp @p {} {} {}".format(*globals.window.position))
+        clipboard.copy("/tp @p {} {} {}".format(*self.position))
 
     def toggle_gamemode(self):
         if self.gamemode == 1: self.set_gamemode(3)
@@ -196,7 +196,7 @@ class Player(Entity.Entity):
             globals.commandparser.parse("/clear")
         if globals.world.gamerulehandler.table["showDeathMessages"].status.status:
             logger.println("[CHAT] player {} died".format(self.name))
-        globals.window.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
+        self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
                                    globals.world.spawnpoint[1])
         self.active_inventory_slot = 0
         globals.window.dy = 0
@@ -217,10 +217,10 @@ class Player(Entity.Entity):
             globals.statehandler.switch_to("minecraft:escape_state")  # todo: add special state
 
     def _get_position(self):
-        return globals.window.position
+        return self.position
 
     def _set_position(self, position):
-        globals.window.position = position
+        self.position = position
 
     def damage(self, hearts: int, check_gamemode=True):
         """

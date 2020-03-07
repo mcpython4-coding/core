@@ -110,7 +110,7 @@ class World:
         """
         self.get_active_dimension().get_chunk(*sector, generate=False).hide()
 
-    def change_sectors(self, before, after, immediate=False, generate_chunks=True):
+    def change_sectors(self, before, after, immediate=False, generate_chunks=True, load_immediate=False):
         """ Move from sector `before` to sector `after`. A sector is a
         contiguous x, y sub-region of world. Sectors are used to speed up
         world rendering.
@@ -130,12 +130,6 @@ class World:
                     if after:
                         x, z = after
                         after_set.add((x + dx, z + dz))
-                    if generate_chunks and abs(dx) <= config.CHUNK_GENERATION_RANGE and \
-                            abs(dz) <= config.CHUNK_GENERATION_RANGE and self.config["enable_auto_gen"]:
-                        x, z = after
-                        chunk = self.get_active_dimension().get_chunk(x+dx, z+dz, generate=False)
-                        if not chunk.generated:
-                            G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
         show = after_set - before_set
         hide = before_set - after_set
         for sector in hide:
@@ -145,7 +139,18 @@ class World:
                                             dimension=self.active_dimension, chunk=sector)
         for sector in show:
             pyglet.clock.schedule_once(lambda _: self.show_sector(sector, immediate), 0.1)
-            pyglet.clock.schedule_once(lambda _: self.show_sector(sector, immediate), 0.1)
+            if not load_immediate:
+                pyglet.clock.schedule_once(lambda _: G.world.savefile.read(
+                    "minecraft:chunk", dimension=self.active_dimension, chunk=sector), 0.1)
+            else:
+                G.world.savefile.read("minecraft:chunk", dimension=self.active_dimension, chunk=sector)
+            dx, dz = sector[0] - after[0], sector[1] - after[1]
+            if generate_chunks and abs(dx) <= config.CHUNK_GENERATION_RANGE and \
+                    abs(dz) <= config.CHUNK_GENERATION_RANGE and self.config["enable_auto_gen"]:
+                x, z = after
+                chunk = self.get_active_dimension().get_chunk(x + dx, z + dz, generate=False)
+                if not chunk.generated:
+                    G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
 
     def process_queue(self):
         if not any(type(x) == state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
@@ -195,7 +200,11 @@ class World:
         G.worldgenerationhandler.tasks_to_generate.clear()
         G.worldgenerationhandler.runtimegenerationcache.clear()
         G.worldgenerationhandler.runtimegenerationcache = [[], {}, {}]
+        if filename is not None:
+            self.setup_by_filename(filename)
         G.eventhandler.call("world:clean")
+
+    def setup_by_filename(self, filename: str):
         self.filename = filename if filename is not None else "tmp"
         self.savefile = storage.SaveFile.SaveFile(self.filename)
 

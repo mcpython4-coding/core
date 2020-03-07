@@ -1,6 +1,12 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
+changelog of storage_update branch
+    - added system for storage
+    - added option to inventories and blocks to add custom data to save with it
+    - added save-screen
+
+
 changelog of master-branch
     - re-added support for custom block renderers
     - added support for OR-condition in block-states
