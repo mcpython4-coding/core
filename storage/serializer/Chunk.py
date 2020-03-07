@@ -10,7 +10,20 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
 
     @classmethod
     def load(cls, savefile, dimension: int, chunk: tuple):
-        G.world.dimensions[dimension].chunks[chunk].loaded = True
+        if dimension not in G.world.dimensions: return
+        chunk_instance: world.Chunk.Chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
+        chunk_instance.loaded = True
+        data = savefile.access_file_pickle("dim/{}/{}_{}.chunk".format(dimension, *chunk_instance))
+        if data is None: return
+        if data["version"] != savefile.version:
+            savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, chunk=chunk)
+            data = savefile.access_file_pickle("dim/{}/{}_{}.chunk".format(dimension, *chunk_instance))
+        chunk_instance.generated = data["generated"]
+        for position in data["blocks"]:
+            d = data["palette"][data["blocks"][position]]
+            block = chunk_instance.add_block(position, d["name"])
+            block.block_state = d["block_state"]
+            block.load(d["custom"])
 
     @classmethod
     def save(cls, data, savefile, dimension: int, chunk: tuple):
