@@ -38,7 +38,7 @@ class StateWorldGeneration(State.State):
         start = time.time()
         flag = True
         while time.time() - start < 0.4 and flag:
-            flag = G.worldgenerationhandler.process_one_generation_task()
+            flag = G.worldgenerationhandler.process_one_generation_task(log_msg=False)
             if flag is None: flag = True
         for chunk in self.status_table:
             if G.world.get_active_dimension().get_chunk(*chunk, generate=False) in \

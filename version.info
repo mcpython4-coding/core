@@ -885,4 +885,6 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 132
 [uuk]: improved rendering performance by sharing vertex data not only between every draw, but also between similar
        blocks
+[uuk]: improved rendering performance by caching the texture data
+[uuk]: removed log message when an chunk is finished in StateGeneration
 

@@ -120,7 +120,7 @@ class LoadingStages:
 
     BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",
                         "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake",
-                        "stage:block_boundingbox_get")
+                        "stage:boxmodel:bake", "stage:block_boundingbox_get")
 
     POST = LoadingStage("finishing up", "stage:post")
 

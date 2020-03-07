@@ -37,7 +37,7 @@ class WorldGenerationHandler:
             if len(self.runtimegenerationcache[0]) == 0 and generate_add:
                 self.process_one_generation_task()
 
-    def process_one_generation_task(self, chunk=None, reorder=True):
+    def process_one_generation_task(self, chunk=None, reorder=True, log_msg=True):
         if chunk is None:
             if len(self.runtimegenerationcache[0]) == 0:
                 cx, cz = util.math.sectorize(G.player.position)
@@ -107,7 +107,8 @@ class WorldGenerationHandler:
                 self.runtimegenerationcache[0].remove(chunk)
                 del self.runtimegenerationcache[1][chunk.position]
                 del self.runtimegenerationcache[2][chunk.position]
-                logger.println("finished generation of chunk {}/{}".format(*chunk.position))
+                if log_msg:
+                    logger.println("finished generation of chunk {}/{}".format(*chunk.position))
                 chunk.generated = True
                 G.eventhandler.call("worldgen:chunk:finished", chunk)
                 return
