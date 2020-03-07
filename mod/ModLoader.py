@@ -122,6 +122,9 @@ class LoadingStages:
                         "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake",
                         "stage:boxmodel:bake", "stage:block_boundingbox_get")
 
+    FILE_INTERFACE = LoadingStage("registration of data interfaces", "stage:serializer:parts",
+                                  "stage:datafixer:general", "stage:datafixer:parts")
+
     POST = LoadingStage("finishing up", "stage:post")
 
 
@@ -130,7 +133,7 @@ LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, Loadin
                  LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.LANGUAGE,
                  LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
                  LoadingStages.WORLDGEN, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
-                 LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.POST]
+                 LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.FILE_INTERFACE, LoadingStages.POST]
 
 
 class ModLoader:

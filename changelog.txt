@@ -8,9 +8,10 @@ changelog of master-branch
     - block models can now rotate themselves
     - tweaked generation system to look more faster and be more faster
     - world generation is now done parallel across up to 5 chunks
-    - improved block-showing performance by caching (rotated) vertices
+    - improved block-showing performance by caching (rotated) vertices and texture data
     - added config for height of world
     - added an world-generation progress-view screen like in MC
+    - added config for how far the world is generated when you are in-game, default is 1 chunk in each direction
 
 
 changelog of snapshot 20w10a [released on 04.03.2020]

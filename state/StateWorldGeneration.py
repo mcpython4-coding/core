@@ -55,6 +55,7 @@ class StateWorldGeneration(State.State):
                 == 0:
             G.statehandler.switch_to("minecraft:game")
             self.finish()
+        G.world.savefile.save_world()
 
     def on_activate(self):
         self.status_table.clear()

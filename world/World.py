@@ -19,10 +19,11 @@ import gui.Inventory
 import random
 import world.GameRule
 import config
+import storage.SaveFile
 
 
 class World:
-    def __init__(self):
+    def __init__(self, filename=None):
         G.world = self
         self.player = world.player.Player("unknown")
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
@@ -34,6 +35,8 @@ class World:
         self.reset_config()
         self.CANCEL_DIM_CHANGE = False
         self.hide_faces_to_ungenerated_chunks = True
+        self.filename = "tmp" if filename is None else filename
+        self.savefile = storage.SaveFile.SaveFile(self.filename)
 
     def reset_config(self):
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
@@ -170,7 +173,7 @@ class World:
             chunk.blockmap = {}
             chunk.is_ready = True
 
-    def cleanup(self, remove_dims=False):
+    def cleanup(self, remove_dims=False, filename=None):
         for dimension in self.dimensions.values():
             dimension: world.Dimension.Dimension
             for chunk in dimension.chunks.values():
@@ -189,4 +192,6 @@ class World:
         G.worldgenerationhandler.runtimegenerationcache.clear()
         G.worldgenerationhandler.runtimegenerationcache = [[], {}, {}]
         G.eventhandler.call("world:clean")
+        self.filename = filename if filename is not None else "tmp"
+        self.savefile = storage.SaveFile.SaveFile(self.filename)
 
