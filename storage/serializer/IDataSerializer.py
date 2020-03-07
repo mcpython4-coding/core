@@ -2,6 +2,9 @@ import event.Registry
 import mod.ModMcpython
 
 
+class InvalidSaveException(Exception): pass
+
+
 class IDataSerializer(event.Registry.IRegistryContent):
     TYPE = "minecraft:data_serializer"
     PART = None  # which part it can serialize

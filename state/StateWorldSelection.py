@@ -48,7 +48,12 @@ class StateWorldSelection(State.State):
         G.world.cleanup()
         worldname = "New World" if self.parts[1].entered_text == "" else self.parts[1].entered_text
         G.world.setup_by_filename(worldname)
-        G.world.savefile.load_world()
+        try:
+            G.world.savefile.load_world()
+        except IOError:
+            logger.println("failed to load world. data-fixer failed with NoDataFixerFoundException")
+            G.world.cleanup()
+            return
         G.world.change_sectors(None, util.math.sectorize(G.player.position), load_immediate=True)
         G.statehandler.switch_to("minecraft:game")
 

@@ -891,6 +891,8 @@ started these clone on 12th of July, 2019
 [uuk]: added SaveFile, IDataFixer and IDataSerializer-class [WARNING: for this phase of development, NO datafixers
        are provided as everything is WIP]
 [uuk]: added data serializers for player data, inventory data, chunks, game rule, world config, data maps
+[uuk]: added exception when something is wrong with save files, but it can be handled, but the user should be informed
+[uuk]: save also includes the version number it was saved in, future version loader are NOT supported
 
 plans for this branch:
     - implement an save system

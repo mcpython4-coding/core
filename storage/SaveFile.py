@@ -5,6 +5,7 @@ import json
 import pickle
 import os
 import logger
+import traceback
 
 """
 History of save versions:
@@ -81,7 +82,13 @@ class SaveFile:
         """
         for serializer in storage.serializer.IDataSerializer.dataserializerregistry.registered_object_map.values():
             if serializer.PART == part:
-                return serializer.load(self, **kwargs)
+                try:
+                    return serializer.load(self, **kwargs)
+                except storage.serializer.IDataSerializer.InvalidSaveException:
+                    traceback.print_exc()
+                    logger.write_exception("during writing part '{}' to save files under '{}' with arguments {}".
+                                           format(part, self.directory, kwargs))
+                    return
         raise ValueError("can't find serializer named '{}'".format(part))
 
     def dump(self, data, part, **kwargs):
