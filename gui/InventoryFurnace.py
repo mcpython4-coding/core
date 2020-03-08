@@ -200,3 +200,13 @@ class InventoryFurnace(gui.Inventory.Inventory):
         self.smelt_start = time.time()
         self.update_status()
 
+    def load(self, data: dict) -> bool:
+        self.fuel_left = data.setdefault("fuel", 0)
+        self.fuel_max = data.setdefault("max fuel", 0)
+        self.xp_stored = data.setdefault("xp", 0)
+        self.progress = data.setdefault("progress", 0)
+        return True
+
+    def save(self):
+        return {"fuel": self.fuel_left, "max fuel": self.fuel_max, "xp": self.xp_stored, "progress": self.progress}
+
