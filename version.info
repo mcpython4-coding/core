@@ -893,11 +893,10 @@ started these clone on 12th of July, 2019
 [uuk]: added data serializers for player data, inventory data, chunks, game rule, world config, data maps
 [uuk]: added exception when something is wrong with save files, but it can be handled, but the user should be informed
 [uuk]: save also includes the version number it was saved in, future version loader are NOT supported
+[uuk]: added StateWorldLoading
 
 plans for this branch:
     - implement an save system
-    todo: add version number to saves, check if newer version -> do NOT load
-    todo: optimize loading to be also like the generation screen
 
     - implement an mc-file converter [use an DataFixer-like interface]
 

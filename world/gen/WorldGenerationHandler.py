@@ -90,9 +90,11 @@ class WorldGenerationHandler:
                 self.runtimegenerationcache[1][chunk.position] = 3
                 return
             position = list(chunk.blockmap.keys())[0]
-            args, kwargs = chunk.blockmap[position]
+            args, kwargs, on_add = chunk.blockmap[position]
             del chunk.blockmap[position]
-            chunk.add_block(*args, **kwargs)
+            blockinstance = chunk.add_block(*args, **kwargs)
+            if on_add is not None:
+                on_add(blockinstance)
             if reorder:
                 self.runtimegenerationcache[0].remove(chunk)
                 self.runtimegenerationcache[0].insert(min(len(self.runtimegenerationcache[0])-1, 4), chunk)

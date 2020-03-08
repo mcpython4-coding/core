@@ -91,9 +91,9 @@ class Chunk:
         return faces
 
     def add_add_block_gen_task(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[],
-                               kwargs={}):
+                               kwargs={}, on_add=None):
         self.blockmap[position] = ([position, block_name], {"immediate": immediate, "block_update": block_update,
-                                                            "args": args, "kwargs": kwargs})
+                                                            "args": args, "kwargs": kwargs}, on_add)
 
     def is_position_blocked(self, position):
         return position in self.world or position in self.blockmap

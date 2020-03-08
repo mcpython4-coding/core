@@ -282,7 +282,7 @@ class BlockState:
         return model, {"rotation": rotations}, 1 if "weight" not in data else data["weight"]
 
     def add_face_to_batch(self, block, batch, face):
-        if block.block_state is None:
+        if block.block_state is None or block.block_state < 0 or block.block_state > len(self.models):
             block.block_state = self.models.index(random.choices(self.models, [e[2] for e in self.models])[0])
         result = []
         model, config, _ = self.models[block.block_state]

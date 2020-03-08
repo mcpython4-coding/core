@@ -9,7 +9,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:chunk"
 
     @classmethod
-    def load(cls, savefile, dimension: int, chunk: tuple):
+    def load(cls, savefile, dimension: int, chunk: tuple, immediate=True):
         if dimension not in G.world.dimensions: return
         chunk_instance: world.Chunk.Chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
         if chunk_instance.loaded: return
@@ -22,12 +22,19 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.generated = data["generated"]
         for position in data["blocks"]:
             d = data["block_palette"][data["blocks"][position]]
-            block = chunk_instance.add_block(position, d["name"])
-            block.block_state = d["block_state"]
-            block.load(d["custom"])
-            inventories = block.get_inventories()
-            for i, path in enumerate(d["inventories"]):
-                savefile.read("minecraft:inventory", inventory=inventories[i], path=path)
+
+            def add(blockinstance):
+                blockinstance.block_state = d["block_state"]
+                blockinstance.load(d["custom"])
+                inventories = blockinstance.get_inventories()
+                for i, path in enumerate(d["inventories"]):
+                    if i >= len(inventories): break
+                    savefile.read("minecraft:inventory", inventory=inventories[i], path=path)
+
+            if immediate:
+                add(chunk_instance.add_block(position, d["name"]))
+            else:
+                chunk_instance.add_add_block_gen_task(position, d["name"], on_add=add)
         chunk_instance.set_value("landmassmap", data["maps"]["landmass"])
         chunk_instance.set_value("temperaturemap", data["maps"]["temperature"])
         chunk_instance.set_value("biomemap", data["maps"]["biome"])

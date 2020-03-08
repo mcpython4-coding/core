@@ -18,6 +18,7 @@ import state.StatePartConfigBackground
 import logger
 import chat.DataPack
 import state.StateWorldGeneration
+import state.StateWorldLoading
 
 
 class StateWorldSelection(State.State):
@@ -48,14 +49,7 @@ class StateWorldSelection(State.State):
         G.world.cleanup()
         worldname = "New World" if self.parts[1].entered_text == "" else self.parts[1].entered_text
         G.world.setup_by_filename(worldname)
-        try:
-            G.world.savefile.load_world()
-        except IOError:
-            logger.println("failed to load world. data-fixer failed with NoDataFixerFoundException")
-            G.world.cleanup()
-            return
-        G.world.change_sectors(None, util.math.sectorize(G.player.position), load_immediate=True)
-        G.statehandler.switch_to("minecraft:game")
+        G.statehandler.switch_to("minecraft:world_loading")
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
