@@ -32,11 +32,12 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
                     if i >= len(inventories): break
                     savefile.read("minecraft:inventory", inventory=inventories[i], path=path)
 
+            flag = d["shown"]
             if immediate:
-                add(chunk_instance.add_block(position, d["name"]))
+                add(chunk_instance.add_block(position, d["name"], immediate=flag))
             else:
                 if d["name"] not in G.registry.get_by_name("block").registered_object_map: continue
-                chunk_instance.add_add_block_gen_task(position, d["name"], on_add=add)
+                chunk_instance.add_add_block_gen_task(position, d["name"], on_add=add, immediate=flag)
         chunk_instance.set_value("landmassmap", data["maps"]["landmass"])
         chunk_instance.set_value("temperaturemap", data["maps"]["temperature"])
         chunk_instance.set_value("biomemap", data["maps"]["biome"])
@@ -51,7 +52,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         blocks = {}
         for position in chunk_instance.world:
             block = chunk_instance.world[position]
-            block_data = {"custom": block.save(), "name": block.NAME}
+            block_data = {"custom": block.save(), "name": block.NAME, "shown": any(block.face_state.faces.values())}
             if block.get_inventories() is not None:
                 block_data["inventories"] = {}
                 for i, inventory in enumerate(block.get_inventories()):

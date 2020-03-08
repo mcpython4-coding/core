@@ -895,4 +895,7 @@ started these clone on 12th of July, 2019
 [uuk]: save also includes the version number it was saved in, future version loader are NOT supported
 [uuk]: added StateWorldLoading
 [uuk]: added an mod-list to general-serializer
+[uuk]: improved world loading performance
+
+todo: implement inventory optimisation, add override-flag & use it in chunk saving as in this moment, all existing data should get override
 
