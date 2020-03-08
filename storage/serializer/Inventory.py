@@ -3,6 +3,11 @@ import globals as G
 import gui.Inventory
 import uuid
 
+"""
+improvements for the future:
+- add option to store under an special directory the data and output the binary data
+"""
+
 
 @G.registry
 class Inventory(storage.serializer.IDataSerializer.IDataSerializer):

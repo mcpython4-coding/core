@@ -24,9 +24,10 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             d = data["block_palette"][data["blocks"][position]]
 
             def add(blockinstance):
-                blockinstance.block_state = d["block_state"]
+                if blockinstance is None: return
                 blockinstance.load(d["custom"])
                 inventories = blockinstance.get_inventories()
+                if "inventories" not in d: return
                 for i, path in enumerate(d["inventories"]):
                     if i >= len(inventories): break
                     savefile.read("minecraft:inventory", inventory=inventories[i], path=path)
@@ -34,6 +35,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             if immediate:
                 add(chunk_instance.add_block(position, d["name"]))
             else:
+                if d["name"] not in G.registry.get_by_name("block").registered_object_map: continue
                 chunk_instance.add_add_block_gen_task(position, d["name"], on_add=add)
         chunk_instance.set_value("landmassmap", data["maps"]["landmass"])
         chunk_instance.set_value("temperaturemap", data["maps"]["temperature"])
@@ -49,13 +51,13 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         blocks = {}
         for position in chunk_instance.world:
             block = chunk_instance.world[position]
-            block_data = {"custom": block.save(), "name": block.NAME, "block_state": block.block_state,
-                          "faces": [block.face_state.faces[e] for e in util.enums.EnumSide.iterate()],
-                          "inventories": []}
-            for i, inventory in enumerate(block.get_inventories()):
-                path = "blockinv/{}_{}_{}/{}".format(*position, i)
-                savefile.dump(None, "minecraft:inventory", inventory=inventory, path=path)
-                block_data["inventories"].append(path)
+            block_data = {"custom": block.save(), "name": block.NAME}
+            if block.get_inventories() is not None:
+                block_data["inventories"] = {}
+                for i, inventory in enumerate(block.get_inventories()):
+                    path = "blockinv/{}_{}_{}/{}".format(*position, i)
+                    savefile.dump(None, "minecraft:inventory", inventory=inventory, path=path)
+                    block_data["inventories"].append(path)
             if block_data in palette:
                 blocks[position] = palette.index(block_data)
             else:
