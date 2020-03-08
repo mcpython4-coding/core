@@ -44,6 +44,7 @@ class SaveFile:
         self.dump(None, "minecraft:general")
         self.read("minecraft:player_data")
         self.read("minecraft:gamerule")
+        self.read("minecraft:registry_info_serializer")
 
     def save_world(self, *_):
         self.save_in_progress = True
@@ -51,6 +52,7 @@ class SaveFile:
         self.dump(None, "minecraft:general")
         self.dump(None, "minecraft:player_data")
         self.dump(None, "minecraft:gamerule")
+        self.dump(None, "minecraft:registry_info_serializer")
         for chunk in G.world.get_active_dimension().chunks:
             self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk)
         print("save complete!")

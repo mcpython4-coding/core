@@ -18,6 +18,11 @@ class IRegistryContent:
 
     INFO = None   # can be used to display any special info in e.g. /registryinfo-command
 
+    # returns some information about the class stored in registry. used in saves to determine if registry was changed,
+    # so could also include an version. Must be pickle-able
+    @classmethod
+    def compressed_info(cls): return cls.NAME
+
 
 class Registry:
     def __init__(self, name: str, registry_type_names: list, injection_function=None,

@@ -127,3 +127,4 @@ issue 132: rendering of not-full blocks was not correct due to vertex parsing er
 issue 134: /generate command was not working; fixed on: 08.03.2020 by uuk
 issue 135: percentage in generation screen was in some cases wrong; fixed on: 08.03.2020 by uuk
 issue 136: all noises are not world-seed based; fixed on: 08.03.2020 by uuk
+issue 137: block entries in commands did NOT accept non-prefixed names; fixed on: 08.03.2020 by uuk
