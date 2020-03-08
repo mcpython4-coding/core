@@ -81,4 +81,5 @@ issue 131:
 issue 133:
     bug: can break unbreakable blocks in gamemode 0
 
-[134 - 137]
+issue 137:
+    bug: coal block has no fuel level

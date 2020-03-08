@@ -905,6 +905,5 @@ started these clone on 12th of July, 2019
 [uuk]: compressed chunk files into region files
 [uuk]: added registry info to saves
 [uuk]: fixed issue 137
-
-todo: add entries for ticking functions to save
+[uuk]: fixed furnace-data deserialization
 

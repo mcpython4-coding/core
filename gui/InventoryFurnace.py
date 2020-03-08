@@ -196,7 +196,10 @@ class InventoryFurnace(gui.Inventory.Inventory):
             if self.slots[2].itemstack.item.get_max_stack_size() > self.slots[2].itemstack.amount:
                 self.slots[2].itemstack.add_amount(1)
         self.slots[0].itemstack.add_amount(-1)
-        G.player.add_xp(self.recipe.xp)
+        try:
+            G.player.add_xp(self.recipe.xp)
+        except AttributeError:
+            pass
         self.smelt_start = time.time()
         self.update_status()
 
@@ -205,6 +208,7 @@ class InventoryFurnace(gui.Inventory.Inventory):
         self.fuel_max = data.setdefault("max fuel", 0)
         self.xp_stored = data.setdefault("xp", 0)
         self.progress = data.setdefault("progress", 0)
+        self.update_status()
         return True
 
     def save(self):
