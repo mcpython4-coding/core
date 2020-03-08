@@ -11,6 +11,7 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
     @classmethod
     def load(cls, savefile):
         data = savefile.access_file_json("level.json")
+        if data is None: raise storage.serializer.IDataSerializer.InvalidSaveException("level.json not found!")
         savefile.version = data["storage version"]
         G.player.name = data["player name"]
         G.world.config = data["config"]

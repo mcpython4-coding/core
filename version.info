@@ -908,4 +908,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed furnace-data deserialization
 [uuk]: compressed biome map, landmass map, temperaure map and height map in chunk data
 [uuk]: saves are now deleted when generate new is pressed with the name is given
+[uuk]: fixed loading of maps in chunks [broken before]
 

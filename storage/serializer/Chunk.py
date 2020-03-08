@@ -50,11 +50,12 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         for x in range(chunk[0]*16, chunk[0]*16+16):
             positions.extend([(x, z) for z in range(chunk[1]*16, chunk[1]*16+16)])
 
-        chunk_instance.set_value("landmassmap", {pos: data["maps"]["landmass"][pos] for pos in positions})
-        chunk_instance.set_value("temperaturemap", {pos: data["maps"]["temperature"][pos] for pos in positions})
+        chunk_instance.set_value("landmassmap", {pos: data["maps"]["landmass"][i] for i, pos in enumerate(positions)})
+        chunk_instance.set_value("temperaturemap",
+                                 {pos: data["maps"]["temperature"][i] for i, pos in enumerate(positions)})
         biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in enumerate(positions)}
         chunk_instance.set_value("biomemap", biome_map)
-        chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][pos] for pos in positions})
+        chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
 
     @classmethod
     def save(cls, data, savefile, dimension: int, chunk: tuple):

@@ -19,8 +19,6 @@ import logger
 import chat.DataPack
 import state.StateWorldGeneration
 import state.StateWorldLoading
-import os
-import shutil
 
 
 class StateWorldSelection(State.State):
@@ -44,9 +42,6 @@ class StateWorldSelection(State.State):
 
     def on_new_world_press(self, *_):
         worldname = "New World" if self.parts[1].entered_text == "" else self.parts[1].entered_text
-        if os.path.exists(G.local+"/saves/{}".format(worldname)):
-            logger.println("deleting old world...")
-            shutil.rmtree(G.local+"/saves/{}".format(worldname))
         G.world.setup_by_filename(worldname)
         G.statehandler.switch_to("minecraft:world_generation_config")
 

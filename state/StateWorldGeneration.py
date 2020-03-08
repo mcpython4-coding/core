@@ -18,6 +18,8 @@ import logger
 import chat.DataPack
 import time
 import util.opengl
+import os
+import shutil
 
 
 class StateWorldGeneration(State.State):
@@ -53,6 +55,9 @@ class StateWorldGeneration(State.State):
             self.finish()
 
     def on_activate(self):
+        if os.path.exists(G.world.savefile.directory):
+            logger.println("deleting old world...")
+            shutil.rmtree(G.world.savefile.directory)
         self.status_table.clear()
         G.dimensionhandler.init_dims()
         sx = G.statehandler.states["minecraft:world_generation_config"].parts[7].entered_text
