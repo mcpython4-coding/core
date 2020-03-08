@@ -45,9 +45,15 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             else:
                 if d["name"] not in G.registry.get_by_name("block").registered_object_map: continue
                 chunk_instance.add_add_block_gen_task(position, d["name"], on_add=add, immediate=flag)
+
+        positions = []
+        for x in range(chunk[0]*16, chunk[0]*16+16):
+            positions.extend([(x, z) for z in range(chunk[1]*16, chunk[1]*16+16)])
+
         chunk_instance.set_value("landmassmap", data["maps"]["landmass"])
         chunk_instance.set_value("temperaturemap", data["maps"]["temperature"])
-        chunk_instance.set_value("biomemap", data["maps"]["biome"])
+        biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in enumerate(positions)}
+        chunk_instance.set_value("biomemap", biome_map)
         chunk_instance.set_value("heightmap", data["maps"]["height"])
 
     @classmethod
@@ -80,6 +86,20 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         landmass_map = chunk_instance.get_value("landmassmap")
         temperature_map = chunk_instance.get_value("temperaturemap")
         biome_map = chunk_instance.get_value("biomemap")
+
+        positions = list(biome_map.keys())  # an list of all (x, z) in the chunk, for sorting the arrays
+        positions.sort(key=lambda x: x[1])
+        positions.sort(key=lambda x: x[0])
+
+        biome_palette = []
+        biomes = []
+        for pos in positions:
+            if biome_map[pos] not in biome_palette:
+                index = len(biome_palette)
+                biome_palette.append(biome_map[pos])
+            else:
+                index = biome_palette.index(biome_map[pos])
+            biomes.append(index)
         height_map = chunk_instance.get_value("heightmap")
         cdata = {
             "dimension": dimension,
@@ -90,7 +110,8 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             "maps": {
                 "landmass": landmass_map,
                 "temperature": temperature_map,
-                "biome": biome_map,
+                "biome": biomes,
+                "biome_palette": biome_palette,
                 "height": height_map
             }
         }

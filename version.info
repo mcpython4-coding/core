@@ -906,4 +906,9 @@ started these clone on 12th of July, 2019
 [uuk]: added registry info to saves
 [uuk]: fixed issue 137
 [uuk]: fixed furnace-data deserialization
+[uuk]: compressed biome map in chunk data
+
+todo: maps should be stored without position indificator, instead use an list
+todo: delete saves when generating new world with the same name
+todo: block map should be re-ordered in y-x-z order list
 

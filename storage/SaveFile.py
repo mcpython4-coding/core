@@ -118,7 +118,7 @@ class SaveFile:
         try:
             with open(file) as f: return json.load(f)
         except json.decoder.JSONDecodeError:
-            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted")
+            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
             return None
 
     def access_file_pickle(self, file):
@@ -126,8 +126,8 @@ class SaveFile:
         if not os.path.isfile(file): return None
         try:
             with open(file, mode="rb") as f: return pickle.load(f)
-        except pickle.UnpicklingError:
-            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted")
+        except (pickle.UnpicklingError, EOFError):
+            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
             return None
 
     def access_raw(self, file):
