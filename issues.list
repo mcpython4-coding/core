@@ -78,4 +78,5 @@ issue 129:
 issue 131:
     bug: slabs are upside-down
 
-[132]
+issue 133:
+    bug: can break unbreakable blocks in gamemode 0

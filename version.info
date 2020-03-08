@@ -896,10 +896,3 @@ started these clone on 12th of July, 2019
 [uuk]: added StateWorldLoading
 [uuk]: added an mod-list to general-serializer
 
-plans for this branch:
-    todo: make sure that inventory data is removed when the block is removed
-
-    - implement an mc-file converter [use an DataFixer-like interface]
-
-    - implement better save screen
-
