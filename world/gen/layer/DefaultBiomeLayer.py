@@ -11,11 +11,17 @@ import globals as G
 import random
 import opensimplex
 import world.Chunk
+import event.EventHandler
 
 
 @G.worldgenerationhandler
 class DefaultBiomeMapLayer(Layer):
     noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
+
+    @classmethod
+    def update_seed(cls):
+        seed = G.world.config["seed"]
+        cls.noise = opensimplex.OpenSimplex(seed=seed*100)
 
     @staticmethod
     def normalize_config(config: LayerConfig):
@@ -44,4 +50,6 @@ class DefaultBiomeMapLayer(Layer):
 
 
 authcode = world.Chunk.Chunk.add_default_attribute("biomemap", DefaultBiomeMapLayer, {})
+
+event.EventHandler.PUBLIC_EVENT_BUS.subscribe("seed:set", DefaultBiomeMapLayer.update_seed)
 

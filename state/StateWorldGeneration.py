@@ -26,8 +26,6 @@ class StateWorldGeneration(State.State):
     def __init__(self):
         State.State.__init__(self)
         self.status_table = {}
-        self.world_size = ((0, 0), (0, 0, 0, 0), 0)
-        self.finished_chunks = 0
 
     def get_parts(self) -> list:
         return [state.StatePartConfigBackground.StatePartConfigBackground(),
@@ -46,8 +44,6 @@ class StateWorldGeneration(State.State):
                 self.status_table[chunk] = 0
                 continue
             if chunk not in G.worldgenerationhandler.runtimegenerationcache[1]:
-                if self.status_table[chunk] != 6:
-                    self.finished_chunks += 1
                 self.status_table[chunk] = 6
                 continue
             self.status_table[chunk] = G.worldgenerationhandler.runtimegenerationcache[1][chunk] + 1
@@ -78,8 +74,8 @@ class StateWorldGeneration(State.State):
         else:
             seed = random.randint(-100000, 100000)
         G.world.config["seed"] = seed
+        G.eventhandler.call("seed:set")
         G.eventhandler.call("on_world_generation_started")
-        self.world_size = ((sx, sy), (-fx, ffx-1, -fy, ffy-1), sx*sy)
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
                 G.worldgenerationhandler.add_chunk_to_generation_list((cx, cz), force_generate=True, generate_add=False)
@@ -117,7 +113,8 @@ class StateWorldGeneration(State.State):
     def on_draw_2d_post(self):
         wx, wy = G.window.get_size()
         mx, my = wx // 2, wy // 2
-        self.parts[1].text = "{}%".format(round(self.finished_chunks/self.world_size[2]*1000)/10)
+        self.parts[1].text = "{}%".format(round(list(
+            self.status_table.values()).count(6)/len(self.status_table)*1000)/10)
 
         for cx, cz in self.status_table:
             status = self.status_table[(cx, cz)]

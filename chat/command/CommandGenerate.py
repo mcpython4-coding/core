@@ -37,8 +37,8 @@ class CommandGenerate(chat.command.Command.Command):
         tx, tz = chunkt
         if fx > tx: fx, tx = tx, fx
         if fz > tz: fz, tz = tz, fz
-        for x in range(fx, tx):
-            for z in range(fz, tz):
+        for x in range(fx, tx+1):
+            for z in range(fz, tz+1):
                 G.worldgenerationhandler.generate_chunk(dim.get_chunk(x, z, generate=False))
         G.world.process_entire_queue()
 

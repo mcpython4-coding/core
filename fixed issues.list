@@ -124,3 +124,6 @@ issue 120: player can't die; fixed on: 05.03.2020 by uuk
 issue 117: "rotation" was not used by model-loader; fixed on: 05.03.2020 by uuk
 issue 130: merge-error in BlockDirt.py; fixed on: 06.03.2020 by uuk
 issue 132: rendering of not-full blocks was not correct due to vertex parsing error; fixed on: 07.03.2020 by uuk
+issue 134: /generate command was not working; fixed on: 08.03.2020 by uuk
+issue 135: percentage in generation screen was in some cases wrong; fixed on: 08.03.2020 by uuk
+issue 136: all noises are not world-seed based; fixed on: 08.03.2020 by uuk

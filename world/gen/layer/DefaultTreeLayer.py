@@ -32,6 +32,7 @@ class DefaultTreeLayer(Layer):
         biome = G.biomehandler.biomes[chunk.get_value("biomemap")[(x, z)]]
         height = chunk.get_value("heightmap")[(x, z)][0][1]
         trees = biome.get_trees()
+        # todo: make noise-based
         for IFeature, chance in trees:
             if random.randint(1, chance) == 1:
                 IFeature.place(chunk.dimension, x, height+1, z)

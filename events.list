@@ -72,6 +72,7 @@ rendering:
 
 world generation:
     "worldgen:chunk:finished": called by WorldGenerationHandler when an chunk was finished in generation
+    "seed:set": called when an new seed was set, seed is stored in G.world.config["seed"]
 
 game play:
     "player:die": called by player when it is killed

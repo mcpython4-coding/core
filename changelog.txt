@@ -2,9 +2,13 @@ Changelog since cleanup-branch of 31.01.2020
 
 
 changelog of storage_update branch
-    - added system for storage
-    - added option to inventories and blocks to add custom data to save with it
-    - added save-screen
+    - added system for storage with serializers and data fixers [unused at the moment]
+    - added option to inventories and blocks to add custom data to save with it (items had such an function before)
+    - added save-screen, save-loading screen
+
+    fixed bugs:
+        - /generate command was not working
+        - seed was ignored by generation system
 
 
 changelog of master-branch
@@ -12,7 +16,7 @@ changelog of master-branch
     - added support for OR-condition in block-states
     - block-states act when selecting from multiple models better
     - block models can now rotate themselves
-    - tweaked generation system to look more faster and be more faster
+    - tweaked generation system to look faster (and be faster)
     - world generation is now done parallel across up to 5 chunks
     - improved block-showing performance by caching (rotated) vertices and texture data
     - added config for height of world

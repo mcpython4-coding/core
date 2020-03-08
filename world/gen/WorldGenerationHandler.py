@@ -136,10 +136,10 @@ class WorldGenerationHandler:
             cconfig.layer = layer
 
     def generate_chunk(self, chunk: world.Chunk.Chunk, check=True, check_chunk=True):
-        if (not self.enable_generation or chunk.is_ready) and check:
-            return
-        if check_chunk and chunk.generated:
-            return
+        print(1)
+        if check_chunk and chunk.generated: return
+        print(3)
+        if type(chunk) == tuple: chunk = G.world.get_active_dimension().get_chunk(chunk, generate=False)
         chunk.loaded = True
         logger.println("generating", chunk.position)
         dimension = chunk.dimension

@@ -14,6 +14,7 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
         savefile.version = data["storage version"]
         G.player.name = data["player name"]
         G.world.config = data["config"]
+        G.eventhandler.call("seed:set")
         if data["game version"] not in config.VERSION_ORDER:
             raise storage.serializer.IDataSerializer.InvalidSaveException("future version are NOT supported")
         for modname in data["mods"]:
