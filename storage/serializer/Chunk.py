@@ -20,6 +20,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, chunk=chunk)
             data = savefile.access_file_pickle("dim/{}/{}_{}.chunk".format(dimension, *chunk)) # reload the data
         chunk_instance.generated = data["generated"]
+        inv_file = "dim/{}/{}_{}.inv".format(dimension, *chunk)
         for position in data["blocks"]:
             d = data["block_palette"][data["blocks"][position]]
 
@@ -30,7 +31,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
                 if "inventories" not in d: return
                 for i, path in enumerate(d["inventories"]):
                     if i >= len(inventories): break
-                    savefile.read("minecraft:inventory", inventory=inventories[i], path=path)
+                    savefile.read("minecraft:inventory", inventory=inventories[i], path=path, file=inv_file)
 
             flag = d["shown"]
             if immediate:
@@ -50,14 +51,19 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance: world.Chunk.Chunk = G.world.dimensions[dimension].chunks[chunk]
         palette = []
         blocks = {}
+        inv_file = "dim/{}/{}_{}.inv".format(dimension, *chunk)
+        overridden = False
         for position in chunk_instance.world:
             block = chunk_instance.world[position]
             block_data = {"custom": block.save(), "name": block.NAME, "shown": any(block.face_state.faces.values())}
             if block.get_inventories() is not None:
-                block_data["inventories"] = {}
+                block_data["inventories"] = []
                 for i, inventory in enumerate(block.get_inventories()):
+                    if not overridden:  # only if we need data, load it
+                        savefile.dump_file_pickle(inv_file, {})
+                        overridden = True
                     path = "blockinv/{}_{}_{}/{}".format(*position, i)
-                    savefile.dump(None, "minecraft:inventory", inventory=inventory, path=path)
+                    savefile.dump(None, "minecraft:inventory", inventory=inventory, path=path, file=inv_file)
                     block_data["inventories"].append(path)
             if block_data in palette:
                 blocks[position] = palette.index(block_data)

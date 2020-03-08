@@ -14,8 +14,9 @@ class Inventory(storage.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:inventory"
 
     @classmethod
-    def load(cls, savefile, inventory: gui.Inventory.Inventory, path: str):
-        data = savefile.access_file_pickle("inventories.dat")
+    def load(cls, savefile, inventory: gui.Inventory.Inventory, path: str, file=None):
+        if file is None: file = "inventories.dat"
+        data = savefile.access_file_pickle(file)
         if data is None: return
         if "version" in data and data["version"] != savefile.version:
             savefile.upgrade("inventory_file")
@@ -27,12 +28,13 @@ class Inventory(storage.serializer.IDataSerializer.IDataSerializer):
         [inventory.slots[i].load(e) for i, e in enumerate(data["slots"])]
 
     @classmethod
-    def save(cls, data, savefile, inventory: gui.Inventory.Inventory, path: str):
-        data = savefile.access_file_pickle("inventories.dat")
+    def save(cls, data, savefile, inventory: gui.Inventory.Inventory, path: str, file=None, override=False):
+        if file is None: file = "inventories.dat"
+        data = savefile.access_file_pickle(file) if not override else None
         if data is None: data = {"version": savefile.version}
         idata = {"uuid": inventory.uuid.int,
                  "custom data": inventory.save(),
                  "slots": [slot.save() for slot in inventory.slots]}
         data[path] = idata
-        savefile.dump_file_pickle("inventories.dat", data)
+        savefile.dump_file_pickle(file, data)
 

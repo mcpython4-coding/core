@@ -896,6 +896,6 @@ started these clone on 12th of July, 2019
 [uuk]: added StateWorldLoading
 [uuk]: added an mod-list to general-serializer
 [uuk]: improved world loading performance
-
-todo: implement inventory optimisation, add override-flag & use it in chunk saving as in this moment, all existing data should get override
+[uuk]: inventory serializer has now an file-parameter to store data not in main file, rather in another one
+[uuk]: block-inventories are now stored per-chunk rather than per-world
 
