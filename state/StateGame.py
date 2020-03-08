@@ -15,6 +15,7 @@ import event.TickHandler
 import pyglet
 from pyglet.window import mouse
 import mod.ModMcpython
+import time
 
 
 class StateGame(State.State):
@@ -28,7 +29,9 @@ class StateGame(State.State):
     def get_parts(self) -> list:
         return [StatePartGame.StatePartGame(), gui.InventoryHandler.inventory_part]
 
-    def on_activate(self): G.worldgenerationhandler.enable_auto_gen = True
+    def on_activate(self):
+        while G.world.savefile.save_in_progress: time.sleep(0.2)
+        G.worldgenerationhandler.enable_auto_gen = True
 
     def on_deactivate(self):
         G.worldgenerationhandler.enable_auto_gen = False

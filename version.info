@@ -898,4 +898,6 @@ started these clone on 12th of July, 2019
 [uuk]: improved world loading performance
 [uuk]: inventory serializer has now an file-parameter to store data not in main file, rather in another one
 [uuk]: block-inventories are now stored per-chunk rather than per-world
+[uuk]: fixed possible issue that block-inventories are not removed when block is deleted in save-files
+[uuk]: world is now saved off-thread in StateEscape, but when you try to exit the state, you have to wait for completion
 

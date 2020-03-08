@@ -14,6 +14,7 @@ import pyglet
 import state.StateGame
 import util.callbacks
 import mod.ModMcpython
+import time
 
 
 class StateEscape(State.State):
@@ -47,6 +48,7 @@ class StateEscape(State.State):
         G.world.cleanup()
         G.eventhandler.call("on_game_leave")
         G.statehandler.switch_to("minecraft:startmenu", immediate=False)
+        while G.world.savefile.save_in_progress: time.sleep(0.2)
 
     @staticmethod
     def on_key_press(symbol, modifiers):
@@ -58,7 +60,7 @@ class StateEscape(State.State):
         pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
 
     def on_activate(self):
-        G.world.savefile.save_world()
+        pyglet.clock.schedule_once(G.world.savefile.save_world, 0.1)
 
 
 escape = None

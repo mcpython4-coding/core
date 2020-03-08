@@ -22,6 +22,7 @@ class SaveFile:
     def __init__(self, directory_name):
         self.directory = G.local+"/saves/"+directory_name
         self.version = LATEST_VERSION
+        self.save_in_progress = False
 
     def load_world(self):
         G.world.cleanup()
@@ -44,7 +45,8 @@ class SaveFile:
         self.read("minecraft:player_data")
         self.read("minecraft:gamerule")
 
-    def save_world(self):
+    def save_world(self, *_):
+        self.save_in_progress = True
         print("saving world...")
         self.dump(None, "minecraft:general")
         self.dump(None, "minecraft:player_data")
@@ -52,6 +54,7 @@ class SaveFile:
         for chunk in G.world.get_active_dimension().chunks:
             self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk)
         print("save complete!")
+        self.save_in_progress = False
 
     def upgrade(self, part=None, version=None, **kwargs):
         """
