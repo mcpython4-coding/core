@@ -907,8 +907,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 137
 [uuk]: fixed furnace-data deserialization
 [uuk]: compressed biome map, landmass map, temperaure map and height map in chunk data
-
-todo: maps should be stored without position indificator, instead use an list
-todo: delete saves when generating new world with the same name
-todo: block map should be re-ordered in y-x-z order list
+[uuk]: saves are now deleted when generate new is pressed with the name is given
 
