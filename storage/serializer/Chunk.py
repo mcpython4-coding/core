@@ -4,6 +4,9 @@ import world.Chunk
 import util.enums
 
 
+def chunk2region(cx, cz): return cx >> 5, cz >> 5
+
+
 @G.registry
 class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:chunk"
@@ -11,16 +14,19 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
     @classmethod
     def load(cls, savefile, dimension: int, chunk: tuple, immediate=True):
         if dimension not in G.world.dimensions: return
+        region = chunk2region(*chunk)
         chunk_instance: world.Chunk.Chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
         if chunk_instance.loaded: return
         chunk_instance.loaded = True
-        data = savefile.access_file_pickle("dim/{}/{}_{}.chunk".format(dimension, *chunk))
+        data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
         if data is None: return
         if data["version"] != savefile.version:
             savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, chunk=chunk)
-            data = savefile.access_file_pickle("dim/{}/{}_{}.chunk".format(dimension, *chunk)) # reload the data
+            data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))  # reload the data
+        if chunk not in data: return
+        data = data[chunk]
         chunk_instance.generated = data["generated"]
-        inv_file = "dim/{}/{}_{}.inv".format(dimension, *chunk)
+        inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
         for position in data["blocks"]:
             d = data["block_palette"][data["blocks"][position]]
 
@@ -48,10 +54,11 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
     def save(cls, data, savefile, dimension: int, chunk: tuple):
         if dimension not in G.world.dimensions: return
         if chunk not in G.world.dimensions[dimension].chunks: return
+        region = chunk2region(*chunk)
         chunk_instance: world.Chunk.Chunk = G.world.dimensions[dimension].chunks[chunk]
         palette = []
         blocks = {}
-        inv_file = "dim/{}/{}_{}.inv".format(dimension, *chunk)
+        inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
         overridden = False
         for position in chunk_instance.world:
             block = chunk_instance.world[position]
@@ -74,8 +81,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         temperature_map = chunk_instance.get_value("temperaturemap")
         biome_map = chunk_instance.get_value("biomemap")
         height_map = chunk_instance.get_value("heightmap")
-        data = {
-            "version": savefile.version,
+        cdata = {
             "dimension": dimension,
             "position": chunk,
             "blocks": blocks,
@@ -88,5 +94,11 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
                 "height": height_map
             }
         }
-        savefile.dump_file_pickle("dim/{}/{}_{}.chunk".format(dimension, *chunk), data)
+        data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
+        if data is None: data = {"version": savefile.version}
+        if data["version"] != savefile.version:
+            savefile.upgrade("chunk", data["version"], dimension=dimension, chunk=chunk)
+            data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
+        data[chunk] = cdata
+        savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
 

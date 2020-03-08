@@ -902,8 +902,8 @@ started these clone on 12th of July, 2019
 [uuk]: world is now saved off-thread in StateEscape, but when you try to exit the state, you have to wait for completion
 [uuk]: fixed issue 134, 135, 136
 [uuk]: furnace inter stuff is now saved also
+[uuk]: compressed chunk files into region files
 
-todo: compress chunk files into region files
 todo: implement registry list
 todo: add entries for ticking functions to save
 

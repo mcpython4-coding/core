@@ -192,6 +192,8 @@ class Player(Entity.Entity):
                 self.hunger = 20
                 return
         super().kill()  # todo: create an new entity for player
+        sector = util.math.sectorize(self.position)
+        globals.world.change_sectors(sector, None)
         if not globals.world.gamerulehandler.table["keepInventory"].status.status:
             globals.commandparser.parse("/clear")
         if globals.world.gamerulehandler.table["showDeathMessages"].status.status:
@@ -211,6 +213,8 @@ class Player(Entity.Entity):
         globals.eventhandler.call("player:die", self)
         self.reset_moving_slot()
         globals.inventoryhandler.close_all_inventories()
+        sector = util.math.sectorize(self.position)
+        globals.world.change_sectors(None, sector)
         # todo: recalculate armor level!
 
         if not globals.world.gamerulehandler.table["doImmediateRespawn"].status.status:
