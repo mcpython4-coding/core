@@ -18,8 +18,9 @@ changelog of master-branch
 
     fixed bugs:
         - /generate <cx> <cz>-command was not working
+        - seed was ignored by generation system
         - noises for world gen were NOT based on world seed
-        - block entries in commands were requiring the mod-prefix
+        - block entries in commands are requiring the mod-prefix
 
 
 changelog of snapshot 20w10a [released on 04.03.2020]
