@@ -84,8 +84,5 @@ issue 133:
 issue 137:
     bug: coal block has no fuel level
 
-issue 138:
-    bug: STRG+C and STRG+V do not work in text inputs
-
 issue 139:
     bug: during generation, block faces of neighbor chunks are not updated
