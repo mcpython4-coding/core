@@ -1,3 +1,10 @@
+"""mcpython - a minecraft clone written in python licenced under MIT-licence
+authors: uuk, xkcdjerry
+
+original game by fogleman licenced under MIT-licence
+minecraft by Mojang
+
+blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import storage.datafixer.IDataFixer
 import storage.serializer.IDataSerializer
@@ -6,6 +13,7 @@ import pickle
 import os
 import logger
 import traceback
+import sys
 
 """
 History of save versions:
@@ -17,10 +25,13 @@ LATEST_VERSION = 1
 
 G.STORAGE_VERSION = LATEST_VERSION
 
+SAVE_DIRECTORY = G.local+"/saves" if "--saves-directory" not in sys.argv else \
+    sys.argv[sys.argv.index("--saves-directory")+1]
+
 
 class SaveFile:
     def __init__(self, directory_name):
-        self.directory = G.local+"/saves/"+directory_name
+        self.directory = os.path.join(SAVE_DIRECTORY, directory_name)
         self.version = LATEST_VERSION
         self.save_in_progress = False
 
