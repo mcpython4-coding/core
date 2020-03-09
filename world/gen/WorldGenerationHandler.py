@@ -25,9 +25,13 @@ class WorldGenerationHandler:
         self.runtimegenerationcache = [[], {}, {}]  # chunk order, chunk state, chunk gen data
         self.tasks_to_generate = []
 
-    def add_chunk_to_generation_list(self, chunk, prior=False, force_generate=False, generate_add=True):
+    def add_chunk_to_generation_list(self, chunk, dimension=None, prior=False, force_generate=False, generate_add=True):
         if not self.enable_auto_gen and not force_generate: return
-        if type(chunk) == tuple: chunk = G.world.get_active_dimension().get_chunk(*chunk)
+        if type(chunk) == tuple:
+            if dimension is None:
+                chunk = G.world.get_active_dimension().get_chunk(*chunk, generate=False)
+            else:
+                chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
         if prior:
             if chunk in self.runtimegenerationcache[0]:
                 self.runtimegenerationcache[0].remove(chunk)
@@ -39,6 +43,8 @@ class WorldGenerationHandler:
         chunk.loaded = True
 
     def process_one_generation_task(self, chunk=None, reorder=True, log_msg=True):
+        if not self.enable_generation: return
+        if type(chunk) in (tuple, list, set): chunk = G.world.get_active_dimension().get_chunk(chunk)
         if chunk is None:
             if len(self.runtimegenerationcache[0]) == 0:
                 cx, cz = util.math.sectorize(G.player.position)
@@ -53,7 +59,6 @@ class WorldGenerationHandler:
                 if len(self.runtimegenerationcache[0]) == 0:
                     return False
             chunk = self.runtimegenerationcache[0][0]
-        if type(chunk) in (tuple, list, set): chunk = G.world.get_active_dimension().get_chunk(chunk)
         if chunk.position not in self.runtimegenerationcache[1]:
             self.runtimegenerationcache[1][chunk.position] = -1
             self.runtimegenerationcache[2][chunk.position] = None
@@ -135,9 +140,14 @@ class WorldGenerationHandler:
             dimension.worldgenerationconfigobjects[layername] = cconfig
             cconfig.layer = layer
 
-    def generate_chunk(self, chunk: world.Chunk.Chunk, check=True, check_chunk=True):
+    def generate_chunk(self, chunk: world.Chunk.Chunk, dimension=None, check_chunk=True):
+        if not self.enable_generation: return
         if check_chunk and chunk.generated: return
-        if type(chunk) == tuple: chunk = G.world.get_active_dimension().get_chunk(chunk, generate=False)
+        if type(chunk) == tuple:
+            if dimension is None:
+                chunk = G.world.get_active_dimension().get_chunk(*chunk, generate=False)
+            else:
+                chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
         chunk.loaded = True
         logger.println("generating", chunk.position)
         dimension = chunk.dimension

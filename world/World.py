@@ -146,7 +146,6 @@ class World:
                 G.world.savefile.read("minecraft:chunk", dimension=self.active_dimension, chunk=sector)
 
         if not after: return
-
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):
                 if generate_chunks and abs(dx) <= config.CHUNK_GENERATION_RANGE and \

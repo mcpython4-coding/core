@@ -24,6 +24,7 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
             elif G.modloader.mods[modname].version != data["mods"][modname]:
                 logger.println("[INFO] mod version did change from '{}' to '{}'. This may break your world!".format(
                     data["mods"][modname], G.modloader.mods[modname].version))
+        [G.worldgenerationhandler.add_chunk_to_generation_list(e[0], dimension=e[1]) for e in data["chunks_to_generate"]]
 
     @classmethod
     def save(cls, data, savefile):
@@ -32,7 +33,9 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
             "player name": G.player.name,
             "config": G.world.config,
             "game version": config.VERSION_NAME,
-            "mods": {mod.name: mod.version for mod in G.modloader.mods.values()}
+            "mods": {mod.name: mod.version for mod in G.modloader.mods.values()},
+            "chunks_to_generate": [(chunk.position, chunk.dimension.id) for chunk in G.worldgenerationhandler.
+                tasks_to_generate + G.worldgenerationhandler.runtimegenerationcache[0]]
         }
         savefile.dump_file_json("level.json", data)
 

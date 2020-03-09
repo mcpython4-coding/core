@@ -48,6 +48,7 @@ class SaveFile:
 
     def save_world(self, *_):
         self.save_in_progress = True
+        G.worldgenerationhandler.enable_generation = False
         print("saving world...")
         self.dump(None, "minecraft:general")
         self.dump(None, "minecraft:player_data")
@@ -57,6 +58,7 @@ class SaveFile:
             if G.world.get_active_dimension().get_chunk(*chunk).loaded:
                 self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk)
         print("save complete!")
+        G.worldgenerationhandler.enable_generation = True
         self.save_in_progress = False
 
     def upgrade(self, part=None, version=None, **kwargs):

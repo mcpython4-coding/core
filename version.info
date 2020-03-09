@@ -911,6 +911,8 @@ started these clone on 12th of July, 2019
 [uuk]: fixed loading of maps in chunks [broken before]
 [uuk]: fixed auto-generation code not working
 [uuk]: fixed reset of the generation config buttons
+[uuk]: fixed possible miss-match of generating chunks in save
+[uuk]: flag enable_generation of WorldGenerationHandler is now used
+[uuk]: chunks that are on the list of chunks that should generate are now also saved
 
-todo: store which chunks should be generated, maybe store also the generation progress OR remove chunk when generation
-    was started
+todo: add an list of dimensions with names

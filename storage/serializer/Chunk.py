@@ -24,6 +24,8 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         if chunk not in data: return
         if chunk_instance.loaded: return
 
+        G.worldgenerationhandler.enable_generation = False
+
         data = data[chunk]
         chunk_instance.generated = data["generated"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
@@ -58,6 +60,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
 
         chunk_instance.loaded = True
+        G.worldgenerationhandler.enable_generation = True
 
     @classmethod
     def save(cls, data, savefile, dimension: int, chunk: tuple):
@@ -65,6 +68,8 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         if chunk not in G.world.dimensions[dimension].chunks: return
         region = chunk2region(*chunk)
         chunk_instance: world.Chunk.Chunk = G.world.dimensions[dimension].chunks[chunk]
+        if not chunk_instance.generated: return
+        G.worldgenerationhandler.enable_generation = False
         palette = []
         blocks = {}
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
@@ -125,4 +130,5 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
         data[chunk] = cdata
         savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
+        G.worldgenerationhandler.enable_generation = True
 
