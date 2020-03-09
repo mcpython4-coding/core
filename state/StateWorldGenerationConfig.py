@@ -78,6 +78,10 @@ class StateWorldGenerationConfig(State.State):
         for part in self.parts:
             if issubclass(type(part), UIPartTextInput.UIPartTextInput):
                 part.reset()
+        self.parts[2].index = 0
+        self.parts[2].text = ""
+        self.parts[3].index = 0
+        self.parts[3].text = ""
 
 
 worldgenerationconfig = None

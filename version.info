@@ -910,7 +910,7 @@ started these clone on 12th of July, 2019
 [uuk]: saves are now deleted when generate new is pressed with the name is given
 [uuk]: fixed loading of maps in chunks [broken before]
 [uuk]: fixed auto-generation code not working
+[uuk]: fixed reset of the generation config buttons
 
-todo: fix world gen chunk order
-todo: fix barrier buttons not reset when re-entering the screen
-todo: store which chunks should be generated
+todo: store which chunks should be generated, maybe store also the generation progress OR remove chunk when generation
+    was started
