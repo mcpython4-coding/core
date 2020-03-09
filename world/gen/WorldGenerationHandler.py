@@ -114,8 +114,8 @@ class WorldGenerationHandler:
                     logger.println("finished generation of chunk {}/{}".format(*chunk.position))
                 G.eventhandler.call("worldgen:chunk:finished", chunk)
                 chunk.generated = True
-                G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
-                                            dimension=chunk.dimension.id, chunk=chunk.position)
+                # G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
+                #                             dimension=chunk.dimension.id, chunk=chunk.position)
                 return
             position = chunk.hide_tasks.pop(0)
             chunk.hide_block(position)
@@ -136,9 +136,7 @@ class WorldGenerationHandler:
             cconfig.layer = layer
 
     def generate_chunk(self, chunk: world.Chunk.Chunk, check=True, check_chunk=True):
-        print(1)
         if check_chunk and chunk.generated: return
-        print(3)
         if type(chunk) == tuple: chunk = G.world.get_active_dimension().get_chunk(chunk, generate=False)
         chunk.loaded = True
         logger.println("generating", chunk.position)
@@ -157,8 +155,8 @@ class WorldGenerationHandler:
         G.eventhandler.call("worldgen:chunk:finished", chunk)
         chunk.generated = True
         chunk.loaded = True
-        G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
-                                    dimension=chunk.dimension.id, chunk=chunk.position)
+        # G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
+        #                             dimension=chunk.dimension.id, chunk=chunk.position)
 
     def register_layer(self, layer: world.gen.layer.Layer.Layer):
         # logger.println(layer, layer.get_name())

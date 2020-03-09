@@ -144,13 +144,16 @@ class World:
                     "minecraft:chunk", dimension=self.active_dimension, chunk=sector), 0.1)
             else:
                 G.world.savefile.read("minecraft:chunk", dimension=self.active_dimension, chunk=sector)
-            dx, dz = sector[0] - after[0], sector[1] - after[1]
-            if generate_chunks and abs(dx) <= config.CHUNK_GENERATION_RANGE and \
-                    abs(dz) <= config.CHUNK_GENERATION_RANGE and self.config["enable_auto_gen"]:
-                x, z = after
-                chunk = self.get_active_dimension().get_chunk(x + dx, z + dz, generate=False)
-                if not chunk.generated:
-                    G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
+
+        if not after: return
+
+        for dx in range(-pad, pad + 1):
+            for dz in range(-pad, pad + 1):
+                if generate_chunks and abs(dx) <= config.CHUNK_GENERATION_RANGE and \
+                        abs(dz) <= config.CHUNK_GENERATION_RANGE and self.config["enable_auto_gen"]:
+                    chunk = self.get_active_dimension().get_chunk(dx+after[0], dz+after[1], generate=False)
+                    if not chunk.generated:
+                        G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
 
     def process_queue(self):
         if not any(type(x) == state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):

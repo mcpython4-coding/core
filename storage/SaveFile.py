@@ -54,7 +54,8 @@ class SaveFile:
         self.dump(None, "minecraft:gamerule")
         self.dump(None, "minecraft:registry_info_serializer")
         for chunk in G.world.get_active_dimension().chunks:
-            self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk)
+            if G.world.get_active_dimension().get_chunk(*chunk).loaded:
+                self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk)
         print("save complete!")
         self.save_in_progress = False
 

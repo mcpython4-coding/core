@@ -909,4 +909,8 @@ started these clone on 12th of July, 2019
 [uuk]: compressed biome map, landmass map, temperaure map and height map in chunk data
 [uuk]: saves are now deleted when generate new is pressed with the name is given
 [uuk]: fixed loading of maps in chunks [broken before]
+[uuk]: fixed auto-generation code not working
 
+todo: fix world gen chunk order
+todo: fix barrier buttons not reset when re-entering the screen
+todo: store which chunks should be generated

@@ -16,14 +16,14 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         if dimension not in G.world.dimensions: return
         region = chunk2region(*chunk)
         chunk_instance: world.Chunk.Chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
-        if chunk_instance.loaded: return
-        chunk_instance.loaded = True
         data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
         if data is None: return
         if data["version"] != savefile.version:
             savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, chunk=chunk)
             data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))  # reload the data
         if chunk not in data: return
+        if chunk_instance.loaded: return
+
         data = data[chunk]
         chunk_instance.generated = data["generated"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
@@ -56,6 +56,8 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in enumerate(positions)}
         chunk_instance.set_value("biomemap", biome_map)
         chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
+
+        chunk_instance.loaded = True
 
     @classmethod
     def save(cls, data, savefile, dimension: int, chunk: tuple):

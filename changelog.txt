@@ -7,8 +7,10 @@ changelog of storage_update branch
     - added save-screen, save-loading screen
 
     fixed bugs:
-        - /generate command was not working
+        - /generate <cx> <cz>-command was not working
         - seed was ignored by generation system
+        - noises for world gen were NOT based on world seed
+        - block entries in commands are requiring the mod-prefix
 
 
 changelog of master-branch

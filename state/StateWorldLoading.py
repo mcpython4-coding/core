@@ -71,8 +71,11 @@ class StateWorldGeneration(State.State):
     def on_draw_2d_post(self):
         wx, wy = G.window.get_size()
         mx, my = wx // 2, wy // 2
-        self.parts[1].text = "{}%".format(
-            round(list(self.status_table.values()).count(1)/len(self.status_table)*1000)/10)
+        if len(self.status_table) == 0:
+            self.parts[1].text = "0%"
+        else:
+            self.parts[1].text = "{}%".format(
+                round(list(self.status_table.values()).count(1)/len(self.status_table)*1000)/10)
 
         for cx, cz in self.status_table:
             status = self.status_table[(cx, cz)]
