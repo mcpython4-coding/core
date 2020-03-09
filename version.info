@@ -918,7 +918,9 @@ started these clone on 12th of July, 2019
 [uuk]: added an dimension list to saves, gives warnings when changes content
 [uuk]: fixed issue 138
 [uuk]: added logger message when an block uses invalid state data
+[uuk]: made saving faster by only saving changed blocks
 
-todo: make save-screen for world when fresh generated; add an changed_blocks array to world; save only what blocks were
-    changed
+todo: make save-screen for world when fresh generated
 todo: make chunk pre-loading [accessing the data from files] also thread-paralleled
+todo: remove temperature map from saves [it is never needed after world gen]
+todo: re-map land entries to an array and an palette [data-fixer needed!]

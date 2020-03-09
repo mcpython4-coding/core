@@ -44,6 +44,8 @@ class StateEscape(State.State):
 
     @staticmethod
     def start_menu_press(x, y):
+        while G.world.savefile.save_in_progress: time.sleep(0.2)
+        G.world.savefile.save_world(override=True)  # make sure that file size is as small as possible
         G.world.setup_by_filename("tmp")
         G.world.cleanup()
         G.eventhandler.call("on_game_leave")

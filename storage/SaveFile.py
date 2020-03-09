@@ -46,7 +46,8 @@ class SaveFile:
         self.read("minecraft:gamerule")
         self.read("minecraft:registry_info_serializer")
 
-    def save_world(self, *_):
+    def save_world(self, *_, override=False):
+        if self.save_in_progress: raise IOError("can't save world. save in process")
         self.save_in_progress = True
         G.worldgenerationhandler.enable_generation = False
         print("saving world...")
@@ -56,7 +57,7 @@ class SaveFile:
         self.dump(None, "minecraft:registry_info_serializer")
         for chunk in G.world.get_active_dimension().chunks:
             if G.world.get_active_dimension().get_chunk(*chunk).loaded:
-                self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk)
+                self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk, override=override)
         print("save complete!")
         G.worldgenerationhandler.enable_generation = True
         self.save_in_progress = False

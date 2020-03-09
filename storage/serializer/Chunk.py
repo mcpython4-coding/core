@@ -63,18 +63,46 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         G.worldgenerationhandler.enable_generation = True
 
     @classmethod
-    def save(cls, data, savefile, dimension: int, chunk: tuple):
+    def save(cls, data, savefile, dimension: int, chunk: tuple, override=False):
         if dimension not in G.world.dimensions: return
         if chunk not in G.world.dimensions[dimension].chunks: return
         region = chunk2region(*chunk)
         chunk_instance: world.Chunk.Chunk = G.world.dimensions[dimension].chunks[chunk]
         if not chunk_instance.generated: return
+        data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
+        if data is None: data = {"version": savefile.version}
+        if data["version"] != savefile.version:
+            savefile.upgrade("chunk", data["version"], dimension=dimension, chunk=chunk)
+            data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
+        if chunk in data and not override:
+            cdata = data[chunk]
+            override = False
+        else:
+            cdata = {
+                "dimension": dimension,
+                "position": chunk,
+                "blocks": {},
+                "block_palette": [],
+                "generated": chunk_instance.generated,
+                "maps": {
+                    "landmass": [None] * 16 ** 2,
+                    "temperature": [None] * 16 ** 2,
+                    "biome": [0] * 16 ** 2,
+                    "biome_palette": [],
+                    "height": [None] * 16 ** 2
+                }
+            }
+            override = True
         G.worldgenerationhandler.enable_generation = False
-        palette = []
-        blocks = {}
+        palette = cdata["block_palette"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
-        overridden = False
-        for position in chunk_instance.world:
+        overridden = not override
+        for position in (
+                chunk_instance.positions_updated_since_last_save if not override else chunk_instance.world.keys()):
+            if position not in chunk_instance.world and not override:
+                if position in cdata["blocks"]:
+                    del cdata["blocks"][position]
+                continue
             block = chunk_instance.world[position]
             block_data = {"custom": block.save(), "name": block.NAME, "shown": any(block.face_state.faces.values())}
             if block.get_inventories() is not None:
@@ -87,47 +115,40 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
                     savefile.dump(None, "minecraft:inventory", inventory=inventory, path=path, file=inv_file)
                     block_data["inventories"].append(path)
             if block_data in palette:
-                blocks[position] = palette.index(block_data)
+                cdata["blocks"][position] = palette.index(block_data)
             else:
-                blocks[position] = len(palette)
+                cdata["blocks"][position] = len(palette)
                 palette.append(block_data)
-        landmass_map = chunk_instance.get_value("landmassmap")
-        temperature_map = chunk_instance.get_value("temperaturemap")
-        biome_map = chunk_instance.get_value("biomemap")
+        chunk_instance.positions_updated_since_last_save.clear()
 
-        positions = list(biome_map.keys())  # an list of all (x, z) in the chunk, for sorting the arrays
-        positions.sort(key=lambda x: x[1])
-        positions.sort(key=lambda x: x[0])
+        if override:
+            biome_map = chunk_instance.get_value("biomemap")
 
-        biome_palette = []
-        biomes = []
-        for pos in positions:
-            if biome_map[pos] not in biome_palette:
-                index = len(biome_palette)
-                biome_palette.append(biome_map[pos])
-            else:
-                index = biome_palette.index(biome_map[pos])
-            biomes.append(index)
-        height_map = chunk_instance.get_value("heightmap")
-        cdata = {
-            "dimension": dimension,
-            "position": chunk,
-            "blocks": blocks,
-            "block_palette": palette,
-            "generated": chunk_instance.generated,
-            "maps": {
-                "landmass": [landmass_map[pos] for pos in positions],
-                "temperature": [temperature_map[pos] for pos in positions],
-                "biome": biomes,
-                "biome_palette": biome_palette,
-                "height": [height_map[pos] for pos in positions]
-            }
-        }
-        data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
-        if data is None: data = {"version": savefile.version}
-        if data["version"] != savefile.version:
-            savefile.upgrade("chunk", data["version"], dimension=dimension, chunk=chunk)
-            data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
+            positions = list(biome_map.keys())  # an list of all (x, z) in the chunk, for sorting the arrays
+            positions.sort(key=lambda x: x[1])
+            positions.sort(key=lambda x: x[0])
+
+            landmass_map = chunk_instance.get_value("landmassmap")
+            cdata["maps"]["landmass"] = [landmass_map[pos] for pos in positions]
+
+            temperature_map = chunk_instance.get_value("temperaturemap")
+            cdata["maps"]["temperature"] = [temperature_map[pos] for pos in positions]
+
+            biome_palette = []
+            biomes = []
+            for pos in positions:
+                if biome_map[pos] not in biome_palette:
+                    index = len(biome_palette)
+                    biome_palette.append(biome_map[pos])
+                else:
+                    index = biome_palette.index(biome_map[pos])
+                biomes.append(index)
+            cdata["maps"]["biome"] = biomes
+            cdata["maps"]["biome_palette"] = biome_palette
+
+            height_map = chunk_instance.get_value("heightmap")
+            cdata["maps"]["height"] = [height_map[pos] for pos in positions]
+
         data[chunk] = cdata
         savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
         G.worldgenerationhandler.enable_generation = True

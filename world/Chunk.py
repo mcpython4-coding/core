@@ -40,6 +40,7 @@ class Chunk:
         self.attr = {}
         for attr in self.attributes.keys():
             self.attr[attr] = self.attributes[attr][1]
+        self.positions_updated_since_last_save = set()
 
     def set_value(self, name, value, authcode=None):
         self.attr[name] = value
@@ -136,6 +137,7 @@ class Chunk:
             if block_update:
                 self.on_block_updated(position, itself=blockupdateself)
             self.check_neighbors(position)
+        self.positions_updated_since_last_save.add(position)
         return blockobj
 
     def on_block_updated(self, position, itself=True):
@@ -174,6 +176,7 @@ class Chunk:
             if block_update:
                 self.on_block_updated(position)
             self.check_neighbors(position)
+        self.positions_updated_since_last_save.add(position)
 
     def check_neighbors(self, position):
         """ Check all blocks surrounding `position` and ensure their visual
@@ -272,6 +275,7 @@ class Chunk:
         self.hide_all()
 
     def update_visable_block(self, position, hide=True):
+        self.positions_updated_since_last_save.add(position)
         if not self.exposed(position):
             self.hide_block(position)
         elif hide:
