@@ -1,18 +1,6 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
-changelog of storage_update branch
-    - added system for storage with serializers and data fixers [unused at the moment]
-    - added option to inventories and blocks to add custom data to save with it (items had such an function before)
-    - added save-screen, save-loading screen
-
-    fixed bugs:
-        - /generate <cx> <cz>-command was not working
-        - seed was ignored by generation system
-        - noises for world gen were NOT based on world seed
-        - block entries in commands are requiring the mod-prefix
-
-
 changelog of master-branch
     - re-added support for custom block renderers
     - added support for OR-condition in block-states
@@ -24,6 +12,15 @@ changelog of master-branch
     - added config for height of world
     - added an world-generation progress-view screen like in MC
     - added config for how far the world is generated when you are in-game, default is 1 chunk in each direction
+    - added system for storage of worlds with serializers and data fixers [data fixers are unused at the moment]
+    - added option to inventories and blocks to add custom data to save with it (items had such an function before)
+    - added save-screen, save-loading screen
+
+    fixed bugs:
+        - /generate <cx> <cz>-command was not working
+        - seed was ignored by generation system
+        - noises for world gen were NOT based on world seed
+        - block entries in commands are requiring the mod-prefix
 
 
 changelog of snapshot 20w10a [released on 04.03.2020]
@@ -37,6 +34,7 @@ changelog of snapshot 20w10a [released on 04.03.2020]
     - added new blocks: fences, walls
     - TickHandler has now an function to tick an function as fast as possible
     - added option for fog distance
+
     fixed bugs:
         - various exceptions from left-over things in the registry & slot changes from last snapshot
         - various issues with slot drawing
@@ -56,6 +54,7 @@ changelog of snapshot 20w09a [released on 26.02.2020]
     - changed some get_name-methodes to NAME-attribute
     - removed some deprecated things
     - changed how things are registered, THIS IS AN BRAKING CHANGE!
+
     fixed bugs:
         - game crashes when using "/tp <position>"-command
         - debug world doesn't use the block state definition correctly
