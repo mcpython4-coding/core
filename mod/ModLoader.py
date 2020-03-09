@@ -99,8 +99,8 @@ class LoadingStages:
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
     TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
-    BLOCKS = LoadingStage("block loading phase", "stage:block:factory:prepare", "stage:block:factory_usage",
-                          "stage:block:base", "stage:block:load", "stage:block:overwrite",
+    BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:factory:prepare",
+                          "stage:block:factory_usage",  "stage:block:load", "stage:block:overwrite",
                           "stage:block:block_config")
     ITEMS = LoadingStage("item loading phase", "stage:item:factory:prepare", "stage:item:factory_usage",
                          "stage:item:base", "stage:item:load", "stage:item:overwrite")

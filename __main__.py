@@ -20,6 +20,8 @@ try:
     import os
     import shutil
 
+    logger.println("tmp storage at {}".format(globals.tmp.name))
+
     if not os.path.exists(globals.local + "/datapacks"): os.makedirs(globals.local + "/datapacks")
 
     import event.EventHandler

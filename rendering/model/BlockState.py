@@ -164,6 +164,8 @@ class DefaultDecoder(IBlockStateDecoder):
         for keymap, blockstate in self.states:
             if keymap == data:
                 return blockstate.add_face_to_batch(block, batch, face)
+        logger.println("[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
+            block.NAME, block.position, data, [e[0] for e in self.states]))
         return []
 
     def transform_to_hitbox(self, blockinstance):
@@ -186,6 +188,9 @@ class DefaultDecoder(IBlockStateDecoder):
         for keymap, blockstate in self.states:
             if keymap == data:
                 blockstate.draw_face(block, face)
+                return
+        logger.println("[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
+            block.NAME, block.position, data, [e[0] for e in self.states]))
 
 
 """

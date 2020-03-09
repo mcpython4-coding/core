@@ -67,7 +67,7 @@ class BoxModel:
 
     def build(self):
         up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
-                                                    for x in util.enums.EnumSide.iterate()])
+                                                            for x in util.enums.EnumSide.iterate()])
         self.tex_data = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
                                              tex_region=self.texregion)
         self.deactive = {face: array[i] == (0, 0) or array[i] is None for i, face in enumerate(

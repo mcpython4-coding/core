@@ -917,3 +917,8 @@ started these clone on 12th of July, 2019
 [uuk]: every dimension has now an name
 [uuk]: added an dimension list to saves, gives warnings when changes content
 [uuk]: fixed issue 138
+[uuk]: added logger message when an block uses invalid state data
+
+todo: make save-screen for world when fresh generated; add an changed_blocks array to world; save only what blocks were
+    changed
+todo: make chunk pre-loading [accessing the data from files] also thread-paralleled
