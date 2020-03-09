@@ -28,7 +28,7 @@ class World:
         self.player = world.player.Player("unknown")
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         self.dimensions = {}
-        self.add_dimension(0, {'configname': None})
+        self.add_dimension(0, "minecraft:overworld", {'configname': None})
         self.active_dimension = 0
         self.config = {}  # contains: seed
         self.gamerulehandler = None
@@ -47,8 +47,8 @@ class World:
     def get_active_dimension(self) -> world.Dimension.Dimension:
         return self.dimensions[self.active_dimension]
 
-    def add_dimension(self, id, config={}) -> world.Dimension.Dimension:
-        dim = self.dimensions[id] = world.Dimension.Dimension(self, id, genconfig=config)
+    def add_dimension(self, id, name, config={}) -> world.Dimension.Dimension:
+        dim = self.dimensions[id] = world.Dimension.Dimension(self, id, name, genconfig=config)
         G.worldgenerationhandler.setup_dimension(dim, config)
         return dim
 

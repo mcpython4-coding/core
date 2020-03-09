@@ -914,5 +914,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed possible miss-match of generating chunks in save
 [uuk]: flag enable_generation of WorldGenerationHandler is now used
 [uuk]: chunks that are on the list of chunks that should generate are now also saved
-
-todo: add an list of dimensions with names
+[uuk]: every dimension has now an name
+[uuk]: added an dimension list to saves, gives warnings when changes content

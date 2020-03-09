@@ -50,7 +50,7 @@ class DimensionHandler:
 
     def init_dims(self):
         for dim in self.dimensions.values():
-            G.world.add_dimension(dim.id, dim.config)
+            G.world.add_dimension(dim.id, dim.name, config=dim.config)
 
 
 G.dimensionhandler = DimensionHandler()
@@ -59,10 +59,11 @@ mod.ModMcpython.mcpython.eventbus.subscribe("stage:dimension", G.dimensionhandle
 
 
 class Dimension:
-    def __init__(self, world, id, genconfig={}):
+    def __init__(self, world, id, name: str, genconfig={}):
         self.id = id
         self.world = world
         self.chunks = {}
+        self.name = name
         self.worldgenerationconfig = genconfig
         self.worldgenerationconfigobjects = {}
         # normal batch

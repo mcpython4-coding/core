@@ -86,3 +86,6 @@ issue 137:
 
 issue 138:
     bug: STRG+C and STRG+V do not work in text inputs
+
+issue 139:
+    bug: during generation, block faces of neighbor chunks are not updated
