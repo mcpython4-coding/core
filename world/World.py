@@ -25,7 +25,6 @@ import storage.SaveFile
 class World:
     def __init__(self, filename=None):
         G.world = self
-        self.player = world.player.Player("unknown")
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         self.dimensions = {}
         self.add_dimension(0, "minecraft:overworld", {'configname': None})
@@ -37,6 +36,7 @@ class World:
         self.hide_faces_to_ungenerated_chunks = True
         self.filename = "tmp" if filename is None else filename
         self.savefile = storage.SaveFile.SaveFile(self.filename)
+        self.player = world.player.Player("unknown")
 
     def reset_config(self):
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
