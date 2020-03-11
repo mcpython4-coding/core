@@ -53,10 +53,6 @@ issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
 
-issue 102:
-    bug: when re-building, carved pumpkin can't be build correct due to same image as pumpkin
-    fix: add rotated state to render in BlockStateGenerator OR change system to create it later when needed
-
 issue 109:
     bug: when closing main inventory after crafting [SHIFT-crafting], output is duplicated
     possible reason: cleanup fails
@@ -75,14 +71,13 @@ issue 122:
 issue 129:
     bug: some fence faces are not rendered
 
-issue 131:
-    bug: slabs are upside-down
-
-issue 133:
-    bug: can break unbreakable blocks in gamemode 0
-
 issue 137:
     bug: coal block has no fuel level
 
 issue 139:
     bug: during generation, block faces of neighbor chunks are not updated
+
+issue 140:
+    bug: sometimes, you fall through one block
+        reproduce:
+            use diamond pickaxe and break stone blocks until bottom of world in gamemode 0

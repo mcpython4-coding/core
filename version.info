@@ -922,3 +922,5 @@ started these clone on 12th of July, 2019
 [uuk]: added --saves-directory <directory> sys.argv flag
 [uuk]: new save version: 2 - removed temperature map from saves, optimized land mass map
 [uuk]: added better exception handling
+[uuk]: fixed issue 102, 131, 132
+[uuk]: implemented IHorizontalOrientableBlock-class

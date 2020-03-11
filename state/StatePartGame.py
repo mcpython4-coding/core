@@ -163,8 +163,8 @@ class StatePartGame(StatePart.StatePart):
                         chunk.remove_block(blockpos)
                         chunk.check_neighbors(blockpos)
                 elif G.player.gamemode == 0:
-                    if self.mouse_press_time >= self.braketime:
-                        itemstack = gui.ItemStack.ItemStack(block.NAME if type(block) != str else block)
+                    if type(block) != str and self.mouse_press_time >= self.braketime and block.is_breakable():
+                        itemstack = gui.ItemStack.ItemStack(block.NAME)
                         if block: block.on_request_item_for_block(itemstack)
                         if G.world.gamerulehandler.table["doTileDrops"].status.status:
                             G.player.add_to_free_place(itemstack)
