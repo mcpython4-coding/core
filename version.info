@@ -924,3 +924,4 @@ started these clone on 12th of July, 2019
 [uuk]: added better exception handling
 [uuk]: fixed issue 102, 131, 132
 [uuk]: implemented IHorizontalOrientableBlock-class
+[uuk]: added new mod-version parser using tuples and min/max versions

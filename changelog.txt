@@ -16,12 +16,17 @@ changelog of master-branch
     - added system for storage of worlds with serializers and data fixers [data fixers are unused at the moment]
     - added option to inventories and blocks to add custom data to save with it (items had such an function before)
     - added save-access-screen, save-loading screen
+    - mod versions should be now tuple instead of any-type
+    - rewritten version compare system to be based on tuples (work with lower and upper bound for versions)
 
     fixed bugs:
         - /generate <cx> <cz>-command was not working
         - seed was ignored by generation system
         - noises for world gen were NOT based on world seed [noticeable when loading an world and generating new chunks]
         - block entries in commands were requiring the mod-prefix
+        - slabs were rendered upside-down
+        - carved pumpkin item was the same as pumpkin
+        - unbreakable blocks could be broken in gamemode 0
 
 
 changelog of snapshot 20w10a [released on 04.03.2020]

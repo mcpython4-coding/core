@@ -335,10 +335,10 @@ class ModLoader:
             depends = mod.dependinfo[0][:]
             for depend in depends:
                 if not depend.arrival():
-                    errors.append("- Mod '{}' needs mod '{}' which is not provided".format(mod.name, depend))
+                    errors.append("- Mod '{}' needs mod {} which is not provided".format(mod.name, depend))
             for depend in mod.dependinfo[2]:
                 if depend.arrival():
-                    errors.append("- Mod '{}' is incompatible with '{}'".format(mod.name, depend))
+                    errors.append("- Mod '{}' is incompatible with {}".format(mod.name, depend))
         for mod in self.found_mods:
             for depend in mod.dependinfo[4]:
                 if depend.name in modinfo and depend.name not in modinfo[mod.name]:
@@ -353,7 +353,7 @@ class ModLoader:
             sys.exit(-1)
         self.modorder = list(util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
         logger.println("mod loading order: ")
-        logger.println(" -", "\n - ".join(["{} ({})".format(name, self.mods[name].version) for name in self.modorder]))
+        logger.println(" -", "\n - ".join([self.mods[name].mod_string() for name in self.modorder]))
 
     def process(self):
         if self.active_loading_stage >= len(LOADING_ORDER): return
