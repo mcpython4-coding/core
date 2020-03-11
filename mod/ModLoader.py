@@ -227,7 +227,7 @@ class ModLoader:
                 i += 1
         logger.println("found mods: {}".format(len(self.found_mods)))
         for modname in self.lasttime_mods.keys():
-            if modname not in self.mods or self.mods[modname].version != self.lasttime_mods[modname]:
+            if modname not in self.mods or self.mods[modname].version != tuple(self.lasttime_mods[modname]):
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
                 G.prebuilding = True
         for modname in self.mods.keys():

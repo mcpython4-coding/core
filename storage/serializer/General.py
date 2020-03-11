@@ -28,9 +28,9 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
         for modname in data["mods"]:
             if modname not in G.modloader.mods:
                 logger.println("[WARNING] mod '{}' is missing. This may break your world!".format(modname))
-            elif G.modloader.mods[modname].version != data["mods"][modname]:
+            elif G.modloader.mods[modname].version != tuple(data["mods"][modname]):
                 logger.println("[INFO] mod version did change from '{}' to '{}'. This may break your world!".format(
-                    data["mods"][modname], G.modloader.mods[modname].version))
+                    data["mods"][modname], tuple(G.modloader.mods[modname].version)))
         [G.worldgenerationhandler.add_chunk_to_generation_list(e[0], dimension=e[1]) for e in data["chunks_to_generate"]]
         for dimension in G.world.dimensions.values():
             if str(dimension.id) in data["dimensions"]:
