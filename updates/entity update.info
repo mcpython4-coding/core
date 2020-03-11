@@ -1,5 +1,5 @@
 
-entities must include an kill-method
+make use of the entity API and implement its not-called functions
 use https://docs.python.org/3/library/uuid.html for uuid generating with function uuid.uuid4()
 use BoxModels which are drawn direct not over an batch / manipulate the vertex data of BoxModel
     (implement ManipulateAbleBoxModel-class)
