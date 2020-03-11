@@ -7,20 +7,21 @@ changelog of master-branch
     - block-states act when selecting from multiple models better
     - block models can now rotate themselves
     - tweaked generation system to look faster (and be faster)
-    - world generation is now done parallel across up to 5 chunks
+    - world generation is now done parallel across up to 5 chunks [not thread-parallel]
     - improved block-showing performance by caching (rotated) vertices and texture data
-    - added config for height of world
+      [this affects also world gen time]
+    - added config for height of world [used in BiomePlains to calculate the height map range]
     - added an world-generation progress-view screen like in MC
     - added config for how far the world is generated when you are in-game, default is 1 chunk in each direction
     - added system for storage of worlds with serializers and data fixers [data fixers are unused at the moment]
     - added option to inventories and blocks to add custom data to save with it (items had such an function before)
-    - added save-screen, save-loading screen
+    - added save-access-screen, save-loading screen
 
     fixed bugs:
         - /generate <cx> <cz>-command was not working
         - seed was ignored by generation system
-        - noises for world gen were NOT based on world seed
-        - block entries in commands are requiring the mod-prefix
+        - noises for world gen were NOT based on world seed [noticeable when loading an world and generating new chunks]
+        - block entries in commands were requiring the mod-prefix
 
 
 changelog of snapshot 20w10a [released on 04.03.2020]

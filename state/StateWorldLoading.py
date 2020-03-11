@@ -18,6 +18,7 @@ import logger
 import chat.DataPack
 import time
 import util.opengl
+import traceback
 
 
 class StateWorldGeneration(State.State):
@@ -49,6 +50,13 @@ class StateWorldGeneration(State.State):
         except IOError:
             logger.println("failed to load world. data-fixer failed with NoDataFixerFoundException")
             G.world.cleanup()
+            G.statehandler.switch_to("minecraft:startmenu")
+            return
+        except:
+            logger.println("failed to load world")
+            logger.write_exception()
+            traceback.print_exc()
+            G.statehandler.switch_to("minecraft:startmenu")
             return
         for cx in range(-3, 4):
             for cz in range(-3, 4):

@@ -920,8 +920,5 @@ started these clone on 12th of July, 2019
 [uuk]: added logger message when an block uses invalid state data
 [uuk]: made saving faster by only saving changed blocks
 [uuk]: added --saves-directory <directory> sys.argv flag
-
-todo: make save-screen for world when fresh generated
-todo: make chunk pre-loading [accessing the data from files] also thread-paralleled with view
-todo: remove temperature map from saves [it is never needed after world gen]
-todo: re-map land entries to an array and an palette [data-fixer needed!]
+[uuk]: new save version: 2 - removed temperature map from saves, optimized land mass map
+[uuk]: added better exception handling

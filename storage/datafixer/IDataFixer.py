@@ -9,6 +9,9 @@ import event.Registry
 import mod.ModMcpython
 
 
+class DataFixerException(Exception): pass
+
+
 class IDataFixer(event.Registry.IRegistryContent):
     TYPE = "minecraft:datafixer"
     # NAME should be: "<version from>-<version to>:<part>"
@@ -42,7 +45,7 @@ generaldatafixerregistry = event.Registry.Registry("generaldatafixers", ["minecr
 
 
 def load_general_fixer():
-    pass
+    import storage.datafixer.DataFixer1to2
 
 
 def load_fixer():

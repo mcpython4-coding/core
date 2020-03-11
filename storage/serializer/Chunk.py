@@ -26,7 +26,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
         if data is None: return
         if data["version"] != savefile.version:
-            savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, chunk=chunk)
+            savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, region=region)
             data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))  # reload the data
         if chunk not in data: return
         if chunk_instance.loaded: return
@@ -59,9 +59,10 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         for x in range(chunk[0]*16, chunk[0]*16+16):
             positions.extend([(x, z) for z in range(chunk[1]*16, chunk[1]*16+16)])
 
-        chunk_instance.set_value("landmassmap", {pos: data["maps"]["landmass"][i] for i, pos in enumerate(positions)})
-        chunk_instance.set_value("temperaturemap",
-                                 {pos: data["maps"]["temperature"][i] for i, pos in enumerate(positions)})
+        chunk_instance.set_value("landmassmap", {pos: data["maps"]["landmass_palette"][data["maps"]["landmass_map"][i]]
+                                                 for i, pos in enumerate(positions)})
+        # chunk_instance.set_value("temperaturemap",
+        #                          {pos: data["maps"]["temperature"][i] for i, pos in enumerate(positions)})
         biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in enumerate(positions)}
         chunk_instance.set_value("biomemap", biome_map)
         chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
@@ -79,7 +80,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
         if data is None: data = {"version": savefile.version}
         if data["version"] != savefile.version:
-            savefile.upgrade("chunk", data["version"], dimension=dimension, chunk=chunk)
+            savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, region=region)
             data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
         if chunk in data and not override:
             cdata = data[chunk]
@@ -92,8 +93,9 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
                 "block_palette": [],
                 "generated": chunk_instance.generated,
                 "maps": {
-                    "landmass": [None] * 16 ** 2,
-                    "temperature": [None] * 16 ** 2,
+                    "landmass_map": [None] * 16 ** 2,
+                    "landmass_palette": [],
+                    # "temperature": [None] * 16 ** 2,
                     "biome": [0] * 16 ** 2,
                     "biome_palette": [],
                     "height": [None] * 16 ** 2
@@ -136,10 +138,19 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             positions.sort(key=lambda x: x[0])
 
             landmass_map = chunk_instance.get_value("landmassmap")
-            cdata["maps"]["landmass"] = [landmass_map[pos] for pos in positions]
+            cdata["maps"]["landmass_map"] = []
+            cdata["maps"]["landmass_palette"] = []
+            for pos in positions:
+                mass = landmass_map[pos]
+                if mass not in cdata["maps"]["landmass_palette"]:
+                    index = len(cdata["maps"]["landmass_palette"])
+                    cdata["maps"]["landmass_palette"].append(mass)
+                else:
+                    index = cdata["maps"]["landmass_palette"].index(mass)
+                cdata["maps"]["landmass_map"].append(index)
 
-            temperature_map = chunk_instance.get_value("temperaturemap")
-            cdata["maps"]["temperature"] = [temperature_map[pos] for pos in positions]
+            # temperature_map = chunk_instance.get_value("temperaturemap")
+            # cdata["maps"]["temperature"] = [temperature_map[pos] for pos in positions]
 
             biome_palette = []
             biomes = []

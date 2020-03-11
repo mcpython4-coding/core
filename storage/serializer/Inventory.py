@@ -26,7 +26,8 @@ class Inventory(storage.serializer.IDataSerializer.IDataSerializer):
         data = savefile.access_file_pickle(file)
         if data is None: return
         if "version" in data and data["version"] != savefile.version:
-            savefile.upgrade("inventory_file")
+            savefile.upgrade("minecraft:inventory_file", version=data["version"], path=path, file=file)
+            data = savefile.access_file_pickle(file)
         if path not in data: return
         data = data[path]
         inventory.uuid = uuid.UUID(int=data["uuid"])

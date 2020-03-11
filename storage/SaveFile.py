@@ -17,11 +17,15 @@ import sys
 
 """
 History of save versions:
-- 1: introduced: 07.03.2020, outdated since: -, not loadable since: -
+- 1: introduced: 07.03.2020, outdated since: 10.03.2020, not loadable since: -
+    - added save system
+- 2: introduced: 10.03.2020, outdated since: -, not loadable since: -
+    - removed temperature maps from saves
+    - optimized landmass map in saves
 """
 
 
-LATEST_VERSION = 1
+LATEST_VERSION = 2
 
 G.STORAGE_VERSION = LATEST_VERSION
 
@@ -86,11 +90,16 @@ class SaveFile:
         while flag:
             for fixer in storage.datafixer.IDataFixer.datafixerregistry.registered_object_map.values():
                 if fixer.TRANSFORMS[0] == version and (part is None or part == fixer.PART):
+                    print("applying fixer '{}'".format(fixer.NAME))
                     fixer.fix(self, **kwargs)
                     if fixer.TRANSFORMS[1] == LATEST_VERSION:
                         flag = False
                     else:
                         new_version = fixer.TRANSFORMS[1]
+                    break
+            else:
+                raise storage.datafixer.IDataFixer.DataFixerException(
+                    "invalid version: '{}'. No datafixers found for the part '{}'!".format(version, part))
             version = new_version
 
     def read(self, part, **kwargs):
