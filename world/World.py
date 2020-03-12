@@ -56,6 +56,7 @@ class World:
         self.hide_faces_to_ungenerated_chunks = True
 
     def get_active_dimension(self) -> world.Dimension.Dimension:
+        if self.active_dimension not in self.dimensions: return
         return self.dimensions[self.active_dimension]
 
     def add_dimension(self, id, name, config={}) -> world.Dimension.Dimension:
@@ -235,7 +236,7 @@ class World:
                 chunk.is_ready = False
             dimension.chunks = {}
         if remove_dims:
-            self.dimensions = {}
+            self.dimensions.clear()
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
         G.window.flying = False

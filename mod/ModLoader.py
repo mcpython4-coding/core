@@ -225,7 +225,7 @@ class ModLoader:
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
-        logger.println("found mods: {}".format(len(self.found_mods)))
+        logger.println("found mod(s): {}".format(len(self.found_mods)))
         for modname in self.lasttime_mods.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(self.lasttime_mods[modname]):
                 # we have an mod which was previous loaded and not now or which was loaded before in another version

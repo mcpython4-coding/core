@@ -1,7 +1,7 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
-changelog of master-branch
+changelog of snapshot 20w11a [released on 12.03.2020]
     - re-added support for custom block renderers
     - added support for OR-condition in block-states
     - block-states act when selecting from multiple models better
