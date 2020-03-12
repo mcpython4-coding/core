@@ -12,6 +12,7 @@ import block.IFallingBlock as FallingBlock
 import block.ILog as ILog
 import util.enums
 import block.ISlab as ISlab
+import block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
 
 
 # todo: implement inventory opening notations
@@ -34,6 +35,7 @@ class BlockFactory:
         self.besttools = []
         self.speed_multiplier = None
         self.block_item_generator_state = None
+        self.face_name = "facing"
 
         self.customsolidsidefunction = None
         self.custommodelstatefunction = None
@@ -127,7 +129,7 @@ class BlockFactory:
 
         if master.interaction_callback:
             class ConstructedBlock(ConstructedBlock):
-                def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
+                def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
                     return master.interaction_callback(self, itemstack, button, modifiers)
 
         if master.customitemstackmodifcationfunction:
@@ -140,6 +142,10 @@ class BlockFactory:
                 @classmethod
                 def modify_block_item(cls, itemconstructor):
                     master.customblockitemmodificationfunction(cls, itemconstructor)
+
+        if master.face_name:
+            class ConstructedBlock(ConstructedBlock):
+                MODEL_FACE_NAME = master.face_name
 
         if register: G.registry.register(ConstructedBlock)
 
@@ -243,5 +249,10 @@ class BlockFactory:
 
     def setBlockItemGeneratorState(self, state: dict):
         self.block_item_generator_state = state
+        return self
+
+    def setHorizontalOrientable(self, face_name="facing"):
+        self.baseclass.append(IHorizontalOrientableBlock.IHorizontalOrientableBlock)
+        self.face_name = face_name
         return self
 

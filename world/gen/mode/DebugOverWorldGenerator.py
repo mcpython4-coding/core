@@ -57,7 +57,7 @@ def chunk_generate(chunk):
             block.face_state.update()
             heigthmap[(x, z)] = [(0, 10)]
 
-    if G.player.gamemode != 3: G.player.set_gamemode(3)
+    if G.world.get_active_player().gamemode != 3: G.world.get_active_player().set_gamemode(3)
     G.window.flying = True
 
 

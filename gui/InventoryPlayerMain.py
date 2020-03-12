@@ -49,7 +49,7 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
             if slot.get_itemstack().item:
                 if issubclass(type(slot.get_itemstack().item), item.ItemArmor.ItemArmor):
                     points += slot.get_itemstack().item.getDefensePoints()
-        G.player.armor_level = points
+        G.world.get_active_player().armor_level = points
 
     def on_deactivate(self):
         self.slots[45].get_itemstack().clean()
@@ -57,6 +57,6 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
             slot: gui.Slot.Slot
             itemstack = slot.get_itemstack()
             slot.set_itemstack(gui.ItemStack.ItemStack.get_empty())
-            G.player.add_to_free_place(itemstack)
+            G.world.get_active_player().pick_up(itemstack)
         G.statehandler.active_state.parts[0].activate_mouse = True
 

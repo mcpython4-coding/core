@@ -27,8 +27,6 @@ class Player(Entity.Entity):
 
     def __init__(self, name):
         super().__init__()
-        globals.player = self
-
         self.name: str = name
         self.gamemode: int = -1
         self.set_gamemode(1)
@@ -41,7 +39,7 @@ class Player(Entity.Entity):
 
         self.fallen_since_y = -1 
 
-        self.inventorys: dict = {}
+        self.inventories: dict = {}
 
         self.inventory_order: list = [  # an ([inventoryindexname: str], [reversed slots: bool}) list
             ("hotbar", False),
@@ -59,7 +57,7 @@ class Player(Entity.Entity):
 
     def hotkey_get_position(self):
         import clipboard
-        clipboard.copy("/tp @p {} {} {}".format(*globals.window.position))
+        clipboard.copy("/tp @p {} {} {}".format(*self.position))
 
     def toggle_gamemode(self):
         if self.gamemode == 1: self.set_gamemode(3)
@@ -71,11 +69,11 @@ class Player(Entity.Entity):
         import gui.InventoryChest
         import gui.InventoryCraftingTable
 
-        hotbar = self.inventorys['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
-        self.inventorys['main'] = gui.InventoryPlayerMain.InventoryPlayerMain(hotbar)
-        self.inventorys['chat'] = chat.Chat.ChatInventory()
-        self.inventorys["enderchest"] = gui.InventoryChest.InventoryChest()
-        self.inventorys["crafting_table"] = gui.InventoryCraftingTable.InventoryCraftingTable()
+        hotbar = self.inventories['hotbar'] = gui.InventoryPlayerHotbar.InventoryPlayerHotbar()
+        self.inventories['main'] = gui.InventoryPlayerMain.InventoryPlayerMain(hotbar)
+        self.inventories['chat'] = chat.Chat.ChatInventory()
+        self.inventories["enderchest"] = gui.InventoryChest.InventoryChest()
+        self.inventories["crafting_table"] = gui.InventoryCraftingTable.InventoryCraftingTable()
 
         self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/hart.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/hart_half.png", "pyglet"),
@@ -88,9 +86,6 @@ class Player(Entity.Entity):
                            ResourceLocator.read("build/texture/gui/icons/armor_base.png", "pyglet")),
                           (ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/xp_bar.png", "pyglet"))]
-
-        self.inventory_slots.clear()
-        [self.inventory_slots.extend(inventory.slots) for inventory in self.inventorys.values()]
 
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
@@ -131,7 +126,7 @@ class Player(Entity.Entity):
     def add_xp_level(self, xp_levels: int):
         self.xp_level += xp_levels
 
-    def add_to_free_place(self, itemstack: gui.ItemStack.ItemStack) -> bool:
+    def pick_up(self, itemstack: gui.ItemStack.ItemStack) -> bool:
         """
         adds the item onto the itemstack
         :param itemstack: the itemstack to add
@@ -143,7 +138,7 @@ class Player(Entity.Entity):
         if not itemstack.item or itemstack.amount == 0:
             return True
         for inventory_name, reverse in self.inventory_order:
-            inventory = self.inventorys[inventory_name]
+            inventory = self.inventories[inventory_name]
             slots = inventory.slots
             if reverse:
                 slots.reverse()
@@ -162,7 +157,7 @@ class Player(Entity.Entity):
                 if itemstack.amount <= 0:
                     return True
         for inventory_name, reverse in self.inventory_order:
-            inventory = self.inventorys[inventory_name]
+            inventory = self.inventories[inventory_name]
             slots = inventory.slots
             if reverse:
                 slots.reverse()
@@ -176,7 +171,7 @@ class Player(Entity.Entity):
         self.active_inventory_slot = slot
 
     def get_active_inventory_slot(self):
-        return self.inventorys["hotbar"].slots[self.active_inventory_slot]
+        return self.inventories["hotbar"].slots[self.active_inventory_slot]
 
     def kill(self, test_totem=True):
         if test_totem:
@@ -186,17 +181,19 @@ class Player(Entity.Entity):
                 self.hearts = 20
                 self.hunger = 20
                 return
-            elif self.inventorys["main"].slots[45].get_itemstack().get_item_name() == "minecraft:totem_of_undying":
-                self.inventorys["main"].slots[45].get_itemstack().clean()
+            elif self.inventories["main"].slots[45].get_itemstack().get_item_name() == "minecraft:totem_of_undying":
+                self.inventories["main"].slots[45].get_itemstack().clean()
                 self.hearts = 20
                 self.hunger = 20
                 return
         super().kill()  # todo: create an new entity for player
+        sector = util.math.sectorize(self.position)
+        globals.world.change_sectors(sector, None)
         if not globals.world.gamerulehandler.table["keepInventory"].status.status:
             globals.commandparser.parse("/clear")
         if globals.world.gamerulehandler.table["showDeathMessages"].status.status:
             logger.println("[CHAT] player {} died".format(self.name))
-        globals.window.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
+        self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
                                    globals.world.spawnpoint[1])
         self.active_inventory_slot = 0
         globals.window.dy = 0
@@ -211,16 +208,18 @@ class Player(Entity.Entity):
         globals.eventhandler.call("player:die", self)
         self.reset_moving_slot()
         globals.inventoryhandler.close_all_inventories()
+        sector = util.math.sectorize(self.position)
+        globals.world.change_sectors(None, sector)
         # todo: recalculate armor level!
 
         if not globals.world.gamerulehandler.table["doImmediateRespawn"].status.status:
             globals.statehandler.switch_to("minecraft:escape_state")  # todo: add special state
 
     def _get_position(self):
-        return globals.window.position
+        return self.position
 
     def _set_position(self, position):
-        globals.window.position = position
+        self.position = position
 
     def damage(self, hearts: int, check_gamemode=True):
         """
@@ -234,7 +233,7 @@ class Player(Entity.Entity):
                 self.kill()
 
     def reset_moving_slot(self):
-        self.add_to_free_place(globals.inventoryhandler.moving_slot.get_itemstack().copy())
+        self.pick_up(globals.inventoryhandler.moving_slot.get_itemstack().copy())
         globals.inventoryhandler.moving_slot.get_itemstack().clean()
 
     def tell(self, msg: str):

@@ -54,7 +54,11 @@ class TickHandler:
             pyglet.clock.schedule_once(self.send_random_ticks, 0)
         while len(self.execute_array) > 0:
             func, args, kwargs = tuple(self.execute_array.pop(0))
-            func(*args, **kwargs)
+            try:
+                func(*args, **kwargs)
+            except:
+                print(func, args, kwargs)
+                raise
         chat.DataPack.datapackhandler.try_call_function("#minecraft:tick")
 
     def schedule_once(self, function, *args, **kwargs):
@@ -93,7 +97,7 @@ class TickHandler:
         self.bind(function, tick * 2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
-        cx, cz = util.math.sectorize(G.player.position)
+        cx, cz = util.math.sectorize(G.world.get_active_player().position)
         for dx in range(-config.RANDOM_TICK_RANGE, config.RANDOM_TICK_RANGE + 1):
             for dz in range(-config.RANDOM_TICK_RANGE, config.RANDOM_TICK_RANGE + 1):
                 if dx ** 2 + dz ** 2 <= config.RANDOM_TICK_RANGE ** 2:

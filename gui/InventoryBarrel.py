@@ -52,15 +52,15 @@ class InventoryBarrel(gui.Inventory.Inventory):
             self.bgsprite.position = (x, y)
             self.bgsprite.draw()
         self.on_draw_over_backgroundimage()
-        for slot in G.player.inventorys["main"].slots[:36] + self.slots:
+        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
-        for slot in G.player.inventorys["main"].slots[:36] + self.slots:
+        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
             slot.draw_lable(x, y)
         self.on_draw_overlay()
 
     def get_interaction_slots(self):
-        return G.player.inventorys["main"].slots[:36] + self.slots
+        return G.world.get_active_player().inventories["main"].slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E: G.inventoryhandler.hide(self)

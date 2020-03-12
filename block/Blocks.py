@@ -55,8 +55,8 @@ def load_blocks():
         False).finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:pumpkin").finish()
-    factory.BlockFactory.BlockFactory().setName("minecraft:carved_pumpkin").setDefaultModelState(
-        {"facing": "north"}).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:carved_pumpkin").setHorizontalOrientable().\
+        setBlockItemGeneratorState({"facing": "south"}).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:melon").finish()
 
     factory.BlockFactory.BlockFactory().setName("minecraft:glass").setAllSideSolid(False).finish()

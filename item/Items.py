@@ -52,7 +52,7 @@ def load_item():
     ender_eye = factory.ItemFactory.ItemFactory().setName("minecraft:ender_eye").finish()
 
     def lambda_add_random_xp():
-        G.player.add_xp(random.randint(3, 11))
+        G.world.get_active_player().add_xp(random.randint(3, 11))
         return True
 
     experience_bottle = factory.ItemFactory.ItemFactory().setName("minecraft:experience_bottle").setEatCallback(

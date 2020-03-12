@@ -46,19 +46,15 @@ issue 96: [maybe fixed]
     possible fix: rewrite SlotCopy
 
 issue 98: [maybe fixed]
-    bug: when moving & reinserting an item in hotbar from player inventory main the item in the hotbar is not rendered
+    bug: when moving & reinserting an item in hotbar from player inventory main the item in the hotbar may not be rendered
     possible fix: see issue 96
 
 issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
 
-issue 102:
-    bug: when re-building, carved pumpkin can't be build correct due to same image as pumpkin
-    fix: add rotated state to render in BlockStateGenerator OR change system to create it later when needed
-
 issue 109:
-    bug: when closing main inventory after crafting [SHIFT-crafting], output is duplicated
+    bug: when closing main inventory after crafting [SHIFT-crafting], output may get duplicated
     possible reason: cleanup fails
 
 issue 113:
@@ -73,7 +69,21 @@ issue 122:
     bug: z-fighting at border between two fences
 
 issue 129:
-    bug: some fence faces are not rendered
+    bug: some fence faces are not rendered [invalid texture rotation?]
 
-issue 131:
-    bug: slabs are upside-down
+issue 137:
+    bug: coal block has no fuel level
+
+issue 139:
+    bug: during in-game generation, block faces of neighbor chunks are not updated
+
+issue 140:
+    bug: sometimes, you fall through one block
+        reproduce:
+            use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
+
+issue 141:
+    bug: hunger is rendered when half not correctly
+
+issue 142:
+    bug: when in escape-state, items are not rendered in hotbar

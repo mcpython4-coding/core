@@ -35,15 +35,14 @@ class Chunk:
         self.blockmap = {}  # an map with position -> [arguments: list, optional_arguments: kwargs] generation code
         self.is_ready = False
         self.visible = False
-        self.loaded = True
+        self.loaded = False
         self.generated = False
         self.attr = {}
         for attr in self.attributes.keys():
             self.attr[attr] = self.attributes[attr][1]
+        self.positions_updated_since_last_save = set()
 
-    def set_value(self, name, value, authcode):
-        if authcode != self.attributes[name][2]:
-            raise ValueError("not able to set value. protection is not uncoverable")
+    def set_value(self, name, value, authcode=None):
         self.attr[name] = value
 
     def get_value(self, name):
@@ -53,8 +52,8 @@ class Chunk:
         if not self.is_ready or len(self.chunkgenerationtasks) > 0: return
         if not self.visible: return
         if not self.loaded:
-            # todo: load chunk
-            return
+            G.tickhandler.schedule_once(G.world.savefile.read, "minecraft:chunk", dimension=self.dimension.id,
+                                        chunk=self.position)
 
     def exposed(self, position):
         """ Returns False is given `position` should be hidden, True otherwise.
@@ -93,9 +92,9 @@ class Chunk:
         return faces
 
     def add_add_block_gen_task(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[],
-                               kwargs={}):
+                               kwargs={}, on_add=None):
         self.blockmap[position] = ([position, block_name], {"immediate": immediate, "block_update": block_update,
-                                                            "args": args, "kwargs": kwargs})
+                                                            "args": args, "kwargs": kwargs}, on_add)
 
     def is_position_blocked(self, position):
         return position in self.world or position in self.blockmap
@@ -138,6 +137,7 @@ class Chunk:
             if block_update:
                 self.on_block_updated(position, itself=blockupdateself)
             self.check_neighbors(position)
+        self.positions_updated_since_last_save.add(position)
         return blockobj
 
     def on_block_updated(self, position, itself=True):
@@ -176,6 +176,7 @@ class Chunk:
             if block_update:
                 self.on_block_updated(position)
             self.check_neighbors(position)
+        self.positions_updated_since_last_save.add(position)
 
     def check_neighbors(self, position):
         """ Check all blocks surrounding `position` and ensure their visual
@@ -274,6 +275,7 @@ class Chunk:
         self.hide_all()
 
     def update_visable_block(self, position, hide=True):
+        self.positions_updated_since_last_save.add(position)
         if not self.exposed(position):
             self.hide_block(position)
         elif hide:

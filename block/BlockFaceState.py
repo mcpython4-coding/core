@@ -46,9 +46,12 @@ class BlockFaceState:
             [x.delete() for x in self.face_data[face]]
         self.face_data[face].clear()
 
-    def update(self):
+    def update(self, redraw_complete=False):
         state = G.world.get_active_dimension().get_chunk_for_position(self.block.position).exposed_faces(
             self.block.position)
+        if state == self.faces and not redraw_complete: return
+        G.world.get_active_dimension().get_chunk_for_position(
+            self.block.position).positions_updated_since_last_save.add(self.block.position)
         self.hide_all()
         for key in state.keys():
             if state[key]: self.show_face(key)

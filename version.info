@@ -871,6 +871,66 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 130
 [uuk]: added helper function subscribe_package_load to EventBus
 [uuk]: parent elements in block models are now correctly replaced instead of adding on top of the of the parent
-
-todo: add an indicator if the game is running -> do not run two instances at ones
+[uuk]: chunks are now generating in-game when close to the chunk, not when trying to enter it
+[uuk]: improved rendering performance
+[uuk]: changed strategy of world in-game generation system to generate first layers and than generate the rest
+[uuk]: new chunks added to generate have now the lowest generation priority rather than the highest
+[uuk]: added some (visual) parallelization to the in-game generation
+[uuk]: added config option for how far to generate new chunks
+[uuk]: the maximum of parallel generation chunks is now 4
+[uuk]: changed some internals on how new chunks generation tasks are stored
+[uuk]: added new state StateWorldGeneration handling the first world generation
+[uuk]: World.cleanup removes now also the world generation tasks
+[uuk]: added chunk generation visualisation
+[uuk]: fixed issue 132
+[uuk]: improved rendering performance by sharing vertex data not only between every draw, but also between similar
+       blocks
+[uuk]: improved rendering performance by caching the texture data
+[uuk]: removed log message when an chunk is finished in StateGeneration
+[uuk]: implemented rendering improvements also to direct-draw functions of BoxModel
+[uuk]: added SaveFile, IDataFixer and IDataSerializer-class [WARNING: for this phase of development, NO datafixers
+       are provided as everything is WIP]
+[uuk]: added data serializers for player data, inventory data, chunks, game rule, world config, data maps
+[uuk]: added exception when something is wrong with save files, but it can be handled, but the user should be informed
+[uuk]: save also includes the version number it was saved in, future version loader are NOT supported
+[uuk]: added StateWorldLoading
+[uuk]: added an mod-list to general-serializer
+[uuk]: improved world loading performance
+[uuk]: inventory serializer has now an file-parameter to store data not in main file, rather in another one
+[uuk]: block-inventories are now stored per-chunk rather than per-world
+[uuk]: fixed possible issue that block-inventories are not removed when block is deleted in save-files
+[uuk]: world is now saved off-thread in StateEscape, but when you try to exit the state, you have to wait for completion
+[uuk]: fixed issue 134, 135, 136
+[uuk]: furnace inter stuff is now saved also
+[uuk]: compressed chunk files into region files
+[uuk]: added registry info to saves
+[uuk]: fixed issue 137
+[uuk]: fixed furnace-data deserialization
+[uuk]: compressed biome map, landmass map, temperaure map and height map in chunk data
+[uuk]: saves are now deleted when generate new is pressed with the name is given
+[uuk]: fixed loading of maps in chunks [broken before]
+[uuk]: fixed auto-generation code not working
+[uuk]: fixed reset of the generation config buttons
+[uuk]: fixed possible miss-match of generating chunks in save
+[uuk]: flag enable_generation of WorldGenerationHandler is now used
+[uuk]: chunks that are on the list of chunks that should generate are now also saved
+[uuk]: every dimension has now an name
+[uuk]: added an dimension list to saves, gives warnings when changes content
+[uuk]: fixed issue 138
+[uuk]: added logger message when an block uses invalid state data
+[uuk]: made saving faster by only saving changed blocks
+[uuk]: added --saves-directory <directory> sys.argv flag
+[uuk]: new save version: 2 - removed temperature map from saves, optimized land mass map
+[uuk]: added better exception handling
+[uuk]: fixed issue 102, 131, 132
+[uuk]: implemented IHorizontalOrientableBlock-class
+[uuk]: added new mod-version parser using tuples and min/max versions
+[uuk]: extension to the Entity-API
+[uuk]: made Entity register-able
+[uuk]: fixed version storage in save files
+[uuk]: fixed version in last-time mod storage
+[uuk]: renamed add_to_free_slots to pick_up of Entity
+[uuk]: renamed inventorys to inventories at player
+[uuk]: moved player instances to G.world.players, access via G.world.get_active_player()
+[uuk]: interaction methods are now using also an player-instance to make it clear who interacts
 

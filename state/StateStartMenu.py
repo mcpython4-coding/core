@@ -12,6 +12,7 @@ import pyglet
 import util.math
 import mod.ModMcpython
 import state.StatePartConfigBackground
+import state.StateWorldSelection
 
 
 class StateStartMenu(state.State.State):
@@ -34,7 +35,7 @@ class StateStartMenu(state.State.State):
 
     @staticmethod
     def on_new_game_press(x, y):
-        G.statehandler.switch_to("minecraft:world_generation_config", immediate=False)
+        G.statehandler.switch_to("minecraft:world_selection", immediate=False)
 
     @staticmethod
     def on_quit_game_press(x, y):
@@ -46,7 +47,7 @@ class StateStartMenu(state.State.State):
     @staticmethod
     def on_key_press(key, modifier):
         if key == pyglet.window.key.ENTER:
-            G.statehandler.switch_to("minecraft:world_generation_config", immediate=False)
+            G.statehandler.switch_to("minecraft:world_selection", immediate=False)
 
 
 startmenu = None

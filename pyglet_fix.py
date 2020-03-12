@@ -10,6 +10,10 @@ import pyglet.event
 
 
 class FixedEventDispatcher(pyglet.event.EventDispatcher):
+    """
+    class for an fix for the _remove_handler function of pyglet in python 3.8
+    """
+
     def _remove_handler(self, name, handler):
         """Used internally to remove all handler instances for the given event name.
 

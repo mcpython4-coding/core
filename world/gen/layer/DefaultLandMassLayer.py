@@ -11,6 +11,7 @@ import globals as G
 import random
 import opensimplex
 import world.Chunk
+import event.EventHandler
 
 
 @G.worldgenerationhandler
@@ -18,6 +19,13 @@ class DefaultLandMassLayer(Layer):
     noise1 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
     noise2 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
     noise3 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
+
+    @classmethod
+    def update_seed(cls):
+        seed = G.world.config["seed"]
+        cls.noise1 = opensimplex.OpenSimplex(seed=seed * 100 + 2)
+        cls.noise2 = opensimplex.OpenSimplex(seed=seed * 100 + 3)
+        cls.noise3 = opensimplex.OpenSimplex(seed=seed * 100 + 4)
 
     @staticmethod
     def normalize_config(config: LayerConfig):
@@ -57,4 +65,7 @@ class DefaultLandMassLayer(Layer):
 
 
 authcode = world.Chunk.Chunk.add_default_attribute("landmassmap", DefaultLandMassLayer, {})
+
+
+event.EventHandler.PUBLIC_EVENT_BUS.subscribe("seed:set", DefaultLandMassLayer.update_seed)
 

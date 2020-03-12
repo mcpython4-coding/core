@@ -33,13 +33,13 @@ class CommandItemInfo(chat.command.Command.Command):
     @staticmethod
     def parse(values: list, modes: list, info):
         if modes[1][1] == 0:  # hand
-            itemstack = G.player.get_active_inventory_slot().get_itemstack()
+            itemstack = G.world.get_active_player().get_active_inventory_slot().get_itemstack()
             logger.println("info to item hold in hand")
             CommandItemInfo.print_info(itemstack)
         elif modes[1][1] == 1:  # inventory
-            for inventorykey in G.player.inventorys.keys():
+            for inventorykey in G.world.get_active_player().inventories.keys():
                 logger.println("info to inventory {} of player".format(inventorykey))
-                for i, slot in enumerate(G.player.inventorys[inventorykey].slots):
+                for i, slot in enumerate(G.world.get_active_player().inventories[inventorykey].slots):
                     if not slot.get_itemstack().is_empty():
                         logger.println("slot {}".format(i+1))
                         CommandItemInfo.print_info(slot.get_itemstack())

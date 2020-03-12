@@ -103,7 +103,7 @@ class InventoryFurnace(gui.Inventory.Inventory):
     @staticmethod
     def on_shift(slot, x, y, button, mod):
         slot_copy = slot.itemstack.copy()
-        if G.player.add_to_free_place(slot_copy):
+        if G.world.get_active_player().pick_up(slot_copy):
             slot.itemstack.clean()  # if we successfully added the itemstack, we have to clear it
         else:
             slot.itemstack.set_amount(slot_copy.itemstack.itemstack)
@@ -130,7 +130,7 @@ class InventoryFurnace(gui.Inventory.Inventory):
 
     def on_deactivate(self):
         super().on_deactivate()
-        G.player.reset_moving_slot()
+        G.world.get_active_player().reset_moving_slot()
         event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
         event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("gameloop:tick:end", self.on_tick)
 
@@ -159,15 +159,15 @@ class InventoryFurnace(gui.Inventory.Inventory):
             except ZeroDivisionError:
                 pass
 
-        for slot in G.player.inventorys["main"].slots[:36] + self.slots:
+        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
-        for slot in G.player.inventorys["main"].slots[:36] + self.slots:
+        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
             slot.draw_lable(x, y)
         self.on_draw_overlay()
 
     def get_interaction_slots(self):
-        return G.player.inventorys["main"].slots[:36] + self.slots
+        return G.world.get_active_player().inventories["main"].slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E: G.inventoryhandler.hide(self)
@@ -196,7 +196,21 @@ class InventoryFurnace(gui.Inventory.Inventory):
             if self.slots[2].itemstack.item.get_max_stack_size() > self.slots[2].itemstack.amount:
                 self.slots[2].itemstack.add_amount(1)
         self.slots[0].itemstack.add_amount(-1)
-        G.player.add_xp(self.recipe.xp)
+        try:
+            G.world.get_active_player().add_xp(self.recipe.xp)
+        except AttributeError:
+            pass
         self.smelt_start = time.time()
         self.update_status()
+
+    def load(self, data: dict) -> bool:
+        self.fuel_left = data.setdefault("fuel", 0)
+        self.fuel_max = data.setdefault("max fuel", 0)
+        self.xp_stored = data.setdefault("xp", 0)
+        self.progress = data.setdefault("progress", 0)
+        self.update_status()
+        return True
+
+    def save(self):
+        return {"fuel": self.fuel_left, "max fuel": self.fuel_max, "xp": self.xp_stored, "progress": self.progress}
 

@@ -99,8 +99,8 @@ class LoadingStages:
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
     TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
-    BLOCKS = LoadingStage("block loading phase", "stage:block:factory:prepare", "stage:block:factory_usage",
-                          "stage:block:base", "stage:block:load", "stage:block:overwrite",
+    BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:factory:prepare",
+                          "stage:block:factory_usage",  "stage:block:load", "stage:block:overwrite",
                           "stage:block:block_config")
     ITEMS = LoadingStage("item loading phase", "stage:item:factory:prepare", "stage:item:factory_usage",
                          "stage:item:base", "stage:item:load", "stage:item:overwrite")
@@ -120,7 +120,10 @@ class LoadingStages:
 
     BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",
                         "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake",
-                        "stage:block_boundingbox_get")
+                        "stage:boxmodel:bake", "stage:block_boundingbox_get")
+
+    FILE_INTERFACE = LoadingStage("registration of data interfaces", "stage:serializer:parts",
+                                  "stage:datafixer:general", "stage:datafixer:parts")
 
     POST = LoadingStage("finishing up", "stage:post")
 
@@ -130,7 +133,7 @@ LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, Loadin
                  LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.LANGUAGE,
                  LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
                  LoadingStages.WORLDGEN, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
-                 LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.POST]
+                 LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.FILE_INTERFACE, LoadingStages.POST]
 
 
 class ModLoader:
@@ -224,7 +227,7 @@ class ModLoader:
                 i += 1
         logger.println("found mods: {}".format(len(self.found_mods)))
         for modname in self.lasttime_mods.keys():
-            if modname not in self.mods or self.mods[modname].version != self.lasttime_mods[modname]:
+            if modname not in self.mods or self.mods[modname].version != tuple(self.lasttime_mods[modname]):
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
                 G.prebuilding = True
         for modname in self.mods.keys():
@@ -332,10 +335,10 @@ class ModLoader:
             depends = mod.dependinfo[0][:]
             for depend in depends:
                 if not depend.arrival():
-                    errors.append("- Mod '{}' needs mod '{}' which is not provided".format(mod.name, depend))
+                    errors.append("- Mod '{}' needs mod {} which is not provided".format(mod.name, depend))
             for depend in mod.dependinfo[2]:
                 if depend.arrival():
-                    errors.append("- Mod '{}' is incompatible with '{}'".format(mod.name, depend))
+                    errors.append("- Mod '{}' is incompatible with {}".format(mod.name, depend))
         for mod in self.found_mods:
             for depend in mod.dependinfo[4]:
                 if depend.name in modinfo and depend.name not in modinfo[mod.name]:
@@ -350,7 +353,7 @@ class ModLoader:
             sys.exit(-1)
         self.modorder = list(util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
         logger.println("mod loading order: ")
-        logger.println(" -", "\n - ".join(["{} ({})".format(name, self.mods[name].version) for name in self.modorder]))
+        logger.println(" -", "\n - ".join([self.mods[name].mod_string() for name in self.modorder]))
 
     def process(self):
         if self.active_loading_stage >= len(LOADING_ORDER): return

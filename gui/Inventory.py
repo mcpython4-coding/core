@@ -195,3 +195,18 @@ class Inventory:
             obj.slots[i].set_itemstack(self.slots[i].get_itemstack().copy())
         return obj
 
+    def load(self, data) -> bool:
+        """
+        serializes the data into the inventory
+        :param data: the data saved
+        :return: if load is valid or not
+        """
+        return True
+
+    def save(self):
+        """
+        serializes the inventory into an pickle-able data stream
+        :return: the data
+        """
+        return "no:data"
+

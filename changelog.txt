@@ -6,6 +6,31 @@ changelog of master-branch
     - added support for OR-condition in block-states
     - block-states act when selecting from multiple models better
     - block models can now rotate themselves
+    - tweaked generation system to look faster (and be faster)
+    - world generation is now done parallel across up to 5 chunks [not thread-parallel]
+    - improved block-showing performance by caching (rotated) vertices and texture data
+      [this affects also world gen time]
+    - added config for height of world [used in BiomePlains to calculate the height map range]
+    - added an world-generation progress-view screen like in MC
+    - added config for how far the world is generated when you are in-game, default is 1 chunk in each direction
+    - added system for storage of worlds with serializers and data fixers [data fixers are unused at the moment]
+    - added option to inventories and blocks to add custom data to save with it (items had such an function before)
+    - added save-access-screen, save-loading screen
+    - mod versions should be now tuple instead of any-type
+    - rewritten version compare system to be based on tuples (work with lower and upper bound for versions)
+    - improved entity API
+    - renamed some stuff to better match
+    - moved player instances to World.players
+    - player interaction methods now include also the player instance itself
+
+    fixed bugs:
+        - /generate <cx> <cz>-command was not working
+        - seed was ignored by generation system
+        - noises for world gen were NOT based on world seed [noticeable when loading an world and generating new chunks]
+        - block entries in commands were requiring the mod-prefix
+        - slabs were rendered upside-down
+        - carved pumpkin item was the same as pumpkin
+        - unbreakable blocks could be broken in gamemode 0
 
 
 changelog of snapshot 20w10a [released on 04.03.2020]
@@ -19,6 +44,7 @@ changelog of snapshot 20w10a [released on 04.03.2020]
     - added new blocks: fences, walls
     - TickHandler has now an function to tick an function as fast as possible
     - added option for fog distance
+
     fixed bugs:
         - various exceptions from left-over things in the registry & slot changes from last snapshot
         - various issues with slot drawing
@@ -38,6 +64,7 @@ changelog of snapshot 20w09a [released on 26.02.2020]
     - changed some get_name-methodes to NAME-attribute
     - removed some deprecated things
     - changed how things are registered, THIS IS AN BRAKING CHANGE!
+
     fixed bugs:
         - game crashes when using "/tp <position>"-command
         - debug world doesn't use the block state definition correctly

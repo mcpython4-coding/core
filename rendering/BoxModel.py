@@ -11,10 +11,12 @@ import util.enums
 import pyglet
 import block.BlockConfig
 import config
+import mod.ModMcpython
 
 
 UV_ORDER = ["up", "down", "north", "east", "south", "west"]
 UV_INDICES = [(1, 0, 3, 2), (1, 0, 3, 2)] + [(0, 1, 2, 3)] * 4   # representative for the order of uv insertion
+SIMILAR_VERTEX = {}
 
 
 class BoxModel:
@@ -50,31 +52,52 @@ class BoxModel:
             rot["xyz".index(data["axis"])] = data["angle"]
             self.rotation = tuple(rot)
 
+        status = (self.rotation, self.rotation_core, tuple(self.boxposition), self.boxsize)
+        if status in SIMILAR_VERTEX:
+            self.rotated_vertices = SIMILAR_VERTEX[status].rotated_vertices
+        else:
+            self.rotated_vertices = {}
+            SIMILAR_VERTEX[status] = self
+
+        self.tex_data = None
+        self.deactive = None
+
+        if model.drawable and self.model.texture_atlas:
+            mod.ModMcpython.mcpython.eventbus.subscribe("stage:boxmodel:bake", self.build)
+
+    def build(self):
+        up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
+                                                            for x in util.enums.EnumSide.iterate()])
+        self.tex_data = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
+                                             tex_region=self.texregion)
+        self.deactive = {face: array[i] == (0, 0) or array[i] is None for i, face in enumerate(
+            util.enums.EnumSide.iterate())}
+
     def add_to_batch(self, position, batch, rotation, active_faces=None):
         x, y, z = position
         x += self.boxposition[0] - 0.5 + self.rposition[0]
         y += self.boxposition[1] - 0.5 + self.rposition[1]
         z += self.boxposition[2] - 0.5 + self.rposition[2]
-        up, down, north, east, south, west = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
-                                                    for x in util.enums.EnumSide.iterate()])
-        deactive = [x == (0, 0) or x is None for x in (up, down, north, east, south, west)]
-        rtextures = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
-                                         tex_region=self.texregion)
-        # todo: can we cache this -> better performance?
-        vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
-                                         [True] * 6)
-        vertex_r = [util.math.rotate_point(vertex[i*3:i*3+3], position, rotation) for i in range(len(vertex) // 3)]
-        vertex_r = [util.math.rotate_point(e, tuple([position[i] + self.rotation_core[i] for i in range(3)]),
-                                           self.rotation) for e in vertex_r]
-        vertex.clear()
+        if rotation in self.rotated_vertices:  # is there data prepared in this case?
+            vertex_r = [(e[0]+x, e[1]+y, e[2]+z) for e in self.rotated_vertices[rotation]]
+        else:  # otherwise, create it and store it
+            vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
+                                             [True] * 6)
+            vertex_r = [util.math.rotate_point(vertex[i * 3:i * 3 + 3], position, rotation) for i in
+                        range(len(vertex) // 3)]
+            vertex_r = [util.math.rotate_point(e, tuple([position[i] + self.rotation_core[i] for i in range(3)]),
+                                               self.rotation) for e in vertex_r]
+            self.rotated_vertices[rotation] = [(e[0]-x, e[1]-y, e[2]-z) for e in vertex_r]
+        vertex = []
         for element in vertex_r: vertex.extend(element)
         batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]
         result = []
         for i in range(6):
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
-                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and deactive[i]: continue
-                t = rtextures[i * 8:i * 8 + 8]
+                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and \
+                        self.deactive[util.enums.EnumSide.iterate()[i].rotate(rotation)]: continue
+                t = self.tex_data[i * 8:i * 8 + 8]
                 v = vertex[i * 12:i * 12 + 12]
                 result.append(batch.add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),
                                         ('t2f/static', t)))
@@ -85,26 +108,27 @@ class BoxModel:
         x += self.boxposition[0] - 0.5 + self.rposition[0]
         y += self.boxposition[1] - 0.5 + self.rposition[1]
         z += self.boxposition[2] - 0.5 + self.rposition[2]
-        up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
-                                                            for x in util.enums.EnumSide.iterate()])
-        deactive = [x == (0, 0) or x is None for x in array]
-        rtextures = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
-                                         tex_region=self.texregion)
-        vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
-                                         [True] * 6)
-        # todo: can we cache this -> better performance?
-        vertex_r = [util.math.rotate_point(vertex[i * 3:i * 3 + 3], position, rotation) for i in
-                    range(len(vertex) // 3)]
-        vertex.clear()
+        if rotation in self.rotated_vertices:  # is there data prepared in this case?
+            vertex_r = [(e[0] + x, e[1] + y, e[2] + z) for e in self.rotated_vertices[rotation]]
+        else:  # otherwise, create it and store it
+            vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
+                                             [True] * 6)
+            vertex_r = [util.math.rotate_point(vertex[i * 3:i * 3 + 3], position, rotation) for i in
+                        range(len(vertex) // 3)]
+            vertex_r = [util.math.rotate_point(e, tuple([position[i] + self.rotation_core[i] for i in range(3)]),
+                                               self.rotation) for e in vertex_r]
+            self.rotated_vertices[rotation] = [(e[0] - x, e[1] - y, e[2] - z) for e in vertex_r]
+        vertex = []
         for element in vertex_r: vertex.extend(element)
         for i in range(6):
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
-                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and deactive[i]: continue
-                t = rtextures[i * 8:i * 8 + 8]
+                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and \
+                        self.deactive[util.enums.EnumSide.iterate()[i].rotate(rotation)]: continue
+                t = self.tex_data[i * 8:i * 8 + 8]
                 v = vertex[i * 12:i * 12 + 12]
                 pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),
-                                        ('t2f/static', t))
+                                     ('t2f/static', t))
 
     def add_face_to_batch(self, position, batch, rotation, face):
         if rotation == (90, 90, 0): rotation = (0, 0, 90)

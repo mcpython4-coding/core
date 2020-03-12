@@ -15,6 +15,7 @@ import event.TickHandler
 import pyglet
 from pyglet.window import mouse
 import mod.ModMcpython
+import time
 
 
 class StateGame(State.State):
@@ -28,7 +29,9 @@ class StateGame(State.State):
     def get_parts(self) -> list:
         return [StatePartGame.StatePartGame(), gui.InventoryHandler.inventory_part]
 
-    def on_activate(self): G.worldgenerationhandler.enable_auto_gen = True
+    def on_activate(self):
+        while G.world.savefile.save_in_progress: time.sleep(0.2)
+        G.worldgenerationhandler.enable_auto_gen = True
 
     def on_deactivate(self):
         G.worldgenerationhandler.enable_auto_gen = False
@@ -44,14 +47,14 @@ class StateGame(State.State):
         elif symbol == key.R:
             G.inventoryhandler.reload_config()
         elif symbol == key.E:
-            if not G.player.inventorys["main"] in G.inventoryhandler.opened_inventorystack:
+            if not G.world.get_active_player().inventories["main"] in G.inventoryhandler.opened_inventorystack:
                 if G.window.exclusive:
                     G.eventhandler.call("on_player_inventory_open")
-                    G.inventoryhandler.show(G.player.inventorys["main"])
+                    G.inventoryhandler.show(G.world.get_active_player().inventories["main"])
                     self.parts[0].activate_mouse = False
             else:
                 G.eventhandler.call("on_player_inventory_close")
-                G.inventoryhandler.hide(G.player.inventorys["main"])
+                G.inventoryhandler.hide(G.world.get_active_player().inventories["main"])
         elif symbol == key.T and G.window.exclusive:
             event.TickHandler.handler.bind(self.open_chat, 2)
         elif symbol == key._7 and modifiers & key.MOD_SHIFT and G.window.exclusive:
@@ -59,7 +62,7 @@ class StateGame(State.State):
 
     @staticmethod
     def open_chat(enter=""):
-        G.inventoryhandler.show(G.player.inventorys["chat"])
+        G.inventoryhandler.show(G.world.get_active_player().inventories["chat"])
         G.chat.text = enter
 
     @staticmethod

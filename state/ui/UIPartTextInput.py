@@ -13,6 +13,7 @@ import util.opengl
 import pyglet
 import Language
 import state.StatePart
+import clipboard
 
 ALL_PATTERN = None
 INT_PATTERN = "-0123456789."
@@ -82,6 +83,10 @@ class UIPartTextInput(UIPart.UIPart):
                     self.on_enter_press()
             elif key == 65288 and len(self.entered_text) > 0:  # BACK
                 self.entered_text = self.entered_text[:-1]
+            elif key == pyglet.window.key.C and mod & pyglet.window.key.MOD_CTRL:
+                clipboard.copy(self.entered_text)
+            elif key == pyglet.window.key.V and mod & pyglet.window.key.MOD_CTRL:
+                self.on_text(clipboard.paste())
 
     def on_text(self, text: str):
         if self.selected and (self.pattern is None or text in self.pattern):

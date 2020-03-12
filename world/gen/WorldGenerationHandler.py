@@ -12,6 +12,7 @@ import world.Dimension
 import world.Chunk
 import mod.ModMcpython
 import logger
+import util.math
 
 
 class WorldGenerationHandler:
@@ -22,24 +23,42 @@ class WorldGenerationHandler:
         self.enable_generation = False
         self.enable_auto_gen = False
         self.runtimegenerationcache = [[], {}, {}]  # chunk order, chunk state, chunk gen data
+        self.tasks_to_generate = []
 
-    def add_chunk_to_generation_list(self, chunk, prior=False):
-        if not self.enable_auto_gen: return
-        if type(chunk) == tuple: chunk = G.world.get_active_dimension().get_chunk(*chunk)
+    def add_chunk_to_generation_list(self, chunk, dimension=None, prior=False, force_generate=False, generate_add=True):
+        if not self.enable_auto_gen and not force_generate: return
+        if type(chunk) == tuple:
+            if dimension is None:
+                chunk = G.world.get_active_dimension().get_chunk(*chunk, generate=False)
+            else:
+                chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
         if prior:
             if chunk in self.runtimegenerationcache[0]:
                 self.runtimegenerationcache[0].remove(chunk)
             self.runtimegenerationcache[0].insert(0, chunk)
         elif chunk not in self.runtimegenerationcache[0]:
-            self.runtimegenerationcache[0].append(chunk)
-            self.runtimegenerationcache[1][chunk.position] = -1
-            self.runtimegenerationcache[2][chunk.position] = None
+            self.tasks_to_generate.append(chunk)
+            if len(self.runtimegenerationcache[0]) == 0 and generate_add:
+                self.process_one_generation_task()
+        chunk.loaded = True
 
-    def process_one_generation_task(self, chunk=None):
-        if chunk is None:
-            if len(self.runtimegenerationcache[0]) == 0: return False
-            chunk = self.runtimegenerationcache[0][0]
+    def process_one_generation_task(self, chunk=None, reorder=True, log_msg=True):
+        if not self.enable_generation: return
         if type(chunk) in (tuple, list, set): chunk = G.world.get_active_dimension().get_chunk(chunk)
+        if chunk is None:
+            if len(self.runtimegenerationcache[0]) == 0:
+                cx, cz = util.math.sectorize(G.world.get_active_player().position)
+                for _ in range(min(len(self.tasks_to_generate), 4)):
+                    chunk = min(self.tasks_to_generate,
+                                key=lambda c: ((c.position[0] - cx) ** 2 + (c.position[1] - cz) ** 2) ** 0.5)
+                    self.tasks_to_generate.remove(chunk)
+                    self.runtimegenerationcache[0].insert(-1, chunk)
+                    self.runtimegenerationcache[1][chunk.position] = -1
+                    self.runtimegenerationcache[2][chunk.position] = None
+                    return
+                if len(self.runtimegenerationcache[0]) == 0:
+                    return False
+            chunk = self.runtimegenerationcache[0][0]
         if chunk.position not in self.runtimegenerationcache[1]:
             self.runtimegenerationcache[1][chunk.position] = -1
             self.runtimegenerationcache[2][chunk.position] = None
@@ -52,6 +71,9 @@ class WorldGenerationHandler:
             if "on_chunk_generate_pre" in config:
                 config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
             self.runtimegenerationcache[2][chunk.position] = [self.layers[layername] for layername in config["layers"]]
+            if reorder:
+                self.runtimegenerationcache[0].remove(chunk)
+                self.runtimegenerationcache[0].insert(-1, chunk)
         elif step == 0:  # process layers
             if len(self.runtimegenerationcache[2][chunk.position]) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 1
@@ -65,14 +87,22 @@ class WorldGenerationHandler:
                 return
             task = chunk.chunkgenerationtasks.pop(0)
             task[0](*task[1], **task[2])
+            if reorder:
+                self.runtimegenerationcache[0].remove(chunk)
+                self.runtimegenerationcache[0].insert(min(len(self.runtimegenerationcache[0])-1, 4), chunk)
         elif step == 2:  # process block additions to the chunk
             if len(chunk.blockmap) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 3
                 return
             position = list(chunk.blockmap.keys())[0]
-            args, kwargs = chunk.blockmap[position]
+            args, kwargs, on_add = chunk.blockmap[position]
             del chunk.blockmap[position]
-            chunk.add_block(*args, **kwargs)
+            blockinstance = chunk.add_block(*args, **kwargs)
+            if on_add is not None:
+                on_add(blockinstance)
+            if reorder:
+                self.runtimegenerationcache[0].remove(chunk)
+                self.runtimegenerationcache[0].insert(min(len(self.runtimegenerationcache[0])-1, 4), chunk)
         elif step == 3:  # process show tasks
             if len(chunk.show_tasks) == 0:
                 self.runtimegenerationcache[1][chunk.position] = 4
@@ -85,8 +115,12 @@ class WorldGenerationHandler:
                 self.runtimegenerationcache[0].remove(chunk)
                 del self.runtimegenerationcache[1][chunk.position]
                 del self.runtimegenerationcache[2][chunk.position]
-                logger.println("finished generation of chunk {}/{}".format(*chunk.position))
+                if log_msg:
+                    logger.println("finished generation of chunk {}/{}".format(*chunk.position))
                 G.eventhandler.call("worldgen:chunk:finished", chunk)
+                chunk.generated = True
+                # G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
+                #                             dimension=chunk.dimension.id, chunk=chunk.position)
                 return
             position = chunk.hide_tasks.pop(0)
             chunk.hide_block(position)
@@ -97,8 +131,8 @@ class WorldGenerationHandler:
         for layername in self.configs[configname]["layers"]:
             layer = self.layers[layername]
             if config is None or layername not in config:
-                cconfig = world.gen.layer.Layer.LayerConfig(**dimension.worldgenerationconfig[layername]
-                    if layername in dimension.worldgenerationconfig else {})
+                cconfig = world.gen.layer.Layer.LayerConfig(**(
+                    dimension.worldgenerationconfig[layername] if layername in dimension.worldgenerationconfig else {}))
                 cconfig.dimension = dimension.id
             else:
                 cconfig = config[layername]
@@ -106,12 +140,15 @@ class WorldGenerationHandler:
             dimension.worldgenerationconfigobjects[layername] = cconfig
             cconfig.layer = layer
 
-    def generate_chunk(self, chunk: world.Chunk.Chunk, check=True, check_chunk=True):
-        if (not self.enable_generation or chunk.is_ready) and check:
-            return
-        if check_chunk and chunk.generated:
-            return
-        chunk.generated = True
+    def generate_chunk(self, chunk: world.Chunk.Chunk, dimension=None, check_chunk=True):
+        if not self.enable_generation: return
+        if check_chunk and chunk.generated: return
+        if type(chunk) == tuple:
+            if dimension is None:
+                chunk = G.world.get_active_dimension().get_chunk(*chunk, generate=False)
+            else:
+                chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
+        chunk.loaded = True
         logger.println("generating", chunk.position)
         dimension = chunk.dimension
         configname = dimension.worldgenerationconfig["configname"]
@@ -126,6 +163,10 @@ class WorldGenerationHandler:
             G.world.process_entire_queue()
         logger.println("\r", end="")
         G.eventhandler.call("worldgen:chunk:finished", chunk)
+        chunk.generated = True
+        chunk.loaded = True
+        # G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
+        #                             dimension=chunk.dimension.id, chunk=chunk.position)
 
     def register_layer(self, layer: world.gen.layer.Layer.Layer):
         # logger.println(layer, layer.get_name())

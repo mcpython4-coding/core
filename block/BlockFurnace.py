@@ -43,7 +43,7 @@ class BlockFurnace(block.Block.Block):
                 {"facing": "north", "lit": "true"}, {"facing": "east", "lit": "true"},
                 {"facing": "south", "lit": "true"}, {"facing": "west", "lit": "true"}]
 
-    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             G.inventoryhandler.show(self.inventory)
             return True
@@ -57,7 +57,7 @@ class BlockFurnace(block.Block.Block):
     def on_remove(self):
         if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
         for slot in self.inventory.slots:
-            G.player.add_to_free_place(slot.itemstack.copy())
+            G.world.get_active_player().pick_up(slot.itemstack.copy())
             slot.itemstack.clean()
         G.inventoryhandler.hide(self.inventory)
         del self.inventory

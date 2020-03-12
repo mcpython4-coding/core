@@ -217,7 +217,7 @@ def read(file, mode=None):
             try:
                 return x.read(file, mode)
             except:
-                # logger.println(file)
+                logger.println("exception during loading file {}".format(file))
                 raise
     raise ValueError("can't find resource {} in any path".format(file))
 

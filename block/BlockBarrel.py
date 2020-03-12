@@ -33,7 +33,7 @@ class BlockBarrel(Block.Block):
             elif dy > 0: self.facing = "down"
             elif dy < 0: self.facing = "up"
 
-    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             G.inventoryhandler.show(self.inventory)
             return True
@@ -74,14 +74,14 @@ class BlockBarrel(Block.Block):
             block.inventory = iteminst.inventory.copy()
 
     def on_request_item_for_block(self, itemstack):
-        if G.window.keys[pyglet.window.key.LCTRL] and G.player.gamemode == 1 and G.window.mouse_pressing[
+        if G.window.keys[pyglet.window.key.LCTRL] and G.world.get_active_player().gamemode == 1 and G.window.mouse_pressing[
                 pyglet.window.mouse.MIDDLE]:
             itemstack.item.inventory = self.inventory.copy()
 
     def on_remove(self):
         if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
         for slot in self.inventory.slots:
-            G.player.add_to_free_place(slot.itemstack.copy())
+            G.world.get_active_player().pick_up(slot.itemstack.copy())
             slot.itemstack.clean()
         G.inventoryhandler.hide(self.inventory)
         del self.inventory

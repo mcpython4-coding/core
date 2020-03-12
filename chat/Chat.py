@@ -149,7 +149,7 @@ class Chat:
         """
         closes the chat
         """
-        G.inventoryhandler.hide(G.player.inventorys["chat"])
+        G.inventoryhandler.hide(G.world.get_active_player().inventories["chat"])
         self.active_index = 0
 
     def clear(self):

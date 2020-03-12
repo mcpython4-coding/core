@@ -123,3 +123,12 @@ issue 119: missing texture face rendering couldn't be deactivated; fixed on: 05.
 issue 120: player can't die; fixed on: 05.03.2020 by uuk
 issue 117: "rotation" was not used by model-loader; fixed on: 05.03.2020 by uuk
 issue 130: merge-error in BlockDirt.py; fixed on: 06.03.2020 by uuk
+issue 132: rendering of not-full blocks was not correct due to vertex parsing error; fixed on: 07.03.2020 by uuk
+issue 134: /generate command was not working; fixed on: 08.03.2020 by uuk
+issue 135: percentage in generation screen was in some cases wrong; fixed on: 08.03.2020 by uuk
+issue 136: all noises are not world-seed based; fixed on: 08.03.2020 by uuk
+issue 137: block entries in commands did NOT accept non-prefixed names; fixed on: 08.03.2020 by uuk
+issue 138: CTRL+C and CTRL+V were not working in UIPartTextInput fields; fixed on: 08.03.2020 by uuk
+issue 131: slabs were rendered upside-down; fixed on: 11.03.2020 by uuk
+issue 102: carved pumpkin was as block-item the same as pumpkin; fixed on: 11.03.2020 by uuk
+issue 132: can break unbreakable blocks in gamemode 0; fixed on: 11.03.2020 by uuk

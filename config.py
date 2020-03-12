@@ -10,10 +10,10 @@ import util.enums
 
 MC_VERSION_BASE = "1.15.2"
 VERSION_TYPE = "snapshot"
-VERSION_NAME = "20w10a"
+VERSION_NAME = "20w11a"
 
 # list of all versions since 19w52a to indicate order
-VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a"]
+VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a"]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)
@@ -72,4 +72,9 @@ FOG_DISTANCE = 60  # something like view distance, but will no force the chunks 
 BIOME_HEIGHT_RANGE_MAP = {  # an dict of biomename: height range storing the internal height range
     "minecraft:plains": (10, 30)
 }
+
+
+# how far to generate chunks on sector change, in chunks from the chunk the player is in, in an square with
+# CHUNK_GENERATION_RANGE * 2 + 1 -size
+CHUNK_GENERATION_RANGE = 1
 

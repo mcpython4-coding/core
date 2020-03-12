@@ -161,7 +161,7 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in G.registry.get_by_name("block").registered_object_map  # is this block arrival?
+            return entrylist[start] in G.registry.get_by_name("block").full_table  # is this block arrival?
         
     @G.registry
     class ItemNameEntry(CommandEntry):

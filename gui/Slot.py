@@ -135,6 +135,17 @@ class Slot:
             traceback.print_exc()
             return False
 
+    def save(self):
+        d = {"itemname": self.itemstack.get_item_name(), "amount": self.itemstack.amount, "data": None}
+        if not self.itemstack.is_empty():
+            d["data"] = self.itemstack.item.get_data()
+        return {"itemstack": d}
+
+    def load(self, data):
+        self.itemstack = gui.ItemStack.ItemStack(data["itemstack"]["itemname"], data["itemstack"]["amount"])
+        if not self.itemstack.is_empty():
+            self.itemstack.item.set_data(data["itemstack"]["data"])
+
 
 class SlotCopy:
     def __init__(self, master, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
@@ -207,4 +218,16 @@ class SlotCopy:
             self.amount_label.draw()
 
     def can_set_item(self, itemstack) -> bool: return self.master.can_set_item(itemstack)
+
+    def save(self):
+        d = {"itemname": self.itemstack.get_item_name(), "amount": self.itemstack.amount, "data": None}
+        if not self.itemstack.is_empty():
+            d["data"] = self.itemstack.item.get_data()
+        return {"itemstack": d}
+
+    def load(self, data):
+        self.itemstack = gui.ItemStack.ItemStack(data["itemstack"]["itemname"], data["itemstack"]["amount"])
+        if not self.itemstack.is_empty():
+            self.itemstack.item.set_data(data["itemstack"]["data"])
+
 

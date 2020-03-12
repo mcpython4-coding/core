@@ -32,13 +32,13 @@ class CommandGenerate(chat.command.Command.Command):
             chunkf = tuple(values[:2])
             chunkt = tuple(values[2:]) if len(values) > 2 else chunkf
         else:
-            chunkf = chunkt = util.math.sectorize(G.player.position)
+            chunkf = chunkt = util.math.sectorize(G.world.get_active_player().position)
         fx, fz = chunkf
         tx, tz = chunkt
         if fx > tx: fx, tx = tx, fx
         if fz > tz: fz, tz = tz, fz
-        for x in range(fx, tx):
-            for z in range(fz, tz):
+        for x in range(fx, tx+1):
+            for z in range(fz, tz+1):
                 G.worldgenerationhandler.generate_chunk(dim.get_chunk(x, z, generate=False))
         G.world.process_entire_queue()
 

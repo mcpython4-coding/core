@@ -50,7 +50,7 @@ class DimensionHandler:
 
     def init_dims(self):
         for dim in self.dimensions.values():
-            G.world.add_dimension(dim.id, dim.config)
+            G.world.add_dimension(dim.id, dim.name, config=dim.config)
 
 
 G.dimensionhandler = DimensionHandler()
@@ -59,10 +59,11 @@ mod.ModMcpython.mcpython.eventbus.subscribe("stage:dimension", G.dimensionhandle
 
 
 class Dimension:
-    def __init__(self, world, id, genconfig={}):
+    def __init__(self, world, id, name: str, genconfig={}):
         self.id = id
         self.world = world
         self.chunks = {}
+        self.name = name
         self.worldgenerationconfig = genconfig
         self.worldgenerationconfigobjects = {}
         # normal batch
@@ -105,14 +106,13 @@ class Dimension:
         self.get_chunk_for_position(position).hide_block(position, immediate=immediate)
 
     def draw(self):
-        x, z = util.math.sectorize(G.player.position)
+        x, z = util.math.sectorize(G.world.get_active_player().position)
         pad = 4
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):
                 cx, cz = x + dx, z + dz
                 chunk = self.get_chunk(cx, cz, create=False)
-                if chunk:
-                    chunk.draw()
+                if chunk: chunk.draw()
         self.batches[0].draw()
         # draw with alpha
         pyglet.gl.glEnable(pyglet.gl.GL_BLEND)

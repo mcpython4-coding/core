@@ -17,6 +17,7 @@ import mod.ModMcpython
 import state.StatePartConfigBackground
 import logger
 import chat.DataPack
+import state.StateWorldGeneration
 
 
 class StateWorldGenerationConfig(State.State):
@@ -51,47 +52,12 @@ class StateWorldGenerationConfig(State.State):
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")
 
-    def on_generate_press(self, x, y): self.generate()
+    def on_generate_press(self, x, y):
+        G.world.cleanup(remove_dims=True)
+        self.generate()
 
     def generate(self):
-        G.world.cleanup(remove_dims=True)
-        G.dimensionhandler.init_dims()
-        sx = self.parts[7].entered_text; sx = 3 if sx == "" else int(sx)
-        sy = self.parts[8].entered_text; sy = 3 if sy == "" else int(sy)
-        G.worldgenerationhandler.enable_generation = True
-        fx = sx // 2
-        fy = sy // 2
-        ffx = sx - fx
-        ffy = sy - fy
-        G.eventhandler.call("on_world_generation_prepared")
-        seed = self.parts[5].entered_text
-        if seed != "":
-            try:
-                seed = int(seed)
-            except ValueError:
-                seed = int.from_bytes(seed.encode("UTF-8"), "big")
-        else:
-            seed = random.randint(-100000, 100000)
-        G.world.config["seed"] = seed
-        G.eventhandler.call("on_world_generation_started")
-        for cx in range(-fx, ffx):
-            for cz in range(-fy, ffy):
-                chunk = G.world.dimensions[0].get_chunk(cx, cz, generate=False)
-                chunk.is_ready = False
-                G.worldgenerationhandler.generate_chunk(chunk)
-                chunk.is_ready = True
-        G.eventhandler.call("on_game_generation_finished")
-        logger.println("[WORLDGENERATION] finished world generation")
-        G.player.position = (G.world.spawnpoint[0], util.math.get_max_y(G.world.spawnpoint), G.world.spawnpoint[1])
-        G.world.config["enable_auto_gen"] = self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
-        G.world.config["enable_world_barrier"] = \
-            self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
-        G.player.name = self.parts[6].entered_text
-        if G.player.name == "": G.player.name = "unknown"
-        chat.DataPack.datapackhandler.reload()
-        chat.DataPack.datapackhandler.try_call_function("#minecraft:load")
-        G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
-        G.eventhandler.call("on_game_enter")
+        G.statehandler.switch_to("minecraft:world_generation")
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
@@ -112,6 +78,10 @@ class StateWorldGenerationConfig(State.State):
         for part in self.parts:
             if issubclass(type(part), UIPartTextInput.UIPartTextInput):
                 part.reset()
+        self.parts[2].index = 0
+        self.parts[2].text = ""
+        self.parts[3].index = 0
+        self.parts[3].text = ""
 
 
 worldgenerationconfig = None
