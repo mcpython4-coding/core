@@ -15,9 +15,9 @@ class ItemFood(item.Item.Item):
         called when the player eats the item
         :return: if the item was eaten or not
         """
-        if G.player.hunger == 20:
+        if G.world.get_active_player().hunger == 20:
             return False
-        G.player.hunger = min(self.get_eat_hunger_addition()+G.player.hunger, 20)
+        G.world.get_active_player().hunger = min(self.get_eat_hunger_addition()+G.world.get_active_player().hunger, 20)
         return True
 
     def get_eat_hunger_addition(self) -> int:

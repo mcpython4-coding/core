@@ -30,7 +30,7 @@ class InventoryCraftingTable(gui.Inventory.Inventory):
 
     def create_slots(self) -> list:
         # 36 slots of main, 9 crafting grid, 1 crafting output
-        # base_slots = G.player.inventorys["main"].slots[:36]
+        # base_slots = G.world.get_active_player().inventories["main"].slots[:36]
         return [gui.Slot.Slot() for _ in range(10)]
 
     def on_activate(self):
@@ -42,9 +42,9 @@ class InventoryCraftingTable(gui.Inventory.Inventory):
         self.slots[-1].itemstack.clean()
         self.slots[-1].get_itemstack().clean()
         for slot in self.slots[:-1]:
-            G.player.add_to_free_place(slot.get_itemstack())
+            G.world.get_active_player().pick_up(slot.get_itemstack())
             slot.get_itemstack().clean()
-        G.player.reset_moving_slot()
+        G.world.get_active_player().reset_moving_slot()
         event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
 
     def draw(self, hoveringslot=None):
@@ -57,15 +57,15 @@ class InventoryCraftingTable(gui.Inventory.Inventory):
             self.bgsprite.position = (x, y)
             self.bgsprite.draw()
         self.on_draw_over_backgroundimage()
-        for slot in G.player.inventorys["main"].slots[:36] + self.slots:
+        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
-        for slot in G.player.inventorys["main"].slots[:36] + self.slots:
+        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
             slot.draw_lable(x, y)
         self.on_draw_overlay()
 
     def get_interaction_slots(self):
-        return G.player.inventorys["main"].slots[:36] + self.slots
+        return G.world.get_active_player().inventories["main"].slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E: G.inventoryhandler.hide(self)

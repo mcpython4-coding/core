@@ -47,7 +47,7 @@ class BlockChest(Block.Block):
         blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
         return blockinst is None or not blockinst.is_solid_side(util.enums.EnumSide.DOWN)
 
-    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT and self.can_open_inventory():
             G.inventoryhandler.show(self.inventory)
             return True
@@ -91,14 +91,14 @@ class BlockChest(Block.Block):
             block.inventory = iteminst.inventory.copy()
 
     def on_request_item_for_block(self, itemstack):
-        if G.window.keys[pyglet.window.key.LCTRL] and G.player.gamemode == 1 and G.window.mouse_pressing[
+        if G.window.keys[pyglet.window.key.LCTRL] and G.world.get_active_player().gamemode == 1 and G.window.mouse_pressing[
                 pyglet.window.mouse.MIDDLE]:
             itemstack.item.inventory = self.inventory.copy()
 
     def on_remove(self):
         if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
         for slot in self.inventory.slots:
-            G.player.add_to_free_place(slot.get_itemstack().copy())
+            G.world.get_active_player().pick_up(slot.get_itemstack().copy())
             slot.get_itemstack().clean()
         G.inventoryhandler.hide(self.inventory)
         del self.inventory

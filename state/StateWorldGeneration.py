@@ -90,17 +90,20 @@ class StateWorldGeneration(State.State):
         self = G.statehandler.states["minecraft:world_generation_config"]
         G.eventhandler.call("on_game_generation_finished")
         logger.println("[WORLDGENERATION] finished world generation")
-        G.player.position = (G.world.spawnpoint[0], util.math.get_max_y(G.world.spawnpoint), G.world.spawnpoint[1])
+        playername = self.parts[6].entered_text
+        if playername not in G.world.players: G.world.add_player(playername)
+        G.world.active_player = playername
+        G.world.get_active_player().position = (G.world.spawnpoint[0], util.math.get_max_y(G.world.spawnpoint),
+                                                G.world.spawnpoint[1])
         G.world.config["enable_auto_gen"] = self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
         G.world.config["enable_world_barrier"] = \
             self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
-        G.player.name = self.parts[6].entered_text
-        if G.player.name == "": G.player.name = "unknown"
+        if G.world.get_active_player().name == "": G.world.get_active_player().name = "unknown"
         chat.DataPack.datapackhandler.reload()
         chat.DataPack.datapackhandler.try_call_function("#minecraft:load")
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
         G.eventhandler.call("on_game_enter")
-        G.world.change_sectors(None, util.math.sectorize(G.player.position))  # add surrounding chunks to list
+        G.world.change_sectors(None, util.math.sectorize(G.world.get_active_player().position))  # add surrounding chunks to list
         G.world.savefile.save_world()
 
     def bind_to_eventbus(self):

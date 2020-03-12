@@ -929,3 +929,8 @@ started these clone on 12th of July, 2019
 [uuk]: made Entity register-able
 [uuk]: fixed version storage in save files
 [uuk]: fixed version in last-time mod storage
+[uuk]: renamed add_to_free_slots to pick_up of Entity
+[uuk]: renamed inventorys to inventories at player
+[uuk]: moved player instances to G.world.players, access via G.world.get_active_player()
+[uuk]: interaction methods are now using also an player-instance to make it clear who interacts
+

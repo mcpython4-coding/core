@@ -29,7 +29,7 @@ class CommandGamemode(chat.command.Command.Command):
     def parse(values: list, modes: list, info):
         mode = values[0]
         if len(values) == 1:  # have we an selector?
-            G.player.set_gamemode(mode)
+            G.world.get_active_player().set_gamemode(mode)
         else:
             for player in values[1]:  # iterate through all players
                 player.set_gamemode(mode)

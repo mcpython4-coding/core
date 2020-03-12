@@ -16,9 +16,9 @@ import item.ItemTool
 class BlockCraftingTable(Block.Block):
     NAME = "minecraft:crafting_table"
 
-    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            G.inventoryhandler.show(G.player.inventorys["crafting_table"])
+            G.inventoryhandler.show(G.world.get_active_player().inventories["crafting_table"])
             return True
         else:
             return False
@@ -27,7 +27,7 @@ class BlockCraftingTable(Block.Block):
         """
         called to get an list of inventories
         """
-        return [G.player.inventorys["crafting_table"]]
+        return [G.world.get_active_player().inventories["crafting_table"]]
 
     def get_hardness(self):
         return 2.5
@@ -36,7 +36,7 @@ class BlockCraftingTable(Block.Block):
         return [item.ItemTool.ToolType.AXE]
 
     def on_remove(self):
-        G.inventoryhandler.hide(G.player.inventorys["crafting_table"])
+        G.inventoryhandler.hide(G.world.get_active_player().inventories["crafting_table"])
 
     @classmethod
     def modify_block_item(cls, itemfactory):

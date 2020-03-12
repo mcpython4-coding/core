@@ -16,42 +16,42 @@ class PlayerData(storage.serializer.IDataSerializer.IDataSerializer):
     @classmethod
     def load(cls, savefile):
         data = savefile.access_file_json("players.json")
-        if data is not None and G.player.name in data:
-            pd = data[G.player.name]
-            G.player.set_gamemode(pd["gamemode"])
-            G.player.hearts = pd["hearts"]
-            G.player.hunger = pd["hunger"]
-            G.player.xp = pd["xp"]
-            G.player.xp_level = pd["xp level"]
-            G.player.fallen_since_y = pd["fallen since y"]
-            G.player.active_inventory_slot = pd["active inventory slot"]
-            G.player.position = pd["position"]
-            G.player.rotation = pd["rotation"]
+        if data is not None and G.world.get_active_player().name in data:
+            pd = data[G.world.get_active_player().name]
+            G.world.get_active_player().set_gamemode(pd["gamemode"])
+            G.world.get_active_player().hearts = pd["hearts"]
+            G.world.get_active_player().hunger = pd["hunger"]
+            G.world.get_active_player().xp = pd["xp"]
+            G.world.get_active_player().xp_level = pd["xp level"]
+            G.world.get_active_player().fallen_since_y = pd["fallen since y"]
+            G.world.get_active_player().active_inventory_slot = pd["active inventory slot"]
+            G.world.get_active_player().position = pd["position"]
+            G.world.get_active_player().rotation = pd["rotation"]
             G.world.join_dimension(pd["dimension"], save_current=False)
             G.window.flying = pd["flying"]
             for name in pd["inventory links"]:
-                savefile.read("minecraft:inventory", inventory=G.player.inventorys[name],
-                              path="players/{}/inventory/{}".format(G.player.name, name))
+                savefile.read("minecraft:inventory", inventory=G.world.get_active_player().inventories[name],
+                              path="players/{}/inventory/{}".format(G.world.get_active_player().name, name))
 
     @classmethod
     def save(cls, data, savefile):
         data = savefile.access_file_json("players.json")
         if data is None: data = {}
-        data[G.player.name] = {
-            "position": G.player.position,
-            "rotation": G.player.rotation,
+        data[G.world.get_active_player().name] = {
+            "position": G.world.get_active_player().position,
+            "rotation": G.world.get_active_player().rotation,
             "dimension": G.world.active_dimension,
-            "gamemode": G.player.gamemode,
-            "hearts": G.player.hearts,
-            "hunger": G.player.hunger,
-            "xp": G.player.xp,
-            "xp level": G.player.xp_level,
-            "fallen since y": G.player.fallen_since_y,
-            "active inventory slot": G.player.active_inventory_slot,
+            "gamemode": G.world.get_active_player().gamemode,
+            "hearts": G.world.get_active_player().hearts,
+            "hunger": G.world.get_active_player().hunger,
+            "xp": G.world.get_active_player().xp,
+            "xp level": G.world.get_active_player().xp_level,
+            "fallen since y": G.world.get_active_player().fallen_since_y,
+            "active inventory slot": G.world.get_active_player().active_inventory_slot,
             "flying": G.window.flying,
-            "inventory links": {name: G.player.inventorys[name].uuid.int for name in G.player.inventorys}
+            "inventory links": {name: G.world.get_active_player().inventories[name].uuid.int for name in G.world.get_active_player().inventories}
         }
-        [savefile.dump(None, "minecraft:inventory", inventory=G.player.inventorys[name],
-                       path="players/{}/inventory/{}".format(G.player.name, name)) for name in G.player.inventorys]
+        [savefile.dump(None, "minecraft:inventory", inventory=G.world.get_active_player().inventories[name],
+                       path="players/{}/inventory/{}".format(G.world.get_active_player().name, name)) for name in G.world.get_active_player().inventories]
         savefile.dump_file_json("players.json", data)
 

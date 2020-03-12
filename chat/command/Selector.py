@@ -55,7 +55,7 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            return [G.player]
+            return [G.world.get_active_player()]
 
     # todo: fully implement
     @G.registry
@@ -68,7 +68,7 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            return [G.player]
+            return [G.world.get_active_player()]
 
     @G.registry
     class AllPlayerSelector(Selector):
@@ -80,5 +80,5 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            return [G.player]
+            return [G.world.get_active_player()]
 

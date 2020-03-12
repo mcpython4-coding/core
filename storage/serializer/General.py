@@ -20,7 +20,9 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
         data = savefile.access_file_json("level.json")
         if data is None: raise storage.serializer.IDataSerializer.InvalidSaveException("level.json not found!")
         savefile.version = data["storage version"]
-        G.player.name = data["player name"]
+        playername = data["player name"]
+        if playername not in G.world.players: G.world.add_player(playername)
+        G.world.active_player = playername
         G.world.config = data["config"]
         G.eventhandler.call("seed:set")
         if data["game version"] not in config.VERSION_ORDER:
@@ -48,7 +50,7 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
     def save(cls, data, savefile):
         data = {
             "storage version": savefile.version,
-            "player name": G.player.name,
+            "player name": G.world.get_active_player().name,
             "config": G.world.config,
             "game version": config.VERSION_NAME,
             "mods": {mod.name: mod.version for mod in G.modloader.mods.values()},

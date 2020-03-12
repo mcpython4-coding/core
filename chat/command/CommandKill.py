@@ -25,7 +25,7 @@ class CommandKill(chat.command.Command.Command):
 
     @staticmethod
     def parse(values: list, modes: list, info):
-        if len(values) == 0: values.append([G.player])
+        if len(values) == 0: values.append([G.world.get_active_player()])
         for entity in values[0]:
             entity.kill(test_totem=False)  # kill all entities selected
 

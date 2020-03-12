@@ -30,7 +30,7 @@ class CommandClear(chat.command.Command.Command):
         cls.CANCEL_CLEAR = False
         G.eventhandler.call("command:clear:start")
         if cls.CANCEL_CLEAR: return
-        if len(values) == 0: values.append([G.player])
+        if len(values) == 0: values.append([G.world.get_active_player()])
         for entity in values[0]:
             for inventory in (entity.inventorys if type(entity.inventorys) in [list, set, tuple] else (
                               [entity.inventorys] if type(entity.inventorys) != dict else entity.inventorys.values())):
