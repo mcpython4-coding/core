@@ -132,3 +132,4 @@ issue 138: CTRL+C and CTRL+V were not working in UIPartTextInput fields; fixed o
 issue 131: slabs were rendered upside-down; fixed on: 11.03.2020 by uuk
 issue 102: carved pumpkin was as block-item the same as pumpkin; fixed on: 11.03.2020 by uuk
 issue 132: can break unbreakable blocks in gamemode 0; fixed on: 11.03.2020 by uuk
+issue 143: model state multi part with OR conditions failed to render; fixed on: 12.03.2020 by uuk

@@ -933,4 +933,5 @@ started these clone on 12th of July, 2019
 [uuk]: renamed inventorys to inventories at player
 [uuk]: moved player instances to G.world.players, access via G.world.get_active_player()
 [uuk]: interaction methods are now using also an player-instance to make it clear who interacts
+[uuk]: fixed issue 143
 
