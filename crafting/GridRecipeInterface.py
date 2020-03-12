@@ -173,9 +173,9 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
         self.remove_input(count=min_item_count)
         itemstacksize = gui.ItemStack.ItemStack(output[0]).item.get_max_stack_size()
         while output[1] > itemstacksize:
-            G.player.add_to_free_place(gui.ItemStack.ItemStack(output[0], itemstacksize))
+            G.world.get_active_player().pick_up(gui.ItemStack.ItemStack(output[0], itemstacksize))
             output[1] -= itemstacksize
-        G.player.add_to_free_place(gui.ItemStack.ItemStack(*output))
+        G.world.get_active_player().pick_up(gui.ItemStack.ItemStack(*output))
         self.check_recipe_state()
         self.update_output()
         if max_item_count == min_item_count:

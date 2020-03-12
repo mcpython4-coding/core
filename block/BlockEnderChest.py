@@ -30,11 +30,11 @@ class BlockChest(Block.Block):
             elif dz < 0 and abs(dx) < abs(dz):
                 self.front_side = util.enums.EnumSide.W
         import gui.InventoryChest
-        self.inventory = G.player.inventorys["enderchest"]
+        self.inventory = G.world.get_active_player().inventories["enderchest"]
 
     NAME = "minecraft:enderchest"
 
-    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             G.inventoryhandler.show(self.inventory)
             return True

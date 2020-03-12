@@ -79,7 +79,16 @@ class Block(event.Registry.IRegistryContent):
     @staticmethod
     def get_all_model_states() -> list: return [{}]  # todo: make attribute
 
-    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:  # todo: include the player
+    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
+        """
+        called when the player pressed an mouse button on the block
+        :param player: the entity instance that interacts. WARNING: may not be an player instance
+        :param itemstack: the itemstack hold in hand, todo: remove
+        :param button: the button pressed
+        :param modifiers: the modifiers hold during press
+        :param exact_hit: where the block was hit at
+        :return: if default logic should be interrupted
+        """
         return False
 
     def get_hardness(self):  # todo: make attribute

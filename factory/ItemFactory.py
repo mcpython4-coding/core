@@ -94,7 +94,7 @@ class ItemFactory:
 
             def get_max_stack_size(self) -> int: return master.stacksize
 
-            def on_player_interact(self, block, button, modifiers) -> bool:
+            def on_player_interact(self, player, block, button, modifiers) -> bool:
                 return master.interaction_callback(block, button, modifiers) if master.interaction_callback else False
 
             def on_set_from_item(self, block):
@@ -110,9 +110,9 @@ class ItemFactory:
                     """
                     if master.eat_callback and master.eat_callback():
                         return True
-                    if G.player.hunger == 20:
+                    if G.world.get_active_player().hunger == 20:
                         return False
-                    G.player.hunger = min(self.get_eat_hunger_addition() + G.player.hunger, 20)
+                    G.world.get_active_player().hunger = min(self.get_eat_hunger_addition() + G.world.get_active_player().hunger, 20)
                     return True
 
                 def get_eat_hunger_addition(self) -> int: return master.hungerregen

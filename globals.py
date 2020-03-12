@@ -17,7 +17,6 @@ STORAGE_VERSION = None
 
 window = None
 world = None
-player = None
 
 chat = None
 

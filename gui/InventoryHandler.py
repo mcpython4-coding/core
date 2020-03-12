@@ -130,7 +130,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                 # todo: threw one item
                 pass
         elif button == mouse.MIDDLE:
-            if G.player.gamemode == 1 and slot and slot.get_itemstack().get_item_name() and not \
+            if G.world.get_active_player().gamemode == 1 and slot and slot.get_itemstack().get_item_name() and not \
                     moving_slot.get_itemstack().get_item_name():
                 moving_slot.set_itemstack(slot.get_itemstack().copy())
                 moving_slot.get_itemstack().set_amount(moving_slot.get_itemstack().item.get_max_stack_size())

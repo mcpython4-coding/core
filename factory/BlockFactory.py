@@ -129,7 +129,7 @@ class BlockFactory:
 
         if master.interaction_callback:
             class ConstructedBlock(ConstructedBlock):
-                def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
+                def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
                     return master.interaction_callback(self, itemstack, button, modifiers)
 
         if master.customitemstackmodifcationfunction:

@@ -46,7 +46,7 @@ issue 96: [maybe fixed]
     possible fix: rewrite SlotCopy
 
 issue 98: [maybe fixed]
-    bug: when moving & reinserting an item in hotbar from player inventory main the item in the hotbar is not rendered
+    bug: when moving & reinserting an item in hotbar from player inventory main the item in the hotbar may not be rendered
     possible fix: see issue 96
 
 issue 100:
@@ -54,7 +54,7 @@ issue 100:
     possible fix: implement some average fps system
 
 issue 109:
-    bug: when closing main inventory after crafting [SHIFT-crafting], output is duplicated
+    bug: when closing main inventory after crafting [SHIFT-crafting], output may get duplicated
     possible reason: cleanup fails
 
 issue 113:
@@ -69,15 +69,21 @@ issue 122:
     bug: z-fighting at border between two fences
 
 issue 129:
-    bug: some fence faces are not rendered
+    bug: some fence faces are not rendered [invalid texture rotation?]
 
 issue 137:
     bug: coal block has no fuel level
 
 issue 139:
-    bug: during generation, block faces of neighbor chunks are not updated
+    bug: during in-game generation, block faces of neighbor chunks are not updated
 
 issue 140:
     bug: sometimes, you fall through one block
         reproduce:
             use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
+
+issue 141:
+    bug: hunger is rendered when half not correctly
+
+issue 142:
+    bug: when in escape-state, items are not rendered in hotbar

@@ -35,7 +35,7 @@ class CommandTeleport(chat.command.Command.Command):
                 for entity in values[0]:
                     entity.position = tuple(values[1][0])
         else:  # tp [position]
-            G.player.position = tuple(values[0])
+            G.world.get_active_player().position = tuple(values[0])
 
     @staticmethod
     def get_help() -> list:

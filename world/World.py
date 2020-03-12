@@ -36,7 +36,18 @@ class World:
         self.hide_faces_to_ungenerated_chunks = True
         self.filename = "tmp" if filename is None else filename
         self.savefile = storage.SaveFile.SaveFile(self.filename)
-        self.player = world.player.Player("unknown")
+
+        self.players = {}  # when in an network, stores an reference to all other players
+        self.add_player("unknown", add_inventories=False)
+        self.active_player = "unknown"
+
+    def add_player(self, name, add_inventories=True):
+        self.players[name] = world.player.Player(name)
+        if add_inventories:
+            self.players[name].create_inventories()
+
+    def get_active_player(self):
+        return self.players[self.active_player]
 
     def reset_config(self):
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
@@ -56,7 +67,7 @@ class World:
         self.CANCEL_DIM_CHANGE = False
         G.eventhandler.call("dimension:chane:pre", id)
         if self.CANCEL_DIM_CHANGE: return
-        sector = util.math.sectorize(G.player.position)
+        sector = util.math.sectorize(G.world.get_active_player().position)
         self.change_sectors(sector, None)
         self.active_dimension = id
         self.change_sectors(None, sector)
@@ -228,11 +239,13 @@ class World:
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
         G.window.flying = False
-        for inv in G.player.inventorys.values(): inv.clear()
+        for inv in G.world.get_active_player().inventories.values(): inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         G.worldgenerationhandler.tasks_to_generate.clear()
         G.worldgenerationhandler.runtimegenerationcache.clear()
         G.worldgenerationhandler.runtimegenerationcache = [[], {}, {}]
+        self.players.clear()
+        self.add_player("unknown")
         if filename is not None:
             self.setup_by_filename(filename)
         G.eventhandler.call("world:clean")

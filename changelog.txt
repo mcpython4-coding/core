@@ -18,6 +18,10 @@ changelog of master-branch
     - added save-access-screen, save-loading screen
     - mod versions should be now tuple instead of any-type
     - rewritten version compare system to be based on tuples (work with lower and upper bound for versions)
+    - improved entity API
+    - renamed some stuff to better match
+    - moved player instances to World.players
+    - player interaction methods now include also the player instance itself
 
     fixed bugs:
         - /generate <cx> <cz>-command was not working

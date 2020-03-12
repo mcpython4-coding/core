@@ -41,7 +41,7 @@ class Entity(event.Registry.IRegistryContent):
         self.dimension = G.world.get_active_dimension() if dimension is None else dimension
         self.position = (0, 0, 0)
         self.rotation = (0, 0, 0)
-        self.inventory_slots = []
+        self.inventories = {}
         self.harts = 0
 
     def tell(self, msg: str):
@@ -51,15 +51,17 @@ class Entity(event.Registry.IRegistryContent):
         :param msg: the msg to tell
         """
 
-    def kill(self):
+    def kill(self, drop_items=True, kill_animation=True):
         """
-        called to kill [remove the entity from world] the entity
+        called to kill the entity [remove the entity from world]
+        :param drop_items: if items should be dropped
+        :param kill_animation: if the kill animation should be played
         todo: invalidate uuid
         todo: drop items
         todo: remove from world
         """
 
-    def add_to_free_place(self, itemstack: gui.ItemStack.ItemStack) -> bool:
+    def pick_up(self, itemstack: gui.ItemStack.ItemStack) -> bool:
         """
         let the entity pick up an item and insert it into its inventory
         :param itemstack: the itemstack to use

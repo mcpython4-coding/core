@@ -44,7 +44,7 @@ class ISlab(block.Block.Block):
     def get_all_model_states() -> list:
         return [{"type": x.name.upper()} for x in SlabModes]
 
-    def on_player_interact(self, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         # todo: add half -> double convert
         return False
 

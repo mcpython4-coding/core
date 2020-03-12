@@ -39,8 +39,8 @@ class CommandXp(chat.command.Command.Command):
     def parse(values: list, modes: list, info):
         if modes[1][1] in [0, 1]:
             if modes[1][1] == 1:
-                G.player.xp = 0
-                G.player.xp_level = 0
+                G.world.get_active_player().xp = 0
+                G.world.get_active_player().xp_level = 0
             if len(modes) == 4 or modes[4][1] == 0:  # points
                 for player in values[1]:
                     player.add_xp(values[2])

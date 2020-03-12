@@ -45,7 +45,16 @@ class Item(event.Registry.IRegistryContent):
         if not issubclass(type(other), Item): return False
         return other.NAME == self.NAME and other.get_data() == self.get_data()
 
-    def on_player_interact(self, block, button, modifiers) -> bool:
+    def on_player_interact(self, player, block, button, modifiers) -> bool:
+        """
+        called when the player tries to use the item
+        :param player: the player interacting
+        :param block: the block in focus, may be None
+        :param button: the button used
+        :param modifiers: the modifiers used
+        :return: if default logic should be interrupted
+        todo: add an exact_hit-parameter
+        """
         return False
 
     def on_set_from_item(self, block):

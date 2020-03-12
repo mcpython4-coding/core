@@ -47,7 +47,7 @@ class WorldGenerationHandler:
         if type(chunk) in (tuple, list, set): chunk = G.world.get_active_dimension().get_chunk(chunk)
         if chunk is None:
             if len(self.runtimegenerationcache[0]) == 0:
-                cx, cz = util.math.sectorize(G.player.position)
+                cx, cz = util.math.sectorize(G.world.get_active_player().position)
                 for _ in range(min(len(self.tasks_to_generate), 4)):
                     chunk = min(self.tasks_to_generate,
                                 key=lambda c: ((c.position[0] - cx) ** 2 + (c.position[1] - cz) ** 2) ** 0.5)
