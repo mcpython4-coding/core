@@ -55,14 +55,20 @@ class LootTableHandler:
     def from_file(self, file: str):
         LootTable.from_file(file)
 
-    def parse_function(self, data) -> loot.LootTableFunction.ILootTableFunction:
+    def parse_function(self, data: dict) -> loot.LootTableFunction.ILootTableFunction:
         name = data["function"]
         if name in loot.LootTableFunction.loottablefunctionregistry.registered_object_map:
             return loot.LootTableFunction.loottablefunctionregistry.registered_object_map[name](data)
         raise ValueError("unable to decode loot table function '{}'".format(name))
 
+    def parse_condition(self, data: dict) -> loot.LootTableCondition.ILootTableCondition:
+        name = data["condition"]
+        if name in loot.LootTableCondition.loottableconditionregistry.registered_object_map:
+            return loot.LootTableCondition.loottableconditionregistry.registered_object_map[name](data)
+        raise ValueError("unable to decode loot table condition '{}'".format(name))
 
-handler = LootTableHandler()
+
+handler = G.loottablehandler = LootTableHandler()
 
 
 class LootTablePoolEntry:
@@ -71,7 +77,7 @@ class LootTablePoolEntry:
         obj = cls(entry_type=LootTablePoolEntryType[data["type"].split(":")[-1].upper()])
         obj.pool = pool
         if "conditions" in data:
-            obj.conditions = [cond for cond in data["conditions"]]
+            obj.conditions = [handler.parse_condition(cond) for cond in data["conditions"]]
         if "functions" in data:
             obj.functions = [handler.parse_function(func) for func in data["functions"]]
         if "name" in data:
@@ -135,7 +141,7 @@ class LootTablePool:
         obj = cls()
         obj.table = table
         if "conditions" in data:
-            obj.conditions = [cond for cond in data["conditions"]]
+            obj.conditions = [handler.parse_condition(cond) for cond in data["conditions"]]
         if "functions" in data:
             obj.functions = [handler.parse_function(func) for func in data["functions"]]
         if "entries" in data:

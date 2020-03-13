@@ -142,7 +142,7 @@ class SetCount(ILootTableFunction):
                     elif self.data["count"]["type"] == "binomial":
                         count = 0
                         for _ in range(self.data["count"]["n"]):
-                            if random.randint(1, round(1/self.data["count"]["p"])): count += 1
+                            if random.randint(1, round(1/self.data["count"]["p"])) == 1: count += 1
                         itemstack.set_amount(count)
 
 
