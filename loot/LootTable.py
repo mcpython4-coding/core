@@ -4,6 +4,8 @@ import random
 import gui.ItemStack
 import globals as G
 import mod.ModMcpython
+import loot.LootTableCondition
+import loot.LootTableFunction
 
 
 class LootTableTypes(enum.Enum):
@@ -53,6 +55,12 @@ class LootTableHandler:
     def from_file(self, file: str):
         LootTable.from_file(file)
 
+    def parse_function(self, data) -> loot.LootTableFunction.ILootTableFunction:
+        name = data["function"]
+        if name in loot.LootTableFunction.loottablefunctionregistry.registered_object_map:
+            return loot.LootTableFunction.loottablefunctionregistry.registered_object_map[name](data)
+        raise ValueError("unable to decode loot table function '{}'".format(name))
+
 
 handler = LootTableHandler()
 
@@ -65,7 +73,7 @@ class LootTablePoolEntry:
         if "conditions" in data:
             obj.conditions = [cond for cond in data["conditions"]]
         if "functions" in data:
-            obj.functions = [func for func in data["functions"]]
+            obj.functions = [handler.parse_function(func) for func in data["functions"]]
         if "name" in data:
             obj.name = data["name"]
         if "children" in data:
@@ -129,7 +137,7 @@ class LootTablePool:
         if "conditions" in data:
             obj.conditions = [cond for cond in data["conditions"]]
         if "functions" in data:
-            obj.functions = [func for func in data["functions"]]
+            obj.functions = [handler.parse_function(func) for func in data["functions"]]
         if "entries" in data:
             obj.entries = [LootTablePoolEntry.from_data(obj, d) for d in data["entries"]]
             obj.entry_weights = [entry.weight for entry in obj.entries]

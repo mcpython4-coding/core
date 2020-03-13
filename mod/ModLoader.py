@@ -110,7 +110,8 @@ class LoadingStages:
     STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states")
     COMMANDS = LoadingStage("command loading phase", "stage:command:entries", "stage:commands",
                             "stage:command:selectors", "stage:command:gamerules")
-    LOOT_TABLES = LoadingStage("loot tables", "stage:loottables:locate", "stage:loottables:load")
+    LOOT_TABLES = LoadingStage("loot tables", "stage:loottables:locate", "stage:loottables:functions",
+                               "stage:loottables:conditions", "stage:loottables:load")
     WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
                             "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
 
