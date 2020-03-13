@@ -3,6 +3,7 @@ import enum
 import random
 import gui.ItemStack
 import globals as G
+import mod.ModMcpython
 
 
 class LootTableTypes(enum.Enum):
@@ -41,6 +42,17 @@ class LootTableHandler:
             name = "minecraft:" + name
         return self[name].roll(*args, **kwargs)
 
+    def for_mod_name(self, modname, directoryname=None):
+        if directoryname is None: directoryname = modname
+        modinstance = G.modloader.mods[modname] if modname in G.modloader.mods else G.modloader.mods["minecraft"]
+        for path in ResourceLocator.get_all_entries("data/{}/loot_tables".format(directoryname)):
+            if path.endswith("/"): continue
+            modinstance.eventbus.subscribe("stage:loottables:load", lambda: self.from_file(path),
+                                           info="loading loot table '{}'".format(path))
+
+    def from_file(self, file: str):
+        LootTable.from_file(file)
+
 
 handler = LootTableHandler()
 
@@ -48,7 +60,7 @@ handler = LootTableHandler()
 class LootTablePoolEntry:
     @classmethod
     def from_data(cls, pool, data: dict):
-        obj = cls(entry_type=LootTablePoolEntryType[data["type"]])
+        obj = cls(entry_type=LootTablePoolEntryType[data["type"].split(":")[-1].upper()])
         obj.pool = pool
         if "conditions" in data:
             obj.conditions = [cond for cond in data["conditions"]]
@@ -157,9 +169,10 @@ class LootTable:
 
     @classmethod
     def from_data(cls, data: dict, name: str):
-        obj = cls(LootTableTypes[data["type"]])
+        obj = cls(LootTableTypes[data["type"].split(":")[-1].upper()])
         handler.loot_tables[name] = obj
-        [obj.pools.append(LootTablePool.from_data(obj, d)) for d in data["pools"]]
+        if "pools" in data:
+            [obj.pools.append(LootTablePool.from_data(obj, d)) for d in data["pools"]]
         return obj
 
     def __init__(self, table_type=LootTableTypes.UNSET):
@@ -170,4 +183,11 @@ class LootTable:
         data = []
         [data.extend(pool.roll(*args, **kwargs) for pool in self.pools)]
         return data
+
+
+def init():
+    handler.for_mod_name("minecraft")
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:loottables:locate", init)
 

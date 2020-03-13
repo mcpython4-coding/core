@@ -164,6 +164,7 @@ class StatePartGame(StatePart.StatePart):
                         chunk.check_neighbors(blockpos)
                 elif G.world.get_active_player().gamemode == 0:
                     if type(block) != str and self.mouse_press_time >= self.braketime and block.is_breakable():
+                        import loot.LootTable
                         itemstack = gui.ItemStack.ItemStack(block.NAME)
                         if block: block.on_request_item_for_block(itemstack)
                         if G.world.gamerulehandler.table["doTileDrops"].status.status:
