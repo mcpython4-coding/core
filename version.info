@@ -935,7 +935,7 @@ started these clone on 12th of July, 2019
 [uuk]: interaction methods are now using also an player-instance to make it clear who interacts
 [uuk]: fixed issue 143
 [uuk]: implemented LootTable system with conditions, functions etc.
+[uuk]: player's pick_up-function now accepts also an list of items
+[uuk]: bound block dropping to block loot tables
 
 todo: make loot tables bound to block breaks
-todo: implement loot table conditions
-

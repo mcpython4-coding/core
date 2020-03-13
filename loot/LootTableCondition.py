@@ -107,6 +107,8 @@ class SurvivesExplosion(ILootTableCondition):
     NAME = "minecraft:survives_explosion"
     # todo: implement
 
+    def check(self, source, *args, **kwargs) -> bool: return True
+
 
 @G.registry
 class TableBonus(ILootTableCondition):

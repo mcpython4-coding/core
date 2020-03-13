@@ -49,8 +49,11 @@ class LootTableHandler:
         modinstance = G.modloader.mods[modname] if modname in G.modloader.mods else G.modloader.mods["minecraft"]
         for path in ResourceLocator.get_all_entries("data/{}/loot_tables".format(directoryname)):
             if path.endswith("/"): continue
-            modinstance.eventbus.subscribe("stage:loottables:load", lambda: self.from_file(path),
-                                           info="loading loot table '{}'".format(path))
+            self._add_load(modinstance, path)
+
+    def _add_load(self, modinstance, path):
+        modinstance.eventbus.subscribe("stage:loottables:load", lambda: self.from_file(path),
+                                       info="loading loot table '{}'".format(path))
 
     def from_file(self, file: str):
         LootTable.from_file(file)
@@ -66,6 +69,12 @@ class LootTableHandler:
         if name in loot.LootTableCondition.loottableconditionregistry.registered_object_map:
             return loot.LootTableCondition.loottableconditionregistry.registered_object_map[name](data)
         raise ValueError("unable to decode loot table condition '{}'".format(name))
+
+    def get_drop_for_block(self, block, player=None):
+        table_name = "{}:blocks/{}".format(*block.NAME.split(":"))
+        if table_name in self.loot_tables:
+            return self.loot_tables[table_name].roll(block=block, player=player)
+        return [gui.ItemStack.ItemStack(block.NAME)]
 
 
 handler = G.loottablehandler = LootTableHandler()
@@ -147,6 +156,11 @@ class LootTablePool:
         if "entries" in data:
             obj.entries = [LootTablePoolEntry.from_data(obj, d) for d in data["entries"]]
             obj.entry_weights = [entry.weight for entry in obj.entries]
+        if "rolls" in data:
+            if type(data["rolls"]) in (int, float):
+                obj.roll_range = (data["rolls"], data["rolls"])
+            else:
+                obj.roll_range = (data["rolls"]["min"], data["rolls"]["max"])
         return obj
 
     def __init__(self):
@@ -161,6 +175,7 @@ class LootTablePool:
     def roll(self, *args, **kwargs):
         if not all([condition.check(self, *args, **kwargs) for condition in self.conditions]): return []
         items = []
+        print(self.roll_range)
         i = random.randint(*self.roll_range)
         # todo: add bonus rolls
         while i > 0:

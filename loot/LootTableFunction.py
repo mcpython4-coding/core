@@ -137,13 +137,15 @@ class SetCount(ILootTableFunction):
                 if type(self.data["count"]) == int:
                     itemstack.set_amount(self.data["count"])
                 else:
-                    if self.data["count"]["type"] == "uniform":
-                        itemstack.set_amount(random.randint(self.data["count"]["min"], self.data["count"]["max"]))
-                    elif self.data["count"]["type"] == "binomial":
+                    if self.data["count"]["type"] == "minecraft:uniform":
+                        count = random.randint(self.data["count"]["min"], self.data["count"]["max"])
+                    elif self.data["count"]["type"] == "minecraft:binomial":
                         count = 0
                         for _ in range(self.data["count"]["n"]):
                             if random.randint(1, round(1/self.data["count"]["p"])) == 1: count += 1
-                        itemstack.set_amount(count)
+                    else:
+                        raise ValueError("unknown set type: '{}'".format(self.data["count"]["type"]))
+                    itemstack.set_amount(count)
 
 
 @G.registry
