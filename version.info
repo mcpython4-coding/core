@@ -941,4 +941,6 @@ started these clone on 12th of July, 2019
 [uuk]: BlockChest can contain an link to an loot table which should be rolled when the chest gets opened
 [uuk]: added start chest to generation code
 [uuk]: fixed issue 144
+[uuk]: added /loot-command
+[uuk]: default stacksize of armor is now 1
 

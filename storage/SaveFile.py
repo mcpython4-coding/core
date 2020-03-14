@@ -22,7 +22,7 @@ History of save versions:
 - 2: introduced: 10.03.2020, outdated since: 13.03.2020, not loadable since: -
     - removed temperature maps from saves
     - optimized landmass map in saves
-- 3: introduced: 13.03.2020, outdated since: -, not loadable since: -
+- 3: introduced: 13.03.2020 [part of loot table update], outdated since: -, not loadable since: -
     - chest container stores now also the loot table link when set
 """
 
@@ -49,7 +49,7 @@ class SaveFile:
             if self.version not in storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map:
                 raise IOError("unsupported storage version '{}'. Latest: '{}', Found transformers from: '{}'".format(
                     str(self.version), str(LATEST_VERSION), "', '".join(
-                        [str(e) for e in storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map.#
+                        [str(e) for e in storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map.
                             keys()])))
             generaldatafixer = storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map[self.version]
             for fix in generaldatafixer.LOAD_FIXES:

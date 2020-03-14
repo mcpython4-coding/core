@@ -8,6 +8,7 @@ changelog of loot table branch
     - added drops to blocks
     - added option to chest to load loot table into the inventory
     - added starter chest
+    - added /loot command
 
 
 changelog of master-branch

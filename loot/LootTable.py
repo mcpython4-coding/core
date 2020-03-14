@@ -6,6 +6,7 @@ import globals as G
 import mod.ModMcpython
 import loot.LootTableCondition
 import loot.LootTableFunction
+import logger
 
 
 class LootTableTypes(enum.Enum):
@@ -42,6 +43,9 @@ class LootTableHandler:
     def roll(self, name: str, *args, **kwargs) -> list:
         if name.count(":") == 0:
             name = "minecraft:" + name
+        if name not in self.loot_tables:
+            logger.println("loot table not found: '{}'".format(name))
+            return []
         return self[name].roll(*args, **kwargs)
 
     def for_mod_name(self, modname, directoryname=None):
