@@ -110,6 +110,8 @@ class LoadingStages:
     STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states")
     COMMANDS = LoadingStage("command loading phase", "stage:command:entries", "stage:commands",
                             "stage:command:selectors", "stage:command:gamerules")
+    LOOT_TABLES = LoadingStage("loot tables", "stage:loottables:locate", "stage:loottables:functions",
+                               "stage:loottables:conditions", "stage:loottables:load")
     WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
                             "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
 
@@ -131,7 +133,7 @@ class LoadingStages:
 LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.PREBUILD,
                  LoadingStages.EXTRA_RESOURCE_LOCATIONS,
                  LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.LANGUAGE,
-                 LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
+                 LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.LOOT_TABLES,
                  LoadingStages.WORLDGEN, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
                  LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.FILE_INTERFACE, LoadingStages.POST]
 
@@ -412,5 +414,6 @@ class ModLoader:
 G.modloader = ModLoader()
 
 
+# this is needed as this depends on above but also above on the import
 import mod.ModMcpython
 

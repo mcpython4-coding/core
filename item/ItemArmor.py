@@ -12,3 +12,5 @@ class ItemArmor(item.ItemTool.ItemTool):  # todo: change to IItemWithDamageBar-c
     def getDefensePoints(self):
         return 0
 
+    def get_max_stack_size(self) -> int: return 1
+

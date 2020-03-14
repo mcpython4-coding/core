@@ -249,6 +249,7 @@ def add_resources_by_modname(modname, pathname=None):
     import Language
     import crafting.CraftingHandler
     import tags.TagHandler
+    import loot.LootTable
     G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,
                                                  info="loading crafting recipes for mod {}".format(modname))
     G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
@@ -259,4 +260,6 @@ def add_resources_by_modname(modname, pathname=None):
     G.modloader.mods[modname].eventbus.subscribe("stage:tag:group", lambda: tags.TagHandler.add_from_location(pathname),
                                                  info="adding tag groups for mod {}".format(modname))
     Language.from_mod_name(modname)
+    G.modloader.mods[modname].eventbus.subscribe("stage:loottables:load", lambda: loot.LootTable.handler.for_mod_name(
+        modname, pathname), info="adding loot tables for mod {}".format(modname))
 

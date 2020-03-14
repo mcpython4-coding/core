@@ -32,8 +32,9 @@ class CommandClear(chat.command.Command.Command):
         if cls.CANCEL_CLEAR: return
         if len(values) == 0: values.append([G.world.get_active_player()])
         for entity in values[0]:
-            for inventory in (entity.inventorys if type(entity.inventorys) in [list, set, tuple] else (
-                              [entity.inventorys] if type(entity.inventorys) != dict else entity.inventorys.values())):
+            for inventory in (entity.inventories if type(entity.inventories) in [list, set, tuple] else (
+                              [entity.inventories] if type(entity.inventories) != dict else
+                              entity.inventories.values())):
                 for slot in inventory.slots:
                     slot.get_itemstack().clean()
             entity.xp = 0

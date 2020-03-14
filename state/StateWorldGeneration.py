@@ -91,6 +91,7 @@ class StateWorldGeneration(State.State):
         G.eventhandler.call("on_game_generation_finished")
         logger.println("[WORLDGENERATION] finished world generation")
         playername = self.parts[6].entered_text
+        if playername == "": playername = "unknown"
         if playername not in G.world.players: G.world.add_player(playername)
         G.world.active_player = playername
         G.world.get_active_player().position = (G.world.spawnpoint[0], util.math.get_max_y(G.world.spawnpoint),
@@ -102,8 +103,14 @@ class StateWorldGeneration(State.State):
         chat.DataPack.datapackhandler.reload()
         chat.DataPack.datapackhandler.try_call_function("#minecraft:load")
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
+        x, z = random.randint(0, 15), random.randint(0, 15)
+        height = util.math.get_max_y((x, z))
+        blockchest = G.world.get_active_dimension().add_block((x, height-1, z), "minecraft:chest")
+        blockchest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
         G.eventhandler.call("on_game_enter")
-        G.world.change_sectors(None, util.math.sectorize(G.world.get_active_player().position))  # add surrounding chunks to list
+
+        # add surrounding chunks to list
+        G.world.change_sectors(None, util.math.sectorize(G.world.get_active_player().position))
         G.world.savefile.save_world()
 
     def bind_to_eventbus(self):

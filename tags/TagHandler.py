@@ -48,7 +48,7 @@ class TagHandler:
 
     def get_tag_for(self, name, group):
         if group not in self.taggroups or name not in self.taggroups[group].tags:
-            raise ValueError("unknown tag {} in group {}".format(name, group))
+            raise ValueError("unknown tag '{}' in group '{}'".format(name, group))
         return self.taggroups[group].tags[name]
 
 
