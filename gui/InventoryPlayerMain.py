@@ -53,7 +53,7 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
 
     def on_deactivate(self):
         self.slots[45].get_itemstack().clean()
-        for slot in self.slots[40:45]:
+        for slot in self.slots[40:-1]:
             slot: gui.Slot.Slot
             itemstack = slot.get_itemstack()
             slot.set_itemstack(gui.ItemStack.ItemStack.get_empty())

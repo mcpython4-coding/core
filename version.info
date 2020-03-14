@@ -944,4 +944,6 @@ started these clone on 12th of July, 2019
 [uuk]: added /loot-command
 [uuk]: default stacksize of armor is now 1
 [uuk]: fixed issue 142, 145, 146, 147
+[uuk]: rewritten shift-click support in crafting output
+[uuk]: fixed issue 109
 

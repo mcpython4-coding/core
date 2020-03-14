@@ -53,10 +53,6 @@ issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
 
-issue 109:
-    bug: when closing main inventory after crafting [SHIFT-crafting], output may get duplicated
-    possible reason: cleanup fails
-
 issue 113:
     bug: "uv-lock"-parameter is ignored in block-states
     fix: implement [see https://minecraft.gamepedia.com/Model]

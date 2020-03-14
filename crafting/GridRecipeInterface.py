@@ -160,24 +160,16 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
 
     def on_output_shift_click(self, slot, x, y, button, modifiers):
         if not self.active_recipe: return
-        min_item_count = None
-        max_item_count = 0
-        for row in self.slot_input_map:
-            for slot in row:
-                if not slot.get_itemstack().is_empty():
-                    if min_item_count is None or slot.get_itemstack().amount < min_item_count:
-                        min_item_count = slot.get_itemstack().amount
-                    if max_item_count < slot.get_itemstack().amount:
-                        max_item_count = slot.get_itemstack().amount
-        output = [self.active_recipe.output[0], self.active_recipe.output[1] * min_item_count]
-        self.remove_input(count=min_item_count)
-        itemstacksize = gui.ItemStack.ItemStack(output[0]).item.get_max_stack_size()
-        while output[1] > itemstacksize:
-            G.world.get_active_player().pick_up(gui.ItemStack.ItemStack(output[0], itemstacksize))
-            output[1] -= itemstacksize
-        G.world.get_active_player().pick_up(gui.ItemStack.ItemStack(*output))
-        self.check_recipe_state()
-        self.update_output()
-        if max_item_count == min_item_count:
-            self.slot_output_map.get_itemstack().clean()
+        old_recipe = self.active_recipe
+        count = 0
+        while self.active_recipe == old_recipe:
+            itemstack = self.slot_output_map.get_itemstack().copy()
+            self.slot_output_map.set_itemstack(gui.ItemStack.ItemStack.get_empty())
+            self.slot_output_map.call_update(player=True)
+            count += itemstack.amount
+        max_size = itemstack.item.get_max_stack_size()
+        for _ in range(count // max_size):
+            G.world.get_active_player().pick_up(itemstack.copy().set_amount(max_size))
+            count -= max_size
+        G.world.get_active_player().pick_up(itemstack.copy().set_amount(count))
 
