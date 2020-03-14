@@ -946,4 +946,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 142, 145, 146, 147
 [uuk]: rewritten shift-click support in crafting output
 [uuk]: fixed issue 109
+[uuk]: fixed custom renderers
+[uuk]: fixed direct draw of BoxModels
+[uuk]: fixed event subscriptions possible more than 1 time
 

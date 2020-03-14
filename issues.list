@@ -3,7 +3,7 @@
 
 issue 9:
     when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
-        Item-instances
+        Item-instances in the same run
     this issue occurs only in the first run with the new block
     possible fix: create item tables only when BlockItemFactory has finished
     better fix: remove BlockItemGenerator & replace by drawing of the corresponding block in the slot in 3d

@@ -116,6 +116,8 @@ class BlockChest(Block.Block):
         return {"model": self.get_model_state(), "loot_table": self.loot_table_link}
 
     def load(self, data):
-        self.set_model_state(data["model"])
-        self.loot_table_link = data["loot_table"]
+        if "model" in data:
+            self.set_model_state(data["model"])
+        if "loot_table" in data:
+            self.loot_table_link = data["loot_table"]
 

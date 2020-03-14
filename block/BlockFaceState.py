@@ -27,7 +27,7 @@ class BlockFaceState:
                 self.face_data[face] = self.custom_renderer.add(self.block.position, self.block, face)
             elif issubclass(type(self.custom_renderer), rendering.ICustomBlockRenderer.ICustomDrawMethodRenderer):
                 if not self.subscribed_renderer:
-                    event.EventHandler.PUBLIC_EVENT_BUS.subscribe("render:draw:3d", self.custom_renderer.draw)
+                    event.EventHandler.PUBLIC_EVENT_BUS.subscribe("render:draw:3d", self._draw_custom_render)
                     self.subscribed_renderer = True
         else:
             self.face_data[face].extend(
@@ -41,10 +41,17 @@ class BlockFaceState:
                 self.custom_renderer.remove(self.block.position, self.block, self.face_data[face], face)
             elif issubclass(type(self.custom_renderer), rendering.ICustomBlockRenderer.ICustomDrawMethodRenderer):
                 if self.subscribed_renderer and not any(self.faces.values()):
-                    event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("render:draw:3d", self.custom_renderer.draw)
+                    event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("render:draw:3d", self._draw_custom_render)
+                    self.subscribed_renderer = False
         else:
             [x.delete() for x in self.face_data[face]]
         self.face_data[face].clear()
+
+    def _draw_custom_render(self):
+        if not self.subscribed_renderer:
+            event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("render:draw:3d", self._draw_custom_render)
+            return
+        self.custom_renderer.draw(self.block.position, self.block)
 
     def update(self, redraw_complete=False):
         state = G.world.get_active_dimension().get_chunk_for_position(self.block.position).exposed_faces(
@@ -57,5 +64,11 @@ class BlockFaceState:
             if state[key]: self.show_face(key)
             else: self.hide_face(key)
 
-    def hide_all(self): [self.hide_face(face) for face in util.enums.EnumSide.iterate()]
+    def hide_all(self):
+        if any(self.faces.values()) and issubclass(
+                type(self.custom_renderer), rendering.ICustomBlockRenderer.ICustomDrawMethodRenderer) and \
+                    self.subscribed_renderer:
+            event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("render:draw:3d", self._draw_custom_render)
+            self.subscribed_renderer = False
+        [self.hide_face(face) for face in util.enums.EnumSide.iterate()]
 

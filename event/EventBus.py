@@ -38,7 +38,9 @@ class EventBus:
         :param kwargs: the kwargs to give
         :param info: an info to give for the caller
         """
-        self.event_subscriptions.setdefault(eventname, []).append((function, args, kwargs, info))
+        if (function, args, kwargs, info) in self.event_subscriptions.setdefault(eventname, []):
+            return
+        self.event_subscriptions[eventname].append((function, args, kwargs, info))
         if G.debugevents:
             with open(G.local+"/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
                 f.write("\nevent subscription of {} to {}".format(function, eventname))
@@ -55,7 +57,7 @@ class EventBus:
         """
         if event_name not in self.event_subscriptions or function not in self.event_subscriptions[event_name]:
             if self.crash_on_error:
-                raise ValueError("can't find function")
+                raise ValueError("can't find function {} in event '{}'".format(function, event_name))
             return
         self.event_subscriptions[event_name].remove(function)
         if G.debugevents:

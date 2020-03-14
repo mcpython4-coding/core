@@ -16,6 +16,7 @@ changelog of master-branch
         - items in hotbar do not render in some cases
         - open inventory list of InventoryHandler gets reversed every ESC-press
         - shift crafting was duplicating output
+        - custom block renderers were not working as expected
 
 
 changelog of snapshot 20w11a [released on 12.03.2020]

@@ -106,8 +106,6 @@ class Block(event.Registry.IRegistryContent):
     def get_view_bbox(self):  # todo: make attribute
         return block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
 
-    def get_custom_block_renderer(self): return None  # todo: make attribute
-
     def on_request_item_for_block(self, itemstack):
         pass
 

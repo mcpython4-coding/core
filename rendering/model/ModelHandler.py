@@ -12,6 +12,7 @@ import rendering.model.Model
 import traceback
 import mod.ModMcpython
 import logger
+import util.enums
 
 
 class ModelHandler:
@@ -106,6 +107,9 @@ class ModelHandler:
         if blockstate is None:
             self.blockstates["minecraft:missing_texture"].draw_face(block, face)
         blockstate.draw_face(block, face)
+
+    def draw_block(self, block):
+        [self.draw_face(block, face) for face in util.enums.EnumSide.iterate()]
 
     def get_bbox(self, block):
         return self.blockstates[block.NAME].loader.transform_to_hitbox(block)

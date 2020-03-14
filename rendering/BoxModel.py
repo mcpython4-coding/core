@@ -127,8 +127,10 @@ class BoxModel:
                         self.deactive[util.enums.EnumSide.iterate()[i].rotate(rotation)]: continue
                 t = self.tex_data[i * 8:i * 8 + 8]
                 v = vertex[i * 12:i * 12 + 12]
-                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),
+                self.model.texture_atlas.group.set_state()
+                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v3f/static', v),
                                      ('t2f/static', t))
+                self.model.texture_atlas.group.unset_state()
 
     def add_face_to_batch(self, position, batch, rotation, face):
         if rotation == (90, 90, 0): rotation = (0, 0, 90)
