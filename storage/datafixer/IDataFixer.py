@@ -45,7 +45,7 @@ generaldatafixerregistry = event.Registry.Registry("generaldatafixers", ["minecr
 
 
 def load_general_fixer():
-    import storage.datafixer.DataFixer1to2
+    from storage.datafixer import (DataFixer1to2, DataFixer2to3)
 
 
 def load_fixer():

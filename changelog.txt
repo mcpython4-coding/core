@@ -4,10 +4,10 @@ Changelog since cleanup-branch of 31.01.2020
 changelog of loot table branch
     - added class for LootTable, added sub-classes for generating the content
     - added base classes for loot table function and conditions
-
     - added loading phase for adding loot tables
     - added drops to blocks
-    - add loot chest to world gen, add starter chest option
+    - added option to chest to load loot table into the inventory
+    - added starter chest
 
 
 changelog of master-branch

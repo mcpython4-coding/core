@@ -937,5 +937,8 @@ started these clone on 12th of July, 2019
 [uuk]: implemented LootTable system with conditions, functions etc.
 [uuk]: player's pick_up-function now accepts also an list of items
 [uuk]: bound block dropping to block loot tables
+[uuk]: Inventory contains now the function insert_items to insert items into the inventory
+[uuk]: BlockChest can contain an link to an loot table which should be rolled when the chest gets opened
+[uuk]: added start chest to generation code
+[uuk]: fixed issue 144
 
-todo: make loot tables bound to block breaks

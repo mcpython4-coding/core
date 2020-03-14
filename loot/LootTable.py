@@ -175,14 +175,18 @@ class LootTablePool:
     def roll(self, *args, **kwargs):
         if not all([condition.check(self, *args, **kwargs) for condition in self.conditions]): return []
         items = []
-        print(self.roll_range)
         i = random.randint(*self.roll_range)
+        done = []
         # todo: add bonus rolls
         while i > 0:
-            item = random.choices(self.entries, weights=self.entry_weights)[0].roll(*args, **kwargs)
+            entry = random.choices(self.entries, weights=self.entry_weights)[0]
+            item = entry.roll(*args, **kwargs)
             if item is not None:
-                items.append(item)
+                items += item
                 i -= 1
+            else:
+                if entry not in done: done.append(entry)
+                elif len(done) == len(self.entries): break
         [func.apply(items) for func in self.functions]
         return items
 
@@ -210,7 +214,8 @@ class LootTable:
 
     def roll(self, *args, **kwargs):
         data = []
-        [data.extend(pool.roll(*args, **kwargs) for pool in self.pools)]
+        for pool in self.pools:
+            data += pool.roll(*args, **kwargs)
         return data
 
 
