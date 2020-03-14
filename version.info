@@ -943,4 +943,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 144
 [uuk]: added /loot-command
 [uuk]: default stacksize of armor is now 1
+[uuk]: fixed issue 142, 145, 146, 147
 

@@ -194,7 +194,7 @@ class InventoryHandler:
         removes one inventory from stack
         :return: the inventory removed or None if no is active
         """
-        stack = self.opened_inventorystack
+        stack = self.opened_inventorystack.copy()
         stack.reverse()
         for inventory in stack:
             if inventory.is_closable_by_escape():

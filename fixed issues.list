@@ -134,3 +134,7 @@ issue 102: carved pumpkin was as block-item the same as pumpkin; fixed on: 11.03
 issue 132: can break unbreakable blocks in gamemode 0; fixed on: 11.03.2020 by uuk
 issue 143: model state multi part with OR conditions failed to render; fixed on: 12.03.2020 by uuk
 issue 144: chest and ender chest were not rendering; fixed on: 14.03.2020 by uuk
+issue 146: inventory list got reversed on every ESC-press; fixed on: 14.03.2020 by uuk
+    causing: issue 142: inventory slots of hotbar are sometimes not drawn; fixed on: 14.03.2020 by uuk
+issue 145: leaves were not colored; fixed on: 14.03.2020 by uuk
+issue 147: shulker boxes were not rendering

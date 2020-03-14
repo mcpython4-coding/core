@@ -78,14 +78,11 @@ issue 139:
     bug: during in-game generation, block faces of neighbor chunks are not updated
 
 issue 140:
-    bug: sometimes, you fall through one block
+    bug: sometimes, you fall through one block (in gamemode 0)
         reproduce:
             use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
 
 issue 141:
     bug: hunger is rendered when half not correctly
 
-issue 142:
-    bug: when in escape-state, items are not rendered in hotbar
-
-[143-144]
+[146 - 147]
