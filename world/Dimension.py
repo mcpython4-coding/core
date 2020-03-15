@@ -12,6 +12,7 @@ import pyglet
 import block.Block
 import mod.ModMcpython
 import sys
+import rendering.OpenGLSetupFile
 
 
 class DimensionDefinition:
@@ -115,8 +116,7 @@ class Dimension:
                 if chunk: chunk.draw()
         self.batches[0].draw()
         # draw with alpha
-        pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
-        pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
+        rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_on")
         self.batches[1].draw()
-        pyglet.gl.glBlendFunc(pyglet.gl.GL_ONE, pyglet.gl.GL_ZERO)
+        rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_off")
 

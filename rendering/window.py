@@ -21,6 +21,7 @@ import PIL.Image
 import psutil
 import event.EventHandler
 import event.TickHandler
+import rendering.OpenGLSetupFile
 
 
 class Window(pyglet.window.Window):
@@ -327,37 +328,26 @@ class Window(pyglet.window.Window):
 
         """
         width, height = self.get_size()
-        glDisable(GL_DEPTH_TEST)
         viewport = self.get_viewport_size()
-        glViewport(0, 0, max(1, viewport[0]), max(1, viewport[1]))
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, max(1, width), 0, max(1, height), -1, 1)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
+        rendering.OpenGLSetupFile.execute_file_by_name("set_2d", width=max(1, width), height=max(1, height),
+                                                       viewport_0=max(1, viewport[0]),
+                                                       viewport_1=max(1, viewport[1]))
 
     def set_3d(self):
         """ Configure OpenGL to draw in 3d.
 
         """
         width, height = self.get_size()
-        glEnable(GL_DEPTH_TEST)
         viewport = self.get_viewport_size()
-        glViewport(0, 0, max(1, viewport[0]), max(1, viewport[1]))
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-
-        # calculate far with rendering distance
-        gluPerspective(65.0, width / float(height), 0.1, config.FOG_DISTANCE+20)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-        x, y, _ = G.world.get_active_player().rotation
-        glRotatef(x, 0, 1, 0)
-        glRotatef(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
-        x, y, z = G.world.get_active_player().position
-        glTranslatef(-x, -y, -z)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        rotation = G.world.get_active_player().rotation
+        position = G.world.get_active_player().position
+        rendering.OpenGLSetupFile.execute_file_by_name("set_3d", width=width, height=height,
+                                                       viewport_0=max(1, viewport[0]),
+                                                       viewport_1=max(1, viewport[1]), rotation_x=rotation[0],
+                                                       rotation_y=rotation[1], position_x=position[0],
+                                                       position_y=position[1], position_z=position[2],
+                                                       trans_rot_x=math.cos(math.radians(rotation[0])),
+                                                       trans_rot_y=math.sin(math.radians(rotation[0])))
 
     def on_draw(self):
         """ Called by pyglet to draw the canvas.

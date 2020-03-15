@@ -179,7 +179,8 @@ class ModLoader:
                 if file in modlocations:
                     modlocations.remove(file)
                 else:
-                    logger.println("[WARNING] it was attempted to remove mod {} which was not found in file system".format(file))
+                    logger.println("[WARNING] it was attempted to remove mod '{}' which was not found in file system".
+                                   format(file))
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1

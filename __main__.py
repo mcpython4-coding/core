@@ -26,8 +26,6 @@ try:
 
     import event.EventHandler
 
-    from rendering import config
-
     import rendering.window
 
     import os
@@ -68,8 +66,9 @@ try:
         globals.world = world.World.World()
         import rendering.model.BlockState
         import Language
+        import rendering.OpenGLSetupFile
 
-        config.setup()
+        rendering.OpenGLSetupFile.execute_file_by_name("setup")
 
         import world.gen.mode.DebugOverWorldGenerator
 
