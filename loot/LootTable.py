@@ -206,7 +206,7 @@ class LootTable:
 
     @classmethod
     def from_data(cls, data: dict, name: str):
-        obj = cls(LootTableTypes[data["type"].split(":")[-1].upper()])
+        obj = cls(LootTableTypes[data["type"].split(":")[-1].upper()] if "type" in data else LootTableTypes.UNSET)
         handler.loot_tables[name] = obj
         if "pools" in data:
             [obj.pools.append(LootTablePool.from_data(obj, d)) for d in data["pools"]]

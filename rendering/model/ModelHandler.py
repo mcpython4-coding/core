@@ -53,6 +53,7 @@ class ModelHandler:
     def special_build(self, used):
         if used not in self.found_models:
             logger.println("model error: can't locate model for '{}'".format(used))
+            print(self.found_models.keys())
             return
         file = self.found_models[used]
         if type(file) == str:

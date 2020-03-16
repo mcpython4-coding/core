@@ -951,4 +951,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed event subscriptions possible more than 1 time
 [uuk]: implemented OpenGLSetupFile-system which makes calling opengl commands easy & exchangeable during runtime
 [uuk]: moved the big rendering parts to the new rendering system
+[uuk]: added IAllDirectionOrientableBlock-baseclass
 

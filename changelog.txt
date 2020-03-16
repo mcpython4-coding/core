@@ -9,6 +9,7 @@ changelog of master-branch
     - added option to chest to load loot table into the inventory
     - added starter chest
     - added /loot command
+    - added loader for OpenGL-only scripts (stored in .gl files, loader under rendering/OpenGLSetupFile.py)
 
     fixed bugs:
         - rendering of multi-part models with OR condition fails due to wrong condition check
@@ -17,6 +18,7 @@ changelog of master-branch
         - open inventory list of InventoryHandler gets reversed every ESC-press
         - shift crafting was duplicating output
         - custom block renderers were not working as expected
+        - alpha blending has now disabled cull face in OpenGL to render also back-faces to user
 
 
 changelog of snapshot 20w11a [released on 12.03.2020]

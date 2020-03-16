@@ -100,7 +100,7 @@ class LoadingStages:
 
     TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
     BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:factory:prepare",
-                          "stage:block:factory_usage",  "stage:block:load", "stage:block:overwrite",
+                          "stage:block:factory_usage", "stage:block:load", "stage:block:overwrite",
                           "stage:block:block_config")
     ITEMS = LoadingStage("item loading phase", "stage:item:factory:prepare", "stage:item:factory_usage",
                          "stage:item:base", "stage:item:load", "stage:item:overwrite")
