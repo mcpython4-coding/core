@@ -5,15 +5,36 @@
       "texture_size": [64, 64],
       "size": [8, 8, 8],
       "uv": ["8|56|16|64", "16|56|24|64", "8|48|16|56", "24|48|32|56", "16|48|24|56", "0|48|8|56"],
-      "position": [0, 4, 0]
+      "position": [0, 0, 0]
+    },
+    "body": {
+      "texture": "assets/minecraft/textures/entity/steve.png",
+      "texture_size": [64, 64],
+      "size": [4, 12, 8],
+      "uv": ["20|44|28|48", "28|44|36|48", "20|32|28|43", "32|32|40|43", "16|32|20|43", "28|32|31|43"],
+      "position": [0, -0.625, 0]
+    },
+    "left_arm": {
+      "texture": "assets/minecraft/textures/entity/steve.png",
+      "texture_size": [64, 64],
+      "size": [4, 12, 4],
+      "uv": ["44|44|48|48", "48|44|52|48", "44|32|48|44", "52|32|56|44", "40|32|44|44", "48|32|52|44"],
+      "position": [0, -0.625, 0.375]
+    },
+    "right_arm": {
+      "texture": "assets/minecraft/textures/entity/steve.png",
+      "texture_size": [64, 64],
+      "size": [4, 12, 4],
+      "uv": ["36|12|40|16", "40|12|44|16", "36|0|40|12", "44|0|48|12", "32|0|36|12", "40|0|44|12"],
+      "position": [0, -0.625, -0.375]
     }
   },
   "states": {
     "outer": {
-      "boxes": [{"box": "head"}]
+      "boxes": [{"box": "head"}, {"box": "body"}, {"box":  "left_arm"}, {"box": "right_arm"}]
     },
     "inner": {
-      "boxes": []
+      "boxes": [{"box": "left_arm"}, {"box": "right_arm"}]
     }
   }
 }

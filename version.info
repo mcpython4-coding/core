@@ -972,4 +972,6 @@ todo: implement visual to player-entity
 todo: add path-finding-system
 todo: fix bug: player is not rendered when exiting generated chunks when barrier is deactivated
 todo: add loading phases for entities
+todo: add /summon command
+todo: add mob spawning
 

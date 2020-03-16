@@ -177,10 +177,10 @@ class BaseBoxModel:
         self.recalculate_cache()
 
     def recalculate_cache(self):
-        vertices = util.math.cube_vertices(*self.rotation_center, *[self.size[i] / 2 for i in range(3)])
+        vertices = util.math.cube_vertices(*self.relative_position, *[self.size[i] / 2 for i in range(3)])
         self.vertex_cache.clear()
         for i in range(len(vertices) // 3):
-            self.vertex_cache.append(util.math.rotate_point(vertices[i*3:i*3+3], (0, 0, 0), self.__rotation))
+            self.vertex_cache.append(util.math.rotate_point(vertices[i*3:i*3+3], self.rotation_center, self.__rotation))
         self.texture_cache = util.math.tex_coords(*[(0, 0)]*6, size=(1, 1), tex_region=self.__texture_region)
 
     def get_rotation(self): return self.__rotation
@@ -202,11 +202,8 @@ class BaseBoxModel:
     def add_to_batch(self, batch, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)):
         vertex = []
         x, y, z = position
-        if rotation == (0, 0, 0):
-            for dx, dy, dz in self.vertex_cache:
-                vertex.extend((x+dx, y+dy, z+dz))
-        elif rotation in self.rotated_vertex_cache:
-            vertex = self.rotated_vertex_cache[rotation]
+        if rotation in self.rotated_vertex_cache:
+            vertex = [e+position[i % 3] for i, e in enumerate(self.rotated_vertex_cache[rotation])]
         else:
             for dx, dy, dz in self.vertex_cache:
                 vertex.extend(util.math.rotate_point((x+dx, y+dy, z+dz), rotation_center, rotation))
@@ -220,11 +217,8 @@ class BaseBoxModel:
     def draw(self, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)):
         vertex = []
         x, y, z = position
-        if rotation == (0, 0, 0):
-            for dx, dy, dz in self.vertex_cache:
-                vertex.extend((x+dx, y+dy, z+dz))
-        elif rotation in self.rotated_vertex_cache:
-            vertex = self.rotated_vertex_cache[rotation]
+        if rotation in self.rotated_vertex_cache:
+            vertex = [e+position[i % 3] for i, e in enumerate(self.rotated_vertex_cache[rotation])]
         else:
             self.rotated_vertex_cache[rotation] = []
             for dx, dy, dz in self.vertex_cache:

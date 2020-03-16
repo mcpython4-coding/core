@@ -429,3 +429,7 @@ class Window(pyglet.window.Window):
     def on_text(self, text):
         G.eventhandler.call("user:keyboard:enter", text)
 
+    def on_close(self):
+        if G.world.savefile.save_in_progress: return
+        self.close()
+
