@@ -34,6 +34,7 @@ craftinghandler = None
 taghandler = None
 dimensionhandler = None
 loottablehandler = None
+entityhandler = None
 
 modelhandler = None
 

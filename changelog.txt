@@ -1,6 +1,13 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
+changelog of the entity-update-branch
+    - moved Entity-class into entity/Entity.py
+    - chunk <-> entity know of each other now
+    - added EntityHandler with entity-registry
+    - made function draw and tick called of entity
+
+
 changelog of master-branch
     - added dimension definition for nether and end
 

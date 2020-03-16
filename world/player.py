@@ -14,10 +14,13 @@ import ResourceLocator
 import mod.ModMcpython
 import logger
 import event.EventHandler
-import Entity
+from entity import Entity
 
 
+@globals.registry
 class Player(Entity.Entity):
+    NAME = "minecraft:player"
+
     GAMEMODE_DICT: dict = {
         "survival": 0, "0": 0,
         "creative": 1, "1": 1,
@@ -25,8 +28,8 @@ class Player(Entity.Entity):
         "spectator": 3, "3": 3
     }
 
-    def __init__(self, name):
-        super().__init__()
+    def __init__(self, name, dimension=None):
+        super().__init__(dimension=dimension)
         self.name: str = name
         self.gamemode: int = -1
         self.set_gamemode(1)

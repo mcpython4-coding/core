@@ -109,6 +109,10 @@ class Dimension:
         self.get_chunk_for_position(position).hide_block(position, immediate=immediate)
 
     def draw(self):
+        self.batches[0].draw()
+        # draw with alpha
+        rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_on")
+        self.batches[1].draw()
         x, z = util.math.sectorize(G.world.get_active_player().position)
         pad = 4
         for dx in range(-pad, pad + 1):
@@ -116,9 +120,5 @@ class Dimension:
                 cx, cz = x + dx, z + dz
                 chunk = self.get_chunk(cx, cz, create=False)
                 if chunk: chunk.draw()
-        self.batches[0].draw()
-        # draw with alpha
-        rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_on")
-        self.batches[1].draw()
         rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_off")
 

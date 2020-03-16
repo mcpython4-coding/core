@@ -8,6 +8,9 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import gui.ItemStack
 import globals as G
 import event.Registry
+import entity.EntityHandler
+import uuid
+import util.math
 
 
 class Entity(event.Registry.IRegistryContent):
@@ -39,10 +42,18 @@ class Entity(event.Registry.IRegistryContent):
         for moder: you SHOULD implement an custom constructor which set the bellow values to an good value
         """
         self.dimension = G.world.get_active_dimension() if dimension is None else dimension
-        self.position = (0, 0, 0)
+        self.__position = (0, 0, 0)
         self.rotation = (0, 0, 0)
         self.inventories = {}
         self.harts = 0
+        self.chunk = None if self.dimension is None else self.dimension.get_chunk_for_position(self.position)
+        self.uuid = uuid.uuid4()
+
+    def get_position(self): return self.__position
+
+    def set_position(self, position: tuple): self.teleport(position)
+
+    position = property(get_position, set_position)
 
     def tell(self, msg: str):
         """
@@ -56,10 +67,12 @@ class Entity(event.Registry.IRegistryContent):
         called to kill the entity [remove the entity from world]
         :param drop_items: if items should be dropped
         :param kill_animation: if the kill animation should be played
-        todo: invalidate uuid
         todo: drop items
-        todo: remove from world
         """
+        if self.chunk is not None and self in self.chunk.entities:
+            self.chunk.entities.remove(self)
+        if self.uuid in G.entityhandler.entity_map:
+            del G.entityhandler.entity_map[self.uuid]
 
     def pick_up(self, itemstack: gui.ItemStack.ItemStack) -> bool:
         """
@@ -84,13 +97,11 @@ class Entity(event.Registry.IRegistryContent):
     def draw(self):
         """
         called to draw the entity
-        todo: make called
         """
 
     def tick(self):
         """
         called every tick to update the entity
-        todo: make called
         """
 
     def dump(self):
@@ -106,13 +117,25 @@ class Entity(event.Registry.IRegistryContent):
         :param data: the data to load from
         """
 
-    def teleport(self, position):
+    def teleport(self, position, dimension=None):
         """
         called when the entity should be teleported
         :param position: the position to teleport to
-        todo: make called
+        :param dimension: to which dimension-id to teleport to, if None, no dimension change is used
         """
-        self.position = position
+        if self.chunk is None: sector_before = util.math.sectorize(self.position)
+        else: sector_before = self.chunk.position
+        if self.chunk is None: before_dim = None
+        else: before_dim = self.chunk.dimension.id
+        if dimension is None: dimension_id = before_dim if before_dim is not None else 0
+        else: dimension_id = dimension
+        self.__position = position
+        sector_after = util.math.sectorize(self.position)
+        if sector_before != sector_after or before_dim != dimension_id:
+            if self.chunk and self in self.chunk.entities:
+                self.chunk.entities.remove(self)
+            self.chunk = G.world.dimensions[dimension_id].get_chunk_for_position(self.position)
+            self.chunk.entities.add(self)
 
     def on_interact(self, player, button, modifiers, itemstack):
         """

@@ -953,4 +953,15 @@ started these clone on 12th of July, 2019
 [uuk]: moved the big rendering parts to the new rendering system
 [uuk]: added IAllDirectionOrientableBlock-baseclass
 [uuk]: dimension -1 (nether) and 1 (end) is now reserved by default
+[uuk]: moved Entity-class to entity/Entity
+[uuk]: entity has now an chunk-attribute storing an Chunk-class representing the entity
+[uuk]: added entities-set to Chunk
+[uuk]: added EntityHandler
+[uuk]: added an registry for entities
+[uuk]: Entity-objects contain now an uuid
+[uuk]: player-entity has now an own name and is send to registry
+[uuk]: Entity.draw function is now called in alpha-block-rendering phase
+[uuk]: changing entity position auto-calls now teleport()wwwwwww
+
+todo: add entities to saves [do not forget to add an data fixer!]
 

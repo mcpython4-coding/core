@@ -42,7 +42,7 @@ class World:
         self.active_player = "unknown"
 
     def add_player(self, name, add_inventories=True):
-        self.players[name] = world.player.Player(name)
+        self.players[name] = G.entityhandler.add_entity("minecraft:player", (0, 0, 0), name)
         if add_inventories:
             self.players[name].create_inventories()
 
