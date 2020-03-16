@@ -952,4 +952,5 @@ started these clone on 12th of July, 2019
 [uuk]: implemented OpenGLSetupFile-system which makes calling opengl commands easy & exchangeable during runtime
 [uuk]: moved the big rendering parts to the new rendering system
 [uuk]: added IAllDirectionOrientableBlock-baseclass
+[uuk]: dimension -1 (nether) and 1 (end) is now reserved by default
 
