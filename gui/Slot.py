@@ -103,7 +103,7 @@ class Slot:
                 self.empty_image.position = (self.position[0] + dx, self.position[1] + dy)
                 self.empty_image.draw()
         self.amount_label.text = str(self.__itemstack.amount)
-        if self.sprite:
+        if self.sprite is not None:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.sprite.draw()
         self.__last_item_file = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None

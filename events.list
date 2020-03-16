@@ -77,8 +77,8 @@ world generation:
 game play:
     "player:die": called by player when it is killed
     "world:reset_config": called when the world config should be reset
-    "dimension:chane:pre": called before the dimension is changed, cancelable
-    "dimension:chane:post": called after the dimension is changed
+    "dimension:chane:pre": called before the dimension is changed with from and to, cancelable
+    "dimension:chane:post": called after the dimension is changed with from and to
     "world:clean": called to clean up the whole world
     "game:gameloop_startup": called direct after the window was created
     "game:startup": called direct before the main gameloop starts

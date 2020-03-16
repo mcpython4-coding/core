@@ -933,4 +933,23 @@ started these clone on 12th of July, 2019
 [uuk]: renamed inventorys to inventories at player
 [uuk]: moved player instances to G.world.players, access via G.world.get_active_player()
 [uuk]: interaction methods are now using also an player-instance to make it clear who interacts
+[uuk]: fixed issue 143
+[uuk]: implemented LootTable system with conditions, functions etc.
+[uuk]: player's pick_up-function now accepts also an list of items
+[uuk]: bound block dropping to block loot tables
+[uuk]: Inventory contains now the function insert_items to insert items into the inventory
+[uuk]: BlockChest can contain an link to an loot table which should be rolled when the chest gets opened
+[uuk]: added start chest to generation code
+[uuk]: fixed issue 144
+[uuk]: added /loot-command
+[uuk]: default stacksize of armor is now 1
+[uuk]: fixed issue 142, 145, 146, 147
+[uuk]: rewritten shift-click support in crafting output
+[uuk]: fixed issue 109
+[uuk]: fixed custom renderers
+[uuk]: fixed direct draw of BoxModels
+[uuk]: fixed event subscriptions possible more than 1 time
+[uuk]: implemented OpenGLSetupFile-system which makes calling opengl commands easy & exchangeable during runtime
+[uuk]: moved the big rendering parts to the new rendering system
+[uuk]: added IAllDirectionOrientableBlock-baseclass
 

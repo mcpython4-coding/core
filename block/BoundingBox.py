@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import util.math
 import pyglet.gl
+import rendering.OpenGLSetupFile
 
 
 class BoundingBox:
@@ -35,12 +36,7 @@ class BoundingBox:
             nx, ny, nz = x, y, z
             rx, ry, rz = util.math.rotate_point(vertex_data_ur[i*3:i*3+3], (0, 0, 0), rot)
             vertex_data.extend([nx+rx, ny+ry, nz+rz])
-        pyglet.gl.glColor3d(0, 0, 0)
-        pyglet.gl.glLineWidth(1.3)
-        pyglet.gl.glPolygonMode(pyglet.gl.GL_FRONT_AND_BACK, pyglet.gl.GL_LINE)
-        pyglet.graphics.draw(24, pyglet.gl.GL_QUADS, ('v3f/static', vertex_data))
-        pyglet.gl.glPolygonMode(pyglet.gl.GL_FRONT_AND_BACK, pyglet.gl.GL_FILL)
-        pyglet.gl.glLineWidth(1)
+        rendering.OpenGLSetupFile.execute_file_by_name("draw_line_box", vertex=('v3f/static', vertex_data))
 
 
 class BoundingArea:

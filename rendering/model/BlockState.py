@@ -80,14 +80,14 @@ class MultiPartDecoder(IBlockStateDecoder):
         for key in part:
             if use_or:
                 if key == "OR":
-                    condition = cls._test_for(state, part[key], use_or=True)
+                    condition = any([cls._test_for(state, part[key][i], use_or=True) for i in range(len(part[key]))])
                 else:
-                    condition = key in state and (state[key] not in part[key].split("|") if type(part[key]) == str
-                                                  else state[key] == part[key])
+                    condition = key in state and ((state[key] not in part[key].split("|")) if type(part[key]) == str
+                                                  else (state[key] == part[key]))
                 if condition: return True
             else:
                 if key == "OR":
-                    condition = not cls._test_for(state, part[key], use_or=True)
+                    condition = not any([cls._test_for(state, part[key][i], use_or=True) for i in range(len(part[key]))])
                 else:
                     condition = key not in state or (state[key] not in part[key].split("|") if type(part[key]) == str
                                                      else state[key] == part[key])

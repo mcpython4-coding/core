@@ -134,6 +134,8 @@ class Player(Entity.Entity):
         """
         # have we an slot?
         if type(itemstack) in (gui.Slot.Slot, gui.Slot.SlotCopy): itemstack = itemstack.get_itemstack()
+        if type(itemstack) == list:
+            return all([self.pick_up(itemstack) for itemstack in itemstack])
 
         if not itemstack.item or itemstack.amount == 0:
             return True

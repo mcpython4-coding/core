@@ -100,7 +100,7 @@ class LoadingStages:
 
     TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
     BLOCKS = LoadingStage("block loading phase", "stage:block:base", "stage:block:factory:prepare",
-                          "stage:block:factory_usage",  "stage:block:load", "stage:block:overwrite",
+                          "stage:block:factory_usage", "stage:block:load", "stage:block:overwrite",
                           "stage:block:block_config")
     ITEMS = LoadingStage("item loading phase", "stage:item:factory:prepare", "stage:item:factory_usage",
                          "stage:item:base", "stage:item:load", "stage:item:overwrite")
@@ -110,6 +110,8 @@ class LoadingStages:
     STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states")
     COMMANDS = LoadingStage("command loading phase", "stage:command:entries", "stage:commands",
                             "stage:command:selectors", "stage:command:gamerules")
+    LOOT_TABLES = LoadingStage("loot tables", "stage:loottables:locate", "stage:loottables:functions",
+                               "stage:loottables:conditions", "stage:loottables:load")
     WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
                             "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
 
@@ -131,7 +133,7 @@ class LoadingStages:
 LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.PREBUILD,
                  LoadingStages.EXTRA_RESOURCE_LOCATIONS,
                  LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.LANGUAGE,
-                 LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
+                 LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.LOOT_TABLES,
                  LoadingStages.WORLDGEN, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
                  LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.FILE_INTERFACE, LoadingStages.POST]
 
@@ -177,7 +179,8 @@ class ModLoader:
                 if file in modlocations:
                     modlocations.remove(file)
                 else:
-                    logger.println("[WARNING] it was attempted to remove mod {} which was not found in file system".format(file))
+                    logger.println("[WARNING] it was attempted to remove mod '{}' which was not found in file system".
+                                   format(file))
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
@@ -412,5 +415,6 @@ class ModLoader:
 G.modloader = ModLoader()
 
 
+# this is needed as this depends on above but also above on the import
 import mod.ModMcpython
 

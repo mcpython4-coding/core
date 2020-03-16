@@ -231,10 +231,6 @@ class Chunk:
 
         """
         self.world[position].face_state.update()
-        return
-        # logger.println("showing", position)
-        self.shown[position] = G.modelhandler.add_to_batch(block, position, self.dimension.batches)
-        # logger.println(self.world[position], self.shown[position])
 
     def hide_block(self, position, immediate=True):
         """ Hide the block at the given `position`. Hiding does not remove the

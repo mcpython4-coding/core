@@ -66,13 +66,14 @@ class World:
 
     def join_dimension(self, id, save_current=True):
         self.CANCEL_DIM_CHANGE = False
-        G.eventhandler.call("dimension:chane:pre", id)
+        G.eventhandler.call("dimension:chane:pre", self.active_dimension, id)
         if self.CANCEL_DIM_CHANGE: return
         sector = util.math.sectorize(G.world.get_active_player().position)
         self.change_sectors(sector, None)
+        old = self.active_dimension
         self.active_dimension = id
         self.change_sectors(None, sector)
-        G.eventhandler.call("dimension:chane:post", id)
+        G.eventhandler.call("dimension:chane:post", old, id)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -237,6 +238,9 @@ class World:
             dimension.chunks = {}
         if remove_dims:
             self.dimensions.clear()
+            for dimension in G.dimensionhandler.dimensions:
+                self.add_dimension(dimension, G.dimensionhandler.dimensions[dimension].name,
+                                   G.dimensionhandler.dimensions[dimension].config)
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
         G.window.flying = False

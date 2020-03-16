@@ -33,6 +33,7 @@ biomehandler = None
 craftinghandler = None
 taghandler = None
 dimensionhandler = None
+loottablehandler = None
 
 modelhandler = None
 

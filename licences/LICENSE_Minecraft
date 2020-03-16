@@ -7,7 +7,8 @@ licenced under the EULA of mojang found under https://account.mojang.com/documen
 THIS IS NO OFFICIAL MINECRAFT PRODUCT. THESE PROJECT IS NOT DONE BY MOJANG AND HAS NO CONNECTION TO THEM BESIDE THE ASSETS.
 
 Following changes were made to the minecraft.jar:
-- removed every java code fragments
-- added assets downloaded by minecraft separately to the file
+- removed every java code fragment
 - changed nether brick fence block state model to match the one of the other fences
+- removed the following block state definitions: chest, ender chest
+- removed the following block models: chest, ender chest, grass block, leaves and shulker boxes
 

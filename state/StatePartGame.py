@@ -164,10 +164,10 @@ class StatePartGame(StatePart.StatePart):
                         chunk.check_neighbors(blockpos)
                 elif G.world.get_active_player().gamemode == 0:
                     if type(block) != str and self.mouse_press_time >= self.braketime and block.is_breakable():
-                        itemstack = gui.ItemStack.ItemStack(block.NAME)
-                        if block: block.on_request_item_for_block(itemstack)
                         if G.world.gamerulehandler.table["doTileDrops"].status.status:
-                            G.world.get_active_player().pick_up(itemstack)
+                            items = G.loottablehandler.get_drop_for_block(block, player=G.world.get_active_player())
+                            if block: [block.on_request_item_for_block(itemstack) for itemstack in items]
+                            G.world.get_active_player().pick_up(items)
                         chunk.remove_block(blockpos)
                         chunk.on_block_updated(blockpos)
                         chunk.check_neighbors(blockpos)

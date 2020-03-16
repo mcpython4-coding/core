@@ -55,6 +55,38 @@ For enabling this world generator, run the game with:
 python __main__.py --debug-world
 ```
 
+ **I want to include mods from another directory**
+ 
+ You can add custom mod directories by running:
+ ```shell script
+python __main__.py --addmoddir <directory in which the mods are located>
+```
+Or, if you want to select single files, run:
+```shell script
+python __main__.py --addmodfile <file for the mod>
+```
+
+You can also disable single mods by filename:
+```shell script
+python __main__.py --removemodfile <file of the mod>
+```
+
+Or, if you wish to remove an mod by the name of it, use:
+```shell script
+python __main__.py --removemod <modname>
+```
+
+ **I want to include resource packs, which are not in the resourcepacks-folder**
+ 
+The resource system supports injection of so called ResourceLocations which tell the system
+where to look for resources. You can add new location using:
+```shell script
+python __main__.py --addresourcepath <path to your resource pack>
+```
+
+If you modify your resource pack list, you should use the --rebuild flag from above to make
+sure that your texture changes are applied to all parts
+
 
 **What if I want to do many of them at once?**
 

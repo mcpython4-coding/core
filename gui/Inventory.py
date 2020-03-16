@@ -12,6 +12,7 @@ import ResourceLocator
 import util.texture
 import PIL.Image
 import uuid
+import random
 
 
 class Inventory:
@@ -209,4 +210,27 @@ class Inventory:
         :return: the data
         """
         return "no:data"
+
+    def insert_items(self, items: list, random_check_order=False):
+        while len(items) > 0:
+            self.insert_item(items.pop(0), random_check_order=random_check_order)
+
+    def insert_item(self, itemstack, random_check_order=False):
+        if itemstack.is_empty(): return
+        slots = self.slots.copy()
+        if random_check_order: random.shuffle(slots)
+        for slot in slots:
+            if slot.itemstack.is_empty():
+                slot.itemstack = itemstack
+                return
+            elif slot.itemstack.get_item_name() == itemstack.get_item_name():
+                if slot.itemstack.amount + itemstack.amount <= itemstack.item.get_max_stack_size():
+                    slot.itemstack.add_amount(itemstack.amount)
+                    return
+                else:
+                    overflow = itemstack.amount - (itemstack.item.get_max_stack_size() - slot.itemstack.amount)
+                    slot.itemstack.amount = itemstack.item.get_max_stack_size()
+                    itemstack.set_amount(overflow)
+        # todo: drop item
+
 

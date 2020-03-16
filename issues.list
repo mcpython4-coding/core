@@ -3,7 +3,7 @@
 
 issue 9:
     when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
-        Item-instances
+        Item-instances in the same run
     this issue occurs only in the first run with the new block
     possible fix: create item tables only when BlockItemFactory has finished
     better fix: remove BlockItemGenerator & replace by drawing of the corresponding block in the slot in 3d
@@ -36,26 +36,18 @@ issue 35:
 issue 55:
     bug: alpha textures are rendered not behind alpha-textures
     since: alpha rendering was implemented
-    possible fix: disable depth test & order faces by ourselves OR change rendering mode
+    fix: order alpha face rendering! (maybe implement an AlphaRenderingRenderer extends ICustomDrawRenderer)
 
-issue 80:
+issue 80: [unable to reproduce, check and mark as resolved when not occur anymore]
     bug: in some cases, mouse button up is still not handled
 
-issue 96: [maybe fixed]
+issue 96: [maybe fixed, check and mark as resolved when not occur anymore]
     bug: SlotCopy does not always work correctly
     possible fix: rewrite SlotCopy
-
-issue 98: [maybe fixed]
-    bug: when moving & reinserting an item in hotbar from player inventory main the item in the hotbar may not be rendered
-    possible fix: see issue 96
 
 issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
-
-issue 109:
-    bug: when closing main inventory after crafting [SHIFT-crafting], output may get duplicated
-    possible reason: cleanup fails
 
 issue 113:
     bug: "uv-lock"-parameter is ignored in block-states
@@ -72,18 +64,19 @@ issue 129:
     bug: some fence faces are not rendered [invalid texture rotation?]
 
 issue 137:
-    bug: coal block has no fuel level
+    bug: coal block has no fuel level [maybe general problem?]
 
 issue 139:
     bug: during in-game generation, block faces of neighbor chunks are not updated
+    possible fix: update all blocks next to the new chunk
 
 issue 140:
-    bug: sometimes, you fall through one block
+    bug: sometimes, you fall through one or more block (in gamemode 0)
         reproduce:
             use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
 
 issue 141:
     bug: hunger is rendered when half not correctly
 
-issue 142:
-    bug: when in escape-state, items are not rendered in hotbar
+issue 148:
+    bug: block info display screen does NOT display position. Instead, (?, ?, ?) is shown

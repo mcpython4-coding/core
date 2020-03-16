@@ -41,6 +41,7 @@ class BlockChest(Block.Block):
                 self.front_side = util.enums.EnumSide.W
         import gui.InventoryChest
         self.inventory = gui.InventoryChest.InventoryChest()
+        self.loot_table_link = None
 
     def can_open_inventory(self) -> bool:
         x, y, z = self.position
@@ -49,6 +50,10 @@ class BlockChest(Block.Block):
 
     def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT and self.can_open_inventory():
+            if self.loot_table_link:
+                self.inventory.insert_items(G.loottablehandler.roll(self.loot_table_link, block=self),
+                                            random_check_order=True)
+                self.loot_table_link = None
             G.inventoryhandler.show(self.inventory)
             return True
         else:
@@ -106,4 +111,13 @@ class BlockChest(Block.Block):
     @classmethod
     def modify_block_item(cls, itemfactory):
         itemfactory.setFuelLevel(15)
+
+    def save(self):
+        return {"model": self.get_model_state(), "loot_table": self.loot_table_link}
+
+    def load(self, data):
+        if "model" in data:
+            self.set_model_state(data["model"])
+        if "loot_table" in data:
+            self.loot_table_link = data["loot_table"]
 

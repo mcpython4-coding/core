@@ -12,6 +12,7 @@ import event.TickHandler
 import event.EventHandler
 import gc
 import chat.DataPack
+import rendering.OpenGLSetupFile
 
 
 @G.registry
@@ -41,6 +42,8 @@ class CommandReload(chat.command.Command.Command):
         G.taghandler.reload()  # reloads all tags
         G.craftinghandler.reload_crafting_recipes()  # reloads all recipes
         G.inventoryhandler.reload_config()  # reloads inventory configuration
+        rendering.OpenGLSetupFile.FILES.clear()
+        rendering.OpenGLSetupFile.execute_file_by_name("setup")  # re-setup opengl
         G.eventhandler.call("command:reload:end")
         gc.collect()  # make sure that memory was cleaned up
 
