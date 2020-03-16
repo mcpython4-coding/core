@@ -163,6 +163,7 @@ def topological_sort(items):
                 remaining_items.append((item, dependencies))
 
         if not emitted:
+            logger.println("[TOPOSORT][FATAL] failed to sort dependency graph {}".format(items))
             raise ValueError()
 
         items = remaining_items

@@ -78,4 +78,5 @@ issue 140:
 issue 141:
     bug: hunger is rendered when half not correctly
 
-[146 - 147]
+issue 148:
+    bug: block info display screen does NOT display position. Instead, (?, ?, ?) is shown

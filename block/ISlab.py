@@ -49,6 +49,7 @@ class ISlab(block.Block.Block):
         return False
 
     def is_solid_side(self, side) -> bool:
+        if self is None: return False
         return self.type == SlabModes.DOUBLE
 
     def get_view_bbox(self): return BBOX_DICT[self.type]
