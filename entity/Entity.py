@@ -82,13 +82,15 @@ class Entity(event.Registry.IRegistryContent):
         for moder: see world/player.py as an example how this could work
         """
 
-    def damage(self, damage):
+    def damage(self, damage, reason=None):
         """
         applies damage to the entity
         FOR MODER:
+            this function is an default implementation. for an working example, see the player entity
             - you may want to apply armor calculation code
             - you may want to override this method for an custom implementation
         :param damage: the damage to apply
+        :param reason: the reason for the damage, may be entity or str [something like DamageSource in mc]
         """
         self.harts -= damage
         if self.harts <= 0:
@@ -102,6 +104,7 @@ class Entity(event.Registry.IRegistryContent):
     def tick(self):
         """
         called every tick to update the entity
+        can be used to update animations, movement, do path finding stuff, damage other entities, ...
         """
 
     def dump(self):
@@ -113,15 +116,18 @@ class Entity(event.Registry.IRegistryContent):
 
     def load(self, data):
         """
-        loads data into the entity
+        loads data into the entity, previous saved
+        For Moder:
+            you CAN include an version entry to make sure you can fix the data version
         :param data: the data to load from
         """
 
-    def teleport(self, position, dimension=None):
+    def teleport(self, position, dimension=None, force_chunk_save_update=False):
         """
         called when the entity should be teleported
         :param position: the position to teleport to
         :param dimension: to which dimension-id to teleport to, if None, no dimension change is used
+        :param force_chunk_save_update: if the system should force to update were player data is stored
         """
         if self.chunk is None: sector_before = util.math.sectorize(self.position)
         else: sector_before = self.chunk.position
@@ -131,7 +137,7 @@ class Entity(event.Registry.IRegistryContent):
         else: dimension_id = dimension
         self.__position = position
         sector_after = util.math.sectorize(self.position)
-        if sector_before != sector_after or before_dim != dimension_id:
+        if sector_before != sector_after or before_dim != dimension_id or force_chunk_save_update:
             if self.chunk and self in self.chunk.entities:
                 self.chunk.entities.remove(self)
             self.chunk = G.world.dimensions[dimension_id].get_chunk_for_position(self.position)

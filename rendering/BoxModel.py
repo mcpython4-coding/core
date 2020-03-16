@@ -12,6 +12,7 @@ import pyglet
 import block.BlockConfig
 import config
 import mod.ModMcpython
+import ResourceLocator
 
 
 UV_ORDER = ["up", "down", "north", "east", "south", "west"]
@@ -128,8 +129,7 @@ class BoxModel:
                 t = self.tex_data[i * 8:i * 8 + 8]
                 v = vertex[i * 12:i * 12 + 12]
                 self.model.texture_atlas.group.set_state()
-                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v3f/static', v),
-                                     ('t2f/static', t))
+                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v3f/static', v), ('t2f/static', t))
                 self.model.texture_atlas.group.unset_state()
 
     def add_face_to_batch(self, position, batch, rotation, face):
@@ -146,4 +146,95 @@ class BoxModel:
 
     def copy(self, new_model=None):
         return BoxModel(self.data, new_model if new_model is not None else self.model)
+
+
+class BaseBoxModel:
+    """
+    an non-model-bound boxmodel class
+    """
+
+    def __init__(self, relative_position: tuple, size: tuple, texture, texture_region=[(0, 0, 1, 1)]*6,
+                 rotation=(0, 0, 0), rotation_center=None):
+        """
+        creates an new renderer for the box-model
+        :param relative_position: where to position the box relative to draw position
+        :param size: the size of the box
+        :param texture: which texture to use. May be str or pyglet.graphics.TextureGroup
+        :param texture_region: which tex region to use, from (0, 0) to (1, 1)
+        :param rotation: how to rotate the bbox
+        :param rotation_center: where to rotate the box around
+        """
+        self.relative_position = relative_position
+        self.size = size
+        self.texture = texture if type(texture) == pyglet.graphics.TextureGroup else pyglet.graphics.TextureGroup(
+            ResourceLocator.read(texture, "pyglet").get_texture())
+        self.__texture_region = texture_region
+        self.__rotation = rotation
+        self.vertex_cache = []
+        self.rotated_vertex_cache = {}
+        self.texture_cache = None
+        self.rotation_center = rotation_center if rotation_center is not None else relative_position
+        self.recalculate_cache()
+
+    def recalculate_cache(self):
+        vertices = util.math.cube_vertices(*self.rotation_center, *[self.size[i] / 2 for i in range(3)])
+        self.vertex_cache.clear()
+        for i in range(len(vertices) // 3):
+            self.vertex_cache.append(util.math.rotate_point(vertices[i*3:i*3+3], (0, 0, 0), self.__rotation))
+        self.texture_cache = util.math.tex_coords(*[(0, 0)]*6, size=(1, 1), tex_region=self.__texture_region)
+
+    def get_rotation(self): return self.__rotation
+
+    def set_rotation(self, rotation: tuple):
+        self.__rotation = rotation
+        self.recalculate_cache()
+
+    rotation = property(get_rotation, set_rotation)
+
+    def get_texture_region(self): return self.__texture_region
+
+    def set_texture_region(self, region):
+        self.__texture_region = region
+        self.recalculate_cache()
+
+    texture_region = property(get_texture_region, set_texture_region)
+
+    def add_to_batch(self, batch, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)):
+        vertex = []
+        x, y, z = position
+        if rotation == (0, 0, 0):
+            for dx, dy, dz in self.vertex_cache:
+                vertex.extend((x+dx, y+dy, z+dz))
+        elif rotation in self.rotated_vertex_cache:
+            vertex = self.rotated_vertex_cache[rotation]
+        else:
+            for dx, dy, dz in self.vertex_cache:
+                vertex.extend(util.math.rotate_point((x+dx, y+dy, z+dz), rotation_center, rotation))
+            self.rotated_vertex_cache[rotation] = vertex
+        result = []
+        for i in range(6):
+            t = self.texture_cache[i * 8:i * 8 + 8]
+            v = vertex[i * 12:i * 12 + 12]
+            result.append(batch.add(4, pyglet.gl.GL_QUADS, self.texture, ('v3f/static', v), ('t2f/static', t)))
+
+    def draw(self, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)):
+        vertex = []
+        x, y, z = position
+        if rotation == (0, 0, 0):
+            for dx, dy, dz in self.vertex_cache:
+                vertex.extend((x+dx, y+dy, z+dz))
+        elif rotation in self.rotated_vertex_cache:
+            vertex = self.rotated_vertex_cache[rotation]
+        else:
+            self.rotated_vertex_cache[rotation] = []
+            for dx, dy, dz in self.vertex_cache:
+                dx, dy, dz = util.math.rotate_point((dx, dy, dz), rotation_center, rotation)
+                self.rotated_vertex_cache[rotation].extend((dx, dy, dz))
+                vertex.extend((x+dx, y+dy, z+dz))
+        self.texture.set_state()
+        for i in range(6):
+            t = self.texture_cache[i * 8:i * 8 + 8]
+            v = vertex[i * 12:i * 12 + 12]
+            pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v3f/static', v), ('t2f/static', t))
+        self.texture.unset_state()
 

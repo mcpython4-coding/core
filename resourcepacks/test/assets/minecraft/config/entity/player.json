@@ -1,0 +1,19 @@
+{
+  "boxes": {
+    "head": {
+      "texture": "assets/minecraft/textures/entity/steve.png",
+      "texture_size": [64, 64],
+      "size": [8, 8, 8],
+      "uv": ["8|56|16|64", "16|56|24|64", "8|48|16|56", "24|48|32|56", "16|48|24|56", "0|48|8|56"],
+      "position": [0, 4, 0]
+    }
+  },
+  "states": {
+    "outer": {
+      "boxes": [{"box": "head"}]
+    },
+    "inner": {
+      "boxes": []
+    }
+  }
+}

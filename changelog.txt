@@ -6,6 +6,8 @@ changelog of the entity-update-branch
     - chunk <-> entity know of each other now
     - added EntityHandler with entity-registry
     - made function draw and tick called of entity
+    - added EntityRenderer with parser of model files
+    - added renderer for player
 
 
 changelog of master-branch

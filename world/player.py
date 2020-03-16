@@ -14,11 +14,11 @@ import ResourceLocator
 import mod.ModMcpython
 import logger
 import event.EventHandler
-from entity import Entity
+from entity import IEntityPlayer
 
 
 @globals.registry
-class Player(Entity.Entity):
+class Player(IEntityPlayer.IEntityPlayer):
     NAME = "minecraft:player"
 
     GAMEMODE_DICT: dict = {
@@ -226,7 +226,7 @@ class Player(Entity.Entity):
     def _set_position(self, position):
         self.position = position
 
-    def damage(self, hearts: int, check_gamemode=True):
+    def damage(self, hearts: int, check_gamemode=True, reason=None):
         """
         damage the player and removes the given amount of hearts (two hearts are one full displayed hart)
         """

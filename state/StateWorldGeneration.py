@@ -113,6 +113,9 @@ class StateWorldGeneration(State.State):
         G.world.change_sectors(None, util.math.sectorize(G.world.get_active_player().position))
         G.world.savefile.save_world()
 
+        player = G.world.get_active_player()
+        player.teleport(player.position, force_chunk_save_update=True)
+
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)

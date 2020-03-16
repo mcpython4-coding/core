@@ -13,6 +13,7 @@ import event.EventHandler
 import gc
 import chat.DataPack
 import rendering.OpenGLSetupFile
+import rendering.EntityRenderer
 
 
 @G.registry
@@ -44,6 +45,7 @@ class CommandReload(chat.command.Command.Command):
         G.inventoryhandler.reload_config()  # reloads inventory configuration
         rendering.OpenGLSetupFile.FILES.clear()
         rendering.OpenGLSetupFile.execute_file_by_name("setup")  # re-setup opengl
+        [e.reload() for e in rendering.EntityRenderer.RENDERERS]
         G.eventhandler.call("command:reload:end")
         gc.collect()  # make sure that memory was cleaned up
 

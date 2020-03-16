@@ -119,6 +119,7 @@ class Dimension:
             for dz in range(-pad, pad + 1):
                 cx, cz = x + dx, z + dz
                 chunk = self.get_chunk(cx, cz, create=False)
-                if chunk: chunk.draw()
+                if chunk is not None:
+                    chunk.draw()
         rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_off")
 

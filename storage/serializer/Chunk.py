@@ -70,6 +70,8 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.loaded = True
         G.worldgenerationhandler.enable_generation = True
 
+        chunk_instance.show()
+
     @classmethod
     def save(cls, data, savefile, dimension: int, chunk: tuple, override=False):
         if dimension not in G.world.dimensions: return
