@@ -14,11 +14,14 @@ import ResourceLocator
 import mod.ModMcpython
 import logger
 import event.EventHandler
-from entity import IEntityPlayer
+import entity.Entity
+import rendering.EntityRenderer
 
 
 @globals.registry
-class Player(IEntityPlayer.IEntityPlayer):
+class Player(entity.Entity.Entity):
+    RENDERER = rendering.EntityRenderer.EntityRenderer("minecraft:player")
+
     NAME = "minecraft:player"
 
     GAMEMODE_DICT: dict = {
@@ -243,3 +246,12 @@ class Player(IEntityPlayer.IEntityPlayer):
 
     def tell(self, msg: str):
         globals.chat.print_ln(msg)
+
+    def draw(self):
+        rx, ry, rz = self.rotation
+        rotation_whole = (0, rx+90, 0)
+        rra = (0, 0, 0) if self.get_active_inventory_slot().itemstack.is_empty() else (45, 0, 0)
+        rla = (0, 0, 0) if self.inventories["main"].slots[-1].itemstack.is_empty() else (45, 0, 0)
+        self.RENDERER.draw(self, "inner" if self == globals.world.get_active_player() else "outer",
+                           part_rotation={"head": (0, 0, 0), "right_arm": rra, "left_arm": rla},
+                           rotation=rotation_whole)

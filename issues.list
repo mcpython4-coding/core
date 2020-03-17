@@ -80,3 +80,6 @@ issue 141:
 
 issue 148:
     bug: block info display screen does NOT display position. Instead, (?, ?, ?) is shown
+
+issue 149:
+    bug: offhand slot is reset when closing inventory

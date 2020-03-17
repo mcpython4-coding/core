@@ -966,6 +966,8 @@ started these clone on 12th of July, 2019
 [uuk]: added base class for player entity for storing the render stuff
 [uuk]: added BaseBoxModel-class for drawing box-models independent from an block-model
 [uuk]: added EntityRenderer-class for handling entity rendering from files
+[uuk]: moved player entity rendering to player-class as it is simpler than expected
+[uuk]: player entity parts are rendered now with correct rotation
 
 todo: add entities to saves [do not forget to add an data fixer!]
 todo: implement visual to player-entity
