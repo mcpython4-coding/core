@@ -8,6 +8,8 @@ changelog of the entity-update-branch
     - made function draw and tick called of entity
     - added EntityRenderer with parser of model files
     - added renderer for player
+    - added saves for entities
+    - added /summon command
 
 
 changelog of master-branch
