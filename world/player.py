@@ -31,7 +31,7 @@ class Player(entity.Entity.Entity):
         "spectator": 3, "3": 3
     }
 
-    def __init__(self, name, dimension=None):
+    def __init__(self, name="unknown", dimension=None):
         super().__init__(dimension=dimension)
         self.name: str = name
         self.gamemode: int = -1

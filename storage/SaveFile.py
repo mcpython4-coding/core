@@ -24,10 +24,12 @@ History of save versions:
     - optimized landmass map in saves
 - 3: introduced: 13.03.2020 [part of loot table update], outdated since: -, not loadable since: -
     - chest container stores now also the loot table link when set
+- 4: introduced: 17.03.2020 [part of entity update], outdate since: -, not loadable since: -
+    - added entity serializer
 """
 
 
-LATEST_VERSION = 3
+LATEST_VERSION = 4
 
 G.STORAGE_VERSION = LATEST_VERSION
 

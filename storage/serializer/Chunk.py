@@ -9,6 +9,7 @@ import storage.serializer.IDataSerializer
 import globals as G
 import world.Chunk
 import util.enums
+import uuid
 
 
 def chunk2region(cx, cz): return cx >> 5, cz >> 5
@@ -61,11 +62,16 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
 
         chunk_instance.set_value("landmassmap", {pos: data["maps"]["landmass_palette"][data["maps"]["landmass_map"][i]]
                                                  for i, pos in enumerate(positions)})
-        # chunk_instance.set_value("temperaturemap",
-        #                          {pos: data["maps"]["temperature"][i] for i, pos in enumerate(positions)})
         biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in enumerate(positions)}
         chunk_instance.set_value("biomemap", biome_map)
         chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
+
+        for entity in data["entities"]:
+            entity_instance = G.entityhandler.add_entity(entity["type"], entity["position"], uuid=uuid.UUID(
+                entity["uuid"]), dimension=G.world.dimensions[dimension])
+            entity_instance.rotation = entity["rotation"]
+            entity_instance.harts = entity["harts"]
+            entity_instance.load(entity["custom"])
 
         chunk_instance.loaded = True
         G.worldgenerationhandler.enable_generation = True
@@ -101,7 +107,8 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
                     "biome": [0] * 16 ** 2,
                     "biome_palette": [],
                     "height": [None] * 16 ** 2
-                }
+                },
+                "entities": []
             }
             override = True
         G.worldgenerationhandler.enable_generation = False
@@ -130,6 +137,10 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             else:
                 cdata["blocks"][position] = len(palette)
                 palette.append(block_data)
+        for entity in chunk_instance.entities:
+            edata = {"type": entity.NAME, "position": entity.position, "rotation": entity.rotation,
+                     "harts": entity.harts, "uuid": str(entity.uuid), "custom": entity.dump()}
+            cdata["entities"].append(edata)
         chunk_instance.positions_updated_since_last_save.clear()
 
         if override:
