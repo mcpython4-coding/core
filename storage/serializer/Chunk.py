@@ -67,8 +67,12 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
 
         for entity in data["entities"]:
-            entity_instance = G.entityhandler.add_entity(entity["type"], entity["position"], uuid=uuid.UUID(
-                entity["uuid"]), dimension=G.world.dimensions[dimension])
+            if entity["type"] == "minecraft:player": continue
+            try:
+                entity_instance = G.entityhandler.add_entity(entity["type"], entity["position"], uuid=uuid.UUID(
+                    entity["uuid"]), dimension=G.world.dimensions[dimension])
+            except ValueError:
+                continue
             entity_instance.rotation = entity["rotation"]
             entity_instance.harts = entity["harts"]
             entity_instance.load(entity["custom"])

@@ -56,16 +56,21 @@ class Player(entity.Entity.Entity):
 
         self.iconparts = []
 
-        mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
-                                                    info="setting up player inventory")
+        if not globals.modloader.finished:
+            mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
+                                                        info="setting up player inventory")
+        else:
+            self.create_inventories()
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:get_player_position", self.hotkey_get_position)
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:gamemode_1-3_toggle", self.toggle_gamemode)
 
     def hotkey_get_position(self):
+        if self != globals.world.get_active_player(): return
         import clipboard
         clipboard.copy("/tp @p {} {} {}".format(*self.position))
 
     def toggle_gamemode(self):
+        if self != globals.world.get_active_player(): return
         if self.gamemode == 1: self.set_gamemode(3)
         elif self.gamemode == 3: self.set_gamemode(1)
 
@@ -179,6 +184,8 @@ class Player(entity.Entity.Entity):
         self.active_inventory_slot = slot
 
     def get_active_inventory_slot(self):
+        if "hotbar" not in self.inventories:
+            self.create_inventories()
         return self.inventories["hotbar"].slots[self.active_inventory_slot]
 
     def kill(self, test_totem=True):
@@ -250,7 +257,8 @@ class Player(entity.Entity.Entity):
     def draw(self):
         rx, ry, rz = self.rotation
         rotation_whole = (0, rx+90, 0)
-        rra = (0, 0, 0) if self.get_active_inventory_slot().itemstack.is_empty() else (45, 0, 0)
+        rra = (0, 0, 0) if self.get_active_inventory_slot() is not None and self.get_active_inventory_slot(
+            ).itemstack.is_empty() else (45, 0, 0)
         rla = (0, 0, 0) if self.inventories["main"].slots[-1].itemstack.is_empty() else (45, 0, 0)
         self.RENDERER.draw(self, "inner" if self == globals.world.get_active_player() else "outer",
                            part_rotation={"head": (0, 0, 0), "right_arm": rra, "left_arm": rla},

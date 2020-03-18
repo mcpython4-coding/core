@@ -62,7 +62,8 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         self.on_draw_overlay()
 
     def on_draw_over_image(self):
-        x, y = G.world.get_active_player().get_active_inventory_slot().position
+        slot = G.world.get_active_player().get_active_inventory_slot()
+        x, y = slot.position
         dx, dy = tuple(self.config["selected_delta"]) if "selected_delta" in self.config else (8, 8)
         x -= dx
         y -= dy

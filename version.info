@@ -971,6 +971,7 @@ started these clone on 12th of July, 2019
 [uuk]: added entities to saves
 [uuk]: added /summon command
 [uuk]: added loading stage "stage:entities"
+[uuk]: fixed summoning of new entities; fixed /summon command with it
 
 todo: implement animations to player visualisation, fix hand when item in hand, only show the hand when an item is in it
 todo: add path-finding-system
@@ -982,4 +983,5 @@ todo: add mob spawning
 todo: remove default BoxModel-class and replace with the new one
 todo: implement real selectors
 todo: add check if entity is summon-able by summon command to it
+todo: hide player arms when no item is in it
 

@@ -7,6 +7,7 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import event.Registry
+import mod.ModMcpython
 
 
 class EntityHandler:
@@ -21,6 +22,7 @@ class EntityHandler:
         entity = self.registry.registered_object_map[name].create_new(position, *args, dimension=dimension, **kwargs)
         if uuid is not None: entity.uuid = uuid
         self.entity_map[entity.uuid] = entity
+        entity.teleport(entity.position, force_chunk_save_update=True)
         return entity
 
     def tick(self):
@@ -29,4 +31,11 @@ class EntityHandler:
 
 
 G.entityhandler = EntityHandler()
+
+
+def load():
+    from entity import (Entity)
+
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:entities", load)
 

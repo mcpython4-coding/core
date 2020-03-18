@@ -153,6 +153,7 @@ class ModLoader:
                 self.lasttime_mods = json.load(f)
         elif not G.prebuilding:
             logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
+        self.finished = False
 
     def look_out(self):
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("prebuilding:finished", self.write_mod_info)
@@ -383,6 +384,7 @@ class ModLoader:
                 self.active_loading_stage += 1
                 if self.active_loading_stage >= len(LOADING_ORDER):
                     G.statehandler.switch_to("minecraft:blockitemgenerator")
+                    self.finished = True
                     return
                 astate.parts[0].progress += 1
                 astate.parts[2].progress = 0
