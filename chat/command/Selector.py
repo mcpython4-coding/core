@@ -7,6 +7,8 @@ minecraft by Mojang
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import event.Registry
+import math
+import random
 
 
 class Selector(event.Registry.IRegistryContent):
@@ -39,13 +41,6 @@ def load():
             return [config.entity]
 
     @G.registry
-    class SelectorEmpty(SelfSelector):
-        NAME = "minecraft:@"
-
-        @staticmethod
-        def is_valid(entry) -> bool: return entry == "@"
-
-    @G.registry
     class PlayerSelector(Selector):
         NAME = "minecraft:@p"
 
@@ -55,9 +50,13 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            return [G.world.get_active_player()]
+            players = list(G.world.players.values())
+            if len(players) == 0: return []
+            x, y, z = config.position
+            players.sort(key=lambda player: math.sqrt((x - player.position[0]) ** 2 + (y - player.position[1]) ** 2 +
+                                                      (z + player.position[2]) ** 2))
+            return [players[0]]
 
-    # todo: fully implement
     @G.registry
     class RandomPlayerSelector(Selector):
         NAME = "minecraft:@r"
@@ -68,7 +67,7 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            return [G.world.get_active_player()]
+            return [random.choice(list(G.world.players.values()))]
 
     @G.registry
     class AllPlayerSelector(Selector):
@@ -80,5 +79,18 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            return [G.world.get_active_player()]
+            return list(G.world.players.values())
+
+    @G.registry
+    class EntitySelector(Selector):
+        NAME = "minecraft:@e"
+
+        @staticmethod
+        def is_valid(entry) -> bool:
+            return entry.startswith("@e")
+
+        @staticmethod
+        def parse(entry, config):
+            if entry == "@e": return list(G.entityhandler.entity_map.values())
+            raise NotImplementedError()  # todo: implement
 
