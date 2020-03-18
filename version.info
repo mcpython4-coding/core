@@ -970,6 +970,7 @@ started these clone on 12th of July, 2019
 [uuk]: player entity parts are rendered now with correct rotation
 [uuk]: added entities to saves
 [uuk]: added /summon command
+[uuk]: added loading stage "stage:entities"
 
 todo: implement animations to player visualisation, fix hand when item in hand, only show the hand when an item is in it
 todo: add path-finding-system

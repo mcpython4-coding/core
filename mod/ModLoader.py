@@ -112,9 +112,9 @@ class LoadingStages:
                             "stage:command:selectors", "stage:command:gamerules")
     LOOT_TABLES = LoadingStage("loot tables", "stage:loottables:locate", "stage:loottables:functions",
                                "stage:loottables:conditions", "stage:loottables:load")
+    ENTITIES = LoadingStage("entities", "stage:entities")
     WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
                             "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
-
     BLOCKSTATE = LoadingStage("blockstate loading phase", "stage:blockstate:register_loaders",
                               "stage:model:blockstate_search", "stage:model:blockstate_create")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_search:intern",
@@ -134,6 +134,7 @@ LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, Loadin
                  LoadingStages.EXTRA_RESOURCE_LOCATIONS,
                  LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.LANGUAGE,
                  LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.LOOT_TABLES,
+                 LoadingStages.ENTITIES,
                  LoadingStages.WORLDGEN, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
                  LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.FILE_INTERFACE, LoadingStages.POST]
 

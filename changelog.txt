@@ -10,6 +10,7 @@ changelog of the entity-update-branch
     - added renderer for player
     - added saves for entities
     - added /summon command
+    - added loading phase for entities
 
 
 changelog of master-branch
