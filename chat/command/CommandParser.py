@@ -19,7 +19,7 @@ class ParsingCommandInfo:
     def __init__(self, entity=None, position=None, dimension=None):
         self.entity = entity if entity else G.world.get_active_player()
         self.position = position if position else self.entity.position
-        self.dimension = dimension if dimension is not None else entity.dimension.id
+        self.dimension = dimension if dimension is not None else self.entity.dimension.id
 
     def copy(self):
         """

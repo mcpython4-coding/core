@@ -976,14 +976,17 @@ started these clone on 12th of July, 2019
 [uuk]: ParsingCommandInfo uses now entity for various filling operations when not all kwargs are set
 [uuk]: added various aspects to the selectors
 
-todo: implement animations to player visualisation, fix hand when item in hand, only show the hand when an item is in it
-todo: add path-finding-system
 todo: fix bug: player is not rendered when exiting generated chunks when barrier is deactivated -> chunk rendering flag
-    not used correctly in this case
+    not used correctly in this case; relates to: when generating new world, entities are not visible
+todo: implement animations to player visualisation, fix hand when item in hand, only show the hand when an item is in it
+todo: add check if entity is summon-able by summon command to it
+todo: hide player arms when no item is in it
+
+MISSING BEFORE GOING ON: collision box system
+
+todo: add path-finding-system
 todo: add more entities!!!
 todo: add mob spawning
 todo: remove default BoxModel-class and replace with the new one
-todo: add check if entity is summon-able by summon command to it
-todo: hide player arms when no item is in it
 todo: add possibility to load skins
 
