@@ -203,6 +203,9 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:red_nether_bricks").finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:soul_sand").setSpeedMultiplier(0.5).finish()
 
+    factory.BlockFactory.BlockFactory().setName("minecraft:mycelium").setDefaultModelState({"snowy": "false"}).finish()
+    factory.BlockFactory.BlockFactory().setName("minecraft:podzol").setDefaultModelState({"snowy": "false"}).finish()
+
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:factory_usage", load_blocks, info="loading block definitions")
 
