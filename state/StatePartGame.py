@@ -57,6 +57,8 @@ ALL_KEY_COMBOS = [HotKeys.RELOAD_CHUNKS, HotKeys.GAME_CRASH, HotKeys.GET_PLAYER_
 
 
 class StatePartGame(StatePart.StatePart):
+    NAME = "minecraft:state_part_game"
+
     mouse_press_time = 0
     block_looking_at = None
     double_space_cooldown = 0

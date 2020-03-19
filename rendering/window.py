@@ -429,3 +429,9 @@ class Window(pyglet.window.Window):
     def on_text(self, text):
         G.eventhandler.call("user:keyboard:enter", text)
 
+    def on_close(self):
+        if G.statehandler.active_state is not None and any(
+                [part.NAME == "minecraft:state_part_game" for part in G.statehandler.active_state.parts]):
+            G.world.savefile.save_world(override=True)
+        self.close()
+

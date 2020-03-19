@@ -9,6 +9,8 @@ import globals as G
 
 
 class StatePart:
+    NAME = "null"
+
     def __init__(self):
         self.parts = self.get_sub_parts()
         self.master = None
