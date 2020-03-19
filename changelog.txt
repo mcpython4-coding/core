@@ -12,6 +12,7 @@ changelog of master-branch
         - icon for half hunger was not rendered correctly
         - BlockItemFactory failed to load block-items when not rebuilding for new blocks since last rebuild. This occur
             only in first run due to missing _finish call of ItemFactory-instances
+        - rotation of BlockModels was not working
 
 
 changelog of snapshot 20w12a [released on 16.03.2020]

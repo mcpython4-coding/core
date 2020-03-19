@@ -145,3 +145,4 @@ issue 152: Chunk.add_block did not accept non-prefixed names like "stone"; fixed
 issue 9: BlockItemGenerator fails to add block-items when not rebuilding for new blocks in first run due to missing
     ItemFactory._finish call which was assigned to an load event which has been called before blockitemfactory was
     finished; fixed on: 19.03.2020 by uuk
+issue 153: rotation of block models was crashing; fixed on: 19.03.2020 by uuk

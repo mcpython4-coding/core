@@ -47,9 +47,9 @@ class BoxModel:
         self.rotation_core = (0, 0, 0)
         if "rotation" in data:
             if "origin" in data["rotation"]:
-                self.rotation_core = data["rotation"]["origin"]
+                self.rotation_core = tuple(data["rotation"]["origin"])
             rot = [0, 0, 0]
-            rot["xyz".index(data["axis"])] = data["angle"]
+            rot["xyz".index(data["rotation"]["axis"])] = data["rotation"]["angle"]
             self.rotation = tuple(rot)
 
         status = (self.rotation, self.rotation_core, tuple(self.boxposition), self.boxsize)

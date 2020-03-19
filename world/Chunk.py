@@ -13,9 +13,12 @@ import config
 from typing import Dict, List
 import util.math
 import util.enums
+import datetime
 
 
 class Chunk:
+    now = datetime.datetime.now()
+
     attributes = {}
 
     @staticmethod
@@ -130,6 +133,11 @@ class Chunk:
                 logger.println("[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(block_name))
                 return
             blockobj = table[block_name](position, *args, **kwargs)
+        if self.now.day == 13 and self.now.month == 1 and "diorite" in blockobj.NAME:
+            print("[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
+                blockobj.NAME))
+            # for developers: easter egg! [DO NOT REMOVE, UUK'S EASTER EGG]
+            return
         self.world[position] = blockobj
         if immediate:
             if self.exposed(position):
