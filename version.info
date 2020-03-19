@@ -960,4 +960,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 141
 [uuk]: improved registry warning messages
 [uuk]: fixed issue 9, 152
+[uuk]: improved command syntax error message
 
