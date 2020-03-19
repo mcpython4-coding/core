@@ -2,12 +2,6 @@ This file is about things that should be removed in the future.
 This is an reminder-file for when to remove them & what.
 So, here follows an list of deprecation's:
 
-since 11th of february, 2020:
-    loading phases:
-        "stage:prepare"
-        "stage:block:base"
-        "stage:item:base"
-
 since 19th of february, 2020:
     ModLoader mod.json format 1.0.0
     Item.get_name, Block.get_name, State.get_name

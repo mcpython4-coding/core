@@ -204,5 +204,5 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:soul_sand").setSpeedMultiplier(0.5).finish()
 
 
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:base", load_blocks, info="loading block definitions")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:factory_usage", load_blocks, info="loading block definitions")
 

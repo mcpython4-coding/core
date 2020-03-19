@@ -143,5 +143,5 @@ def load_item():
     diamond_boots = factory.ItemFactory.ItemFactory().setName("minecraft:diamond_boots").setArmorPoints(3).finish()
 
 
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:item:base", load_item, info="generating items")
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:item:factory_usage", load_item, info="generating items")
 

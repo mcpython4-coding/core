@@ -3,6 +3,8 @@ Changelog since cleanup-branch of 31.01.2020
 
 changelog of master-branch
     - added dimension definition for nether and end
+    - removed deprecated loading phases
+    - removed features.py as it was outdated
 
 
 changelog of snapshot 20w12a [released on 16.03.2020]
