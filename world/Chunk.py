@@ -112,20 +112,20 @@ class Chunk:
             Whether or not to draw the block immediately.
 
         """
+        if position[1] < 0 or position[1] > 255: return
         if position != util.math.normalize(position):
-            raise ValueError("position {} is no valid block position".format(position))
+            raise ValueError("position '{}' is no valid block position".format(position))
         # logger.println("adding", block_name, "at", position)
         if position in self.world:
             self.remove_block(position, immediate=immediate, block_update=block_update)
         if position in self.blockmap:
             del self.blockmap[position]
-        if position[1] < 0 or position[1] > 255: return
         if block_name in [None, "air", "minecraft:air"]: return
         if issubclass(type(block_name), Block.Block):
             blockobj = block_name
             blockobj.position = position
         else:
-            table = G.registry.get_by_name("block").registered_object_map
+            table = G.registry.get_by_name("block").full_table
             if block_name not in table:
                 logger.println("[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(block_name))
                 return

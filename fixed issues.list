@@ -141,3 +141,7 @@ issue 145: leaves were not colored; fixed on: 14.03.2020 by uuk
 issue 147: shulker boxes were not rendering; fixed on: 14.03.2020 by uuk
 issue 109: output of crafting gets duplicated when shift-crafting; fixed on: 14.03.2020 by uuk
 issue 141: half hunger icon was drawn incorrectly; fixed on: 19.03.2020 by uuk
+issue 152: Chunk.add_block did not accept non-prefixed names like "stone"; fixed on: 19.03.2020 by uuk
+issue 9: BlockItemGenerator fails to add block-items when not rebuilding for new blocks in first run due to missing
+    ItemFactory._finish call which was assigned to an load event which has been called before blockitemfactory was
+    finished; fixed on: 19.03.2020 by uuk

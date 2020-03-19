@@ -7,6 +7,12 @@ changelog of master-branch
     - removed features.py as it was outdated
     - world is now saved when window is closed (only when in the state)
 
+    fixed bugs:
+        - Chunk.add_block did NOT accept the non-prefixed block-names like "stone"
+        - icon for half hunger was not rendered correctly
+        - BlockItemFactory failed to load block-items when not rebuilding for new blocks since last rebuild. This occur
+            only in first run due to missing _finish call of ItemFactory-instances
+
 
 changelog of snapshot 20w12a [released on 16.03.2020]
     - added class for LootTable, added sub-classes for generating the content

@@ -958,4 +958,6 @@ started these clone on 12th of July, 2019
 [uuk]: when closing game window, game will now be saved automatically
 [uuk]: rewritten how icons for hearts, hunger and armor are cropped & drawn
 [uuk]: fixed issue 141
+[uuk]: improved registry warning messages
+[uuk]: fixed issue 9, 152
 
