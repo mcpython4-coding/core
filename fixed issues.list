@@ -140,3 +140,4 @@ issue 146: inventory list got reversed on every ESC-press; fixed on: 14.03.2020 
 issue 145: leaves were not colored; fixed on: 14.03.2020 by uuk
 issue 147: shulker boxes were not rendering; fixed on: 14.03.2020 by uuk
 issue 109: output of crafting gets duplicated when shift-crafting; fixed on: 14.03.2020 by uuk
+issue 141: half hunger icon was drawn incorrectly; fixed on: 19.03.2020 by uuk

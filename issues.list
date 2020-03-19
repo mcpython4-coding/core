@@ -59,6 +59,7 @@ issue 118:
 
 issue 122:
     bug: z-fighting at border between two fences
+    possible fix: decrease box size of fences by hand
 
 issue 129:
     bug: some fence faces are not rendered [invalid texture rotation?]
@@ -75,8 +76,17 @@ issue 140:
         reproduce:
             use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
 
-issue 141:
-    bug: hunger is rendered when half not correctly
-
 issue 148:
     bug: block info display screen does NOT display position. Instead, (?, ?, ?) is shown
+    possible reason: wrong game-rule parsing
+
+issue 150:
+    bug: blocks are not shown at e.g. (1e+18, 100, 0)
+    fix A: write something like an draw-area which will move the chunk relative position & camera position when you
+        are far enough out
+    fix B: add world barrier at high x/z coordinates and do not let player walk away
+
+issue 151:
+    bug: block coordinates are not relative in saves to chunk position making save take longer for outer chunks than for
+        inner (see 150 for reproducing)
+    fix: make chunk coordinates relative
