@@ -47,6 +47,17 @@ class Language:
                            ResourceLocator.read(file, "json").copy())
 
     @classmethod
+    def from_old_data(cls, file: str, name=None):
+        name = file.split("/")[-1].split(".")[0] if name is None else name
+        if name not in LANGUAGES: LANGUAGES[name] = cls()
+        language = LANGUAGES[name]
+        for line in ResourceLocator.read(file).decode("UTF-8").split("\n"):
+            if line.startswith("#"): continue
+            if line.count(" ") + line.count("   ") + line.count("\r") >= len(line): continue
+            pre, *post = line.split("=")
+            language.table[pre] = "=".join(post)
+
+    @classmethod
     def from_data(cls, name: str, data: dict):
         if name in LANGUAGES:
             LANGUAGES[name].table = {**LANGUAGES[name].table, **data}
@@ -71,6 +82,9 @@ def from_directory(directory: str, modname: str):
         if f.endswith(".json"):  # new language format
             G.modloader.mods[modname].eventbus.subscribe("stage:language", Language.from_file, f[:],
                                                          info="loading language file {} ({}/{})".format(f, i+1, m))
+        elif f.endswith(".lang"):  # old language format
+            G.modloader.mods[modname].eventbus.subscribe("stage:language", Language.from_old_file, f[:],
+                                                         info="loading language file {} ({}/{})".format(f, i + 1, m))
 
 
 def from_mod_name(modname: str): from_directory("assets/{}/lang".format(modname), modname)
@@ -78,7 +92,6 @@ def from_mod_name(modname: str): from_directory("assets/{}/lang".format(modname)
 
 from_mod_name("minecraft")
 
-# todo: move to an load-function over "assets/minecraft/lang" or "minecraft"
 # todo: make load of only the active language and load others when needed -> reduce RAM usage
 # todo: make an sys.argv option to disable loading & translating
 

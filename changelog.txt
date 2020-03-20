@@ -7,6 +7,7 @@ changelog of master-branch
     - removed features.py as it was outdated
     - world is now saved when window is closed (only when in the state)
     - added mycelium block, podzol block
+    - .lang files can now be also loaded
 
     fixed bugs:
         - Chunk.add_block did NOT accept the non-prefixed block-names like "stone"

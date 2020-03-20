@@ -1,6 +1,6 @@
 
 
-remove features.py & replace by better system
+add am replacement for features.py
 remove mod.json support, port everything to mods.toml
 implement auto-all-py import system which replaces the main-files entry in the mod.json
 

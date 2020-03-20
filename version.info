@@ -962,4 +962,6 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 9, 152, 153
 [uuk]: improved command syntax error message
 [uuk]: added mycelium, podzol
+[uuk]: removed pyglet_fix.py as it is not required anymore
+[uuk]: added loader for the .lang format
 
