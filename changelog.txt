@@ -17,6 +17,7 @@ changelog of master-branch
         - BlockItemFactory failed to load block-items when not rebuilding for new blocks since last rebuild. This occur
             only in first run due to missing _finish call of ItemFactory-instances
         - rotation of BlockModels was not working
+        - multipart models failed to load when an entry had an list of models
 
 
 changelog of snapshot 20w12a [released on 16.03.2020]

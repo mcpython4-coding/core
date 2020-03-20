@@ -80,6 +80,7 @@ issue 151:
         inner (see 150 for reproducing)
     fix: make chunk coordinates relative
 
-
 issue 154:
     bug: debug world blocks do NOT use block-state
+
+[155]

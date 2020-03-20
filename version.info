@@ -967,4 +967,5 @@ started these clone on 12th of July, 2019
 [uuk]: added support for rotation in blockmodel-element
 [uuk]: BlockFactory's setDefaultModelState-function accept now also an string like in boxmodels as state
 [uuk]: added handle for palette reference errors
+[uuk]: fixed issue 155
 
