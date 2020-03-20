@@ -8,6 +8,7 @@ changelog of master-branch
     - world is now saved when window is closed (only when in the state)
     - added mycelium block, podzol block
     - .lang files can now be also loaded
+    - added support for uv rotation in element of block-models
 
     fixed bugs:
         - Chunk.add_block did NOT accept the non-prefixed block-names like "stone"
