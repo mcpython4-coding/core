@@ -191,6 +191,8 @@ class BlockFactory:
         return self
 
     def setDefaultModelState(self, state: dict):
+        if type(state) == str:
+            state = {e.split("=")[0]: e.split("=")[1] for e in state.split(",")}
         def get_state(*_): return state
         self.setCustomModelStateFunction(get_state)
         return self
