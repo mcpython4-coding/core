@@ -9,6 +9,7 @@ import storage.serializer.IDataSerializer
 import globals as G
 import world.Chunk
 import util.enums
+import logger
 
 
 def chunk2region(cx, cz): return cx >> 5, cz >> 5
@@ -59,13 +60,17 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         for x in range(chunk[0]*16, chunk[0]*16+16):
             positions.extend([(x, z) for z in range(chunk[1]*16, chunk[1]*16+16)])
 
-        chunk_instance.set_value("landmassmap", {pos: data["maps"]["landmass_palette"][data["maps"]["landmass_map"][i]]
-                                                 for i, pos in enumerate(positions)})
-        # chunk_instance.set_value("temperaturemap",
-        #                          {pos: data["maps"]["temperature"][i] for i, pos in enumerate(positions)})
-        biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in enumerate(positions)}
-        chunk_instance.set_value("biomemap", biome_map)
-        chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
+        try:
+            chunk_instance.set_value("landmassmap", {pos: data["maps"]["landmass_palette"][data["maps"]["landmass_map"][i]]
+                                                     for i, pos in enumerate(positions)})
+            # chunk_instance.set_value("temperaturemap",
+            #                          {pos: data["maps"]["temperature"][i] for i, pos in enumerate(positions)})
+            biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in enumerate(positions)}
+            chunk_instance.set_value("biomemap", biome_map)
+            chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
+        except IndexError:
+            logger.println("[CHUNK][CORRUPTED] palette exception in chunk '{}' in dimension '{}'".format(
+                chunk, dimension))
 
         chunk_instance.loaded = True
         G.worldgenerationhandler.enable_generation = True

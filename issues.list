@@ -81,4 +81,5 @@ issue 151:
     fix: make chunk coordinates relative
 
 
-[152-153]
+issue 154:
+    bug: debug world blocks do NOT use block-state

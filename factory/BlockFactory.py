@@ -103,10 +103,21 @@ class BlockFactory:
             def get_best_tools(self):
                 return master.besttools
 
+            def set_model_state(self, state):
+                for baseclass in master.baseclass:
+                    baseclass.set_model_state(self, state)
+
+            def get_model_state(self):
+                state = {}
+                for baseclass in master.baseclass:
+                    state = {**state, **baseclass.get_model_state(self)}
+                return state
+
         if self.solid_faces:
             class ConstructedBlock(ConstructedBlock):
                 def is_solid_side(self, side) -> bool:
-                    return master.solid_faces[side] if side in master.solid_faces else False
+                    return master.solid_faces[side] if side in master.solid_faces else all(
+                        [baseclass2.is_solid_side(self, side) for baseclass2 in master.baseclass])
         elif self.customsolidsidefunction:
             class ConstructedBlock(ConstructedBlock):
                 def is_solid_side(self, side) -> bool: return master.customsolidsidefunction(self, side)

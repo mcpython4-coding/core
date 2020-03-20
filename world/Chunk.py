@@ -137,7 +137,7 @@ class Chunk:
             print("[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
                 blockobj.NAME))
             # for developers: easter egg! [DO NOT REMOVE, UUK'S EASTER EGG]
-            return
+            return self.add_block(position, "minecraft:stone")
         self.world[position] = blockobj
         if immediate:
             if self.exposed(position):
