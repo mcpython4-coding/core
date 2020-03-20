@@ -83,7 +83,7 @@ def from_directory(directory: str, modname: str):
             G.modloader.mods[modname].eventbus.subscribe("stage:language", Language.from_file, f[:],
                                                          info="loading language file {} ({}/{})".format(f, i+1, m))
         elif f.endswith(".lang"):  # old language format
-            G.modloader.mods[modname].eventbus.subscribe("stage:language", Language.from_old_file, f[:],
+            G.modloader.mods[modname].eventbus.subscribe("stage:language", Language.from_old_data, f[:],
                                                          info="loading language file {} ({}/{})".format(f, i + 1, m))
 
 

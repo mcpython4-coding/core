@@ -206,6 +206,9 @@ def load_blocks():
     factory.BlockFactory.BlockFactory().setName("minecraft:mycelium").setDefaultModelState({"snowy": "false"}).finish()
     factory.BlockFactory.BlockFactory().setName("minecraft:podzol").setDefaultModelState({"snowy": "false"}).finish()
 
+    factory.BlockFactory.BlockFactory().setName("minecraft:barrier").setAllSideSolid(False).setBrakeAbleFlag(
+        False).finish()
+
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:factory_usage", load_blocks, info="loading block definitions")
 

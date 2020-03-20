@@ -6,7 +6,8 @@ changelog of master-branch
     - removed deprecated loading phases
     - removed features.py as it was outdated
     - world is now saved when window is closed (only when in the state)
-    - added mycelium block, podzol block
+    - added mycelium block, podzol block, barrier block
+    - added barrier item
     - .lang files can now be also loaded
     - added support for uv rotation in element of block-models
     - BlockFactory accepts now also an state-str like in block-state-files in setDefaultModelState

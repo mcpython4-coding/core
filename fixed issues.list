@@ -148,3 +148,4 @@ issue 9: BlockItemGenerator fails to add block-items when not rebuilding for new
 issue 153: rotation of block models was crashing; fixed on: 19.03.2020 by uuk
 issue 155: multipart-models were crashing on load when using multiple model links in one entry;
     fixed on: 20.03.2020 by uuk
+issue 156: exceptions when in gamemode 0 due to wrong xp draw call

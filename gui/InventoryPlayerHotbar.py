@@ -173,9 +173,10 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         wx, _ = G.window.get_size()
         x = wx // 2 - 182
         y = hy + 55
-        G.world.get_active_player().iconparts[3][0].blit(x, y)
+        G.world.get_active_player().iconparts[0][0].blit(x, y)
         active_progress = G.world.get_active_player().xp / G.world.get_active_player().get_needed_xp_for_next_level()
-        G.world.get_active_player().iconparts[3][1].get_region(x=0, y=0, height=10, width=round(362*active_progress)+1).blit(x, y)
+        G.world.get_active_player().iconparts[0][1].get_region(
+            x=0, y=0, height=10, width=round(362*active_progress)+1).blit(x, y)
         if G.world.get_active_player().xp_level != 0:
             self.lable.x = wx // 2
             self.lable.y = hy + 65

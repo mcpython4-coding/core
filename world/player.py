@@ -46,6 +46,8 @@ class Player(Entity.Entity):
             ("main", False)
         ]
 
+        self.iconparts = []
+
         self.active_inventory_slot: int = 0
 
         mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
@@ -72,6 +74,9 @@ class Player(Entity.Entity):
         self.inventories['chat'] = chat.Chat.ChatInventory()
         self.inventories["enderchest"] = gui.InventoryChest.InventoryChest()
         self.inventories["crafting_table"] = gui.InventoryCraftingTable.InventoryCraftingTable()
+
+        self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
+                           ResourceLocator.read("build/texture/gui/icons/xp_bar.png", "pyglet"))]
 
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
