@@ -49,9 +49,9 @@ class ItemFactory:
 
         self.fuel_level = None
 
-    def finish(self, register=True):
+    def finish(self, register=True, task_list=False):
         modname, itemname = tuple(self.name.split(":"))
-        if not G.prebuilding:
+        if not G.prebuilding and not task_list:
             G.modloader.mods[modname].eventbus.subscribe("stage:item:load", self._finish, register,
                                                          info="loading item named {}".format(itemname))
         else:

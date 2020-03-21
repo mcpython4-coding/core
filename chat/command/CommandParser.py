@@ -92,7 +92,8 @@ class CommandParser:
         if len(command) == 1 and not all(
                 [subcommand.mode == chat.command.Command.ParseMode.OPTIONAL for subcommand in parsebridge.sub_commands]
         ):
-            logger.println("unable to parse command. please use /help command to get exact command syntax")
+            logger.println("unable to parse command. please use /help <command name> command to get exact command "
+                           "syntax")
             return None, None
         active_entry = parsebridge
         values = []
@@ -115,11 +116,11 @@ class CommandParser:
                     logger.println([x.mode for x in active_entry.sub_commands])
                     return values, array
                 else:
-                    logger.println("[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}".
-                          format(len(array)+1))
-                    logger.println("missing one of the following entrys: {}".format([subcommand.type for subcommand in
-                                                                           active_entry.sub_commands]))
-                    logger.println("gotten values: {}".format(values))
+                    logger.println("[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}:".
+                                   format(len(array)+1))
+                    logger.println(" - missing one of the following entries: {}".format([subcommand.type for subcommand
+                                                                                         in active_entry.sub_commands]))
+                    logger.println(" - gotten values: {}".format(values))
                     return None, array
         if all([x.mode == chat.command.Command.ParseMode.OPTIONAL for x in active_entry.sub_commands]):
             return values, array

@@ -142,6 +142,8 @@ def load_item():
     diamond_leggings = factory.ItemFactory.ItemFactory().setName("minecraft:diamond_leggings").setArmorPoints(6).finish()
     diamond_boots = factory.ItemFactory.ItemFactory().setName("minecraft:diamond_boots").setArmorPoints(3).finish()
 
+    factory.ItemFactory.ItemFactory().setName("minecraft:barrier").setHasBlockFlag(True).finish()
 
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:item:base", load_item, info="generating items")
+
+mod.ModMcpython.mcpython.eventbus.subscribe("stage:item:factory_usage", load_item, info="generating items")
 

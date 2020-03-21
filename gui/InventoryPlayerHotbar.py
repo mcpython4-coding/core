@@ -15,6 +15,57 @@ import time
 import util.opengl
 
 
+base: pyglet.image.AbstractImage = ResourceLocator.read("gui/icons", "pyglet")
+
+
+def _get_tex_region(rx, ry, rex, rey):
+    image = base.get_region(round(rx / 255 * base.width), round((1 - rey / 255) * base.height),
+                            round((rex - rx) / 255 * base.width), round(((rey - ry) / 255) * base.height))
+    return image
+
+
+class TEXTURES:
+    hearts = [
+        [  # base, regenerate
+            _get_tex_region(16, 0, 25, 9), _get_tex_region(25, 0, 34, 9), _get_tex_region(34, 0, 43, 9),
+            _get_tex_region(43, 0, 52, 9)],
+        [  # normal, hit
+            _get_tex_region(52, 0, 61, 9), _get_tex_region(61, 0, 70, 9), _get_tex_region(70, 0, 79, 9),
+            _get_tex_region(79, 0, 88, 9)
+        ],
+        [  # poison, hit
+            _get_tex_region(88, 0, 97, 9), _get_tex_region(97, 0, 106, 9), _get_tex_region(106, 0, 115, 9),
+            _get_tex_region(115, 0, 124, 9)
+        ],
+        [  # wither, hit
+            _get_tex_region(124, 0, 133, 9), _get_tex_region(133, 0, 142, 9), _get_tex_region(142, 0, 151, 9),
+            _get_tex_region(151, 0, 160, 9)
+        ],
+        [  # absorption
+            _get_tex_region(160, 0, 169, 9), _get_tex_region(169, 0, 178, 9)
+        ]
+    ]
+
+    armor = [
+        _get_tex_region(16, 9, 25, 18), _get_tex_region(25, 9, 34, 18), _get_tex_region(34, 9, 43, 18)
+    ]
+
+    hunger = [
+        [  # background
+            _get_tex_region(16, 27, 25, 36), _get_tex_region(25, 27, 34, 36), _get_tex_region(34, 27, 43, 36),
+            _get_tex_region(43, 27, 52, 36)
+        ],
+        [  # normal, regen
+            _get_tex_region(52, 27, 61, 36), _get_tex_region(61, 27, 70, 36), _get_tex_region(70, 27, 79, 36),
+            _get_tex_region(79, 27, 88, 36)
+        ],
+        [  # hunger, regen
+            _get_tex_region(88, 27, 97, 36), _get_tex_region(97, 27, 106, 36), _get_tex_region(106, 27, 115, 36),
+            _get_tex_region(115, 27, 124, 36)
+        ]
+    ]
+
+
 class InventoryPlayerHotbar(gui.Inventory.Inventory):
     """
     main inventory for the hotbar
@@ -100,9 +151,9 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         y = hy + 75
         hearts = round(G.world.get_active_player().hearts)
         for _ in range(10):
-            G.world.get_active_player().iconparts[0][2].blit(x-1, y-1)
+            TEXTURES.hearts[0][0].blit(x, y, width=18, height=18)
             if hearts > 0:
-                G.world.get_active_player().iconparts[0][int(hearts == 1)].blit(x, y)
+                TEXTURES.hearts[1][bool(hearts == 1)].blit(x, y, width=18, height=18)
                 hearts -= 2
             x += 16
 
@@ -112,9 +163,9 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         y = hy + 75
         hunger = round(G.world.get_active_player().hunger)
         for _ in range(10):
-            G.world.get_active_player().iconparts[1][2].blit(x+1, y)
+            TEXTURES.hunger[0][0].blit(x, y, width=18, height=18)
             if hunger > 0:
-                G.world.get_active_player().iconparts[1][int(hunger == 1)].blit(x, y)
+                TEXTURES.hunger[1][int(hunger == 1)].blit(x, y, width=18, height=18)
                 hunger -= 2
             x -= 16
 
@@ -122,9 +173,10 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         wx, _ = G.window.get_size()
         x = wx // 2 - 182
         y = hy + 55
-        G.world.get_active_player().iconparts[3][0].blit(x, y)
+        G.world.get_active_player().iconparts[0][0].blit(x, y)
         active_progress = G.world.get_active_player().xp / G.world.get_active_player().get_needed_xp_for_next_level()
-        G.world.get_active_player().iconparts[3][1].get_region(x=0, y=0, height=10, width=round(362*active_progress)+1).blit(x, y)
+        G.world.get_active_player().iconparts[0][1].get_region(
+            x=0, y=0, height=10, width=round(362*active_progress)+1).blit(x, y)
         if G.world.get_active_player().xp_level != 0:
             self.lable.x = wx // 2
             self.lable.y = hy + 65
@@ -137,9 +189,9 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         y = hy + 95
         armor = round(G.world.get_active_player().armor_level)
         for _ in range(10):
-            G.world.get_active_player().iconparts[2][2].blit(x, y)
+            TEXTURES.armor[0].blit(x, y, width=18, height=18)
             if armor > 0:
-                G.world.get_active_player().iconparts[2][int(armor == 1)].blit(x, y)
+                TEXTURES.armor[int(armor != 1)+1].blit(x, y, width=18, height=18)
                 armor -= 2
             x += 16
 

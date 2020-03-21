@@ -46,9 +46,9 @@ class Player(Entity.Entity):
             ("main", False)
         ]
 
-        self.active_inventory_slot: int = 0
-
         self.iconparts = []
+
+        self.active_inventory_slot: int = 0
 
         mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
                                                     info="setting up player inventory")
@@ -75,16 +75,7 @@ class Player(Entity.Entity):
         self.inventories["enderchest"] = gui.InventoryChest.InventoryChest()
         self.inventories["crafting_table"] = gui.InventoryCraftingTable.InventoryCraftingTable()
 
-        self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/hart.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/hart_half.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/hart_base.png", "pyglet")),
-                          (ResourceLocator.read("build/texture/gui/icons/hunger.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/hunger_half.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/hunger_base.png", "pyglet")),
-                          (ResourceLocator.read("build/texture/gui/icons/armor.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/armor_half.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/armor_base.png", "pyglet")),
-                          (ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
+        self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/xp_bar.png", "pyglet"))]
 
     def set_gamemode(self, gamemode: int or str):

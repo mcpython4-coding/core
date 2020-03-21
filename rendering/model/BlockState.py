@@ -54,7 +54,11 @@ class MultiPartDecoder(IBlockStateDecoder):
     def __init__(self, data: dict, block_state):
         super().__init__(data, block_state)
         for entry in data["multipart"]:
-            G.modelhandler.used_models.append(entry["apply"]["model"])
+            if type(entry["apply"]) == dict:
+                G.modelhandler.used_models.append(entry["apply"]["model"])
+            else:
+                for d in entry["apply"]:
+                    G.modelhandler.used_models.append(d["model"])
 
     def add_face_to_batch(self, block, batch, face):
         state = block.get_model_state()

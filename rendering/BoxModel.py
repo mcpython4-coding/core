@@ -34,22 +34,26 @@ class BoxModel:
         NS = (data["from"][0] / 16, data["from"][1] / 16, data["to"][0] / 16, data["to"][1] / 16)
         EW = (data["from"][2] / 16, data["from"][1] / 16, data["to"][2] / 16, data["to"][1] / 16)
         self.texregion = [UD, UD, NS, EW, NS, EW]
+        self.texregionrotate = [0] * 6
         for face in util.enums.EnumSide.iterate():
             facename = face.normal_name
             if facename in data["faces"]:
-                addr = data["faces"][facename]["texture"]
+                f = data["faces"][facename]
+                addr = f["texture"]
                 self.faces[util.enums.EnumSide[facename.upper()]] = model.get_texture_position(addr)
-                if "uv" in data["faces"][facename]:
-                    uvs = tuple(data["faces"][facename]["uv"])
-                    index = UV_ORDER.index(facename)
+                index = UV_ORDER.index(facename)
+                if "uv" in f:
+                    uvs = tuple(f["uv"])
                     self.texregion[index] = tuple([uvs[i]/16 for i in UV_INDICES[index]])
+                if "rotation" in f:
+                    self.texregionrotate[index] = f["rotation"]
         self.rotation = (0, 0, 0)
         self.rotation_core = (0, 0, 0)
         if "rotation" in data:
             if "origin" in data["rotation"]:
-                self.rotation_core = data["rotation"]["origin"]
+                self.rotation_core = tuple(data["rotation"]["origin"])
             rot = [0, 0, 0]
-            rot["xyz".index(data["axis"])] = data["angle"]
+            rot["xyz".index(data["rotation"]["axis"])] = data["rotation"]["angle"]
             self.rotation = tuple(rot)
 
         status = (self.rotation, self.rotation_core, tuple(self.boxposition), self.boxsize)
@@ -69,7 +73,7 @@ class BoxModel:
         up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
                                                             for x in util.enums.EnumSide.iterate()])
         self.tex_data = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
-                                             tex_region=self.texregion)
+                                             tex_region=self.texregion, rotation=self.texregionrotate)
         self.deactive = {face: array[i] == (0, 0) or array[i] is None for i, face in enumerate(
             util.enums.EnumSide.iterate())}
 

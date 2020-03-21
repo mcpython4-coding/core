@@ -952,4 +952,21 @@ started these clone on 12th of July, 2019
 [uuk]: implemented OpenGLSetupFile-system which makes calling opengl commands easy & exchangeable during runtime
 [uuk]: moved the big rendering parts to the new rendering system
 [uuk]: added IAllDirectionOrientableBlock-baseclass
+[uuk]: dimension -1 (nether) and 1 (end) is now reserved by default
+[uuk]: removed deprecated loading phases
+[uuk]: removed features.py
+[uuk]: when closing game window, game will now be saved automatically
+[uuk]: rewritten how icons for hearts, hunger and armor are cropped & drawn
+[uuk]: fixed issue 141
+[uuk]: improved registry warning messages
+[uuk]: fixed issue 9, 152, 153
+[uuk]: improved command syntax error message
+[uuk]: added mycelium, podzol
+[uuk]: removed pyglet_fix.py as it is not required anymore
+[uuk]: added loader for the .lang format
+[uuk]: added support for rotation in blockmodel-element
+[uuk]: BlockFactory's setDefaultModelState-function accept now also an string like in boxmodels as state
+[uuk]: added handle for palette reference errors
+[uuk]: fixed issue 155, 156
+[uuk]: added barrier block
 

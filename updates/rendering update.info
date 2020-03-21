@@ -6,7 +6,7 @@ Part 2:
     - implement this to grass block
 
 beside this:
-    - make text in chat selectable, implement STRG+X
+    - make text in chat selectable, implement STRG+X, fix cursor movement, add mouse button selection
     - add mc icon
     - add F3-screen with extra info if the chunk is fully generated or not
     - redo alpha drawing
