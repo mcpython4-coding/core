@@ -969,4 +969,5 @@ started these clone on 12th of July, 2019
 [uuk]: added handle for palette reference errors
 [uuk]: fixed issue 155, 156
 [uuk]: added barrier block
+[uuk]: new event: "stage:blockitemfactory:finish"
 

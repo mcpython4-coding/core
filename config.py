@@ -9,7 +9,7 @@ import math
 import util.enums
 
 MC_VERSION_BASE = "1.15.2"
-VERSION_TYPE = "snapshot"
+VERSION_TYPE = "dev"
 VERSION_NAME = "20w12b"
 
 # list of all versions since 19w52a to indicate order

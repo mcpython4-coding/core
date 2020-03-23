@@ -106,7 +106,8 @@ class LoadingStages:
                          "stage:item:load", "stage:item:overwrite")
     LANGUAGE = LoadingStage("language file loading", "stage:language")
     RECIPE = LoadingStage("recipe loading phase", "stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
-    INVENTORIES = LoadingStage("inventory loading phase", "stage:inventories")
+    INVENTORIES = LoadingStage("inventory loading phase", "stage:inventories:pre", "stage:inventories",
+                               "stage:inventories:post")
     STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states")
     COMMANDS = LoadingStage("command loading phase", "stage:command:entries", "stage:commands",
                             "stage:command:selectors", "stage:command:gamerules")

@@ -64,6 +64,7 @@ interaction:
 states:
     "state:switch:pre": called by StateHandler before the state is switched, cancelable
     "state:switch:post": called by StateHandler after the state is switched
+    "stage:blockitemfactory:finish": called when blockitemfactory finished
 
 rendering:
     "modelhandler:searched": called by ModelHandler after lookup for models
