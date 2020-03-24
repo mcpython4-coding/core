@@ -32,6 +32,7 @@ class ISlab(block.Block.Block):
             self.type = SlabModes.TOP
         else:
             self.type = SlabModes.BOTTOM
+        self.face_solid = {face: False for face in util.enums.EnumSide.iterate()}
 
     def get_model_state(self):
         return {"type": self.type.name.lower()}
@@ -47,10 +48,6 @@ class ISlab(block.Block.Block):
     def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         # todo: add half -> double convert
         return False
-
-    def is_solid_side(self, side) -> bool:
-        if self is None: return False
-        return self.type == SlabModes.DOUBLE
 
     def get_view_bbox(self): return BBOX_DICT[self.type]
 

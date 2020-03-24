@@ -139,11 +139,11 @@ class Player(Entity.Entity):
                 if not slot.get_itemstack().is_empty() and slot.get_itemstack().get_item_name() == itemstack.get_item_name() and \
                         slot.interaction_mode[2]:
                     if slot.get_itemstack().item and slot.get_itemstack().amount + itemstack.amount <= itemstack.item. \
-                            get_max_stack_size():
+                            STACK_SIZE:
                         slot.get_itemstack().add_amount(itemstack.amount)
                         return True
                     else:
-                        m = slot.get_itemstack().item.get_max_stack_size()
+                        m = slot.get_itemstack().item.STACK_SIZE
                         delta = m - slot.get_itemstack().amount
                         slot.get_itemstack().set_amount(m)
                         itemstack.add_amount(-delta)

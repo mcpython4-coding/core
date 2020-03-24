@@ -24,7 +24,8 @@ class InventoryCraftingTable(gui.Inventory.Inventory):
     def get_config_file() -> str or None:
         return "assets/config/inventory/blockinventorycraftingtable.json"
 
-    def on_create(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         inputs = [self.slots[:3], self.slots[3:6], self.slots[6:9]]
         self.recipeinterface = crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[9])
 

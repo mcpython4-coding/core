@@ -9,37 +9,41 @@ import globals as G
 import PIL.Image
 import event.Registry
 import uuid
+import logger
 
 
 class Item(event.Registry.IRegistryContent):
     TYPE = "minecraft:item"
 
+    STACK_SIZE = 64
+    HAS_BLOCK = True
+
     @classmethod
-    def get_used_texture_files(cls):
+    def get_used_texture_files(cls):  # WARNING: will be removed during item rendering update
         return [cls.get_default_item_image_location()]
 
     @classmethod
     def get_name(cls) -> str: return cls.NAME
 
-    @staticmethod
-    def has_block() -> bool:
-        return True
+    @classmethod
+    def has_block(cls) -> bool:
+        return cls.HAS_BLOCK
 
     def get_block(self) -> str:
         return self.NAME
 
     @staticmethod
-    def get_default_item_image_location() -> str:
+    def get_default_item_image_location() -> str:  # WARNING: will be removed during item rendering update
         raise NotImplementedError()
 
-    def get_active_image_location(self):
+    def get_active_image_location(self):  # WARNING: will be removed during item rendering update
         return self.get_default_item_image_location()
 
     def __init__(self):
         self.uuid = uuid.uuid4()
 
-    def get_max_stack_size(self) -> int:  # todo: make attribute
-        return 64
+    def get_max_stack_size(self) -> int:  # todo: remove
+        return self.STACK_SIZE
 
     def __eq__(self, other):
         if not issubclass(type(other), Item): return False
@@ -64,5 +68,7 @@ class Item(event.Registry.IRegistryContent):
 
     def get_data(self): return "no:data"
 
-    def set_data(self, data): pass
+    def set_data(self, data):
+        if data != "no:data":
+            logger.println("[WARNING] data-deserialization did NOT expect data, but data '{}' was got".format(data))
 

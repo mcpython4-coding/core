@@ -970,4 +970,13 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 155, 156
 [uuk]: added barrier block
 [uuk]: new event: "stage:blockitemfactory:finish"
+[uuk]: moved the following configs [old ones are still arrival but not in normal use]:
+       Block.is_breakable() to static Block.BREAKABLE, Block.is_solid_side(side) to Block.face_solid[side],
+       Block.get_hardness() to static Block.HARDNESS, Block.get_minimum_tool_level() to static Block.MINIMUM_TOOL_LEVEL,
+       Block.get_best_tools() to static Block.BEST_TOOLS_TO_BREAK, Item.get_max_stack_size to static Item.STACK_SIZE,
+       ItemArmor.getDefensePoints() to static ItemArmor.DEFENSE_POINTS, ItemFood.get_eat_hunger_addition to
+       static ItemFood.HUNGER_ADDITION, Item.has_block() to static Item.HAS_BLOCK, ItemTool.get_tool_level to
+       static ItemTool.TOOL_LEVEL, ItemTool.get_tool_type() to static ItemTool.TOOL_TYPE
+[uuk]: removed Inventory.on_create
+[uuk]: added SlotTrashCan, SlotInfiniteStack and SlotInfiniteStackExchangeable-classes
 

@@ -231,3 +231,54 @@ class SlotCopy:
             self.itemstack.item.set_data(data["itemstack"]["data"])
 
 
+class SlotInfiniteStack(Slot):
+    def __init__(self, itemstack, position=(0, 0), allow_player_remove=True,
+                 allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None):
+        super().__init__(itemstack=itemstack, position=position, allow_player_remove=allow_player_remove,
+                         allow_player_insert=False, allow_player_add_to_free_place=allow_player_add_to_free_place,
+                         on_update=on_update, allow_half_getting=allow_half_getting, on_shift_click=on_shift_click)
+        self.reference_stack = self.itemstack.copy()
+
+    def set_itemstack(self, stack, update=True, player=False):
+        pass
+
+    def call_update(self, player=False):
+        if not self.on_update: return
+        [f(player=player) for f in self.on_update]
+        if self.itemstack != self.reference_stack:
+            self.itemstack = self.reference_stack.copy()
+
+    itemstack = property(Slot.get_itemstack, set_itemstack)
+
+
+class SlotInfiniteStackExchangeable(Slot):
+    def __init__(self, itemstack, position=(0, 0), allow_player_remove=True,
+                 allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None):
+        super().__init__(itemstack=itemstack, position=position, allow_player_remove=allow_player_remove,
+                         allow_player_insert=True, allow_player_add_to_free_place=allow_player_add_to_free_place,
+                         on_update=on_update, allow_half_getting=allow_half_getting, on_shift_click=on_shift_click)
+        self.reference_stack = self.itemstack.copy()
+
+    def set_itemstack(self, stack, update=True, player=False):
+        self.__itemstack = stack if stack else gui.ItemStack.ItemStack.get_empty()
+        if not stack.itemstack.is_empty(): self.reference_stack = stack.copy()
+        if update:
+            self.call_update(player=player)
+
+    def call_update(self, player=False):
+        if not self.on_update: return
+        [f(player=player) for f in self.on_update]
+        if self.itemstack != self.reference_stack:
+            self.itemstack = self.reference_stack.copy()
+
+    itemstack = property(Slot.get_itemstack, set_itemstack)
+
+
+class SlotTrashCan(Slot):
+    def set_itemstack(self, stack, update=True, player=False):
+        self.__itemstack = stack if stack else gui.ItemStack.ItemStack.get_empty()
+        flag = True
+        if update:
+            flag = self.call_update(player=player)
+        if flag is not False: self.__itemstack.clean()
+

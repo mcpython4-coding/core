@@ -31,6 +31,7 @@ class BlockChest(Block.Block):
                 self.front_side = util.enums.EnumSide.W
         import gui.InventoryChest
         self.inventory = G.world.get_active_player().inventories["enderchest"]
+        self.face_solid = {face: False for face in util.enums.EnumSide.iterate()}
 
     NAME = "minecraft:enderchest"
 
@@ -44,14 +45,9 @@ class BlockChest(Block.Block):
     def get_inventories(self):
         return [self.inventory]
 
-    def get_hardness(self):
-        return 2.5
-
-    def get_minimum_tool_level(self):
-        return 0
-
-    def get_best_tools(self):
-        return [item.ItemTool.ToolType.PICKAXE]
+    HARDNESS = 2.5
+    MINIMUM_TOOL_LEVEL = 0
+    BEST_TOOLS_TO_BREAK = [item.ItemTool.ToolType.PICKAXE]
 
     def get_provided_slots(self, side): return self.inventory.slots
 
@@ -72,8 +68,6 @@ class BlockChest(Block.Block):
                 {"side": util.enums.EnumSide.S}, {"side": util.enums.EnumSide.W}]
 
     def get_view_bbox(self): return BBOX
-
-    def is_solid_side(self, side) -> bool: return False
 
     def on_remove(self):
         G.inventoryhandler.hide(self.inventory)

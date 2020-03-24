@@ -29,6 +29,6 @@ class BlockGrassBlock(Block.Block):
         else:
             blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
             if blockinst is not None and type(blockinst) != str:
-                if blockinst.is_solid_side(util.enums.EnumSide.UP) or blockinst.is_solid_side(util.enums.EnumSide.DOWN):
+                if blockinst.face_solid[util.enums.EnumSide.UP] or blockinst.face_solid[util.enums.EnumSide.DOWN]:
                     G.world.get_active_dimension().add_block(self.position, "minecraft:dirt")
 

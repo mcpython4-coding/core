@@ -76,14 +76,14 @@ class StatePartGame(StatePart.StatePart):
         if not block:
             cls.braketime = None  # no braketime because no block
         else:
-            hardness = block.get_hardness()
+            hardness = block.HARDNESS
             itemstack = G.world.get_active_player().get_active_inventory_slot().get_itemstack()
             istool = itemstack.item and issubclass(type(itemstack.item), ItemTool.ItemTool)
-            toollevel = itemstack.item.get_tool_level() if istool else 0
-            if not istool or not any([x in block.get_best_tools() for x in itemstack.item.get_tool_type()]):
-                cls.braketime = (1.5 if block.get_minimum_tool_level() <= toollevel else 5) * hardness
+            toollevel = itemstack.item.TOOL_LEVEL if istool else 0
+            if not istool or not any([x in block.BEST_TOOLS_TO_BREAK for x in itemstack.item.TOOL_TYPE]):
+                cls.braketime = (1.5 if block.MINIMUM_TOOL_LEVEL <= toollevel else 5) * hardness
             else:
-                cls.braketime = (1.5 if block.get_minimum_tool_level() <= toollevel else 5) * hardness / \
+                cls.braketime = (1.5 if block.MINIMUM_TOOL_LEVEL <= toollevel else 5) * hardness / \
                                 itemstack.item.get_speed_multiplyer(itemstack)
             # todo: add factor when not on ground, when in water (when its added)
 
@@ -165,7 +165,7 @@ class StatePartGame(StatePart.StatePart):
                         chunk.remove_block(blockpos)
                         chunk.check_neighbors(blockpos)
                 elif G.world.get_active_player().gamemode == 0:
-                    if type(block) != str and self.mouse_press_time >= self.braketime and block.is_breakable():
+                    if type(block) != str and self.mouse_press_time >= self.braketime and block.BREAKABLE:
                         if G.world.gamerulehandler.table["doTileDrops"].status.status:
                             items = G.loottablehandler.get_drop_for_block(block, player=G.world.get_active_player())
                             if block: [block.on_request_item_for_block(itemstack) for itemstack in items]
@@ -191,7 +191,7 @@ class StatePartGame(StatePart.StatePart):
             if blockpos:
                 if G.window.mouse_pressing[mouse.RIGHT] and previous:
                     slot = G.world.get_active_player().get_active_inventory_slot()
-                    if slot.get_itemstack().item and slot.get_itemstack().item.has_block() and self.mouse_press_time > 0.10 and \
+                    if slot.get_itemstack().item and slot.get_itemstack().item.HAS_BLOCK and self.mouse_press_time > 0.10 and \
                             G.world.get_active_player().gamemode in (0, 1):
                         x, y, z = previous
                         px, _, pz = util.math.normalize(G.world.get_active_player().position)
@@ -224,7 +224,7 @@ class StatePartGame(StatePart.StatePart):
                     if reverse:
                         slots.reverse()
                     for slot in slots:
-                        if slot.get_itemstack().item and slot.get_itemstack().item.has_block() and \
+                        if slot.get_itemstack().item and slot.get_itemstack().item.HAS_BLOCK and \
                                 slot.get_itemstack().item == itemstack.item:
                             if inventoryname != "hotbar":
                                 sslot = selected_slot.get_itemstack()

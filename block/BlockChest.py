@@ -42,11 +42,12 @@ class BlockChest(Block.Block):
         import gui.InventoryChest
         self.inventory = gui.InventoryChest.InventoryChest()
         self.loot_table_link = None
+        self.face_solid = {face: False for face in util.enums.EnumSide.iterate()}
 
     def can_open_inventory(self) -> bool:
         x, y, z = self.position
         blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
-        return blockinst is None or not blockinst.is_solid_side(util.enums.EnumSide.DOWN)
+        return blockinst is None or not blockinst.face_solid[util.enums.EnumSide.DOWN]
 
     def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT and self.can_open_inventory():
@@ -62,11 +63,8 @@ class BlockChest(Block.Block):
     def get_inventories(self):
         return [self.inventory]
 
-    def get_hardness(self):
-        return 2.5
-
-    def get_best_tools(self):
-        return [item.ItemTool.ToolType.AXE]
+    HARDNESS = 2.5
+    BEST_TOOLS_TO_BREAK = [item.ItemTool.ToolType.AXE]
 
     def get_provided_slots(self, side): return self.inventory.slots
 
@@ -87,8 +85,6 @@ class BlockChest(Block.Block):
                 {"side": util.enums.EnumSide.S}, {"side": util.enums.EnumSide.W}]
 
     def get_view_bbox(self): return BBOX
-
-    def is_solid_side(self, side) -> bool: return False
 
     @classmethod
     def set_block_data(cls, iteminst, block):

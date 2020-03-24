@@ -13,25 +13,24 @@ from util.enums import ToolType
 class ItemTool(item.Item.Item):
     NAME = "minecraft:unknown_tool"
 
-    @staticmethod
-    def has_block() -> bool:
-        return False
+    HAS_BLOCK = False
+    STACK_SIZE = 1
+
+    TOOL_LEVEL = 0
+    TOOL_TYPE = []
 
     def __init__(self):
         super().__init__()
-
-    def get_max_stack_size(self) -> int:
-        return 1
 
     def __eq__(self, other):
         if not issubclass(type(other), ItemTool): return False
         return other.NAME == self.NAME
 
-    def get_tool_level(self):
-        return 0
+    def get_tool_level(self):  # todo: remove
+        return self.TOOL_LEVEL
 
-    def get_tool_type(self):
-        return []
+    def get_tool_type(self):  # todo: remove
+        return self.TOOL_TYPE
 
     def get_speed_multiplyer(self, itemstack):
         return 1

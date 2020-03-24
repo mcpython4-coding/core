@@ -85,7 +85,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                             slot.get_itemstack().get_item_name() is not None:
                         eamount = slot.get_itemstack().amount
                         ramount = moving_slot.get_itemstack().amount
-                        mstack = slot.get_itemstack().item.get_max_stack_size()
+                        mstack = slot.get_itemstack().item.STACK_SIZE
                         if eamount == mstack: return
                         possible = mstack - eamount
                         if possible > ramount:
@@ -121,7 +121,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                             moving_slot.get_itemstack().clean()
                         slot.call_update(player=True)
                 elif not slot.get_itemstack().is_empty() and slot.get_itemstack().get_item_name() == moving_slot.get_itemstack().\
-                        get_item_name() and slot.get_itemstack().amount < slot.get_itemstack().item.get_max_stack_size():
+                        get_item_name() and slot.get_itemstack().amount < slot.get_itemstack().item.STACK_SIZE:
                     if slot.interaction_mode[1]:
                         slot.get_itemstack().add_amount(1)
                         moving_slot.get_itemstack().add_amount(-1)
@@ -133,7 +133,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             if G.world.get_active_player().gamemode == 1 and slot and slot.get_itemstack().get_item_name() and not \
                     moving_slot.get_itemstack().get_item_name():
                 moving_slot.set_itemstack(slot.get_itemstack().copy())
-                moving_slot.get_itemstack().set_amount(moving_slot.get_itemstack().item.get_max_stack_size())
+                moving_slot.get_itemstack().set_amount(moving_slot.get_itemstack().item.STACK_SIZE)
 
         if moving_slot.get_itemstack().amount == 0:
             moving_slot.get_itemstack().clean()

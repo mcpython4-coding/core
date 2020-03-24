@@ -35,14 +35,9 @@ def create_shulker_box(name):
         def get_inventories(self):
             return [self.inventory]
 
-        def get_hardness(self):
-            return 2.5
-
-        def get_minimum_tool_level(self):
-            return 0
-
-        def get_best_tools(self):
-            return [item.ItemTool.ToolType.AXE]
+        HARDNESS = 2.5
+        MINIMUM_TOOL_LEVEL = 0
+        BEST_TOOLS_TO_BREAK = [item.ItemTool.ToolType.AXE]
 
         def get_provided_slots(self, side): return self.inventory.slots
 

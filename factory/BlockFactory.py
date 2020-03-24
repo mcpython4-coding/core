@@ -73,7 +73,7 @@ class BlockFactory:
 
             BLOCK_ITEM_GENERATOR_STATE = master.block_item_generator_state
 
-            def is_breakable(self) -> bool: return master.breakable
+            BREAKABLE = master.breakable
 
             @staticmethod
             def get_all_model_states():
@@ -94,14 +94,9 @@ class BlockFactory:
                     baseclass.on_remove(self)
                 if master.delete_callback: master.delete_callback(self)
 
-            def get_hardness(self):
-                return master.hardness
-
-            def get_minimum_tool_level(self):
-                return master.minmum_toollevel
-
-            def get_best_tools(self):
-                return master.besttools
+            HARDNESS = master.hardness
+            MINIMUM_TOOL_LEVEL = master.minmum_toollevel
+            BEST_TOOLS_TO_BREAK = master.besttools
 
             def set_model_state(self, state):
                 for baseclass in master.baseclass:
@@ -115,12 +110,9 @@ class BlockFactory:
 
         if self.solid_faces:
             class ConstructedBlock(ConstructedBlock):
-                def is_solid_side(self, side) -> bool:
-                    return master.solid_faces[side] if side in master.solid_faces else all(
-                        [baseclass2.is_solid_side(self, side) for baseclass2 in master.baseclass])
-        elif self.customsolidsidefunction:
-            class ConstructedBlock(ConstructedBlock):
-                def is_solid_side(self, side) -> bool: return master.customsolidsidefunction(self, side)
+                self.face_solid = {side: master.solid_faces[side] if side in master.solid_faces else all(
+                        [not hasattr(baseclass2, "face_solid") or baseclass2.face_solid[side] for baseclass2 in
+                         master.baseclass]) for side in util.enums.EnumSide.iterate()}
 
         if master.randomupdate_callback:
             class ConstructedBlock(ConstructedBlock):

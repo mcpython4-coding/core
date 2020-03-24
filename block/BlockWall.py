@@ -18,6 +18,7 @@ class IWall(block.Block.Block):
         super().__init__(*args, **kwargs)
         self.connections = {"north": False, "east": False, "south": False, "west": False, "up": False}
         self.on_block_update()
+        self.face_solid = {face: False for face in util.enums.EnumSide.iterate()}
 
     def get_model_state(self) -> dict:
         state = {key: str(self.connections[key]).lower() for key in self.connections}
@@ -31,25 +32,22 @@ class IWall(block.Block.Block):
         block_south: block.Block.Block = G.world.get_active_dimension().get_block((x - 1, y, z))
         block_west: block.Block.Block = G.world.get_active_dimension().get_block((x, y, z - 1))
 
-        self.connections["east"] = block_north is not None and (type(block_north) != str and block_north.is_solid_side(
-            util.enums.EnumSide.SOUTH) or issubclass(type(block_north), IWall))
-        self.connections["south"] = block_east is not None and (type(block_east) != str and block_east.is_solid_side(
-            util.enums.EnumSide.WEST) or issubclass(type(block_east), IWall))
-        self.connections["west"] = block_south is not None and (type(block_south) != str and block_south.is_solid_side(
-            util.enums.EnumSide.NORTH) or issubclass(type(block_south), IWall))
-        self.connections["north"] = block_west is not None and (type(block_west) != str and block_west.is_solid_side(
-            util.enums.EnumSide.EAST) or issubclass(type(block_west), IWall))
+        self.connections["east"] = block_north is not None and (type(block_north) != str and block_north.face_solid[
+            util.enums.EnumSide.SOUTH] or issubclass(type(block_north), IWall))
+        self.connections["south"] = block_east is not None and (type(block_east) != str and block_east.face_solid[
+            util.enums.EnumSide.WEST] or issubclass(type(block_east), IWall))
+        self.connections["west"] = block_south is not None and (type(block_south) != str and block_south.face_solid[
+            util.enums.EnumSide.NORTH] or issubclass(type(block_south), IWall))
+        self.connections["north"] = block_west is not None and (type(block_west) != str and block_west.face_solid[
+            util.enums.EnumSide.EAST] or issubclass(type(block_west), IWall))
         self.connections["up"] = False  # for next calculation, this must be False
         self.connections["up"] = list(self.connections.values()).count(True) != 2 or (
             self.connections["north"] != self.connections["south"] or self.connections["east"] !=
             self.connections["west"])
         upper_block: block.Block.Block = G.world.get_active_dimension().get_block((x, y+1, z))
         if not self.connections["up"] and upper_block is not None and type(upper_block) != str and \
-                upper_block.is_solid_side(util.enums.EnumSide.DOWN) and not issubclass(type(upper_block), IWall):
+                upper_block.face_solid[util.enums.EnumSide.DOWN] and not issubclass(type(upper_block), IWall):
             self.connections["up"] = True
-
-    def is_solid_side(self, side) -> bool:
-        return False
 
     def set_model_state(self, state: dict):
         for key in state:

@@ -26,7 +26,7 @@ class ItemStack:
                 self.item = None
         else:
             self.item = None
-        self.amount = amount if self.item and 0 <= amount <= self.item.get_max_stack_size() else 0
+        self.amount = amount if self.item and 0 <= amount <= self.item.STACK_SIZE else 0
 
     def copy(self):
         """
