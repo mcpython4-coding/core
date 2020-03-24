@@ -8,6 +8,9 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import gui.ItemStack
 import globals as G
 import event.Registry
+"""
+WARNING: Code will be moved to entity/Entity as seen in the entity-update branch
+"""
 
 
 class Entity(event.Registry.IRegistryContent):
