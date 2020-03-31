@@ -4,6 +4,7 @@ Changelog since cleanup-branch of 31.01.2020
 changelog of master-branch:
     - added new event: "stage:blockitemfactory:finish"
     - cleaned up base classes for block and item
+    - chunk entries containing positions are mostly stored relative to the chunk decreasing save file size
 
 
 changelog of snapshot 20w12b [released on 21.03.2020]

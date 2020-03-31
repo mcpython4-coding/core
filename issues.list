@@ -75,12 +75,10 @@ issue 150:
         are far enough out
     fix B: add world barrier at high x/z coordinates and do not let player walk away
 
-issue 151:
-    bug: block coordinates are not relative in saves to chunk position making save take longer for outer chunks than for
-        inner (see 150 for reproducing)
-    fix: make chunk coordinates relative
-
-issue 154:
+issue 154: [fix with generation update]
     bug: debug world blocks do NOT use block-state
 
-[155-156]
+issue 157:
+    bug: loading hangs before showing the chunk loading screen due to deserialization timing
+
+[158]

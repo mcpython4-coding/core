@@ -979,4 +979,7 @@ started these clone on 12th of July, 2019
        static ItemTool.TOOL_LEVEL, ItemTool.get_tool_type() to static ItemTool.TOOL_TYPE
 [uuk]: removed Inventory.on_create
 [uuk]: added SlotTrashCan, SlotInfiniteStack and SlotInfiniteStackExchangeable-classes
+[uuk]: fixed issue 151, 158
+[uuk]: improved error handling when world is saved/loaded
+[uuk]: latest save-file version is now 4
 

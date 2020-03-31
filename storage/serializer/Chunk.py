@@ -37,8 +37,10 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         data = data[chunk]
         chunk_instance.generated = data["generated"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
-        for position in data["blocks"]:
-            d = data["block_palette"][data["blocks"][position]]
+        for rel_position in data["blocks"]:
+            position = (rel_position[0] + chunk_instance.position[0] * 16, rel_position[1],
+                        rel_position[2] + chunk_instance.position[1] * 16)
+            d = data["block_palette"][data["blocks"][rel_position]]
 
             def add(blockinstance):
                 if blockinstance is None: return
@@ -113,9 +115,11 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         overridden = not override
         for position in (
                 chunk_instance.positions_updated_since_last_save if not override else chunk_instance.world.keys()):
+            rel_position = (position[0] - chunk_instance.position[0] * 16, position[1],
+                            position[2] - chunk_instance.position[1] * 16)
             if position not in chunk_instance.world and not override:
-                if position in cdata["blocks"]:
-                    del cdata["blocks"][position]
+                if rel_position in cdata["blocks"]:
+                    del cdata["blocks"][rel_position]
                 continue
             block = chunk_instance.world[position]
             block_data = {"custom": block.save(), "name": block.NAME, "shown": any(block.face_state.faces.values())}
@@ -125,13 +129,13 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
                     if not overridden:  # only if we need data, load it
                         savefile.dump_file_pickle(inv_file, {})
                         overridden = True
-                    path = "blockinv/{}_{}_{}/{}".format(*position, i)
+                    path = "blockinv/{}_{}_{}/{}".format(*rel_position, i)
                     savefile.dump(None, "minecraft:inventory", inventory=inventory, path=path, file=inv_file)
                     block_data["inventories"].append(path)
             if block_data in palette:
-                cdata["blocks"][position] = palette.index(block_data)
+                cdata["blocks"][rel_position] = palette.index(block_data)
             else:
-                cdata["blocks"][position] = len(palette)
+                cdata["blocks"][rel_position] = len(palette)
                 palette.append(block_data)
         chunk_instance.positions_updated_since_last_save.clear()
 
