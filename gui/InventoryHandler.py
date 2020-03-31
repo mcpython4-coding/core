@@ -11,6 +11,7 @@ import state.StatePart
 import state.StatePartGame
 from pyglet.window import key, mouse
 import gui.Slot
+import logger
 
 
 class OpenedInventoryStatePart(state.StatePart.StatePart):
@@ -29,10 +30,13 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
         self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
 
-    @staticmethod
-    def on_key_press(symbol, modifiers):
+    def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             G.inventoryhandler.remove_one_from_stack()
+        x, y = G.window.mouse_position
+        slot = self._get_slot_for(x, y)
+        if slot is not None and slot.on_button_press is not None:
+            slot.on_button_press(x, y, symbol, modifiers)
 
     def on_draw_2d(self):
         hoveringslot = self._get_slot_for(*G.window.mouse_position)
@@ -66,75 +70,83 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                     return slot
         return None
 
+    def handle_left_click(self, x, y, slot, modifiers):
+        moving_slot = G.inventoryhandler.moving_slot
+        if slot and (slot.interaction_mode[0] or not slot.get_itemstack().item) and (slot.interaction_mode[1] or not
+                moving_slot.get_itemstack().item):
+            if slot.get_itemstack().get_item_name() == moving_slot.get_itemstack().get_item_name() and \
+                    slot.get_itemstack().get_item_name() is not None:
+                eamount = slot.get_itemstack().amount
+                ramount = moving_slot.get_itemstack().amount
+                mstack = slot.get_itemstack().item.STACK_SIZE
+                if eamount == mstack: return
+                possible = mstack - eamount
+                if possible > ramount:
+                    possible = ramount
+                slot.get_itemstack().add_amount(possible)
+                slot.call_update(player=True)
+                moving_slot.get_itemstack().add_amount(-possible)
+                if moving_slot.get_itemstack().amount <= 0:
+                    moving_slot.get_itemstack().clean()
+            else:
+                flag = slot.can_set_item(moving_slot.get_itemstack())
+                if flag:
+                    stack, mstack = slot.get_itemstack(), moving_slot.get_itemstack()
+                    moving_slot.set_itemstack(stack)
+                    slot.set_itemstack(mstack, player=True)
+        else:
+            # todo: threw the itemstack [see entity update for info]
+            pass
+
+    def handle_right_click(self, x, y, slot, modifiers):
+        moving_slot = G.inventoryhandler.moving_slot
+        if slot:
+            if not slot.get_itemstack().item:
+                if slot.interaction_mode[1] and slot.can_set_item(moving_slot.get_itemstack()):
+                    slot.set_itemstack(moving_slot.get_itemstack().copy().set_amount(1), player=True)
+                    moving_slot.get_itemstack().add_amount(-1)
+            elif not moving_slot.get_itemstack().item and slot.allow_half_getting:
+                if slot.interaction_mode[0]:
+                    moving_slot.set_itemstack(slot.get_itemstack().copy())
+                    slot.get_itemstack().amount //= 2
+                    moving_slot.get_itemstack().set_amount(
+                        abs(moving_slot.get_itemstack().amount - slot.get_itemstack().amount))
+                    if slot.get_itemstack().amount == 0:
+                        slot.get_itemstack().clean()
+                    if moving_slot.get_itemstack().amount == 0:
+                        moving_slot.get_itemstack().clean()
+                    slot.call_update(player=True)
+            elif not slot.get_itemstack().is_empty() and slot.get_itemstack().get_item_name() == moving_slot.get_itemstack(). \
+                    get_item_name() and slot.get_itemstack().amount < slot.get_itemstack().item.STACK_SIZE:
+                if slot.interaction_mode[1]:
+                    slot.get_itemstack().add_amount(1)
+                    moving_slot.get_itemstack().add_amount(-1)
+                    slot.call_update(player=True)
+        else:
+            # todo: threw one item [see entity update for info]
+            pass
+
+    def handle_middle_click(self, x, y, slot, modifiers):
+        moving_slot = G.inventoryhandler.moving_slot
+        if G.world.get_active_player().gamemode == 1 and slot and slot.get_itemstack().get_item_name() and not \
+                moving_slot.get_itemstack().get_item_name():
+            moving_slot.set_itemstack(slot.get_itemstack().copy())
+            moving_slot.get_itemstack().set_amount(moving_slot.get_itemstack().item.STACK_SIZE)
+
     def on_mouse_press(self, x, y, button, modifiers):
-        # todo: split up into seperated functions / onto an intern event bus
-        if G.window.exclusive: return
+        if G.window.exclusive: return  # when no mouse interaction is active, do nothing
         slot: gui.Slot.Slot = self._get_slot_for(x, y)
         moving_slot: gui.Slot.Slot = G.inventoryhandler.moving_slot
-        if button == mouse.LEFT:
-            if slot and (slot.interaction_mode[0] or not slot.get_itemstack().item) and (slot.interaction_mode[1] or not
-                                                                                         moving_slot.get_itemstack().item):
-                if modifiers & key.MOD_SHIFT and slot.on_shift_click:
-                    try:
-                        slot.on_shift_click(slot, x, y, button, modifiers)
-                    except:
-                        print("error during executing function {}".format(slot.on_shift_click))
-                        raise
-                else:
-                    if slot.get_itemstack().get_item_name() == moving_slot.get_itemstack().get_item_name() and \
-                            slot.get_itemstack().get_item_name() is not None:
-                        eamount = slot.get_itemstack().amount
-                        ramount = moving_slot.get_itemstack().amount
-                        mstack = slot.get_itemstack().item.STACK_SIZE
-                        if eamount == mstack: return
-                        possible = mstack - eamount
-                        if possible > ramount:
-                            possible = ramount
-                        slot.get_itemstack().add_amount(possible)
-                        slot.call_update(player=True)
-                        moving_slot.get_itemstack().add_amount(-possible)
-                        if moving_slot.get_itemstack().amount <= 0:
-                            moving_slot.get_itemstack().clean()
-                    else:
-                        flag = slot.can_set_item(moving_slot.get_itemstack())
-                        if flag:
-                            stack, mstack = slot.get_itemstack(), moving_slot.get_itemstack()
-                            moving_slot.set_itemstack(stack)
-                            slot.set_itemstack(mstack, player=True)
-            else:
-                # todo: threw the itemstack
-                pass
-        elif button == mouse.RIGHT:
-            if slot:
-                if not slot.get_itemstack().item:
-                    if slot.interaction_mode[1] and slot.can_set_item(moving_slot.get_itemstack()):
-                        slot.set_itemstack(moving_slot.get_itemstack().copy().set_amount(1), player=True)
-                        moving_slot.get_itemstack().add_amount(-1)
-                elif not moving_slot.get_itemstack().item and slot.allow_half_getting:
-                    if slot.interaction_mode[0]:
-                        moving_slot.set_itemstack(slot.get_itemstack().copy())
-                        slot.get_itemstack().amount //= 2
-                        moving_slot.get_itemstack().set_amount(abs(moving_slot.get_itemstack().amount - slot.get_itemstack().amount))
-                        if slot.get_itemstack().amount == 0:
-                            slot.get_itemstack().clean()
-                        if moving_slot.get_itemstack().amount == 0:
-                            moving_slot.get_itemstack().clean()
-                        slot.call_update(player=True)
-                elif not slot.get_itemstack().is_empty() and slot.get_itemstack().get_item_name() == moving_slot.get_itemstack().\
-                        get_item_name() and slot.get_itemstack().amount < slot.get_itemstack().item.STACK_SIZE:
-                    if slot.interaction_mode[1]:
-                        slot.get_itemstack().add_amount(1)
-                        moving_slot.get_itemstack().add_amount(-1)
-                        slot.call_update(player=True)
-            else:
-                # todo: threw one item
-                pass
-        elif button == mouse.MIDDLE:
-            if G.world.get_active_player().gamemode == 1 and slot and slot.get_itemstack().get_item_name() and not \
-                    moving_slot.get_itemstack().get_item_name():
-                moving_slot.set_itemstack(slot.get_itemstack().copy())
-                moving_slot.get_itemstack().set_amount(moving_slot.get_itemstack().item.STACK_SIZE)
-
+        if modifiers & key.MOD_SHIFT and slot.on_shift_click:
+            try:
+                flag = slot.on_shift_click(slot, x, y, button, modifiers)
+            except:
+                logger.println("error during executing function {}".format(slot.on_shift_click))
+                raise
+            if flag is True: return
+        if button == mouse.LEFT: self.handle_left_click(x, y, slot, modifiers)
+        elif button == mouse.RIGHT: self.handle_right_click(x, y, slot, modifiers)
+        elif button == mouse.MIDDLE: self.handle_middle_click(x, y, slot, modifiers)
         if moving_slot.get_itemstack().amount == 0:
             moving_slot.get_itemstack().clean()
 

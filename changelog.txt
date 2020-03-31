@@ -5,6 +5,9 @@ changelog of master-branch:
     - added new event: "stage:blockitemfactory:finish"
     - cleaned up base classes for block and item
     - chunk entries containing positions are mostly stored relative to the chunk decreasing save file size
+    - changed some internal inventory interaction things
+    - on_shift_click can now return True when it should interrupt the following logic
+    - slots can now handle an key press
 
 
 changelog of snapshot 20w12b [released on 21.03.2020]

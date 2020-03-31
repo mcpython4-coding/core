@@ -982,4 +982,7 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 151, 158
 [uuk]: improved error handling when world is saved/loaded
 [uuk]: latest save-file version is now 4
+[uuk]: split up InventoryHandler's mouse click handle function into variants for each button
+[uuk]: SHIFT-click is now send in any case to the function
+[uuk]: added on_button_press-attribute to Slot and its child classes
 
