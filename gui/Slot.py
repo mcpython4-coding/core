@@ -104,7 +104,6 @@ class Slot:
             if self.empty_image:
                 self.empty_image.position = (self.position[0] + dx, self.position[1] + dy)
                 self.empty_image.draw()
-        self.amount_label.text = str(self.__itemstack.amount)
         if self.sprite is not None:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.sprite.draw()
@@ -114,7 +113,7 @@ class Slot:
         """
         these code draws only the lable, before, normal draw should be executed for correcrt setup
         """
-        if not self.itemstack.is_empty() and self.sprite is not None:
+        if self.itemstack.amount > 1:
             # don't know why this is needed, but it is needed for fixing issue 106
             self.amount_label.anchor_x = "right"
 

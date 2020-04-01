@@ -106,5 +106,4 @@ issue 161:
     fix: like in kill-method, force-close all inventories on save
     other fix: save moving slot also & load it
 
-issue 162:
-    bug: non-SlotCopy slots render 1 stack-size
+[162]

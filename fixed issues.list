@@ -154,3 +154,4 @@ issue 151: saves include full-coordinates, not chunk relative ones leading into 
 issue 158: when trying to load an world which does not exists, the game gives two exceptions to the log; fixed on:
     31.03.2020 by uuk
 issue 160: when dragging mouse, mouse position attribute of window does not get updated; fixed on: 31.03.2020 by uuk
+issue 162: Slot-instances render item stacks with size 1 with stack size label; fixed on: 01.04.2020 by uuk
