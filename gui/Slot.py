@@ -148,6 +148,9 @@ class Slot:
         if not self.itemstack.is_empty():
             self.itemstack.item.set_data(data["itemstack"]["data"])
 
+    def __str__(self):
+        return "Slot(position=({},{}),itemstack={})".format(*self.position, self.itemstack)
+
 
 class SlotCopy:
     def __init__(self, master, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
@@ -233,6 +236,9 @@ class SlotCopy:
         self.itemstack = gui.ItemStack.ItemStack(data["itemstack"]["itemname"], data["itemstack"]["amount"])
         if not self.itemstack.is_empty():
             self.itemstack.item.set_data(data["itemstack"]["data"])
+
+    def __str__(self):
+        return "Slot(position=({},{}),itemstack={})".format(*self.position, self.itemstack)
 
 
 class SlotInfiniteStack(Slot):

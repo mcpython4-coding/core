@@ -213,10 +213,10 @@ class Inventory:
         slots = self.slots.copy()
         if random_check_order: random.shuffle(slots)
         for slot in slots:
-            if slot.itemstack.is_empty():
-                slot.itemstack = itemstack
+            if slot.itemstack.is_empty() and slot.interaction_mode[2]:
+                slot.set_itemstack(itemstack)
                 return
-            elif slot.itemstack.get_item_name() == itemstack.get_item_name():
+            elif slot.itemstack.get_item_name() == itemstack.get_item_name() and slot.interaction_mode[2]:
                 if slot.itemstack.amount + itemstack.amount <= itemstack.item.STACK_SIZE:
                     slot.itemstack.add_amount(itemstack.amount)
                     return
@@ -225,5 +225,10 @@ class Inventory:
                     slot.itemstack.amount = itemstack.item.STACK_SIZE
                     itemstack.set_amount(overflow)
         # todo: drop item
+
+    def update_shift_container(self):
+        """
+        called when the inventory should update the content of the ShiftContainer of the inventory-handler
+        """
 
 

@@ -12,6 +12,7 @@ import state.StatePartGame
 from pyglet.window import key, mouse
 import gui.Slot
 import logger
+import gui.ShiftContainer
 
 
 class OpenedInventoryStatePart(state.StatePart.StatePart):
@@ -83,7 +84,9 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         if modifiers & key.MOD_SHIFT:
             if slot.on_shift_click:
                 flag = slot.on_shift_click(x, y, button, modifiers, G.world.get_active_player())
-                if flag is not True: return
+                if flag is not True: return  # no default logic should go on
+            if G.inventoryhandler.shift_container is not None and \
+                G.inventoryhandler.shift_container.move_to_opposite(slot): return
         if button == mouse.LEFT:
             if G.inventoryhandler.moving_slot.itemstack.is_empty() or (not slot.interaction_mode[1] and
                                                                        slot.itemstack == self.moving_itemstack):
@@ -192,7 +195,11 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         slot = self._get_slot_for(x, y)
         if slot is None: return
         if self.mode != 0: return
-        # todo: add container-container scroll (-> see SHIFT-click for movement code, only move one item of stack)
+        if G.inventoryhandler.shift_container is not None:
+            if G.window.keys[key.LSHIFT]:
+                G.inventoryhandler.shift_container.move_to_opposite(slot)
+            else:
+                G.inventoryhandler.shift_container.move_to_opposite(slot, count=1)
 
 
 inventory_part = OpenedInventoryStatePart()
@@ -200,7 +207,10 @@ inventory_part = OpenedInventoryStatePart()
 
 class InventoryHandler:
     """
-    main class for registrating inventories
+    main class for registration of inventories
+    Will handle every inventory created at any time. Will keep track of which inventories are open and to send the
+        events to their event bus.
+    Please do not mess around with the internal lists as they are representing the state of the inventory system.
     """
 
     def __init__(self):
@@ -209,6 +219,11 @@ class InventoryHandler:
         self.inventorys = []
         self.moving_slot: gui.Slot.Slot = gui.Slot.Slot(allow_player_add_to_free_place=False, allow_player_insert=False,
                                                         allow_player_remove=False)
+        self.shift_container = gui.ShiftContainer.ShiftContainer()
+
+    def update_shift_container(self):
+        for inventory in self.opened_inventorystack:
+            inventory.update_shift_container()
 
     def add(self, inventory):
         """
@@ -232,6 +247,7 @@ class InventoryHandler:
         if inventory in self.opened_inventorystack: return
         self.opened_inventorystack.append(inventory)
         inventory.on_activate()
+        self.update_shift_container()
         G.eventhandler.call("inventory:show", inventory)
 
     def hide(self, inventory):
@@ -243,6 +259,7 @@ class InventoryHandler:
         if inventory in self.alwaysopened: return
         inventory.on_deactivate()
         self.opened_inventorystack.remove(inventory)
+        self.update_shift_container()
         G.eventhandler.call("inventory:hide", inventory)
 
     def remove_one_from_stack(self):

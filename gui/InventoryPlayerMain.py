@@ -58,3 +58,7 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
             G.world.get_active_player().pick_up(itemstack)
         G.statehandler.active_state.parts[0].activate_mouse = True
 
+    def update_shift_container(self):
+        G.inventoryhandler.shift_container.container_A = self.slots[:9] + self.slots[36:41]
+        G.inventoryhandler.shift_container.container_B = self.slots[9:36]
+
