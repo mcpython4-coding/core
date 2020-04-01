@@ -13,6 +13,7 @@ import logger
 class ItemStack:
     """
     base class for item stored somewhere
+    todo: add function to copy content from one ItemStack to another
     """
     
     def __init__(self, item_name_or_instance, amount=1):
@@ -33,6 +34,7 @@ class ItemStack:
         copy the itemstack
         :return: copy of itself
         """
+        # todo: create an new item instance & copy data
         return ItemStack(self.item, self.amount)
 
     def clean(self):
@@ -65,4 +67,8 @@ class ItemStack:
     def add_amount(self, amount):
         self.set_amount(self.amount + amount)
         return self
+
+    def __str__(self):
+        return "ItemStack(item='{}',amount='{}'{})".format(self.get_item_name(), self.amount, "" if self.is_empty() else
+                                                           ",data={}".format(self.item.get_data()))
 

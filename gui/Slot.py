@@ -38,7 +38,7 @@ class Slot:
         :param allow_player_add_to_free_place: if items can be added direct to system
         :param on_update: called when the slot is updated
         :param allow_half_getting: can the player get only the half of the items out of the slot?
-        :param on_shift_click: called when shift-clicked on the block
+        :param on_shift_click: called when shift-clicked on the block, should return if normal logic should go on or not
         :param on_button_press: called when an button is pressed when hovering above the slot
         """
         self.__itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
@@ -114,7 +114,7 @@ class Slot:
         """
         these code draws only the lable, before, normal draw should be executed for correcrt setup
         """
-        if self.itemstack.amount > 1:
+        if not self.itemstack.is_empty() and self.sprite is not None:
             # don't know why this is needed, but it is needed for fixing issue 106
             self.amount_label.anchor_x = "right"
 

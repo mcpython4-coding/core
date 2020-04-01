@@ -8,6 +8,7 @@ changelog of master-branch:
     - changed some internal inventory interaction things
     - on_shift_click can now return True when it should interrupt the following logic
     - slots can now handle an key press
+    - rewritten mouse interaction system to support dragging over more than one slot
 
 
 changelog of snapshot 20w12b [released on 21.03.2020]

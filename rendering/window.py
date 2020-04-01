@@ -262,6 +262,7 @@ class Window(pyglet.window.Window):
         self.mouse_pressing[button] = False
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        self.mouse_position = (x, y)
         G.eventhandler.call("user:mouse:drag", x, y, dx, dy, buttons, modifiers)
         if self.exclusive:
             self.on_mouse_motion(x, y, dx, dy)
