@@ -17,9 +17,9 @@ class ShiftContainer:
         if len(opposite) == 0:
             return False
         for slot2 in opposite:
-            if slot2.itemstack == slot.itemstack and slot.interaction_mode[1] and slot.interaction_mode[2]:
-                delta = min(slot.itemstack.amount, slot2.itemstack.item.STACK_SIZE-slot2.itemstack.amount) if count \
-                    is None else count
+            if slot2.itemstack.item == slot.itemstack.item and slot.interaction_mode[1] and slot.interaction_mode[2]:
+                delta = min(slot.itemstack.amount if count is None else count,
+                            slot2.itemstack.item.STACK_SIZE-slot2.itemstack.amount)
                 slot2.itemstack.add_amount(delta)
                 slot.itemstack.add_amount(-delta)
                 if slot.itemstack.is_empty() or count is not None: return True

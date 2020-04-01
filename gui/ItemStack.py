@@ -66,6 +66,8 @@ class ItemStack:
 
     def add_amount(self, amount):
         self.set_amount(self.amount + amount)
+        if self.amount == 0: self.clean()
+        if self.item and self.item.STACK_SIZE < self.amount: self.amount = self.item.STACK_SIZE
         return self
 
     def __str__(self):
