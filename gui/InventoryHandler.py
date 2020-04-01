@@ -25,7 +25,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         self.active = False
         self.slot_list = []
         self.moving_itemstack = None
-        self.mode = 0  # possible: 0 - None, 1: equal on all slots, 2: on every slot one more
+        self.mode = 0  # possible: 0 - None, 1: equal on all slots, 2: on every slot one more, 3: fill up slots
         self.original_amount = []
 
     def bind_to_eventbus(self):
@@ -106,10 +106,11 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                 self.on_mouse_drag(x, y, 0, 0, button, modifiers)
         elif button == mouse.MIDDLE:
             if G.inventoryhandler.moving_slot.itemstack.is_empty() and G.world.get_active_player().gamemode == 1:
-                G.inventoryhandler.moving_slot.itemstack = self.moving_itemstack.copy().set_amount(
-                    slot.itemstack.item.STACK_SIZE)
-            else:
-                pass  # todo: add drag-filler
+                G.inventoryhandler.moving_slot.set_itemstack(slot.itemstack.copy().set_amount(
+                    slot.itemstack.item.STACK_SIZE))
+            elif G.world.get_active_player().gamemode == 1:
+                self.mode = 3
+                self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
         if G.window.exclusive:  # when no mouse interaction is active, do nothing beside clearing the status
@@ -126,13 +127,19 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             self.original_amount.clear()
             self.moving_itemstack = None
             self.mode = 0
-        elif self.mode == 1:
+        elif self.mode == 2:
             if len(self.slot_list) == 0:
                 pass  # todo: drop item [see entity update]
             self.slot_list.clear()
             self.original_amount.clear()
             self.moving_itemstack = None
             self.mode = 0
+        elif self.mode == 3:
+            self.slot_list.clear()
+            self.original_amount.clear()
+            self.moving_itemstack = None
+            self.mode = 0
+            G.inventoryhandler.moving_slot.itemstack.clean()
 
     def deactivate(self):
         for statepart in self.parts:
@@ -173,11 +180,18 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                     overhead -= 1
                     slot.call_update(True)
             G.inventoryhandler.moving_slot.itemstack.set_amount(overhead)
+        elif self.mode == 3:
+            for i, slot in enumerate(self.slot_list):
+                if slot.itemstack.item != self.moving_itemstack.item:
+                    slot.set_itemstack(self.moving_itemstack.copy())
+                slot.itemstack.set_amount(slot.itemstack.item.STACK_SIZE)
+                slot.call_update(True)
 
     def on_mouse_scroll(self, x, y, dx, dy):
         if G.window.exclusive: return  # when no mouse interaction is active, do nothing
         slot = self._get_slot_for(x, y)
         if slot is None: return
+        if self.mode != 0: return
         # todo: add container-container scroll (-> see SHIFT-click for movement code, only move one item of stack)
 
 

@@ -987,7 +987,3 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 160
 [uuk]: rewritten mouse handling system in guis to work with drag-mouse-movements
 
-todo: add an class ShiftAbleContainer constructed with an list of slots. Every GUI must implement an pair of these
-    objects which are than handled to shift-click items from an inventory into another and to scoll them from one
-    to the other.
-
