@@ -3,4 +3,4 @@ update generation system:
     - implement dimension-assigned generation system
     - implement cave generation
     - implement more biomes
-    - implement /locate and /locatebiome comamnds
+    - implement /locate and /locatebiome comamnd

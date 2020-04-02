@@ -11,6 +11,8 @@ import state.StatePart
 import state.StatePartGame
 from pyglet.window import key, mouse
 import gui.Slot
+import logger
+import gui.ShiftContainer
 
 
 class OpenedInventoryStatePart(state.StatePart.StatePart):
@@ -21,18 +23,27 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
 
     def __init__(self):
         super().__init__()
-
         self.active = False
+        self.slot_list = []
+        self.moving_itemstack = None
+        self.mode = 0  # possible: 0 - None, 1: equal on all slots, 2: on every slot one more, 3: fill up slots
+        self.original_amount = []
 
     def bind_to_eventbus(self):
         self.master[0].eventbus.subscribe("user:keyboard:press", self.on_key_press)
         self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
         self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
+        self.master[0].eventbus.subscribe("user:mouse:release", self.on_mouse_release)
+        self.master[0].eventbus.subscribe("user:mouse:drag", self.on_mouse_drag)
+        self.master[0].eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
 
-    @staticmethod
-    def on_key_press(symbol, modifiers):
+    def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             G.inventoryhandler.remove_one_from_stack()
+        x, y = G.window.mouse_position
+        slot = self._get_slot_for(x, y)
+        if slot is not None and slot.on_button_press is not None:
+            slot.on_button_press(x, y, symbol, modifiers)
 
     def on_draw_2d(self):
         hoveringslot = self._get_slot_for(*G.window.mouse_position)
@@ -49,7 +60,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             G.inventoryhandler.moving_slot.draw(0, 0)
             G.inventoryhandler.moving_slot.draw_lable(0, 0)
 
-    def _get_slot_for(self, x, y) -> gui.Slot.Slot or None:
+    def _get_slot_for(self, x, y) -> gui.Slot.Slot:
         """
         get slot for position
         :param x: the x position
@@ -64,79 +75,131 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
                 sy += dy
                 if 0 <= x - sx <= 32 and 0 <= y - sy <= 32:
                     return slot
-        return None
 
     def on_mouse_press(self, x, y, button, modifiers):
-        # todo: split up into seperated functions / onto an intern event bus
-        if G.window.exclusive: return
+        if G.window.exclusive: return  # when no mouse interaction is active, do nothing
         slot: gui.Slot.Slot = self._get_slot_for(x, y)
-        moving_slot: gui.Slot.Slot = G.inventoryhandler.moving_slot
+        if slot is None: return
+        self.moving_itemstack = G.inventoryhandler.moving_slot.itemstack.copy()
+        if modifiers & key.MOD_SHIFT:
+            if slot.on_shift_click:
+                flag = slot.on_shift_click(x, y, button, modifiers, G.world.get_active_player())
+                if flag is not True: return  # no default logic should go on
+            if G.inventoryhandler.shift_container is not None and \
+                G.inventoryhandler.shift_container.move_to_opposite(slot): return
         if button == mouse.LEFT:
-            if slot and (slot.interaction_mode[0] or not slot.get_itemstack().item) and (slot.interaction_mode[1] or not
-                                                                                         moving_slot.get_itemstack().item):
-                if modifiers & key.MOD_SHIFT and slot.on_shift_click:
-                    try:
-                        slot.on_shift_click(slot, x, y, button, modifiers)
-                    except:
-                        print("error during executing function {}".format(slot.on_shift_click))
-                        raise
-                else:
-                    if slot.get_itemstack().get_item_name() == moving_slot.get_itemstack().get_item_name() and \
-                            slot.get_itemstack().get_item_name() is not None:
-                        eamount = slot.get_itemstack().amount
-                        ramount = moving_slot.get_itemstack().amount
-                        mstack = slot.get_itemstack().item.get_max_stack_size()
-                        if eamount == mstack: return
-                        possible = mstack - eamount
-                        if possible > ramount:
-                            possible = ramount
-                        slot.get_itemstack().add_amount(possible)
-                        slot.call_update(player=True)
-                        moving_slot.get_itemstack().add_amount(-possible)
-                        if moving_slot.get_itemstack().amount <= 0:
-                            moving_slot.get_itemstack().clean()
-                    else:
-                        flag = slot.can_set_item(moving_slot.get_itemstack())
-                        if flag:
-                            stack, mstack = slot.get_itemstack(), moving_slot.get_itemstack()
-                            moving_slot.set_itemstack(stack)
-                            slot.set_itemstack(mstack, player=True)
+            if G.inventoryhandler.moving_slot.itemstack.is_empty() or (not slot.interaction_mode[1] and
+                                                                       slot.itemstack == self.moving_itemstack):
+                if not slot.interaction_mode[0]: return
+                G.inventoryhandler.moving_slot.itemstack = slot.itemstack.copy()
+                slot.itemstack.clean()
+                slot.call_update(True)
             else:
-                # todo: threw the itemstack
-                pass
+                self.mode = 1
+                self.on_mouse_drag(x, y, 0, 0, button, modifiers)
         elif button == mouse.RIGHT:
-            if slot:
-                if not slot.get_itemstack().item:
-                    if slot.interaction_mode[1] and slot.can_set_item(moving_slot.get_itemstack()):
-                        slot.set_itemstack(moving_slot.get_itemstack().copy().set_amount(1), player=True)
-                        moving_slot.get_itemstack().add_amount(-1)
-                elif not moving_slot.get_itemstack().item and slot.allow_half_getting:
-                    if slot.interaction_mode[0]:
-                        moving_slot.set_itemstack(slot.get_itemstack().copy())
-                        slot.get_itemstack().amount //= 2
-                        moving_slot.get_itemstack().set_amount(abs(moving_slot.get_itemstack().amount - slot.get_itemstack().amount))
-                        if slot.get_itemstack().amount == 0:
-                            slot.get_itemstack().clean()
-                        if moving_slot.get_itemstack().amount == 0:
-                            moving_slot.get_itemstack().clean()
-                        slot.call_update(player=True)
-                elif not slot.get_itemstack().is_empty() and slot.get_itemstack().get_item_name() == moving_slot.get_itemstack().\
-                        get_item_name() and slot.get_itemstack().amount < slot.get_itemstack().item.get_max_stack_size():
-                    if slot.interaction_mode[1]:
-                        slot.get_itemstack().add_amount(1)
-                        moving_slot.get_itemstack().add_amount(-1)
-                        slot.call_update(player=True)
+            if G.inventoryhandler.moving_slot.itemstack.is_empty() and slot.allow_half_getting:
+                if not slot.interaction_mode[0]: return
+                amount = slot.itemstack.amount
+                G.inventoryhandler.moving_slot.itemstack = slot.itemstack.copy().set_amount(amount-amount//2)
+                slot.itemstack.set_amount(amount//2)
+                slot.call_update(True)
             else:
-                # todo: threw one item
-                pass
+                self.mode = 2
+                self.on_mouse_drag(x, y, 0, 0, button, modifiers)
         elif button == mouse.MIDDLE:
-            if G.world.get_active_player().gamemode == 1 and slot and slot.get_itemstack().get_item_name() and not \
-                    moving_slot.get_itemstack().get_item_name():
-                moving_slot.set_itemstack(slot.get_itemstack().copy())
-                moving_slot.get_itemstack().set_amount(moving_slot.get_itemstack().item.get_max_stack_size())
+            if G.inventoryhandler.moving_slot.itemstack.is_empty() and G.world.get_active_player().gamemode == 1:
+                G.inventoryhandler.moving_slot.set_itemstack(slot.itemstack.copy().set_amount(
+                    slot.itemstack.item.STACK_SIZE))
+            elif G.world.get_active_player().gamemode == 1:
+                self.mode = 3
+                self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
-        if moving_slot.get_itemstack().amount == 0:
-            moving_slot.get_itemstack().clean()
+    def on_mouse_release(self, x, y, button, modifiers):
+        if G.window.exclusive:  # when no mouse interaction is active, do nothing beside clearing the status
+            self.slot_list.clear()
+            self.original_amount.clear()
+            self.moving_itemstack = None
+            self.mode = 0
+            return
+        self.reorder_slot_list_stacks()
+        if self.mode == 1:
+            if len(self.slot_list) == 0:
+                pass  # todo: drop item [see entity update]
+            self.slot_list.clear()
+            self.original_amount.clear()
+            self.moving_itemstack = None
+            self.mode = 0
+        elif self.mode == 2:
+            if len(self.slot_list) == 0:
+                pass  # todo: drop item [see entity update]
+            self.slot_list.clear()
+            self.original_amount.clear()
+            self.moving_itemstack = None
+            self.mode = 0
+        elif self.mode == 3:
+            self.slot_list.clear()
+            self.original_amount.clear()
+            self.moving_itemstack = None
+            self.mode = 0
+            G.inventoryhandler.moving_slot.itemstack.clean()
+
+    def deactivate(self):
+        for statepart in self.parts:
+            statepart.deactivate()
+        self.on_mouse_release(0, 0, 0, 0)
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifers):
+        if G.window.exclusive: return  # when no mouse interaction is active, do nothing
+        slot = self._get_slot_for(x, y)
+        if slot is None: return
+        if self.mode != 0 and (slot.itemstack.item == self.moving_itemstack.item or slot.itemstack.is_empty()):
+            if not slot.can_set_item(self.moving_itemstack): return
+            if not slot.interaction_mode[1]: return
+            if slot not in self.slot_list:
+                self.slot_list.append(slot)
+                self.original_amount.append(slot.itemstack.amount)
+            self.reorder_slot_list_stacks()
+
+    def reorder_slot_list_stacks(self):
+        if len(self.slot_list) == 0: return
+        if self.mode == 1:
+            total = self.moving_itemstack.amount
+            per_element = total // len(self.slot_list)
+            overhead = total - per_element * len(self.slot_list)
+            for i, slot in enumerate(self.slot_list):
+                x = 0 if overhead == 0 else 1
+                if overhead > 0: overhead -= 1
+                if slot.itemstack.is_empty(): slot.itemstack = self.moving_itemstack.copy()
+                slot.itemstack.set_amount(self.original_amount[i]+per_element+x)
+                slot.call_update(True)
+            G.inventoryhandler.moving_slot.itemstack.clean()
+        elif self.mode == 2:
+            overhead = self.moving_itemstack.amount
+            for i, slot in enumerate(self.slot_list):
+                if overhead > 0:
+                    if slot.itemstack.is_empty(): slot.itemstack = self.moving_itemstack.copy()
+                    slot.itemstack.set_amount(self.original_amount[i]+1)
+                    overhead -= 1
+                    slot.call_update(True)
+            G.inventoryhandler.moving_slot.itemstack.set_amount(overhead)
+        elif self.mode == 3:
+            for i, slot in enumerate(self.slot_list):
+                if slot.itemstack.item != self.moving_itemstack.item:
+                    slot.set_itemstack(self.moving_itemstack.copy())
+                slot.itemstack.set_amount(slot.itemstack.item.STACK_SIZE)
+                slot.call_update(True)
+
+    def on_mouse_scroll(self, x, y, dx, dy):
+        if G.window.exclusive: return  # when no mouse interaction is active, do nothing
+        slot = self._get_slot_for(x, y)
+        if slot is None: return
+        if self.mode != 0: return
+        if G.inventoryhandler.shift_container is not None:
+            if G.window.keys[key.LSHIFT]:
+                G.inventoryhandler.shift_container.move_to_opposite(slot)
+            else:
+                G.inventoryhandler.shift_container.move_to_opposite(slot, count=1)
 
 
 inventory_part = OpenedInventoryStatePart()
@@ -144,7 +207,10 @@ inventory_part = OpenedInventoryStatePart()
 
 class InventoryHandler:
     """
-    main class for registrating inventories
+    main class for registration of inventories
+    Will handle every inventory created at any time. Will keep track of which inventories are open and to send the
+        events to their event bus.
+    Please do not mess around with the internal lists as they are representing the state of the inventory system.
     """
 
     def __init__(self):
@@ -153,6 +219,11 @@ class InventoryHandler:
         self.inventorys = []
         self.moving_slot: gui.Slot.Slot = gui.Slot.Slot(allow_player_add_to_free_place=False, allow_player_insert=False,
                                                         allow_player_remove=False)
+        self.shift_container = gui.ShiftContainer.ShiftContainer()
+
+    def update_shift_container(self):
+        for inventory in self.opened_inventorystack:
+            inventory.update_shift_container()
 
     def add(self, inventory):
         """
@@ -176,6 +247,7 @@ class InventoryHandler:
         if inventory in self.opened_inventorystack: return
         self.opened_inventorystack.append(inventory)
         inventory.on_activate()
+        self.update_shift_container()
         G.eventhandler.call("inventory:show", inventory)
 
     def hide(self, inventory):
@@ -187,6 +259,7 @@ class InventoryHandler:
         if inventory in self.alwaysopened: return
         inventory.on_deactivate()
         self.opened_inventorystack.remove(inventory)
+        self.update_shift_container()
         G.eventhandler.call("inventory:hide", inventory)
 
     def remove_one_from_stack(self):

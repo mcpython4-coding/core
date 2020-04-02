@@ -953,6 +953,43 @@ started these clone on 12th of July, 2019
 [uuk]: moved the big rendering parts to the new rendering system
 [uuk]: added IAllDirectionOrientableBlock-baseclass
 [uuk]: dimension -1 (nether) and 1 (end) is now reserved by default
+[uuk]: removed deprecated loading phases
+[uuk]: removed features.py
+[uuk]: when closing game window, game will now be saved automatically
+[uuk]: rewritten how icons for hearts, hunger and armor are cropped & drawn
+[uuk]: fixed issue 141
+[uuk]: improved registry warning messages
+[uuk]: fixed issue 9, 152, 153
+[uuk]: improved command syntax error message
+[uuk]: added mycelium, podzol
+[uuk]: removed pyglet_fix.py as it is not required anymore
+[uuk]: added loader for the .lang format
+[uuk]: added support for rotation in blockmodel-element
+[uuk]: BlockFactory's setDefaultModelState-function accept now also an string like in boxmodels as state
+[uuk]: added handle for palette reference errors
+[uuk]: fixed issue 155, 156
+[uuk]: added barrier block
+[uuk]: new event: "stage:blockitemfactory:finish"
+[uuk]: moved the following configs [old ones are still arrival but not in normal use]:
+       Block.is_breakable() to static Block.BREAKABLE, Block.is_solid_side(side) to Block.face_solid[side],
+       Block.get_hardness() to static Block.HARDNESS, Block.get_minimum_tool_level() to static Block.MINIMUM_TOOL_LEVEL,
+       Block.get_best_tools() to static Block.BEST_TOOLS_TO_BREAK, Item.get_max_stack_size to static Item.STACK_SIZE,
+       ItemArmor.getDefensePoints() to static ItemArmor.DEFENSE_POINTS, ItemFood.get_eat_hunger_addition to
+       static ItemFood.HUNGER_ADDITION, Item.has_block() to static Item.HAS_BLOCK, ItemTool.get_tool_level to
+       static ItemTool.TOOL_LEVEL, ItemTool.get_tool_type() to static ItemTool.TOOL_TYPE
+[uuk]: removed Inventory.on_create
+[uuk]: added SlotTrashCan, SlotInfiniteStack and SlotInfiniteStackExchangeable-classes
+[uuk]: fixed issue 151, 158
+[uuk]: improved error handling when world is saved/loaded
+[uuk]: latest save-file version is now 4
+[uuk]: SHIFT-click is now send in any case to the function
+[uuk]: added on_button_press-attribute to Slot and its child classes
+[uuk]: fixed issue 160
+[uuk]: rewritten mouse handling system in guis to work with drag-mouse-movements
+[uuk]: added ShiftContainer-class holding two lists of slots for shift-clicking
+[uuk]: fixed issue 148, 162, 163
+[uuk]: added skin download helper
+[uuk]: dimension -1 (nether) and 1 (end) is now reserved by default
 [uuk]: moved Entity-class to entity/Entity
 [uuk]: entity has now an chunk-attribute storing an Chunk-class representing the entity
 [uuk]: added entities-set to Chunk

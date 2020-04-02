@@ -14,6 +14,7 @@ import os
 import logger
 import traceback
 import sys
+import traceback
 
 """
 History of save versions:
@@ -22,9 +23,10 @@ History of save versions:
 - 2: introduced: 10.03.2020, outdated since: 13.03.2020, not loadable since: -
     - removed temperature maps from saves
     - optimized landmass map in saves
-- 3: introduced: 13.03.2020 [part of loot table update], outdated since: -, not loadable since: -
+- 3: introduced: 13.03.2020 [part of loot table update], outdated since: 31.03.2020, not loadable since: -
     - chest container stores now also the loot table link when set
-- 4: introduced: 17.03.2020 [part of entity update], outdate since: -, not loadable since: -
+- 4: introduced: 31.03.2020, outdated since: -, not loadable since: -
+    - block coordinates are stored now relative to chunk; decreases chunk size
     - added entity serializer
 """
 
@@ -45,41 +47,55 @@ class SaveFile:
 
     def load_world(self):
         G.world.cleanup()
-        self.read("minecraft:general")
+        try:
+            self.read("minecraft:general")
 
-        while self.version != LATEST_VERSION:
-            if self.version not in storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map:
-                raise IOError("unsupported storage version '{}'. Latest: '{}', Found transformers from: '{}'".format(
-                    str(self.version), str(LATEST_VERSION), "', '".join(
-                        [str(e) for e in storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map.
-                            keys()])))
-            generaldatafixer = storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map[self.version]
-            for fix in generaldatafixer.LOAD_FIXES:
-                if type(fix) != tuple:
-                    self.upgrade(fix)
-                else:
-                    self.upgrade(fix[0], **fix[1])
-            self.version = generaldatafixer.UPGRADES_TO
+            while self.version != LATEST_VERSION:
+                if self.version not in storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map:
+                    raise IOError("unsupported storage version '{}'. Latest: '{}', Found transformers from: '{}'".format(
+                        str(self.version), str(LATEST_VERSION), "', '".join(
+                            [str(e) for e in storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map.
+                                keys()])))
+                generaldatafixer = storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map[self.version]
+                for fix in generaldatafixer.LOAD_FIXES:
+                    if type(fix) != tuple:
+                        self.upgrade(fix)
+                    else:
+                        self.upgrade(fix[0], **fix[1])
+                self.version = generaldatafixer.UPGRADES_TO
 
-        self.dump(None, "minecraft:general")
-        self.read("minecraft:player_data")
-        self.read("minecraft:gamerule")
-        self.read("minecraft:registry_info_serializer")
+            self.dump(None, "minecraft:general")
+            self.read("minecraft:player_data")
+            self.read("minecraft:gamerule")
+            self.read("minecraft:registry_info_serializer")
+        except:
+            G.world.cleanup()
+            G.statehandler.switch_to("minecraft:startmenu")
+            logger.println("exception during loading world. falling back to start menu...")
+            logger.write_exception()
+            traceback.print_exc()
 
     def save_world(self, *_, override=False):
         if self.save_in_progress: raise IOError("can't save world. save in process")
-        self.save_in_progress = True
-        G.worldgenerationhandler.enable_generation = False
-        print("saving world...")
-        self.dump(None, "minecraft:general")
-        self.dump(None, "minecraft:player_data")
-        self.dump(None, "minecraft:gamerule")
-        self.dump(None, "minecraft:registry_info_serializer")
-        for chunk in G.world.get_active_dimension().chunks:
-            if G.world.get_active_dimension().get_chunk(*chunk).loaded:
-                self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk, override=override)
-        print("save complete!")
-        G.worldgenerationhandler.enable_generation = True
+        try:
+            self.save_in_progress = True
+            G.worldgenerationhandler.enable_generation = False
+            print("saving world...")
+            self.dump(None, "minecraft:general")
+            self.dump(None, "minecraft:player_data")
+            self.dump(None, "minecraft:gamerule")
+            self.dump(None, "minecraft:registry_info_serializer")
+            for chunk in G.world.get_active_dimension().chunks:
+                if G.world.get_active_dimension().get_chunk(*chunk).loaded:
+                    self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk, override=override)
+            print("save complete!")
+            G.worldgenerationhandler.enable_generation = True
+        except:
+            G.world.cleanup()
+            G.statehandler.switch_to("minecraft:startmenu")
+            logger.println("exception during saving world. falling back to start menu...")
+            logger.write_exception()
+            traceback.print_exc()
         self.save_in_progress = False
 
     def upgrade(self, part=None, version=None, to=None, **kwargs):
@@ -97,7 +113,7 @@ class SaveFile:
         while flag:
             for fixer in storage.datafixer.IDataFixer.datafixerregistry.registered_object_map.values():
                 if fixer.TRANSFORMS[0] == version and (part is None or part == fixer.PART):
-                    print("applying fixer '{}'".format(fixer.NAME))
+                    print("applying fixer '{}' with config {}".format(fixer.NAME, kwargs))
                     fixer.fix(self, **kwargs)
                     if fixer.TRANSFORMS[1] == to:
                         flag = False
@@ -123,9 +139,9 @@ class SaveFile:
                     return serializer.load(self, **kwargs)
                 except storage.serializer.IDataSerializer.InvalidSaveException:
                     traceback.print_exc()
-                    logger.write_exception("during writing part '{}' to save files under '{}' with arguments {}".
+                    logger.write_exception("during reading part '{}' from save files under '{}' with arguments {}".
                                            format(part, self.directory, kwargs))
-                    return
+                    raise
         raise ValueError("can't find serializer named '{}'".format(part))
 
     def dump(self, data, part, **kwargs):
@@ -146,25 +162,25 @@ class SaveFile:
 
     def access_file_json(self, file):
         file = os.path.join(self.directory, file)
-        if not os.path.isfile(file): return None
+        if not os.path.isfile(file): return
         try:
             with open(file) as f: return json.load(f)
         except json.decoder.JSONDecodeError:
             logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
-            return None
+            return
 
     def access_file_pickle(self, file):
         file = os.path.join(self.directory, file)
-        if not os.path.isfile(file): return None
+        if not os.path.isfile(file): return
         try:
             with open(file, mode="rb") as f: return pickle.load(f)
         except (pickle.UnpicklingError, EOFError):
             logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
-            return None
+            return
 
     def access_raw(self, file):
         file = os.path.join(self.directory, file)
-        if not os.path.isfile(file): return None
+        if not os.path.isfile(file): return
         with open(file, mode="rb") as f: return f.read()
 
     def dump_file_json(self, file, data):

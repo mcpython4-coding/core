@@ -52,9 +52,9 @@ class Player(entity.Entity.Entity):
             ("main", False)
         ]
 
-        self.active_inventory_slot: int = 0
-
         self.iconparts = []
+
+        self.active_inventory_slot: int = 0
 
         if not globals.modloader.finished:
             mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
@@ -86,16 +86,7 @@ class Player(entity.Entity.Entity):
         self.inventories["enderchest"] = gui.InventoryChest.InventoryChest()
         self.inventories["crafting_table"] = gui.InventoryCraftingTable.InventoryCraftingTable()
 
-        self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/hart.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/hart_half.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/hart_base.png", "pyglet")),
-                          (ResourceLocator.read("build/texture/gui/icons/hunger.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/hunger_half.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/hunger_base.png", "pyglet")),
-                          (ResourceLocator.read("build/texture/gui/icons/armor.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/armor_half.png", "pyglet"),
-                           ResourceLocator.read("build/texture/gui/icons/armor_base.png", "pyglet")),
-                          (ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
+        self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/xp_bar.png", "pyglet"))]
 
     def set_gamemode(self, gamemode: int or str):
@@ -159,11 +150,11 @@ class Player(entity.Entity.Entity):
                 if not slot.get_itemstack().is_empty() and slot.get_itemstack().get_item_name() == itemstack.get_item_name() and \
                         slot.interaction_mode[2]:
                     if slot.get_itemstack().item and slot.get_itemstack().amount + itemstack.amount <= itemstack.item. \
-                            get_max_stack_size():
+                            STACK_SIZE:
                         slot.get_itemstack().add_amount(itemstack.amount)
                         return True
                     else:
-                        m = slot.get_itemstack().item.get_max_stack_size()
+                        m = slot.get_itemstack().item.STACK_SIZE
                         delta = m - slot.get_itemstack().amount
                         slot.get_itemstack().set_amount(m)
                         itemstack.add_amount(-delta)

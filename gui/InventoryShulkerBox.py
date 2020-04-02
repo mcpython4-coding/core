@@ -35,3 +35,7 @@ class InventoryShulkerBox(gui.InventoryChest.InventoryChest):
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E: G.inventoryhandler.hide(self)
 
+    def update_shift_container(self):
+        G.inventoryhandler.shift_container.container_A = G.world.get_active_player().inventories["main"].slots[:36]
+        G.inventoryhandler.shift_container.container_B = self.slots
+

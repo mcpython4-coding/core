@@ -9,8 +9,10 @@ import item.ItemTool
 
 
 class ItemArmor(item.ItemTool.ItemTool):  # todo: change to IItemWithDamageBar-class
-    def getDefensePoints(self):
-        return 0
+    DEFENSE_POINTS = 0
 
-    def get_max_stack_size(self) -> int: return 1
+    def getDefensePoints(self):  # todo: remove
+        return self.DEFENSE_POINTS
+
+    STACK_SIZE = 1
 

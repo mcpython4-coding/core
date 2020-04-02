@@ -14,7 +14,39 @@ changelog of the entity-update-branch
 
 
 changelog of master-branch
+    - added new event: "stage:blockitemfactory:finish"
+    - cleaned up base classes for block and item
+    - chunk entries containing positions are mostly stored relative to the chunk decreasing save file size
+    - changed some internal inventory interaction things
+    - on_shift_click can now return True when it should interrupt the following logic
+    - slots can now handle an key press
+    - rewritten mouse interaction system to support dragging over more than one slot & better shift-clicking
+
+    fixed bugs:
+        - game gives out exceptions when trying to load an non-existing world
+        - internal mouse-position error when dragging
+        - block-looking-at position lable was inverted to the gamerule
+        - crash when inventory slot count decreases between two loads of an world
+
+
+changelog of snapshot 20w12b [released on 21.03.2020]
     - added dimension definition for nether and end
+    - removed deprecated loading phases
+    - removed features.py as it was outdated
+    - world is now saved when window is closed (only when in the state)
+    - added mycelium block, podzol block, barrier block
+    - added barrier item
+    - .lang files can now be also loaded
+    - added support for uv rotation in element of block-models
+    - BlockFactory accepts now also an state-str like in block-state-files in setDefaultModelState
+
+    fixed bugs:
+        - Chunk.add_block did NOT accept the non-prefixed block-names like "stone"
+        - icon for half hunger was not rendered correctly
+        - BlockItemFactory failed to load block-items when not rebuilding for new blocks since last rebuild. This occur
+            only in first run due to missing _finish call of ItemFactory-instances
+        - rotation of BlockModels was not working
+        - multipart models failed to load when an entry had an list of models
 
 
 changelog of snapshot 20w12a [released on 16.03.2020]

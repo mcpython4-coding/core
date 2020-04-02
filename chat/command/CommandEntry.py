@@ -8,6 +8,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 from chat.command.Command import ParseType
 import event.Registry
+import logger
 
 
 class CommandEntry(event.Registry.IRegistryContent):
@@ -161,7 +162,11 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in G.registry.get_by_name("block").full_table  # is this block arrival?
+            flag = entrylist[start] in G.registry.get_by_name("block").full_table  # is this block arrival?
+            if not flag:
+                logger.println("[INFORM] invalid due to missing registry entry. Use '/registryinfo block' for an list "
+                               "of all found blocks!")
+            return flag
         
     @G.registry
     class ItemNameEntry(CommandEntry):
@@ -177,7 +182,11 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return entrylist[start] in G.registry.get_by_name("item").registered_object_map  # is this item arrival?
+            flag = entrylist[start] in G.registry.get_by_name("item").registered_object_map  # is this item arrival?
+            if not flag:
+                logger.println("[INFORM] invalid due to missing registry entry. Use '/registryinfo item' for an list "
+                               "of all found blocks")
+            return flag
         
     @G.registry
     class SelectorEntry(CommandEntry):

@@ -16,7 +16,6 @@ add end dimension:
     - add rendering for:
         - portal beam
         - shulker protectile
-    - implement dimension entry
     - add world generator
     - add feature generator for:
         - obsidian pillars

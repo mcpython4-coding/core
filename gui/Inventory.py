@@ -38,7 +38,6 @@ class Inventory:
         self.slots = self.create_slots()
         self.config = {}
         self.reload_config()
-        self.on_create()
         self.uuid = uuid.uuid4()
 
     def reload_config(self):
@@ -81,12 +80,6 @@ class Inventory:
             self.bgsprite = pyglet.sprite.Sprite(ResourceLocator.read(self.config["image_location"], "pyglet"))
         if "bg_image_pos" in self.config:
             self.bg_image_pos = tuple(self.config["bg_image_pos"])
-        self.on_create()
-
-    def on_create(self):  # todo: remove
-        """
-        called when the inventory is created
-        """
 
     def create_slots(self) -> list:  # todo: remove
         """
@@ -136,9 +129,9 @@ class Inventory:
         called when the inventory is hidden
         """
 
-    def is_closable_by_escape(self) -> bool: return True
+    def is_closable_by_escape(self) -> bool: return True  # todo: make attribute
 
-    def is_always_open(self) -> bool: return False
+    def is_always_open(self) -> bool: return False  # todo: make attribute
 
     def draw(self, hoveringslot=None):
         """
@@ -157,34 +150,34 @@ class Inventory:
             slot.draw_lable(x, y)
         self.on_draw_overlay()
 
-    def on_draw_background(self):
+    def on_draw_background(self):  # todo: remove
         """
         draw the background
         """
 
-    def on_draw_over_backgroundimage(self):
+    def on_draw_over_backgroundimage(self):  # todo: remove
         """
         draw between background and slots
         """
 
-    def on_draw_over_image(self):
+    def on_draw_over_image(self):  # todo: remove
         """
         draw between slots and counts
         """
 
-    def on_draw_overlay(self):
+    def on_draw_overlay(self):  # todo: remove
         """
         draw over anything else
         """
 
-    def is_blocking_interactions(self) -> bool:
+    def is_blocking_interactions(self) -> bool:  # todo: make attribute
         return True
 
-    def on_world_cleared(self):
+    def on_world_cleared(self):  # todo: remove
         [slot.get_itemstack().clean() for slot in self.slots]
         if self in G.inventoryhandler.opened_inventorystack: G.inventoryhandler.hide(self)
 
-    def get_interaction_slots(self):
+    def get_interaction_slots(self):  # todo: make attribute
         return self.slots
 
     def clear(self):
@@ -220,17 +213,22 @@ class Inventory:
         slots = self.slots.copy()
         if random_check_order: random.shuffle(slots)
         for slot in slots:
-            if slot.itemstack.is_empty():
-                slot.itemstack = itemstack
+            if slot.itemstack.is_empty() and slot.interaction_mode[2]:
+                slot.set_itemstack(itemstack)
                 return
-            elif slot.itemstack.get_item_name() == itemstack.get_item_name():
-                if slot.itemstack.amount + itemstack.amount <= itemstack.item.get_max_stack_size():
+            elif slot.itemstack.get_item_name() == itemstack.get_item_name() and slot.interaction_mode[2]:
+                if slot.itemstack.amount + itemstack.amount <= itemstack.item.STACK_SIZE:
                     slot.itemstack.add_amount(itemstack.amount)
                     return
                 else:
-                    overflow = itemstack.amount - (itemstack.item.get_max_stack_size() - slot.itemstack.amount)
-                    slot.itemstack.amount = itemstack.item.get_max_stack_size()
+                    overflow = itemstack.amount - (itemstack.item.STACK_SIZE - slot.itemstack.amount)
+                    slot.itemstack.amount = itemstack.item.STACK_SIZE
                     itemstack.set_amount(overflow)
         # todo: drop item
+
+    def update_shift_container(self):
+        """
+        called when the inventory should update the content of the ShiftContainer of the inventory-handler
+        """
 
 

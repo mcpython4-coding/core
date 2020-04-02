@@ -28,7 +28,7 @@ class Slot:
 
     def __init__(self, itemstack=None, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
                  allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None,
-                 empty_image=None, allowed_item_tags=None, allowed_item_test=None):
+                 empty_image=None, allowed_item_tags=None, allowed_item_test=None, on_button_press=None):
         """
         creates an new slot
         :param itemstack: the itemstack to use
@@ -38,7 +38,8 @@ class Slot:
         :param allow_player_add_to_free_place: if items can be added direct to system
         :param on_update: called when the slot is updated
         :param allow_half_getting: can the player get only the half of the items out of the slot?
-        :param on_shift_click: called when shift-clicked on the block
+        :param on_shift_click: called when shift-clicked on the block, should return if normal logic should go on or not
+        :param on_button_press: called when an button is pressed when hovering above the slot
         """
         self.__itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
         self.position = position
@@ -61,6 +62,7 @@ class Slot:
         self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
         self.allowed_item_tags = allowed_item_tags
         self.allowed_item_func = allowed_item_test
+        self.on_button_press = on_button_press
 
     def get_itemstack(self):
         return self.__itemstack
@@ -102,7 +104,6 @@ class Slot:
             if self.empty_image:
                 self.empty_image.position = (self.position[0] + dx, self.position[1] + dy)
                 self.empty_image.draw()
-        self.amount_label.text = str(self.__itemstack.amount)
         if self.sprite is not None:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.sprite.draw()
@@ -146,10 +147,14 @@ class Slot:
         if not self.itemstack.is_empty():
             self.itemstack.item.set_data(data["itemstack"]["data"])
 
+    def __str__(self):
+        return "Slot(position=({},{}),itemstack={})".format(*self.position, self.itemstack)
+
 
 class SlotCopy:
     def __init__(self, master, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
-                 allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None):
+                 allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None,
+                 on_button_press=None):
         # todo: add empty image
         # todo: add options for item allowing
         self.master: Slot = master
@@ -167,6 +172,7 @@ class SlotCopy:
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
         self.amount_label = pyglet.text.Label(text=str(self.master.itemstack.amount), anchor_x="right")
+        self.on_button_press = on_button_press
 
     def get_allowed_item_tags(self):
         return self.master.allowed_item_tags
@@ -230,4 +236,60 @@ class SlotCopy:
         if not self.itemstack.is_empty():
             self.itemstack.item.set_data(data["itemstack"]["data"])
 
+    def __str__(self):
+        return "Slot(position=({},{}),itemstack={})".format(*self.position, self.itemstack)
+
+
+class SlotInfiniteStack(Slot):
+    def __init__(self, itemstack, position=(0, 0), allow_player_remove=True, on_button_press=None,
+                 allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None):
+        super().__init__(itemstack=itemstack, position=position, allow_player_remove=allow_player_remove,
+                         allow_player_insert=False, allow_player_add_to_free_place=allow_player_add_to_free_place,
+                         on_update=on_update, allow_half_getting=allow_half_getting, on_shift_click=on_shift_click,
+                         on_button_press=on_button_press)
+        self.reference_stack = self.itemstack.copy()
+
+    def set_itemstack(self, stack, update=True, player=False):
+        pass
+
+    def call_update(self, player=False):
+        if not self.on_update: return
+        [f(player=player) for f in self.on_update]
+        if self.itemstack != self.reference_stack:
+            self.itemstack = self.reference_stack.copy()
+
+    itemstack = property(Slot.get_itemstack, set_itemstack)
+
+
+class SlotInfiniteStackExchangeable(Slot):
+    def __init__(self, itemstack, position=(0, 0), allow_player_remove=True, on_button_press=None,
+                 allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None):
+        super().__init__(itemstack=itemstack, position=position, allow_player_remove=allow_player_remove,
+                         allow_player_insert=True, allow_player_add_to_free_place=allow_player_add_to_free_place,
+                         on_update=on_update, allow_half_getting=allow_half_getting, on_shift_click=on_shift_click,
+                         on_button_press=on_button_press)
+        self.reference_stack = self.itemstack.copy()
+
+    def set_itemstack(self, stack, update=True, player=False):
+        self.__itemstack = stack if stack else gui.ItemStack.ItemStack.get_empty()
+        if not stack.itemstack.is_empty(): self.reference_stack = stack.copy()
+        if update:
+            self.call_update(player=player)
+
+    def call_update(self, player=False):
+        if not self.on_update: return
+        [f(player=player) for f in self.on_update]
+        if self.itemstack != self.reference_stack:
+            self.itemstack = self.reference_stack.copy()
+
+    itemstack = property(Slot.get_itemstack, set_itemstack)
+
+
+class SlotTrashCan(Slot):
+    def set_itemstack(self, stack, update=True, player=False):
+        self.__itemstack = stack if stack else gui.ItemStack.ItemStack.get_empty()
+        flag = True
+        if update:
+            flag = self.call_update(player=player)
+        if flag is not False: self.__itemstack.clean()
 

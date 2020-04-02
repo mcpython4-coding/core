@@ -123,6 +123,7 @@ class StateBlockItemGenerator(State.State):
             json.dump({"finished": True}, f)
         G.tickhandler.enable_random_ticks = True
         G.world.hide_faces_to_ungenerated_chunks = True
+        G.eventhandler.call("stage:blockitemfactory:finish")
 
     def close(self):
         G.statehandler.switch_to("minecraft:startmenu")
@@ -212,7 +213,7 @@ class StateBlockItemGenerator(State.State):
         obj = factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True)
         block = G.world.get_active_dimension().get_block((0, 0, 0))
         if type(block) != str and block is not None: block.modify_block_item(obj)
-        obj.finish()
+        obj.finish(task_list=True)
         self.tries = 0
 
 

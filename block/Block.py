@@ -11,6 +11,7 @@ import block.BoundingBox
 import block.BlockFaceState
 import event.Registry
 import uuid
+import util.enums
 
 
 class Block(event.Registry.IRegistryContent):
@@ -21,7 +22,13 @@ class Block(event.Registry.IRegistryContent):
     CUSTOM_WALING_SPEED_MULTIPLIER = None  # used when the player walks in an different speed on this block
     TYPE = "minecraft:block_registry"
 
-    BLOCK_ITEM_GENERATOR_STATE = None
+    BLOCK_ITEM_GENERATOR_STATE = None  # used internally to set the state the BlockItemGenerator uses
+
+    BREAKABLE = True  # If this block can be broken in gamemode 0 and 2
+
+    HARDNESS = 1
+    MINIMUM_TOOL_LEVEL = 0
+    BEST_TOOLS_TO_BREAK = []
 
     def __init__(self, position: tuple, set_to=None, real_hit=None, state=None):
         """
@@ -36,6 +43,7 @@ class Block(event.Registry.IRegistryContent):
         if state is not None: self.set_model_state(state)
         self.face_state = block.BlockFaceState.BlockFaceState(self)
         self.block_state = None
+        self.face_solid = {face: True for face in util.enums.EnumSide.iterate()}
         self.uuid = uuid.uuid4()
 
     def on_remove(self):
@@ -49,11 +57,8 @@ class Block(event.Registry.IRegistryContent):
         """
         return []
 
-    def is_breakable(self) -> bool:  # todo: make to constant
-        """
-        :return: if the block is breakable in gamemode 0
-        """
-        return True
+    def is_breakable(self) -> bool:  # todo: remove
+        return self.BREAKABLE
 
     def on_random_update(self):
         """
@@ -65,12 +70,8 @@ class Block(event.Registry.IRegistryContent):
         called when an near-by block-position is updated by setting/removing an block
         """
 
-    def is_solid_side(self, side) -> bool:  # todo: make attribute
-        """
-        :param side: the side that is asked for
-        :return: if the side is solid or not
-        """
-        return True
+    def is_solid_side(self, side) -> bool:  # todo: remove
+        return self.face_solid[side]
 
     def get_model_state(self) -> dict: return {}
 
@@ -91,14 +92,14 @@ class Block(event.Registry.IRegistryContent):
         """
         return False
 
-    def get_hardness(self):  # todo: make attribute
-        return 1
+    def get_hardness(self):  # todo: remove
+        return self.HARDNESS
 
-    def get_minimum_tool_level(self):  # todo: make attribute
-        return 0
+    def get_minimum_tool_level(self):  # todo: remove
+        return self.MINIMUM_TOOL_LEVEL
 
-    def get_best_tools(self):  # todo: make attribute
-        return []
+    def get_best_tools(self):  # todo: remove
+        return self.BEST_TOOLS_TO_BREAK
 
     def get_provided_slots(self, side):
         return []

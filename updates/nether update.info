@@ -1,5 +1,5 @@
 add nether dimension:
-    - nether portal
+    - nether portal with portal blocks and multiblock-structure
     - different background color
     - nether fortress
     - zombie pigman, ghast, magma cube, blaze, wither skeleton, pigman jockey
@@ -8,5 +8,4 @@ add nether dimension:
     - magma blocks vein
     - soul sand vein
     - gravel vein
-    - lava, mushrooms, netherrack, soul sand, glowstone, magma block, portal block, nether bricks & variants,
-      nether wart
+    - lava, mushrooms, portal block

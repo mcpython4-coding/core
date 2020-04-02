@@ -37,6 +37,11 @@ class ChunkFixer(storage.datafixer.IDataFixer.IDataFixer):
             cdata = data[chunk]
             if "entities" not in cdata:
                 cdata["entities"] = []
+            blocks = cdata["blocks"]
+            cdata["blocks"] = {}
+            for position in blocks:
+                cdata["blocks"][(position[0] - chunk[0] * 16, position[1],
+                                      position[2] - chunk[2] * 16)] = blocks[position]
         savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
 
 

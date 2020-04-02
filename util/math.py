@@ -41,23 +41,34 @@ def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True
     return top + bottom + left + right + front + back
 
 
-def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1)):
+def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0):
     """
     Return the bounding vertices of the texture square.
     :param x: the texture atlas entry to use
     :param y: the texture atlas entry to use
     :param size: the size of the texture atlas used
     :param region: the texture region to use. (0, 0, 1, 1) is full texture atlas texture size
+    :param rot: in steps of 90: how much to rotate the vertices
     """
     mx = 1. / size[0]
     my = 1. / size[1]
     dx = x * mx
     dy = y * my
     bx, by, ex, ey = region[0] / size[0], region[1] / size[1], (1 - region[2]) / size[0], (1 - region[3]) / size[1]
-    return dx + bx, dy + by, dx + mx - ex, dy + by, dx + mx - ex, dy + my - ey, dx + bx, dy + my - ey
+    positions = [(dx + bx, dy + by), (dx + mx - ex, dy + by), (dx + mx - ex, dy + my - ey), (dx + bx, dy + my - ey)]
+    if rot != 0:
+        reindex = rot // 90
+        _positions = positions
+        positions = [0] * len(positions)
+        for i, e in enumerate(_positions):
+            positions[(i+reindex) % 4] = e
+
+    position = []
+    [position.extend(e) for e in positions]
+    return position
 
 
-def tex_coords(*args, size=(32, 32), tex_region=None):
+def tex_coords(*args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)):
     """
     Return a list of the texture squares for the top, bottom and sides.
     """
@@ -68,12 +79,12 @@ def tex_coords(*args, size=(32, 32), tex_region=None):
             arg = (0, 0)
         args[i] = arg
     top, bottom, N, S, E, W = tuple(args)
-    top = tex_coord(*top, size=size, region=tex_region[0])
-    bottom = tex_coord(*bottom, size=size, region=tex_region[1])
-    n = tex_coord(*N, size=size, region=tex_region[2])
-    e = tex_coord(*E, size=size, region=tex_region[3])
-    s = tex_coord(*S, size=size, region=tex_region[4])
-    w = tex_coord(*W, size=size, region=tex_region[5])
+    top = tex_coord(*top, size=size, region=tex_region[0], rot=rotation[0])
+    bottom = tex_coord(*bottom, size=size, region=tex_region[1], rot=rotation[1])
+    n = tex_coord(*N, size=size, region=tex_region[2], rot=rotation[2])
+    e = tex_coord(*E, size=size, region=tex_region[3], rot=rotation[3])
+    s = tex_coord(*S, size=size, region=tex_region[4], rot=rotation[4])
+    w = tex_coord(*W, size=size, region=tex_region[5], rot=rotation[5])
     result = []
     result.extend(top)
     result.extend(bottom)

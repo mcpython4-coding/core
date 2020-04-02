@@ -61,11 +61,11 @@ class CommandItemInfo(chat.command.Command.Command):
         logger.println("-amount: {}".format(itemstack.amount))
         logger.println("-itemname: '{}'".format(itemstack.get_item_name()))
         if itemstack.item:
-            logger.println("-has block: {}".format(itemstack.item.has_block()))
-            if itemstack.item.has_block():
+            logger.println("-has block: {}".format(itemstack.item.HAS_BLOCK))
+            if itemstack.item.HAS_BLOCK:
                 logger.println("-blockname: {}".format(itemstack.item.get_block()))
             logger.println("-itemfile: '{}'".format(itemstack.item.get_default_item_image_location()))
-            logger.println("-max stack size: {}".format(itemstack.item.get_max_stack_size()))
+            logger.println("-max stack size: {}".format(itemstack.item.STACK_SIZE))
             tags = []
             for tag in G.taghandler.taggroups["items"].tags.values():
                 if itemstack.item.NAME in tag.entries:

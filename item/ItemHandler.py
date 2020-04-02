@@ -20,6 +20,7 @@ import factory.ItemFactory
 import mod.ModMcpython
 import traceback
 import logger
+import logger
 
 
 TEXTURE_ATLASES = []
@@ -77,7 +78,8 @@ def load_data(from_block_item_generator=False):
                     block.modify_block_item(obj)
                     obj.finish()
                 else:
-                    logger.println("[ERROR] during constructing block item for {}: Failed to find block".format(name))
+                    logger.println("[ERROR] during constructing block item for '{}': Failed to find block in active "
+                                   "registry".format(name))
                     data.remove(entry)
             with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
                 json.dump(data, f)
@@ -101,7 +103,8 @@ def register_item(registry, itemclass):
         except ValueError:
             images = [texture.TextureAtlas.MISSING_TEXTURE] * len(files)
             traceback.print_exc()
-            print("during not finding files: {}".format(files))
+            logger.write_exception()
+            logger.println("during not finding files: {}".format(files))
         flag = True
         for textureatlas in TEXTURE_ATLASES:
             if textureatlas.is_free_for(files):
@@ -116,7 +119,7 @@ def register_item(registry, itemclass):
             for i, image in enumerate(images):
                 table[itemclass.NAME][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
     except:
-        logger.println(itemclass.NAME, itemclass.get_used_texture_files())
+        logger.println("information for exception: ", itemclass.NAME, itemclass.get_used_texture_files())
         raise
 
 

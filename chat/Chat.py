@@ -25,7 +25,8 @@ class ChatInventory(gui.Inventory.Inventory):
     main class for chat
     """
 
-    def on_create(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.lable = pyglet.text.HTMLLabel("", x=15, y=15)
         self.enable_blink = True
         self.timer = time.time()

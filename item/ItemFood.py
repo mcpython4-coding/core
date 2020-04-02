@@ -17,9 +17,11 @@ class ItemFood(item.Item.Item):
         """
         if G.world.get_active_player().hunger == 20:
             return False
-        G.world.get_active_player().hunger = min(self.get_eat_hunger_addition()+G.world.get_active_player().hunger, 20)
+        G.world.get_active_player().hunger = min(self.HUNGER_ADDITION+G.world.get_active_player().hunger, 20)
         return True
 
+    HUNGER_ADDITION = None
+
     def get_eat_hunger_addition(self) -> int:
-        raise NotImplementedError()
+        return self.HUNGER_ADDITION
 

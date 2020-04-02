@@ -254,14 +254,15 @@ class Window(pyglet.window.Window):
             mouse button was clicked.
 
         """
-        G.eventhandler.call("user:mouse:press", x, y, button, modifiers)
         self.mouse_pressing[button] = True
+        G.eventhandler.call("user:mouse:press", x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
-        G.eventhandler.call("user:mouse:release", x, y, button, modifiers)
         self.mouse_pressing[button] = False
+        G.eventhandler.call("user:mouse:release", x, y, button, modifiers)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        self.mouse_position = (x, y)
         G.eventhandler.call("user:mouse:drag", x, y, dx, dy, buttons, modifiers)
         if self.exclusive:
             self.on_mouse_motion(x, y, dx, dy)
@@ -381,15 +382,16 @@ class Window(pyglet.window.Window):
         if not G.world.gamerulehandler.table["showCoordinates"].status.status:
             x = y = z = "?"
         chunk = G.world.get_active_dimension().get_chunk(*util.math.sectorize(G.world.get_active_player().position), create=False)
-        self.label.text = '%02d (%.2f, %.2f, %.2f), gamemode %01d' % (
-            pyglet.clock.get_fps(), x, y, z, G.world.get_active_player().gamemode)
+        self.label.text = '%02d (%.2f, %.2f, %.2f) [region %01d %01d], gamemode %01d' % (
+            pyglet.clock.get_fps(), x, y, z, 0, 0, G.world.get_active_player().gamemode)
         vector = G.window.get_sight_vector()
         blockpos, previous, hitpos = G.world.hit_test(G.world.get_active_player().position, vector)
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str: blockname = blockname.NAME
-            self.label2.text = "block {} at {}".format(blockname, blockpos if not G.world.gamerulehandler.table[
-                "showCoordinates"].status.status else ("?", "?", "?"))
+            self.label2.text = "looking at '{}(position={})'".format(
+                blockname, blockpos if G.world.gamerulehandler.table["showCoordinates"].status.status else
+                ("?", "?", "?"))
             self.label2.draw()
             self.label3.y = self.height - 34
         else:
@@ -431,5 +433,8 @@ class Window(pyglet.window.Window):
 
     def on_close(self):
         if G.world.savefile.save_in_progress: return
+        if G.statehandler.active_state is not None and any(
+                [part.NAME == "minecraft:state_part_game" for part in G.statehandler.active_state.parts]):
+            G.world.savefile.save_world(override=True)
         self.close()
 

@@ -80,10 +80,10 @@ class InventoryFurnace(gui.Inventory.Inventory):
                 return
             if self.slots[2].itemstack.get_item_name() is not None and (
                     self.slots[2].itemstack.get_item_name() != recipe.output or
-                    self.slots[2].itemstack.amount >= self.slots[2].itemstack.item.get_max_stack_size()):
+                    self.slots[2].itemstack.amount >= self.slots[2].itemstack.item.STACK_SIZE):
                 if not self.slots[2].itemstack.is_empty():
                     print(self.slots[2].itemstack.get_item_name() != recipe.output,
-                          self.slots[2].itemstack.amount, self.slots[2].itemstack.item.get_max_stack_size())
+                          self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
                 self.reset()
                 return
             self.recipe: crafting.FurnaceCrafting.FurnesRecipe = recipe
@@ -193,7 +193,7 @@ class InventoryFurnace(gui.Inventory.Inventory):
         if self.slots[2].itemstack.is_empty():
             self.slots[2].itemstack = gui.ItemStack.ItemStack(self.recipe.output)
         else:
-            if self.slots[2].itemstack.item.get_max_stack_size() > self.slots[2].itemstack.amount:
+            if self.slots[2].itemstack.item.STACK_SIZE > self.slots[2].itemstack.amount:
                 self.slots[2].itemstack.add_amount(1)
         self.slots[0].itemstack.add_amount(-1)
         try:
