@@ -27,11 +27,12 @@ History of save versions:
     - chest container stores now also the loot table link when set
 - 4: introduced: 31.03.2020, outdated since: -, not loadable since: -
     - block coordinates are stored now relative to chunk; decreases chunk size
+- 5: pre-introduced: 17.03.2020 [part of entity update], outdate since: -, not loadable since: -
     - added entity serializer
 """
 
 
-LATEST_VERSION = 4
+LATEST_VERSION = 5
 
 G.STORAGE_VERSION = LATEST_VERSION
 
