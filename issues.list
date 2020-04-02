@@ -90,20 +90,22 @@ issue 150:
      fix B: move integers to move rendering of world first, than apply an relative player coordinate, store every coord
         as an tuple of (sector x, sector z, dx, y, dz) where x=10**(4*"sector x")+dx and z respectively
         (-> maybe add an FloatPosition-class handling all this stuff)
-     fix C: use the decimal module for handling the floats
+     fix C: use the decimal module for handling the floats [warning: OpenGL may cause problems when using the module]
 
 issue 154: [fix with generation update]
     bug: debug world blocks do NOT use block-state
 
 issue 157:
-    bug: loading hangs before showing the chunk loading screen due to deserialization timing
+    bug: loading hangs before showing the chunk loading screen due to deserialization times
+    fix: add color indicating that the deserialization is in progress
 
 issue 159: [fix in world generation update]
-    bug: various maps are stored not chunk-relative
+    bug: various maps are stored not chunk-relative making file size big at outer positions
+    fix: implement relative-storage with data-fixer
 
 issue 161:
     bug: when saving, moving slot is not saved
     fix: like in kill-method, force-close all inventories on save
     other fix: save moving slot also & load it
 
-[162]
+[162-163]

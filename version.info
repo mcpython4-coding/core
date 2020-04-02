@@ -987,5 +987,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 160
 [uuk]: rewritten mouse handling system in guis to work with drag-mouse-movements
 [uuk]: added ShiftContainer-class holding two lists of slots for shift-clicking
-[uuk]: fixed issue 162
+[uuk]: fixed issue 148, 162, 163
 

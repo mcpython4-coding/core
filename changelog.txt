@@ -10,6 +10,12 @@ changelog of master-branch:
     - slots can now handle an key press
     - rewritten mouse interaction system to support dragging over more than one slot & better shift-clicking
 
+    fixed bugs:
+        - game gives out exceptions when trying to load an non-existing world
+        - internal mouse-position error when dragging
+        - block-looking-at position lable was inverted to the gamerule
+        - crash when inventory slot count decreases between two loads of an world
+
 
 changelog of snapshot 20w12b [released on 21.03.2020]
     - added dimension definition for nether and end
