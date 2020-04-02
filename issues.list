@@ -106,6 +106,6 @@ issue 159: [fix in world generation update]
 issue 161:
     bug: when saving, moving slot is not saved
     fix: like in kill-method, force-close all inventories on save
-    other fix: save moving slot also & load it
+    other fix: save moving slot also & load it [warning: also save what inventories are open]
 
 [162-163]
