@@ -101,13 +101,14 @@ class EntityRenderer:
 
     def add_to_batch(self, batch, entity, state, rotation=(0, 0, 0), part_rotation=None):
         """
-        adds the entity to an batch. Useful only for static entities
+        adds the entity to an batch. Useful mostly for static entities like static complex block elements
         :param batch: the batch to use
         :param entity: the entity to add
         :param state: the state to add
         :param rotation: the rotation to use
         :param part_rotation: the rotation of every part
         :return: an list of vertex-objects created with the batch
+        WARNING: batch  M U S T  be rendered in an 3d environment with, if the texture needs it, alpha enabled
         """
         data = []
         x, y, z = entity.position

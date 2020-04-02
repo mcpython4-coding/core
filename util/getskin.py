@@ -12,6 +12,7 @@ import requests
 import globals as G
 import os
 import logger
+import PIL.Image
 
 DEBUG = False
 SIMULATE = False
@@ -95,5 +96,11 @@ def download_skin(username: str, store: str):
     if r.status_code != 200: raise ValueError()
     with open(store, 'wb') as f:
         f.write(r.content)
-    with open(G.local+"/build/skin_{}.png".format(username), "wb") as f:
-        f.write(r.content)
+    image = PIL.Image.open(store)
+    if image.size[0] != image.size[1:]:
+        new_image = PIL.Image.new("RGBA", (image.size[0], image.size[0]), (0, 0, 0, 0))
+        new_image.alpha_composite(image)
+        new_image.alpha_composite(image.crop((0, 16, 15, 32)), (16, 48))
+        new_image.alpha_composite(image.crop((40, 16, 55, 32)), (32, 48))
+        new_image.save(store)
+    shutil.copy(store, G.local+"/build/skin_{}.png".format(username))
