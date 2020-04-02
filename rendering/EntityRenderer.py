@@ -61,16 +61,18 @@ class EntityRenderer:
         self.data = ResourceLocator.read(self.path, "json")
         self.box_models.clear()
         self.states.clear()
+        reloaded = []
         for boxname in self.data["boxes"]:
             box = self.data["boxes"][boxname]
             texture = box["texture"]
             self.texture_size = box["texture_size"]
-            if texture in TEXTURES:
+            if texture in TEXTURES and texture in reloaded:
                 group = TEXTURES[texture]
             else:
                 group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
                     ResourceLocator.read(texture, "pyglet").get_texture())
-            self.box_models[boxname]= rendering.BoxModel.BaseBoxModel(
+                reloaded.append(texture)
+            self.box_models[boxname] = rendering.BoxModel.BaseBoxModel(
                 box["position"] if "position" in box else (0, 0, 0), tuple([e/16 for e in box["size"]]), group,
                 [tuple([float(x)/self.texture_size[i%2] for i, x in enumerate(e.split("|"))]) for e in box["uv"]],
                 box["rotation"] if "rotation" in box else (0, 0, 0), box["center"] if "center" in box else (0, 0, 0))

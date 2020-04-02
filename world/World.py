@@ -45,9 +45,11 @@ class World:
         self.players[name] = G.entityhandler.add_entity("minecraft:player", (0, 0, 0), name)
         if add_inventories:
             self.players[name].create_inventories()
+        return self.players[name]
 
     def get_active_player(self):
-        return self.players[self.active_player]
+        return self.players[self.active_player] if self.active_player in self.players else self.add_player(
+            self.active_player)
 
     def reset_config(self):
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}

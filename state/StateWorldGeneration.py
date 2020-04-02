@@ -20,6 +20,10 @@ import time
 import util.opengl
 import os
 import shutil
+import util.getskin
+import world.player
+import ResourceLocator
+import traceback
 
 
 class StateWorldGeneration(State.State):
@@ -87,12 +91,23 @@ class StateWorldGeneration(State.State):
                 self.status_table[(cx, cz)] = 0
 
     def finish(self):
+        # read in the config
+
         self = G.statehandler.states["minecraft:world_generation_config"]
         G.eventhandler.call("on_game_generation_finished")
         logger.println("[WORLDGENERATION] finished world generation")
         playername = self.parts[6].entered_text
         if playername == "": playername = "unknown"
         if playername not in G.world.players: G.world.add_player(playername)
+
+        # setup skin
+        try:
+            util.getskin.download_skin(playername, G.local+"/build/skin.png")
+        except ValueError:
+            logger.println("[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
+            ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local + "/build/skin.png")
+            traceback.print_exc()
+        world.player.Player.RENDERER.reload()
         G.world.active_player = playername
         G.world.get_active_player().position = (G.world.spawnpoint[0], util.math.get_max_y(G.world.spawnpoint),
                                                 G.world.spawnpoint[1])
@@ -100,19 +115,24 @@ class StateWorldGeneration(State.State):
         G.world.config["enable_world_barrier"] = \
             self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
         if G.world.get_active_player().name == "": G.world.get_active_player().name = "unknown"
+
+        # reload all the data-packs
         chat.DataPack.datapackhandler.reload()
         chat.DataPack.datapackhandler.try_call_function("#minecraft:load")
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
+
+        # set spawn-point
         x, z = random.randint(0, 15), random.randint(0, 15)
         height = util.math.get_max_y((x, z))
         blockchest = G.world.get_active_dimension().add_block((x, height-1, z), "minecraft:chest")
         blockchest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
         G.eventhandler.call("on_game_enter")
 
-        # add surrounding chunks to list
+        # add surrounding chunks to load list
         G.world.change_sectors(None, util.math.sectorize(G.world.get_active_player().position))
         G.world.savefile.save_world()
 
+        # set player position
         player = G.world.get_active_player()
         player.teleport(player.position, force_chunk_save_update=True)
 

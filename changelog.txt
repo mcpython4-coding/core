@@ -11,6 +11,7 @@ changelog of the entity-update-branch
     - added saves for entities
     - added /summon command
     - added loading phase for entities
+    - added skins based on the player name
 
 
 changelog of master-branch

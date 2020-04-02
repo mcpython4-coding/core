@@ -9,6 +9,9 @@ import storage.serializer.IDataSerializer
 import globals as G
 import config
 import logger
+import util.getskin
+import world.player
+import ResourceLocator
 
 
 @G.registry
@@ -23,6 +26,12 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
         playername = data["player name"]
         if playername not in G.world.players: G.world.add_player(playername)
         G.world.active_player = playername
+        try:
+            util.getskin.download_skin(playername, G.local+"/build/skin.png")
+        except ValueError:
+            logger.println("[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
+            ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local + "/build/skin.png")
+        world.player.Player.RENDERER.reload()
         G.world.config = data["config"]
         G.eventhandler.call("seed:set")
         if data["game version"] not in config.VERSION_ORDER:
