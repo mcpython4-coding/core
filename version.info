@@ -1016,8 +1016,8 @@ started these clone on 12th of July, 2019
 [uuk]: skins will be applied when arrival by player name. In case of not existent, the default skin is used
 [uuk]: added support for non-full skin files [internally converted when downloading them]
 [uuk]: added SUMMON_ABLE-flag to Entity-class determine if the entity can be used in the /summon command
+[uuk]: moved skin-cache from build to build/skins folder
 
-todo: move player skin cache to an separated folder
 todo: check if rebuild mode is possible [maybe skin caching does NOT work correctly :-(]
 todo: check what happens when no internet connection is arrival [skin download fails]
 todo: fix bug: when dying, entity player is not rendered anymore
