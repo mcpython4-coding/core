@@ -1025,6 +1025,7 @@ todo: move player skin cache to an separated folder
 todo: check if rebuild mode is possible [maybe skin caching does NOT work correctly :-(]
 todo: check what happens when no internet connection is arrival [skin download fails]
 todo: fix bug: when dying, entity player is not rendered anymore
+todo: fix bug: an player named "unknown" stays always at (0, 0, 0)
 
 MISSING BEFORE GOING ON: collision box system [AABB's]
 

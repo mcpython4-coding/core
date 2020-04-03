@@ -53,6 +53,9 @@ class Chunk:
         return self.attr[name]
 
     def draw(self):
+        # if len(self.entities) > 0: print([(entity.position, entity.NAME, entity.name) for entity in self.entities])
+        # if len(self.entities) > 0:
+        #     print(self.position, self.is_ready, len(self.chunkgenerationtasks), self.visible, self.loaded)
         if not self.is_ready or len(self.chunkgenerationtasks) > 0: return
         if not self.visible: return
         if not self.loaded:

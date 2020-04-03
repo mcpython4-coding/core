@@ -93,6 +93,11 @@ class StateWorldGeneration(State.State):
     def finish(self):
         # read in the config
 
+        for pos in self.status_table:
+            chunk = G.world.get_active_dimension().get_chunk(*pos)
+            chunk.is_ready = True
+            chunk.visible = True
+
         self = G.statehandler.states["minecraft:world_generation_config"]
         G.eventhandler.call("on_game_generation_finished")
         logger.println("[WORLDGENERATION] finished world generation")
