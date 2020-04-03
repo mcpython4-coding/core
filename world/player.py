@@ -194,34 +194,34 @@ class Player(entity.Entity.Entity):
                 self.hearts = 20
                 self.hunger = 20
                 return
-        super().kill()  # todo: create an new entity for player
         sector = util.math.sectorize(self.position)
         globals.world.change_sectors(sector, None)
+        self.reset_moving_slot()
         if not globals.world.gamerulehandler.table["keepInventory"].status.status:
-            globals.commandparser.parse("/clear")
+            globals.commandparser.parse("/clear")  # todo: drop items
         if globals.world.gamerulehandler.table["showDeathMessages"].status.status:
-            logger.println("[CHAT] player {} died".format(self.name))
+            logger.println("[CHAT] player {} died".format(self.name))   # todo: add death screen
         self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
-                                   globals.world.spawnpoint[1])
+                         globals.world.spawnpoint[1])
         self.active_inventory_slot = 0
         globals.window.dy = 0
         globals.chat.close()
+        globals.inventoryhandler.close_all_inventories()
+        # todo: drop xp
         self.xp = 0
         self.xp_level = 0
         self.hearts = 20
         self.hunger = 20
-        globals.window.flying = False
+        globals.window.flying = False if self.gamemode != 3 else True
         self.armor_level = 0
         self.armor_toughness = 0
         globals.eventhandler.call("player:die", self)
-        self.reset_moving_slot()
-        globals.inventoryhandler.close_all_inventories()
         sector = util.math.sectorize(self.position)
         globals.world.change_sectors(None, sector)
         # todo: recalculate armor level!
 
         if not globals.world.gamerulehandler.table["doImmediateRespawn"].status.status:
-            globals.statehandler.switch_to("minecraft:escape_state")  # todo: add special state
+            globals.statehandler.switch_to("minecraft:escape_state")  # todo: add special state [see above]
 
     def _get_position(self):
         return self.position
