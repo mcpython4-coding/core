@@ -119,7 +119,6 @@ class StateWorldGeneration(State.State):
         G.world.config["enable_auto_gen"] = self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
         G.world.config["enable_world_barrier"] = \
             self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
-        if G.world.get_active_player().name == "": G.world.get_active_player().name = "unknown"
 
         # reload all the data-packs
         chat.DataPack.datapackhandler.reload()

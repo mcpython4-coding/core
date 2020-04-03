@@ -1019,10 +1019,9 @@ started these clone on 12th of July, 2019
 [uuk]: moved skin-cache from build to build/skins folder
 [uuk]: fixed bug: player entity is removed from world when it dies and not added back
 
-todo: fix bug: an player named "unknown" stays always at (0, 0, 0) when loading the world again
-
 MISSING BEFORE GOING ON: collision box system [AABB's]
 
+todo: add small version of player rendered in inventory [simply draw in 3d in the back]
 todo: add path-finding-system
 todo: add more entities!!! [elytra, snow golem, slimes, armor stand, banners, beds, bell, real chest renders, arrow,
                             shield, shulkers, signs, end portal, experience orb]

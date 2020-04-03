@@ -245,12 +245,18 @@ class Player(entity.Entity.Entity):
         globals.inventoryhandler.moving_slot.get_itemstack().clean()
 
     def tell(self, msg: str):
-        globals.chat.print_ln(msg)
+        if self == globals.world.get_active_player():
+            globals.chat.print_ln(msg)
+        else:
+            pass  # todo: send through network
 
-    def draw(self):
-        rx, ry, rz = self.rotation
+    def draw(self, position=None, rotation=None, full=None):
+        if self != globals.world.get_active_player(): return  # used to fix unknown player in world
+        old_position = self.position
+        if position is not None: self.set_position_unsafe(position)
+        rx, ry, rz = self.rotation if rotation is None else rotation
         rotation_whole = (0, rx + 90, 0)
-        if self != globals.world.get_active_player():
+        if self != globals.world.get_active_player() or full is True:
             self.RENDERER.draw(self, "outer", rotation=rotation_whole)
         else:
             if self.get_active_inventory_slot() is not None and not self.get_active_inventory_slot(
@@ -259,3 +265,4 @@ class Player(entity.Entity.Entity):
 
             if not self.inventories["main"].slots[-1].itemstack.is_empty():
                 self.RENDERER.draw_box(self, "left_arm_rotated", rotation=rotation_whole)
+        self.set_position_unsafe(old_position)

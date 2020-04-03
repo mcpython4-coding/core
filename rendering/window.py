@@ -334,14 +334,14 @@ class Window(pyglet.window.Window):
                                                        viewport_0=max(1, viewport[0]),
                                                        viewport_1=max(1, viewport[1]))
 
-    def set_3d(self):
+    def set_3d(self, position=None, rotation=None):
         """ Configure OpenGL to draw in 3d.
 
         """
         width, height = self.get_size()
-        viewport = self.get_viewport_size()
-        rotation = G.world.get_active_player().rotation
-        position = G.world.get_active_player().position
+        viewport = self.get_framebuffer_size()
+        if rotation is None: rotation = G.world.get_active_player().rotation
+        if position is None: position = G.world.get_active_player().position
         rendering.OpenGLSetupFile.execute_file_by_name("set_3d", width=width, height=height,
                                                        viewport_0=max(1, viewport[0]),
                                                        viewport_1=max(1, viewport[1]), rotation_x=rotation[0],

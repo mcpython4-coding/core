@@ -38,7 +38,7 @@ class World:
         self.savefile = storage.SaveFile.SaveFile(self.filename)
 
         self.players = {}  # when in an network, stores an reference to all other players
-        self.add_player("unknown", add_inventories=False)
+        # self.add_player("unknown", add_inventories=False)
         self.active_player = "unknown"
 
     def add_player(self, name, add_inventories=True):
@@ -230,7 +230,7 @@ class World:
             chunk.blockmap.clear()
             chunk.is_ready = True
 
-    def cleanup(self, remove_dims=False, filename=None):
+    def cleanup(self, remove_dims=False, filename=None, add_player=False):
         for dimension in self.dimensions.values():
             dimension: world.Dimension.Dimension
             for chunk in dimension.chunks.values():
@@ -252,7 +252,7 @@ class World:
         G.worldgenerationhandler.runtimegenerationcache.clear()
         G.worldgenerationhandler.runtimegenerationcache = [[], {}, {}]
         self.players.clear()
-        self.add_player("unknown")
+        if add_player: self.add_player("unknown")
         if filename is not None:
             self.setup_by_filename(filename)
         G.eventhandler.call("world:clean")

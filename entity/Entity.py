@@ -55,6 +55,9 @@ class Entity(event.Registry.IRegistryContent):
 
     def set_position(self, position: tuple): self.teleport(position)
 
+    # only for some small use-cases. WARNING: will  N O T  do any internal handling for updating the position
+    def set_position_unsafe(self, position: tuple): self.__position = position
+
     position = property(get_position, set_position)
 
     def tell(self, msg: str):

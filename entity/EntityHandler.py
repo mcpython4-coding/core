@@ -18,6 +18,7 @@ class EntityHandler:
 
     def add_entity(self, name, position, *args, dimension=None, uuid=None, check_summon=False, **kwargs):
         if dimension is None: dimension = G.world.get_active_dimension()
+        if type(dimension) == int: dimension = G.world.dimensions[dimension]
         if name not in self.registry.registered_object_map:
             raise ValueError("unknown entity type name: '{}'".format(name))
         entity = self.registry.registered_object_map[name]
