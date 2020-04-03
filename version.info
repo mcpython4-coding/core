@@ -1024,13 +1024,18 @@ todo: hide player arms when no item is in it
 todo: move player skin cache to an separated folder
 todo: check if rebuild mode is possible [maybe skin caching does NOT work correctly :-(]
 todo: check what happens when no internet connection is arrival [skin download fails]
+todo: fix bug: when dying, entity player is not rendered anymore
 
-MISSING BEFORE GOING ON: collision box system
+MISSING BEFORE GOING ON: collision box system [AABB's]
 
 todo: add path-finding-system
-todo: add more entities!!!
+todo: add more entities!!! [elytra, snow golem, slimes, armor stand, banners, beds, bell, real chest renders, arrow,
+                            shield, shulkers, signs, end portal, experience orb]
 todo: add mob spawning
 todo: remove default BoxModel-class and replace with the new one
 todo: add possibility to load skins
 todo: add riding ability for entities
+
+When item rendering update finished:
+todo: implement item-entity with pickup-system
 

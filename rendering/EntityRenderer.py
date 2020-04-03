@@ -99,6 +99,12 @@ class EntityRenderer:
                                                     for i in range(3)]),
                      rotation_center=rotation_center)
 
+    def draw_box(self, entity, boxname, position=(0, 0, 0), rotation=(0, 0, 0), rotation_center=(0, 0, 0)):
+        x, y, z = entity.position
+        box = self.box_models[boxname]
+        box.draw((x + position[0], y + position[1], z + position[2]),
+                 rotation=rotation, rotation_center=rotation_center)
+
     def add_to_batch(self, batch, entity, state, rotation=(0, 0, 0), part_rotation=None):
         """
         adds the entity to an batch. Useful mostly for static entities like static complex block elements

@@ -16,6 +16,7 @@ import logger
 import event.EventHandler
 import entity.Entity
 import rendering.EntityRenderer
+import math
 
 
 @globals.registry
@@ -247,10 +248,13 @@ class Player(entity.Entity.Entity):
 
     def draw(self):
         rx, ry, rz = self.rotation
-        rotation_whole = (0, rx+90, 0)
-        rra = (0, 0, 0) if self.get_active_inventory_slot() is not None and self.get_active_inventory_slot(
-            ).itemstack.is_empty() else (45, 0, 0)
-        rla = (0, 0, 0) if self.inventories["main"].slots[-1].itemstack.is_empty() else (45, 0, 0)
-        self.RENDERER.draw(self, "inner" if self == globals.world.get_active_player() else "outer",
-                           part_rotation={"head": (0, 0, 0), "right_arm": rra, "left_arm": rla},
-                           rotation=rotation_whole)
+        rotation_whole = (0, rx + 90, 0)
+        if self != globals.world.get_active_player():
+            self.RENDERER.draw(self, "outer", rotation=rotation_whole)
+        else:
+            if self.get_active_inventory_slot() is not None and not self.get_active_inventory_slot(
+                    ).itemstack.is_empty():
+                self.RENDERER.draw_box(self, "right_arm_rotated", rotation=rotation_whole)
+
+            if not self.inventories["main"].slots[-1].itemstack.is_empty():
+                self.RENDERER.draw_box(self, "left_arm_rotated", rotation=rotation_whole)
