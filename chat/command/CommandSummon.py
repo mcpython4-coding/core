@@ -30,7 +30,7 @@ class CommandSummon(chat.command.Command.Command):
         position = values[1] if len(values) > 1 else info.entity.position
         # todo: add check if entity is summon-able by command
         try:
-            G.entityhandler.add_entity(values[0], position)
+            G.entityhandler.add_entity(values[0], position, check_summon=True)
         except ValueError:
             logger.println("[COMMAND][SUMMON] entity type '{}' not found!".format(values[0]))
 

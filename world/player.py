@@ -24,6 +24,7 @@ class Player(entity.Entity.Entity):
     RENDERER = rendering.EntityRenderer.EntityRenderer("minecraft:player")
 
     NAME = "minecraft:player"
+    SUMMON_ABLE = False
 
     GAMEMODE_DICT: dict = {
         "survival": 0, "0": 0,

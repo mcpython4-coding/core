@@ -21,6 +21,8 @@ class Entity(event.Registry.IRegistryContent):
 
     TYPE = "minecraft:entity"
 
+    SUMMON_ABLE = True
+
     @classmethod
     def create_new(cls, position, *args, **kwargs):
         """

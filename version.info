@@ -1015,12 +1015,8 @@ started these clone on 12th of July, 2019
 [uuk]: merged dev-branch; changed introduced storage version from 4 to 5
 [uuk]: skins will be applied when arrival by player name. In case of not existent, the default skin is used
 [uuk]: added support for non-full skin files [internally converted when downloading them]
+[uuk]: added SUMMON_ABLE-flag to Entity-class determine if the entity can be used in the /summon command
 
-todo: fix bug: player is not rendered when exiting generated chunks when barrier is deactivated -> chunk rendering flag
-    not used correctly in this case; relates to: when generating new world, entities are not visible
-todo: implement animations to player visualisation, fix hand when item in hand, only show the hand when an item is in it
-todo: add check if entity is summon-able by summon command to it [player can be currently summoned!]
-todo: hide player arms when no item is in it
 todo: move player skin cache to an separated folder
 todo: check if rebuild mode is possible [maybe skin caching does NOT work correctly :-(]
 todo: check what happens when no internet connection is arrival [skin download fails]
