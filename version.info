@@ -1018,10 +1018,8 @@ started these clone on 12th of July, 2019
 [uuk]: added SUMMON_ABLE-flag to Entity-class determine if the entity can be used in the /summon command
 [uuk]: moved skin-cache from build to build/skins folder
 
-todo: check if rebuild mode is possible [maybe skin caching does NOT work correctly :-(]
-todo: check what happens when no internet connection is arrival [skin download fails]
 todo: fix bug: when dying, entity player is not rendered anymore
-todo: fix bug: an player named "unknown" stays always at (0, 0, 0)
+todo: fix bug: an player named "unknown" stays always at (0, 0, 0) when loading the world again
 
 MISSING BEFORE GOING ON: collision box system [AABB's]
 
@@ -1034,5 +1032,5 @@ todo: add possibility to load skins
 todo: add riding ability for entities
 
 When item rendering update finished:
-todo: implement item-entity with pickup-system
+todo: implement item-entity with pickup-system, item rendering in player hand
 

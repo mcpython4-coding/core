@@ -75,7 +75,10 @@ def download_skin(username: str, store: str):
     if os.path.exists(store):
         os.remove(store)
 
-    r = get_url(userid_url.format(username=username))
+    try:
+        r = get_url(userid_url.format(username=username))
+    except requests.exceptions.ConnectionError:
+        raise ValueError() from None
     if r.status_code != 200: raise ValueError()
     userid = r.json()['id']
 
