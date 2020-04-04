@@ -1019,17 +1019,3 @@ started these clone on 12th of July, 2019
 [uuk]: moved skin-cache from build to build/skins folder
 [uuk]: fixed bug: player entity is removed from world when it dies and not added back
 
-MISSING BEFORE GOING ON: collision box system [AABB's]
-
-todo: add small version of player rendered in inventory [simply draw in 3d in the back]
-todo: add path-finding-system
-todo: add more entities!!! [elytra, snow golem, slimes, armor stand, banners, beds, bell, real chest renders, arrow,
-                            shield, shulkers, signs, end portal, experience orb]
-todo: add mob spawning
-todo: remove default BoxModel-class and replace with the new one
-todo: add possibility to load skins
-todo: add riding ability for entities
-
-When item rendering update finished:
-todo: implement item-entity with pickup-system, item rendering in player hand
-

@@ -68,7 +68,7 @@ class Slot:
         return self.__itemstack
 
     def set_itemstack(self, stack, update=True, player=False):
-        self.__itemstack = stack if stack else gui.ItemStack.ItemStack.get_empty()
+        self.__itemstack = stack if stack is not None else gui.ItemStack.ItemStack.get_empty()
         if update:
             self.call_update(player=player)
 
@@ -143,7 +143,7 @@ class Slot:
         return {"itemstack": d}
 
     def load(self, data):
-        self.itemstack = gui.ItemStack.ItemStack(data["itemstack"]["itemname"], data["itemstack"]["amount"])
+        self.set_itemstack(gui.ItemStack.ItemStack(data["itemstack"]["itemname"], data["itemstack"]["amount"]))
         if not self.itemstack.is_empty():
             self.itemstack.item.set_data(data["itemstack"]["data"])
 
@@ -232,7 +232,7 @@ class SlotCopy:
         return {"itemstack": d}
 
     def load(self, data):
-        self.itemstack = gui.ItemStack.ItemStack(data["itemstack"]["itemname"], data["itemstack"]["amount"])
+        self.set_itemstack(gui.ItemStack.ItemStack(data["itemstack"]["itemname"], data["itemstack"]["amount"]))
         if not self.itemstack.is_empty():
             self.itemstack.item.set_data(data["itemstack"]["data"])
 
@@ -256,7 +256,7 @@ class SlotInfiniteStack(Slot):
         if not self.on_update: return
         [f(player=player) for f in self.on_update]
         if self.itemstack != self.reference_stack:
-            self.itemstack = self.reference_stack.copy()
+            self.itemstack.set_itemstack(self.reference_stack.copy())
 
     itemstack = property(Slot.get_itemstack, set_itemstack)
 
@@ -280,7 +280,7 @@ class SlotInfiniteStackExchangeable(Slot):
         if not self.on_update: return
         [f(player=player) for f in self.on_update]
         if self.itemstack != self.reference_stack:
-            self.itemstack = self.reference_stack.copy()
+            self.set_itemstack(self.reference_stack.copy())
 
     itemstack = property(Slot.get_itemstack, set_itemstack)
 

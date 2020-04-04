@@ -91,7 +91,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             if G.inventoryhandler.moving_slot.itemstack.is_empty() or (not slot.interaction_mode[1] and
                                                                        slot.itemstack == self.moving_itemstack):
                 if not slot.interaction_mode[0]: return
-                G.inventoryhandler.moving_slot.itemstack = slot.itemstack.copy()
+                G.inventoryhandler.moving_slot.set_itemstack(slot.itemstack.copy())
                 slot.itemstack.clean()
                 slot.call_update(True)
             else:
@@ -101,7 +101,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             if G.inventoryhandler.moving_slot.itemstack.is_empty() and slot.allow_half_getting:
                 if not slot.interaction_mode[0]: return
                 amount = slot.itemstack.amount
-                G.inventoryhandler.moving_slot.itemstack = slot.itemstack.copy().set_amount(amount-amount//2)
+                G.inventoryhandler.moving_slot.set_itemstack(slot.itemstack.copy().set_amount(amount-amount//2))
                 slot.itemstack.set_amount(amount//2)
                 slot.call_update(True)
             else:
@@ -170,7 +170,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             for i, slot in enumerate(self.slot_list):
                 x = 0 if overhead == 0 else 1
                 if overhead > 0: overhead -= 1
-                if slot.itemstack.is_empty(): slot.itemstack = self.moving_itemstack.copy()
+                if slot.itemstack.is_empty(): slot.set_itemstack(self.moving_itemstack.copy())
                 slot.itemstack.set_amount(self.original_amount[i]+per_element+x)
                 slot.call_update(True)
             G.inventoryhandler.moving_slot.itemstack.clean()
@@ -178,7 +178,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             overhead = self.moving_itemstack.amount
             for i, slot in enumerate(self.slot_list):
                 if overhead > 0:
-                    if slot.itemstack.is_empty(): slot.itemstack = self.moving_itemstack.copy()
+                    if slot.itemstack.is_empty(): slot.set_itemstack(self.moving_itemstack.copy())
                     slot.itemstack.set_amount(self.original_amount[i]+1)
                     overhead -= 1
                     slot.call_update(True)

@@ -191,7 +191,7 @@ class InventoryFurnace(gui.Inventory.Inventory):
 
     def finish(self):
         if self.slots[2].itemstack.is_empty():
-            self.slots[2].itemstack = gui.ItemStack.ItemStack(self.recipe.output)
+            self.slots[2].set_itemstack(gui.ItemStack.ItemStack(self.recipe.output))
         else:
             if self.slots[2].itemstack.item.STACK_SIZE > self.slots[2].itemstack.amount:
                 self.slots[2].itemstack.add_amount(1)

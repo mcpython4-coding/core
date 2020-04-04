@@ -1,19 +1,6 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
-changelog of the entity-update-branch
-    - moved Entity-class into entity/Entity.py
-    - chunk <-> entity know of each other now
-    - added EntityHandler with entity-registry
-    - made function draw and tick called of entity
-    - added EntityRenderer with parser of model files
-    - added renderer for player
-    - added saves for entities
-    - added /summon command
-    - added loading phase for entities
-    - added player skins based on the player name downloaded from the official mojang servers
-
-
 changelog of master-branch
     - added new event: "stage:blockitemfactory:finish"
     - cleaned up base classes for block and item
@@ -22,6 +9,16 @@ changelog of master-branch
     - on_shift_click can now return True when it should interrupt the following logic
     - slots can now handle an key press
     - rewritten mouse interaction system to support dragging over more than one slot & better shift-clicking
+    - moved Entity-class into entity/Entity.py
+    - entities are now saved in saves
+    - added EntityHandler with entity-registry
+    - made function draw and tick called of entity
+    - added EntityRenderer with parser of model files
+    - added renderer for player
+    - added saves for entities
+    - added /summon command
+    - added loading phase for entities
+    - added player skins based on the player name downloaded from the official mojang servers
 
     fixed bugs:
         - game gives out exceptions when trying to load an non-existing world

@@ -56,7 +56,8 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
             slot: gui.Slot.Slot
             itemstack = slot.get_itemstack()
             slot.set_itemstack(gui.ItemStack.ItemStack.get_empty())
-            G.world.get_active_player().pick_up(itemstack)
+            if not G.world.get_active_player().pick_up(itemstack):
+                pass  # todo: drop item as item could not be added to inventory
         G.statehandler.active_state.parts[0].activate_mouse = True
 
     def update_shift_container(self):
