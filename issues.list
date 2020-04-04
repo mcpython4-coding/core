@@ -1,6 +1,13 @@
 
 [issue 1-8 are part of github-only and are mostly fixed at the moment]
 
+issue 9:
+    when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
+        Item-instances in the same run
+    this issue occurs only in the first run with the new block
+    possible fix: create item tables only when BlockItemFactory has finished
+    better fix: remove BlockItemGenerator & replace by drawing of the corresponding block in the slot in 3d
+
 issue 22:
     bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
          is removed, it all updates following bug 23
@@ -65,9 +72,8 @@ issue 140:
         reproduce:
             use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
 
-issue 148:
-    bug: block info display screen does NOT display position. Instead, (?, ?, ?) is shown
-    possible reason: wrong game-rule parsing
+issue 149:
+    bug: offhand slot is reset when closing inventory
 
 issue 150:
     bug: float point precision loos at high coordinates e.g. [only occur on block rendering]:

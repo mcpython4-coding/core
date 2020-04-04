@@ -27,10 +27,12 @@ History of save versions:
     - chest container stores now also the loot table link when set
 - 4: introduced: 31.03.2020, outdated since: -, not loadable since: -
     - block coordinates are stored now relative to chunk; decreases chunk size
+- 5: pre-introduced: 17.03.2020 [part of entity update], outdate since: -, not loadable since: -
+    - added entity serializer
 """
 
 
-LATEST_VERSION = 4
+LATEST_VERSION = 5
 
 G.STORAGE_VERSION = LATEST_VERSION
 
@@ -97,14 +99,16 @@ class SaveFile:
             traceback.print_exc()
         self.save_in_progress = False
 
-    def upgrade(self, part=None, version=None, **kwargs):
+    def upgrade(self, part=None, version=None, to=None, **kwargs):
         """
         upgrades the part of the SaveFile to the latest version supported
         :param part: the part to update, or None, if all should upgrade
         :param kwargs: kwargs given to the fixers
         :param version: which version to upgrade from
+        :param to: to which version to upgrade to
         """
         if version is None: version = self.version
+        if to is None: to = LATEST_VERSION
         new_version = None
         flag = True
         while flag:
@@ -112,14 +116,15 @@ class SaveFile:
                 if fixer.TRANSFORMS[0] == version and (part is None or part == fixer.PART):
                     print("applying fixer '{}' with config {}".format(fixer.NAME, kwargs))
                     fixer.fix(self, **kwargs)
-                    if fixer.TRANSFORMS[1] == LATEST_VERSION:
+                    if fixer.TRANSFORMS[1] == to:
                         flag = False
                     else:
                         new_version = fixer.TRANSFORMS[1]
                     break
             else:
                 raise storage.datafixer.IDataFixer.DataFixerException(
-                    "invalid version: '{}'. No datafixers found for the part '{}'!".format(version, part))
+                    "invalid version: '{}' to upgrade to '{}'. No datafixers found for the part '{}'!".format(version,
+                                                                                                              to, part))
             version = new_version
 
     def read(self, part, **kwargs):

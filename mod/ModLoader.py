@@ -113,9 +113,9 @@ class LoadingStages:
                             "stage:command:selectors", "stage:command:gamerules")
     LOOT_TABLES = LoadingStage("loot tables", "stage:loottables:locate", "stage:loottables:functions",
                                "stage:loottables:conditions", "stage:loottables:load")
+    ENTITIES = LoadingStage("entities", "stage:entities")
     WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
                             "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
-
     BLOCKSTATE = LoadingStage("blockstate loading phase", "stage:blockstate:register_loaders",
                               "stage:model:blockstate_search", "stage:model:blockstate_create")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_search:intern",
@@ -135,6 +135,7 @@ LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, Loadin
                  LoadingStages.EXTRA_RESOURCE_LOCATIONS,
                  LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.LANGUAGE,
                  LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.LOOT_TABLES,
+                 LoadingStages.ENTITIES,
                  LoadingStages.WORLDGEN, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
                  LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.FILE_INTERFACE, LoadingStages.POST]
 
@@ -153,6 +154,7 @@ class ModLoader:
                 self.lasttime_mods = json.load(f)
         elif not G.prebuilding:
             logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
+        self.finished = False
 
     def look_out(self):
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("prebuilding:finished", self.write_mod_info)
@@ -383,6 +385,7 @@ class ModLoader:
                 self.active_loading_stage += 1
                 if self.active_loading_stage >= len(LOADING_ORDER):
                     G.statehandler.switch_to("minecraft:blockitemgenerator")
+                    self.finished = True
                     return
                 astate.parts[0].progress += 1
                 astate.parts[2].progress = 0

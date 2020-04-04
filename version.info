@@ -989,4 +989,47 @@ started these clone on 12th of July, 2019
 [uuk]: added ShiftContainer-class holding two lists of slots for shift-clicking
 [uuk]: fixed issue 148, 162, 163
 [uuk]: added skin download helper
+[uuk]: dimension -1 (nether) and 1 (end) is now reserved by default
+[uuk]: moved Entity-class to entity/Entity
+[uuk]: entity has now an chunk-attribute storing an Chunk-class representing the entity
+[uuk]: added entities-set to Chunk
+[uuk]: added EntityHandler
+[uuk]: added an registry for entities
+[uuk]: Entity-objects contain now an uuid
+[uuk]: player-entity has now an own name and is send to registry
+[uuk]: Entity.draw function is now called in alpha-block-rendering phase
+[uuk]: changing entity position auto-calls now teleport()
+[uuk]: SaveFile.upgrade() can get now an to-parameter to indicate to which version to upgrade to
+[uuk]: added base class for player entity for storing the render stuff
+[uuk]: added BaseBoxModel-class for drawing box-models independent from an block-model
+[uuk]: added EntityRenderer-class for handling entity rendering from files
+[uuk]: moved player entity rendering to player-class as it is simpler than expected
+[uuk]: player entity parts are rendered now with correct rotation
+[uuk]: added entities to saves
+[uuk]: added /summon command
+[uuk]: added loading stage "stage:entities"
+[uuk]: fixed summoning of new entities; fixed /summon command with it
+[uuk]: removed "@"-selector
+[uuk]: ParsingCommandInfo uses now entity for various filling operations when not all kwargs are set
+[uuk]: added various aspects to the selectors
+[uuk]: merged dev-branch; changed introduced storage version from 4 to 5
+[uuk]: skins will be applied when arrival by player name. In case of not existent, the default skin is used
+[uuk]: added support for non-full skin files [internally converted when downloading them]
+[uuk]: added SUMMON_ABLE-flag to Entity-class determine if the entity can be used in the /summon command
+[uuk]: moved skin-cache from build to build/skins folder
+[uuk]: fixed bug: player entity is removed from world when it dies and not added back
+
+MISSING BEFORE GOING ON: collision box system [AABB's]
+
+todo: add small version of player rendered in inventory [simply draw in 3d in the back]
+todo: add path-finding-system
+todo: add more entities!!! [elytra, snow golem, slimes, armor stand, banners, beds, bell, real chest renders, arrow,
+                            shield, shulkers, signs, end portal, experience orb]
+todo: add mob spawning
+todo: remove default BoxModel-class and replace with the new one
+todo: add possibility to load skins
+todo: add riding ability for entities
+
+When item rendering update finished:
+todo: implement item-entity with pickup-system, item rendering in player hand
 

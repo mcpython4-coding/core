@@ -12,6 +12,7 @@ import gui.ItemStack
 import crafting.CraftingHandler
 import crafting.GridRecipeInterface
 import item.ItemArmor
+import pyglet
 
 
 class InventoryPlayerMain(gui.Inventory.Inventory):

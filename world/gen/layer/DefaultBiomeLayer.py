@@ -46,7 +46,7 @@ class DefaultBiomeMapLayer(Layer):
                 landmass = landmap[(x, z)]
                 v = DefaultBiomeMapLayer.noise.noise3d(x/factor, z/factor, x*z/factor**2) * 0.5 + 0.5
                 biomemap[(x, z)] = G.biomehandler.get_biome_at(landmass, config.dimension, v, temperaturemap[(x, z)])
-        chunk.set_value("biomemap", biomemap, authcode)
+        chunk.set_value("biomemap", biomemap)
 
 
 authcode = world.Chunk.Chunk.add_default_attribute("biomemap", DefaultBiomeMapLayer, {})

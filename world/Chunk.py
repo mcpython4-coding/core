@@ -44,19 +44,25 @@ class Chunk:
         for attr in self.attributes.keys():
             self.attr[attr] = self.attributes[attr][1]
         self.positions_updated_since_last_save = set()
+        self.entities = set()
 
-    def set_value(self, name, value, authcode=None):
+    def set_value(self, name, value):
         self.attr[name] = value
 
     def get_value(self, name):
         return self.attr[name]
 
     def draw(self):
+        # if len(self.entities) > 0:
+        #     print([(entity.position, entity.NAME, entity.name) for entity in self.entities])
+        #     print(self.position, self.is_ready, len(self.chunkgenerationtasks), self.visible, self.loaded)
         if not self.is_ready or len(self.chunkgenerationtasks) > 0: return
         if not self.visible: return
         if not self.loaded:
             G.tickhandler.schedule_once(G.world.savefile.read, "minecraft:chunk", dimension=self.dimension.id,
                                         chunk=self.position)
+        for entity in self.entities:
+            entity.draw()
 
     def exposed(self, position):
         """ Returns False is given `position` should be hidden, True otherwise.

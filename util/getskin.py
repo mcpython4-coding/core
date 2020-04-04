@@ -10,6 +10,9 @@ from base64 import b64decode
 
 import requests
 import globals as G
+import os
+import logger
+import PIL.Image
 
 DEBUG = False
 SIMULATE = False
@@ -29,13 +32,6 @@ class SimulatedResponse(object):
         if self.is_json:
             return json.loads(self.content)
         return None
-
-
-def fail(msg, verbose_msg):
-    print(msg, file=sys.stderr)
-    if DEBUG:
-        print(verbose_msg, file=sys.stderr)
-    sys.exit(1)
 
 
 def find_texture_info(properties):
@@ -70,23 +66,45 @@ def get_url(url, **kwargs):
         return requests.get(url, **kwargs)
 
 
-def download_skin(username):
+def download_skin(username: str, store: str):
+    if os.path.isfile(G.local+"/build/skins/{}.png".format(username)):
+        print("loading skin from cache...")
+        shutil.copy(G.local+"/build/skins/{}.png".format(username), store)
+        return
+    print("downloading skin for '{}'".format(username))
+    if os.path.exists(store):
+        os.remove(store)
 
-    r = get_url(userid_url.format(username=username))
+    try:
+        r = get_url(userid_url.format(username=username))
+    except requests.exceptions.ConnectionError:
+        raise ValueError() from None
     if r.status_code != 200: raise ValueError()
     userid = r.json()['id']
 
     r = get_url(userinfo_url.format(userid=userid))
     userinfo = r.json()
-    texture_info = find_texture_info(userinfo['properties'])
+    if "error" in userinfo:
+        logger.println("[SERVER] {}: {}".format(userinfo["error"], userinfo["errorMessage"]))
+        raise ValueError()
+    try:
+        texture_info = find_texture_info(userinfo['properties'])
+    except KeyError:
+        logger.println("ParseError in '{}'".format(userinfo))
+        raise
     if texture_info is None: raise ValueError()
 
-    try:
-        skin_url = texture_info['textures']['SKIN']['url']
-    except:
-        raise ValueError() from None
+    skin_url = texture_info["textures"]["SKIN"]["url"]
     r = get_url(skin_url, stream=True)
     if r.status_code != 200: raise ValueError()
-    with open(G.tmp.name+"/skin.png", 'wb') as f:
-        shutil.copyfileobj(r.raw, f)
-
+    with open(store, 'wb') as f:
+        f.write(r.content)
+    image = PIL.Image.open(store)
+    if image.size[0] != image.size[1:]:
+        new_image = PIL.Image.new("RGBA", (image.size[0], image.size[0]), (0, 0, 0, 0))
+        new_image.alpha_composite(image)
+        new_image.alpha_composite(image.crop((0, 16, 15, 32)), (16, 48))
+        new_image.alpha_composite(image.crop((40, 16, 55, 32)), (32, 48))
+        new_image.save(store)
+    if not os.path.exists(G.local+"/build/skins"): os.makedirs(G.local+"/build/skins")
+    shutil.copy(store, G.local+"/build/skins/{}.png".format(username))
