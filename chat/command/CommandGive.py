@@ -35,7 +35,7 @@ class CommandGive(chat.command.Command.Command):
         cls.CANCEL_GIVE = False
         G.eventhandler.call("command:give:start", stack)
         if cls.CANCEL_GIVE: return
-        if stack.amount > stack.item.get_max_stack_size(): stack.amount = stack.item.get_max_stack_size()
+        if stack.amount > stack.item.STACK_SIZE: stack.amount = stack.item.STACK_SIZE
         for player in values[0]:  # iterate over all players to give
             player.pick_up(stack)
         G.eventhandler.call("command:give:end", stack)

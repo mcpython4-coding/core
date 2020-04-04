@@ -10,5 +10,8 @@ Following changes were made to the minecraft.jar:
 - removed every java code fragment
 - changed nether brick fence block state model to match the one of the other fences
 - removed the following block state definitions: chest, ender chest
-- removed the following block models: chest, ender chest, grass block, leaves and shulker boxes
+- removed the following block models: chest, ender chest, grass block, leaves and shulker boxes and replaced by our ones
+- changed some entries in slab base model to render correctly
+
+All replacements apart of the slab are located in the minecraft.zip file instead of the <version name>.jar file
 

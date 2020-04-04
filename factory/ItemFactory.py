@@ -79,8 +79,7 @@ class ItemFactory:
 
             NAME = master.name
 
-            @staticmethod
-            def has_block() -> bool: return master.has_block
+            HAS_BLOCK = master.has_block
 
             def get_block(self) -> str: return master.blockname
 
@@ -92,7 +91,7 @@ class ItemFactory:
             def __init__(self):
                 if master.creation_callback: master.creation_callback(self)
 
-            def get_max_stack_size(self) -> int: return master.stacksize
+            STACK_SIZE = master.stacksize
 
             def on_player_interact(self, player, block, button, modifiers) -> bool:
                 return master.interaction_callback(block, button, modifiers) if master.interaction_callback else False
@@ -112,18 +111,16 @@ class ItemFactory:
                         return True
                     if G.world.get_active_player().hunger == 20:
                         return False
-                    G.world.get_active_player().hunger = min(self.get_eat_hunger_addition() + G.world.get_active_player().hunger, 20)
+                    G.world.get_active_player().hunger = min(self.HUNGER_ADDITION+G.world.get_active_player().hunger, 20)
                     return True
 
-                def get_eat_hunger_addition(self) -> int: return master.hungerregen
+                HUNGER_ADDITION = master.hungerregen
 
         if item.ItemTool.ItemTool in self.baseclass:  # is an tool
             class ConstructedItem(ConstructedItem):  # so construct an new class with additional functions
-                def get_tool_level(self):
-                    return master.tool_level
+                TOOL_LEVEL = master.tool_level
 
-                def get_tool_type(self):
-                    return master.tool_type
+                TOOL_TYPE = master.tool_type
 
                 def get_speed_multiplyer(self, itemstack):
                     return master.tool_speed_multi if not master.tool_speed_callback else master.tool_speed_callback(
@@ -131,8 +128,7 @@ class ItemFactory:
 
         if master.armor_points:
             class ConstructedItem(ConstructedItem):
-                def getDefensePoints(self):
-                    return master.armor_points
+                DEFENSE_POINTS = master.armor_points
 
         if master.fuel_level is not None:
             class ConstructedItem(ConstructedItem):

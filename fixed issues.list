@@ -149,3 +149,11 @@ issue 153: rotation of block models was crashing; fixed on: 19.03.2020 by uuk
 issue 155: multipart-models were crashing on load when using multiple model links in one entry;
     fixed on: 20.03.2020 by uuk
 issue 156: exceptions when in gamemode 0 due to wrong xp draw call
+issue 151: saves include full-coordinates, not chunk relative ones leading into memory problems; fixed on: 31.03.2020 by
+    uuk
+issue 158: when trying to load an world which does not exists, the game gives two exceptions to the log; fixed on:
+    31.03.2020 by uuk
+issue 160: when dragging mouse, mouse position attribute of window does not get updated; fixed on: 31.03.2020 by uuk
+issue 162: Slot-instances render item stacks with size 1 with stack size label; fixed on: 01.04.2020 by uuk
+issue 148: block-position label is inverted to the gamerule-value; fixed on: 01.04.2020 by uuk
+issue 163: Inventory serializer crashes when inventory slot count gets smaller on new load; fixed on: 02.04.2020 by uuk

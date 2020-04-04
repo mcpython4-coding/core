@@ -1,6 +1,13 @@
 
 [issue 1-8 are part of github-only and are mostly fixed at the moment]
 
+issue 9:
+    when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
+        Item-instances in the same run
+    this issue occurs only in the first run with the new block
+    possible fix: create item tables only when BlockItemFactory has finished
+    better fix: remove BlockItemGenerator & replace by drawing of the corresponding block in the slot in 3d
+
 issue 22:
     bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
          is removed, it all updates following bug 23
@@ -48,39 +55,63 @@ issue 118:
 
 issue 122:
     bug: z-fighting at border between two fences
-    possible fix: decrease box size of fences by hand
+    possible fix: decrease box size of fences "by hand" (manipulate model data)
 
 issue 129:
-    bug: some fence faces are not rendered [invalid texture rotation?]
+    bug: some fence faces are not rendered [invalid texture rotation, internal miss-match in order of texture-coord?]
 
 issue 137:
     bug: coal block has no fuel level [maybe general problem?]
 
 issue 139:
     bug: during in-game generation, block faces of neighbor chunks are not updated
-    possible fix: update all blocks next to the new chunk
+    possible fix: update all blocks next to the new chunk OR remove the hide-faces in not generated chunks
 
 issue 140:
-    bug: sometimes, you fall through one or more block (in gamemode 0)
+    bug: (sometimes, )you fall through one or more block (in gamemode 0)
         reproduce:
             use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
 
-issue 148:
-    bug: block info display screen does NOT display position. Instead, (?, ?, ?) is shown
-    possible reason: wrong game-rule parsing
+issue 149:
+    bug: offhand slot is reset when closing inventory
 
 issue 150:
-    bug: blocks are not shown at e.g. (1e+18, 100, 0)
-    fix A: write something like an draw-area which will move the chunk relative position & camera position when you
-        are far enough out
-    fix B: add world barrier at high x/z coordinates and do not let player walk away
+    bug: float point precision loos at high coordinates e.g. [only occur on block rendering]:
+     - at z=1000000: world is "wobbing" around -> movements are not shown correctly
+     - at z=1010000: hit-boxes begin loosing their shape
+     - at z=1100000: movement gets "jumpy"
+     - at z=2000000: cube faces start to get un-flatened, hitbox is not rendered anymore
+     - at z=3000000: entire blocks start to get invisible, all cube faces are not flat anymore
+     - at z=4000000: textures are now partwise stretched, all previous effects are getting worse
+     - at z=5000000: world is partwise invisible completely, cull-face rendering issues
+     - at z=6000000: cube faces are broken into several peaces in some cases, strip-wise rendering, face doubling
+        [I was still able to render from time to time parts of an hitbox, but not at where they are supposed to]
+     - at z=7000000: OpenGL fails in parts to order the colors after depth [depth buffer fails?]
+     - at z=8000000: world is more than half not visible, textures are more scattered
+     - at z=9000000: FOV seems broken
+     - at z=10000000: world is in an state where rendering nearly is completely broken
+     ... [somewhere, rendering stops completely due to above rendering problems]
 
-issue 151:
-    bug: block coordinates are not relative in saves to chunk position making save take longer for outer chunks than for
-        inner (see 150 for reproducing)
-    fix: make chunk coordinates relative
+     fix A: add some form of world barrier
+     fix B: move integers to move rendering of world first, than apply an relative player coordinate, store every coord
+        as an tuple of (sector x, sector z, dx, y, dz) where x=10**(4*"sector x")+dx and z respectively
+        (-> maybe add an FloatPosition-class handling all this stuff)
+     fix C: use the decimal module for handling the floats [warning: OpenGL may cause problems when using the module]
 
-issue 154:
+issue 154: [fix with generation update]
     bug: debug world blocks do NOT use block-state
 
-[155-156]
+issue 157:
+    bug: loading hangs before showing the chunk loading screen due to deserialization times
+    fix: add color indicating that the deserialization is in progress
+
+issue 159: [fix in world generation update]
+    bug: various maps are stored not chunk-relative making file size big at outer positions
+    fix: implement relative-storage with data-fixer
+
+issue 161:
+    bug: when saving, moving slot is not saved
+    fix: like in kill-method, force-close all inventories on save
+    other fix: save moving slot also & load it [warning: also save what inventories are open]
+
+[162-163]

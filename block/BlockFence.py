@@ -26,6 +26,7 @@ class IFence(block.Block.Block):
         super().__init__(*args, **kwargs)
         self.connections = {"north": False, "east": False, "south": False, "west": False}
         self.on_block_update()
+        self.face_solid = {face: False for face in util.enums.EnumSide.iterate()}
 
     def get_model_state(self) -> dict:
         state = {key: str(self.connections[key]).lower() for key in self.connections}
@@ -44,8 +45,6 @@ class IFence(block.Block.Block):
         self.connections["west"] = self.connects_to(util.enums.EnumSide.SOUTH, block_south)
         self.connections["north"] = self.connects_to(util.enums.EnumSide.WEST, block_west)
 
-    def is_solid_side(self, side) -> bool: return False
-
     def set_model_state(self, state: dict):
         for key in state:
             self.connections[key] = state[key] == "true"
@@ -63,7 +62,7 @@ class IFence(block.Block.Block):
 
     def connects_to(self, face: util.enums.EnumSide, blockinstance: block.Block.Block):
         if blockinstance is None or type(blockinstance) == str: return False
-        return blockinstance.is_solid_side(face.invert()) or (
+        return blockinstance.face_solid[face.invert()] or (
                 issubclass(type(blockinstance), IFence) and len(self.FENCE_TYPE_NAME.intersection(
                     blockinstance.FENCE_TYPE_NAME)) > 0)
 

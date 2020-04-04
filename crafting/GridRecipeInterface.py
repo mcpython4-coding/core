@@ -167,7 +167,7 @@ class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):
             self.slot_output_map.set_itemstack(gui.ItemStack.ItemStack.get_empty())
             self.slot_output_map.call_update(player=True)
             count += itemstack.amount
-        max_size = itemstack.item.get_max_stack_size()
+        max_size = itemstack.item.STACK_SIZE
         for _ in range(count // max_size):
             G.world.get_active_player().pick_up(itemstack.copy().set_amount(max_size))
             count -= max_size

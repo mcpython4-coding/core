@@ -44,19 +44,25 @@ class Chunk:
         for attr in self.attributes.keys():
             self.attr[attr] = self.attributes[attr][1]
         self.positions_updated_since_last_save = set()
+        self.entities = set()
 
-    def set_value(self, name, value, authcode=None):
+    def set_value(self, name, value):
         self.attr[name] = value
 
     def get_value(self, name):
         return self.attr[name]
 
     def draw(self):
+        # if len(self.entities) > 0:
+        #     print([(entity.position, entity.NAME, entity.name) for entity in self.entities])
+        #     print(self.position, self.is_ready, len(self.chunkgenerationtasks), self.visible, self.loaded)
         if not self.is_ready or len(self.chunkgenerationtasks) > 0: return
         if not self.visible: return
         if not self.loaded:
             G.tickhandler.schedule_once(G.world.savefile.read, "minecraft:chunk", dimension=self.dimension.id,
                                         chunk=self.position)
+        for entity in self.entities:
+            entity.draw()
 
     def exposed(self, position):
         """ Returns False is given `position` should be hidden, True otherwise.
@@ -69,8 +75,7 @@ class Chunk:
             chunk = self.dimension.get_chunk_for_position(pos, generate=False)
             if chunk.loaded:
                 block = self.dimension.get_block(pos)
-                if not (block and (block.is_solid_side(face) if type(block) != str else G.registry.get_by_name("block").
-                        registered_object_map[block].is_solid_side(None, face))):
+                if not (block and (block.face_solid[face] if type(block) != str else True)):
                     return True
         return False
 
@@ -89,8 +94,8 @@ class Chunk:
                 block = self.dimension.get_block(pos)
                 if block is None: faces[face] = True
                 elif type(block) == str: faces[face] = False  # todo: add an callback when the block is ready
-                elif not block.is_solid_side(face.invert()): faces[face] = True
-                elif not blockinst.is_solid_side(face): faces[face] = True
+                elif not block.face_solid[face.invert()]: faces[face] = True
+                elif not blockinst.face_solid[face]: faces[face] = True
                 else: faces[face] = False
         return faces
 

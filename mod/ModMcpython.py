@@ -19,6 +19,7 @@ mcpython = mod.Mod.Mod("minecraft", VERSION)
 
 def init():
     import loot.LootTable
+    import entity.EntityHandler
 
 
 mcpython.eventbus.subscribe("stage:mod:init", init)

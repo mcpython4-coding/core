@@ -64,6 +64,10 @@ class StateWorldGeneration(State.State):
                 G.world.savefile.read("minecraft:chunk", dimension=G.world.active_dimension, chunk=(cx, cz),
                                       immediate=False)
 
+    def on_deactivate(self):
+        player = G.world.get_active_player()
+        player.teleport(player.position, force_chunk_save_update=True)
+
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)

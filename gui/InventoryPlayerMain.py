@@ -12,6 +12,7 @@ import gui.ItemStack
 import crafting.CraftingHandler
 import crafting.GridRecipeInterface
 import item.ItemArmor
+import pyglet
 
 
 class InventoryPlayerMain(gui.Inventory.Inventory):
@@ -22,14 +23,12 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
     def __init__(self, hotbar):
         self.hotbar = hotbar
         super().__init__()
+        inputs = [self.slots[40:42], self.slots[42:44]]
+        self.recipeinterface = crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[44])
 
     @staticmethod
     def get_config_file() -> str or None:
         return "assets/config/inventory/playerinventorymain.json"
-
-    def on_create(self):
-        inputs = [self.slots[40:42], self.slots[42:44]]
-        self.recipeinterface = crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[44])
 
     def create_slots(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
@@ -48,7 +47,7 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
         for slot in self.slots[35:40]:
             if slot.get_itemstack().item:
                 if issubclass(type(slot.get_itemstack().item), item.ItemArmor.ItemArmor):
-                    points += slot.get_itemstack().item.getDefensePoints()
+                    points += slot.get_itemstack().item.DEFENSE_POINTS
         G.world.get_active_player().armor_level = points
 
     def on_deactivate(self):
@@ -57,6 +56,11 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
             slot: gui.Slot.Slot
             itemstack = slot.get_itemstack()
             slot.set_itemstack(gui.ItemStack.ItemStack.get_empty())
-            G.world.get_active_player().pick_up(itemstack)
+            if not G.world.get_active_player().pick_up(itemstack):
+                pass  # todo: drop item as item could not be added to inventory
         G.statehandler.active_state.parts[0].activate_mouse = True
+
+    def update_shift_container(self):
+        G.inventoryhandler.shift_container.container_A = self.slots[:9] + self.slots[36:41]
+        G.inventoryhandler.shift_container.container_B = self.slots[9:36]
 

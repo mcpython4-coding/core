@@ -10,6 +10,7 @@ import globals as G
 import world.Chunk
 import util.enums
 import logger
+import uuid
 
 
 def chunk2region(cx, cz): return cx >> 5, cz >> 5
@@ -37,8 +38,10 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         data = data[chunk]
         chunk_instance.generated = data["generated"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
-        for position in data["blocks"]:
-            d = data["block_palette"][data["blocks"][position]]
+        for rel_position in data["blocks"]:
+            position = (rel_position[0] + chunk_instance.position[0] * 16, rel_position[1],
+                        rel_position[2] + chunk_instance.position[1] * 16)
+            d = data["block_palette"][data["blocks"][rel_position]]
 
             def add(blockinstance):
                 if blockinstance is None: return
@@ -63,8 +66,6 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         try:
             chunk_instance.set_value("landmassmap", {pos: data["maps"]["landmass_palette"][data["maps"]["landmass_map"][i]]
                                                      for i, pos in enumerate(positions)})
-            # chunk_instance.set_value("temperaturemap",
-            #                          {pos: data["maps"]["temperature"][i] for i, pos in enumerate(positions)})
             biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in enumerate(positions)}
             chunk_instance.set_value("biomemap", biome_map)
             chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
@@ -72,8 +73,21 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             logger.println("[CHUNK][CORRUPTED] palette exception in chunk '{}' in dimension '{}'".format(
                 chunk, dimension))
 
+        for entity in data["entities"]:
+            if entity["type"] == "minecraft:player": continue
+            try:
+                entity_instance = G.entityhandler.add_entity(entity["type"], entity["position"], uuid=uuid.UUID(
+                    entity["uuid"]), dimension=G.world.dimensions[dimension])
+            except ValueError:
+                continue
+            entity_instance.rotation = entity["rotation"]
+            entity_instance.harts = entity["harts"]
+            entity_instance.load(entity["custom"])
+
         chunk_instance.loaded = True
         G.worldgenerationhandler.enable_generation = True
+
+        chunk_instance.show()
 
     @classmethod
     def save(cls, data, savefile, dimension: int, chunk: tuple, override=False):
@@ -104,7 +118,8 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
                     "biome": [0] * 16 ** 2,
                     "biome_palette": [],
                     "height": [None] * 16 ** 2
-                }
+                },
+                "entities": []
             }
             override = True
         G.worldgenerationhandler.enable_generation = False
@@ -113,9 +128,11 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
         overridden = not override
         for position in (
                 chunk_instance.positions_updated_since_last_save if not override else chunk_instance.world.keys()):
+            rel_position = (position[0] - chunk_instance.position[0] * 16, position[1],
+                            position[2] - chunk_instance.position[1] * 16)
             if position not in chunk_instance.world and not override:
-                if position in cdata["blocks"]:
-                    del cdata["blocks"][position]
+                if rel_position in cdata["blocks"]:
+                    del cdata["blocks"][rel_position]
                 continue
             block = chunk_instance.world[position]
             block_data = {"custom": block.save(), "name": block.NAME, "shown": any(block.face_state.faces.values())}
@@ -125,14 +142,18 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
                     if not overridden:  # only if we need data, load it
                         savefile.dump_file_pickle(inv_file, {})
                         overridden = True
-                    path = "blockinv/{}_{}_{}/{}".format(*position, i)
+                    path = "blockinv/{}_{}_{}/{}".format(*rel_position, i)
                     savefile.dump(None, "minecraft:inventory", inventory=inventory, path=path, file=inv_file)
                     block_data["inventories"].append(path)
             if block_data in palette:
-                cdata["blocks"][position] = palette.index(block_data)
+                cdata["blocks"][rel_position] = palette.index(block_data)
             else:
-                cdata["blocks"][position] = len(palette)
+                cdata["blocks"][rel_position] = len(palette)
                 palette.append(block_data)
+        for entity in chunk_instance.entities:
+            edata = {"type": entity.NAME, "position": entity.position, "rotation": entity.rotation,
+                     "harts": entity.harts, "uuid": str(entity.uuid), "custom": entity.dump()}
+            cdata["entities"].append(edata)
         chunk_instance.positions_updated_since_last_save.clear()
 
         if override:

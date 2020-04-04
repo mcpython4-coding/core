@@ -38,6 +38,8 @@ try:
     import ResourceLocator
     ResourceLocator.load_resource_packs()
 
+    ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local+"/build/skin.png")
+
     import mod.ModLoader
 
     G.modloader.look_out()

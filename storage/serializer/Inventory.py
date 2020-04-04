@@ -33,7 +33,7 @@ class Inventory(storage.serializer.IDataSerializer.IDataSerializer):
         inventory.uuid = uuid.UUID(int=data["uuid"])
         status = inventory.load(data["custom data"])
         if not status: return
-        [inventory.slots[i].load(e) for i, e in enumerate(data["slots"])]
+        [inventory.slots[i].load(e) if i < len(inventory.slots) else None for i, e in enumerate(data["slots"])]
 
     @classmethod
     def save(cls, data, savefile, inventory: gui.Inventory.Inventory, path: str, file=None, override=False):

@@ -14,10 +14,18 @@ import ResourceLocator
 import mod.ModMcpython
 import logger
 import event.EventHandler
-import Entity
+import entity.Entity
+import rendering.EntityRenderer
+import math
 
 
-class Player(Entity.Entity):
+@globals.registry
+class Player(entity.Entity.Entity):
+    RENDERER = rendering.EntityRenderer.EntityRenderer("minecraft:player")
+
+    NAME = "minecraft:player"
+    SUMMON_ABLE = False
+
     GAMEMODE_DICT: dict = {
         "survival": 0, "0": 0,
         "creative": 1, "1": 1,
@@ -25,8 +33,8 @@ class Player(Entity.Entity):
         "spectator": 3, "3": 3
     }
 
-    def __init__(self, name):
-        super().__init__()
+    def __init__(self, name="unknown", dimension=None):
+        super().__init__(dimension=dimension)
         self.name: str = name
         self.gamemode: int = -1
         self.set_gamemode(1)
@@ -50,16 +58,21 @@ class Player(Entity.Entity):
 
         self.active_inventory_slot: int = 0
 
-        mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
-                                                    info="setting up player inventory")
+        if not globals.modloader.finished:
+            mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
+                                                        info="setting up player inventory")
+        else:
+            self.create_inventories()
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:get_player_position", self.hotkey_get_position)
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:gamemode_1-3_toggle", self.toggle_gamemode)
 
     def hotkey_get_position(self):
+        if self != globals.world.get_active_player(): return
         import clipboard
         clipboard.copy("/tp @p {} {} {}".format(*self.position))
 
     def toggle_gamemode(self):
+        if self != globals.world.get_active_player(): return
         if self.gamemode == 1: self.set_gamemode(3)
         elif self.gamemode == 3: self.set_gamemode(1)
 
@@ -139,11 +152,11 @@ class Player(Entity.Entity):
                 if not slot.get_itemstack().is_empty() and slot.get_itemstack().get_item_name() == itemstack.get_item_name() and \
                         slot.interaction_mode[2]:
                     if slot.get_itemstack().item and slot.get_itemstack().amount + itemstack.amount <= itemstack.item. \
-                            get_max_stack_size():
+                            STACK_SIZE:
                         slot.get_itemstack().add_amount(itemstack.amount)
                         return True
                     else:
-                        m = slot.get_itemstack().item.get_max_stack_size()
+                        m = slot.get_itemstack().item.STACK_SIZE
                         delta = m - slot.get_itemstack().amount
                         slot.get_itemstack().set_amount(m)
                         itemstack.add_amount(-delta)
@@ -164,6 +177,8 @@ class Player(Entity.Entity):
         self.active_inventory_slot = slot
 
     def get_active_inventory_slot(self):
+        if "hotbar" not in self.inventories:
+            self.create_inventories()
         return self.inventories["hotbar"].slots[self.active_inventory_slot]
 
     def kill(self, test_totem=True):
@@ -179,34 +194,34 @@ class Player(Entity.Entity):
                 self.hearts = 20
                 self.hunger = 20
                 return
-        super().kill()  # todo: create an new entity for player
         sector = util.math.sectorize(self.position)
         globals.world.change_sectors(sector, None)
+        self.reset_moving_slot()
         if not globals.world.gamerulehandler.table["keepInventory"].status.status:
-            globals.commandparser.parse("/clear")
+            globals.commandparser.parse("/clear")  # todo: drop items
         if globals.world.gamerulehandler.table["showDeathMessages"].status.status:
-            logger.println("[CHAT] player {} died".format(self.name))
+            logger.println("[CHAT] player {} died".format(self.name))   # todo: add death screen
         self.position = (globals.world.spawnpoint[0], util.math.get_max_y(globals.world.spawnpoint),
-                                   globals.world.spawnpoint[1])
+                         globals.world.spawnpoint[1])
         self.active_inventory_slot = 0
         globals.window.dy = 0
         globals.chat.close()
+        globals.inventoryhandler.close_all_inventories()
+        # todo: drop xp
         self.xp = 0
         self.xp_level = 0
         self.hearts = 20
         self.hunger = 20
-        globals.window.flying = False
+        globals.window.flying = False if self.gamemode != 3 else True
         self.armor_level = 0
         self.armor_toughness = 0
         globals.eventhandler.call("player:die", self)
-        self.reset_moving_slot()
-        globals.inventoryhandler.close_all_inventories()
         sector = util.math.sectorize(self.position)
         globals.world.change_sectors(None, sector)
         # todo: recalculate armor level!
 
         if not globals.world.gamerulehandler.table["doImmediateRespawn"].status.status:
-            globals.statehandler.switch_to("minecraft:escape_state")  # todo: add special state
+            globals.statehandler.switch_to("minecraft:escape_state")  # todo: add special state [see above]
 
     def _get_position(self):
         return self.position
@@ -214,7 +229,7 @@ class Player(Entity.Entity):
     def _set_position(self, position):
         self.position = position
 
-    def damage(self, hearts: int, check_gamemode=True):
+    def damage(self, hearts: int, check_gamemode=True, reason=None):
         """
         damage the player and removes the given amount of hearts (two hearts are one full displayed hart)
         """
@@ -230,4 +245,24 @@ class Player(Entity.Entity):
         globals.inventoryhandler.moving_slot.get_itemstack().clean()
 
     def tell(self, msg: str):
-        globals.chat.print_ln(msg)
+        if self == globals.world.get_active_player():
+            globals.chat.print_ln(msg)
+        else:
+            pass  # todo: send through network
+
+    def draw(self, position=None, rotation=None, full=None):
+        if self != globals.world.get_active_player(): return  # used to fix unknown player in world
+        old_position = self.position
+        if position is not None: self.set_position_unsafe(position)
+        rx, ry, rz = self.rotation if rotation is None else rotation
+        rotation_whole = (0, rx + 90, 0)
+        if self != globals.world.get_active_player() or full is True:
+            self.RENDERER.draw(self, "outer", rotation=rotation_whole)
+        else:
+            if self.get_active_inventory_slot() is not None and not self.get_active_inventory_slot(
+                    ).itemstack.is_empty():
+                self.RENDERER.draw_box(self, "right_arm_rotated", rotation=rotation_whole)
+
+            if not self.inventories["main"].slots[-1].itemstack.is_empty():
+                self.RENDERER.draw_box(self, "left_arm_rotated", rotation=rotation_whole)
+        self.set_position_unsafe(old_position)
