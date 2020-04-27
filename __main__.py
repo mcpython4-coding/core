@@ -38,6 +38,9 @@ try:
     import ResourceLocator
     ResourceLocator.load_resource_packs()
 
+    if not os.path.exists(G.local+"/build"):
+        os.makedirs(G.local+"/build")
+
     ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local+"/build/skin.png")
 
     import mod.ModLoader
