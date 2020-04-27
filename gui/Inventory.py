@@ -77,7 +77,10 @@ class Inventory:
         if "image_position" in self.config:
             self.position = self.config["image_position"]
         if "image_location" in self.config:
-            self.bgsprite = pyglet.sprite.Sprite(ResourceLocator.read(self.config["image_location"], "pyglet"))
+            if ResourceLocator.exists(self.config["image_location"]):
+                self.bgsprite = pyglet.sprite.Sprite(ResourceLocator.read(self.config["image_location"], "pyglet"))
+            else:
+                self.bgsprite = pyglet.sprite.Sprite(ResourceLocator.read("assets/missingtexture.png", "pyglet"))
         if "bg_image_pos" in self.config:
             self.bg_image_pos = tuple(self.config["bg_image_pos"])
 

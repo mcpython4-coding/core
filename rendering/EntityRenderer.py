@@ -69,8 +69,12 @@ class EntityRenderer:
             if texture in TEXTURES and texture in reloaded:
                 group = TEXTURES[texture]
             else:
-                group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                    ResourceLocator.read(texture, "pyglet").get_texture())
+                if ResourceLocator.exists(texture):
+                    group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
+                        ResourceLocator.read(texture, "pyglet").get_texture())
+                else:
+                    group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
+                        ResourceLocator.read("assets/missingtexture.png", "pyglet").get_texture())
                 reloaded.append(texture)
             self.box_models[boxname] = rendering.BoxModel.BaseBoxModel(
                 box["position"] if "position" in box else (0, 0, 0), tuple([e/16 for e in box["size"]]), group,
