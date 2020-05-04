@@ -38,12 +38,13 @@ issue 55:
     since: alpha rendering was implemented
     fix: order alpha face rendering! (maybe implement an AlphaRenderingRenderer extends ICustomDrawRenderer)
 
-issue 80: [unable to reproduce, check and mark as resolved when not occur anymore]
+issue 80:
     bug: in some cases, mouse button up is still not handled
 
 issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
+    solution: maybe WAI
 
 issue 113:
     bug: "uv-lock"-parameter is ignored in block-states
@@ -98,14 +99,14 @@ issue 150:
         (-> maybe add an FloatPosition-class handling all this stuff)
      fix C: use the decimal module for handling the floats [warning: OpenGL may cause problems when using the module]
 
-issue 154: [fix with generation update]
+issue 154:
     bug: debug world blocks do NOT use block-state
 
 issue 157:
     bug: loading hangs before showing the chunk loading screen due to deserialization times
     fix: add color indicating that the deserialization is in progress
 
-issue 159: [fix in world generation update]
+issue 159:
     bug: various maps are stored not chunk-relative making file size big at outer positions
     fix: implement relative-storage with data-fixer
 
@@ -114,4 +115,16 @@ issue 161:
     fix: like in kill-method, force-close all inventories on save
     other fix: save moving slot also & load it [warning: also save what inventories are open]
 
-[162-163]
+issue 164:
+    bug: saving/loading big worlds take ages
+    fix: do NOT load every time the whole .region file, store it in RAM [we have enough of it]
+
+issue 165:
+    bug: changing chunks in an big world takes ages
+    fix: see issue 164
+
+issue 166:
+    bug: world generation is slow
+
+issue 167:
+    bug: when setting up new, the game is unable to launch [e.g. when DELETING the build-folder]

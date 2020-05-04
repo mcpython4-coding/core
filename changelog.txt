@@ -1,7 +1,24 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
-changelog of master-branch
+changelog of master-branch:
+    - during developing more features, the developer has decided to discard the progress. As some more difficulties had
+        occur [Covid-19], the development time for these dev-cycle was far longer than expected.
+    - resize-event is called after every state switch now
+
+    planned:
+        - change how mod.json's work, rework event loading annotations [@G.modloader(<modname>) -> event by func name?
+        - search why generation takes so long [issue 166]
+        - speed up chunk accessing [issue 164 & 165]
+        - make startup fail-save [issue 167]
+        - fix issue 137, 159, 161
+        - check for the reason of issue 157 and fix if possible
+        - fix debug world [it sets the state, but does not update visible state with redraw=True] (issue 154)
+        - fix issue 149 [caused by an wrong slot assignment to clear]
+        - fix issue 9 caused by an missing _finish call in ItemFactory
+
+
+changelog of snapshot 20w14a
     - added new event: "stage:blockitemfactory:finish"
     - cleaned up base classes for block and item
     - chunk entries containing positions are mostly stored relative to the chunk decreasing save file size

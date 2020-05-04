@@ -1018,4 +1018,6 @@ started these clone on 12th of July, 2019
 [uuk]: added SUMMON_ABLE-flag to Entity-class determine if the entity can be used in the /summon command
 [uuk]: moved skin-cache from build to build/skins folder
 [uuk]: fixed bug: player entity is removed from world when it dies and not added back
+[uuk]: rolled back dev-branch as its code was strongly broken [world gen time ~100x higher than before]
+[uuk]: when switching to an state, it will now get an on_resize-event-call as size may have updated
 

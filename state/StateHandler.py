@@ -32,8 +32,9 @@ class StateHandler:
         if self.CANCEL_SWITCH_STATE: return
         if self.active_state:
             self.active_state.deactivate()
-        self.active_state = self.states[statename]
+        self.active_state: State.State = self.states[statename]
         self.active_state.activate()
+        self.active_state.eventbus.call("user:window:resize", *G.window.get_size())
         G.eventhandler.call("state:switch:post", statename)
         logger.println("[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename), write_into_console=False)
 
