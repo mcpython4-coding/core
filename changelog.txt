@@ -5,6 +5,7 @@ changelog of master-branch:
     - during developing more features, the developer has decided to discard the progress. As some more difficulties had
         occur [Covid-19], the development time for these dev-cycle was far longer than expected.
     - resize-event is called after every state switch now
+    - refactored ModLoader-class & optimized some loading systems
 
     planned:
         - change how mod.json's work, rework event loading annotations [@G.modloader(<modname>) -> event by func name?
