@@ -272,9 +272,10 @@ class ModLoader:
 
     @classmethod
     def load_new_json(cls, data: dict, file: str):
+        if "version" not in data: raise IOError("invalid mod.json file found without 'version'-entry")
         version = data["version"]
-        # old: "1.0.0" without "version" entry is loaded abovWQe
-        if version == "1.1.0":  # 1.1.0: latest
+        # old: "1.0.0" without "version" entry is loaded above
+        if version == "1.1.0":  # 1.1.0: outdated since 04.05.2020
             loader = data["loader"] if "loader" in data else "python:default"
             # todo: add registry for loaders
             if loader == "python:default":
@@ -290,6 +291,43 @@ class ModLoader:
                 logger.println("[MODLOADER][ERROR] found mod.json ({}) which is not using any supported loader"
                                " ({})".format(file, loader))
                 G.window.close()
+        elif version == "1.2.0":  # latest
+            for entry in data["entries"]:
+                modname = entry["name"]
+                loader = entry["loader"]
+                if loader == "python:default":
+                    version = tuple(entry["version"].split("."))
+                    modinstance = mod.Mod.Mod(modname, version)
+                    if "depends" in entry:
+                        for depend in entry["depends"]:
+                            t = None if "type" not in depend else depend["type"]
+                            if t is None or t == "depend": modinstance.add_dependency(cls.cast_dependency(depend))
+                            elif t == "depend_not_load_order":
+                                modinstance.add_not_load_dependency(cls.cast_dependency(depend))
+                            elif t == "not_compatible": modinstance.add_not_compatible(cls.cast_dependency(depend))
+                            elif t == "load_before": modinstance.add_load_before_if_arrival(cls.cast_dependency(depend))
+                            elif t == "load_after": modinstance.add_load_after_if_arrival(cls.cast_dependency(depend))
+                            elif t == "only_if": modinstance.add_load_only_when_arrival(cls.cast_dependency(depend))
+                            elif t == "only_if_not":
+                                modinstance.add_load_only_when_not_arrival(cls.cast_dependency(depend))
+                    if "load_resources" in entry and entry["load_resources"]:
+                        modinstance.add_load_default_resources()
+                    for location in entry["load_files"]:
+                        try:
+                            importlib.import_module(location.replace("/", ".").replace("\\", "."))
+                        except ModuleNotFoundError:
+                            logger.println("[MODLOADER][ERROR] can't load mod file {}".format(location))
+                            return
+                else:
+                    raise IOError("invalid loader '{}'".format(loader))
+
+    @classmethod
+    def cast_dependency(cls, depend):
+        c = {}
+        if "version" in depend: c["version_min"] = depend["version"]
+        if "upper_version" in depend: c["version_max"] = depend["upper_version"]
+        if "versions" in depend: c["versions"] = depend["versions"]
+        return mod.Mod.ModDependency(depend["name"], **c)
 
     @staticmethod
     def _load_from_old_json(data: dict, file: str):
@@ -354,28 +392,38 @@ class ModLoader:
                 modinfo[mod.name] = []
         return errors, modinfo
 
-    def check_dependency_errors(self, errors):
+    def check_dependency_errors(self, errors, modinfo):
         for mod in self.found_mods:
-            depends = mod.dependinfo[0][:]
-            for depend in depends:
+            for depend in mod.dependinfo[0]:
                 if not depend.arrival():
                     errors.append("- Mod '{}' needs mod {} which is not provided".format(mod.name, depend))
             for depend in mod.dependinfo[2]:
                 if depend.arrival():
-                    errors.append("- Mod '{}' is incompatible with {}".format(mod.name, depend))
-        return errors
+                    errors.append("- Mod '{}' is incompatible with {} which is provided".format(mod.name, depend))
+            for depend in mod.dependinfo[5]:
+                if not depend.arrival():
+                    del modinfo[mod.name]
+                    del self.mods[mod.name]
+            for depend in mod.dependinfo[6]:
+                if depend.arrival():
+                    del modinfo[mod.name]
+                    del self.mods[mod.name]
+        return errors, modinfo
 
     def sort_mods(self):
-        errors, modinfo = self.check_mod_duplicates()
-        errors = self.check_dependency_errors(errors)
+        errors, modinfo = self.check_dependency_errors(*self.check_mod_duplicates())
         for mod in self.found_mods:
             for depend in mod.dependinfo[4]:
-                if depend.name in modinfo and depend.name not in modinfo[mod.name]:
+                if mod.name in modinfo and depend.name not in modinfo[mod.name]:
                     modinfo[mod.name].append(depend.name)
             for depend in mod.dependinfo[3]:
                 if depend.name in modinfo and mod.name not in modinfo[depend.name]:
                     modinfo[depend.name].append(mod.name)
         if len(errors) > 0:
+            logger.println("found mods: ")
+            logger.println(" -", "\n - ".join([modinstance.mod_string() for modinstance in self.mods.values()]))
+            logger.println()
+
             logger.println("errors with mods:")
             logger.println(" ", end="")
             logger.println(*errors, sep="\n ")
@@ -418,7 +466,7 @@ class ModLoader:
             else:
                 astate.parts[2].progress_max = 0
         else:
-            raise ValueError("invalid result status {}".format(status))
+            raise ValueError("invalid result status '{}'".format(status))
 
     def process(self):
         if self.active_loading_stage >= len(LOADING_ORDER): return

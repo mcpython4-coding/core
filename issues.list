@@ -128,3 +128,6 @@ issue 166:
 
 issue 167:
     bug: when setting up new, the game is unable to launch [e.g. when DELETING the build-folder]
+
+issue 168:
+    bug: when starting in-game generation, game hangs for an short moment

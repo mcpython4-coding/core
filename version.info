@@ -1021,4 +1021,6 @@ started these clone on 12th of July, 2019
 [uuk]: rolled back dev-branch as its code was strongly broken [world gen time ~100x higher than before]
 [uuk]: when switching to an state, it will now get an on_resize-event-call as size may have updated
 [uuk]: refactored ModLoader & optimized mod-loading by updating pgb's only when task execution for tick finished
+[uuk]: new mod.json file version: 1.2.0 [old still supported]
+[uuk]: ModDependency will cast now an stringified version entry [in form of x.y.z.[...]] to the correct tuple version
 
