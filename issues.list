@@ -1,7 +1,7 @@
 
 [issue 1-8 are part of github-only and are mostly fixed at the moment]
 
-issue 9:
+issue 9: [seems fixed, please check]
     when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
         Item-instances in the same run
     this issue occurs only in the first run with the new block

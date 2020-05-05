@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -14,6 +15,7 @@ from typing import Dict, List
 import util.math
 import util.enums
 import datetime
+import deprecate
 
 
 class Chunk:
@@ -99,6 +101,7 @@ class Chunk:
                 else: faces[face] = False
         return faces
 
+    @deprecate.deprecated
     def add_add_block_gen_task(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[],
                                kwargs={}, on_add=None):
         self.blockmap[position] = ([position, block_name], {"immediate": immediate, "block_update": block_update,
@@ -109,16 +112,16 @@ class Chunk:
 
     def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True, blockupdateself=True,
                   args=[], kwargs={}):
-        """ Add a block with the given `texture` and `position` to the world.
-
-        Parameters
-        ----------
-        position : tuple of len 3
-            The (x, y, z) position of the block to add.
-        block_name : the name of the block to add
-        immediate : bool
-            Whether or not to draw the block immediately.
-
+        """
+        adds an block to the given position
+        :param position: the position to add
+        :param block_name: the name of the block or an instance of it
+        :param immediate: if the block should be shown if needed
+        :param block_update: if an block-update should be send to neighbors blocks
+        :param blockupdateself: if the block should get an block-update
+        :param args: the args to create the block with
+        :param kwargs: the kwargs to create the block with
+        :return: the block instance or None if it could not be created
         """
         if position[1] < 0 or position[1] > 255: return
         if position != util.math.normalize(position):

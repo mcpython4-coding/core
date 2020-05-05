@@ -22,9 +22,9 @@ changelog of master-branch:
         - search why generation takes so long [issue 166]
         - speed up chunk accessing [issue 164 & 165]
         - make startup fail-save [issue 167]
-        - fix issue 137, 159, 161
+        - fix issue 137, 161
+        - optimize world storage (also issue 159)
         - check for the reason of issue 157 and fix if possible
-        - fix issue 9 caused by an missing _finish call in ItemFactory (may be fixed before)
 
 
 changelog of snapshot 20w14a

@@ -1,14 +1,19 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
 import logger
 
 try:
+    import sys
+    if sys.version_info.major < 3 or sys.version_info.minor < 7:
+        logger.println("[WARN] you are using an not supported version of python. Game may not run!")
+
     import config
     version = config.FULL_VERSION_NAME.upper()
     logger.println("---------------"+"-"*len(version))
