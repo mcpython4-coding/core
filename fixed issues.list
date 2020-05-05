@@ -159,3 +159,4 @@ issue 148: block-position label is inverted to the gamerule-value; fixed on: 01.
 issue 163: Inventory serializer crashes when inventory slot count gets smaller on new load; fixed on: 02.04.2020 by uuk
 issue 154: debug world does not use correct block states; fixed on 05.05.2020 by uuk
 issue 169: BlockItemGenerator was not using block-state set correctly; fixed on 05.05.2020 by uuk
+issue 170: memory leak with block inventories; fixed on 05.05.2020 by uuk

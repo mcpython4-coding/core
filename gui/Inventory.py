@@ -234,4 +234,12 @@ class Inventory:
         called when the inventory should update the content of the ShiftContainer of the inventory-handler
         """
 
+    def __del__(self):
+        if self in G.inventoryhandler.alwaysopened:
+            G.inventoryhandler.alwaysopened.remove(self)
+        G.inventoryhandler.hide(self)
+        if self in G.inventoryhandler.inventorys:
+            G.inventoryhandler.inventorys.remove(self)
+        G.inventoryhandler.update_shift_container()
+
 
