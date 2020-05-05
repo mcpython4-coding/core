@@ -1029,4 +1029,5 @@ started these clone on 12th of July, 2019
 [uuk]: changed some internal loading stage calling
 [uuk]: added new loading events: "stage:block:factory:finish", "stage:item:factory:finish"
 [uuk]: fixed issue 154 and 169
+[uuk]: added --fullscreen flag for enabling fullscreen on startup
 

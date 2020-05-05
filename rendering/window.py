@@ -435,6 +435,8 @@ class Window(pyglet.window.Window):
         if G.world.savefile.save_in_progress: return
         if G.statehandler.active_state is not None and any(
                 [part.NAME == "minecraft:state_part_game" for part in G.statehandler.active_state.parts]):
+            # have we an world which should be saved?
             G.world.savefile.save_world(override=True)
+        self.set_fullscreen(False)
         self.close()
 

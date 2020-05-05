@@ -123,6 +123,7 @@ class StateBlockItemGenerator(State.State):
             json.dump({"finished": True}, f)
         G.tickhandler.enable_random_ticks = True
         G.world.hide_faces_to_ungenerated_chunks = True
+        G.window.set_fullscreen("--fullscreen" in sys.argv)
         G.eventhandler.call("stage:blockitemfactory:finish")
 
     def close(self):

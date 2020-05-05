@@ -55,6 +55,12 @@ For enabling this world generator, run the game with:
 python __main__.py --debug-world
 ```
 
+ **I want to play in fullscreen**
+
+This is possible by adding "--fullscreen" after the command. This will tell out
+rendering backend to enable fullscreen. At the moment it is not possible to toggle between them
+in-game.
+
  **I want to include mods from another directory**
  
  You can add custom mod directories by running:
