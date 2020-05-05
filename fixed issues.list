@@ -162,4 +162,4 @@ issue 169: BlockItemGenerator was not using block-state set correctly; fixed on 
 issue 170: memory leak with block inventories; fixed on 05.05.2020 by uuk
 issue 149: offhand slots get cleared on inventory close; fixed on 05.05.2020 by uuk
 issue 171: memory leak with block instances; fixed on 05.05.2020 by uuk
-issue 172: when deleting build-folder, game crashes on every run; fixed on 05.05.2020 by uuk
+issue 172 & 167: when deleting build-folder, game crashes on every run; fixed on 05.05.2020 by uuk

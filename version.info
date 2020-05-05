@@ -1033,5 +1033,6 @@ started these clone on 12th of July, 2019
 [uuk]: fixed memory leak with block-inventories (issue 170)
 [uuk]: fixed offhand slot resetting on every inventory close (issue 149)
 [uuk]: fixed memory leak with block-instances (issue 171)
-[uuk]: fixed crash when deleting build-folder (issue 172)
+[uuk]: fixed crash when deleting build-folder (issue 167 & 172)
+[uuk]: improved exception message on world save not found
 

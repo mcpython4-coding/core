@@ -11,6 +11,7 @@ changelog of master-branch:
     - improved mod loading stage calling
     - new loading events: "stage:block:factory:finish" and "stage:item:factory:finish"
     - added --fullscreen -flag for enabling fullscreen on startup [unstable at the moment]
+    - improved error message when world save not found on load
 
     fixed bugs:
         - state of block may not be set correctly in some cases
@@ -22,7 +23,6 @@ changelog of master-branch:
     planned:
         - search why generation takes so long [issue 166]
         - speed up chunk accessing [issue 164 & 165]
-        - make startup fail-save [issue 167]
         - fix issue 137, 161
         - optimize world storage (also issue 159)
         - check for the reason of issue 157 and fix if possible

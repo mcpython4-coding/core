@@ -11,6 +11,7 @@ import mod.ModMcpython
 
 
 class InvalidSaveException(Exception): pass
+class MissingSaveException(Exception): pass
 
 
 class IDataSerializer(event.Registry.IRegistryContent):

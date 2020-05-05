@@ -22,7 +22,7 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
     @classmethod
     def load(cls, savefile):
         data = savefile.access_file_json("level.json")
-        if data is None: raise storage.serializer.IDataSerializer.InvalidSaveException("level.json not found!")
+        if data is None: raise storage.serializer.IDataSerializer.MissingSaveException("level.json not found!")
         savefile.version = data["storage version"]
         playername = data["player name"]
         if playername not in G.world.players: G.world.add_player(playername)

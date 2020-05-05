@@ -70,6 +70,10 @@ class SaveFile:
             self.read("minecraft:player_data")
             self.read("minecraft:gamerule")
             self.read("minecraft:registry_info_serializer")
+        except storage.serializer.IDataSerializer.MissingSaveException:
+            logger.println("[WARN] save '{}' not found, falling back to selection menu".format(self.directory))
+            G.world.cleanup()
+            G.statehandler.switch_to("minecraft:world_selection")
         except:
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
