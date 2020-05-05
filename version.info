@@ -1023,4 +1023,7 @@ started these clone on 12th of July, 2019
 [uuk]: refactored ModLoader & optimized mod-loading by updating pgb's only when task execution for tick finished
 [uuk]: new mod.json file version: 1.2.0 [old still supported]
 [uuk]: ModDependency will cast now an stringified version entry [in form of x.y.z.[...]] to the correct tuple version
+[uuk]: can now subscribe to load-event via the following structure:
+    @G.modloader(<modname>, <eventname>)
+    def <your function>(<...>)
 
