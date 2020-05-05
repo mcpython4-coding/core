@@ -99,9 +99,6 @@ issue 150:
         (-> maybe add an FloatPosition-class handling all this stuff)
      fix C: use the decimal module for handling the floats [warning: OpenGL may cause problems when using the module]
 
-issue 154:
-    bug: debug world blocks do NOT use block-state
-
 issue 157:
     bug: loading hangs before showing the chunk loading screen due to deserialization times
     fix: add color indicating that the deserialization is in progress
@@ -131,3 +128,5 @@ issue 167:
 
 issue 168:
     bug: when starting in-game generation, game hangs for an short moment
+
+[169]

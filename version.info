@@ -1028,4 +1028,5 @@ started these clone on 12th of July, 2019
     def <your function>(<...>)
 [uuk]: changed some internal loading stage calling
 [uuk]: added new loading events: "stage:block:factory:finish", "stage:item:factory:finish"
+[uuk]: fixed issue 154 and 169
 

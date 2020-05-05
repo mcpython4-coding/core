@@ -54,7 +54,7 @@ def chunk_generate(chunk):
             block, state = blockmap[(x, z)]
             block = chunk.add_block((x, 10, z), block, block_update=False)
             block.set_model_state(state)
-            block.face_state.update()
+            block.face_state.update(redraw_complete=True)
             heigthmap[(x, z)] = [(0, 10)]
 
     if G.world.get_active_player().gamemode != 3: G.world.get_active_player().set_gamemode(3)
