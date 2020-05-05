@@ -17,6 +17,7 @@ changelog of master-branch:
         - memory leak with block inventories
         - offhand slot gets cleared when closing inventory
         - memory leak with block instances
+        - crash when build-folder was deleted
 
     planned:
         - search why generation takes so long [issue 166]

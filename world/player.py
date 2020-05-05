@@ -89,6 +89,12 @@ class Player(entity.Entity.Entity):
         self.inventories["enderchest"] = gui.InventoryChest.InventoryChest()
         self.inventories["crafting_table"] = gui.InventoryCraftingTable.InventoryCraftingTable()
 
+        if ResourceLocator.exists("build/texture/gui/icons/xp_bar_empty.png"):
+            self.load_xp_icons()
+        else:
+            event.EventHandler.PUBLIC_EVENT_BUS.subscribe("stage:blockitemfactory:finish", self.load_xp_icons)
+
+    def load_xp_icons(self):
         self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/xp_bar.png", "pyglet"))]
 
