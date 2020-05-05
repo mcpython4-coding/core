@@ -1027,4 +1027,5 @@ started these clone on 12th of July, 2019
     @G.modloader(<modname>, <eventname>)
     def <your function>(<...>)
 [uuk]: changed some internal loading stage calling
+[uuk]: added new loading events: "stage:block:factory:finish", "stage:item:factory:finish"
 
