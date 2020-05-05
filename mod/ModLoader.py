@@ -54,16 +54,34 @@ class LoadingStage:
         self.progress = 0
         self.max_progress = 0
 
-    def call_one(self) -> LoadingStageStatus:
+    @classmethod
+    def finish(cls, astate):
+        G.modloader.active_loading_stage += 1
+        if G.modloader.active_loading_stage >= len(LOADING_ORDER):
+            G.statehandler.switch_to("minecraft:blockitemgenerator")
+            G.modloader.finished = True
+            return True
+        astate.parts[0].progress += 1
+        astate.parts[2].progress = 0
+        new_stage = LOADING_ORDER[G.modloader.active_loading_stage]
+        if new_stage.eventnames[0] in G.modloader.mods[G.modloader.modorder[0]].eventbus.event_subscriptions:
+            astate.parts[2].progress_max = len(G.modloader.mods[G.modloader.modorder[0]].eventbus.event_subscriptions[
+                                                   new_stage.eventnames[0]])
+        else:
+            astate.parts[2].progress_max = 0
+
+    def call_one(self, astate):
         if self.active_mod_index >= len(G.modloader.mods):
             self.active_mod_index = 0
-            if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
+            if len(self.eventnames) == 0: return self.finish(astate)
             self.active_event_name = self.eventnames.pop(0)
             modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
             self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
-            return LoadingStageStatus.EVENT_CHANGED
+            astate.parts[2].progress_max = self.max_progress
+            astate.parts[2].progress = 0
+            return
         if self.active_event_name is None:
-            if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
+            if len(self.eventnames) == 0: return self.finish(astate)
             self.active_event_name = self.eventnames.pop(0)
         modname = G.modloader.modorder[self.active_mod_index]
         modinst: mod.Mod.Mod = G.modloader.mods[modname]
@@ -73,21 +91,25 @@ class LoadingStage:
             self.active_mod_index += 1
             if self.active_mod_index >= len(G.modloader.mods):
                 self.active_mod_index = 0
-                if len(self.eventnames) == 0: return LoadingStageStatus.FINISHED
+                if len(self.eventnames) == 0: return self.finish(astate)
                 self.active_event_name = self.eventnames.pop(0)
                 modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
                 if self.active_event_name in modinst.eventbus.event_subscriptions:
                     self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
                 else:
                     self.max_progress = 0
-                return LoadingStageStatus.EVENT_CHANGED
+                astate.parts[2].progress_max = self.max_progress
+                astate.parts[2].progress = 0
+                return
             modinst: mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
             if self.active_event_name in modinst.eventbus.event_subscriptions:
                 self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
             else:
                 self.max_progress = 0
-            return LoadingStageStatus.MOD_CHANGED
-        return LoadingStageStatus.WORKING
+            astate.parts[2].progress_max = self.max_progress
+            astate.parts[2].progress = 0
+            return
+        astate.parts[2].progress += 1  # todo: this is not good, can we optimize it?
 
 
 class LoadingStages:
@@ -444,42 +466,6 @@ class ModLoader:
         logger.println("mod loading order: ")
         logger.println(" -", "\n - ".join([self.mods[name].mod_string() for name in self.modorder]))
 
-    def process_one(self, astate):
-        """
-        process one task
-        :param astate: the prepared loading state
-        :return: True if exit should be executed else None
-        """
-        stage = LOADING_ORDER[self.active_loading_stage]
-        status = stage.call_one()  # execute the task
-        # and check for the status todo: can we move this to task execution?
-        if status == LoadingStageStatus.WORKING:
-            astate.parts[2].progress += 1  # todo: this is not good, can we optimize it?
-            self.update_pgb_text()
-        elif status == LoadingStageStatus.MOD_CHANGED:
-            astate.parts[2].progress_max = stage.max_progress
-            astate.parts[2].progress = 0
-            self.update_pgb_text()
-        elif status == LoadingStageStatus.EVENT_CHANGED:
-            astate.parts[2].progress_max = stage.max_progress
-            astate.parts[2].progress = 0
-        elif status == LoadingStageStatus.FINISHED:
-            self.active_loading_stage += 1
-            if self.active_loading_stage >= len(LOADING_ORDER):
-                G.statehandler.switch_to("minecraft:blockitemgenerator")
-                self.finished = True
-                return True
-            astate.parts[0].progress += 1
-            astate.parts[2].progress = 0
-            new_stage = LOADING_ORDER[self.active_loading_stage]
-            if new_stage.eventnames[0] in self.mods[self.modorder[0]].eventbus.event_subscriptions:
-                astate.parts[2].progress_max = len(self.mods[self.modorder[0]].eventbus.event_subscriptions[
-                                                       new_stage.eventnames[0]])
-            else:
-                astate.parts[2].progress_max = 0
-        else:
-            raise ValueError("invalid result status '{}'".format(status))
-
     def process(self):
         if self.active_loading_stage >= len(LOADING_ORDER): return
         start = time.time()
@@ -487,7 +473,8 @@ class ModLoader:
         astate.parts[0].progress_max = len(LOADING_ORDER)
         astate.parts[1].progress_max = len(self.mods)
         while time.time() - start < 0.2:
-            if self.process_one(astate): return
+            stage = LOADING_ORDER[self.active_loading_stage]
+            if stage.call_one(astate): return
         self.update_pgb_text()
 
     def update_pgb_text(self):

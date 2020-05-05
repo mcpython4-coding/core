@@ -6,6 +6,9 @@ changelog of master-branch:
         occur [Covid-19], the development time for these dev-cycle was far longer than expected.
     - resize-event is called after every state switch now
     - refactored ModLoader-class & optimized some loading systems
+    - added new mod.json file version
+    - added @globals.modloader(<modname>, <eventname>) annotation
+    - improved mod loading stage calling
 
     planned:
         - change how mod.json's work, rework event loading annotations [@G.modloader(<modname>) -> event by func name?

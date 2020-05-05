@@ -1026,4 +1026,5 @@ started these clone on 12th of July, 2019
 [uuk]: can now subscribe to load-event via the following structure:
     @G.modloader(<modname>, <eventname>)
     def <your function>(<...>)
+[uuk]: changed some internal loading stage calling
 
