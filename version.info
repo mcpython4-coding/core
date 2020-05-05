@@ -1035,4 +1035,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed memory leak with block-instances (issue 171)
 [uuk]: fixed crash when deleting build-folder (issue 167 & 172)
 [uuk]: improved exception message on world save not found
+[uuk]: normal logging messages get now also escaped
 
