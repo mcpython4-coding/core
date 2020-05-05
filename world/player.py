@@ -266,3 +266,7 @@ class Player(entity.Entity.Entity):
             if not self.inventories["main"].slots[-1].itemstack.is_empty():
                 self.RENDERER.draw_box(self, "left_arm_rotated", rotation=rotation_whole)
         self.set_position_unsafe(old_position)
+
+    def __del__(self):
+        for inventory in self.inventories.values():
+            del inventory

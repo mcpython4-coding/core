@@ -160,3 +160,5 @@ issue 163: Inventory serializer crashes when inventory slot count gets smaller o
 issue 154: debug world does not use correct block states; fixed on 05.05.2020 by uuk
 issue 169: BlockItemGenerator was not using block-state set correctly; fixed on 05.05.2020 by uuk
 issue 170: memory leak with block inventories; fixed on 05.05.2020 by uuk
+issue 149: offhand slots get cleared on inventory close; fixed on 05.05.2020 by uuk
+issue 171: memory leak with block instances; fixed on 05.05.2020 by uuk

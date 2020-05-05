@@ -72,3 +72,6 @@ class BlockFaceState:
             self.subscribed_renderer = False
         [self.hide_face(face) for face in util.enums.EnumSide.iterate()]
 
+    def __del__(self):
+        self.hide_all()
+

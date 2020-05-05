@@ -10,18 +10,21 @@ changelog of master-branch:
     - added @globals.modloader(<modname>, <eventname>) annotation
     - improved mod loading stage calling
     - new loading events: "stage:block:factory:finish" and "stage:item:factory:finish"
-    - added --fullscreen -flag for enabling fullscreen on startup
+    - added --fullscreen -flag for enabling fullscreen on startup [unstable at the moment]
+
+    fixed bugs:
+        - state of block may not be set correctly in some cases
+        - memory leak with block inventories
+        - offhand slot gets cleared when closing inventory
+        - memory leak with block instances
 
     planned:
-        - change how mod.json's work, rework event loading annotations [@G.modloader(<modname>) -> event by func name?
         - search why generation takes so long [issue 166]
         - speed up chunk accessing [issue 164 & 165]
         - make startup fail-save [issue 167]
         - fix issue 137, 159, 161
         - check for the reason of issue 157 and fix if possible
-        - fix debug world [it sets the state, but does not update visible state with redraw=True] (issue 154)
-        - fix issue 149 [caused by an wrong slot assignment to clear]
-        - fix issue 9 caused by an missing _finish call in ItemFactory
+        - fix issue 9 caused by an missing _finish call in ItemFactory (may be fixed before)
 
 
 changelog of snapshot 20w14a

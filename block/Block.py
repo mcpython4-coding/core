@@ -126,3 +126,6 @@ class Block(event.Registry.IRegistryContent):
         """
         self.set_model_state(data)
 
+    def __del__(self):
+        del self.face_state
+

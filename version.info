@@ -1031,4 +1031,6 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 154 and 169
 [uuk]: added --fullscreen flag for enabling fullscreen on startup
 [uuk]: fixed memory leak with block-inventories (issue 170)
+[uuk]: fixed offhand slot resetting on every inventory close (issue 149)
+[uuk]: fixed memory leak with block-instances (issue 171)
 

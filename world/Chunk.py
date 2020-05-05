@@ -306,3 +306,13 @@ class Chunk:
         return self.blockmap[position][0][1] if position in self.blockmap else (self.world[position] if position in
                                                                                 self.world else None)
 
+    def __del__(self):
+        for block in self.world.values():
+            del block
+        self.shown.clear()
+        self.show_tasks.clear()
+        self.hide_tasks.clear()
+        self.chunkgenerationtasks.clear()
+        self.blockmap.clear()
+        self.attr.clear()
+

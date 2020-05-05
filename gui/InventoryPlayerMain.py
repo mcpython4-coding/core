@@ -51,7 +51,7 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
         G.world.get_active_player().armor_level = points
 
     def on_deactivate(self):
-        self.slots[45].get_itemstack().clean()
+        self.slots[44].get_itemstack().clean()
         for slot in self.slots[40:-1]:
             slot: gui.Slot.Slot
             itemstack = slot.get_itemstack()

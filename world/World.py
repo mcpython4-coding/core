@@ -235,8 +235,7 @@ class World:
             dimension: world.Dimension.Dimension
             for chunk in dimension.chunks.values():
                 chunk.hide_all()
-                chunk.world = {}
-                chunk.is_ready = False
+                del chunk
             dimension.chunks = {}
         if remove_dims:
             self.dimensions.clear()

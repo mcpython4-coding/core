@@ -73,9 +73,6 @@ issue 140:
         reproduce:
             use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
 
-issue 149:
-    bug: offhand slot is reset when closing inventory
-
 issue 150:
     bug: float point precision loos at high coordinates e.g. [only occur on block rendering]:
      - at z=1000000: world is "wobbing" around -> movements are not shown correctly
@@ -129,4 +126,4 @@ issue 167:
 issue 168:
     bug: when starting in-game generation, game hangs for an short moment
 
-[169-170]
+[169-171]

@@ -235,6 +235,8 @@ class Inventory:
         """
 
     def __del__(self):
+        # we do not care about it when it is None [gc-sided deletion at the end of the program]
+        if G is None or G.inventoryhandler is None: return
         if self in G.inventoryhandler.alwaysopened:
             G.inventoryhandler.alwaysopened.remove(self)
         G.inventoryhandler.hide(self)
