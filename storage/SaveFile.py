@@ -13,9 +13,7 @@ import json
 import pickle
 import os
 import logger
-import traceback
 import sys
-import traceback
 
 """
 History of save versions:

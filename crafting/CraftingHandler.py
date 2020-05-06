@@ -11,7 +11,6 @@ import crafting.IRecipeType
 import json
 import ResourceLocator
 import item.ItemHandler
-import traceback
 import mod.ModMcpython
 import sys
 import logger

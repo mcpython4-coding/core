@@ -9,7 +9,6 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import chat.command.Command
 import logger
-import traceback
 
 
 class ParsingCommandInfo:
@@ -68,17 +67,13 @@ class CommandParser:
             try:
                 values, trace = self._convert_to_values(split, parsebridge, info)
             except:
-                logger.println("[CHAT][EXCEPTION] during parsing values")
-                logger.write_exception()
-                traceback.print_exc()
+                logger.write_exception("[CHAT][EXCEPTION] during parsing values")
                 return
             if values is None: return
             try:
                 command.parse(values, trace, info)
             except:
-                logger.println("[CHAT][EXCEPTION] during executing command")
-                logger.write_exception()
-                traceback.print_exc()
+                logger.write_exception("[CHAT][EXCEPTION] during executing command")
         else:
             logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
 

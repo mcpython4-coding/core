@@ -13,7 +13,6 @@ import crafting.GridRecipes
 import event.EventInfo
 import gui.Slot
 import gui.ItemStack
-import traceback
 
 
 class GridRecipeInterface(crafting.IRecipeInterface.IRecipeInterface):

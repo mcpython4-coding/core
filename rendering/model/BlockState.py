@@ -10,7 +10,6 @@ import globals as G
 import ResourceLocator
 import random
 import mod.ModMcpython
-import traceback
 import logger
 import event.Registry
 import block.BoundingBox
@@ -238,8 +237,7 @@ class BlockStateDefinition:
                 modname, s[-1].split(".")[0]))
         except BlockStateNotNeeded: pass
         except:
-            logger.println("error during loading model from file {}".format(file))
-            traceback.print_exc()
+            logger.write_exception("error during loading model from file '{}'".format(file))
 
     @classmethod
     def from_data(cls, name, data):
@@ -252,8 +250,7 @@ class BlockStateDefinition:
             return BlockStateDefinition(data, name)
         except BlockStateNotNeeded: pass  # do we need this model?
         except:
-            logger.println("error during loading model for {} from data {}".format(name, data))
-            traceback.print_exc()
+            logger.write_exception("error during loading model for '{}' from data {}".format(name, data))
 
     def __init__(self, data: dict, name: str):
         if name not in G.registry.get_by_name("block").registered_object_map: raise BlockStateNotNeeded()

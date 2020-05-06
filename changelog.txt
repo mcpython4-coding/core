@@ -12,6 +12,7 @@ changelog of master-branch:
     - new loading events: "stage:block:factory:finish" and "stage:item:factory:finish"
     - added --fullscreen -flag for enabling fullscreen on startup [unstable at the moment]
     - improved error message when world save not found on load
+    - improved exception handling by logger
 
     fixed bugs:
         - state of block may not be set correctly in some cases

@@ -9,7 +9,6 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import event.EventBus
 import event.EventHandler
-import traceback
 
 
 class ModDependency:

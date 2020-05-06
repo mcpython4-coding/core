@@ -6,19 +6,20 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import globals as G
-import gui.Inventory
-import util.opengl
+import html
+import time
+
+import clipboard
 import pyglet
 from pyglet.window import key
-import time
-import chat.command.CommandHandler
-import event.EventHandler
+
 import event.EventBus
-import clipboard
-import traceback
+import event.EventHandler
+import globals as G
+import gui.Inventory
 import logger
-import html
+import util.opengl
+import chat.command.CommandHandler
 
 
 class ChatInventory(gui.Inventory.Inventory):
@@ -37,14 +38,14 @@ class ChatInventory(gui.Inventory.Inventory):
 
     def update_text(self, text, underline_index):
         if len(text) < underline_index:
-            self.lable.text = "<font color='white'>"+text+"_</font>"
+            self.lable.text = "<font color='white'>" + text + "_</font>"
             return
         try:
             self.lable.text = "<font color='white'>{}<u>{}</u>{}</font>".format(text[:underline_index],
                                                                                 text[underline_index],
-                                                                                text[1+underline_index:])
+                                                                                text[1 + underline_index:])
         except IndexError:
-            self.lable.text = "<font color='white'>"+text+"<span>&#95;</span></font>"
+            self.lable.text = "<font color='white'>" + text + "<span>&#95;</span></font>"
 
     def on_activate(self):
         G.chat.text = ""
@@ -64,7 +65,7 @@ class ChatInventory(gui.Inventory.Inventory):
         if (round(time.time() - self.timer) % 2) == 1:
             self.update_text(text, G.chat.active_index)
         else:
-            self.lable.text = "<font color='white'>"+text+"</font>"
+            self.lable.text = "<font color='white'>" + text + "</font>"
         self.lable.draw()
 
 
@@ -89,7 +90,7 @@ class Chat:
         called when text is entered
         :param text: the text that is entered
         """
-        self.text = self.text[:self.active_index+1] + text + self.text[self.active_index+1:]
+        self.text = self.text[:self.active_index + 1] + text + self.text[self.active_index + 1:]
         self.active_index += len(text)
 
     def on_key_press(self, symbol, modifiers):
@@ -99,12 +100,14 @@ class Chat:
         :param modifiers: the modifiers that are used
         """
         if symbol == 65288:  # BACK
-            self.text = self.text[:self.active_index-1] + self.text[self.active_index:]
+            self.text = self.text[:self.active_index - 1] + self.text[self.active_index:]
             self.active_index -= 1
         elif symbol == key.DELETE and self.active_index < len(self.text):
-            self.text = self.text[:self.active_index] + self.text[self.active_index+1:]
-        elif symbol == 65360: self.active_index = 0   # begin key
-        elif symbol == key.END: self.active_index = len(self.text)
+            self.text = self.text[:self.active_index] + self.text[self.active_index + 1:]
+        elif symbol == 65360:
+            self.active_index = 0  # begin key
+        elif symbol == key.END:
+            self.active_index = len(self.text)
         elif symbol == key.ENTER:  # execute command
             self.CANCEL_INPUT = False
             G.eventhandler.call("chat:text_enter", self.text)
@@ -142,7 +145,7 @@ class Chat:
         elif symbol == key.V and modifiers & key.MOD_CTRL:  # insert text from clipboard
             self.enter(clipboard.paste())
         # else:
-            # print(symbol, modifiers)
+        # print(symbol, modifiers)
 
     def print_ln(self, text: str):
         logger.println("[CHAT] {}".format(text))
@@ -159,4 +162,3 @@ class Chat:
 
 
 G.chat = Chat()
-

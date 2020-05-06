@@ -12,7 +12,6 @@ import gui.ItemStack
 import item.ItemHandler
 # import texture.helpers
 import ResourceLocator
-import traceback
 import logger
 
 
@@ -133,8 +132,7 @@ class Slot:
         try:
             return (flag1 and flag2) or (flag3 and flag4) or not (flag1 or flag3)
         except:
-            logger.println("[GUI][ERROR] error during executing check func '{}'".format(self.allowed_item_func))
-            traceback.print_exc()
+            logger.write_exception("[GUI][ERROR] error during executing check func '{}'".format(self.allowed_item_func))
             return False
 
     def save(self):

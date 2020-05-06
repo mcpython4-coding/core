@@ -19,7 +19,6 @@ import pyglet
 import sys
 import factory.ItemFactory
 import mod.ModMcpython
-import traceback
 import logger
 import logger
 
@@ -103,9 +102,7 @@ def register_item(registry, itemclass):
             images = [ResourceLocator.read(file, "pil").resize((32, 32), PIL.Image.NEAREST) for file in files]
         except ValueError:
             images = [texture.TextureAtlas.MISSING_TEXTURE] * len(files)
-            traceback.print_exc()
-            logger.write_exception()
-            logger.println("during not finding files: {}".format(files))
+            logger.write_exception("during not finding files: {}".format(files))
         flag = True
         for textureatlas in TEXTURE_ATLASES:
             if textureatlas.is_free_for(files):

@@ -79,3 +79,5 @@ BIOME_HEIGHT_RANGE_MAP = {  # an dict of biomename: height range storing the int
 # CHUNK_GENERATION_RANGE * 2 + 1 -size
 CHUNK_GENERATION_RANGE = 1
 
+WRITE_NOT_FORMATTED_EXCEPTION = False  # if exceptions should be not formatted-printed to console by logger
+

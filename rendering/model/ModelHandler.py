@@ -10,7 +10,6 @@ import globals as G
 import ResourceLocator
 import util.math
 import rendering.model.Model
-import traceback
 import mod.ModMcpython
 import logger
 import util.enums
@@ -92,9 +91,7 @@ class ModelHandler:
                                                                 name.split(":")[0] if name.count(":") == 1 else
                                                                 "minecraft")
         except:
-            logger.println("error during loading model '{}' named '{}'".format(location, name))
-            traceback.print_exc()
-            traceback.print_stack()
+            logger.write_exception("error during loading model '{}' named '{}'".format(location, name))
 
     def add_face_to_batch(self, block, face, batches) -> list:
         blockstate = self.blockstates[block.NAME]

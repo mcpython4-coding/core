@@ -21,7 +21,6 @@ import json
 import factory.ItemFactory
 import item.ItemHandler
 import mod.ModMcpython
-import traceback
 import logger
 import state.StateModLoading
 import psutil

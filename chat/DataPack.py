@@ -13,7 +13,6 @@ import os
 import enum
 import logger
 import event.EventHandler
-import traceback
 import chat.command.CommandParser
 
 
@@ -111,9 +110,7 @@ class DataPack:
                         self.access.read(file, None).decode("UTF-8"), name)
         except:
             self.status = DataPackStatus.SYSTEM_ERROR
-            logger.println("error during loading data pack '{}'".format(self.name))
-            traceback.print_exc()
-            logger.write_exception()
+            logger.write_exception("error during loading data pack '{}'".format(self.name))
             return
         self.status = DataPackStatus.ACTIVATED
 
@@ -126,9 +123,7 @@ class DataPack:
             self.function_table.clear()  # unload all .mcfunction files
         except:
             self.status = DataPackStatus.SYSTEM_ERROR
-            logger.println("error during unloading data pack '{}'".format(self.name))
-            logger.write_exception()
-            traceback.print_exc()
+            logger.write_exception("error during unloading data pack '{}'".format(self.name))
             return
         self.status = DataPackStatus.UNLOADED  # we have successfully unloaded the data-pack
         if self.access: self.access.close()

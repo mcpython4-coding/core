@@ -19,7 +19,6 @@ import logger
 import chat.DataPack
 import time
 import util.opengl
-import traceback
 
 
 class StateWorldGeneration(State.State):
@@ -54,9 +53,7 @@ class StateWorldGeneration(State.State):
             G.statehandler.switch_to("minecraft:startmenu")
             return
         except:
-            logger.println("failed to load world")
-            logger.write_exception()
-            traceback.print_exc()
+            logger.write_exception("failed to load world")
             G.statehandler.switch_to("minecraft:startmenu")
             return
         for cx in range(-3, 4):

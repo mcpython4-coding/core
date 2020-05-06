@@ -24,7 +24,6 @@ import shutil
 import util.getskin
 import world.player
 import ResourceLocator
-import traceback
 
 
 class StateWorldGeneration(State.State):
@@ -110,9 +109,8 @@ class StateWorldGeneration(State.State):
         try:
             util.getskin.download_skin(playername, G.local+"/build/skin.png")
         except ValueError:
-            logger.println("[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
+            logger.write_exception("[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
             ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local + "/build/skin.png")
-            traceback.print_exc()
         world.player.Player.RENDERER.reload()
         G.world.active_player = playername
         G.world.get_active_player().position = (G.world.spawnpoint[0], util.math.get_max_y(G.world.spawnpoint),

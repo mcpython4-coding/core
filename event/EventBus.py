@@ -7,7 +7,6 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
-import traceback
 import sys
 import time
 import logger
@@ -85,16 +84,11 @@ class EventBus:
                 dif = time.time() - start
             except SystemExit: raise
             except:
-                if not exception_occ:
-                    logger.println("EXCEPTION DURING CALLING EVENT '{}' OVER ".format(event_name))
-                    traceback.print_stack()
-                    exception_occ = True
-                logger.println("exception:")
-                traceback.print_exc()
-                logger.write_exception()
-                logger.println("during calling function: {} with arguments: {}".format(function, list(args)+list(
-                    self.extra_arguments[0])+list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs}, sep="\n"))
-                logger.println("function info: '{}'".format(info))
+                exception_occ = True
+                logger.write_exception("during calling function: {} with arguments: {}".format(function, list(
+                    args)+list(self.extra_arguments[0])+list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs},
+                                                                                               sep="\n"),
+                                       "function info: '{}'".format(info))
             if G.debugevents:
                 with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
                     f.write("\nevent call of '{}' takes {}s until finish".format(function, dif))
@@ -152,16 +146,10 @@ class EventBus:
                 result.append((function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
                                         **{**kwargs, **self.extra_arguments[1], **ekwargs}), info))
             except:
-                if not exception_occ:
-                    logger.println("EXCEPTION DURING CALLING EVENT {} OVER ".format(eventname))
-                    traceback.print_stack()
-                    exception_occ = True
-                logger.println("exception:")
-                traceback.print_exc()
-                logger.write_exception()
-                logger.println("during calling function:", function, "with arguments:", list(args) + list(
-                    self.extra_arguments[0]) + list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs}, sep="\n")
-                logger.println("function info:", info)
+                exception_occ = True
+                logger.write_exception("during calling function:", function, "with arguments:", list(args) + list(
+                    self.extra_arguments[0]) + list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs},
+                                       "function info:", info)
             dif = time.time() - start
             if G.debugevents:
                 with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
