@@ -31,12 +31,9 @@ class DefaultBiomeMapLayer(Layer):
 
     NAME = "biomemap_default"
 
-    @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, chunk):
-        chunk.chunkgenerationtasks.append([DefaultBiomeMapLayer.generate_biomemap, [chunk, config], {}])
-
-    @staticmethod
-    def generate_biomemap(chunk, config):
+    @classmethod
+    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+        chunk = reference.chunk
         cx, cz = chunk.position
         biomemap = chunk.get_value("biomemap")
         landmap = chunk.get_value("landmassmap")

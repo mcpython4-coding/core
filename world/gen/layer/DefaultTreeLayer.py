@@ -18,16 +18,18 @@ class DefaultTreeLayer(Layer):
     NAME = "tree_default"
 
     @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, chunk):
+    def add_generate_functions_to_chunk(config: LayerConfig, reference):
+        chunk = reference.chunk
         cx, cz = chunk.position
         cx *= 16
         cz *= 16
         for x in range(16):
             for z in range(16):
-                chunk.chunkgenerationtasks.append([DefaultTreeLayer.generate_position, [cx+x, cz+z, chunk, config], {}])
+                reference.schedule_invoke(DefaultTreeLayer.generate_position, cx+x, cz+z, reference, config)
 
     @staticmethod
-    def generate_position(x, z, chunk, config):
+    def generate_position(x, z, reference, config):
+        chunk = reference.chunk
         treemap = chunk.get_value("treeblocked")
         if (x, z) in treemap: return  # is an tree nearby?
         biome = G.biomehandler.biomes[chunk.get_value("biomemap")[(x, z)]]

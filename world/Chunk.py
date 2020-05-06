@@ -15,7 +15,6 @@ from typing import Dict, List
 import util.math
 import util.enums
 import datetime
-import deprecate
 
 
 class Chunk:
@@ -33,16 +32,11 @@ class Chunk:
         self.dimension = dimension
         self.position = position
         self.world = {}
-        self.shown = {}
-        self.show_tasks = []
-        self.hide_tasks = []
-        self.chunkgenerationtasks = []
-        self.blockmap = {}  # an map with position -> [arguments: list, optional_arguments: kwargs] generation code
-        self.is_ready = False
-        self.visible = False
-        self.loaded = False
-        self.generated = False
-        self.attr = {}
+        self.is_ready = False  # used when the chunks gets invalid or is loaded at the moment
+        self.visible = False  # used when the chunk should be visible
+        self.loaded = False  # used if load success
+        self.generated = False  # used if generation success
+        self.attr = {}  # todo: rewrite!
         for attr in self.attributes.keys():
             self.attr[attr] = self.attributes[attr][1]
         self.positions_updated_since_last_save = set()
@@ -58,7 +52,7 @@ class Chunk:
         # if len(self.entities) > 0:
         #     print([(entity.position, entity.NAME, entity.name) for entity in self.entities])
         #     print(self.position, self.is_ready, len(self.chunkgenerationtasks), self.visible, self.loaded)
-        if not self.is_ready or len(self.chunkgenerationtasks) > 0: return
+        if not self.is_ready: return
         if not self.visible: return
         if not self.loaded:
             G.tickhandler.schedule_once(G.world.savefile.read, "minecraft:chunk", dimension=self.dimension.id,
@@ -101,14 +95,8 @@ class Chunk:
                 else: faces[face] = False
         return faces
 
-    @deprecate.deprecated
-    def add_add_block_gen_task(self, position: tuple, block_name: str, immediate=True, block_update=True, args=[],
-                               kwargs={}, on_add=None):
-        self.blockmap[position] = ([position, block_name], {"immediate": immediate, "block_update": block_update,
-                                                            "args": args, "kwargs": kwargs}, on_add)
-
     def is_position_blocked(self, position):
-        return position in self.world or position in self.blockmap
+        return position in self.world or G.worldgenerationhandler.task_handler.get_block(position) is not None
 
     def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True, blockupdateself=True,
                   args=[], kwargs={}):
@@ -129,8 +117,6 @@ class Chunk:
         # logger.println("adding", block_name, "at", position)
         if position in self.world:
             self.remove_block(position, immediate=immediate, block_update=block_update)
-        if position in self.blockmap:
-            del self.blockmap[position]
         if block_name in [None, "air", "minecraft:air"]: return
         if issubclass(type(block_name), Block.Block):
             blockobj = block_name
@@ -179,7 +165,6 @@ class Chunk:
         :param blockupdateself:
             Whether the block to remove should get an block-update or not
         """
-        if position in self.blockmap: del self.blockmap[position]
         if position not in self.world: return
         if issubclass(type(position), Block.Block):
             position = position.position
@@ -225,16 +210,10 @@ class Chunk:
         if type(position) == Block.Block:
             position = position.position
         if position not in self.world: return
-        # if position in self.shown:
-        #     self.hide_block(position)
-        self.shown[position] = []
         if immediate:
             self._show_block(position, self.world[position])
         else:
-            if position in self.hide_tasks:
-                self.hide_tasks.remove(position)
-                return
-            self.show_tasks.append(position)
+            G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
 
     def _show_block(self, position, block):
         """ Private implementation of the `show_block()` method.
@@ -262,14 +241,10 @@ class Chunk:
         """
         if type(position) == Block.Block:
             position = position.position
-        # if position not in self.shown: return
         if immediate:
             self._hide_block(position)
         else:
-            if position in self.show_tasks:
-                self.show_tasks.remove(position)
-                return
-            self.hide_tasks.append(position)
+            G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
 
     def _hide_block(self, position):
         """ Private implementation of the 'hide_block()` method.
@@ -296,30 +271,30 @@ class Chunk:
     def update_visable(self, hide=True, immediate=False):
         for position in self.world.keys():
             if immediate:
-                self.chunkgenerationtasks.append([self.update_visable_block, [position], {"hide": hide}])
+                G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
             else:
                 self.update_visable_block(position, hide=hide)
 
     def hide_all(self, immediate=True):
-        for position in self.shown.copy():
+        for position in self.world:
             self.hide_block(position, immediate=immediate)
 
     def get_block(self, position):
         position = util.math.normalize(position)
-        return self.blockmap[position][0][1] if position in self.blockmap else (self.world[position] if position in
-                                                                                self.world else None)
+        return self.world[position] if position in self.world else G.worldgenerationhandler.task_handler.get_block(
+            position, chunk=self)
 
     def __del__(self):
+        G.worldgenerationhandler.task_handler.clear_chunk(self)
         for block in self.world.values():
             del block
         self.world.clear()
-        self.shown.clear()
-        self.show_tasks.clear()
-        self.hide_tasks.clear()
-        self.chunkgenerationtasks.clear()
-        self.blockmap.clear()
         self.attr.clear()
         for entity in self.entities:
             del entity
         self.entities.clear()
+        del self.dimension
+
+    def __str__(self):
+        return "Chunk(dimension={},position={})".format(self.dimension.id, self.position)
 

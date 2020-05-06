@@ -27,6 +27,6 @@ class Layer(event.Registry.Registry):
     NAME = "minecraft:unknown_layer"
 
     @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, chunk):
+    def add_generate_functions_to_chunk(config: LayerConfig, reference):
         pass
 

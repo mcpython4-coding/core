@@ -175,7 +175,7 @@ class World:
             return
         start = time.time()
         while time.time() - start < 0.01:
-            result = G.worldgenerationhandler.process_one_generation_task()
+            result = G.worldgenerationhandler.task_handler.process_one_task()
             if result is not None and not result: return
 
     def process_tasks(self, timer=0.2):
@@ -214,21 +214,7 @@ class World:
         dim: world.Dimension.Dimension = self.get_active_dimension()
         t = time.time()
         for chunk in list(dim.chunks.values()):
-            for task in chunk.show_tasks:
-                chunk._show_block(task, chunk.world[task])
-            for task in chunk.hide_tasks:
-                chunk._hide_block(task, chunk.world[task])
-            while len(chunk.chunkgenerationtasks) > 0:
-                task = chunk.chunkgenerationtasks.pop(0)
-                task[0](*task[1], **task[2])
-            for position in list(chunk.blockmap.keys()):
-                args, kwargs, on_add = chunk.blockmap[position]
-                blockinstance = chunk.add_block(*args, **kwargs)
-                if on_add is not None:
-                    on_add(blockinstance)
-            chunk.show_tasks.clear()
-            chunk.hide_tasks.clear()
-            chunk.blockmap.clear()
+            while G.worldgenerationhandler.task_handler.process_one_task(chunk=chunk) > 1: pass
             chunk.is_ready = True
 
     def cleanup(self, remove_dims=False, filename=None, add_player=False):
@@ -248,9 +234,7 @@ class World:
         G.window.flying = False
         for inv in G.world.get_active_player().inventories.values(): inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
-        G.worldgenerationhandler.tasks_to_generate.clear()
-        G.worldgenerationhandler.runtimegenerationcache.clear()
-        G.worldgenerationhandler.runtimegenerationcache = [[], {}, {}]
+        G.worldgenerationhandler.task_handler.clear()
         self.players.clear()
         if add_player: self.add_player("unknown")
         if filename is not None:

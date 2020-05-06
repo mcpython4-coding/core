@@ -1037,4 +1037,11 @@ started these clone on 12th of July, 2019
 [uuk]: improved exception message on world save not found
 [uuk]: normal logging messages get now also escaped
 [uuk]: improved exception messages in log
+[uuk]: improved world gen (see below)
+[uuk]: fixed exception when adding show-tasks by world gen (issue 173)
+[uuk]: removed shown-attribute of chunk as it was not used anymore (this reduces memory usage as empty lists were stored
+    where blocks are in world)
+[uuk]: fixed Chunk.hide_all()-method based on unused shown-method (issue 174)
+[uuk]: rewritten how generation tasks are stored
+[uuk]: rewritten chunk gen task system
 

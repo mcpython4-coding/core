@@ -31,12 +31,9 @@ class DefaultHeightMapLayer(Layer):
 
     NAME = "heightmap_default"
 
-    @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, chunk):
-        chunk.chunkgenerationtasks.append([DefaultHeightMapLayer.generate_heightmap, [chunk, config], {}])
-
     @classmethod
-    def generate_heightmap(cls, chunk, config):
+    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+        chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
         cx, cz = chunk.position
         factor = 10**config.size

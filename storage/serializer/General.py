@@ -64,8 +64,8 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
             "config": G.world.config,
             "game version": config.VERSION_NAME,
             "mods": {mod.name: mod.version for mod in G.modloader.mods.values()},
-            "chunks_to_generate": [(chunk.position, chunk.dimension.id) for chunk in G.worldgenerationhandler.
-                tasks_to_generate + G.worldgenerationhandler.runtimegenerationcache[0]],
+            "chunks_to_generate": [(chunk.position, chunk.dimension.id) for chunk in
+                                   G.worldgenerationhandler.task_handler.chunks],
             "dimensions": {dimension.id: dimension.name for dimension in G.world.dimensions.values()}
         }
         savefile.dump_file_json("level.json", data)

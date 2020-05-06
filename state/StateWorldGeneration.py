@@ -39,22 +39,14 @@ class StateWorldGeneration(State.State):
                                                  color=(255, 255, 255, 255))]
 
     def on_update(self, dt):
-        start = time.time()
-        flag = True
-        while time.time() - start < 0.4 and flag:
-            flag = G.worldgenerationhandler.process_one_generation_task(log_msg=False)
-            if flag is None: flag = True
+        G.worldgenerationhandler.task_handler.process_tasks(timer=.4)
         for chunk in self.status_table:
-            if G.world.get_active_dimension().get_chunk(*chunk, generate=False) in \
-                    G.worldgenerationhandler.tasks_to_generate:
-                self.status_table[chunk] = 0
-                continue
-            if chunk not in G.worldgenerationhandler.runtimegenerationcache[1]:
-                self.status_table[chunk] = 6
-                continue
-            self.status_table[chunk] = G.worldgenerationhandler.runtimegenerationcache[1][chunk] + 1
-        if len(G.worldgenerationhandler.tasks_to_generate) == len(G.worldgenerationhandler.runtimegenerationcache[0]) \
-                == 0:
+            c = G.world.get_active_dimension().get_chunk(*chunk)
+            if c not in G.worldgenerationhandler.task_handler.chunks:
+                self.status_table[chunk] = 1
+            else:
+                self.status_table[chunk] = 1 / G.worldgenerationhandler.task_handler.get_task_count_for_chunk(c)
+        if len(G.worldgenerationhandler.task_handler.chunks) == 0:
             G.statehandler.switch_to("minecraft:game")
             self.finish()
 
@@ -159,8 +151,8 @@ class StateWorldGeneration(State.State):
 
         for cx, cz in self.status_table:
             status = self.status_table[(cx, cz)]
-            if 0 <= status <= 6:
-                factor = status / 6 * 255
+            if 0 <= status <= 1:
+                factor = status * 255
                 color = (factor, factor, factor)
             else:
                 color = (136, 0, 255)

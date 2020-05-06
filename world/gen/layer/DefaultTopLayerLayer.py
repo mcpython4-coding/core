@@ -24,19 +24,17 @@ class DefaultTopLayerLayer(Layer):
 
     NAME = "top_layer_default"
 
-    @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, chunk):
-        chunk.chunkgenerationtasks.append([DefaultTopLayerLayer.generate_chunk, [chunk, config], {}])
-
-    @staticmethod
-    def generate_chunk(chunk, config):
+    @classmethod
+    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+        chunk = reference.chunk
         factor = 10 ** config.size
         for x in range(chunk.position[0]*16, chunk.position[0]*16+16):
             for z in range(chunk.position[1]*16, chunk.position[1]*16+16):
-                chunk.chunkgenerationtasks.append([DefaultTopLayerLayer.generate_xz, [chunk, x, z, config, factor], {}])
+                reference.schedule_invoke(cls.generate_xz, reference, x, z, config, factor)
 
     @staticmethod
-    def generate_xz(chunk, x, z, config, factor):
+    def generate_xz(reference, x, z, config, factor):
+        chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
         mheight = heightmap[(x, z)][0][1]
         biome = G.biomehandler.biomes[chunk.get_value("biomemap")[(x, z)]]
@@ -48,12 +46,12 @@ class DefaultTopLayerLayer(Layer):
         decorators = biome.get_top_layer_configuration(height)
         for i in range(height):
             y = mheight - (height-i-1)
-            block = chunk.get_block((x, y, z)) if chunk.is_position_blocked((x, y, z)) else None
+            block = reference.get_block((x, y, z))
             if block and (block if type(block) == str else block.NAME) in ["minecraft:stone"]:
                 if i == height - 1:
-                    chunk.add_block((x, y, z), decorators[i])
+                    reference.schedule_block_add((x, y, z), decorators[i])
                 else:
-                    chunk.add_add_block_gen_task((x, y, z), decorators[i], immediate=i == height - 1)
+                    reference.schedule_block_add((x, y, z), decorators[i], immediate=i >= height - 1)
 
 
 

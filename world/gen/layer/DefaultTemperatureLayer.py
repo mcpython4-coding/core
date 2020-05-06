@@ -35,12 +35,9 @@ class DefaultTemperatureLayer(Layer):
 
     NAME = "temperaturemap"
 
-    @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, chunk):
-        chunk.chunkgenerationtasks.append([DefaultTemperatureLayer.generate_temperature, [chunk, config], {}])
-
-    @staticmethod
-    def generate_temperature(chunk, config):
+    @classmethod
+    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+        chunk = reference.chunk
         cx, cz = chunk.position
         temperaturemap = chunk.get_value("temperaturemap")
         factor = 10**config.size

@@ -123,4 +123,10 @@ class Dimension:
                 if chunk is not None:
                     chunk.draw()
         rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_off")
+        
+    def __del__(self):
+        self.chunks.clear()
+        del self.world
+        self.worldgenerationconfigobjects.clear()
+        self.batches.clear()
 

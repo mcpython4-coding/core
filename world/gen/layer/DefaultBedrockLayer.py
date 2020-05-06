@@ -21,24 +21,18 @@ class DefaultBedrockLayer(Layer):
 
     NAME = "bedrock_default"
 
-    @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, chunk):
-        chunk.chunkgenerationtasks.append([DefaultBedrockLayer.generate_bedrock_base, [chunk], {}])
-        chunk.chunkgenerationtasks.append([DefaultBedrockLayer.generate_bedrock_top, [chunk, config], {}])
-
-    @staticmethod
-    def generate_bedrock_base(chunk):
+    @classmethod
+    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+        chunk = reference.chunk
         for x in range(chunk.position[0]*16, chunk.position[0]*16+16):
             for z in range(chunk.position[1]*16, chunk.position[1]*16+16):
-                chunk.add_add_block_gen_task((x, 0, z), "minecraft:bedrock")
-
-    @staticmethod
-    def generate_bedrock_top(chunk, config):
+                reference.schedule_block_add((x, 0, z), "minecraft:bedrock")
+        chunk = reference.chunk
         for x in range(chunk.position[0]*16, chunk.position[0]*16+16):
             for z in range(chunk.position[1]*16, chunk.position[1]*16+16):
                 for y in range(1, 5):
                     if random.randint(1, config.bedrockchance) == 1:
-                        chunk.add_add_block_gen_task((x, y, z), "minecraft:bedrock")
+                        reference.schedule_block_add((x, y, z), "minecraft:bedrock")
 
 
 
