@@ -312,10 +312,14 @@ class Chunk:
     def __del__(self):
         for block in self.world.values():
             del block
+        self.world.clear()
         self.shown.clear()
         self.show_tasks.clear()
         self.hide_tasks.clear()
         self.chunkgenerationtasks.clear()
         self.blockmap.clear()
         self.attr.clear()
+        for entity in self.entities:
+            del entity
+        self.entities.clear()
 

@@ -75,4 +75,6 @@ class BlockFaceState:
 
     def __del__(self):
         self.hide_all()
+        del self.block
+        del self.custom_renderer
 

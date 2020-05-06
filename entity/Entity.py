@@ -161,3 +161,6 @@ class Entity(event.Registry.IRegistryContent):
         for moder: should damage entity if needed
         """
 
+    def __del__(self):
+        del self.chunk
+
