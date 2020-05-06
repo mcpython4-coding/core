@@ -95,7 +95,7 @@ class WorldGenerationTaskHandler:
     def process_tasks(self, chunks=None, timer=None):
         start = time.time()
         if chunks is None: chunks = list(self.chunks)
-        chunks.sort(key=lambda chunk: chunk.position[0] * chunk.position[1])
+        chunks.sort(key=lambda chunk: abs(chunk.position[0] * chunk.position[1]))
         for chunk in chunks:
             flag = True
             while flag:

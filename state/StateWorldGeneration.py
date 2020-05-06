@@ -6,24 +6,24 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-from . import State
-import state.ui.UIPartLable
-import globals as G
-import util.math
-from pyglet.window import key
-import pyglet
+import os
 import random
+import shutil
+
+from pyglet.window import key
+
+import ResourceLocator
+import chat.DataPack
+import globals as G
+import logger
 import mod.ModMcpython
 import state.StatePartConfigBackground
-import logger
-import chat.DataPack
-import time
-import util.opengl
-import os
-import shutil
+import state.ui.UIPartLable
 import util.getskin
+import util.math
+import util.opengl
 import world.player
-import ResourceLocator
+from . import State
 
 
 class StateWorldGeneration(State.State):
@@ -43,7 +43,7 @@ class StateWorldGeneration(State.State):
         for chunk in self.status_table:
             c = G.world.get_active_dimension().get_chunk(*chunk)
             if c not in G.worldgenerationhandler.task_handler.chunks:
-                self.status_table[chunk] = 1
+                self.status_table[chunk] = -1
             else:
                 self.status_table[chunk] = 1 / G.worldgenerationhandler.task_handler.get_task_count_for_chunk(c)
         if len(G.worldgenerationhandler.task_handler.chunks) == 0:
@@ -99,9 +99,10 @@ class StateWorldGeneration(State.State):
 
         # setup skin
         try:
-            util.getskin.download_skin(playername, G.local+"/build/skin.png")
+            util.getskin.download_skin(playername, G.local + "/build/skin.png")
         except ValueError:
-            logger.write_exception("[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
+            logger.write_exception(
+                "[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
             ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local + "/build/skin.png")
         world.player.Player.RENDERER.reload()
         G.world.active_player = playername
@@ -119,7 +120,7 @@ class StateWorldGeneration(State.State):
         # set spawn-point
         x, z = random.randint(0, 15), random.randint(0, 15)
         height = util.math.get_max_y((x, z))
-        blockchest = G.world.get_active_dimension().add_block((x, height-1, z), "minecraft:chest")
+        blockchest = G.world.get_active_dimension().add_block((x, height - 1, z), "minecraft:chest")
         blockchest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
         G.eventhandler.call("on_game_enter")
 
@@ -147,16 +148,18 @@ class StateWorldGeneration(State.State):
         wx, wy = G.window.get_size()
         mx, my = wx // 2, wy // 2
         self.parts[1].text = "{}%".format(round(list(
-            self.status_table.values()).count(6)/len(self.status_table)*1000)/10)
+            self.status_table.values()).count(6) / len(self.status_table) * 1000) / 10)
 
         for cx, cz in self.status_table:
             status = self.status_table[(cx, cz)]
             if 0 <= status <= 1:
                 factor = status * 255
                 color = (factor, factor, factor)
+            elif status == -1:
+                color = (0, 255, 0)
             else:
                 color = (136, 0, 255)
-            util.opengl.draw_rectangle((mx+cx*10, my+cz*10), (10, 10), color)
+            util.opengl.draw_rectangle((mx + cx * 10, my + cz * 10), (10, 10), color)
 
 
 worldgeneration = None
@@ -168,4 +171,3 @@ def create():
 
 
 mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
-

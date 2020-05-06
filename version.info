@@ -1044,4 +1044,5 @@ started these clone on 12th of July, 2019
 [uuk]: fixed Chunk.hide_all()-method based on unused shown-method (issue 174)
 [uuk]: rewritten how generation tasks are stored
 [uuk]: rewritten chunk gen task system
+[uuk]: world gen screen draws now green entries when finished
 
