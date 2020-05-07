@@ -113,6 +113,7 @@ class Command(event.Registry.IRegistryContent):
     def get_help() -> list:
         """
         :return: help pages for this command. a (commandprefix, info)-list
+        todo: make translated
         """
         return []
 

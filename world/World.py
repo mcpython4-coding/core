@@ -173,10 +173,7 @@ class World:
     def process_queue(self):
         if not any(type(x) == state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
             return
-        start = time.time()
-        while time.time() - start < 0.01:
-            result = G.worldgenerationhandler.task_handler.process_one_task()
-            if result is not None and not result: return
+        G.worldgenerationhandler.task_handler.process_tasks(timer=0.02)
 
     def process_tasks(self, timer=0.2):
         G.worldgenerationhandler.task_handler.process_tasks(timer=timer)
@@ -184,13 +181,10 @@ class World:
 
     def process_entire_queue(self):
         """ Process the entire queue with no breaks.
+        todo: remove
 
         """
-        dim: world.Dimension.Dimension = self.get_active_dimension()
-        t = time.time()
-        for chunk in list(dim.chunks.values()):
-            while G.worldgenerationhandler.task_handler.process_one_task(chunk=chunk) > 1: pass
-            chunk.is_ready = True
+        G.worldgenerationhandler.task_handler.process_tasks()
 
     def cleanup(self, remove_dims=False, filename=None, add_player=False):
         for dimension in self.dimensions.values():

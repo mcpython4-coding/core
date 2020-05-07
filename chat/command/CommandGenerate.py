@@ -40,11 +40,12 @@ class CommandGenerate(chat.command.Command.Command):
         if fz > tz: fz, tz = tz, fz
         for x in range(fx, tx+1):
             for z in range(fz, tz+1):
-                G.worldgenerationhandler.generate_chunk(dim.get_chunk(x, z, generate=False))
-        G.world.process_entire_queue()
+                c = dim.get_chunk(x, z, generate=False)
+                G.worldgenerationhandler.add_chunk_to_generation_list(c)
+                G.worldgenerationhandler.task_handler.process_tasks(chunks=[c])  # only generate the ones from us
 
     @staticmethod
     def get_help() -> list:
         return ["/generate [<x> <z> [<tox> <toz>]]: generates the chunk you are in if no one is specified or the "
-                "specified area, else the specified"]
+                "specified area, else the specified chunk by (x, z)"]
 

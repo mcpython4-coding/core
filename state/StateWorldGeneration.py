@@ -147,8 +147,7 @@ class StateWorldGeneration(State.State):
     def on_draw_2d_post(self):
         wx, wy = G.window.get_size()
         mx, my = wx // 2, wy // 2
-        self.parts[1].text = "{}%".format(round(list(
-            self.status_table.values()).count(6) / len(self.status_table) * 1000) / 10)
+        self.parts[1].text = "{}%".format(round(sum(self.status_table.values())/len(self.status_table)*1000)/10)
 
         for cx, cz in self.status_table:
             status = self.status_table[(cx, cz)]

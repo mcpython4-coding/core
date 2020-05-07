@@ -125,3 +125,18 @@ issue 168:
 
 issue 174:
     bug: loading bars of mod-loading are not in the middle
+
+issue 175:
+    bug: structures overlapping into not-generated chunks are not shown when the chunks respecify are generated
+    fix: add an special list of pre-generated blocks which is injected into actual generation task array when the chunk
+        generation is requested
+
+issue 176:
+    bug: structures overlapping into not-generated chunks are not saved
+    fix: see issue 175
+
+issue 177:
+    bug: grass block faces generated next to leaves are not visible
+
+issue 178:
+    bug: hotbar is not transparent(rendered)
