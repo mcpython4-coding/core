@@ -38,8 +38,10 @@ class StateWorldGeneration(State.State):
     def on_update(self, dt):
         G.world.process_tasks(timer=0.8)
         for chunk in self.status_table:
-            self.status_table[chunk] = int(len(G.world.get_active_dimension().get_chunk(*chunk).blockmap) == 0)
-        if all(self.status_table.values()):
+            c = G.worldgenerationhandler.task_handler.get_task_count_for_chunk(
+                G.world.get_active_dimension().get_chunk(*chunk))
+            self.status_table[chunk] = 1/c if c > 0 else -1
+        if len(G.worldgenerationhandler.task_handler.chunks) == 0:
             G.statehandler.switch_to("minecraft:game")
 
     def on_activate(self):
@@ -54,6 +56,7 @@ class StateWorldGeneration(State.State):
             return
         except:
             logger.write_exception("failed to load world")
+            G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
             return
         for cx in range(-3, 4):
@@ -92,6 +95,8 @@ class StateWorldGeneration(State.State):
             if 0 <= status <= 1:
                 factor = status * 255
                 color = (factor, factor, factor)
+            elif status == -1:
+                color = (0, 255, 0)
             else:
                 color = (136, 0, 255)
             util.opengl.draw_rectangle((mx+cx*10, my+cz*10), (10, 10), color)

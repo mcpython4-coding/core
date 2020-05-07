@@ -179,33 +179,8 @@ class World:
             if result is not None and not result: return
 
     def process_tasks(self, timer=0.2):
-        """
-        process an part of the array
-        """
-        dim: world.Dimension.Dimension = self.get_active_dimension()
-        t = time.time()
-        for chunk in list(dim.chunks.values()):
-            for task in chunk.show_tasks:
-                chunk._show_block(task, chunk.world[task])
-                if time.time() - t > timer: return
-            for task in chunk.hide_tasks:
-                chunk._hide_block(task, chunk.world[task])
-                if time.time() - t > timer: return
-            while len(chunk.chunkgenerationtasks) > 0:
-                task = chunk.chunkgenerationtasks.pop(0)
-                task[0](*task[1], **task[2])
-                if time.time() - t > timer: return
-            for position in list(chunk.blockmap.keys()):
-                args, kwargs, on_add = chunk.blockmap[position]
-                blockinstance = chunk.add_block(*args, **kwargs)
-                if on_add is not None:
-                    on_add(blockinstance)
-                if time.time() - t > timer: return
-            chunk.show_tasks.clear()
-            chunk.hide_tasks.clear()
-            chunk.blockmap.clear()
-            chunk.is_ready = True
-            if time.time() - t > timer: return
+        G.worldgenerationhandler.task_handler.process_tasks(timer=timer)
+        # todo: remove
 
     def process_entire_queue(self):
         """ Process the entire queue with no breaks.

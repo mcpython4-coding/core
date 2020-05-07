@@ -57,8 +57,11 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             if immediate:
                 add(chunk_instance.add_block(position, d["name"], immediate=flag))
             else:
+                # todo: add missing texture block -> insert here
+                # todo: pre-check the palette and replace with air / missing_block-block (-> better performance)
                 if d["name"] not in G.registry.get_by_name("block").registered_object_map: continue
-                chunk_instance.add_add_block_gen_task(position, d["name"], on_add=add, immediate=flag)
+                G.worldgenerationhandler.task_handler.schedule_block_add(chunk_instance, position, d["name"],
+                                                                         on_add=add, immediate=flag)
 
         positions = []
         for x in range(chunk[0]*16, chunk[0]*16+16):

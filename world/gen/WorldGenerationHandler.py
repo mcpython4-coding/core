@@ -22,6 +22,11 @@ class WorldGenerationTaskHandler:
         self.data_maps = [{}, {}, {}]  # invoke, world_changes, shown_updates
 
     def get_task_count_for_chunk(self, chunk: world.Chunk.Chunk) -> int:
+        """
+        gets the total count of tasks for an given chunk as an int
+        :param chunk:
+        :return:
+        """
         dim = chunk.dimension.id
         p = chunk.position
         count = 0
@@ -40,6 +45,13 @@ class WorldGenerationTaskHandler:
         return count
 
     def schedule_invoke(self, chunk: world.Chunk.Chunk, method, *args, **kwargs):
+        """
+        schedules an callable-invoke for the future
+        :param chunk: the chunk to link to
+        :param method: the method to call
+        :param args: the args to call with
+        :param kwargs: the kwargs to call with
+        """
         if not issubclass(type(chunk), world.Chunk.Chunk):
             raise ValueError("chunk must be sub-class of Chunk, not {}".format(chunk))
         if not callable(method):
@@ -48,7 +60,16 @@ class WorldGenerationTaskHandler:
         self.data_maps[0].setdefault(chunk.dimension.id, {}).setdefault(chunk.position, []).append(
             (method, args, kwargs))
 
-    def schedule_block_add(self, chunk, position: tuple, name: str, *args, on_add=None, **kwargs):
+    def schedule_block_add(self, chunk: world.Chunk.Chunk, position: tuple, name: str, *args, on_add=None, **kwargs):
+        """
+        schedules an addition of an block
+        :param chunk: the chunk the block is linked to
+        :param position: the position of the block
+        :param name: the name of the block
+        :param args: the args to send to the add_block-method
+        :param on_add: an callable called together with the block instance when the block is added
+        :param kwargs: the kwargs send to the add_block-method
+        """
         if "immediate" not in kwargs or kwargs["immediate"]:
             self.schedule_visual_update(chunk, position)
         kwargs["immediate"] = False
@@ -56,24 +77,53 @@ class WorldGenerationTaskHandler:
             name, args, kwargs, on_add)
         self.chunks.add(chunk)
 
-    def schedule_block_remove(self, chunk, position, *args, on_remove=None, **kwargs):
+    def schedule_block_remove(self, chunk: world.Chunk.Chunk, position: tuple, *args, on_remove=None, **kwargs):
+        """
+        schedules an removal of an block
+        :param chunk: the chunk the block is linked to
+        :param position: the position of the block
+        :param args: the args to call the remove_block-function with
+        :param on_remove: an callable to call when the block gets removed, with None as an parameter
+        :param kwargs: the kwargs to call the remove_block-function with
+        """
         self.data_maps[1].setdefault(chunk.dimension.id, {}).setdefault(chunk.position, {})[position] = (
             None, args, kwargs, on_remove)
         self.chunks.add(chunk)
 
-    def schedule_block_show(self, chunk, position):
+    def schedule_block_show(self, chunk: world.Chunk.Chunk, position: tuple):
+        """
+        schedules an show of an block
+        :param chunk: the chunk
+        :param position: the position of the block
+        """
         self.data_maps[2].setdefault(chunk.dimension.id, {}).setdefault(chunk.position, {})[position] = 1
         self.chunks.add(chunk)
 
-    def schedule_block_hide(self, chunk, position):
+    def schedule_block_hide(self, chunk: world.Chunk.Chunk, position: tuple):
+        """
+        schedules an hide of an block
+        :param chunk: the chunk
+        :param position: the position of the block
+        """
         self.data_maps[2].setdefault(chunk.dimension.id, {}).setdefault(chunk.position, {})[position] = 0
         self.chunks.add(chunk)
 
-    def schedule_visual_update(self, chunk, position):
+    def schedule_visual_update(self, chunk: world.Chunk.Chunk, position: tuple):
+        """
+        schedules an visual update of an block (-> show/hide as needed)
+        :param chunk: the chunk
+        :param position: the position of the block
+        """
         self.data_maps[2].setdefault(chunk.dimension.id, {}).setdefault(chunk.position, {})[position] = 2
         self.chunks.add(chunk)
 
     def process_one_task(self, chunk=None, reorder=True, log_msg=False) -> int:
+        """
+        processes one task from an semi-random chunk or an given one
+        :param chunk: the chunk or None to select one
+        :param reorder: unused; only for backwards-compatibility todo: remove
+        :param log_msg: if messages for extra info should be logged
+        """
         start = time.time()
         if not G.worldgenerationhandler.enable_generation: return 0
         if chunk is None:
@@ -83,7 +133,8 @@ class WorldGenerationTaskHandler:
         if log_msg:
             logger.println("[WORLD][HANDLER] processing chunk {}".format(chunk))
         if self._process_0_array(chunk) or self._process_1_array(chunk) or self._process_2_array(chunk):
-            logger.println("executing took {}s in chunk {}".format(time.time()-start, chunk))
+            if log_msg:
+                logger.println("executing took {}s in chunk {}".format(time.time()-start, chunk))
             return 2
         if self.get_task_count_for_chunk(chunk) == 0:
             self.chunks.remove(chunk)
@@ -93,6 +144,11 @@ class WorldGenerationTaskHandler:
         return 3
 
     def process_tasks(self, chunks=None, timer=None):
+        """
+        process tasks
+        :param chunks: if given, an iterable of chunks to generate
+        :param timer: if given, an float in seconds to determine how far to generate
+        """
         start = time.time()
         if chunks is None: chunks = list(self.chunks)
         chunks.sort(key=lambda chunk: abs(chunk.position[0] * chunk.position[1]))
@@ -157,7 +213,13 @@ class WorldGenerationTaskHandler:
                 return True
         return False
 
-    def get_block(self, position, chunk=None, dimension=None):
+    def get_block(self, position: tuple, chunk=None, dimension=None):
+        """
+        gets an generated block from the array
+        :param position: the position of the block
+        :param chunk: if the chunk is known
+        :param dimension: if the dimension is known
+        """
         if chunk is None:
             if dimension is None: dimension = G.world.get_active_dimension()
             chunk = dimension.get_chunk_for_position(position)
@@ -167,6 +229,10 @@ class WorldGenerationTaskHandler:
             pass
 
     def clear_chunk(self, chunk: world.Chunk.Chunk):
+        """
+        will remove all scheduled tasks from an given chunk
+        :param chunk: the chunk
+        """
         dim = chunk.dimension.id
         p = chunk.position
         if dim in self.data_maps[0] and p in self.data_maps[0][dim]: del self.data_maps[0][dim][p]
@@ -176,6 +242,9 @@ class WorldGenerationTaskHandler:
             self.chunks.remove(chunk)
 
     def clear(self):
+        """
+        will remove all scheduled tasks [chunk-wise]
+        """
         for chunk in self.chunks.copy():
             self.clear_chunk(chunk)
 
@@ -183,6 +252,8 @@ class WorldGenerationTaskHandler:
 class WorldGenerationTaskHandlerReference:
     """
     reference class to an WorldGenerationTaskHandler for setting the chunk globally
+    all scheduling functions are the same of WorldGenerationTaskHandler exept the chunk-parameter is missing.
+    It is set on construction
     """
 
     def __init__(self, handler: WorldGenerationTaskHandler, chunk: world.Chunk.Chunk):
