@@ -1,19 +1,31 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
+changelog of future-master-branch: [the branch called "dev" after the below one]
+    planned:
+        - speed up chunk accessing [issue 164 & 165]
+        - optimize world storage (also issue 159 & 161)
+        - add tool tips, custom tool tip system, ...
+        - check for the reason of issue 157 and fix if possible
+        - replace every loading event annotation with @G.modloader("minecraft", <stage>, [<info>])
+
+
 changelog of master-branch:
     - during developing more features, the developer has decided to discard the progress. As some more difficulties had
         occur [Covid-19], the development time for these dev-cycle was far longer than expected.
     - resize-event is called after every state switch now
     - refactored ModLoader-class & optimized some loading systems
     - added new mod.json file version
-    - added @globals.modloader(<modname>, <eventname>) annotation
+    - added @globals.modloader(<modname>, <eventname>, [<info>]) annotation
     - improved mod loading stage calling
     - new loading events: "stage:block:factory:finish" and "stage:item:factory:finish"
     - added --fullscreen -flag for enabling fullscreen on startup [unstable at the moment]
     - improved error message when world save not found on load
     - improved exception handling by logger
     - improved world gen, rewritten how tasks are stored & scheduled (!)
+    - removed tag #minecraft:furnace_fuel and replaced by an hasattr(item, "FUEL") check
+    - changed signature of on_shift_click(x, y, button, modifiers, player) of slot to
+        (slot, x, y, button, modifiers, player)
 
     fixed bugs:
         - state of block may not be set correctly in some cases
@@ -21,13 +33,9 @@ changelog of master-branch:
         - offhand slot gets cleared when closing inventory
         - crash when build-folder was deleted
         - exceptions when using show-tasks in world gen arrays
+        - a lot of normal fuels were not accepted by furnace as fuels
 
     planned:
-        - search why generation takes so long [issue 166] - in progress
-        - speed up chunk accessing [issue 164 & 165]
-        - fix issue 137, 161
-        - optimize world storage (also issue 159)
-        - check for the reason of issue 157 and fix if possible
         - why is start chest empty?
 
 

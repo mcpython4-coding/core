@@ -96,18 +96,22 @@ class InventoryFurnace(gui.Inventory.Inventory):
     def create_slots(self) -> list:
         # 36 slots of main, 1 input, 1 fuel and 1 output
         slots = [gui.Slot.Slot(on_update=self.on_input_update, on_shift_click=self.on_shift),
-                 gui.Slot.Slot(allowed_item_tags=["#minecraft:furnace_fuel"], on_update=self.on_fuel_slot_update,
-                               on_shift_click=self.on_shift),
+                 gui.Slot.Slot(on_update=self.on_fuel_slot_update, on_shift_click=self.on_shift,
+                               allowed_item_test=self.is_fuel),
                  gui.Slot.Slot(on_update=self.on_output_update, on_shift_click=self.on_shift)]
         return slots
 
+    @classmethod
+    def is_fuel(cls, itemstack):
+        return not itemstack.is_empty() and hasattr(itemstack.item, "FUEL")
+
     @staticmethod
-    def on_shift(slot, x, y, button, mod):
+    def on_shift(slot, x, y, button, mod, player):
         slot_copy = slot.itemstack.copy()
         if G.world.get_active_player().pick_up(slot_copy):
             slot.itemstack.clean()  # if we successfully added the itemstack, we have to clear it
         else:
-            slot.itemstack.set_amount(slot_copy.itemstack.itemstack)
+            slot.itemstack.set_amount(slot_copy.itemstack.amount)
 
     def on_input_update(self, player=False):
         if self.slots[0].itemstack.is_empty(): self.reset()

@@ -17,6 +17,10 @@ import time
 
 
 class WorldGenerationTaskHandler:
+    """
+    handler for generating tasks off-call
+    """
+
     def __init__(self):
         self.chunks = set()
         self.data_maps = [{}, {}, {}]  # invoke, world_changes, shown_updates
@@ -294,17 +298,37 @@ class WorldGenerationHandler:
         self.enable_auto_gen = False  # if chunks around the player should be generated when needed
         self.task_handler = WorldGenerationTaskHandler()
 
-    def add_chunk_to_generation_list(self, chunk, dimension=None, prior=False, force_generate=False, generate_add=True):
+    def add_chunk_to_generation_list(self, chunk, dimension=None, prior=False, force_generate=False, immediate=False,
+                                     generate_add=False):
+        """
+        adds chunk schedule to the system
+        will set the loaded-flag of the chunk during the process
+        will schedule the internal _add_chunk function
+        :param chunk: the chunk
+        :param dimension: optional: if chunk is tuple, if another dim than active should be used
+        :param prior: not used anymore, only for backward compatibility todo: remove
+        :param force_generate: if generation should take place also when auto-gen is disabled
+        :param generate_add: not used anymore, only for backward compatibility todo: remove
+        :param immediate: if _add_chunk should be called immediate or not [can help in cases where TaskHandler stops
+            running tasks when in-generation progress]
+        """
         if not self.enable_auto_gen and not force_generate: return
         if type(chunk) == tuple:
             if dimension is None:
                 chunk = G.world.get_active_dimension().get_chunk(*chunk, generate=False)
             else:
                 chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
-        self.task_handler.schedule_invoke(chunk, self._add_chunk, chunk)
+        if immediate:
+            self._add_chunk(chunk)
+        else:
+            self.task_handler.schedule_invoke(chunk, self._add_chunk, chunk)
         chunk.loaded = True
 
-    def _add_chunk(self, chunk):
+    def _add_chunk(self, chunk: world.Chunk.Chunk):
+        """
+        internal implementation of the chunk generation code
+        :param chunk: the chunk to schedule
+        """
         dimension = chunk.dimension
         configname = dimension.worldgenerationconfig["configname"]
         config = self.configs[configname]

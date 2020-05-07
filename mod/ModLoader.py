@@ -164,12 +164,13 @@ LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, Loadin
 
 
 class ModLoaderAnnotation:
-    def __init__(self, modname: str, eventname: str):
+    def __init__(self, modname: str, eventname: str, info=None):
         self.modname = modname
         self.eventname = eventname
+        self.info = info
 
     def __call__(self, function):
-        G.modloader.mods[self.modname].eventbus.subscribe(self.eventname, function)
+        G.modloader.mods[self.modname].eventbus.subscribe(self.eventname, function, info=self.info)
 
 
 class ModLoader:
@@ -188,8 +189,8 @@ class ModLoader:
             logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
         self.finished = False
 
-    def __call__(self, modname: str, eventname: str) -> ModLoaderAnnotation:
-        return ModLoaderAnnotation(modname, eventname)
+    def __call__(self, modname: str, eventname: str, info=None) -> ModLoaderAnnotation:
+        return ModLoaderAnnotation(modname, eventname, info)
 
     @classmethod
     def get_locations(cls) -> list:

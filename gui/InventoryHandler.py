@@ -84,7 +84,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         self.moving_itemstack = G.inventoryhandler.moving_slot.itemstack.copy()
         if modifiers & key.MOD_SHIFT:
             if slot.on_shift_click:
-                flag = slot.on_shift_click(x, y, button, modifiers, G.world.get_active_player())
+                flag = slot.on_shift_click(slot, x, y, button, modifiers, G.world.get_active_player())
                 if flag is not True: return  # no default logic should go on
             if G.inventoryhandler.shift_container is not None and \
                 G.inventoryhandler.shift_container.move_to_opposite(slot): return

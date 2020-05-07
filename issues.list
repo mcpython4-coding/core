@@ -61,9 +61,6 @@ issue 122:
 issue 129:
     bug: some fence faces are not rendered [invalid texture rotation, internal miss-match in order of texture-coord?]
 
-issue 137:
-    bug: coal block has no fuel level [maybe general problem?]
-
 issue 139:
     bug: during in-game generation, block faces of neighbor chunks are not updated
     possible fix: update all blocks next to the new chunk OR remove the hide-faces in not generated chunks

@@ -18,6 +18,7 @@ class TagHandler:
     def __init__(self):
         self.taggroups = {}  # name -> taggroup
         self.taglocations = []
+        G.modloader("minecraft", "stage:tag:load", "loading tag-groups")(self.load_tags)
 
     def from_data(self, taggroup: str, tagname: str, data: dict, replace=True):
         self.taggroups.setdefault(taggroup, tags.TagGroup.TagGroup(taggroup)).add_from_data(tagname, data, replace)
@@ -47,26 +48,37 @@ class TagHandler:
                 mod.ModMcpython.mcpython.eventbus.subscribe("stage:tag:load", taggroup.build,
                                                             info="loading tag-group '{}'".format(taggroup.name))
 
-    def get_tag_for(self, name, group):
+    def get_tag_for(self, name: str, group: str) -> tags.Tag.Tag:
         if group not in self.taggroups or name not in self.taggroups[group].tags:
             raise ValueError("unknown tag '{}' in group '{}'".format(name, group))
         return self.taggroups[group].tags[name]
+
+    def get_tags_for_entry(self, identifier: str, group: str) -> list:
+        taglist = []
+        for tag in self.taggroups[group].tags.values():
+            if identifier in tag.entries:
+                taglist.append(tag)
+        return taglist
+
+    def has_entry_tag(self, identifier: str, group: str, tagname: str) -> bool:
+        return identifier in self.get_tag_for(tagname, group).entries
 
 
 G.taghandler = TagHandler()
 
 
 def add_from_location(loc: str):
+    """
+    adds tags from an given scope for an given namespace where loc is the name of the namespace
+    :param loc: the namespace
+    WARNING: when adding outside normal build period, errors may occur
+    """
     G.taghandler.taglocations += [x.format(loc) for x in ["data/{}/tags/items", "data/{}/tags/naming",
                                                           "data/{}/tags/blocks", "data/{}/tags/functions"]]
 
 
+@G.modloader("minecraft", "stage:tag:group", "adding tag group locations")
 def on_group_add():
     add_from_location("minecraft")
     add_from_location("forge")
-
-
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:tag:group", on_group_add, info="adding tag group locations")
-
-mod.ModMcpython.mcpython.eventbus.subscribe("stage:tag:load", G.taghandler.load_tags, info="loading tag-groups")
 

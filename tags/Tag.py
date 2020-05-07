@@ -30,9 +30,9 @@ class Tag:
         return dep
 
     def build(self):
-        raw = self.entries[:]
-        old_entries = self.entries
-        self.entries = []
+        raw = self.entries.copy()
+        old_entries = self.entries.copy()
+        self.entries.clear()
         for entry in raw:
             if entry.startswith("#"):
                 if entry not in self.master.tags:
