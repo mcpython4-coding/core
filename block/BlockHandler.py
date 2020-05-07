@@ -18,6 +18,14 @@ def register_block(registry, blockclass):
         name = blockclass.NAME
         block_registry.full_table[name] = blockclass
         block_registry.full_table[name.split(":")[-1]] = blockclass
+        if blockclass.SOLID is None:
+            blockclass.SOLID = all(blockclass((0, 0, 0)).face_solid.values())
+
+        if blockclass.CONDUCTS_REDSTONE_POWER is None:
+            blockclass.CONDUCTS_REDSTONE_POWER = blockclass.SOLID
+
+        if blockclass.CAN_MOBS_SPAWN_ON is None:
+            blockclass.CAN_MOBS_SPAWN_ON = blockclass.SOLID
 
 
 block_registry = event.Registry.Registry("block", ["minecraft:block_registry"], injection_function=register_block)

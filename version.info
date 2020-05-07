@@ -1050,4 +1050,11 @@ started these clone on 12th of July, 2019
 [uuk]: changed signature of on_shift_click(x, y, button, modifiers, player) of slot to
     (slot, x, y, button, modifiers, player)
 [uuk]: fixed Inventory.insert_item failing to insert items (issue 179)
+[uuk]: removed the following functions: Block.is_breakable(), Block.is_solid_side(), Block.get_hardness(),
+         Block.get_minimum_tool_level, Block.get_best_tools(), Item.get_name(), Item.has_block(),
+         Item.get_max_stack_size()
+[uuk]: added the following functions: Block.on_redstone_update(), Block.inject_redstone_power(side, level: int),
+         Block.CONDUCTS_REDSTONE_POWER, Block.SOLID, dynamic Block.injected_redstone_power, Block.get_redstone_output(),
+         Block.get_redstone_source_power(), Block.CAN_MOBS_SPAWN_ON,
+         Entity.movement [implemented in tick() as default impl.]
 

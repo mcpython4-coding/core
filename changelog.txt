@@ -46,9 +46,6 @@ changelog of master-branch: (theme: bug fixing & system improvements)
         - exceptions when using show-tasks in world gen arrays
         - a lot of normal fuels were not accepted by furnace as fuels
 
-    planned:
-        - refactor & rearrange API of Block, Item, State, StatePart, Entity and Biome
-
 
 changelog of snapshot 20w14a
     - added new event: "stage:blockitemfactory:finish"

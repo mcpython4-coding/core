@@ -31,6 +31,12 @@ class Block(event.Registry.IRegistryContent):
     MINIMUM_TOOL_LEVEL = 0
     BEST_TOOLS_TO_BREAK = []
 
+    SOLID = None  # if the block is solid; None is unset and set by system by checking face_solid on an block instance
+
+    CONDUCTS_REDSTONE_POWER = None  # if the block can conduct redstone power; None is unset and set by system to SOLID
+
+    CAN_MOBS_SPAWN_ON = None  # if mobs can spawn on the block; None is unset and set by system to SOLID
+
     def __init__(self, position: tuple, set_to=None, real_hit=None, state=None):
         """
         creates new Block
@@ -46,20 +52,18 @@ class Block(event.Registry.IRegistryContent):
         self.block_state = None
         self.face_solid = {face: True for face in util.enums.EnumSide.iterate()}
         self.uuid = uuid.uuid4()
+        self.injected_redstone_power = {}
+
+    def __del__(self):
+        # remove circular link of Block <-> BlockFaceState
+        del self.face_state
+
+    # block events
 
     def on_remove(self):
         """
         called when the block is removed
         """
-
-    def get_inventories(self):
-        """
-        called to get an list of inventories
-        """
-        return []
-
-    def is_breakable(self) -> bool:  # todo: remove
-        return self.BREAKABLE
 
     def on_random_update(self):
         """
@@ -70,16 +74,12 @@ class Block(event.Registry.IRegistryContent):
         """
         called when an near-by block-position is updated by setting/removing an block
         """
+        self.on_redstone_update()
 
-    def is_solid_side(self, side) -> bool:  # todo: remove
-        return self.face_solid[side]
-
-    def get_model_state(self) -> dict: return {}
-
-    def set_model_state(self, state: dict): pass
-
-    @staticmethod
-    def get_all_model_states() -> list: return [{}]  # todo: make attribute
+    def on_redstone_update(self):
+        """
+        special event called in order to update redstone state. Not used by vanilla at the moment
+        """
 
     def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         """
@@ -92,27 +92,6 @@ class Block(event.Registry.IRegistryContent):
         :return: if default logic should be interrupted
         """
         return False
-
-    def get_hardness(self):  # todo: remove
-        return self.HARDNESS
-
-    def get_minimum_tool_level(self):  # todo: remove
-        return self.MINIMUM_TOOL_LEVEL
-
-    def get_best_tools(self):  # todo: remove
-        return self.BEST_TOOLS_TO_BREAK
-
-    def get_provided_slots(self, side):
-        return []
-
-    def get_view_bbox(self):  # todo: make attribute
-        return block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
-
-    def on_request_item_for_block(self, itemstack):
-        pass
-
-    @classmethod
-    def modify_block_item(cls, itemconstructor): pass  # todo: add an event for this
 
     def save(self):
         """
@@ -127,6 +106,41 @@ class Block(event.Registry.IRegistryContent):
         """
         self.set_model_state(data)
 
-    def __del__(self):
-        del self.face_state
+    # block status functions
+
+    def get_inventories(self):
+        """
+        called to get an list of inventories
+        """
+        return []
+
+    def get_model_state(self) -> dict: return {}
+
+    def set_model_state(self, state: dict): pass
+
+    def get_provided_slots(self, side):
+        return []
+
+    def get_view_bbox(self):
+        return block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
+
+    def on_request_item_for_block(self, itemstack):
+        pass
+
+    def inject_redstone_power(self, side, level: int):
+        self.injected_redstone_power[side] = level
+
+    def get_redstone_output(self, side):
+        return max(self.get_redstone_source_power(side), *self.injected_redstone_power.values())
+
+    def get_redstone_source_power(self, side):
+        return 0
+
+    # registry setup functions
+
+    @classmethod
+    def modify_block_item(cls, itemconstructor): pass  # todo: add an table for subscriptions
+
+    @staticmethod
+    def get_all_model_states() -> list: return [{}]  # todo: make attribute
 
