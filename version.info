@@ -1049,4 +1049,5 @@ started these clone on 12th of July, 2019
 [uuk]: removed tag #minecraft:furnace_fuel, fixing issue 137
 [uuk]: changed signature of on_shift_click(x, y, button, modifiers, player) of slot to
     (slot, x, y, button, modifiers, player)
+[uuk]: fixed Inventory.insert_item failing to insert items (issue 179)
 

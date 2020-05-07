@@ -164,4 +164,5 @@ issue 149: offhand slots get cleared on inventory close; fixed on 05.05.2020 by 
 issue 171: memory leak with block instances; fixed on 05.05.2020 by uuk
 issue 172 & 167: when deleting build-folder, game crashes on every run; fixed on 05.05.2020 by uuk
 issue 173: exception (and not handling) of show-tasks in world gen task system; fixed on 06.05.2020 by uuk
-issue 174: Chunk.hide_all() was using shown-attribute of Chunk causing problems; fixed on 06.05.2020
+issue 174: Chunk.hide_all() was using shown-attribute of Chunk causing problems; fixed on 06.05.2020 by uuk
+issue 179: Inventory.insert_item() was failing; fixed on 07.05.2020 by uuk

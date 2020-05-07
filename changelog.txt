@@ -1,16 +1,27 @@
 Changelog since cleanup-branch of 31.01.2020
 
+future themes:
+    - item tooltips
+    - Entity name tags [an name above them] with rendering (player name!)
+    - generation update: add ores, more structures, more biomes; maybe rewrite Biome API
+    - multiprocessing: can we use multiprocessing to share work between multiple cores (like generation task execution)
 
-changelog of future-master-branch: [the branch called "dev" after the below one]
+
+changelog of future-master-branch: [the branch called "dev" after the below one] (theme: optimize save files)
     planned:
         - speed up chunk accessing [issue 164 & 165]
         - optimize world storage (also issue 159 & 161)
-        - add tool tips, custom tool tip system, ...
         - check for the reason of issue 157 and fix if possible
         - replace every loading event annotation with @G.modloader("minecraft", <stage>, [<info>])
+        - make it possible to have slots without inventories; change Block.get_inventories() to Block.get_all_slots(),
+            update saves accordingly (slots stored in block-data not in inventory system -> add datafixer for it)
+        - add API for Block-fixes to saves with an array of fixers in an general-file and an int-list in every chunk
+            array defining which fixers to apply when loaded
+        - add system for data-fixers for mods, only all-fix
+        - add state for optimizing the world
 
 
-changelog of master-branch:
+changelog of master-branch: (theme: bug fixing & system improvements)
     - during developing more features, the developer has decided to discard the progress. As some more difficulties had
         occur [Covid-19], the development time for these dev-cycle was far longer than expected.
     - resize-event is called after every state switch now
@@ -36,7 +47,7 @@ changelog of master-branch:
         - a lot of normal fuels were not accepted by furnace as fuels
 
     planned:
-        - why is start chest empty?
+        - refactor & rearrange API of Block, Item, State, StatePart, Entity and Biome
 
 
 changelog of snapshot 20w14a
