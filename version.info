@@ -1057,4 +1057,5 @@ started these clone on 12th of July, 2019
          Block.CONDUCTS_REDSTONE_POWER, Block.SOLID, dynamic Block.injected_redstone_power, Block.get_redstone_output(),
          Block.get_redstone_source_power(), Block.CAN_MOBS_SPAWN_ON,
          Entity.movement [implemented in tick() as default impl.]
+[github]: released alpha 1.0.0
 
