@@ -10,18 +10,18 @@ import math
 import util.enums
 
 MC_VERSION_BASE = "1.15.2"
-VERSION_TYPE = "alpha"
+VERSION_TYPE = "alpha release"
 VERSION_NAME = "a1.0.0"
 
-# list of all versions since 19w52a to indicate order
+# list of all versions since 19w52a to indicate order of release; used in save files
 VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20w12a", "20w12b", "20w14a",
-                 "a1.0.0"]
+                 VERSION_NAME]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)
 
 
-TICKS_PER_SEC = 20
+TICKS_PER_SEC = 20  # how many ticks per second should be executed
 
 WALKING_SPEED = 5
 SPRINTING_SPEED = 8
@@ -34,11 +34,11 @@ SPEED_DICT = {
     0: [WALKING_SPEED, SPRINTING_SPEED],
     1: [WALKING_SPEED, SPRINTING_SPEED, FLYING_SPEED, FLYING_SPRINTING_SPEED],
     2: [WALKING_SPEED, SPRINTING_SPEED],
-    3: [0, 0, GAMEMODE_3_SPEED, GAMEMODE_3_SPRINTING_SPEED]
+    3: [WALKING_SPEED, SPRINTING_SPEED, GAMEMODE_3_SPEED, GAMEMODE_3_SPRINTING_SPEED]
 }
 
-GRAVITY = 20.0
-TERMINAL_VELOCITY = 50
+GRAVITY = 20.0  # gravity, in -m/s^2 -> speed is calculated with v -= GRAVITY * dt
+TERMINAL_VELOCITY = 50  # maximum speed downwards
 MAX_JUMP_HEIGHT = 1.0  # About the height of a block.
 # To derive the formula for calculating jump speed, first solve
 #    v_t = v_0 + a * t
@@ -49,7 +49,7 @@ MAX_JUMP_HEIGHT = 1.0  # About the height of a block.
 #    s = s_0 + v_0 * t + (a * t^2) / 2
 JUMP_SPEED = math.sqrt(2 * GRAVITY * MAX_JUMP_HEIGHT)
 
-PLAYER_HEIGHT = 2
+PLAYER_HEIGHT = 2  # the height of the player, in blocks; WARNING: will be removed in the future
 
 
 _ADVANCED_FACES = [[[(x, y, z) for z in range(-1, 2)] for y in range(-1, 2)] for x in range(-1, 2)]
@@ -62,11 +62,11 @@ for e in _ADVANCED_FACES:
 del _ADVANCED_FACES
 
 
-RANDOM_TICK_RANGE = 2
+RANDOM_TICK_RANGE = 2  # how far to execute random ticks away from player
 
-USE_MISSING_TEXTURES_ON_MISS_TEXTURE = False
+USE_MISSING_TEXTURES_ON_MISS_TEXTURE = False  # if missing texture should be used when no texture was selected for an face
 
-CPU_USAGE_REFRESH_TIME = 0.8
+CPU_USAGE_REFRESH_TIME = 0.8  # how often to refresh cpu usage indicator
 
 FOG_DISTANCE = 60  # something like view distance, but will no force the chunks to generate
 

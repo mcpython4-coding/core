@@ -26,8 +26,19 @@ History of save versions:
     - chest container stores now also the loot table link when set
 - 4: introduced: 31.03.2020, outdated since: -, not loadable since: -
     - block coordinates are stored now relative to chunk; decreases chunk size
-- 5: pre-introduced: 17.03.2020 [part of entity update], outdate since: -, not loadable since: -
+- 5: introduced: 17.03.2020 [part of entity update], outdated since: -, not loadable since: -
     - added entity serializer
+
+planned:
+- 6: introduced: -, outdated since: -, not loadable since: -
+    - changed how block-inventories are stored
+    - optimisations to chunk-accessing
+    - introduced datafixer system for mods; introduced block-fixers
+    
+    data structure changes:
+        Region: add last_loaded-parameter
+        Chunk: add unapplied_fixers-list for storing which fixers to apply when loaded
+        General: add an list of data-fixers applied to the world in the time of live of the world
 """
 
 

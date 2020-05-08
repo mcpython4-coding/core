@@ -1,13 +1,17 @@
 Changelog since cleanup-branch of 31.01.2020
 
 future themes:
-    - item tooltips
+    - item tooltips with custom replacement possibility
     - Entity name tags [an name above them] with rendering (player name!)
     - generation update: add ores, more structures, more biomes; maybe rewrite Biome API
     - multiprocessing: can we use multiprocessing to share work between multiple cores (like generation task execution)
+    - start menu update: add some nice background
+    - config background: add config pages
 
 
-changelog of future-master-branch: [the branch called "dev" after the below one] (theme: optimize save files)
+changelog of master-branch: (theme: optimize save files)
+    based on dev-cycle 1
+
     planned:
         - speed up chunk accessing [issue 164 & 165]
         - optimize world storage (also issue 159 & 161)
@@ -18,10 +22,10 @@ changelog of future-master-branch: [the branch called "dev" after the below one]
         - add API for Block-fixes to saves with an array of fixers in an general-file and an int-list in every chunk
             array defining which fixers to apply when loaded
         - add system for data-fixers for mods, only all-fix
-        - add state for optimizing the world
+        - add state for optimizing the world (-> go through every chunk to fix it)
 
 
-changelog of master-branch: (theme: bug fixing & system improvements)
+changelog of release alpha 1.0.0: (theme: bug fixing & system improvements)
     - during developing more features, the developer has decided to discard the progress. As some more difficulties had
         occur [Covid-19], the development time for these dev-cycle was far longer than expected.
     - resize-event is called after every state switch now
