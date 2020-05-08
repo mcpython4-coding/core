@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -18,7 +19,6 @@ import pyglet
 import sys
 import factory.ItemFactory
 import mod.ModMcpython
-import traceback
 import logger
 import logger
 
@@ -102,9 +102,7 @@ def register_item(registry, itemclass):
             images = [ResourceLocator.read(file, "pil").resize((32, 32), PIL.Image.NEAREST) for file in files]
         except ValueError:
             images = [texture.TextureAtlas.MISSING_TEXTURE] * len(files)
-            traceback.print_exc()
-            logger.write_exception()
-            logger.println("during not finding files: {}".format(files))
+            logger.write_exception("during not finding files: {}".format(files))
         flag = True
         for textureatlas in TEXTURE_ATLASES:
             if textureatlas.is_free_for(files):

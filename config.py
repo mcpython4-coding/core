@@ -1,19 +1,21 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import math
 import util.enums
 
 MC_VERSION_BASE = "1.15.2"
-VERSION_TYPE = "snapshot"
-VERSION_NAME = "20w14a"
+VERSION_TYPE = "alpha"
+VERSION_NAME = "a1.0.0"
 
 # list of all versions since 19w52a to indicate order
-VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20w12a", "20w12b", "20w14a"]
+VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20w12a", "20w12b", "20w14a",
+                 "a1.0.0"]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)
@@ -77,4 +79,6 @@ BIOME_HEIGHT_RANGE_MAP = {  # an dict of biomename: height range storing the int
 # how far to generate chunks on sector change, in chunks from the chunk the player is in, in an square with
 # CHUNK_GENERATION_RANGE * 2 + 1 -size
 CHUNK_GENERATION_RANGE = 1
+
+WRITE_NOT_FORMATTED_EXCEPTION = False  # if exceptions should be not formatted-printed to console by logger
 

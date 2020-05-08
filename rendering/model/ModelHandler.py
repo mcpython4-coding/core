@@ -1,15 +1,15 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import ResourceLocator
 import util.math
 import rendering.model.Model
-import traceback
 import mod.ModMcpython
 import logger
 import util.enums
@@ -91,9 +91,7 @@ class ModelHandler:
                                                                 name.split(":")[0] if name.count(":") == 1 else
                                                                 "minecraft")
         except:
-            logger.println("error during loading model '{}' named '{}'".format(location, name))
-            traceback.print_exc()
-            traceback.print_stack()
+            logger.write_exception("error during loading model '{}' named '{}'".format(location, name))
 
     def add_face_to_batch(self, block, face, batches) -> list:
         blockstate = self.blockstates[block.NAME]

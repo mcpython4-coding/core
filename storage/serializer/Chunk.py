@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import storage.serializer.IDataSerializer
@@ -21,17 +22,17 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:chunk"
 
     @classmethod
-    def load(cls, savefile, dimension: int, chunk: tuple, immediate=True):
+    def load(cls, savefile, dimension: int, chunk: tuple, immediate=False):
         if dimension not in G.world.dimensions: return
         region = chunk2region(*chunk)
         chunk_instance: world.Chunk.Chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
+        if chunk_instance.loaded: return
         data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
         if data is None: return
         if data["version"] != savefile.version:
             savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, region=region)
             data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))  # reload the data
         if chunk not in data: return
-        if chunk_instance.loaded: return
 
         G.worldgenerationhandler.enable_generation = False
 
@@ -56,8 +57,13 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             if immediate:
                 add(chunk_instance.add_block(position, d["name"], immediate=flag))
             else:
-                if d["name"] not in G.registry.get_by_name("block").registered_object_map: continue
-                chunk_instance.add_add_block_gen_task(position, d["name"], on_add=add, immediate=flag)
+                # todo: add missing texture block -> insert here
+                # todo: pre-check the palette and replace with air / missing_block-block (-> better performance)
+                if d["name"] not in G.registry.get_by_name("block").registered_object_map:
+                    logger.println("[WARN] could not add block {} at {}".format(d["name"], position))
+                    continue
+                G.worldgenerationhandler.task_handler.schedule_block_add(chunk_instance, position, d["name"],
+                                                                         on_add=add, immediate=flag)
 
         positions = []
         for x in range(chunk[0]*16, chunk[0]*16+16):
@@ -70,7 +76,7 @@ class Chunk(storage.serializer.IDataSerializer.IDataSerializer):
             chunk_instance.set_value("biomemap", biome_map)
             chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
         except IndexError:
-            logger.println("[CHUNK][CORRUPTED] palette exception in chunk '{}' in dimension '{}'".format(
+            logger.write_exception("[CHUNK][CORRUPTED] palette exception in chunk '{}' in dimension '{}'".format(
                 chunk, dimension))
 
         for entity in data["entities"]:

@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
@@ -37,12 +38,9 @@ class DefaultLandMassLayer(Layer):
 
     NAME = "landmass_default"
 
-    @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, chunk):
-        chunk.chunkgenerationtasks.append([DefaultLandMassLayer.generate_landmass, [chunk, config], {}])
-
-    @staticmethod
-    def generate_landmass(chunk, config):
+    @classmethod
+    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+        chunk = reference.chunk
         cx, cz = chunk.position
         landmap = chunk.get_value("landmassmap")
         factor = 10**config.size
@@ -56,12 +54,6 @@ class DefaultLandMassLayer(Layer):
                 if v == len(config.masses):
                     v = 0
                 landmap[(x, z)] = config.masses[v]
-                """
-                if v < 0:
-                    chunk.add_add_block_gen_task((x, 5, z), "minecraft:stone")
-                else:
-                    chunk.add_add_block_gen_task((x, 5, z), "minecraft:dirt")
-                """
 
 
 authcode = world.Chunk.Chunk.add_default_attribute("landmassmap", DefaultLandMassLayer, {})

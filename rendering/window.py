@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import pyglet
@@ -435,6 +436,8 @@ class Window(pyglet.window.Window):
         if G.world.savefile.save_in_progress: return
         if G.statehandler.active_state is not None and any(
                 [part.NAME == "minecraft:state_part_game" for part in G.statehandler.active_state.parts]):
+            # have we an world which should be saved?
             G.world.savefile.save_world(override=True)
+        self.set_fullscreen(False)
         self.close()
 

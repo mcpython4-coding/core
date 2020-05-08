@@ -1,14 +1,14 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import event.EventBus
 import event.EventHandler
-import traceback
 
 
 class ModDependency:
@@ -24,8 +24,16 @@ class ModDependency:
 
         """
         self.name = name
-        self.version_range = (version_min, version_max)
-        self.versions = versions
+        self.version_range = (self.convert_any_to_version_tuple(version_min),
+                              self.convert_any_to_version_tuple(version_max))
+        self.versions = None if versions is None else [self.convert_any_to_version_tuple(e) for e in versions]
+
+    @classmethod
+    def convert_any_to_version_tuple(cls, a):
+        if a is None: return None
+        if type(a) == tuple: return a
+        if type(a) == str: return tuple([int(e) for e in a.split(".")])
+        raise ValueError("invalid version entry '{}' of type '{}'".format(a, type(a)))
 
     def arrival(self) -> bool:
         if self.name not in G.modloader.mods: return False
@@ -84,7 +92,7 @@ class Mod:
         self.name = name
         self.eventbus: event.EventBus.EventBus = event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
             crash_on_error=False)
-        self.dependinfo = [[] for _ in range(5)]  # need, possible, not possible, before, after
+        self.dependinfo = [[] for _ in range(7)]  # need, possible, not possible, before, after, only with, only without
         self.path = None
         self.version = version
         self.package = None
@@ -126,4 +134,14 @@ class Mod:
             depend = ModDependency(*depend.split("|"))
         self.dependinfo[1].append(depend)
         self.dependinfo[4].append(depend)
+
+    def add_load_only_when_arrival(self, depend):
+        if type(depend) == str:
+            depend = ModDependency(*depend.split("|"))
+        self.dependinfo[5].append(depend)
+
+    def add_load_only_when_not_arrival(self, depend):
+        if type(depend) == str:
+            depend = ModDependency(*depend.split("|"))
+        self.dependinfo[6].append(depend)
 

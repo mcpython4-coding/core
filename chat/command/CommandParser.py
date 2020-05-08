@@ -1,14 +1,14 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import chat.command.Command
 import logger
-import traceback
 
 
 class ParsingCommandInfo:
@@ -67,17 +67,13 @@ class CommandParser:
             try:
                 values, trace = self._convert_to_values(split, parsebridge, info)
             except:
-                logger.println("[CHAT][EXCEPTION] during parsing values")
-                logger.write_exception()
-                traceback.print_exc()
+                logger.write_exception("[CHAT][EXCEPTION] during parsing values")
                 return
             if values is None: return
             try:
                 command.parse(values, trace, info)
             except:
-                logger.println("[CHAT][EXCEPTION] during executing command")
-                logger.write_exception()
-                traceback.print_exc()
+                logger.write_exception("[CHAT][EXCEPTION] during executing command")
         else:
             logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
 

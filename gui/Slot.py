@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -11,7 +12,6 @@ import gui.ItemStack
 import item.ItemHandler
 # import texture.helpers
 import ResourceLocator
-import traceback
 import logger
 
 
@@ -125,15 +125,14 @@ class Slot:
     def can_set_item(self, itemstack) -> bool:
         itemname = itemstack.get_item_name()
         flag1 = self.allowed_item_tags is not None
-        flag2 = flag1 and (any([itemname in G.taghandler.taggroups["items"].tags[x].entries for x in
+        flag2 = flag1 and (any([G.taghandler.has_entry_tag(itemname, "items", x) for x in
                                 self.allowed_item_tags]) or itemstack.get_item_name() is None)
         flag3 = self.allowed_item_func is not None
         flag4 = flag3 and self.allowed_item_func(itemstack)
         try:
-            return (flag1 and flag2) or (flag3 and flag4) or not (flag1 or flag3)
+            return not (flag1 or flag3) or (flag1 and flag2) or (flag3 and flag4)
         except:
-            logger.println("[GUI][ERROR] error during executing check func '{}'".format(self.allowed_item_func))
-            traceback.print_exc()
+            logger.write_exception("[GUI][ERROR] error during executing check func '{}'".format(self.allowed_item_func))
             return False
 
     def save(self):

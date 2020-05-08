@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 """
@@ -170,7 +171,7 @@ def transform_name(file: str) -> str:
         else:
             f = "assets/{}/textures/{}/{}.png".format(f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:]))
         return f
-    raise NotImplementedError("can't transform name {} to valid path".format(file))
+    raise NotImplementedError("can't transform name '{}' to valid path".format(file))
 
 
 def exists(file, transform=True):
@@ -181,7 +182,7 @@ def exists(file, transform=True):
         for x in RESOURCE_LOCATIONS:
             if x.path == resource:
                 return x.is_in_path(file)
-        raise RuntimeError("can't find resource named {}".format(resource))
+        raise RuntimeError("can't find resource named '{}'".format(resource))
     for x in RESOURCE_LOCATIONS:
         if x.is_in_path(file):
             return True

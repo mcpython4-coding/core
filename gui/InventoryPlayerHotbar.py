@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -13,6 +14,7 @@ import pyglet
 import ResourceLocator
 import time
 import util.opengl
+import event.EventHandler
 
 
 base: pyglet.image.AbstractImage = ResourceLocator.read("gui/icons", "pyglet")
@@ -73,14 +75,21 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
 
     def __init__(self):
         gui.Inventory.Inventory.__init__(self)
-        self.selected_sprite = pyglet.sprite.Sprite(ResourceLocator.read("build/texture/gui/selected_slot.png",
-                                                                         "pyglet"))
+        if ResourceLocator.exists("build/texture/gui/selected_slot.png"):
+            self.get_select_sprite()
+        else:
+            self.selected_sprite = None
+            event.EventHandler.PUBLIC_EVENT_BUS.subscribe("stage:blockitemfactory:finish", self.get_select_sprite)
         self.lable = pyglet.text.Label(color=(255, 255, 255, 255))
         self.last_index = 0
         self.last_item = None
         self.time_since_last_change = 0
 
         self.xp_level_lable = pyglet.text.Label(color=(92, 133, 59), anchor_x="center")
+
+    def get_select_sprite(self):
+        self.selected_sprite = pyglet.sprite.Sprite(ResourceLocator.read("build/texture/gui/selected_slot.png",
+                                                                         "pyglet"))
 
     @staticmethod
     def get_config_file():

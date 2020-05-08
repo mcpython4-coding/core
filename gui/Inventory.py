@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -13,6 +14,7 @@ import util.texture
 import PIL.Image
 import uuid
 import random
+import logger
 
 
 class Inventory:
@@ -207,31 +209,42 @@ class Inventory:
         """
         return "no:data"
 
-    def insert_items(self, items: list, random_check_order=False):
+    def insert_items(self, items: list, random_check_order=False, insert_when_same_item=True):
         while len(items) > 0:
-            self.insert_item(items.pop(0), random_check_order=random_check_order)
+            self.insert_item(items.pop(0), random_check_order=random_check_order,
+                             insert_when_same_item=insert_when_same_item)
 
-    def insert_item(self, itemstack, random_check_order=False):
+    def insert_item(self, itemstack, random_check_order=False, insert_when_same_item=True):
         if itemstack.is_empty(): return
         slots = self.slots.copy()
         if random_check_order: random.shuffle(slots)
         for slot in slots:
-            if slot.itemstack.is_empty() and slot.interaction_mode[2]:
+            if slot.itemstack.is_empty():
                 slot.set_itemstack(itemstack)
                 return
-            elif slot.itemstack.get_item_name() == itemstack.get_item_name() and slot.interaction_mode[2]:
+            elif slot.itemstack.get_item_name() == itemstack.get_item_name():
                 if slot.itemstack.amount + itemstack.amount <= itemstack.item.STACK_SIZE:
                     slot.itemstack.add_amount(itemstack.amount)
                     return
-                else:
+                elif insert_when_same_item:
                     overflow = itemstack.amount - (itemstack.item.STACK_SIZE - slot.itemstack.amount)
                     slot.itemstack.amount = itemstack.item.STACK_SIZE
                     itemstack.set_amount(overflow)
-        # todo: drop item
+        logger.println("itemstack overflow: ".format(itemstack))
 
     def update_shift_container(self):
         """
         called when the inventory should update the content of the ShiftContainer of the inventory-handler
         """
+
+    def __del__(self):
+        # we do not care about it when it is None [gc-sided deletion at the end of the program]
+        if G is None or G.inventoryhandler is None: return
+        if self in G.inventoryhandler.alwaysopened:
+            G.inventoryhandler.alwaysopened.remove(self)
+        G.inventoryhandler.hide(self)
+        if self in G.inventoryhandler.inventorys:
+            G.inventoryhandler.inventorys.remove(self)
+        G.inventoryhandler.update_shift_container()
 
 

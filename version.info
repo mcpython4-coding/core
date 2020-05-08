@@ -1018,4 +1018,44 @@ started these clone on 12th of July, 2019
 [uuk]: added SUMMON_ABLE-flag to Entity-class determine if the entity can be used in the /summon command
 [uuk]: moved skin-cache from build to build/skins folder
 [uuk]: fixed bug: player entity is removed from world when it dies and not added back
+[uuk]: rolled back dev-branch as its code was strongly broken [world gen time ~100x higher than before]
+[uuk]: when switching to an state, it will now get an on_resize-event-call as size may have updated
+[uuk]: refactored ModLoader & optimized mod-loading by updating pgb's only when task execution for tick finished
+[uuk]: new mod.json file version: 1.2.0 [old still supported]
+[uuk]: ModDependency will cast now an stringified version entry [in form of x.y.z.[...]] to the correct tuple version
+[uuk]: can now subscribe to load-event via the following structure:
+    @G.modloader(<modname>, <eventname>)
+    def <your function>(<...>)
+[uuk]: changed some internal loading stage calling
+[uuk]: added new loading events: "stage:block:factory:finish", "stage:item:factory:finish"
+[uuk]: fixed issue 154 and 169
+[uuk]: added --fullscreen flag for enabling fullscreen on startup
+[uuk]: fixed memory leak with block-inventories (issue 170)
+[uuk]: fixed offhand slot resetting on every inventory close (issue 149)
+[uuk]: fixed memory leak with block-instances (issue 171)
+[uuk]: fixed crash when deleting build-folder (issue 167 & 172)
+[uuk]: improved exception message on world save not found
+[uuk]: normal logging messages get now also escaped
+[uuk]: improved exception messages in log
+[uuk]: improved world gen (see below)
+[uuk]: fixed exception when adding show-tasks by world gen (issue 173)
+[uuk]: removed shown-attribute of chunk as it was not used anymore (this reduces memory usage as empty lists were stored
+    where blocks are in world)
+[uuk]: fixed Chunk.hide_all()-method based on unused shown-method (issue 174)
+[uuk]: rewritten how generation tasks are stored
+[uuk]: rewritten chunk gen task system
+[uuk]: world gen screen draws now green entries when finished
+[uuk]: @G.modloader() accepts now an info-parameter
+[uuk]: removed tag #minecraft:furnace_fuel, fixing issue 137
+[uuk]: changed signature of on_shift_click(x, y, button, modifiers, player) of slot to
+    (slot, x, y, button, modifiers, player)
+[uuk]: fixed Inventory.insert_item failing to insert items (issue 179)
+[uuk]: removed the following functions: Block.is_breakable(), Block.is_solid_side(), Block.get_hardness(),
+         Block.get_minimum_tool_level, Block.get_best_tools(), Item.get_name(), Item.has_block(),
+         Item.get_max_stack_size()
+[uuk]: added the following functions: Block.on_redstone_update(), Block.inject_redstone_power(side, level: int),
+         Block.CONDUCTS_REDSTONE_POWER, Block.SOLID, dynamic Block.injected_redstone_power, Block.get_redstone_output(),
+         Block.get_redstone_source_power(), Block.CAN_MOBS_SPAWN_ON,
+         Entity.movement [implemented in tick() as default impl.]
+[github]: released alpha 1.0.0
 

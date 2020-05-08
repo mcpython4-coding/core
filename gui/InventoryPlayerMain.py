@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -51,7 +52,7 @@ class InventoryPlayerMain(gui.Inventory.Inventory):
         G.world.get_active_player().armor_level = points
 
     def on_deactivate(self):
-        self.slots[45].get_itemstack().clean()
+        self.slots[44].get_itemstack().clean()
         for slot in self.slots[40:-1]:
             slot: gui.Slot.Slot
             itemstack = slot.get_itemstack()

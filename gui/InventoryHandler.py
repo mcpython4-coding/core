@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -83,7 +84,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         self.moving_itemstack = G.inventoryhandler.moving_slot.itemstack.copy()
         if modifiers & key.MOD_SHIFT:
             if slot.on_shift_click:
-                flag = slot.on_shift_click(x, y, button, modifiers, G.world.get_active_player())
+                flag = slot.on_shift_click(slot, x, y, button, modifiers, G.world.get_active_player())
                 if flag is not True: return  # no default logic should go on
             if G.inventoryhandler.shift_container is not None and \
                 G.inventoryhandler.shift_container.move_to_opposite(slot): return

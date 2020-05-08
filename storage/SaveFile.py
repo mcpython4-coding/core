@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -12,9 +13,7 @@ import json
 import pickle
 import os
 import logger
-import traceback
 import sys
-import traceback
 
 """
 History of save versions:
@@ -69,6 +68,10 @@ class SaveFile:
             self.read("minecraft:player_data")
             self.read("minecraft:gamerule")
             self.read("minecraft:registry_info_serializer")
+        except storage.serializer.IDataSerializer.MissingSaveException:
+            logger.println("[WARN] save '{}' not found, falling back to selection menu".format(self.directory))
+            G.world.cleanup()
+            G.statehandler.switch_to("minecraft:world_selection")
         except:
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")

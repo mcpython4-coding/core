@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -32,8 +33,9 @@ class StateHandler:
         if self.CANCEL_SWITCH_STATE: return
         if self.active_state:
             self.active_state.deactivate()
-        self.active_state = self.states[statename]
+        self.active_state: State.State = self.states[statename]
         self.active_state.activate()
+        self.active_state.eventbus.call("user:window:resize", *G.window.get_size())
         G.eventhandler.call("state:switch:post", statename)
         logger.println("[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename), write_into_console=False)
 

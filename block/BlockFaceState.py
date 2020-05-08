@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import util.enums
@@ -71,4 +72,9 @@ class BlockFaceState:
             event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("render:draw:3d", self._draw_custom_render)
             self.subscribed_renderer = False
         [self.hide_face(face) for face in util.enums.EnumSide.iterate()]
+
+    def __del__(self):
+        self.hide_all()
+        del self.block
+        del self.custom_renderer
 

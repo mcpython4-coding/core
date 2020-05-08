@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -17,6 +18,14 @@ def register_block(registry, blockclass):
         name = blockclass.NAME
         block_registry.full_table[name] = blockclass
         block_registry.full_table[name.split(":")[-1]] = blockclass
+        if blockclass.SOLID is None:
+            blockclass.SOLID = all(blockclass((0, 0, 0)).face_solid.values())
+
+        if blockclass.CONDUCTS_REDSTONE_POWER is None:
+            blockclass.CONDUCTS_REDSTONE_POWER = blockclass.SOLID
+
+        if blockclass.CAN_MOBS_SPAWN_ON is None:
+            blockclass.CAN_MOBS_SPAWN_ON = blockclass.SOLID
 
 
 block_registry = event.Registry.Registry("block", ["minecraft:block_registry"], injection_function=register_block)

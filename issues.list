@@ -1,7 +1,7 @@
 
 [issue 1-8 are part of github-only and are mostly fixed at the moment]
 
-issue 9:
+issue 9: [seems fixed, please check]
     when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
         Item-instances in the same run
     this issue occurs only in the first run with the new block
@@ -38,12 +38,13 @@ issue 55:
     since: alpha rendering was implemented
     fix: order alpha face rendering! (maybe implement an AlphaRenderingRenderer extends ICustomDrawRenderer)
 
-issue 80: [unable to reproduce, check and mark as resolved when not occur anymore]
+issue 80:
     bug: in some cases, mouse button up is still not handled
 
 issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
+    solution: maybe WAI
 
 issue 113:
     bug: "uv-lock"-parameter is ignored in block-states
@@ -60,9 +61,6 @@ issue 122:
 issue 129:
     bug: some fence faces are not rendered [invalid texture rotation, internal miss-match in order of texture-coord?]
 
-issue 137:
-    bug: coal block has no fuel level [maybe general problem?]
-
 issue 139:
     bug: during in-game generation, block faces of neighbor chunks are not updated
     possible fix: update all blocks next to the new chunk OR remove the hide-faces in not generated chunks
@@ -71,9 +69,6 @@ issue 140:
     bug: (sometimes, )you fall through one or more block (in gamemode 0)
         reproduce:
             use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
-
-issue 149:
-    bug: offhand slot is reset when closing inventory
 
 issue 150:
     bug: float point precision loos at high coordinates e.g. [only occur on block rendering]:
@@ -98,14 +93,11 @@ issue 150:
         (-> maybe add an FloatPosition-class handling all this stuff)
      fix C: use the decimal module for handling the floats [warning: OpenGL may cause problems when using the module]
 
-issue 154: [fix with generation update]
-    bug: debug world blocks do NOT use block-state
-
 issue 157:
     bug: loading hangs before showing the chunk loading screen due to deserialization times
     fix: add color indicating that the deserialization is in progress
 
-issue 159: [fix in world generation update]
+issue 159:
     bug: various maps are stored not chunk-relative making file size big at outer positions
     fix: implement relative-storage with data-fixer
 
@@ -114,4 +106,36 @@ issue 161:
     fix: like in kill-method, force-close all inventories on save
     other fix: save moving slot also & load it [warning: also save what inventories are open]
 
-[162-163]
+issue 164:
+    bug: saving/loading big worlds take ages
+    fix: do NOT load every time the whole .region file, store it in RAM [we have enough of it]
+
+issue 165:
+    bug: changing chunks in an big world takes ages
+    fix: see issue 164
+
+issue 166:
+    bug: world generation is slow
+
+issue 168:
+    bug: when starting in-game generation, game hangs for an short moment
+
+issue 174:
+    bug: loading bars of mod-loading are not in the middle
+
+issue 175:
+    bug: structures overlapping into not-generated chunks are not shown when the chunks respecify are generated
+    fix: add an special list of pre-generated blocks which is injected into actual generation task array when the chunk
+        generation is requested
+
+issue 176:
+    bug: structures overlapping into not-generated chunks are not saved
+    fix: see issue 175
+
+issue 177:
+    bug: grass block faces generated next to leaves are not visible
+
+issue 178:
+    bug: hotbar is not transparent(rendered)
+
+[179]

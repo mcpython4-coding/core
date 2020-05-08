@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -12,7 +13,6 @@ import os
 import enum
 import logger
 import event.EventHandler
-import traceback
 import chat.command.CommandParser
 
 
@@ -110,9 +110,7 @@ class DataPack:
                         self.access.read(file, None).decode("UTF-8"), name)
         except:
             self.status = DataPackStatus.SYSTEM_ERROR
-            logger.println("error during loading data pack '{}'".format(self.name))
-            traceback.print_exc()
-            logger.write_exception()
+            logger.write_exception("error during loading data pack '{}'".format(self.name))
             return
         self.status = DataPackStatus.ACTIVATED
 
@@ -125,9 +123,7 @@ class DataPack:
             self.function_table.clear()  # unload all .mcfunction files
         except:
             self.status = DataPackStatus.SYSTEM_ERROR
-            logger.println("error during unloading data pack '{}'".format(self.name))
-            logger.write_exception()
-            traceback.print_exc()
+            logger.write_exception("error during unloading data pack '{}'".format(self.name))
             return
         self.status = DataPackStatus.UNLOADED  # we have successfully unloaded the data-pack
         if self.access: self.access.close()

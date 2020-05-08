@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -53,7 +54,7 @@ class BlockChest(Block.Block):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT and self.can_open_inventory():
             if self.loot_table_link:
                 self.inventory.insert_items(G.loottablehandler.roll(self.loot_table_link, block=self),
-                                            random_check_order=True)
+                                            random_check_order=True, insert_when_same_item=False)
                 self.loot_table_link = None
             G.inventoryhandler.show(self.inventory)
             return True

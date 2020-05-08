@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -172,71 +173,25 @@ class World:
     def process_queue(self):
         if not any(type(x) == state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
             return
-        start = time.time()
-        while time.time() - start < 0.01:
-            result = G.worldgenerationhandler.process_one_generation_task()
-            if result is not None and not result: return
+        G.worldgenerationhandler.task_handler.process_tasks(timer=0.02)
 
     def process_tasks(self, timer=0.2):
-        """
-        process an part of the array
-        """
-        dim: world.Dimension.Dimension = self.get_active_dimension()
-        t = time.time()
-        for chunk in list(dim.chunks.values()):
-            for task in chunk.show_tasks:
-                chunk._show_block(task, chunk.world[task])
-                if time.time() - t > timer: return
-            for task in chunk.hide_tasks:
-                chunk._hide_block(task, chunk.world[task])
-                if time.time() - t > timer: return
-            while len(chunk.chunkgenerationtasks) > 0:
-                task = chunk.chunkgenerationtasks.pop(0)
-                task[0](*task[1], **task[2])
-                if time.time() - t > timer: return
-            for position in list(chunk.blockmap.keys()):
-                args, kwargs, on_add = chunk.blockmap[position]
-                blockinstance = chunk.add_block(*args, **kwargs)
-                if on_add is not None:
-                    on_add(blockinstance)
-                if time.time() - t > timer: return
-            chunk.show_tasks.clear()
-            chunk.hide_tasks.clear()
-            chunk.blockmap.clear()
-            chunk.is_ready = True
-            if time.time() - t > timer: return
+        G.worldgenerationhandler.task_handler.process_tasks(timer=timer)
+        # todo: remove
 
     def process_entire_queue(self):
         """ Process the entire queue with no breaks.
+        todo: remove
 
         """
-        dim: world.Dimension.Dimension = self.get_active_dimension()
-        t = time.time()
-        for chunk in list(dim.chunks.values()):
-            for task in chunk.show_tasks:
-                chunk._show_block(task, chunk.world[task])
-            for task in chunk.hide_tasks:
-                chunk._hide_block(task, chunk.world[task])
-            while len(chunk.chunkgenerationtasks) > 0:
-                task = chunk.chunkgenerationtasks.pop(0)
-                task[0](*task[1], **task[2])
-            for position in list(chunk.blockmap.keys()):
-                args, kwargs, on_add = chunk.blockmap[position]
-                blockinstance = chunk.add_block(*args, **kwargs)
-                if on_add is not None:
-                    on_add(blockinstance)
-            chunk.show_tasks.clear()
-            chunk.hide_tasks.clear()
-            chunk.blockmap.clear()
-            chunk.is_ready = True
+        G.worldgenerationhandler.task_handler.process_tasks()
 
     def cleanup(self, remove_dims=False, filename=None, add_player=False):
         for dimension in self.dimensions.values():
             dimension: world.Dimension.Dimension
             for chunk in dimension.chunks.values():
                 chunk.hide_all()
-                chunk.world = {}
-                chunk.is_ready = False
+                del chunk
             dimension.chunks = {}
         if remove_dims:
             self.dimensions.clear()
@@ -248,9 +203,7 @@ class World:
         G.window.flying = False
         for inv in G.world.get_active_player().inventories.values(): inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
-        G.worldgenerationhandler.tasks_to_generate.clear()
-        G.worldgenerationhandler.runtimegenerationcache.clear()
-        G.worldgenerationhandler.runtimegenerationcache = [[], {}, {}]
+        G.worldgenerationhandler.task_handler.clear()
         self.players.clear()
         if add_player: self.add_player("unknown")
         if filename is not None:

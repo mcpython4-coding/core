@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
@@ -30,12 +31,9 @@ class DefaultHeightMapLayer(Layer):
 
     NAME = "heightmap_default"
 
-    @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, chunk):
-        chunk.chunkgenerationtasks.append([DefaultHeightMapLayer.generate_heightmap, [chunk, config], {}])
-
     @classmethod
-    def generate_heightmap(cls, chunk, config):
+    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+        chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
         cx, cz = chunk.position
         factor = 10**config.size

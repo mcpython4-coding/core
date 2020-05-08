@@ -1,7 +1,53 @@
 Changelog since cleanup-branch of 31.01.2020
 
+future themes:
+    - item tooltips
+    - Entity name tags [an name above them] with rendering (player name!)
+    - generation update: add ores, more structures, more biomes; maybe rewrite Biome API
+    - multiprocessing: can we use multiprocessing to share work between multiple cores (like generation task execution)
 
-changelog of master-branch
+
+changelog of future-master-branch: [the branch called "dev" after the below one] (theme: optimize save files)
+    planned:
+        - speed up chunk accessing [issue 164 & 165]
+        - optimize world storage (also issue 159 & 161)
+        - check for the reason of issue 157 and fix if possible
+        - replace every loading event annotation with @G.modloader("minecraft", <stage>, [<info>])
+        - make it possible to have slots without inventories; change Block.get_inventories() to Block.get_all_slots(),
+            update saves accordingly (slots stored in block-data not in inventory system -> add datafixer for it)
+        - add API for Block-fixes to saves with an array of fixers in an general-file and an int-list in every chunk
+            array defining which fixers to apply when loaded
+        - add system for data-fixers for mods, only all-fix
+        - add state for optimizing the world
+
+
+changelog of master-branch: (theme: bug fixing & system improvements)
+    - during developing more features, the developer has decided to discard the progress. As some more difficulties had
+        occur [Covid-19], the development time for these dev-cycle was far longer than expected.
+    - resize-event is called after every state switch now
+    - refactored ModLoader-class & optimized some loading systems
+    - added new mod.json file version
+    - added @globals.modloader(<modname>, <eventname>, [<info>]) annotation
+    - improved mod loading stage calling
+    - new loading events: "stage:block:factory:finish" and "stage:item:factory:finish"
+    - added --fullscreen -flag for enabling fullscreen on startup [unstable at the moment]
+    - improved error message when world save not found on load
+    - improved exception handling by logger
+    - improved world gen, rewritten how tasks are stored & scheduled (!)
+    - removed tag #minecraft:furnace_fuel and replaced by an hasattr(item, "FUEL") check
+    - changed signature of on_shift_click(x, y, button, modifiers, player) of slot to
+        (slot, x, y, button, modifiers, player)
+
+    fixed bugs:
+        - state of block may not be set correctly in some cases
+        - memory leaks all over the place
+        - offhand slot gets cleared when closing inventory
+        - crash when build-folder was deleted
+        - exceptions when using show-tasks in world gen arrays
+        - a lot of normal fuels were not accepted by furnace as fuels
+
+
+changelog of snapshot 20w14a
     - added new event: "stage:blockitemfactory:finish"
     - cleaned up base classes for block and item
     - chunk entries containing positions are mostly stored relative to the chunk decreasing save file size

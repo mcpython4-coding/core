@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import storage.serializer.IDataSerializer
@@ -21,7 +22,7 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
     @classmethod
     def load(cls, savefile):
         data = savefile.access_file_json("level.json")
-        if data is None: raise storage.serializer.IDataSerializer.InvalidSaveException("level.json not found!")
+        if data is None: raise storage.serializer.IDataSerializer.MissingSaveException("level.json not found!")
         savefile.version = data["storage version"]
         playername = data["player name"]
         if playername not in G.world.players: G.world.add_player(playername)
@@ -63,8 +64,8 @@ class General(storage.serializer.IDataSerializer.IDataSerializer):
             "config": G.world.config,
             "game version": config.VERSION_NAME,
             "mods": {mod.name: mod.version for mod in G.modloader.mods.values()},
-            "chunks_to_generate": [(chunk.position, chunk.dimension.id) for chunk in G.worldgenerationhandler.
-                tasks_to_generate + G.worldgenerationhandler.runtimegenerationcache[0]],
+            "chunks_to_generate": [(chunk.position, chunk.dimension.id) for chunk in
+                                   G.worldgenerationhandler.task_handler.chunks],
             "dimensions": {dimension.id: dimension.name for dimension in G.world.dimensions.values()}
         }
         savefile.dump_file_json("level.json", data)

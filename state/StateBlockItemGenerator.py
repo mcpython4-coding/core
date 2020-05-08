@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 from . import State, StatePartGame
@@ -20,7 +21,6 @@ import json
 import factory.ItemFactory
 import item.ItemHandler
 import mod.ModMcpython
-import traceback
 import logger
 import state.StateModLoading
 import psutil
@@ -101,7 +101,7 @@ class StateBlockItemGenerator(State.State):
                                                                      block_update=False)
             if blockinstance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
-            blockinstance.face_state.update()
+            blockinstance.face_state.update(redraw_complete=True)
         except ValueError:
             self.blockindex = 0
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
@@ -123,6 +123,7 @@ class StateBlockItemGenerator(State.State):
             json.dump({"finished": True}, f)
         G.tickhandler.enable_random_ticks = True
         G.world.hide_faces_to_ungenerated_chunks = True
+        G.window.set_fullscreen("--fullscreen" in sys.argv)
         G.eventhandler.call("stage:blockitemfactory:finish")
 
     def close(self):
@@ -143,7 +144,7 @@ class StateBlockItemGenerator(State.State):
                                                                      block_update=False)
             if blockinstance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
-            blockinstance.face_state.update()
+            blockinstance.face_state.update(redraw_complete=True)
         except ValueError:
             logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                            "following exception".format(self.tasks[self.blockindex]))
@@ -215,6 +216,8 @@ class StateBlockItemGenerator(State.State):
         if type(block) != str and block is not None: block.modify_block_item(obj)
         obj.finish(task_list=True)
         self.tries = 0
+        self.SETUP_TIME = 1
+        self.CLEANUP_TIME = 1
 
 
 blockitemgenerator = None

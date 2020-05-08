@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -39,11 +40,12 @@ class CommandGenerate(chat.command.Command.Command):
         if fz > tz: fz, tz = tz, fz
         for x in range(fx, tx+1):
             for z in range(fz, tz+1):
-                G.worldgenerationhandler.generate_chunk(dim.get_chunk(x, z, generate=False))
-        G.world.process_entire_queue()
+                c = dim.get_chunk(x, z, generate=False)
+                G.worldgenerationhandler.add_chunk_to_generation_list(c)
+                G.worldgenerationhandler.task_handler.process_tasks(chunks=[c])  # only generate the ones from us
 
     @staticmethod
     def get_help() -> list:
         return ["/generate [<x> <z> [<tox> <toz>]]: generates the chunk you are in if no one is specified or the "
-                "specified area, else the specified"]
+                "specified area, else the specified chunk by (x, z)"]
 

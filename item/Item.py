@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
@@ -19,35 +20,29 @@ class Item(event.Registry.IRegistryContent):
     HAS_BLOCK = True
 
     @classmethod
-    def get_used_texture_files(cls):  # WARNING: will be removed during item rendering update
+    def get_used_texture_files(cls):  # WARNING: will be removed during item rendering update; todo: make attribute
         return [cls.get_default_item_image_location()]
-
-    @classmethod
-    def get_name(cls) -> str: return cls.NAME
-
-    @classmethod
-    def has_block(cls) -> bool:
-        return cls.HAS_BLOCK
-
-    def get_block(self) -> str:
-        return self.NAME
 
     @staticmethod
     def get_default_item_image_location() -> str:  # WARNING: will be removed during item rendering update
         raise NotImplementedError()
 
-    def get_active_image_location(self):  # WARNING: will be removed during item rendering update
-        return self.get_default_item_image_location()
-
     def __init__(self):
         self.uuid = uuid.uuid4()
-
-    def get_max_stack_size(self) -> int:  # todo: remove
-        return self.STACK_SIZE
 
     def __eq__(self, other):
         if not issubclass(type(other), Item): return False
         return other.NAME == self.NAME and other.get_data() == self.get_data()
+
+    # default getter functions
+
+    def get_active_image_location(self):  # WARNING: will be removed during item rendering update
+        return self.get_default_item_image_location()
+
+    def get_block(self) -> str:
+        return self.NAME
+
+    # events
 
     def on_player_interact(self, player, block, button, modifiers) -> bool:
         """

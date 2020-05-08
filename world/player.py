@@ -1,8 +1,9 @@
-"""mcpython - a minecraft clone written in python licenced under MIT-licence
-authors: uuk, xkcdjerry
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
 
-original game by fogleman licenced under MIT-licence
-minecraft by Mojang
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals
@@ -88,6 +89,12 @@ class Player(entity.Entity.Entity):
         self.inventories["enderchest"] = gui.InventoryChest.InventoryChest()
         self.inventories["crafting_table"] = gui.InventoryCraftingTable.InventoryCraftingTable()
 
+        if ResourceLocator.exists("build/texture/gui/icons/xp_bar_empty.png"):
+            self.load_xp_icons()
+        else:
+            event.EventHandler.PUBLIC_EVENT_BUS.subscribe("stage:blockitemfactory:finish", self.load_xp_icons)
+
+    def load_xp_icons(self):
         self.iconparts = [(ResourceLocator.read("build/texture/gui/icons/xp_bar_empty.png", "pyglet"),
                            ResourceLocator.read("build/texture/gui/icons/xp_bar.png", "pyglet"))]
 
@@ -266,3 +273,7 @@ class Player(entity.Entity.Entity):
             if not self.inventories["main"].slots[-1].itemstack.is_empty():
                 self.RENDERER.draw_box(self, "left_arm_rotated", rotation=rotation_whole)
         self.set_position_unsafe(old_position)
+
+    def __del__(self):
+        for inventory in self.inventories.values():
+            del inventory
