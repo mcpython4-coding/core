@@ -8,11 +8,20 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import mod.Mod
 import config
+import logger
 
 VERSION_POST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-VERSION = (0, 1, int(config.VERSION_NAME[:2]), int(config.VERSION_NAME[3:5]),
-           VERSION_POST.index(config.VERSION_NAME[5]))
+if type(config.VERSION_NAME) == str and config.VERSION_NAME[2] == "w":  # snapshot
+    VERSION = (0, 1, int(config.VERSION_NAME[:2]), int(config.VERSION_NAME[3:5]),
+               VERSION_POST.index(config.VERSION_NAME[5]))
+elif type(config.VERSION_NAME) == str:
+    c = config.VERSION_NAME
+    if c[0] in "abr": c = c[1:]
+    VERSION = tuple([int(e) for e in c.split(".")])
+else:
+    logger.println("[WARN] version entry wrong formatted")
+    VERSION = config.VERSION_NAME
 
 # create the mod
 mcpython = mod.Mod.Mod("minecraft", VERSION)
