@@ -151,7 +151,6 @@ class StateBlockItemGenerator(State.State):
             self.blockindex += 1
             pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)
             # event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
-            traceback.print_exc()
             return
         except:
             print(self.tasks[self.blockindex])

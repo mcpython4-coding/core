@@ -166,3 +166,4 @@ issue 172 & 167: when deleting build-folder, game crashes on every run; fixed on
 issue 173: exception (and not handling) of show-tasks in world gen task system; fixed on 06.05.2020 by uuk
 issue 174: Chunk.hide_all() was using shown-attribute of Chunk causing problems; fixed on 06.05.2020 by uuk
 issue 179: Inventory.insert_item() was failing; fixed on 07.05.2020 by uuk
+issue 180: when loading an save from an newer version, an exception is printed; fixed 11.05.2020 by uuk

@@ -11,7 +11,7 @@ import util.enums
 
 MC_VERSION_BASE = "1.15.2"
 VERSION_TYPE = "alpha release"
-VERSION_NAME = "a1.0.0"
+VERSION_NAME = "a1.0.1"
 
 # list of all versions since 19w52a to indicate order of release; used in save files
 VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20w12a", "20w12b", "20w14a",

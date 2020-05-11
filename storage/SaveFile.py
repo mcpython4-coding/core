@@ -86,9 +86,7 @@ class SaveFile:
         except:
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
-            logger.println("exception during loading world. falling back to start menu...")
-            logger.write_exception()
-            traceback.print_exc()
+            logger.write_exception("exception during loading world. falling back to start menu...")
 
     def save_world(self, *_, override=False):
         if self.save_in_progress: raise IOError("can't save world. save in process")
@@ -108,9 +106,7 @@ class SaveFile:
         except:
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
-            logger.println("exception during saving world. falling back to start menu...")
-            logger.write_exception()
-            traceback.print_exc()
+            logger.write_exception("exception during saving world. falling back to start menu...")
         self.save_in_progress = False
 
     def upgrade(self, part=None, version=None, to=None, **kwargs):
@@ -153,7 +149,6 @@ class SaveFile:
                 try:
                     return serializer.load(self, **kwargs)
                 except storage.serializer.IDataSerializer.InvalidSaveException:
-                    traceback.print_exc()
                     logger.write_exception("during reading part '{}' from save files under '{}' with arguments {}".
                                            format(part, self.directory, kwargs))
                     raise

@@ -1,28 +1,11 @@
 Changelog since cleanup-branch of 31.01.2020
 
-future themes:
-    - item tooltips with custom replacement possibility
-    - Entity name tags [an name above them] with rendering (player name!)
-    - generation update: add ores, more structures, more biomes; maybe rewrite Biome API
-    - multiprocessing: can we use multiprocessing to share work between multiple cores (like generation task execution)
-    - start menu update: add some nice background
-    - config background: add config pages
 
+changelog of release alpha 1.0.1
+    - fixed crash on startup
 
-changelog of master-branch: (theme: optimize save files)
-    based on dev-cycle 1
-
-    planned:
-        - speed up chunk accessing [issue 164 & 165]
-        - optimize world storage (also issue 159 & 161)
-        - check for the reason of issue 157 and fix if possible
-        - replace every loading event annotation with @G.modloader("minecraft", <stage>, [<info>])
-        - make it possible to have slots without inventories; change Block.get_inventories() to Block.get_all_slots(),
-            update saves accordingly (slots stored in block-data not in inventory system -> add datafixer for it)
-        - add API for Block-fixes to saves with an array of fixers in an general-file and an int-list in every chunk
-            array defining which fixers to apply when loaded
-        - add system for data-fixers for mods, only all-fix
-        - add state for optimizing the world (-> go through every chunk to fix it)
+    fixed bugs:
+        - when loading an world from an never save version, the game gives out an exception
 
 
 changelog of release alpha 1.0.0: (theme: bug fixing & system improvements)

@@ -1059,3 +1059,7 @@ started these clone on 12th of July, 2019
          Entity.movement [implemented in tick() as default impl.]
 [github]: released alpha 1.0.0
 
+[uuk]: fixed load-crash
+[uuk]: fixed issue when loading newer versions (they were not handled correctly)
+[github]: released alpha 1.0.1
+
