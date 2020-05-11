@@ -14,6 +14,7 @@ import block.BlockConfig
 import config
 import mod.ModMcpython
 import ResourceLocator
+import deprecation
 
 
 UV_ORDER = ["up", "down", "north", "east", "south", "west"]
@@ -23,7 +24,7 @@ SIMILAR_VERTEX = {}
 
 class BoxModel:
     def __init__(self, data: dict, model):
-        self.data = data
+        self.__data = data  # todo: remove
         self.model = model
         self.boxposition = [x / 16 for x in data["from"]]
         self.boxsize = (data["to"][0] - data["from"][0], data["to"][1] - data["from"][1],
@@ -71,22 +72,40 @@ class BoxModel:
         if model.drawable and self.model.texture_atlas:
             mod.ModMcpython.mcpython.eventbus.subscribe("stage:boxmodel:bake", self.build)
 
+    @deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
+    def get_data(self):
+        return self.__data
+
+    @deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
+    def set_data(self, data):
+        self.__data = data
+
+    data = property(get_data, set_data)
+
     def build(self):
         up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
                                                             for x in util.enums.EnumSide.iterate()])
-        self.tex_data = util.math.tex_coords(up, down, north, east, south, west, size=self.model.texture_atlas.size,
-                                             tex_region=self.texregion, rotation=self.texregionrotate)
+        self.tex_data = util.math.tex_coords_better(up, down, north, east, south, west, tex_region=self.texregion,
+                                                    size=self.model.texture_atlas.size, rotation=self.texregionrotate)
         self.deactive = {face: array[i] == (0, 0) or array[i] is None for i, face in enumerate(
             util.enums.EnumSide.iterate())}
 
     def add_to_batch(self, position, batch, rotation, active_faces=None):
+        """
+        adds the box model to the batch
+        :param position: the position based on
+        :param batch: the batches to select from
+        :param rotation: the rotation to use
+        :param active_faces: which faces to show
+        :return: an vertex-list-list
+        """
         x, y, z = position
         x += self.boxposition[0] - 0.5 + self.rposition[0]
         y += self.boxposition[1] - 0.5 + self.rposition[1]
         z += self.boxposition[2] - 0.5 + self.rposition[2]
         if rotation in self.rotated_vertices:  # is there data prepared in this case?
             vertex_r = [(e[0]+x, e[1]+y, e[2]+z) for e in self.rotated_vertices[rotation]]
-        else:  # otherwise, create it and store it
+        else:  # otherwise, create it and store it todo: can we pre-calculate it?
             vertex = util.math.cube_vertices(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32, self.boxsize[2] / 32,
                                              [True] * 6)
             vertex_r = [util.math.rotate_point(vertex[i * 3:i * 3 + 3], position, rotation) for i in
@@ -94,17 +113,15 @@ class BoxModel:
             vertex_r = [util.math.rotate_point(e, tuple([position[i] + self.rotation_core[i] for i in range(3)]),
                                                self.rotation) for e in vertex_r]
             self.rotated_vertices[rotation] = [(e[0]-x, e[1]-y, e[2]-z) for e in vertex_r]
-        vertex = []
-        for element in vertex_r: vertex.extend(element)
+        vertex = sum(vertex_r, tuple())  # todo: this is an inefficent part as it gets called every add
         batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]
         result = []
-        for i in range(6):
+        for i, face in enumerate(util.enums.EnumSide.iterate()):  # todo: is there an better way?
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
-                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and \
-                        self.deactive[util.enums.EnumSide.iterate()[i].rotate(rotation)]: continue
-                t = self.tex_data[i * 8:i * 8 + 8]
-                v = vertex[i * 12:i * 12 + 12]
+                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and self.deactive[face.rotate(rotation)]: continue
+                t = self.tex_data[i]
+                v = vertex[i * 12:i * 12 + 12]  # todo: is there an better way?
                 result.append(batch.add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group, ('v3f/static', v),
                                         ('t2f/static', t)))
         return result
@@ -124,14 +141,13 @@ class BoxModel:
             vertex_r = [util.math.rotate_point(e, tuple([position[i] + self.rotation_core[i] for i in range(3)]),
                                                self.rotation) for e in vertex_r]
             self.rotated_vertices[rotation] = [(e[0] - x, e[1] - y, e[2] - z) for e in vertex_r]
-        vertex = []
-        for element in vertex_r: vertex.extend(element)
+        vertex = sum(vertex_r, tuple())
         for i in range(6):
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
                 if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and \
                         self.deactive[util.enums.EnumSide.iterate()[i].rotate(rotation)]: continue
-                t = self.tex_data[i * 8:i * 8 + 8]
+                t = self.tex_data[i]
                 v = vertex[i * 12:i * 12 + 12]
                 self.model.texture_atlas.group.set_state()
                 pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v3f/static', v), ('t2f/static', t))
@@ -149,7 +165,9 @@ class BoxModel:
         return self.draw(position, rotation, active_faces={i: x == face for i, x in enumerate(
             util.enums.EnumSide.iterate())})
 
+    @deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
     def copy(self, new_model=None):
+        # todo: remove together with self.data-attribute
         return BoxModel(self.data, new_model if new_model is not None else self.model)
 
 

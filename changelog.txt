@@ -3,12 +3,13 @@ Changelog since cleanup-branch of 31.01.2020
 
 changelog of snapshot [next] (theme: feature cleanup & improvements)
     changelog of dev-cycle 1
+        - optimized block rendering, deprecated some old stuff
 
 
-    planned:
-        - fix issues: 80, 157, 175, 176, 177, 178, 181
-        - make it possible for player-instances to have different skins based on their name
-        - make the hand of the player move together with
+    planned (some parts may be moved to future snapshots):
+        - fix issues: 80, 157, 175, 176, 177, 178
+        - make it possible for player-instances to have different skins based on their name, fix issue 181
+        - make the hand of the player move when placing block & move together when moving camera up / down
         - merge BoxModel & BaseBoxModel / make BoxModel use BaseBoxModel
         - make BoxModels faster in adding
         - add support for .obj files for block models

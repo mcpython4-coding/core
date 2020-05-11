@@ -10,3 +10,7 @@ since 19th of february, 2020:
     Inventory.create_slots, Inventory.activate, Inventory.deactivate
     Item.get_max_stack_size
     State.on_activate, State.on_deactivate
+
+marked for removal for alpha 1.2.0:
+    BoxModel.copy() together with BoxModel.__data, BoxModel'S data setter
+    util/math/tex_coords
