@@ -1,6 +1,33 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
+changelog of snapshot [next] (theme: feature cleanup & improvements)
+    changelog of dev-cycle 1
+
+
+    planned:
+        - fix issues: 80, 157, 175, 176, 177, 178, 181
+        - make it possible for player-instances to have different skins based on their name
+        - make the hand of the player move together with
+        - merge BoxModel & BaseBoxModel / make BoxModel use BaseBoxModel
+        - make BoxModels faster in adding
+        - add support for .obj files for block models
+        - add support for forge block state format, maybe split up the blockstate-loaders into different files
+        - clean up & improve the following elements: (for all: use texture reload event)
+            button: clean up rendering code, maybe use an batch for all parts, listen to the on_resize event for
+                re-calculation
+            image: clean up rendering code, check if it is still working
+            lable: clean up rendering code, can we add possibility to render colored text
+            progress bar: fix issue 174, clean up code, can we make pgb change color over time
+            text input: clean up rendering code, implement navigation & selection
+            slot <-> slot copy: make connection more stable, help gc with deleting when not needed
+        - implement serializer for states making runtime-based changes possible & easier to create new states
+        - implement IWorld-class with abstract interaction functions, add ServerWorld & ClientWorld-instances
+        - add attribute SIDE to globals, add function sideOnly(side: str) making functions only callable when on
+            an given side
+        [more may come]
+
+
 changelog of release alpha 1.0.1
     - fixed crash on startup
 

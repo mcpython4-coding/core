@@ -138,4 +138,5 @@ issue 177:
 issue 178:
     bug: hotbar is not transparent(rendered)
 
-[179-180]
+issue 181:
+    bug: when disabling work-around fix in player, another player is rendered
