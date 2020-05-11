@@ -17,7 +17,8 @@ import ResourceLocator
 import deprecation
 
 
-UV_ORDER = ["up", "down", "north", "east", "south", "west"]
+UV_ORDER = [util.enums.EnumSide.UP, util.enums.EnumSide.DOWN, util.enums.EnumSide.WEST,
+            util.enums.EnumSide.EAST, util.enums.EnumSide.NORTH, util.enums.EnumSide.SOUTH]
 UV_INDICES = [(1, 0, 3, 2), (1, 0, 3, 2)] + [(0, 1, 2, 3)] * 4   # representative for the order of uv insertion
 SIMILAR_VERTEX = {}
 
@@ -41,10 +42,11 @@ class BoxModel:
         for face in util.enums.EnumSide.iterate():
             facename = face.normal_name
             if facename in data["faces"]:
+                face = util.enums.EnumSide[facename.upper()]
                 f = data["faces"][facename]
                 addr = f["texture"]
-                self.faces[util.enums.EnumSide[facename.upper()]] = model.get_texture_position(addr)
-                index = UV_ORDER.index(facename)
+                self.faces[face] = model.get_texture_position(addr)
+                index = UV_ORDER.index(face)
                 if "uv" in f:
                     uvs = tuple(f["uv"])
                     self.texregion[index] = tuple([uvs[i]/16 for i in UV_INDICES[index]])
@@ -92,6 +94,7 @@ class BoxModel:
                                                     size=self.model.texture_atlas.size, rotation=self.texregionrotate)
         self.deactive = {face: array[i] == (0, 0) or array[i] is None for i, face in enumerate(
             util.enums.EnumSide.iterate())}
+        # todo: can we upload vertices to GPU in advance?
 
     def add_to_batch(self, position, batch, rotation, active_faces=None):
         """
@@ -101,6 +104,7 @@ class BoxModel:
         :param rotation: the rotation to use
         :param active_faces: which faces to show
         :return: an vertex-list-list
+        todo: make active_faces an dict of faces -> state, not an order-defined list
         """
         x, y, z = position
         x += self.boxposition[0] - 0.5 + self.rposition[0]
@@ -117,7 +121,8 @@ class BoxModel:
         vertex = [sum(e, tuple()) for e in vertex_r]
         batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]
         result = []
-        for i, face in enumerate(util.enums.EnumSide.iterate()):
+        for face in util.enums.EnumSide.iterate():  # todo: can we add everything at ones?
+            i = UV_ORDER.index(face)
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
                 if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and self.deactive[face.rotate(rotation)]: continue
@@ -140,11 +145,11 @@ class BoxModel:
             self.rotated_vertices[rotation] = vertex_r
             vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in vertex_r]
         vertex = [sum(e, tuple()) for e in vertex_r]
-        for i in range(6):
+        for face in util.enums.EnumSide.iterate():  # todo: can we add everything at ones?
+            i = UV_ORDER.index(face)
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
-                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and \
-                        self.deactive[util.enums.EnumSide.iterate()[i].rotate(rotation)]: continue
+                if not config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and self.deactive[face.rotate(rotation)]: continue
                 self.model.texture_atlas.group.set_state()
                 pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v3f/static', vertex[i]), ('t2f/static', self.tex_data[i]))
                 self.model.texture_atlas.group.unset_state()

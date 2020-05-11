@@ -10,8 +10,6 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
         - fix issues: 80, 157, 175, 176, 177, 178
         - make it possible for player-instances to have different skins based on their name, fix issue 181
         - make the hand of the player move when placing block & move together when moving camera up / down
-        - merge BoxModel & BaseBoxModel / make BoxModel use BaseBoxModel
-        - make BoxModels faster in adding
         - add support for .obj files for block models
         - add support for forge block state format, maybe split up the blockstate-loaders into different files
         - clean up & improve the following elements: (for all: use texture reload event)
