@@ -24,10 +24,15 @@ def get_max_y(pos):
     return y + config.PLAYER_HEIGHT  # account for the distance from head to foot
 
 
+@deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
 def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
-    """ Return the vertices of the cube at position x, y, z with size 2*n.
-
     """
+    Same as cube_vertices_better, but will return all summed up instead of separated lists
+    """
+    return sum(cube_vertices_better(x, y, z, nx, ny, nz, faces=faces), [])
+
+
+def cube_vertices_better(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
     top = [x - nx, y + ny, z - nz, x - nx, y + ny, z + nz, x + nx, y + ny, z + nz, x + nx, y + ny, z - nz] if faces[0] \
         else []
     bottom = [x - nx, y - ny, z - nz, x + nx, y - ny, z - nz, x + nx, y - ny, z + nz, x - nx, y - ny, z + nz] if \
@@ -40,7 +45,7 @@ def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True
         faces[4] else []
     back = [x + nx, y - ny, z - nz, x - nx, y - ny, z - nz, x - nx, y + ny, z - nz, x + nx, y + ny, z - nz] if \
         faces[5] else []
-    return top + bottom + left + right + front + back
+    return top, bottom, left, right, front, back
 
 
 def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
