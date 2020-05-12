@@ -2,8 +2,21 @@ Changelog since cleanup-branch of 31.01.2020
 
 
 changelog of snapshot [next] (theme: feature cleanup & improvements)
-    changelog of dev-cycle 1
+    changelog of dev-cycle 1 [planned: optimisations to rendering]
         - optimized block rendering, deprecated some old stuff
+
+        fixed issues:
+            - block updates were not called in every case
+            - walls and fences were not updating their state correctly
+            - during printing an exception, an new exception could occur
+        todo: fix offset of rendering of fences
+
+    changelog of dev-cycle 2 [planned: advanced rendering functions]
+    changelog of dev-cycle 3 [planned: UI improvements]
+    changelog of dev-cycle 4 [planned: State-definition files]
+    changelog of dev-cycle 5 [planned: preparation for client/server: IWorld-interface and integrated-impl.]
+
+    changelog of dev-cycle [last] [planned: bug fixing of work, overall bug fixing, testing]
 
 
     planned (some parts may be moved to future snapshots):
@@ -24,6 +37,7 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
         - implement IWorld-class with abstract interaction functions, add ServerWorld & ClientWorld-instances
         - add attribute SIDE to globals, add function sideOnly(side: str) making functions only callable when on
             an given side
+        - split up StatePartGame into smaller parts to make code cleaner
         [more may come]
 
 

@@ -164,6 +164,7 @@ class StatePartGame(StatePart.StatePart):
                 if G.world.get_active_player().gamemode == 1:
                     if self.mouse_press_time >= 0.10:
                         chunk.remove_block(blockpos)
+                        chunk.on_block_updated(blockpos)
                         chunk.check_neighbors(blockpos)
                 elif G.world.get_active_player().gamemode == 0:
                     if type(block) != str and self.mouse_press_time >= self.braketime and block.BREAKABLE:
@@ -199,10 +200,12 @@ class StatePartGame(StatePart.StatePart):
                         py = math.ceil(G.world.get_active_player().position[1])
                         if not (x == px and z == pz and py-1 <= y <= py) and not G.world.get_active_dimension().\
                                 get_block(previous):
-                            G.world.get_active_dimension().add_block(
+                            chunk = G.world.get_active_dimension().get_chunk_for_position(previous)
+                            chunk.add_block(
                                 previous, slot.get_itemstack().item.get_block(),
                                 kwargs={"set_to": blockpos, "real_hit": hitpos})
-                            slot.get_itemstack().item.on_set_from_item(G.world.get_active_dimension().get_block(previous))
+                            chunk.on_block_updated(previous)
+                            slot.get_itemstack().item.on_set_from_item(chunk.get_block(previous))
                             if G.world.get_active_player().gamemode == 0: slot.get_itemstack().add_amount(-1)
                             self.mouse_press_time = 0
                             # todo: check if set-able in gamemode 2

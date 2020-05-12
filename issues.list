@@ -140,3 +140,5 @@ issue 178:
 
 issue 181:
     bug: when disabling work-around fix in player, another player is rendered
+
+[182-184]

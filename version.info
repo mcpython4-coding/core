@@ -1066,3 +1066,6 @@ started these clone on 12th of July, 2019
 [uuk]: preparations for next snapshot(s)
 [uuk]: deprecated BoxModel.copy & BoxModel.data
 [uuk]: improved block rendering
+[uuk]: fixed issue 182: block updated not always called
+[uuk]: fixed issue 183: fences and walls were not updating model state when updating internal state
+[uuk]: fixed issue 184: exception when printing exception with non-str info

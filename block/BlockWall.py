@@ -18,7 +18,8 @@ class IWall(block.Block.Block):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connections = {"north": False, "east": False, "south": False, "west": False, "up": False}
-        self.on_block_update()
+        if self.NAME in G.modelhandler.blockstates:
+            self.on_block_update()
         self.face_solid = {face: False for face in util.enums.EnumSide.iterate()}
 
     def get_model_state(self) -> dict:
@@ -49,6 +50,8 @@ class IWall(block.Block.Block):
         if not self.connections["up"] and upper_block is not None and type(upper_block) != str and \
                 upper_block.face_solid[util.enums.EnumSide.DOWN] and not issubclass(type(upper_block), IWall):
             self.connections["up"] = True
+
+        self.face_state.update(redraw_complete=True)
 
     def set_model_state(self, state: dict):
         for key in state:

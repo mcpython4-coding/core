@@ -53,7 +53,7 @@ def println(*msg, sep=" ", end="\n", write_into_console=True, write_into_log_fil
 def write_exception(*info):
     console = not config.WRITE_NOT_FORMATTED_EXCEPTION
     println("[ERROR][EXCEPTION] gotten exception", write_into_console=console)
-    println("-", *["\n-".join(info)], sep="", write_into_console=console)
+    println("-", *["\n-".join([str(e) for e in info])], sep="", write_into_console=console)
     sdata = traceback.format_stack()[:-2]
     data = traceback.format_exc().replace("\\", "/").replace(G.local, "%LOCAL%").replace(inter_home, "%PYTHON%").split(
         "\n")

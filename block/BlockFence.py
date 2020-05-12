@@ -26,7 +26,8 @@ class IFence(block.Block.Block):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connections = {"north": False, "east": False, "south": False, "west": False}
-        self.on_block_update()
+        if self.NAME in G.modelhandler.blockstates:
+            self.on_block_update()
         self.face_solid = {face: False for face in util.enums.EnumSide.iterate()}
 
     def get_model_state(self) -> dict:
@@ -45,6 +46,8 @@ class IFence(block.Block.Block):
         self.connections["south"] = self.connects_to(util.enums.EnumSide.EAST, block_east)
         self.connections["west"] = self.connects_to(util.enums.EnumSide.SOUTH, block_south)
         self.connections["north"] = self.connects_to(util.enums.EnumSide.WEST, block_west)
+
+        self.face_state.update(redraw_complete=True)
 
     def set_model_state(self, state: dict):
         for key in state:
