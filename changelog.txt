@@ -1,6 +1,16 @@
 Changelog since cleanup-branch of 31.01.2020
 
 
+planned for the future:
+    - optimize texture reload with everything (re-block-item-factories, reload block models,
+        reload item texture, gui textures, ...)
+    - add more factories for various parts (better block models, block states, full block factory, ...)
+    - add mode were linking between recipe in/out is shuffled and loot table links are shuffled (see Amnesia Pack)
+        together with an gamerule and an /shuffle [<group>] command
+    - add scoreboards with commands, execute entry, ...
+    - make commands more fail-save
+
+
 changelog of snapshot [next] (theme: feature cleanup & improvements)
     changelog of dev-cycle 1 [planned: optimisations to rendering]
         - optimized block rendering, deprecated some old stuff
@@ -9,7 +19,6 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
             - block updates were not called in every case
             - walls and fences were not updating their state correctly
             - during printing an exception, an new exception could occur
-        todo: fix offset of rendering of fences
 
     changelog of dev-cycle 2 [planned: advanced rendering functions]
     changelog of dev-cycle 3 [planned: UI improvements]

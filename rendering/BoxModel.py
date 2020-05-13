@@ -15,6 +15,7 @@ import config
 import mod.ModMcpython
 import ResourceLocator
 import deprecation
+import globals as G
 
 
 UV_ORDER = [util.enums.EnumSide.UP, util.enums.EnumSide.DOWN, util.enums.EnumSide.WEST,
@@ -25,6 +26,7 @@ SIMILAR_VERTEX = {}
 
 class BoxModel:
     def __init__(self, data: dict, model):
+        # todo: move most of the code here to the build function
         self.__data = data  # todo: remove
         self.model = model
         self.boxposition = [x / 16 for x in data["from"]]
@@ -72,7 +74,10 @@ class BoxModel:
         self.deactive = None
 
         if model.drawable and self.model.texture_atlas:
-            mod.ModMcpython.mcpython.eventbus.subscribe("stage:boxmodel:bake", self.build)
+            if G.modloader.finished:
+                self.build()
+            else:
+                mod.ModMcpython.mcpython.eventbus.subscribe("stage:boxmodel:bake", self.build)
 
         self.raw_vertices = util.math.cube_vertices_better(0, 0, 0, self.boxsize[0] / 32, self.boxsize[1] / 32,
                                                            self.boxsize[2] / 32, [True] * 6)
@@ -95,6 +100,49 @@ class BoxModel:
         self.deactive = {face: array[i] == (0, 0) or array[i] is None for i, face in enumerate(
             util.enums.EnumSide.iterate())}
         # todo: can we upload vertices to GPU in advance?
+        # todo: can we pre-calculated rotated variants
+
+    def get_vertex_variant(self, rotation: tuple, position: tuple) -> list:
+        """
+        implementation to get the vertex data for an rotated block
+        :param rotation: the rotation to use
+        :param position: the position of the vertex cube
+        """
+        """
+        x, y, z = position
+        x += self.boxposition[0] - 0.5 + self.rposition[0]
+        y += self.boxposition[1] - 0.5 + self.rposition[1]
+        z += self.boxposition[2] - 0.5 + self.rposition[2]
+        rotation = (rotation[0] % 360, rotation[1] % 360, rotation[2] % 360)
+        if rotation in self.rotated_vertices:  # is there data prepared in this case?
+            vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in self.rotated_vertices[rotation]]
+        else:  # otherwise, create it and store it todo: can we pre-calculate it?
+            vertex_r = [[util.math.rotate_point(l[i * 3:i * 3 + 3], (0, 0, 0), rotation) for i in
+                         range(len(l)//3)] for l in self.raw_vertices]
+            vertex_r = [[util.math.rotate_point(e, self.rotation_core, self.rotation) for e in l] for l in vertex_r]
+            self.rotated_vertices[rotation] = vertex_r
+            vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in vertex_r]
+        return [sum(e, tuple()) for e in vertex_r]"""
+        x, y, z = position
+        x += self.boxposition[0] - 0.5 + self.rposition[0]
+        y += self.boxposition[1] - 0.5 + self.rposition[1]
+        z += self.boxposition[2] - 0.5 + self.rposition[2]
+        if rotation in self.rotated_vertices:  # is there data prepared in this case?
+            vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in m] for m in self.rotated_vertices[rotation]]
+        else:  # otherwise, create it and store it
+            vertex = util.math.cube_vertices_better(x, y, z, self.boxsize[0] / 32, self.boxsize[1] / 32,
+                                                    self.boxsize[2] / 32, [True] * 6)
+            vertex_r = []
+            for face in vertex:
+                face_r = []
+                for i in range(len(face) // 3):
+                    v = util.math.rotate_point(face[i*3:i*3+3], position, rotation)
+                    v = util.math.rotate_point(v,  tuple([position[i] + self.rotation_core[i] for i in range(3)]),
+                                               self.rotation)
+                    face_r.append(v)
+                vertex_r.append(face_r)
+            self.rotated_vertices[rotation] = [[(e[0] - x, e[1] - y, e[2] - z) for e in m] for m in vertex_r]
+        return [sum(e, tuple()) for e in vertex_r]
 
     def add_to_batch(self, position, batch, rotation, active_faces=None):
         """
@@ -106,20 +154,9 @@ class BoxModel:
         :return: an vertex-list-list
         todo: make active_faces an dict of faces -> state, not an order-defined list
         """
-        x, y, z = position
-        x += self.boxposition[0] - 0.5 + self.rposition[0]
-        y += self.boxposition[1] - 0.5 + self.rposition[1]
-        z += self.boxposition[2] - 0.5 + self.rposition[2]
-        if rotation in self.rotated_vertices:  # is there data prepared in this case?
-            vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in self.rotated_vertices[rotation]]
-        else:  # otherwise, create it and store it todo: can we pre-calculate it?
-            vertex_r = [[util.math.rotate_point(l[i * 3:i * 3 + 3], (0, 0, 0), rotation) for i in range(len(l)//3)] for
-                        l in self.raw_vertices]
-            vertex_r = [[util.math.rotate_point(e, self.rotation_core, self.rotation) for e in l] for l in vertex_r]
-            self.rotated_vertices[rotation] = vertex_r
-            vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in vertex_r]
-        vertex = [sum(e, tuple()) for e in vertex_r]
-        batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]
+        vertex = self.get_vertex_variant(rotation, position)
+        if type(batch) == list:
+            batch = batch[0] if self.model.name not in block.BlockConfig.ENTRYS["alpha"] else batch[1]
         result = []
         for face in util.enums.EnumSide.iterate():  # todo: can we add everything at ones?
             i = UV_ORDER.index(face)
@@ -131,20 +168,14 @@ class BoxModel:
         return result
 
     def draw(self, position, rotation, active_faces=None):
-        x, y, z = position
-        x += self.boxposition[0] - 0.5 + self.rposition[0]
-        y += self.boxposition[1] - 0.5 + self.rposition[1]
-        z += self.boxposition[2] - 0.5 + self.rposition[2]
-        if rotation in self.rotated_vertices:  # is there data prepared in this case?
-            vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in self.rotated_vertices[rotation]]
-        else:  # otherwise, create it and store it todo: can we pre-calculate it?
-            vertex_r = [[util.math.rotate_point(l[i * 3:i * 3 + 3], (0, 0, 0), rotation) for i in range(len(l) // 3)]
-                        for
-                        l in self.raw_vertices]
-            vertex_r = [[util.math.rotate_point(e, self.rotation_core, self.rotation) for e in l] for l in vertex_r]
-            self.rotated_vertices[rotation] = vertex_r
-            vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in vertex_r]
-        vertex = [sum(e, tuple()) for e in vertex_r]
+        """
+        draws the BoxModel direct into the world
+        WARNING: use batches for better performance
+        :param position: the position to draw on
+        :param rotation: the rotation to draw with
+        :param active_faces: which faces to draw
+        """
+        vertex = self.get_vertex_variant(rotation, position)
         for face in util.enums.EnumSide.iterate():  # todo: can we add everything at ones?
             i = UV_ORDER.index(face)
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
