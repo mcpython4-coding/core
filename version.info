@@ -1071,3 +1071,4 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 184: exception when printing exception with non-str info
 [uuk]: fixed issue 186: event "worldgen:chunk:finished" was only called for direct-generation processes
 [uuk]: fixed issue 187: exceptions when generating chunks from main menu without content
+[uuk]: implemented forge model decoder

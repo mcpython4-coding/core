@@ -12,7 +12,7 @@ planned for the future:
 
 
 changelog of snapshot [next] (theme: feature cleanup & improvements)
-    changelog of dev-cycle 1 [planned: optimisations to rendering]
+    changelog of dev-cycle 1 [optimisations to rendering]
         - optimized block rendering, deprecated some old stuff
 
         fixed issues:
@@ -22,6 +22,7 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
             - event "worldgen:chunk:finished" was not called in most cases
 
     changelog of dev-cycle 2 [planned: advanced rendering functions]
+
     changelog of dev-cycle 3 [planned: UI improvements]
     changelog of dev-cycle 4 [planned: State-definition files]
     changelog of dev-cycle 5 [planned: preparation for client/server: IWorld-interface and integrated-impl.]
@@ -30,9 +31,7 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
 
 
     planned (some parts may be moved to future snapshots):
-        - fix issues: 80, 157, 175, 176, 177, 178
-        - make it possible for player-instances to have different skins based on their name, fix issue 181
-        - make the hand of the player move when placing block & move together when moving camera up / down
+        - fix issues: 80, 157, 175, 176, 177, 178, 181
         - add support for .obj files for block models
         - add support for forge block state format, maybe split up the blockstate-loaders into different files
         - clean up & improve the following elements: (for all: use texture reload event)
