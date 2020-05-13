@@ -170,3 +170,5 @@ issue 180: when loading an save from an newer version, an exception is printed; 
 issue 182: block update was not send in some cases; fixed on 12.05.2020 by uuk
 issue 183: fence and walls were not updating texture when updating internal state; fixed on 12.05.2020 by uuk
 issue 184: exception when writing an exception with an non-str info; fixed on 12.05.2020 by uuk
+issue 186: event "worldgen:chunk:finished" was not called for runtime-like generated chunks; fixed on 13.05.2020 by uuk
+issue 187: exceptions when generating chunks without content from main menu; fixed on 13.05.2020 by uuk

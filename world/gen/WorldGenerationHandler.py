@@ -167,6 +167,7 @@ class WorldGenerationTaskHandler:
                 chunk.generated = True
                 chunk.finished = True
                 chunk.loaded = True
+                G.eventhandler.call("worldgen:chunk:finished", chunk)
 
     def _process_0_array(self, chunk: world.Chunk.Chunk) -> bool:
         if chunk.dimension.id in self.data_maps[0]:

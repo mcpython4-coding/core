@@ -19,6 +19,7 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
             - block updates were not called in every case
             - walls and fences were not updating their state correctly
             - during printing an exception, an new exception could occur
+            - event "worldgen:chunk:finished" was not called in most cases
 
     changelog of dev-cycle 2 [planned: advanced rendering functions]
     changelog of dev-cycle 3 [planned: UI improvements]

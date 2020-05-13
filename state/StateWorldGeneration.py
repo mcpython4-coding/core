@@ -45,7 +45,8 @@ class StateWorldGeneration(State.State):
             if c not in G.worldgenerationhandler.task_handler.chunks:
                 self.status_table[chunk] = -1
             else:
-                self.status_table[chunk] = 1 / G.worldgenerationhandler.task_handler.get_task_count_for_chunk(c)
+                count = G.worldgenerationhandler.task_handler.get_task_count_for_chunk(c)
+                self.status_table[chunk] = 1 / (count if count > 0 else 1)
         if len(G.worldgenerationhandler.task_handler.chunks) == 0:
             G.statehandler.switch_to("minecraft:game")
             self.finish()
