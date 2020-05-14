@@ -17,7 +17,7 @@ class BlockDirt(Block.Block):
     todo: implement -> grass convert
     """
 
-    NAME = "minecraft:dirt"
+    NAME: str = "minecraft:dirt"
 
     def on_random_update(self):
         x, y, z = self.position

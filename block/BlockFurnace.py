@@ -14,11 +14,17 @@ import gui.InventoryFurnace
 
 @G.registry
 class BlockFurnace(block.Block.Block):
-    FURNACE_RECIPES = ["minecraft:smelting"]
+    """
+    class for the furnace block
+    """
+    FURNACE_RECIPES: list = ["minecraft:smelting"]  # the list of recipe groups to use for this furnace
 
-    NAME = "minecraft:furnace"
+    NAME: str = "minecraft:furnace"
 
     def __init__(self, *args, **kwargs):
+        """
+        creates an furnace block in the world
+        """
         super().__init__(*args, **kwargs)
         self.facing = "north"
         self.active = False
@@ -66,13 +72,13 @@ class BlockFurnace(block.Block.Block):
 
 @G.registry
 class BlastFurnace(BlockFurnace):
-    NAME = "minecraft:blast_furnace"
+    NAME: str = "minecraft:blast_furnace"
 
-    FURNACE_RECIPES = ["minecraft:blasting"]
+    FURNACE_RECIPES: list = ["minecraft:blasting"]
 
 
 @G.registry
 class Smoker(BlockFurnace):
-    NAME = "minecraft:smoker"
+    NAME: str = "minecraft:smoker"
 
-    FURNACE_RECIPES = ["minecraft:smoking"]
+    FURNACE_RECIPES: list = ["minecraft:smoking"]

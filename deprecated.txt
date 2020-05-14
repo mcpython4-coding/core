@@ -14,3 +14,4 @@ since 19th of february, 2020:
 marked for removal for alpha 1.2.0:
     BoxModel.copy() together with BoxModel.__data, BoxModel'S data setter
     util/math/tex_coords, util/math/cube_vertices
+    block.BlockConfig.ENTRYS, block.BlockEnderChest.BlockChest

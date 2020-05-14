@@ -17,13 +17,15 @@ class IFence(block.Block.Block):
     Base class for every fence-like block. Expects
     """
 
-    FENCE_TYPE_NAME = set()
-
-    BBOX = None
+    FENCE_TYPE_NAME: set = set()  # the type list of the fences
 
     # todo: add bounding-box
+    BBOX = None  # the bounding box
 
     def __init__(self, *args, **kwargs):
+        """
+        will create the fence
+        """
         super().__init__(*args, **kwargs)
         self.connections = {"north": False, "east": False, "south": False, "west": False}
         if self.NAME in G.modelhandler.blockstates:

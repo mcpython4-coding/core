@@ -6,24 +6,44 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import globals as G
+"""
+classes will be removed in the future as they can be replaced by tags
+"""
 import ResourceLocator
 
 
 class BlockConfigEntry:
-    def __init__(self, configname):
-        self.name = configname
-        self.affects = []
+    """
+    Entry class for BlockConfig
+    """
 
-    def add_data(self, data):
+    def __init__(self, configname: str):
+        """
+        creates am mew entry
+        :param configname: the name of the config class
+        """
+        self.name: str = configname
+        self.affects: list = []
+
+    def add_data(self, data: list):
+        """
+        adds data to the system
+        :param data: an lsit of data to apply
+        """
         self.affects += data
 
-    def contains(self, item): return item in self.affects
+    def contains(self, item):
+        """
+        will check if the item is marked as affected
+        :param item: the item to check
+        """
+        return item in self.affects
 
     def __contains__(self, item): return self.contains(item)
 
 
-ENTRYS = {}
+ENTRYS = {}  # todo: remove in a1.2.0
+ENTRIES: dict = ENTRYS  # the entries
 
 
 for file in ResourceLocator.get_all_entries_special("assets/config/block"):

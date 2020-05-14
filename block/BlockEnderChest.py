@@ -6,18 +6,25 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import globals as G
-from . import Block
 from pyglet.window import mouse, key
+
+import globals as G
 import item.ItemTool
 import util.enums
-import block.BoundingBox
 from block.BlockChest import BBOX
+from . import Block
 
 
 @G.registry
-class BlockChest(Block.Block):
+class BlockEnderChest(Block.Block):
+    """
+    class for the ender chest
+    """
+
     def __init__(self, *args, **kwargs):
+        """
+        creates the ender chest block
+        """
         super().__init__(*args, **kwargs)
         self.front_side = util.enums.EnumSide.N
         if self.real_hit:
@@ -30,7 +37,6 @@ class BlockChest(Block.Block):
                 self.front_side = util.enums.EnumSide.E
             elif dz < 0 and abs(dx) < abs(dz):
                 self.front_side = util.enums.EnumSide.W
-        import gui.InventoryChest
         self.inventory = G.world.get_active_player().inventories["enderchest"]
         self.face_solid = {face: False for face in util.enums.EnumSide.iterate()}
 
@@ -50,7 +56,8 @@ class BlockChest(Block.Block):
     MINIMUM_TOOL_LEVEL = 0
     BEST_TOOLS_TO_BREAK = [item.ItemTool.ToolType.PICKAXE]
 
-    def get_provided_slots(self, side): return self.inventory.slots
+    def get_provided_slots(self, side):
+        return self.inventory.slots
 
     def set_model_state(self, state: dict):
         if "side" in state:
@@ -68,8 +75,11 @@ class BlockChest(Block.Block):
         return [{"side": util.enums.EnumSide.N}, {"side": util.enums.EnumSide.E},
                 {"side": util.enums.EnumSide.S}, {"side": util.enums.EnumSide.W}]
 
-    def get_view_bbox(self): return BBOX
+    def get_view_bbox(self):
+        return BBOX
 
     def on_remove(self):
         G.inventoryhandler.hide(self.inventory)
 
+
+BlockChest = BlockEnderChest  # todo: remove in a1.2.0
