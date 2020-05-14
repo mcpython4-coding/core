@@ -6,12 +6,14 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import gui.ItemStack
-import item.ItemTool
-import block.BoundingBox
-import block.BlockFaceState
-import event.Registry
+import typing
 import uuid
+
+import block.BlockFaceState
+import block.BoundingBox
+import event.Registry
+import gui.ItemStack
+import gui.Slot
 import util.enums
 
 
@@ -20,22 +22,27 @@ class Block(event.Registry.IRegistryContent):
     base class for all blocks
     """
 
-    CUSTOM_WALING_SPEED_MULTIPLIER = None  # used when the player walks in an different speed on this block
-    TYPE = "minecraft:block_registry"
+    # used when the player walks in an different speed on this block
+    CUSTOM_WALING_SPEED_MULTIPLIER: typing.Union[float, None] = None
+    TYPE: str = "minecraft:block_registry"
 
-    BLOCK_ITEM_GENERATOR_STATE = None  # used internally to set the state the BlockItemGenerator uses
+    # used internally to set the state the BlockItemGenerator uses
+    BLOCK_ITEM_GENERATOR_STATE: typing.Union[dict, None] = None
 
-    BREAKABLE = True  # If this block can be broken in gamemode 0 and 2
+    BREAKABLE: bool = True  # If this block can be broken in gamemode 0 and 2
 
-    HARDNESS = 1
-    MINIMUM_TOOL_LEVEL = 0
-    BEST_TOOLS_TO_BREAK = []
+    HARDNESS: float = 1  # the hardness of the block
+    MINIMUM_TOOL_LEVEL: float = 0  # the minimum tool level
+    BEST_TOOLS_TO_BREAK: typing.List[util.enums.ToolType] = []  # the tools best to break
 
-    SOLID = None  # if the block is solid; None is unset and set by system by checking face_solid on an block instance
+    # if the block is solid; None is unset and set by system by checking face_solid on an block instance
+    SOLID: typing.Union[bool, None] = None
 
-    CONDUCTS_REDSTONE_POWER = None  # if the block can conduct redstone power; None is unset and set by system to SOLID
+    # if the block can conduct redstone power; None is unset and set by system to SOLID
+    CONDUCTS_REDSTONE_POWER: typing.Union[bool, None] = None
 
-    CAN_MOBS_SPAWN_ON = None  # if mobs can spawn on the block; None is unset and set by system to SOLID
+    # if mobs can spawn on the block; None is unset and set by system to SOLID
+    CAN_MOBS_SPAWN_ON: typing.Union[bool, None] = None
 
     def __init__(self, position: tuple, set_to=None, real_hit=None, state=None):
         """
@@ -55,7 +62,9 @@ class Block(event.Registry.IRegistryContent):
         self.injected_redstone_power = {}
 
     def __del__(self):
-        # remove circular link of Block <-> BlockFaceState
+        """
+        used for removing the circular dependency between Block and BlockFaceState for gc
+        """
         del self.face_state
 
     # block events
@@ -114,33 +123,68 @@ class Block(event.Registry.IRegistryContent):
         """
         return []
 
-    def get_model_state(self) -> dict: return {}
+    def get_model_state(self) -> dict:
+        """
+        the active model state
+        :return: the model state
+        """
+        return {}
 
-    def set_model_state(self, state: dict): pass
+    def set_model_state(self, state: dict):
+        """
+        sets the model state for the block
+        :param state: the state to set
+        """
 
-    def get_provided_slots(self, side):
+    def get_provided_slots(self, side: util.enums.EnumSide) -> typing.List[typing.Union[gui.Slot.Slot, gui.Slot.SlotCopy]]:
+        """
+        gets the slots for an given side
+        :param side: the side to check
+        :return: an list of slot of the side
+        """
         return []
 
-    def get_view_bbox(self):
+    def get_view_bbox(self) -> typing.Union[block.BoundingBox.BoundingBox, block.BoundingBox.BoundingArea]:
+        """
+        used to get the bbox of the block
+        :return: the bbox
+        """
         return block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
 
-    def on_request_item_for_block(self, itemstack):
-        pass
+    def on_request_item_for_block(self, itemstack: gui.ItemStack.ItemStack):
+        """
+        used when an item is requested exactly for this block. Useful for setting custom data to the itemstack
+        :param itemstack: the itemstack generated for the block
+        """
 
-    def inject_redstone_power(self, side, level: int):
+    def inject_redstone_power(self, side: util.enums.EnumSide, level: int):
+        """
+        used to inject an redstone value into the system
+        :param side: the side from which the redstone value comes
+        :param level: the level of redstone, between 0 and 15
+        """
         self.injected_redstone_power[side] = level
 
-    def get_redstone_output(self, side):
+    def get_redstone_output(self, side: util.enums.EnumSide) -> int:
+        """
+        gets the redstone value on an given side
+        :param side: the side to use
+        :return: the value, as an integer between 0 and 15
+        """
         return max(self.get_redstone_source_power(side), *self.injected_redstone_power.values())
 
-    def get_redstone_source_power(self, side):
+    def get_redstone_source_power(self, side: util.enums.EnumSide):
+        """
+        gets source power of an given side
+        :param side: the side to use
+        :return: an value between 0 and 15 representing the redstone value
+        """
         return 0
 
-    # registry setup functions
+    # registry setup functions, will be removed in future
 
     @classmethod
     def modify_block_item(cls, itemconstructor): pass  # todo: add an table for subscriptions
 
     @staticmethod
     def get_all_model_states() -> list: return [{}]  # todo: make attribute
-
