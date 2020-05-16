@@ -23,6 +23,7 @@ import toml
 import config
 import logger
 from util.enums import LoadingStageStatus
+import deprecation
 
 # information for modders: this file contains every event called on the system
 # you may NOT do any job beside registration to events outside of the loading events
@@ -46,7 +47,16 @@ if not os.path.exists(G.local+"/mods"):
 
 
 class LoadingStage:
+    """
+    class for any loading stage for the system
+    """
+
     def __init__(self, name, *eventnames):
+        """
+        creates an new instance of LoadingStage
+        :param name: the name of the stage
+        :param eventnames: an list of events to call in this stage
+        """
         self.name = name
         self.active_event_name = None
         self.active_mod_index = 0
@@ -57,6 +67,10 @@ class LoadingStage:
 
     @classmethod
     def finish(cls, astate):
+        """
+        will finish up the system
+        :param astate: the state to use
+        """
         G.modloader.active_loading_stage += 1
         if G.modloader.active_loading_stage >= len(LOADING_ORDER):
             G.statehandler.switch_to("minecraft:blockitemgenerator")
@@ -72,6 +86,10 @@ class LoadingStage:
             astate.parts[2].progress_max = 0
 
     def call_one(self, astate):
+        """
+        will call one event from the stack
+        :param astate: the state to use
+        """
         if self.active_mod_index >= len(G.modloader.mods):
             self.active_mod_index = 0
             if len(self.eventnames) == 0: return self.finish(astate)
@@ -114,6 +132,10 @@ class LoadingStage:
 
 
 class LoadingStages:
+    """
+    collection of all stages with their events
+    """
+
     PREPARE = LoadingStage("preparation phase", "stage:mod:init")
     ADD_LOADING_STAGES = LoadingStage("loading stage register phase", "stage:addition_of_stages")
 
@@ -154,27 +176,51 @@ class LoadingStages:
     POST = LoadingStage("finishing up", "stage:post")
 
 
-LOADING_ORDER = [LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.PREBUILD,
-                 LoadingStages.EXTRA_RESOURCE_LOCATIONS,
-                 LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.LANGUAGE,
-                 LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.LOOT_TABLES,
-                 LoadingStages.ENTITIES,
-                 LoadingStages.WORLDGEN, LoadingStages.STATES, LoadingStages.BLOCK_MODEL,
-                 LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.FILE_INTERFACE, LoadingStages.POST]
+# the order of stages todo: make serialized from config file
+LOADING_ORDER: list = [
+    LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.PREBUILD,
+    LoadingStages.EXTRA_RESOURCE_LOCATIONS, LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS,
+    LoadingStages.LANGUAGE, LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
+    LoadingStages.LOOT_TABLES, LoadingStages.ENTITIES, LoadingStages.WORLDGEN, LoadingStages.STATES,
+    LoadingStages.BLOCK_MODEL, LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.FILE_INTERFACE,
+    LoadingStages.POST]
 
 
 class ModLoaderAnnotation:
+    """
+    representation of an @G.modloader([...]) annotation
+    """
+
     def __init__(self, modname: str, eventname: str, info=None):
+        """
+        creates an new annotation
+        :param modname: the name of the mod to annotate to
+        :param eventname: the event name to subscribe to
+        :param info: the info send to the event bus
+        """
         self.modname = modname
         self.eventname = eventname
         self.info = info
 
     def __call__(self, function):
+        """
+        subscribes an function to the event
+        :param function: the function to use
+        :return: the function annotated
+        """
         G.modloader.mods[self.modname].eventbus.subscribe(self.eventname, function, info=self.info)
+        return function
 
 
 class ModLoader:
+    """
+    the mod loader class
+    """
+
     def __init__(self):
+        """
+        creates an new modloader-instance
+        """
         self.found_mods = []
         self.mods = {}
         self.modorder = []
@@ -190,10 +236,20 @@ class ModLoader:
         self.finished = False
 
     def __call__(self, modname: str, eventname: str, info=None) -> ModLoaderAnnotation:
+        """
+        annotation to the event system
+        :param modname: the mod name
+        :param eventname: the event name
+        :param info: the info
+        :return: an ModLoaderAnnotation-instance for annotation
+        """
         return ModLoaderAnnotation(modname, eventname, info)
 
     @classmethod
     def get_locations(cls) -> list:
+        """
+        will return an list of mod locations found for loading
+        """
         modlocations = []
         locs = [G.local + "/mods"]
         i = 0
@@ -226,6 +282,10 @@ class ModLoader:
         return modlocations
 
     def load_mod_jsons(self, modlocations: list):
+        """
+        will load the mod description files for the given locations and parse their content
+        :param modlocations: the locations found
+        """
         for file in modlocations:
             self.found_mod_instances.clear()
             if os.path.isfile(file):
@@ -260,6 +320,9 @@ class ModLoader:
                     logger.println("[WARNING] can't locate mod.json file for mod at '{}'".format(file))
 
     def look_out(self):
+        """
+        will load all mods arrival
+        """
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("prebuilding:finished", self.write_mod_info)
         modlocations = self.get_locations()
         self.load_mod_jsons(modlocations)
@@ -278,6 +341,9 @@ class ModLoader:
         self.check_for_update()
 
     def check_for_update(self):
+        """
+        will check for changes between versions
+        """
         logger.println("found mod(s): {}".format(len(self.found_mods)))
         for modname in self.lasttime_mods.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(self.lasttime_mods[modname]):
@@ -289,29 +355,50 @@ class ModLoader:
                 G.prebuilding = True
 
     def write_mod_info(self):
+        """
+        writes the data for the mod table into the file
+        """
         with open(G.local + "/build/mods.json", mode="w") as f:
             m = {modinst.name: modinst.version for modinst in self.mods.values()}
             json.dump(m, f)
 
     def load_mods_json(self, data: str, file: str):
+        """
+        will parse the data to the correct system
+        :param data: the data to load
+        :param file: the file located under
+        """
         self.load_from_decoded_json(json.loads(data), file)
 
     @classmethod
     def load_from_decoded_json(cls, data: dict, file: str):
+        """
+        will parse the decoded json-data to the correct system
+        :param data: the data of the mod
+        :param file: the file allocated (used for warning messages)
+        """
         if "version" not in data:
-            logger.println("[MODLOADER][WARN] found out-dated mod.json format for file at {}".format(file))
-            logger.println("[MODLOADER][WARN] support WILL BE DROPPED IN THE FUTURE")
-            logger.println("[MODLOADER] please inform the mod developer that he has to change the mod.json")
-            cls._load_from_old_json(data, file)
+            logger.println("[MODLOADER][INVALID] the version entry in '{}' has an invalid version format".format(file))
         else:
-            cls.load_new_json(data, file)
+            cls.load_json(data, file)
 
     @classmethod
+    @deprecation.deprecated("dev1:2", "a1.2.0")
     def load_new_json(cls, data: dict, file: str):
+        cls.load_json(data, file)
+
+    @classmethod
+    def load_json(cls, data: dict, file: str):
+        """
+        load the stored json file
+        :param data: the data to load
+        :param file: the file to load, for debugging uses
+        """
         if "version" not in data: raise IOError("invalid mod.json file found without 'version'-entry")
         version = data["version"]
-        # old: "1.0.0" without "version" entry is loaded above
         if version == "1.1.0":  # 1.1.0: outdated since 04.05.2020
+            logger.println("[WARN] using outdated mod.json format 1.1.0. Latest is 1.2.0. Format may get "
+                           "removed in the future")
             loader = data["loader"] if "loader" in data else "python:default"
             # todo: add registry for loaders
             if loader == "python:default":
@@ -358,7 +445,12 @@ class ModLoader:
                     raise IOError("invalid loader '{}'".format(loader))
 
     @classmethod
-    def cast_dependency(cls, depend):
+    def cast_dependency(cls, depend: dict):
+        """
+        will cast an dict-structure to the depend
+        :param depend: the depend dict
+        :return: the parsed mod.Mod.ModDependency-object
+        """
         c = {}
         if "version" in depend: c["version_min"] = depend["version"]
         if "upper_version" in depend: c["version_max"] = depend["upper_version"]
@@ -366,6 +458,7 @@ class ModLoader:
         return mod.Mod.ModDependency(depend["name"], **c)
 
     @staticmethod
+    @deprecation.deprecated("dev1:2", "a1.3.0")
     def _load_from_old_json(data: dict, file: str):
         if "main files" in data:
             files = data["main files"]
@@ -379,6 +472,11 @@ class ModLoader:
             logger.println("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(file))
 
     def load_mods_toml(self, data: str, file):
+        """
+        will load an toml-data-object
+        :param data: the toml-representation
+        :param file: the file for debugging reasons
+        """
         data = toml.loads(data)
         if 'modLoader' in data:
             if data['modLoader'] == "javafml":
@@ -408,14 +506,23 @@ class ModLoader:
                     self.mods[modname].add_dependency(dependname)
                     # todo: add version loader
 
-    def add_to_add(self, mod):
-        G.eventhandler.call("modloader:mod_found", mod)
-        self.mods[mod.name] = mod
-        self.found_mods.append(mod)
-        mod.path = self.active_directory
-        self.found_mod_instances.append(mod)
+    def add_to_add(self, modinstance: mod.Mod.Mod):
+        """
+        will add an mod-instance into the inner system
+        :param modinstance: the mod instance to add
+        """
+        G.eventhandler.call("modloader:mod_found", modinstance)
+        self.mods[modinstance.name] = modinstance
+        self.found_mods.append(modinstance)
+        modinstance.path = self.active_directory
+        self.found_mod_instances.append(modinstance)
 
     def check_mod_duplicates(self):
+        """
+        will check for mod duplicates
+        :return an tuple of errors as string and collected mod-info's as dict
+        todo: add config option for strategy: fail, load newest, load oldest, load all
+        """
         errors = []
         modinfo = {}
         for mod in self.found_mods:
@@ -428,7 +535,13 @@ class ModLoader:
                 modinfo[mod.name] = []
         return errors, modinfo
 
-    def check_dependency_errors(self, errors, modinfo):
+    def check_dependency_errors(self, errors: list, modinfo: dict):
+        """
+        will iterate through
+        :param errors: the error list
+        :param modinfo: the mod info dict
+        :return: errors and modinfo-tuple
+        """
         for mod in self.found_mods:
             for depend in mod.dependinfo[0]:
                 if not depend.arrival():
@@ -447,6 +560,9 @@ class ModLoader:
         return errors, modinfo
 
     def sort_mods(self):
+        """
+        will create the modorder-list by sorting after dependencies
+        """
         errors, modinfo = self.check_dependency_errors(*self.check_mod_duplicates())
         for mod in self.found_mods:
             for depend in mod.dependinfo[4]:
@@ -469,6 +585,9 @@ class ModLoader:
         logger.println(" -", "\n - ".join([self.mods[name].mod_string() for name in self.modorder]))
 
     def process(self):
+        """
+        will process some loading tasks
+        """
         if self.active_loading_stage >= len(LOADING_ORDER): return
         start = time.time()
         astate: state.StateModLoading.StateModLoading = G.statehandler.active_state
@@ -480,6 +599,9 @@ class ModLoader:
         self.update_pgb_text()
 
     def update_pgb_text(self):
+        """
+        will update the text of the pgb's in mod loading
+        """
         stage = LOADING_ORDER[self.active_loading_stage]
         astate: state.StateModLoading.StateModLoading = G.statehandler.active_state
         modinst: mod.Mod.Mod = self.mods[self.modorder[stage.active_mod_index]]

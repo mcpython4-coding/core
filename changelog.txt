@@ -21,11 +21,13 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
             - during printing an exception, an new exception could occur
             - event "worldgen:chunk:finished" was not called in most cases
 
-    changelog of dev-cycle 2 [planned: advanced rendering functions]
+    changelog of dev-cycle 2 [modding improvements]
+        - improved dependency system for mods
 
-    changelog of dev-cycle 3 [planned: UI improvements]
-    changelog of dev-cycle 4 [planned: State-definition files]
-    changelog of dev-cycle 5 [planned: preparation for client/server: IWorld-interface and integrated-impl.]
+    changelog of dev-cycle 3 [planned: advanced rendering functions]
+    changelog of dev-cycle 4 [planned: UI improvements]
+    changelog of dev-cycle 5 [planned: State-definition files]
+    changelog of dev-cycle 6 [planned: preparation for client/server: IWorld-interface and integrated-impl.]
 
     changelog of dev-cycle [last] [planned: bug fixing of work, overall bug fixing, testing]
 

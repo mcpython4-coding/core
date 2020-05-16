@@ -1076,4 +1076,6 @@ started these clone on 12th of July, 2019
 [uuk]: Mod.add_load_default_resources accepts now an path_name parameter setting the namespace when different from mod
        name
 [uuk]: mod dependency functions return now the mod
+[uuk]: @G.modloader-annotation will now return the function
+[uuk]: dropped for old mod version format
 
