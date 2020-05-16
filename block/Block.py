@@ -8,6 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import typing
 import uuid
+import deprecation
 
 import block.BlockFaceState
 import block.BoundingBox
@@ -136,6 +137,7 @@ class Block(event.Registry.IRegistryContent):
         :param state: the state to set
         """
 
+    @deprecation.deprecated("dev1-2", "a1.3.0")
     def get_provided_slots(self, side: util.enums.EnumSide) -> typing.List[typing.Union[gui.Slot.Slot, gui.Slot.SlotCopy]]:
         """
         gets the slots for an given side
@@ -143,6 +145,14 @@ class Block(event.Registry.IRegistryContent):
         :return: an list of slot of the side
         """
         return []
+
+    def get_provided_slot_lists(self, side: util.enums.EnumSide):
+        """
+        gets slots for various reasons for an given side
+        :param side: the side asked for
+        :return: an tuple of lists of input slots and output slots
+        """
+        return [], []
 
     def get_view_bbox(self) -> typing.Union[block.BoundingBox.BoundingBox, block.BoundingBox.BoundingArea]:
         """
