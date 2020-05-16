@@ -1072,3 +1072,8 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue 186: event "worldgen:chunk:finished" was only called for direct-generation processes
 [uuk]: fixed issue 187: exceptions when generating chunks from main menu without content
 [uuk]: implemented forge model decoder
+[uuk]: version-parameter of Mod.__init__ accepts now also string with '.' between the version parts and an list
+[uuk]: Mod.add_load_default_resources accepts now an path_name parameter setting the namespace when different from mod
+       name
+[uuk]: mod dependency functions return now the mod
+
