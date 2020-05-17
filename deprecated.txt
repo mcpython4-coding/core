@@ -2,8 +2,12 @@ This file is about things that should be removed in the future.
 This is an reminder-file for when to remove them & what.
 So, here follows an list of deprecation's:
 
+general strategy for feature moving:
+    1. add new method linking to old
+    2. link old to new
+    3. remove old
+
 since 19th of february, 2020:
-    ModLoader mod.json format 1.0.0
     Item.get_name, Block.get_name, State.get_name
     Block.is_breakable, Block.get_all_model_states, Block.get_hardness, Block.get_minimum_tool_level,
         Block.get_best_tools, Block.get_custom_block_renderer, Block.modify_block_item
@@ -19,3 +23,4 @@ marked for removal for alpha 1.2.0:
 marked for removal in alpha 1.3.0:
     ModLoader._load_from_old_json, ModLoader.load_new_json
     Block.get_provided_slots
+    Inventory._get_position

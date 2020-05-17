@@ -415,10 +415,30 @@ class ModLoader:
                                " ({})".format(file, loader))
                 G.window.close()
         elif version == "1.2.0":  # latest
+            """
+            example:
+            {
+                "version": "1.2.0",
+                "entries": [
+                    {
+                        "name": "TestMod",
+                        "version": "Some.Version",
+                        "load_resources": true,
+                        "load_files": ["some.package.to.load"]
+                    }
+                ]
+            }
+            """
             for entry in data["entries"]:
+                if "name" not in entry:
+                    logger.println("[INVALID] invalid entry found in '{}': missing 'name'-entry".format(file))
+                    continue
                 modname = entry["name"]
-                loader = entry["loader"]
+                loader = entry["loader"] if "loader" in entry else "python:default"
                 if loader == "python:default":
+                    if "version" not in entry:
+                        logger.println("[INVALID] invalid entry found in '{}': missing 'version'-entry".format(file))
+                        continue
                     version = tuple(entry["version"].split("."))
                     modinstance = mod.Mod.Mod(modname, version)
                     if "depends" in entry:

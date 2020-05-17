@@ -51,6 +51,7 @@ class BoxModel:
                 index = UV_ORDER.index(face)
                 if "uv" in f:
                     uvs = tuple(f["uv"])
+                    uvs = (uvs[0], 16-uvs[1], uvs[2], 16-uvs[3])
                     self.texregion[index] = tuple([uvs[i]/16 for i in UV_INDICES[index]])
                 if "rotation" in f:
                     self.texregionrotate[index] = f["rotation"]

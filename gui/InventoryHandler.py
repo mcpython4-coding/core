@@ -69,7 +69,7 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
         :return: the slot or None if none found
         """
         for inventory in G.inventoryhandler.opened_inventorystack:
-            dx, dy = inventory._get_position()
+            dx, dy = inventory.get_position()
             for slot in inventory.get_interaction_slots():
                 sx, sy = slot.position
                 sx += dx
