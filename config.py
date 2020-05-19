@@ -126,4 +126,5 @@ def load():
         BIOME_HEIGHT_RANGE_MAP["minecraft:plains"] = biomeconfig["minecraft:plains"].read()
 
         # todo: add config for pgb colors, pgb text colors, button positions, ...
+        # todo: add doc strings into config files
 

@@ -94,10 +94,13 @@ If you modify your resource pack list, you should use the --rebuild flag from ab
 sure that your texture changes are applied to all parts
 
 
- **My config files are broken, how can I reset them?**
+**My config files are broken, how can I reset them?**
  
 You can either delete them by hand or run the game with the "--delete-configs"-flag
 
+**I want to use another directory for my saves**
+
+You can use the "--saves-directory <directory>"-flag to change where your save files are stored
 
 **What if I want to do many of them at once?**
 

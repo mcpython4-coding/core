@@ -3,12 +3,13 @@ Changelog since cleanup-branch of 31.01.2020
 
 planned for the future:
     - optimize texture reload with everything (re-block-item-factories, reload block models,
-        reload item texture, gui textures, ...)
+        reload item texture, gui textures, ...), config reload
     - add more factories for various parts (better block models, block states, full block factory, ...)
     - add mode were linking between recipe in/out is shuffled and loot table links are shuffled (see Amnesia Pack)
         together with an gamerule and an /shuffle [<group>] command
     - add scoreboards with commands, execute entry, ...
     - make commands more fail-save
+    - make world gen more fail-save
 
 
 changelog of snapshot [next] (theme: feature cleanup & improvements)
@@ -16,15 +17,20 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
         - optimized block rendering, deprecated some old stuff
 
         fixed issues:
-            - block updates were not called in every case
-            - walls and fences were not updating their state correctly
-            - during printing an exception, an new exception could occur
-            - event "worldgen:chunk:finished" was not called in most cases
+            from versions before this snapshot:
+                - block updates were not called in every case
+                - walls and fences were not updating their state correctly
+                - during printing an exception, an new exception could occur
+                - event "worldgen:chunk:finished" was not called in most cases
 
     changelog of dev-cycle 2 [modding improvements]
         - improved dependency system for mods
         - deprecated some old stuff
         - added config system for mods [incompatible with mc config files]
+
+        fix issue:
+            from previous cycle:
+                - minecraft version tuple could contain string-instances
 
     changelog of dev-cycle 3 [planned: advanced rendering functions]
     changelog of dev-cycle 4 [planned: UI improvements]
@@ -58,7 +64,8 @@ changelog of release alpha 1.0.1
     - fixed crash on startup
 
     fixed bugs:
-        - when loading an world from an never save version, the game gives out an exception
+        from previous release:
+            - when loading an world from an never save version, the game gives out an exception
 
 
 changelog of release alpha 1.0.0: (theme: bug fixing & system improvements)
