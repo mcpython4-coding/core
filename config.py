@@ -31,10 +31,10 @@ GAMEMODE_3_SPEED = 20
 GAMEMODE_3_SPRINTING_SPEED = 25
 
 SPEED_DICT = {
-    0: [WALKING_SPEED, SPRINTING_SPEED],
+    0: [WALKING_SPEED, SPRINTING_SPEED, 0, 0],
     1: [WALKING_SPEED, SPRINTING_SPEED, FLYING_SPEED, FLYING_SPRINTING_SPEED],
-    2: [WALKING_SPEED, SPRINTING_SPEED],
-    3: [WALKING_SPEED, SPRINTING_SPEED, GAMEMODE_3_SPEED, GAMEMODE_3_SPRINTING_SPEED]
+    2: [WALKING_SPEED, SPRINTING_SPEED, 0, 0],
+    3: [FLYING_SPEED, FLYING_SPRINTING_SPEED, GAMEMODE_3_SPEED, GAMEMODE_3_SPRINTING_SPEED]
 }
 
 GRAVITY = 20.0  # gravity, in -m/s^2 -> speed is calculated with v -= GRAVITY * dt
@@ -104,6 +104,26 @@ def load():
 
     @G.modloader("minecraft", "stage:mod:config:work")
     def load_data():
-        global GRAVITY
-        GRAVITY = config["physics"]["gravity"].read()
+        SPEED_DICT[0] = [speeds["walking"], speeds["sprinting"], 0, 0]
+        SPEED_DICT[1] = [speeds["walking"], speeds["sprinting"], speeds["flying"], speeds["fly_sprinting"]]
+        SPEED_DICT[2] = [speeds["walking"], speeds["sprinting"], 0, 0]
+        SPEED_DICT[3] = [speeds["flying"], speeds["fly_sprinting"], speeds["gamemode_3"], speeds["gamemode_3_sprinting"]]
+
+        global GRAVITY, TERMINAL_VELOCITY
+        GRAVITY, TERMINAL_VELOCITY = physics["gravity"].read(), physics["terminal_velocity"].read()
+
+        global RANDOM_TICK_RANGE, CPU_USAGE_REFRESH_TIME
+        RANDOM_TICK_RANGE, CPU_USAGE_REFRESH_TIME = timing["random_tick_range"].read(), timing[
+            "cpu_usage_refresh_time"].read()
+
+        global USE_MISSING_TEXTURES_ON_MISS_TEXTURE, FOG_DISTANCE, CHUNK_GENERATION_RANGE, WRITE_NOT_FORMATTED_EXCEPTION
+        USE_MISSING_TEXTURES_ON_MISS_TEXTURE = rendering["use_missing_texture_on_missing_faces"].read()
+        FOG_DISTANCE, CHUNK_GENERATION_RANGE = rendering["fog_distance"].read(), rendering["chunk_generation_range"
+                                                                                           ].read()
+        WRITE_NOT_FORMATTED_EXCEPTION = rendering["write_not_formatted_exceptions"].read()
+
+        global BIOME_HEIGHT_RANGE_MAP
+        BIOME_HEIGHT_RANGE_MAP["minecraft:plains"] = biomeconfig["minecraft:plains"].read()
+
+        # todo: add config for pgb colors, pgb text colors, button positions, ...
 
