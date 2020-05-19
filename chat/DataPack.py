@@ -17,6 +17,10 @@ import chat.command.CommandParser
 
 
 class DataPackStatus(enum.Enum):
+    """
+    Enum for the loading-status of an data-pack
+    """
+
     INACTIVE = 0  # status for every new created datapack
     ACTIVATED = 1  # the datapack is active
     DEACTIVATED = 2  # the datapack is deactivated (by the user)
@@ -26,22 +30,39 @@ class DataPackStatus(enum.Enum):
 
 
 class DataPackHandler:
+    """
+    handler for data packs
+    """
+
     def __init__(self):
         self.data_packs = []
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("game:close", self.cleanup)
 
     def _load(self):
+        """
+        will load all data packs
+        """
         for path in os.listdir(G.local+"/datapacks"):
             self.data_packs.append(self._load_datapack(G.local+"/datapacks/"+path))
         G.eventhandler.call("datapack:search")
 
-    def _load_datapack(self, directory):
-        datapack = DataPack(directory)
-        datapack.load()
-        G.eventhandler.call("datapack:load", datapack)
-        return datapack
+    def _load_datapack(self, directory: str):
+        """
+        will load an given data pack
+        :param directory: the directory to load from
+        """
+        try:
+            datapack = DataPack(directory)
+            datapack.load()
+            G.eventhandler.call("datapack:load", datapack)
+            return datapack
+        except:
+            logger.write_exception("during loading data pack from {}".format(directory))
 
     def reload(self):
+        """
+        reloads all data packs
+        """
         old_status_table = {datapack.name: datapack.status for datapack in self.data_packs}
         self.cleanup()
         self._load()
@@ -53,12 +74,21 @@ class DataPackHandler:
                     datapack.status = old_status_table[datapack.name]
 
     def cleanup(self):
+        """
+        removes all data packs from the system
+        """
         G.eventhandler.call("datapack:unload:pre")
         for datapack in self.data_packs: datapack.unload()
         self.data_packs.clear()
         G.eventhandler.call("datapack:unload:post")
 
     def try_call_function(self, name: str, info=None):
+        """
+        will try to invoke an function in an datapack
+        :param name: the name of the function
+        :param info: the info-object to use
+        WARNING: will only invoke ONE function/tag from the datapacks, not all
+        """
         if info is None:
             info = chat.command.CommandParser.ParsingCommandInfo()
         if name.startswith("#"):  # an tag
@@ -80,7 +110,15 @@ datapackhandler = DataPackHandler()
 
 
 class DataPack:
+    """
+    class for an single data pack
+    """
+
     def __init__(self, directory: str):
+        """
+        will create an new DataPack-object
+        :param directory: where the datapack is located
+        """
         self.directory = directory
         self.function_table = {}
         self.status = DataPackStatus.INACTIVE
@@ -89,6 +127,9 @@ class DataPack:
         self.description = ""
 
     def load(self):
+        """
+        will load the data pack
+        """
         if self.status == DataPackStatus.SYSTEM_ERROR: return
         # when the data pack was active, unload it first
         try:
@@ -115,6 +156,9 @@ class DataPack:
         self.status = DataPackStatus.ACTIVATED
 
     def unload(self):
+        """
+        will unload the datapack
+        """
         if self.status == DataPackStatus.SYSTEM_ERROR: return
         if self.status == DataPackStatus.INACTIVE or self.status == DataPackStatus.UNLOADED:
             raise ValueError("can't un-load an not loaded datapack")
@@ -126,10 +170,14 @@ class DataPack:
             logger.write_exception("error during unloading data pack '{}'".format(self.name))
             return
         self.status = DataPackStatus.UNLOADED  # we have successfully unloaded the data-pack
-        if self.access: self.access.close()
-        self.access = None
+        if self.access: self.access.close()  # remove access to the file system
+        self.access = None  # an remove the instance
 
     def set_status(self, status: DataPackStatus):
+        """
+        sets the status of the data pack
+        :param status: the status to set
+        """
         if status == self.status: return
         self.status = status
         if status == DataPackStatus.ACTIVATED and self.access not in ResourceLocator.RESOURCE_LOCATIONS:

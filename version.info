@@ -1079,4 +1079,8 @@ sstarted these clone on 12th of July, 2019
 [uuk]: @G.modloader-annotation will now return the function
 [uuk]: dropped for old mod version format
 [uuk]: introduced basic config system
+[uuk]: fixed issue 188: version tuple may have str-entries
+[uuk]: fixed issue 189: data packs may not get unloaded correctly
+[uuk]: /clear command will now use the .clear() method of inventory
+[uuk]: added an get_inventories() method to Entity
 

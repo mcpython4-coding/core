@@ -27,8 +27,11 @@ class ChatInventory(gui.Inventory.Inventory):
     main class for chat
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        """
+        creates an new Chat-instance
+        """
+        super().__init__()
         self.lable = pyglet.text.HTMLLabel("", x=15, y=15)
         self.enable_blink = True
         self.timer = time.time()
@@ -36,7 +39,12 @@ class ChatInventory(gui.Inventory.Inventory):
         self.eventbus.subscribe("user:keyboard:press", G.chat.on_key_press)
         self.eventbus.subscribe("user:keyboard:enter", G.chat.enter)
 
-    def update_text(self, text, underline_index):
+    def update_text(self, text: str, underline_index: int):
+        """
+        updates the text displayed by the chat
+        :param text: the text to use
+        :param underline_index: the index where the "_" is
+        """
         if len(text) < underline_index:
             self.lable.text = "<font color='white'>" + text + "_</font>"
             return
@@ -48,19 +56,31 @@ class ChatInventory(gui.Inventory.Inventory):
             self.lable.text = "<font color='white'>" + text + "<span>&#95;</span></font>"
 
     def on_activate(self):
+        """
+        called by the system on activation of the inventory
+        """
         G.chat.text = ""
         G.chat.active_index = 0
         G.chat.has_entered_t = False
         self.eventbus.activate()
 
     def on_deactivate(self):
+        """
+        called by the system on deactivation of the inventory
+        """
         self.eventbus.deactivate()
 
     def on_draw_background(self):
+        """
+        called to draw the background of the inventory
+        """
         wx, _ = G.window.get_size()
         util.opengl.draw_rectangle((10, 10), (wx - 20, 20), color=(.0, .0, .0, .8))
 
     def on_draw_overlay(self):
+        """
+        called to draw the overlay of the inventory
+        """
         text = html.escape(G.chat.text)
         if (round(time.time() - self.timer) % 2) == 1:
             self.update_text(text, G.chat.active_index)
@@ -98,6 +118,7 @@ class Chat:
         called when an key is pressed
         :param symbol: the symbol that is pressed
         :param modifiers: the modifiers that are used
+        todo: split up into parts
         """
         if symbol == 65288:  # BACK
             self.text = self.text[:self.active_index - 1] + self.text[self.active_index:]
@@ -148,6 +169,12 @@ class Chat:
         # print(symbol, modifiers)
 
     def print_ln(self, text: str):
+        """
+        will print an line into the chat
+        :param text: the line to print
+        todo: make an in-game chat an link this to there
+        todo: make all commands use this as backend
+        """
         logger.println("[CHAT] {}".format(text))
 
     def close(self):
@@ -158,6 +185,9 @@ class Chat:
         self.active_index = 0
 
     def clear(self):
+        """
+        will clear the chat
+        """
         self.history.clear()
 
 

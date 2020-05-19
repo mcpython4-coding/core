@@ -57,6 +57,9 @@ class Entity(event.Registry.IRegistryContent):
     def __del__(self):
         del self.chunk
 
+    def __str__(self):
+        return "{}(dim={},pos={},rot={})".format(type(self).__name__, self.dimension.id, self.position, self.rotation)
+
     # system for moving
 
     def get_position(self): return self.__position
@@ -143,6 +146,13 @@ class Entity(event.Registry.IRegistryContent):
         todo: damage entity when needed
         for moder: should damage entity if needed
         """
+
+    def get_inventories(self) -> list:
+        """
+        will return an list of all currently arrival inventories for this entity
+        :return:
+        """
+        return list(self.inventories.values())
 
     # system events
 

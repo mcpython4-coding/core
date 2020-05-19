@@ -22,11 +22,10 @@ class CommandClone(chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "clone"
-        parsebridge.add_subcommand(SubCommand(ParseType.POSITION).add_subcommand(SubCommand(
-            ParseType.POSITION).add_subcommand(SubCommand(ParseType.POSITION).add_subcommand(
-                SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL).add_subcommand(
-                    SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL).add_subcommand(
-                        SubCommand(ParseType.BLOCKNAME, mode=ParseMode.OPTIONAL)))))))
+        parsebridge.add_subcommand(ParseType.POSITION.add_subcommand(ParseType.POSITION.add_subcommand(
+            ParseType.STRING_WITHOUT_QUOTES.set_mode(ParseMode.OPTIONAL).add_subcommand(
+                ParseType.STRING_WITHOUT_QUOTES.set_mode(ParseMode.OPTIONAL).add_subcommand(
+                    ParseType.BLOCKNAME.set_mode(ParseMode.OPTIONAL))))))
 
     @staticmethod
     def parse(values: list, modes: list, info):
@@ -37,6 +36,7 @@ class CommandClone(chat.command.Command.Command):
         fx, fy, fz = tuple([round(e) for e in values[0]])
         ex, ey, ez = tuple([round(e) for e in values[1]])
         dx, dy, dz = tuple([round(e) for e in values[2]])
+        # order them into the right order
         if fx > ex: ex, fx = fx, ex
         if fy > ey: ey, fy = fy, ey
         if fz > ez: ez, fz = fz, ez
@@ -44,6 +44,7 @@ class CommandClone(chat.command.Command.Command):
         if len(values) > 4 and values[4] != "force" and fx <= dx <= ex and fy <= dy <= ey and fz <= dz <= ez:
             G.chat.print_ln("[CLONE][ERROR] can't clone in non-force mode an overlapping region")
             return
+        # todo: split up into three functions in an util/world.py for moving modes
         for x in range(fx, ex+1):
             for y in range(fy, ey+1):
                 for z in range(fz, ez+1):

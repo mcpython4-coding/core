@@ -21,6 +21,7 @@ import deprecation
 class Inventory:
     """
     base inventory class
+    todo: split up into the storage part and the rendering part
     """
 
     @staticmethod

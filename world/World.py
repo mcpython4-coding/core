@@ -21,6 +21,7 @@ import random
 import world.GameRule
 import config
 import storage.SaveFile
+import chat.DataPack
 
 
 class World:
@@ -208,6 +209,7 @@ class World:
         if add_player: self.add_player("unknown")
         if filename is not None:
             self.setup_by_filename(filename)
+        chat.DataPack.datapackhandler.cleanup()
         G.eventhandler.call("world:clean")
 
     def setup_by_filename(self, filename: str):

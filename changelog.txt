@@ -32,6 +32,9 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
             from previous cycle:
                 - minecraft version tuple could contain string-instances
 
+            from versions before this snapshot:
+                - data packs may not get unloaded when they needed to
+
     changelog of dev-cycle 3 [planned: advanced rendering functions]
     changelog of dev-cycle 4 [planned: UI improvements]
     changelog of dev-cycle 5 [planned: State-definition files]

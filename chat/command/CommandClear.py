@@ -24,7 +24,7 @@ class CommandClear(chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "clear"
-        parsebridge.add_subcommand(SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL))
+        parsebridge.add_subcommand(ParseType.SELECTOR.set_mode(ParseMode.OPTIONAL))
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -32,14 +32,15 @@ class CommandClear(chat.command.Command.Command):
         G.eventhandler.call("command:clear:start")
         if cls.CANCEL_CLEAR: return
         if len(values) == 0: values.append([G.world.get_active_player()])
-        for entity in values[0]:
-            for inventory in (entity.inventories if type(entity.inventories) in [list, set, tuple] else (
-                              [entity.inventories] if type(entity.inventories) != dict else
-                              entity.inventories.values())):
-                for slot in inventory.slots:
-                    slot.get_itemstack().clean()
-            entity.xp = 0
-            entity.xp_level = 0
+        for entity in values[0]:  # iterate over all entities
+            if not hasattr(entity, "inventories"):  # has it an inventory?
+                G.chat.print_ln("entity {} has no inventories!".format(entity))
+                continue
+            for inventory in entity.get_inventories():
+                inventory.clear()  # clear every inventory
+            if hasattr(entity, "xp"):
+                entity.xp = 0
+                entity.xp_level = 0
         G.inventoryhandler.moving_slot.get_itemstack().clean()
         G.eventhandler.call("command:clear:end")
 
