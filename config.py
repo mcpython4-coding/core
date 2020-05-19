@@ -20,8 +20,9 @@ VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)
 
-TICKS_PER_SEC = 20  # how many ticks per second should be executed
+TICKS_PER_SEC = 20  # how many ticks per second should be executed, todo: remove (unused)
 
+# todo: remove definitions of "raw" values
 WALKING_SPEED = 5
 SPRINTING_SPEED = 8
 FLYING_SPEED = 15
@@ -48,9 +49,10 @@ MAX_JUMP_HEIGHT = 1.0  # About the height of a block.
 #    s = s_0 + v_0 * t + (a * t^2) / 2
 JUMP_SPEED = math.sqrt(2 * GRAVITY * MAX_JUMP_HEIGHT)
 
-PLAYER_HEIGHT = 2  # the height of the player, in blocks; WARNING: will be removed in the future
+PLAYER_HEIGHT = 2  # the height of the player, in blocks; WARNING: will be removed in the future todo: remove
 
 
+# todo: move to util.enums
 _ADVANCED_FACES = [[[(x, y, z) for z in range(-1, 2)] for y in range(-1, 2)] for x in range(-1, 2)]
 ADVANCED_FACES = []
 for e in _ADVANCED_FACES:
@@ -80,4 +82,28 @@ BIOME_HEIGHT_RANGE_MAP = {  # an dict of biomename: height range storing the int
 CHUNK_GENERATION_RANGE = 1
 
 WRITE_NOT_FORMATTED_EXCEPTION = False  # if exceptions should be not formatted-printed to console by logger
+
+
+def load():
+    import mod.ConfigFile
+    import globals as G
+
+    config = mod.ConfigFile.ConfigFile("main", "minecraft")
+    speeds = mod.ConfigFile.DictDataMapper().add_entry("walking", 5).add_entry("sprinting", 8).add_entry(
+        "flying", 15).add_entry("fly_sprinting", 18).add_entry("gamemode_3", 20).add_entry("gamemode_3_sprinting", 25)
+    physics = mod.ConfigFile.DictDataMapper().add_entry("gravity", 20).add_entry("terminal_velocity", 50)
+    timing = mod.ConfigFile.DictDataMapper().add_entry("random_tick_range", 2).add_entry(
+        "cpu_usage_refresh_time", .8)
+    rendering = mod.ConfigFile.DictDataMapper().add_entry("use_missing_texture_on_missing_faces", False).add_entry(
+        "fog_distance", 60).add_entry("chunk_generation_range", 1).add_entry("write_not_formatted_exceptions", False)
+    config.add_entry("physics", physics).add_entry("speeds", speeds).add_entry("timing", timing).add_entry(
+        "rendering", rendering)
+
+    biomeconfig = mod.ConfigFile.ConfigFile("biomes", "minecraft")
+    biomeconfig.add_entry("minecraft:plains", mod.ConfigFile.ListDataMapper().append(10).append(30))
+
+    @G.modloader("minecraft", "stage:mod:config:work")
+    def load_data():
+        global GRAVITY
+        GRAVITY = config["physics"]["gravity"].read()
 

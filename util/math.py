@@ -21,7 +21,7 @@ def get_max_y(pos):
     chunk = G.world.get_active_dimension().get_chunk_for_position((x, y, z))
     heightmap = chunk.get_value('heightmap')
     y = heightmap[x, z][0][1] if (x, z) in heightmap else 0
-    return y + config.PLAYER_HEIGHT  # account for the distance from head to foot
+    return y + 2  # account for the distance from head to foot
 
 
 @deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")

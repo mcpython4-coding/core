@@ -24,6 +24,7 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
     changelog of dev-cycle 2 [modding improvements]
         - improved dependency system for mods
         - deprecated some old stuff
+        - added config system for mods [incompatible with mc config files]
 
     changelog of dev-cycle 3 [planned: advanced rendering functions]
     changelog of dev-cycle 4 [planned: UI improvements]

@@ -80,7 +80,7 @@ class Window(pyglet.window.Window):
 
         # This call schedules the `update()` method to be called
         # TICKS_PER_SEC. This is the main game event loop.
-        pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
+        pyglet.clock.schedule_interval(self.update, 0.05)
 
         state.StateHandler.load()
 
@@ -165,7 +165,7 @@ class Window(pyglet.window.Window):
         # todo: change to attribute in State-class
         if dt > 3 and G.statehandler.active_state.NAME not in ["minecraft:modloading"]:
             logger.println("[warning] running behind normal tick, did you overload game? missing " +
-                           str(dt - 1.0 / TICKS_PER_SEC)+" seconds")
+                           str(dt - 0.05)+" seconds")
         self.world.process_queue()
         sector = sectorize(G.world.get_active_player().position)
         if sector != self.sector:

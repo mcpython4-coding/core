@@ -141,6 +141,10 @@ class LoadingStages:
 
     PREBUILD = LoadingStage("prebuilding", "stage:prebuild:addition", "stage:prebuild:do")
 
+    # first: create ConfigFile objects, second: internally, third: do something with the data
+    CONFIGS = LoadingStage("loading mod config", "stage:mod:config:define", "stage:mod:config:load",
+                           "stage:mod:config:work")
+
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
     TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
@@ -178,7 +182,7 @@ class LoadingStages:
 
 # the order of stages todo: make serialized from config file
 LOADING_ORDER: list = [
-    LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.PREBUILD,
+    LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.CONFIGS, LoadingStages.PREBUILD,
     LoadingStages.EXTRA_RESOURCE_LOCATIONS, LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS,
     LoadingStages.LANGUAGE, LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
     LoadingStages.LOOT_TABLES, LoadingStages.ENTITIES, LoadingStages.WORLDGEN, LoadingStages.STATES,
@@ -645,4 +649,5 @@ G.modloader = ModLoader()
 
 # this is needed as this depends on above but also above on the import
 import mod.ModMcpython
+import mod.ConfigFile
 

@@ -1078,4 +1078,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: mod dependency functions return now the mod
 [uuk]: @G.modloader-annotation will now return the function
 [uuk]: dropped for old mod version format
+[uuk]: introduced basic config system
 

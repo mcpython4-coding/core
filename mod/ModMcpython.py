@@ -18,7 +18,7 @@ if type(config.VERSION_NAME) == str and config.VERSION_NAME[2] == "w":  # snapsh
 elif type(config.VERSION_NAME) == str:
     if config.VERSION_NAME.startswith("snapshot dev "):
         s = config.VERSION_NAME.split(" ")
-        VERSION = (0, 2, s[2], s[4])
+        VERSION = (0, 2, int(s[2]), int(s[4]))
     else:
         c = config.VERSION_NAME
         if c[0] in "abr": c = c[1:]

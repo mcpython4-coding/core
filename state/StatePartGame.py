@@ -281,7 +281,7 @@ class StatePartGame(StatePart.StatePart):
         x, y, z = G.world.get_active_player().position
         before = util.math.sectorize(G.world.get_active_player().position)
         if G.world.get_active_player().gamemode != 3:
-            x, y, z = G.window.collide((x + dx, y + dy, z + dz), PLAYER_HEIGHT)
+            x, y, z = G.window.collide((x + dx, y + dy, z + dz), 2)
         else:
             x, y, z = x + dx, y + dy, z + dz
         if G.window.dy < 0 and G.world.get_active_player().fallen_since_y is None:
