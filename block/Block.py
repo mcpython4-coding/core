@@ -33,6 +33,7 @@ class Block(event.Registry.IRegistryContent):
     BREAKABLE: bool = True  # If this block can be broken in gamemode 0 and 2
 
     HARDNESS: float = 1  # the hardness of the block
+    BLAST_RESISTANCE: float = 0  # how good it is in resisting explosions
     MINIMUM_TOOL_LEVEL: float = 0  # the minimum tool level
     BEST_TOOLS_TO_BREAK: typing.List[util.enums.ToolType] = []  # the tools best to break
 
@@ -44,6 +45,8 @@ class Block(event.Registry.IRegistryContent):
 
     # if mobs can spawn on the block; None is unset and set by system to SOLID
     CAN_MOBS_SPAWN_ON: typing.Union[bool, None] = None
+
+    ENABLE_RANDOM_TICKS = False
 
     def __init__(self, position: tuple, set_to=None, real_hit=None, state=None):
         """
@@ -79,6 +82,7 @@ class Block(event.Registry.IRegistryContent):
         """
         called on random update
         """
+        raise IOError()
 
     def on_block_update(self):
         """

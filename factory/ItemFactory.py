@@ -13,6 +13,7 @@ import item.ItemArmor
 import globals as G
 import mod.ModMcpython
 import sys
+import deprecation
 
 
 # todo: add ItemFactoryHandler which make it possible to add custom functions & custom class constructing
@@ -22,10 +23,11 @@ class ItemFactory:
     @classmethod
     def process(cls):
         for itemfactory, flag in cls.TASKS:
-            itemfactory._finish(flag)
+            itemfactory.finish_up(flag)
 
     def __init__(self):
         self.name = None
+        self.modname = None
         self.itemfile = None
         self.used_itemfiles = []
         self.has_block = False
@@ -50,15 +52,49 @@ class ItemFactory:
 
         self.fuel_level = None
 
+        self.template = None
+
+    def setTemplate(self):
+        """
+        sets the current status as "template". This status will be set to on every .finish() call, but will not affect
+        the new generated entry.
+        """
+        self.template = self.copy()
+        return self
+
+    def setToTemplate(self):
+        if self.template is not None:
+            self.__dict__ = self.template.__dict__
+
+    def resetTemplate(self):
+        self.template = None
+
     def finish(self, register=True, task_list=False):
-        modname, itemname = tuple(self.name.split(":"))
+        if self.modname is None:
+            modname, itemname = tuple(self.name.split(":"))
+        else:
+            modname, itemname = self.modname, self.name
         if not G.prebuilding and not task_list:
             G.modloader.mods[modname].eventbus.subscribe("stage:item:load", self._finish, register,
                                                          info="loading item named {}".format(itemname))
         else:
             self.TASKS.append((self, register))
 
+    def copy(self):
+        obj = type(self)()
+        obj.__dict__ = self.__dict__.copy()
+        return obj
+
+    @deprecation.deprecated("dev1-2", "a1.2.0")
     def _finish(self, register):
+        self.finish_up(register)
+
+    def finish_up(self, register=False):
+        """
+        will finish up the creation
+        :param register: if the result should be registered to the registry
+        todo: clean up this mess!!!!!
+        """
         master = self
 
         class baseclass(object): pass
@@ -148,8 +184,12 @@ class ItemFactory:
             self.setBaseClass(item.Item.Item)
         return self
 
+    def setGlobalModName(self, name: str):
+        self.modname = name
+        return self
+
     def setName(self, name: str):
-        self.name = name
+        self.name = ("" if self.modname is None else self.modname) + name
         return self
 
     def setDefaultItemFile(self, itemfile: str):

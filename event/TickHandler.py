@@ -110,7 +110,8 @@ class TickHandler:
                             position = (x + ddx, ddy, z + ddz)
                             blockinst = G.world.get_active_dimension().get_block(position)
                             if blockinst is not None and type(blockinst) != str:
-                                blockinst.on_random_update()
+                                if blockinst.ENABLE_RANDOM_TICKS:
+                                    blockinst.on_random_update()
 
 
 handler = G.tickhandler = TickHandler()

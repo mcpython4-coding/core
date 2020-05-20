@@ -10,6 +10,11 @@ planned for the future:
     - add scoreboards with commands, execute entry, ...
     - make commands more fail-save
     - make world gen more fail-save
+    - add ores
+    - add mcpi API support
+    - an logging update
+    - improve item texture atlas system (it seems not very stable)
+    - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum
 
 
 changelog of snapshot [next] (theme: feature cleanup & improvements)
@@ -26,11 +31,13 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
     changelog of dev-cycle 2 [modding improvements]
         - improved dependency system for mods
         - deprecated some old stuff
-        - added config system for mods [incompatible with mc config files]
+        - added config system for mods & internals [incompatible with mc config files]
+        - improved existing factories & added some more factories & entries
 
-        fix issue:
+        fixed issues:
             from previous cycle:
                 - minecraft version tuple could contain string-instances
+                - slab textures on side were upside down
 
             from versions before this snapshot:
                 - data packs may not get unloaded when they needed to

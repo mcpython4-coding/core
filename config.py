@@ -104,10 +104,12 @@ def load():
 
     @G.modloader("minecraft", "stage:mod:config:work")
     def load_data():
-        SPEED_DICT[0] = [speeds["walking"], speeds["sprinting"], 0, 0]
-        SPEED_DICT[1] = [speeds["walking"], speeds["sprinting"], speeds["flying"], speeds["fly_sprinting"]]
-        SPEED_DICT[2] = [speeds["walking"], speeds["sprinting"], 0, 0]
-        SPEED_DICT[3] = [speeds["flying"], speeds["fly_sprinting"], speeds["gamemode_3"], speeds["gamemode_3_sprinting"]]
+        SPEED_DICT[0] = [speeds["walking"].read(), speeds["sprinting"].read(), 0, 0]
+        SPEED_DICT[1] = [speeds["walking"].read(), speeds["sprinting"].read(),
+                         speeds["flying"].read(), speeds["fly_sprinting"].read()]
+        SPEED_DICT[2] = [speeds["walking"].read(), speeds["sprinting"].read(), 0, 0]
+        SPEED_DICT[3] = [speeds["flying"].read(), speeds["fly_sprinting"].read(),
+                         speeds["gamemode_3"].read(), speeds["gamemode_3_sprinting"].read()]
 
         global GRAVITY, TERMINAL_VELOCITY
         GRAVITY, TERMINAL_VELOCITY = physics["gravity"].read(), physics["terminal_velocity"].read()

@@ -16,6 +16,8 @@ class ICoralBlock(block.Block.Block):
     base class for every coral block
     """
 
+    ENABLE_RANDOM_TICKS = True
+
     def on_random_update(self):
         # todo: add water check; not arrival as it is not implemented
         G.world.get_active_dimension().add_block(self.position, "{}:dead_{}".format(*self.NAME.split(":")))

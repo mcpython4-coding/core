@@ -32,6 +32,9 @@ class BlockChest(Block.Block):
 
     NAME: str = "minecraft:chest"  # the name of the chest
 
+    HARDNESS = 2.5
+    BLAST_RESISTANCE = 2.5
+
     def __init__(self, *args, **kwargs):
         """
         creates an new BlockChest

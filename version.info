@@ -1083,4 +1083,10 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed issue 189: data packs may not get unloaded correctly
 [uuk]: /clear command will now use the .clear() method of inventory
 [uuk]: added an get_inventories() method to Entity
+[uuk]: added factories for various things
+[uuk]: BlockFactory and ItemFactory have now an template-mode and can now set the mod-name beforehand
+[uuk]: re-ordered the Blocks.py list, changing order & existing entries, added some blocks; for an complete list,
+       see Blocks.py
+[uuk]: fixed issue 190, 191
+[uuk]: added BLAST_RESISTANCE-attribute to Block
 

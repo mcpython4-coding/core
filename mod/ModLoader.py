@@ -165,6 +165,9 @@ class LoadingStages:
     ENTITIES = LoadingStage("entities", "stage:entities")
     WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
                             "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
+    MODEL_FACTORY = LoadingStage("applying model factories", "stage:modelfactory:prepare",
+                                 "stage:modefactory:use", "stage:modelfactory:bake", "stage:blockstatefactory:prepare",
+                                 "stage:blockstatefactory:use", "stage:blockstatefactory:bake")
     BLOCKSTATE = LoadingStage("blockstate loading phase", "stage:blockstate:register_loaders",
                               "stage:model:blockstate_search", "stage:model:blockstate_create")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_search:intern",
