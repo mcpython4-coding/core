@@ -35,18 +35,23 @@ def load_blocks():
 
     # missing: air
 
-    full_template.setName("stone").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("granite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("polished_granite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("diorite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("polished_diorite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("andesite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("polished_andesite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("stone").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    full_template.setName("granite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    full_template.setName("polished_granite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("diorite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    full_template.setName("polished_diorite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("andesite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("polished_andesite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
     full_template.setName("dirt").setStrenght(.5).setBestTools(ToolType.SHOVEL).finish()
     full_template.setName("coarse_dirt").setStrenght(.5).setBestTools(ToolType.SHOVEL).finish()
     full_template.setName("podzol").setDefaultModelState({"snowy": "false"}).setStrenght(.5).setBestTools(
         ToolType.SHOVEL).finish()
-    full_template.setName("cobblestone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("cobblestone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
     full_template.setName("oak_planks").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
     full_template.setName("spruce_planks").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
@@ -65,9 +70,9 @@ def load_blocks():
     falling_template.setName("red_sand").setStrenght(.5).setBestTools(ToolType.SHOVEL).finish()
     falling_template.setName("gravel").setStrenght(.6).setBestTools(ToolType.SHOVEL).finish()
 
-    full_template.setName("gold_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("iron_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("coal_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("gold_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(3).finish()
+    full_template.setName("iron_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
+    full_template.setName("coal_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
     log_template.setName("oak_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("spruce_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
@@ -115,13 +120,14 @@ def load_blocks():
 
     full_template.setName("glass").setAllSideSolid(False).setStrenght(.3).setBestTools(ToolType.PICKAXE).finish()
 
-    full_template.setName("lapis_ore").setStrenght(3).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("lapis_block").setStrenght(3.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("lapis_ore").setStrenght(3).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
+    full_template.setName("lapis_block").setStrenght(3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
 
     # missing: dispenser
 
-    full_template.setName("sandstone").setBestTools(ToolType.PICKAXE).setStrenght(.8).finish()
-    full_template.setName("cut_sandstone").setBestTools(ToolType.PICKAXE).setStrenght(.8).finish()
+    full_template.setName("sandstone").setBestTools(ToolType.PICKAXE).setStrenght(.8).setMinimumToolLevel(1).finish()
+    full_template.setName("cut_sandstone").setBestTools(ToolType.PICKAXE).setStrenght(.8).setMinimumToolLevel(
+        1).finish()
 
     # missing: note block; white, orange, magenta, light blue, yellow, lime, pink, gray, light gray, cyan, purple, blue,
     # brown, green, red and black bed; powered and detector rail, sticky piston, cobweb, grass, fern, dead bush,
@@ -147,28 +153,33 @@ def load_blocks():
     # missing: dandelion, poppy, blue orchid, allium, azure bluet, red tulip, orange tulip, white tulip, pink tulip,
     # oxeye daisy, cornflower, wither rose, lily of the valley, brown mushroom
 
-    full_template.setName("gold_block").setStrenght(3., 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("iron_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("gold_block").setStrenght(3., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        3).finish()
+    full_template.setName("iron_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        2).finish()
 
-    full_template.setName("bricks").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("bricks").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
     # missing: tnt
 
     full_template.setName("bookshelf").setStrenght(1.5).setBestTools(ToolType.AXE).finish()
 
-    full_template.setName("mossy_cobblestone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("obsidian").setStrenght(50., 1200.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("mossy_cobblestone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("obsidian").setStrenght(50., 1200.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
     # missing: torch, fire, spawner, oak, spruce, birch, jungle, acacia and dark oak stairs, redstone wire
 
-    full_template.setName("diamond_ore").setStrenght(3.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("diamond_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("diamond_ore").setStrenght(3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(3).finish()
+    full_template.setName("diamond_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        3).finish()
 
     # missing: wheat, farmland; oak, spruce, birch, jungle, acacia and dark oak signs & doors & pressure plates, ladder,
     # rail, lever, stone pressure plate
 
     full_template.setName("redstone_ore").setStrenght(3.).setDefaultModelState({"lit": "false"}).setBestTools(
-        ToolType.PICKAXE).finish()
+        ToolType.PICKAXE).setMinimumToolLevel(3).finish()
 
     # missing: redstone torch, stone button, snow
 
@@ -183,7 +194,7 @@ def load_blocks():
     # missing: sugar can, jukebox
 
     full_template.setName("pumpkin").setStrenght(1.).setBestTools(ToolType.AXE).finish()
-    full_template.setName("netherrack").setStrenght(.4).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("netherrack").setStrenght(.4).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     full_template.setName("soul_sand").setStrenght(.5).setSpeedMultiplier(.4).setBestTools(ToolType.SHOVEL).finish()
     full_template.setName("glowstone").setStrenght(.3).setBestTools(ToolType.PICKAXE).finish()
 
@@ -192,7 +203,7 @@ def load_blocks():
     full_template.setName("carved_pumpkin").setHorizontalOrientable().setStrenght(1.).setBestTools(
         ToolType.AXE).finish()
     full_template.setName("jack_o_lantern").setHorizontalOrientable().setStrenght(1.).setBestTools(
-        ToolType.AXE).finish()
+        ToolType.AXE).setBlockItemGeneratorState({"facing": "east"}).finish()
 
     # missing: cake, repeater
 
@@ -202,10 +213,14 @@ def load_blocks():
 
     # missing: oak, spruce, birch, jungle, acacia and dark oak trapdoors
 
-    full_template.setName("stone_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("mossy_stone_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("cracked_stone_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("chiseled_stone_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("stone_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("mossy_stone_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("cracked_stone_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE). \
+        setMinimumToolLevel(1).finish()
+    full_template.setName("chiseled_stone_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE). \
+        setMinimumToolLevel(1).finish()
 
     # missing: infested stone, cobblestone, stone bricks, mossy stone bricks, cracked stone bricks and chiseled stone
     # bricks; brown and red mushroom block, iron bars, glass pane
@@ -220,20 +235,23 @@ def load_blocks():
 
     # missing: lily pad
 
-    full_template.setName("nether_bricks").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("nether_bricks").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
     # missing: nether brick stairs, nether wart, enchanting table, brewing stand, cauldron, end portal, end portal
     # frame
 
-    full_template.setName("end_stone").setStrenght(3., 9.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("end_stone").setStrenght(3., 9.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
     # missing: draggon egg, redstone lamp, cocoa, sandstone stairs
 
-    full_template.setName("emerald_ore").setStrenght(3.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("emerald_ore").setStrenght(3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(3).finish()
 
     # missing: tripwire hook, tripwire
 
-    full_template.setName("emerald_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("emerald_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        3).finish()
 
     # missing: beacon, flower pot; potted oak, spruce, birch, jungle, acacia and dark oak sapling, fern, dandelion,
     # poppy, blue orchid, allium, azure bluet, red tulip, orange tulip, white tulip, pink tulip, oxeye daisy,
@@ -242,19 +260,22 @@ def load_blocks():
     # zombie head, player head, creeper head, dragon head, anvil, chipped anvil, damaged anvil, trapped chest,
     # light & heavy weighted pressure plate, comparator, daylight detector
 
-    full_template.setName("redstone_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("nether_quartz_ore").setStrenght(3.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("redstone_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        3).finish()
+    full_template.setName("nether_quartz_ore").setStrenght(3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        3).finish()
 
     # missing: hopper
 
-    full_template.setName("quartz_block").setStrenght(.8).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("chiseled_quartz_block").setStrenght(.8).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("quartz_block").setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(3).finish()
+    full_template.setName("chiseled_quartz_block").setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        3).finish()
 
     # missing: quartz stairs, activator rail, dropper
 
     for color in colors:
         full_template.setName("{}_terracotta".format(color)).setStrenght(1.25, 4.2).setBestTools(
-            ToolType.PICKAXE).finish()
+            ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
     # missing colored glass panes, slime block
 
@@ -263,29 +284,40 @@ def load_blocks():
 
     # missing: iron trapdoor
 
-    full_template.setName("prismarine").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("prismarine_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("dark_prismarine").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("prismarine_slab").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("prismarine_brick_slab").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("dark_prismarine_slab").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("prismarine").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("prismarine_bricks").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("dark_prismarine").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("prismarine_slab").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("prismarine_brick_slab").setStrenght(1.5, 6.).setBestTools(
+        ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("dark_prismarine_slab").setStrenght(1.5, 6.).setBestTools(
+        ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
     # missing: prismarine stairs, prismarine brick stairs, dark prismarine stairs
 
-    full_template.setName("sea_lantern").setStrenght(.3).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("sea_lantern").setStrenght(.3).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
     log_template.setName("hay_block").setStrenght(.5).finish()
 
-    full_template.setName("terracotta").setStrenght(1.25, 4.2).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("terracotta").setStrenght(1.25, 4.2).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
-    full_template.setName("coal_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("coal_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
     full_template.setName("packed_ice").setStrenght(.5).setSpeedMultiplier(1.98).setBestTools(ToolType.PICKAXE).finish()
 
     # missing: sunflower, lilac, rose bush, peony, tall grass, large fern, colored banners
 
-    full_template.setName("red_sandstone").setStrenght(.8).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("chiseled_red_sandstone").setStrenght(.8).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("cut_red_sandstone").setStrenght(.8).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("red_sandstone").setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("chiseled_red_sandstone").setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("cut_red_sandstone").setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
     # missing: red sandstone stairs
 
@@ -295,37 +327,56 @@ def load_blocks():
     slab_template.setName("jungle_slab").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
     slab_template.setName("acacia_slab").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
     slab_template.setName("dark_oak_slab").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
-    slab_template.setName("stone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("smooth_stone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("sandstone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("cut_sandstone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("petrified_oak_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("cobblestone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("brick_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("stone_brick_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("nether_brick_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("quartz_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("red_sandstone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("cut_red_sandstone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("purpur_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
+    slab_template.setName("stone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("smooth_stone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("sandstone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("cut_sandstone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("petrified_oak_slab").setStrenght(2., 6.).setBestTools(ToolType.AXE).finish()
+    slab_template.setName("cobblestone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("brick_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("stone_brick_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("nether_brick_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("quartz_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("red_sandstone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    slab_template.setName("cut_red_sandstone_slab").setStrenght(2., 6.).setBestTools(
+        ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("purpur_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
-    full_template.setName("smooth_stone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("smooth_sandstone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("smooth_quartz").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
-    full_template.setName("smooth_red_sandstone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("smooth_stone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("smooth_sandstone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("smooth_quartz").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    full_template.setName("smooth_red_sandstone").setStrenght(2., 6.).setBestTools(
+        ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
     # missing: wooden doors, end rod, chorus plant, chorus flower
 
-    full_template.setName("purpur_block").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
-    log_template.setName("purpur_pillar").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("purpur_block").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
+    log_template.setName("purpur_pillar").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
     # missing: purpur stairs
 
-    full_template.setName("end_stone_bricks").setStrenght(3., 9.).setBestTools(ToolType.PICKAXE).finish()
+    full_template.setName("end_stone_bricks").setStrenght(3., 9.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
     # missing: beetroots, grass path, end gateway, repeating command block, chain command block
 
-    full_template.setName("frosted_ice").setSpeedMultiplier(0.98).setStrenght(.5).setDefaultModelState("age=0").\
+    full_template.setName("frosted_ice").setSpeedMultiplier(0.98).setStrenght(.5).setDefaultModelState("age=0"). \
         setBestTools(ToolType.PICKAXE).finish()
     full_template.setName("magma_block").setStrenght(.5).setBestTools(ToolType.PICKAXE).finish()
     full_template.setName("nether_wart_block").setStrenght(1.).setBestTools(ToolType.PICKAXE).finish()
@@ -335,7 +386,8 @@ def load_blocks():
     # missing: structure void, observer, colored glazed terracotta
 
     for color in colors:
-        full_template.setName("{}_concrete".format(color)).setStrenght(1.8).setBestTools(ToolType.PICKAXE).finish()
+        full_template.setName("{}_concrete".format(color)).setStrenght(1.8).setBestTools(ToolType.PICKAXE). \
+            setMinimumToolLevel(1).finish()
         falling_template.setName("{}_concrete_powder".format(color)).setStrenght(.5).setBestTools(
             ToolType.SHOVEL).finish()
 
@@ -351,19 +403,19 @@ def load_blocks():
     # diorite and granite stairs; mossy stone brick stairs, end stone brick stairs, stone stairs, smooth sandstone
     # stairs, smooth quartz stairs; granite, andesite and diorite stairs; red nether brick stairs, smooth red sandstone
 
-    slab_template.setName("polished_granite_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("smooth_red_sandstone_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("mossy_stone_brick_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("polished_diorite_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("mossy_cobblestone_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("end_stone_brick_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("smooth_sandstone_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("smooth_quartz_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("granite_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("andesite_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("red_nether_brick_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("polished_andesite_slab").setBestTools(ToolType.PICKAXE).finish()
-    slab_template.setName("diorite_slab").setBestTools(ToolType.PICKAXE).finish()
+    slab_template.setName("polished_granite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("smooth_red_sandstone_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("mossy_stone_brick_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("polished_diorite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("mossy_cobblestone_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("end_stone_brick_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("smooth_sandstone_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("smooth_quartz_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("granite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("andesite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("red_nether_brick_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("polished_andesite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    slab_template.setName("diorite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
     # missing: scaffolding, loom, smoker, blast furnace, cartography table, fletching table, grindstone, lectern,
     # smithing table, stonecutter, bell, lantern, campfire, sweet berry bush, structure block, jigsaw, composter, bee

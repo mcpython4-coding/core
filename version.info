@@ -1071,7 +1071,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed issue 184: exception when printing exception with non-str info
 [uuk]: fixed issue 186: event "worldgen:chunk:finished" was only called for direct-generation processes
 [uuk]: fixed issue 187: exceptions when generating chunks from main menu without content
-[uuk]: implemented forge model decoder
+[github]: end of dev-cycle 1
 [uuk]: version-parameter of Mod.__init__ accepts now also string with '.' between the version parts and an list
 [uuk]: Mod.add_load_default_resources accepts now an path_name parameter setting the namespace when different from mod
        name
@@ -1089,4 +1089,4 @@ sstarted these clone on 12th of July, 2019
        see Blocks.py
 [uuk]: fixed issue 190, 191
 [uuk]: added BLAST_RESISTANCE-attribute to Block
-
+[github]: end of dev-cycle 2

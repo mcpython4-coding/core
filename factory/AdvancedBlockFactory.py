@@ -32,7 +32,7 @@ class FullCube(IAdvancedBlockFactoryMode):
     NAME = "minecraft:model_full_cube"
 
     REQUIRED_SETTINGS = [("texture",), ("textures",)]
-    OPTIONAL_SETTINGS = ["solid", "alpha_enable"]
+    OPTIONAL_SETTINGS = []
 
     @classmethod
     def work(cls, factory_instance, settings: dict):
@@ -47,6 +47,36 @@ class FullCube(IAdvancedBlockFactoryMode):
             obj.finish()
         factory.BlockModelFactory.NormalBlockStateFactory().setName(factory_instance.name).addVariant(
             "default", factory_instance.name).finish()
+
+
+@G.registry
+class SlabBlock(IAdvancedBlockFactoryMode):
+    NAME = "minecraft:model_slab_block"
+
+    REQUIRED_SETTINGS = [("texture",)]
+    OPTIONAL_SETTINGS = []
+
+    @classmethod
+    def work(cls, factory_instance, settings: dict):
+        if "texture" in settings:
+            assert type(settings["texture"]) == str
+            tex = settings["texture"]
+            factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("block/slab"). \
+                setTexture("top", tex).setTexture("bottom", tex).setTexture("side", tex).finish()
+            factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name+"_top").setParent(
+                "block/slab_top").setTexture("top", tex).setTexture("bottom", tex).setTexture("side", tex).finish()
+            factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent(
+                "block/cube_all_full").setTexture("all", tex).finish()
+        elif "textures" in settings:
+            assert type(settings["textures"]) == dict
+            obj = factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("block/cube")
+            obj.textures = settings["textures"]
+            obj.finish()
+        factory.BlockModelFactory.NormalBlockStateFactory().setName(factory_instance.name).addVariant(
+            "type=bottom", factory_instance.name).addVariant("type=top", factory_instance.name+"_top").addVariant(
+            "type=double", factory_instance.name+"_full").finish()
+
+        factory_instance.block_factory.setSlab()
 
 
 class SimpleBlockFactoryHelper(factory.BlockFactory.BlockFactory):
