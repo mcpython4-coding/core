@@ -1090,3 +1090,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed issue 190, 191
 [uuk]: added BLAST_RESISTANCE-attribute to Block
 [github]: end of dev-cycle 2
+[uuk]: improved exception handling on missing blockstate annotation
+[uuk]: fixed AdvancedBlockFactory [issue 192]

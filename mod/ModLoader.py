@@ -215,6 +215,8 @@ class ModLoaderAnnotation:
         :param function: the function to use
         :return: the function annotated
         """
+        if self.modname not in G.modloader.mods:
+            self.modname = "minecraft"
         G.modloader.mods[self.modname].eventbus.subscribe(self.eventname, function, info=self.info)
         return function
 

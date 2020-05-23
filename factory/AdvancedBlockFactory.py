@@ -132,7 +132,7 @@ class AdvancedBlockFactory:
     def finish(self):
         assert self.mode is not None
         assert self.settings is not None or len(self.mode.REQUIRED_SETTINGS) == 0
-        k = list(self.settings.keys())
+        k = tuple(self.settings.keys())
         assert k in self.mode.REQUIRED_SETTINGS, "configuration MUST be allowed!"
         assert self.name is not None
         modname, blockname = tuple(self.name.split(":"))

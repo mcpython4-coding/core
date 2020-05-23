@@ -44,9 +44,15 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
             from versions before this snapshot:
                 - data packs may not get unloaded when they needed to
 
-    changelog of dev-cycle 3 [planned: advanced rendering functions]
-    changelog of dev-cycle 4 [planned: UI improvements]
-    changelog of dev-cycle 5 [planned: State-definition files]
+    changelog of dev-cycle 3 [State-definition files]
+        - improved exception handling
+
+        fixed issues:
+            from previous cycle:
+                - AdvancedBlockFactory was not working
+
+    changelog of dev-cycle 4 [planned: advanced rendering functions]
+    changelog of dev-cycle 5 [planned: UI improvements]
     changelog of dev-cycle 6 [planned: preparation for client/server: IWorld-interface and integrated-impl.]
 
     changelog of dev-cycle [last] [planned: bug fixing of work, overall bug fixing, testing]
