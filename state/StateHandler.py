@@ -10,6 +10,7 @@ import globals as G
 from . import State
 import logger
 import event.TickHandler
+import state.StateConfigFile
 
 
 class StateHandler:
@@ -26,7 +27,7 @@ class StateHandler:
 
     def _switch_to(self, statename):
         if statename not in self.states:
-            logger.println("[WARNING] state {} does not exists".format(statename))
+            logger.println("[WARNING] state '{}' does not exists".format(statename))
             return
         self.CANCEL_SWITCH_STATE = False
         G.eventhandler.call("state:switch:pre", statename)
@@ -39,8 +40,10 @@ class StateHandler:
         G.eventhandler.call("state:switch:post", statename)
         logger.println("[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename), write_into_console=False)
 
-    def add_state(self, state: State.State):
-        self.states[state.NAME] = state
+    def add_state(self, state_instance: State.State):
+        self.states[state_instance.NAME] = state_instance
+        if state_instance.CONFIG_LOCATION is not None:
+            state.StateConfigFile.get_config(state_instance.CONFIG_LOCATION).inject(state_instance)
 
     def update_exclusive(self):
         G.window.set_exclusive_mouse(self.active_state.is_mouse_exclusive())

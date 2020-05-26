@@ -3,29 +3,33 @@ This is an reminder-file for when to remove them & what.
 So, here follows an list of deprecation's:
 
 general strategy for feature moving:
-    1. add new method linking to old
-    2. link old to new
-    3. remove old
-
-since 19th of february, 2020 (unknown when to remove, but maybe before 1.2.0):
-    Item.get_name, Block.get_name, State.get_name
-    Block.is_breakable, Block.get_all_model_states, Block.get_hardness, Block.get_minimum_tool_level,
-        Block.get_best_tools, Block.get_custom_block_renderer, Block.modify_block_item
-    Inventory.create_slots, Inventory.activate, Inventory.deactivate
-    Item.get_max_stack_size
-    State.on_activate, State.on_deactivate
+    1. mark for removal in the future
+    2. add new method linking to old, deprecate old
+    3. link old to new
+    4. remove old, add line stating: # function <XY> removed in <version>
+    5. remove this
 
 marked for removal for alpha 1.2.0:
-    BoxModel.copy() together with BoxModel.__data, BoxModel'S data setter
-    util/math/tex_coords, util/math/cube_vertices
-    block.BlockConfig.ENTRYS, block.BlockEnderChest.BlockChest
-    BlockFactory._finish, ItemFactory._finish
+    [2] BoxModel.copy() together with BoxModel.__data, BoxModel'S data setter
+    [2] util/math/tex_coords, util/math/cube_vertices
+    [2] block.BlockConfig.ENTRYS, block.BlockEnderChest.BlockChest
+    [2] BlockFactory._finish, ItemFactory._finish
 
 marked for removal in alpha 1.3.0:
-    ModLoader._load_from_old_json, ModLoader.load_new_json
-    Block.get_provided_slots
-    Inventory._get_position
-    config.TICKS_PER_SEC, config.WALKING_SPEED, config.SPRINTING_SPEED, config.FLYING_SPEED,
+    [2] ModLoader._load_from_old_json, ModLoader.load_new_json
+    [2] Block.get_provided_slots
+    [2] Inventory._get_position
+    [2] config.TICKS_PER_SEC, config.WALKING_SPEED, config.SPRINTING_SPEED, config.FLYING_SPEED,
         config.FLYING_SPRINTING_SPEED, config.GAMEMODE_3_SPEED, config.GAMEMODE_3_SPRINTING_SPEED, config.PLAYER_HEIGHT
-    BlockFactory.setBrakeAble
-    BlockFactory-objects with no set hardness & blast resistance
+    [2] BlockFactory.setBrakeAble
+    [2] BlockFactory-objects with no set hardness & blast resistance
+    [2] State.on_activate(), State.on_deactivate(), State.get_parts(), StatePart.get_sub_parts()
+    [2] Inventory.create_slots(), Inventory.activate(), Inventory.deactivate()
+    [2] Block.is_breakable, Block.get_all_model_states, Block.get_hardness, Block.get_minimum_tool_level,
+        Block.get_best_tools, Block.get_custom_block_renderer, Block.modify_block_item
+    [2] Item.get_max_stack_size
+    [2] State.is_mouse_exclusive()
+
+marked for removal in alpha 1.4.0:
+    [2] Item.get_name, Block.get_name, State.get_name
+    [1] State WITHOUT StateConfigFile, State.parts, State.bind_to_eventbus

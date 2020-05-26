@@ -1092,3 +1092,5 @@ sstarted these clone on 12th of July, 2019
 [github]: end of dev-cycle 2
 [uuk]: improved exception handling on missing blockstate annotation
 [uuk]: fixed AdvancedBlockFactory [issue 192]
+[uuk]: added StateConfigFile-system making parsing of state config files possible
+[uuk]: deprecated a lot of functions, specified the old deprecations more

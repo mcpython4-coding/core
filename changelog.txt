@@ -46,6 +46,8 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
 
     changelog of dev-cycle 3 [State-definition files]
         - improved exception handling
+        - added StateConfigFile.py handling State-confog-files
+        - deprecated some more functions, attributes, etc.
 
         fixed issues:
             from previous cycle:

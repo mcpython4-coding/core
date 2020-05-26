@@ -157,7 +157,8 @@ class LoadingStages:
     RECIPE = LoadingStage("recipe loading phase", "stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
     INVENTORIES = LoadingStage("inventory loading phase", "stage:inventories:pre", "stage:inventories",
                                "stage:inventories:post")
-    STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states")
+    STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states", "stage:state_config:parser",
+                          "stage:state_config:generate", "stage:states:post")
     COMMANDS = LoadingStage("command loading phase", "stage:command:entries", "stage:commands",
                             "stage:command:selectors", "stage:command:gamerules")
     LOOT_TABLES = LoadingStage("loot tables", "stage:loottables:locate", "stage:loottables:functions",

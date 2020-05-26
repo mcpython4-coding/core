@@ -218,9 +218,9 @@ def read(file, mode=None):
             try:
                 return x.read(file, mode)
             except:
-                logger.println("exception during loading file {}".format(file))
+                logger.println("exception during loading file '{}'".format(file))
                 raise
-    raise ValueError("can't find resource {} in any path".format(file))
+    raise ValueError("can't find resource '{}' in any path".format(file))
 
 
 def get_all_entries(directory: str) -> list:
@@ -245,6 +245,11 @@ def get_all_entries_special(directory: str) -> list:
 
 
 def add_resources_by_modname(modname, pathname=None):
+    """
+    loads the default data locations into the system for an given namespace
+    :param modname: the name of the mod for the loading stages
+    :param pathname: the namespace or None if the same as the mod name
+    """
     if pathname is None: pathname = modname
     from rendering.model.BlockState import BlockStateDefinition
     import Language

@@ -1,0 +1,34 @@
+{
+  "mouse_interactive": true,
+  "parts": {
+    "game_header": {
+      "type": "minecraft:ui_lable_default",
+      "text": "#*menu.game*#",
+      "anchor_win": "MM",
+      "anchor_lab": "MM",
+      "position":[0, 100],
+      "color": [255, 255, 255, 255]
+    },
+    "game_single_player": {
+      "type": "minecraft:ui_button_default",
+      "size": [200, 15],
+      "text": "#*menu.singleplayer*#",
+      "position": [0, 0],
+      "anchor_win": "MM",
+      "anchor_but": "MM",
+      "on_press": "on_new_game_press"
+    },
+    "game_quit": {
+      "type": "minecraft:ui_button_default",
+      "size": [200, 15],
+      "text": "#*menu.quit*#",
+      "position": [0, -20],
+      "anchor_win": "MM",
+      "anchor_but": "MM",
+      "on_press": "on_quit_game_press"
+    },
+    "background": {
+      "type": "minecraft:config_background"
+    }
+  }
+}

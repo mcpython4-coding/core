@@ -102,7 +102,10 @@ except:  # when we crash on loading, make sure that all resources are closed
     ResourceLocator.close_all_resources()
     logger.write_exception()
     logger.add_funny_line()
-    G.tmp.cleanup()
+    try:
+        G.tmp.cleanup()
+    except NameError:
+        pass
     raise
 
 
