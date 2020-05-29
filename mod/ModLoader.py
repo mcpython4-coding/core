@@ -449,7 +449,7 @@ class ModLoader:
                     if "version" not in entry:
                         logger.println("[INVALID] invalid entry found in '{}': missing 'version'-entry".format(file))
                         continue
-                    version = tuple(entry["version"].split("."))
+                    version = tuple([int(e) for e in entry["version"].split(".")])
                     modinstance = mod.Mod.Mod(modname, version)
                     if "depends" in entry:
                         for depend in entry["depends"]:

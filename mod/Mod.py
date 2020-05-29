@@ -10,6 +10,7 @@ import globals as G
 import event.EventBus
 import event.EventHandler
 import typing
+import typing
 
 
 class ModDependency:
@@ -52,12 +53,14 @@ class ModDependency:
             return any([self.__testfor(mod.version, e) for e in self.versions])
         return False
 
-    def __testfor(self, version, args: tuple) -> bool:
+    @classmethod
+    def __testfor(cls, version, args: tuple) -> bool:
         """
         will test for the arrival of the dependency
         :param version: the version found
         :param args: optional args found
         """
+        if type(version) == str: version = version.split(".")
         if type(args[0]) == int: return version >= args
         if len(args) == 1: return version >= args[0]
         if len(args) == 2: return args[1] >= version >= args[0]
@@ -97,7 +100,7 @@ class Mod:
     mod.json file.
     """
 
-    def __init__(self, name: str, version: tuple):
+    def __init__(self, name: str, version: typing.Union[tuple, str, set, list]):
         """
         creates an new mod
         :param name: the name of the mod
@@ -105,7 +108,7 @@ class Mod:
         """
         if type(version) != tuple:
             if type(version) == str:
-                version = version.split(".")
+                version = tuple([int(e) for e in version.split(".")])
             elif type(version) in (set, list):
                 version = tuple(version)
             else:

@@ -100,13 +100,13 @@ try:
 except:  # when we crash on loading, make sure that all resources are closed
     import ResourceLocator
     ResourceLocator.close_all_resources()
-    logger.write_exception()
+    logger.write_exception("general loading exception")
     logger.add_funny_line()
     try:
         G.tmp.cleanup()
     except NameError:
         pass
-    raise
+    sys.exit(-1)
 
 
 if __name__ == "__main__":
@@ -115,10 +115,9 @@ if __name__ == "__main__":
         main()
     except SystemExit: pass  # sys.exit() was called
     except:
-        logger.write_exception()
+        logger.write_exception("general system exception leading into an crash")
         logger.add_funny_line()
         G.tmp.cleanup()
-        raise
     finally:
         import ResourceLocator
         ResourceLocator.close_all_resources()
