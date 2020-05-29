@@ -32,6 +32,10 @@ import logger
 
 
 class IResourceLocation:
+    """
+    base class for an class holding an link to an resource system
+    """
+
     @staticmethod
     def is_valid(path: str) -> bool: raise NotImplementedError()
 
@@ -45,6 +49,10 @@ class IResourceLocation:
 
 
 class ResourceZipFile(IResourceLocation):
+    """
+    implementation for archives
+    """
+
     @staticmethod
     def is_valid(path: str) -> bool: return zipfile.is_zipfile(path)
 
@@ -83,6 +91,10 @@ class ResourceZipFile(IResourceLocation):
 
 
 class ResourceDirectory(IResourceLocation):
+    """
+    implementation for raw directories
+    """
+
     @staticmethod
     def is_valid(path: str) -> bool:
         return os.path.isdir(path)

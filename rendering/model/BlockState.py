@@ -197,22 +197,6 @@ class DefaultDecoder(IBlockStateDecoder):
             block.NAME, block.position, data, [e[0] for e in self.states]))
 
 
-"""
-@G.registry
-class ForgeVersionDecoder(IBlockStateDecoder):
-    @classmethod
-    def is_valid(cls, data: dict) -> bool:
-        return "forge_marker" in data and data["forge_marker"] == 1 and "mod_marker" not in data
-
-    def __init__(self, data: dict, block_state):
-        super().__init__(data, block_state)
-
-    def add_face_to_batch(self, block, batch, face):
-        return []
-
-    def transform_to_hitbox(self, block): raise NotImplementedError()"""
-
-
 class BlockStateDefinition:
     TO_CREATE = set()
 

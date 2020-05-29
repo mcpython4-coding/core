@@ -53,7 +53,7 @@ class FullCube(IAdvancedBlockFactoryMode):
 class SlabBlock(IAdvancedBlockFactoryMode):
     NAME = "minecraft:model_slab_block"
 
-    REQUIRED_SETTINGS = [("texture",)]
+    REQUIRED_SETTINGS = [("texture",), ("textures",)]
     OPTIONAL_SETTINGS = []
 
     @classmethod

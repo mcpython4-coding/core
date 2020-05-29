@@ -7,6 +7,8 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 """
+WARNING: the system is outdated and will likely be removed in the future
+
 what does this system do?
     as mentioned in #1 (may be closed when you read this), game loading takes / have taken for some reasons on some
         devices very long (in #1: 30 minutes).

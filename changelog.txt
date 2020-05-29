@@ -16,6 +16,9 @@ planned for the future:
     - an logging update
     - improve item texture atlas system (it seems not very stable)
     - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum
+    - rendering helper class for setting up things like 3d rendering, alpha usage, ...
+    - add an line into logging where the system searches for the location where the error occur and will link the mod
+        caused it into the log
 
 
 changelog of snapshot [next] (theme: feature cleanup & improvements)
@@ -52,6 +55,11 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
         fixed issues:
             from previous cycle:
                 - AdvancedBlockFactory was not working
+
+    changelog of dev-cycle 4
+
+        fixed issues:
+            - mod.json was not parsing version-entry correctly
 
     changelog of dev-cycle 4 [planned: advanced rendering functions]
     changelog of dev-cycle 5 [planned: UI improvements]

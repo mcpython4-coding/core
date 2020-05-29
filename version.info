@@ -1094,3 +1094,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed AdvancedBlockFactory [issue 192]
 [uuk]: added StateConfigFile-system making parsing of state config files possible
 [uuk]: deprecated a lot of functions, specified the old deprecations more
+[uuk]: code improvements

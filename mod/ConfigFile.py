@@ -72,10 +72,10 @@ class IDataMapper:
         raise NotImplementedError()
 
     def serialize(self) -> str:
-        pass
+        raise NotImplementedError()
 
     def deserialize(self, d: StringParsingPool):
-        pass
+        raise NotImplementedError()
 
     def integrate(self, other):
         if type(self) != type(other): raise ValueError("invalid integration mapper target: {} (source: {})".format(
@@ -91,11 +91,11 @@ class ICustomDataMapper(IDataMapper, ABC):
 
     @classmethod
     def valid_value_to_parse(cls, data) -> bool:
-        return False
+        raise NotImplementedError()
 
     @classmethod
     def parse(cls, data) -> IDataMapper:
-        pass
+        raise NotImplementedError()
 
 
 class DictDataMapper(IDataMapper):
@@ -130,7 +130,7 @@ class DictDataMapper(IDataMapper):
             self.value[key] = toDataMapper(value[key])
 
     def serialize(self) -> str:
-        data = "D{"
+        data = "D{\n"
         for key in self.value:
             d = self.value[key][0].serialize()
             d = "    "+"\n    ".join(d.split("\n"))
@@ -367,7 +367,10 @@ class ConfigFile:
         assert d.pop_line() == "PROVIDING_MOD={}".format(self.assigned_mod)
         d.pop_line()
         while len(d.get_line().strip()) == 0: d.pop_line()
-        self.main_tag.integrate(bufferToMapper(d))
+        try:
+            self.main_tag.integrate(bufferToMapper(d))
+        except:
+            logger.write_exception("during loading config file '{}'".format(self.file))
 
     def write(self):
         data = "// mcpython config file\nVERSION=1.0.0\nPROVIDING_MOD={}\nPROVIDING_MOD_VERSION={}\n\n{}".format(

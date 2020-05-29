@@ -43,6 +43,14 @@ inter_home = os.path.dirname(sys.executable).replace("\\", "/")
 
 
 def println(*msg, sep=" ", end="\n", write_into_console=True, write_into_log_file=True):
+    """
+    will print an line into the console with formatting
+    :param msg: the msg to log
+    :param sep: how to separate the elements
+    :param end: how the message ends
+    :param write_into_console: if the data should be written into the console
+    :param write_into_log_file: if the data should be written into the log file
+    """
     msg = [str(e).replace("\\", "/").replace(G.local, "%LOCAL%").replace(inter_home, "%PYTHON%") for e in msg]
     if write_into_console: print(*msg, sep=sep, end=end)
     if write_into_log_file:
@@ -51,6 +59,10 @@ def println(*msg, sep=" ", end="\n", write_into_console=True, write_into_log_fil
 
 
 def write_exception(*info):
+    """
+    write the current exception into console and log
+    :param info: the info to use
+    """
     console = not config.WRITE_NOT_FORMATTED_EXCEPTION
     println("[ERROR][EXCEPTION] gotten exception", write_into_console=console)
     println("-", *["\n-".join([str(e) for e in info])], sep="", write_into_console=console)
@@ -62,6 +74,7 @@ def write_exception(*info):
         println(info, write_into_log_file=False)
         traceback.print_stack()
         traceback.print_exc()
+    add_funny_line()
 
 
 println("""MCPYTHON version {} ({}) running on {}

@@ -144,4 +144,10 @@ issue 181:
 issue 185:
     bug: in big worlds, chunks can get randomly hidden
 
-[186-192]
+issue 193:
+    bug: mod locations are not escaped in logs
+
+issue 194:
+    bug: config files fail to decode empty dict [and possible other empty tags]
+
+[195]
