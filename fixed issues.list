@@ -179,3 +179,4 @@ issue 191: slab textures were upside down; fixed on 20.05.2020 by uuk
 issue 192: AdvancedBlockFactory was failing in some cases; fixed on 20.05.2020 by uuk
 issue 195: parsed mod versions from mod.json files were not parsed into str; fixed on 29.05.2020
 issue 197: TickHandler was trying to tick the function tag for ticks when not in world; fixed on 30.05.2020
+issue 198: Chunk was sharing the default attribute with all instances leading into one big data map; fixed on 30.05.2020

@@ -59,7 +59,7 @@ def reload_chunks():
     dim = G.world.get_active_dimension()
     for i, chunk in enumerate(list(dim.chunks.values())):  # iterate over all active chunks
         G.window.set_caption("preparing chunk {}/{} at {}".format(i + 1, len(dim.chunks), chunk.position))
-        chunk.update_visable(immediate=True)
+        chunk.update_visible(immediate=True)
     G.window.set_caption("finished!")
 
 
