@@ -22,7 +22,7 @@ planned for the future:
     - parser for the new mc dimension config format
 
 
-changelog of snapshot [next] (theme: feature cleanup & improvements)
+changelog of snapshot 20w22a released on 30.05.2020 (theme: feature cleanup & improvements)
     changelog of dev-cycle 1 [optimisations to rendering]
         - optimized block rendering, deprecated some old stuff
         - re-ordered some UV-related stuff, you may want to update your own models
