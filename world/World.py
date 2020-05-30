@@ -36,7 +36,7 @@ class World:
         # todo: add some more variation
         self.spawnpoint: typing.Tuple[int, int] = (random.randint(0, 15), random.randint(0, 15))
         self.dimensions: typing.Dict[int, world.Dimension.Dimension] = {}  # todo: change for str-based
-        G.dimensionhandler.setup_dimensions()
+        G.dimensionhandler.init_dims()
         self.active_dimension: int = 0  # todo: change to str; todo: move to player; todo: make property
         # container for world-related config; contains: seed [build in] todo: move to config class
         self.config: typing.Dict[str, typing.Any] = {}
@@ -274,7 +274,7 @@ class World:
             dimension.chunks = {}
         if remove_dims:
             self.dimensions.clear()
-            G.dimensionhandler.setup_dimensions()
+            G.dimensionhandler.init_dims()
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
         G.window.flying = False

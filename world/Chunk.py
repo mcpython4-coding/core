@@ -245,7 +245,7 @@ class Chunk:
         :param position: The (x, y, z) position of the block to show.
         :param immediate: Whether or not to show the block immediately.
         """
-        if type(position) == Block.Block:
+        if issubclass(type(position), Block.Block):
             position = position.position
         if position not in self.world: return
         if immediate:

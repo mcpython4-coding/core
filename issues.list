@@ -154,4 +154,7 @@ issue 196:
     bug: when picking up an itemstack during holding one, it gets reset
     reproduce: craft one thing with an item in mouse and the item is not picked up
 
-[197-198]
+issue 199:
+    bug: dynamic generated dimension ids are not saved in saves leading into miss-matches when changing dimension
+         list
+    fix: add them to the storage system and re-assign on load

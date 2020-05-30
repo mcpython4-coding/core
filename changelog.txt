@@ -19,6 +19,7 @@ planned for the future:
     - rendering helper class for setting up things like 3d rendering, alpha usage, ...
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log
+    - parser for the new mc dimension config format
 
 
 changelog of snapshot [next] (theme: feature cleanup & improvements)
@@ -57,6 +58,7 @@ changelog of snapshot [next] (theme: feature cleanup & improvements)
                 - AdvancedBlockFactory was not working
 
     changelog of dev-cycle 4
+        - deprecated a lot of stuff
 
         fixed issues:
             - mod.json was not parsing version-entry correctly

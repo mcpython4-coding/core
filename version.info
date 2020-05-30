@@ -1095,3 +1095,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added StateConfigFile-system making parsing of state config files possible
 [uuk]: deprecated a lot of functions, specified the old deprecations more
 [uuk]: code improvements
+[uuk]: Dimension.get_chunk() accepts now also an tuple as position, not only two numbers
