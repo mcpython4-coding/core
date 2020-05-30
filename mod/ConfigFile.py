@@ -154,7 +154,10 @@ class DictDataMapper(IDataMapper):
             if l.startswith("//"): continue
             if "->" in l:
                 obj[l.split(" -> {")[0]] = bufferToMapper(d)
-        d.pop_line()
+        try:
+            d.pop_line()
+        except IndexError:
+            pass
         return obj
 
     def integrate(self, other):

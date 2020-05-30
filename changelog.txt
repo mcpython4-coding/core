@@ -22,74 +22,32 @@ planned for the future:
     - parser for the new mc dimension config format
 
 
+changelog of snapshot [next]
+    changelog of dev-cycle 1
+        - changed version tuple builder for mcpython
+
+        fixed issues:
+            from previous snapshot:
+                - dicts in config file failed to load
+
+
 changelog of snapshot 20w22a released on 30.05.2020 (theme: feature cleanup & improvements)
-    changelog of dev-cycle 1 [optimisations to rendering]
-        - optimized block rendering, deprecated some old stuff
-        - re-ordered some UV-related stuff, you may want to update your own models
+    - optimized block rendering
+    - re-ordered some UV-related stuff, you may want to update your own models
+    - improved dependency system for mods
+    - added config system for mods & internals [incompatible with mc config files]
+    - improved existing factories & added some more factories & entries
+    - improved exception handling
+    - added StateConfigFile.py handling State-confog-files
+    - deprecated a lot of stuff
 
-        fixed issues:
-            from versions before this snapshot:
-                - block updates were not called in every case
-                - walls and fences were not updating their state correctly
-                - during printing an exception, an new exception could occur
-                - event "worldgen:chunk:finished" was not called in most cases
-
-    changelog of dev-cycle 2 [modding improvements]
-        - improved dependency system for mods
-        - deprecated some old stuff
-        - added config system for mods & internals [incompatible with mc config files]
-        - improved existing factories & added some more factories & entries
-
-        fixed issues:
-            from previous cycle:
-                - minecraft version tuple could contain string-instances
-                - slab textures on side were upside down
-
-            from versions before this snapshot:
-                - data packs may not get unloaded when they needed to
-
-    changelog of dev-cycle 3 [State-definition files]
-        - improved exception handling
-        - added StateConfigFile.py handling State-confog-files
-        - deprecated some more functions, attributes, etc.
-
-        fixed issues:
-            from previous cycle:
-                - AdvancedBlockFactory was not working
-
-    changelog of dev-cycle 4
-        - deprecated a lot of stuff
-
-        fixed issues:
-            - mod.json was not parsing version-entry correctly
-
-    changelog of dev-cycle 4 [planned: advanced rendering functions]
-    changelog of dev-cycle 5 [planned: UI improvements]
-    changelog of dev-cycle 6 [planned: preparation for client/server: IWorld-interface and integrated-impl.]
-
-    changelog of dev-cycle [last] [planned: bug fixing of work, overall bug fixing, testing]
-
-
-    planned (some parts may be moved to future snapshots):
-        - fix issues: 80, 157, 175, 176, 177, 178, 181
-        - add support for .obj files for block models
-        - add support for forge block state format, maybe split up the blockstate-loaders into different files
-        - clean up & improve the following elements: (for all: use texture reload event)
-            button: clean up rendering code, maybe use an batch for all parts, listen to the on_resize event for
-                re-calculation
-            image: clean up rendering code, check if it is still working
-            lable: clean up rendering code, can we add possibility to render colored text
-            progress bar: fix issue 174, clean up code, can we make pgb change color over time
-            text input: clean up rendering code, implement navigation & selection
-            slot <-> slot copy: make connection more stable, help gc with deleting when not needed
-        - implement serializer for states making runtime-based changes possible & easier to create new states
-        - implement IWorld-class with abstract interaction functions, add ServerWorld & ClientWorld-instances
-        - add attribute SIDE to globals, add function sideOnly(side: str) making functions only callable when on
-            an given side
-        - improve UI by adding tab/enter support for switching buttons etc.
-        - split up StatePartGame into smaller parts to make code cleaner
-        [more may come]
-
+    fixed issues:
+        from versions before this snapshot:
+            - block updates were not called in every case
+            - walls and fences were not updating their state correctly
+            - during printing an exception, an new exception could occur
+            - event "worldgen:chunk:finished" was not called in most cases
+            - data packs may not get unloaded when they needed to
 
 changelog of release alpha 1.0.1
     fixed bugs:

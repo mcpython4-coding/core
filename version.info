@@ -1096,3 +1096,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: deprecated a lot of functions, specified the old deprecations more
 [uuk]: code improvements
 [uuk]: Dimension.get_chunk() accepts now also an tuple as position, not only two numbers
+[github]: released snapshot 20w22a
+
+[uuk]: fixed issue 194: loading of empty dicts from config file failed

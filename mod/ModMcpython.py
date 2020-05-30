@@ -12,23 +12,25 @@ import logger
 
 VERSION_POST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-if type(config.VERSION_NAME) == str and config.VERSION_NAME[2] == "w":  # snapshot
-    VERSION = (0, 1, int(config.VERSION_NAME[:2]), int(config.VERSION_NAME[3:5]),
-               VERSION_POST.index(config.VERSION_NAME[5]))
-elif type(config.VERSION_NAME) == str:
-    if config.VERSION_NAME.startswith("snapshot dev "):
-        s = config.VERSION_NAME.split(" ")
-        VERSION = (0, 2, int(s[2]), int(s[4]))
+
+def parse_version(string: str) -> tuple:
+    if type(string) == str and string[2] == "w":  # snapshot
+        # type - alpha (0), pre - 1, post - 2, point - 0, a, b, c, build
+        return 0, 1, 2, 0, int(string[:2]), int(string[3:5]), VERSION_POST.index(string[5]), config.DEVELOPMENT_COUNTER
+    elif type(string) == str:
+        if string.startswith("snapshot dev "):
+            previous = parse_version(config.DEVELOPING_FOR)
+            return previous[:-1] + (config.DEVELOPMENT_COUNTER,)
+        else:  # format: [type][a].[b].[c]
+            c = string[1:].split(".")
+            return "abr".index(string[0]), int(c[0]), int(c[1]), int(c[2]), config.DEVELOPMENT_COUNTER
     else:
-        c = config.VERSION_NAME
-        if c[0] in "abr": c = c[1:]
-        VERSION = tuple([int(e) for e in c.split(".")])
-else:
-    logger.println("[WARN] version entry wrong formatted")
-    VERSION = config.VERSION_NAME
+        logger.println("[WARN] version entry {} wrong formatted".format(string))
+        return tuple(string.split("."))
+
 
 # create the mod
-mcpython = mod.Mod.Mod("minecraft", VERSION)
+mcpython = mod.Mod.Mod("minecraft", parse_version(config.VERSION_NAME))
 
 
 def init():

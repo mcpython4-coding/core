@@ -109,7 +109,8 @@ try:
         G.eventhandler.call("game:startup")
         setup()
         run()
-
+except SystemExit:
+    sys.exit(-1)
 except:  # when we crash on loading, make sure that all resources are closed and we cleaned up afterwards
     import ResourceLocator
     ResourceLocator.close_all_resources()
