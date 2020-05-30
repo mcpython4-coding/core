@@ -153,3 +153,5 @@ issue 194:
 issue 196:
     bug: when picking up an itemstack during holding one, it gets reset
     reproduce: craft one thing with an item in mouse and the item is not picked up
+
+[197]

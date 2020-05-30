@@ -36,20 +36,21 @@ class World:
         # todo: add some more variation
         self.spawnpoint: typing.Tuple[int, int] = (random.randint(0, 15), random.randint(0, 15))
         self.dimensions: typing.Dict[int, world.Dimension.Dimension] = {}  # todo: change for str-based
-        self.add_dimension(0, "minecraft:overworld", {'configname': None})
+        G.dimensionhandler.setup_dimensions()
         self.active_dimension: int = 0  # todo: change to str; todo: move to player; todo: make property
-        self.config: typing.Dict[str, typing.Any] = {}  # container for world-related config; contains: seed
-        self.gamerulehandler: typing.Union[world.GameRule.GameRuleHandler, None] = None
+        # container for world-related config; contains: seed [build in] todo: move to config class
+        self.config: typing.Dict[str, typing.Any] = {}
+        self.gamerulehandler: typing.Union[world.GameRule.GameRuleHandler, None] = None  # the gamerule handler fort his world
         self.reset_config()  # will reset the config
         self.CANCEL_DIM_CHANGE: bool = False  # flag for canceling the dim change event
         self.hide_faces_to_ungenerated_chunks: bool = True  # todo: move to configs
-        self.filename: str = "tmp" if filename is None else filename  # the file-name to use
-        self.savefile: storage.SaveFile.SaveFile = storage.SaveFile.SaveFile(self.filename)  # the save file
+        self.filename: str = "tmp" if filename is None else filename  # the file-name to use, todo: make None if not needed
+        self.savefile: storage.SaveFile.SaveFile = storage.SaveFile.SaveFile(self.filename)  # the save file instance
 
         # when in an network, stores an reference to all other players
         self.players: typing.Dict[str, world.player.Player] = {}
         # self.add_player("unknown", add_inventories=False)
-        self.active_player: str = "unknown"  # todo: make property
+        self.active_player: str = "unknown"  # todo: make property, make None-able & set default None when not in world
 
     def add_player(self, name: str, add_inventories: bool = True, override: bool = True):
         """
@@ -93,10 +94,9 @@ class World:
 
         todo: move to player
         """
-        if self.active_dimension not in self.dimensions: return
-        return self.dimensions[self.active_dimension]
+        return self.get_dimension(self.active_dimension)
 
-    def add_dimension(self, dim_id: int, name: str, config=None, dim_config=None) -> world.Dimension.Dimension:
+    def add_dimension(self, dim_id: int, name: str, dim_config=None, config=None) -> world.Dimension.Dimension:
         """
         will add an new dimension into the system
         :param dim_id: the id to create under
@@ -128,8 +128,16 @@ class World:
         self.change_chunks(None, sector)
         G.eventhandler.call("dimension:chane:post", old, dim_id)
 
+    def get_dimension(self, dim_id: int) -> world.Dimension.Dimension:
+        """
+        will get an dimension with an special id
+        :param dim_id: the id to use
+        :return: the dimension instance or None if it does not exist
+        """
+        if dim_id in self.dimensions: return self.dimensions[dim_id]
+
     def hit_test(self, position: typing.Tuple[float, float, float], vector: typing.Tuple[float, float, float],
-                 max_distance: int = 8) -> typing.Any[
+                 max_distance: int = 8) -> typing.Union[
             typing.Tuple[typing.Tuple[int, int, int], typing.Tuple[int, int, int], typing.Tuple[float, float, float]],
             typing.Tuple[None, None, None]]:
         """
@@ -256,7 +264,7 @@ class World:
         :param remove_dims: if dimensions should be cleared
         :param filename: the new filename if it changes
         :param add_player: if the player should be added
-        todo: make splitted up into smaller functions
+        todo: make split up into smaller functions
         """
         for dimension in self.dimensions.values():
             dimension: world.Dimension.Dimension
@@ -266,9 +274,7 @@ class World:
             dimension.chunks = {}
         if remove_dims:
             self.dimensions.clear()
-            for dimension in G.dimensionhandler.dimensions:
-                self.add_dimension(dimension, G.dimensionhandler.dimensions[dimension].name,
-                                   G.dimensionhandler.dimensions[dimension].config)
+            G.dimensionhandler.setup_dimensions()
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
         G.window.flying = False

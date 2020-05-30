@@ -56,6 +56,11 @@ class DimensionHandler:
         for dim in self.dimensions.values():
             G.world.add_dimension(dim.id, dim.name, config=dim.config)
 
+    def setup_dimensions(self):
+        for dimension in self.dimensions:
+            definition: DimensionDefinition = self.dimensions[dimension]
+            G.world.add_dimension(dimension, definition.name, definition.config)
+
 
 G.dimensionhandler = DimensionHandler()
 
