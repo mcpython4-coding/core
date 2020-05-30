@@ -12,6 +12,8 @@ import util.math
 import random
 import config
 import chat.DataPack
+import state.StatePartGame
+import logger
 
 
 class TickHandler:
@@ -51,16 +53,17 @@ class TickHandler:
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
                     return
-        if self.enable_random_ticks:
-            pyglet.clock.schedule_once(self.send_random_ticks, 0)
+        if any(type(x) == state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
+            chat.DataPack.datapackhandler.try_call_function("#minecraft:tick")
+            if self.enable_random_ticks:
+                pyglet.clock.schedule_once(self.send_random_ticks, 0)
         while len(self.execute_array) > 0:
             func, args, kwargs = tuple(self.execute_array.pop(0))
             try:
                 func(*args, **kwargs)
             except:
-                print(func, args, kwargs)
-                raise
-        chat.DataPack.datapackhandler.try_call_function("#minecraft:tick")
+                logger.write_exception("exception during invoking", "{}({},{})".format(
+                    func, ", ".join(args), ", ".join(["{}={}".format(key, kwargs[key]) for key in kwargs])))
 
     def schedule_once(self, function, *args, **kwargs):
         """
@@ -110,7 +113,8 @@ class TickHandler:
                             position = (x + ddx, ddy, z + ddz)
                             blockinst = G.world.get_active_dimension().get_block(position)
                             if blockinst is not None and type(blockinst) != str:
-                                blockinst.on_random_update()
+                                if blockinst.ENABLE_RANDOM_TICKS:
+                                    blockinst.on_random_update()
 
 
 handler = G.tickhandler = TickHandler()

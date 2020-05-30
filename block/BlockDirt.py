@@ -8,6 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 from . import Block
+import util.enums
 
 
 @G.registry
@@ -17,7 +18,13 @@ class BlockDirt(Block.Block):
     todo: implement -> grass convert
     """
 
-    NAME = "minecraft:dirt"
+    NAME: str = "minecraft:dirt"
+
+    HARDNESS = .5
+    BLAST_RESISTANCE = .5
+    BEST_TOOLS_TO_BREAK = [util.enums.ToolType.SHOVEL]
+
+    ENABLE_RANDOM_TICKS = True
 
     def on_random_update(self):
         x, y, z = self.position

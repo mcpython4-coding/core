@@ -15,7 +15,11 @@ import item.ItemTool
 
 @G.registry
 class BlockCraftingTable(Block.Block):
-    NAME = "minecraft:crafting_table"
+    """
+    class for the crafting table
+    """
+
+    NAME: str = "minecraft:crafting_table"
 
     def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:

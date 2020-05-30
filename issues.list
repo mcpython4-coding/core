@@ -138,4 +138,23 @@ issue 177:
 issue 178:
     bug: hotbar is not transparent(rendered)
 
-[179-180]
+issue 181:
+    bug: when disabling work-around fix in player, another player is rendered
+
+issue 185:
+    bug: in big worlds, chunks can get randomly hidden
+
+issue 193:
+    bug: mod locations are not escaped in logs
+
+issue 194:
+    bug: config files fail to decode empty dict [and possible other empty tags]
+
+issue 196:
+    bug: when picking up an itemstack during holding one, it gets reset
+    reproduce: craft one thing with an item in mouse and the item is not picked up
+
+issue 199:
+    bug: dynamic generated dimension ids are not saved in saves leading into miss-matches when changing dimension
+         list
+    fix: add them to the storage system and re-assign on load

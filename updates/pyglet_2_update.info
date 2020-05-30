@@ -1,0 +1,7 @@
+When pyglet 2 comes out, it will focus on OpenGL >= 3.0 leading into an overhaul of the intern direct-OpenGL calls.
+
+Every feature by pyglet should be automatically ported, but the following things are direct-OpenGL calling in this
+project:
+- setup 2d/3d/alpha on/off
+- util/opengl.py stuff
+- BoxModel rendering, EntityRenderer,

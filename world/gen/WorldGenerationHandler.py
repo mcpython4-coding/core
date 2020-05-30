@@ -167,6 +167,7 @@ class WorldGenerationTaskHandler:
                 chunk.generated = True
                 chunk.finished = True
                 chunk.loaded = True
+                G.eventhandler.call("worldgen:chunk:finished", chunk)
 
     def _process_0_array(self, chunk: world.Chunk.Chunk) -> bool:
         if chunk.dimension.id in self.data_maps[0]:
@@ -377,7 +378,7 @@ class WorldGenerationHandler:
             logger.println("\rgenerating layer {} ({}/{})".format(layername, i + 1, m), end="")
             layer = self.layers[layername]
             layer.add_generate_functions_to_chunk(dimension.worldgenerationconfigobjects[layername], handler)
-            G.world.process_entire_queue()
+            G.worldgenerationhandler.task_handler.process_tasks()
         logger.println("\r", end="")
         G.eventhandler.call("worldgen:chunk:finished", chunk)
         chunk.generated = True

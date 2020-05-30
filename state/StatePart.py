@@ -13,7 +13,8 @@ class StatePart:
     NAME = "null"
 
     def __init__(self):
-        self.parts = self.get_sub_parts()
+        self.part_dict = {}
+        self.parts = self.get_sub_parts()  # todo: remove
         self.master = None
 
     def activate(self):
@@ -24,7 +25,7 @@ class StatePart:
         for statepart in self.parts:
             statepart.deactivate()
 
-    def get_sub_parts(self) -> list:
+    def get_sub_parts(self) -> list:  # todo: remove
         return []
 
     def bind_to_eventbus(self):

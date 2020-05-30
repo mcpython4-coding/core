@@ -65,10 +65,10 @@ class ItemStack:
         if self.amount == 0: self.clean()
         return self
 
-    def add_amount(self, amount):
+    def add_amount(self, amount, check_overflow=True):
         self.set_amount(self.amount + amount)
         if self.amount == 0: self.clean()
-        if self.item and self.item.STACK_SIZE < self.amount: self.amount = self.item.STACK_SIZE
+        if self.item and self.item.STACK_SIZE < self.amount and check_overflow: self.amount = self.item.STACK_SIZE
         return self
 
     def __str__(self):

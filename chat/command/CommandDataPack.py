@@ -29,6 +29,7 @@ class CommandDatapack(chat.command.Command.Command):
             ParseType.STRING_WITHOUT_QUOTES)))
         parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "list"))
 
+        # own implementation, will force-delete the assets access of all data-packs, very unstable
         parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "release"))
 
     @classmethod
@@ -53,5 +54,6 @@ class CommandDatapack(chat.command.Command.Command):
         return ["/datapack enable <name>: enables an datapack",
                 "/datapack disable <name>: disables an datapack",
                 "/datapack list: lists all arrival datapacks with status",
-                "/datapack release: unloads all datapacks, decrease memory usage, makes deleting datapacks possible"]
+                "/datapack release: unloads all datapacks, decrease memory usage, makes deleting datapacks possible."
+                "WARNING: is very unstable"]
 

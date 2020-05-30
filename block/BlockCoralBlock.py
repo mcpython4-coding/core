@@ -12,39 +12,69 @@ import factory.BlockFactory
 
 
 class ICoralBlock(block.Block.Block):
+    """
+    base class for every coral block
+    """
+
+    ENABLE_RANDOM_TICKS = True
+
     def on_random_update(self):
-        # todo: add water check
+        # todo: add water check; not arrival as it is not implemented
         G.world.get_active_dimension().add_block(self.position, "{}:dead_{}".format(*self.NAME.split(":")))
 
 
 @G.registry
 class BrainCoralBlock(ICoralBlock):
-    NAME = "minecraft:brain_coral_block"
+    """
+    class for brain coral block
+    """
+
+    NAME: str = "minecraft:brain_coral_block"
 
 
 @G.registry
 class BubbleCoralBlock(ICoralBlock):
-    NAME = "minecraft:bubble_coral_block"
+    """
+    class for bubble coral block
+    """
+
+    NAME: str = "minecraft:bubble_coral_block"
 
 
 @G.registry
 class FireCoralBlock(ICoralBlock):
-    NAME = "minecraft:fire_coral_block"
+    """
+    class for fire coral block
+    """
+
+    NAME: str = "minecraft:fire_coral_block"
 
 
 @G.registry
 class HornCoralBlock(ICoralBlock):
-    NAME = "minecraft:horn_coral_block"
+    """
+    class for horn coral block
+    """
+
+    NAME: str = "minecraft:horn_coral_block"
 
 
 @G.registry
 class TubeCoralBlock(ICoralBlock):
-    NAME = "minecraft:tube_coral_block"
+    """
+    class for tube coral block
+    """
+
+    NAME: str = "minecraft:tube_coral_block"
 
 
+# the dead variants
 factory.BlockFactory.BlockFactory().setName("minecraft:dead_brain_coral_block").finish()
 factory.BlockFactory.BlockFactory().setName("minecraft:dead_bubble_coral_block").finish()
 factory.BlockFactory.BlockFactory().setName("minecraft:dead_fire_coral_block").finish()
 factory.BlockFactory.BlockFactory().setName("minecraft:dead_horn_coral_block").finish()
 factory.BlockFactory.BlockFactory().setName("minecraft:dead_tube_coral_block").finish()
+
+
+# todo: create factory function
 

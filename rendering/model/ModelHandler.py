@@ -18,16 +18,25 @@ import util.enums
 class ModelHandler:
     def __init__(self):
         self.models = {}
-        self.used_models = []
-        self.found_models = {}
+        self.used_models = []  # todo: change to set
+        self.found_models = {}  # todo: clear when not needed
         self.blockstates = {}
-        self.lookup_locations = []
-        self.dependence_list = []
+        self.lookup_locations = []  # todo: change to set
+        self.dependence_list = []  # todo: clear when not needed
+        # todo: add reload compatibility
 
-    def add_from_mod(self, modname):
+    def add_from_mod(self, modname: str):
+        """
+        will add locations for an given mod name
+        :param modname: the mod to use
+        """
         self.lookup_locations.append("assets/{}/models/block".format(modname))
 
     def search(self):
+        """
+        will search all locations for new stuff
+        todo: add datapack locations
+        """
         for location in self.lookup_locations:
             found_models = ResourceLocator.get_all_entries(location)
             for model in found_models:
@@ -39,12 +48,17 @@ class ModelHandler:
                 self.found_models[name] = model
         G.eventhandler.call("modelhandler:searched")
 
-    def add_from_data(self, name, data):
+    def add_from_data(self, name: str, data: dict):
+        """
+        will inject data as an block-model file
+        :param name: the name to use
+        :param data: the data to inject
+        """
         self.found_models[name] = data
 
-    def build(self): [self.__let_subscribe_to_build(model) for model in self.used_models]
+    def build(self): [self.let_subscribe_to_build(model) for model in self.used_models]  # todo: use set intersection
 
-    def __let_subscribe_to_build(self, model):
+    def let_subscribe_to_build(self, model):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
         if modname not in G.modloader.mods: modname = "minecraft"
         G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake_prepare", self.special_build, model,
@@ -61,7 +75,7 @@ class ModelHandler:
         else:
             data = file
         if "parent" in data:
-            self.__let_subscribe_to_build(data["parent"])
+            self.let_subscribe_to_build(data["parent"])
             depend = [data["parent"]]
         else:
             depend = []
@@ -94,6 +108,10 @@ class ModelHandler:
             logger.write_exception("error during loading model '{}' named '{}'".format(location, name))
 
     def add_face_to_batch(self, block, face, batches) -> list:
+        if block.NAME not in self.blockstates:
+            logger.println("[FATAL] block data for block '{}' not found!".format(block.NAME))
+            print("possible:", self.blockstates.keys())
+            return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
         if blockstate is None:
@@ -101,6 +119,10 @@ class ModelHandler:
         return blockstate.add_face_to_batch(block, batches, face)
 
     def draw_face(self, block, face):
+        if block.NAME not in self.blockstates:
+            logger.println("[FATAL] block data for block '{}' not found!".format(block.NAME))
+            print("possible:", self.blockstates.keys())
+            return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
         if blockstate is None:

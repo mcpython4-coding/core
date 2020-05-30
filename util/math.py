@@ -11,6 +11,7 @@ import globals as G
 import config
 import math
 import logger
+import deprecation
 
 
 def get_max_y(pos):
@@ -20,13 +21,18 @@ def get_max_y(pos):
     chunk = G.world.get_active_dimension().get_chunk_for_position((x, y, z))
     heightmap = chunk.get_value('heightmap')
     y = heightmap[x, z][0][1] if (x, z) in heightmap else 0
-    return y + config.PLAYER_HEIGHT  # account for the distance from head to foot
+    return y + 2  # account for the distance from head to foot
 
 
+@deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
 def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
-    """ Return the vertices of the cube at position x, y, z with size 2*n.
-
     """
+    Same as cube_vertices_better, but will return all summed up instead of separated lists
+    """
+    return sum(cube_vertices_better(x, y, z, nx, ny, nz, faces=faces), [])
+
+
+def cube_vertices_better(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
     top = [x - nx, y + ny, z - nz, x - nx, y + ny, z + nz, x + nx, y + ny, z + nz, x + nx, y + ny, z - nz] if faces[0] \
         else []
     bottom = [x - nx, y - ny, z - nz, x + nx, y - ny, z - nz, x + nx, y - ny, z + nz, x - nx, y - ny, z + nz] if \
@@ -39,10 +45,10 @@ def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True
         faces[4] else []
     back = [x + nx, y - ny, z - nz, x - nx, y - ny, z - nz, x - nx, y + ny, z - nz, x + nx, y + ny, z - nz] if \
         faces[5] else []
-    return top + bottom + left + right + front + back
+    return top, bottom, left, right, front, back
 
 
-def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0):
+def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
     """
     Return the bounding vertices of the texture square.
     :param x: the texture atlas entry to use
@@ -50,6 +56,7 @@ def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0):
     :param size: the size of the texture atlas used
     :param region: the texture region to use. (0, 0, 1, 1) is full texture atlas texture size
     :param rot: in steps of 90: how much to rotate the vertices
+    :return: an tuple representing the texture coordinates
     """
     mx = 1. / size[0]
     my = 1. / size[1]
@@ -63,37 +70,31 @@ def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0):
         positions = [0] * len(positions)
         for i, e in enumerate(_positions):
             positions[(i+reindex) % 4] = e
-
-    position = []
-    [position.extend(e) for e in positions]
-    return position
+    return sum(positions, tuple())
 
 
+@deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
 def tex_coords(*args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)):
     """
-    Return a list of the texture squares for the top, bottom and sides.
+    same as tex_coords_better, but returns everything in an single list instead of an list of tuples
+    todo: when removed, rename later the new one to this
     """
-    if tex_region is None: tex_region = [(0, 0, 1, 1)] * 6
-    args = list(args)
-    for i, arg in enumerate(args):
-        if arg is None:
-            arg = (0, 0)
-        args[i] = arg
-    top, bottom, N, S, E, W = tuple(args)
-    top = tex_coord(*top, size=size, region=tex_region[0], rot=rotation[0])
-    bottom = tex_coord(*bottom, size=size, region=tex_region[1], rot=rotation[1])
-    n = tex_coord(*N, size=size, region=tex_region[2], rot=rotation[2])
-    e = tex_coord(*E, size=size, region=tex_region[3], rot=rotation[3])
-    s = tex_coord(*S, size=size, region=tex_region[4], rot=rotation[4])
-    w = tex_coord(*W, size=size, region=tex_region[5], rot=rotation[5])
-    result = []
-    result.extend(top)
-    result.extend(bottom)
-    result.extend(n)
-    result.extend(e)
-    result.extend(s)
-    result.extend(w)
-    return result
+    return sum(tex_coords_better(*args, size=size, tex_region=tex_region, rotation=rotation), tuple())
+
+
+def tex_coords_better(*args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)) -> list:
+    """
+    this is an better implementation of above tex_coords function. It will return an list of coords instead
+    of an list where you have to manually find entries
+    :param args: every face to calculate
+    :param size: the size of the texture group
+    :param tex_region: the region in the texture, where 0 is one end and 1 the other
+    :param rotation: the rotation of the whole thing
+    :return: an list of lists of texture coords
+    """
+    if tex_region is None: tex_region = [(0, 0, 1, 1)] * len(args)
+    return [tex_coord(*(face if face is not None else (0, 0)), size=size, region=tex_region[i], rot=rotation[i])
+            for i, face in enumerate(args)]
 
 
 def tex_coord_factor(fx, fy, tx, ty): return fx, fy, tx, fy, tx, ty, fx, ty

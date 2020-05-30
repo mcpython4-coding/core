@@ -11,18 +11,26 @@ import event.Registry
 
 
 class State(event.Registry.IRegistryContent):
-    @staticmethod
-    def is_mouse_exclusive():
-        return False
+    """
+    base class
+    """
+
+    IS_MOUSE_EXCLUSIVE = False
+    CONFIG_LOCATION = None  # default location: data/{mod}/states/{name}.json
+
+    @classmethod
+    def is_mouse_exclusive(cls):  # todo: make attribute
+        return cls.IS_MOUSE_EXCLUSIVE
 
     def __init__(self):
-        self.parts = self.get_parts()
-        G.statehandler.add_state(self)
+        self.part_dict = {}
+        self.parts = self.get_parts()  # todo: remove
         self.eventbus = G.eventhandler.create_bus(active=False, crash_on_error=False)
         self.bind_to_eventbus()
         for statepart in self.parts:
             statepart.master = [self]  # StateParts get an list of steps to get to them as an list
             statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
+        G.statehandler.add_state(self)
 
     def activate(self):
         self.eventbus.activate()
@@ -36,10 +44,10 @@ class State(event.Registry.IRegistryContent):
         for statepart in self.parts:
             statepart.deactivate()
 
-    def bind_to_eventbus(self):
+    def bind_to_eventbus(self):  # todo: remove
         pass
 
-    def get_parts(self) -> list:
+    def get_parts(self) -> list:  # todo: remove
         return []
 
     def on_activate(self):  # todo: remove

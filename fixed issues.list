@@ -167,3 +167,16 @@ issue 173: exception (and not handling) of show-tasks in world gen task system; 
 issue 174: Chunk.hide_all() was using shown-attribute of Chunk causing problems; fixed on 06.05.2020 by uuk
 issue 179: Inventory.insert_item() was failing; fixed on 07.05.2020 by uuk
 issue 180: when loading an save from an newer version, an exception is printed; fixed 11.05.2020 by uuk
+issue 182: block update was not send in some cases; fixed on 12.05.2020 by uuk
+issue 183: fence and walls were not updating texture when updating internal state; fixed on 12.05.2020 by uuk
+issue 184: exception when writing an exception with an non-str info; fixed on 12.05.2020 by uuk
+issue 186: event "worldgen:chunk:finished" was not called for runtime-like generated chunks; fixed on 13.05.2020 by uuk
+issue 187: exceptions when generating chunks without content from main menu; fixed on 13.05.2020 by uuk
+issue 188: minecraft version tuple could contain strings; fixed on 19.05.2020 by uuk
+issue 189: data packs were not unloaded on world unload; fixed on 19.05.2020 by uuk
+issue 190: config system was not parsing the data correctly; fixed on 19.05.2020 by uuk
+issue 191: slab textures were upside down; fixed on 20.05.2020 by uuk
+issue 192: AdvancedBlockFactory was failing in some cases; fixed on 20.05.2020 by uuk
+issue 195: parsed mod versions from mod.json files were not parsed into str; fixed on 29.05.2020
+issue 197: TickHandler was trying to tick the function tag for ticks when not in world; fixed on 30.05.2020
+issue 198: Chunk was sharing the default attribute with all instances leading into one big data map; fixed on 30.05.2020

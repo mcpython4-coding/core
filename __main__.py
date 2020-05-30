@@ -8,6 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
 import logger
+import deprecation
 
 try:
     import sys
@@ -68,6 +69,10 @@ try:
 
 
     def setup():
+        """
+        will set up some stuff
+        todo: move to somewhere else
+        """
         import globals as G
         import world.World
         globals.world = world.World.World()
@@ -80,6 +85,9 @@ try:
         import world.gen.mode.DebugOverWorldGenerator
 
     def run():
+        """
+        will launch the game in the active configuration
+        """
         import pyglet
         # todo: move size to config.py
         rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
@@ -93,29 +101,36 @@ try:
             raise
 
 
+    @deprecation.deprecated()
     def main():
+        """
+        todo: merge with run()
+        """
         G.eventhandler.call("game:startup")
         setup()
         run()
-except:  # when we crash on loading, make sure that all resources are closed
+
+except:  # when we crash on loading, make sure that all resources are closed and we cleaned up afterwards
     import ResourceLocator
     ResourceLocator.close_all_resources()
-    logger.write_exception()
-    logger.add_funny_line()
-    G.tmp.cleanup()
-    raise
+    logger.write_exception("general loading exception")
+    try:
+        G.tmp.cleanup()
+    except NameError:
+        pass
+    sys.exit(-1)
 
 
 if __name__ == "__main__":
 
     try:
-        main()
+        G.eventhandler.call("game:startup")
+        setup()
+        run()
     except SystemExit: pass  # sys.exit() was called
     except:
-        logger.write_exception()
-        logger.add_funny_line()
+        logger.write_exception("general system exception leading into an crash")
         G.tmp.cleanup()
-        raise
     finally:
         import ResourceLocator
         ResourceLocator.close_all_resources()

@@ -28,7 +28,7 @@ class Slot:
 
     def __init__(self, itemstack=None, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
                  allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None,
-                 empty_image=None, allowed_item_tags=None, allowed_item_test=None, on_button_press=None):
+                 empty_image=None, allowed_item_tags=None, allowed_item_test=None, on_button_press=None, capacity=None):
         """
         creates an new slot
         :param itemstack: the itemstack to use
@@ -40,6 +40,7 @@ class Slot:
         :param allow_half_getting: can the player get only the half of the items out of the slot?
         :param on_shift_click: called when shift-clicked on the block, should return if normal logic should go on or not
         :param on_button_press: called when an button is pressed when hovering above the slot
+        :param capacity: the max item count for the slot
         """
         self.__itemstack = itemstack if itemstack else gui.ItemStack.ItemStack.get_empty()
         self.position = position
@@ -63,6 +64,11 @@ class Slot:
         self.allowed_item_tags = allowed_item_tags
         self.allowed_item_func = allowed_item_test
         self.on_button_press = on_button_press
+        self.__capacity = capacity
+
+    def get_capacity(self):
+        return self.__capacity if self.__capacity is not None else (64 if self.itemstack.is_empty() else self.itemstack.
+                                                                    item.STACK_SIZE)
 
     def get_itemstack(self):
         return self.__itemstack

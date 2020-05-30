@@ -109,7 +109,7 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
 
     def draw(self, hoveringslot=None):
         self.on_draw_background()
-        x, y = self._get_position()
+        x, y = self.get_position()
         if self.bgsprite:
             self.bgsprite.position = (x + self.bg_image_pos[0], y + self.bg_image_pos[1])
             self.bgsprite.draw()
@@ -127,7 +127,7 @@ class InventoryPlayerHotbar(gui.Inventory.Inventory):
         dx, dy = tuple(self.config["selected_delta"]) if "selected_delta" in self.config else (8, 8)
         x -= dx
         y -= dy
-        dx, dy = self._get_position()
+        dx, dy = self.get_position()
         x += dx
         y += dy
         self.selected_sprite.position = (x, y)

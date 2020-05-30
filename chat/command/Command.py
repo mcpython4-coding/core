@@ -25,21 +25,29 @@ class ParseType(enum.Enum):
     POSITION = 7  # an position. may be selector
     SELECT_DEFINITED_STRING = 8  # an selection of diffrent strings out of an list
     OPEN_END_UNDEFINITED_STRING = 9  # an variable list of strings
-    STRING_WITHOUT_QUOTES = 10
-    BOOLEAN = 11
+    STRING_WITHOUT_QUOTES = 10  # an varialbe string without the ""
+    BOOLEAN = 11  # an boolean value
+
+    def add_subcommand(self, subcommand):
+        return SubCommand(self).add_subcommand(subcommand)
+
+    def set_mode(self, parsemode):
+        return SubCommand(self, parsemode)
 
 
 class ParseMode(enum.Enum):
     """
     An enum for how ParseType-entries are handled
     """
-    USER_NEED_ENTER = 0  # user must enter this
-    OPTIONAL = 1  # user can enter this
+
+    USER_NEED_ENTER = 0  # user must enter this entry
+    OPTIONAL = 1  # user can enter this, but all sub-elements are than invalid
+    # todo: add something like OPTIONAL_ALLOW_FURTHER
 
 
 class SubCommand:
     """
-    class for an part of an command. contains one parseable entry, one parsemode and an list of sub-commands
+    class for an part of an command. contains one parse-able entry, one ParseMode and an list of sub-commands
     """
 
     def __init__(self, type, *args, mode=ParseMode.USER_NEED_ENTER, **kwargs):
@@ -58,8 +66,8 @@ class SubCommand:
 
     def add_subcommand(self, subcommand):
         """
-        add an new subcommand to this
-        :param subcommand: the subcommand to add
+        add an new SubCommand to this SubCommand
+        :param subcommand: the SubCommand to add
         :return: itself
         """
         self.sub_commands.append(subcommand)
@@ -83,15 +91,20 @@ class ParseBridge:
     def add_subcommand(self, subcommand):
         """
         add an new subcommand to this
-        :param subcommand: the subcommand to add
-        :return: itself
+        :param subcommand: the subcommand to add or an ParseType
+        :return: the object invoked on (the self)
         """
+        if type(subcommand) == ParseType: subcommand = SubCommand(subcommand)
         self.sub_commands.append(subcommand)
         return self
 
 
 class Command(event.Registry.IRegistryContent):
-    TYPE = "minecraft:command"
+    """
+    base class for every command
+    """
+
+    TYPE = "minecraft:command"  # the type defintion for the registry
 
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
@@ -99,6 +112,7 @@ class Command(event.Registry.IRegistryContent):
         takes an ParseBridge and fills it with life
         :param parsebridge: the parsebridge to use
         """
+        raise NotImplementedError()
 
     @staticmethod
     def parse(values: list, modes: list, info):
@@ -112,7 +126,7 @@ class Command(event.Registry.IRegistryContent):
     @staticmethod
     def get_help() -> list:
         """
-        :return: help pages for this command. a (commandprefix, info)-list
+        :return: help pages for this command. a "<command build>: <description>"-list
         todo: make translated
         """
         return []

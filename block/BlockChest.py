@@ -6,28 +6,39 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import globals as G
-from . import Block
+from datetime import datetime
+
+import pyglet
 from pyglet.window import mouse, key
+
+import block.BoundingBox
+import globals as G
 import item.ItemTool
 import util.enums
-import block.BoundingBox
-from datetime import datetime
-import pyglet
 import util.enums
+from . import Block
 
-
-BBOX = block.BoundingBox.BoundingBox((14/16, 14/16, 14/16), (1/16, 1/16, 1/16))
+BBOX = block.BoundingBox.BoundingBox((14/16, 14/16, 14/16), (1/16, 1/16, 1/16))  # the bounding box of the chest
 
 
 @G.registry
 class BlockChest(Block.Block):
-    now = datetime.now()
-    is_christmas = 24 <= now.day <= 26 and now.month == 12
+    """
+    The Chest block class
+    """
 
-    NAME = "minecraft:chest"
+    now: datetime = datetime.now()   # now
+    is_christmas: bool = 24 <= now.day <= 26 and now.month == 12  # if christmas is today
+
+    NAME: str = "minecraft:chest"  # the name of the chest
+
+    HARDNESS = 2.5
+    BLAST_RESISTANCE = 2.5
 
     def __init__(self, *args, **kwargs):
+        """
+        creates an new BlockChest
+        """
         super().__init__(*args, **kwargs)
         self.front_side = util.enums.EnumSide.N
         if self.real_hit:
@@ -46,6 +57,10 @@ class BlockChest(Block.Block):
         self.face_solid = {face: False for face in util.enums.EnumSide.iterate()}
 
     def can_open_inventory(self) -> bool:
+        """
+        checks if the inventory can be opened
+        :return: if the block can be opened
+        """
         x, y, z = self.position
         blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
         return blockinst is None or not blockinst.face_solid[util.enums.EnumSide.DOWN]

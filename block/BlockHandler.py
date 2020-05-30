@@ -10,6 +10,7 @@ import globals as G
 import block.Block
 import event.Registry
 import mod.ModMcpython
+import logger
 
 
 def register_block(registry, blockclass):
@@ -18,14 +19,24 @@ def register_block(registry, blockclass):
         name = blockclass.NAME
         block_registry.full_table[name] = blockclass
         block_registry.full_table[name.split(":")[-1]] = blockclass
+        instance = blockclass((0, 0, 0))
         if blockclass.SOLID is None:
-            blockclass.SOLID = all(blockclass((0, 0, 0)).face_solid.values())
+            blockclass.SOLID = all(instance.face_solid.values())
 
         if blockclass.CONDUCTS_REDSTONE_POWER is None:
             blockclass.CONDUCTS_REDSTONE_POWER = blockclass.SOLID
 
         if blockclass.CAN_MOBS_SPAWN_ON is None:
             blockclass.CAN_MOBS_SPAWN_ON = blockclass.SOLID
+
+        if not blockclass.ENABLE_RANDOM_TICKS:
+            try:
+                instance.on_random_update()
+                logger.println("[WARN] block {} has not set ENABLE_RANDOM_TICKS, but the event function was changed!"
+                               .format(blockclass.NAME))
+                blockclass.ENABLE_RANDOM_TICKS = True
+            except IOError:
+                pass
 
 
 block_registry = event.Registry.Registry("block", ["minecraft:block_registry"], injection_function=register_block)

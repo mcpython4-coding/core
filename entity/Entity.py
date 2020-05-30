@@ -57,6 +57,9 @@ class Entity(event.Registry.IRegistryContent):
     def __del__(self):
         del self.chunk
 
+    def __str__(self):
+        return "{}(dim={},pos={},rot={})".format(type(self).__name__, self.dimension.id, self.position, self.rotation)
+
     # system for moving
 
     def get_position(self): return self.__position
@@ -79,12 +82,14 @@ class Entity(event.Registry.IRegistryContent):
         else: before_dim = self.chunk.dimension.id
         if dimension is None: dimension_id = before_dim if before_dim is not None else 0
         else: dimension_id = dimension
+        dimension = G.world.get_dimension(dimension_id)
         self.__position = position
+        if dimension is None: return
         sector_after = util.math.sectorize(self.position)
         if sector_before != sector_after or before_dim != dimension_id or force_chunk_save_update:
             if self.chunk and self in self.chunk.entities:
                 self.chunk.entities.remove(self)
-            self.chunk = G.world.dimensions[dimension_id].get_chunk_for_position(self.position)
+            self.chunk = dimension.get_chunk_for_position(self.position)
             self.chunk.entities.add(self)
 
     position = property(get_position, set_position)
@@ -143,6 +148,13 @@ class Entity(event.Registry.IRegistryContent):
         todo: damage entity when needed
         for moder: should damage entity if needed
         """
+
+    def get_inventories(self) -> list:
+        """
+        will return an list of all currently arrival inventories for this entity
+        :return:
+        """
+        return list(self.inventories.values())
 
     # system events
 

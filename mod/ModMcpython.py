@@ -16,9 +16,13 @@ if type(config.VERSION_NAME) == str and config.VERSION_NAME[2] == "w":  # snapsh
     VERSION = (0, 1, int(config.VERSION_NAME[:2]), int(config.VERSION_NAME[3:5]),
                VERSION_POST.index(config.VERSION_NAME[5]))
 elif type(config.VERSION_NAME) == str:
-    c = config.VERSION_NAME
-    if c[0] in "abr": c = c[1:]
-    VERSION = tuple([int(e) for e in c.split(".")])
+    if config.VERSION_NAME.startswith("snapshot dev "):
+        s = config.VERSION_NAME.split(" ")
+        VERSION = (0, 2, int(s[2]), int(s[4]))
+    else:
+        c = config.VERSION_NAME
+        if c[0] in "abr": c = c[1:]
+        VERSION = tuple([int(e) for e in c.split(".")])
 else:
     logger.println("[WARN] version entry wrong formatted")
     VERSION = config.VERSION_NAME

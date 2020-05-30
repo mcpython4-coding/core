@@ -48,7 +48,7 @@ class InventoryBarrel(gui.Inventory.Inventory):
 
     def draw(self, hoveringslot=None):
         self.on_draw_background()
-        x, y = self._get_position()
+        x, y = self.get_position()
         if self.bgsprite:
             self.bgsprite.position = (x, y)
             self.bgsprite.draw()

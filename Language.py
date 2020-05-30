@@ -11,9 +11,9 @@ import globals as G
 import warnings
 
 
-LANGUAGES = {}
+LANGUAGES = {}  # table of data of Languages
 # change this for having another language, you have to include the needed lang files yourself :/
-ACTIVE_LANGUAGE = "en_us"
+ACTIVE_LANGUAGE = "en_us"  # the active language
 
 
 def get(key, formatting=None):
@@ -42,13 +42,27 @@ def translate(s: str):
 
 
 class Language:
+    """
+    base class for language data
+    """
+
     @classmethod
     def from_file(cls, file: str, name=None):
+        """
+        will load an file into the system
+        :param file: the file to load, as ResourceLocate-able
+        :param name: the name of the language to use or None for generation from file name
+        """
         Language.from_data(file.split("/")[-1].split(".")[0] if name is None else name,
                            ResourceLocator.read(file, "json").copy())
 
     @classmethod
     def from_old_data(cls, file: str, name=None):
+        """
+        will load an file from the old format into the system
+        :param file: the file to load
+        :param name: the name to load under, or None if to read from the file name
+        """
         name = file.split("/")[-1].split(".")[0] if name is None else name
         if name not in LANGUAGES: LANGUAGES[name] = cls()
         language = LANGUAGES[name]
@@ -60,6 +74,11 @@ class Language:
 
     @classmethod
     def from_data(cls, name: str, data: dict):
+        """
+        will load data into the system
+        :param name: the name to load under
+        :param data: the data to load
+        """
         if name in LANGUAGES:
             LANGUAGES[name].table = {**LANGUAGES[name].table, **data}
         else:
@@ -77,6 +96,11 @@ class Language:
 
 
 def from_directory(directory: str, modname: str):
+    """
+    will create Language data for an directory
+    :param directory: the directory name
+    :param modname: the mod name
+    """
     files = ResourceLocator.get_all_entries_special(directory)
     m = len(files)
     for i, f in enumerate(files):

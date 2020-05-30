@@ -84,6 +84,8 @@ class ToolType(enum.Enum):
     SWORD = 5  # not real an tool, but internally handled as one of it
     HOE = 6  # not real an tool, but internally handled as one of it
 
+    # tool levels (from 0 to 6): hand, wood, stone, iron, gold, diamond, netherite
+
 
 class SlabModes(enum.Enum):
     TOP = 1

@@ -29,24 +29,64 @@ import util.texture
 import sys
 import config
 import logger
+import typing
 
 
 class IResourceLocation:
+    """
+    base class for an class holding an link to an resource system
+    """
+
     @staticmethod
-    def is_valid(path: str) -> bool: raise NotImplementedError()
+    def is_valid(path: str) -> bool:
+        """
+        checks if an location is valid as an source
+        :param path: the path to check
+        :return: if it is valid or not
+        """
+        raise NotImplementedError()
 
-    def is_in_path(self, filename: str) -> bool: raise NotImplementedError()
+    def is_in_path(self, filename: str) -> bool:
+        """
+        checks if an local file-name is in the given path
+        :param filename: the file name to check
+        :return: if it is in the path
+        """
+        raise NotImplementedError()
 
-    def read(self, filename: str, mode: str): raise NotImplementedError()
+    def read(self, filename: str, mode: str):
+        """
+        will read an file into the system
+        :param filename: the file name to use
+        :param mode: the mode to use
+        :return: the content of the file loaded in the correct mode
+        """
+        raise NotImplementedError()
 
-    def close(self): pass
+    def close(self):
+        """
+        implement if you need to close an resource on end
+        """
 
-    def get_all_entries_in_directory(self, directory: str) -> list: raise NotImplementedError()
+    def get_all_entries_in_directory(self, directory: str) -> list:
+        """
+        should return all entries in an local directory
+        :param directory: the directory to check
+        :return: an list of data
+
+        todo: make generator
+        """
+        raise NotImplementedError()
 
 
 class ResourceZipFile(IResourceLocation):
+    """
+    implementation for archives
+    """
+
     @staticmethod
-    def is_valid(path: str) -> bool: return zipfile.is_zipfile(path)
+    def is_valid(path: str) -> bool:
+        return zipfile.is_zipfile(path)
 
     def __init__(self, path: str):
         self.archive = zipfile.ZipFile(path)
@@ -83,6 +123,10 @@ class ResourceZipFile(IResourceLocation):
 
 
 class ResourceDirectory(IResourceLocation):
+    """
+    implementation for raw directories
+    """
+
     @staticmethod
     def is_valid(path: str) -> bool:
         return os.path.isdir(path)
@@ -118,11 +162,14 @@ class ResourceDirectory(IResourceLocation):
         return file_list
 
 
-RESOURCE_PACK_LOADERS = [ResourceZipFile, ResourceDirectory]
-RESOURCE_LOCATIONS = []
+RESOURCE_PACK_LOADERS = [ResourceZipFile, ResourceDirectory]  # data loaders for the resource locations
+RESOURCE_LOCATIONS = []  # an list of all resource locations in the system
 
 
 def load_resource_packs():
+    """
+    will load the resource packs found in the paths for it
+    """
     close_all_resources()
     for file in os.listdir(G.local+"/resourcepacks"):
         if file in ["{}.jar".format(config.MC_VERSION_BASE), "minecraft.zip"]: continue
@@ -153,6 +200,9 @@ def load_resource_packs():
 
 
 def close_all_resources():
+    """
+    will close all opened resource locations
+    """
     for item in RESOURCE_LOCATIONS:
         item.close()
     RESOURCE_LOCATIONS.clear()
@@ -160,10 +210,16 @@ def close_all_resources():
         G.eventhandler.call("resources:close")
 
 
-MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity", "model"]
+MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity", "model"]  # how mc locations look like
 
 
 def transform_name(file: str) -> str:
+    """
+    will transform an MC-ResourceLocation string into an local path
+    :param file: the thing to use
+    :return: the transformed
+    :raises NotImplementedError: when the data is invalid
+    """
     f = file.split(":")
     if any([f[-1].startswith(x) for x in MC_IMAGE_LOCATIONS]):
         if len(f) == 1:
@@ -174,7 +230,13 @@ def transform_name(file: str) -> str:
     raise NotImplementedError("can't transform name '{}' to valid path".format(file))
 
 
-def exists(file, transform=True):
+def exists(file: str, transform=True):
+    """
+    checks if an given file exists in the system
+    :param file: the file to check
+    :param transform: if it should be transformed for check
+    :return: if it exists or not
+    """
     if file.startswith("@"):  # special resource notation, can be used for accessing special ResourceLocations
         data = file.split("|")
         resource = data[0][1:]
@@ -194,7 +256,13 @@ def exists(file, transform=True):
     return False
 
 
-def read(file, mode=None):
+def read(file: str, mode: typing.Union[None, str] = None):
+    """
+    will read the content of an file
+    :param file: the file to load
+    :param mode: the mode to load in, or None for binary
+    :return: the content
+    """
     if file.startswith("@"):  # special resource notation, can be used for accessing special ResourceLocations
         data = file.split("|")
         resource = data[0][1:]
@@ -218,12 +286,18 @@ def read(file, mode=None):
             try:
                 return x.read(file, mode)
             except:
-                logger.println("exception during loading file {}".format(file))
+                logger.println("exception during loading file '{}'".format(file))
                 raise
-    raise ValueError("can't find resource {} in any path".format(file))
+    raise ValueError("can't find resource '{}' in any path".format(file))
 
 
 def get_all_entries(directory: str) -> list:
+    """
+    will get all files & directories [ending with an "/"] of an given directory across all resource locations
+    :param directory: the directory to use
+    :return: an list of all found files
+    todo: make return an generator
+    """
     result = []
     loc = RESOURCE_LOCATIONS
     loc.reverse()
@@ -237,6 +311,7 @@ def get_all_entries_special(directory: str) -> list:
     returns all entries found with their corresponding '@[path]:file'-notation
     :param directory: the directory to searc from
     :return: an list of found resources
+    todo: make use an generator
     """
     result = []
     for x in RESOURCE_LOCATIONS:
@@ -245,6 +320,11 @@ def get_all_entries_special(directory: str) -> list:
 
 
 def add_resources_by_modname(modname, pathname=None):
+    """
+    loads the default data locations into the system for an given namespace
+    :param modname: the name of the mod for the loading stages
+    :param pathname: the namespace or None if the same as the mod name
+    """
     if pathname is None: pathname = modname
     from rendering.model.BlockState import BlockStateDefinition
     import Language

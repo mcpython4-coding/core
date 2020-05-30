@@ -9,9 +9,15 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import event.EventBus
 import event.EventHandler
+import typing
+import typing
 
 
 class ModDependency:
+    """
+    class for an dependency-like reference to an mod
+    """
+
     def __init__(self, name: str, version_min=None, version_max=None, versions=None):
         """
         creates an new mod dependency instance. need to be assigned with another mod. if no version(s) is/are specified,
@@ -47,15 +53,28 @@ class ModDependency:
             return any([self.__testfor(mod.version, e) for e in self.versions])
         return False
 
-    def __testfor(self, version, args: tuple) -> bool:
+    @classmethod
+    def __testfor(cls, version, args: tuple) -> bool:
+        """
+        will test for the arrival of the dependency
+        :param version: the version found
+        :param args: optional args found
+        """
+        if type(version) == str: version = version.split(".")
         if type(args[0]) == int: return version >= args
         if len(args) == 1: return version >= args[0]
         if len(args) == 2: return args[1] >= version >= args[0]
 
     def get_version(self):
+        """
+        gets the real version of the mod specified by this
+        """
         return G.modloader.mods[self.name].version
 
     def __str__(self):
+        """
+        returns an stringifies version dependency
+        """
         if self.version_range[0] is not None:
             if self.version_range[1] is not None:
                 return "'{}' in version from version {} to {}".format(self.name,
@@ -77,71 +96,126 @@ class ModDependency:
 
 class Mod:
     """
-    class for mods. for creating an new mod, create an instance of this
+    class for mods. For creating an new mod, create an instance of this or define an entry in the latest version in your
+    mod.json file.
     """
 
-    def __init__(self, name: str, version: tuple):
+    def __init__(self, name: str, version: typing.Union[tuple, str, set, list]):
         """
         creates an new mod
         :param name: the name of the mod
         :param version: an tuple of CONSTANT length across ALL versions representing the version of the mod
         """
         if type(version) != tuple:
-            raise ValueError("can't use mod named '{}' as it provides an not-valid version '{}'".format(
-                name, version))
+            if type(version) == str:
+                version = tuple([int(e) for e in version.split(".")])
+            elif type(version) in (set, list):
+                version = tuple(version)
+            else:
+                raise ValueError("can't use mod named '{}' as it provides an not-valid version '{}'".format(
+                    name, version))
         self.name = name
         self.eventbus: event.EventBus.EventBus = event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
             crash_on_error=False)
         self.dependinfo = [[] for _ in range(7)]  # need, possible, not possible, before, after, only with, only without
         self.path = None
-        self.version = version
-        self.package = None
+        self.version = version  # the version of the mod, as an tuple
+        self.package = None  # the package where the mod-file was found
         G.modloader.add_to_add(self)
 
     def mod_string(self):
+        """
+        will transform the mod into an string
+        """
         return "{} ({})".format(self.name, ".".join([str(e) for e in self.version]))
 
-    def add_load_default_resources(self):
+    def __repr__(self):
+        return "Mod({},{})".format(self.name, self.version)
+
+    def add_load_default_resources(self, path_name=None):
+        """
+        adds the default resource locations for loading into the system
+        :param path_name: optional: the namespace to load
+        """
+        if path_name is None: path_name = self.name
         import ResourceLocator
         self.eventbus.subscribe("stage:mod:init",
-                                lambda: ResourceLocator.add_resources_by_modname(self.name, self.name),
+                                lambda: ResourceLocator.add_resources_by_modname(self.name, path_name),
                                 info="adding resources")
 
-    def add_dependency(self, depend):
+    def add_dependency(self, depend: typing.Union[str, ModDependency]):
+        """
+        will add an dependency into the system; The selected mod will be loaded before this one
+        :param depend: the mod to depend on
+        """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
         self.dependinfo[0].append(depend)
         self.dependinfo[4].append(depend)
+        return self
 
-    def add_not_load_dependency(self, depend):
+    def add_not_load_dependency(self, depend: typing.Union[str, ModDependency]):
+        """
+        will add an dependency without setting load_after for this mod
+        :param depend: the mod to depend on
+        """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
         self.dependinfo[0].append(depend)
+        return self
 
-    def add_not_compatible(self, depend):
+    def add_not_compatible(self, depend: typing.Union[str, ModDependency]):
+        """
+        sets an mod for not loadable together with another one (e.g. useful on mod rename)
+        :param depend: the mod to not load with
+        """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
         self.dependinfo[2].append(depend)
+        return self
 
-    def add_load_before_if_arrival(self, depend):
+    def add_load_before_if_arrival(self, depend: typing.Union[str, ModDependency]):
+        """
+        Will load these mod before the selected, but will not set the dependency
+        :param depend: the mod to load before
+        :return:
+        """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
         self.dependinfo[1].append(depend)
         self.dependinfo[3].append(depend)
+        return self
 
-    def add_load_after_if_arrival(self, depend):
+    def add_load_after_if_arrival(self, depend: typing.Union[str, ModDependency]):
+        """
+        Will load these mod after the selected, but will not set the dependency
+        :param depend: the mod to load after
+        :return:
+        """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
         self.dependinfo[1].append(depend)
         self.dependinfo[4].append(depend)
+        return self
 
-    def add_load_only_when_arrival(self, depend):
+    def add_load_only_when_arrival(self, depend: typing.Union[str, ModDependency]):
+        """
+        Will only load the mod if another one is arrival, but will not cause an dependency error in case of not arrival
+        :param depend: the mod to check for
+        """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
         self.dependinfo[5].append(depend)
+        return self
 
-    def add_load_only_when_not_arrival(self, depend):
+    def add_load_only_when_not_arrival(self, depend: typing.Union[str, ModDependency]):
+        """
+        Will only load the mod if another one is not arrival, but will not cause an dependency error in case of arrival,
+        Useful for e.g. API's
+        :param depend: the mod to check for
+        """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
         self.dependinfo[6].append(depend)
+        return self
 

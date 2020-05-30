@@ -25,6 +25,9 @@ class UIPartLable(UIPart.UIPart):
         :param press: the EventInfo for mouse lables and mods, no area
         :param anchor_lable: the anchor on the lable
         :param anchor_window: the anchor on the window
+        :param on_press: called when the mouse presses on the lable together with x and y
+        :param color: the color of the text to use
+        :param text_size: the size of the text
         """
         super().__init__(position, 0, anchor_window=anchor_window, anchor_element=anchor_lable)
         if len(color) != 4: raise ValueError("color must be an tuple of (r, g, b, a)")

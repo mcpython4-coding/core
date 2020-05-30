@@ -1,246 +1,487 @@
 Changelog since cleanup-branch of 31.01.2020
+todo: make into an .md file
+
+
+planned for the future:
+    - optimize texture reload with everything (re-block-item-factories, reload block models,
+        reload item texture, gui textures, ...), config reload
+    - add more factories for various parts (better block models, block states, full block factory, ...)
+    - add mode were linking between recipe in/out is shuffled and loot table links are shuffled (see Amnesia Pack)
+        together with an gamerule and an /shuffle [<group>] command
+    - add scoreboards with commands, execute entry, ...
+    - make commands more fail-save
+    - make world gen more fail-save
+    - add ores
+    - add mcpi API support
+    - an logging update
+    - improve item texture atlas system (it seems not very stable)
+    - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum
+    - rendering helper class for setting up things like 3d rendering, alpha usage, ...
+    - add an line into logging where the system searches for the location where the error occur and will link the mod
+        caused it into the log
+    - parser for the new mc dimension config format
+
+
+changelog of snapshot [next] (theme: feature cleanup & improvements)
+    changelog of dev-cycle 1 [optimisations to rendering]
+        - optimized block rendering, deprecated some old stuff
+        - re-ordered some UV-related stuff, you may want to update your own models
+
+        fixed issues:
+            from versions before this snapshot:
+                - block updates were not called in every case
+                - walls and fences were not updating their state correctly
+                - during printing an exception, an new exception could occur
+                - event "worldgen:chunk:finished" was not called in most cases
+
+    changelog of dev-cycle 2 [modding improvements]
+        - improved dependency system for mods
+        - deprecated some old stuff
+        - added config system for mods & internals [incompatible with mc config files]
+        - improved existing factories & added some more factories & entries
+
+        fixed issues:
+            from previous cycle:
+                - minecraft version tuple could contain string-instances
+                - slab textures on side were upside down
+
+            from versions before this snapshot:
+                - data packs may not get unloaded when they needed to
+
+    changelog of dev-cycle 3 [State-definition files]
+        - improved exception handling
+        - added StateConfigFile.py handling State-confog-files
+        - deprecated some more functions, attributes, etc.
+
+        fixed issues:
+            from previous cycle:
+                - AdvancedBlockFactory was not working
+
+    changelog of dev-cycle 4
+        - deprecated a lot of stuff
+
+        fixed issues:
+            - mod.json was not parsing version-entry correctly
+
+    changelog of dev-cycle 4 [planned: advanced rendering functions]
+    changelog of dev-cycle 5 [planned: UI improvements]
+    changelog of dev-cycle 6 [planned: preparation for client/server: IWorld-interface and integrated-impl.]
+
+    changelog of dev-cycle [last] [planned: bug fixing of work, overall bug fixing, testing]
+
+
+    planned (some parts may be moved to future snapshots):
+        - fix issues: 80, 157, 175, 176, 177, 178, 181
+        - add support for .obj files for block models
+        - add support for forge block state format, maybe split up the blockstate-loaders into different files
+        - clean up & improve the following elements: (for all: use texture reload event)
+            button: clean up rendering code, maybe use an batch for all parts, listen to the on_resize event for
+                re-calculation
+            image: clean up rendering code, check if it is still working
+            lable: clean up rendering code, can we add possibility to render colored text
+            progress bar: fix issue 174, clean up code, can we make pgb change color over time
+            text input: clean up rendering code, implement navigation & selection
+            slot <-> slot copy: make connection more stable, help gc with deleting when not needed
+        - implement serializer for states making runtime-based changes possible & easier to create new states
+        - implement IWorld-class with abstract interaction functions, add ServerWorld & ClientWorld-instances
+        - add attribute SIDE to globals, add function sideOnly(side: str) making functions only callable when on
+            an given side
+        - improve UI by adding tab/enter support for switching buttons etc.
+        - split up StatePartGame into smaller parts to make code cleaner
+        [more may come]
 
 
 changelog of release alpha 1.0.1
-    - fixed crash on startup
-
     fixed bugs:
-        - when loading an world from an never save version, the game gives out an exception
+        from previous release:
+            - fixed crash on startup
+            - when loading an world from an never save version, the game gives out an exception
 
 
 changelog of release alpha 1.0.0: (theme: bug fixing & system improvements)
-    - during developing more features, the developer has decided to discard the progress. As some more difficulties had
-        occur [Covid-19], the development time for these dev-cycle was far longer than expected.
-    - resize-event is called after every state switch now
-    - refactored ModLoader-class & optimized some loading systems
-    - added new mod.json file version
-    - added @globals.modloader(<modname>, <eventname>, [<info>]) annotation
-    - improved mod loading stage calling
-    - new loading events: "stage:block:factory:finish" and "stage:item:factory:finish"
-    - added --fullscreen -flag for enabling fullscreen on startup [unstable at the moment]
-    - improved error message when world save not found on load
-    - improved exception handling by logger
-    - improved world gen, rewritten how tasks are stored & scheduled (!)
-    - removed tag #minecraft:furnace_fuel and replaced by an hasattr(item, "FUEL") check
-    - changed signature of on_shift_click(x, y, button, modifiers, player) of slot to
-        (slot, x, y, button, modifiers, player)
+    during developing more features, the developer has decided to discard the progress. As some more difficulties had
+    occur [Covid-19], the development time for these dev-cycle was far longer than expected.
+
+    Event-system:
+        - resize-event is called after every state switch now
+        - improved mod loading stage calling
+        - new loading events: "stage:block:factory:finish" and "stage:item:factory:finish"
+        - changed signature of on_shift_click(x, y, button, modifiers, player) of slot to
+          (slot, x, y, button, modifiers, player)
+
+    Code optimisations:
+        - refactored ModLoader-class & optimized some loading systems
+
+    Mod loading:
+        - added new mod.json file version
+        - added @globals.modloader(<modname>, <eventname>, [<info>]) annotation
+
+    Launch flags:
+        - added --fullscreen -flag for enabling fullscreen on startup [unstable at the moment]
+
+    Error handling:
+        - improved error message when world save not found on load
+        - improved exception handling by logger
+
+    World generation:
+        - improved world gen, rewritten how tasks are stored & scheduled (!)
+
+    Tags:
+        - removed tag #minecraft:furnace_fuel and replaced by an hasattr(item, "FUEL") check
 
     fixed bugs:
-        - state of block may not be set correctly in some cases
-        - memory leaks all over the place
-        - offhand slot gets cleared when closing inventory
-        - crash when build-folder was deleted
-        - exceptions when using show-tasks in world gen arrays
-        - a lot of normal fuels were not accepted by furnace as fuels
+        long-time issues:
+            - state of block may not be set correctly in some cases
+            - memory leaks all over the place
+            - offhand slot gets cleared when closing inventory
+            - crash when build-folder was deleted
+            - exceptions when using show-tasks in world gen arrays
+            - a lot of normal fuels were not accepted by furnace as fuels
 
 
 changelog of snapshot 20w14a
-    - added new event: "stage:blockitemfactory:finish"
-    - cleaned up base classes for block and item
-    - chunk entries containing positions are mostly stored relative to the chunk decreasing save file size
-    - changed some internal inventory interaction things
-    - on_shift_click can now return True when it should interrupt the following logic
-    - slots can now handle an key press
-    - rewritten mouse interaction system to support dragging over more than one slot & better shift-clicking
-    - moved Entity-class into entity/Entity.py
-    - entities are now saved in saves
-    - added EntityHandler with entity-registry
-    - made function draw and tick called of entity
-    - added EntityRenderer with parser of model files
-    - added renderer for player
-    - added saves for entities
-    - added /summon command
-    - added loading phase for entities
-    - added player skins based on the player name downloaded from the official mojang servers
+    Events:
+        - added new event: "stage:blockitemfactory:finish"
+        - changed some internal inventory interaction things
+        - added loading phase for entities
+
+    code improvements:
+        - cleaned up base classes for block and item
+        - moved Entity-class into entity/Entity.py
+
+    Save files:
+        - chunk entries containing positions are mostly stored relative to the chunk decreasing save file size
+        - added saves for entities
+
+    GUI interaction:
+        - rewritten mouse interaction system to support dragging over more than one slot & better shift-clicking
+        - on_shift_click can now return True when it should interrupt the following logic
+        - slots can now handle an key press
+
+    Entity system:
+        - entities are now saved in saves
+        - added EntityHandler with entity-registry
+        - made function draw and tick called of entity
+        - added EntityRenderer with parser of model files
+        - added renderer for player
+        - added player skins based on the player name downloaded from the official mojang servers
+
+    Commands:
+        - added /summon command
 
     fixed bugs:
-        - game gives out exceptions when trying to load an non-existing world
-        - internal mouse-position error when dragging
-        - block-looking-at position lable was inverted to the gamerule
-        - crash when inventory slot count decreases between two loads of an world
+        long-time issues:
+            - internal mouse-position error when dragging [since introduction of mouse position entry]
+
+        since introduction of game rules:
+            - block-looking-at position lable was inverted to the gamerule
+
+        since introductions of inventories to saves:
+            - game gives out exceptions when trying to load an non-existing world
+            - crash when inventory slot count decreases between two loads of an world
 
 
 changelog of snapshot 20w12b [released on 21.03.2020]
-    - added dimension definition for nether and end
-    - removed deprecated loading phases
-    - removed features.py as it was outdated
-    - world is now saved when window is closed (only when in the state)
-    - added mycelium block, podzol block, barrier block
-    - added barrier item
-    - .lang files can now be also loaded
-    - added support for uv rotation in element of block-models
-    - BlockFactory accepts now also an state-str like in block-state-files in setDefaultModelState
+    Dimensions:
+        - added dimension definition for nether and end
+
+    Mod system:
+        - removed deprecated loading phases
+        - removed features.py as it was outdated
+
+    World saves:
+        - world is now saved when window is closed (only when in the state)
+
+    Blocks:
+        - added mycelium block, podzol block, barrier block
+        - BlockFactory accepts now also an state-str like in block-state-files in setDefaultModelState
+
+    Items:
+        - added barrier item
+
+    Language:
+        - .lang files can now be also loaded
+
+    Rendering:
+        - added support for uv rotation in element of block-models
 
     fixed bugs:
-        - Chunk.add_block did NOT accept the non-prefixed block-names like "stone"
-        - icon for half hunger was not rendered correctly
-        - BlockItemFactory failed to load block-items when not rebuilding for new blocks since last rebuild. This occur
-            only in first run due to missing _finish call of ItemFactory-instances
-        - rotation of BlockModels was not working
-        - multipart models failed to load when an entry had an list of models
+        since Registry-update II:
+            - Chunk.add_block did NOT accept the non-prefixed block-names like "stone"
+
+        long-time issues:
+            - icon for half hunger was not rendered correctly
+            - BlockItemFactory failed to load block-items when not rebuilding for new blocks since last rebuild. This
+                occur only in first run due to missing _finish call of ItemFactory-instances
+
+        model system issues:
+            - rotation of BlockModels was not working
+            - multipart models failed to load when an entry had an list of models
 
 
 changelog of snapshot 20w12a [released on 16.03.2020]
-    - added class for LootTable, added sub-classes for generating the content
-    - added base classes for loot table function and conditions
-    - added loading phase for adding loot tables
-    - added drops to blocks
-    - added option to chest to load loot table into the inventory
-    - added starter chest
-    - added /loot command
-    - added loader for OpenGL-only scripts (stored in .gl files, loader under rendering/OpenGLSetupFile.py)
+    Loot tables:
+        - added class for LootTable, added sub-classes for generating the content
+        - added base classes for loot table function and conditions
+
+    Mod system:
+        - added loading phase for adding loot tables
+
+    Blocks:
+        - added drops to blocks
+        - added option to chest to load loot table into the inventory
+        - added starter chest
+
+    Commands:
+        - added /loot command
+
+    Rendering:
+        - added loader for OpenGL-only scripts (stored in .gl files, loader under rendering/OpenGLSetupFile.py)
+        - alpha blending has now disabled cull face in OpenGL to render also back-faces to user
 
     fixed bugs:
-        - rendering of multi-part models with OR condition fails due to wrong condition check
-        - rendering of some blocks failed
-        - items in hotbar do not render in some cases
-        - open inventory list of InventoryHandler gets reversed every ESC-press
-        - shift crafting was duplicating output
-        - custom block renderers were not working as expected
-        - alpha blending has now disabled cull face in OpenGL to render also back-faces to user
+        model system issues:
+            - rendering of multi-part models with OR condition fails due to wrong condition check
+            - rendering of some blocks failed
+            - custom block renderers were not working as expected
+
+        long-term issues:
+            - items in hotbar do not render in some cases
+            - open inventory list of InventoryHandler gets reversed every ESC-press
+            - shift crafting was duplicating output
 
 
 changelog of snapshot 20w11a [released on 12.03.2020]
-    - re-added support for custom block renderers
-    - added support for OR-condition in block-states
-    - block-states act when selecting from multiple models better
-    - block models can now rotate themselves
-    - tweaked generation system to look faster (and be faster)
-    - world generation is now done parallel across up to 5 chunks [not thread-parallel]
-    - improved block-showing performance by caching (rotated) vertices and texture data
-      [this affects also world gen time]
-    - added config for height of world [used in BiomePlains to calculate the height map range]
-    - added an world-generation progress-view screen like in MC
-    - added config for how far the world is generated when you are in-game, default is 1 chunk in each direction
-    - added system for storage of worlds with serializers and data fixers [data fixers are unused at the moment]
-    - added option to inventories and blocks to add custom data to save with it (items had such an function before)
-    - added save-access-screen, save-loading screen
-    - mod versions should be now tuple instead of any-type
-    - rewritten version compare system to be based on tuples (work with lower and upper bound for versions)
-    - improved entity API
-    - renamed some stuff to better match
-    - moved player instances to World.players
-    - player interaction methods now include also the player instance itself
+    Rendering:
+        - re-added support for custom block renderers
+        - added support for OR-condition in block-states
+        - block-states act when selecting from multiple models better
+        - block models can now rotate themselves
+        - improved block-showing performance by caching (rotated) vertices and texture data
+          [this affects also world gen time]
+
+    World generation
+        - tweaked generation system to look faster (and be faster)
+        - world generation is now done parallel across up to 5 chunks [not thread-parallel]
+        - added an world-generation progress-view screen like in MC
+
+    Config:
+        - added config for height of world [used in BiomePlains to calculate the height map range]
+        - added config for how far the world is generated when you are in-game, default is 1 chunk in each direction
+
+    World saves:
+        - added system for storage of worlds with serializers and data fixers [data fixers are unused at the moment]
+        - added option to inventories and blocks to add custom data to save with it (items had such an function before)
+        - added save-access-screen, save-loading screen
+
+    Mod system:
+        - mod versions should be now tuple instead of any-type
+        - rewritten version compare system to be based on tuples (work with lower and upper bound for versions)
+
+    Entities:
+        - improved entity API
+
+    Code improvements:
+        - renamed some stuff to better match
+        - moved player instances to World.players
+        - player interaction methods now include also the player instance itself
 
     fixed bugs:
-        - /generate <cx> <cz>-command was not working
-        - seed was ignored by generation system
-        - noises for world gen were NOT based on world seed [noticeable when loading an world and generating new chunks]
-        - block entries in commands were requiring the mod-prefix
-        - slabs were rendered upside-down
-        - carved pumpkin item was the same as pumpkin
+        command issues:
+            - /generate <cx> <cz>-command was not working
+            - block entries in commands were requiring the mod-prefix
+
+        long-term issues:
+            - seed was ignored by generation system
+                -> noises for world gen were NOT based on world seed
+                    [noticeable when loading an world and generating new chunks]
+
+        rendering issues:
+            - slabs were rendered upside-down
+            - carved pumpkin item was the same as pumpkin
+
         - unbreakable blocks could be broken in gamemode 0
 
 
 changelog of snapshot 20w10a [released on 04.03.2020]
     - updated libraries
-    - added datapack support
-    - added gamerules
-    - new commands: /clone, /tell, /replaceitem, /gamerule
-    - added multipart-block-model support
-    - added generator code for creating BoundingBox from BlockState
-    - BoxModels will now rotate properly relative to middle of block, not only changing textures
-    - added new blocks: fences, walls
-    - TickHandler has now an function to tick an function as fast as possible
-    - added option for fog distance
+
+    Datapacks:
+        - added datapack support
+
+    Commands:
+        - added gamerules
+        - new commands: /clone, /tell, /replaceitem, /gamerule
+
+    Rendering:
+        - added multipart-block-model support
+        - added generator code for creating BoundingBox from BlockState
+        - BoxModels will now rotate properly relative to middle of block, not only changing textures
+
+    Blocks:
+        - added new blocks: fences, walls
+
+    Events:
+        - TickHandler has now an function to tick an function as fast as possible
+
+    Config:
+        - added option for fog distance
 
     fixed bugs:
-        - various exceptions from left-over things in the registry & slot changes from last snapshot
-        - various issues with slot drawing
+        long-term issues:
+            - various exceptions from left-over things in the registry & slot changes from last snapshot
+            - various issues with slot drawing
+
         - fixed exception on shift-clicking crafting output of main inventory
 
 
 changelog of snapshot 20w09a [released on 26.02.2020]
-    - changed TextureAtlas-block-addition system to be based on mod-based/texture size-based atlases
-    - new blocks: furnace with inventory & crafting, barrel, ice variants, bone block, book shelf, coral blocks,
-                  pumpkin, carved pumpkin, melon, clay, coarse dirt, prismarin blocks, dried kelp block, end stones,
-                  glowstone, magma block, mossy stone bricks, nether bricks, nether wart block, netherrack,
-                  purpur blocks, quartz slab, red nether bricks, smooth quartz slab, soul sand
-    - added key "E" to close various inventories
-    - Block-class has now an CUSTOM_WALING_SPEED_MULTIPLIER-attribute used for custom waling speeds ontop of blocks
-    - changed mod.json format to have an "version"-attribute & an "loader"-attribute
-    - USE_MISSING_TEXTURES_ON_MISS_TEXTURE config option is now False by default
-    - changed some get_name-methodes to NAME-attribute
-    - removed some deprecated things
-    - changed how things are registered, THIS IS AN BRAKING CHANGE!
+    Rendering:
+        - changed TextureAtlas-block-addition system to be based on mod-based/texture size-based atlases
+        - USE_MISSING_TEXTURES_ON_MISS_TEXTURE config option is now False by default
+
+    Blocks:
+        - new blocks: furnace with inventory & crafting, barrel, ice variants, bone block, book shelf, coral blocks,
+                      pumpkin, carved pumpkin, melon, clay, coarse dirt, prismarin blocks, dried kelp block, end stones,
+                      glowstone, magma block, mossy stone bricks, nether bricks, nether wart block, netherrack,
+                      purpur blocks, quartz slab, red nether bricks, smooth quartz slab, soul sand
+        - Block-class has now an CUSTOM_WALING_SPEED_MULTIPLIER-attribute used for custom waling speeds ontop of blocks
+
+    Inventory Interaction:
+        - added key "E" to close various inventories
+
+    Mod system:
+        - changed mod.json format to have an "version"-attribute & an "loader"-attribute
+
+    Code improvements:
+        - changed some get_name-methods to NAME-attribute
+        - removed some deprecated things
+
+    Events:
+        - changed how things are registered, THIS IS AN BRAKING CHANGE!
 
     fixed bugs:
-        - game crashes when using "/tp <position>"-command
-        - debug world doesn't use the block state definition correctly
-        - can't get items out of an tag-handled slot
-        - cobblestone was not arrival
-        - crash when not arrival python file is linked from mod.json file
-        - crash when block-name-prefix is no mod-prefix
-        - crash when model-name-prefix is no mod-prefix
-        - some chest textures were not drawn correct
+        command issues:
+            - game crashes when using "/tp <position>"-command
+
+        rendering issues:
+            - debug world doesn't use the block state definition correctly [This issue appeared very often down the road]
+            - some chest textures were not drawn correct
+
+        interaction issues:
+            - can't get items out of an tag-handled slot
+            - cobblestone was not arrival
+
+        mod loading issue_
+            - crash when not arrival python file is linked from mod.json file
+            - crash when block-name-prefix is no mod-prefix
+            - crash when model-name-prefix is no mod-prefix
 
 changelog of snapshot 20w07a [released on 10.02.2020]
     based on: rendering update branch 1 & changes to master-branch
-    - block textures are now cut out to squares making animated textures load only the first texture, but not the whole
-    - inventory config has now an option to offset the background
-    - ResourceLocator.add_resources_by_modname's directory parameter is now optional
-    - added config for USE_MISSING_TEXTURES_ON_MISS_TEXTURE
-    - ResourceLocator.add_resources_by_modname will now also load tags
-    - added new blocks: brick slab, glass, stained glass, carpets, sandstone
-    - rendering support for "uv" coordinates
-    - TextureAtlas will now resize automatically to new size if needed
-    - added grass <-> dirt convert
-    - log contains now some os-specific information
-    - changes the way how html characters are escaped
-    - added some memory & cpu usage information
-    - added hot-keys: F3+A, F3+C, F3+C for 10s, F3+D, F3+I, F3+N and F3+T
-    - changed the way how block faces are stored
-    - removed custom block renderers for the moment
-    - crashes on mod bus do not crash the game any more
-    - blocks are now rendered face-by-face instead of all faces at ones
+
+    Rendering:
+        - block textures are now cut out to squares making animated textures load only the first texture, but not the
+          whole
+        - rendering support for "uv" coordinates
+        - TextureAtlas will now resize automatically to new size if needed
+        - changes the way how html characters are escaped in chat
+        - changed the way how block faces are stored
+        - removed custom block renderers for the moment
+        - blocks are now rendered face-by-face instead of all faces at ones
+
+    Config:
+        - inventory config has now an option to offset the background
+        - added config for USE_MISSING_TEXTURES_ON_MISS_TEXTURE
+
+    Resource handling:
+        - ResourceLocator.add_resources_by_modname's directory parameter is now optional
+        - ResourceLocator.add_resources_by_modname will now also load tags
+
+    Blocks:
+        - added new blocks: brick slab, glass, stained glass, carpets, sandstone
+        - added grass <-> dirt convert
+
+    logging:
+        - log contains now some os-specific information
+        - crashes on mod bus do not crash the game any more
+
+    Screen Info:
+        - added some memory & cpu usage information
+
+    Special keys:
+        - added hot-keys: F3+A, F3+C, F3+C for 10s, F3+D, F3+I, F3+N and F3+T
 
     fixed bugs:
-        - exceptions when trying to load recipes from an namespace with sub-recipe-folders
-        - models in sub-directories where not loadable
-        - fixed random updates
-        - block inventories were not closed when block holding the inventory was removed
-        - some textures were blurry
-        - info label in-game were drawn offset in resized windows
+        mod system issues:
+            - exceptions when trying to load recipes from an namespace with sub-recipe-folders
+            - models in sub-directories where not loadable
+            - on_remove function was not called correctly when an block was removed
+
+        event issues:
+            - fixed random updates
+            - block inventories were not closed when block holding the inventory was removed
+            - mouse button up is in some cases not handled correctly
+            - closing crafting tables could duplicate output
+            - when braking an chest, items were deleted
+
+        rendering issues:
+            - some textures were blurry
+            - info label in-game were drawn offset in resized windows
+            - chat was in some cases not displaying text correctly
+
         - various crashes & exceptions in log
-        - mouse button up is in some cases not handled correctly
-        - closing crafting tables could duplicate output
-        - when braking an chest, items were deleted
-        - on_remove function was not called correctly when an block was removed
-        - chat was in some cases not displaying text correctly
 
 changelog of snapshot 20w05a [released on 01.02.2020]
-    based on: cleanup-branch version 1 [merged on 01.02.2020 onto master]:
-    - added an file called "events.list" storing every event ever called
-    - added loading event called "stage:block:block_config" called to register block config entries
-    - split up ICustomBlockRenderer into IStaticCustomBlockRenderer and IObjectedCustomBlockRenderer
-    - add new events: "command:clear:start", "command:clear:end", "command:give:start", "command:give:end",
+    based on: cleanup-branch version 1 [merged on 01.02.2020 onto master]
+    - updated textures to 1.15.2
+    - upgraded libraries
+
+    informal:
+        - added an file called "events.list" storing every event ever called
+
+    Events:
+        - added loading event called "stage:block:block_config" called to register block config entries
+        - add new events: "command:clear:start", "command:clear:end", "command:give:start", "command:give:end",
                       "command:help:generate_pages", "command:parse_bridge:setup", "command:execute_command",
                       "command:registryinfo:parse", "chat:text_enter", "inventory:show", "modloader:mod_found",
                       "itemhandler:build:atlases:save", "itemhandler:build:atlases:load", "state:switch:pre",
                       "state:switch:post", "modelhandler:searched", "worldgen:chunk:finished", "player:die",
                       "world:reset_config", "dimension:chane:pre", "dimension:chane:post", "world:clean", "game:close",
                       "resources:load", "resources:close"
-    - deprecated call_until_equal, call_until_getting_value and call_until_not_equal of EventBus, use call_until instead
-    - added instant_ticks-attribute to TickHandler
-    - updated textures to 1.15.2
-    - added new run option: --debug-world which sets the world generator to debug
-    - added logger system
-    - moved some project file
-    - added real config background
-    - added system to check if prebuilding was interrupted before in which case prebuilding would activate again
-    - chat accepts now the DELETE key, the END key and the BEGIN key
-    - better exception handling
-    - upgraded libraries
+        - deprecated call_until_equal, call_until_getting_value and call_until_not_equal of EventBus, use call_until
+          instead
+        - added instant_ticks-attribute to TickHandler
+        - added system to check if prebuilding was interrupted before in which case prebuilding would activate again
+
+    Rendering:
+        - split up ICustomBlockRenderer into IStaticCustomBlockRenderer and IObjectedCustomBlockRenderer
+        - added real config background
+        - chat accepts now the DELETE key, the END key and the BEGIN key
+
+    Startup flags:
+        - added new run option: --debug-world which sets the world generator to debug
+
+    logging:
+        - added logger system
+        - better exception handling
+
+    code improvements:
+        - moved some project file
 
     - fixed bugs:
-        - loading bar was offset
-        - debug world generator was not working
-        - chests & ender chests were not working in debug world
-        - game was crashing when hovering over an button
-        - chat was "open" until first opening
+        rendering issues:
+            - loading bar was offset
+            - game was crashing when hovering over an button
+            - chat was "open" until first opening
+
+        world generation issues:
+            - debug world generator was not working
+            - chests & ender chests were not working in debug world
+            - chat marker for active writing position was not correct drawn
+            - chat was doing bad stuff with strings like "&#38;"
+
         - raw crash in BlockItemGenerator
-        - chat marker for active writing position was not correct drawn
-        - chat was doing bad stuff with strings like "&#38;"
         - possible infinite loop in deleting directories when files where opened
         - mod list storage was not correctly saved
 

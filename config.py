@@ -7,22 +7,22 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import math
-import util.enums
 
 MC_VERSION_BASE = "1.15.2"
-VERSION_TYPE = "alpha release"
-VERSION_NAME = "a1.0.1"
+VERSION_TYPE = "dev"
+# possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
+VERSION_NAME = "snapshot dev 1 cycle 4"
 
-# list of all versions since 19w52a to indicate order of release; used in save files
+# list of all versions since 19w52a to indicate order of release; used in save files todo: export to other file
 VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20w12a", "20w12b", "20w14a",
-                 VERSION_NAME]
+                 "a1.0.0", "a1.0.1", "snapshot dev 1 cycle 1", VERSION_NAME]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)
 
+TICKS_PER_SEC = 20  # how many ticks per second should be executed, todo: remove (unused)
 
-TICKS_PER_SEC = 20  # how many ticks per second should be executed
-
+# todo: remove definitions of "raw" values
 WALKING_SPEED = 5
 SPRINTING_SPEED = 8
 FLYING_SPEED = 15
@@ -31,10 +31,10 @@ GAMEMODE_3_SPEED = 20
 GAMEMODE_3_SPRINTING_SPEED = 25
 
 SPEED_DICT = {
-    0: [WALKING_SPEED, SPRINTING_SPEED],
+    0: [WALKING_SPEED, SPRINTING_SPEED, 0, 0],
     1: [WALKING_SPEED, SPRINTING_SPEED, FLYING_SPEED, FLYING_SPRINTING_SPEED],
-    2: [WALKING_SPEED, SPRINTING_SPEED],
-    3: [WALKING_SPEED, SPRINTING_SPEED, GAMEMODE_3_SPEED, GAMEMODE_3_SPRINTING_SPEED]
+    2: [WALKING_SPEED, SPRINTING_SPEED, 0, 0],
+    3: [FLYING_SPEED, FLYING_SPRINTING_SPEED, GAMEMODE_3_SPEED, GAMEMODE_3_SPRINTING_SPEED]
 }
 
 GRAVITY = 20.0  # gravity, in -m/s^2 -> speed is calculated with v -= GRAVITY * dt
@@ -49,9 +49,10 @@ MAX_JUMP_HEIGHT = 1.0  # About the height of a block.
 #    s = s_0 + v_0 * t + (a * t^2) / 2
 JUMP_SPEED = math.sqrt(2 * GRAVITY * MAX_JUMP_HEIGHT)
 
-PLAYER_HEIGHT = 2  # the height of the player, in blocks; WARNING: will be removed in the future
+PLAYER_HEIGHT = 2  # the height of the player, in blocks; WARNING: will be removed in the future todo: remove
 
 
+# todo: move to util.enums
 _ADVANCED_FACES = [[[(x, y, z) for z in range(-1, 2)] for y in range(-1, 2)] for x in range(-1, 2)]
 ADVANCED_FACES = []
 for e in _ADVANCED_FACES:
@@ -81,4 +82,51 @@ BIOME_HEIGHT_RANGE_MAP = {  # an dict of biomename: height range storing the int
 CHUNK_GENERATION_RANGE = 1
 
 WRITE_NOT_FORMATTED_EXCEPTION = False  # if exceptions should be not formatted-printed to console by logger
+
+
+def load():
+    import mod.ConfigFile
+    import globals as G
+
+    config = mod.ConfigFile.ConfigFile("main", "minecraft")
+    speeds = mod.ConfigFile.DictDataMapper().add_entry("walking", 5).add_entry("sprinting", 8).add_entry(
+        "flying", 15).add_entry("fly_sprinting", 18).add_entry("gamemode_3", 20).add_entry("gamemode_3_sprinting", 25)
+    physics = mod.ConfigFile.DictDataMapper().add_entry("gravity", 20).add_entry("terminal_velocity", 50)
+    timing = mod.ConfigFile.DictDataMapper().add_entry("random_tick_range", 2).add_entry(
+        "cpu_usage_refresh_time", .8)
+    rendering = mod.ConfigFile.DictDataMapper().add_entry("use_missing_texture_on_missing_faces", False).add_entry(
+        "fog_distance", 60).add_entry("chunk_generation_range", 1).add_entry("write_not_formatted_exceptions", False)
+    config.add_entry("physics", physics).add_entry("speeds", speeds).add_entry("timing", timing).add_entry(
+        "rendering", rendering)
+
+    biomeconfig = mod.ConfigFile.ConfigFile("biomes", "minecraft")
+    biomeconfig.add_entry("minecraft:plains", mod.ConfigFile.ListDataMapper().append(10).append(30))
+
+    @G.modloader("minecraft", "stage:mod:config:work")
+    def load_data():
+        SPEED_DICT[0] = [speeds["walking"].read(), speeds["sprinting"].read(), 0, 0]
+        SPEED_DICT[1] = [speeds["walking"].read(), speeds["sprinting"].read(),
+                         speeds["flying"].read(), speeds["fly_sprinting"].read()]
+        SPEED_DICT[2] = [speeds["walking"].read(), speeds["sprinting"].read(), 0, 0]
+        SPEED_DICT[3] = [speeds["flying"].read(), speeds["fly_sprinting"].read(),
+                         speeds["gamemode_3"].read(), speeds["gamemode_3_sprinting"].read()]
+
+        global GRAVITY, TERMINAL_VELOCITY
+        GRAVITY, TERMINAL_VELOCITY = physics["gravity"].read(), physics["terminal_velocity"].read()
+
+        global RANDOM_TICK_RANGE, CPU_USAGE_REFRESH_TIME
+        RANDOM_TICK_RANGE, CPU_USAGE_REFRESH_TIME = timing["random_tick_range"].read(), timing[
+            "cpu_usage_refresh_time"].read()
+
+        global USE_MISSING_TEXTURES_ON_MISS_TEXTURE, FOG_DISTANCE, CHUNK_GENERATION_RANGE, WRITE_NOT_FORMATTED_EXCEPTION
+        USE_MISSING_TEXTURES_ON_MISS_TEXTURE = rendering["use_missing_texture_on_missing_faces"].read()
+        FOG_DISTANCE, CHUNK_GENERATION_RANGE = rendering["fog_distance"].read(), rendering["chunk_generation_range"
+                                                                                           ].read()
+        WRITE_NOT_FORMATTED_EXCEPTION = rendering["write_not_formatted_exceptions"].read()
+
+        global BIOME_HEIGHT_RANGE_MAP
+        BIOME_HEIGHT_RANGE_MAP["minecraft:plains"] = biomeconfig["minecraft:plains"].read()
+
+        # todo: add config for pgb colors, pgb text colors, button positions, ...
+        # todo: add doc strings into config files
 

@@ -70,6 +70,7 @@ class StateBlockItemGenerator(State.State):
 
     def on_activate(self):
         G.world.cleanup()
+        G.dimensionhandler.init_dims()
         G.world.hide_faces_to_ungenerated_chunks = False
         G.tickhandler.enable_random_ticks = False
         self.tasks = list(G.registry.get_by_name("block").registered_object_map.keys())

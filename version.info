@@ -1,4 +1,4 @@
-started these clone on 12th of July, 2019
+sstarted these clone on 12th of July, 2019
 [github]: started day 1 as 12th of July, 2019
 [github]: created git repo, author: uuk, uuk has now all rights onto these project
 [uuk]: added tasks.list storing some todo's for the future
@@ -1063,3 +1063,36 @@ started these clone on 12th of July, 2019
 [uuk]: fixed issue when loading newer versions (they were not handled correctly)
 [github]: released alpha 1.0.1
 
+[uuk]: preparations for next snapshot(s)
+[uuk]: deprecated BoxModel.copy & BoxModel.data
+[uuk]: improved block rendering
+[uuk]: fixed issue 182: block updated not always called
+[uuk]: fixed issue 183: fences and walls were not updating model state when updating internal state
+[uuk]: fixed issue 184: exception when printing exception with non-str info
+[uuk]: fixed issue 186: event "worldgen:chunk:finished" was only called for direct-generation processes
+[uuk]: fixed issue 187: exceptions when generating chunks from main menu without content
+[github]: end of dev-cycle 1
+[uuk]: version-parameter of Mod.__init__ accepts now also string with '.' between the version parts and an list
+[uuk]: Mod.add_load_default_resources accepts now an path_name parameter setting the namespace when different from mod
+       name
+[uuk]: mod dependency functions return now the mod
+[uuk]: @G.modloader-annotation will now return the function
+[uuk]: dropped for old mod version format
+[uuk]: introduced basic config system
+[uuk]: fixed issue 188: version tuple may have str-entries
+[uuk]: fixed issue 189: data packs may not get unloaded correctly
+[uuk]: /clear command will now use the .clear() method of inventory
+[uuk]: added an get_inventories() method to Entity
+[uuk]: added factories for various things
+[uuk]: BlockFactory and ItemFactory have now an template-mode and can now set the mod-name beforehand
+[uuk]: re-ordered the Blocks.py list, changing order & existing entries, added some blocks; for an complete list,
+       see Blocks.py
+[uuk]: fixed issue 190, 191
+[uuk]: added BLAST_RESISTANCE-attribute to Block
+[github]: end of dev-cycle 2
+[uuk]: improved exception handling on missing blockstate annotation
+[uuk]: fixed AdvancedBlockFactory [issue 192]
+[uuk]: added StateConfigFile-system making parsing of state config files possible
+[uuk]: deprecated a lot of functions, specified the old deprecations more
+[uuk]: code improvements
+[uuk]: Dimension.get_chunk() accepts now also an tuple as position, not only two numbers

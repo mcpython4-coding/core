@@ -18,6 +18,12 @@ class BlockGrassBlock(Block.Block):
     """
     NAME = "minecraft:grass_block"
 
+    HARDNESS = .5
+    BLAST_RESISTANCE = .5
+    BEST_TOOLS_TO_BREAK = [util.enums.ToolType.SHOVEL]
+
+    ENABLE_RANDOM_TICKS = True
+
     def get_model_state(self) -> dict:
         return {"snowy": "false"}
 

@@ -18,14 +18,21 @@ import gui.InventoryBarrel
 
 @G.registry
 class BlockBarrel(Block.Block):
-    NAME = "minecraft:barrel"
+    """
+    class for the Barrel-Block
+    """
+
+    NAME: str = "minecraft:barrel"  # the name of the block
 
     def __init__(self, *args, **kwargs):
+        """
+        Creates an new BlockBarrel-class
+        """
         super().__init__(*args, **kwargs)
-        self.facing = "up"
-        self.opened = False
-        self.inventory = gui.InventoryBarrel.InventoryBarrel(self)
-        if self.set_to is not None:
+        self.facing: str = "up"   # the direction the block faces to
+        self.opened: bool = False  # if the barrel is open
+        self.inventory: gui.InventoryBarrel.InventoryBarrel = gui.InventoryBarrel.InventoryBarrel(self)
+        if self.set_to is not None:  # check for direction from setting
             dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
             if dx > 0:   self.facing = "west"
             elif dz > 0: self.facing = "north"
