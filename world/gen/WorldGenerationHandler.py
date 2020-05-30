@@ -378,7 +378,7 @@ class WorldGenerationHandler:
             logger.println("\rgenerating layer {} ({}/{})".format(layername, i + 1, m), end="")
             layer = self.layers[layername]
             layer.add_generate_functions_to_chunk(dimension.worldgenerationconfigobjects[layername], handler)
-            G.world.process_entire_queue()
+            G.worldgenerationhandler.task_handler.process_tasks()
         logger.println("\r", end="")
         G.eventhandler.call("worldgen:chunk:finished", chunk)
         chunk.generated = True

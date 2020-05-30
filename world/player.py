@@ -202,7 +202,7 @@ class Player(entity.Entity.Entity):
                 self.hunger = 20
                 return
         sector = util.math.sectorize(self.position)
-        globals.world.change_sectors(sector, None)
+        globals.world.change_chunks(sector, None)
         self.reset_moving_slot()
         if not globals.world.gamerulehandler.table["keepInventory"].status.status:
             globals.commandparser.parse("/clear")  # todo: drop items
@@ -224,7 +224,7 @@ class Player(entity.Entity.Entity):
         self.armor_toughness = 0
         globals.eventhandler.call("player:die", self)
         sector = util.math.sectorize(self.position)
-        globals.world.change_sectors(None, sector)
+        globals.world.change_chunks(None, sector)
         # todo: recalculate armor level!
 
         if not globals.world.gamerulehandler.table["doImmediateRespawn"].status.status:

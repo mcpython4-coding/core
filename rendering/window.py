@@ -23,6 +23,7 @@ import psutil
 import event.EventHandler
 import event.TickHandler
 import rendering.OpenGLSetupFile
+import state.StatePartGame
 
 
 class Window(pyglet.window.Window):
@@ -166,12 +167,13 @@ class Window(pyglet.window.Window):
         if dt > 3 and G.statehandler.active_state.NAME not in ["minecraft:modloading"]:
             logger.println("[warning] running behind normal tick, did you overload game? missing " +
                            str(dt - 0.05)+" seconds")
-        self.world.process_queue()
+        if any(type(x) == state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
+            G.worldgenerationhandler.task_handler.process_tasks(timer=0.02)
         sector = sectorize(G.world.get_active_player().position)
         if sector != self.sector:
-            pyglet.clock.schedule_once(lambda _: G.world.change_sectors(self.sector, sector), 0.1)
+            pyglet.clock.schedule_once(lambda _: G.world.change_chunks(self.sector, sector), 0.1)
             if self.sector is None:
-                G.world.process_entire_queue()
+                G.worldgenerationhandler.task_handler.process_tasks()
             self.sector = sector
 
         G.eventhandler.call("gameloop:tick:end", dt)

@@ -150,4 +150,6 @@ issue 193:
 issue 194:
     bug: config files fail to decode empty dict [and possible other empty tags]
 
-[195]
+issue 196:
+    bug: when picking up an itemstack during holding one, it gets reset
+    reproduce: craft one thing with an item in mouse and the item is not picked up

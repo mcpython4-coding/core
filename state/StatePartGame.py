@@ -293,7 +293,7 @@ class StatePartGame(StatePart.StatePart):
 
         after = util.math.sectorize(G.world.get_active_player().position)
         if before != after:
-            G.world.change_sectors(before, after)
+            G.world.change_chunks(before, after)
 
         if G.world.get_active_player().hearts < 20 and G.world.get_active_player().hunger > 4 and time.time() - self.regenerate_cooldown > 2 and \
                 G.world.get_active_player().gamemode in (0, 2):

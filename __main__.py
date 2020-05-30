@@ -68,7 +68,6 @@ try:
     import world.gen.biome.BiomeHandler
 
 
-    @deprecation.deprecated()
     def setup():
         """
         will set up some stuff
@@ -125,7 +124,9 @@ except:  # when we crash on loading, make sure that all resources are closed and
 if __name__ == "__main__":
 
     try:
-        main()
+        G.eventhandler.call("game:startup")
+        setup()
+        run()
     except SystemExit: pass  # sys.exit() was called
     except:
         logger.write_exception("general system exception leading into an crash")
