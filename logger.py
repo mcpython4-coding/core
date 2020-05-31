@@ -42,6 +42,21 @@ log_file = datetime.now().strftime(G.local + "/logs/log_%d.%m.%y_%H.%M.%S.txt")
 inter_home = os.path.dirname(sys.executable).replace("\\", "/")
 
 
+ESCAPE = {G.local: "%LOCAL%", inter_home: "%PYTHON%"}
+
+
+def escape(string: str) -> str:
+    """
+    will escape the string correctly
+    :param string: the string to escape
+    :return: the escaped string
+    """
+    for key in ESCAPE:
+        if key in string:
+            string = string.replace(key, ESCAPE[key])
+    return string
+
+
 def println(*msg, sep=" ", end="\n", write_into_console=True, write_into_log_file=True):
     """
     will print an line into the console with formatting
@@ -51,7 +66,7 @@ def println(*msg, sep=" ", end="\n", write_into_console=True, write_into_log_fil
     :param write_into_console: if the data should be written into the console
     :param write_into_log_file: if the data should be written into the log file
     """
-    msg = [str(e).replace("\\", "/").replace(G.local, "%LOCAL%").replace(inter_home, "%PYTHON%") for e in msg]
+    msg = [escape(str(e).replace("\\", "/")) for e in msg]
     if write_into_console: print(*msg, sep=sep, end=end)
     if write_into_log_file:
         with open(log_file, mode="a") as f:

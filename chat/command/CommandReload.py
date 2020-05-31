@@ -46,9 +46,11 @@ class CommandReload(chat.command.Command.Command):
         G.inventoryhandler.reload_config()  # reloads inventory configuration
         rendering.OpenGLSetupFile.FILES.clear()
         rendering.OpenGLSetupFile.execute_file_by_name("setup")  # re-setup opengl
+        # todo: reload block state files, block model files, regenerate block item images, regenerate item atlases
         [e.reload() for e in rendering.EntityRenderer.RENDERERS]
         G.eventhandler.call("command:reload:end")
         gc.collect()  # make sure that memory was cleaned up
+        G.window.print_profiler()
 
     @staticmethod
     def get_help() -> list:

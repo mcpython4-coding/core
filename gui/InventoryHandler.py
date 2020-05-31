@@ -89,11 +89,16 @@ class OpenedInventoryStatePart(state.StatePart.StatePart):
             if G.inventoryhandler.shift_container is not None and \
                 G.inventoryhandler.shift_container.move_to_opposite(slot): return
         if button == mouse.LEFT:
-            if G.inventoryhandler.moving_slot.itemstack.is_empty() or (not slot.interaction_mode[1] and
-                                                                       slot.itemstack == self.moving_itemstack):
+            if G.inventoryhandler.moving_slot.itemstack.is_empty():
                 if not slot.interaction_mode[0]: return
                 G.inventoryhandler.moving_slot.set_itemstack(slot.itemstack.copy())
                 slot.itemstack.clean()
+                slot.call_update(True)
+            elif not slot.interaction_mode[1] and slot.itemstack == self.moving_itemstack:
+                if not slot.interaction_mode[0]: return
+                total = min(slot.itemstack.item.STACK_SIZE, slot.itemstack.amount + G.inventoryhandler.moving_slot.itemstack.amount)
+                G.inventoryhandler.moving_slot.itemstack.set_amount(total)
+                slot.itemstack.add_amount(-total+G.inventoryhandler.moving_slot.itemstack.amount)
                 slot.call_update(True)
             else:
                 self.mode = 1

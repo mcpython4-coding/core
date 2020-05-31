@@ -175,23 +175,28 @@ class World:
     @deprecation.deprecated("dev1-4", "a1.3.0")
     def show_sector(self, sector): self.show_chunk(sector)
 
-    def show_chunk(self, chunk: typing.Tuple[int, int]):
+    def show_chunk(self, chunk: typing.Union[typing.Tuple[int, int], world.Chunk.Chunk]):
         """
         Ensure all blocks in the given chunk that should be shown are
         drawn to the canvas.
         :param chunk: the chunk to show
         """
-        self.get_active_dimension().get_chunk(*chunk, generate=False).show()
+        if not issubclass(type(chunk), world.Chunk.Chunk):
+            chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
+        chunk.show()
 
     @deprecation.deprecated("dev1-4", "a1.3.0")
     def hide_sector(self, sector, immediate=False): self.hide_chunk(sector)
 
-    def hide_chunk(self, chunk: typing.Tuple[int, int]):
+    def hide_chunk(self, chunk: typing.Union[typing.Tuple[int, int], world.Chunk.Chunk]):
         """
         Ensure all blocks in the given chunk that should be hidden are
         removed from the canvas.
+        :param chunk: the chunk to hide
         """
-        self.get_active_dimension().get_chunk(*chunk, generate=False).hide()
+        if not issubclass(type(chunk), world.Chunk.Chunk):
+            chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
+        chunk.hide()
 
     @deprecation.deprecated("dev1-4", "a1.3.0")
     def change_sectors(self, before, after, immediate=False, generate_chunks=True, load_immediate=False):
@@ -210,30 +215,29 @@ class World:
         after_set = set()
         pad = 4
         for dx in range(-pad, pad + 1):
-            for dy in [0]:  # range(-pad, pad + 1):
-                for dz in range(-pad, pad + 1):
-                    if dx ** 2 + dy ** 2 + dz ** 2 > (pad + 1) ** 2:
-                        continue
-                    if before:
-                        x, z = before
-                        before_set.add((x + dx, z + dz))
-                    if after:
-                        x, z = after
-                        after_set.add((x + dx, z + dz))
+            for dz in range(-pad, pad + 1):
+                if dx ** 2 + dz ** 2 > (pad + 1) ** 2:
+                    continue
+                if before:
+                    x, z = before
+                    before_set.add((x + dx, z + dz))
+                if after:
+                    x, z = after
+                    after_set.add((x + dx, z + dz))
         show = after_set - before_set
         hide = before_set - after_set
-        for sector in hide:
-            pyglet.clock.schedule_once(lambda _: self.hide_chunk(sector), 0.1)
-            if G.world.get_active_dimension().get_chunk(*sector, generate=False).loaded:
+        for chunk in hide:
+            pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
+            if G.world.get_active_dimension().get_chunk(*chunk, generate=False).loaded:
                 G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
-                                            dimension=self.active_dimension, chunk=sector)
-        for sector in show:
-            pyglet.clock.schedule_once(lambda _: self.show_chunk(sector), 0.1)
+                                            dimension=self.active_dimension, chunk=chunk)
+        for chunk in show:
+            pyglet.clock.schedule_once(lambda _: self.show_chunk(chunk), 0.1)
             if not load_immediate:
                 pyglet.clock.schedule_once(lambda _: G.world.savefile.read(
-                    "minecraft:chunk", dimension=self.active_dimension, chunk=sector), 0.1)
+                    "minecraft:chunk", dimension=self.active_dimension, chunk=chunk), 0.1)
             else:
-                G.world.savefile.read("minecraft:chunk", dimension=self.active_dimension, chunk=sector)
+                G.world.savefile.read("minecraft:chunk", dimension=self.active_dimension, chunk=chunk)
 
         if not after: return
         for dx in range(-pad, pad + 1):

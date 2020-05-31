@@ -289,6 +289,8 @@ class ModLoader:
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
+        for i, location in enumerate(modlocations):
+            logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i+1)
         return modlocations
 
     def load_mod_jsons(self, modlocations: list):
