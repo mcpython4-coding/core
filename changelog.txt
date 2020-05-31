@@ -23,12 +23,14 @@ planned for the future:
 
 
 changelog of snapshot [next]
-    changelog of dev-cycle 1
+    changelog of dev-cycle 1 (theme: bug fixing and general improvements)
         - changed version tuple builder for mcpython
+        - added profiler system with config options
 
         fixed issues:
             from previous snapshot:
                 - dicts in config file failed to load
+                - booleans where not correctly loaded
 
 
 changelog of snapshot 20w22a released on 30.05.2020 (theme: feature cleanup & improvements)

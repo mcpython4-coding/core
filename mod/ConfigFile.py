@@ -21,6 +21,10 @@ class InvalidMapperData(Exception): pass
 
 
 class StringParsingPool:
+    """
+    An system dedicated to handling an file context with the ability to pop and get lines.
+    """
+
     def __init__(self, text: str):
         self.data = text.split("\n")
     
@@ -37,6 +41,12 @@ class StringParsingPool:
 
 
 def toDataMapper(value):
+    """
+    will 'map' the given value to an IDataMapper-object
+    :param value: the value to map
+    :return: an IDataMapper-instance
+    WARNING: in case of non normal data mapper found, an StringDataMapper is used
+    """
     if issubclass(type(value), IDataMapper):
         return value
     elif type(value) == dict:
@@ -61,32 +71,57 @@ def toDataMapper(value):
 
 
 class IDataMapper:
+    """
+    base class for every serialize-able content in config files
+    """
+
     def __init__(self, default_value):
         self.value = None
         self.write(default_value)
 
     def read(self):
+        """
+        will return an pythonic representation of the content
+        """
         raise NotImplementedError()
 
     def write(self, value):
+        """
+        will write to the internal buffer the data
+        :param value: the value to write
+        """
         raise NotImplementedError()
 
     def serialize(self) -> str:
+        """
+        will compress the mapper into an string-representation
+        :return: the stringified version
+        """
         raise NotImplementedError()
 
     def deserialize(self, d: StringParsingPool):
+        """
+        will write certain data into the mapper
+        :param d: the pool to read from
+        """
         raise NotImplementedError()
 
     def integrate(self, other):
+        """
+        will integrate the data from other into this
+        :param other: the mapper to integrate
+        """
         if type(self) != type(other): raise ValueError("invalid integration mapper target: {} (source: {})".format(
             type(other), type(self)))
-        self.value = other.value
+        self.write(other.read())
 
 
 class ICustomDataMapper(IDataMapper, ABC):
     """
-    For modders which would like to add their own config data types.
-    Will need to add to the MAPPERS list
+    For modders which would like to add their own config data types
+    Will need to add to the MAPPERS list to work with config system
+
+    WARNING: lower priority than normal aata mappers beside string mapper. Overriding with this not possible
     """
 
     @classmethod
@@ -99,6 +134,10 @@ class ICustomDataMapper(IDataMapper, ABC):
 
 
 class DictDataMapper(IDataMapper):
+    """
+    implementation of an mapper mapping dict-objects
+    """
+
     def __init__(self):
         super().__init__({})
 
@@ -153,11 +192,9 @@ class DictDataMapper(IDataMapper):
                 break
             if l.startswith("//"): continue
             if "->" in l:
-                obj[l.split(" -> {")[0]] = bufferToMapper(d)
-        try:
-            d.pop_line()
-        except IndexError:
-            pass
+                obj[l.split(" -> {")[0]] = bufferToMapper(d)  # handle the following like an data buffer
+                if d.get_line() == "}":
+                    d.pop_line()
         return obj
 
     def integrate(self, other):
@@ -303,7 +340,7 @@ class BooleanDataMapper(IDataMapper):
         line = d.get_line()
         if not line.startswith("B"):
             raise InvalidMapperData()
-        return BooleanDataMapper(line[1:].lower() == "true")
+        return BooleanDataMapper(value=d.pop_line()[1:].lower() == "true")
 
 
 MAPPERS = [DictDataMapper, ListDataMapper, IntDataMapper, FloatDataMapper, StringDataMapper, BooleanDataMapper]
@@ -371,7 +408,8 @@ class ConfigFile:
         d.pop_line()
         while len(d.get_line().strip()) == 0: d.pop_line()
         try:
-            self.main_tag.integrate(bufferToMapper(d))
+            mapper = bufferToMapper(d)
+            self.main_tag.integrate(mapper)
         except:
             logger.write_exception("during loading config file '{}'".format(self.file))
 

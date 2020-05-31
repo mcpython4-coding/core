@@ -87,6 +87,11 @@ CHUNK_GENERATION_RANGE = 1
 
 WRITE_NOT_FORMATTED_EXCEPTION = False  # if exceptions should be not formatted-printed to console by logger
 
+ENABLE_PROFILING = False
+
+ENABLE_PROFILER_DRAW = True
+ENABLE_PROFILER_TICK = False
+
 
 def load():
     import mod.ConfigFile
@@ -100,8 +105,11 @@ def load():
         "cpu_usage_refresh_time", .8)
     rendering = mod.ConfigFile.DictDataMapper().add_entry("use_missing_texture_on_missing_faces", False).add_entry(
         "fog_distance", 60).add_entry("chunk_generation_range", 1).add_entry("write_not_formatted_exceptions", False)
+    profiler = mod.ConfigFile.DictDataMapper().add_entry("enable", False).add_entry("total_draw", True).add_entry(
+        "total_tick", False)
+
     config.add_entry("physics", physics).add_entry("speeds", speeds).add_entry("timing", timing).add_entry(
-        "rendering", rendering)
+        "rendering", rendering).add_entry("profiler", profiler)
 
     biomeconfig = mod.ConfigFile.ConfigFile("biomes", "minecraft")
     biomeconfig.add_entry("minecraft:plains", mod.ConfigFile.ListDataMapper().append(10).append(30))
@@ -130,6 +138,11 @@ def load():
 
         global BIOME_HEIGHT_RANGE_MAP
         BIOME_HEIGHT_RANGE_MAP["minecraft:plains"] = biomeconfig["minecraft:plains"].read()
+
+        global ENABLE_PROFILING, ENABLE_PROFILER_DRAW, ENABLE_PROFILER_TICK
+        ENABLE_PROFILING = profiler["enable"].read()
+        ENABLE_PROFILER_DRAW = profiler["total_draw"].read()
+        ENABLE_PROFILER_TICK = profiler["total_tick"].read()
 
         # todo: add config for pgb colors, pgb text colors, button positions, ...
         # todo: add doc strings into config files

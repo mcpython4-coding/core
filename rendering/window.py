@@ -6,24 +6,25 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import pyglet
-from pyglet.gl import *
-from config import *
-from pyglet.window import key, mouse
-from util.math import *
-import time
-import globals as G
-import state.StateHandler
-import util.math
-import ResourceLocator
-import util.texture
-import logger
 import PIL.Image
 import psutil
+import pyglet
+from pyglet.gl import *
+from pyglet.window import key, mouse
+import cProfile
+
+import ResourceLocator
 import event.EventHandler
 import event.TickHandler
+import globals as G
+import logger
 import rendering.OpenGLSetupFile
+import state.StateHandler
 import state.StatePartGame
+import util.math
+import util.texture
+from config import *
+from util.math import *
 
 
 class Window(pyglet.window.Window):
@@ -79,9 +80,13 @@ class Window(pyglet.window.Window):
         self.mouse_pressing = {mouse.LEFT: False, mouse.RIGHT: False, mouse.MIDDLE: False}
         self.mouse_position = (0, 0)
 
+        self.draw_profiler = cProfile.Profile()
+        self.tick_profiler = cProfile.Profile()
+
         # This call schedules the `update()` method to be called
         # TICKS_PER_SEC. This is the main game event loop.
         pyglet.clock.schedule_interval(self.update, 0.05)
+        pyglet.clock.schedule_interval(self.print_profiler, 10)
 
         state.StateHandler.load()
 
@@ -93,6 +98,17 @@ class Window(pyglet.window.Window):
 
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:game_crash", self.close)
         event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:copy_block_or_entity_data", self.get_block_entity_info)
+
+    def print_profiler(self, dt=None):
+        if not config.ENABLE_PROFILING: return
+
+        if config.ENABLE_PROFILER_DRAW:
+            self.draw_profiler.print_stats(1)
+            self.draw_profiler.clear()
+
+        if config.ENABLE_PROFILER_TICK:
+            self.tick_profiler.print_stats(1)
+            self.tick_profiler.clear()
 
     def reset_caption(self):
         self.set_caption("mcpython 4 - {}".format(config.FULL_VERSION_NAME))
@@ -156,6 +172,7 @@ class Window(pyglet.window.Window):
             The change in time since the last call.
 
         """
+        if config.ENABLE_PROFILER_TICK and config.ENABLE_PROFILING: self.tick_profiler.enable()
         G.eventhandler.call("gameloop:tick:start", dt)
 
         self.cpu_usage_timer += dt
@@ -177,6 +194,7 @@ class Window(pyglet.window.Window):
             self.sector = sector
 
         G.eventhandler.call("gameloop:tick:end", dt)
+        if config.ENABLE_PROFILER_TICK and config.ENABLE_PROFILING: self.tick_profiler.disable()
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`
@@ -354,9 +372,10 @@ class Window(pyglet.window.Window):
                                                        trans_rot_y=math.sin(math.radians(rotation[0])))
 
     def on_draw(self):
-        """ Called by pyglet to draw the canvas.
-
         """
+        Called by pyglet to draw the canvas.
+        """
+        if config.ENABLE_PROFILER_DRAW and config.ENABLE_PROFILING: self.draw_profiler.enable()
         self.clear()
         self.set_3d()
         G.eventhandler.call("render:draw:3d")
@@ -364,11 +383,11 @@ class Window(pyglet.window.Window):
         G.eventhandler.call("render:draw:2d:background")
         G.eventhandler.call("render:draw:2d")
         G.eventhandler.call("render:draw:2d:overlay")
+        if config.ENABLE_PROFILER_DRAW and config.ENABLE_PROFILING: self.draw_profiler.disable()
 
     def draw_focused_block(self):
-        """ Draw black edges around the block that is currently under the
-        crosshairs.
-
+        """
+        Draw black edges around the block that is currently under the crosshairs.
         """
         vector = self.get_sight_vector()
         block = G.world.hit_test(G.world.get_active_player().position, vector)[0]
@@ -377,8 +396,8 @@ class Window(pyglet.window.Window):
             if block: block.get_view_bbox().draw_outline(block.position)
 
     def draw_label(self):
-        """ Draw the label in the top left of the screen.
-
+        """
+        Draw the label in the top left of the screen.
         """
         x, y, z = G.world.get_active_player().position
         nx, ny, nz = util.math.normalize(G.world.get_active_player().position)

@@ -1099,3 +1099,5 @@ sstarted these clone on 12th of July, 2019
 [github]: released snapshot 20w22a
 
 [uuk]: fixed issue 194: loading of empty dicts from config file failed
+[uuk]: added profiler system with config system
+[uuk]: fixed issue 200: config was not parsed correctly

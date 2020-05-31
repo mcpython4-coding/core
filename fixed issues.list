@@ -182,3 +182,4 @@ issue 197: TickHandler was trying to tick the function tag for ticks when not in
 issue 198: Chunk was sharing the default attribute with all instances leading into one big data map; fixed on 30.05.2020
            by uuk
 issue 194: dicts in config failed to load when they were empty; fixed on 30.05.2020 by uuk
+issue 200: config files were not parsed correctly; fixed on 30.05.2020 by uuk
