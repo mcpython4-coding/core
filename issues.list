@@ -1,16 +1,16 @@
 
 [issue 1-8 are part of github-only and are mostly fixed at the moment]
 
-issue 22:
+issue 22: [fixed in generation improvements]
     bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
          is removed, it all updates following bug 23
     strategy: debug where block updates are called & why the block is not updated correct
 
-issue 23:
+issue 23: [fixed in generation improvements]
     bug: when sand is falling, it can fall more than 1 block at a time, see issue 22 for reproducing
     possible reason: fall is active two times in TickHandler
 
-issue 28:
+issue 28: [caused by issue 185]
     bug: F3+A - hot-key does not reload the world correctly
     since: unknown, found after fixing issue 19 & implementing hot-keys
     possible fix: rewrite this part of Chunk's method's

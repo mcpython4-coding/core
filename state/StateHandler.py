@@ -19,13 +19,14 @@ class StateHandler:
         self.states = {}
         self.CANCEL_SWITCH_STATE = False
 
-    def switch_to(self, statename: str or None, immediate=True):
+    def switch_to(self, statename: str, immediate=True):
+        if statename is None: return  # todo: remove
         if immediate:
             self._switch_to(statename)
         else:
             event.TickHandler.handler.schedule_once(self._switch_to, statename)
 
-    def _switch_to(self, statename):
+    def _switch_to(self, statename: str):
         if statename not in self.states:
             logger.println("[WARNING] state '{}' does not exists".format(statename))
             return
@@ -57,5 +58,5 @@ def load():
                    StateWorldGenerationConfig, StateModLoading)
     import gui.InventoryHandler
 
-    handler.switch_to("minecraft:modloading")
+    handler.switch_to("minecraft:modloading")  # this is the first state todo: make config for it
 

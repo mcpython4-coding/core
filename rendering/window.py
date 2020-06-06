@@ -197,21 +197,13 @@ class Window(pyglet.window.Window):
         if config.ENABLE_PROFILER_TICK and config.ENABLE_PROFILING: self.tick_profiler.disable()
 
     def collide(self, position, height):
-        """ Checks to see if the player at the given `position` and `height`
+        """
+        Checks to see if the player at the given `position` and `height`
         is colliding with any blocks in the world.
 
-        Parameters
-        ----------
-        position : tuple of len 3
-            The (x, y, z) position to check for collisions at.
-        height : int or float
-            The height of the player.
-
-        Returns
-        -------
-        position : tuple of len 3
-            The new position of the player taking into account collisions.
-
+        :param position: The (x, y, z) position to check for collisions at.
+        :param height: The height of the player.
+        :return The new position of the player taking into account collisions.
         """
         # How much overlap with a dimension of a surrounding block you need to
         # have to count as a collision. If 0, touching terrain at all counts as
@@ -237,8 +229,6 @@ class Window(pyglet.window.Window):
                     if not chunk.generated:
                         if G.world.config["enable_world_barrier"]:
                             blockstate = True
-                        # elif G.world.config["enable_auto_gen"] and not blockstate:
-                        #     G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
                     if not blockstate:
                         continue
                     p[i] -= (d - pad) * face[i]
@@ -253,8 +243,6 @@ class Window(pyglet.window.Window):
                             if dy > 0 and G.world.gamerulehandler.table["fallDamage"].status.status:
                                 G.world.get_active_player().damage(dy)
                             G.world.get_active_player().fallen_since_y = None
-                    # if not chunk.generated and G.world.config["enable_auto_gen"]:
-                    #     G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
                     break
         return tuple(p)
 

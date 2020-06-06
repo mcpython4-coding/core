@@ -42,8 +42,8 @@ class BlockConfigEntry:
     def __contains__(self, item): return self.contains(item)
 
 
-ENTRYS = {}  # todo: remove in a1.2.0
-ENTRIES: dict = ENTRYS  # the entries
+ENTRIES = dict()  # the entries
+ENTRYS = ENTRIES  # todo: remove in a1.2.0
 
 
 for file in ResourceLocator.get_all_entries_special("assets/config/block"):

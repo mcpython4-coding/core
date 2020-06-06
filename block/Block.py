@@ -97,13 +97,13 @@ class Block(event.Registry.IRegistryContent):
 
     def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         """
-        called when the player pressed an mouse button on the block
+        Called when the player pressed on mouse button on the block.
         :param player: the entity instance that interacts. WARNING: may not be an player instance
-        :param itemstack: the itemstack hold in hand, todo: remove
+        :param itemstack: the itemstack hold in hand, todo: remove as it is published by player
         :param button: the button pressed
         :param modifiers: the modifiers hold during press
         :param exact_hit: where the block was hit at
-        :return: if default logic should be interrupted
+        :return: if default logic should be interrupted or not
         """
         return False
 
@@ -201,4 +201,4 @@ class Block(event.Registry.IRegistryContent):
     def modify_block_item(cls, itemconstructor): pass  # todo: add an table for subscriptions
 
     @staticmethod
-    def get_all_model_states() -> list: return [{}]  # todo: make attribute
+    def get_all_model_states() -> list: return [{}]  # todo: make attribute or external config file
