@@ -12,6 +12,7 @@ prebuilding = "--rebuild" in sys.argv
 debugevents = "--debugevents" in sys.argv
 
 local = os.path.dirname(__file__).replace("\\", "/")
+home = local+"/home" if "--home" not in sys.argv else sys.argv[sys.argv.index("--home")+1]
 tmp = tempfile.TemporaryDirectory()
 
 STORAGE_VERSION = None

@@ -1104,3 +1104,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added ESCAPE-dict to logger fixing issue 193
 [uuk]: refactored the code
 [uuk]: added to every package the __init__.py file [doing nothing at the moment]
+[uuk]: moved save files to home/saves
+[uuk]: moved config files to home/config
+[uuk]: added sys.argv flag "--home <home>" to set where the home is [default: local+"/home"]
+[uuk]: saves, configs, data packs, logs and mods are now stored in the home-directory instead of the local directory

@@ -51,7 +51,7 @@ History of save versions:
 G.STORAGE_VERSION = LATEST_VERSION = 5  # the latest version, used for upgrading
 
 # where the stuff should be saved
-SAVE_DIRECTORY = G.local+"/saves" if "--saves-directory" not in sys.argv else \
+SAVE_DIRECTORY = G.home+"/saves" if "--saves-directory" not in sys.argv else \
     sys.argv[sys.argv.index("--saves-directory")+1]
 
 

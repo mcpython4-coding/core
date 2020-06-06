@@ -13,6 +13,8 @@ import logger
 
 try:
     import sys
+    import os
+    import globals as G
 
     if sys.version_info.major < 3 or sys.version_info.minor < 7:
         logger.println("[WARN] you are using an not supported version of python. Game may not run!")
@@ -24,25 +26,21 @@ try:
     logger.println("- MCPYTHON 4 {} -".format(version))
     logger.println("---------------" + "-" * len(version))
 
-    import sys
-    import globals as G
+    if not os.path.isdir(G.home):
+        os.makedirs(G.home)
 
     sys.path.append(G.local + "/mcpython")
 
     import globals
-    import os
     import shutil
 
     logger.println("tmp storage at {}".format(globals.tmp.name))
 
-    if not os.path.exists(globals.local + "/datapacks"): os.makedirs(globals.local + "/datapacks")
+    if not os.path.exists(globals.home + "/datapacks"): os.makedirs(globals.home + "/datapacks")
 
     import mcpython.event.EventHandler
 
     import mcpython.rendering.window
-
-    import os
-
     import globals as G
 
     # check if build folder exists, if not, we need to create its content

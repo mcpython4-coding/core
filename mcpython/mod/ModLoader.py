@@ -42,8 +42,8 @@ import deprecation
 # For people which bring their own assets with them: please, if you are not familiar with the whole asset loading
 #   system, use the ResourceLocator.add_resources_by_modname-function to notate your loading to the right events
 
-if not os.path.exists(G.local+"/mods"):
-    os.makedirs(G.local+"/mods")
+if not os.path.exists(G.home+"/mods"):
+    os.makedirs(G.home+"/mods")
 
 
 class LoadingStage:
@@ -261,7 +261,7 @@ class ModLoader:
         will return an list of mod locations found for loading
         """
         modlocations = []
-        locs = [G.local + "/mods"]
+        locs = [G.home + "/mods"]
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]

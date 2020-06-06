@@ -35,14 +35,14 @@ FUNNY_STRINGS = [
     "Warning: your game has crashed!"
 ]
 
-if not os.path.exists(G.local + "/logs"):
-    os.makedirs(G.local + "/logs")
+if not os.path.exists(G.home + "/logs"):
+    os.makedirs(G.home + "/logs")
 
-log_file = datetime.now().strftime(G.local + "/logs/log_%d.%m.%y_%H.%M.%S.txt")
+log_file = datetime.now().strftime(G.home + "/logs/log_%d.%m.%y_%H.%M.%S.txt")
 inter_home = os.path.dirname(sys.executable).replace("\\", "/")
 
 
-ESCAPE = {G.local: "%LOCAL%", inter_home: "%PYTHON%"}
+ESCAPE = {G.local: "%LOCAL%", inter_home: "%PYTHON%", G.home: "%HOME%"}
 
 
 def escape(string: str) -> str:

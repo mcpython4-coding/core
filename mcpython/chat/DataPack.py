@@ -43,8 +43,8 @@ class DataPackHandler:
         """
         will load all data packs
         """
-        for path in os.listdir(G.local+"/datapacks"):
-            self.data_packs.append(self._load_datapack(G.local+"/datapacks/"+path))
+        for path in os.listdir(G.home+"/datapacks"):
+            self.data_packs.append(self._load_datapack(G.home+"/datapacks/"+path))
         G.eventhandler.call("datapack:search")
 
     def _load_datapack(self, directory: str):

@@ -13,8 +13,8 @@ from abc import ABC
 import globals as G
 import logger
 
-if not os.path.isdir(G.local + "/config"):
-    os.makedirs(G.local + "/config")
+if not os.path.isdir(G.home + "/config"):
+    os.makedirs(G.home + "/config")
 
 
 class InvalidMapperData(Exception): pass
@@ -369,7 +369,7 @@ class ConfigFile:
         self.file_name = file_name
         self.assigned_mod = assigned_mod
         self.main_tag = DictDataMapper()
-        self.file = G.local+"/config/{}/{}.conf".format(assigned_mod, file_name)
+        self.file = G.local+"home/config/{}/{}.conf".format(assigned_mod, file_name)
         G.modloader(self.assigned_mod, "stage:mod:config:load", "building config file {}".format(self.file))(self.build)
 
     def add_entry(self, key: str, default_mapper=None, description=None):
