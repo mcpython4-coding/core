@@ -55,7 +55,7 @@ class TextureFactory:
             else:
                 images[out] = self.transform(images, images[image], mode, **entry)
         for store in data["store"]:
-            f = G.local+"/build/texture/"+store["location"]
+            f = G.build+"/texture/"+store["location"]
             d = os.path.dirname(f)
             if not os.path.exists(d): os.makedirs(d)
             images[store["id"]].save(f)

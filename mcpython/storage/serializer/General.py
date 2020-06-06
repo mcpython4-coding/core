@@ -28,10 +28,10 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         if playername not in G.world.players: G.world.add_player(playername)
         G.world.active_player = playername
         try:
-            mcpython.util.getskin.download_skin(playername, G.local+"/build/skin.png")
+            mcpython.util.getskin.download_skin(playername, G.build+"/skin.png")
         except ValueError:
             logger.println("[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
-            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local + "/build/skin.png")
+            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
         mcpython.world.player.Player.RENDERER.reload()
         G.world.config = data["config"]
         G.eventhandler.call("seed:set")

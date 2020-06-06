@@ -44,14 +44,14 @@ try:
     import globals as G
 
     # check if build folder exists, if not, we need to create its content
-    if not os.path.exists(G.local+"/build"):
+    if not os.path.exists(G.build+""):
         G.prebuilding = True
 
     import mcpython.ResourceLocator
     mcpython.ResourceLocator.load_resource_packs()
 
-    if os.path.exists(G.local+"/build"):
-        mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local+"/build/skin.png")
+    if os.path.exists(G.build+""):
+        mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
 
     import mcpython.mod.ModLoader
 

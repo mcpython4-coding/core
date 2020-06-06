@@ -100,11 +100,11 @@ class StateWorldGeneration(State.State):
 
         # setup skin
         try:
-            mcpython.util.getskin.download_skin(playername, G.local + "/build/skin.png")
+            mcpython.util.getskin.download_skin(playername, G.build+"/skin.png")
         except ValueError:
             logger.write_exception(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
-            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local + "/build/skin.png")
+            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
         mcpython.world.player.Player.RENDERER.reload()
         G.world.active_player = playername
         G.world.get_active_player().position = (G.world.spawnpoint[0], mcpython.util.math.get_max_y(G.world.spawnpoint),

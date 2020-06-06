@@ -197,6 +197,8 @@ def load_resource_packs():
     RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(
         mcpython.config.MC_VERSION_BASE)))
     RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/minecraft.zip"))  # the special extension file
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.home))
+    RESOURCE_LOCATIONS.append(ResourceDirectory(G.build))
     G.eventhandler.call("resources:load")
 
 

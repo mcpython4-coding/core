@@ -42,7 +42,7 @@ log_file = datetime.now().strftime(G.home + "/logs/log_%d.%m.%y_%H.%M.%S.txt")
 inter_home = os.path.dirname(sys.executable).replace("\\", "/")
 
 
-ESCAPE = {G.local: "%LOCAL%", inter_home: "%PYTHON%", G.home: "%HOME%"}
+ESCAPE = {G.local: "%LOCAL%", inter_home: "%PYTHON%", G.home: "%HOME%", G.build: "%BUILD%"}
 
 
 def escape(string: str) -> str:

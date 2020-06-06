@@ -74,10 +74,10 @@ class StateBlockItemGenerator(State.State):
         G.world.hide_faces_to_ungenerated_chunks = False
         G.tickhandler.enable_random_ticks = False
         self.tasks = list(G.registry.get_by_name("block").registered_object_map.keys())
-        if not os.path.isdir(G.local + "/build/generated_items"): os.makedirs(G.local + "/build/generated_items")
+        if not os.path.isdir(G.build+"/generated_items"): os.makedirs(G.build+"/generated_items")
         if not G.prebuilding:
-            if os.path.exists(G.local+"/build/itemblockfactory.json"):
-                with open(G.local+"/build/itemblockfactory.json", mode="r") as f:
+            if os.path.exists(G.build+"/itemblockfactory.json"):
+                with open(G.build+"/itemblockfactory.json", mode="r") as f:
                     self.table = json.load(f)
             else:  # make sure it is was reset
                 self.table.clear()
@@ -112,7 +112,7 @@ class StateBlockItemGenerator(State.State):
 
     def on_deactivate(self):
         G.world.cleanup()
-        with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
+        with open(G.build+"/itemblockfactory.json", mode="w") as f:
             json.dump(self.table, f)
         mcpython.factory.ItemFactory.ItemFactory.process()
         mcpython.item.ItemHandler.build()
@@ -120,7 +120,7 @@ class StateBlockItemGenerator(State.State):
         G.window.set_minimum_size(1, 1)
         G.window.set_maximum_size(100000, 100000)  # only here for making resizing possible again
         mcpython.event.TickHandler.handler.enable_tick_skipping = True
-        with open(G.local + "/build/info.json", mode="w") as f:
+        with open(G.build+"/info.json", mode="w") as f:
             json.dump({"finished": True}, f)
         G.tickhandler.enable_random_ticks = True
         G.world.hide_faces_to_ungenerated_chunks = True
@@ -166,8 +166,8 @@ class StateBlockItemGenerator(State.State):
     def take_image(self, *args):
         if self.blockindex >= len(self.tasks): return
         blockname = self.tasks[self.blockindex]
-        file = "build/generated_items/{}.png".format("__".join(blockname.split(":")))
-        pyglet.image.get_buffer_manager().get_color_buffer().save(G.local + "/" + file)
+        file = "generated_items/{}.png".format("__".join(blockname.split(":")))
+        pyglet.image.get_buffer_manager().get_color_buffer().save(G.build + "/" + file)
         image: PIL.Image.Image = mcpython.ResourceLocator.read(file, "pil")
         if image.getbbox() is None or len(image.histogram()) <= 1:
             pyglet.clock.schedule_once(self.take_image, 0.05)
@@ -175,7 +175,7 @@ class StateBlockItemGenerator(State.State):
             self._error_counter(image, blockname)
             return
         image = image.crop((240, 129, 558, 447))  # todo: make dynamic based on window size
-        image.save(G.local + "/" + file)
+        image.save(G.build + "/" + file)
         if image == self.last_image:
             self._error_counter(image, blockname)
             return
@@ -189,7 +189,7 @@ class StateBlockItemGenerator(State.State):
             logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
                 self.tasks[self.blockindex]))
             self.last_image = image
-            file = G.local + "/build/blockitemgenerator_fail_{}_of_{}.png".format(
+            file = G.build+"/blockitemgenerator_fail_{}_of_{}.png".format(
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__"))
             image.save(file)
             logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(file))

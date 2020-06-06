@@ -238,8 +238,8 @@ class ModLoader:
         self.active_loading_stage = 0
         self.lasttime_mods = {}
         self.found_mod_instances = []
-        if os.path.exists(G.local+"/build/mods.json"):
-            with open(G.local+"/build/mods.json") as f:
+        if os.path.exists(G.build+"/mods.json"):
+            with open(G.build+"/mods.json") as f:
                 self.lasttime_mods = json.load(f)
         elif not G.prebuilding:
             logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
@@ -370,7 +370,7 @@ class ModLoader:
         """
         writes the data for the mod table into the file
         """
-        with open(G.local + "/build/mods.json", mode="w") as f:
+        with open(G.build+"/mods.json", mode="w") as f:
             m = {modinst.name: modinst.version for modinst in self.mods.values()}
             json.dump(m, f)
 

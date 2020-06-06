@@ -55,13 +55,13 @@ def add():
         def dump_data(directory: str):
             for _ in range(10):
                 try:
-                    shutil.rmtree(G.local+"/build")
+                    shutil.rmtree(G.build+"")
                     break
                 except PermissionError: pass
                 except OSError: pass
             else:
                 raise IOError("can't remove 'build'-folder. please make sure that no file is opened")
-            os.makedirs(G.local+"/build")
+            os.makedirs(G.build+"")
 
         USES_DIRECTORY = False
 
@@ -77,12 +77,12 @@ def add():
 
 
 def execute():
-    if not os.path.exists(G.local+"/build"):
-        os.makedirs(G.local+"/build")
-    with open(G.local+"/build/info.json", mode="w") as f:
+    if not os.path.exists(G.build+""):
+        os.makedirs(G.build+"")
+    with open(G.build+"/info.json", mode="w") as f:
         json.dump({"finished": False}, f)
     for iprepareabletask in taskregistry.registered_object_map.values():
-        directory = G.local+"/build/"+iprepareabletask.NAME
+        directory = G.build+"/"+iprepareabletask.NAME
         if iprepareabletask.USES_DIRECTORY:
             if os.path.exists(directory): shutil.rmtree(directory)
             os.makedirs(directory)
@@ -93,9 +93,9 @@ def execute():
 # todo: split up into different sub-calls
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", add, info="adding prebuild tasks")
 
-if not os.path.exists(G.local+"/build/info.json"): G.prebuilding = True
+if not os.path.exists(G.build+"/info.json"): G.prebuilding = True
 else:
-    with open(G.local+"/build/info.json") as f:
+    with open(G.build+"/info.json") as f:
         data = json.load(f)
     if not data["finished"]:
         G.prebuilding = True

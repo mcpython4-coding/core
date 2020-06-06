@@ -75,9 +75,9 @@ def get_url(url, **kwargs):
 
 
 def download_skin(username: str, store: str):
-    if os.path.isfile(G.local+"/build/skins/{}.png".format(username)):
+    if os.path.isfile(G.build+"/skins/{}.png".format(username)):
         print("loading skin from cache...")
-        shutil.copy(G.local+"/build/skins/{}.png".format(username), store)
+        shutil.copy(G.build+"/skins/{}.png".format(username), store)
         return
     print("downloading skin for '{}'".format(username))
     if os.path.exists(store):
@@ -114,5 +114,5 @@ def download_skin(username: str, store: str):
         new_image.alpha_composite(image.crop((0, 16, 15, 32)), (16, 48))
         new_image.alpha_composite(image.crop((40, 16, 55, 32)), (32, 48))
         new_image.save(store)
-    if not os.path.exists(G.local+"/build/skins"): os.makedirs(G.local+"/build/skins")
-    shutil.copy(store, G.local+"/build/skins/{}.png".format(username))
+    if not os.path.exists(G.build+"/skins"): os.makedirs(G.build+"/skins")
+    shutil.copy(store, G.build+"/skins/{}.png".format(username))

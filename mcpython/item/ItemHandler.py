@@ -23,47 +23,47 @@ TEXTURE_ATLASES = []
 
 
 def build():
-    if not os.path.exists(G.local+"/build/itematlases"):
-        os.makedirs(G.local+"/build/itematlases")
+    if not os.path.exists(G.build+"/itematlases"):
+        os.makedirs(G.build+"/itematlases")
 
     logger.println("building item texture atlases...")
     G.eventhandler.call("itemhandler:build:atlases:save")
     indexdata = {}
     for i, textureatlas in enumerate(TEXTURE_ATLASES):
         file = "atlas_{}.png".format(i)
-        textureatlas.texture.save(G.local+"/build/itematlases/"+file)
-        textureatlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.local+"/build/itematlases/"+file),
+        textureatlas.texture.save(G.build+"/itematlases/"+file)
+        textureatlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.build+"/itematlases/"+file),
                                                       *textureatlas.size)
         indexdata[file] = {"size": textureatlas.size, "loaded_item_file_names": textureatlas.images,
                            "locations": textureatlas.imagelocations}
     indexdata["loaded_item_file_names"] = items.itemindextable
-    with open(G.local + "/build/itematlases/index.json", mode="w") as f:
+    with open(G.build+"/itematlases/index.json", mode="w") as f:
         json.dump(indexdata, f)
 
 
 def load_data(from_block_item_generator=False):
     if G.prebuilding and not from_block_item_generator: return
     G.eventhandler.call("itemhandler:build:atlases:load")
-    if not os.path.exists(G.local+"/build/itematlases"):
-        os.makedirs(G.local+"/build/itematlases")
-    elif os.path.exists(G.local + "/build/itematlases/index.json"):
-        with open(G.local+"/build/itematlases/index.json") as f:
+    if not os.path.exists(G.build+"/itematlases"):
+        os.makedirs(G.build+"/itematlases")
+    elif os.path.exists(G.build+"/itematlases/index.json"):
+        with open(G.build+"/itematlases/index.json") as f:
             indextable = json.load(f)
-        for file in os.listdir(G.local+"/build/itematlases"):
+        for file in os.listdir(G.build+"/itematlases"):
             if not file.endswith(".json") and file in indextable:
                 atlas = mcpython.texture.TextureAtlas.TextureAtlas(size=indextable[file]["size"], image_size=(32, 32),
                                                           add_missing_texture=False, pyglet_special_pos=False)
-                image = PIL.Image.open(G.local+"/build/itematlases/"+file)
+                image = PIL.Image.open(G.build+"/itematlases/"+file)
                 atlas.texture = image
                 atlas.images = indextable[file]["loaded_item_file_names"]
                 atlas.imagelocations = indextable[file]["locations"]
                 TEXTURE_ATLASES.append(atlas)
                 if not G.prebuilding:
-                    atlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.local + "/build/itematlases/" + file),
+                    atlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.build+"/itematlases/" + file),
                                                          *atlas.size)
         items.itemindextable = indextable["loaded_item_file_names"]
         if not G.prebuilding:
-            with open(G.local+"/build/itemblockfactory.json") as f:
+            with open(G.build+"/itemblockfactory.json") as f:
                 data = json.load(f)
             for entry in data[:]:
                 name = entry[0]
@@ -77,7 +77,7 @@ def load_data(from_block_item_generator=False):
                     logger.println("[ERROR] during constructing block item for '{}': Failed to find block in active "
                                    "registry".format(name))
                     data.remove(entry)
-            with open(G.local+"/build/itemblockfactory.json", mode="w") as f:
+            with open(G.build+"/itemblockfactory.json", mode="w") as f:
                 json.dump(data, f)
 
 
