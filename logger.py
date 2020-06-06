@@ -12,7 +12,7 @@ import random
 import sys
 from datetime import datetime
 
-import config
+import mcpython.config
 import globals as G
 import traceback
 
@@ -78,14 +78,14 @@ def write_exception(*info):
     write the current exception into console and log
     :param info: the info to use
     """
-    console = not config.WRITE_NOT_FORMATTED_EXCEPTION
+    console = not mcpython.config.WRITE_NOT_FORMATTED_EXCEPTION
     println("[ERROR][EXCEPTION] gotten exception", write_into_console=console)
     println("-", *["\n-".join([str(e) for e in info])], sep="", write_into_console=console)
     sdata = traceback.format_stack()[:-2]
     data = traceback.format_exc().replace("\\", "/").replace(G.local, "%LOCAL%").replace(inter_home, "%PYTHON%").split(
         "\n")
     println(data[0], "\n", "".join(sdata), "\n".join(data[1:]), write_into_console=console)
-    if config.WRITE_NOT_FORMATTED_EXCEPTION:
+    if mcpython.config.WRITE_NOT_FORMATTED_EXCEPTION:
         println(info, write_into_log_file=False)
         traceback.print_stack()
         traceback.print_exc()
@@ -97,8 +97,8 @@ machine: {}
 processor: {}
 python version: {}, implementation: {}
 """.format(
-    config.VERSION_NAME, config.VERSION_TYPE, platform.system().replace("Darwin", "MacOS"), platform.machine(),
-    platform.processor(), platform.python_version(), platform.python_implementation()
+    mcpython.config.VERSION_NAME, mcpython.config.VERSION_TYPE, platform.system().replace("Darwin", "MacOS"),
+    platform.machine(), platform.processor(), platform.python_version(), platform.python_implementation()
 ), write_into_console=False)
 
 

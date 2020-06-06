@@ -7,19 +7,27 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
-import logger
 import deprecation
+
+import logger
 
 try:
     import sys
+
     if sys.version_info.major < 3 or sys.version_info.minor < 7:
         logger.println("[WARN] you are using an not supported version of python. Game may not run!")
 
-    import config
-    version = config.FULL_VERSION_NAME.upper()
-    logger.println("---------------"+"-"*len(version))
+    import mcpython.config
+
+    version = mcpython.config.FULL_VERSION_NAME.upper()
+    logger.println("---------------" + "-" * len(version))
     logger.println("- MCPYTHON 4 {} -".format(version))
-    logger.println("---------------"+"-"*len(version))
+    logger.println("---------------" + "-" * len(version))
+
+    import sys
+    import globals as G
+
+    sys.path.append(G.local + "/mcpython")
 
     import globals
     import os
@@ -29,9 +37,9 @@ try:
 
     if not os.path.exists(globals.local + "/datapacks"): os.makedirs(globals.local + "/datapacks")
 
-    import event.EventHandler
+    import mcpython.event.EventHandler
 
-    import rendering.window
+    import mcpython.rendering.window
 
     import os
 
@@ -41,13 +49,13 @@ try:
     if not os.path.exists(G.local+"/build"):
         G.prebuilding = True
 
-    import ResourceLocator
-    ResourceLocator.load_resource_packs()
+    import mcpython.ResourceLocator
+    mcpython.ResourceLocator.load_resource_packs()
 
     if os.path.exists(G.local+"/build"):
-        ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local+"/build/skin.png")
+        mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.local+"/build/skin.png")
 
-    import mod.ModLoader
+    import mcpython.mod.ModLoader
 
     G.modloader.look_out()
 
@@ -55,17 +63,19 @@ try:
 
     import sys
 
-    import setup as systemsetup
+    import mcpython.setup as systemsetup
 
-    import rendering.model.ModelHandler
-    import rendering.model.BlockState
+    import mcpython.rendering.model.ModelHandler
+    import mcpython.rendering.model.BlockState
 
-    import tags.TagHandler
-    import block.BlockHandler
-    import item.ItemHandler
-    import world.gen.WorldGenerationHandler
+    import mcpython.tags.TagHandler
+    import mcpython.block.BlockHandler
+    import mcpython.item.ItemHandler
+    import mcpython.world.gen.WorldGenerationHandler
 
-    import world.gen.biome.BiomeHandler
+    import mcpython.world.gen.biome.BiomeHandler
+
+    import mcpython.texture.factory
 
 
     def setup():
@@ -74,15 +84,15 @@ try:
         todo: move to somewhere else
         """
         import globals as G
-        import world.World
-        globals.world = world.World.World()
-        import rendering.model.BlockState
-        import Language
-        import rendering.OpenGLSetupFile
+        import mcpython.world.World
+        globals.world = mcpython.world.World.World()
+        import mcpython.rendering.model.BlockState
+        import mcpython.Language
+        import mcpython.rendering.OpenGLSetupFile
 
-        rendering.OpenGLSetupFile.execute_file_by_name("setup")
+        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("setup")
 
-        import world.gen.mode.DebugOverWorldGenerator
+        import mcpython.world.gen.mode.DebugOverWorldGenerator
 
     def run():
         """
@@ -90,9 +100,9 @@ try:
         """
         import pyglet
         # todo: move size to config.py
-        rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
-        G.window.set_icon(ResourceLocator.read("icon_16x16.png", "pyglet"),
-                          ResourceLocator.read("icon_32x32.png", "pyglet"))
+        mcpython.rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
+        G.window.set_icon(mcpython.ResourceLocator.read("icon_16x16.png", "pyglet"),
+                          mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"))
         G.eventhandler.call("game:gameloop_startup")
         try:
             pyglet.app.run()
@@ -112,8 +122,8 @@ try:
 except SystemExit:
     sys.exit(-1)
 except:  # when we crash on loading, make sure that all resources are closed and we cleaned up afterwards
-    import ResourceLocator
-    ResourceLocator.close_all_resources()
+    import mcpython.ResourceLocator
+    mcpython.ResourceLocator.close_all_resources()
     logger.write_exception("general loading exception")
     try:
         G.tmp.cleanup()
@@ -133,7 +143,7 @@ if __name__ == "__main__":
         logger.write_exception("general system exception leading into an crash")
         G.tmp.cleanup()
     finally:
-        import ResourceLocator
-        ResourceLocator.close_all_resources()
+        import mcpython.ResourceLocator
+        mcpython.ResourceLocator.close_all_resources()
         G.eventhandler.call("game:close")
         G.tmp.cleanup()

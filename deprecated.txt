@@ -42,3 +42,7 @@ marked for removal in alpha 1.4.0:
     [1] State WITHOUT StateConfigFile, State.parts, State.bind_to_eventbus
     [2] __main__.main()
     [2] Chunk.update_visable_block(), Chunk.update_visable()
+
+
+marked for removal in alpha 1.5.0:
+    remove support for non-prefixed mcpython imports

@@ -1102,3 +1102,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added profiler system with config system
 [uuk]: fixed issue 200: config was not parsed correctly in some cases
 [uuk]: added ESCAPE-dict to logger fixing issue 193
+[uuk]: refactored the code
+[uuk]: added to every package the __init__.py file [doing nothing at the moment]

@@ -44,8 +44,13 @@ information on development:
 changelog of snapshot [next]
     - changed version tuple builder for mcpython
     - added profiler system with config options
+    - refactored most of the stuff into the mcypthon-folder, but the folder itself is added to sys.path for backward
+        compatibility [WARNING: this is an breaking change!!!!!!!!]
 
     fixed issues:
+        long-term issues:
+            - barrel rotation was not saved
+
         from previous snapshot:
             - dicts in config file failed to load
             - booleans where not correctly loaded
