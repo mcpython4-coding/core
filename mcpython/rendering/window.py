@@ -6,6 +6,8 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
+import sys
+
 import PIL.Image
 import psutil
 import pyglet
@@ -26,7 +28,30 @@ from mcpython.config import *  # todo: remove
 from mcpython.util.math import *  # todo: remove
 
 
-class Window(pyglet.window.Window):
+class NoWindow:
+    """
+    class simulating an window
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.width = self.height = 200
+
+    def get_size(self): return self.width, self.height
+
+    def push_handlers(self, handler):
+        pass
+
+    def close(self):
+        pass
+
+    def set_caption(self, caption: str):
+        pass
+
+    def set_icon(self, *args):
+        pass
+
+
+class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow):
 
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)

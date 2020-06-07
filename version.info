@@ -1124,3 +1124,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added "--exit-after-data-gen" flag to sys.argv for exiting after generation
 [uuk]: now using simplejson for encoding an json object
 [uuk]: added installer.py for installing all the stuff
+[uuk]: /reload will now re-generate also data generators by calling the program with "--data-gen --exit-after-data-gen"
+[uuk]: added "--no-window"-flag for opening no window [useful for data gen]

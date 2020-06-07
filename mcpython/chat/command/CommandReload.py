@@ -16,6 +16,8 @@ import mcpython.event.TickHandler
 import mcpython.rendering.EntityRenderer
 import mcpython.rendering.OpenGLSetupFile
 from mcpython.chat.command.Command import ParseBridge
+import subprocess
+import sys
 
 
 @G.registry
@@ -41,6 +43,10 @@ class CommandReload(mcpython.chat.command.Command.Command):
         cls.CANCEL_RELOAD = False
         G.eventhandler.call("command:reload:start")
         if cls.CANCEL_RELOAD: return
+        if G.dev_environment:
+            # todo: same parameters as this launch!
+            subprocess.Popen([sys.executable, G.local+"/__main__.py", "--data-gen", "--exit-after-data-gen",
+                              "--no-window"], stderr=sys.stderr)
         mcpython.chat.DataPack.datapackhandler.reload()  # reloads all data packs
         G.taghandler.reload()  # reloads all tags
         G.craftinghandler.reload_crafting_recipes()  # reloads all recipes

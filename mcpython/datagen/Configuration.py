@@ -10,6 +10,7 @@ import globals as G
 import pickle
 import os
 import simplejson
+import logger
 
 
 class IDataGenerator:
@@ -54,7 +55,11 @@ class DataGeneratorConfig:
         return mcpython.datagen.RecipeGenerator.SmeltingGenerator(args[0], self, *args[1:], **kwargs)
 
     def __build(self):
-        [element.generate() for element in self.elements]
+        for element in self.elements:
+            try:
+                element.generate()
+            except:
+                logger.write_exception("during building {}".format(element))
 
     def write(self, data, *args):
         if len(args) == 4:

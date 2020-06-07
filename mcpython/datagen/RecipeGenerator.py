@@ -9,6 +9,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import mcpython.datagen.Configuration
 import mcpython.gui.ItemStack
 import typing
+import logger
 
 
 class ICraftingKeyEncoder:
@@ -162,6 +163,9 @@ class ShapelessGenerator(mcpython.datagen.Configuration.IDataGenerator):
         return self
 
     def generate(self):
+        if self.output is None:
+            logger.println("recipe {} is missing output!".format(self.name))
+            return
         data = {"type": "minecraft:crafting_shapeless", "ingredients": [encode_data(e) for e in self.inputs],
                 "result": {"count": self.output[0], "item": self.output[1]}}
         if self.group is not None:
