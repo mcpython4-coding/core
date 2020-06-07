@@ -1110,3 +1110,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: saves, configs, data packs, logs and mods are now stored in the home-directory instead of the local directory
 [uuk]: added sys.argv flag "--build-folder <folder>" setting the folder where build stuff is stored
        [default: home+"/build"]
+[uuk]: moved resourcepacks-folder into home-directory

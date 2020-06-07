@@ -1,0 +1,22 @@
+// gl setup file
+
+// Enable culling (not rendering) of back-facing facets -- facets that aren't visible to you
+// todo: move to world rendering code and disable when drawing with alpha
+glEnable(glEnum GL_CULL_FACE)
+
+// Set the texture minification/magnification function to GL_NEAREST (nearest
+// in Manhattan distance) to the specified texture coordinates. GL_NEAREST
+// "is generally faster than GL_LINEAR, but it can produce textured images
+// with sharper edges because the transition between texture elements is not
+// as smooth."
+glTexParameteri(glEnum GL_TEXTURE_2D, glEnum GL_TEXTURE_MIN_FILTER, glEnum GL_NEAREST)
+glTexParameteri(glEnum GL_TEXTURE_2D, glEnum GL_TEXTURE_MAG_FILTER, glEnum GL_NEAREST)
+
+// setup system for alpha drawing
+glEnable(glEnum GL_BLEND)
+glBlendFunc(glEnum GL_SRC_ALPHA, glEnum GL_ONE_MINUS_SRC_ALPHA)
+
+set pyglet.image.Texture.default_min_filter -> glEnum GL_NEAREST
+set pyglet.image.Texture.default_mag_filter -> glEnum GL_NEAREST
+
+subcall setup_fog

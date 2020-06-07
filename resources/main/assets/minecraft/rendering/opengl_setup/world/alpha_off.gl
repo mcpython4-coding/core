@@ -1,0 +1,4 @@
+// disables alpha drawing
+
+glBlendFunc(glEnum GL_ONE, glEnum GL_ZERO)
+glEnable(glEnum GL_CULL_FACE)

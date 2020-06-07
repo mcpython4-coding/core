@@ -46,6 +46,8 @@ changelog of snapshot [next]
     - added profiler system with config options
     - refactored most of the stuff into the mcypthon-folder, but the folder itself is added to sys.path for backward
         compatibility [WARNING: this is an breaking change!!!!!!!!]
+    - refactored much not-code related files into the home-folder
+    - refactored & unpacked assets into the resources-folder
 
     fixed issues:
         long-term issues:

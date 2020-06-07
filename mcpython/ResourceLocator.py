@@ -171,9 +171,11 @@ def load_resource_packs():
     will load the resource packs found in the paths for it
     """
     close_all_resources()
-    for file in os.listdir(G.local+"/resourcepacks"):
+    if not os.path.exists(G.home+"/resourcepacks"):
+        os.makedirs(G.home+"/resourcepacks")
+    for file in os.listdir(G.home+"/resourcepacks"):
         if file in ["{}.jar".format(mcpython.config.MC_VERSION_BASE), "minecraft.zip"]: continue
-        file = G.local+"/resourcepacks/" + file
+        file = G.home+"/resourcepacks/" + file
         flag = True
         for source in RESOURCE_PACK_LOADERS:
             if flag and source.is_valid(file):
@@ -194,9 +196,10 @@ def load_resource_packs():
         else:
             i += 1
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
-    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/{}.jar".format(
-        mcpython.config.MC_VERSION_BASE)))
-    RESOURCE_LOCATIONS.append(ResourceZipFile(G.local + "/resourcepacks/minecraft.zip"))  # the special extension file
+    if G.dev_environment:
+        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/generated"))
+        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/main"))
+        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/source"))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.home))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.build))
     G.eventhandler.call("resources:load")
