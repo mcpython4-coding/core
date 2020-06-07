@@ -169,3 +169,46 @@ class ShapelessGenerator(mcpython.datagen.Configuration.IDataGenerator):
 
         self.config.write_json(data, "data", "recipes", self.name+".json")
 
+
+class SmeltingGenerator(mcpython.datagen.Configuration.IDataGenerator):
+    def __init__(self, name: str, config, mode="minecraft:smelting"):
+        super().__init__(config)
+        self.name = name
+        self.group = None
+        self.output = None
+        self.xp = 0
+        self.cooking_time = 200
+        self.inputs = []
+        self.mode = mode
+
+    def setGroup(self, name: str):
+        self.group = name
+        return self
+
+    def add_ingredient(self, data):
+        self.inputs.append(data)
+        return self
+
+    def add_ingredients(self, *data):
+        self.inputs += data
+        return self
+
+    def setOutput(self, stack: str):
+        self.output = stack
+        return self
+
+    def setXp(self, xp: int):
+        self.xp = xp
+        return self
+
+    def setCookingTime(self, dt: int):
+        self.cooking_time = dt
+        return self
+
+    def generate(self):
+        inp = encode_data(self.inputs[0]) if len(self.inputs) == 1 else [encode_data(e) for e in self.inputs]
+        data = {"type": self.mode, "ingredient": inp, "result": self.output,
+                "experience": self.xp, "cookingtime": self.cooking_time}
+
+        self.config.write_json(data, "data", "recipes", self.name + ".json")
+

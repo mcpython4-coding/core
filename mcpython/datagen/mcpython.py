@@ -88,3 +88,29 @@ def generate_data():
     generate_stair(config, "andesite_stairs", "andesite")
     generate_wall(config, "andesite_wall", "andesite")
 
+    config.shaped_recipe("anvil").setEntries([(0, 2), (1, 2), (2, 2)], "minecraft:iron_block").setEntries(
+        [(0, 0), (1, 0), (2, 0), (1, 1)], "minecraft:iron_ingot").setOutput("minecraft:anvil")
+
+    config.shaped_recipe("armor_stand").setEntries(
+        [(0, 0), (1, 1), (2, 0), (1, 2), (0, 2), (2, 2)], "minecraft:stick").setEntry(
+        1, 0, "minecraft:smooth_stone_slab").setOutput("minecraft:armor_stand")
+
+    config.shaped_recipe("arrow").setEntry(0, 0, "minecraft:feather").setEntry(0, 1, "minecraft:stick").setEntry(
+        0, 2, "minecraft:flint").setOutput("minecraft:arrow")
+    config.smelting_recipe("baked_potato").add_ingredient("minecraft:potato").setOutput("minecraft:baked_potato").setXp(
+        0.35)
+    config.smelting_recipe("backed_potato_from_campfire_cooking", mode="minecraft:campfire_cooking").add_ingredient(
+        "minecraft:potato").setOutput("minecraft:baked_potato").setXp(0.35).setCookingTime(600)
+    config.smelting_recipe("backed_potato_from_smoking", mode="minecraft:smoking").add_ingredient(
+        "minecraft:potato").setOutput("minecraft:baked_potato").setXp(0.35).setCookingTime(100)
+
+    config.shaped_recipe("barrel").setEntries(
+        [(0, 0), (0, 1), (0, 2), (2, 0), (2, 1), (2, 2)], "#minecraft:planks").setEntries(
+        [(1, 0), (1, 2)], "#minecraft:wooden_slabs").setOutput("minecraft:barrel")
+    config.shaped_recipe("beacon").setEntries([(0, 0), (1, 0), (2, 0)], "minecraft:obsidian").setEntries(
+        [(0, 1), (0, 2), (2, 1), (2, 2), (1, 2)], "minecraft:glass").setEntry(1, 1, "minecraft:nether_start").setOutput(
+        "minecraft:beacon")
+    config.shaped_recipe("beehive").setEntries(
+        [(0, 0), (1, 0), (2, 0), (0, 2), (1, 2), (2, 2)], "#minecraft:planks").setEntries(
+        [(0, 1), (1, 1), (2, 1)], "minecraft:honeycomb").setOutput("minecraft:beehive")
+

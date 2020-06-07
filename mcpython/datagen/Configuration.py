@@ -49,6 +49,10 @@ class DataGeneratorConfig:
         import mcpython.datagen.RecipeGenerator
         return mcpython.datagen.RecipeGenerator.ShapelessGenerator(name,  self)
 
+    def smelting_recipe(self, *args, **kwargs):
+        import mcpython.datagen.RecipeGenerator
+        return mcpython.datagen.RecipeGenerator.SmeltingGenerator(args[0], self, *args[1:], **kwargs)
+
     def __build(self):
         [element.generate() for element in self.elements]
 
