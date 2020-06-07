@@ -9,6 +9,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import pickle
 import os
+import simplejson
 
 
 class IDataGenerator:
@@ -44,6 +45,10 @@ class DataGeneratorConfig:
         import mcpython.datagen.RecipeGenerator
         return mcpython.datagen.RecipeGenerator.ShapedRecipeGenerator(name, self)
 
+    def shapeless_recipe(self, name: str):
+        import mcpython.datagen.RecipeGenerator
+        return mcpython.datagen.RecipeGenerator.ShapelessGenerator(name,  self)
+
     def __build(self):
         [element.generate() for element in self.elements]
 
@@ -66,4 +71,7 @@ class DataGeneratorConfig:
         else:
             with open(file, mode="wb") as f:
                 pickle.dump(data, f)
+
+    def write_json(self, data, *args):
+        self.write(simplejson.dumps(data, sort_keys=True, indent="  "), *args)
 

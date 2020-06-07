@@ -148,6 +148,8 @@ def build():
     copytree(local + "/resources/source", folder)
     copytree(local + "/resources/generated", folder)
     copytree(local + "/resources/main", folder)
+    
+    shutil.copy(local+"/requirements.txt", folder+"/requirements.txt")
 
     print("modifying source...")
     with open(folder + "/globals.py") as f:

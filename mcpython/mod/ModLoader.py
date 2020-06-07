@@ -192,10 +192,10 @@ LOADING_ORDER: list = [
     LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.CONFIGS, LoadingStages.PREBUILD]
 
 
-if "--data-gen" in sys.argv and G.dev_environment:  # only do it in dev-environment
+if G.data_gen:  # only do it in dev-environment
     LOADING_ORDER.append(LoadingStages.DATA_GENERATION)
 
-    if "--exit-after-data-gen":
+    if G.data_gen_exit:
         LOADING_ORDER.append(LoadingStage("exit", "special:exit"))
 
 LOADING_ORDER += [

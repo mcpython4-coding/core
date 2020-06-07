@@ -1122,3 +1122,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: data generators have their own loading stage (conditionally added) for doing their stuff
 [uuk]: recommend only in dev-environment as in final build it is not activate-able
 [uuk]: added "--exit-after-data-gen" flag to sys.argv for exiting after generation
+[uuk]: now using simplejson for encoding an json object
+[uuk]: added installer.py for installing all the stuff

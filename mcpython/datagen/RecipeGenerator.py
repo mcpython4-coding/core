@@ -8,7 +8,6 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import mcpython.datagen.Configuration
 import mcpython.gui.ItemStack
-import json
 import typing
 
 
@@ -37,7 +36,7 @@ class TagEncoder(ICraftingKeyEncoder):
 
     @classmethod
     def encode(cls, data: str):
-        return {"tag": data}
+        return {"tag": data[1:]}
 
 
 class StringTypedItem(ICraftingKeyEncoder):
@@ -129,10 +128,44 @@ class ShapedRecipeGenerator(mcpython.datagen.Configuration.IDataGenerator):
         for i, entry in enumerate(self.types):
             table[INDICATOR_LIST[i]] = encode_data(entry)
 
-        data = {"type": "crafting_shaped", "pattern": pattern, "key": table, "result": {
+        data = {"type": "minecraft:crafting_shaped", "pattern": pattern, "key": table, "result": {
                 "count": self.output[0], "item": self.output[1]}}
         if self.group is not None:
             data["group"] = self.group
 
-        self.config.write(json.dumps(data), "data", "recipes", self.name+".json")
+        self.config.write_json(data, "data", "recipes", self.name+".json")
+
+
+class ShapelessGenerator(mcpython.datagen.Configuration.IDataGenerator):
+    def __init__(self, name: str, config):
+        super().__init__(config)
+        self.name = name
+        self.inputs = []
+        self.output = None
+        self.group = None
+
+    def setGroup(self, name: str):
+        self.group = name
+        return self
+
+    def setOutput(self, stack: typing.Union[typing.Tuple[int, str], str]):
+        if type(stack) == str: stack = (1, stack)
+        self.output = stack
+        return self
+
+    def addInput(self, identifier, count=1):
+        self.inputs += [identifier] * count
+        return self
+
+    def addInputs(self, *identifiers):
+        self.inputs += identifiers
+        return self
+
+    def generate(self):
+        data = {"type": "minecraft:crafting_shapeless", "ingredients": [encode_data(e) for e in self.inputs],
+                "result": {"count": self.output[0], "item": self.output[1]}}
+        if self.group is not None:
+            data["group"] = self.group
+
+        self.config.write_json(data, "data", "recipes", self.name+".json")
 

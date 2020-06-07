@@ -28,7 +28,7 @@ def transform_to_item_stack(item, table: dict) -> list:
     elif "tag" in item:  # have we an tag?
         try:
             entries = G.taghandler.taggroups["items"].tags["#"+item["tag"]].entries
-        except:
+        except (KeyError, IndexError):
             logger.println("tag loading issue for recipe transform of {} to valid item list".format(item))
             return []
         for item in entries[:]:

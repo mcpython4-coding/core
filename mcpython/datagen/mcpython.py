@@ -16,6 +16,22 @@ import sys
 DEFAULT_OUTPUT = G.local+"/resources/generated"
 
 
+def generate_slab(config, name, base):
+    config.shaped_recipe(name).setGroup("slab").setEntries([(0, 0), (1, 0), (2, 0)], "minecraft:"+base).setOutput(
+        (6, "minecraft:"+name))
+
+
+def generate_stair(config, name, base):
+    config.shaped_recipe(name).setGroup("stair").setEntries(
+        [(0, 0), (1, 0), (2, 0), (0, 1), (0, 2), (1, 1)], "minecraft:"+base).setOutput(
+        (4, "minecraft:"+name))
+
+
+def generate_wall(config, name, base):
+    config.shaped_recipe(name).setGroup("wall").setEntries(
+        [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1)], "minecraft:"+base).setOutput((6, "minecraft:"+name))
+
+
 def generate_wooded_recipes(config: Configuration.DataGeneratorConfig, w: str):
     config.shaped_recipe("{}_boat".format(w)).setGroup("boat").setEntries(
         [(0, 0), (0, 1), (1, 0), (2, 0), (2, 1)], "minecraft:{}_planks".format(w)).setOutput(
@@ -60,4 +76,15 @@ def generate_data():
 
     for w in ["acacia", "birch", "oak", "jungle", "spruce", "dark_oak"]:
         generate_wooded_recipes(config, w)
+
+    config.shaped_recipe("activator_rail").setEntries(
+        [(0, 0), (0, 1), (0, 2), (2, 0), (2, 1), (2, 2)], "minecraft:iron_ingot").setEntries(
+        [(1, 0), (1, 2)], "minecraft:stick").setEntry(1, 1, "minecraft:redstone_torch").setOutput(
+        (6, "minecraft:activator_rail"))
+
+    config.shapeless_recipe("andesite").addInputs("minecraft:diorite", "minecraft:cobblestone").setOutput(
+        (2, "minecraft:andesite"))
+    generate_slab(config, "andesite_slab", "andesite")
+    generate_stair(config, "andesite_stairs", "andesite")
+    generate_wall(config, "andesite_wall", "andesite")
 
