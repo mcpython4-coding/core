@@ -11,10 +11,10 @@ import math
 MC_VERSION_BASE = "1.15.2"
 VERSION_TYPE = "dev"
 # possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
-VERSION_NAME = "snapshot dev 2 cycle 1"
+VERSION_NAME = "snapshot dev 2"
 
 DEVELOPING_FOR = "20w23a"
-DEVELOPMENT_COUNTER = 1  # cycle 1
+DEVELOPMENT_COUNTER = 2  # major step 2
 
 # list of all versions since 19w52a to indicate order of release; used in save files todo: export to other file
 VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20w12a", "20w12b", "20w14a",

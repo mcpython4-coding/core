@@ -243,6 +243,7 @@ def exists(file: str, transform=True):
     :param transform: if it should be transformed for check
     :return: if it exists or not
     """
+    if file.startswith("build/"): file = file.replace("build/", G.build + "/", 1)
     if file.startswith("@"):  # special resource notation, can be used for accessing special ResourceLocations
         data = file.split("|")
         resource = data[0][1:]
@@ -269,10 +270,12 @@ def read(file: str, mode: typing.Union[None, str] = None):
     :param mode: the mode to load in, or None for binary
     :return: the content
     """
+    if file.startswith("build/"): file = file.replace("build/", G.build + "/", 1)
     if file.startswith("@"):  # special resource notation, can be used for accessing special ResourceLocations
         data = file.split("|")
         resource = data[0][1:]
         file = "|".join(data[1:])
+        if file.startswith("build/"): file = file.replace("build/", G.build + "/", 1)
         for x in RESOURCE_LOCATIONS:
             if x.path == resource:
                 try:

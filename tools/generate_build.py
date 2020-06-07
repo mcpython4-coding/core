@@ -13,6 +13,7 @@ import stat
 import zipfile
 import datetime
 import time
+import json
 
 """
 how to build an final version?
@@ -148,6 +149,14 @@ def build():
         d = f.read().replace("dev_environment = True", "dev_environment = False", 1)
     with open(folder + "/globals.py", mode="w") as f:
         f.write(d)
+    with open(folder+"/mcpython/config.py") as f:
+        d = f.read()
+    local_space = {}
+    exec(d, {}, local_space)
+    with open(folder+"/version.json", mode="w") as f:
+        json.dump({
+            "type": local_space["VERSION_TYPE"], "base": local_space["MC_VERSION_BASE"],
+            "name": local_space["VERSION_NAME"], "heading": local_space["DEVELOPING_FOR"]}, f)
 
     print("zip-ing up stuff...")
     now = datetime.datetime.now()
