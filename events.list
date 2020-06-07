@@ -97,3 +97,6 @@ hotkeys:
     "hotkey:gamemode_1-3_toggle": called with key combo F3+N, used to toggle gamemode
     "hotkey:reload_textures": called with key combo F3+T, used to reload textures
 
+data generation [loading event]:
+    "special:datagen:configure": called by the data generation system in order for mods to generate their datagens
+

@@ -141,6 +141,9 @@ class LoadingStages:
 
     PREBUILD = LoadingStage("prebuilding", "stage:prebuild:addition", "stage:prebuild:do")
 
+    # Optional stage for running the data generators. Only active in --data-gen mode
+    DATA_GENERATION = LoadingStage("generating special data", "special:datagen:configure", "special:datagen:generate")
+
     # first: create ConfigFile objects, second: internally, third: do something with the data
     CONFIGS = LoadingStage("loading mod config", "stage:mod:config:define", "stage:mod:config:load",
                            "stage:mod:config:work")
@@ -186,7 +189,16 @@ class LoadingStages:
 
 # the order of stages todo: make serialized from config file
 LOADING_ORDER: list = [
-    LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.CONFIGS, LoadingStages.PREBUILD,
+    LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.CONFIGS, LoadingStages.PREBUILD]
+
+
+if "--data-gen" in sys.argv and G.dev_environment:  # only do it in dev-environment
+    LOADING_ORDER.append(LoadingStages.DATA_GENERATION)
+
+    if "--exit-after-data-gen":
+        LOADING_ORDER.append(LoadingStage("exit", "special:exit"))
+
+LOADING_ORDER += [
     LoadingStages.EXTRA_RESOURCE_LOCATIONS, LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS,
     LoadingStages.LANGUAGE, LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
     LoadingStages.LOOT_TABLES, LoadingStages.ENTITIES, LoadingStages.WORLDGEN, LoadingStages.STATES,
@@ -658,4 +670,10 @@ G.modloader = ModLoader()
 # this is needed as this depends on above but also above on the import
 import mcpython.mod.ModMcpython
 import mcpython.mod.ConfigFile
+import mcpython.datagen.mcpython
+
+
+@G.modloader("minecraft", "special:exit")
+def exit():
+    sys.exit()
 

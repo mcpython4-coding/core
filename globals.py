@@ -17,6 +17,9 @@ home = local+"/home" if "--home-folder" not in sys.argv else sys.argv[sys.argv.i
 build = home+"/build" if "--build-folder" not in sys.argv else sys.argv[sys.argv.index("--build-folder")+1]
 tmp = tempfile.TemporaryDirectory()
 
+data_gen = "--data-gen" in sys.argv
+data_gen_exit = "--exit-after-data-gen" in sys.argv
+
 STORAGE_VERSION = None
 
 window = None

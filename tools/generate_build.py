@@ -14,6 +14,7 @@ import zipfile
 import datetime
 import time
 import json
+import subprocess
 
 """
 how to build an final version?
@@ -21,9 +22,10 @@ how to build an final version?
 2. collect the executable files
 3. collect the licences
 4. collect the changelog
-5. collect the assets
-6. exchange build information in globals.py from dev-environment to build
-7. zip-up the files into one directory
+5. collecting generated sources [re-running the game]
+6. collect the assets
+7. exchange build information in globals.py from dev-environment to build
+8. zip-up the files into one directory
 """
 
 
@@ -138,6 +140,9 @@ def build():
 
     print("collecting changelog...")
     shutil.copy(local + "/changelog.txt", folder + "/changelog.txt")
+
+    print("collecting data generations...")
+    subprocess.call(["py", "-3.8", local+"/__main__.py", "--data-gen", "--exit-after-data-gen"], stdout=sys.stdout)
 
     print("collecting assets...")  #
     copytree(local + "/resources/source", folder)

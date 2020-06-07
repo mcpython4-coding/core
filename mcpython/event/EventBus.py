@@ -145,6 +145,8 @@ class EventBus:
             try:
                 result.append((function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
                                         **{**kwargs, **self.extra_arguments[1], **ekwargs}), info))
+            except SystemExit:
+                raise
             except:
                 exception_occ = True
                 logger.write_exception("during calling function:", function, "with arguments:", list(args) + list(

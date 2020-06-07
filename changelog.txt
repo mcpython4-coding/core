@@ -53,6 +53,7 @@ changelog of snapshot [next]
     - refactored & unpacked assets into the resources-folder
     - made inventory interaction subscriptions more fail-self
     - moved crafting-folder to gui/crafting
+    - added data generator system
 
     fixed issues:
         long-term issues:

@@ -1117,3 +1117,8 @@ sstarted these clone on 12th of July, 2019
 [uuk]: introduced an system for building the project into an stand-alone zipfile removing all dev-only files
 [uuk]: added new class: RenderingHelper helpful with gl calls
 [uuk]: refactored crafting-folder to gui/crafting
+[uuk]: introduced data generators for generating data
+[uuk]: added "--data-gen" flag to sys.argv for generating with these data generators
+[uuk]: data generators have their own loading stage (conditionally added) for doing their stuff
+[uuk]: recommend only in dev-environment as in final build it is not activate-able
+[uuk]: added "--exit-after-data-gen" flag to sys.argv for exiting after generation
