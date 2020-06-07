@@ -79,7 +79,11 @@ class Slot:
 
     def call_update(self, player=False):
         if not self.on_update: return
-        [f(player=player) for f in self.on_update]
+        for f in self.on_update:
+            try:
+                f(player=player)
+            except:
+                logger.write_exception("during invoking {} for slot {}".format(f, self))
 
     itemstack = property(get_itemstack, set_itemstack)
 

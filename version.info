@@ -1111,3 +1111,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added sys.argv flag "--build-folder <folder>" setting the folder where build stuff is stored
        [default: home+"/build"]
 [uuk]: moved resourcepacks-folder into home-directory
+[uuk]: made inventory interaction subscriptions more fail-self
+[uuk]: fixed exception when shift-clicking crafting output [issue 206]
+[uuk]: fixed deletion of items in the crafting grid on close [issue 207]

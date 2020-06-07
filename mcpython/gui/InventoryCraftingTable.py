@@ -41,11 +41,11 @@ class InventoryCraftingTable(mcpython.gui.Inventory.Inventory):
 
     def on_deactivate(self):
         super().on_deactivate()
+        for slot in self.slots[:-1]:
+            G.world.get_active_player().pick_up(slot.get_itemstack().copy())
+            slot.get_itemstack().clean()
         self.slots[-1].itemstack.clean()
         self.slots[-1].get_itemstack().clean()
-        for slot in self.slots[:-1]:
-            G.world.get_active_player().pick_up(slot.get_itemstack())
-            slot.get_itemstack().clean()
         G.world.get_active_player().reset_moving_slot()
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
 

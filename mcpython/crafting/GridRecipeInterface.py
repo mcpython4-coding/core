@@ -157,7 +157,7 @@ class GridRecipeInterface(mcpython.crafting.IRecipeInterface.IRecipeInterface):
                 self.active_recipe = None
             self.update_output()
 
-    def on_output_shift_click(self, slot, x, y, button, modifiers):
+    def on_output_shift_click(self, slot, x, y, button, modifiers, player):
         if not self.active_recipe: return
         old_recipe = self.active_recipe
         count = 0

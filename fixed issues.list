@@ -185,3 +185,5 @@ issue 194: dicts in config failed to load when they were empty; fixed on 30.05.2
 issue 200: config files were not parsed correctly; fixed on 30.05.2020 by uuk
 issue 193: mod locations were not escaped in logs; fixed on 30.05.2020 by uuk
 issue 205: barrel block was not storing facing correctly; fixed on 06.06.2020 by uuk
+issue 206: shift-clicking the recipe output was not working; fixed on 07.06.2020 by uuk
+issue 207: when closing an crafting table, items in the grid were get deleted; fixed on 07.06.2020 by uuk

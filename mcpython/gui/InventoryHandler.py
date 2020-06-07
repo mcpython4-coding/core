@@ -12,6 +12,7 @@ import mcpython.state.StatePart
 from pyglet.window import key, mouse
 import mcpython.gui.Slot
 import mcpython.gui.ShiftContainer
+import logger
 
 
 class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
@@ -82,8 +83,12 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
         self.moving_itemstack = G.inventoryhandler.moving_slot.itemstack.copy()
         if modifiers & key.MOD_SHIFT:
             if slot.on_shift_click:
-                flag = slot.on_shift_click(slot, x, y, button, modifiers, G.world.get_active_player())
-                if flag is not True: return  # no default logic should go on
+                try:
+                    flag = slot.on_shift_click(slot, x, y, button, modifiers, G.world.get_active_player())
+                    if flag is not True: return  # no default logic should go on
+                except:
+                    logger.write_exception("during shift-clicking {}, the function {} crashed".format(
+                        slot, slot.on_shift_click))
             if G.inventoryhandler.shift_container is not None and \
                 G.inventoryhandler.shift_container.move_to_opposite(slot): return
         if button == mouse.LEFT:
