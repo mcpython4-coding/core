@@ -99,6 +99,7 @@ def from_directory(directory: str, modname: str):
     :param directory: the directory name
     :param modname: the mod name
     """
+    if not modname in G.modloader.mods: modname = "minecraft"
     files = mcpython.ResourceLocator.get_all_entries_special(directory)
     m = len(files)
     for i, f in enumerate(files):
@@ -114,6 +115,7 @@ def from_mod_name(modname: str): from_directory("assets/{}/lang".format(modname)
 
 
 from_mod_name("minecraft")
+from_mod_name("mcpython")
 
 # todo: make load of only the active language and load others when needed -> reduce RAM usage
 # todo: make an sys.argv option to disable loading & translating

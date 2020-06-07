@@ -369,7 +369,7 @@ class ConfigFile:
         self.file_name = file_name
         self.assigned_mod = assigned_mod
         self.main_tag = DictDataMapper()
-        self.file = G.local+"home/config/{}/{}.conf".format(assigned_mod, file_name)
+        self.file = G.home+"/config/{}/{}.conf".format(assigned_mod, file_name)
         G.modloader(self.assigned_mod, "stage:mod:config:load", "building config file {}".format(self.file))(self.build)
 
     def add_entry(self, key: str, default_mapper=None, description=None):
