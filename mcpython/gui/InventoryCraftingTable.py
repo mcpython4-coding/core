@@ -10,8 +10,8 @@ import globals as G
 import mcpython.gui.Inventory
 import mcpython.gui.Slot
 import mcpython.gui.ItemStack
-import mcpython.crafting.CraftingHandler
-import mcpython.crafting.GridRecipeInterface
+import mcpython.gui.crafting.CraftingHandler
+import mcpython.gui.crafting.GridRecipeInterface
 import pyglet
 import mcpython.event.EventHandler
 
@@ -28,7 +28,7 @@ class InventoryCraftingTable(mcpython.gui.Inventory.Inventory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         inputs = [self.slots[:3], self.slots[3:6], self.slots[6:9]]
-        self.recipeinterface = mcpython.crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[9])
+        self.recipeinterface = mcpython.gui.crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[9])
 
     def create_slots(self) -> list:
         # 36 slots of main, 9 crafting grid, 1 crafting output

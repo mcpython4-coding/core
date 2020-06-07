@@ -337,7 +337,7 @@ def add_resources_by_modname(modname, pathname=None):
     if pathname is None: pathname = modname
     from mcpython.rendering.model.BlockState import BlockStateDefinition
     import mcpython.Language
-    import mcpython.crafting.CraftingHandler
+    import mcpython.gui.crafting.CraftingHandler
     import mcpython.tags.TagHandler
     import mcpython.loot.LootTable
     G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,

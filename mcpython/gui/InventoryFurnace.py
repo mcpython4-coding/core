@@ -10,7 +10,7 @@ import globals as G
 import mcpython.gui.Inventory
 import mcpython.gui.Slot
 import mcpython.gui.ItemStack
-import mcpython.crafting.FurnaceCrafting
+import mcpython.gui.crafting.FurnaceCrafting
 import mcpython.event.EventHandler
 import pyglet
 import time
@@ -86,7 +86,7 @@ class InventoryFurnace(mcpython.gui.Inventory.Inventory):
                           self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
                 self.reset()
                 return
-            self.recipe: mcpython.crafting.FurnaceCrafting.FurnesRecipe = recipe
+            self.recipe: mcpython.gui.crafting.FurnaceCrafting.FurnesRecipe = recipe
             self.block.active = True
             self.block.face_state.update()
         else:

@@ -6,7 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import mcpython.crafting.GridRecipes
+import mcpython.gui.crafting.GridRecipes
 
 
 class ShapedCraftingRecipeFactory:
@@ -20,7 +20,7 @@ class ShapedCraftingRecipeFactory:
         return self
 
     def finish(self):
-        mcpython.crafting.GridRecipes.GridShaped(self.grid, self.output).register()
+        mcpython.gui.crafting.GridRecipes.GridShaped(self.grid, self.output).register()
 
 
 class ShapelessCraftingRecipeFactory:
@@ -34,5 +34,5 @@ class ShapelessCraftingRecipeFactory:
         return self
 
     def finish(self):
-        mcpython.crafting.GridRecipes.GridShapeless(self.items, self.output)
+        mcpython.gui.crafting.GridRecipes.GridShapeless(self.items, self.output)
 

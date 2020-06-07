@@ -52,6 +52,7 @@ changelog of snapshot [next]
     - refactored much not-code related files into the home-folder
     - refactored & unpacked assets into the resources-folder
     - made inventory interaction subscriptions more fail-self
+    - moved crafting-folder to gui/crafting
 
     fixed issues:
         long-term issues:

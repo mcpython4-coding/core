@@ -10,8 +10,8 @@ import globals as G
 import mcpython.gui.Inventory
 import mcpython.gui.Slot
 import mcpython.gui.ItemStack
-import mcpython.crafting.CraftingHandler
-import mcpython.crafting.GridRecipeInterface
+import mcpython.gui.crafting.CraftingHandler
+import mcpython.gui.crafting.GridRecipeInterface
 import mcpython.item.ItemArmor
 
 
@@ -24,7 +24,7 @@ class InventoryPlayerMain(mcpython.gui.Inventory.Inventory):
         self.hotbar = hotbar
         super().__init__()
         inputs = [self.slots[40:42], self.slots[42:44]]
-        self.recipeinterface = mcpython.crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[44])
+        self.recipeinterface = mcpython.gui.crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[44])
 
     @staticmethod
     def get_config_file() -> str or None:

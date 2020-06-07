@@ -10,8 +10,8 @@ import globals as G
 import mcpython.gui.Inventory
 import mcpython.gui.Slot
 import mcpython.gui.ItemStack
-import mcpython.crafting.CraftingHandler
-import mcpython.crafting.GridRecipeInterface
+import mcpython.gui.crafting.CraftingHandler
+import mcpython.gui.crafting.GridRecipeInterface
 import mcpython.gui.ItemStack
 import pyglet
 import mcpython.event.EventHandler
