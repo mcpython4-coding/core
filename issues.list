@@ -162,4 +162,5 @@ issue 203:
 issue 204:
     bug: debug world generates start chest
 
-[205-207]
+issue 208:
+    bug: closing the player inventory will also add the crafting output to the inventory

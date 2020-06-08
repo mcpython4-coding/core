@@ -5,7 +5,7 @@ todo: make into an .md file
 planned for the future:
     - optimize texture reload with everything (re-block-item-factories, reload block models,
         reload item texture, gui textures, ...), config reload
-    - add more factories for various parts (better block models, block states, full block factory, ...)
+    - add more factories for various parts (better block models, block states, full block factory, ...) [data gens?]
     - add mode were linking between recipe in/out is shuffled and loot table links are shuffled (see Amnesia Pack)
         together with an gamerule and an /shuffle [<group>] command
     - add scoreboards with commands, execute entry, ...
@@ -14,12 +14,14 @@ planned for the future:
     - add ores
     - add mcpi API support
     - an logging update
-    - improve item texture atlas system (it seems not very stable)
+    - improve item texture atlas system (it seems not very stable when adding new items without rebuilding)
     - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum
     - rendering helper class for setting up things like 3d rendering, alpha usage, ...
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log
     - parser for the new mc dimension config format
+    - mdk kit with setup
+    - an API holding all block & item names & internal use of only the API
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
