@@ -13,60 +13,92 @@ import logger
 
 
 class ICraftingKeyEncoder:
+    """
+    base class for an encoder for an crafting field
+    """
+
+    # checks if the given data can be encoded with these instance
     @classmethod
     def valid(cls, data) -> bool: raise NotImplementedError()
 
+    # encodes certain data
     @classmethod
-    def encode(cls, data): raise NotImplementedError()
+    def encode(cls, data, config): raise NotImplementedError()
 
 
 class ItemStackEncoder(ICraftingKeyEncoder):
+    """
+    encodes an ItemStack-instance
+    WARNING: in normal mode, ItemStacks can NOT be used as they are based on the item-registry which is not yet
+        filled with data
+    """
     @classmethod
     def valid(cls, data) -> bool:
         return type(data) == mcpython.gui.ItemStack.ItemStack
 
     @classmethod
-    def encode(cls, data: mcpython.gui.ItemStack.ItemStack):
+    def encode(cls, data: mcpython.gui.ItemStack.ItemStack, config):
         return {"item": data.get_item_name()}
 
 
 class TagEncoder(ICraftingKeyEncoder):
+    """
+    encodes an string-tag like "#minecraft:logs"
+    """
+
     @classmethod
     def valid(cls, data) -> bool:
         return type(data) == str and data.startswith("#")
 
     @classmethod
-    def encode(cls, data: str):
-        return {"tag": data[1:]}
+    def encode(cls, data: str, config):
+        tag = data[1:]
+        if ":" not in tag and config.default_namespace is not None: tag = config.default_namespace + ":" + tag
+        return {"tag": tag}
 
 
 class StringTypedItem(ICraftingKeyEncoder):
+    """
+    encodes an raw item name
+    """
+
     @classmethod
     def valid(cls, data) -> bool:
         return type(data) == str and not data.startswith("#")
 
     @classmethod
-    def encode(cls, data):
+    def encode(cls, data, config):
+        if ":" not in data and config.default_namespace is not None: data = config.default_namespace + ":" + data
         return {"item": data}
 
 
 class MixedTypeList(ICraftingKeyEncoder):
+    """
+    encodes an list of key encode-ables
+    """
+
     @classmethod
     def valid(cls, data) -> bool:
         return type(data) == list
 
     @classmethod
-    def encode(cls, data: list):
-        return [encode_data(e) for e in data]
+    def encode(cls, data: list, config):
+        return [(e, config) for e in data]
 
 
 CRAFTING_ENCODERS = [ItemStackEncoder, TagEncoder, MixedTypeList, StringTypedItem]
 
 
-def encode_data(data):
+def encode_data(data, config):
+    """
+    encodes data together with the configuration to use
+    :param data: the data to encode
+    :param config: the config to use
+    :return: encoded data for later dumping in data gen
+    """
     for encoder in CRAFTING_ENCODERS:
         if encoder.valid(data):
-            return encoder.encode(data)
+            return encoder.encode(data, config)
     raise ValueError("no encoder found for {}".format(data))
 
 
@@ -74,6 +106,10 @@ INDICATOR_LIST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 class ShapedRecipeGenerator(mcpython.datagen.Configuration.IDataGenerator):
+    """
+    Generator for an shaped recipe
+    """
+
     def __init__(self, name: str, config):
         super().__init__(config)
         self.grid = {}
@@ -117,9 +153,9 @@ class ShapedRecipeGenerator(mcpython.datagen.Configuration.IDataGenerator):
         sx = max(self.grid.keys(), key=lambda x: x[0])[0]
         sy = max(self.grid.keys(), key=lambda x: x[1])[1]
 
-        for y in range(sy+1):
+        for y in range(sy + 1):
             p = ""
-            for x in range(sx+1):
+            for x in range(sx + 1):
                 p += INDICATOR_LIST[self.grid[(x, y)]] if (x, y) in self.grid else " "
             pattern.append(p)
 
@@ -127,14 +163,14 @@ class ShapedRecipeGenerator(mcpython.datagen.Configuration.IDataGenerator):
 
         table = {}
         for i, entry in enumerate(self.types):
-            table[INDICATOR_LIST[i]] = encode_data(entry)
+            table[INDICATOR_LIST[i]] = encode_data(entry, self.config)
 
         data = {"type": "minecraft:crafting_shaped", "pattern": pattern, "key": table, "result": {
-                "count": self.output[0], "item": self.output[1]}}
+            "count": self.output[0], "item": self.output[1]}}
         if self.group is not None:
             data["group"] = self.group
 
-        self.config.write_json(data, "data", "recipes", self.name+".json")
+        self.config.write_json(data, "data", "recipes", self.name + ".json")
 
 
 class ShapelessGenerator(mcpython.datagen.Configuration.IDataGenerator):
@@ -166,12 +202,13 @@ class ShapelessGenerator(mcpython.datagen.Configuration.IDataGenerator):
         if self.output is None:
             logger.println("recipe {} is missing output!".format(self.name))
             return
-        data = {"type": "minecraft:crafting_shapeless", "ingredients": [encode_data(e) for e in self.inputs],
+        data = {"type": "minecraft:crafting_shapeless",
+                "ingredients": [encode_data(e, self.config) for e in self.inputs],
                 "result": {"count": self.output[0], "item": self.output[1]}}
         if self.group is not None:
             data["group"] = self.group
 
-        self.config.write_json(data, "data", "recipes", self.name+".json")
+        self.config.write_json(data, "data", "recipes", self.name + ".json")
 
 
 class SmeltingGenerator(mcpython.datagen.Configuration.IDataGenerator):
@@ -210,9 +247,9 @@ class SmeltingGenerator(mcpython.datagen.Configuration.IDataGenerator):
         return self
 
     def generate(self):
-        inp = encode_data(self.inputs[0]) if len(self.inputs) == 1 else [encode_data(e) for e in self.inputs]
+        inp = encode_data(self.inputs[0], self.config) if len(self.inputs) == 1 else [encode_data(e, self.config) for e
+                                                                                      in self.inputs]
         data = {"type": self.mode, "ingredient": inp, "result": self.output,
                 "experience": self.xp, "cookingtime": self.cooking_time}
 
         self.config.write_json(data, "data", "recipes", self.name + ".json")
-
