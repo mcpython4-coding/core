@@ -178,7 +178,7 @@ def generate_recipes():
     config.smelting_recipe("baked_potato").add_ingredient("potato").setOutput("baked_potato").setXp(0.35)
     config.smelting_recipe("backed_potato_from_campfire_cooking", mode="campfire_cooking").add_ingredient(
         "potato").setOutput("baked_potato").setXp(0.35).setCookingTime(600)
-    config.smelting_recipe("backed_potato_from_smoking", mode="smoking").add_ingredient("potato").setOutput(
+    config.smelting_recipe("backed_potato_from_smoking", mode="minecraft:smoking").add_ingredient("potato").setOutput(
         "baked_potato").setXp(0.35).setCookingTime(100)
 
     config.shaped_recipe("barrel").setEntries([(0, 0), (0, 1), (0, 2), (2, 0), (2, 1), (2, 2)], "#planks").setEntries(
@@ -240,7 +240,7 @@ def generate_recipes():
         1, 1, "redstone").setOutput("clock")
     config.shapeless_recipe("coal").addInput("coal_block").setOutput((9, "coal"))
     config.shaped_recipe("coal_block").setEntries(THREE_BY_THREE, "coal").setOutput("coal_block")
-    config.smelting_recipe("coal_from_blasting", "blasting").add_ingredient("coal_ore").setOutput("coal").setXp(
+    config.smelting_recipe("coal_from_blasting", "minecraft:blasting").add_ingredient("coal_ore").setOutput("coal").setXp(
         .1).setCookingTime(100)
     config.smelting_recipe("coal_from_blasting").add_ingredient("coal_ore").setOutput("coal").setXp(.1)
     config.shaped_recipe("coarse_dirt").setEntries([(0, 0), (1, 1)], "gravel").setEntries(
@@ -260,44 +260,44 @@ def generate_recipes():
     config.smelting_recipe("cooked_beef").add_ingredient("beef").setOutput("cooked_beef").setXp(.35)
     config.smelting_recipe("cooked_beef_from_campfire_cooking", "campfire_cooking").add_ingredient(
         "beef").setOutput("cooked_beef").setXp(.35).setCookingTime(600)
-    config.smelting_recipe("cooked_beef_from_smoking", "smoking").add_ingredient("beef").setOutput(
+    config.smelting_recipe("cooked_beef_from_smoking", "minecraft:smoking").add_ingredient("beef").setOutput(
         "cooked_beef").setXp(.35).setCookingTime(100)
 
     config.smelting_recipe("cooked_chicken").add_ingredient("chicken").setOutput(
         "cooked_chicken").setXp(.35)
     config.smelting_recipe("cooked_chicken_from_campfire_cooking", "campfire_cooking").add_ingredient(
         "chicken").setOutput("cooked_chicken").setXp(.35).setCookingTime(600)
-    config.smelting_recipe("cooked_chicken_from_smoking", "smoking").add_ingredient("chicken").setOutput(
+    config.smelting_recipe("cooked_chicken_from_smoking", "minecraft:smoking").add_ingredient("chicken").setOutput(
         "cooked_chicken").setXp(.35).setCookingTime(100)
 
     config.smelting_recipe("cooked_cod").add_ingredient("cod").setOutput("cooked_cod").setXp(.35)
     config.smelting_recipe("cooked_cod_from_campfire_cooking", "campfire_cooking").add_ingredient("cod").setOutput(
         "cooked_cod").setXp(.35).setCookingTime(600)
-    config.smelting_recipe("cooked_cod_from_smoking", "smoking").add_ingredient("cod").setOutput("cooked_cod").setXp(
+    config.smelting_recipe("cooked_cod_from_smoking", "minecraft:smoking").add_ingredient("cod").setOutput("cooked_cod").setXp(
         .35).setCookingTime(100)
 
     config.smelting_recipe("cooked_mutton").add_ingredient("mutton").setOutput("cooked_mutton").setXp(.35)
     config.smelting_recipe("cooked_mutton_from_campfire_cooking", "campfire_cooking").add_ingredient(
         "mutton").setOutput("cooked_mutton").setXp(.35).setCookingTime(600)
-    config.smelting_recipe("cooked_mutton_from_smoking", "smoking").add_ingredient("mutton").setOutput(
+    config.smelting_recipe("cooked_mutton_from_smoking", "minecraft:smoking").add_ingredient("mutton").setOutput(
         "cooked_mutton").setXp(.35).setCookingTime(100)
 
     config.smelting_recipe("cooked_porkchop").add_ingredient("porkchop").setOutput("cooked_porkchop").setXp(.35)
     config.smelting_recipe("cooked_porkchop_from_campfire_cooking", "campfire_cooking").add_ingredient(
         "porkchop").setOutput("cooked_porkchop").setXp(.35).setCookingTime(600)
-    config.smelting_recipe("cooked_porkchop_from_smoking", "smoking").add_ingredient("porkchop").setOutput(
+    config.smelting_recipe("cooked_porkchop_from_smoking", "minecraft:smoking").add_ingredient("porkchop").setOutput(
         "cooked_porkchop").setXp(.35).setCookingTime(100)
 
     config.smelting_recipe("cooked_rabbit").add_ingredient("rabbit").setOutput("cooked_rabbit").setXp(.35)
     config.smelting_recipe("cooked_rabbit_from_campfire_cooking", "campfire_cooking").add_ingredient(
         "rabbit").setOutput("cooked_rabbit").setXp(.35).setCookingTime(600)
-    config.smelting_recipe("cooked_rabbit_from_smoking", "smoking").add_ingredient("rabbit").setOutput(
+    config.smelting_recipe("cooked_rabbit_from_smoking", "minecraft:smoking").add_ingredient("rabbit").setOutput(
         "cooked_rabbit").setXp(.35).setCookingTime(100)
 
     config.smelting_recipe("cooked_salmon").add_ingredient("salmon").setOutput("cooked_salmon").setXp(.35)
     config.smelting_recipe("cooked_salmon_from_campfire_cooking", "campfire_cooking").add_ingredient(
         "salmon").setOutput("cooked_salmon").setXp(.35).setCookingTime(600)
-    config.smelting_recipe("cooked_salmon_from_smoking", "smoking").add_ingredient(
+    config.smelting_recipe("cooked_salmon_from_smoking", "minecraft:smoking").add_ingredient(
         "salmon").setOutput("cooked_salmon").setXp(.35).setCookingTime(100)
 
     config.shaped_recipe("cookie").setEntries([(0, 0), (2, 0)], "wheat").setEntry(1, 0, "cocoa_beans").setOutput(
@@ -332,7 +332,7 @@ def generate_recipes():
 
     config.shapeless_recipe("diamond").addInput("diamond_block").setOutput((9, "diamond"))
     config.shaped_recipe("diamond_block").setEntries(THREE_BY_THREE, "diamond").setOutput("diamond_block")
-    config.smelting_recipe("diamond_from_blasting", "blasting").add_ingredient("diamond_ore").setOutput(
+    config.smelting_recipe("diamond_from_blasting", "minecraft:blasting").add_ingredient("diamond_ore").setOutput(
         "diamond").setXp(1).setCookingTime(100)
     config.smelting_recipe("diamond_from_blasting").add_ingredient("diamond_ore").setOutput("diamond").setXp(1)
     config.shaped_recipe("diorite").setEntries([(0, 0), (1, 1)], "quart").setEntries(
@@ -347,7 +347,7 @@ def generate_recipes():
     config.smelting_recipe("dried_kelp_from_smelting").add_ingredient("kelp").setOutput("dried_kelp").setXp(.1)
     config.smelting_recipe("dried_kelp_from_smelting", "campfire_cooking").add_ingredient("kelp").setOutput(
         "dried_kelp").setXp(.1).setCookingTime(600)
-    config.smelting_recipe("dried_kelp_from_smelting", "smoking").add_ingredient("kelp").setOutput("dried_kelp").setXp(
+    config.smelting_recipe("dried_kelp_from_smelting", "minecraft:smoking").add_ingredient("kelp").setOutput("dried_kelp").setXp(
         .1).setCookingTime(100)
     config.shaped_recipe("dropper").setEntries(leggings, "cobblestone").setEntry(1, 0, "redstone").setOutput("dropper")
     config.shapeless_recipe("emerald").addInput("emerald_block").setOutput((9, "emerald"))
@@ -398,7 +398,7 @@ def generate_recipes():
     config.shapeless_recipe("gold_nugget").addInput("gold_ingot").setOutput((9, "gold_nugget"))
     GOLDEN_RECOVER = ["golden_pickaxe", "golden_shovel", "golden_axe", "golden_hoe", "golden_sword", "golden_helmet",
                       "golden_chestplate", "golden_leggings", "golden_boots", "golden_horse_armor"]
-    config.smelting_recipe("gold_nugger_from_blasting", "blasting").add_ingredient(GOLDEN_RECOVER).setOutput(
+    config.smelting_recipe("gold_nugger_from_blasting", "minecraft:blasting").add_ingredient(GOLDEN_RECOVER).setOutput(
         "golden_nugget").setXp(.1).setCookingTime(100)
     config.smelting_recipe("gold_nugger_from_blasting").add_ingredient(GOLDEN_RECOVER).setOutput("golden_nugget").setXp(
         .1)
@@ -431,5 +431,25 @@ def generate_recipes():
     config.smelting_recipe("iron_ingot").add_ingredient("iron_ore").setOutput("iron_ingot").setXp(.7)
     config.smelting_recipe("iron_ingot", "minecraft:blasting").add_ingredient("iron_ore").setOutput("iron_ingot").setXp(
         .7).setCookingTime(100)
+    config.shapeless_recipe("iron_ingot_from_iron_block").addInput("iron_block").setOutput((9, "iron_ingot"))
+    config.shaped_recipe("iron_ingot_from_nuggets").setEntries(THREE_BY_THREE, "iron_nugget").setOutput("iron_ingot")
+    config.shapeless_recipe("iron_nugget").addInput("iron_ingot").setOutput((9, "iron_nugget"))
+    IRON_RECOVER = ["iron_pickaxe", "iron_shovel", "iron_axe", "iron_hoe", "iron_sword", "iron_helmet",
+                    "iron_chestplate", "iron_leggings", "iron_boots", "iron_horse_armor", "chainmail_helmet",
+                    "chainmail_chestplate", "chainmail_leggings", "chainmail_boots"]
+    config.smelting_recipe("iron_nugget_from_blasting", "minecraft:blasting").add_ingredient(IRON_RECOVER).setOutput(
+        "iron_nugget").setXp(.1).setCookingTime(100)
+    config.smelting_recipe("iron_nugget_from_smelting").add_ingredient(IRON_RECOVER).setOutput("iron_nugget").setXp(.1)
+    config.shaped_recipe("iron_trapdoor").setEntries(TWO_BY_TWO, "iron_ingot").setOutput("iron_trapdoor")
+    config.shaped_recipe("item_frame").setEntries(AROUND_HOLLOW, "stick").setEntry(1, 1, "leather").setOutput(
+        "item_frame")
+    config.shaped_recipe("jack_o_lantern").setEntry(0, 0, "torch").setEntry(0, 1, "carved_pumpkin").setOutput(
+        "jack_o_lantern")
+    config.shaped_recipe("jukebox").setEntries(AROUND_HOLLOW, "#planks").setEntry(1, 1, "diamond").setOutput("jukebox")
+    config.shaped_recipe("ladder").setEntries([(0, 0), (0, 1), (0, 2), (2, 0), (2, 1), (2, 2), (1, 1)],
+                                              "stick").setOutput((3, "ladder"))
+    config.shaped_recipe("lantern").setEntries(AROUND_HOLLOW, "iron_nugget").setEntry(
+        1, 1, "torch").setOutput("lantern")
+    config.shaped_recipe("lapis_block").setEntries(THREE_BY_THREE, "lapis_lazuli").setOutput("lapis_block")
 
 

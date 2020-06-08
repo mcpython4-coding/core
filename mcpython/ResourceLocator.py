@@ -196,12 +196,12 @@ def load_resource_packs():
         else:
             i += 1
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
-    if G.dev_environment:
-        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/generated"))
-        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/main"))
-        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/source"))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.home))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.build))
+    if G.dev_environment:  # only in dev-environment we need these special folders...
+        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/main"))
+        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/generated"))
+        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/source"))
     G.eventhandler.call("resources:load")
 
 

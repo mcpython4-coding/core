@@ -83,7 +83,7 @@ class MixedTypeList(ICraftingKeyEncoder):
 
     @classmethod
     def encode(cls, data: list, config):
-        return [(e, config) for e in data]
+        return [encode_data(e, config) for e in data]
 
 
 CRAFTING_ENCODERS = [ItemStackEncoder, TagEncoder, MixedTypeList, StringTypedItem]
@@ -227,7 +227,10 @@ class SmeltingGenerator(mcpython.datagen.Configuration.IDataGenerator):
         return self
 
     def add_ingredient(self, data):
-        self.inputs.append(data)
+        if type(data) == str:
+            self.inputs.append(data)
+        else:
+            self.inputs += data
         return self
 
     def add_ingredients(self, *data):
