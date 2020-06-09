@@ -142,7 +142,8 @@ def build():
     shutil.copy(local + "/changelog.txt", folder + "/changelog.txt")
 
     print("collecting data generations...")
-    subprocess.call(["py", "-3.8", local+"/__main__.py", "--data-gen", "--exit-after-data-gen"], stdout=sys.stdout)
+    subprocess.call(["py", "-3.8", local+"/__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"],
+                    stdout=sys.stdout)
 
     print("collecting assets...")  #
     copytree(local + "/resources/source", folder)

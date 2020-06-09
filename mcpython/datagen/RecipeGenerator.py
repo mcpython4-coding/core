@@ -195,6 +195,8 @@ class ShapelessGenerator(mcpython.datagen.Configuration.IDataGenerator):
         return self
 
     def addInputs(self, *identifiers):
+        if len(identifiers) == 1 and type(identifiers) == list:
+            logger.println("[WARNING] did you mean *[...] instead of [...] for generator named {}?".format(self.name))
         self.inputs += identifiers
         return self
 

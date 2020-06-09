@@ -136,7 +136,7 @@ def generate_recipes():
     hoe = [(0, 2), (1, 2)]
     pickaxe = hoe + [(2, 2)]
 
-    for l in ARMOR:
+    for l in ARMOR + ["leather"]:
         n = l[0] if type(l) == tuple else l
         m = l[1] if type(l) == tuple else "" + l
         config.shaped_recipe("{}_boots".format(n)).setEntries(boots, m).setOutput("{}_boots".format(n))
@@ -189,17 +189,16 @@ def generate_recipes():
         [(0, 1), (1, 1), (2, 1)], "honeycomb").setOutput("beehive")
     config.shapeless_recipe("beetroot_soup").addInput("bowl").addInput("beetroot", 6).setOutput("beetroot_soup")
     config.shapeless_recipe("back_dye").setGroup("black_dye").addInput("ink_sac").setOutput("black_dye")
-    config.shapeless_recipe("black_dye_from_wither_rose").setGroup("black_dye").addInput("wither_rose").setOutput(
-        "black_dye")
+    config.one_to_one("black_dye_from_wither_rose", "wither_rose", "black_dye").setGroup("black_dye")
     config.shaped_recipe("blast_furnace").setEntries(DOWNER_ROW, "smooth_stone").setEntries(
         [(0, 1), (0, 2), (1, 2), (2, 2), (2, 1)], "iron_ingot").setEntry(1, 1, "furnace").setOutput("blast_furnace")
-    config.shapeless_recipe("blaze_powder").addInput("blaze_rod").setOutput((2, "blaze_powder"))
-    config.shapeless_recipe("blue_dye").addInput("lapis_lazuli").setOutput("blue_dye")
-    config.shapeless_recipe("blue_dye_from_cornflower").addInput("cornflower").setOutput("blue_dye")
+    config.one_to_one("blaze_powder", "blaze_rod", (2, "blaze_powder"))
+    config.one_to_one("blue_dye", "lapis_lazuli", "blue_dye")
+    config.one_to_one("blue_dye_from_cornflower", "cornflower", "blue_dye")
     config.shaped_recipe("blue_ice").setEntries(THREE_BY_THREE, "packed_ice").setOutput("blue_ice")
     config.shaped_recipe("bone_block").setEntries(THREE_BY_THREE, "bone_meal").setOutput("bone_block")
-    config.shapeless_recipe("bone_meal").addInput("bone").setOutput((3, "bone_meal"))
-    config.shapeless_recipe("bone_meal_from_bone_block").addInput("bone_block").setOutput((9, "bone_meal"))
+    config.one_to_one("bone_meal", "bone", (3, "bone_meal"))
+    config.one_to_one("bone_meal_from_bone_block", "bone_block", (9, "bone_meal"))
     config.shapeless_recipe("book").addInput("paper", 3).addInput("leather").setOutput("book")
     config.shaped_recipe("bookshelf").setEntries(
         [(0, 0), (1, 0), (2, 0), (0, 2), (1, 2), (2, 2)], "#planks").setEntries(
@@ -215,7 +214,7 @@ def generate_recipes():
     generate_stair(config, "brick_stairs", "bricks")
     generate_wall(config, "brick_wall", "bricks")
     config.shaped_recipe("bricks").setEntries(TWO_BY_TWO, "brick").setOutput("bricks")
-    config.shapeless_recipe("brown_dye").addInput("cocoa_beans").setOutput("brown_dye")
+    config.one_to_one("brown_dye", "cocoa_beans", "brown_dye")
     config.shaped_recipe("bucket").setEntries(SMALL_V, "iron_ingot").setOutput("bucket")
     config.shaped_recipe("cake").setEntries(DOWNER_ROW, "wheat").setEntries([(0, 1), (2, 1)], "sugar").setEntry(
         1, 1, "egg").setEntries([(0, 2), (1, 2), (2, 2)], "milk_bucket").setOutput("cake")
@@ -238,7 +237,7 @@ def generate_recipes():
     config.shaped_recipe("clay").setEntries(TWO_BY_TWO, "clay_ball").setOutput("clay")
     config.shaped_recipe("clock").setEntries([(1, 0), (0, 1), (2, 1), (1, 2)], "gold_ingot").setEntry(
         1, 1, "redstone").setOutput("clock")
-    config.shapeless_recipe("coal").addInput("coal_block").setOutput((9, "coal"))
+    config.one_to_one("coal", "coal_block", (9, "coal"))
     config.shaped_recipe("coal_block").setEntries(THREE_BY_THREE, "coal").setOutput("coal_block")
     config.smelting_recipe("coal_from_blasting", "minecraft:blasting").add_ingredient("coal_ore").setOutput("coal").setXp(
         .1).setCookingTime(100)
@@ -306,7 +305,7 @@ def generate_recipes():
     config.smelting_recipe("cracked_stone_bricks").add_ingredient("stone_bricks").setOutput(
         "cracked_stone_bricks").setXp(.1)
     config.shaped_recipe("crafting_table").setEntries(TWO_BY_TWO, "#planks").setOutput("crafting_table")
-    config.shapeless_recipe("creeper_banner_pattern").addInputs(["paper", "creeper_head"]).setOutput(
+    config.shapeless_recipe("creeper_banner_pattern").addInputs("paper", "creeper_head").setOutput(
         "creeper_banner_pattern")
 
     config.shaped_recipe("crossbow").setEntries([(1, 0), (0, 2), (2, 2)], "stick").setEntries(
@@ -318,7 +317,7 @@ def generate_recipes():
     config.shaped_recipe("cut_sandstone").setEntries(TWO_BY_TWO, "sandstone").setOutput("cut_sandstone")
     generate_slab(config, "cut_sandstone_slab", "cut_sandstone")
 
-    config.shapeless_recipe("cyan_dye").addInputs(["blue_dye", "green_dye"]).setOutput((2, "cyan_dye"))
+    config.shapeless_recipe("cyan_dye").addInputs("blue_dye", "green_dye").setOutput((2, "cyan_dye"))
 
     config.shaped_recipe("dark_prismarine").setEntries(AROUND_HOLLOW, "prismarine_shard").setEntry(
         1, 1, "black_dye").setOutput("dark_prismarine")
@@ -330,7 +329,7 @@ def generate_recipes():
         [(0, 0), (0, 1), (0, 2), (2, 0), (2, 1), (2, 2)], "iron_ingot").setEntry(1, 0, "redstone").setEntry(
         1, 1, "stone_pressure_plate").setOutput("detector_rail")
 
-    config.shapeless_recipe("diamond").addInput("diamond_block").setOutput((9, "diamond"))
+    config.one_to_one("diamond", "diamond_block", (9, "diamond"))
     config.shaped_recipe("diamond_block").setEntries(THREE_BY_THREE, "diamond").setOutput("diamond_block")
     config.smelting_recipe("diamond_from_blasting", "minecraft:blasting").add_ingredient("diamond_ore").setOutput(
         "diamond").setXp(1).setCookingTime(100)
@@ -342,7 +341,7 @@ def generate_recipes():
     generate_wall(config, "diorite_wall", "diorite")
     config.shaped_recipe("dispenser").setEntries(leggings, "cobblestone").setEntry(1, 0, "redstone").setEntry(
         1, 1, "bow").setOutput("dispenser")
-    config.shapeless_recipe("died_kelp").addInput("dried_kelp_block").setOutput((9, "dried_kelp"))
+    config.one_to_one("died_kelp", "dried_kelp_block", (9, "dried_kelp"))
     config.shaped_recipe("dried_kelp_block").setEntries(THREE_BY_THREE, "dried_kelp").setOutput("dried_kelp_block")
     config.smelting_recipe("dried_kelp_from_smelting").add_ingredient("kelp").setOutput("dried_kelp").setXp(.1)
     config.smelting_recipe("dried_kelp_from_smelting", "campfire_cooking").add_ingredient("kelp").setOutput(
@@ -350,7 +349,7 @@ def generate_recipes():
     config.smelting_recipe("dried_kelp_from_smelting", "minecraft:smoking").add_ingredient("kelp").setOutput("dried_kelp").setXp(
         .1).setCookingTime(100)
     config.shaped_recipe("dropper").setEntries(leggings, "cobblestone").setEntry(1, 0, "redstone").setOutput("dropper")
-    config.shapeless_recipe("emerald").addInput("emerald_block").setOutput((9, "emerald"))
+    config.one_to_one("emerald", "emerald_block", (9, "emerald"))
     config.shaped_recipe("emerald_block").setEntries(THREE_BY_THREE, "emerald").setOutput("emerald_block")
     config.smelting_recipe("emerald_from_smelting").add_ingredient("emerald_ore").setOutput("emerald").setXp(1)
     config.smelting_recipe("emerald_from_blasting").add_ingredient("emerald_ore").setOutput("emerald").setXp(
@@ -367,17 +366,17 @@ def generate_recipes():
     config.shaped_recipe("end_stone_bricks").setEntries(TWO_BY_TWO, "end_stone").setOutput((4, "end_stone_bricks"))
     config.shaped_recipe("ender_chest").setEntries(AROUND_HOLLOW, "obsidian").setEntry(1, 1, "ender_eye").setOutput(
         "ender_chest")
-    config.shapeless_recipe("ender_eye").addInputs(["ender_pearl", "blaze_poweder"]).setOutput("ender_eye")
+    config.shapeless_recipe("ender_eye").addInputs("ender_pearl", "blaze_poweder").setOutput("ender_eye")
     config.shapeless_recipe("fermented_spider_eye").setOutput("fermented_spider_eye").addInputs(
-        ["spider_eye", "brown_mushroom", "sugar"])
-    config.shapeless_recipe("fire_charge").addInputs(
-        ["gunpowder", "blaze_powder", ["coal", "charcoal"]]).setOutput((3, "fire_charge"))
+        "spider_eye", "brown_mushroom", "sugar")
+    config.shapeless_recipe("fire_charge").addInputs("gunpowder", "blaze_powder", ["coal", "charcoal"]).setOutput(
+        (3, "fire_charge"))
     config.shaped_recipe("fishing_rod").setEntries([(0, 0), (1, 1), (2, 2)], "stick").setEntries(
         [(2, 0), (2, 1)], "string").setOutput("fishing_rod")
     config.shaped_recipe("fletching_table").setEntries(TWO_BY_TWO, "#planks").setEntries(
         [(0, 2), (1, 2)], "flint").setOutput("fletching_table")
-    config.shapeless_recipe("flint_and_steel").addInputs(["iron_ingot", "flint"]).setOutput("flint_and_steel")
-    config.shapeless_recipe("flower_banner_pattern").addInputs(["paper", "oseye_daisy"]).setOutput(
+    config.shapeless_recipe("flint_and_steel").addInputs("iron_ingot", "flint").setOutput("flint_and_steel")
+    config.shapeless_recipe("flower_banner_pattern").addInputs("paper", "oseye_daisy").setOutput(
         "flower_banner_patter")
     config.shaped_recipe("flower_pot").setEntries(SMALL_V, "brick").setOutput("flower_pot")
     config.shaped_recipe("furnace").setEntries(AROUND_HOLLOW, "cobblestone").setOutput("furnace")
@@ -393,9 +392,9 @@ def generate_recipes():
     config.smelting_recipe("gold_ingot").add_ingredient("gold_ore").setOutput("gold_ingot").setXp(1.)
     config.smelting_recipe("gold_ingot_from_blasting").add_ingredient("gold_ore").setOutput("gold_ingot").setXp(
         1.).setCookingTime(100)
-    config.shapeless_recipe("gold_ingot_from_gold_block").addInput("gold_block").setOutput((9, "gold_ingot"))
+    config.one_to_one("gold_ingot_from_gold_block", "gold_block", (9, "gold_ingot"))
     config.shaped_recipe("gold_ingot_from_nuggets").setEntries(THREE_BY_THREE, "gold_nugget").setOutput("gold_ingot")
-    config.shapeless_recipe("gold_nugget").addInput("gold_ingot").setOutput((9, "gold_nugget"))
+    config.one_to_one("gold_nugget", "gold_ingot", (9, "gold_nugget"))
     GOLDEN_RECOVER = ["golden_pickaxe", "golden_shovel", "golden_axe", "golden_hoe", "golden_sword", "golden_helmet",
                       "golden_chestplate", "golden_leggings", "golden_boots", "golden_horse_armor"]
     config.smelting_recipe("gold_nugger_from_blasting", "minecraft:blasting").add_ingredient(GOLDEN_RECOVER).setOutput(
@@ -406,11 +405,11 @@ def generate_recipes():
         "golden_apple")
     config.shaped_recipe("golden_carrot").setEntries(AROUND_HOLLOW, "gold_nugget").setEntry(1, 1, "carrot").setOutput(
         "golden_carrot")
-    config.shapeless_recipe("granite").addInputs(["granite", "quartz"]).setOutput("granite")
+    config.shapeless_recipe("granite").addInputs("granite", "quartz").setOutput("granite")
     generate_slab(config, "granite_slab", "granite")
     generate_stair(config, "granite_stairs", "granite")
     generate_wall(config, "granite_wall", "granite")
-    config.shapeless_recipe("gray_dye").addInputs(["black_dye", "white_dye"]).setOutput((2, "gray_dye"))
+    config.shapeless_recipe("gray_dye").addInputs("black_dye", "white_dye").setOutput((2, "gray_dye"))
     config.smelting_recipe("green_dye").add_ingredient("cactus").setOutput("green_dye").setXp(1.)
     config.shaped_recipe("grindstone").setEntries([(0, 0), (2, 0)], "#planks").setEntries(
         [(0, 1), (2, 1)], "stick").setEntry(1, 1, "stone_slab").setOutput("grindstone")
@@ -431,9 +430,9 @@ def generate_recipes():
     config.smelting_recipe("iron_ingot").add_ingredient("iron_ore").setOutput("iron_ingot").setXp(.7)
     config.smelting_recipe("iron_ingot", "minecraft:blasting").add_ingredient("iron_ore").setOutput("iron_ingot").setXp(
         .7).setCookingTime(100)
-    config.shapeless_recipe("iron_ingot_from_iron_block").addInput("iron_block").setOutput((9, "iron_ingot"))
+    config.one_to_one("iron_ingot_from_iron_block", "iron_block", (9, "iron_ingot"))
     config.shaped_recipe("iron_ingot_from_nuggets").setEntries(THREE_BY_THREE, "iron_nugget").setOutput("iron_ingot")
-    config.shapeless_recipe("iron_nugget").addInput("iron_ingot").setOutput((9, "iron_nugget"))
+    config.one_to_one("iron_nugget", "iron_ingot", (9, "iron_nugget"))
     IRON_RECOVER = ["iron_pickaxe", "iron_shovel", "iron_axe", "iron_hoe", "iron_sword", "iron_helmet",
                     "iron_chestplate", "iron_leggings", "iron_boots", "iron_horse_armor", "chainmail_helmet",
                     "chainmail_chestplate", "chainmail_leggings", "chainmail_boots"]
@@ -451,5 +450,75 @@ def generate_recipes():
     config.shaped_recipe("lantern").setEntries(AROUND_HOLLOW, "iron_nugget").setEntry(
         1, 1, "torch").setOutput("lantern")
     config.shaped_recipe("lapis_block").setEntries(THREE_BY_THREE, "lapis_lazuli").setOutput("lapis_block")
+    config.smelting_recipe("lapis_from_blasting", "minecraft:blasting").add_ingredient("minecraft:lapis_ore").setOutput(
+        "minecraft:lapis_lazuli").setXp(.2).setCookingTime(100)
+    config.smelting_recipe("lapis_from_smelting").add_ingredient("lapis_ore").setOutput("lapis_lazuli").setXp(.2)
+    config.one_to_one("lapis_lazuli", "lapis_block", (9, "lapis_lazuli"))
+    config.shaped_recipe("lead").setEntries([(0, 1), (0, 2), (1, 2), (2, 0)], "string").setEntry(
+        1, 1, "slime_ball").setOutput("lead")
+    config.shaped_recipe("leather").setEntries(TWO_BY_TWO, "rabbit_hide").setOutput("leather")
+    config.shaped_recipe("lectern").setEntries(pickaxe+[(1, 0)], "#wooden_slabs").setEntry(1, 1, "bookself").setOutput(
+        "lectern")
+    config.shaped_recipe("lever").setEntry(0, 0, "cobblestone").setEntry(0, 1, "stick").setOutput("lever")
+    config.one_to_one("light_blue_dye_from_blue_orchid", "blue_orchid", "light_blue_dye")
+    config.shapeless_recipe("light_blue_dye_from_blue_white_dye").addInputs("blue_dye", "white_dye").setOutput(
+        (2, "light_blue_dye"))
+    config.one_to_one("light_blue_dye_from_azure_bluet", "azure_bluet", "light_blue_dye")
+    config.shapeless_recipe("light_gray_dye_from_black_white_dye").addInput("black_dye").addInput(
+        "white_dye", 2).setOutput((3, "light_gray_dye"))
+    config.shapeless_recipe("light_gray_dye_from_gray_white_dye").addInputs("gray_dye", "white_dye").setOutput(
+        (2, "light_gray_dye"))
+    config.one_to_one("light_gray_dye_from_oxeye_daisy", "oxeye_daisy", "light_gray_dye")
+    config.one_to_one("light_gray_dye_from_white_tulip", "white_tulip", "light_gray_dye")
+    config.shaped_recipe("light_weighted_pressure_plate").setEntries([(0, 0), (1, 0)], "gold_ingot").setOutput(
+        "minecraft:light_weighted_pressure_plate")
+    config.shapeless_recipe("lime_dye").addInputs("green_dye", "white_dye").setOutput((2, "lime_dye"))
+    config.smelting_recipe("lime_dye_from_smelting").add_ingredient("sea_pickle").setOutput("lime_dye").setXp(
+        .1)
+    config.shaped_recipe("loom").setEntries([(0, 0), (1, 0)], "#planks").setEntries(
+        [(0, 1), (1, 1)], "string").setOutput("loom")
+    config.one_to_one("magenta_dye_from_allium", "allium", "magenta_dye")
+    config.shapeless_recipe("magenta_dye_from_blue_red_pink").addInputs("blue_dye", "red_dye", "pink_dye").setOutput(
+        (3, "magenta_dye"))
+    config.shapeless_recipe("magenta_dye_from_blue_red_white_dye").addInputs(
+        "blue_dye", "red_dye", "red_dye", "white_dye").setOutput((4, "magenta_dye"))
+    config.shapeless_recipe("magenta_dye_from_lilac").addInput("lilac").setOutput((2, "magenta_dye"))
+    config.shapeless_recipe("magenta_dye_from_purple_and_pink").addInputs("purple_dye", "pink_dye").setOutput(
+        (2, "magenta_dye"))
+    config.shaped_recipe("magma_block").setEntries(TWO_BY_TWO, "magma_cream").setOutput("magma_block")
+    config.shapeless_recipe("magma_cream").addInputs("blaze_powder", "slime_ball").setOutput("magma_cream")
+    config.shaped_recipe("map").setEntries(AROUND_HOLLOW, "paper").setEntry(1, 1, "compass").setOutput("map")
+    config.shaped_recipe("melon").setEntries(THREE_BY_THREE, "melon_slice").setOutput("melon")
+    config.shapeless_recipe("melon_seeds").addInput("melon_slice").setOutput("melon_seeds")
+    config.shaped_recipe("minecart").setEntries(SMALL_U, "iron_ingot").setOutput("minecart")
+    config.shapeless_recipe("mojang_banner_pattern").addInputs("paper", "enchanted_golden_apple").setOutput(
+        "mojang_banner_pattern")
+
+    config.shapeless_recipe("mossy_cobblestone").addInputs("cobblestone", "vine").setOutput("mossy_cobblestone")
+    generate_slab(config, "mossy_cobblestone_slab", "mossy_cobblestone")
+    generate_stair(config, "mossy_cobblestone_stairs", "mossy_cobblestone")
+    generate_wall(config, "mossy_cobblestone_wall", "mossy_cobblestone")
+
+    config.shapeless_recipe("mossy_stone_bricks").addInputs("stone_bricks", "vine").setOutput("mossy_stone_bricks")
+    generate_slab(config, "mossy_stone_brick_slab", "mossy_stone_bricks")
+    generate_stair(config, "mossy_stone_brick_stairs", "mossy_stone_bricks")
+    generate_wall(config, "mossy_stone_brick_wall", "mossy_stone_bricks")
+
+    config.shapeless_recipe("mushroom_stew").addInputs("brown_mushroom", "red_mushroom", "bowl").setOutput(
+        "mushroom_stew")
+
+    config.smelting_recipe("nether_brick").add_ingredient("netherrack").setOutput("nether_brick").setXp(.1)
+    config.shaped_recipe("nether_brick_fence").setEntries(
+        [(0, 0), (0, 1), (2, 0), (2, 1)], "nether_bricks").setEntries([(1, 0), (1, 1)], "nether_brick").setOutput(
+        (3, "nether_fence"))
+    generate_slab(config, "nether_brick_slab", "nether_bricks")
+    generate_stair(config, "nether_brick_stairs", "nether_bricks")
+    generate_wall(config, "nether_brick_wall", "nether_bricks")
+
+    config.shaped_recipe("nether_bricks").setEntries(TWO_BY_TWO, "nether_brick").setOutput("nether_bricks")
+    config.shaped_recipe("nether_wart_block").setEntries(THREE_BY_THREE, "nether_wart").setOutput("nether_wart_block")
+
+    config.shaped_recipe("note_block").setEntries(AROUND_HOLLOW, "#planks").setEntry(1, 1, "redstone").setOutput(
+        "note_block")
 
 

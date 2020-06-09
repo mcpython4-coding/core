@@ -20,8 +20,11 @@ planned for the future:
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log
     - parser for the new mc dimension config format
-    - mdk kit with setup
-    - an API holding all block & item names & internal use of only the API
+    - mdk kit with setup and launcher binding
+    - add an mode where the window opens only when the load is complete
+    - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
+        and when the user tries to go back to start menu, the game is closing. [change button text for that]
+    - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -45,7 +48,17 @@ information on development:
 
 changelog of snapshot [next]
     WARNING: this snapshot WILL break some backward-compatibility as it moved a lot of stuff around. Use the constants
-    in globals.py for allocation.
+        in globals.py for allocation.
+    WARNING: this snapshot adds data generators. They are useful, but currently complicated to set up. We will add
+        in the future an mdk generator script for setting up an mdk package with all run-configurations,
+        launcher bindings and useful helper scripts like building it into an final zip file
+    WARNING: this snapshot changed the way how the dev-environment is packaged. This may lead into problems
+    WARNING: this snapshot changed the way how final end-user directories look like and what can be modified,
+        See globals.py for the locations, do NOT use G.local+"/build/[...]", use G.build+"/[...]"!!!!
+    WARNING: as data generators are now an thing, you can NOT rely on that your game will load up completely as an mod.
+        There is the extreme "--data-gen --exit-after-data-gen --no-window" mode in which no window will open
+        (and as so now draw-events or user interactions are called, only ticks) and the game will exit after the
+        data gen is finished (via an extra loading stage)
 
     - changed version tuple builder for mcpython
     - added profiler system with config options
@@ -55,7 +68,11 @@ changelog of snapshot [next]
     - refactored & unpacked assets into the resources-folder
     - made inventory interaction subscriptions more fail-self
     - moved crafting-folder to gui/crafting
-    - added data generator system
+    - added data generator system, moved a lot of internal stuff to there, mods are free to use it
+    - added system to build the project into one stand-alone zip-archive
+    - added the following command line arguments: --data-gen. --exit-after-data-gen and --no-window.
+        First will generate the data (the data gen for the core will only work in dev-environment), second will
+        auto-exit the game when data-gen is finished (needs --data-gen also) and last will not open an window.
 
     fixed issues:
         long-term issues:
@@ -69,13 +86,23 @@ changelog of snapshot [next]
 
 
 changelog of snapshot 20w22a released on 30.05.2020 (theme: feature cleanup & improvements)
-    - optimized block rendering
-    - re-ordered some UV-related stuff, you may want to update your own models
-    - improved dependency system for mods
-    - added config system for mods & internals [incompatible with mc config files]
-    - improved existing factories & added some more factories & entries
-    - improved exception handling
-    - added StateConfigFile.py handling State-confog-files
+    Rendering:
+        - optimized block rendering
+        - re-ordered some UV-related stuff, you may want to update your own models
+
+    Modding:
+        - improved dependency system for mods
+        - added config system for mods & internals [incompatible with mc config files]
+
+    Factories:
+        - improved existing factories & added some more factories & entries
+
+    Logging:
+        - improved exception handling
+
+    States:
+        - added StateConfigFile.py handling State-config-files
+
     - deprecated a lot of stuff
 
     fixed issues:

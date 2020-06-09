@@ -79,6 +79,15 @@ class DataGeneratorConfig:
         import mcpython.datagen.RecipeGenerator
         return mcpython.datagen.RecipeGenerator.ShapelessGenerator(name,  self)
 
+    def one_to_one(self, name: str, i, o):
+        """
+        simple way to create an shapeless recipe with only one input and one output
+        :param name: the name to generate under; used for the path-formatter
+        :param i: the input
+        :param o: the output
+        """
+        return self.shapeless_recipe(name).addInput(i).setOutput(o)
+
     def smelting_recipe(self, *args, **kwargs):
         """
         will create an new mcpython.datagen.RecipeGenerator.SmeltingGenerator create with these config object
