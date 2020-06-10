@@ -18,11 +18,9 @@ import time
 import mcpython.state.StateModLoading
 import mcpython.util.math
 import mcpython.mod.Mod
-import enum
 import toml
 import mcpython.config
 import logger
-from mcpython.util.enums import LoadingStageStatus
 import deprecation
 
 # information for modders: this file contains every event called on the system
@@ -670,7 +668,7 @@ G.modloader = ModLoader()
 # this is needed as this depends on above but also above on the import
 import mcpython.mod.ModMcpython
 import mcpython.mod.ConfigFile
-import mcpython.datagen.mcpython
+from mcpython.datagen.mcpython import recipes, block_models
 
 
 @G.modloader("minecraft", "special:exit")
