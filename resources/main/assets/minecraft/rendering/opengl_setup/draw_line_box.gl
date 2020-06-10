@@ -1,0 +1,6 @@
+glColor3d(glInt 0, glInt 0, glInt 0)
+glLineWidth(glFloat 1.3)
+glPolygonMode(glEnum GL_FRONT_AND_BACK, glEnum GL_LINE)
+invoke pyglet.graphics.draw(glInt 24, glEnum GL_QUADS, glParameter vertex)
+glPolygonMode(glEnum GL_FRONT_AND_BACK, glEnum GL_FILL)
+glLineWidth(glInt 1)

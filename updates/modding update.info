@@ -1,7 +1,6 @@
 
 
 add am replacement for features.py
-remove mod.json support, port everything to mods.toml
 implement auto-all-py import system which replaces the main-files entry in the mod.json
 
 make cancelable events only call further functions when event was not canceled (maybe special func on EventBus?)

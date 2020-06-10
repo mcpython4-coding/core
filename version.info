@@ -1096,3 +1096,36 @@ sstarted these clone on 12th of July, 2019
 [uuk]: deprecated a lot of functions, specified the old deprecations more
 [uuk]: code improvements
 [uuk]: Dimension.get_chunk() accepts now also an tuple as position, not only two numbers
+[github]: released snapshot 20w22a
+
+[uuk]: fixed issue 194: loading of empty dicts from config file failed
+[uuk]: added profiler system with config system
+[uuk]: fixed issue 200: config was not parsed correctly in some cases
+[uuk]: added ESCAPE-dict to logger fixing issue 193
+[uuk]: refactored the code
+[uuk]: added to every package the __init__.py file [doing nothing at the moment]
+[uuk]: moved save files to home/saves
+[uuk]: moved config files to home/config
+[uuk]: added sys.argv flag "--home-folder <home>" to set where the home is [default: local+"/home"]
+[uuk]: saves, configs, data packs, logs and mods are now stored in the home-directory instead of the local directory
+[uuk]: added sys.argv flag "--build-folder <folder>" setting the folder where build stuff is stored
+       [default: home+"/build"]
+[uuk]: moved resourcepacks-folder into home-directory
+[uuk]: made inventory interaction subscriptions more fail-self
+[uuk]: fixed exception when shift-clicking crafting output [issue 206]
+[uuk]: fixed deletion of items in the crafting grid on close [issue 207]
+[uuk]: introduced an system for building the project into an stand-alone zipfile removing all dev-only files
+[uuk]: added new class: RenderingHelper helpful with gl calls
+[uuk]: refactored crafting-folder to gui/crafting
+[uuk]: introduced data generators for generating data
+[uuk]: added "--data-gen" flag to sys.argv for generating with these data generators
+[uuk]: data generators have their own loading stage (conditionally added) for doing their stuff
+[uuk]: recommend only in dev-environment as in final build it is not activate-able
+[uuk]: added "--exit-after-data-gen" flag to sys.argv for exiting after generation
+[uuk]: now using simplejson for encoding an json object
+[uuk]: added installer.py for installing all the stuff
+[uuk]: /reload will now re-generate also data generators by calling the program with "--data-gen --exit-after-data-gen"
+[uuk]: added "--no-window"-flag for opening no window [useful for data gen]
+[uuk]: deprecated old factories for models, block states and recipes
+[uuk]: implemented data generators for block models and block state files, tags and entities
+[github]: released snapshot 20w24a

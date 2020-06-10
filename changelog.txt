@@ -5,7 +5,7 @@ todo: make into an .md file
 planned for the future:
     - optimize texture reload with everything (re-block-item-factories, reload block models,
         reload item texture, gui textures, ...), config reload
-    - add more factories for various parts (better block models, block states, full block factory, ...)
+    - add more factories for various parts (better block models, block states, full block factory, ...) [data gens?]
     - add mode were linking between recipe in/out is shuffled and loot table links are shuffled (see Amnesia Pack)
         together with an gamerule and an /shuffle [<group>] command
     - add scoreboards with commands, execute entry, ...
@@ -14,82 +14,106 @@ planned for the future:
     - add ores
     - add mcpi API support
     - an logging update
-    - improve item texture atlas system (it seems not very stable)
+    - improve item texture atlas system (it seems not very stable when adding new items without rebuilding)
     - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum
     - rendering helper class for setting up things like 3d rendering, alpha usage, ...
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log
     - parser for the new mc dimension config format
+    - mdk kit with setup and launcher binding
+    - add an mode where the window opens only when the load is complete
+    - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
+        and when the user tries to go back to start menu, the game is closing. [change button text for that]
+    - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
+
+information on development:
+    - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
+        but not published as releases on github, and the final releases pushed to release-branch and published as#
+        an release
+    - developing happens also on feature branches were bigger features can be tested. It is not guaranteed that any
+        if this features will make its way into the final release.
+    - PR's should target master or in some cases the feature branches, only for critical bug fixes the release-branch
+    - this file will keep track on every development leading into an snapshot or release. The dev-branch will be used
+        for creating the entries. Every new snapshot changelog starts with "changelog of <type> <name>" with optional
+        following the theme of the snapshot, the release date and additional information. The changelog than can
+        be in two formats:
+        a) when not released yet:
+            - an list of changes in the order of introduction
+        b) in the final release:
+            - an grouped list of changes after topic in an logical order with all not noticeable changes removed
+        both can be followed by an table of issues starting with "fixed issues:" followed by an list of grouped after
+        first obscures of the bug the list of issues with an short description and when based on an github bug report
+        its id.
+
+
+changelog of snapshot 20w24a released on 10.06.2020 (theme: refactoring & data generators)
+    WARNING: this snapshot WILL break some backward-compatibility as it moved a lot of stuff around. Use the constants
+        in globals.py for allocation.
+    WARNING: this snapshot adds data generators. They are useful, but currently complicated to set up. We will add
+        in the future an mdk generator script for setting up an mdk package with all run-configurations,
+        launcher bindings and useful helper scripts like building it into an final zip file
+    WARNING: this snapshot changed the way how the dev-environment is packaged. This may lead into problems
+    WARNING: this snapshot changed the way how final end-user directories look like and what can be modified,
+        See globals.py for the locations, do NOT use G.local+"/build/[...]", use G.build+"/[...]"!!!!
+    WARNING: as data generators are now an thing, you can NOT rely on that your game will load up completely as an mod.
+        There is the extreme "--data-gen --exit-after-data-gen --no-window" mode in which no window will open
+        (and as so now draw-events or user interactions are called, only ticks) and the game will exit after the
+        data gen is finished (via an extra loading stage)
+
+    - changed version tuple builder for mcpython
+    - added profiler system with config options
+    - refactored most of the stuff into the mcypthon-folder, but the folder itself is added to sys.path for backward
+        compatibility [WARNING: this is an breaking change!!!!!!!!]
+    - refactored much not-code related files into the home-folder
+    - refactored & unpacked assets into the resources-folder
+    - made inventory interaction subscriptions more fail-self
+    - moved crafting-folder to gui/crafting, old interfaces still exists, but are deprecated
+    - added data generator system, moved a lot of internal stuff to there, mods are free to use it
+    - added system to build the project into one stand-alone zip-archive
+    - added the following command line arguments: --data-gen. --exit-after-data-gen and --no-window.
+        First will generate the data (the data gen for the core will only work in dev-environment), second will
+        auto-exit the game when data-gen is finished (needs --data-gen also) and last will not open an window.
+    - as the data gen system exists, the old factories are now deprecated and will be removed until a1.5.0
+    - added data generators for entities, block models and tags
+
+    fixed issues:
+        long-term issues:
+            - barrel rotation was not saved
+            - shift-clicking the output-slot of the crafting gave an exception
+            - closing the crafting table was deleting all items which were in the crafting grid
+
+        from previous snapshot:
+            - dicts in config file failed to load
+            - booleans where not correctly loaded
 
 
 changelog of snapshot 20w22a released on 30.05.2020 (theme: feature cleanup & improvements)
-    changelog of dev-cycle 1 [optimisations to rendering]
-        - optimized block rendering, deprecated some old stuff
+    Rendering:
+        - optimized block rendering
         - re-ordered some UV-related stuff, you may want to update your own models
 
-        fixed issues:
-            from versions before this snapshot:
-                - block updates were not called in every case
-                - walls and fences were not updating their state correctly
-                - during printing an exception, an new exception could occur
-                - event "worldgen:chunk:finished" was not called in most cases
-
-    changelog of dev-cycle 2 [modding improvements]
+    Modding:
         - improved dependency system for mods
-        - deprecated some old stuff
         - added config system for mods & internals [incompatible with mc config files]
+
+    Factories:
         - improved existing factories & added some more factories & entries
 
-        fixed issues:
-            from previous cycle:
-                - minecraft version tuple could contain string-instances
-                - slab textures on side were upside down
-
-            from versions before this snapshot:
-                - data packs may not get unloaded when they needed to
-
-    changelog of dev-cycle 3 [State-definition files]
+    Logging:
         - improved exception handling
-        - added StateConfigFile.py handling State-confog-files
-        - deprecated some more functions, attributes, etc.
 
-        fixed issues:
-            from previous cycle:
-                - AdvancedBlockFactory was not working
+    States:
+        - added StateConfigFile.py handling State-config-files
 
-    changelog of dev-cycle 4
-        - deprecated a lot of stuff
+    - deprecated a lot of stuff
 
-        fixed issues:
-            - mod.json was not parsing version-entry correctly
-
-    changelog of dev-cycle 4 [planned: advanced rendering functions]
-    changelog of dev-cycle 5 [planned: UI improvements]
-    changelog of dev-cycle 6 [planned: preparation for client/server: IWorld-interface and integrated-impl.]
-
-    changelog of dev-cycle [last] [planned: bug fixing of work, overall bug fixing, testing]
-
-
-    planned (some parts may be moved to future snapshots):
-        - fix issues: 80, 157, 175, 176, 177, 178, 181
-        - add support for .obj files for block models
-        - add support for forge block state format, maybe split up the blockstate-loaders into different files
-        - clean up & improve the following elements: (for all: use texture reload event)
-            button: clean up rendering code, maybe use an batch for all parts, listen to the on_resize event for
-                re-calculation
-            image: clean up rendering code, check if it is still working
-            lable: clean up rendering code, can we add possibility to render colored text
-            progress bar: fix issue 174, clean up code, can we make pgb change color over time
-            text input: clean up rendering code, implement navigation & selection
-            slot <-> slot copy: make connection more stable, help gc with deleting when not needed
-        - implement serializer for states making runtime-based changes possible & easier to create new states
-        - implement IWorld-class with abstract interaction functions, add ServerWorld & ClientWorld-instances
-        - add attribute SIDE to globals, add function sideOnly(side: str) making functions only callable when on
-            an given side
-        - improve UI by adding tab/enter support for switching buttons etc.
-        - split up StatePartGame into smaller parts to make code cleaner
-        [more may come]
-
+    fixed issues:
+        from versions before this snapshot:
+            - block updates were not called in every case
+            - walls and fences were not updating their state correctly
+            - during printing an exception, an new exception could occur
+            - event "worldgen:chunk:finished" was not called in most cases
+            - data packs may not get unloaded when they needed to
 
 changelog of release alpha 1.0.1
     fixed bugs:

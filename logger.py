@@ -12,7 +12,7 @@ import random
 import sys
 from datetime import datetime
 
-import config
+import mcpython.config
 import globals as G
 import traceback
 
@@ -35,11 +35,26 @@ FUNNY_STRINGS = [
     "Warning: your game has crashed!"
 ]
 
-if not os.path.exists(G.local + "/logs"):
-    os.makedirs(G.local + "/logs")
+if not os.path.exists(G.home + "/logs"):
+    os.makedirs(G.home + "/logs")
 
-log_file = datetime.now().strftime(G.local + "/logs/log_%d.%m.%y_%H.%M.%S.txt")
+log_file = datetime.now().strftime(G.home + "/logs/log_%d.%m.%y_%H.%M.%S.txt")
 inter_home = os.path.dirname(sys.executable).replace("\\", "/")
+
+
+ESCAPE = {G.local: "%LOCAL%", inter_home: "%PYTHON%", G.home: "%HOME%", G.build: "%BUILD%"}
+
+
+def escape(string: str) -> str:
+    """
+    will escape the string correctly
+    :param string: the string to escape
+    :return: the escaped string
+    """
+    for key in ESCAPE:
+        if key in string:
+            string = string.replace(key, ESCAPE[key])
+    return string
 
 
 def println(*msg, sep=" ", end="\n", write_into_console=True, write_into_log_file=True):
@@ -51,7 +66,7 @@ def println(*msg, sep=" ", end="\n", write_into_console=True, write_into_log_fil
     :param write_into_console: if the data should be written into the console
     :param write_into_log_file: if the data should be written into the log file
     """
-    msg = [str(e).replace("\\", "/").replace(G.local, "%LOCAL%").replace(inter_home, "%PYTHON%") for e in msg]
+    msg = [escape(str(e).replace("\\", "/")) for e in msg]
     if write_into_console: print(*msg, sep=sep, end=end)
     if write_into_log_file:
         with open(log_file, mode="a") as f:
@@ -63,14 +78,14 @@ def write_exception(*info):
     write the current exception into console and log
     :param info: the info to use
     """
-    console = not config.WRITE_NOT_FORMATTED_EXCEPTION
+    console = not mcpython.config.WRITE_NOT_FORMATTED_EXCEPTION
     println("[ERROR][EXCEPTION] gotten exception", write_into_console=console)
     println("-", *["\n-".join([str(e) for e in info])], sep="", write_into_console=console)
     sdata = traceback.format_stack()[:-2]
     data = traceback.format_exc().replace("\\", "/").replace(G.local, "%LOCAL%").replace(inter_home, "%PYTHON%").split(
         "\n")
     println(data[0], "\n", "".join(sdata), "\n".join(data[1:]), write_into_console=console)
-    if config.WRITE_NOT_FORMATTED_EXCEPTION:
+    if mcpython.config.WRITE_NOT_FORMATTED_EXCEPTION:
         println(info, write_into_log_file=False)
         traceback.print_stack()
         traceback.print_exc()
@@ -82,8 +97,8 @@ machine: {}
 processor: {}
 python version: {}, implementation: {}
 """.format(
-    config.VERSION_NAME, config.VERSION_TYPE, platform.system().replace("Darwin", "MacOS"), platform.machine(),
-    platform.processor(), platform.python_version(), platform.python_implementation()
+    mcpython.config.VERSION_NAME, mcpython.config.VERSION_TYPE, platform.system().replace("Darwin", "MacOS"),
+    platform.machine(), platform.processor(), platform.python_version(), platform.python_implementation()
 ), write_into_console=False)
 
 

@@ -1,0 +1,11 @@
+{
+  "images": ["gui/widgets"],
+  "space": 2,
+  "transforms": [
+    {"mode": "cut", "image": 0, "store": 1, "area": [0, 0, 182, 22]},
+    {"mode": "resize", "image": 1, "store": 1, "size": [364, 44]},
+    {"mode": "cut", "image": 0, "store": 2, "area": [0, 22, 24, 46]},
+    {"mode": "resize", "image": 2, "store": 2, "size": [48, 48]}
+  ],
+  "store": [{"id": 1, "location": "gui/hotbar.png"}, {"id": 2, "location": "gui/selected_slot.png"}]
+}

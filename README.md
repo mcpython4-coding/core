@@ -1,9 +1,15 @@
+[Discord](https://discord.gg/KY3agaW)
+
 # mcpython-4
 This is the fourth version of an minecraft-like, python-written game based on forgleman's code.
 
 **Like it?**
 
 Watch us and submit to it at https://github.com/mcpython4-coding/core .
+
+You are looking at the development-section of the installation guide.
+You can use the launcher from https://github.com/mcpython4-coding/Launcher
+to automatically download and setup the latest version of mcpython4
 
 How to setup?
 -----------------------------------------------------------------------------------------------------
@@ -12,10 +18,12 @@ Install any version of python 3.
 Download this project, unzip it, open a console in its directory and type:
 
 ```shell script
-pip install -r requirements.txt
+python installer.py
 ```
 
-The pip/python command crashes!(This section's instructions are under the assumption that you have already install python)
+This will set up all required libraries.
+
+The python command crashes in the pip-section!(This section's instructions are under the assumption that you have already install python)
 ----------------------------------------------------------------------------------------------------
 If python crashes with an error that says something about syntax,than you have got the wrong version:use python 3,not 2.
 (On Linux/UNIX,this can be done by replacing python with python3 and pip with pip3 in the bash commands)
@@ -31,6 +39,12 @@ How to run?
 Type in console:
 ```shell script
 python __main__.py
+```
+
+On your first run in dev-environment, use the following command
+to create some special resources:
+```shell script
+python __main__.py --data-gen
 ```
 
 Flags

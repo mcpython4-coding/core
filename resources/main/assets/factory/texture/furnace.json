@@ -1,0 +1,14 @@
+{
+  "images": ["gui/container/furnace"],
+  "space": 3,
+  "transforms": [
+    {"mode": "cut", "image": 0, "store": 1, "area": [0, 0, 176, 166]},
+    {"mode": "resize", "image": 1, "store": 1, "size": [352, 332]},
+    {"mode": "cut", "image": 0, "store": 2, "area": [176, 0, 190, 14]},
+    {"mode": "resize", "image": 2, "store": 2, "size": [28, 28]},
+    {"mode": "cut", "image": 0, "store": 3, "area": [176, 14, 200, 31]},
+    {"mode": "resize", "image": 3, "store": 3, "size": [48, 34]}
+  ],
+  "store": [{"id": 1, "location": "gui/furnace.png"}, {"id": 2, "location": "gui/furnace_fire.png"},
+    {"id": 3, "location": "gui/furnace_arrow.png"}]
+}

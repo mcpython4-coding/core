@@ -10,9 +10,15 @@ import os, sys, tempfile
 
 prebuilding = "--rebuild" in sys.argv
 debugevents = "--debugevents" in sys.argv
+dev_environment = True  # dynamical set on build
 
 local = os.path.dirname(__file__).replace("\\", "/")
+home = local+"/home" if "--home-folder" not in sys.argv else sys.argv[sys.argv.index("--home-folder")+1]
+build = home+"/build" if "--build-folder" not in sys.argv else sys.argv[sys.argv.index("--build-folder")+1]
 tmp = tempfile.TemporaryDirectory()
+
+data_gen = "--data-gen" in sys.argv and dev_environment
+data_gen_exit = "--exit-after-data-gen" in sys.argv
 
 STORAGE_VERSION = None
 

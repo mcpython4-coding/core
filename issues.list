@@ -1,23 +1,16 @@
 
 [issue 1-8 are part of github-only and are mostly fixed at the moment]
 
-issue 9: [seems fixed, please check]
-    when you add new blocks without rebuilding, BlockItemGenerator creates the item images, but fails to create
-        Item-instances in the same run
-    this issue occurs only in the first run with the new block
-    possible fix: create item tables only when BlockItemFactory has finished
-    better fix: remove BlockItemGenerator & replace by drawing of the corresponding block in the slot in 3d
-
-issue 22:
+issue 22: [fixed in generation improvements]
     bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
          is removed, it all updates following bug 23
     strategy: debug where block updates are called & why the block is not updated correct
 
-issue 23:
+issue 23: [fixed in generation improvements]
     bug: when sand is falling, it can fall more than 1 block at a time, see issue 22 for reproducing
     possible reason: fall is active two times in TickHandler
 
-issue 28:
+issue 28: [caused by issue 185]
     bug: F3+A - hot-key does not reload the world correctly
     since: unknown, found after fixing issue 19 & implementing hot-keys
     possible fix: rewrite this part of Chunk's method's
@@ -31,7 +24,7 @@ issue 35:
     bug: going inside an non-full block will give you damage instead of bouncing of the block
     since: block damage was introduced
     fix: check for solid block
-    better fix: use rewritten collision system based on AABB's to determine if you are in an block
+    better fix: use rewritten collision system based on AABB's to determine if you are in an block or not
 
 issue 55:
     bug: alpha textures are rendered not behind alpha-textures
@@ -40,11 +33,12 @@ issue 55:
 
 issue 80:
     bug: in some cases, mouse button up is still not handled
+    fix: call mouse button up event before changing the active state only on the event bus for it
 
 issue 100:
     bug: fps counter is constantly changing making it hard to read from
     possible fix: implement some average fps system
-    solution: maybe WAI
+    possible better fix: use some smooth fps technique
 
 issue 113:
     bug: "uv-lock"-parameter is ignored in block-states
@@ -144,12 +138,6 @@ issue 181:
 issue 185:
     bug: in big worlds, chunks can get randomly hidden
 
-issue 193:
-    bug: mod locations are not escaped in logs
-
-issue 194:
-    bug: config files fail to decode empty dict [and possible other empty tags]
-
 issue 196:
     bug: when picking up an itemstack during holding one, it gets reset
     reproduce: craft one thing with an item in mouse and the item is not picked up
@@ -158,3 +146,21 @@ issue 199:
     bug: dynamic generated dimension ids are not saved in saves leading into miss-matches when changing dimension
          list
     fix: add them to the storage system and re-assign on load
+
+issue 201:
+    bug: in debug world, you can change block states, break blocks, add blocks, ...
+    fix: implement system to have an event bus for an generator mode only active when in an world with these world
+        generator
+
+issue 202:
+    bug: generation progress % gets negative and is counting down from 100%
+
+issue 203:
+    bug: when loading an previous debug world, exceptions are printed out
+    fix: set world generator to the one loaded from world
+
+issue 204:
+    bug: debug world generates start chest
+
+issue 208:
+    bug: closing the player inventory will also add the crafting output to the inventory
