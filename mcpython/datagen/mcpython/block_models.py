@@ -19,5 +19,5 @@ def load_block_states():
     if "--data-gen" not in sys.argv: return  # data gen only when launched so, not when we think
     config = Configuration.DataGeneratorConfig("minecraft", G.local + "/resources/generated")
     config.setDefaultNamespace("minecraft")
-    BlockStateGenerator(config, "acacia_planks").add_state(None, ModelRepresentation("block/acacia_planks"))
+    # BlockStateGenerator(config, "acacia_planks").add_state(None, ModelRepresentation("block/acacia_planks"))
 
