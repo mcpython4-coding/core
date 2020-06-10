@@ -46,7 +46,7 @@ information on development:
         its id.
 
 
-changelog of snapshot [next]
+changelog of snapshot 20w24a released on 10.06.2020 (theme: refactoring & data generators)
     WARNING: this snapshot WILL break some backward-compatibility as it moved a lot of stuff around. Use the constants
         in globals.py for allocation.
     WARNING: this snapshot adds data generators. They are useful, but currently complicated to set up. We will add
@@ -74,6 +74,7 @@ changelog of snapshot [next]
         First will generate the data (the data gen for the core will only work in dev-environment), second will
         auto-exit the game when data-gen is finished (needs --data-gen also) and last will not open an window.
     - as the data gen system exists, the old factories are now deprecated and will be removed until a1.5.0
+    - added data generators for entities, block models and tags
 
     fixed issues:
         long-term issues:

@@ -1128,3 +1128,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added "--no-window"-flag for opening no window [useful for data gen]
 [uuk]: deprecated old factories for models, block states and recipes
 [uuk]: implemented data generators for block models and block state files, tags and entities
+[github]: released snapshot 20w24a
