@@ -9,23 +9,30 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import mcpython.rendering.model.BlockState
 import globals as G
 import mcpython.util.enums
+import deprecation
 
 
+@deprecation.deprecated("dev2-2", "a1.5.0")
 class BlockModelFactory:
+
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def __init__(self):
         self.name = None
         self.parent = "block/block"
         self.elements = None
         self.textures = None
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def setName(self, name: str):
         self.name = name
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def setParent(self, parent: str):
         self.parent = parent
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def addElement(self, f: tuple, t: tuple, textures: list, rotation=None, uvs=[(0, 0, 1, 1)]*6, texture_rotation=[0]*6):
         """
         will add an visual element to the model
@@ -41,15 +48,18 @@ class BlockModelFactory:
         self.elements.append((f, t, textures, rotation, uvs, texture_rotation))
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def setTexture(self, key: str, texture: str):
         if self.textures is None: self.textures = {}
         self.textures[key] = texture
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish(self):
         assert self.name is not None
         G.modloader(self.name.split(":")[0], "stage:modelfactory:bake")(self.finish_up)
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish_up(self):
         assert self.name is not None
         data = {"parent": self.parent}
@@ -73,23 +83,30 @@ class BlockModelFactory:
                     lambda: G.modelhandler.add_from_data(self.name, data))
 
 
+@deprecation.deprecated("dev2-2", "a1.5.0")
 class NormalBlockStateFactory:
+
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def __init__(self):
         self.name = None
         self.variants = []
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def setName(self, name: str):
         self.name = name
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def addVariant(self, variant_descriptor: str, *models):
         self.variants.append((variant_descriptor, models))
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish(self):
         assert self.name is not None
         G.modloader(self.name.split(":")[0], "stage:blockstatefactory:bake")(self.finish_up)
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish_up(self):
         assert self.name is not None
         data = {"variants": {}}
@@ -101,4 +118,3 @@ class NormalBlockStateFactory:
         G.modloader(self.name.split(":")[0], "stage:model:blockstate_search")(
             mcpython.rendering.model.BlockState.BlockStateDefinition.from_data(self.name, data))
 
-# todo: add factory for multipart models

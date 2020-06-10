@@ -7,32 +7,43 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import mcpython.gui.crafting.GridRecipes
+import deprecation
 
 
+@deprecation.deprecated("dev2-2", "a1.5.0")
 class ShapedCraftingRecipeFactory:
+
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def __init__(self, output):
         self.grid = {}
         self.output = output
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def set_input(self, position, itemname):
         if type(itemname) == str: itemname = [itemname]
         for pos in (position if type(position) == list else [position]): self.grid[pos] = itemname
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish(self):
         mcpython.gui.crafting.GridRecipes.GridShaped(self.grid, self.output).register()
 
 
+@deprecation.deprecated("dev2-2", "a1.5.0")
 class ShapelessCraftingRecipeFactory:
+
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def __init__(self, output):
         self.output = output
         self.items = []
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def add_item(self, item, count=1):
         if type(item) == str: item = [item]
         self.items += [item] * count
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish(self):
         mcpython.gui.crafting.GridRecipes.GridShapeless(self.items, self.output)
 

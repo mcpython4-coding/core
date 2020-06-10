@@ -67,12 +67,13 @@ changelog of snapshot [next]
     - refactored much not-code related files into the home-folder
     - refactored & unpacked assets into the resources-folder
     - made inventory interaction subscriptions more fail-self
-    - moved crafting-folder to gui/crafting
+    - moved crafting-folder to gui/crafting, old interfaces still exists, but are deprecated
     - added data generator system, moved a lot of internal stuff to there, mods are free to use it
     - added system to build the project into one stand-alone zip-archive
     - added the following command line arguments: --data-gen. --exit-after-data-gen and --no-window.
         First will generate the data (the data gen for the core will only work in dev-environment), second will
         auto-exit the game when data-gen is finished (needs --data-gen also) and last will not open an window.
+    - as the data gen system exists, the old factories are now deprecated and will be removed until a1.5.0
 
     fixed issues:
         long-term issues:

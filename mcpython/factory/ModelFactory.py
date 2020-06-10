@@ -8,9 +8,13 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import mcpython.rendering.model.Model
+import deprecation
 
 
+@deprecation.deprecated("dev2-2", "a1.5.0")
 class ModelFactory:
+
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def __init__(self, name: str, parent="block/block"):
         self.name = name
         self.parent = parent
@@ -29,10 +33,12 @@ class ModelFactory:
                                         "east": {"texture": texturenames[3], "cullface": "east"}}})
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def set_texture(self, name, texturefile):
         self.textures[name] = texturefile
         return self
 
+    @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish(self):
         data = {"parent": self.parent}
         if len(self.elements) > 0: data["elements"] = self.elements

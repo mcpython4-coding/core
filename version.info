@@ -1126,3 +1126,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added installer.py for installing all the stuff
 [uuk]: /reload will now re-generate also data generators by calling the program with "--data-gen --exit-after-data-gen"
 [uuk]: added "--no-window"-flag for opening no window [useful for data gen]
+[uuk]: deprecated old factories for models, block states and recipes

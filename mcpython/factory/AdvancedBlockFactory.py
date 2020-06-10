@@ -10,6 +10,7 @@ import mcpython.factory.BlockFactory
 import mcpython.factory.BlockModelFactory
 import mcpython.event.Registry
 import globals as G
+# todo: re-write to be based on new data gen system
 
 
 class IAdvancedBlockFactoryMode(mcpython.event.Registry.IRegistryContent):
