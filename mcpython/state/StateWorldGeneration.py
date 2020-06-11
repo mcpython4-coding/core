@@ -36,7 +36,9 @@ class StateWorldGeneration(State.State):
     def get_parts(self) -> list:
         return [mcpython.state.StatePartConfigBackground.StatePartConfigBackground(),
                 mcpython.state.ui.UIPartLable.UIPartLable("0%", (0, 50), anchor_lable="MM", anchor_window="MD",
-                                                 color=(255, 255, 255, 255))]
+                                                          color=(255, 255, 255, 255)),
+                mcpython.state.ui.UIPartLable.UIPartLable("(0/0/0)", (0, 30), anchor_lable="MM", anchor_window="MD",
+                                                          color=(255, 255, 255, 255))]
 
     def on_update(self, dt):
         G.worldgenerationhandler.task_handler.process_tasks(timer=.4)
@@ -100,11 +102,12 @@ class StateWorldGeneration(State.State):
 
         # setup skin
         try:
-            mcpython.util.getskin.download_skin(playername, G.build+"/skin.png")
+            mcpython.util.getskin.download_skin(playername, G.build + "/skin.png")
         except ValueError:
             logger.write_exception(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
-            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
+            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(
+                G.build + "/skin.png")
         mcpython.world.player.Player.RENDERER.reload()
         G.world.active_player = playername
         G.world.get_active_player().position = (G.world.spawnpoint[0], mcpython.util.math.get_max_y(G.world.spawnpoint),
@@ -145,10 +148,15 @@ class StateWorldGeneration(State.State):
             G.tickhandler.schedule_once(G.world.cleanup)
             logger.println("interrupted world generation by user")
 
+    def calculate_percentage_of_progress(self):
+        k = list(self.status_table.values())
+        return k.count(-1) / len(k)
+
     def on_draw_2d_post(self):
         wx, wy = G.window.get_size()
         mx, my = wx // 2, wy // 2
-        self.parts[1].text = "{}%".format(round(sum(self.status_table.values())/len(self.status_table)*1000)/10)
+        self.parts[1].text = "{}%".format(round(self.calculate_percentage_of_progress() * 1000) / 10)
+        self.parts[2].text = "{}/{}/{}".format(*G.worldgenerationhandler.task_handler.get_total_task_stats())
 
         for cx, cz in self.status_table:
             status = self.status_table[(cx, cz)]

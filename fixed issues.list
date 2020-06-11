@@ -190,3 +190,4 @@ issue 207: when closing an crafting table, items in the grid were get deleted; f
 issue 208: crafting output was added also to player inventory when closing it; fixed on 11.06.2020 by uuk
 issue 209: generator script for recipe generator from json was not parsing output correctly; fixed on 11.06.2020 by uuk
 issue 174: loading bars in mod loading where not in the middle of the screen; fixed on 11.06.2020 by uuk
+issue 202: loading and generating progress % was calculated wrong; fixed on 11.06.2020 by uuk

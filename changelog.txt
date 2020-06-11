@@ -16,7 +16,7 @@ planned for the future:
     - an logging update
     - improve item texture atlas system (it seems not very stable when adding new items without rebuilding)
     - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum
-    - rendering helper class for setting up things like 3d rendering, alpha usage, ...
+    - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality]
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log
     - parser for the new mc dimension config format
@@ -51,11 +51,13 @@ changelog of snapshot [next]
     - added state part serializer for progress bar
     - rewritten data fixer system. Incompatible with old one. Old stuff still arrival, but deprecated
     - old worlds are still load-able as data-fixers were ported
+    - improved loading & generation screens
 
     fixed issues:
         long-term issues:
             - crafting output slot was added to inventory
             - loading bars of mod loading where not in the middle
+            - % in world gen / load screen was calculated wrong leading into negative %
 
         since last snapshot:
             - generator for recipe generator was not parsing output correctly leading into errors in the recipes

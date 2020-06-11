@@ -149,9 +149,6 @@ issue 201:
     fix: implement system to have an event bus for an generator mode only active when in an world with these world
         generator
 
-issue 202:
-    bug: generation progress % gets negative and is counting down from 100%
-
 issue 203:
     bug: when loading an previous debug world, exceptions are printed out
     fix: set world generator to the one loaded from world
