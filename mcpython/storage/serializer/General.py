@@ -13,6 +13,7 @@ import logger
 import mcpython.util.getskin
 import mcpython.world.player
 import mcpython.ResourceLocator
+import mcpython.storage.SaveFile
 
 
 @G.registry
@@ -41,8 +42,12 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             if modname not in G.modloader.mods:
                 logger.println("[WARNING] mod '{}' is missing. This may break your world!".format(modname))
             elif G.modloader.mods[modname].version != tuple(data["mods"][modname]):
-                logger.println("[INFO] mod version did change from '{}' to '{}'. This may break your world!".format(
-                    data["mods"][modname], tuple(G.modloader.mods[modname].version)))
+                try:
+                    savefile.apply_mod_fixer(modname, G.modloader.mods[modname].version)
+                except mcpython.storage.SaveFile.DataFixerNotFoundException:
+                    if modname != "minecraft":
+                        logger.println("[WARN] mod {} did not provide data-fixers for mod version change "
+                                       "which occured between the sessions".format(modname))
         [G.worldgenerationhandler.add_chunk_to_generation_list(e[0], dimension=e[1]) for e in data["chunks_to_generate"]]
         for dimension in G.world.dimensions.values():
             if str(dimension.id) in data["dimensions"]:

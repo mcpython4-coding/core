@@ -189,6 +189,28 @@ class SaveFile:
         fixer: mcpython.storage.datafixers.IDataFixer.IPartFixer = self.part_fixer_registry.registered_object_map[name]
         fixer.apply(self, *args, **kwargs)
 
+    def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
+        if modname not in self.mod_fixers or modname not in G.modloader.mods: raise DataFixerNotFoundException(modname)
+        target_version = G.modloader.mods[modname].version
+        fixers = self.mod_fixers[modname]
+        if source_version not in fixers: raise DataFixerNotFoundException(modname+str(source_version))
+        if len(fixers) == 1 or len(source_version) != len(target_version):
+            fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = fixers[0]
+        else:
+            fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = min(
+                fixers, key=lambda v: self._get_distance(v, source_version))
+        fixer.apply(self, *args, **kwargs)
+        [self.apply_group_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES]
+        [self.apply_part_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.PART_FIXER_NAMES]
+
+    @classmethod
+    def _get_distance(cls, v, t):
+        s = 0
+        for i in range(len(v)):
+            f = len(v) - i - 1
+            s += 100 ** f * abs(v[i] - t[i])
+        return s
+
     @classmethod
     def get_serializer_for(cls, part):
         for serializer in mcpython.storage.serializer.IDataSerializer.dataserializerregistry.registered_object_map.values():
