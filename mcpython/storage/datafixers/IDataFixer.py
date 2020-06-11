@@ -16,8 +16,8 @@ class IDataFixer(mcpython.event.Registry.IRegistryContent):
     FIXES_TO = None
 
     @classmethod
-    def apply(cls):
-        raise NotImplementedError()
+    def apply(cls, savefile, *args):
+        pass
 
 
 class IStorageVersionFixer(IDataFixer, ABC):
@@ -27,7 +27,7 @@ class IStorageVersionFixer(IDataFixer, ABC):
     """
     TYPE = "minecraft:storage_version_fixer"
 
-    GROUP_FIXER_NAMES = []  # an list of group fixers to apply when trying to load
+    GROUP_FIXER_NAMES = []  # an list of (name_of_group_fixer, args, kwargs) to apply when trying to load
 
 
 class IModVersionFixer(IDataFixer, ABC):
@@ -43,7 +43,8 @@ class IModVersionFixer(IDataFixer, ABC):
 
     MOD_NAME = None  # the mod name to fix under
 
-    GROUP_FIXER_NAMES = []  # an list of group fixers to apply when trying to load with the new mod version
+    GROUP_FIXER_NAMES = []  # an list of (name_of_group_fixer, args, kwargs) to apply when trying to load
+    PART_FIXER_NAMES = []  # an list of (name_of_part_fixer, args, kwargs) to apply when trying to load
 
 
 class IGroupFixer(IDataFixer, ABC):
@@ -53,11 +54,7 @@ class IGroupFixer(IDataFixer, ABC):
     """
     TYPE = "minecraft:group_fixer"
 
-    GROUP = None  # which group to find under
-
-    @classmethod
-    def apply_part(cls, part_fixer):
-        pass
+    PART_FIXER_NAMES = []  # an list of (name_of_part_fixer, args, kwargs) to apply when fixing
 
 
 class IPartFixer(IDataFixer, ABC):
@@ -67,14 +64,14 @@ class IPartFixer(IDataFixer, ABC):
     """
     TYPE = "minecraft:part_fixer"
 
-    GROUP = None  # the thing this is pointing to. E.g. block data
-    GROUP_FIXER_NAME = None  # the name of the fixer dedicated to these part
+    TARGET_SERIALIZER_NAME = None  # the name of the fixer dedicated to these part
 
     @classmethod
-    def apply(cls):
+    def apply(cls, savefile, *args, **kwargs):
         """
-        default implementation of the IPartFixer apply() call calling apply_part(cls) on the GROUP_FIXER specified
-        by GROUP_FIXER_NAME.
-        Mods may want to override this.
+        default implementation of the IPartFixer apply() calling apply_part_fixer(cls) on the SERIALIZER specified
+        by TARGET_SERIALIZER_NAME
+        Mods may want to override this method when doing other special stuff
         """
+        savefile.get_serializer_for(cls.TARGET_SERIALIZER_NAME).apply_part_fixer(savefile, cls, *args, **kwargs)
 

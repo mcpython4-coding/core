@@ -1132,3 +1132,5 @@ sstarted these clone on 12th of July, 2019
 
 [uuk]: added rendering_helper attribute to globals.py which is reset after every draw cycle
 [uuk]: added state part serializer for progress bar
+[uuk]: implemented new data fixer system
+[uuk]: new storage version: 6

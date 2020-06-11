@@ -7,6 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import mcpython.storage.serializer.IDataSerializer
+import mcpython.storage.datafixers.IDataFixer
 import globals as G
 import mcpython.world.Chunk
 import mcpython.util.enums
@@ -17,21 +18,195 @@ import uuid
 def chunk2region(cx, cz): return cx >> 5, cz >> 5
 
 
+def access_region_data(savefile, dimension: int, region: tuple):
+    if dimension not in G.world.dimensions: return
+    return savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
+
+
+def write_region_data(savefile, dimension, region, data):
+    savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
+
+
+class BlockPartFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    Fixer for fixing special block data
+    Applied only ONES per block-palette entry, not ones per block. Will change all blocks of the same kind
+    in that chunk
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:chunk"
+
+    TARGET_BLOCK_NAME = None  # on which block(s) to apply
+
+    @classmethod
+    def fix(cls, savefile, dim, region, chunk, data) -> dict:
+        """
+        called to apply the fix
+        :param savefile: the savefile-instance to use
+        :param dim: the dim in
+        :param region: the region in
+        :param chunk: the chunk in
+        :param data: the block data
+        :return: the transformed data
+        """
+
+
+class ChunkDataFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    fixer targeting an whole chunk-data dict
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:chunk"
+
+    @classmethod
+    def fix(cls, savefile, dim, region, chunk, data) -> dict:
+        """
+        will apply the fix
+        :param savefile: the savefile to use
+        :param dim: the dimension in
+        :param region: the region in
+        :param chunk: the chunk position
+        :param data: the chunk data
+        :return: the transformed chunk data
+        """
+
+
+class RegionDataFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    fixer for fixing an whole .region file
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:chunk"
+
+    @classmethod
+    def fix(cls, savefile, dim, region, data) -> dict:
+        """
+        will apply the fix
+        :param savefile: the savefile to use
+        :param dim: the dimension in
+        :param region: the region in
+        :param data: the region data
+        :return: the transformed region data
+        """
+
+
+class BlockRemovalFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    Fixer for removing block-data from special blocks from the chunk system
+    Will replace the block data with REPLACE (default: air-block)
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:chunk"
+
+    TARGET_BLOCK_NAMES = None  # on which block(s) to apply
+    REPLACE = {"name": "minecraft:air", "custom": {}, "shown": False}  # the block data to replace with
+
+
+class EntityDataFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    Fixer for fixing entity data from storage
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:chunk"
+    TARGET_ENTITY_NAME = None  # which entity to apply to
+
+    @classmethod
+    def fix(cls, savefile, dim, region, chunk, data):
+        """
+        will apply the fix
+        :param savefile: the savefile to use
+        :param dim: the dimension in
+        :param region: the region in
+        :param chunk: the chunk in
+        :param data: the entity data
+        """
+
+
+class EntityRemovalFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    Fixer for removing an entity type from saves
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:chunk"
+    TARGET_ENTITY_NAME = None  # which entity to apply to
+
+
 @G.registry
 class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:chunk"
 
     @classmethod
+    def apply_part_fixer(cls, savefile, fixer):
+        if issubclass(fixer, BlockPartFixer):
+            blocks = (fixer.TARGET_BLOCK_NAME if type(fixer.TARGET_BLOCK_NAME) in (list, tuple, set) else
+                      (fixer.TARGET_BLOCK_NAME,))
+            for dim, region in savefile.region_iterator():
+                data = access_region_data(savefile, dim, region)
+                if data is None: continue
+                for chunk in data:
+                    if chunk == "version": continue
+                    palette = data[chunk]["block_palette"]
+                    for i, entry in enumerate(palette):
+                        if entry["name"] in blocks:
+                            palette[i] = fixer.fix(savefile, dim, region, chunk, entry)
+                write_region_data(savefile, dim, region, data)
+        elif issubclass(fixer, RegionDataFixer):
+            for dim, region in savefile.region_iterator():
+                data = access_region_data(savefile, dim, region)
+                if data is None: continue
+                data = fixer.fix(savefile, dim, region, data)
+                write_region_data(savefile, dim, region, data)
+        elif issubclass(fixer, ChunkDataFixer):
+            for dim, region in savefile.region_iterator():
+                data = access_region_data(savefile, dim, region)
+                if data is None: continue
+                for chunk in data:
+                    if chunk == "version": continue
+                    data[chunk] = fixer.fix(savefile, dim, region, chunk, data["chunk"])
+        elif issubclass(fixer, BlockRemovalFixer):
+            blocks = (fixer.TARGET_BLOCK_NAMES if type(fixer.TARGET_BLOCK_NAMES) in (list, tuple, set) else
+                      (fixer.TARGET_BLOCK_NAMES,))
+            for dim, region in savefile.region_iterator():
+                data = access_region_data(savefile, dim, region)
+                if data is None: continue
+                for chunk in data:
+                    if chunk == "version": continue
+                    palette = data[chunk]["block_palette"]
+                    for i, entry in enumerate(palette):
+                        if entry["name"] in blocks:
+                            palette[i] = fixer.REPLACE
+                write_region_data(savefile, dim, region, data)
+        elif issubclass(fixer, EntityDataFixer):
+            for dim, region in savefile.region_iterator():
+                data = access_region_data(savefile, dim, region)
+                if data is None: continue
+                for chunk in data:
+                    if chunk == "version": continue
+                    cdata = data[chunk]
+                    for entity_data in cdata["entities"]:
+                        if entity_data["type"] == fixer.TARGET_ENTITY_NAME:
+                            fixer.fix(savefile, dim, region, chunk, entity_data)
+        elif issubclass(fixer, EntityRemovalFixer):
+            for dim, region in savefile.region_iterator():
+                data = access_region_data(savefile, dim, region)
+                if data is None: continue
+                for chunk in data:
+                    if chunk == "version": continue
+                    cdata = data[chunk]
+                    for entity_data in cdata["entities"].copy():
+                        if entity_data["type"] == fixer.TARGET_ENTITY_NAME:
+                            cdata["entities"].remove(entity_data)
+
+    @classmethod
     def load(cls, savefile, dimension: int, chunk: tuple, immediate=False):
-        if dimension not in G.world.dimensions: return
         region = chunk2region(*chunk)
+        try:
+            data = access_region_data(savefile, dimension, region)
+        except NotImplementedError:
+            return
         chunk_instance: mcpython.world.Chunk.Chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
         if chunk_instance.loaded: return
-        data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
         if data is None: return
-        if data["version"] != savefile.version:
-            savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, region=region)
-            data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))  # reload the data
         if chunk not in data: return
 
         G.worldgenerationhandler.enable_generation = False
@@ -103,10 +278,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance: mcpython.world.Chunk.Chunk = G.world.dimensions[dimension].chunks[chunk]
         if not chunk_instance.generated: return
         data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
-        if data is None: data = {"version": savefile.version}
-        if data["version"] != savefile.version:
-            savefile.upgrade("minecraft:chunk", version=data["version"], dimension=dimension, region=region)
-            data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
+        if data is None: data = {}
         if chunk in data and not override:
             cdata = data[chunk]
             override = False
@@ -129,7 +301,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             }
             override = True
         G.worldgenerationhandler.enable_generation = False
-        palette = cdata["block_palette"]
+        palette = cdata["block_palette"]  # list of {"custom": <some stuff>, "name": <name>, "shown": <shown>, ...}
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
         overridden = not override
         for position in (
@@ -200,6 +372,6 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             cdata["maps"]["height"] = [height_map[pos] for pos in positions]
 
         data[chunk] = cdata
-        savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
+        write_region_data(savefile, dimension, region, data)
         G.worldgenerationhandler.enable_generation = True
 

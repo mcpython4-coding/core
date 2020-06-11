@@ -6,14 +6,19 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import globals as G
-import mcpython.storage.datafixer.IDataFixer
-import mcpython.storage.serializer.IDataSerializer
 import json
-import pickle
 import os
-import logger
+import pickle
 import sys
+
+import deprecation
+
+import globals as G
+import logger
+import mcpython.event.Registry
+import mcpython.storage.datafixer.IDataFixer
+import mcpython.storage.datafixers.IDataFixer
+import mcpython.storage.serializer.IDataSerializer
 
 """
 How to decide when an new version is needed?
@@ -43,16 +48,30 @@ History of save versions:
     - chest container stores now also the loot table link when set
 - 4: introduced: 31.03.2020, outdated since: -, not loadable since: -
     - block coordinates are stored now relative to chunk; decreases chunk size
-- 5: introduced: 17.03.2020 [part of entity update], outdated since: -, not loadable since: -
+- 5: introduced: 17.03.2020 [part of entity update], outdated since: 11.06.2020, not loadable since: -
     - added entity serializer
+- 6: introduced: 11.06.2020, outdated since: -, not loadable since: -
+    - re-write of data fixer system, old still fix-able
+    - removed "version"-attribute out of region files and inventory files
+    - data fixers are applied to the WHOLE world ON LOAD, not when needed
 """
 
-
-G.STORAGE_VERSION = LATEST_VERSION = 5  # the latest version, used for upgrading
+G.STORAGE_VERSION = LATEST_VERSION = 6  # the latest version, used for upgrading
 
 # where the stuff should be saved
-SAVE_DIRECTORY = G.home+"/saves" if "--saves-directory" not in sys.argv else \
-    sys.argv[sys.argv.index("--saves-directory")+1]
+SAVE_DIRECTORY = G.home + "/saves" if "--saves-directory" not in sys.argv else \
+    sys.argv[sys.argv.index("--saves-directory") + 1]
+
+
+class DataFixerNotFoundException(Exception): pass
+
+
+def register_storage_fixer(_, fixer: mcpython.storage.datafixers.IDataFixer.IStorageVersionFixer):
+    SaveFile.storage_version_fixers.setdefault(fixer.FIXES_FROM, []).append(fixer)
+
+
+def register_mod_fixer(_, fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer):
+    SaveFile.mod_fixers.setdefault(fixer.MOD_NAME, {}).setdefault(fixer.FIXES_FROM, []).append(fixer)
 
 
 class SaveFile:
@@ -60,6 +79,16 @@ class SaveFile:
     Interface to an stored file on the disk
     Used to load certain parts into the system & store them
     """
+
+    storage_version_fixers = {}
+    mod_fixers = {}
+
+    storage_fixer_registry = mcpython.event.Registry.Registry(
+        "storage_fixer", ["minecraft:storage_version_fixer"], injection_function=register_storage_fixer)
+    mod_fixer_registry = mcpython.event.Registry.Registry(
+        "mod_fixer", ["minecraft:mod_version_fixer"], injection_function=register_mod_fixer)
+    group_fixer_registry = mcpython.event.Registry.Registry("group_fixer", ["minecraft:group_fixer"])
+    part_fixer_registry = mcpython.event.Registry.Registry("part_fixer", ["minecraft:part_fixer"])
 
     def __init__(self, directory_name: str):
         """
@@ -70,28 +99,34 @@ class SaveFile:
         self.version = LATEST_VERSION
         self.save_in_progress = False
 
+    def region_iterator(self):
+        for dim in os.listdir(self.directory + "/dim"):
+            for region in os.listdir(self.directory + "/dim/" + dim):
+                yield dim, region
+
     def load_world(self):
         """
         loads all setup-data into the world
         """
-        G.world.cleanup()
+        G.world.cleanup()  # make sure everything is removed before we start
         try:
             self.read("minecraft:general")
-
             while self.version != LATEST_VERSION:
-                if self.version not in mcpython.storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map:
-                    raise IOError("unsupported storage version '{}'. Latest: '{}', Found transformers from: '{}'".format(
-                        str(self.version), str(LATEST_VERSION), "', '".join(
-                            [str(e) for e in mcpython.storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map.
-                                keys()])))
-                generaldatafixer = mcpython.storage.datafixer.IDataFixer.generaldatafixerregistry.registered_object_map[self.version]
-                for fix in generaldatafixer.LOAD_FIXES:
-                    if type(fix) != tuple:
-                        self.upgrade(fix)
-                    else:
-                        self.upgrade(fix[0], **fix[1])
-                self.version = generaldatafixer.UPGRADES_TO
-
+                if self.version not in self.storage_version_fixers:
+                    logger.println("[ERROR] unable to data-fix world. No data fixer found for version {}".format(
+                        self.version))
+                    G.world.cleanup()
+                    G.statehandler.switch_to("minecraft:startmenu")
+                    return
+                fixers = self.storage_version_fixers[self.version]
+                if len(fixers) > 1:
+                    # search for the one fixing to the nearest version to the searched for
+                    fixer = min(fixers, key=lambda f: abs(LATEST_VERSION-f.FIXES_TO))
+                else:
+                    fixer = fixers[0]
+                self.apply_storage_fixer(fixer.NAME)
+                self.read("minecraft:general")
+                self.version = fixer.FIXES_TO
             self.dump(None, "minecraft:general")
             self.read("minecraft:player_data")
             self.read("minecraft:gamerule")
@@ -121,8 +156,10 @@ class SaveFile:
             self.dump(None, "minecraft:gamerule")
             self.dump(None, "minecraft:registry_info_serializer")
             for chunk in G.world.get_active_dimension().chunks:
+                # todo: save all loaded dimension, not only the active one
                 if G.world.get_active_dimension().get_chunk(*chunk).loaded:
-                    self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk, override=override)
+                    self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk,
+                              override=override)
             print("save complete!")
             G.worldgenerationhandler.enable_generation = True
         except:
@@ -131,33 +168,33 @@ class SaveFile:
             logger.write_exception("exception during saving world. falling back to start menu...")
         self.save_in_progress = False
 
-    def upgrade(self, part=None, version=None, to=None, **kwargs):
-        """
-        upgrades the part of the SaveFile to the latest version supported
-        :param part: the part to update, or None, if all should upgrade
-        :param kwargs: kwargs given to the fixers
-        :param version: which version to upgrade from
-        :param to: to which version to upgrade to
-        """
-        if version is None: version = self.version
-        if to is None: to = LATEST_VERSION
-        new_version = None
-        flag = True
-        while flag:
-            for fixer in mcpython.storage.datafixer.IDataFixer.datafixerregistry.registered_object_map.values():
-                if fixer.TRANSFORMS[0] == version and (part is None or part == fixer.PART):
-                    print("applying fixer '{}' with config {}".format(fixer.NAME, kwargs))
-                    fixer.fix(self, **kwargs)
-                    if fixer.TRANSFORMS[1] == to:
-                        flag = False
-                    else:
-                        new_version = fixer.TRANSFORMS[1]
-                    break
-            else:
-                raise mcpython.storage.datafixer.IDataFixer.DataFixerException(
-                    "invalid version: '{}' to upgrade to '{}'. No datafixers found for the part '{}'!".format(version,
-                                                                                                              to, part))
-            version = new_version
+    def apply_storage_fixer(self, name: str, *args, **kwargs):
+        if name not in self.storage_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
+        fixer: mcpython.storage.datafixers.IDataFixer.IStorageVersionFixer = \
+            self.storage_fixer_registry.registered_object_map[name]
+        fixer.apply(self, *args, **kwargs)
+        for name, args, kwargs in fixer.GROUP_FIXER_NAMES:
+            self.apply_group_fixer(*args, **kwargs)
+
+    def apply_group_fixer(self, name: str, *args, **kwargs):
+        if name not in self.group_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
+        fixer: mcpython.storage.datafixers.IDataFixer.IGroupFixer = \
+            self.group_fixer_registry.registered_object_map[name]
+        fixer.apply(self, *args, **kwargs)
+        for name, args, kwargs in fixer.PART_FIXER_NAMES:
+            self.apply_part_fixer(name, *args, **kwargs)
+
+    def apply_part_fixer(self, name: str, *args, **kwargs):
+        if name not in self.part_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
+        fixer: mcpython.storage.datafixers.IDataFixer.IPartFixer = self.part_fixer_registry.registered_object_map[name]
+        fixer.apply(self, *args, **kwargs)
+
+    @classmethod
+    def get_serializer_for(cls, part):
+        for serializer in mcpython.storage.serializer.IDataSerializer.dataserializerregistry.registered_object_map.values():
+            if serializer.PART == part:
+                return serializer
+        raise ValueError("can't find serializer named '{}'".format(part))
 
     def read(self, part, **kwargs):
         """
@@ -166,15 +203,11 @@ class SaveFile:
         :param kwargs: kwargs given to the loader
         :return: whatever the loader returns
         """
-        for serializer in mcpython.storage.serializer.IDataSerializer.dataserializerregistry.registered_object_map.values():
-            if serializer.PART == part:
-                try:
-                    return serializer.load(self, **kwargs)
-                except mcpython.storage.serializer.IDataSerializer.InvalidSaveException:
-                    logger.write_exception("during reading part '{}' from save files under '{}' with arguments {}".
-                                           format(part, self.directory, kwargs))
-                    raise
-        raise ValueError("can't find serializer named '{}'".format(part))
+        try:
+            return self.get_serializer_for(part).load(self, **kwargs)
+        except mcpython.storage.serializer.IDataSerializer.InvalidSaveException:
+            logger.write_exception("during reading part '{}' from save files under '{}' with arguments {}".
+                                   format(part, self.directory, kwargs))
 
     def dump(self, data, part, **kwargs):
         """
@@ -183,11 +216,7 @@ class SaveFile:
         :param part: the part to save
         :param kwargs: the kwargs to give the saver
         """
-        for serializer in mcpython.storage.serializer.IDataSerializer.dataserializerregistry.registered_object_map.values():
-            if serializer.PART == part:
-                serializer.save(data, self, **kwargs)
-                return
-        raise ValueError("can't find serializer named '{}'".format(part))
+        self.get_serializer_for(part).save(data, self, **kwargs)
 
     # Helper functions for fixers, loaders and savers
     # todo: add nbt serializer
@@ -201,7 +230,8 @@ class SaveFile:
         file = os.path.join(self.directory, file)
         if not os.path.isfile(file): return
         try:
-            with open(file) as f: return json.load(f)
+            with open(file) as f:
+                return json.load(f)
         except json.decoder.JSONDecodeError:
             logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
             return
@@ -215,7 +245,8 @@ class SaveFile:
         file = os.path.join(self.directory, file)
         if not os.path.isfile(file): return
         try:
-            with open(file, mode="rb") as f: return pickle.load(f)
+            with open(file, mode="rb") as f:
+                return pickle.load(f)
         except (pickle.UnpicklingError, EOFError):
             logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
             return
@@ -265,4 +296,11 @@ class SaveFile:
         if not os.path.isdir(d): os.makedirs(d)
         with open(file, mode="wb") as f: return f.write(data)
 
+    @deprecation.deprecated("dev3-1", "a1.3.0")
+    def upgrade(self, part=None, version=None, to=None, **kwargs):
+        raise mcpython.storage.datafixer.IDataFixer.DataFixerException("unimplemented")
 
+
+@G.modloader("minecraft", "stage:datafixer:general")
+def load_elements():
+    from mcpython.storage.datafixers import (DataFixer1to2, DataFixer2to3, DataFixer3to4, DataFixer4to5, DataFixer5to6)

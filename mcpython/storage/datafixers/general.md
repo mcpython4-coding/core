@@ -29,6 +29,11 @@ The IPartFixer
 These is for use for small potions of IGroupFixers. They are applied onto an IGroupFixer
 together with some args. The group fixer will decide how to handle it.
 
+Integration with the old system
+-
+There is no way to load the old data fixers as they were not implemented in an dynamic way for
+mods.
+
 Examples
 -
 _WIP_

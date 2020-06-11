@@ -104,7 +104,7 @@ class UILableStateConfigEntry(IStateConfigEntry):
 
 @G.registry
 class UIProgressBarConfigEntry(IStateConfigEntry):
-    NAMe = "minecraft:ui_progressbar"
+    NAME = "minecraft:ui_progressbar"
 
     @classmethod
     def deserialize(cls, state_instance, data: dict, existing) -> mcpython.state.StatePart.StatePart:

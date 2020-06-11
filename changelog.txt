@@ -47,6 +47,8 @@ information on development:
 
 changelog of snapshot [next]
     - added state part serializer for progress bar
+    - rewritten data fixer system. Incompatible with old one. Old stuff still arrival, but deprecated
+    - old worlds are still load-able as data-fixers were ported
 
     fixed issues:
         long-term issues:
