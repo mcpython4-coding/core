@@ -25,6 +25,8 @@ planned for the future:
     - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
         and when the user tries to go back to start menu, the game is closing. [change button text for that]
     - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
+    - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html)
+    - implement lighting
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
