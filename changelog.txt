@@ -46,9 +46,12 @@ information on development:
         its id.
 
 changelog of snapshot [next]
+    - added state part serializer for progress bar
+
     fixed issues:
         long-term issues:
             - crafting output slot was added to inventory
+            - loading bars of mod loading where not in the middle
 
         since last snapshot:
             - generator for recipe generator was not parsing output correctly leading into errors in the recipes

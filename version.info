@@ -1131,3 +1131,4 @@ sstarted these clone on 12th of July, 2019
 [github]: released snapshot 20w24a
 
 [uuk]: added rendering_helper attribute to globals.py which is reset after every draw cycle
+[uuk]: added state part serializer for progress bar

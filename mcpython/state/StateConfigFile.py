@@ -27,7 +27,8 @@ class IStateConfigEntry(mcpython.event.Registry.IRegistryContent):
     # NAME is the type-name
 
     @classmethod
-    def deserialize(cls, state_instance, data: dict, existing: typing.Union[None, mcpython.state.StatePart.StatePart]) -> \
+    def deserialize(cls, state_instance, data: dict,
+                    existing: typing.Union[None, mcpython.state.StatePart.StatePart]) -> \
             mcpython.state.StatePart.StatePart:
         raise NotImplementedError()
 
@@ -41,7 +42,8 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
 
     @classmethod
     def deserialize(cls, state_instance, data: dict,
-                    existing: typing.Union[None, mcpython.state.StatePart.StatePart]) -> mcpython.state.StatePart.StatePart:
+                    existing: typing.Union[
+                        None, mcpython.state.StatePart.StatePart]) -> mcpython.state.StatePart.StatePart:
         import mcpython.state.ui.UIPartButton
 
         size = tuple(data["size"])
@@ -66,8 +68,8 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
             existing.on_press = on_press
             return existing
         return mcpython.state.ui.UIPartButton.UIPartButton(size, text, position, anchor_button=anchor_button,
-                                                  anchor_window=anchor_window, enabled=enabled,
-                                                  has_hovering_state=has_hov, on_press=on_press)
+                                                           anchor_window=anchor_window, enabled=enabled,
+                                                           has_hovering_state=has_hov, on_press=on_press)
 
 
 @G.registry
@@ -76,7 +78,7 @@ class UILableStateConfigEntry(IStateConfigEntry):
 
     @classmethod
     def deserialize(cls, state_instance, data: dict, existing: typing.Union[
-            None, mcpython.state.StatePart.StatePart]) -> mcpython.state.StatePart.StatePart:
+        None, mcpython.state.StatePart.StatePart]) -> mcpython.state.StatePart.StatePart:
         import mcpython.state.ui.UIPartLable
         text = data["text"]
         position = tuple(data["position"])
@@ -95,8 +97,40 @@ class UILableStateConfigEntry(IStateConfigEntry):
             existing.color = color
             existing.text_size = text_size
             return existing
-        return mcpython.state.ui.UIPartLable.UIPartLable(text, position, anchor_lable=anchor_lable, anchor_window=anchor_window,
-                                                on_press=on_press, color=color, text_size=text_size)
+        return mcpython.state.ui.UIPartLable.UIPartLable(text, position, anchor_lable=anchor_lable,
+                                                         anchor_window=anchor_window,
+                                                         on_press=on_press, color=color, text_size=text_size)
+
+
+@G.registry
+class UIProgressBarConfigEntry(IStateConfigEntry):
+    NAMe = "minecraft:ui_progressbar"
+
+    @classmethod
+    def deserialize(cls, state_instance, data: dict, existing) -> mcpython.state.StatePart.StatePart:
+        import mcpython.state.ui.UIPartProgressBar
+
+        position = data["position"]
+        size = data["size"]
+        color = (1., 0, 0) if "color" not in data else data["color"]
+        item_count = data["items"]
+        status = 0 if "status" not in data else data["status"]
+        text = data["text"]
+        anchor_ele = data["element_anchor"] if "element_anchor" in data else "LD"
+        anchor_win = data["window_anchor"] if "window_anchor" in data else "LD"
+        assert type(size) == tuple
+        if existing is not None and issubclass(type(existing), mcpython.state.ui.UIPartProgressBar.UIPartProgressBar):
+            existing.position = position
+            existing.size = size
+            existing.anchor_window = anchor_win
+            existing.anchor_element = anchor_ele
+            existing.color = color
+            existing.progress = status
+            existing.progress_max = item_count
+            existing.text = text
+            return existing
+        return mcpython.state.ui.UIPartProgressBar.UIPartProgressBar(position, size, color, item_count, status,
+                                                                     text, anchor_ele, anchor_win)
 
 
 @G.registry
@@ -104,7 +138,8 @@ class ConfigBackground(IStateConfigEntry):
     NAME = "minecraft:config_background"
 
     @classmethod
-    def deserialize(cls, state_instance, data: dict, existing: typing.Union[None, mcpython.state.StatePart.StatePart]) -> \
+    def deserialize(cls, state_instance, data: dict,
+                    existing: typing.Union[None, mcpython.state.StatePart.StatePart]) -> \
             mcpython.state.StatePart.StatePart:
         import mcpython.state.StatePartConfigBackground
         if existing is not None and issubclass(type(existing),
