@@ -187,3 +187,5 @@ issue 193: mod locations were not escaped in logs; fixed on 30.05.2020 by uuk
 issue 205: barrel block was not storing facing correctly; fixed on 06.06.2020 by uuk
 issue 206: shift-clicking the recipe output was not working; fixed on 07.06.2020 by uuk
 issue 207: when closing an crafting table, items in the grid were get deleted; fixed on 07.06.2020 by uuk
+issue 208: crafting output was added also to player inventory when closing it; fixed on 11.06.2020 by uuk
+issue 209: generator script for recipe generator from json was not parsing output correctly; fixed on 11.06.2020 by uuk

@@ -45,6 +45,11 @@ information on development:
         first obscures of the bug the list of issues with an short description and when based on an github bug report
         its id.
 
+changelog of snapshot [next]
+    fixed issues:
+        since last snapshot:
+            - generator for recipe generator was not parsing output correctly leading into errors in the recipes
+
 
 changelog of snapshot 20w24a released on 10.06.2020 (theme: refactoring & data generators)
     WARNING: this snapshot WILL break some backward-compatibility as it moved a lot of stuff around. Use the constants
@@ -60,21 +65,30 @@ changelog of snapshot 20w24a released on 10.06.2020 (theme: refactoring & data g
         (and as so now draw-events or user interactions are called, only ticks) and the game will exit after the
         data gen is finished (via an extra loading stage)
 
-    - changed version tuple builder for mcpython
-    - added profiler system with config options
-    - refactored most of the stuff into the mcypthon-folder, but the folder itself is added to sys.path for backward
-        compatibility [WARNING: this is an breaking change!!!!!!!!]
-    - refactored much not-code related files into the home-folder
-    - refactored & unpacked assets into the resources-folder
-    - made inventory interaction subscriptions more fail-self
-    - moved crafting-folder to gui/crafting, old interfaces still exists, but are deprecated
-    - added data generator system, moved a lot of internal stuff to there, mods are free to use it
     - added system to build the project into one stand-alone zip-archive
-    - added the following command line arguments: --data-gen. --exit-after-data-gen and --no-window.
-        First will generate the data (the data gen for the core will only work in dev-environment), second will
-        auto-exit the game when data-gen is finished (needs --data-gen also) and last will not open an window.
-    - as the data gen system exists, the old factories are now deprecated and will be removed until a1.5.0
-    - added data generators for entities, block models and tags
+
+    Modding:
+        - changed version tuple builder for mcpython
+        - added data generator system, moved a lot of internal stuff to there, mods are free to use it
+        - data generators are arrival for BlockModel's, BlockState's, EntityModel's, Recipes and Tags
+        - as the data gen system exists, the old factories for data-gen-converted stuff are now deprecated and will be
+            removed until a1.5.0
+
+    Debugging:
+        - added profiler system with config options
+        - made inventory interaction subscriptions more fail-self
+
+    Project Structure:
+        - refactored most of the stuff into the mcypthon-folder, but the folder itself is added to sys.path for backward
+            compatibility [WARNING: this is an breaking change!!!!!!!!]
+        - refactored much not-code related files into the home-folder
+        - refactored & unpacked assets into the resources-folder
+        - moved crafting-folder to gui/crafting, old interfaces still exists, but are deprecated
+
+    Execution:
+        - added the following command line arguments: --data-gen. --exit-after-data-gen and --no-window.
+            First will generate the data (the data gen for the core will only work in dev-environment), second will
+            auto-exit the game when data-gen is finished (needs --data-gen also) and last will not open an window.
 
     fixed issues:
         long-term issues:

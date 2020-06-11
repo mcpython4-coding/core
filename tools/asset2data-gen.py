@@ -15,6 +15,8 @@ import collections
 local = os.path.dirname(os.path.dirname(__file__))
 REPLACE_NAMESPACE = "minecraft:"
 
+REMOVE_TRANSLATED_FILES = False
+
 
 def decode_items_without_quotes(d) -> str:
     if type(d) == list:
@@ -38,7 +40,7 @@ def generate_recipe_generator(file: str) -> typing.Union[typing.Tuple[str, typin
     name = file.split("/")[-1].split(".")[0]
     t = data["type"]
     if t == "minecraft:crafting_shaped":
-        os.remove(file)
+        if REMOVE_TRANSLATED_FILES: os.remove(file)
         ex = set()
         i = []
         item_to_pos = {}
@@ -58,18 +60,18 @@ def generate_recipe_generator(file: str) -> typing.Union[typing.Tuple[str, typin
             i.append(".setEntries({}, {})".format(pos, item))
             ex.add(pos)
             ex.add(item)
-        oitem = data["result"]["item"] if "count" not in data else "({}, {})".format(
+        oitem = '"{}"'.format(data["result"]["item"]) if "count" not in data["result"] else "({}, \"{}\")".format(
             data["result"]["count"], data["result"]["item"])
         oitem = oitem.replace(REPLACE_NAMESPACE, "")
-        ex.add('"{}"'.format(oitem))
-        o = ".setOutput(\"{}\")".format(oitem)
+        ex.add(oitem)
+        o = ".setOutput({})".format(oitem)
         if "group" in data:
             o += ".setGroup(\"{}\")".format(data["group"])
             ex.add('"{}"'.format(data["group"]))
 
         return "config.shaped_recipe(\"{}\"){}{}".format(name, "".join(i), o), ex
     elif t == "minecraft:crafting_shapeless":
-        os.remove(file)
+        if REMOVE_TRANSLATED_FILES: os.remove(file)
         i = []
         ex = set()
         entry_counter = collections.defaultdict(lambda: 0)
@@ -84,17 +86,17 @@ def generate_recipe_generator(file: str) -> typing.Union[typing.Tuple[str, typin
             item = '"{}"'.format(key)
             i.append(".addInput({}, {})".format(item.replace(REPLACE_NAMESPACE, ""), entry_counter[key]))
             ex.add(item)
-        oitem = data["result"]["item"] if "count" not in data else "({}, {})".format(
+        oitem = '"{}"'.format(data["result"]["item"]) if "count" not in data["result"] else "({}, \"{}\")".format(
             data["result"]["count"], data["result"]["item"])
         oitem = oitem.replace(REPLACE_NAMESPACE, "")
-        ex.add('"{}"'.format(oitem))
-        o = ".setOutput(\"{}\")".format(oitem)
+        ex.add(oitem)
+        o = ".setOutput({})".format(oitem)
         if "group" in data:
             o += ".setGroup(\"{}\")".format(data["group"])
             ex.add('"{}"'.format(data["group"]))
         return "config.shapeless_recipe(\"{}\"){}{}".format(name, "".join(i), o), ex
     elif t in ["minecraft:smelting", 'minecraft:campfire_cooking', 'minecraft:smoking', 'minecraft:blasting']:
-        os.remove(file)
+        if REMOVE_TRANSLATED_FILES: os.remove(file)
         ex = set()
         m = "" if t == "minecraft:smelting" else ', "{}"'.format(t, ex.add('"{}"'.format(t)))
         i = decode_item(data["ingredient"])
