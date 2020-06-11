@@ -30,7 +30,7 @@ from mcpython.util.math import *  # todo: remove
 
 class NoWindow:
     """
-    class simulating an window
+    class simulating an window for the no-window mode
     """
 
     def __init__(self, *args, **kwargs):
@@ -54,14 +54,20 @@ class NoWindow:
 class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow):
 
     def __init__(self, *args, **kwargs):
+        """
+        creates an new window-instance
+        :param args: args send to pyglet.window.Window-constructor
+        :param kwargs: kwargs send to pyglet.window.Window-constructor
+        """
+
         super(Window, self).__init__(*args, **kwargs)
 
-        G.window = self
+        G.window = self  # write window instance to globals.py for sharing
 
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
 
-        # When flying gravity has no effect and speed is increased.
+        # When flying gravity has no effect and speed is increased. todo: move to player
         self.flying = False
 
         # Strafing is moving lateral to the direction you are facing,
@@ -69,24 +75,24 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         #
         # First element is -1 when moving forward, 1 when moving back, and 0
         # otherwise. The second element is -1 when moving left, 1 when moving
-        # right, and 0 otherwise.
+        # right, and 0 otherwise. todo: move to player's movement-attribute
         self.strafe = [0, 0]
 
         # Which sector the player is currently in.
-        self.sector = None
+        self.sector = None  # todo: move to player
 
         # Velocity in the y (upward) direction.
-        self.dy = 0
+        self.dy = 0  # todo: move to player
 
         # Convenience list of num keys, todo: move to config.py
         self.num_keys = [
             key._1, key._2, key._3, key._4, key._5,
             key._6, key._7, key._8, key._9]
 
-        # Instance of the model that handles the world.
+        # Instance of the model that handles the world.  todo: remove attribute
         self.world = G.world
 
-        # The label that is displayed in the top left of the canvas.
+        # The label that is displayed in the top left of the canvas.  todo: move to separated class
         self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
                                        x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
                                        color=(0, 0, 0, 255))
@@ -97,26 +103,26 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                                         x=self.width - 10, y=self.height - 34, anchor_x='right', anchor_y='top',
                                         color=(0, 0, 0, 255))
 
-        self.cpu_usage = psutil.cpu_percent(interval=None)
-        self.cpu_usage_timer = 0
+        self.cpu_usage = psutil.cpu_percent(interval=None)  # todo: move to separated class
+        self.cpu_usage_timer = 0  # todo: move to separated class
 
-        # storing mouse information
+        # storing mouse information todo: use pyglet's mouse handler
         self.mouse_pressing = {mouse.LEFT: False, mouse.RIGHT: False, mouse.MIDDLE: False}
         self.mouse_position = (0, 0)
 
-        self.draw_profiler = cProfile.Profile()
-        self.tick_profiler = cProfile.Profile()
+        self.draw_profiler = cProfile.Profile()  # todo: move to separated class
+        self.tick_profiler = cProfile.Profile()  # todo: move to separated class
 
-        # This call schedules the `update()` method to be called
-        # TICKS_PER_SEC. This is the main game event loop.
+        # This call schedules the `update()` method to be called 20 times per sec. This is the main game event loop.
         pyglet.clock.schedule_interval(self.update, 0.05)
         pyglet.clock.schedule_interval(self.print_profiler, 10)
 
-        mcpython.state.StateHandler.load()
+        mcpython.state.StateHandler.load()  # load the state system
 
-        self.keys = key.KeyStateHandler()
+        self.keys = key.KeyStateHandler()  # key handler from pyglet
         self.push_handlers(self.keys)
 
+        # todo: move to seperated class
         self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
             mcpython.ResourceLocator.read("gui/icons", "pil").crop((0, 0, 15, 15)).resize((30, 30), PIL.Image.NEAREST))
 
@@ -125,6 +131,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                                                                self.get_block_entity_info)
 
     def print_profiler(self, dt=None):
+        """
+        will print the enabled profiler(s)
+        """
         if not mcpython.config.ENABLE_PROFILING: return
 
         if mcpython.config.ENABLE_PROFILER_DRAW:
@@ -136,20 +145,25 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             self.tick_profiler.clear()
 
     def reset_caption(self):
+        """
+        will set the caption of the window to the default one
+        """
         self.set_caption("mcpython 4 - {}".format(mcpython.config.FULL_VERSION_NAME))
 
     def set_exclusive_mouse(self, exclusive):
-        """ If `exclusive` is True, the game will capture the mouse, if False
-        the game will ignore the mouse.
-
+        """
+        If `exclusive` is True, the game will capture the mouse and not display it. Otherwise,
+        the mouse is free to move
         """
         super(Window, self).set_exclusive_mouse(exclusive)
         self.exclusive = exclusive
 
-    def get_sight_vector(self):
-        """ Returns the current line of sight vector indicating the direction
+    @classmethod
+    def get_sight_vector(cls):
+        """
+        Returns the current line of sight vector indicating the direction
         the player is looking.
-
+        todo: move to player
         """
         x, y, _ = G.world.get_active_player().rotation
         # y ranges from -90 to 90, or -pi/2 to pi/2, so m ranges from 0 to 1 and
@@ -163,15 +177,12 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         dz = math.sin(math.radians(x - 90)) * m
         return dx, dy, dz
 
-    def get_motion_vector(self):
-        """ Returns the current motion vector indicating the velocity of the
+    def get_motion_vector(self) -> tuple:
+        """
+        Returns the current motion vector indicating the velocity of the
         player.
-
-        Returns
-        -------
-        vector : tuple of len 3
-            Tuple containing the velocity in x, y, and z respectively.
-
+        :return: vector: Tuple containing the velocity in x, y, and z respectively.
+        todo: integrate into player movement
         """
         if any(self.strafe):
             x, y, _ = G.world.get_active_player().rotation
@@ -187,15 +198,10 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             dz = 0.0
         return dx, dy, dz
 
-    def update(self, dt):
-        """ This method is scheduled to be called repeatedly by the pyglet
-        clock.
-
-        Parameters
-        ----------
-        dt : float
-            The change in time since the last call.
-
+    def update(self, dt: float):
+        """
+        This method is scheduled to be called repeatedly by the pyglet clock.
+        :param dt: The change in time since the last call.
         """
         if mcpython.config.ENABLE_PROFILER_TICK and mcpython.config.ENABLE_PROFILING: self.tick_profiler.enable()
         G.eventhandler.call("gameloop:tick:start", dt)
@@ -273,87 +279,83 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                     break
         return tuple(p)
 
-    def on_mouse_press(self, x, y, button, modifiers):
-        """ Called when a mouse button is pressed. See pyglet docs for button
-        amd modifier mappings.
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+        """
+        Called when a mouse button is pressed. See pyglet docs for button amd modifier mappings.
 
-        Parameters
-        ----------
-        x, y : int
-            The coordinates of the mouse click. Always center of the screen if
-            the mouse is captured.
-        button : int
-            Number representing mouse button that was clicked. 1 = left button,
-            4 = right button.
-        modifiers : int
-            Number representing any modifying keys that were pressed when the
-            mouse button was clicked.
-
+        :param x, y: The coordinates of the mouse click. Always center of the screen if the mouse is captured.
+        :param button: Number representing mouse button that was clicked. 1 = left button, 4 = right button.
+            [access via pyglet.window.mouse]
+        :param modifiers : Number representing any modifying keys that were pressed when the mouse button was clicked.
+            [access via pyglet.window.key.MOD_[...]]
         """
         self.mouse_pressing[button] = True
         G.eventhandler.call("user:mouse:press", x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
+        """
+        called when an button is released with the same argument as on_mouse_press
+        """
         self.mouse_pressing[button] = False
         G.eventhandler.call("user:mouse:release", x, y, button, modifiers)
 
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+    def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int):
+        """
+        called when the mouse moves over the screen while one or more buttons are pressed
+        :param x: the new x position
+        :param y: the new y position
+        :param dx: the delta x
+        :param dy: the delta y
+        :param buttons: the buttons pressed
+        :param modifiers: the modifiers pressed
+        """
         self.mouse_position = (x, y)
         G.eventhandler.call("user:mouse:drag", x, y, dx, dy, buttons, modifiers)
         if self.exclusive:
             self.on_mouse_motion(x, y, dx, dy)
 
-    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+    def on_mouse_scroll(self, x: int, y: int, scroll_x: int, scroll_y: int):
+        """
+        called by pyglet when the mouse wheel is spinned
+        :param x: the new x scroll
+        :param y: the new y scroll
+        :param scroll_x: the delta x
+        :param scroll_y: the detla y
+        """
         G.eventhandler.call("user:mouse:scroll", x, y, scroll_x, scroll_y)
 
-    def on_mouse_motion(self, x, y, dx, dy):
-        """ Called when the player moves the mouse.
+    def on_mouse_motion(self, x: int, y: int, dx: float, dy: float):
+        """
+        Called when the player moves the mouse.
 
-        Parameters
-        ----------
-        x, y : int
-            The coordinates of the mouse click. Always center of the screen if
-            the mouse is captured.
-        dx, dy : float
-            The movement of the mouse.
+        :param x, y: The coordinates of the mouse click. Always center of the screen if the mouse is captured.
+        :param dx, dy : The movement of the mouse.
 
         """
         G.eventhandler.call("user:mouse:motion", x, y, dx, dy)
         self.mouse_position = (x, y)
 
-    def on_key_press(self, symbol, modifiers):
-        """ Called when the player presses a key. See pyglet docs for key
-        mappings.
-
-        Parameters
-        ----------
-        symbol : int
-            Number representing the key that was pressed.
-        modifiers : int
-            Number representing any modifying keys that were pressed.
-
+    def on_key_press(self, symbol: int, modifiers: int):
+        """
+        Called when the player presses a key. See pyglet docs for key mappings.
+        :param symbol: Number representing the key that was pressed.
+        :param modifiers: Number representing any modifying keys that were pressed.
         """
         G.eventhandler.call("user:keyboard:press", symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
-        """ Called when the player releases a key. See pyglet docs for key
-        mappings.
-
-        Parameters
-        ----------
-        symbol : int
-            Number representing the key that was pressed.
-        modifiers : int
-            Number representing any modifying keys that were pressed.
-
+        """
+        Called when the player releases a key. See pyglet docs for key mappings.
+        :param symbol: Number representing the key that was pressed.
+        :param modifiers: Number representing any modifying keys that were pressed.
         """
         G.eventhandler.call("user:keyboard:release", symbol, modifiers)
 
-    def on_resize(self, width, height):
-        """ Called when the window is resized to a new `width` and `height`.
-
+    def on_resize(self, width: int, height: int):
         """
-        # label
+        Called when the window is resized to a new `width` and `height`.
+        """
+        # labels todo: move to seperated class
         self.label.y = height - 10
         self.label2.y = height - 22
         self.label3.x = width - 10
@@ -361,8 +363,8 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("user:window:resize", width, height)
 
     def set_2d(self):
-        """ Configure OpenGL to draw in 2d.
-
+        """
+        Configure OpenGL to draw in 2d.
         """
         width, height = self.get_size()
         viewport = self.get_viewport_size()
@@ -371,8 +373,8 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                                                                 viewport_1=max(1, viewport[1]))
 
     def set_3d(self, position=None, rotation=None):
-        """ Configure OpenGL to draw in 3d.
-
+        """
+        Configure OpenGL to draw in 3d.
         """
         width, height = self.get_size()
         viewport = self.get_framebuffer_size()
@@ -390,6 +392,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         """
         Called by pyglet to draw the canvas.
         """
+        status = G.rendering_helper.save_status(add_to_stack=False)
         if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.enable()
         self.clear()
         self.set_3d()
@@ -399,6 +402,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("render:draw:2d")
         G.eventhandler.call("render:draw:2d:overlay")
         if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.disable()
+        G.rendering_helper.apply(status)
 
     def draw_focused_block(self):
         """
@@ -449,6 +453,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         self.label3.draw()
 
     def get_block_entity_info(self):
+        """
+        used by hotkey for copying entity data to the clipboard
+        """
         import clipboard
         vector = self.get_sight_vector()
         blockpos, previous, hitpos = G.world.hit_test(G.world.get_active_player().position, vector)
@@ -458,18 +465,26 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             clipboard.copy(blockname)
 
     def draw_reticle(self):
-        """ Draw the crosshairs in the center of the screen.
-
+        """
+        Draw the crosshairs in the center of the screen.
         """
         pyglet.gl.glColor3d(255, 255, 255)
         wx, wy = self.get_size()
         self.CROSSHAIRS_TEXTURE.blit(wx // 2 - self.CROSSHAIRS_TEXTURE.width // 2,
                                      wy // 2 - self.CROSSHAIRS_TEXTURE.height // 2)
 
-    def on_text(self, text):
+    def on_text(self, text: str):
+        """
+        called by pyglet with decoded key values when an text is entered
+        :param text: the text entered
+        """
         G.eventhandler.call("user:keyboard:enter", text)
 
     def on_close(self):
+        """
+        called when the window tries to close itself
+        cleans up some stuff before closing
+        """
         if G.world.savefile.save_in_progress: return
         if G.statehandler.active_state is not None and any(
                 [part.NAME == "minecraft:state_part_game" for part in G.statehandler.active_state.parts]):

@@ -258,7 +258,6 @@ class Player(mcpython.entity.Entity.Entity):
             pass  # todo: send through network
 
     def draw(self, position=None, rotation=None, full=None):
-        if self != globals.world.get_active_player(): return  # used to fix unknown player in world
         old_position = self.position
         if position is not None: self.set_position_unsafe(position)
         rx, ry, rz = self.rotation if rotation is None else rotation
@@ -277,3 +276,7 @@ class Player(mcpython.entity.Entity.Entity):
     def __del__(self):
         for inventory in self.inventories.values():
             del inventory
+
+    def __str__(self):
+        return "Player(dim={},pos={},rot={},name=\"{}\")".format(
+            self.dimension.id, self.position, self.rotation, self.name)

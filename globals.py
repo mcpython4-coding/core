@@ -7,6 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import os, sys, tempfile
+import mcpython.rendering.RenderingHelper
 
 prebuilding = "--rebuild" in sys.argv
 debugevents = "--debugevents" in sys.argv
@@ -46,6 +47,8 @@ entityhandler = None
 modelhandler = None
 
 modloader = None
+
+rendering_helper = mcpython.rendering.RenderingHelper.RenderingHelper()
 
 NEXT_EVENT_BUS_ID = 0
 

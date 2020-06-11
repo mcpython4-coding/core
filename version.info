@@ -1129,3 +1129,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: deprecated old factories for models, block states and recipes
 [uuk]: implemented data generators for block models and block state files, tags and entities
 [github]: released snapshot 20w24a
+
+[uuk]: added rendering_helper attribute to globals.py which is reset after every draw cycle
