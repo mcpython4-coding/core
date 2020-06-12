@@ -486,9 +486,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         cleans up some stuff before closing
         """
         if G.world.savefile.save_in_progress: return
-        if G.statehandler.active_state is not None and any(
-                [part.NAME == "minecraft:state_part_game" for part in G.statehandler.active_state.parts]):
+        if G.world.world_loaded:
             # have we an world which should be saved?
+            G.world.get_active_player().inventories["main"].remove_items_from_crafting()
             G.world.savefile.save_world(override=True)
         self.set_fullscreen(False)
         self.close()

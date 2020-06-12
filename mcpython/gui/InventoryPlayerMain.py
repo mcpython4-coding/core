@@ -46,7 +46,7 @@ class InventoryPlayerMain(mcpython.gui.Inventory.Inventory):
                     points += slot.get_itemstack().item.DEFENSE_POINTS
         G.world.get_active_player().armor_level = points
 
-    def on_deactivate(self):
+    def remove_items_from_crafting(self):
         for slot in self.slots[40:-2]:
             slot: mcpython.gui.Slot.Slot
             itemstack = slot.get_itemstack()
@@ -54,6 +54,9 @@ class InventoryPlayerMain(mcpython.gui.Inventory.Inventory):
             if not G.world.get_active_player().pick_up(itemstack):
                 pass  # todo: drop item as item could not be added to inventory
         self.slots[-2].get_itemstack().clean()
+
+    def on_deactivate(self):
+        self.remove_items_from_crafting()
         G.statehandler.active_state.parts[0].activate_mouse = True
 
     def update_shift_container(self):

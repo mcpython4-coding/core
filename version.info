@@ -1138,3 +1138,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added new command: /shuffledata
 [uuk]: added shuffle config entry & shuffle timer entry
 [uuk]: /shuffledata will now "shuffle" recipes and loot tables
+[uuk]: fixed issue 211: crafting slots are saved when closing the game with inventory open

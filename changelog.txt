@@ -58,6 +58,7 @@ changelog of snapshot [next]
             - crafting output slot was added to inventory
             - loading bars of mod loading where not in the middle
             - % in world gen / load screen was calculated wrong leading into negative %
+            - crafting slot could get saved when closing the game
 
         since last snapshot:
             - generator for recipe generator was not parsing output correctly leading into errors in the recipes
