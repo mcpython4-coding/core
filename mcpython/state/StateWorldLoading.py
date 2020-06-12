@@ -19,6 +19,7 @@ import logger
 import mcpython.chat.DataPack
 import time
 import mcpython.util.opengl
+import mcpython.config
 
 
 class StateWorldLoading(State.State):
@@ -45,6 +46,9 @@ class StateWorldLoading(State.State):
             self.status_table[chunk] = 1 / c if c > 0 else -1
         if len(G.worldgenerationhandler.task_handler.chunks) == 0:
             G.statehandler.switch_to("minecraft:game")
+            G.world.world_loaded = True
+            if mcpython.config.SHUFFLE_DATA and mcpython.config.SHUFFLE_INTERVAL > 0:
+                G.eventhandler.call("data:shuffle:all")
         self.parts[1].text = "{}%".format(round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10)
 
     def on_activate(self):

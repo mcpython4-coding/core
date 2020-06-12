@@ -24,6 +24,7 @@ import mcpython.util.math
 import mcpython.util.opengl
 import mcpython.world.player
 from . import State
+import mcpython.config
 
 
 class StateWorldGeneration(State.State):
@@ -135,6 +136,11 @@ class StateWorldGeneration(State.State):
         # set player position
         player = G.world.get_active_player()
         player.teleport(player.position, force_chunk_save_update=True)
+
+        G.world.world_loaded = True
+
+        if mcpython.config.SHUFFLE_DATA and mcpython.config.SHUFFLE_INTERVAL > 0:
+            G.eventhandler.call("data:shuffle:all")
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

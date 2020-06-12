@@ -6,8 +6,6 @@ planned for the future:
     - optimize texture reload with everything (re-block-item-factories, reload block models,
         reload item texture, gui textures, ...), config reload
     - add more factories for various parts (better block models, block states, full block factory, ...) [data gens?]
-    - add mode were linking between recipe in/out is shuffled and loot table links are shuffled (see Amnesia Pack)
-        together with an gamerule and an /shuffle [<group>] command
     - add scoreboards with commands, execute entry, ...
     - make commands more fail-save
     - make world gen more fail-save
@@ -52,6 +50,8 @@ changelog of snapshot [next]
     - rewritten data fixer system. Incompatible with old one. Old stuff still arrival, but deprecated
     - old worlds are still load-able as data-fixers were ported
     - improved loading & generation screens
+    - added /shuffledata command for shuffling recipes & loot table outputs with other ones
+        (must be activated in config files)
 
     fixed issues:
         long-term issues:

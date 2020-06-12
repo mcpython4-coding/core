@@ -11,6 +11,7 @@ commands:
     "command:reload:start": called by command "/reload" on executing the command. cancelable in CommandReload-class
         [cancels the "normal" reload, but will call all following subscribers]
     "command:reload:end": called after successful execution of "/reload" command
+    "data:shuffle:all": called by /shuffledata when it is time to shuffle it
 
     "command:parse_bridge:setup": called by ParseBridge when an new event was registered, called with command and
         ParseBridge-object, cancelable in G.commandparser.CANCEL_REGISTER [cancels the annotation into the system,

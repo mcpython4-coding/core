@@ -134,9 +134,9 @@ class GridRecipeInterface(mcpython.gui.crafting.IRecipeInterface.IRecipeInterfac
     def update_output(self):
         self.slot_output_map.get_itemstack().clean()
         if self.active_recipe:
-            self.slot_output_map.set_itemstack(mcpython.gui.ItemStack.ItemStack(self.active_recipe.output[0],
-                                                                                amount=self.active_recipe.output[1]),
-                                               update=False)
+            recipe = G.craftinghandler.check_relink(self.active_recipe)
+            self.slot_output_map.set_itemstack(mcpython.gui.ItemStack.ItemStack(
+                recipe.output[0], amount=recipe.output[1]), update=False)
 
     def remove_input(self, count=1):
         # removes from every input slot count item (called when an item is crafted)

@@ -14,7 +14,9 @@ import globals as G
 import mcpython.mod.ModMcpython
 import mcpython.loot.LootTableCondition
 import mcpython.loot.LootTableFunction
+import mcpython.event.EventHandler
 import logger
+import random
 
 
 class LootTableTypes(enum.Enum):
@@ -45,16 +47,37 @@ class LootTableHandler:
     def __init__(self):
         self.loot_tables = {}
 
+        self.relink_table = {}
+        mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:shuffle:all", self.shuffle_data)
+
+    def shuffle_data(self):
+        ccopy = list(self.loot_tables.keys())
+        for key in self.loot_tables:
+            relinked = random.choice(ccopy)
+            self.relink_table[key] = relinked
+            ccopy.remove(relinked)
+
     def __getitem__(self, item):
+        if item in self.relink_table: item = self.relink_table[item]
         return self.loot_tables[item]
 
-    def roll(self, name: str, *args, **kwargs) -> list:
+    def roll(self, name: str, *args, relink=True, **kwargs) -> list:
         if name.count(":") == 0:
             name = "minecraft:" + name
+        if relink and name in self.relink_table:
+            name = self.relink_table[name]
         if name not in self.loot_tables:
             logger.println("loot table not found: '{}'".format(name))
             return []
         return self[name].roll(*args, **kwargs)
+
+    def get_drop_for_block(self, block, player=None, relink=True):
+        table_name = "{}:blocks/{}".format(*block.NAME.split(":"))
+        if relink and table_name in self.relink_table:
+            table_name = self.relink_table[table_name]
+        if table_name in self.loot_tables:
+            return self.loot_tables[table_name].roll(block=block, player=player)
+        return [mcpython.gui.ItemStack.ItemStack(block.NAME)]
 
     def for_mod_name(self, modname, directoryname=None):
         if directoryname is None: directoryname = modname
@@ -81,12 +104,6 @@ class LootTableHandler:
         if name in mcpython.loot.LootTableCondition.loottableconditionregistry.registered_object_map:
             return mcpython.loot.LootTableCondition.loottableconditionregistry.registered_object_map[name](data)
         raise ValueError("unable to decode loot table condition '{}'".format(name))
-
-    def get_drop_for_block(self, block, player=None):
-        table_name = "{}:blocks/{}".format(*block.NAME.split(":"))
-        if table_name in self.loot_tables:
-            return self.loot_tables[table_name].roll(block=block, player=player)
-        return [mcpython.gui.ItemStack.ItemStack(block.NAME)]
 
 
 handler = G.loottablehandler = LootTableHandler()

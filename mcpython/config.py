@@ -93,6 +93,9 @@ ENABLE_PROFILING = False
 ENABLE_PROFILER_DRAW = True
 ENABLE_PROFILER_TICK = False
 
+SHUFFLE_DATA = False
+SHUFFLE_INTERVAL = -1
+
 
 def load():
     import mcpython.mod.ConfigFile
@@ -110,9 +113,11 @@ def load():
     profiler = mcpython.mod.ConfigFile.DictDataMapper().add_entry("enable", False).add_entry("total_draw",
                                                                                              True).add_entry(
         "total_tick", False)
+    misc = mcpython.mod.ConfigFile.DictDataMapper().add_entry("enable_mixing_data", False).add_entry(
+        "auto_shuffle_interval", -1)
 
     config.add_entry("physics", physics).add_entry("speeds", speeds).add_entry("timing", timing).add_entry(
-        "rendering", rendering).add_entry("profiler", profiler)
+        "rendering", rendering).add_entry("profiler", profiler).add_entry("misc", misc)
 
     biomeconfig = mcpython.mod.ConfigFile.ConfigFile("biomes", "minecraft")
     biomeconfig.add_entry("minecraft:plains", mcpython.mod.ConfigFile.ListDataMapper().append(10).append(30))
@@ -147,6 +152,19 @@ def load():
         ENABLE_PROFILER_DRAW = profiler["total_draw"].read()
         ENABLE_PROFILER_TICK = profiler["total_tick"].read()
 
-        # todo: add config for pgb colors, pgb text colors, button positions, ...
+        global SHUFFLE_DATA, SHUFFLE_INTERVAL
+        SHUFFLE_DATA = misc["enable_mixing_data"].read()
+        SHUFFLE_INTERVAL = misc["auto_shuffle_interval"].read()
+
+        if SHUFFLE_DATA and SHUFFLE_INTERVAL > 0:
+            import pyglet
+
+            def on_shuffle(dt):
+                if G.world.world_loaded:
+                    print("shuffling data...")
+                    G.eventhandler.call("data:shuffle:all")
+
+            pyglet.clock.schedule_interval(on_shuffle, SHUFFLE_INTERVAL)
+
         # todo: add doc strings into config files
 

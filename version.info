@@ -1135,3 +1135,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: implemented new data fixer system
 [uuk]: new storage version: 6
 [uuk]: improved generating & loading world screen, fixing bug 202
+[uuk]: added new command: /shuffledata
+[uuk]: added shuffle config entry & shuffle timer entry
+[uuk]: /shuffledata will now "shuffle" recipes and loot tables

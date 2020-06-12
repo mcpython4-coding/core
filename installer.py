@@ -8,6 +8,9 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import subprocess
 import sys
+"""
+installation code for setting up your python
+"""
 
 
 subprocess.Popen([sys.executable, "-m", "pip", "install", "-r", "./requirements.txt"],

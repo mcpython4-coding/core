@@ -11,13 +11,19 @@ import mcpython.gui.crafting.IRecipeType
 import mcpython.ResourceLocator
 import mcpython.item.ItemHandler
 import mcpython.mod.ModMcpython
+import mcpython.event.EventHandler
 import sys
 import logger
+import random
 
 
 class CraftingHandler:
     def __init__(self):
         self.recipeinfotable = {}
+
+        self.recipe_table = {}
+
+        self.recipe_relink_table = {}
 
         # all shapeless recipes sorted after item count
         self.crafting_recipes_shapeless = {}
@@ -28,6 +34,25 @@ class CraftingHandler:
 
         self.loaded_mod_dirs = set()
 
+        mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:shuffle:all", self.shuffle_data)
+
+    def shuffle_data(self):
+        recipe_groups = {}
+        for recipe in self.recipe_table.values():
+            recipe_groups.setdefault(recipe.__class__.__name__, []).append(recipe)
+        recipe_group_copy = {key: recipe_groups[key].copy() for key in recipe_groups}
+        for group in recipe_groups:
+            for recipe in recipe_groups[group]:
+                recipe_2 = random.choice(recipe_group_copy[group])
+                self.recipe_relink_table[recipe.name] = recipe_2.name
+                recipe_group_copy[group].remove(recipe_2)
+
+    def check_relink(self, recipe):
+        name = recipe.name
+        if name in self.recipe_relink_table:
+            return self.recipe_table[self.recipe_relink_table[name]]
+        return recipe
+
     def __call__(self, obj):
         if issubclass(obj, mcpython.gui.crafting.IRecipeType.IRecipe):
             [self.recipeinfotable.setdefault(name, obj) for name in obj.get_recipe_names()]
@@ -35,24 +60,27 @@ class CraftingHandler:
             raise ValueError()
         return obj
 
-    @staticmethod
-    def add_recipe(recipe: mcpython.gui.crafting.IRecipeType.IRecipe):
+    def add_recipe(self, recipe: mcpython.gui.crafting.IRecipeType.IRecipe, name):
+        recipe.name = name
         recipe.register()
+        self.recipe_table[name] = recipe
 
-    def add_recipe_from_data(self, data: dict):
-        name = data["type"]
-        if name in self.recipeinfotable:
-            recipe = self.recipeinfotable[name].from_data(data)
+    def add_recipe_from_data(self, data: dict, name: str):
+        rname = data["type"]
+        if rname in self.recipeinfotable:
+            recipe = self.recipeinfotable[rname].from_data(data)
             if recipe is None:
                 return 0
-            self.add_recipe(recipe)
+            self.add_recipe(recipe, name)
             return recipe
         else:
             return None
 
     def add_recipe_from_file(self, file: str):
         data = mcpython.ResourceLocator.read(file, "json")
-        result = self.add_recipe_from_data(data)
+        s = file.split("/")
+        name = "{}:{}".format(s[s.index("data")+1], "/".join(s[s.index("recipes")+1:]))
+        result = self.add_recipe_from_data(data, name)
         if result is None and "--debugrecipes" in sys.argv:
             logger.println("error in decoding recipe from file {}: type '{}' not found".format(file, data["type"]))
 

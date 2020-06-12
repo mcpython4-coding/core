@@ -21,6 +21,7 @@ class IRecipe:
 
     def __init__(self):
         self.uuid = uuid.uuid4()
+        self.name = None
 
     def register(self):
         pass
