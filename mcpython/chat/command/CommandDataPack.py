@@ -48,12 +48,13 @@ class CommandDatapack(mcpython.chat.command.Command.Command):
                 G.chat.print_ln("- datapack '{}' - status: {}".format(datapack.name, datapack.status.name))
         elif values[0] == "release":
             mcpython.chat.DataPack.datapackhandler.cleanup()
+        else:
+            G.chat.print_ln("failed to execute command. invalid syntax")
 
     @staticmethod
     def get_help() -> list:
         return ["/datapack enable <name>: enables an datapack",
                 "/datapack disable <name>: disables an datapack",
                 "/datapack list: lists all arrival datapacks with status",
-                "/datapack release: unloads all datapacks, decrease memory usage, makes deleting datapacks possible."
-                "WARNING: is very unstable"]
+                "/datapack release: unloads all datapacks, decrease memory usage, makes deleting datapacks possible."]
 

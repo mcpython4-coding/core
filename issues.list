@@ -156,7 +156,4 @@ issue 203:
 issue 204:
     bug: debug world generates start chest
 
-issue 210:
-    bug: /execute command is using outdated world access
-
-[211]
+[211-212]

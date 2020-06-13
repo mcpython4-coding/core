@@ -34,7 +34,7 @@ class CommandClear(mcpython.chat.command.Command.Command):
         if len(values) == 0: values.append([G.world.get_active_player()])
         for entity in values[0]:  # iterate over all entities
             if not hasattr(entity, "inventories"):  # has it an inventory?
-                G.chat.print_ln("entity {} has no inventories!".format(entity))
+                G.chat.print_ln("entity '{}' has no inventories!".format(entity))
                 continue
             for inventory in entity.get_inventories():
                 inventory.clear()  # clear every inventory

@@ -42,7 +42,7 @@ class CommandFill(mcpython.chat.command.Command.Command):
                 for z in range(round(fz), round(tz)+1):
                     block = dimension.get_block((x, y, z))
                     if not replace or (block and block.NAME == replace):  # check for replace block
-                        dimension.add_block((x, y, z), values[2])
+                        dimension.get_chunk_for_position((x, y, z)).add_block((x, y, z), values[2])
 
     @staticmethod
     def get_help() -> list:

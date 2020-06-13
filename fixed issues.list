@@ -194,3 +194,4 @@ issue 174: loading bars in mod loading where not in the middle of the screen; fi
 issue 202: loading and generating progress % was calculated wrong; fixed on 11.06.2020 by uuk
 issue 211: when closing the game while the main inventory is open, items could get saved in the crafting grid;
            fixed on 12.06.2020 by uuk
+issue 212: /clone was not updating visual status of blocks

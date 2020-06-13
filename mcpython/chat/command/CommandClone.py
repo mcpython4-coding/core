@@ -60,11 +60,13 @@ class CommandClone(mcpython.chat.command.Command.Command):
                     if len(values) > 4 and values[4] == "move":
                         dimension.remove_block((x, y, z))
         for x, y, z in block_map:
+            chunk = dimension.get_chunk_for_position((x, y, z))
             if block_map[(x, y, z)] is None:
-                dimension.remove_block((x, y, z))
+                chunk.remove_block((x, y, z))
             else:
-                block = dimension.add_block((x+dx, y+dy, z+dz), block_map[(x, y, z)].NAME)
+                block = chunk.add_block((x+dx, y+dy, z+dz), block_map[(x, y, z)].NAME)
                 block.set_model_state(block_map[(x, y, z)].get_model_state())
+                block.face_state.update()
 
     @staticmethod
     def get_help() -> list:
