@@ -43,7 +43,7 @@ class IFallingBlock(mcpython.block.Block.Block):
             chunk = G.world.get_active_dimension().get_chunk_for_position(self.position)
             chunk.on_block_updated(self.position)
             if y == 0: return
-            G.world.get_active_dimension().add_block((x, y - 1, z), self, blockupdateself=False)
+            chunk.add_block((x, y - 1, z), self, blockupdateself=False)
             self.on_block_update()
-            G.world.get_active_dimension().check_neighbors(self.position)
+            chunk.check_neighbors(self.position)
 

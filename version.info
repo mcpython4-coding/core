@@ -1140,5 +1140,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: /shuffledata will now "shuffle" recipes and loot tables
 [uuk]: fixed issue 211: crafting slots are saved when closing the game with inventory open
 [uuk]: implemented MatrixStack-class for mass-applying the same operations over and over again
-
-todo: fix hitbox generator from block-state
+[uuk]: Block.__init__ has now new optional parameter "player" storing the player set the block (if arrival). This value
+       is NOT cached in the block class. Must be handled in constructor
+[uuk]: implemented TextureDataGen.py for data gens handling texture stuff
+[uuk]: added async_register-function to G.registry for registering classes in another loading phase

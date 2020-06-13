@@ -101,6 +101,9 @@ class RegistryHandler:
     def register(self, *args, **kwargs):
         return self(*args, **kwargs)
 
+    def async_register(self, mod: str, phase: str):
+        return lambda obj: G.modloader(mod, phase)(lambda: self.register(obj))
+
 
 G.registry = RegistryHandler()
 

@@ -223,6 +223,11 @@ class BlockModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
 
     def set_texture_variable(self, name: str, texture: str):
         self.textures[name] = texture
+        return self
+
+    def set_texture_variables(self, texture: str, *names):
+        [self.set_texture_variable(name, texture) for name in names]
+        return self
 
     def add_element(self, f: tuple, t: tuple, *faces, rotation_center=None,
                     rotation_axis=None, rotation_angle=None, rotation_rescale=False, shade=True):

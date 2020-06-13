@@ -52,6 +52,7 @@ changelog of snapshot [next]
     - improved loading & generation screens
     - added /shuffledata command for shuffling recipes & loot table outputs with other ones
         (must be activated in config files)
+    - added data gen system for textures
 
     fixed issues:
         long-term issues:

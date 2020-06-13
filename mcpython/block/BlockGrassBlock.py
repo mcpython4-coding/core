@@ -37,5 +37,6 @@ class BlockGrassBlock(Block.Block):
             blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
             if blockinst is not None and type(blockinst) != str:
                 if blockinst.face_solid[mcpython.util.enums.EnumSide.UP] or blockinst.face_solid[mcpython.util.enums.EnumSide.DOWN]:
-                    G.world.get_active_dimension().add_block(self.position, "minecraft:dirt")
+                    G.world.get_active_dimension().get_chunk_for_position(self.position).add_block(
+                        self.position, "minecraft:dirt")
 

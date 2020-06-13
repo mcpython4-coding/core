@@ -48,7 +48,7 @@ class Block(mcpython.event.Registry.IRegistryContent):
 
     ENABLE_RANDOM_TICKS = False
 
-    def __init__(self, position: tuple, set_to=None, real_hit=None, state=None):
+    def __init__(self, position: tuple, set_to=None, real_hit=None, state=None, player=None):
         """
         creates new Block
         :param position: the position to create the block on
