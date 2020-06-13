@@ -57,5 +57,5 @@ def create_carpet(carpet_color: str):
     return Carpet
 
 
-for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:
+for color in mcpython.util.enums.COLORS:
     create_carpet("minecraft:" + color)

@@ -1144,3 +1144,5 @@ sstarted these clone on 12th of July, 2019
        is NOT cached in the block class. Must be handled in constructor
 [uuk]: implemented TextureDataGen.py for data gens handling texture stuff
 [uuk]: added async_register-function to G.registry for registering classes in another loading phase
+[uuk]: changed loading order
+[uuk]: removed naming-folder from tag system
