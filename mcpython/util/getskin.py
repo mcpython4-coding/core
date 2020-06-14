@@ -6,6 +6,9 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
+# code for downloading skin data from the mc API
+# todo: make class-based
+
 # file licensed under the licence in licenses/LICENSE_mcskinview
 # modified for this project
 
@@ -29,7 +32,11 @@ userid_url = "https://api.mojang.com/users/profiles/minecraft/{username}"
 userinfo_url = "https://sessionserver.mojang.com/session/minecraft/profile/{userid}"
 
 
-class SimulatedResponse(object):
+class SimulatedResponse:
+    """
+    Simulated response
+    """
+
     def __init__(self, content, is_json, raw=None):
         self.content = content
         self.is_json = is_json
@@ -76,7 +83,7 @@ def get_url(url, **kwargs):
 
 def download_skin(username: str, store: str):
     if os.path.isfile(G.build+"/skins/{}.png".format(username)):
-        print("loading skin from cache...")
+        logger.println("loading skin from cache...")
         shutil.copy(G.build+"/skins/{}.png".format(username), store)
         return
     print("downloading skin for '{}'".format(username))

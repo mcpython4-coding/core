@@ -54,6 +54,7 @@ changelog of snapshot [next]
         (must be activated in config files)
     - added data gen system for textures
     - changed order of loading stages to be more functional
+    - changed some logging systems
 
     fixed issues:
         long-term issues:

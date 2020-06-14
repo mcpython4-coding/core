@@ -72,6 +72,8 @@ RANDOM_TICK_RANGE = 2  # how far to execute random ticks away from player
 
 USE_MISSING_TEXTURES_ON_MISS_TEXTURE = False  # if missing texture should be used when no texture was selected for an face
 
+USE_MIP_MAPPING = True
+
 CPU_USAGE_REFRESH_TIME = 0.8  # how often to refresh cpu usage indicator
 
 FOG_DISTANCE = 60  # something like view distance, but will no force the chunks to generate

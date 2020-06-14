@@ -12,7 +12,7 @@ import globals as G
 import pyglet
 import os
 import mcpython.mod.ModMcpython
-import random
+import mcpython.config
 
 
 MISSING_TEXTURE = mcpython.ResourceLocator.read("assets/missingtexture.png", "pil").resize((16, 16), PIL.Image.NEAREST)

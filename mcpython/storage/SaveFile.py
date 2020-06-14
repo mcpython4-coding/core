@@ -150,7 +150,7 @@ class SaveFile:
         try:
             self.save_in_progress = True
             G.worldgenerationhandler.enable_generation = False
-            print("saving world...")
+            logger.println("saving world...")
             self.dump(None, "minecraft:general")
             self.dump(None, "minecraft:player_data")
             self.dump(None, "minecraft:gamerule")
@@ -160,7 +160,7 @@ class SaveFile:
                 if G.world.get_active_dimension().get_chunk(*chunk).loaded:
                     self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk,
                               override=override)
-            print("save complete!")
+            logger.println("save complete!")
             G.worldgenerationhandler.enable_generation = True
         except:
             G.world.cleanup()

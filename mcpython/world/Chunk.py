@@ -84,21 +84,8 @@ class Chunk:
         for entity in self.entities:
             entity.draw()
 
-    def exposed(self, position: typing.Tuple[int, int, int]):
-        """
-        Returns False is given `position` should be hidden, True otherwise
-        :param position: the position to use
-        """
-        x, y, z = position
-        for face in mcpython.util.enums.EnumSide.iterate():
-            dx, dy, dz = face.relative
-            pos = (x + dx, y + dy, z + dz)
-            chunk = self.dimension.get_chunk_for_position(pos, generate=False)
-            if chunk.loaded:
-                block = self.dimension.get_block(pos)
-                if not (block is not None and (block.face_solid[face] if type(block) != str else True)):
-                    return True
-        return False
+    @deprecation.deprecated("dev3-1", "a1.3.0")
+    def exposed(self, position): return any(self.exposed_faces(position).values())
 
     def exposed_faces(self, position: typing.Tuple[int, int, int]) -> typing.Dict[mcpython.util.enums.EnumSide, bool]:
         """
@@ -278,19 +265,21 @@ class Chunk:
         if position not in self.world: return
         self.world[position].face_state.hide_all()
 
-    def show(self):
+    def show(self, force=False):
         """
         will show the chunk
+        :param force: if the chunk show should be forced or not
         """
-        if self.visible: return
+        if self.visible and not force: return
         self.visible = True
         self.update_visible()
 
-    def hide(self):
+    def hide(self, force=False):
         """
         will hide the chunk
+        :param force: if the chunk hide should be forced or not
         """
-        if not self.visible: return
+        if not self.visible and not force: return
         self.visible = False
         self.hide_all()
 

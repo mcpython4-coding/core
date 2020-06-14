@@ -639,7 +639,7 @@ class ModLoader:
             sys.exit(-1)
         self.modorder = list(mcpython.util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
         logger.println("mod loading order: ")
-        logger.println(" -", "\n - ".join([self.mods[name].mod_string() for name in self.modorder]))
+        logger.println(" - "+"\n - ".join([self.mods[name].mod_string() for name in self.modorder]))
 
     def process(self):
         """
@@ -652,7 +652,7 @@ class ModLoader:
         astate.parts[1].progress_max = len(self.mods)
         while time.time() - start < 0.2:
             stage = LOADING_ORDER[self.active_loading_stage]
-            if stage.call_one(astate): return
+            if stage.call_one(astate): break
         self.update_pgb_text()
 
     def update_pgb_text(self):

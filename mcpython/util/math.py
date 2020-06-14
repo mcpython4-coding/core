@@ -15,8 +15,10 @@ import deprecation
 
 
 def get_max_y(pos):
-    """gets the max y at a x,y,z or x,z pos
-    todo: move to Chunk-class"""
+    """
+    gets the max y at a x,y,z or x,z pos
+    todo: move to Chunk-class
+    """
     x, y, z = normalize(pos if len(pos) == 3 else (pos[0], 0, pos[1]))
     chunk = G.world.get_active_dimension().get_chunk_for_position((x, y, z))
     heightmap = chunk.get_value('heightmap')

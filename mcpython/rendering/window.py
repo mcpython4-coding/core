@@ -355,7 +355,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         """
         Called when the window is resized to a new `width` and `height`.
         """
-        # labels todo: move to seperated class
+        # labels todo: move to separated class
         self.label.y = height - 10
         self.label2.y = height - 22
         self.label3.x = width - 10
