@@ -34,6 +34,12 @@ class UIScrollBar(mcpython.state.ui.UIPart.UIPart):
         self.on_scroll = on_scroll
         self.active = True
 
+    def move(self, delta: int):
+        x, y = self.bar_position
+        self.bar_position = x, max(self.position[1], min(self.position[1]+self.scroll_distance, y+delta))
+        if self.on_scroll:
+            self.on_scroll(0, 0, 0, delta, 0, 0, self.get_status())
+
     def bind_to_eventbus(self):
         self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         self.master[0].eventbus.subscribe("user:mouse:release", self.on_mouse_release)

@@ -30,6 +30,8 @@ from .ui import UIPartButton, UIPartScrollBar
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
     mcpython.ResourceLocator.read("assets/missingtexture.png", "pil").resize((50, 50), PIL.Image.NEAREST))
+WORLD_SELECTION = mcpython.ResourceLocator.read("minecraft:gui/world_selection", "pil")
+WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(WORLD_SELECTION.crop((0, 0, 32, 32)))
 
 
 class StateWorldSelection(State.State):
@@ -39,15 +41,17 @@ class StateWorldSelection(State.State):
         super().__init__()
         self.world_data = []  # the data representing the world list; first goes first in list from above
         self.selected_world = None
+        self.selection_sprite = pyglet.sprite.Sprite(WORLD_SELECTION_SELECT)
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
         self.eventbus.subscribe("render:draw:2d:overlay", self.on_draw_2d_post)
         self.eventbus.subscribe("user:window:resize", self.on_resize)
+        self.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
 
     def on_resize(self, wx, wy):
-        self.parts[4].set_size_respective((wx - 60, 80), wy - 140)
+        self.parts[4].set_size_respective((wx - 80, 105), wy - 195)
         self.recalculate_sprite_position()
 
     def get_parts(self) -> list:
@@ -59,7 +63,7 @@ class StateWorldSelection(State.State):
                                           anchor_window="MD", on_press=self.on_world_load_press),
                 UIPartButton.UIPartButton((150, 20), "back", (-105, 20), anchor_window="MD", anchor_button="MM",
                                           on_press=self.on_back_press),
-                UIPartScrollBar.UIScrollBar((wx - 60, 80), wy - 140, on_scroll=self.on_scroll)]
+                UIPartScrollBar.UIScrollBar((wx - 80, 105), wy - 195, on_scroll=self.on_scroll)]
 
     def on_mouse_press(self, x, y, button, modifiers):
         if not button == mouse.LEFT: return
@@ -67,7 +71,7 @@ class StateWorldSelection(State.State):
         wx -= 120
         for i, (_, icon, _) in enumerate(self.world_data):
             px, py = icon.position
-            if 0 <= x - px <= wx and 0 <= y - py <= 50:
+            if 0 <= x - px <= wx-130 and 0 <= y - py <= 50:
                 if 0 <= x - px <= 50:
                     self.enter_world(i)
                 else:
@@ -81,10 +85,13 @@ class StateWorldSelection(State.State):
     def on_scroll(self, x, y, dx, dy, button, mod, status):
         self.recalculate_sprite_position()
 
+    def on_mouse_scroll(self, x, y, dx, dy):
+        self.parts[4].move(dy*4)
+
     def recalculate_sprite_position(self):
         wx, wy = G.window.get_size()
-        status = (1-self.parts[4].get_status()) * len(self.world_data) * 60
-        ay = wy - 60 + status - 160
+        status = (1-self.parts[4].get_status()) * len(self.world_data) * 20
+        ay = wy + status - 120
         for i, (_, sprite, labels) in enumerate(self.world_data):
             sprite.x = 50
             sprite.y = ay
@@ -105,23 +112,38 @@ class StateWorldSelection(State.State):
             self.reload_world_icons()
         elif symbol == key.ENTER and self.selected_world is not None:  # selecting world & pressing enter will launch it
             self.enter_world(self.selected_world)
+        elif symbol == key.UP and self.selected_world is not None and self.selected_world > 0:
+            self.selected_world -= 1
+            self.parts[4].move(60)
+        elif symbol == key.DOWN and self.selected_world is not None and self.selected_world < len(self.world_data) - 1:
+            self.selected_world += 1
+            self.parts[4].move(-60)
 
     def on_draw_2d_post(self):
-        wx, _ = G.window.get_size()
+        wx, wy = G.window.get_size()
         pyglet.gl.glClearColor(1., 1., 1., 1.)
+        x, y = G.window.mouse_position
         for i, (_, icon, labels) in enumerate(self.world_data):
+            if icon.y < 105 or icon.y > wy - 110: continue
             icon.draw()
             for label in labels:
                 label.draw()
             if i == self.selected_world:
                 x, y = icon.position
-                mcpython.util.opengl.draw_line_rectangle((x-2, y-2), (wx-116, 54), (1, 1, 1))
+                mcpython.util.opengl.draw_line_rectangle((x-2, y-2), (wx-130, 54), (1, 1, 1))
+            px, py = icon.position
+            if 0 <= x - px <= wx and 0 <= y - py <= 50:
+                if 0 <= x - px <= 50:
+                    self.selection_sprite.position = icon.position[0] + 25 - 16, icon.position[1] + 25 - 16
+                    self.selection_sprite.draw()
+        mcpython.util.opengl.draw_line_rectangle((45, 100), (wx-90, wy-160), (1, 1, 1))
 
     def activate(self):
         super().activate()
         self.reload_world_icons()
 
     def reload_world_icons(self):
+        wx, wy = G.window.get_size()
         self.world_data.clear()
         for directory in os.listdir(mcpython.storage.SaveFile.SAVE_DIRECTORY):
             path = os.path.join(mcpython.storage.SaveFile.SAVE_DIRECTORY, directory).replace("\\", "/")
@@ -147,6 +169,8 @@ class StateWorldSelection(State.State):
                 self.world_data.append((edit_date, sprite, labels))
         self.world_data.sort(key=lambda d: d[0].timestamp())
         self.recalculate_sprite_position()
+        if (wy - 140) / 60 > len(self.world_data):
+            self.parts[4].active = False
 
     def on_back_press(self, *_):
         G.statehandler.switch_to("minecraft:startmenu")
