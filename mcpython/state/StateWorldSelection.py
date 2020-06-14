@@ -7,8 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 from . import State, StatePartGame
-from .ui import UIPartButton, UIPartTextInput
-from .ui.UIPartTextInput import INT_PATTERN
+from .ui import UIPartButton, UIPartTextInput, UIPartScrollBar
 import globals as G
 import mcpython.util.math
 from pyglet.window import key
@@ -25,30 +24,31 @@ import mcpython.state.StateWorldLoading
 class StateWorldSelection(State.State):
     NAME = "minecraft:world_selection"
 
-    def __init__(self): State.State.__init__(self)
+    def __init__(self):
+        super().__init__()
 
     def get_parts(self) -> list:
+        wx, wy = G.window.get_size()
         return [mcpython.state.StatePartConfigBackground.StatePartConfigBackground(),
-                UIPartTextInput.UIPartTextInput((310, 30), (0, 80), anchor_ti="MM", anchor_window="MD",
-                                                empty_overlay_text="world name: "),
-                UIPartButton.UIPartButton((150, 30), "generate new", (-105, 40), anchor_button="MM", anchor_window="MD",
+                UIPartButton.UIPartButton((150, 20), "generate new", (105, 60), anchor_button="MM", anchor_window="MD",
                                           on_press=self.on_new_world_press),
-                UIPartButton.UIPartButton((150, 30), "load world", (105, 40), anchor_button="MM", anchor_window="MD",
-                                          on_press=self.on_world_load_press),
-                UIPartButton.UIPartButton((310, 30), "back", (0, 120), anchor_window="MD", anchor_button="MM",
-                                          on_press=self.on_back_press)]
+                UIPartButton.UIPartButton((150, 20), "play!", (-105, 60), anchor_button="MM",
+                                          anchor_window="MD", on_press=self.on_world_load_press),
+                UIPartButton.UIPartButton((150, 20), "back", (-105, 20), anchor_window="MD", anchor_button="MM",
+                                          on_press=self.on_back_press),
+                UIPartScrollBar.UIScrollBar((wx-60, 80), wy-140)]
 
     def on_back_press(self, *_):
         G.statehandler.switch_to("minecraft:startmenu")
 
     def on_new_world_press(self, *_):
-        worldname = "New World" if self.parts[1].entered_text == "" else self.parts[1].entered_text
+        worldname = "New World"  # if self.parts[1].entered_text == "" else self.parts[1].entered_text
         G.world.setup_by_filename(worldname)
         G.statehandler.switch_to("minecraft:world_generation_config")
 
     def on_world_load_press(self, *_):
         G.world.cleanup()
-        worldname = "New World" if self.parts[1].entered_text == "" else self.parts[1].entered_text
+        worldname = "New World" # if self.parts[1].entered_text == "" else self.parts[1].entered_text
         G.world.setup_by_filename(worldname)
         G.statehandler.switch_to("minecraft:world_loading")
 
@@ -64,7 +64,8 @@ class StateWorldSelection(State.State):
     def on_draw_2d_pre():
         pyglet.gl.glClearColor(1., 1., 1., 1.)
 
-    def on_activate(self):
+    def activate(self):
+        super().activate()
         for part in self.parts:
             if issubclass(type(part), UIPartTextInput.UIPartTextInput):
                 part.reset()
