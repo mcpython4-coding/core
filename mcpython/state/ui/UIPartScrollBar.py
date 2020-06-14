@@ -21,12 +21,18 @@ scroll_inactive = mcpython.util.texture.to_pyglet_image(IMAGE.crop((244, 0, 255,
 
 
 class UIScrollBar(mcpython.state.ui.UIPart.UIPart):
-    def __init__(self, position: tuple, scroll_distance: int):
+    """
+    class representing an scroll bar
+    """
+
+    def __init__(self, position: tuple, scroll_distance: int, on_scroll=None):
         super().__init__(position, (0, 0))
         self.selected = False
         self.bar_position = position
         self.bar_sprite = pyglet.sprite.Sprite(scroll_active)
         self.scroll_distance = scroll_distance
+        self.on_scroll = on_scroll
+        self.active = True
 
     def bind_to_eventbus(self):
         self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
@@ -35,6 +41,7 @@ class UIScrollBar(mcpython.state.ui.UIPart.UIPart):
         self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw)
 
     def on_mouse_press(self, x, y, button, mod):
+        if not self.active: return
         if button != mouse.LEFT: return
         bx, by = self.bar_position
         if 0 <= x - bx <= 20 and 0 <= y - by <= 28:
@@ -43,13 +50,28 @@ class UIScrollBar(mcpython.state.ui.UIPart.UIPart):
     def on_mouse_release(self, x, y, button, mod): self.selected = False
 
     def on_mouse_drag(self, x, y, dx, dy, button, mod):
+        if not self.active: return
         if button == mouse.LEFT and self.selected:
             self.bar_position = (self.position[0], max(self.position[1], min(self.position[1]+self.scroll_distance, y)))
+            if self.on_scroll:
+                self.on_scroll(x, y, dx, dy, button, mod, self.get_status())
 
     def on_draw(self):
+        if not self.active: return
         self.bar_sprite.position = self.bar_position
         self.bar_sprite.draw()
 
-    def get_status(self):
-        pass
+    def get_status(self) -> float:
+        """
+        will return the status as an float between 0 and 1 where 0 is the downer end and 1 the upper
+        """
+        if not self.active: return 0
+        return (self.bar_position[1] - self.position[1]) / self.scroll_distance
+
+    def set_size_respective(self, position: tuple, scroll_distance: int):
+        if not self.active: return
+        status = self.get_status()
+        self.position = position
+        self.bar_position = (self.position[0], self.position[1] + status * scroll_distance)
+        self.scroll_distance = scroll_distance
 
