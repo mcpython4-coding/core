@@ -36,7 +36,8 @@ class NoWindow:
     def __init__(self, *args, **kwargs):
         self.width = self.height = 200
 
-    def get_size(self): return self.width, self.height
+    def get_size(self):
+        return self.width, self.height
 
     def push_handlers(self, handler):
         pass

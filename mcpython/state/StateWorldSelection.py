@@ -71,7 +71,7 @@ class StateWorldSelection(State.State):
         wx -= 120
         for i, (_, icon, _) in enumerate(self.world_data):
             px, py = icon.position
-            if 0 <= x - px <= wx-130 and 0 <= y - py <= 50:
+            if 0 <= x - px <= wx - 130 and 0 <= y - py <= 50:
                 if 0 <= x - px <= 50:
                     self.enter_world(i)
                 else:
@@ -86,11 +86,11 @@ class StateWorldSelection(State.State):
         self.recalculate_sprite_position()
 
     def on_mouse_scroll(self, x, y, dx, dy):
-        self.parts[4].move(dy*4)
+        self.parts[4].move(dy * 4)
 
     def recalculate_sprite_position(self):
         wx, wy = G.window.get_size()
-        status = (1-self.parts[4].get_status()) * len(self.world_data) * 20
+        status = (1 - self.parts[4].get_status()) * len(self.world_data) * 20
         ay = wy + status - 120
         for i, (_, sprite, labels) in enumerate(self.world_data):
             sprite.x = 50
@@ -130,13 +130,13 @@ class StateWorldSelection(State.State):
                 label.draw()
             if i == self.selected_world:
                 x, y = icon.position
-                mcpython.util.opengl.draw_line_rectangle((x-2, y-2), (wx-130, 54), (1, 1, 1))
+                mcpython.util.opengl.draw_line_rectangle((x - 2, y - 2), (wx - 130, 54), (1, 1, 1))
             px, py = icon.position
             if 0 <= x - px <= wx and 0 <= y - py <= 50:
                 if 0 <= x - px <= 50:
                     self.selection_sprite.position = icon.position[0] + 25 - 16, icon.position[1] + 25 - 16
                     self.selection_sprite.draw()
-        mcpython.util.opengl.draw_line_rectangle((45, 100), (wx-90, wy-160), (1, 1, 1))
+        mcpython.util.opengl.draw_line_rectangle((45, 100), (wx - 90, wy - 160), (1, 1, 1))
 
     def activate(self):
         super().activate()
@@ -147,15 +147,15 @@ class StateWorldSelection(State.State):
         self.world_data.clear()
         for directory in os.listdir(mcpython.storage.SaveFile.SAVE_DIRECTORY):
             path = os.path.join(mcpython.storage.SaveFile.SAVE_DIRECTORY, directory).replace("\\", "/")
-            if os.path.isdir(path) and os.path.isfile(path+"/level.json"):
-                if os.path.isfile(path+"/icon.png"):
-                    icon = pyglet.image.load(path+"/icon.png")
+            if os.path.isdir(path) and os.path.isfile(path + "/level.json"):
+                if os.path.isfile(path + "/icon.png"):
+                    icon = pyglet.image.load(path + "/icon.png")
                 else:
                     icon = MISSING_TEXTURE
                 sprite = pyglet.sprite.Sprite(icon)
-                with open(path+"/level.json") as f:
+                with open(path + "/level.json") as f:
                     data = json.load(f)
-                edit_date = datetime.datetime.fromtimestamp(os.path.getmtime(path+"/level.json"))
+                edit_date = datetime.datetime.fromtimestamp(os.path.getmtime(path + "/level.json"))
                 diff = datetime.datetime.now() - edit_date
                 if diff.days < 5:
                     edit = "{} days ago".format(diff.days)

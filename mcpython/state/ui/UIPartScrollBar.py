@@ -6,13 +6,13 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import mcpython.state.ui.UIPart
-from pyglet.window import key, mouse
-import mcpython.ResourceLocator
-import pyglet
-import mcpython.util.texture
 import PIL.Image
+import pyglet
+from pyglet.window import mouse
 
+import mcpython.ResourceLocator
+import mcpython.state.ui.UIPart
+import mcpython.util.texture
 
 IMAGE = mcpython.ResourceLocator.read("assets/minecraft/textures/gui/container/creative_inventory/tabs.png", "pil")
 scroll_active = mcpython.util.texture.to_pyglet_image(IMAGE.crop((233, 0, 243, 14)).resize((20, 28), PIL.Image.NEAREST))
@@ -36,7 +36,7 @@ class UIScrollBar(mcpython.state.ui.UIPart.UIPart):
 
     def move(self, delta: int):
         x, y = self.bar_position
-        self.bar_position = x, max(self.position[1], min(self.position[1]+self.scroll_distance, y+delta))
+        self.bar_position = x, max(self.position[1], min(self.position[1] + self.scroll_distance, y + delta))
         if self.on_scroll:
             self.on_scroll(0, 0, 0, delta, 0, 0, self.get_status())
 
@@ -53,12 +53,14 @@ class UIScrollBar(mcpython.state.ui.UIPart.UIPart):
         if 0 <= x - bx <= 20 and 0 <= y - by <= 28:
             self.selected = True
 
-    def on_mouse_release(self, x, y, button, mod): self.selected = False
+    def on_mouse_release(self, x, y, button, mod):
+        self.selected = False
 
     def on_mouse_drag(self, x, y, dx, dy, button, mod):
         if not self.active: return
         if button == mouse.LEFT and self.selected:
-            self.bar_position = (self.position[0], max(self.position[1], min(self.position[1]+self.scroll_distance, y)))
+            self.bar_position = (
+            self.position[0], max(self.position[1], min(self.position[1] + self.scroll_distance, y)))
             if self.on_scroll:
                 self.on_scroll(x, y, dx, dy, button, mod, self.get_status())
 
@@ -80,4 +82,3 @@ class UIScrollBar(mcpython.state.ui.UIPart.UIPart):
         self.position = position
         self.bar_position = (self.position[0], self.position[1] + status * scroll_distance)
         self.scroll_distance = scroll_distance
-
