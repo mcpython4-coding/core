@@ -1,4 +1,4 @@
-add end dimension:
+add end dimension content:
     - add blocks & items [if not implemented until then]:
         - end portal frame & block
         - ender pearl & eye
@@ -16,7 +16,7 @@ add end dimension:
     - add rendering for:
         - portal beam
         - shulker protectile
-    - add world generator
+    - add world generator for end dimension
     - add feature generator for:
         - obsidian pillars
         - portal to overworld & outer end

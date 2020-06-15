@@ -652,7 +652,7 @@ class ModLoader:
         astate.parts[1].progress_max = len(self.mods)
         while time.time() - start < 0.2:
             stage = LOADING_ORDER[self.active_loading_stage]
-            if stage.call_one(astate): break
+            if stage.call_one(astate): return
         self.update_pgb_text()
 
     def update_pgb_text(self):
