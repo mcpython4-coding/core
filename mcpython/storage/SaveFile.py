@@ -194,7 +194,7 @@ class SaveFile:
         target_version = G.modloader.mods[modname].version
         fixers = self.mod_fixers[modname]
         if source_version not in fixers: raise DataFixerNotFoundException(modname+str(source_version))
-        if len(fixers) == 1 or len(source_version) != len(target_version):
+        if source_version is not None or len(fixers) == 1 or len(source_version) != len(target_version):
             fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = fixers[0]
         else:
             fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = min(

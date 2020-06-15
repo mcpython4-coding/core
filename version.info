@@ -1151,5 +1151,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: implemented the following loot table conditions: minecraft:block_state_property,
        minecraft:damage_source_properties
 [uuk]: added DamageSource-class
+[uuk]: improved mod data fixer invoker
 
 

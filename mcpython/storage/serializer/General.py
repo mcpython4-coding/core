@@ -43,11 +43,14 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                 logger.println("[WARNING] mod '{}' is missing. This may break your world!".format(modname))
             elif G.modloader.mods[modname].version != tuple(data["mods"][modname]):
                 try:
-                    savefile.apply_mod_fixer(modname, G.modloader.mods[modname].version)
+                    savefile.apply_mod_fixer(modname, tuple(data["mods"][modname]))
                 except mcpython.storage.SaveFile.DataFixerNotFoundException:
                     if modname != "minecraft":
                         logger.println("[WARN] mod {} did not provide data-fixers for mod version change "
                                        "which occured between the sessions".format(modname))
+        for modname in G.modloader.mods:
+            if modname not in data["mods"]:
+                savefile.apply_mod_fixer(modname, None)
         [G.worldgenerationhandler.add_chunk_to_generation_list(e[0], dimension=e[1]) for e in data["chunks_to_generate"]]
         for dimension in G.world.dimensions.values():
             if str(dimension.id) in data["dimensions"]:

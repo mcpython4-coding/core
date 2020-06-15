@@ -15,6 +15,7 @@ import pyglet.graphics
 class RenderingHelper:
     """
     class for helping storing an gl status and exchanging it, rolling back, ...
+    todo: add setup functions for various systems
     """
 
     def __init__(self):
