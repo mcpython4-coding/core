@@ -62,6 +62,20 @@ class LootTableHandler:
         return self.loot_tables[item]
 
     def roll(self, name: str, *args, relink=True, **kwargs) -> list:
+        """
+        will roll the loot table
+        :param name: the name of the loot table
+        :param args: args send to every part
+        :param relink: if relinks should be followed or not
+        :param kwargs: kwargs send to every part
+        :return: an list of item stacks
+        kwarg-options:
+            - block=<Block instance>: an block parsed on
+            - damage_source=<DamageSource instance>: an damage source
+            - this_entity=<Entity instance>: an entity generated for
+            - killer_entity=<Entity instance>:  the entity killed the this_entity
+            - position=<tuple of lenght 3>: the position executed at
+        """
         if name.count(":") == 0:
             name = "minecraft:" + name
         if relink and name in self.relink_table:
