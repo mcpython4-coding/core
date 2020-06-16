@@ -141,6 +141,7 @@ class StateWorldSelection(State.State):
     def activate(self):
         super().activate()
         self.reload_world_icons()
+        self.parts[4].set_status(1)
 
     def reload_world_icons(self):
         wx, wy = G.window.get_size()

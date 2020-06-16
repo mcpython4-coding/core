@@ -60,7 +60,7 @@ class UIScrollBar(mcpython.state.ui.UIPart.UIPart):
         if not self.active: return
         if button == mouse.LEFT and self.selected:
             self.bar_position = (
-            self.position[0], max(self.position[1], min(self.position[1] + self.scroll_distance, y)))
+                self.position[0], max(self.position[1], min(self.position[1] + self.scroll_distance, y)))
             if self.on_scroll:
                 self.on_scroll(x, y, dx, dy, button, mod, self.get_status())
 
@@ -75,6 +75,9 @@ class UIScrollBar(mcpython.state.ui.UIPart.UIPart):
         """
         if not self.active: return 0
         return (self.bar_position[1] - self.position[1]) / self.scroll_distance
+
+    def set_status(self, status: float):
+        self.bar_position = (self.bar_position[0], self.position[1] + status * self.scroll_distance)
 
     def set_size_respective(self, position: tuple, scroll_distance: int):
         if not self.active: return

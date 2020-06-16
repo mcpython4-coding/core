@@ -32,10 +32,10 @@ class StateWorldGenerationConfig(State.State):
                  UIPartButton.UIPartButton((300, 20), "#*multiplayer.status.finished*#", (20, 20), anchor_window="MD",
                                            on_press=self.on_generate_press),
                  UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
-                                                 (-320, 150), anchor_window="MD",
+                                                 (-320, 200), anchor_window="MD",
                                                  text_constructor="#*special.worldgeneration.enable_auo_gen*#: {}"),
                  UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
-                                                 (20, 150), anchor_window="MD",
+                                                 (20, 200), anchor_window="MD",
                                                  text_constructor="#*special.worldgeneration.enable_barrier*#: {}")]
         text = [UIPartTextInput.UIPartTextInput((300, 40), (20, 50), anchor_window="MD",
                                                 empty_overlay_text="#*special.worldgeneration.seed_empty*#"),
@@ -44,7 +44,9 @@ class StateWorldGenerationConfig(State.State):
                 UIPartTextInput.UIPartTextInput((300, 40), (-320, 100), anchor_window="MD", pattern=INT_PATTERN,
                                                 empty_overlay_text="#*special.worldgeneration.worldsize|x|3*#"),
                 UIPartTextInput.UIPartTextInput((300, 40), (20, 100), anchor_window="MD", pattern=INT_PATTERN,
-                                                empty_overlay_text="#*special.worldgeneration.worldsize|y|3*#")]
+                                                empty_overlay_text="#*special.worldgeneration.worldsize|y|3*#"),
+                UIPartTextInput.UIPartTextInput((640, 40), (0, 170), anchor_window="MD", anchor_ti="MM",
+                                                empty_overlay_text="World Name")]
 
         parts.append(UIPartTextInput.TextInputTabHandler([text[2], text[3], text[1], text[0]]))
 
@@ -54,7 +56,9 @@ class StateWorldGenerationConfig(State.State):
         G.statehandler.switch_to("minecraft:startmenu")
 
     def on_generate_press(self, x, y):
-        G.world.cleanup(remove_dims=True)
+        filename = self.parts[8].entered_text
+        if filename == "": filename = "New World"
+        G.world.cleanup(remove_dims=True, filename=filename)
         self.generate()
 
     def generate(self):
