@@ -27,7 +27,7 @@ class IRegistryContent:
 
 class Registry:
     def __init__(self, name: str, registry_type_names: list, injection_function=None,
-                 allow_argument_injection=False, class_based=True):
+                 allow_argument_injection=False, class_based=True, dump_content_in_saves=True):
         self.name = name
         self.registry_type_names = registry_type_names
         self.injection_function = injection_function
@@ -37,6 +37,7 @@ class Registry:
         self.class_based = class_based
         G.registry.registries.append(self)
         self.CANCEL_REGISTRATION = False
+        self.dump_content_in_saves = dump_content_in_saves
 
     def is_valid(self, obj: IRegistryContent):
         return not self.locked and obj.TYPE in self.registry_type_names

@@ -56,6 +56,11 @@ class Chunk:
         self.positions_updated_since_last_save = set()
         self.entities = set()
 
+    def get_maximum_y_coordinate_from_generation(self, x: int, z: int) -> int:
+        height_map = self.get_value('heightmap')
+        y = height_map[x, z][0][1] if (x, z) in height_map else 0
+        return y
+
     def set_value(self, name: str, value):
         """
         will set an attribute of the chunk

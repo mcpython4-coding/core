@@ -57,6 +57,7 @@ changelog of snapshot [next]
     - changed some logging systems
     - implemented two new loot table conditions: minecraft:block_state_property and minecraft:damage_source_properties
     - added DamageSource class
+    - improved code
 
     fixed issues:
         long-term issues:

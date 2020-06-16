@@ -18,41 +18,43 @@ class PlayerData(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     def load(cls, savefile):
         data = savefile.access_file_json("players.json")
         if data is not None and G.world.get_active_player().name in data:
-            pd = data[G.world.get_active_player().name]
-            G.world.get_active_player().set_gamemode(pd["gamemode"])
-            G.world.get_active_player().hearts = pd["hearts"]
-            G.world.get_active_player().hunger = pd["hunger"]
-            G.world.get_active_player().xp = pd["xp"]
-            G.world.get_active_player().xp_level = pd["xp level"]
-            G.world.get_active_player().fallen_since_y = pd["fallen since y"]
-            G.world.get_active_player().active_inventory_slot = pd["active inventory slot"]
-            G.world.get_active_player().position = pd["position"]
-            G.world.get_active_player().rotation = pd["rotation"]
+            player = G.world.get_active_player()
+            pd = data[player.name]
+            player.set_gamemode(pd["gamemode"])
+            player.hearts = pd["hearts"]
+            player.hunger = pd["hunger"]
+            player.xp = pd["xp"]
+            player.xp_level = pd["xp level"]
+            player.fallen_since_y = pd["fallen since y"]
+            player.active_inventory_slot = pd["active inventory slot"]
+            player.position = pd["position"]
+            player.rotation = pd["rotation"]
             G.world.join_dimension(pd["dimension"], save_current=False)
             G.window.flying = pd["flying"]
             for name in pd["inventory links"]:
-                savefile.read("minecraft:inventory", inventory=G.world.get_active_player().inventories[name],
-                              path="players/{}/inventory/{}".format(G.world.get_active_player().name, name))
+                savefile.read("minecraft:inventory", inventory=player.inventories[name],
+                              path="players/{}/inventory/{}".format(player.name, name))
 
     @classmethod
     def save(cls, data, savefile):
         data = savefile.access_file_json("players.json")
         if data is None: data = {}
-        data[G.world.get_active_player().name] = {
-            "position": G.world.get_active_player().position,
-            "rotation": G.world.get_active_player().rotation,
-            "dimension": G.world.active_dimension,
-            "gamemode": G.world.get_active_player().gamemode,
-            "hearts": G.world.get_active_player().hearts,
-            "hunger": G.world.get_active_player().hunger,
-            "xp": G.world.get_active_player().xp,
-            "xp level": G.world.get_active_player().xp_level,
-            "fallen since y": G.world.get_active_player().fallen_since_y,
-            "active inventory slot": G.world.get_active_player().active_inventory_slot,
-            "flying": G.window.flying,
-            "inventory links": {name: G.world.get_active_player().inventories[name].uuid.int for name in G.world.get_active_player().inventories}
-        }
-        [savefile.dump(None, "minecraft:inventory", inventory=G.world.get_active_player().inventories[name],
-                       path="players/{}/inventory/{}".format(G.world.get_active_player().name, name)) for name in G.world.get_active_player().inventories]
+        for player in G.world.players:
+            data[player.name] = {
+                "position": player.position,
+                "rotation": player.rotation,
+                "dimension": G.world.active_dimension,
+                "gamemode": player.gamemode,
+                "hearts": player.hearts,
+                "hunger": player.hunger,
+                "xp": player.xp,
+                "xp level": player.xp_level,
+                "fallen since y": player.fallen_since_y,
+                "active inventory slot": player.active_inventory_slot,
+                "flying": G.window.flying,
+                "inventory links": {name: player.inventories[name].uuid.int for name in player.inventories}
+            }
+            [savefile.dump(None, "minecraft:inventory", inventory=player.inventories[name],
+                           path="players/{}/inventory/{}".format(player.name, name)) for name in player.inventories]
         savefile.dump_file_json("players.json", data)
 

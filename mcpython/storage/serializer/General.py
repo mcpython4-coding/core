@@ -24,20 +24,26 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     def load(cls, savefile):
         data = savefile.access_file_json("level.json")
         if data is None: raise mcpython.storage.serializer.IDataSerializer.MissingSaveException("level.json not found!")
+
         savefile.version = data["storage version"]
+
         playername = data["player name"]
         if playername not in G.world.players: G.world.add_player(playername)
         G.world.active_player = playername
+
         try:
             mcpython.util.getskin.download_skin(playername, G.build+"/skin.png")
         except ValueError:
             logger.println("[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
             mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
         mcpython.world.player.Player.RENDERER.reload()
+
         G.world.config = data["config"]
         G.eventhandler.call("seed:set")
+
         if data["game version"] not in mcpython.config.VERSION_ORDER:
-            raise mcpython.storage.serializer.IDataSerializer.InvalidSaveException("future version are NOT supported")
+            logger.println("future version are NOT supported. Loading may NOT work")
+
         for modname in data["mods"]:
             if modname not in G.modloader.mods:
                 logger.println("[WARNING] mod '{}' is missing. This may break your world!".format(modname))
@@ -51,6 +57,7 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         for modname in G.modloader.mods:
             if modname not in data["mods"]:
                 savefile.apply_mod_fixer(modname, None)
+
         [G.worldgenerationhandler.add_chunk_to_generation_list(e[0], dimension=e[1]) for e in data["chunks_to_generate"]]
         for dimension in G.world.dimensions.values():
             if str(dimension.id) in data["dimensions"]:
