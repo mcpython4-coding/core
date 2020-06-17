@@ -39,7 +39,7 @@ class PlayerData(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     def save(cls, data, savefile):
         data = savefile.access_file_json("players.json")
         if data is None: data = {}
-        for player in G.world.players:
+        for player in G.world.players.values():
             data[player.name] = {
                 "position": player.position,
                 "rotation": player.rotation,

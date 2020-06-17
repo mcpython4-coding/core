@@ -638,8 +638,8 @@ class ModLoader:
             logger.println(*errors, sep="\n ")
             sys.exit(-1)
         self.modorder = list(mcpython.util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
-        logger.println("mod loading order: ")
-        logger.println(" - "+"\n - ".join([self.mods[name].mod_string() for name in self.modorder]))
+        for name in self.modorder:
+            logger.println(" - " + self.mods[name].mod_string())
 
     def process(self):
         """
