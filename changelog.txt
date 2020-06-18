@@ -45,21 +45,37 @@ information on development:
         first obscures of the bug the list of issues with an short description and when based on an github bug report
         its id.
 
+
+changelog of snapshot [next]
+
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
-    - added state part serializer for progress bar
-    - rewritten data fixer system. Incompatible with old one. Old stuff still arrival, but deprecated
-    - old worlds are still load-able as data-fixers were ported
-    - improved loading & generation screens
-    - added /shuffledata command for shuffling recipes & loot table outputs with other ones
-        (must be activated in config files)
-    - added data gen system for textures
-    - changed order of loading stages to be more functional
-    - changed some logging systems
-    - implemented two new loot table conditions: minecraft:block_state_property and minecraft:damage_source_properties
-    - added DamageSource class
-    - improved code
-    - implemented world list with selection. Moved world name enter into world generation settings screen
-    - added UI element for scroll bars
+    Rendering:
+        - added state part serializer for progress bar
+        - generation screens
+        - implemented world list with selection. Moved world name enter into world generation settings screen
+        - added UI element for scroll bars
+
+    Saves:
+        - rewritten data fixer system. Incompatible with old one. Old stuff still arrival, but deprecated
+        - old worlds are still load-able as data-fixers were ported
+
+    Console:
+        - improved loading
+        - changed some logging systems
+
+    Commands:
+        - added /shuffledata command for shuffling recipes & loot table outputs with other ones
+            (must be activated in config files)
+
+    Modding:
+        - added data gen system for textures
+        - changed order of loading stages to be more functional
+
+    Loot tables:
+        - implemented two new loot table conditions: minecraft:block_state_property and minecraft:damage_source_properties
+
+    Entity API:
+        - added DamageSource class
 
     fixed issues:
         long-term issues:
