@@ -1155,5 +1155,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: moved some code around
 [uuk]: all player instances of an world are now saved
 [uuk]: made it possible for registries to be NOT saved in system
-
-
+[uuk]: added scroll bar UI element
+[uuk]: changed StateWorldSelection screen look
+[uuk]: implemented some more functionality
