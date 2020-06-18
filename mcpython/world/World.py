@@ -52,6 +52,7 @@ class World:
         self.players: typing.Dict[str, mcpython.world.player.Player] = {}
         # self.add_player("unknown", add_inventories=False)
         self.active_player: str = "unknown"  # todo: make property, make None-able & set default None when not in world
+        self.world_loaded = False  # describes if the world is loaded or not
 
     def add_player(self, name: str, add_inventories: bool = True, override: bool = True):
         """

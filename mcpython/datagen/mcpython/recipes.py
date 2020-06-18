@@ -34,1429 +34,1307 @@ def generate_recipes():
     aab = ['golden_pickaxe', 'golden_shovel', 'golden_axe', 'golden_hoe', 'golden_sword', 'golden_helmet',
            'golden_chestplate', 'golden_leggings', 'golden_boots', 'golden_horse_armor']
     aac = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
-    aad = [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
-    aae = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2)]
+    aad = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2)]
+    aae = [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
     aaf = ['chiseled_quartz_block', 'quartz_block', 'quartz_pillar']
-    aag = [(0, 0), (0, 1), (0, 2), (1, 0), (2, 0), (2, 1), (2, 2)]
-    aah = [(0, 0), (0, 1), (0, 2), (1, 2), (2, 0), (2, 1), (2, 2)]
+    aag = [(0, 0), (0, 1), (0, 2), (1, 2), (2, 0), (2, 1), (2, 2)]
+    aah = [(0, 0), (0, 1), (0, 2), (1, 0), (2, 0), (2, 1), (2, 2)]
     aai = [(0, 0), (0, 1), (0, 2), (1, 1), (2, 0), (2, 1), (2, 2)]
-    aaj = [(0, 0), (0, 2), (1, 0), (1, 2), (2, 0), (2, 2)]
-    aak = [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1)]
-    aal = [(0, 0), (0, 1), (0, 2), (2, 0), (2, 1), (2, 2)]
-    aam = [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)]
-    aan = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
-    aao = [(0, 0), (0, 1), (1, 0), (2, 0), (2, 1)]
-    aap = [(0, 0), (0, 1), (1, 1), (2, 0), (2, 1)]
+    aaj = [(0, 0), (0, 1), (0, 2), (2, 0), (2, 1), (2, 2)]
+    aak = [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)]
+    aal = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
+    aam = [(0, 0), (0, 2), (1, 0), (1, 2), (2, 0), (2, 2)]
+    aan = [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1)]
+    aao = [(0, 0), (0, 1), (1, 1), (2, 0), (2, 1)]
+    aap = [(0, 0), (0, 1), (1, 0), (2, 0), (2, 1)]
     aaq = ['purpur_block', 'purpur_pillar']
     aar = [(0, 0), (0, 1), (1, 0), (1, 1)]
     aas = [(0, 0), (0, 1), (2, 0), (2, 1)]
-    aat = [(0, 1), (0, 2), (1, 1), (1, 2)]
-    aau = [(0, 1), (1, 0), (1, 2), (2, 1)]
-    aav = [(0, 2), (1, 1), (1, 2), (2, 2)]
+    aat = [(0, 2), (1, 1), (1, 2), (2, 2)]
+    aau = [(0, 1), (0, 2), (1, 1), (1, 2)]
+    aav = [(0, 1), (1, 0), (1, 2), (2, 1)]
     aaw = "light_weighted_pressure_plate"
-    aax = "light_blue_stained_glass_pane"
-    aay = "heavy_weighted_pressure_plate"
-    aaz = "light_gray_stained_glass_pane"
-    aaA = "light_gray_glazed_terracotta"
-    aaB = "light_blue_glazed_terracotta"
-    aaC = "smooth_red_sandstone_stairs"
-    aaD = "light_blue_concrete_powder"
-    aaE = "magenta_stained_glass_pane"
-    aaF = "light_gray_concrete_powder"
-    aaG = "minecraft:campfire_cooking"
-    aaH = "magenta_glazed_terracotta"
-    aaI = "orange_stained_glass_pane"
-    aaJ = "yellow_stained_glass_pane"
-    aaK = "purple_stained_glass_pane"
-    aaL = "smooth_red_sandstone_slab"
-    aaM = "light_gray_stained_glass"
-    aaN = "orange_glazed_terracotta"
-    aaO = "brown_stained_glass_pane"
-    aaP = "mossy_cobblestone_stairs"
-    aaQ = "light_blue_stained_glass"
-    aaR = "yellow_glazed_terracotta"
-    aaS = "green_stained_glass_pane"
-    aaT = "polished_andesite_stairs"
-    aaU = "white_stained_glass_pane"
-    aaV = "black_stained_glass_pane"
-    aaW = "mossy_stone_brick_stairs"
-    aaX = "purple_glazed_terracotta"
-    aaY = "white_glazed_terracotta"
-    aaZ = "lime_stained_glass_pane"
-    aba = "magenta_concrete_powder"
-    abb = "red_nether_brick_stairs"
-    abc = "polished_diorite_stairs"
-    abd = "black_glazed_terracotta"
-    abe = "prismarine_brick_stairs"
-    abf = "polished_granite_stairs"
-    abg = "dark_oak_pressure_plate"
-    abh = "cyan_stained_glass_pane"
-    abi = "gray_stained_glass_pane"
-    abj = "brown_glazed_terracotta"
-    abk = "green_glazed_terracotta"
-    abl = "pink_stained_glass_pane"
-    abm = "smooth_sandstone_stairs"
-    abn = "blue_stained_glass_pane"
-    abo = [(0, 0), (1, 1), (2, 0)]
-    abp = [(0, 2), (1, 2), (2, 2)]
-    abq = "mossy_stone_brick_wall"
-    abr = "stripped_dark_oak_wood"
-    abs = "glistering_melon_slice"
-    abt = "pink_glazed_terracotta"
-    abu = "cut_red_sandstone_slab"
-    abv = "mossy_cobblestone_slab"
-    abw = "chiseled_red_sandstone"
-    abx = "red_stained_glass_pane"
-    aby = "polished_andesite_slab"
-    abz = "cyan_glazed_terracotta"
-    abA = [(0, 1), (1, 0), (2, 1)]
-    abB = "mossy_cobblestone_wall"
-    abC = "creeper_banner_pattern"
-    abD = "yellow_concrete_powder"
-    abE = "dark_prismarine_stairs"
-    abF = [(0, 0), (1, 0), (2, 0)]
-    abG = "gray_glazed_terracotta"
-    abH = "orange_concrete_powder"
-    abI = [(0, 1), (1, 1), (2, 1)]
-    abJ = "blue_glazed_terracotta"
-    abK = "mossy_stone_brick_slab"
-    abL = "end_stone_brick_stairs"
-    abM = "purple_concrete_powder"
-    abN = [(0, 0), (0, 1), (1, 0)]
-    abO = "lime_glazed_terracotta"
-    abP = "polished_granite_slab"
-    abQ = "chiseled_quartz_block"
-    abR = "chiseled_stone_bricks"
-    abS = "wooden_pressure_plate"
-    abT = "red_nether_brick_wall"
-    abU = "black_concrete_powder"
-    abV = "flower_banner_pattern"
-    abW = "red_glazed_terracotta"
-    abX = "spruce_pressure_plate"
-    abY = "light_gray_terracotta"
-    abZ = "prismarine_brick_slab"
-    aca = "green_concrete_powder"
-    acb = "smooth_sandstone_slab"
-    acc = "red_nether_brick_slab"
-    acd = "jungle_pressure_plate"
-    ace = "mojang_banner_pattern"
-    acf = "magenta_stained_glass"
-    acg = "light_blue_terracotta"
-    ach = "polished_diorite_slab"
-    aci = "white_concrete_powder"
-    acj = "acacia_pressure_plate"
-    ack = "brown_concrete_powder"
-    acl = "end_stone_brick_wall"
-    acm = "orange_stained_glass"
-    acn = "pink_concrete_powder"
-    aco = "cracked_stone_bricks"
-    acp = "stripped_acacia_wood"
-    acq = "blue_concrete_powder"
-    acr = "end_stone_brick_slab"
-    acs = "dark_prismarine_slab"
-    act = "red_sandstone_stairs"
-    acu = "gray_concrete_powder"
-    acv = "smooth_quartz_stairs"
-    acw = "fermented_spider_eye"
-    acx = "stone_pressure_plate"
-    acy = "birch_pressure_plate"
-    acz = "stripped_spruce_wood"
-    acA = "cyan_concrete_powder"
-    acB = "yellow_stained_glass"
-    acC = "skull_banner_pattern"
-    acD = "purple_stained_glass"
-    acE = "smooth_red_sandstone"
-    acF = "stripped_jungle_wood"
-    acG = "lime_concrete_powder"
-    acH = "nether_brick_stairs"
-    acI = "dark_oak_fence_gate"
-    acJ = "popped_chorus_fruit"
-    acK = "white_stained_glass"
-    acL = "black_stained_glass"
-    acM = "leather_horse_armor"
-    acN = "stripped_birch_wood"
-    acO = "brown_stained_glass"
-    acP = "green_stained_glass"
-    acQ = "red_concrete_powder"
-    acR = "smooth_quartz_slab"
-    acS = "minecraft:blasting"
-    acT = "stained_terracotta"
-    acU = "stone_brick_stairs"
-    acV = "diamond_chestplate"
-    acW = "magenta_terracotta"
-    acX = "leather_chestplate"
-    acY = "lime_stained_glass"
-    acZ = "oak_pressure_plate"
-    ada = "mossy_stone_bricks"
-    adb = "cyan_stained_glass"
-    adc = "gray_stained_glass"
-    add = "pink_stained_glass"
-    ade = "stained_glass_pane"
-    adf = "red_sandstone_wall"
-    adg = "cobblestone_stairs"
-    adh = "red_sandstone_slab"
-    adi = "blue_stained_glass"
-    adj = "cut_sandstone_slab"
-    adk = "nether_brick_fence"
-    adl = "chiseled_sandstone"
-    adm = "mossy_cobblestone"
-    adn = "nether_brick_slab"
-    ado = "prismarine_stairs"
-    adp = "orange_terracotta"
-    adq = "golden_chestplate"
-    adr = "yellow_terracotta"
-    ads = "nether_wart_block"
-    adt = "red_stained_glass"
-    adu = "cut_red_sandstone"
-    adv = "dark_oak_trapdoor"
-    adw = "prismarine_bricks"
-    adx = "smooth_stone_slab"
-    ady = "spruce_fence_gate"
-    adz = "light_blue_banner"
-    adA = "polished_andesite"
-    adB = "minecraft:smoking"
-    adC = "acacia_fence_gate"
-    adD = "jungle_fence_gate"
-    adE = "wooden_fence_gate"
-    adF = "light_gray_carpet"
-    adG = "nether_brick_wall"
-    adH = "nether_quartz_ore"
-    adI = "light_gray_banner"
-    adJ = "cartography_table"
-    adK = "stripped_oak_wood"
-    adL = "light_blue_carpet"
-    adM = "red_nether_bricks"
-    adN = "daylight_detector"
-    adO = "carrot_on_a_stick"
-    adP = "purple_terracotta"
-    adQ = "end_stone_bricks"
-    adR = "leather_leggings"
-    adS = "dried_kelp_block"
-    adT = "green_terracotta"
-    adU = "diamond_leggings"
-    adV = "stone_brick_wall"
-    adW = "white_terracotta"
-    adX = "cobblestone_slab"
-    adY = "stone_brick_slab"
-    adZ = "polished_granite"
-    aea = "enchanting_table"
-    aeb = "smooth_sandstone"
-    aec = "prismarine_shard"
-    aed = "cobblestone_wall"
-    aee = "black_terracotta"
-    aef = "polished_diorite"
-    aeg = "birch_fence_gate"
-    aeh = "furnace_minecart"
-    aei = "sandstone_stairs"
-    aej = "brown_terracotta"
-    aek = "pink_terracotta"
-    ael = "cooked_porkchop"
-    aem = "dark_oak_stairs"
-    aen = "gray_terracotta"
-    aeo = "dark_prismarine"
-    aep = "dark_oak_planks"
-    aeq = "acacia_trapdoor"
-    aer = "wooden_trapdoor"
-    aes = "dark_oak_button"
-    aet = "andesite_stairs"
-    aeu = "jungle_trapdoor"
-    aev = "honeycomb_block"
-    aew = "light_blue_wool"
-    aex = "prismarine_wall"
-    aey = "flint_and_steel"
-    aez = "spruce_trapdoor"
-    aeA = "hopper_minecart"
-    aeB = "fletching_table"
-    aeC = "iron_chestplate"
-    aeD = "golden_leggings"
-    aeE = "light_gray_wool"
-    aeF = "prismarine_slab"
-    aeG = "cyan_terracotta"
-    aeH = "blue_terracotta"
-    aeI = "diamond_pickaxe"
-    aeJ = "concrete_powder"
-    aeK = "lime_terracotta"
-    aeL = "redstone_torch"
-    aeM = "diamond_shovel"
-    aeN = "golden_pickaxe"
-    aeO = "magenta_banner"
-    aeP = "chest_minecart"
-    aeQ = [(1, 0), (1, 1)]
-    aeR = "light_blue_dye"
-    aeS = [(0, 1), (1, 0)]
-    aeT = [(0, 0), (0, 1)]
-    aeU = "granite_stairs"
-    aeV = "activator_rail"
-    aeW = [(1, 0), (1, 2)]
-    aeX = "sandstone_slab"
-    aeY = "light_gray_bed"
-    aeZ = "diamond_helmet"
-    afa = "light_blue_bed"
-    afb = "spectral_arrow"
-    afc = "sandstone_wall"
-    afd = [(0, 0), (1, 0)]
-    afe = [(0, 1), (2, 1)]
-    aff = "diorite_stairs"
-    afg = "leather_helmet"
-    afh = "magenta_carpet"
-    afi = "oak_fence_gate"
-    afj = [(0, 0), (2, 0)]
-    afk = "glowstone_dust"
-    afl = "cooked_chicken"
-    afm = [(0, 1), (0, 2)]
-    afn = "birch_trapdoor"
-    afo = [(0, 0), (1, 1)]
-    afp = "dark_oak_fence"
-    afq = "wooden_pickaxe"
-    afr = "crafting_table"
-    afs = "light_gray_dye"
-    aft = "red_terracotta"
-    afu = [(0, 1), (1, 1)]
-    afv = "jack_o_lantern"
-    afw = "smithing_table"
-    afx = "redstone_block"
-    afy = [(1, 1), (1, 2)]
-    afz = "dark_oak_slab"
-    afA = "trapped_chest"
-    afB = "beetroot_soup"
-    afC = "detector_rail"
-    afD = "acacia_planks"
-    afE = "tripwire_hook"
-    afF = "brewing_stand"
-    afG = "purple_banner"
-    afH = "sticky_piston"
-    afI = "dark_oak_sign"
-    afJ = "orange_carpet"
-    afK = "#wooden_slabs"
-    afL = "wooden_shovel"
-    afM = "jungle_planks"
-    afN = "mushroom_stew"
-    afO = "emerald_block"
-    afP = "cooked_salmon"
-    afQ = "diamond_block"
-    afR = "dark_oak_boat"
-    afS = "nether_bricks"
-    afT = "quartz_stairs"
-    afU = "dark_oak_wood"
-    afV = "spruce_button"
-    afW = "golden_carrot"
-    afX = "wooden_stairs"
-    afY = "cut_sandstone"
-    afZ = "turtle_helmet"
-    aga = "orange_banner"
-    agb = "andesite_slab"
-    agc = "cooked_mutton"
-    agd = "pumpkin_seeds"
-    age = "golden_shovel"
-    agf = "iron_trapdoor"
-    agg = "acacia_button"
-    agh = "cooked_rabbit"
-    agi = "yellow_carpet"
-    agj = "purpur_stairs"
-    agk = "smooth_quartz"
-    agl = "jungle_button"
-    agm = "jungle_stairs"
-    agn = "redstone_lamp"
-    ago = "wooden_button"
-    agp = "diamond_boots"
-    agq = "yellow_banner"
-    agr = "purple_carpet"
-    ags = "stained_glass"
-    agt = "iron_leggings"
-    agu = "spruce_planks"
-    agv = "acacia_stairs"
-    agw = "writable_book"
-    agx = "quartz_pillar"
-    agy = "blast_furnace"
-    agz = "red_sandstone"
-    agA = "dark_oak_door"
-    agB = "diamond_sword"
-    agC = "andesite_wall"
-    agD = "golden_helmet"
-    agE = "leather_boots"
-    agF = "purpur_pillar"
-    agG = "spruce_stairs"
-    agH = "stone_pickaxe"
-    agI = "baked_potato"
-    agJ = "honey_bottle"
-    agK = "purpur_block"
-    agL = "diorite_wall"
-    agM = "brick_stairs"
-    agN = "diorite_slab"
-    agO = "spruce_fence"
-    agP = "black_carpet"
-    agQ = "powered_rail"
-    agR = "lapis_lazuli"
-    agS = "iron_pickaxe"
-    agT = "acacia_fence"
-    agU = "stone_stairs"
-    agV = "white_banner"
-    agW = "birch_button"
-    agX = "birch_stairs"
-    agY = "white_carpet"
-    agZ = "glass_bottle"
-    aha = "granite_slab"
-    ahb = "tnt_minecart"
-    ahc = "nether_brick"
-    ahd = "brown_carpet"
-    ahe = "blaze_powder"
-    ahf = "granite_wall"
-    ahg = "black_banner"
-    ahh = "brown_banner"
-    ahi = "golden_sword"
-    ahj = "quartz_block"
-    ahk = "wooden_fence"
-    ahl = "golden_apple"
-    ahm = "stone_bricks"
-    ahn = "stone_shovel"
-    aho = "wooden_sword"
-    ahp = "smooth_stone"
-    ahq = "birch_planks"
-    ahr = "redstone_ore"
-    ahs = "jungle_fence"
-    aht = "green_banner"
-    ahu = "magenta_wool"
-    ahv = "stone_button"
-    ahw = "green_carpet"
-    ahx = "golden_boots"
-    ahy = "oak_trapdoor"
-    ahz = "cooked_beef"
-    ahA = "scaffolding"
-    ahB = "cyan_carpet"
-    ahC = "gray_banner"
-    ahD = "sea_lantern"
-    ahE = "pink_carpet"
-    ahF = "acacia_slab"
-    ahG = "iron_nugget"
-    ahH = "acacia_boat"
-    ahI = "magenta_bed"
-    ahJ = "diamond_ore"
-    ahK = "cobblestone"
-    ahL = "rabbit_stew"
-    ahM = "ender_chest"
-    ahN = "lapis_block"
-    ahO = "lime_banner"
-    ahP = "iron_helmet"
-    ahQ = "jungle_wood"
-    ahR = "acacia_door"
-    ahS = "spruce_slab"
-    ahT = "jungle_slab"
-    ahU = "spruce_door"
-    ahV = "pumpkin_pie"
-    ahW = "slime_block"
-    ahX = "spruce_wood"
-    ahY = "fishing_rod"
-    ahZ = "blue_banner"
-    aia = "gold_nugget"
-    aib = "yellow_wool"
-    aic = "iron_shovel"
-    aid = "acacia_wood"
-    aie = "wooden_door"
-    aif = "honey_block"
-    aig = "jungle_sign"
-    aih = "diamond_hoe"
-    aii = "quartz_slab"
-    aij = "melon_seeds"
-    aik = "end_crystal"
-    ail = "diamond_axe"
-    aim = "shulker_box"
-    ain = "magma_block"
-    aio = "jungle_door"
-    aip = "wooden_slab"
-    aiq = "cyan_banner"
-    air = "purpur_slab"
-    ais = "jungle_boat"
-    ait = "magenta_dye"
-    aiu = "birch_fence"
-    aiv = "melon_slice"
-    aiw = "gray_carpet"
-    aix = "cocoa_beans"
-    aiy = "fire_charge"
-    aiz = "nether_wart"
-    aiA = "stone_sword"
-    aiB = "stonecutter"
-    aiC = "acacia_sign"
-    aiD = "spruce_sign"
-    aiE = "spruce_boat"
-    aiF = "coarse_dirt"
-    aiG = "blue_carpet"
-    aiH = "pink_banner"
-    aiI = "emerald_ore"
-    aiJ = "magma_cream"
-    aiK = "armor_stand"
-    aiL = "purple_wool"
-    aiM = "lime_carpet"
-    aiN = "orange_wool"
-    aiO = "note_block"
-    aiP = "purple_bed"
-    aiQ = "golden_axe"
-    aiR = "wooden_axe"
-    aiS = "black_wool"
-    aiT = "slime_ball"
-    aiU = "gold_block"
-    aiV = "white_wool"
-    aiW = "brick_slab"
-    aiX = "stone_slab"
-    aiY = "snow_block"
-    aiZ = "terracotta"
-    aja = "yellow_bed"
-    ajb = "brick_wall"
-    ajc = "flower_pot"
-    ajd = "birch_wood"
-    aje = "bone_block"
-    ajf = "sugar_cane"
-    ajg = "iron_boots"
-    ajh = "oak_planks"
-    aji = "orange_bed"
-    ajj = "birch_boat"
-    ajk = "wooden_hoe"
-    ajl = "dried_kelp"
-    ajm = "iron_block"
-    ajn = "birch_sign"
-    ajo = "grindstone"
-    ajp = "red_banner"
-    ajq = "golden_hoe"
-    ajr = "yellow_dye"
-    ajs = "item_frame"
-    ajt = "birch_door"
-    aju = "birch_slab"
-    ajv = "purple_dye"
-    ajw = "iron_ingot"
-    ajx = "oak_stairs"
-    ajy = "glass_pane"
-    ajz = "iron_sword"
-    ajA = "gold_ingot"
-    ajB = "oak_button"
-    ajC = "cooked_cod"
-    ajD = "brown_wool"
-    ajE = "prismarine"
-    ajF = "packed_ice"
-    ajG = "coal_block"
-    ajH = "orange_dye"
-    ajI = "comparator"
-    ajJ = "red_carpet"
-    ajK = "green_wool"
-    ajL = "gray_wool"
-    ajM = "lapis_ore"
-    ajN = "stone_axe"
-    ajO = "iron_bars"
-    ajP = "cyan_wool"
-    ajQ = "blue_wool"
-    ajR = "oak_fence"
-    ajS = "white_bed"
-    ajT = "brown_bed"
-    ajU = "gunpowder"
-    ajV = "blaze_rod"
-    ajW = "black_bed"
-    ajX = "black_dye"
-    ajY = "bone_meal"
-    ajZ = "ender_eye"
-    aka = "white_dye"
-    akb = "dispenser"
-    akc = "stone_hoe"
-    akd = "honeycomb"
-    ake = "clay_ball"
-    akf = "bookshelf"
-    akg = "iron_door"
-    akh = "glowstone"
-    aki = "composter"
-    akj = "brown_dye"
-    akk = "sandstone"
-    akl = "green_bed"
-    akm = "hay_block"
-    akn = "pink_wool"
-    ako = "green_dye"
-    akp = "lime_wool"
-    akq = "oak_slab"
-    akr = "blue_dye"
-    aks = "bonemeal"
-    akt = "iron_hoe"
-    aku = "painting"
-    akv = "iron_axe"
-    akw = "campfire"
-    akx = "minecart"
-    aky = "cauldron"
-    akz = "coal_ore"
-    akA = "cyan_dye"
-    akB = "gray_dye"
-    akC = "pink_bed"
-    akD = "gold_ore"
-    akE = "obsidian"
-    akF = "oak_boat"
-    akG = "dyed_bed"
-    akH = "porkchop"
-    akI = "pink_dye"
-    akJ = "oak_door"
-    akK = "red_wool"
-    akL = "blue_ice"
-    akM = "charcoal"
-    akN = "cyan_bed"
-    akO = "crossbow"
-    akP = "lime_bed"
-    akQ = "redstone"
-    akR = "lime_dye"
-    akS = "oak_sign"
-    akT = "andesite"
-    akU = "gray_bed"
-    akV = "oak_wood"
-    akW = "iron_ore"
-    akX = "observer"
-    akY = "repeater"
-    akZ = "blue_bed"
-    ala = "compass"
-    alb = "#planks"
-    alc = "lantern"
-    ald = "red_dye"
-    ale = "beehive"
-    alf = "dropper"
-    alg = "granite"
-    alh = "jukebox"
-    ali = "end_rod"
-    alj = "diamond"
-    alk = "leather"
-    all = "feather"
-    alm = "diorite"
-    aln = "emerald"
-    alo = "chicken"
-    alp = "red_bed"
-    alq = "conduit"
-    alr = "furnace"
-    als = "lectern"
-    alt = "salmon"
-    alu = "carpet"
-    alv = "beacon"
-    alw = "ladder"
-    alx = "banner"
-    aly = [(1, 1)]
-    alz = "planks"
-    alA = "quartz"
-    alB = "carrot"
-    alC = "bricks"
-    alD = "piston"
-    alE = "barrel"
-    alF = "potato"
-    alG = [(0, 0)]
-    alH = "sticks"
-    alI = "smoker"
-    alJ = [(0, 1)]
-    alK = "hopper"
-    alL = [(1, 0)]
-    alM = "rabbit"
-    alN = "gravel"
-    alO = "cookie"
-    alP = [(1, 2)]
-    alQ = "mutton"
-    alR = "string"
-    alS = "shears"
-    alT = "bucket"
-    alU = "sponge"
-    alV = "shield"
-    alW = [(0, 2)]
-    alX = "bamboo"
-    alY = "paper"
-    alZ = "wheat"
-    ama = "torch"
-    amb = "melon"
-    amc = "stick"
-    amd = "lever"
-    ame = "#logs"
-    amf = "brick"
-    amg = "flint"
-    amh = "anvil"
-    ami = "stone"
-    amj = "chest"
-    amk = "sugar"
-    aml = "arrow"
-    amm = "bread"
-    amn = "clock"
-    amo = "glass"
-    amp = "snow"
-    amq = "bowl"
-    amr = "boat"
-    ams = "book"
-    amt = "kelp"
-    amu = "rail"
-    amv = "beef"
-    amw = "sand"
-    amx = "cake"
-    amy = "wool"
-    amz = "coal"
-    amA = "loom"
-    amB = "bark"
-    amC = "lead"
-    amD = "clay"
-    amE = "bow"
-    amF = "cod"
-    amG = "map"
-    amH = "tnt"
-    amI = "egg"
-    amJ = "bed"
-    amK = 0.15
-    amL = 0.35
-    amM = 0.7
-    amN = 100
-    amO = 0.2
-    amP = 0.1
-    amQ = 1.0
-    amR = 600
-    config.shaped_recipe(ahH).setEntries(aap, afD).setOutput(ahH).setGroup(amr)
-    config.shapeless_recipe(agg).addInput(afD, 1).setOutput(agg).setGroup(ago)
-    config.shaped_recipe(ahR).setEntries(aan, afD).setOutput(ahR).setGroup(aie)
-    config.shaped_recipe(agT).setEntries(aeQ, amc).setEntries(aas, afD).setOutput(agT).setGroup(ahk)
-    config.shaped_recipe(adC).setEntries(aas, amc).setEntries(aeQ, afD).setOutput(adC).setGroup(adE)
-    config.shapeless_recipe(afD).addInput("#acacia_logs", 1).setOutput(afD).setGroup(alz)
-    config.shaped_recipe(acj).setEntries(afd, afD).setOutput(acj).setGroup(abS)
-    config.shaped_recipe(aiC).setEntries(aak, afD).setEntries(alP, amc).setOutput(aiC)
-    config.shaped_recipe(ahF).setEntries(abF, afD).setOutput(ahF).setGroup(aip)
-    config.shaped_recipe(agv).setEntries(aam, afD).setOutput(agv).setGroup(afX)
-    config.shaped_recipe(aeq).setEntries(aak, afD).setOutput(aeq).setGroup(aer)
-    config.shaped_recipe(aid).setEntries(aar, "acacia_log").setOutput(aid).setGroup(amB)
-    config.shaped_recipe(aeV).setEntries(aly, aeL).setEntries(aeW, amc).setEntries(aal, ajw).setOutput(aeV)
-    config.shapeless_recipe(akT).addInput(alm, 1).addInput(ahK, 1).setOutput(akT)
-    config.shaped_recipe(agb).setEntries(abF, akT).setOutput(agb)
-    config.shaped_recipe(aet).setEntries(aam, akT).setOutput(aet)
-    config.shaped_recipe(agC).setEntries(aak, akT).setOutput(agC)
-    config.shaped_recipe(amh).setEntries(abF, ajm).setEntries(aav, ajw).setOutput(amh)
-    config.shaped_recipe(aiK).setEntries([(0, 0), (0, 2), (1, 0), (1, 1), (2, 0), (2, 2)], amc).setEntries(alP,
-                                                                                                           adx).setOutput(
-        aiK)
-    config.shaped_recipe(aml).setEntries(alJ, amc).setEntries(alG, amg).setEntries(alW, all).setOutput(aml)
-    config.smelting_recipe(agI).add_ingredient(alF).setXp(amL).setOutput(agI)
-    config.smelting_recipe("baked_potato_from_campfire_cooking", aaG).add_ingredient(alF).setXp(amL).setOutput(
-        agI).setCookingTime(amR)
-    config.smelting_recipe("baked_potato_from_smoking", adB).add_ingredient(alF).setXp(amL).setOutput(
-        agI).setCookingTime(amN)
-    config.shaped_recipe(alE).setEntries(aal, alb).setEntries(aeW, afK).setOutput(alE)
-    config.shaped_recipe(alv).setEntries(aly, "nether_star").setEntries(aao, amo).setEntries(abp, akE).setOutput(alv)
-    config.shaped_recipe(ale).setEntries(aaj, alb).setEntries(abI, akd).setOutput(ale)
-    config.shapeless_recipe(afB).addInput(amq, 1).addInput("beetroot", 6).setOutput(afB)
-    config.shaped_recipe(ajj).setEntries(aap, ahq).setOutput(ajj).setGroup(amr)
-    config.shapeless_recipe(agW).addInput(ahq, 1).setOutput(agW).setGroup(ago)
-    config.shaped_recipe(ajt).setEntries(aan, ahq).setOutput(ajt).setGroup(aie)
-    config.shaped_recipe(aiu).setEntries(aeQ, amc).setEntries(aas, ahq).setOutput(aiu).setGroup(ahk)
-    config.shaped_recipe(aeg).setEntries(aas, amc).setEntries(aeQ, ahq).setOutput(aeg).setGroup(adE)
-    config.shapeless_recipe(ahq).addInput("#birch_logs", 1).setOutput(ahq).setGroup(alz)
-    config.shaped_recipe(acy).setEntries(afd, ahq).setOutput(acy).setGroup(abS)
-    config.shaped_recipe(ajn).setEntries(aak, ahq).setEntries(alP, amc).setOutput(ajn)
-    config.shaped_recipe(aju).setEntries(abF, ahq).setOutput(aju).setGroup(aip)
-    config.shaped_recipe(agX).setEntries(aam, ahq).setOutput(agX).setGroup(afX)
-    config.shaped_recipe(afn).setEntries(aak, ahq).setOutput(afn).setGroup(aer)
-    config.shaped_recipe(ajd).setEntries(aar, "birch_log").setOutput(ajd).setGroup(amB)
-    config.shaped_recipe(ahg).setEntries(aak, aiS).setEntries(alP, amc).setOutput(ahg).setGroup(alx)
-    config.shaped_recipe(ajW).setEntries(abF, aiS).setEntries(abI, alb).setOutput(ajW).setGroup(amJ)
-    config.shapeless_recipe("black_bed_from_white_bed").addInput(ajS, 1).addInput(ajX, 1).setOutput(ajW).setGroup(akG)
-    config.shaped_recipe(agP).setEntries(afd, aiS).setOutput(agP).setGroup(alu)
-    config.shaped_recipe("black_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, ajX).setOutput(
-        agP).setGroup(alu)
-    config.shapeless_recipe(abU).addInput(ajX, 1).addInput(amw, 4).addInput(alN, 4).setOutput(abU).setGroup(aeJ)
-    config.shapeless_recipe(ajX).addInput("ink_sac", 1).setOutput(ajX).setGroup(ajX)
-    config.shapeless_recipe("black_dye_from_wither_rose").addInput("wither_rose", 1).setOutput(ajX).setGroup(ajX)
-    config.smelting_recipe(abd).add_ingredient(aee).setXp(amP).setOutput(abd)
-    config.shaped_recipe(acL).setEntries(aae, amo).setEntries(aly, ajX).setOutput(acL).setGroup(ags)
-    config.shaped_recipe(aaV).setEntries(aak, acL).setOutput(aaV).setGroup(ade)
-    config.shaped_recipe("black_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                     ajX).setOutput(
-        aaV).setGroup(ade)
-    config.shaped_recipe(aee).setEntries(aae, aiZ).setEntries(aly, ajX).setOutput(aee).setGroup(acT)
-    config.shapeless_recipe(aiS).addInput(ajX, 1).addInput(aiV, 1).setOutput(aiS).setGroup(amy)
-    config.shaped_recipe(agy).setEntries(abp, ahp).setEntries(aly, alr).setEntries(aao, ajw).setOutput(agy)
-    config.shapeless_recipe(ahe).addInput(ajV, 1).setOutput(ahe)
-    config.shaped_recipe(ahZ).setEntries(aak, ajQ).setEntries(alP, amc).setOutput(ahZ).setGroup(alx)
-    config.shaped_recipe(akZ).setEntries(abF, ajQ).setEntries(abI, alb).setOutput(akZ).setGroup(amJ)
-    config.shapeless_recipe("blue_bed_from_white_bed").addInput(ajS, 1).addInput(akr, 1).setOutput(akZ).setGroup(akG)
-    config.shaped_recipe(aiG).setEntries(afd, ajQ).setOutput(aiG).setGroup(alu)
-    config.shaped_recipe("blue_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, akr).setOutput(
-        aiG).setGroup(alu)
-    config.shapeless_recipe(acq).addInput(akr, 1).addInput(amw, 4).addInput(alN, 4).setOutput(acq).setGroup(aeJ)
-    config.shapeless_recipe(akr).addInput(agR, 1).setOutput(akr).setGroup(akr)
-    config.shapeless_recipe("blue_dye_from_cornflower").addInput("cornflower", 1).setOutput(akr).setGroup(akr)
-    config.smelting_recipe(abJ).add_ingredient(aeH).setXp(amP).setOutput(abJ)
-    config.shaped_recipe(akL).setEntries(aac, ajF).setOutput(akL)
-    config.shaped_recipe(adi).setEntries(aae, amo).setEntries(aly, akr).setOutput(adi).setGroup(ags)
-    config.shaped_recipe(abn).setEntries(aak, adi).setOutput(abn).setGroup(ade)
-    config.shaped_recipe("blue_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly, akr).setOutput(
-        abn).setGroup(ade)
-    config.shaped_recipe(aeH).setEntries(aae, aiZ).setEntries(aly, akr).setOutput(aeH).setGroup(acT)
-    config.shapeless_recipe(ajQ).addInput(akr, 1).addInput(aiV, 1).setOutput(ajQ).setGroup(amy)
-    config.shaped_recipe(aje).setEntries(aac, ajY).setOutput(aje)
-    config.shapeless_recipe(ajY).addInput("bone", 1).setOutput(ajY).setGroup(aks)
-    config.shapeless_recipe("bone_meal_from_bone_block").addInput(aje, 1).setOutput(ajY).setGroup(aks)
-    config.shapeless_recipe(ams).addInput(alY, 3).addInput(alk, 1).setOutput(ams)
-    config.shaped_recipe(akf).setEntries(aaj, alb).setEntries(abI, ams).setOutput(akf)
-    config.shaped_recipe(amE).setEntries([(0, 1), (1, 0), (1, 2)], amc).setEntries([(2, 0), (2, 1), (2, 2)],
-                                                                                   alR).setOutput(amE)
-    config.shaped_recipe(amq).setEntries(abo, alb).setOutput(amq)
-    config.shaped_recipe(amm).setEntries(abF, alZ).setOutput(amm)
-    config.shaped_recipe(afF).setEntries(alL, ajV).setEntries(abI, ahK).setOutput(afF)
-    config.smelting_recipe(amf).add_ingredient(ake).setXp(0.3).setOutput(amf)
-    config.shaped_recipe(alC).setEntries(aar, amf).setOutput(alC)
-    config.shaped_recipe(aiW).setEntries(abF, alC).setOutput(aiW)
-    config.shaped_recipe(agM).setEntries(aam, alC).setOutput(agM)
-    config.shaped_recipe(ajb).setEntries(aak, alC).setOutput(ajb)
-    config.shaped_recipe(ahh).setEntries(aak, ajD).setEntries(alP, amc).setOutput(ahh).setGroup(alx)
-    config.shaped_recipe(ajT).setEntries(abF, ajD).setEntries(abI, alb).setOutput(ajT).setGroup(amJ)
-    config.shapeless_recipe("brown_bed_from_white_bed").addInput(ajS, 1).addInput(akj, 1).setOutput(ajT).setGroup(akG)
-    config.shaped_recipe(ahd).setEntries(afd, ajD).setOutput(ahd).setGroup(alu)
-    config.shaped_recipe("brown_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, akj).setOutput(
-        ahd).setGroup(alu)
-    config.shapeless_recipe(ack).addInput(akj, 1).addInput(amw, 4).addInput(alN, 4).setOutput(ack).setGroup(aeJ)
-    config.shapeless_recipe(akj).addInput(aix, 1).setOutput(akj).setGroup(akj)
-    config.smelting_recipe(abj).add_ingredient(aej).setXp(amP).setOutput(abj)
-    config.shaped_recipe(acO).setEntries(aae, amo).setEntries(aly, akj).setOutput(acO).setGroup(ags)
-    config.shaped_recipe(aaO).setEntries(aak, acO).setOutput(aaO).setGroup(ade)
-    config.shaped_recipe("brown_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                     akj).setOutput(
-        aaO).setGroup(ade)
-    config.shaped_recipe(aej).setEntries(aae, aiZ).setEntries(aly, akj).setOutput(aej).setGroup(acT)
-    config.shapeless_recipe(ajD).addInput(akj, 1).addInput(aiV, 1).setOutput(ajD).setGroup(amy)
-    config.shaped_recipe(alT).setEntries(abo, ajw).setOutput(alT)
-    config.shaped_recipe(amx).setEntries(abF, "milk_bucket").setEntries(afe, amk).setEntries(abp, alZ).setEntries(aly,
-                                                                                                                  amI).setOutput(
-        amx)
-    config.shaped_recipe(akw).setEntries(abp, ame).setEntries(abA, amc).setEntries(aly, "#coals").setOutput(akw)
-    config.shaped_recipe(adO).setEntries(alG, ahY).setEntries(aly, alB).setOutput(adO)
-    config.shaped_recipe(adJ).setEntries(aat, alb).setEntries(afd, alY).setOutput(adJ)
-    config.shaped_recipe(aky).setEntries(aah, ajw).setOutput(aky)
-    config.smelting_recipe(akM).add_ingredient(ame).setXp(amK).setOutput(akM)
-    config.shaped_recipe(amj).setEntries(aae, alb).setOutput(amj)
-    config.shaped_recipe(aeP).setEntries(alG, amj).setEntries(alJ, akx).setOutput(aeP)
-    config.shaped_recipe(abQ).setEntries(aeT, aii).setOutput(abQ)
-    config.shaped_recipe(abw).setEntries(aeT, adh).setOutput(abw)
-    config.shaped_recipe(adl).setEntries(aeT, aeX).setOutput(adl)
-    config.shaped_recipe(abR).setEntries(aeT, adY).setOutput(abR)
-    config.shaped_recipe(amD).setEntries(aar, ake).setOutput(amD)
-    config.shaped_recipe(amn).setEntries(aau, ajA).setEntries(aly, akQ).setOutput(amn)
-    config.shapeless_recipe(amz).addInput(ajG, 1).setOutput(amz)
-    config.shaped_recipe(ajG).setEntries(aac, amz).setOutput(ajG)
-    config.smelting_recipe("coal_from_blasting", acS).add_ingredient(akz).setXp(amP).setOutput(amz).setCookingTime(amN)
-    config.smelting_recipe("coal_from_smelting").add_ingredient(akz).setXp(amP).setOutput(amz)
-    config.shaped_recipe(aiF).setEntries(afo, "dirt").setEntries(aeS, alN).setOutput(aiF)
-    config.shaped_recipe(adX).setEntries(abF, ahK).setOutput(adX)
-    config.shaped_recipe(adg).setEntries(aam, ahK).setOutput(adg)
-    config.shaped_recipe(aed).setEntries(aak, ahK).setOutput(aed)
-    config.shaped_recipe(ajI).setEntries(abA, aeL).setEntries(aly, alA).setEntries(abp, ami).setOutput(ajI)
-    config.shaped_recipe(ala).setEntries(aau, ajw).setEntries(aly, akQ).setOutput(ala)
-    config.shaped_recipe(aki).setEntries(aah, afK).setOutput(aki)
-    config.shaped_recipe(alq).setEntries(aae, "nautilus_shell").setEntries(aly, "heart_of_the_sea").setOutput(alq)
-    config.smelting_recipe(ahz).add_ingredient(amv).setXp(amL).setOutput(ahz)
-    config.smelting_recipe("cooked_beef_from_campfire_cooking", aaG).add_ingredient(amv).setXp(amL).setOutput(
-        ahz).setCookingTime(amR)
-    config.smelting_recipe("cooked_beef_from_smoking", adB).add_ingredient(amv).setXp(amL).setOutput(
-        ahz).setCookingTime(amN)
-    config.smelting_recipe(afl).add_ingredient(alo).setXp(amL).setOutput(afl)
-    config.smelting_recipe("cooked_chicken_from_campfire_cooking", aaG).add_ingredient(alo).setXp(amL).setOutput(
-        afl).setCookingTime(amR)
-    config.smelting_recipe("cooked_chicken_from_smoking", adB).add_ingredient(alo).setXp(amL).setOutput(
-        afl).setCookingTime(amN)
-    config.smelting_recipe(ajC).add_ingredient(amF).setXp(amL).setOutput(ajC)
-    config.smelting_recipe("cooked_cod_from_campfire_cooking", aaG).add_ingredient(amF).setXp(amL).setOutput(
-        ajC).setCookingTime(amR)
-    config.smelting_recipe("cooked_cod_from_smoking", adB).add_ingredient(amF).setXp(amL).setOutput(ajC).setCookingTime(
-        amN)
-    config.smelting_recipe(agc).add_ingredient(alQ).setXp(amL).setOutput(agc)
-    config.smelting_recipe("cooked_mutton_from_campfire_cooking", aaG).add_ingredient(alQ).setXp(amL).setOutput(
-        agc).setCookingTime(amR)
-    config.smelting_recipe("cooked_mutton_from_smoking", adB).add_ingredient(alQ).setXp(amL).setOutput(
-        agc).setCookingTime(amN)
-    config.smelting_recipe(ael).add_ingredient(akH).setXp(amL).setOutput(ael)
-    config.smelting_recipe("cooked_porkchop_from_campfire_cooking", aaG).add_ingredient(akH).setXp(amL).setOutput(
-        ael).setCookingTime(amR)
-    config.smelting_recipe("cooked_porkchop_from_smoking", adB).add_ingredient(akH).setXp(amL).setOutput(
-        ael).setCookingTime(amN)
-    config.smelting_recipe(agh).add_ingredient(alM).setXp(amL).setOutput(agh)
-    config.smelting_recipe("cooked_rabbit_from_campfire_cooking", aaG).add_ingredient(alM).setXp(amL).setOutput(
-        agh).setCookingTime(amR)
-    config.smelting_recipe("cooked_rabbit_from_smoking", adB).add_ingredient(alM).setXp(amL).setOutput(
-        agh).setCookingTime(amN)
-    config.smelting_recipe(afP).add_ingredient(alt).setXp(amL).setOutput(afP)
-    config.smelting_recipe("cooked_salmon_from_campfire_cooking", aaG).add_ingredient(alt).setXp(amL).setOutput(
-        afP).setCookingTime(amR)
-    config.smelting_recipe("cooked_salmon_from_smoking", adB).add_ingredient(alt).setXp(amL).setOutput(
-        afP).setCookingTime(amN)
-    config.shaped_recipe(alO).setEntries(afj, alZ).setEntries(alL, aix).setOutput(alO)
-    config.smelting_recipe(aco).add_ingredient(ahm).setXp(amP).setOutput(aco)
-    config.shaped_recipe(afr).setEntries(aar, alb).setOutput(afr)
-    config.shapeless_recipe(abC).addInput(alY, 1).addInput("creeper_head", 1).setOutput(abC)
-    config.shaped_recipe(akO).setEntries(afe, alR).setEntries([(0, 0), (1, 2), (2, 0)], amc).setEntries(alL,
-                                                                                                        ajw).setEntries(
-        aly, afE).setOutput(akO)
-    config.shaped_recipe(adu).setEntries(aar, agz).setOutput(adu)
-    config.shaped_recipe(abu).setEntries(abF, adu).setOutput(abu)
-    config.shaped_recipe(afY).setEntries(aar, akk).setOutput(afY)
-    config.shaped_recipe(adj).setEntries(abF, afY).setOutput(adj)
-    config.shaped_recipe(aiq).setEntries(aak, ajP).setEntries(alP, amc).setOutput(aiq).setGroup(alx)
-    config.shaped_recipe(akN).setEntries(abF, ajP).setEntries(abI, alb).setOutput(akN).setGroup(amJ)
-    config.shapeless_recipe("cyan_bed_from_white_bed").addInput(ajS, 1).addInput(akA, 1).setOutput(akN).setGroup(akG)
-    config.shaped_recipe(ahB).setEntries(afd, ajP).setOutput(ahB).setGroup(alu)
-    config.shaped_recipe("cyan_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, akA).setOutput(
-        ahB).setGroup(alu)
-    config.shapeless_recipe(acA).addInput(akA, 1).addInput(amw, 4).addInput(alN, 4).setOutput(acA).setGroup(aeJ)
-    config.shapeless_recipe(akA).addInput(akr, 1).addInput(ako, 1).setOutput(akA)
-    config.smelting_recipe(abz).add_ingredient(aeG).setXp(amP).setOutput(abz)
-    config.shaped_recipe(adb).setEntries(aae, amo).setEntries(aly, akA).setOutput(adb).setGroup(ags)
-    config.shaped_recipe(abh).setEntries(aak, adb).setOutput(abh).setGroup(ade)
-    config.shaped_recipe("cyan_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly, akA).setOutput(
-        abh).setGroup(ade)
-    config.shaped_recipe(aeG).setEntries(aae, aiZ).setEntries(aly, akA).setOutput(aeG).setGroup(acT)
-    config.shapeless_recipe(ajP).addInput(akA, 1).addInput(aiV, 1).setOutput(ajP).setGroup(amy)
-    config.shaped_recipe(afR).setEntries(aap, aep).setOutput(afR).setGroup(amr)
-    config.shapeless_recipe(aes).addInput(aep, 1).setOutput(aes).setGroup(ago)
-    config.shaped_recipe(agA).setEntries(aan, aep).setOutput(agA).setGroup(aie)
-    config.shaped_recipe(afp).setEntries(aeQ, amc).setEntries(aas, aep).setOutput(afp).setGroup(ahk)
-    config.shaped_recipe(acI).setEntries(aas, amc).setEntries(aeQ, aep).setOutput(acI).setGroup(adE)
-    config.shapeless_recipe(aep).addInput("#dark_oak_logs", 1).setOutput(aep).setGroup(alz)
-    config.shaped_recipe(abg).setEntries(afd, aep).setOutput(abg).setGroup(abS)
-    config.shaped_recipe(afI).setEntries(aak, aep).setEntries(alP, amc).setOutput(afI)
-    config.shaped_recipe(afz).setEntries(abF, aep).setOutput(afz).setGroup(aip)
-    config.shaped_recipe(aem).setEntries(aam, aep).setOutput(aem).setGroup(afX)
-    config.shaped_recipe(adv).setEntries(aak, aep).setOutput(adv).setGroup(aer)
-    config.shaped_recipe(afU).setEntries(aar, "dark_oak_log").setOutput(afU).setGroup(amB)
-    config.shaped_recipe(aeo).setEntries(aae, aec).setEntries(aly, ajX).setOutput(aeo)
-    config.shaped_recipe(acs).setEntries(abF, aeo).setOutput(acs)
-    config.shaped_recipe(abE).setEntries(aam, aeo).setOutput(abE)
-    config.shaped_recipe(adN).setEntries(abI, alA).setEntries(abF, amo).setEntries(abp, afK).setOutput(adN)
-    config.shaped_recipe(afC).setEntries(alP, akQ).setEntries(aly, acx).setEntries(aal, ajw).setOutput(afC)
-    config.shapeless_recipe(alj).addInput(afQ, 1).setOutput(alj)
-    config.shaped_recipe(ail).setEntries(afy, amc).setEntries(abN, alj).setOutput(ail)
-    config.shaped_recipe(afQ).setEntries(aac, alj).setOutput(afQ)
-    config.shaped_recipe(agp).setEntries(aas, alj).setOutput(agp)
-    config.shaped_recipe(acV).setEntries(aad, alj).setOutput(acV)
-    config.smelting_recipe("diamond_from_blasting", acS).add_ingredient(ahJ).setXp(amQ).setOutput(alj).setCookingTime(
-        amN)
-    config.smelting_recipe("diamond_from_smelting").add_ingredient(ahJ).setXp(amQ).setOutput(alj)
-    config.shaped_recipe(aeZ).setEntries(aao, alj).setOutput(aeZ)
-    config.shaped_recipe(aih).setEntries(afy, amc).setEntries(afd, alj).setOutput(aih)
-    config.shaped_recipe(adU).setEntries(aag, alj).setOutput(adU)
-    config.shaped_recipe(aeI).setEntries(afy, amc).setEntries(abF, alj).setOutput(aeI)
-    config.shaped_recipe(aeM).setEntries(afm, amc).setEntries(alG, alj).setOutput(aeM)
-    config.shaped_recipe(agB).setEntries(alW, amc).setEntries(aeT, alj).setOutput(agB)
-    config.shaped_recipe(alm).setEntries(aeS, alA).setEntries(afo, ahK).setOutput(alm)
-    config.shaped_recipe(agN).setEntries(abF, alm).setOutput(agN)
-    config.shaped_recipe(aff).setEntries(aam, alm).setOutput(aff)
-    config.shaped_recipe(agL).setEntries(aak, alm).setOutput(agL)
-    config.shaped_recipe(akb).setEntries(alP, akQ).setEntries(aag, ahK).setEntries(aly, amE).setOutput(akb)
-    config.shapeless_recipe(ajl).addInput(adS, 1).setOutput(ajl)
-    config.shapeless_recipe(adS).addInput(ajl, 9).setOutput(adS)
-    config.smelting_recipe("dried_kelp_from_campfire_cooking", aaG).add_ingredient(amt).setXp(amP).setOutput(
-        ajl).setCookingTime(amR)
-    config.smelting_recipe("dried_kelp_from_smelting").add_ingredient(amt).setXp(amP).setOutput(ajl)
-    config.smelting_recipe("dried_kelp_from_smoking", adB).add_ingredient(amt).setXp(amP).setOutput(ajl).setCookingTime(
-        amN)
-    config.shaped_recipe(alf).setEntries(alP, akQ).setEntries(aag, ahK).setOutput(alf)
-    config.shapeless_recipe(aln).addInput(afO, 1).setOutput(aln)
-    config.shaped_recipe(afO).setEntries(aac, aln).setOutput(afO)
-    config.smelting_recipe("emerald_from_blasting", acS).add_ingredient(aiI).setXp(amQ).setOutput(aln).setCookingTime(
-        amN)
-    config.smelting_recipe("emerald_from_smelting").add_ingredient(aiI).setXp(amQ).setOutput(aln)
-    config.shaped_recipe(aea).setEntries(alL, ams).setEntries(aav, akE).setEntries(afe, alj).setOutput(aea)
-    config.shaped_recipe(ahM).setEntries(aae, akE).setEntries(aly, ajZ).setOutput(ahM)
-    config.shapeless_recipe(ajZ).addInput("ender_pearl", 1).addInput(ahe, 1).setOutput(ajZ)
-    config.shaped_recipe(aik).setEntries(alP, "ghast_tear").setEntries(aly, ajZ).setEntries(aag, amo).setOutput(aik)
-    config.shaped_recipe(ali).setEntries(alJ, acJ).setEntries(alG, ajV).setOutput(ali)
-    config.shaped_recipe(adQ).setEntries(aar, "end_stone").setOutput(adQ)
-    config.shaped_recipe(acr).setEntries(abF, adQ).setOutput(acr)
-    config.shaped_recipe(abL).setEntries(aam, adQ).setOutput(abL)
-    config.shaped_recipe(acl).setEntries(aak, adQ).setOutput(acl)
-    config.shapeless_recipe(acw).addInput("spider_eye", 1).addInput("brown_mushroom", 1).addInput(amk, 1).setOutput(acw)
-    config.shapeless_recipe(aiy).addInput(ajU, 1).addInput(ahe, 1).setOutput(aiy)
-    config.shaped_recipe(ahY).setEntries([(0, 2), (1, 1), (2, 0)], amc).setEntries([(2, 1), (2, 2)], alR).setOutput(ahY)
-    config.shaped_recipe(aeB).setEntries(aat, alb).setEntries(afd, amg).setOutput(aeB)
-    config.shapeless_recipe(aey).addInput(ajw, 1).addInput(amg, 1).setOutput(aey)
-    config.shapeless_recipe(abV).addInput(alY, 1).addInput("oxeye_daisy", 1).setOutput(abV)
-    config.shaped_recipe(ajc).setEntries(abo, amf).setOutput(ajc)
-    config.shaped_recipe(alr).setEntries(aae, ahK).setOutput(alr)
-    config.shaped_recipe(aeh).setEntries(alG, alr).setEntries(alJ, akx).setOutput(aeh)
-    config.smelting_recipe(amo).add_ingredient("#sand").setXp(amP).setOutput(amo)
-    config.shaped_recipe(agZ).setEntries(abo, amo).setOutput(agZ)
-    config.shaped_recipe(ajy).setEntries(aak, amo).setOutput(ajy)
-    config.shaped_recipe(abs).setEntries(aae, aia).setEntries(aly, aiv).setOutput(abs)
-    config.shaped_recipe(akh).setEntries(aar, afk).setOutput(akh)
-    config.shaped_recipe(ahl).setEntries(aae, ajA).setEntries(aly, "apple").setOutput(ahl)
-    config.shaped_recipe(aiQ).setEntries(afy, amc).setEntries(abN, ajA).setOutput(aiQ)
-    config.shaped_recipe(ahx).setEntries(aas, ajA).setOutput(ahx)
-    config.shaped_recipe(afW).setEntries(aae, aia).setEntries(aly, alB).setOutput(afW)
-    config.shaped_recipe(adq).setEntries(aad, ajA).setOutput(adq)
-    config.shaped_recipe(agD).setEntries(aao, ajA).setOutput(agD)
-    config.shaped_recipe(ajq).setEntries(afy, amc).setEntries(afd, ajA).setOutput(ajq)
-    config.shaped_recipe(aeD).setEntries(aag, ajA).setOutput(aeD)
-    config.shaped_recipe(aeN).setEntries(afy, amc).setEntries(abF, ajA).setOutput(aeN)
-    config.shaped_recipe(age).setEntries(afm, amc).setEntries(alG, ajA).setOutput(age)
-    config.shaped_recipe(ahi).setEntries(alW, amc).setEntries(aeT, ajA).setOutput(ahi)
-    config.shaped_recipe(aiU).setEntries(aac, ajA).setOutput(aiU)
-    config.smelting_recipe(ajA).add_ingredient(akD).setXp(amQ).setOutput(ajA)
-    config.smelting_recipe("gold_ingot_from_blasting", acS).add_ingredient(akD).setXp(amQ).setOutput(
-        ajA).setCookingTime(amN)
-    config.shapeless_recipe("gold_ingot_from_gold_block").addInput(aiU, 1).setOutput(ajA).setGroup(ajA)
-    config.shaped_recipe("gold_ingot_from_nuggets").setEntries(aac, aia).setOutput(ajA).setGroup(ajA)
-    config.shapeless_recipe(aia).addInput(ajA, 1).setOutput(aia)
-    config.smelting_recipe("gold_nugget_from_blasting", acS).add_ingredient(aab).setXp(amP).setOutput(
-        aia).setCookingTime(amN)
-    config.smelting_recipe("gold_nugget_from_smelting").add_ingredient(aab).setXp(amP).setOutput(aia)
-    config.shapeless_recipe(alg).addInput(alm, 1).addInput(alA, 1).setOutput(alg)
-    config.shaped_recipe(aha).setEntries(abF, alg).setOutput(aha)
-    config.shaped_recipe(aeU).setEntries(aam, alg).setOutput(aeU)
-    config.shaped_recipe(ahf).setEntries(aak, alg).setOutput(ahf)
-    config.shaped_recipe(ahC).setEntries(aak, ajL).setEntries(alP, amc).setOutput(ahC).setGroup(alx)
-    config.shaped_recipe(akU).setEntries(abF, ajL).setEntries(abI, alb).setOutput(akU).setGroup(amJ)
-    config.shapeless_recipe("gray_bed_from_white_bed").addInput(ajS, 1).addInput(akB, 1).setOutput(akU).setGroup(akG)
-    config.shaped_recipe(aiw).setEntries(afd, ajL).setOutput(aiw).setGroup(alu)
-    config.shaped_recipe("gray_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, akB).setOutput(
-        aiw).setGroup(alu)
-    config.shapeless_recipe(acu).addInput(akB, 1).addInput(amw, 4).addInput(alN, 4).setOutput(acu).setGroup(aeJ)
-    config.shapeless_recipe(akB).addInput(ajX, 1).addInput(aka, 1).setOutput(akB)
-    config.smelting_recipe(abG).add_ingredient(aen).setXp(amP).setOutput(abG)
-    config.shaped_recipe(adc).setEntries(aae, amo).setEntries(aly, akB).setOutput(adc).setGroup(ags)
-    config.shaped_recipe(abi).setEntries(aak, adc).setOutput(abi).setGroup(ade)
-    config.shaped_recipe("gray_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly, akB).setOutput(
-        abi).setGroup(ade)
-    config.shaped_recipe(aen).setEntries(aae, aiZ).setEntries(aly, akB).setOutput(aen).setGroup(acT)
-    config.shapeless_recipe(ajL).addInput(akB, 1).addInput(aiV, 1).setOutput(ajL).setGroup(amy)
-    config.shaped_recipe(aht).setEntries(aak, ajK).setEntries(alP, amc).setOutput(aht).setGroup(alx)
-    config.shaped_recipe(akl).setEntries(abF, ajK).setEntries(abI, alb).setOutput(akl).setGroup(amJ)
-    config.shapeless_recipe("green_bed_from_white_bed").addInput(ajS, 1).addInput(ako, 1).setOutput(akl).setGroup(akG)
-    config.shaped_recipe(ahw).setEntries(afd, ajK).setOutput(ahw).setGroup(alu)
-    config.shaped_recipe("green_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, ako).setOutput(
-        ahw).setGroup(alu)
-    config.shapeless_recipe(aca).addInput(ako, 1).addInput(amw, 4).addInput(alN, 4).setOutput(aca).setGroup(aeJ)
-    config.smelting_recipe(ako).add_ingredient("cactus").setXp(amQ).setOutput(ako)
-    config.smelting_recipe(abk).add_ingredient(adT).setXp(amP).setOutput(abk)
-    config.shaped_recipe(acP).setEntries(aae, amo).setEntries(aly, ako).setOutput(acP).setGroup(ags)
-    config.shaped_recipe(aaS).setEntries(aak, acP).setOutput(aaS).setGroup(ade)
-    config.shaped_recipe("green_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                     ako).setOutput(
-        aaS).setGroup(ade)
-    config.shaped_recipe(adT).setEntries(aae, aiZ).setEntries(aly, ako).setOutput(adT).setGroup(acT)
-    config.shapeless_recipe(ajK).addInput(ako, 1).addInput(aiV, 1).setOutput(ajK).setGroup(amy)
-    config.shaped_recipe(ajo).setEntries(afj, amc).setEntries(alL, aiX).setEntries(afe, alb).setOutput(ajo)
-    config.shaped_recipe(akm).setEntries(aac, alZ).setOutput(akm)
-    config.shaped_recipe(aay).setEntries(afd, ajw).setOutput(aay)
-    config.shaped_recipe(aev).setEntries(aar, akd).setOutput(aev)
-    config.shaped_recipe(aif).setEntries(aar, agJ).setOutput(aif)
-    config.shapeless_recipe(agJ).addInput(aif, 1).addInput(agZ, 4).setOutput(agJ)
-    config.shaped_recipe(alK).setEntries(aly, amj).setEntries([(0, 0), (0, 1), (1, 2), (2, 0), (2, 1)], ajw).setOutput(
-        alK)
-    config.shaped_recipe(aeA).setEntries(alG, alK).setEntries(alJ, akx).setOutput(aeA)
-    config.shaped_recipe(akv).setEntries(afy, amc).setEntries(abN, ajw).setOutput(akv)
-    config.shaped_recipe(ajO).setEntries(aak, ajw).setOutput(ajO)
-    config.shaped_recipe(ajm).setEntries(aac, ajw).setOutput(ajm)
-    config.shaped_recipe(ajg).setEntries(aas, ajw).setOutput(ajg)
-    config.shaped_recipe(aeC).setEntries(aad, ajw).setOutput(aeC)
-    config.shaped_recipe(akg).setEntries(aan, ajw).setOutput(akg)
-    config.shaped_recipe(ahP).setEntries(aao, ajw).setOutput(ahP)
-    config.shaped_recipe(akt).setEntries(afy, amc).setEntries(afd, ajw).setOutput(akt)
-    config.smelting_recipe(ajw).add_ingredient(akW).setXp(amM).setOutput(ajw)
-    config.smelting_recipe("iron_ingot_from_blasting", acS).add_ingredient(akW).setXp(amM).setOutput(
-        ajw).setCookingTime(amN)
-    config.shapeless_recipe("iron_ingot_from_iron_block").addInput(ajm, 1).setOutput(ajw).setGroup(ajw)
-    config.shaped_recipe("iron_ingot_from_nuggets").setEntries(aac, ahG).setOutput(ajw).setGroup(ajw)
-    config.shaped_recipe(agt).setEntries(aag, ajw).setOutput(agt)
-    config.shapeless_recipe(ahG).addInput(ajw, 1).setOutput(ahG)
-    config.smelting_recipe("iron_nugget_from_blasting", acS).add_ingredient(aaa).setXp(amP).setOutput(
-        ahG).setCookingTime(amN)
-    config.smelting_recipe("iron_nugget_from_smelting").add_ingredient(aaa).setXp(amP).setOutput(ahG)
-    config.shaped_recipe(agS).setEntries(afy, amc).setEntries(abF, ajw).setOutput(agS)
-    config.shaped_recipe(aic).setEntries(afm, amc).setEntries(alG, ajw).setOutput(aic)
-    config.shaped_recipe(ajz).setEntries(alW, amc).setEntries(aeT, ajw).setOutput(ajz)
-    config.shaped_recipe(agf).setEntries(aar, ajw).setOutput(agf)
-    config.shaped_recipe(ajs).setEntries(aae, amc).setEntries(aly, alk).setOutput(ajs)
-    config.shaped_recipe(afv).setEntries(alG, "carved_pumpkin").setEntries(alJ, ama).setOutput(afv)
-    config.shaped_recipe(alh).setEntries(aae, alb).setEntries(aly, alj).setOutput(alh)
-    config.shaped_recipe(ais).setEntries(aap, afM).setOutput(ais).setGroup(amr)
-    config.shapeless_recipe(agl).addInput(afM, 1).setOutput(agl).setGroup(ago)
-    config.shaped_recipe(aio).setEntries(aan, afM).setOutput(aio).setGroup(aie)
-    config.shaped_recipe(ahs).setEntries(aeQ, amc).setEntries(aas, afM).setOutput(ahs).setGroup(ahk)
-    config.shaped_recipe(adD).setEntries(aas, amc).setEntries(aeQ, afM).setOutput(adD).setGroup(adE)
-    config.shapeless_recipe(afM).addInput("#jungle_logs", 1).setOutput(afM).setGroup(alz)
-    config.shaped_recipe(acd).setEntries(afd, afM).setOutput(acd).setGroup(abS)
-    config.shaped_recipe(aig).setEntries(aak, afM).setEntries(alP, amc).setOutput(aig)
-    config.shaped_recipe(ahT).setEntries(abF, afM).setOutput(ahT).setGroup(aip)
-    config.shaped_recipe(agm).setEntries(aam, afM).setOutput(agm).setGroup(afX)
-    config.shaped_recipe(aeu).setEntries(aak, afM).setOutput(aeu).setGroup(aer)
-    config.shaped_recipe(ahQ).setEntries(aar, "jungle_log").setOutput(ahQ).setGroup(amB)
-    config.shaped_recipe(alw).setEntries(aai, amc).setOutput(alw)
-    config.shaped_recipe(alc).setEntries(aly, ama).setEntries(aae, ahG).setOutput(alc)
-    config.shaped_recipe(ahN).setEntries(aac, agR).setOutput(ahN)
-    config.smelting_recipe("lapis_from_blasting", acS).add_ingredient(ajM).setXp(amO).setOutput(agR).setCookingTime(amN)
-    config.smelting_recipe("lapis_from_smelting").add_ingredient(ajM).setXp(amO).setOutput(agR)
-    config.shapeless_recipe(agR).addInput(ahN, 1).setOutput(agR)
-    config.shaped_recipe(amC).setEntries([(0, 0), (0, 1), (1, 0), (2, 2)], alR).setEntries(aly, aiT).setOutput(amC)
-    config.shaped_recipe(alk).setEntries(aar, "rabbit_hide").setOutput(alk)
-    config.shaped_recipe(agE).setEntries(aas, alk).setOutput(agE)
-    config.shaped_recipe(acX).setEntries(aad, alk).setOutput(acX)
-    config.shaped_recipe(afg).setEntries(aao, alk).setOutput(afg)
-    config.shaped_recipe(acM).setEntries(aai, alk).setOutput(acM)
-    config.shaped_recipe(adR).setEntries(aag, alk).setOutput(adR)
-    config.shaped_recipe(als).setEntries([(0, 0), (1, 0), (1, 2), (2, 0)], afK).setEntries(aly, akf).setOutput(als)
-    config.shaped_recipe(amd).setEntries(alJ, ahK).setEntries(alG, amc).setOutput(amd)
-    config.shaped_recipe(adz).setEntries(aak, aew).setEntries(alP, amc).setOutput(adz).setGroup(alx)
-    config.shaped_recipe(afa).setEntries(abF, aew).setEntries(abI, alb).setOutput(afa).setGroup(amJ)
-    config.shapeless_recipe("light_blue_bed_from_white_bed").addInput(ajS, 1).addInput(aeR, 1).setOutput(afa).setGroup(
-        akG)
-    config.shaped_recipe(adL).setEntries(afd, aew).setOutput(adL).setGroup(alu)
-    config.shaped_recipe("light_blue_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, aeR).setOutput(
-        adL).setGroup(alu)
-    config.shapeless_recipe(aaD).addInput(aeR, 1).addInput(amw, 4).addInput(alN, 4).setOutput(aaD).setGroup(aeJ)
-    config.shapeless_recipe("light_blue_dye_from_blue_orchid").addInput("blue_orchid", 1).setOutput(aeR).setGroup(aeR)
-    config.shapeless_recipe("light_blue_dye_from_blue_white_dye").addInput(akr, 1).addInput(aka, 1).setOutput(
-        aeR).setGroup(aeR)
-    config.smelting_recipe(aaB).add_ingredient(acg).setXp(amP).setOutput(aaB)
-    config.shaped_recipe(aaQ).setEntries(aae, amo).setEntries(aly, aeR).setOutput(aaQ).setGroup(ags)
-    config.shaped_recipe(aax).setEntries(aak, aaQ).setOutput(aax).setGroup(ade)
-    config.shaped_recipe("light_blue_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                          aeR).setOutput(
-        aax).setGroup(ade)
-    config.shaped_recipe(acg).setEntries(aae, aiZ).setEntries(aly, aeR).setOutput(acg).setGroup(acT)
-    config.shapeless_recipe(aew).addInput(aeR, 1).addInput(aiV, 1).setOutput(aew).setGroup(amy)
-    config.shaped_recipe(adI).setEntries(aak, aeE).setEntries(alP, amc).setOutput(adI).setGroup(alx)
-    config.shaped_recipe(aeY).setEntries(abF, aeE).setEntries(abI, alb).setOutput(aeY).setGroup(amJ)
-    config.shapeless_recipe("light_gray_bed_from_white_bed").addInput(ajS, 1).addInput(afs, 1).setOutput(aeY).setGroup(
-        akG)
-    config.shaped_recipe(adF).setEntries(afd, aeE).setOutput(adF).setGroup(alu)
-    config.shaped_recipe("light_gray_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, afs).setOutput(
-        adF).setGroup(alu)
-    config.shapeless_recipe(aaF).addInput(afs, 1).addInput(amw, 4).addInput(alN, 4).setOutput(aaF).setGroup(aeJ)
-    config.shapeless_recipe("light_gray_dye_from_azure_bluet").addInput("azure_bluet", 1).setOutput(afs).setGroup(afs)
-    config.shapeless_recipe("light_gray_dye_from_black_white_dye").addInput(ajX, 1).addInput(aka, 2).setOutput(
-        afs).setGroup(afs)
-    config.shapeless_recipe("light_gray_dye_from_gray_white_dye").addInput(akB, 1).addInput(aka, 1).setOutput(
-        afs).setGroup(afs)
-    config.shapeless_recipe("light_gray_dye_from_oxeye_daisy").addInput("oxeye_daisy", 1).setOutput(afs).setGroup(afs)
-    config.shapeless_recipe("light_gray_dye_from_white_tulip").addInput("white_tulip", 1).setOutput(afs).setGroup(afs)
-    config.smelting_recipe(aaA).add_ingredient(abY).setXp(amP).setOutput(aaA)
-    config.shaped_recipe(aaM).setEntries(aae, amo).setEntries(aly, afs).setOutput(aaM).setGroup(ags)
-    config.shaped_recipe(aaz).setEntries(aak, aaM).setOutput(aaz).setGroup(ade)
-    config.shaped_recipe("light_gray_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                          afs).setOutput(
-        aaz).setGroup(ade)
-    config.shaped_recipe(abY).setEntries(aae, aiZ).setEntries(aly, afs).setOutput(abY).setGroup(acT)
-    config.shapeless_recipe(aeE).addInput(afs, 1).addInput(aiV, 1).setOutput(aeE).setGroup(amy)
-    config.shaped_recipe(aaw).setEntries(afd, ajA).setOutput(aaw)
-    config.shaped_recipe(ahO).setEntries(aak, akp).setEntries(alP, amc).setOutput(ahO).setGroup(alx)
-    config.shaped_recipe(akP).setEntries(abF, akp).setEntries(abI, alb).setOutput(akP).setGroup(amJ)
-    config.shapeless_recipe("lime_bed_from_white_bed").addInput(ajS, 1).addInput(akR, 1).setOutput(akP).setGroup(akG)
-    config.shaped_recipe(aiM).setEntries(afd, akp).setOutput(aiM).setGroup(alu)
-    config.shaped_recipe("lime_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, akR).setOutput(
-        aiM).setGroup(alu)
-    config.shapeless_recipe(acG).addInput(akR, 1).addInput(amw, 4).addInput(alN, 4).setOutput(acG).setGroup(aeJ)
-    config.shapeless_recipe(akR).addInput(ako, 1).addInput(aka, 1).setOutput(akR)
-    config.smelting_recipe("lime_dye_from_smelting").add_ingredient("sea_pickle").setXp(amP).setOutput(akR)
-    config.smelting_recipe(abO).add_ingredient(aeK).setXp(amP).setOutput(abO)
-    config.shaped_recipe(acY).setEntries(aae, amo).setEntries(aly, akR).setOutput(acY).setGroup(ags)
-    config.shaped_recipe(aaZ).setEntries(aak, acY).setOutput(aaZ).setGroup(ade)
-    config.shaped_recipe("lime_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly, akR).setOutput(
-        aaZ).setGroup(ade)
-    config.shaped_recipe(aeK).setEntries(aae, aiZ).setEntries(aly, akR).setOutput(aeK).setGroup(acT)
-    config.shapeless_recipe(akp).addInput(akR, 1).addInput(aiV, 1).setOutput(akp).setGroup(amy)
-    config.shaped_recipe(amA).setEntries(afu, alb).setEntries(afd, alR).setOutput(amA)
-    config.shaped_recipe(aeO).setEntries(aak, ahu).setEntries(alP, amc).setOutput(aeO).setGroup(alx)
-    config.shaped_recipe(ahI).setEntries(abF, ahu).setEntries(abI, alb).setOutput(ahI).setGroup(amJ)
-    config.shapeless_recipe("magenta_bed_from_white_bed").addInput(ajS, 1).addInput(ait, 1).setOutput(ahI).setGroup(akG)
-    config.shaped_recipe(afh).setEntries(afd, ahu).setOutput(afh).setGroup(alu)
-    config.shaped_recipe("magenta_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, ait).setOutput(
-        afh).setGroup(alu)
-    config.shapeless_recipe(aba).addInput(ait, 1).addInput(amw, 4).addInput(alN, 4).setOutput(aba).setGroup(aeJ)
-    config.shapeless_recipe("magenta_dye_from_allium").addInput("allium", 1).setOutput(ait).setGroup(ait)
-    config.shapeless_recipe("magenta_dye_from_blue_red_pink").addInput(akr, 1).addInput(ald, 1).addInput(akI,
+    aax = "heavy_weighted_pressure_plate"
+    aay = "light_blue_glazed_terracotta"
+    aaz = "light_gray_glazed_terracotta"
+    aaA = "minecraft:campfire_cooking"
+    aaB = "magenta_glazed_terracotta"
+    aaC = "purple_glazed_terracotta"
+    aaD = "light_gray_stained_glass"
+    aaE = "orange_glazed_terracotta"
+    aaF = "yellow_glazed_terracotta"
+    aaG = "light_blue_stained_glass"
+    aaH = "green_glazed_terracotta"
+    aaI = "white_glazed_terracotta"
+    aaJ = "dark_oak_pressure_plate"
+    aaK = "brown_glazed_terracotta"
+    aaL = "black_glazed_terracotta"
+    aaM = [(0, 1), (1, 1), (2, 1)]
+    aaN = [(0, 0), (0, 1), (1, 0)]
+    aaO = "cyan_glazed_terracotta"
+    aaP = "lime_glazed_terracotta"
+    aaQ = "pink_glazed_terracotta"
+    aaR = "glistering_melon_slice"
+    aaS = "chiseled_red_sandstone"
+    aaT = "gray_glazed_terracotta"
+    aaU = "blue_glazed_terracotta"
+    aaV = "creeper_banner_pattern"
+    aaW = [(0, 1), (1, 0), (2, 1)]
+    aaX = [(0, 2), (1, 2), (2, 2)]
+    aaY = [(0, 0), (1, 1), (2, 0)]
+    aaZ = [(0, 0), (1, 0), (2, 0)]
+    aba = "red_glazed_terracotta"
+    abb = "acacia_pressure_plate"
+    abc = "chiseled_quartz_block"
+    abd = "mojang_banner_pattern"
+    abe = "light_gray_terracotta"
+    abf = "light_blue_terracotta"
+    abg = "chiseled_stone_bricks"
+    abh = "magenta_stained_glass"
+    abi = "wooden_pressure_plate"
+    abj = "flower_banner_pattern"
+    abk = "spruce_pressure_plate"
+    abl = "jungle_pressure_plate"
+    abm = "cracked_stone_bricks"
+    abn = "purple_stained_glass"
+    abo = "orange_stained_glass"
+    abp = "smooth_red_sandstone"
+    abq = "birch_pressure_plate"
+    abr = "skull_banner_pattern"
+    abs = "fermented_spider_eye"
+    abt = "stone_pressure_plate"
+    abu = "yellow_stained_glass"
+    abv = "brown_stained_glass"
+    abw = "popped_chorus_fruit"
+    abx = "black_stained_glass"
+    aby = "dark_oak_fence_gate"
+    abz = "green_stained_glass"
+    abA = "white_stained_glass"
+    abB = "leather_horse_armor"
+    abC = "stained_glass_pane"
+    abD = "magenta_terracotta"
+    abE = "blue_stained_glass"
+    abF = "stained_terracotta"
+    abG = "chiseled_sandstone"
+    abH = "leather_chestplate"
+    abI = "red_sandstone_slab"
+    abJ = "mossy_stone_bricks"
+    abK = "cyan_stained_glass"
+    abL = "oak_pressure_plate"
+    abM = "pink_stained_glass"
+    abN = "diamond_chestplate"
+    abO = "gray_stained_glass"
+    abP = "minecraft:blasting"
+    abQ = "lime_stained_glass"
+    abR = "acacia_fence_gate"
+    abS = "prismarine_bricks"
+    abT = "wooden_fence_gate"
+    abU = "purple_terracotta"
+    abV = "nether_quartz_ore"
+    abW = "smooth_stone_slab"
+    abX = "light_gray_banner"
+    abY = "minecraft:smoking"
+    abZ = "nether_wart_block"
+    aca = "red_stained_glass"
+    acb = "spruce_fence_gate"
+    acc = "light_blue_banner"
+    acd = "red_nether_bricks"
+    ace = "mossy_cobblestone"
+    acf = "polished_andesite"
+    acg = "yellow_terracotta"
+    ach = "orange_terracotta"
+    aci = "daylight_detector"
+    acj = "carrot_on_a_stick"
+    ack = "cartography_table"
+    acl = "jungle_fence_gate"
+    acm = "cut_red_sandstone"
+    acn = "golden_chestplate"
+    aco = "end_stone_bricks"
+    acp = "prismarine_shard"
+    acq = "polished_granite"
+    acr = "polished_diorite"
+    acs = "enchanting_table"
+    act = "smooth_sandstone"
+    acu = "brown_terracotta"
+    acv = "leather_leggings"
+    acw = "stone_brick_slab"
+    acx = "birch_fence_gate"
+    acy = "white_terracotta"
+    acz = "furnace_minecart"
+    acA = "diamond_leggings"
+    acB = (2, "magenta_dye")
+    acC = "black_terracotta"
+    acD = "dried_kelp_block"
+    acE = "green_terracotta"
+    acF = "wooden_trapdoor"
+    acG = "golden_leggings"
+    acH = "light_blue_wool"
+    acI = "dark_prismarine"
+    acJ = "blue_terracotta"
+    acK = "flint_and_steel"
+    acL = "dark_oak_planks"
+    acM = "honeycomb_block"
+    acN = "hopper_minecart"
+    acO = "concrete_powder"
+    acP = "diamond_pickaxe"
+    acQ = "cyan_terracotta"
+    acR = "fletching_table"
+    acS = "gray_terracotta"
+    acT = "lime_terracotta"
+    acU = "dark_oak_button"
+    acV = "iron_chestplate"
+    acW = "cooked_porkchop"
+    acX = "pink_terracotta"
+    acY = "light_gray_wool"
+    acZ = "red_terracotta"
+    ada = [(1, 0), (1, 1)]
+    adb = "diamond_helmet"
+    adc = "crafting_table"
+    add = "wooden_pickaxe"
+    ade = "magenta_banner"
+    adf = "smithing_table"
+    adg = [(0, 1), (2, 1)]
+    adh = "redstone_block"
+    adi = [(0, 0), (1, 0)]
+    adj = [(0, 0), (1, 1)]
+    adk = "jack_o_lantern"
+    adl = "redstone_torch"
+    adm = "leather_helmet"
+    adn = [(0, 1), (0, 2)]
+    ado = "golden_pickaxe"
+    adp = "sandstone_slab"
+    adq = [(0, 1), (1, 0)]
+    adr = [(1, 0), (1, 2)]
+    ads = "diamond_shovel"
+    adt = [(1, 1), (1, 2)]
+    adu = "light_gray_dye"
+    adv = [(0, 0), (2, 0)]
+    adw = "light_blue_bed"
+    adx = "chest_minecart"
+    ady = "cooked_chicken"
+    adz = [(0, 1), (1, 1)]
+    adA = [(0, 0), (0, 1)]
+    adB = "light_gray_bed"
+    adC = "oak_fence_gate"
+    adD = "glowstone_dust"
+    adE = "light_blue_dye"
+    adF = "orange_banner"
+    adG = "writable_book"
+    adH = "#wooden_slabs"
+    adI = "golden_shovel"
+    adJ = "jungle_button"
+    adK = "diamond_block"
+    adL = "emerald_block"
+    adM = "golden_helmet"
+    adN = "cooked_rabbit"
+    adO = "stone_pickaxe"
+    adP = "wooden_stairs"
+    adQ = "blast_furnace"
+    adR = "yellow_banner"
+    adS = "acacia_button"
+    adT = "nether_bricks"
+    adU = "cut_sandstone"
+    adV = "iron_trapdoor"
+    adW = "leather_boots"
+    adX = (2, "pink_dye")
+    adY = "red_sandstone"
+    adZ = "wooden_shovel"
+    aea = "sticky_piston"
+    aeb = "turtle_helmet"
+    aec = "tripwire_hook"
+    aed = "stained_glass"
+    aee = "cooked_mutton"
+    aef = "mushroom_stew"
+    aeg = "acacia_planks"
+    aeh = "spruce_planks"
+    aei = "smooth_quartz"
+    aej = "spruce_button"
+    aek = "iron_leggings"
+    ael = "cooked_salmon"
+    aem = "diamond_boots"
+    aen = "purple_banner"
+    aeo = "diamond_sword"
+    aep = "trapped_chest"
+    aeq = "dark_oak_boat"
+    aer = "redstone_lamp"
+    aes = "jungle_planks"
+    aet = "purpur_pillar"
+    aeu = "brewing_stand"
+    aev = "golden_carrot"
+    aew = "beetroot_soup"
+    aex = "wooden_button"
+    aey = "birch_planks"
+    aez = "green_banner"
+    aeA = "black_banner"
+    aeB = "birch_button"
+    aeC = "stone_button"
+    aeD = "lapis_lazuli"
+    aeE = "smooth_stone"
+    aeF = "quartz_block"
+    aeG = "iron_pickaxe"
+    aeH = "golden_apple"
+    aeI = "white_banner"
+    aeJ = "baked_potato"
+    aeK = "golden_sword"
+    aeL = "wooden_sword"
+    aeM = "honey_bottle"
+    aeN = "magenta_wool"
+    aeO = "golden_boots"
+    aeP = "stone_bricks"
+    aeQ = "stone_shovel"
+    aeR = "wooden_fence"
+    aeS = "tnt_minecart"
+    aeT = "brown_banner"
+    aeU = "redstone_ore"
+    aeV = "nether_brick"
+    aeW = "white_carpet"
+    aeX = "pumpkin_pie"
+    aeY = "purpur_slab"
+    aeZ = "diamond_axe"
+    afa = "honey_block"
+    afb = "emerald_ore"
+    afc = "lapis_block"
+    afd = "lime_banner"
+    afe = "diamond_hoe"
+    aff = "rabbit_stew"
+    afg = "fishing_rod"
+    afh = "wooden_slab"
+    afi = "quartz_slab"
+    afj = "cocoa_beans"
+    afk = "wooden_door"
+    afl = "gray_banner"
+    afm = "magenta_dye"
+    afn = "gold_nugget"
+    afo = "blue_banner"
+    afp = "slime_block"
+    afq = "nether_wart"
+    afr = "jungle_boat"
+    afs = "magma_block"
+    aft = "acacia_boat"
+    afu = "end_crystal"
+    afv = "magma_cream"
+    afw = "magenta_bed"
+    afx = "ender_chest"
+    afy = "pink_banner"
+    afz = "melon_seeds"
+    afA = "iron_nugget"
+    afB = "sea_lantern"
+    afC = "spruce_boat"
+    afD = "diamond_ore"
+    afE = "iron_helmet"
+    afF = "iron_shovel"
+    afG = "melon_slice"
+    afH = "yellow_wool"
+    afI = "cyan_banner"
+    afJ = "armor_stand"
+    afK = "orange_wool"
+    afL = "purple_wool"
+    afM = "shulker_box"
+    afN = "cooked_beef"
+    afO = "cobblestone"
+    afP = "stone_sword"
+    afQ = "stonecutter"
+    afR = "orange_bed"
+    afS = "wooden_hoe"
+    afT = "wooden_axe"
+    afU = "golden_hoe"
+    afV = "green_wool"
+    afW = "sugar_cane"
+    afX = "purple_bed"
+    afY = "flower_pot"
+    afZ = "red_banner"
+    aga = "packed_ice"
+    agb = "iron_sword"
+    agc = "iron_ingot"
+    agd = "dried_kelp"
+    age = "bone_block"
+    agf = "yellow_bed"
+    agg = "black_wool"
+    agh = "brown_wool"
+    agi = "gold_block"
+    agj = "glass_pane"
+    agk = "yellow_dye"
+    agl = "terracotta"
+    agm = "comparator"
+    agn = "oak_planks"
+    ago = "slime_ball"
+    agp = "prismarine"
+    agq = "birch_boat"
+    agr = "stone_slab"
+    ags = "gold_ingot"
+    agt = "iron_boots"
+    agu = "oak_button"
+    agv = "cooked_cod"
+    agw = "orange_dye"
+    agx = "snow_block"
+    agy = "iron_block"
+    agz = "item_frame"
+    agA = "grindstone"
+    agB = "golden_axe"
+    agC = "white_wool"
+    agD = "coal_block"
+    agE = "purple_dye"
+    agF = "note_block"
+    agG = "sandstone"
+    agH = "green_dye"
+    agI = "black_dye"
+    agJ = "ender_eye"
+    agK = "brown_bed"
+    agL = "stone_hoe"
+    agM = "stone_axe"
+    agN = "composter"
+    agO = "dispenser"
+    agP = "white_bed"
+    agQ = "brown_dye"
+    agR = "black_bed"
+    agS = "bone_meal"
+    agT = "clay_ball"
+    agU = "blue_wool"
+    agV = "pink_wool"
+    agW = "gray_wool"
+    agX = "lime_wool"
+    agY = "blaze_rod"
+    agZ = "glowstone"
+    aha = "cyan_wool"
+    ahb = "white_dye"
+    ahc = "bookshelf"
+    ahd = "gunpowder"
+    ahe = "hay_block"
+    ahf = "lapis_ore"
+    ahg = "honeycomb"
+    ahh = "green_bed"
+    ahi = "cyan_bed"
+    ahj = "redstone"
+    ahk = "lime_bed"
+    ahl = "gray_bed"
+    ahm = "iron_hoe"
+    ahn = "gold_ore"
+    aho = "cauldron"
+    ahp = "coal_ore"
+    ahq = "painting"
+    ahr = "minecart"
+    ahs = "blue_dye"
+    aht = "porkchop"
+    ahu = "pink_bed"
+    ahv = "obsidian"
+    ahw = "red_wool"
+    ahx = "bonemeal"
+    ahy = "oak_boat"
+    ahz = "dyed_bed"
+    ahA = "lime_dye"
+    ahB = "andesite"
+    ahC = "cyan_dye"
+    ahD = "pink_dye"
+    ahE = "iron_axe"
+    ahF = "blue_ice"
+    ahG = "blue_bed"
+    ahH = "observer"
+    ahI = "crossbow"
+    ahJ = "repeater"
+    ahK = "charcoal"
+    ahL = "campfire"
+    ahM = "iron_ore"
+    ahN = "gray_dye"
+    ahO = "chicken"
+    ahP = "dropper"
+    ahQ = "red_bed"
+    ahR = "lectern"
+    ahS = "feather"
+    ahT = "red_dye"
+    ahU = "granite"
+    ahV = "compass"
+    ahW = "emerald"
+    ahX = "#planks"
+    ahY = "diorite"
+    ahZ = "leather"
+    aia = "beehive"
+    aib = "diamond"
+    aic = "lantern"
+    aid = "conduit"
+    aie = "furnace"
+    aif = "jukebox"
+    aig = "string"
+    aih = [(0, 0)]
+    aii = "smoker"
+    aij = "bucket"
+    aik = "beacon"
+    ail = "bamboo"
+    aim = "carpet"
+    ain = [(0, 1)]
+    aio = "gravel"
+    aip = "banner"
+    aiq = "mutton"
+    air = "potato"
+    ais = "carrot"
+    ait = "piston"
+    aiu = "hopper"
+    aiv = "sponge"
+    aiw = "quartz"
+    aix = "salmon"
+    aiy = "shield"
+    aiz = "bricks"
+    aiA = "sticks"
+    aiB = [(1, 0)]
+    aiC = [(1, 1)]
+    aiD = "shears"
+    aiE = [(0, 2)]
+    aiF = "barrel"
+    aiG = "planks"
+    aiH = [(1, 2)]
+    aiI = "rabbit"
+    aiJ = "sugar"
+    aiK = "wheat"
+    aiL = "lever"
+    aiM = "anvil"
+    aiN = "torch"
+    aiO = "chest"
+    aiP = "arrow"
+    aiQ = "melon"
+    aiR = "clock"
+    aiS = "#logs"
+    aiT = "bread"
+    aiU = "paper"
+    aiV = "brick"
+    aiW = "flint"
+    aiX = "stone"
+    aiY = "stick"
+    aiZ = "glass"
+    aja = "bark"
+    ajb = "book"
+    ajc = "loom"
+    ajd = "wool"
+    aje = "coal"
+    ajf = "sand"
+    ajg = "cake"
+    ajh = "kelp"
+    aji = "clay"
+    ajj = "beef"
+    ajk = "boat"
+    ajl = "egg"
+    ajm = "cod"
+    ajn = "tnt"
+    ajo = "bow"
+    ajp = "bed"
+    ajq = "map"
+    ajr = 0.35
+    ajs = 0.15
+    ajt = 0.2
+    aju = 1.0
+    ajv = 0.7
+    ajw = 0.1
+    ajx = 600
+    ajy = 100
+    config.shaped_recipe(aft).setEntries(aao, aeg).setOutput(aft).setGroup(ajk)
+    config.shapeless_recipe(adS).addInput(aeg, 1).setOutput(adS).setGroup(aex)
+    config.shaped_recipe("acacia_door").setEntries(aal, aeg).setOutput((3, "acacia_door")).setGroup(afk)
+    config.shaped_recipe("acacia_fence").setEntries(ada, aiY).setEntries(aas, aeg).setOutput(
+        (3, "acacia_fence")).setGroup(aeR)
+    config.shaped_recipe(abR).setEntries(aas, aiY).setEntries(ada, aeg).setOutput(abR).setGroup(abT)
+    config.shapeless_recipe(aeg).addInput("#acacia_logs", 1).setOutput((4, aeg)).setGroup(aiG)
+    config.shaped_recipe(abb).setEntries(adi, aeg).setOutput(abb).setGroup(abi)
+    config.shaped_recipe("acacia_sign").setEntries(aan, aeg).setEntries(aiH, aiY).setOutput((3, "acacia_sign"))
+    config.shaped_recipe("acacia_slab").setEntries(aaZ, aeg).setOutput((6, "acacia_slab")).setGroup(afh)
+    config.shaped_recipe("acacia_stairs").setEntries(aak, aeg).setOutput((4, "acacia_stairs")).setGroup(adP)
+    config.shaped_recipe("acacia_trapdoor").setEntries(aan, aeg).setOutput((2, "acacia_trapdoor")).setGroup(acF)
+    config.shaped_recipe("acacia_wood").setEntries(aar, "acacia_log").setOutput((3, "acacia_wood")).setGroup(aja)
+    config.shaped_recipe("activator_rail").setEntries(aiC, adl).setEntries(adr, aiY).setEntries(aaj, agc).setOutput(
+        (6, "activator_rail"))
+    config.shapeless_recipe(ahB).addInput(ahY, 1).addInput(afO, 1).setOutput((2, ahB))
+    config.shaped_recipe("andesite_slab").setEntries(aaZ, ahB).setOutput((6, "andesite_slab"))
+    config.shaped_recipe("andesite_stairs").setEntries(aak, ahB).setOutput((4, "andesite_stairs"))
+    config.shaped_recipe("andesite_wall").setEntries(aan, ahB).setOutput((6, "andesite_wall"))
+    config.shaped_recipe(aiM).setEntries(aaZ, agy).setEntries(aat, agc).setOutput(aiM)
+    config.shaped_recipe(afJ).setEntries([(0, 0), (0, 2), (1, 0), (1, 1), (2, 0), (2, 2)], aiY).setEntries(aiH,
+                                                                                                           abW).setOutput(
+        afJ)
+    config.shaped_recipe(aiP).setEntries(ain, aiY).setEntries(aih, aiW).setEntries(aiE, ahS).setOutput((4, aiP))
+    config.smelting_recipe(aeJ).add_ingredient(air).setXp(ajr).setOutput(aeJ)
+    config.smelting_recipe("baked_potato_from_campfire_cooking", aaA).add_ingredient(air).setXp(ajr).setOutput(
+        aeJ).setCookingTime(ajx)
+    config.smelting_recipe("baked_potato_from_smoking", abY).add_ingredient(air).setXp(ajr).setOutput(
+        aeJ).setCookingTime(ajy)
+    config.shaped_recipe(aiF).setEntries(aaj, ahX).setEntries(adr, adH).setOutput(aiF)
+    config.shaped_recipe(aik).setEntries(aiC, "nether_star").setEntries(aap, aiZ).setEntries(aaX, ahv).setOutput(aik)
+    config.shaped_recipe(aia).setEntries(aam, ahX).setEntries(aaM, ahg).setOutput(aia)
+    config.shapeless_recipe(aew).addInput("bowl", 1).addInput("beetroot", 6).setOutput(aew)
+    config.shaped_recipe(agq).setEntries(aao, aey).setOutput(agq).setGroup(ajk)
+    config.shapeless_recipe(aeB).addInput(aey, 1).setOutput(aeB).setGroup(aex)
+    config.shaped_recipe("birch_door").setEntries(aal, aey).setOutput((3, "birch_door")).setGroup(afk)
+    config.shaped_recipe("birch_fence").setEntries(ada, aiY).setEntries(aas, aey).setOutput(
+        (3, "birch_fence")).setGroup(aeR)
+    config.shaped_recipe(acx).setEntries(aas, aiY).setEntries(ada, aey).setOutput(acx).setGroup(abT)
+    config.shapeless_recipe(aey).addInput("#birch_logs", 1).setOutput((4, aey)).setGroup(aiG)
+    config.shaped_recipe(abq).setEntries(adi, aey).setOutput(abq).setGroup(abi)
+    config.shaped_recipe("birch_sign").setEntries(aan, aey).setEntries(aiH, aiY).setOutput((3, "birch_sign"))
+    config.shaped_recipe("birch_slab").setEntries(aaZ, aey).setOutput((6, "birch_slab")).setGroup(afh)
+    config.shaped_recipe("birch_stairs").setEntries(aak, aey).setOutput((4, "birch_stairs")).setGroup(adP)
+    config.shaped_recipe("birch_trapdoor").setEntries(aan, aey).setOutput((2, "birch_trapdoor")).setGroup(acF)
+    config.shaped_recipe("birch_wood").setEntries(aar, "birch_log").setOutput((3, "birch_wood")).setGroup(aja)
+    config.shaped_recipe(aeA).setEntries(aan, agg).setEntries(aiH, aiY).setOutput(aeA).setGroup(aip)
+    config.shaped_recipe(agR).setEntries(aaZ, agg).setEntries(aaM, ahX).setOutput(agR).setGroup(ajp)
+    config.shapeless_recipe("black_bed_from_white_bed").addInput(agP, 1).addInput(agI, 1).setOutput(agR).setGroup(ahz)
+    config.shaped_recipe("black_carpet").setEntries(adi, agg).setOutput((3, "black_carpet")).setGroup(aim)
+    config.shaped_recipe("black_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, agI).setOutput(
+        (8, "black_carpet")).setGroup(aim)
+    config.shapeless_recipe("black_concrete_powder").addInput(agI, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "black_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe(agI).addInput("ink_sac", 1).setOutput(agI).setGroup(agI)
+    config.shapeless_recipe("black_dye_from_wither_rose").addInput("wither_rose", 1).setOutput(agI).setGroup(agI)
+    config.smelting_recipe(aaL).add_ingredient(acC).setXp(ajw).setOutput(aaL)
+    config.shaped_recipe(abx).setEntries(aad, aiZ).setEntries(aiC, agI).setOutput((8, abx)).setGroup(aed)
+    config.shaped_recipe("black_stained_glass_pane").setEntries(aan, abx).setOutput(
+        (16, "black_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("black_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                     agI).setOutput(
+        (8, "black_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acC).setEntries(aad, agl).setEntries(aiC, agI).setOutput((8, acC)).setGroup(abF)
+    config.shapeless_recipe(agg).addInput(agI, 1).addInput(agC, 1).setOutput(agg).setGroup(ajd)
+    config.shaped_recipe(adQ).setEntries(aaX, aeE).setEntries(aiC, aie).setEntries(aap, agc).setOutput(adQ)
+    config.shapeless_recipe("blaze_powder").addInput(agY, 1).setOutput((2, "blaze_powder"))
+    config.shaped_recipe(afo).setEntries(aan, agU).setEntries(aiH, aiY).setOutput(afo).setGroup(aip)
+    config.shaped_recipe(ahG).setEntries(aaZ, agU).setEntries(aaM, ahX).setOutput(ahG).setGroup(ajp)
+    config.shapeless_recipe("blue_bed_from_white_bed").addInput(agP, 1).addInput(ahs, 1).setOutput(ahG).setGroup(ahz)
+    config.shaped_recipe("blue_carpet").setEntries(adi, agU).setOutput((3, "blue_carpet")).setGroup(aim)
+    config.shaped_recipe("blue_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, ahs).setOutput(
+        (8, "blue_carpet")).setGroup(aim)
+    config.shapeless_recipe("blue_concrete_powder").addInput(ahs, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "blue_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe(ahs).addInput(aeD, 1).setOutput(ahs).setGroup(ahs)
+    config.shapeless_recipe("blue_dye_from_cornflower").addInput("cornflower", 1).setOutput(ahs).setGroup(ahs)
+    config.smelting_recipe(aaU).add_ingredient(acJ).setXp(ajw).setOutput(aaU)
+    config.shaped_recipe(ahF).setEntries(aac, aga).setOutput(ahF)
+    config.shaped_recipe(abE).setEntries(aad, aiZ).setEntries(aiC, ahs).setOutput((8, abE)).setGroup(aed)
+    config.shaped_recipe("blue_stained_glass_pane").setEntries(aan, abE).setOutput(
+        (16, "blue_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("blue_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC, ahs).setOutput(
+        (8, "blue_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acJ).setEntries(aad, agl).setEntries(aiC, ahs).setOutput((8, acJ)).setGroup(abF)
+    config.shapeless_recipe(agU).addInput(ahs, 1).addInput(agC, 1).setOutput(agU).setGroup(ajd)
+    config.shaped_recipe(age).setEntries(aac, agS).setOutput(age)
+    config.shapeless_recipe(agS).addInput("bone", 1).setOutput((3, agS)).setGroup(ahx)
+    config.shapeless_recipe("bone_meal_from_bone_block").addInput(age, 1).setOutput((9, agS)).setGroup(ahx)
+    config.shapeless_recipe(ajb).addInput(aiU, 3).addInput(ahZ, 1).setOutput(ajb)
+    config.shaped_recipe(ahc).setEntries(aam, ahX).setEntries(aaM, ajb).setOutput(ahc)
+    config.shaped_recipe(ajo).setEntries([(0, 1), (1, 0), (1, 2)], aiY).setEntries([(2, 0), (2, 1), (2, 2)],
+                                                                                   aig).setOutput(ajo)
+    config.shaped_recipe("bowl").setEntries(aaY, ahX).setOutput((4, "bowl"))
+    config.shaped_recipe(aiT).setEntries(aaZ, aiK).setOutput(aiT)
+    config.shaped_recipe(aeu).setEntries(aiB, agY).setEntries(aaM, afO).setOutput(aeu)
+    config.smelting_recipe(aiV).add_ingredient(agT).setXp(0.3).setOutput(aiV)
+    config.shaped_recipe(aiz).setEntries(aar, aiV).setOutput(aiz)
+    config.shaped_recipe("brick_slab").setEntries(aaZ, aiz).setOutput((6, "brick_slab"))
+    config.shaped_recipe("brick_stairs").setEntries(aak, aiz).setOutput((4, "brick_stairs"))
+    config.shaped_recipe("brick_wall").setEntries(aan, aiz).setOutput((6, "brick_wall"))
+    config.shaped_recipe(aeT).setEntries(aan, agh).setEntries(aiH, aiY).setOutput(aeT).setGroup(aip)
+    config.shaped_recipe(agK).setEntries(aaZ, agh).setEntries(aaM, ahX).setOutput(agK).setGroup(ajp)
+    config.shapeless_recipe("brown_bed_from_white_bed").addInput(agP, 1).addInput(agQ, 1).setOutput(agK).setGroup(ahz)
+    config.shaped_recipe("brown_carpet").setEntries(adi, agh).setOutput((3, "brown_carpet")).setGroup(aim)
+    config.shaped_recipe("brown_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, agQ).setOutput(
+        (8, "brown_carpet")).setGroup(aim)
+    config.shapeless_recipe("brown_concrete_powder").addInput(agQ, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "brown_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe(agQ).addInput(afj, 1).setOutput(agQ).setGroup(agQ)
+    config.smelting_recipe(aaK).add_ingredient(acu).setXp(ajw).setOutput(aaK)
+    config.shaped_recipe(abv).setEntries(aad, aiZ).setEntries(aiC, agQ).setOutput((8, abv)).setGroup(aed)
+    config.shaped_recipe("brown_stained_glass_pane").setEntries(aan, abv).setOutput(
+        (16, "brown_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("brown_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                     agQ).setOutput(
+        (8, "brown_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acu).setEntries(aad, agl).setEntries(aiC, agQ).setOutput((8, acu)).setGroup(abF)
+    config.shapeless_recipe(agh).addInput(agQ, 1).addInput(agC, 1).setOutput(agh).setGroup(ajd)
+    config.shaped_recipe(aij).setEntries(aaY, agc).setOutput(aij)
+    config.shaped_recipe(ajg).setEntries(aaZ, "milk_bucket").setEntries(adg, aiJ).setEntries(aaX, aiK).setEntries(aiC,
+                                                                                                                  ajl).setOutput(
+        ajg)
+    config.shaped_recipe(ahL).setEntries(aaX, aiS).setEntries(aaW, aiY).setEntries(aiC, "#coals").setOutput(ahL)
+    config.shaped_recipe(acj).setEntries(aih, afg).setEntries(aiC, ais).setOutput(acj)
+    config.shaped_recipe(ack).setEntries(aau, ahX).setEntries(adi, aiU).setOutput(ack)
+    config.shaped_recipe(aho).setEntries(aag, agc).setOutput(aho)
+    config.smelting_recipe(ahK).add_ingredient(aiS).setXp(ajs).setOutput(ahK)
+    config.shaped_recipe(aiO).setEntries(aad, ahX).setOutput(aiO)
+    config.shaped_recipe(adx).setEntries(aih, aiO).setEntries(ain, ahr).setOutput(adx)
+    config.shaped_recipe(abc).setEntries(adA, afi).setOutput(abc)
+    config.shaped_recipe(aaS).setEntries(adA, abI).setOutput(aaS)
+    config.shaped_recipe(abG).setEntries(adA, adp).setOutput(abG)
+    config.shaped_recipe(abg).setEntries(adA, acw).setOutput(abg)
+    config.shaped_recipe(aji).setEntries(aar, agT).setOutput(aji)
+    config.shaped_recipe(aiR).setEntries(aav, ags).setEntries(aiC, ahj).setOutput(aiR)
+    config.shapeless_recipe(aje).addInput(agD, 1).setOutput((9, aje))
+    config.shaped_recipe(agD).setEntries(aac, aje).setOutput(agD)
+    config.smelting_recipe("coal_from_blasting", abP).add_ingredient(ahp).setXp(ajw).setOutput(aje).setCookingTime(ajy)
+    config.smelting_recipe("coal_from_smelting").add_ingredient(ahp).setXp(ajw).setOutput(aje)
+    config.shaped_recipe("coarse_dirt").setEntries(adj, "dirt").setEntries(adq, aio).setOutput((4, "coarse_dirt"))
+    config.shaped_recipe("cobblestone_slab").setEntries(aaZ, afO).setOutput((6, "cobblestone_slab"))
+    config.shaped_recipe("cobblestone_stairs").setEntries(aak, afO).setOutput((4, "cobblestone_stairs"))
+    config.shaped_recipe("cobblestone_wall").setEntries(aan, afO).setOutput((6, "cobblestone_wall"))
+    config.shaped_recipe(agm).setEntries(aaW, adl).setEntries(aiC, aiw).setEntries(aaX, aiX).setOutput(agm)
+    config.shaped_recipe(ahV).setEntries(aav, agc).setEntries(aiC, ahj).setOutput(ahV)
+    config.shaped_recipe(agN).setEntries(aag, adH).setOutput(agN)
+    config.shaped_recipe(aid).setEntries(aad, "nautilus_shell").setEntries(aiC, "heart_of_the_sea").setOutput(aid)
+    config.smelting_recipe(afN).add_ingredient(ajj).setXp(ajr).setOutput(afN)
+    config.smelting_recipe("cooked_beef_from_campfire_cooking", aaA).add_ingredient(ajj).setXp(ajr).setOutput(
+        afN).setCookingTime(ajx)
+    config.smelting_recipe("cooked_beef_from_smoking", abY).add_ingredient(ajj).setXp(ajr).setOutput(
+        afN).setCookingTime(ajy)
+    config.smelting_recipe(ady).add_ingredient(ahO).setXp(ajr).setOutput(ady)
+    config.smelting_recipe("cooked_chicken_from_campfire_cooking", aaA).add_ingredient(ahO).setXp(ajr).setOutput(
+        ady).setCookingTime(ajx)
+    config.smelting_recipe("cooked_chicken_from_smoking", abY).add_ingredient(ahO).setXp(ajr).setOutput(
+        ady).setCookingTime(ajy)
+    config.smelting_recipe(agv).add_ingredient(ajm).setXp(ajr).setOutput(agv)
+    config.smelting_recipe("cooked_cod_from_campfire_cooking", aaA).add_ingredient(ajm).setXp(ajr).setOutput(
+        agv).setCookingTime(ajx)
+    config.smelting_recipe("cooked_cod_from_smoking", abY).add_ingredient(ajm).setXp(ajr).setOutput(agv).setCookingTime(
+        ajy)
+    config.smelting_recipe(aee).add_ingredient(aiq).setXp(ajr).setOutput(aee)
+    config.smelting_recipe("cooked_mutton_from_campfire_cooking", aaA).add_ingredient(aiq).setXp(ajr).setOutput(
+        aee).setCookingTime(ajx)
+    config.smelting_recipe("cooked_mutton_from_smoking", abY).add_ingredient(aiq).setXp(ajr).setOutput(
+        aee).setCookingTime(ajy)
+    config.smelting_recipe(acW).add_ingredient(aht).setXp(ajr).setOutput(acW)
+    config.smelting_recipe("cooked_porkchop_from_campfire_cooking", aaA).add_ingredient(aht).setXp(ajr).setOutput(
+        acW).setCookingTime(ajx)
+    config.smelting_recipe("cooked_porkchop_from_smoking", abY).add_ingredient(aht).setXp(ajr).setOutput(
+        acW).setCookingTime(ajy)
+    config.smelting_recipe(adN).add_ingredient(aiI).setXp(ajr).setOutput(adN)
+    config.smelting_recipe("cooked_rabbit_from_campfire_cooking", aaA).add_ingredient(aiI).setXp(ajr).setOutput(
+        adN).setCookingTime(ajx)
+    config.smelting_recipe("cooked_rabbit_from_smoking", abY).add_ingredient(aiI).setXp(ajr).setOutput(
+        adN).setCookingTime(ajy)
+    config.smelting_recipe(ael).add_ingredient(aix).setXp(ajr).setOutput(ael)
+    config.smelting_recipe("cooked_salmon_from_campfire_cooking", aaA).add_ingredient(aix).setXp(ajr).setOutput(
+        ael).setCookingTime(ajx)
+    config.smelting_recipe("cooked_salmon_from_smoking", abY).add_ingredient(aix).setXp(ajr).setOutput(
+        ael).setCookingTime(ajy)
+    config.shaped_recipe("cookie").setEntries(adv, aiK).setEntries(aiB, afj).setOutput((8, "cookie"))
+    config.smelting_recipe(abm).add_ingredient(aeP).setXp(ajw).setOutput(abm)
+    config.shaped_recipe(adc).setEntries(aar, ahX).setOutput(adc)
+    config.shapeless_recipe(aaV).addInput(aiU, 1).addInput("creeper_head", 1).setOutput(aaV)
+    config.shaped_recipe(ahI).setEntries(adg, aig).setEntries([(0, 0), (1, 2), (2, 0)], aiY).setEntries(aiB,
+                                                                                                        agc).setEntries(
+        aiC, aec).setOutput(ahI)
+    config.shaped_recipe(acm).setEntries(aar, adY).setOutput((4, acm))
+    config.shaped_recipe("cut_red_sandstone_slab").setEntries(aaZ, acm).setOutput((6, "cut_red_sandstone_slab"))
+    config.shaped_recipe(adU).setEntries(aar, agG).setOutput((4, adU))
+    config.shaped_recipe("cut_sandstone_slab").setEntries(aaZ, adU).setOutput((6, "cut_sandstone_slab"))
+    config.shaped_recipe(afI).setEntries(aan, aha).setEntries(aiH, aiY).setOutput(afI).setGroup(aip)
+    config.shaped_recipe(ahi).setEntries(aaZ, aha).setEntries(aaM, ahX).setOutput(ahi).setGroup(ajp)
+    config.shapeless_recipe("cyan_bed_from_white_bed").addInput(agP, 1).addInput(ahC, 1).setOutput(ahi).setGroup(ahz)
+    config.shaped_recipe("cyan_carpet").setEntries(adi, aha).setOutput((3, "cyan_carpet")).setGroup(aim)
+    config.shaped_recipe("cyan_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, ahC).setOutput(
+        (8, "cyan_carpet")).setGroup(aim)
+    config.shapeless_recipe("cyan_concrete_powder").addInput(ahC, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "cyan_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe(ahC).addInput(ahs, 1).addInput(agH, 1).setOutput((2, ahC))
+    config.smelting_recipe(aaO).add_ingredient(acQ).setXp(ajw).setOutput(aaO)
+    config.shaped_recipe(abK).setEntries(aad, aiZ).setEntries(aiC, ahC).setOutput((8, abK)).setGroup(aed)
+    config.shaped_recipe("cyan_stained_glass_pane").setEntries(aan, abK).setOutput(
+        (16, "cyan_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("cyan_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC, ahC).setOutput(
+        (8, "cyan_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acQ).setEntries(aad, agl).setEntries(aiC, ahC).setOutput((8, acQ)).setGroup(abF)
+    config.shapeless_recipe(aha).addInput(ahC, 1).addInput(agC, 1).setOutput(aha).setGroup(ajd)
+    config.shaped_recipe(aeq).setEntries(aao, acL).setOutput(aeq).setGroup(ajk)
+    config.shapeless_recipe(acU).addInput(acL, 1).setOutput(acU).setGroup(aex)
+    config.shaped_recipe("dark_oak_door").setEntries(aal, acL).setOutput((3, "dark_oak_door")).setGroup(afk)
+    config.shaped_recipe("dark_oak_fence").setEntries(ada, aiY).setEntries(aas, acL).setOutput(
+        (3, "dark_oak_fence")).setGroup(aeR)
+    config.shaped_recipe(aby).setEntries(aas, aiY).setEntries(ada, acL).setOutput(aby).setGroup(abT)
+    config.shapeless_recipe(acL).addInput("#dark_oak_logs", 1).setOutput((4, acL)).setGroup(aiG)
+    config.shaped_recipe(aaJ).setEntries(adi, acL).setOutput(aaJ).setGroup(abi)
+    config.shaped_recipe("dark_oak_sign").setEntries(aan, acL).setEntries(aiH, aiY).setOutput((3, "dark_oak_sign"))
+    config.shaped_recipe("dark_oak_slab").setEntries(aaZ, acL).setOutput((6, "dark_oak_slab")).setGroup(afh)
+    config.shaped_recipe("dark_oak_stairs").setEntries(aak, acL).setOutput((4, "dark_oak_stairs")).setGroup(adP)
+    config.shaped_recipe("dark_oak_trapdoor").setEntries(aan, acL).setOutput((2, "dark_oak_trapdoor")).setGroup(acF)
+    config.shaped_recipe("dark_oak_wood").setEntries(aar, "dark_oak_log").setOutput((3, "dark_oak_wood")).setGroup(aja)
+    config.shaped_recipe(acI).setEntries(aad, acp).setEntries(aiC, agI).setOutput(acI)
+    config.shaped_recipe("dark_prismarine_slab").setEntries(aaZ, acI).setOutput((6, "dark_prismarine_slab"))
+    config.shaped_recipe("dark_prismarine_stairs").setEntries(aak, acI).setOutput((4, "dark_prismarine_stairs"))
+    config.shaped_recipe(aci).setEntries(aaM, aiw).setEntries(aaZ, aiZ).setEntries(aaX, adH).setOutput(aci)
+    config.shaped_recipe("detector_rail").setEntries(aiH, ahj).setEntries(aiC, abt).setEntries(aaj, agc).setOutput(
+        (6, "detector_rail"))
+    config.shapeless_recipe(aib).addInput(adK, 1).setOutput((9, aib))
+    config.shaped_recipe(aeZ).setEntries(adt, aiY).setEntries(aaN, aib).setOutput(aeZ)
+    config.shaped_recipe(adK).setEntries(aac, aib).setOutput(adK)
+    config.shaped_recipe(aem).setEntries(aas, aib).setOutput(aem)
+    config.shaped_recipe(abN).setEntries(aae, aib).setOutput(abN)
+    config.smelting_recipe("diamond_from_blasting", abP).add_ingredient(afD).setXp(aju).setOutput(aib).setCookingTime(
+        ajy)
+    config.smelting_recipe("diamond_from_smelting").add_ingredient(afD).setXp(aju).setOutput(aib)
+    config.shaped_recipe(adb).setEntries(aap, aib).setOutput(adb)
+    config.shaped_recipe(afe).setEntries(adt, aiY).setEntries(adi, aib).setOutput(afe)
+    config.shaped_recipe(acA).setEntries(aah, aib).setOutput(acA)
+    config.shaped_recipe(acP).setEntries(adt, aiY).setEntries(aaZ, aib).setOutput(acP)
+    config.shaped_recipe(ads).setEntries(adn, aiY).setEntries(aih, aib).setOutput(ads)
+    config.shaped_recipe(aeo).setEntries(aiE, aiY).setEntries(adA, aib).setOutput(aeo)
+    config.shaped_recipe(ahY).setEntries(adq, aiw).setEntries(adj, afO).setOutput((2, ahY))
+    config.shaped_recipe("diorite_slab").setEntries(aaZ, ahY).setOutput((6, "diorite_slab"))
+    config.shaped_recipe("diorite_stairs").setEntries(aak, ahY).setOutput((4, "diorite_stairs"))
+    config.shaped_recipe("diorite_wall").setEntries(aan, ahY).setOutput((6, "diorite_wall"))
+    config.shaped_recipe(agO).setEntries(aiH, ahj).setEntries(aah, afO).setEntries(aiC, ajo).setOutput(agO)
+    config.shapeless_recipe(agd).addInput(acD, 1).setOutput((9, agd))
+    config.shapeless_recipe(acD).addInput(agd, 9).setOutput(acD)
+    config.smelting_recipe("dried_kelp_from_campfire_cooking", aaA).add_ingredient(ajh).setXp(ajw).setOutput(
+        agd).setCookingTime(ajx)
+    config.smelting_recipe("dried_kelp_from_smelting").add_ingredient(ajh).setXp(ajw).setOutput(agd)
+    config.smelting_recipe("dried_kelp_from_smoking", abY).add_ingredient(ajh).setXp(ajw).setOutput(agd).setCookingTime(
+        ajy)
+    config.shaped_recipe(ahP).setEntries(aiH, ahj).setEntries(aah, afO).setOutput(ahP)
+    config.shapeless_recipe(ahW).addInput(adL, 1).setOutput((9, ahW))
+    config.shaped_recipe(adL).setEntries(aac, ahW).setOutput(adL)
+    config.smelting_recipe("emerald_from_blasting", abP).add_ingredient(afb).setXp(aju).setOutput(ahW).setCookingTime(
+        ajy)
+    config.smelting_recipe("emerald_from_smelting").add_ingredient(afb).setXp(aju).setOutput(ahW)
+    config.shaped_recipe(acs).setEntries(aiB, ajb).setEntries(aat, ahv).setEntries(adg, aib).setOutput(acs)
+    config.shaped_recipe(afx).setEntries(aad, ahv).setEntries(aiC, agJ).setOutput(afx)
+    config.shapeless_recipe(agJ).addInput("ender_pearl", 1).addInput("blaze_powder", 1).setOutput(agJ)
+    config.shaped_recipe(afu).setEntries(aiH, "ghast_tear").setEntries(aiC, agJ).setEntries(aah, aiZ).setOutput(afu)
+    config.shaped_recipe("end_rod").setEntries(ain, abw).setEntries(aih, agY).setOutput((4, "end_rod"))
+    config.shaped_recipe(aco).setEntries(aar, "end_stone").setOutput((4, aco))
+    config.shaped_recipe("end_stone_brick_slab").setEntries(aaZ, aco).setOutput((6, "end_stone_brick_slab"))
+    config.shaped_recipe("end_stone_brick_stairs").setEntries(aak, aco).setOutput((4, "end_stone_brick_stairs"))
+    config.shaped_recipe("end_stone_brick_wall").setEntries(aan, aco).setOutput((6, "end_stone_brick_wall"))
+    config.shapeless_recipe(abs).addInput("spider_eye", 1).addInput("brown_mushroom", 1).addInput(aiJ, 1).setOutput(abs)
+    config.shapeless_recipe("fire_charge").addInput(ahd, 1).addInput("blaze_powder", 1).setOutput((3, "fire_charge"))
+    config.shaped_recipe(afg).setEntries([(0, 2), (1, 1), (2, 0)], aiY).setEntries([(2, 1), (2, 2)], aig).setOutput(afg)
+    config.shaped_recipe(acR).setEntries(aau, ahX).setEntries(adi, aiW).setOutput(acR)
+    config.shapeless_recipe(acK).addInput(agc, 1).addInput(aiW, 1).setOutput(acK)
+    config.shapeless_recipe(abj).addInput(aiU, 1).addInput("oxeye_daisy", 1).setOutput(abj)
+    config.shaped_recipe(afY).setEntries(aaY, aiV).setOutput(afY)
+    config.shaped_recipe(aie).setEntries(aad, afO).setOutput(aie)
+    config.shaped_recipe(acz).setEntries(aih, aie).setEntries(ain, ahr).setOutput(acz)
+    config.smelting_recipe(aiZ).add_ingredient("#sand").setXp(ajw).setOutput(aiZ)
+    config.shaped_recipe("glass_bottle").setEntries(aaY, aiZ).setOutput((3, "glass_bottle"))
+    config.shaped_recipe(agj).setEntries(aan, aiZ).setOutput((16, agj))
+    config.shaped_recipe(aaR).setEntries(aad, afn).setEntries(aiC, afG).setOutput(aaR)
+    config.shaped_recipe(agZ).setEntries(aar, adD).setOutput(agZ)
+    config.shaped_recipe(aeH).setEntries(aad, ags).setEntries(aiC, "apple").setOutput(aeH)
+    config.shaped_recipe(agB).setEntries(adt, aiY).setEntries(aaN, ags).setOutput(agB)
+    config.shaped_recipe(aeO).setEntries(aas, ags).setOutput(aeO)
+    config.shaped_recipe(aev).setEntries(aad, afn).setEntries(aiC, ais).setOutput(aev)
+    config.shaped_recipe(acn).setEntries(aae, ags).setOutput(acn)
+    config.shaped_recipe(adM).setEntries(aap, ags).setOutput(adM)
+    config.shaped_recipe(afU).setEntries(adt, aiY).setEntries(adi, ags).setOutput(afU)
+    config.shaped_recipe(acG).setEntries(aah, ags).setOutput(acG)
+    config.shaped_recipe(ado).setEntries(adt, aiY).setEntries(aaZ, ags).setOutput(ado)
+    config.shaped_recipe(adI).setEntries(adn, aiY).setEntries(aih, ags).setOutput(adI)
+    config.shaped_recipe(aeK).setEntries(aiE, aiY).setEntries(adA, ags).setOutput(aeK)
+    config.shaped_recipe(agi).setEntries(aac, ags).setOutput(agi)
+    config.smelting_recipe(ags).add_ingredient(ahn).setXp(aju).setOutput(ags)
+    config.smelting_recipe("gold_ingot_from_blasting", abP).add_ingredient(ahn).setXp(aju).setOutput(
+        ags).setCookingTime(ajy)
+    config.shapeless_recipe("gold_ingot_from_gold_block").addInput(agi, 1).setOutput((9, ags)).setGroup(ags)
+    config.shaped_recipe("gold_ingot_from_nuggets").setEntries(aac, afn).setOutput(ags).setGroup(ags)
+    config.shapeless_recipe(afn).addInput(ags, 1).setOutput((9, afn))
+    config.smelting_recipe("gold_nugget_from_blasting", abP).add_ingredient(aab).setXp(ajw).setOutput(
+        afn).setCookingTime(ajy)
+    config.smelting_recipe("gold_nugget_from_smelting").add_ingredient(aab).setXp(ajw).setOutput(afn)
+    config.shapeless_recipe(ahU).addInput(ahY, 1).addInput(aiw, 1).setOutput(ahU)
+    config.shaped_recipe("granite_slab").setEntries(aaZ, ahU).setOutput((6, "granite_slab"))
+    config.shaped_recipe("granite_stairs").setEntries(aak, ahU).setOutput((4, "granite_stairs"))
+    config.shaped_recipe("granite_wall").setEntries(aan, ahU).setOutput((6, "granite_wall"))
+    config.shaped_recipe(afl).setEntries(aan, agW).setEntries(aiH, aiY).setOutput(afl).setGroup(aip)
+    config.shaped_recipe(ahl).setEntries(aaZ, agW).setEntries(aaM, ahX).setOutput(ahl).setGroup(ajp)
+    config.shapeless_recipe("gray_bed_from_white_bed").addInput(agP, 1).addInput(ahN, 1).setOutput(ahl).setGroup(ahz)
+    config.shaped_recipe("gray_carpet").setEntries(adi, agW).setOutput((3, "gray_carpet")).setGroup(aim)
+    config.shaped_recipe("gray_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, ahN).setOutput(
+        (8, "gray_carpet")).setGroup(aim)
+    config.shapeless_recipe("gray_concrete_powder").addInput(ahN, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "gray_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe(ahN).addInput(agI, 1).addInput(ahb, 1).setOutput((2, ahN))
+    config.smelting_recipe(aaT).add_ingredient(acS).setXp(ajw).setOutput(aaT)
+    config.shaped_recipe(abO).setEntries(aad, aiZ).setEntries(aiC, ahN).setOutput((8, abO)).setGroup(aed)
+    config.shaped_recipe("gray_stained_glass_pane").setEntries(aan, abO).setOutput(
+        (16, "gray_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("gray_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC, ahN).setOutput(
+        (8, "gray_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acS).setEntries(aad, agl).setEntries(aiC, ahN).setOutput((8, acS)).setGroup(abF)
+    config.shapeless_recipe(agW).addInput(ahN, 1).addInput(agC, 1).setOutput(agW).setGroup(ajd)
+    config.shaped_recipe(aez).setEntries(aan, afV).setEntries(aiH, aiY).setOutput(aez).setGroup(aip)
+    config.shaped_recipe(ahh).setEntries(aaZ, afV).setEntries(aaM, ahX).setOutput(ahh).setGroup(ajp)
+    config.shapeless_recipe("green_bed_from_white_bed").addInput(agP, 1).addInput(agH, 1).setOutput(ahh).setGroup(ahz)
+    config.shaped_recipe("green_carpet").setEntries(adi, afV).setOutput((3, "green_carpet")).setGroup(aim)
+    config.shaped_recipe("green_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, agH).setOutput(
+        (8, "green_carpet")).setGroup(aim)
+    config.shapeless_recipe("green_concrete_powder").addInput(agH, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "green_concrete_powder")).setGroup(acO)
+    config.smelting_recipe(agH).add_ingredient("cactus").setXp(aju).setOutput(agH)
+    config.smelting_recipe(aaH).add_ingredient(acE).setXp(ajw).setOutput(aaH)
+    config.shaped_recipe(abz).setEntries(aad, aiZ).setEntries(aiC, agH).setOutput((8, abz)).setGroup(aed)
+    config.shaped_recipe("green_stained_glass_pane").setEntries(aan, abz).setOutput(
+        (16, "green_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("green_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                     agH).setOutput(
+        (8, "green_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acE).setEntries(aad, agl).setEntries(aiC, agH).setOutput((8, acE)).setGroup(abF)
+    config.shapeless_recipe(afV).addInput(agH, 1).addInput(agC, 1).setOutput(afV).setGroup(ajd)
+    config.shaped_recipe(agA).setEntries(adv, aiY).setEntries(aiB, agr).setEntries(adg, ahX).setOutput(agA)
+    config.shaped_recipe(ahe).setEntries(aac, aiK).setOutput(ahe)
+    config.shaped_recipe(aax).setEntries(adi, agc).setOutput(aax)
+    config.shaped_recipe(acM).setEntries(aar, ahg).setOutput(acM)
+    config.shaped_recipe(afa).setEntries(aar, aeM).setOutput(afa)
+    config.shapeless_recipe(aeM).addInput(afa, 1).addInput("glass_bottle", 4).setOutput((4, aeM))
+    config.shaped_recipe(aiu).setEntries(aiC, aiO).setEntries([(0, 0), (0, 1), (1, 2), (2, 0), (2, 1)], agc).setOutput(
+        aiu)
+    config.shaped_recipe(acN).setEntries(aih, aiu).setEntries(ain, ahr).setOutput(acN)
+    config.shaped_recipe(ahE).setEntries(adt, aiY).setEntries(aaN, agc).setOutput(ahE)
+    config.shaped_recipe("iron_bars").setEntries(aan, agc).setOutput((16, "iron_bars"))
+    config.shaped_recipe(agy).setEntries(aac, agc).setOutput(agy)
+    config.shaped_recipe(agt).setEntries(aas, agc).setOutput(agt)
+    config.shaped_recipe(acV).setEntries(aae, agc).setOutput(acV)
+    config.shaped_recipe("iron_door").setEntries(aal, agc).setOutput((3, "iron_door"))
+    config.shaped_recipe(afE).setEntries(aap, agc).setOutput(afE)
+    config.shaped_recipe(ahm).setEntries(adt, aiY).setEntries(adi, agc).setOutput(ahm)
+    config.smelting_recipe(agc).add_ingredient(ahM).setXp(ajv).setOutput(agc)
+    config.smelting_recipe("iron_ingot_from_blasting", abP).add_ingredient(ahM).setXp(ajv).setOutput(
+        agc).setCookingTime(ajy)
+    config.shapeless_recipe("iron_ingot_from_iron_block").addInput(agy, 1).setOutput((9, agc)).setGroup(agc)
+    config.shaped_recipe("iron_ingot_from_nuggets").setEntries(aac, afA).setOutput(agc).setGroup(agc)
+    config.shaped_recipe(aek).setEntries(aah, agc).setOutput(aek)
+    config.shapeless_recipe(afA).addInput(agc, 1).setOutput((9, afA))
+    config.smelting_recipe("iron_nugget_from_blasting", abP).add_ingredient(aaa).setXp(ajw).setOutput(
+        afA).setCookingTime(ajy)
+    config.smelting_recipe("iron_nugget_from_smelting").add_ingredient(aaa).setXp(ajw).setOutput(afA)
+    config.shaped_recipe(aeG).setEntries(adt, aiY).setEntries(aaZ, agc).setOutput(aeG)
+    config.shaped_recipe(afF).setEntries(adn, aiY).setEntries(aih, agc).setOutput(afF)
+    config.shaped_recipe(agb).setEntries(aiE, aiY).setEntries(adA, agc).setOutput(agb)
+    config.shaped_recipe(adV).setEntries(aar, agc).setOutput(adV)
+    config.shaped_recipe(agz).setEntries(aad, aiY).setEntries(aiC, ahZ).setOutput(agz)
+    config.shaped_recipe(adk).setEntries(aih, "carved_pumpkin").setEntries(ain, aiN).setOutput(adk)
+    config.shaped_recipe(aif).setEntries(aad, ahX).setEntries(aiC, aib).setOutput(aif)
+    config.shaped_recipe(afr).setEntries(aao, aes).setOutput(afr).setGroup(ajk)
+    config.shapeless_recipe(adJ).addInput(aes, 1).setOutput(adJ).setGroup(aex)
+    config.shaped_recipe("jungle_door").setEntries(aal, aes).setOutput((3, "jungle_door")).setGroup(afk)
+    config.shaped_recipe("jungle_fence").setEntries(ada, aiY).setEntries(aas, aes).setOutput(
+        (3, "jungle_fence")).setGroup(aeR)
+    config.shaped_recipe(acl).setEntries(aas, aiY).setEntries(ada, aes).setOutput(acl).setGroup(abT)
+    config.shapeless_recipe(aes).addInput("#jungle_logs", 1).setOutput((4, aes)).setGroup(aiG)
+    config.shaped_recipe(abl).setEntries(adi, aes).setOutput(abl).setGroup(abi)
+    config.shaped_recipe("jungle_sign").setEntries(aan, aes).setEntries(aiH, aiY).setOutput((3, "jungle_sign"))
+    config.shaped_recipe("jungle_slab").setEntries(aaZ, aes).setOutput((6, "jungle_slab")).setGroup(afh)
+    config.shaped_recipe("jungle_stairs").setEntries(aak, aes).setOutput((4, "jungle_stairs")).setGroup(adP)
+    config.shaped_recipe("jungle_trapdoor").setEntries(aan, aes).setOutput((2, "jungle_trapdoor")).setGroup(acF)
+    config.shaped_recipe("jungle_wood").setEntries(aar, "jungle_log").setOutput((3, "jungle_wood")).setGroup(aja)
+    config.shaped_recipe("ladder").setEntries(aai, aiY).setOutput((3, "ladder"))
+    config.shaped_recipe(aic).setEntries(aiC, aiN).setEntries(aad, afA).setOutput(aic)
+    config.shaped_recipe(afc).setEntries(aac, aeD).setOutput(afc)
+    config.smelting_recipe("lapis_from_blasting", abP).add_ingredient(ahf).setXp(ajt).setOutput(aeD).setCookingTime(ajy)
+    config.smelting_recipe("lapis_from_smelting").add_ingredient(ahf).setXp(ajt).setOutput(aeD)
+    config.shapeless_recipe(aeD).addInput(afc, 1).setOutput((9, aeD))
+    config.shaped_recipe("lead").setEntries([(0, 0), (0, 1), (1, 0), (2, 2)], aig).setEntries(aiC, ago).setOutput(
+        (2, "lead"))
+    config.shaped_recipe(ahZ).setEntries(aar, "rabbit_hide").setOutput(ahZ)
+    config.shaped_recipe(adW).setEntries(aas, ahZ).setOutput(adW)
+    config.shaped_recipe(abH).setEntries(aae, ahZ).setOutput(abH)
+    config.shaped_recipe(adm).setEntries(aap, ahZ).setOutput(adm)
+    config.shaped_recipe(abB).setEntries(aai, ahZ).setOutput(abB)
+    config.shaped_recipe(acv).setEntries(aah, ahZ).setOutput(acv)
+    config.shaped_recipe(ahR).setEntries([(0, 0), (1, 0), (1, 2), (2, 0)], adH).setEntries(aiC, ahc).setOutput(ahR)
+    config.shaped_recipe(aiL).setEntries(ain, afO).setEntries(aih, aiY).setOutput(aiL)
+    config.shaped_recipe(acc).setEntries(aan, acH).setEntries(aiH, aiY).setOutput(acc).setGroup(aip)
+    config.shaped_recipe(adw).setEntries(aaZ, acH).setEntries(aaM, ahX).setOutput(adw).setGroup(ajp)
+    config.shapeless_recipe("light_blue_bed_from_white_bed").addInput(agP, 1).addInput(adE, 1).setOutput(adw).setGroup(
+        ahz)
+    config.shaped_recipe("light_blue_carpet").setEntries(adi, acH).setOutput((3, "light_blue_carpet")).setGroup(aim)
+    config.shaped_recipe("light_blue_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, adE).setOutput(
+        (8, "light_blue_carpet")).setGroup(aim)
+    config.shapeless_recipe("light_blue_concrete_powder").addInput(adE, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "light_blue_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe("light_blue_dye_from_blue_orchid").addInput("blue_orchid", 1).setOutput(adE).setGroup(adE)
+    config.shapeless_recipe("light_blue_dye_from_blue_white_dye").addInput(ahs, 1).addInput(ahb, 1).setOutput(
+        (2, adE)).setGroup(adE)
+    config.smelting_recipe(aay).add_ingredient(abf).setXp(ajw).setOutput(aay)
+    config.shaped_recipe(aaG).setEntries(aad, aiZ).setEntries(aiC, adE).setOutput((8, aaG)).setGroup(aed)
+    config.shaped_recipe("light_blue_stained_glass_pane").setEntries(aan, aaG).setOutput(
+        (16, "light_blue_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("light_blue_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                          adE).setOutput(
+        (8, "light_blue_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(abf).setEntries(aad, agl).setEntries(aiC, adE).setOutput((8, abf)).setGroup(abF)
+    config.shapeless_recipe(acH).addInput(adE, 1).addInput(agC, 1).setOutput(acH).setGroup(ajd)
+    config.shaped_recipe(abX).setEntries(aan, acY).setEntries(aiH, aiY).setOutput(abX).setGroup(aip)
+    config.shaped_recipe(adB).setEntries(aaZ, acY).setEntries(aaM, ahX).setOutput(adB).setGroup(ajp)
+    config.shapeless_recipe("light_gray_bed_from_white_bed").addInput(agP, 1).addInput(adu, 1).setOutput(adB).setGroup(
+        ahz)
+    config.shaped_recipe("light_gray_carpet").setEntries(adi, acY).setOutput((3, "light_gray_carpet")).setGroup(aim)
+    config.shaped_recipe("light_gray_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, adu).setOutput(
+        (8, "light_gray_carpet")).setGroup(aim)
+    config.shapeless_recipe("light_gray_concrete_powder").addInput(adu, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "light_gray_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe("light_gray_dye_from_azure_bluet").addInput("azure_bluet", 1).setOutput(adu).setGroup(adu)
+    config.shapeless_recipe("light_gray_dye_from_black_white_dye").addInput(agI, 1).addInput(ahb, 2).setOutput(
+        (3, adu)).setGroup(adu)
+    config.shapeless_recipe("light_gray_dye_from_gray_white_dye").addInput(ahN, 1).addInput(ahb, 1).setOutput(
+        (2, adu)).setGroup(adu)
+    config.shapeless_recipe("light_gray_dye_from_oxeye_daisy").addInput("oxeye_daisy", 1).setOutput(adu).setGroup(adu)
+    config.shapeless_recipe("light_gray_dye_from_white_tulip").addInput("white_tulip", 1).setOutput(adu).setGroup(adu)
+    config.smelting_recipe(aaz).add_ingredient(abe).setXp(ajw).setOutput(aaz)
+    config.shaped_recipe(aaD).setEntries(aad, aiZ).setEntries(aiC, adu).setOutput((8, aaD)).setGroup(aed)
+    config.shaped_recipe("light_gray_stained_glass_pane").setEntries(aan, aaD).setOutput(
+        (16, "light_gray_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("light_gray_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                          adu).setOutput(
+        (8, "light_gray_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(abe).setEntries(aad, agl).setEntries(aiC, adu).setOutput((8, abe)).setGroup(abF)
+    config.shapeless_recipe(acY).addInput(adu, 1).addInput(agC, 1).setOutput(acY).setGroup(ajd)
+    config.shaped_recipe(aaw).setEntries(adi, ags).setOutput(aaw)
+    config.shaped_recipe(afd).setEntries(aan, agX).setEntries(aiH, aiY).setOutput(afd).setGroup(aip)
+    config.shaped_recipe(ahk).setEntries(aaZ, agX).setEntries(aaM, ahX).setOutput(ahk).setGroup(ajp)
+    config.shapeless_recipe("lime_bed_from_white_bed").addInput(agP, 1).addInput(ahA, 1).setOutput(ahk).setGroup(ahz)
+    config.shaped_recipe("lime_carpet").setEntries(adi, agX).setOutput((3, "lime_carpet")).setGroup(aim)
+    config.shaped_recipe("lime_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, ahA).setOutput(
+        (8, "lime_carpet")).setGroup(aim)
+    config.shapeless_recipe("lime_concrete_powder").addInput(ahA, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "lime_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe(ahA).addInput(agH, 1).addInput(ahb, 1).setOutput((2, ahA))
+    config.smelting_recipe("lime_dye_from_smelting").add_ingredient("sea_pickle").setXp(ajw).setOutput(ahA)
+    config.smelting_recipe(aaP).add_ingredient(acT).setXp(ajw).setOutput(aaP)
+    config.shaped_recipe(abQ).setEntries(aad, aiZ).setEntries(aiC, ahA).setOutput((8, abQ)).setGroup(aed)
+    config.shaped_recipe("lime_stained_glass_pane").setEntries(aan, abQ).setOutput(
+        (16, "lime_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("lime_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC, ahA).setOutput(
+        (8, "lime_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acT).setEntries(aad, agl).setEntries(aiC, ahA).setOutput((8, acT)).setGroup(abF)
+    config.shapeless_recipe(agX).addInput(ahA, 1).addInput(agC, 1).setOutput(agX).setGroup(ajd)
+    config.shaped_recipe(ajc).setEntries(adz, ahX).setEntries(adi, aig).setOutput(ajc)
+    config.shaped_recipe(ade).setEntries(aan, aeN).setEntries(aiH, aiY).setOutput(ade).setGroup(aip)
+    config.shaped_recipe(afw).setEntries(aaZ, aeN).setEntries(aaM, ahX).setOutput(afw).setGroup(ajp)
+    config.shapeless_recipe("magenta_bed_from_white_bed").addInput(agP, 1).addInput(afm, 1).setOutput(afw).setGroup(ahz)
+    config.shaped_recipe("magenta_carpet").setEntries(adi, aeN).setOutput((3, "magenta_carpet")).setGroup(aim)
+    config.shaped_recipe("magenta_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, afm).setOutput(
+        (8, "magenta_carpet")).setGroup(aim)
+    config.shapeless_recipe("magenta_concrete_powder").addInput(afm, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "magenta_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe("magenta_dye_from_allium").addInput("allium", 1).setOutput(afm).setGroup(afm)
+    config.shapeless_recipe("magenta_dye_from_blue_red_pink").addInput(ahs, 1).addInput(ahT, 1).addInput(ahD,
                                                                                                          1).setOutput(
-        ait).setGroup(ait)
-    config.shapeless_recipe("magenta_dye_from_blue_red_white_dye").addInput(akr, 1).addInput(ald, 2).addInput(aka,
+        (3, afm)).setGroup(afm)
+    config.shapeless_recipe("magenta_dye_from_blue_red_white_dye").addInput(ahs, 1).addInput(ahT, 2).addInput(ahb,
                                                                                                               1).setOutput(
-        ait).setGroup(ait)
-    config.shapeless_recipe("magenta_dye_from_lilac").addInput("lilac", 1).setOutput(ait).setGroup(ait)
-    config.shapeless_recipe("magenta_dye_from_purple_and_pink").addInput(ajv, 1).addInput(akI, 1).setOutput(
-        ait).setGroup(ait)
-    config.smelting_recipe(aaH).add_ingredient(acW).setXp(amP).setOutput(aaH)
-    config.shaped_recipe(acf).setEntries(aae, amo).setEntries(aly, ait).setOutput(acf).setGroup(ags)
-    config.shaped_recipe(aaE).setEntries(aak, acf).setOutput(aaE).setGroup(ade)
-    config.shaped_recipe("magenta_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                       ait).setOutput(
-        aaE).setGroup(ade)
-    config.shaped_recipe(acW).setEntries(aae, aiZ).setEntries(aly, ait).setOutput(acW).setGroup(acT)
-    config.shapeless_recipe(ahu).addInput(ait, 1).addInput(aiV, 1).setOutput(ahu).setGroup(amy)
-    config.shaped_recipe(ain).setEntries(aar, aiJ).setOutput(ain)
-    config.shapeless_recipe(aiJ).addInput(ahe, 1).addInput(aiT, 1).setOutput(aiJ)
-    config.shaped_recipe(amG).setEntries(aae, alY).setEntries(aly, ala).setOutput(amG)
-    config.shaped_recipe(amb).setEntries(aac, aiv).setOutput(amb)
-    config.shapeless_recipe(aij).addInput(aiv, 1).setOutput(aij)
-    config.shaped_recipe(akx).setEntries(aap, ajw).setOutput(akx)
-    config.shapeless_recipe(ace).addInput(alY, 1).addInput("enchanted_golden_apple", 1).setOutput(ace)
-    config.shapeless_recipe(adm).addInput(ahK, 1).addInput("vine", 1).setOutput(adm)
-    config.shaped_recipe(abv).setEntries(abF, adm).setOutput(abv)
-    config.shaped_recipe(aaP).setEntries(aam, adm).setOutput(aaP)
-    config.shaped_recipe(abB).setEntries(aak, adm).setOutput(abB)
-    config.shapeless_recipe(ada).addInput(ahm, 1).addInput("vine", 1).setOutput(ada)
-    config.shaped_recipe(abK).setEntries(abF, ada).setOutput(abK)
-    config.shaped_recipe(aaW).setEntries(aam, ada).setOutput(aaW)
-    config.shaped_recipe(abq).setEntries(aak, ada).setOutput(abq)
-    config.shapeless_recipe(afN).addInput("brown_mushroom", 1).addInput("red_mushroom", 1).addInput(amq, 1).setOutput(
-        afN)
-    config.smelting_recipe(ahc).add_ingredient("netherrack").setXp(amP).setOutput(ahc)
-    config.shaped_recipe(afS).setEntries(aar, ahc).setOutput(afS)
-    config.shaped_recipe(adk).setEntries(aas, afS).setEntries(aeQ, ahc).setOutput(adk)
-    config.shaped_recipe(adn).setEntries(abF, afS).setOutput(adn)
-    config.shaped_recipe(acH).setEntries(aam, afS).setOutput(acH)
-    config.shaped_recipe(adG).setEntries(aak, afS).setOutput(adG)
-    config.shaped_recipe(ads).setEntries(aac, aiz).setOutput(ads)
-    config.shaped_recipe(aiO).setEntries(aae, alb).setEntries(aly, akQ).setOutput(aiO)
-    config.shaped_recipe(akF).setEntries(aap, ajh).setOutput(akF).setGroup(amr)
-    config.shapeless_recipe(ajB).addInput(ajh, 1).setOutput(ajB).setGroup(ago)
-    config.shaped_recipe(akJ).setEntries(aan, ajh).setOutput(akJ).setGroup(aie)
-    config.shaped_recipe(ajR).setEntries(aeQ, amc).setEntries(aas, ajh).setOutput(ajR).setGroup(ahk)
-    config.shaped_recipe(afi).setEntries(aas, amc).setEntries(aeQ, ajh).setOutput(afi).setGroup(adE)
-    config.shapeless_recipe(ajh).addInput("#oak_logs", 1).setOutput(ajh).setGroup(alz)
-    config.shaped_recipe(acZ).setEntries(afd, ajh).setOutput(acZ).setGroup(abS)
-    config.shaped_recipe(akS).setEntries(aak, ajh).setEntries(alP, amc).setOutput(akS)
-    config.shaped_recipe(akq).setEntries(abF, ajh).setOutput(akq).setGroup(aip)
-    config.shaped_recipe(ajx).setEntries(aam, ajh).setOutput(ajx).setGroup(afX)
-    config.shaped_recipe(ahy).setEntries(aak, ajh).setOutput(ahy).setGroup(aer)
-    config.shaped_recipe(akV).setEntries(aar, "oak_log").setOutput(akV).setGroup(amB)
-    config.shaped_recipe(akX).setEntries([(2, 1)], alA).setEntries(afu, akQ).setEntries(aaj, ahK).setOutput(akX)
-    config.shaped_recipe(aga).setEntries(aak, aiN).setEntries(alP, amc).setOutput(aga).setGroup(alx)
-    config.shaped_recipe(aji).setEntries(abF, aiN).setEntries(abI, alb).setOutput(aji).setGroup(amJ)
-    config.shapeless_recipe("orange_bed_from_white_bed").addInput(ajS, 1).addInput(ajH, 1).setOutput(aji).setGroup(akG)
-    config.shaped_recipe(afJ).setEntries(afd, aiN).setOutput(afJ).setGroup(alu)
-    config.shaped_recipe("orange_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, ajH).setOutput(
-        afJ).setGroup(alu)
-    config.shapeless_recipe(abH).addInput(ajH, 1).addInput(amw, 4).addInput(alN, 4).setOutput(abH).setGroup(aeJ)
-    config.shapeless_recipe("orange_dye_from_orange_tulip").addInput("orange_tulip", 1).setOutput(ajH).setGroup(ajH)
-    config.shapeless_recipe("orange_dye_from_red_yellow").addInput(ald, 1).addInput(ajr, 1).setOutput(ajH).setGroup(ajH)
-    config.smelting_recipe(aaN).add_ingredient(adp).setXp(amP).setOutput(aaN)
-    config.shaped_recipe(acm).setEntries(aae, amo).setEntries(aly, ajH).setOutput(acm).setGroup(ags)
-    config.shaped_recipe(aaI).setEntries(aak, acm).setOutput(aaI).setGroup(ade)
-    config.shaped_recipe("orange_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                      ajH).setOutput(
-        aaI).setGroup(ade)
-    config.shaped_recipe(adp).setEntries(aae, aiZ).setEntries(aly, ajH).setOutput(adp).setGroup(acT)
-    config.shapeless_recipe(aiN).addInput(ajH, 1).addInput(aiV, 1).setOutput(aiN).setGroup(amy)
-    config.shapeless_recipe(ajF).addInput("ice", 9).setOutput(ajF)
-    config.shaped_recipe(aku).setEntries(aae, amc).setEntries(aly, "#wool").setOutput(aku)
-    config.shaped_recipe(alY).setEntries(abF, ajf).setOutput(alY)
-    config.shaped_recipe(aiH).setEntries(aak, akn).setEntries(alP, amc).setOutput(aiH).setGroup(alx)
-    config.shaped_recipe(akC).setEntries(abF, akn).setEntries(abI, alb).setOutput(akC).setGroup(amJ)
-    config.shapeless_recipe("pink_bed_from_white_bed").addInput(ajS, 1).addInput(akI, 1).setOutput(akC).setGroup(akG)
-    config.shaped_recipe(ahE).setEntries(afd, akn).setOutput(ahE).setGroup(alu)
-    config.shaped_recipe("pink_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, akI).setOutput(
-        ahE).setGroup(alu)
-    config.shapeless_recipe(acn).addInput(akI, 1).addInput(amw, 4).addInput(alN, 4).setOutput(acn).setGroup(aeJ)
-    config.shapeless_recipe("pink_dye_from_peony").addInput("peony", 1).setOutput(akI).setGroup(akI)
-    config.shapeless_recipe("pink_dye_from_pink_tulip").addInput("pink_tulip", 1).setOutput(akI).setGroup(akI)
-    config.shapeless_recipe("pink_dye_from_red_white_dye").addInput(ald, 1).addInput(aka, 1).setOutput(akI).setGroup(
-        akI)
-    config.smelting_recipe(abt).add_ingredient(aek).setXp(amP).setOutput(abt)
-    config.shaped_recipe(add).setEntries(aae, amo).setEntries(aly, akI).setOutput(add).setGroup(ags)
-    config.shaped_recipe(abl).setEntries(aak, add).setOutput(abl).setGroup(ade)
-    config.shaped_recipe("pink_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly, akI).setOutput(
-        abl).setGroup(ade)
-    config.shaped_recipe(aek).setEntries(aae, aiZ).setEntries(aly, akI).setOutput(aek).setGroup(acT)
-    config.shapeless_recipe(akn).addInput(akI, 1).addInput(aiV, 1).setOutput(akn).setGroup(amy)
-    config.shaped_recipe(alD).setEntries(alP, akQ).setEntries([(0, 1), (0, 2), (2, 1), (2, 2)], ahK).setEntries(abF,
-                                                                                                                alb).setEntries(
-        aly, ajw).setOutput(alD)
-    config.shaped_recipe(adA).setEntries(aar, akT).setOutput(adA)
-    config.shaped_recipe(aby).setEntries(abF, adA).setOutput(aby)
-    config.shaped_recipe(aaT).setEntries(aam, adA).setOutput(aaT)
-    config.shaped_recipe(aef).setEntries(aar, alm).setOutput(aef)
-    config.shaped_recipe(ach).setEntries(abF, aef).setOutput(ach)
-    config.shaped_recipe(abc).setEntries(aam, aef).setOutput(abc)
-    config.shaped_recipe(adZ).setEntries(aar, alg).setOutput(adZ)
-    config.shaped_recipe(abP).setEntries(abF, adZ).setOutput(abP)
-    config.shaped_recipe(abf).setEntries(aam, adZ).setOutput(abf)
-    config.smelting_recipe(acJ).add_ingredient("chorus_fruit").setXp(amP).setOutput(acJ)
-    config.shaped_recipe(agQ).setEntries(alP, akQ).setEntries(aly, amc).setEntries(aal, ajA).setOutput(agQ)
-    config.shaped_recipe(ajE).setEntries(aar, aec).setOutput(ajE)
-    config.shaped_recipe(adw).setEntries(aac, aec).setOutput(adw)
-    config.shaped_recipe(abZ).setEntries(abF, adw).setOutput(abZ)
-    config.shaped_recipe(abe).setEntries(aam, adw).setOutput(abe)
-    config.shaped_recipe(aeF).setEntries(abF, ajE).setOutput(aeF)
-    config.shaped_recipe(ado).setEntries(aam, ajE).setOutput(ado)
-    config.shaped_recipe(aex).setEntries(aak, ajE).setOutput(aex)
-    config.shapeless_recipe(ahV).addInput("pumpkin", 1).addInput(amk, 1).addInput(amI, 1).setOutput(ahV)
-    config.shapeless_recipe(agd).addInput("pumpkin", 1).setOutput(agd)
-    config.shaped_recipe(afG).setEntries(aak, aiL).setEntries(alP, amc).setOutput(afG).setGroup(alx)
-    config.shaped_recipe(aiP).setEntries(abF, aiL).setEntries(abI, alb).setOutput(aiP).setGroup(amJ)
-    config.shapeless_recipe("purple_bed_from_white_bed").addInput(ajS, 1).addInput(ajv, 1).setOutput(aiP).setGroup(akG)
-    config.shaped_recipe(agr).setEntries(afd, aiL).setOutput(agr).setGroup(alu)
-    config.shaped_recipe("purple_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, ajv).setOutput(
-        agr).setGroup(alu)
-    config.shapeless_recipe(abM).addInput(ajv, 1).addInput(amw, 4).addInput(alN, 4).setOutput(abM).setGroup(aeJ)
-    config.shapeless_recipe(ajv).addInput(akr, 1).addInput(ald, 1).setOutput(ajv)
-    config.smelting_recipe(aaX).add_ingredient(adP).setXp(amP).setOutput(aaX)
-    config.shaped_recipe(acD).setEntries(aae, amo).setEntries(aly, ajv).setOutput(acD).setGroup(ags)
-    config.shaped_recipe(aaK).setEntries(aak, acD).setOutput(aaK).setGroup(ade)
-    config.shaped_recipe("purple_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                      ajv).setOutput(
-        aaK).setGroup(ade)
-    config.shaped_recipe(adP).setEntries(aae, aiZ).setEntries(aly, ajv).setOutput(adP).setGroup(acT)
-    config.shapeless_recipe(aiL).addInput(ajv, 1).addInput(aiV, 1).setOutput(aiL).setGroup(amy)
-    config.shaped_recipe(agK).setEntries(aar, acJ).setOutput(agK)
-    config.shaped_recipe(agF).setEntries(aeT, air).setOutput(agF)
-    config.shaped_recipe(air).setEntries(abF, aaq).setOutput(air)
-    config.shaped_recipe(agj).setEntries(aam, aaq).setOutput(agj)
-    config.smelting_recipe(alA).add_ingredient(adH).setXp(amO).setOutput(alA)
-    config.shaped_recipe(ahj).setEntries(aar, alA).setOutput(ahj)
-    config.smelting_recipe("quartz_from_blasting", acS).add_ingredient(adH).setXp(amO).setOutput(alA).setCookingTime(
-        amN)
-    config.shaped_recipe(agx).setEntries(aeT, ahj).setOutput(agx)
-    config.shaped_recipe(aii).setEntries(abF, aaf).setOutput(aii)
-    config.shaped_recipe(afT).setEntries(aam, aaf).setOutput(afT)
-    config.shapeless_recipe("rabbit_stew_from_brown_mushroom").addInput(agI, 1).addInput(agh, 1).addInput(amq,
+        (4, afm)).setGroup(afm)
+    config.shapeless_recipe("magenta_dye_from_lilac").addInput("lilac", 1).setOutput(acB).setGroup(afm)
+    config.shapeless_recipe("magenta_dye_from_purple_and_pink").addInput(agE, 1).addInput(ahD, 1).setOutput(
+        acB).setGroup(afm)
+    config.smelting_recipe(aaB).add_ingredient(abD).setXp(ajw).setOutput(aaB)
+    config.shaped_recipe(abh).setEntries(aad, aiZ).setEntries(aiC, afm).setOutput((8, abh)).setGroup(aed)
+    config.shaped_recipe("magenta_stained_glass_pane").setEntries(aan, abh).setOutput(
+        (16, "magenta_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("magenta_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                       afm).setOutput(
+        (8, "magenta_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(abD).setEntries(aad, agl).setEntries(aiC, afm).setOutput((8, abD)).setGroup(abF)
+    config.shapeless_recipe(aeN).addInput(afm, 1).addInput(agC, 1).setOutput(aeN).setGroup(ajd)
+    config.shaped_recipe(afs).setEntries(aar, afv).setOutput(afs)
+    config.shapeless_recipe(afv).addInput("blaze_powder", 1).addInput(ago, 1).setOutput(afv)
+    config.shaped_recipe(ajq).setEntries(aad, aiU).setEntries(aiC, ahV).setOutput(ajq)
+    config.shaped_recipe(aiQ).setEntries(aac, afG).setOutput(aiQ)
+    config.shapeless_recipe(afz).addInput(afG, 1).setOutput(afz)
+    config.shaped_recipe(ahr).setEntries(aao, agc).setOutput(ahr)
+    config.shapeless_recipe(abd).addInput(aiU, 1).addInput("enchanted_golden_apple", 1).setOutput(abd)
+    config.shapeless_recipe(ace).addInput(afO, 1).addInput("vine", 1).setOutput(ace)
+    config.shaped_recipe("mossy_cobblestone_slab").setEntries(aaZ, ace).setOutput((6, "mossy_cobblestone_slab"))
+    config.shaped_recipe("mossy_cobblestone_stairs").setEntries(aak, ace).setOutput((4, "mossy_cobblestone_stairs"))
+    config.shaped_recipe("mossy_cobblestone_wall").setEntries(aan, ace).setOutput((6, "mossy_cobblestone_wall"))
+    config.shapeless_recipe(abJ).addInput(aeP, 1).addInput("vine", 1).setOutput(abJ)
+    config.shaped_recipe("mossy_stone_brick_slab").setEntries(aaZ, abJ).setOutput((6, "mossy_stone_brick_slab"))
+    config.shaped_recipe("mossy_stone_brick_stairs").setEntries(aak, abJ).setOutput((4, "mossy_stone_brick_stairs"))
+    config.shaped_recipe("mossy_stone_brick_wall").setEntries(aan, abJ).setOutput((6, "mossy_stone_brick_wall"))
+    config.shapeless_recipe(aef).addInput("brown_mushroom", 1).addInput("red_mushroom", 1).addInput("bowl",
+                                                                                                    1).setOutput(aef)
+    config.smelting_recipe(aeV).add_ingredient("netherrack").setXp(ajw).setOutput(aeV)
+    config.shaped_recipe(adT).setEntries(aar, aeV).setOutput(adT)
+    config.shaped_recipe("nether_brick_fence").setEntries(aas, adT).setEntries(ada, aeV).setOutput(
+        (6, "nether_brick_fence"))
+    config.shaped_recipe("nether_brick_slab").setEntries(aaZ, adT).setOutput((6, "nether_brick_slab"))
+    config.shaped_recipe("nether_brick_stairs").setEntries(aak, adT).setOutput((4, "nether_brick_stairs"))
+    config.shaped_recipe("nether_brick_wall").setEntries(aan, adT).setOutput((6, "nether_brick_wall"))
+    config.shaped_recipe(abZ).setEntries(aac, afq).setOutput(abZ)
+    config.shaped_recipe(agF).setEntries(aad, ahX).setEntries(aiC, ahj).setOutput(agF)
+    config.shaped_recipe(ahy).setEntries(aao, agn).setOutput(ahy).setGroup(ajk)
+    config.shapeless_recipe(agu).addInput(agn, 1).setOutput(agu).setGroup(aex)
+    config.shaped_recipe("oak_door").setEntries(aal, agn).setOutput((3, "oak_door")).setGroup(afk)
+    config.shaped_recipe("oak_fence").setEntries(ada, aiY).setEntries(aas, agn).setOutput((3, "oak_fence")).setGroup(
+        aeR)
+    config.shaped_recipe(adC).setEntries(aas, aiY).setEntries(ada, agn).setOutput(adC).setGroup(abT)
+    config.shapeless_recipe(agn).addInput("#oak_logs", 1).setOutput((4, agn)).setGroup(aiG)
+    config.shaped_recipe(abL).setEntries(adi, agn).setOutput(abL).setGroup(abi)
+    config.shaped_recipe("oak_sign").setEntries(aan, agn).setEntries(aiH, aiY).setOutput((3, "oak_sign"))
+    config.shaped_recipe("oak_slab").setEntries(aaZ, agn).setOutput((6, "oak_slab")).setGroup(afh)
+    config.shaped_recipe("oak_stairs").setEntries(aak, agn).setOutput((4, "oak_stairs")).setGroup(adP)
+    config.shaped_recipe("oak_trapdoor").setEntries(aan, agn).setOutput((2, "oak_trapdoor")).setGroup(acF)
+    config.shaped_recipe("oak_wood").setEntries(aar, "oak_log").setOutput((3, "oak_wood")).setGroup(aja)
+    config.shaped_recipe(ahH).setEntries([(2, 1)], aiw).setEntries(adz, ahj).setEntries(aam, afO).setOutput(ahH)
+    config.shaped_recipe(adF).setEntries(aan, afK).setEntries(aiH, aiY).setOutput(adF).setGroup(aip)
+    config.shaped_recipe(afR).setEntries(aaZ, afK).setEntries(aaM, ahX).setOutput(afR).setGroup(ajp)
+    config.shapeless_recipe("orange_bed_from_white_bed").addInput(agP, 1).addInput(agw, 1).setOutput(afR).setGroup(ahz)
+    config.shaped_recipe("orange_carpet").setEntries(adi, afK).setOutput((3, "orange_carpet")).setGroup(aim)
+    config.shaped_recipe("orange_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, agw).setOutput(
+        (8, "orange_carpet")).setGroup(aim)
+    config.shapeless_recipe("orange_concrete_powder").addInput(agw, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "orange_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe("orange_dye_from_orange_tulip").addInput("orange_tulip", 1).setOutput(agw).setGroup(agw)
+    config.shapeless_recipe("orange_dye_from_red_yellow").addInput(ahT, 1).addInput(agk, 1).setOutput(
+        (2, agw)).setGroup(agw)
+    config.smelting_recipe(aaE).add_ingredient(ach).setXp(ajw).setOutput(aaE)
+    config.shaped_recipe(abo).setEntries(aad, aiZ).setEntries(aiC, agw).setOutput((8, abo)).setGroup(aed)
+    config.shaped_recipe("orange_stained_glass_pane").setEntries(aan, abo).setOutput(
+        (16, "orange_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("orange_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                      agw).setOutput(
+        (8, "orange_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(ach).setEntries(aad, agl).setEntries(aiC, agw).setOutput((8, ach)).setGroup(abF)
+    config.shapeless_recipe(afK).addInput(agw, 1).addInput(agC, 1).setOutput(afK).setGroup(ajd)
+    config.shapeless_recipe(aga).addInput("ice", 9).setOutput(aga)
+    config.shaped_recipe(ahq).setEntries(aad, aiY).setEntries(aiC, "#wool").setOutput(ahq)
+    config.shaped_recipe(aiU).setEntries(aaZ, afW).setOutput((3, aiU))
+    config.shaped_recipe(afy).setEntries(aan, agV).setEntries(aiH, aiY).setOutput(afy).setGroup(aip)
+    config.shaped_recipe(ahu).setEntries(aaZ, agV).setEntries(aaM, ahX).setOutput(ahu).setGroup(ajp)
+    config.shapeless_recipe("pink_bed_from_white_bed").addInput(agP, 1).addInput(ahD, 1).setOutput(ahu).setGroup(ahz)
+    config.shaped_recipe("pink_carpet").setEntries(adi, agV).setOutput((3, "pink_carpet")).setGroup(aim)
+    config.shaped_recipe("pink_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, ahD).setOutput(
+        (8, "pink_carpet")).setGroup(aim)
+    config.shapeless_recipe("pink_concrete_powder").addInput(ahD, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "pink_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe("pink_dye_from_peony").addInput("peony", 1).setOutput(adX).setGroup(ahD)
+    config.shapeless_recipe("pink_dye_from_pink_tulip").addInput("pink_tulip", 1).setOutput(ahD).setGroup(ahD)
+    config.shapeless_recipe("pink_dye_from_red_white_dye").addInput(ahT, 1).addInput(ahb, 1).setOutput(adX).setGroup(
+        ahD)
+    config.smelting_recipe(aaQ).add_ingredient(acX).setXp(ajw).setOutput(aaQ)
+    config.shaped_recipe(abM).setEntries(aad, aiZ).setEntries(aiC, ahD).setOutput((8, abM)).setGroup(aed)
+    config.shaped_recipe("pink_stained_glass_pane").setEntries(aan, abM).setOutput(
+        (16, "pink_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("pink_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC, ahD).setOutput(
+        (8, "pink_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acX).setEntries(aad, agl).setEntries(aiC, ahD).setOutput((8, acX)).setGroup(abF)
+    config.shapeless_recipe(agV).addInput(ahD, 1).addInput(agC, 1).setOutput(agV).setGroup(ajd)
+    config.shaped_recipe(ait).setEntries(aiH, ahj).setEntries([(0, 1), (0, 2), (2, 1), (2, 2)], afO).setEntries(aaZ,
+                                                                                                                ahX).setEntries(
+        aiC, agc).setOutput(ait)
+    config.shaped_recipe(acf).setEntries(aar, ahB).setOutput((4, acf))
+    config.shaped_recipe("polished_andesite_slab").setEntries(aaZ, acf).setOutput((6, "polished_andesite_slab"))
+    config.shaped_recipe("polished_andesite_stairs").setEntries(aak, acf).setOutput((4, "polished_andesite_stairs"))
+    config.shaped_recipe(acr).setEntries(aar, ahY).setOutput((4, acr))
+    config.shaped_recipe("polished_diorite_slab").setEntries(aaZ, acr).setOutput((6, "polished_diorite_slab"))
+    config.shaped_recipe("polished_diorite_stairs").setEntries(aak, acr).setOutput((4, "polished_diorite_stairs"))
+    config.shaped_recipe(acq).setEntries(aar, ahU).setOutput((4, acq))
+    config.shaped_recipe("polished_granite_slab").setEntries(aaZ, acq).setOutput((6, "polished_granite_slab"))
+    config.shaped_recipe("polished_granite_stairs").setEntries(aak, acq).setOutput((4, "polished_granite_stairs"))
+    config.smelting_recipe(abw).add_ingredient("chorus_fruit").setXp(ajw).setOutput(abw)
+    config.shaped_recipe("powered_rail").setEntries(aiH, ahj).setEntries(aiC, aiY).setEntries(aaj, ags).setOutput(
+        (6, "powered_rail"))
+    config.shaped_recipe(agp).setEntries(aar, acp).setOutput(agp)
+    config.shaped_recipe(abS).setEntries(aac, acp).setOutput(abS)
+    config.shaped_recipe("prismarine_brick_slab").setEntries(aaZ, abS).setOutput((6, "prismarine_brick_slab"))
+    config.shaped_recipe("prismarine_brick_stairs").setEntries(aak, abS).setOutput((4, "prismarine_brick_stairs"))
+    config.shaped_recipe("prismarine_slab").setEntries(aaZ, agp).setOutput((6, "prismarine_slab"))
+    config.shaped_recipe("prismarine_stairs").setEntries(aak, agp).setOutput((4, "prismarine_stairs"))
+    config.shaped_recipe("prismarine_wall").setEntries(aan, agp).setOutput((6, "prismarine_wall"))
+    config.shapeless_recipe(aeX).addInput("pumpkin", 1).addInput(aiJ, 1).addInput(ajl, 1).setOutput(aeX)
+    config.shapeless_recipe("pumpkin_seeds").addInput("pumpkin", 1).setOutput((4, "pumpkin_seeds"))
+    config.shaped_recipe(aen).setEntries(aan, afL).setEntries(aiH, aiY).setOutput(aen).setGroup(aip)
+    config.shaped_recipe(afX).setEntries(aaZ, afL).setEntries(aaM, ahX).setOutput(afX).setGroup(ajp)
+    config.shapeless_recipe("purple_bed_from_white_bed").addInput(agP, 1).addInput(agE, 1).setOutput(afX).setGroup(ahz)
+    config.shaped_recipe("purple_carpet").setEntries(adi, afL).setOutput((3, "purple_carpet")).setGroup(aim)
+    config.shaped_recipe("purple_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, agE).setOutput(
+        (8, "purple_carpet")).setGroup(aim)
+    config.shapeless_recipe("purple_concrete_powder").addInput(agE, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "purple_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe(agE).addInput(ahs, 1).addInput(ahT, 1).setOutput((2, agE))
+    config.smelting_recipe(aaC).add_ingredient(abU).setXp(ajw).setOutput(aaC)
+    config.shaped_recipe(abn).setEntries(aad, aiZ).setEntries(aiC, agE).setOutput((8, abn)).setGroup(aed)
+    config.shaped_recipe("purple_stained_glass_pane").setEntries(aan, abn).setOutput(
+        (16, "purple_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("purple_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                      agE).setOutput(
+        (8, "purple_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(abU).setEntries(aad, agl).setEntries(aiC, agE).setOutput((8, abU)).setGroup(abF)
+    config.shapeless_recipe(afL).addInput(agE, 1).addInput(agC, 1).setOutput(afL).setGroup(ajd)
+    config.shaped_recipe("purpur_block").setEntries(aar, abw).setOutput((4, "purpur_block"))
+    config.shaped_recipe(aet).setEntries(adA, aeY).setOutput(aet)
+    config.shaped_recipe(aeY).setEntries(aaZ, aaq).setOutput((6, aeY))
+    config.shaped_recipe("purpur_stairs").setEntries(aak, aaq).setOutput((4, "purpur_stairs"))
+    config.smelting_recipe(aiw).add_ingredient(abV).setXp(ajt).setOutput(aiw)
+    config.shaped_recipe(aeF).setEntries(aar, aiw).setOutput(aeF)
+    config.smelting_recipe("quartz_from_blasting", abP).add_ingredient(abV).setXp(ajt).setOutput(aiw).setCookingTime(
+        ajy)
+    config.shaped_recipe("quartz_pillar").setEntries(adA, aeF).setOutput((2, "quartz_pillar"))
+    config.shaped_recipe(afi).setEntries(aaZ, aaf).setOutput((6, afi))
+    config.shaped_recipe("quartz_stairs").setEntries(aak, aaf).setOutput((4, "quartz_stairs"))
+    config.shapeless_recipe("rabbit_stew_from_brown_mushroom").addInput(aeJ, 1).addInput(adN, 1).addInput("bowl",
                                                                                                           1).addInput(
-        alB, 1).addInput("brown_mushroom", 1).setOutput(ahL).setGroup(ahL)
-    config.shapeless_recipe("rabbit_stew_from_red_mushroom").addInput(agI, 1).addInput(agh, 1).addInput(amq,
-                                                                                                        1).addInput(alB,
+        ais, 1).addInput("brown_mushroom", 1).setOutput(aff).setGroup(aff)
+    config.shapeless_recipe("rabbit_stew_from_red_mushroom").addInput(aeJ, 1).addInput(adN, 1).addInput("bowl",
+                                                                                                        1).addInput(ais,
                                                                                                                     1).addInput(
-        "red_mushroom", 1).setOutput(ahL).setGroup(ahL)
-    config.shaped_recipe(amu).setEntries(aly, amc).setEntries(aal, ajw).setOutput(amu)
-    config.shapeless_recipe(akQ).addInput(afx, 1).setOutput(akQ)
-    config.shaped_recipe(afx).setEntries(aac, akQ).setOutput(afx)
-    config.smelting_recipe("redstone_from_blasting", acS).add_ingredient(ahr).setXp(amM).setOutput(akQ).setCookingTime(
-        amN)
-    config.smelting_recipe("redstone_from_smelting").add_ingredient(ahr).setXp(amM).setOutput(akQ)
-    config.shaped_recipe(agn).setEntries(aau, akQ).setEntries(aly, akh).setOutput(agn)
-    config.shaped_recipe(aeL).setEntries(alJ, amc).setEntries(alG, akQ).setOutput(aeL)
-    config.shaped_recipe(ajp).setEntries(aak, akK).setEntries(alP, amc).setOutput(ajp).setGroup(alx)
-    config.shaped_recipe(alp).setEntries(abF, akK).setEntries(abI, alb).setOutput(alp).setGroup(amJ)
-    config.shapeless_recipe("red_bed_from_white_bed").addInput(ajS, 1).addInput(ald, 1).setOutput(alp).setGroup(akG)
-    config.shaped_recipe(ajJ).setEntries(afd, akK).setOutput(ajJ).setGroup(alu)
-    config.shaped_recipe("red_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, ald).setOutput(
-        ajJ).setGroup(alu)
-    config.shapeless_recipe(acQ).addInput(ald, 1).addInput(amw, 4).addInput(alN, 4).setOutput(acQ).setGroup(aeJ)
-    config.shapeless_recipe("red_dye_from_beetroot").addInput("beetroot", 1).setOutput(ald).setGroup(ald)
-    config.shapeless_recipe("red_dye_from_poppy").addInput("poppy", 1).setOutput(ald).setGroup(ald)
-    config.shapeless_recipe("red_dye_from_rose_bush").addInput("rose_bush", 1).setOutput(ald).setGroup(ald)
-    config.shapeless_recipe("red_dye_from_tulip").addInput("red_tulip", 1).setOutput(ald).setGroup(ald)
-    config.smelting_recipe(abW).add_ingredient(aft).setXp(amP).setOutput(abW)
-    config.shaped_recipe(adM).setEntries(aeS, aiz).setEntries(afo, ahc).setOutput(adM)
-    config.shaped_recipe(acc).setEntries(abF, adM).setOutput(acc)
-    config.shaped_recipe(abb).setEntries(aam, adM).setOutput(abb)
-    config.shaped_recipe(abT).setEntries(aak, adM).setOutput(abT)
-    config.shaped_recipe(agz).setEntries(aar, "red_sand").setOutput(agz)
-    config.shaped_recipe(adh).setEntries(abF, ['red_sandstone', 'chiseled_red_sandstone']).setOutput(adh)
-    config.shaped_recipe(act).setEntries(aam,
-                                         ['red_sandstone', 'chiseled_red_sandstone', 'cut_red_sandstone']).setOutput(
-        act)
-    config.shaped_recipe(adf).setEntries(aak, agz).setOutput(adf)
-    config.shaped_recipe(adt).setEntries(aae, amo).setEntries(aly, ald).setOutput(adt).setGroup(ags)
-    config.shaped_recipe(abx).setEntries(aak, adt).setOutput(abx).setGroup(ade)
-    config.shaped_recipe("red_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly, ald).setOutput(
-        abx).setGroup(ade)
-    config.shaped_recipe(aft).setEntries(aae, aiZ).setEntries(aly, ald).setOutput(aft).setGroup(acT)
-    config.shapeless_recipe(akK).addInput(ald, 1).addInput(aiV, 1).setOutput(akK).setGroup(amy)
-    config.shaped_recipe(akY).setEntries(afj, aeL).setEntries(alL, akQ).setEntries(abI, ami).setOutput(akY)
-    config.shaped_recipe(akk).setEntries(aar, amw).setOutput(akk)
-    config.shaped_recipe(aeX).setEntries(abF, ['sandstone', 'chiseled_sandstone']).setOutput(aeX)
-    config.shaped_recipe(aei).setEntries(aam, ['sandstone', 'chiseled_sandstone', 'cut_sandstone']).setOutput(aei)
-    config.shaped_recipe(afc).setEntries(aak, akk).setOutput(afc)
-    config.shaped_recipe(ahA).setEntries(alL, alR).setEntries(aal, alX).setOutput(ahA)
-    config.shaped_recipe(ahD).setEntries([(0, 0), (0, 2), (2, 0), (2, 2)], aec).setEntries(
-        [(0, 1), (1, 0), (1, 1), (1, 2), (2, 1)], "prismarine_crystals").setOutput(ahD)
-    config.shaped_recipe(alS).setEntries(aeS, ajw).setOutput(alS)
-    config.shaped_recipe(alV).setEntries([(0, 0), (0, 1), (1, 1), (1, 2), (2, 0), (2, 1)], alb).setEntries(alL,
-                                                                                                           ajw).setOutput(
-        alV)
-    config.shaped_recipe(aim).setEntries(alJ, amj).setEntries([(0, 0), (0, 2)], "shulker_shell").setOutput(aim)
-    config.shapeless_recipe(acC).addInput(alY, 1).addInput("wither_skeleton_skull", 1).setOutput(acC)
-    config.shapeless_recipe(aiT).addInput(ahW, 1).setOutput(aiT)
-    config.shaped_recipe(ahW).setEntries(aac, aiT).setOutput(ahW)
-    config.shaped_recipe(afw).setEntries(aat, alb).setEntries(afd, ajw).setOutput(afw)
-    config.shaped_recipe(alI).setEntries(aau, ame).setEntries(aly, alr).setOutput(alI)
-    config.smelting_recipe(agk).add_ingredient(ahj).setXp(amP).setOutput(agk)
-    config.shaped_recipe(acR).setEntries(abF, agk).setOutput(acR)
-    config.shaped_recipe(acv).setEntries(aam, agk).setOutput(acv)
-    config.smelting_recipe(acE).add_ingredient(agz).setXp(amP).setOutput(acE)
-    config.shaped_recipe(aaL).setEntries(abF, acE).setOutput(aaL)
-    config.shaped_recipe(aaC).setEntries(aam, acE).setOutput(aaC)
-    config.smelting_recipe(aeb).add_ingredient(akk).setXp(amP).setOutput(aeb)
-    config.shaped_recipe(acb).setEntries(abF, aeb).setOutput(acb)
-    config.shaped_recipe(abm).setEntries(aam, aeb).setOutput(abm)
-    config.smelting_recipe(ahp).add_ingredient(ami).setXp(amP).setOutput(ahp)
-    config.shaped_recipe(adx).setEntries(abF, ahp).setOutput(adx)
-    config.shaped_recipe(amp).setEntries(abF, aiY).setOutput(amp)
-    config.shaped_recipe(aiY).setEntries(aar, "snowball").setOutput(aiY)
-    config.shaped_recipe(afb).setEntries(aau, afk).setEntries(aly, aml).setOutput(afb)
-    config.smelting_recipe(alU).add_ingredient("wet_sponge").setXp(amK).setOutput(alU)
-    config.shaped_recipe(aiE).setEntries(aap, agu).setOutput(aiE).setGroup(amr)
-    config.shapeless_recipe(afV).addInput(agu, 1).setOutput(afV).setGroup(ago)
-    config.shaped_recipe(ahU).setEntries(aan, agu).setOutput(ahU).setGroup(aie)
-    config.shaped_recipe(agO).setEntries(aeQ, amc).setEntries(aas, agu).setOutput(agO).setGroup(ahk)
-    config.shaped_recipe(ady).setEntries(aas, amc).setEntries(aeQ, agu).setOutput(ady).setGroup(adE)
-    config.shapeless_recipe(agu).addInput("#spruce_logs", 1).setOutput(agu).setGroup(alz)
-    config.shaped_recipe(abX).setEntries(afd, agu).setOutput(abX).setGroup(abS)
-    config.shaped_recipe(aiD).setEntries(aak, agu).setEntries(alP, amc).setOutput(aiD)
-    config.shaped_recipe(ahS).setEntries(abF, agu).setOutput(ahS).setGroup(aip)
-    config.shaped_recipe(agG).setEntries(aam, agu).setOutput(agG).setGroup(afX)
-    config.shaped_recipe(aez).setEntries(aak, agu).setOutput(aez).setGroup(aer)
-    config.shaped_recipe(ahX).setEntries(aar, "spruce_log").setOutput(ahX).setGroup(amB)
-    config.shaped_recipe(amc).setEntries(aeT, alb).setOutput(amc).setGroup(alH)
-    config.shaped_recipe(afH).setEntries(alJ, alD).setEntries(alG, aiT).setOutput(afH)
-    config.shaped_recipe("stick_from_bamboo_item").setEntries(aeT, alX).setOutput(amc).setGroup(alH)
-    config.smelting_recipe(ami).add_ingredient(ahK).setXp(amP).setOutput(ami)
-    config.shaped_recipe(aiB).setEntries(alL, ajw).setEntries(abI, ami).setOutput(aiB)
-    config.shaped_recipe(ajN).setEntries(afy, amc).setEntries(abN, ahK).setOutput(ajN)
-    config.shaped_recipe(ahm).setEntries(aar, ami).setOutput(ahm)
-    config.shaped_recipe(adY).setEntries(abF, ahm).setOutput(adY)
-    config.shaped_recipe(acU).setEntries(aam, ahm).setOutput(acU)
-    config.shaped_recipe(adV).setEntries(aak, ahm).setOutput(adV)
-    config.shapeless_recipe(ahv).addInput(ami, 1).setOutput(ahv)
-    config.shaped_recipe(akc).setEntries(afy, amc).setEntries(afd, ahK).setOutput(akc)
-    config.shaped_recipe(agH).setEntries(afy, amc).setEntries(abF, ahK).setOutput(agH)
-    config.shaped_recipe(acx).setEntries(afd, ami).setOutput(acx)
-    config.shaped_recipe(ahn).setEntries(afm, amc).setEntries(alG, ahK).setOutput(ahn)
-    config.shaped_recipe(aiX).setEntries(abF, ami).setOutput(aiX)
-    config.shaped_recipe(agU).setEntries(aam, ami).setOutput(agU)
-    config.shaped_recipe(aiA).setEntries(alW, amc).setEntries(aeT, ahK).setOutput(aiA)
-    config.shaped_recipe(acp).setEntries(aar, "stripped_acacia_log").setOutput(acp).setGroup(amB)
-    config.shaped_recipe(acN).setEntries(aar, "stripped_birch_log").setOutput(acN).setGroup(amB)
-    config.shaped_recipe(abr).setEntries(aar, "stripped_dark_oak_log").setOutput(abr).setGroup(amB)
-    config.shaped_recipe(acF).setEntries(aar, "stripped_jungle_log").setOutput(acF).setGroup(amB)
-    config.shaped_recipe(adK).setEntries(aar, "stripped_oak_log").setOutput(adK).setGroup(amB)
-    config.shaped_recipe(acz).setEntries(aar, "stripped_spruce_log").setOutput(acz).setGroup(amB)
-    config.shapeless_recipe("sugar_from_honey_bottle").addInput(agJ, 1).setOutput(amk).setGroup(amk)
-    config.shapeless_recipe("sugar_from_sugar_cane").addInput(ajf, 1).setOutput(amk).setGroup(amk)
-    config.smelting_recipe(aiZ).add_ingredient(amD).setXp(amL).setOutput(aiZ)
-    config.shaped_recipe(amH).setEntries(aau, ['sand', 'red_sand']).setEntries([(0, 0), (0, 2), (1, 1), (2, 0), (2, 2)],
-                                                                               ajU).setOutput(amH)
-    config.shaped_recipe(ahb).setEntries(alG, amH).setEntries(alJ, akx).setOutput(ahb)
-    config.shaped_recipe(ama).setEntries(alJ, amc).setEntries(alG, ['coal', 'charcoal']).setOutput(ama)
-    config.shapeless_recipe(afA).addInput(amj, 1).addInput(afE, 1).setOutput(afA)
-    config.shaped_recipe(afE).setEntries(alW, alb).setEntries(alJ, amc).setEntries(alG, ajw).setOutput(afE)
-    config.shaped_recipe(afZ).setEntries(aao, "scute").setOutput(afZ)
-    config.shapeless_recipe(alZ).addInput(akm, 1).setOutput(alZ)
-    config.shaped_recipe(agV).setEntries(aak, aiV).setEntries(alP, amc).setOutput(agV).setGroup(alx)
-    config.shaped_recipe(ajS).setEntries(abF, aiV).setEntries(abI, alb).setOutput(ajS).setGroup(amJ)
-    config.shaped_recipe(agY).setEntries(afd, aiV).setOutput(agY).setGroup(alu)
-    config.shapeless_recipe(aci).addInput(aka, 1).addInput(amw, 4).addInput(alN, 4).setOutput(aci).setGroup(aeJ)
-    config.shapeless_recipe(aka).addInput(ajY, 1).setOutput(aka).setGroup(aka)
+        "red_mushroom", 1).setOutput(aff).setGroup(aff)
+    config.shaped_recipe("rail").setEntries(aiC, aiY).setEntries(aaj, agc).setOutput((16, "rail"))
+    config.shapeless_recipe(ahj).addInput(adh, 1).setOutput((9, ahj))
+    config.shaped_recipe(adh).setEntries(aac, ahj).setOutput(adh)
+    config.smelting_recipe("redstone_from_blasting", abP).add_ingredient(aeU).setXp(ajv).setOutput(ahj).setCookingTime(
+        ajy)
+    config.smelting_recipe("redstone_from_smelting").add_ingredient(aeU).setXp(ajv).setOutput(ahj)
+    config.shaped_recipe(aer).setEntries(aav, ahj).setEntries(aiC, agZ).setOutput(aer)
+    config.shaped_recipe(adl).setEntries(ain, aiY).setEntries(aih, ahj).setOutput(adl)
+    config.shaped_recipe(afZ).setEntries(aan, ahw).setEntries(aiH, aiY).setOutput(afZ).setGroup(aip)
+    config.shaped_recipe(ahQ).setEntries(aaZ, ahw).setEntries(aaM, ahX).setOutput(ahQ).setGroup(ajp)
+    config.shapeless_recipe("red_bed_from_white_bed").addInput(agP, 1).addInput(ahT, 1).setOutput(ahQ).setGroup(ahz)
+    config.shaped_recipe("red_carpet").setEntries(adi, ahw).setOutput((3, "red_carpet")).setGroup(aim)
+    config.shaped_recipe("red_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, ahT).setOutput(
+        (8, "red_carpet")).setGroup(aim)
+    config.shapeless_recipe("red_concrete_powder").addInput(ahT, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "red_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe("red_dye_from_beetroot").addInput("beetroot", 1).setOutput(ahT).setGroup(ahT)
+    config.shapeless_recipe("red_dye_from_poppy").addInput("poppy", 1).setOutput(ahT).setGroup(ahT)
+    config.shapeless_recipe("red_dye_from_rose_bush").addInput("rose_bush", 1).setOutput((2, ahT)).setGroup(ahT)
+    config.shapeless_recipe("red_dye_from_tulip").addInput("red_tulip", 1).setOutput(ahT).setGroup(ahT)
+    config.smelting_recipe(aba).add_ingredient(acZ).setXp(ajw).setOutput(aba)
+    config.shaped_recipe(acd).setEntries(adq, afq).setEntries(adj, aeV).setOutput(acd)
+    config.shaped_recipe("red_nether_brick_slab").setEntries(aaZ, acd).setOutput((6, "red_nether_brick_slab"))
+    config.shaped_recipe("red_nether_brick_stairs").setEntries(aak, acd).setOutput((4, "red_nether_brick_stairs"))
+    config.shaped_recipe("red_nether_brick_wall").setEntries(aan, acd).setOutput((6, "red_nether_brick_wall"))
+    config.shaped_recipe(adY).setEntries(aar, "red_sand").setOutput(adY)
+    config.shaped_recipe(abI).setEntries(aaZ, ['red_sandstone', 'chiseled_red_sandstone']).setOutput((6, abI))
+    config.shaped_recipe("red_sandstone_stairs").setEntries(aak, ['red_sandstone', 'chiseled_red_sandstone',
+                                                                  'cut_red_sandstone']).setOutput(
+        (4, "red_sandstone_stairs"))
+    config.shaped_recipe("red_sandstone_wall").setEntries(aan, adY).setOutput((6, "red_sandstone_wall"))
+    config.shaped_recipe(aca).setEntries(aad, aiZ).setEntries(aiC, ahT).setOutput((8, aca)).setGroup(aed)
+    config.shaped_recipe("red_stained_glass_pane").setEntries(aan, aca).setOutput(
+        (16, "red_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("red_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC, ahT).setOutput(
+        (8, "red_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acZ).setEntries(aad, agl).setEntries(aiC, ahT).setOutput((8, acZ)).setGroup(abF)
+    config.shapeless_recipe(ahw).addInput(ahT, 1).addInput(agC, 1).setOutput(ahw).setGroup(ajd)
+    config.shaped_recipe(ahJ).setEntries(adv, adl).setEntries(aiB, ahj).setEntries(aaM, aiX).setOutput(ahJ)
+    config.shaped_recipe(agG).setEntries(aar, ajf).setOutput(agG)
+    config.shaped_recipe(adp).setEntries(aaZ, ['sandstone', 'chiseled_sandstone']).setOutput((6, adp))
+    config.shaped_recipe("sandstone_stairs").setEntries(aak,
+                                                        ['sandstone', 'chiseled_sandstone', 'cut_sandstone']).setOutput(
+        (4, "sandstone_stairs"))
+    config.shaped_recipe("sandstone_wall").setEntries(aan, agG).setOutput((6, "sandstone_wall"))
+    config.shaped_recipe("scaffolding").setEntries(aiB, aig).setEntries(aaj, ail).setOutput((6, "scaffolding"))
+    config.shaped_recipe(afB).setEntries([(0, 0), (0, 2), (2, 0), (2, 2)], acp).setEntries(
+        [(0, 1), (1, 0), (1, 1), (1, 2), (2, 1)], "prismarine_crystals").setOutput(afB)
+    config.shaped_recipe(aiD).setEntries(adq, agc).setOutput(aiD)
+    config.shaped_recipe(aiy).setEntries([(0, 0), (0, 1), (1, 1), (1, 2), (2, 0), (2, 1)], ahX).setEntries(aiB,
+                                                                                                           agc).setOutput(
+        aiy)
+    config.shaped_recipe(afM).setEntries(ain, aiO).setEntries([(0, 0), (0, 2)], "shulker_shell").setOutput(afM)
+    config.shapeless_recipe(abr).addInput(aiU, 1).addInput("wither_skeleton_skull", 1).setOutput(abr)
+    config.shapeless_recipe(ago).addInput(afp, 1).setOutput((9, ago))
+    config.shaped_recipe(afp).setEntries(aac, ago).setOutput(afp)
+    config.shaped_recipe(adf).setEntries(aau, ahX).setEntries(adi, agc).setOutput(adf)
+    config.shaped_recipe(aii).setEntries(aav, aiS).setEntries(aiC, aie).setOutput(aii)
+    config.smelting_recipe(aei).add_ingredient(aeF).setXp(ajw).setOutput(aei)
+    config.shaped_recipe("smooth_quartz_slab").setEntries(aaZ, aei).setOutput((6, "smooth_quartz_slab"))
+    config.shaped_recipe("smooth_quartz_stairs").setEntries(aak, aei).setOutput((4, "smooth_quartz_stairs"))
+    config.smelting_recipe(abp).add_ingredient(adY).setXp(ajw).setOutput(abp)
+    config.shaped_recipe("smooth_red_sandstone_slab").setEntries(aaZ, abp).setOutput((6, "smooth_red_sandstone_slab"))
+    config.shaped_recipe("smooth_red_sandstone_stairs").setEntries(aak, abp).setOutput(
+        (4, "smooth_red_sandstone_stairs"))
+    config.smelting_recipe(act).add_ingredient(agG).setXp(ajw).setOutput(act)
+    config.shaped_recipe("smooth_sandstone_slab").setEntries(aaZ, act).setOutput((6, "smooth_sandstone_slab"))
+    config.shaped_recipe("smooth_sandstone_stairs").setEntries(aak, act).setOutput((4, "smooth_sandstone_stairs"))
+    config.smelting_recipe(aeE).add_ingredient(aiX).setXp(ajw).setOutput(aeE)
+    config.shaped_recipe(abW).setEntries(aaZ, aeE).setOutput((6, abW))
+    config.shaped_recipe("snow").setEntries(aaZ, agx).setOutput((6, "snow"))
+    config.shaped_recipe(agx).setEntries(aar, "snowball").setOutput(agx)
+    config.shaped_recipe("spectral_arrow").setEntries(aav, adD).setEntries(aiC, aiP).setOutput((2, "spectral_arrow"))
+    config.smelting_recipe(aiv).add_ingredient("wet_sponge").setXp(ajs).setOutput(aiv)
+    config.shaped_recipe(afC).setEntries(aao, aeh).setOutput(afC).setGroup(ajk)
+    config.shapeless_recipe(aej).addInput(aeh, 1).setOutput(aej).setGroup(aex)
+    config.shaped_recipe("spruce_door").setEntries(aal, aeh).setOutput((3, "spruce_door")).setGroup(afk)
+    config.shaped_recipe("spruce_fence").setEntries(ada, aiY).setEntries(aas, aeh).setOutput(
+        (3, "spruce_fence")).setGroup(aeR)
+    config.shaped_recipe(acb).setEntries(aas, aiY).setEntries(ada, aeh).setOutput(acb).setGroup(abT)
+    config.shapeless_recipe(aeh).addInput("#spruce_logs", 1).setOutput((4, aeh)).setGroup(aiG)
+    config.shaped_recipe(abk).setEntries(adi, aeh).setOutput(abk).setGroup(abi)
+    config.shaped_recipe("spruce_sign").setEntries(aan, aeh).setEntries(aiH, aiY).setOutput((3, "spruce_sign"))
+    config.shaped_recipe("spruce_slab").setEntries(aaZ, aeh).setOutput((6, "spruce_slab")).setGroup(afh)
+    config.shaped_recipe("spruce_stairs").setEntries(aak, aeh).setOutput((4, "spruce_stairs")).setGroup(adP)
+    config.shaped_recipe("spruce_trapdoor").setEntries(aan, aeh).setOutput((2, "spruce_trapdoor")).setGroup(acF)
+    config.shaped_recipe("spruce_wood").setEntries(aar, "spruce_log").setOutput((3, "spruce_wood")).setGroup(aja)
+    config.shaped_recipe(aiY).setEntries(adA, ahX).setOutput((4, aiY)).setGroup(aiA)
+    config.shaped_recipe(aea).setEntries(ain, ait).setEntries(aih, ago).setOutput(aea)
+    config.shaped_recipe("stick_from_bamboo_item").setEntries(adA, ail).setOutput(aiY).setGroup(aiA)
+    config.smelting_recipe(aiX).add_ingredient(afO).setXp(ajw).setOutput(aiX)
+    config.shaped_recipe(afQ).setEntries(aiB, agc).setEntries(aaM, aiX).setOutput(afQ)
+    config.shaped_recipe(agM).setEntries(adt, aiY).setEntries(aaN, afO).setOutput(agM)
+    config.shaped_recipe(aeP).setEntries(aar, aiX).setOutput((4, aeP))
+    config.shaped_recipe(acw).setEntries(aaZ, aeP).setOutput((6, acw))
+    config.shaped_recipe("stone_brick_stairs").setEntries(aak, aeP).setOutput((4, "stone_brick_stairs"))
+    config.shaped_recipe("stone_brick_wall").setEntries(aan, aeP).setOutput((6, "stone_brick_wall"))
+    config.shapeless_recipe(aeC).addInput(aiX, 1).setOutput(aeC)
+    config.shaped_recipe(agL).setEntries(adt, aiY).setEntries(adi, afO).setOutput(agL)
+    config.shaped_recipe(adO).setEntries(adt, aiY).setEntries(aaZ, afO).setOutput(adO)
+    config.shaped_recipe(abt).setEntries(adi, aiX).setOutput(abt)
+    config.shaped_recipe(aeQ).setEntries(adn, aiY).setEntries(aih, afO).setOutput(aeQ)
+    config.shaped_recipe(agr).setEntries(aaZ, aiX).setOutput((6, agr))
+    config.shaped_recipe("stone_stairs").setEntries(aak, aiX).setOutput((4, "stone_stairs"))
+    config.shaped_recipe(afP).setEntries(aiE, aiY).setEntries(adA, afO).setOutput(afP)
+    config.shaped_recipe("stripped_acacia_wood").setEntries(aar, "stripped_acacia_log").setOutput(
+        (3, "stripped_acacia_wood")).setGroup(aja)
+    config.shaped_recipe("stripped_birch_wood").setEntries(aar, "stripped_birch_log").setOutput(
+        (3, "stripped_birch_wood")).setGroup(aja)
+    config.shaped_recipe("stripped_dark_oak_wood").setEntries(aar, "stripped_dark_oak_log").setOutput(
+        (3, "stripped_dark_oak_wood")).setGroup(aja)
+    config.shaped_recipe("stripped_jungle_wood").setEntries(aar, "stripped_jungle_log").setOutput(
+        (3, "stripped_jungle_wood")).setGroup(aja)
+    config.shaped_recipe("stripped_oak_wood").setEntries(aar, "stripped_oak_log").setOutput(
+        (3, "stripped_oak_wood")).setGroup(aja)
+    config.shaped_recipe("stripped_spruce_wood").setEntries(aar, "stripped_spruce_log").setOutput(
+        (3, "stripped_spruce_wood")).setGroup(aja)
+    config.shapeless_recipe("sugar_from_honey_bottle").addInput(aeM, 1).setOutput((3, aiJ)).setGroup(aiJ)
+    config.shapeless_recipe("sugar_from_sugar_cane").addInput(afW, 1).setOutput(aiJ).setGroup(aiJ)
+    config.smelting_recipe(agl).add_ingredient(aji).setXp(ajr).setOutput(agl)
+    config.shaped_recipe(ajn).setEntries(aav, ['sand', 'red_sand']).setEntries([(0, 0), (0, 2), (1, 1), (2, 0), (2, 2)],
+                                                                               ahd).setOutput(ajn)
+    config.shaped_recipe(aeS).setEntries(aih, ajn).setEntries(ain, ahr).setOutput(aeS)
+    config.shaped_recipe(aiN).setEntries(ain, aiY).setEntries(aih, ['coal', 'charcoal']).setOutput((4, aiN))
+    config.shapeless_recipe(aep).addInput(aiO, 1).addInput(aec, 1).setOutput(aep)
+    config.shaped_recipe(aec).setEntries(aiE, ahX).setEntries(ain, aiY).setEntries(aih, agc).setOutput((2, aec))
+    config.shaped_recipe(aeb).setEntries(aap, "scute").setOutput(aeb)
+    config.shapeless_recipe(aiK).addInput(ahe, 1).setOutput((9, aiK))
+    config.shaped_recipe(aeI).setEntries(aan, agC).setEntries(aiH, aiY).setOutput(aeI).setGroup(aip)
+    config.shaped_recipe(agP).setEntries(aaZ, agC).setEntries(aaM, ahX).setOutput(agP).setGroup(ajp)
+    config.shaped_recipe(aeW).setEntries(adi, agC).setOutput((3, aeW)).setGroup(aim)
+    config.shapeless_recipe("white_concrete_powder").addInput(ahb, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "white_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe(ahb).addInput(agS, 1).setOutput(ahb).setGroup(ahb)
     config.shapeless_recipe("white_dye_from_lily_of_the_valley").addInput("lily_of_the_valley", 1).setOutput(
-        aka).setGroup(aka)
-    config.smelting_recipe(aaY).add_ingredient(adW).setXp(amP).setOutput(aaY)
-    config.shaped_recipe(acK).setEntries(aae, amo).setEntries(aly, aka).setOutput(acK).setGroup(ags)
-    config.shaped_recipe(aaU).setEntries(aak, acK).setOutput(aaU).setGroup(ade)
-    config.shaped_recipe("white_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                     aka).setOutput(
-        aaU).setGroup(ade)
-    config.shaped_recipe(adW).setEntries(aae, aiZ).setEntries(aly, aka).setOutput(adW).setGroup(acT)
-    config.shaped_recipe("white_wool_from_string").setEntries(aar, alR).setOutput(aiV)
-    config.shaped_recipe(aiR).setEntries(afy, amc).setEntries(abN, alb).setOutput(aiR)
-    config.shaped_recipe(ajk).setEntries(afy, amc).setEntries(afd, alb).setOutput(ajk)
-    config.shaped_recipe(afq).setEntries(afy, amc).setEntries(abF, alb).setOutput(afq)
-    config.shaped_recipe(afL).setEntries(afm, amc).setEntries(alG, alb).setOutput(afL)
-    config.shaped_recipe(aho).setEntries(alW, amc).setEntries(aeT, alb).setOutput(aho)
-    config.shapeless_recipe(agw).addInput(ams, 1).addInput("ink_sac", 1).addInput(all, 1).setOutput(agw)
-    config.shaped_recipe(agq).setEntries(aak, aib).setEntries(alP, amc).setOutput(agq).setGroup(alx)
-    config.shaped_recipe(aja).setEntries(abF, aib).setEntries(abI, alb).setOutput(aja).setGroup(amJ)
-    config.shapeless_recipe("yellow_bed_from_white_bed").addInput(ajS, 1).addInput(ajr, 1).setOutput(aja).setGroup(akG)
-    config.shaped_recipe(agi).setEntries(afd, aib).setOutput(agi).setGroup(alu)
-    config.shaped_recipe("yellow_carpet_from_white_carpet").setEntries(aae, agY).setEntries(aly, ajr).setOutput(
-        agi).setGroup(alu)
-    config.shapeless_recipe(abD).addInput(ajr, 1).addInput(amw, 4).addInput(alN, 4).setOutput(abD).setGroup(aeJ)
-    config.shapeless_recipe("yellow_dye_from_dandelion").addInput("dandelion", 1).setOutput(ajr).setGroup(ajr)
-    config.shapeless_recipe("yellow_dye_from_sunflower").addInput("sunflower", 1).setOutput(ajr).setGroup(ajr)
-    config.smelting_recipe(aaR).add_ingredient(adr).setXp(amP).setOutput(aaR)
-    config.shaped_recipe(acB).setEntries(aae, amo).setEntries(aly, ajr).setOutput(acB).setGroup(ags)
-    config.shaped_recipe(aaJ).setEntries(aak, acB).setOutput(aaJ).setGroup(ade)
-    config.shaped_recipe("yellow_stained_glass_pane_from_glass_pane").setEntries(aae, ajy).setEntries(aly,
-                                                                                                      ajr).setOutput(
-        aaJ).setGroup(ade)
-    config.shaped_recipe(adr).setEntries(aae, aiZ).setEntries(aly, ajr).setOutput(adr).setGroup(acT)
-    config.shapeless_recipe(aib).addInput(ajr, 1).addInput(aiV, 1).setOutput(aib).setGroup(amy)
+        ahb).setGroup(ahb)
+    config.smelting_recipe(aaI).add_ingredient(acy).setXp(ajw).setOutput(aaI)
+    config.shaped_recipe(abA).setEntries(aad, aiZ).setEntries(aiC, ahb).setOutput((8, abA)).setGroup(aed)
+    config.shaped_recipe("white_stained_glass_pane").setEntries(aan, abA).setOutput(
+        (16, "white_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("white_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                     ahb).setOutput(
+        (8, "white_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acy).setEntries(aad, agl).setEntries(aiC, ahb).setOutput((8, acy)).setGroup(abF)
+    config.shaped_recipe("white_wool_from_string").setEntries(aar, aig).setOutput(agC)
+    config.shaped_recipe(afT).setEntries(adt, aiY).setEntries(aaN, ahX).setOutput(afT)
+    config.shaped_recipe(afS).setEntries(adt, aiY).setEntries(adi, ahX).setOutput(afS)
+    config.shaped_recipe(add).setEntries(adt, aiY).setEntries(aaZ, ahX).setOutput(add)
+    config.shaped_recipe(adZ).setEntries(adn, aiY).setEntries(aih, ahX).setOutput(adZ)
+    config.shaped_recipe(aeL).setEntries(aiE, aiY).setEntries(adA, ahX).setOutput(aeL)
+    config.shapeless_recipe(adG).addInput(ajb, 1).addInput("ink_sac", 1).addInput(ahS, 1).setOutput(adG)
+    config.shaped_recipe(adR).setEntries(aan, afH).setEntries(aiH, aiY).setOutput(adR).setGroup(aip)
+    config.shaped_recipe(agf).setEntries(aaZ, afH).setEntries(aaM, ahX).setOutput(agf).setGroup(ajp)
+    config.shapeless_recipe("yellow_bed_from_white_bed").addInput(agP, 1).addInput(agk, 1).setOutput(agf).setGroup(ahz)
+    config.shaped_recipe("yellow_carpet").setEntries(adi, afH).setOutput((3, "yellow_carpet")).setGroup(aim)
+    config.shaped_recipe("yellow_carpet_from_white_carpet").setEntries(aad, aeW).setEntries(aiC, agk).setOutput(
+        (8, "yellow_carpet")).setGroup(aim)
+    config.shapeless_recipe("yellow_concrete_powder").addInput(agk, 1).addInput(ajf, 4).addInput(aio, 4).setOutput(
+        (8, "yellow_concrete_powder")).setGroup(acO)
+    config.shapeless_recipe("yellow_dye_from_dandelion").addInput("dandelion", 1).setOutput(agk).setGroup(agk)
+    config.shapeless_recipe("yellow_dye_from_sunflower").addInput("sunflower", 1).setOutput((2, agk)).setGroup(agk)
+    config.smelting_recipe(aaF).add_ingredient(acg).setXp(ajw).setOutput(aaF)
+    config.shaped_recipe(abu).setEntries(aad, aiZ).setEntries(aiC, agk).setOutput((8, abu)).setGroup(aed)
+    config.shaped_recipe("yellow_stained_glass_pane").setEntries(aan, abu).setOutput(
+        (16, "yellow_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe("yellow_stained_glass_pane_from_glass_pane").setEntries(aad, agj).setEntries(aiC,
+                                                                                                      agk).setOutput(
+        (8, "yellow_stained_glass_pane")).setGroup(abC)
+    config.shaped_recipe(acg).setEntries(aad, agl).setEntries(aiC, agk).setOutput((8, acg)).setGroup(abF)
+    config.shapeless_recipe(afH).addInput(agk, 1).addInput(agC, 1).setOutput(afH).setGroup(ajd)

@@ -9,11 +9,53 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import mcpython.storage.serializer.IDataSerializer
 import globals as G
 import mcpython.world.GameRule
+import mcpython.storage.datafixers.IDataFixer
+
+
+class GameRuleFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    Fixer targeting one or more game-rule entries
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:gamerule"
+
+    TARGET_GAMERULE_NAME = []  # which game rules to apply to
+
+    @classmethod
+    def fix(cls, savefile, data) -> dict:
+        pass
+
+
+class GameRuleRemovalFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    Fixer targeting the removal of game-rule data from the save files
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:gamerule"
+
+    TARGET_GAMERULE_NAME = []  # which game rules to apply to
 
 
 @G.registry
 class GameRule(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:gamerule"
+
+    @classmethod
+    def apply_part_fixer(cls, savefile, fixer):
+        if issubclass(fixer, GameRuleFixer):
+            data = savefile.access_file_json("gamerules.json")
+            if data is None: return
+            for name in data:
+                if name in fixer.TARGET_GAMERULE_NAME:
+                    data[name] = fixer.fix(savefile, data[name])
+            savefile.dump_file_json("gamerules.json", data)
+        elif issubclass(fixer, GameRuleRemovalFixer):
+            data = savefile.access_file_json("gamerules.json")
+            if data is None: return
+            for name in data:
+                if name in fixer.TARGET_GAMERULE_NAME:
+                    del data[name]
+            savefile.dump_file_json("gamerules.json", data)
 
     @classmethod
     def load(cls, savefile):

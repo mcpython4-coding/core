@@ -26,6 +26,9 @@ class StateStartMenu(mcpython.state.State.State):
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
+    def on_activate(self):
+        G.world.world_loaded = False
+
     @staticmethod
     def on_new_game_press(x, y):
         G.statehandler.switch_to("minecraft:world_selection", immediate=False)

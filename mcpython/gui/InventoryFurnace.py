@@ -72,7 +72,7 @@ class InventoryFurnace(mcpython.gui.Inventory.Inventory):
             self.smelt_start = time.time()
             for x in self.types:
                 if self.old_item_name in G.craftinghandler.furnace_recipes[x]:
-                    recipe = G.craftinghandler.furnace_recipes[x][self.old_item_name]
+                    recipe = G.craftinghandler.check_relink(G.craftinghandler.furnace_recipes[x][self.old_item_name])
                     break
             else:
                 logger.println("[ERROR] no recipe found")

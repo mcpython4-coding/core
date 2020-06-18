@@ -118,7 +118,7 @@ def load_item():
         mcpython.factory.ItemFactory.ItemFactory().setName("minecraft:diamond_{}".format(toolname)).setToolType([tooltype]). \
             setToolBrakeMutli(12).setToolLevel(3).finish()
 
-    for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:
+    for color in mcpython.util.enums.COLORS:
         mcpython.factory.ItemFactory.ItemFactory().setName("minecraft:{}_dye".format(color))
 
     gold_helmet = mcpython.factory.ItemFactory.ItemFactory().setName("minecraft:golden_helmet").setArmorPoints(2).finish()

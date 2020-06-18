@@ -114,9 +114,6 @@ issue 166:
 issue 168:
     bug: when starting in-game generation, game hangs for an short moment
 
-issue 174:
-    bug: loading bars of mod-loading are not in the middle
-
 issue 175:
     bug: structures overlapping into not-generated chunks are not shown when the chunks respecify are generated
     fix: add an special list of pre-generated blocks which is injected into actual generation task array when the chunk
@@ -128,18 +125,18 @@ issue 176:
 
 issue 177:
     bug: grass block faces generated next to leaves are not visible
+    possible cause: wrong is_solid calculation
 
 issue 178:
     bug: hotbar is not transparent(rendered)
-
-issue 181:
-    bug: when disabling work-around fix in player, another player is rendered
+    fix: enable alpha blending
 
 issue 185:
     bug: in big worlds, chunks can get randomly hidden
+    fix: implement chunk load ticket system
 
 issue 196:
-    bug: when picking up an itemstack during holding one, it gets reset
+    bug: when in gui and picking up an itemstack during holding one, it gets reset
     reproduce: craft one thing with an item in mouse and the item is not picked up
 
 issue 199:
@@ -152,9 +149,6 @@ issue 201:
     fix: implement system to have an event bus for an generator mode only active when in an world with these world
         generator
 
-issue 202:
-    bug: generation progress % gets negative and is counting down from 100%
-
 issue 203:
     bug: when loading an previous debug world, exceptions are printed out
     fix: set world generator to the one loaded from world
@@ -162,5 +156,4 @@ issue 203:
 issue 204:
     bug: debug world generates start chest
 
-issue 208:
-    bug: closing the player inventory will also add the crafting output to the inventory
+[211-212]

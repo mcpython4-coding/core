@@ -11,16 +11,16 @@ import math
 MC_VERSION_BASE = "1.15.2"
 VERSION_TYPE = "dev"
 # possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
-VERSION_NAME = "20w24a"
+VERSION_NAME = "20w25a"
 
-DEVELOPING_FOR = "20w24a"
-DEVELOPMENT_COUNTER = 3  # final: 3
+DEVELOPING_FOR = "20w25a"
+DEVELOPMENT_COUNTER = 3
 
 # list of all versions since 19w52a to indicate order of release; used in save files todo: export to other file
 VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20w12a", "20w12b", "20w14a",
                  "a1.0.0", "a1.0.1", "snapshot dev 1 cycle 1", "snapshot dev 1 cycle 2",
                  "snapshot dev 1 cycle 3", "snapshot dev 1 cycle 4", "20w22a", "snapshot dev 1",
-                 "snapshot dev 2", VERSION_NAME]
+                 "snapshot dev 2", "20w24a", "snapshot dev 3", VERSION_NAME]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)
@@ -72,6 +72,8 @@ RANDOM_TICK_RANGE = 2  # how far to execute random ticks away from player
 
 USE_MISSING_TEXTURES_ON_MISS_TEXTURE = False  # if missing texture should be used when no texture was selected for an face
 
+USE_MIP_MAPPING = True
+
 CPU_USAGE_REFRESH_TIME = 0.8  # how often to refresh cpu usage indicator
 
 FOG_DISTANCE = 60  # something like view distance, but will no force the chunks to generate
@@ -93,6 +95,9 @@ ENABLE_PROFILING = False
 ENABLE_PROFILER_DRAW = True
 ENABLE_PROFILER_TICK = False
 
+SHUFFLE_DATA = False
+SHUFFLE_INTERVAL = -1
+
 
 def load():
     import mcpython.mod.ConfigFile
@@ -110,9 +115,11 @@ def load():
     profiler = mcpython.mod.ConfigFile.DictDataMapper().add_entry("enable", False).add_entry("total_draw",
                                                                                              True).add_entry(
         "total_tick", False)
+    misc = mcpython.mod.ConfigFile.DictDataMapper().add_entry("enable_mixing_data", False).add_entry(
+        "auto_shuffle_interval", -1)
 
     config.add_entry("physics", physics).add_entry("speeds", speeds).add_entry("timing", timing).add_entry(
-        "rendering", rendering).add_entry("profiler", profiler)
+        "rendering", rendering).add_entry("profiler", profiler).add_entry("misc", misc)
 
     biomeconfig = mcpython.mod.ConfigFile.ConfigFile("biomes", "minecraft")
     biomeconfig.add_entry("minecraft:plains", mcpython.mod.ConfigFile.ListDataMapper().append(10).append(30))
@@ -147,6 +154,19 @@ def load():
         ENABLE_PROFILER_DRAW = profiler["total_draw"].read()
         ENABLE_PROFILER_TICK = profiler["total_tick"].read()
 
-        # todo: add config for pgb colors, pgb text colors, button positions, ...
+        global SHUFFLE_DATA, SHUFFLE_INTERVAL
+        SHUFFLE_DATA = misc["enable_mixing_data"].read()
+        SHUFFLE_INTERVAL = misc["auto_shuffle_interval"].read()
+
+        if SHUFFLE_DATA and SHUFFLE_INTERVAL > 0:
+            import pyglet
+
+            def on_shuffle(dt):
+                if G.world.world_loaded:
+                    print("shuffling data...")
+                    G.eventhandler.call("data:shuffle:all")
+
+            pyglet.clock.schedule_interval(on_shuffle, SHUFFLE_INTERVAL)
+
         # todo: add doc strings into config files
 

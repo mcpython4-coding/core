@@ -7,6 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import mcpython.event.Registry
+import mcpython.entity.DamageSource
 import globals as G
 import random
 
@@ -39,13 +40,49 @@ class Alternative(ILootTableCondition):
 @G.registry
 class BlockStateProperty(ILootTableCondition):
     NAME = "minecraft:block_state_property"
-    # todo: implement
+
+    def __init__(self, data):
+        super().__init__(data)
+        self.name = data["block"]
+        self.state = data["properties"] if "properties" in data else {}
+
+    def check(self, source, *args, block=None, **kwargs) -> bool:
+        if block is None: return False
+        if block.NAME != self.name: return False
+        if len(self.state) == 0: return True
+        state = block.get_model_state()
+        for key in self.state:
+            if key not in state or state[key] != self.state[key]: return False
+        return True
 
 
 @G.registry
 class DamageSourceProperties(ILootTableCondition):
     NAME = "minecraft:damage_source_properties"
-    # todo: implement
+
+    def __init__(self, data):
+        super().__init__(data)
+        self.source = mcpython.entity.DamageSource.DamageSource()
+        if "bypasses_armor" in data:
+            self.source.setAttribute("bypasses_armor", data["bypasses_armor"])
+        if "bypasses_invulnerability" in data:
+            self.source.setAttribute("bypasses_invulnerability", data["bypasses_invulnerability"])
+        if "bypasses_magic" in data:
+            self.source.setAttribute("bypasses_magic", data["bypasses_magic"])
+        if "is_explosion" in data:
+            self.source.setAttribute("is_explosion", data["is_explosion"])
+        if "is_magic" in data:
+            self.source.setAttribute("is_magic", data["is_magic"])
+        if "is_projectile" in data:
+            self.source.setAttribute("is_projectile", data["is_projectile"])
+        if "is_lightning" in data:
+            self.source.setAttribute("is_lightning", data["is_lightning"])
+
+        # todo: add direct_entity & source_entity
+
+    def check(self, source, *args, damage_source=None, **kwargs) -> bool:
+        if damage_source is None: return False
+        return self.source == damage_source
 
 
 @G.registry

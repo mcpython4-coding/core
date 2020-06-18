@@ -13,6 +13,7 @@ import logger
 import mcpython.util.getskin
 import mcpython.world.player
 import mcpython.ResourceLocator
+import mcpython.storage.SaveFile
 
 
 @G.registry
@@ -23,26 +24,40 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     def load(cls, savefile):
         data = savefile.access_file_json("level.json")
         if data is None: raise mcpython.storage.serializer.IDataSerializer.MissingSaveException("level.json not found!")
+
         savefile.version = data["storage version"]
+
         playername = data["player name"]
         if playername not in G.world.players: G.world.add_player(playername)
         G.world.active_player = playername
+
         try:
             mcpython.util.getskin.download_skin(playername, G.build+"/skin.png")
         except ValueError:
             logger.println("[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
             mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
         mcpython.world.player.Player.RENDERER.reload()
+
         G.world.config = data["config"]
         G.eventhandler.call("seed:set")
+
         if data["game version"] not in mcpython.config.VERSION_ORDER:
-            raise mcpython.storage.serializer.IDataSerializer.InvalidSaveException("future version are NOT supported")
+            logger.println("future version are NOT supported. Loading may NOT work")
+
         for modname in data["mods"]:
             if modname not in G.modloader.mods:
                 logger.println("[WARNING] mod '{}' is missing. This may break your world!".format(modname))
             elif G.modloader.mods[modname].version != tuple(data["mods"][modname]):
-                logger.println("[INFO] mod version did change from '{}' to '{}'. This may break your world!".format(
-                    data["mods"][modname], tuple(G.modloader.mods[modname].version)))
+                try:
+                    savefile.apply_mod_fixer(modname, tuple(data["mods"][modname]))
+                except mcpython.storage.SaveFile.DataFixerNotFoundException:
+                    if modname != "minecraft":
+                        logger.println("[WARN] mod {} did not provide data-fixers for mod version change "
+                                       "which occured between the sessions".format(modname))
+        for modname in G.modloader.mods:
+            if modname not in data["mods"]:
+                savefile.apply_mod_fixer(modname, None)
+
         [G.worldgenerationhandler.add_chunk_to_generation_list(e[0], dimension=e[1]) for e in data["chunks_to_generate"]]
         for dimension in G.world.dimensions.values():
             if str(dimension.id) in data["dimensions"]:

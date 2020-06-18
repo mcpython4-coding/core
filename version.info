@@ -1129,3 +1129,32 @@ sstarted these clone on 12th of July, 2019
 [uuk]: deprecated old factories for models, block states and recipes
 [uuk]: implemented data generators for block models and block state files, tags and entities
 [github]: released snapshot 20w24a
+
+[uuk]: added rendering_helper attribute to globals.py which is reset after every draw cycle
+[uuk]: added state part serializer for progress bar
+[uuk]: implemented new data fixer system
+[uuk]: new storage version: 6
+[uuk]: improved generating & loading world screen, fixing bug 202
+[uuk]: added new command: /shuffledata
+[uuk]: added shuffle config entry & shuffle timer entry
+[uuk]: /shuffledata will now "shuffle" recipes and loot tables
+[uuk]: fixed issue 211: crafting slots are saved when closing the game with inventory open
+[uuk]: implemented MatrixStack-class for mass-applying the same operations over and over again
+[uuk]: Block.__init__ has now new optional parameter "player" storing the player set the block (if arrival). This value
+       is NOT cached in the block class. Must be handled in constructor
+[uuk]: implemented TextureDataGen.py for data gens handling texture stuff
+[uuk]: added async_register-function to G.registry for registering classes in another loading phase
+[uuk]: changed loading order
+[uuk]: removed naming-folder from tag system
+[uuk]: logger is now pre-fixing everything with the time printed out
+[uuk]: changed how exceptions are formatted
+[uuk]: implemented the following loot table conditions: minecraft:block_state_property,
+       minecraft:damage_source_properties
+[uuk]: added DamageSource-class
+[uuk]: improved mod data fixer invoker
+[uuk]: moved some code around
+[uuk]: all player instances of an world are now saved
+[uuk]: made it possible for registries to be NOT saved in system
+[uuk]: added scroll bar UI element
+[uuk]: changed StateWorldSelection screen look
+[uuk]: implemented some more functionality

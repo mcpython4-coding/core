@@ -53,7 +53,7 @@ class CommandExecute(mcpython.chat.command.Command.Command):
 
     @staticmethod
     def parse(values: list, modes: list, info):
-        CommandExecute._parse_subcommand(0, values[index], values, info)  # execute first entry
+        CommandExecute._parse_subcommand(0, values[0], values, info)  # execute first entry
 
     @staticmethod
     def _parse_subcommand(index, command, values, info):

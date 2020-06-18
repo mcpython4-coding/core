@@ -134,39 +134,44 @@ class LoadingStages:
     collection of all stages with their events
     """
 
-    PREPARE = LoadingStage("preparation phase", "stage:mod:init")
+    # used to do the magic stuff to set up your system
+    PREPARE = LoadingStage("preparation phase", "stage:pre", "stage:mod:init")
+    # this special phase is for adding new loading phases, if you want to
     ADD_LOADING_STAGES = LoadingStage("loading stage register phase", "stage:addition_of_stages")
 
-    PREBUILD = LoadingStage("prebuilding", "stage:prebuild:addition", "stage:prebuild:do")
+    # if your mod has other resource locations...
+    EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
-    # Optional stage for running the data generators. Only active in --data-gen mode
-    DATA_GENERATION = LoadingStage("generating special data", "special:datagen:configure", "special:datagen:generate")
+    # deprecated (but removal in long future) system of preparing data, but storing them in an "cache"
+    PREBUILD = LoadingStage("prebuilding", "stage:prebuild:addition", "stage:prebuild:do")
 
     # first: create ConfigFile objects, second: internally, third: do something with the data
     CONFIGS = LoadingStage("loading mod config", "stage:mod:config:define", "stage:mod:config:load",
                            "stage:mod:config:work")
 
-    EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
-
-    TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
+    # blocks, items, inventories, ... all stuff to register
     BLOCKS = LoadingStage("block loading phase", "stage:block:factory:prepare",
                           "stage:block:factory_usage", "stage:block:factory:finish", "stage:block:load",
                           "stage:block:overwrite", "stage:block:block_config")
     ITEMS = LoadingStage("item loading phase", "stage:item:factory:prepare", "stage:item:factory_usage",
                          "stage:item:factory:finish", "stage:item:load", "stage:item:overwrite")
-    LANGUAGE = LoadingStage("language file loading", "stage:language")
-    RECIPE = LoadingStage("recipe loading phase", "stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
     INVENTORIES = LoadingStage("inventory loading phase", "stage:inventories:pre", "stage:inventories",
                                "stage:inventories:post")
-    STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states", "stage:state_config:parser",
-                          "stage:state_config:generate", "stage:states:post")
     COMMANDS = LoadingStage("command loading phase", "stage:command:entries", "stage:commands",
                             "stage:command:selectors", "stage:command:gamerules")
+    ENTITIES = LoadingStage("entities", "stage:entities")
+
+    # Optional stage for running the data generators. Only active in --data-gen mode
+    DATA_GENERATION = LoadingStage("generating special data", "special:datagen:configure", "special:datagen:generate")
+
+    # all the deserialization stuff, must be after data gen as data gen may want to inject some stuff
+    LANGUAGE = LoadingStage("language file loading", "stage:language")
+    TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
+    RECIPE = LoadingStage("recipe loading phase", "stage:recipes", "stage:recipe:groups", "stage:recipe:bake")
     LOOT_TABLES = LoadingStage("loot tables", "stage:loottables:locate", "stage:loottables:functions",
                                "stage:loottables:conditions", "stage:loottables:load")
-    ENTITIES = LoadingStage("entities", "stage:entities")
-    WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
-                            "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
+
+    # so, all stuff around block models & states
     MODEL_FACTORY = LoadingStage("applying model factories", "stage:modelfactory:prepare",
                                  "stage:modefactory:use", "stage:modelfactory:bake", "stage:blockstatefactory:prepare",
                                  "stage:blockstatefactory:use", "stage:blockstatefactory:bake")
@@ -174,20 +179,31 @@ class LoadingStages:
                               "stage:model:blockstate_search", "stage:model:blockstate_create")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_search:intern",
                                "stage:model:model_create")
-
     BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",
                         "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake",
                         "stage:boxmodel:bake", "stage:block_boundingbox_get")
 
+    # now, the world gen, depends on results of registry system and data deserialization
+    WORLDGEN = LoadingStage("world generation loading phase", "stage:worldgen:biomes", "stage:worldgen:feature",
+                            "stage:worldgen:layer", "stage:worldgen:mode", "stage:dimension")
+
+    # How about storing stuff?
     FILE_INTERFACE = LoadingStage("registration of data interfaces", "stage:serializer:parts",
                                   "stage:datafixer:general", "stage:datafixer:parts")
 
-    POST = LoadingStage("finishing up", "stage:post")
+    # Display-ables. Depends on most of above, nothing depends on
+    STATES = LoadingStage("state loading phase", "stage:stateparts", "stage:states", "stage:state_config:parser",
+                          "stage:state_config:generate", "stage:states:post")
+
+    POST = LoadingStage("finishing up", "stage:post", "stage:final")
 
 
 # the order of stages todo: make serialized from config file
 LOADING_ORDER: list = [
-    LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.CONFIGS, LoadingStages.PREBUILD]
+    LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.EXTRA_RESOURCE_LOCATIONS,
+    LoadingStages.PREBUILD, LoadingStages.CONFIGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.INVENTORIES,
+    LoadingStages.COMMANDS, LoadingStages.ENTITIES
+]
 
 
 if G.data_gen:  # only do it in dev-environment
@@ -197,11 +213,10 @@ if G.data_gen:  # only do it in dev-environment
         LOADING_ORDER.append(LoadingStage("exit", "special:exit"))
 
 LOADING_ORDER += [
-    LoadingStages.EXTRA_RESOURCE_LOCATIONS, LoadingStages.TAGS, LoadingStages.BLOCKS, LoadingStages.ITEMS,
-    LoadingStages.LANGUAGE, LoadingStages.RECIPE, LoadingStages.INVENTORIES, LoadingStages.COMMANDS,
-    LoadingStages.LOOT_TABLES, LoadingStages.ENTITIES, LoadingStages.WORLDGEN, LoadingStages.STATES,
-    LoadingStages.BLOCK_MODEL, LoadingStages.BLOCKSTATE, LoadingStages.BAKE, LoadingStages.FILE_INTERFACE,
-    LoadingStages.POST]
+    LoadingStages.LANGUAGE, LoadingStages.TAGS, LoadingStages.RECIPE, LoadingStages.LOOT_TABLES,
+    LoadingStages.MODEL_FACTORY, LoadingStages.BLOCKSTATE, LoadingStages.BLOCK_MODEL, LoadingStages.BAKE,
+    LoadingStages.WORLDGEN, LoadingStages.FILE_INTERFACE, LoadingStages.STATES, LoadingStages.POST
+]
 
 
 class ModLoaderAnnotation:
@@ -623,8 +638,8 @@ class ModLoader:
             logger.println(*errors, sep="\n ")
             sys.exit(-1)
         self.modorder = list(mcpython.util.math.topological_sort([(key, modinfo[key]) for key in modinfo.keys()]))
-        logger.println("mod loading order: ")
-        logger.println(" -", "\n - ".join([self.mods[name].mod_string() for name in self.modorder]))
+        for name in self.modorder:
+            logger.println(" - " + self.mods[name].mod_string())
 
     def process(self):
         """

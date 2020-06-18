@@ -37,6 +37,10 @@ marked for removal in alpha 1.3.0:
     [2] Dimension.get_block(), Dimension.add_block(), Dimension.remove_block(), Dimension.check_neighbors()
     [2] Dimension.show_block(), Dimension.hide_block()
     [2] access of the crafting-folder in the root
+    [2] the mcpython.storage.datafixer folder
+    [2] SaveFile.upgrade()
+    [2] Chunk.exposed()
+    [2]: util/math.py/get_max_y()
 
 marked for removal in alpha 1.4.0:
     [2] Item.get_name, Block.get_name, State.get_name
@@ -48,3 +52,4 @@ marked for removal in alpha 1.4.0:
 marked for removal in alpha 1.5.0:
     remove support for non-prefixed mcpython imports
     BlockModelFactory.py, ModelFactory.py, RecipeFactory.py
+    [1] texture factory system, replace by data gen

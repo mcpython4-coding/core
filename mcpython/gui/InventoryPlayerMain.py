@@ -32,13 +32,9 @@ class InventoryPlayerMain(mcpython.gui.Inventory.Inventory):
 
     def create_slots(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
-        return [self.hotbar.slots[i].copy() for i in range(9)] + \
-               [mcpython.gui.Slot.Slot() for _ in range(27)] + \
+        return [self.hotbar.slots[i].copy() for i in range(9)] + [mcpython.gui.Slot.Slot() for _ in range(27)] + \
                [mcpython.gui.Slot.Slot(allow_player_add_to_free_place=False, on_update=self.armor_update) for _ in range(4)] + \
-               [mcpython.gui.Slot.Slot(allow_player_add_to_free_place=False) for _ in range(6)]
-
-    def on_activate(self):
-        pass
+               [mcpython.gui.Slot.Slot(allow_player_add_to_free_place=False) for _ in range(5)] + [mcpython.gui.Slot.Slot()]
 
     def armor_update(self, player=None):
         # todo: add toughness
@@ -50,14 +46,17 @@ class InventoryPlayerMain(mcpython.gui.Inventory.Inventory):
                     points += slot.get_itemstack().item.DEFENSE_POINTS
         G.world.get_active_player().armor_level = points
 
-    def on_deactivate(self):
-        self.slots[44].get_itemstack().clean()
-        for slot in self.slots[40:-1]:
+    def remove_items_from_crafting(self):
+        for slot in self.slots[40:-2]:
             slot: mcpython.gui.Slot.Slot
             itemstack = slot.get_itemstack()
             slot.set_itemstack(mcpython.gui.ItemStack.ItemStack.get_empty())
             if not G.world.get_active_player().pick_up(itemstack):
                 pass  # todo: drop item as item could not be added to inventory
+        self.slots[-2].get_itemstack().clean()
+
+    def on_deactivate(self):
+        self.remove_items_from_crafting()
         G.statehandler.active_state.parts[0].activate_mouse = True
 
     def update_shift_container(self):

@@ -31,7 +31,7 @@ def load_blocks():
     falling_template = full_template.copy().resetTemplate().setFallable().setTemplate()
     slab_template = full_template.copy().resetTemplate().setSlab().setTemplate()
 
-    colors = G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries
+    colors = mcpython.util.enums.COLORS
 
     # missing: air
 

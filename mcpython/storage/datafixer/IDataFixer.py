@@ -8,51 +8,42 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import mcpython.event.Registry
 import mcpython.mod.ModMcpython
+import deprecation
 
 
+@deprecation.deprecated("dev3-1", "a1.3.0")
 class DataFixerException(Exception): pass
 
 
+@deprecation.deprecated("dev3-1", "a1.3.0")
 class IDataFixer(mcpython.event.Registry.IRegistryContent):
     TYPE = "minecraft:datafixer"
-    # NAME should be: "<version from>-<version to>:<part>"
-
-    TRANSFORMS = (None, None)  # from, to
-    PART = None  # which part it fixes, only one per part is executed
-
-    DEPENDS = []  # an list of fixer parts which should be executed first
+    TRANSFORMS = (None, None)
+    PART = None
+    DEPENDS = []
 
     @classmethod
+    @deprecation.deprecated("dev3-1", "a1.3.0")
     def fix(cls, savefile):
-        raise NotImplementedError()
+        pass
 
 
+@deprecation.deprecated("dev3-1", "a1.3.0")
 class IGeneralDataFixer(mcpython.event.Registry.IRegistryContent):
-    """
-    Every version supported by datafixer need this.
-    It provides information what to fix on load and what can wait
-    """
-
     TYPE = "minecraft:general_datafixer"
-    # NAME should be the version this data fixer group is assigned to
-
-    LOAD_FIXES = []  # an list of parts to fix an or (partname, kwargs)
-
-    UPGRADES_TO = None  # which version this datafixer upgrades to
+    LOAD_FIXES = []
+    UPGRADES_TO = None
 
 
-datafixerregistry = mcpython.event.Registry.Registry("datafixers", ["minecraft:datafixer"])
-generaldatafixerregistry = mcpython.event.Registry.Registry("generaldatafixers", ["minecraft:general_datafixer"])
+datafixerregistry = None  # mcpython.event.Registry.Registry("datafixers", ["minecraft:datafixer"])
+generaldatafixerregistry = None  # mcpython.event.Registry.Registry("generaldatafixers", ["minecraft:general_datafixer"])
 
 
+@deprecation.deprecated("dev3-1", "a1.3.0")
 def load_general_fixer():
-    from mcpython.storage.datafixer import (DataFixer1to2, DataFixer2to3, DataFixer3to4, DataFixer4to5)
+    from mcpython.storage.datafixer import DataFixer3to4, DataFixer1to2, DataFixer2to3, DataFixer4to5
 
 
+@deprecation.deprecated("dev3-1", "a1.3.0")
 def load_fixer():
     pass
-
-
-mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:datafixer:general", load_general_fixer)
-mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:datafixer:parts", load_fixer)
-

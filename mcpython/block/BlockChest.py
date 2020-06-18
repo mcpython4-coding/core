@@ -69,7 +69,8 @@ class BlockChest(Block.Block):
     def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT and self.can_open_inventory():
             if self.loot_table_link:
-                self.inventory.insert_items(G.loottablehandler.roll(self.loot_table_link, block=self),
+                self.inventory.insert_items(G.loottablehandler.roll(self.loot_table_link, block=self,
+                                                                    position=self.position),
                                             random_check_order=True, insert_when_same_item=False)
                 self.loot_table_link = None
             G.inventoryhandler.show(self.inventory)

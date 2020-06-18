@@ -12,16 +12,14 @@ import mcpython.config
 import math
 import logger
 import deprecation
+import deprecation
 
 
+@deprecation.deprecated("dev3-2", "a1.3.0")
 def get_max_y(pos):
-    """gets the max y at a x,y,z or x,z pos
-    todo: move to Chunk-class"""
     x, y, z = normalize(pos if len(pos) == 3 else (pos[0], 0, pos[1]))
     chunk = G.world.get_active_dimension().get_chunk_for_position((x, y, z))
-    heightmap = chunk.get_value('heightmap')
-    y = heightmap[x, z][0][1] if (x, z) in heightmap else 0
-    return y + 2  # account for the distance from head to foot
+    return chunk.get_maximum_y_coordinate_from_generation(*pos)
 
 
 @deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")

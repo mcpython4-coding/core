@@ -24,6 +24,7 @@ import mcpython.util.math
 import mcpython.util.opengl
 import mcpython.world.player
 from . import State
+import mcpython.config
 
 
 class StateWorldGeneration(State.State):
@@ -36,7 +37,9 @@ class StateWorldGeneration(State.State):
     def get_parts(self) -> list:
         return [mcpython.state.StatePartConfigBackground.StatePartConfigBackground(),
                 mcpython.state.ui.UIPartLable.UIPartLable("0%", (0, 50), anchor_lable="MM", anchor_window="MD",
-                                                 color=(255, 255, 255, 255))]
+                                                          color=(255, 255, 255, 255)),
+                mcpython.state.ui.UIPartLable.UIPartLable("(0/0/0)", (0, 30), anchor_lable="MM", anchor_window="MD",
+                                                          color=(255, 255, 255, 255))]
 
     def on_update(self, dt):
         G.worldgenerationhandler.task_handler.process_tasks(timer=.4)
@@ -100,15 +103,15 @@ class StateWorldGeneration(State.State):
 
         # setup skin
         try:
-            mcpython.util.getskin.download_skin(playername, G.build+"/skin.png")
+            mcpython.util.getskin.download_skin(playername, G.build + "/skin.png")
         except ValueError:
             logger.write_exception(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
-            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
+            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(
+                G.build + "/skin.png")
         mcpython.world.player.Player.RENDERER.reload()
         G.world.active_player = playername
-        G.world.get_active_player().position = (G.world.spawnpoint[0], mcpython.util.math.get_max_y(G.world.spawnpoint),
-                                                G.world.spawnpoint[1])
+        G.world.get_active_player().set_to_spawn_point()
         G.world.config["enable_auto_gen"] = self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
         G.world.config["enable_world_barrier"] = \
             self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
@@ -119,9 +122,10 @@ class StateWorldGeneration(State.State):
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
 
         # set spawn-point
+        chunk = G.world.get_active_dimension().get_chunk((0, 0))
         x, z = random.randint(0, 15), random.randint(0, 15)
-        height = mcpython.util.math.get_max_y((x, z))
-        blockchest = G.world.get_active_dimension().add_block((x, height - 1, z), "minecraft:chest")
+        height = chunk.get_maximum_y_coordinate_from_generation(x, z)
+        blockchest = G.world.get_active_dimension().add_block((x, height+1, z), "minecraft:chest")
         blockchest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
         G.eventhandler.call("on_game_enter")
 
@@ -132,6 +136,11 @@ class StateWorldGeneration(State.State):
         # set player position
         player = G.world.get_active_player()
         player.teleport(player.position, force_chunk_save_update=True)
+
+        G.world.world_loaded = True
+
+        if mcpython.config.SHUFFLE_DATA and mcpython.config.SHUFFLE_INTERVAL > 0:
+            G.eventhandler.call("data:shuffle:all")
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
@@ -145,10 +154,15 @@ class StateWorldGeneration(State.State):
             G.tickhandler.schedule_once(G.world.cleanup)
             logger.println("interrupted world generation by user")
 
+    def calculate_percentage_of_progress(self):
+        k = list(self.status_table.values())
+        return k.count(-1) / len(k)
+
     def on_draw_2d_post(self):
         wx, wy = G.window.get_size()
         mx, my = wx // 2, wy // 2
-        self.parts[1].text = "{}%".format(round(sum(self.status_table.values())/len(self.status_table)*1000)/10)
+        self.parts[1].text = "{}%".format(round(self.calculate_percentage_of_progress() * 1000) / 10)
+        self.parts[2].text = "{}/{}/{}".format(*G.worldgenerationhandler.task_handler.get_total_task_stats())
 
         for cx, cz in self.status_table:
             status = self.status_table[(cx, cz)]

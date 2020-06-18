@@ -13,6 +13,8 @@ import mcpython.ResourceLocator
 import os
 import mcpython.event.Registry
 
+print("someone loaded mcpython.texture.factory... a bad thing !!!! (deprecated :-( )")
+
 
 class ITextureChange(mcpython.event.Registry.IRegistryContent):
     TYPE = "minecraft:texture_change"

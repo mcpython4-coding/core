@@ -155,65 +155,68 @@ class StatePartGame(StatePart.StatePart):
             self._update(dt / m)
 
     def on_left_click_interaction_update(self, dt):
+        player = G.world.get_active_player()
         if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
             vector = G.window.get_sight_vector()
-            blockpos, previous, hitpos = G.world.hit_test(G.world.get_active_player().position, vector)
+            blockpos, previous, hitpos = G.world.hit_test(player.position, vector)
             if G.window.mouse_pressing[mouse.LEFT] and blockpos and G.world.get_active_dimension().get_block(blockpos):
                 block = G.world.get_active_dimension().get_block(blockpos)
                 chunk = G.world.get_active_dimension().get_chunk(*mcpython.util.math.sectorize(blockpos))
-                if G.world.get_active_player().gamemode == 1:
+                if player.gamemode == 1:
                     if self.mouse_press_time >= 0.10:
                         chunk.remove_block(blockpos)
                         chunk.on_block_updated(blockpos)
                         chunk.check_neighbors(blockpos)
-                elif G.world.get_active_player().gamemode == 0:
+                elif player.gamemode == 0:
                     if type(block) != str and self.mouse_press_time >= self.braketime and block.BREAKABLE:
                         if G.world.gamerulehandler.table["doTileDrops"].status.status:
-                            items = G.loottablehandler.get_drop_for_block(block, player=G.world.get_active_player())
+                            items = G.loottablehandler.get_drop_for_block(block, player=player)
                             if block: [block.on_request_item_for_block(itemstack) for itemstack in items]
-                            G.world.get_active_player().pick_up(items)
+                            player.pick_up(items)
                         chunk.remove_block(blockpos)
                         chunk.on_block_updated(blockpos)
                         chunk.check_neighbors(blockpos)
                 # todo: check if breakable in gamemode 2
 
     def on_right_click_interaction_update(self, dt):
+        player = G.world.get_active_player()
         if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
-            if G.world.get_active_player().get_active_inventory_slot().get_itemstack().item and \
-                    issubclass(type(G.world.get_active_player().get_active_inventory_slot().get_itemstack().item), ItemFood.ItemFood):
-                itemfood = G.world.get_active_player().get_active_inventory_slot().get_itemstack().item
+            if player.get_active_inventory_slot().get_itemstack().item and \
+                    issubclass(type(player.get_active_inventory_slot().get_itemstack().item), ItemFood.ItemFood):
+                itemfood = player.get_active_inventory_slot().get_itemstack().item
                 if itemfood.on_eat():
                     self.set_cooldown = time.time() - 1
-                    G.world.get_active_player().get_active_inventory_slot().get_itemstack().add_amount(-1)
-                    if G.world.get_active_player().get_active_inventory_slot().get_itemstack().amount == 0:
-                        G.world.get_active_player().get_active_inventory_slot().get_itemstack().clean()
+                    player.get_active_inventory_slot().get_itemstack().add_amount(-1)
+                    if player.get_active_inventory_slot().get_itemstack().amount == 0:
+                        player.get_active_inventory_slot().get_itemstack().clean()
                     return
             vector = G.window.get_sight_vector()
-            blockpos, previous, hitpos = G.world.hit_test(G.world.get_active_player().position, vector)
+            blockpos, previous, hitpos = G.world.hit_test(player.position, vector)
             if blockpos:
                 if G.window.mouse_pressing[mouse.RIGHT] and previous:
-                    slot = G.world.get_active_player().get_active_inventory_slot()
+                    slot = player.get_active_inventory_slot()
                     if slot.get_itemstack().item and slot.get_itemstack().item.HAS_BLOCK and self.mouse_press_time > 0.10 and \
-                            G.world.get_active_player().gamemode in (0, 1):
+                            player.gamemode in (0, 1):
                         x, y, z = previous
-                        px, _, pz = mcpython.util.math.normalize(G.world.get_active_player().position)
-                        py = math.ceil(G.world.get_active_player().position[1])
+                        px, _, pz = mcpython.util.math.normalize(player.position)
+                        py = math.ceil(player.position[1])
                         if not (x == px and z == pz and py-1 <= y <= py) and not G.world.get_active_dimension().\
                                 get_block(previous):
                             chunk = G.world.get_active_dimension().get_chunk_for_position(previous)
                             chunk.add_block(
                                 previous, slot.get_itemstack().item.get_block(),
-                                kwargs={"set_to": blockpos, "real_hit": hitpos})
+                                kwargs={"set_to": blockpos, "real_hit": hitpos, "player": player})
                             chunk.on_block_updated(previous)
                             slot.get_itemstack().item.on_set_from_item(chunk.get_block(previous))
-                            if G.world.get_active_player().gamemode == 0: slot.get_itemstack().add_amount(-1)
+                            if player.gamemode == 0: slot.get_itemstack().add_amount(-1)
                             self.mouse_press_time = 0
                             # todo: check if set-able in gamemode 2
 
     def on_middle_click_interaction_update(self, dt):
+        player = G.world.get_active_player()
         if G.window.exclusive and any(G.window.mouse_pressing.values()) and time.time() - self.set_cooldown > 1:
             vector = G.window.get_sight_vector()
-            blockpos, previous, hitpos = G.world.hit_test(G.world.get_active_player().position, vector)
+            blockpos, previous, hitpos = G.world.hit_test(player.position, vector)
             if G.window.mouse_pressing[mouse.MIDDLE] and blockpos and self.mouse_press_time > 0.1:
                 chunk = G.world.get_active_dimension().get_chunk_for_position(blockpos)
                 self.mouse_press_time = 0
@@ -221,9 +224,9 @@ class StatePartGame(StatePart.StatePart):
                 itemstack = mcpython.gui.ItemStack.ItemStack(block.NAME if type(block) != str else block)
                 block = chunk.get_block(blockpos)
                 if block: block.on_request_item_for_block(itemstack)
-                selected_slot = G.world.get_active_player().get_active_inventory_slot()
-                for inventoryname, reverse in G.world.get_active_player().inventory_order:
-                    inventory = G.world.get_active_player().inventories[inventoryname]
+                selected_slot = player.get_active_inventory_slot()
+                for inventoryname, reverse in player.inventory_order:
+                    inventory = player.inventories[inventoryname]
                     slots: list = inventory.slots
                     if reverse:
                         slots.reverse()
@@ -235,12 +238,12 @@ class StatePartGame(StatePart.StatePart):
                                 selected_slot.set_itemstack(slot.get_itemstack())
                                 slot.set_itemstack(sslot)
                             else:
-                                G.world.get_active_player().set_active_inventory_slot(slots.index(slot))
+                                player.set_active_inventory_slot(slots.index(slot))
                             return
-                if G.world.get_active_player().gamemode == 1:
+                if player.gamemode == 1:
                     old_itemstack = selected_slot.get_itemstack()
                     selected_slot.set_itemstack(itemstack)
-                    G.world.get_active_player().pick_up(old_itemstack)
+                    player.pick_up(old_itemstack)
                     if G.window.mouse_pressing[mouse.LEFT]: self.calculate_new_braketime()
 
     def _update(self, dt):
@@ -253,16 +256,17 @@ class StatePartGame(StatePart.StatePart):
             The change in time since the last call.
 
         """
-        speed = mcpython.config.SPEED_DICT[G.world.get_active_player().gamemode][(0 if not G.window.keys[key.LSHIFT] else 1) +
+        player = G.world.get_active_player()
+        speed = mcpython.config.SPEED_DICT[player.gamemode][(0 if not G.window.keys[key.LSHIFT] else 1) +
                                                      (0 if not G.window.flying else 2)]
         if not G.window.flying and G.window.dy == 0:
-            x, y, z = mcpython.util.math.normalize(G.world.get_active_player().position)
+            x, y, z = mcpython.util.math.normalize(player.position)
             block_inst = G.world.get_active_dimension().get_block((x, y-2, z))
             if block_inst is not None and type(block_inst) != str and \
                     block_inst.CUSTOM_WALING_SPEED_MULTIPLIER is not None:
                 speed *= block_inst.CUSTOM_WALING_SPEED_MULTIPLIER
-        if G.world.get_active_player().gamemode in (0, 2) and G.window.keys[key.LSHIFT]:
-            G.world.get_active_player().hunger -= dt*0.2
+        if player.gamemode in (0, 2) and G.window.keys[key.LSHIFT]:
+            player.hunger -= dt*0.2
         d = dt * speed  # distance covered this tick.
         dx, dy, dz = G.window.get_motion_vector()
         # New position in space, before accounting for gravity.
@@ -278,51 +282,52 @@ class StatePartGame(StatePart.StatePart):
         elif self.activate_keyboard and not (G.window.keys[key.SPACE] and G.window.keys[key.LSHIFT]):
             dy = dt*6 if G.window.keys[key.SPACE] else (-dt*6 if G.window.keys[key.LSHIFT] else 0)
         # collisions
-        x, y, z = G.world.get_active_player().position
-        before = mcpython.util.math.sectorize(G.world.get_active_player().position)
-        if G.world.get_active_player().gamemode != 3:
+        x, y, z = player.position
+        before = mcpython.util.math.sectorize(player.position)
+        if player.gamemode != 3:
             x, y, z = G.window.collide((x + dx, y + dy, z + dz), 2)
         else:
             x, y, z = x + dx, y + dy, z + dz
-        if G.window.dy < 0 and G.world.get_active_player().fallen_since_y is None:
-            G.world.get_active_player().fallen_since_y = G.world.get_active_player().position[1]
-        G.world.get_active_player().position = (x, y, z)
+        if G.window.dy < 0 and player.fallen_since_y is None:
+            player.fallen_since_y = player.position[1]
+        player.position = (x, y, z)
         if y < -10 and time.time() - self.void_damage_cooldown > 0.25:
-            G.world.get_active_player().damage(1, check_gamemode=False)
+            player.damage(1, check_gamemode=False)
             self.void_damage_cooldown = time.time()
 
-        after = mcpython.util.math.sectorize(G.world.get_active_player().position)
+        after = mcpython.util.math.sectorize(player.position)
         if before != after:
             G.world.change_chunks(before, after)
 
-        if G.world.get_active_player().hearts < 20 and G.world.get_active_player().hunger > 4 and time.time() - self.regenerate_cooldown > 2 and \
-                G.world.get_active_player().gamemode in (0, 2):
-            G.world.get_active_player().hearts += 1
-            G.world.get_active_player().hunger -= 0.5
+        if player.hearts < 20 and player.hunger > 4 and time.time() - self.regenerate_cooldown > 2 and \
+                player.gamemode in (0, 2):
+            player.hearts += 1
+            player.hunger -= 0.5
             self.regenerate_cooldown = time.time()
 
-        if G.world.get_active_player().hunger == 0 and time.time() - self.hunger_heart_cooldown > 1:
-            G.world.get_active_player().damage(1)
+        if player.hunger == 0 and time.time() - self.hunger_heart_cooldown > 1:
+            player.damage(1)
             self.hunger_heart_cooldown = time.time()
 
-        nx, _, nz = mcpython.util.math.normalize(G.world.get_active_player().position)
-        ny = math.ceil(G.world.get_active_player().position[1])
+        nx, _, nz = mcpython.util.math.normalize(player.position)
+        ny = math.ceil(player.position[1])
 
-        if G.world.get_active_player().gamemode in (0, 2) and G.world.get_active_dimension().get_block((nx, ny, nz)):
-            G.world.get_active_player().damage(dt)
+        if player.gamemode in (0, 2) and G.world.get_active_dimension().get_block((nx, ny, nz)):
+            player.damage(dt)
 
     def on_mouse_press(self, x, y, button, modifiers):
+        player = G.world.get_active_player()
         if not self.activate_mouse: return
-        slot = G.world.get_active_player().get_active_inventory_slot()
+        slot = player.get_active_inventory_slot()
         vector = G.window.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(G.world.get_active_player().position, vector)
+        blockpos, previous, hitpos = G.world.hit_test(player.position, vector)
         block = G.world.get_active_dimension().get_block(blockpos) if blockpos else None
         cancel = False
         if not slot.get_itemstack().is_empty():
-            if slot.get_itemstack().item.on_player_interact(G.world.get_active_player(), block, button, modifiers):
+            if slot.get_itemstack().item.on_player_interact(player, block, button, modifiers):
                 cancel = True
         if block and type(block) != str:
-            if not cancel and block.on_player_interact(G.world.get_active_player(), slot.get_itemstack(), button,
+            if not cancel and block.on_player_interact(player, slot.get_itemstack(), button,
                                                        modifiers, hitpos):
                 cancel = True
         if cancel:

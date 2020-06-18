@@ -20,6 +20,7 @@ class RegistryInfo(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         data = savefile.access_file_pickle("registries.dat")
         if data is None: return
         for registry in G.registry.registries:
+            if not registry.dump_content_in_saves: continue
             if registry.name not in data:
                 logger.println("[REGISTRY][WARN] registry '{}' not found in files!".format(registry.name))
             else:

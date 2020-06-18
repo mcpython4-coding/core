@@ -60,6 +60,6 @@ def create_shulker_box(name):
 
 
 create_shulker_box("shulker_box")
-for color in G.taghandler.taggroups["naming"].tags["#minecraft:colors"].entries:
+for color in mcpython.util.enums.COLORS:
     create_shulker_box("{}_shulker_box".format(color))
 

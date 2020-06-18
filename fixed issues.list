@@ -1,6 +1,7 @@
-a list of all fixed issues, in order of fixing
+a list of all (bigger) fixed issues, in order of fixing
+with date of fixing (as far as noticed) and person of fix
 
-issue 15: mod loading was loading mods.json rather than mod.json in some special cases
+issue 15: mod loading was trying to load mods.json rather than mod.json in some special cases
 issue 11: block textures are blurry; fixed on: 31.01.2020 by uuk; occur since library update
 issue 27: TextureFactory generates blurry images; fixed on: 31.01.2020 by uuk; occur since library update
 issue 20: mod list was not proper saved; fixed on: 31.01.2020 by uuk; occur since mod list move
@@ -187,3 +188,10 @@ issue 193: mod locations were not escaped in logs; fixed on 30.05.2020 by uuk
 issue 205: barrel block was not storing facing correctly; fixed on 06.06.2020 by uuk
 issue 206: shift-clicking the recipe output was not working; fixed on 07.06.2020 by uuk
 issue 207: when closing an crafting table, items in the grid were get deleted; fixed on 07.06.2020 by uuk
+issue 208: crafting output was added also to player inventory when closing it; fixed on 11.06.2020 by uuk
+issue 209: generator script for recipe generator from json was not parsing output correctly; fixed on 11.06.2020 by uuk
+issue 174: loading bars in mod loading where not in the middle of the screen; fixed on 11.06.2020 by uuk
+issue 202: loading and generating progress % was calculated wrong; fixed on 11.06.2020 by uuk
+issue 211: when closing the game while the main inventory is open, items could get saved in the crafting grid;
+           fixed on 12.06.2020 by uuk
+issue 212: /clone was not updating visual status of blocks

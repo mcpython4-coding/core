@@ -11,6 +11,7 @@ import pickle
 import os
 import simplejson
 import logger
+import PIL.Image
 
 
 class IDataGenerator:
@@ -129,6 +130,8 @@ class DataGeneratorConfig:
         elif type(data) == bytes:
             with open(file, mode="wb") as f:
                 f.write(data)
+        elif type(data) == PIL.Image.Image:
+            data.save(file)
         else:
             with open(file, mode="wb") as f:
                 pickle.dump(data, f)

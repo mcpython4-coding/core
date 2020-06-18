@@ -28,6 +28,10 @@ class IDataSerializer(mcpython.event.Registry.IRegistryContent):
     def save(cls, data, savefile, **kwargs):
         raise NotImplementedError()
 
+    @classmethod
+    def apply_part_fixer(cls, savefile, fixer):
+        pass
+
 
 dataserializerregistry = mcpython.event.Registry.Registry("dataserializer", ["minecraft:data_serializer"])
 

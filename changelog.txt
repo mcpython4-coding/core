@@ -6,8 +6,6 @@ planned for the future:
     - optimize texture reload with everything (re-block-item-factories, reload block models,
         reload item texture, gui textures, ...), config reload
     - add more factories for various parts (better block models, block states, full block factory, ...) [data gens?]
-    - add mode were linking between recipe in/out is shuffled and loot table links are shuffled (see Amnesia Pack)
-        together with an gamerule and an /shuffle [<group>] command
     - add scoreboards with commands, execute entry, ...
     - make commands more fail-save
     - make world gen more fail-save
@@ -16,7 +14,7 @@ planned for the future:
     - an logging update
     - improve item texture atlas system (it seems not very stable when adding new items without rebuilding)
     - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum
-    - rendering helper class for setting up things like 3d rendering, alpha usage, ...
+    - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality]
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log
     - parser for the new mc dimension config format
@@ -25,6 +23,8 @@ planned for the future:
     - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
         and when the user tries to go back to start menu, the game is closing. [change button text for that]
     - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
+    - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html)
+    - implement lighting
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -45,6 +45,32 @@ information on development:
         first obscures of the bug the list of issues with an short description and when based on an github bug report
         its id.
 
+changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
+    - added state part serializer for progress bar
+    - rewritten data fixer system. Incompatible with old one. Old stuff still arrival, but deprecated
+    - old worlds are still load-able as data-fixers were ported
+    - improved loading & generation screens
+    - added /shuffledata command for shuffling recipes & loot table outputs with other ones
+        (must be activated in config files)
+    - added data gen system for textures
+    - changed order of loading stages to be more functional
+    - changed some logging systems
+    - implemented two new loot table conditions: minecraft:block_state_property and minecraft:damage_source_properties
+    - added DamageSource class
+    - improved code
+    - implemented world list with selection. Moved world name enter into world generation settings screen
+    - added UI element for scroll bars
+
+    fixed issues:
+        long-term issues:
+            - crafting output slot was added to inventory
+            - loading bars of mod loading where not in the middle
+            - % in world gen / load screen was calculated wrong leading into negative %
+            - crafting slot could get saved when closing the game
+
+        since last snapshot:
+            - generator for recipe generator was not parsing output correctly leading into errors in the recipes
+
 
 changelog of snapshot 20w24a released on 10.06.2020 (theme: refactoring & data generators)
     WARNING: this snapshot WILL break some backward-compatibility as it moved a lot of stuff around. Use the constants
@@ -60,21 +86,30 @@ changelog of snapshot 20w24a released on 10.06.2020 (theme: refactoring & data g
         (and as so now draw-events or user interactions are called, only ticks) and the game will exit after the
         data gen is finished (via an extra loading stage)
 
-    - changed version tuple builder for mcpython
-    - added profiler system with config options
-    - refactored most of the stuff into the mcypthon-folder, but the folder itself is added to sys.path for backward
-        compatibility [WARNING: this is an breaking change!!!!!!!!]
-    - refactored much not-code related files into the home-folder
-    - refactored & unpacked assets into the resources-folder
-    - made inventory interaction subscriptions more fail-self
-    - moved crafting-folder to gui/crafting, old interfaces still exists, but are deprecated
-    - added data generator system, moved a lot of internal stuff to there, mods are free to use it
     - added system to build the project into one stand-alone zip-archive
-    - added the following command line arguments: --data-gen. --exit-after-data-gen and --no-window.
-        First will generate the data (the data gen for the core will only work in dev-environment), second will
-        auto-exit the game when data-gen is finished (needs --data-gen also) and last will not open an window.
-    - as the data gen system exists, the old factories are now deprecated and will be removed until a1.5.0
-    - added data generators for entities, block models and tags
+
+    Modding:
+        - changed version tuple builder for mcpython
+        - added data generator system, moved a lot of internal stuff to there, mods are free to use it
+        - data generators are arrival for BlockModel's, BlockState's, EntityModel's, Recipes and Tags
+        - as the data gen system exists, the old factories for data-gen-converted stuff are now deprecated and will be
+            removed until a1.5.0
+
+    Debugging:
+        - added profiler system with config options
+        - made inventory interaction subscriptions more fail-self
+
+    Project Structure:
+        - refactored most of the stuff into the mcypthon-folder, but the folder itself is added to sys.path for backward
+            compatibility [WARNING: this is an breaking change!!!!!!!!]
+        - refactored much not-code related files into the home-folder
+        - refactored & unpacked assets into the resources-folder
+        - moved crafting-folder to gui/crafting, old interfaces still exists, but are deprecated
+
+    Execution:
+        - added the following command line arguments: --data-gen. --exit-after-data-gen and --no-window.
+            First will generate the data (the data gen for the core will only work in dev-environment), second will
+            auto-exit the game when data-gen is finished (needs --data-gen also) and last will not open an window.
 
     fixed issues:
         long-term issues:

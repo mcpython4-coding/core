@@ -26,6 +26,19 @@ class WorldGenerationTaskHandler:
         self.chunks = set()
         self.data_maps = [{}, {}, {}]  # invoke, world_changes, shown_updates
 
+    def get_total_task_stats(self) -> list:
+        """
+        will return the sum of all tasks of the whole system, in invoke, world_changes and shown_updates separated
+        """
+        stats = []
+        for d in self.data_maps:
+            count = 0
+            for dim in d.values():
+                for chunk in dim.values():
+                    count += len(chunk)
+            stats.append(count)
+        return stats
+
     def get_task_count_for_chunk(self, chunk: mcpython.world.Chunk.Chunk) -> int:
         """
         gets the total count of tasks for an given chunk as an int

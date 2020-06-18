@@ -66,11 +66,45 @@ def println(*msg, sep=" ", end="\n", write_into_console=True, write_into_log_fil
     :param write_into_console: if the data should be written into the console
     :param write_into_log_file: if the data should be written into the log file
     """
-    msg = [escape(str(e).replace("\\", "/")) for e in msg]
+    now = datetime.now()
+    msg = ["[{}][{}][{}][{}][{}][{}] ".format(now.year, now.month, now.day, now.hour, now.minute, now.second)+escape(
+        str(e).replace("\\", "/")) for e in msg]
     if write_into_console: print(*msg, sep=sep, end=end)
     if write_into_log_file:
         with open(log_file, mode="a") as f:
             print(*msg, sep=sep, end=end, file=f)
+
+
+def _transform_any_str_list(data) -> list:
+    if type(data) == str: return data.split("\n")
+    if type(data) == list: return data
+    return str(data).split("\n")
+
+
+def write_into_container(*container_areas, style=("+", "-", "|"), header=None, outer_line_distance=2,
+                         empty_lines_before_separate=1):
+    """
+    will print the given data into an container-like structure
+    :param container_areas: an list of container areas. Every area must be str or list. Areas are separated by
+        horizontal lines from each other.
+    :param style: the style to print with
+    :param header: the header line of the table, may be str or list
+    :param outer_line_distance: the distance from the vertical line to the string, in spaces
+    :param empty_lines_before_separate: the new lines between text and an horizontal line
+    """
+    areas = ([_transform_any_str_list(header)] if header is not None else []) + [
+        _transform_any_str_list(a) for a in container_areas]
+    max_characters_in_line = max([max([len(line) for line in area]) for area in areas])
+    horizontal_line = style[0] + style[1] * (max_characters_in_line + 2 * outer_line_distance) + style[0]
+    empty_line = style[2] + " " * (max_characters_in_line + 2 * outer_line_distance) + style[2]
+    for area in areas:
+        println(horizontal_line)
+        [println(empty_line) for _ in range(empty_lines_before_separate)]
+        for line in area:
+            println(style[2]+" "*outer_line_distance+line+" "*(
+                    outer_line_distance+max_characters_in_line-len(line))+style[2])
+        [println(empty_line) for _ in range(empty_lines_before_separate)]
+    println(horizontal_line)
 
 
 def write_exception(*info):
@@ -78,18 +112,16 @@ def write_exception(*info):
     write the current exception into console and log
     :param info: the info to use
     """
-    console = not mcpython.config.WRITE_NOT_FORMATTED_EXCEPTION
-    println("[ERROR][EXCEPTION] gotten exception", write_into_console=console)
-    println("-", *["\n-".join([str(e) for e in info])], sep="", write_into_console=console)
+    pdata = [["EXCEPTION", random.choice(FUNNY_STRINGS)]+list(info)]
     sdata = traceback.format_stack()[:-2]
     data = traceback.format_exc().replace("\\", "/").replace(G.local, "%LOCAL%").replace(inter_home, "%PYTHON%").split(
         "\n")
-    println(data[0], "\n", "".join(sdata), "\n".join(data[1:]), write_into_console=console)
+    pdata.append([data[0]]+"".join(sdata).split("\n")+data[1:-1])
+    write_into_container(*pdata)
     if mcpython.config.WRITE_NOT_FORMATTED_EXCEPTION:
         println(info, write_into_log_file=False)
         traceback.print_stack()
         traceback.print_exc()
-    add_funny_line()
 
 
 println("""MCPYTHON version {} ({}) running on {}

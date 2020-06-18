@@ -20,7 +20,8 @@ class ICoralBlock(mcpython.block.Block.Block):
 
     def on_random_update(self):
         # todo: add water check; not arrival as it is not implemented
-        G.world.get_active_dimension().add_block(self.position, "{}:dead_{}".format(*self.NAME.split(":")))
+        G.world.get_active_dimension().get_chunk_for_position(self.position).add_block(
+            self.position, "{}:dead_{}".format(*self.NAME.split(":")))
 
 
 @G.registry

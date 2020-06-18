@@ -78,7 +78,6 @@ class Slot:
             self.call_update(player=player)
 
     def call_update(self, player=False):
-        if not self.on_update: return
         for f in self.on_update:
             try:
                 f(player=player)

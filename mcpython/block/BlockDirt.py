@@ -41,6 +41,7 @@ class BlockDirt(Block.Block):
                         if blockinst is not None:
                             if blockinst == "minecraft:grass_block" or (
                                     type(blockinst) != str and blockinst.NAME == "minecraft:grass_block"):
-                                G.world.get_active_dimension().add_block(self.position, "minecraft:grass_block")
+                                G.world.get_active_dimension().get_chunk_for_position(self.position).add_block(
+                                    self.position, "minecraft:grass_block")
                                 return
 
