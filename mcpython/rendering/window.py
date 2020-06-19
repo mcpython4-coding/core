@@ -377,17 +377,10 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         """
         Configure OpenGL to draw in 3d.
         """
-        width, height = self.get_size()
-        viewport = self.get_framebuffer_size()
-        if rotation is None: rotation = G.world.get_active_player().rotation
-        if position is None: position = G.world.get_active_player().position
-        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("set_3d", width=width, height=height,
-                                                                viewport_0=max(1, viewport[0]),
-                                                                viewport_1=max(1, viewport[1]), rotation_x=rotation[0],
-                                                                rotation_y=rotation[1], position_x=position[0],
-                                                                position_y=position[1], position_z=position[2],
-                                                                trans_rot_x=math.cos(math.radians(rotation[0])),
-                                                                trans_rot_y=math.sin(math.radians(rotation[0])))
+        if G.world.get_active_player() is None: return
+        if G.rendering_helper.default_3d_stack is None:
+            G.rendering_helper.default_3d_stack = G.rendering_helper.get_dynamic_3d_matrix_stack()
+        G.rendering_helper.default_3d_stack.apply()
 
     def on_draw(self):
         """

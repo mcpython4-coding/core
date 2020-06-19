@@ -47,6 +47,7 @@ information on development:
 
 
 changelog of snapshot [next]
+    - improved rendering system by using MatrixStack's and RenderingHelper-instances
 
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
     Rendering:

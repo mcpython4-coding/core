@@ -6,10 +6,13 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import pyglet.gl as _gl
-import pyglet.gl.glu as _glu
 import collections
-import pyglet.graphics
+import math
+
+import pyglet.gl as _gl
+
+import globals as G
+import mcpython.rendering.MatrixStack
 
 
 class RenderingHelper:
@@ -25,6 +28,7 @@ class RenderingHelper:
         """
         self.status_table = {}
         self.saved = collections.deque()
+        self.default_3d_stack = None
 
     def save_status(self, add_to_stack=True):
         """
@@ -84,4 +88,52 @@ class RenderingHelper:
         if data is None: data = self.status_table
         for key in data:
             self.set_flag(key, data[key])
+        return self
+
+    def get_default_3d_matrix_stack(self, base=None) -> mcpython.rendering.MatrixStack.MatrixStack:
+        """
+        will create an MatrixStack-instance with the active transformation for the active player
+        Will set up perspective for 3d rendering with these stack
+        :param base: the MatrixStack-instance to set into
+        :return: the MatrixStack instance
+        WARNING: all transformations will be applied ON TOP of the base-MatrixStack if its provided
+        """
+        if base is None: base = mcpython.rendering.MatrixStack.MatrixStack()
+        width, height = G.window.get_size()
+        self.glEnable(_gl.GL_DEPTH_TEST)
+        viewport = G.window.get_viewport_size()
+        base.addViewport(0, 0, max(1, viewport[0]), max(1, viewport[1]))
+        base.addMatrixMode(_gl.GL_PROJECTION)
+        base.addLoadIdentity()
+        base.addGluPerspective(65.0, width / height, 0.1, 60.0)
+        base.addMatrixMode(_gl.GL_MODELVIEW)
+        base.addLoadIdentity()
+        x, y, _ = G.world.get_active_player().rotation
+        base.addRotate3d(x, 0, 1, 0)
+        base.addRotate3d(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
+        x, y, z = G.world.get_active_player().position
+        base.addTranslate3d(-x, -y, -z)
+        return base
+
+    def get_dynamic_3d_matrix_stack(self, base=None) -> mcpython.rendering.MatrixStack.LinkedMatrixStack:
+        """
+        same as get_default_3d_matrix_stack, but the matrix stack is an LinkedMatrixStack with links to player position,
+            etc.
+        [see above]
+        """
+        if base is None: base = mcpython.rendering.MatrixStack.LinkedMatrixStack()
+        self.glEnable(_gl.GL_DEPTH_TEST)
+        base.addViewport(lambda: (0, 0, max(1, G.window.get_viewport_size()[0]),
+                                  max(1, G.window.get_viewport_size()[1])))
+        base.addMatrixMode(_gl.GL_PROJECTION)
+        base.addLoadIdentity()
+        base.addGluPerspective(lambda: (65.0, G.window.get_size()[0] / G.window.get_size()[1], 0.1, 60.0))
+        base.addMatrixMode(_gl.GL_MODELVIEW)
+        base.addLoadIdentity()
+        base.addRotate3d(lambda: (G.world.get_active_player().rotation[0], 0, 1, 0))
+        base.addRotate3d(lambda: (-G.world.get_active_player().rotation[1],
+                                  math.cos(math.radians(G.world.get_active_player().rotation[0])), 0,
+                                  math.sin(math.radians(G.world.get_active_player().rotation[0]))))
+        base.addTranslate3d(lambda: [-e for e in G.world.get_active_player().position])
+        return base
 
