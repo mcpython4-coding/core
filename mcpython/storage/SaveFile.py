@@ -173,6 +173,13 @@ class SaveFile:
         self.save_in_progress = False
 
     def apply_storage_fixer(self, name: str, *args, **kwargs):
+        """
+        will apply an fixer to fix the storage version
+        :param name: the name of the fixer to use
+        :param args: the args to send
+        :param kwargs: the kwargs to use
+        :raises DataFixerNotFoundException: if the name is invalid
+        """
         if name not in self.storage_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
         fixer: mcpython.storage.datafixers.IDataFixer.IStorageVersionFixer = \
             self.storage_fixer_registry.registered_object_map[name]
@@ -181,6 +188,13 @@ class SaveFile:
             self.apply_group_fixer(*args, **kwargs)
 
     def apply_group_fixer(self, name: str, *args, **kwargs):
+        """
+        will apply an group fixer to the system
+        :param name: the name of the group fixer to use
+        :param args: the args to use
+        :param kwargs: the kwargs to use
+        :raises DataFixerNotFoundException: if the name is invalid
+        """
         if name not in self.group_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
         fixer: mcpython.storage.datafixers.IDataFixer.IGroupFixer = \
             self.group_fixer_registry.registered_object_map[name]
@@ -189,30 +203,49 @@ class SaveFile:
             self.apply_part_fixer(name, *args, **kwargs)
 
     def apply_part_fixer(self, name: str, *args, **kwargs):
+        """
+        will apply an part fixer to the system
+        :param name: the name to use
+        :param args: the args to send
+        :param kwargs: the kwargs
+        :raises DataFixerNotFoundException: if the name is invalid
+        """
         if name not in self.part_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
         fixer: mcpython.storage.datafixers.IDataFixer.IPartFixer = self.part_fixer_registry.registered_object_map[name]
         fixer.apply(self, *args, **kwargs)
 
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
+        """
+        applies an mod fixer(list) to the system
+        :param modname: the mod name
+        :param source_version: where to start from
+        :param args: args to call with
+        :param kwargs: kwargs to call with
+        :raises DataFixerNotFoundException: if the name is invalid
+        """
         if modname not in self.mod_fixers or modname not in G.modloader.mods: raise DataFixerNotFoundException(modname)
-        target_version = G.modloader.mods[modname].version
+        instance = G.modloader.mods[modname]
         fixers = self.mod_fixers[modname]
+        while instance.version != source_version:
+            possible_fixers = set()
+            for fixer in fixers:
+                if source_version is None or (len(fixer.FIXES_FROM) == len(source_version) and
+                                              source_version <= fixer.FIXES_FROM):
+                    possible_fixers.add(fixer)
 
-        possible_fixers = set()
-        for fixer in fixers:
-            if source_version is None or (len(fixer.FIXES_FROM) == len(source_version) and
-                                          source_version <= fixer.FIXES_FROM):
-                possible_fixers.add(fixer)
+            if len(possible_fixers) == 0: return
 
-        if source_version is not None or len(possible_fixers) == 1:
-            fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = fixers[0]
-        else:
-            fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = min(
-                possible_fixers, key=lambda v: self._get_distance(v, source_version))
+            if source_version is not None or len(possible_fixers) == 1:
+                fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = fixers[0]
+            else:
+                fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = min(
+                    possible_fixers, key=lambda v: self._get_distance(v, source_version))
 
-        fixer.apply(self, *args, **kwargs)
-        [self.apply_group_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES]
-        [self.apply_part_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.PART_FIXER_NAMES]
+            fixer.apply(self, *args, **kwargs)
+            [self.apply_group_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES]
+            [self.apply_part_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.PART_FIXER_NAMES]
+
+            source_version = fixer.FIXES_TO
 
     @classmethod
     def _get_distance(cls, v, t):
