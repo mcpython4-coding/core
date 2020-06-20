@@ -6,14 +6,27 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import mcpython.storage.serializer.IDataSerializer
 import globals as G
-import mcpython.config
 import logger
+import mcpython.ResourceLocator
+import mcpython.config
+import mcpython.storage.SaveFile
+import mcpython.storage.datafixers.IDataFixer
+import mcpython.storage.serializer.IDataSerializer
 import mcpython.util.getskin
 import mcpython.world.player
-import mcpython.ResourceLocator
-import mcpython.storage.SaveFile
+
+
+class WorldConfigFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    Class representing an fix for the config-entry
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:general"
+
+    @classmethod
+    def fix(cls, savefile, data: dict) -> dict:
+        raise NotImplementedError()
 
 
 @G.registry
@@ -21,11 +34,23 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:general"
 
     @classmethod
+    def apply_part_fixer(cls, savefile, fixer):
+        # when it is another version, loading MAY fail
+        if savefile.version != mcpython.storage.SaveFile.LATEST_VERSION: return
+
+        data = savefile.access_file_json("level.json")
+        data["config"] = fixer.fix(savefile, data["config"])
+        savefile.write_file_json("level.json", data)
+
+    @classmethod
     def load(cls, savefile):
         data = savefile.access_file_json("level.json")
         if data is None: raise mcpython.storage.serializer.IDataSerializer.MissingSaveException("level.json not found!")
 
         savefile.version = data["storage version"]
+
+        # when it is another version, loading MAY fail
+        if savefile.version != mcpython.storage.SaveFile.LATEST_VERSION: return
 
         playername = data["player name"]
         if playername not in G.world.players: G.world.add_player(playername)
@@ -42,7 +67,9 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         G.eventhandler.call("seed:set")
 
         if data["game version"] not in mcpython.config.VERSION_ORDER:
-            logger.println("future version are NOT supported. Loading may NOT work")
+            logger.println("Future version are NOT supported. Loading may NOT work (but we try to)")
+            logger.println("Whatever happens to you saves now, we CAN NOT give you help. For your information, ")
+            logger.println("it was last loaded in '{}'".format(data["game version"]))
 
         for modname in data["mods"]:
             if modname not in G.modloader.mods:
@@ -53,12 +80,17 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                 except mcpython.storage.SaveFile.DataFixerNotFoundException:
                     if modname != "minecraft":
                         logger.println("[WARN] mod {} did not provide data-fixers for mod version change "
-                                       "which occured between the sessions".format(modname))
+                                       "which occur between the sessions (from {} to {})".format(
+                                            modname, tuple(data["mods"][modname]), G.modloader.mods[modname].version))
+
+        # apply data fixers for creating mod data
         for modname in G.modloader.mods:
             if modname not in data["mods"]:
                 savefile.apply_mod_fixer(modname, None)
 
+        # the chunks scheduled for generation
         [G.worldgenerationhandler.add_chunk_to_generation_list(e[0], dimension=e[1]) for e in data["chunks_to_generate"]]
+
         for dimension in G.world.dimensions.values():
             if str(dimension.id) in data["dimensions"]:
                 if data["dimensions"][str(dimension.id)] != dimension.name:
@@ -74,9 +106,9 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     @classmethod
     def save(cls, data, savefile):
         data = {
-            "storage version": savefile.version,
-            "player name": G.world.get_active_player().name,
-            "config": G.world.config,
+            "storage version": savefile.version,  # the storage version stored in
+            "player name": G.world.get_active_player().name,  # the name of the player the world played in
+            "config": G.world.config,  # the world config
             "game version": mcpython.config.VERSION_NAME,
             "mods": {mod.name: mod.version for mod in G.modloader.mods.values()},
             "chunks_to_generate": [(chunk.position, chunk.dimension.id) for chunk in

@@ -197,12 +197,19 @@ class SaveFile:
         if modname not in self.mod_fixers or modname not in G.modloader.mods: raise DataFixerNotFoundException(modname)
         target_version = G.modloader.mods[modname].version
         fixers = self.mod_fixers[modname]
-        if source_version not in fixers: raise DataFixerNotFoundException(modname+str(source_version))
-        if source_version is not None or len(fixers) == 1 or len(source_version) != len(target_version):
+
+        possible_fixers = set()
+        for fixer in fixers:
+            if source_version is None or (len(fixer.FIXES_FROM) == len(source_version) and
+                                          source_version <= fixer.FIXES_FROM):
+                possible_fixers.add(fixer)
+
+        if source_version is not None or len(possible_fixers) == 1:
             fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = fixers[0]
         else:
             fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = min(
-                fixers, key=lambda v: self._get_distance(v, source_version))
+                possible_fixers, key=lambda v: self._get_distance(v, source_version))
+
         fixer.apply(self, *args, **kwargs)
         [self.apply_group_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES]
         [self.apply_part_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.PART_FIXER_NAMES]

@@ -48,6 +48,7 @@ information on development:
 
 changelog of snapshot [next]
     - improved rendering system by using MatrixStack's and RenderingHelper-instances
+    - improved data fixer system
 
     fixed issues:
         from previous snapshot:
