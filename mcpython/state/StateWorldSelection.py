@@ -168,7 +168,7 @@ class StateWorldSelection(State.State):
                           pyglet.text.Label("last loaded with {} mod{}".format(
                               len(data["mods"]), "" if len(data["mods"]) <= 1 else "s"))]
                 self.world_data.append((edit_date, sprite, labels))
-        self.world_data.sort(key=lambda d: d[0].timestamp())
+        self.world_data.sort(key=lambda d: -d[0].timestamp())
         self.recalculate_sprite_position()
         if (wy - 140) / 60 > len(self.world_data):
             self.parts[4].active = False

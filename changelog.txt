@@ -49,6 +49,10 @@ information on development:
 changelog of snapshot [next]
     - improved rendering system by using MatrixStack's and RenderingHelper-instances
 
+    fixed issues:
+        from previous snapshot:
+            - ordering of world selection list was wrong
+
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
     Rendering:
         - added state part serializer for progress bar
