@@ -1164,3 +1164,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed ordering of world selection list (issue 213)
 [uuk]: improved data fixer system
 [uuk]: added WorldConfigFixer class for fixing the "config" entry of saves (the G.world.config attribute)
+[uuk]: added KeyMouseBinding-class holding key/mouse config
