@@ -196,3 +196,4 @@ issue 211: when closing the game while the main inventory is open, items could g
            fixed on 12.06.2020 by uuk
 issue 212: /clone was not updating visual status of blocks; fixed by uuk
 issue 213: world selection list was wrong way round sorted; fixed on 20.06.2020 by uuk
+issue 214: world selection list was rendering wrong; fixed on 20.06.2020 by uuk

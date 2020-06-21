@@ -87,6 +87,10 @@ class Inventory:
                 self.bgsprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read("assets/missingtexture.png", "pyglet"))
         if "bg_image_pos" in self.config:
             self.bg_image_pos = tuple(self.config["bg_image_pos"])
+        self.on_reload()
+
+    def on_reload(self):
+        pass
 
     def create_slots(self) -> list:  # todo: remove
         """

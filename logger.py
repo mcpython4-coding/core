@@ -94,15 +94,15 @@ def write_into_container(*container_areas, style=("+", "-", "|"), header=None, o
     """
     areas = ([_transform_any_str_list(header)] if header is not None else []) + [
         _transform_any_str_list(a) for a in container_areas]
-    max_characters_in_line = max([max([len(line) for line in area]) for area in areas])
+    max_characters_in_line = max([max([len(str(line)) for line in area]) for area in areas])
     horizontal_line = style[0] + style[1] * (max_characters_in_line + 2 * outer_line_distance) + style[0]
     empty_line = style[2] + " " * (max_characters_in_line + 2 * outer_line_distance) + style[2]
     for area in areas:
         println(horizontal_line)
         [println(empty_line) for _ in range(empty_lines_before_separate)]
         for line in area:
-            println(style[2]+" "*outer_line_distance+line+" "*(
-                    outer_line_distance+max_characters_in_line-len(line))+style[2])
+            println(style[2]+" "*outer_line_distance+str(line)+" "*(
+                    outer_line_distance+max_characters_in_line-len(str(line)))+style[2])
         [println(empty_line) for _ in range(empty_lines_before_separate)]
     println(horizontal_line)
 

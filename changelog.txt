@@ -53,6 +53,7 @@ changelog of snapshot [next]
     fixed issues:
         from previous snapshot:
             - ordering of world selection list was wrong
+            - world selection screen was not rendering all possible worlds
 
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
     Rendering:

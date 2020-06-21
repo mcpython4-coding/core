@@ -112,10 +112,10 @@ class BlockChest(Block.Block):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_remove(self):
-        if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
-        for slot in self.inventory.slots:
-            G.world.get_active_player().pick_up(slot.get_itemstack().copy())
-            slot.get_itemstack().clean()
+        if G.world.gamerulehandler.table["doTileDrops"].status.status:
+            for slot in self.inventory.slots:
+                G.world.get_active_player().pick_up(slot.get_itemstack().copy())
+                slot.get_itemstack().clean()
         G.inventoryhandler.hide(self.inventory)
         del self.inventory
 

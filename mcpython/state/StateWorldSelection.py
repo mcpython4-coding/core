@@ -91,7 +91,7 @@ class StateWorldSelection(State.State):
     def recalculate_sprite_position(self):
         wx, wy = G.window.get_size()
         status = (1 - self.parts[4].get_status()) * len(self.world_data) * 20
-        ay = wy + status - 120
+        ay = wy + status - 150
         for i, (_, sprite, labels) in enumerate(self.world_data):
             sprite.x = 50
             sprite.y = ay
