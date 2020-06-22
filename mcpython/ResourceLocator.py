@@ -219,11 +219,12 @@ def close_all_resources():
 MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity", "model"]  # how mc locations look like
 
 
-def transform_name(file: str) -> str:
+def transform_name(file: str, raise_on_error=True) -> str:
     """
     will transform an MC-ResourceLocation string into an local path
     :param file: the thing to use
     :return: the transformed
+    :param raise_on_error: will raise downer exception, otherwise return the file iself
     :raises NotImplementedError: when the data is invalid
     """
     f = file.split(":")
@@ -233,7 +234,9 @@ def transform_name(file: str) -> str:
         else:
             f = "assets/{}/textures/{}/{}.png".format(f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:]))
         return f
-    raise NotImplementedError("can't transform name '{}' to valid path".format(file))
+    if raise_on_error:
+        raise NotImplementedError("can't transform name '{}' to valid path".format(file))
+    return file
 
 
 def exists(file: str, transform=True):

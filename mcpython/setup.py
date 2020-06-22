@@ -28,6 +28,7 @@ what does this system do?
 import json
 import os
 import shutil
+import logger
 
 import globals as G
 import mcpython.event.Registry
@@ -93,11 +94,14 @@ def execute():
 # todo: split up into different sub-calls
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", add, info="adding prebuild tasks")
 
-if not os.path.exists(G.build+"/info.json"): G.prebuilding = True
+if not os.path.exists(G.build+"/info.json"):
+    logger.println("rebuild mode due missing info file")
+    G.prebuilding = True
 else:
     with open(G.build+"/info.json") as f:
         data = json.load(f)
     if not data["finished"]:
+        logger.println("rebuild mode due to unfinished cache")
         G.prebuilding = True
 
 if G.prebuilding:
