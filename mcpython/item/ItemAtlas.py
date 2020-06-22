@@ -110,6 +110,5 @@ class ItemAtlasHandler:
 
         atlas_id, position = self.allocation_table[file]
         x, y = position[0], position[1]
-        print(file, (y, x), atlas_id)
         return self.atlas_grids[atlas_id][y, x]
 

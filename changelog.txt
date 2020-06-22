@@ -49,11 +49,14 @@ information on development:
 changelog of snapshot [next]
     - improved rendering system by using MatrixStack's and RenderingHelper-instances
     - improved data fixer system
+    - changed how item textures are baked together
+    - SHIFT-drag support in inventories
 
     fixed issues:
         from previous snapshot:
             - ordering of world selection list was wrong
             - world selection screen was not rendering all possible worlds
+            - ShiftContainer was miss-behaving in certain cases
 
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
     Rendering:

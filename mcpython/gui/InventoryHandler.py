@@ -158,7 +158,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
             statepart.deactivate()
         self.on_mouse_release(0, 0, 0, 0)
 
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifers):
+    def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
         if G.window.exclusive: return  # when no mouse interaction is active, do nothing
         slot = self._get_slot_for(x, y)
         if slot is None: return
@@ -169,6 +169,17 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
                 self.slot_list.append(slot)
                 self.original_amount.append(slot.itemstack.amount)
             self.reorder_slot_list_stacks()
+        elif modifiers & key.MOD_SHIFT:
+            slot = self._get_slot_for(x, y)
+            if slot.on_shift_click:
+                try:
+                    flag = slot.on_shift_click(slot, x, y, button, modifiers, G.world.get_active_player())
+                    if flag is not True: return  # no default logic should go on
+                except:
+                    logger.write_exception("during shift-clicking {}, the function {} crashed".format(
+                        slot, slot.on_shift_click))
+            if G.inventoryhandler.shift_container is not None and \
+                G.inventoryhandler.shift_container.move_to_opposite(slot): return
 
     def reorder_slot_list_stacks(self):
         if len(self.slot_list) == 0: return

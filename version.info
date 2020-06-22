@@ -1166,3 +1166,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added WorldConfigFixer class for fixing the "config" entry of saves (the G.world.config attribute)
 [uuk]: added KeyMouseBinding-class holding key/mouse config
 [uuk]: fixed world list rendering (issue 214)
+[uuk]: rewritten how item textures are stored
+[uuk]: added shift-drag behaviour to inventory system
+[uuk]: improved behaviour of shift-container class (issue 215)
