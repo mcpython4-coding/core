@@ -34,6 +34,12 @@ class EventHandler:
         for bus in self.active_buses:
             results += bus.call(eventname, *args, *kwargs)
 
+    def call_cancelable(self, eventname, *args, **kwargs):
+        for bus in self.active_buses:
+            if bus.call_cancelable(eventname, *args, **kwargs).canceled:
+                return False
+        return True
+
     def __call__(self, *args, **kwargs): self.call(*args, **kwargs)
 
 

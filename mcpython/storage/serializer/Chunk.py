@@ -214,13 +214,14 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         data = data[chunk]
         chunk_instance.generated = data["generated"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
-        for rel_position in data["blocks"]:
+        for rel_position in data["blocks"].keys():
             position = (rel_position[0] + chunk_instance.position[0] * 16, rel_position[1],
                         rel_position[2] + chunk_instance.position[1] * 16)
             d = data["block_palette"][data["blocks"][rel_position]]
 
             def add(blockinstance):
                 if blockinstance is None: return
+                if d["name"] == "minecraft:chest": print(d["name"], d["custom"], blockinstance.position)
                 blockinstance.load(d["custom"])
                 inventories = blockinstance.get_inventories()
                 if "inventories" not in d: return

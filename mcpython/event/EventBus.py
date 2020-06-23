@@ -13,6 +13,14 @@ import logger
 import importlib
 
 
+class CancelAbleEvent:
+    def __init__(self):
+        self.canceled = False
+
+    def cancel(self):
+        self.canceled = True
+
+
 class EventBus:
     """
     An class for bundling event calls to instances of this to make it easy to add/remove big event notations.
@@ -96,6 +104,11 @@ class EventBus:
             logger.println("\nout of the above reasons, the game has crashes")
             sys.exit(-1)
         return result
+
+    def call_cancelable(self, event_name, *args, **kwargs):
+        handler = CancelAbleEvent()
+        self.call_until(event_name, lambda _: handler.canceled, *((handler,)+args), **kwargs)
+        return handler
 
     def call_until(self, event_name, check_function, *args, **kwargs):
         if event_name not in self.event_subscriptions: return None

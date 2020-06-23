@@ -12,6 +12,8 @@ import mcpython.event.Registry
 import mcpython.entity.EntityHandler
 import uuid
 import mcpython.util.math
+import logger
+import traceback
 
 
 class Entity(mcpython.event.Registry.IRegistryContent):
@@ -64,7 +66,14 @@ class Entity(mcpython.event.Registry.IRegistryContent):
 
     def get_position(self): return self.__position
 
-    def set_position(self, position: tuple): self.teleport(position)
+    def set_position(self, position: tuple):
+        if type(position) not in (tuple, list, set):
+            logger.println("[FATAL] invalid position for set_position() on {} '{}'".format(self, position))
+            traceback.print_exc()
+            return
+        self.teleport(position)
+
+    position = property(get_position, set_position)
 
     # only for some small use-cases. WARNING: will  N O T  do any internal handling for updating the position
     def set_position_unsafe(self, position: tuple): self.__position = position
@@ -91,8 +100,6 @@ class Entity(mcpython.event.Registry.IRegistryContent):
                 self.chunk.entities.remove(self)
             self.chunk = dimension.get_chunk_for_position(self.position)
             self.chunk.entities.add(self)
-
-    position = property(get_position, set_position)
 
     # interaction functions
 
@@ -155,6 +162,11 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :return:
         """
         return list(self.inventories.values())
+
+    def on_inventory_cleared(self):
+        """
+        called by /clear when the inventory of the entity should be cleared
+        """
 
     # system events
 

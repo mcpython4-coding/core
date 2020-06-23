@@ -20,6 +20,7 @@ import mcpython.world.gen.mode
 class WorldGenerationTaskHandler:
     """
     handler for generating tasks off-call
+    todo: make task work more efficient!!!
     """
 
     def __init__(self):

@@ -30,6 +30,7 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - port every state configuration to config files [6]
     - launcher system to download mc assets separately [10]
     - entity AI system
+    - rendering layer system
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -51,11 +52,12 @@ information on development:
         its id.
 
 
-changelog of snapshot [next]
+changelog of snapshot [next] (theme: fixing stuff)
     - improved rendering system by using MatrixStack's and RenderingHelper-instances
     - improved data fixer system
     - changed how item textures are baked together
     - SHIFT-drag support in inventories
+    - improved command handling
 
     fixed issues:
         from previous snapshot:

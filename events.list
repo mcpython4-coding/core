@@ -1,8 +1,12 @@
 
 commands:
-    "command:clear:start": called by command "/clear" on beginning to clearing inventory, cancelable in
-        CommandClear-class, [cancels the real "clear", but will call all following subscribers]
-    "command:clear:end": called by command "/clear" on end of clearing inventory
+    command:clear(CancelAbleEvent, ParsingCommandInfo): called when /clear is executed
+    command:clear:entity(CancelAbleEvent, ParsingCommandInfo, Entity): called for every entity affected by /clear.
+        Will cancel /clear only for THIS entity
+    command:clear:finish(ParsingCommandInfo): called by command "/clear" on end of clearing inventory
+
+    command:clone:block_map(ParsingCommandInfo, dict): called when data is collected together with the data table
+
     "command:give:start": called by command "/give" on beginning of adding items, called with ItemStack-parameter,
         cancelable in CommandGive-class [cancels the "real" giving, but will call all following subscribers]
     "command:help:generate_pages": called on CommandHelp's page generation, called with the page list as an parameter
@@ -100,4 +104,8 @@ hotkeys:
 
 data generation [loading event]:
     "special:datagen:configure": called by the data generation system in order for mods to generate their datagens
+
+removed:
+    "command:clear:start": previous event for /clear command
+    "command:clear:end": previous event for /clear command
 

@@ -124,9 +124,20 @@ class Block(mcpython.event.Registry.IRegistryContent):
 
     def get_inventories(self):
         """
-        called to get an list of inventories
+        Called to get an list of inventories
+        FOR MODDERS: use get_provided_slot_lists() where possible
         """
         return []
+
+    def get_provided_slot_lists(self, side: mcpython.util.enums.EnumSide):
+        """
+        Similar to get_inventories, but specifies only slots & the side on which the interaction can happen.
+        Useful for e.g. furnaces which can get fuel from the side, but from top the item to smelt.
+        gets slots for various reasons for an given side
+        :param side: the side asked for
+        :return: an tuple of lists of input slots and output slots
+        """
+        return [], []
 
     def get_model_state(self) -> dict:
         """
@@ -140,24 +151,6 @@ class Block(mcpython.event.Registry.IRegistryContent):
         sets the model state for the block
         :param state: the state to set
         """
-
-    @deprecation.deprecated("dev1-2", "a1.3.0")
-    def get_provided_slots(self, side: mcpython.util.enums.EnumSide) -> typing.List[
-            typing.Union[mcpython.gui.Slot.Slot, mcpython.gui.Slot.SlotCopy]]:
-        """
-        gets the slots for an given side
-        :param side: the side to check
-        :return: an list of slot of the side
-        """
-        return []
-
-    def get_provided_slot_lists(self, side: mcpython.util.enums.EnumSide):
-        """
-        gets slots for various reasons for an given side
-        :param side: the side asked for
-        :return: an tuple of lists of input slots and output slots
-        """
-        return [], []
 
     def get_view_bbox(self) -> typing.Union[mcpython.block.BoundingBox.BoundingBox,
                                             mcpython.block.BoundingBox.BoundingArea]:
@@ -204,3 +197,15 @@ class Block(mcpython.event.Registry.IRegistryContent):
 
     @staticmethod
     def get_all_model_states() -> list: return [{}]  # todo: make attribute or external config file
+
+    # deprecated stuff
+
+    @deprecation.deprecated("dev1-2", "a1.3.0")
+    def get_provided_slots(self, side: mcpython.util.enums.EnumSide) -> typing.List[
+            typing.Union[mcpython.gui.Slot.Slot, mcpython.gui.Slot.SlotCopy]]:
+        """
+        gets the slots for an given side
+        :param side: the side to check
+        :return: an list of slot of the side
+        """
+        return []

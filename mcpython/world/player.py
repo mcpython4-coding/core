@@ -285,3 +285,7 @@ class Player(mcpython.entity.Entity.Entity):
     def __str__(self):
         return "Player(dim={},pos={},rot={},name=\"{}\")".format(
             self.dimension.id, self.position, self.rotation, self.name)
+
+    def on_inventory_cleared(self):
+        self.xp = 0
+        self.xp_level = 0

@@ -1170,3 +1170,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added shift-drag behaviour to inventory system
 [uuk]: improved behaviour of shift-container class (issue 215)
 [uuk]: RegistryInfo was dumping unwanted stuff into files (issue 216)
+[uuk]: event system has now an call_cancelable() function to call an function with an provider for canceling it
+[uuk]: improved /clear command
+[uuk]: ParsingCommandInfo has now an chat-attribute storing an Chat-instance

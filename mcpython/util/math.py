@@ -112,11 +112,14 @@ def normalize(position):
 
     """
     try:
+        if type(position) in (tuple, list, set) and len(position) != 3:
+            logger.println("[FATAL] invalid position '{}'".format(position))
+            return position
         x, y, z = position if type(position) == tuple else tuple(position)
         x, y, z = (int(round(x)), int(round(y)), int(round(z)))
         return x, y, z
     except:
-        logger.println(position)
+        logger.println("[FATAL] error during parsing position {}".format(position))
         raise
 
 

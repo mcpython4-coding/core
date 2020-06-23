@@ -13,21 +13,21 @@ issue 23: [fixed in generation improvements]
 issue 28: [caused by issue 185]
     bug: F3+A - hot-key does not reload the world correctly
     since: unknown, found after fixing issue 19 & implementing hot-keys
-    possible fix: rewrite this part of Chunk's method's
+    possible fix: rewrite this part of the method of the Chunk-class
 
 issue 34:
     bug: jumping from downwards into an block, you get damage
     since: block damage was introduced
-    fix: rewrite collision system
+    fix: rewrite collision system & check for overlap value
 
 issue 35:
-    bug: going inside an non-full block will give you damage instead of bouncing of the block
+    bug: going inside an non-full block will give you damage instead of bouncing of the block (e.g. glass)
     since: block damage was introduced
     fix: check for solid block
     better fix: use rewritten collision system based on AABB's to determine if you are in an block or not
 
 issue 55:
-    bug: alpha textures are rendered not behind alpha-textures
+    bug: alpha textures are not rendered behind alpha-textures
     since: alpha rendering was implemented
     fix: order alpha face rendering! (maybe implement an AlphaRenderingRenderer extends ICustomDrawRenderer)
 
@@ -156,4 +156,8 @@ issue 203:
 issue 204:
     bug: debug world generates start chest
 
-[211-216]
+issue 217:
+    bug: chest content can get lost
+
+issue 218:
+    bug: game crashes when using e.g. "/tp @s 10 10 10" in chat

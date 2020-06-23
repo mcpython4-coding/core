@@ -16,6 +16,7 @@ import globals as G
 import mcpython.item.ItemTool
 import mcpython.util.enums
 from . import Block
+import logger
 
 BBOX = mcpython.block.BoundingBox.BoundingBox((14/16, 14/16, 14/16), (1/16, 1/16, 1/16))  # the bounding box of the chest
 
@@ -129,6 +130,12 @@ class BlockChest(Block.Block):
     def load(self, data):
         if "model" in data:
             self.set_model_state(data["model"])
+        else:
+            logger.println("[SERIALIZER][WARN] BlockChest at {} is missing model state in save files".format(
+                self.position))
         if "loot_table" in data:
             self.loot_table_link = data["loot_table"]
+        else:
+            logger.println("[SERIALIZER][WARN] BlockChest at {} is missing loot table in save files".format(
+                self.position))
 
