@@ -2,29 +2,34 @@ Changelog since cleanup-branch of 31.01.2020
 todo: make into an .md file
 
 
-planned for the future:
+planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
+        before next stable release):
     - optimize texture reload with everything (re-block-item-factories, reload block models,
-        reload item texture, gui textures, ...), config reload
-    - add more factories for various parts (better block models, block states, full block factory, ...) [data gens?]
-    - add scoreboards with commands, execute entry, ...
-    - make commands more fail-save
-    - make world gen more fail-save
-    - add ores
-    - add mcpi API support
-    - an logging update
-    - improve item texture atlas system (it seems not very stable when adding new items without rebuilding)
-    - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum
-    - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality]
+        reload item texture, gui textures, ...), config reload [1,y]
+    - add combined data generators & factories [1,y]
+    - add more factories for various parts (better block models, block states, full block factory, ...) [2]
+    - add scoreboards with commands, execute entry, ... [5]
+    - make commands more fail-save [2,y]
+    - make world gen more fail-save [2,y]
+    - add ores [4]
+    - add mcpi API support [10]
+    - an logging update [4]
+    - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum [7]
+    - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality] [5]
     - add an line into logging where the system searches for the location where the error occur and will link the mod
-        caused it into the log
-    - parser for the new mc dimension config format
-    - mdk kit with setup and launcher binding
-    - add an mode where the window opens only when the load is complete
+        caused it into the log [6]
+    - parser for the new mc dimension config format [20]
+    - mdk kit with setup and launcher binding [11]
+    - add an mode where the window opens only when the load is complete [100]
     - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
-        and when the user tries to go back to start menu, the game is closing. [change button text for that]
-    - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
-    - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html)
-    - implement lighting
+        and when the user tries to go back to start menu, the game is closing. [change button text for that] [100]
+    - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation [30]
+    - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html) [110]
+    - implement lighting [1000]
+    - implement more UI element parsers [5]
+    - port every state configuration to config files [6]
+    - launcher system to download mc assets separately [10]
+    - entity AI system
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -57,6 +62,7 @@ changelog of snapshot [next]
             - ordering of world selection list was wrong
             - world selection screen was not rendering all possible worlds
             - ShiftContainer was miss-behaving in certain cases
+            - registry info was not dumping data correctly
 
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
     Rendering:

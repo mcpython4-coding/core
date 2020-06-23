@@ -198,3 +198,5 @@ issue 212: /clone was not updating visual status of blocks; fixed by uuk
 issue 213: world selection list was wrong way round sorted; fixed on 20.06.2020 by uuk
 issue 214: world selection list was rendering wrong; fixed on 20.06.2020 by uuk
 issue 215: can't shift-click out of certain slots, caused by ShiftContainer-miss-behaviour; fixed on 22.06.2020 by uuk
+issue 216: RegistryInfo serializer was dumping registry data from registries marked not for dumping: fixed on 23.06.2020
+           by uuk
