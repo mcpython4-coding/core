@@ -43,7 +43,7 @@ class FullCube(IAdvancedBlockFactoryMode):
                 setTexture("all", settings["texture"]).finish()
         elif "textures" in settings:
             assert type(settings["textures"]) == dict
-            obj = mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("block/cube")
+            obj = mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("minecraft:block/cube")
             obj.textures = settings["textures"]
             obj.finish()
         mcpython.factory.BlockModelFactory.NormalBlockStateFactory().setName(factory_instance.name).addVariant(
@@ -70,7 +70,7 @@ class SlabBlock(IAdvancedBlockFactoryMode):
                 "block/cube_all_full").setTexture("all", tex).finish()
         elif "textures" in settings:
             assert type(settings["textures"]) == dict
-            obj = mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("block/cube")
+            obj = mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("minecraft:block/cube")
             obj.textures = settings["textures"]
             obj.finish()
         mcpython.factory.BlockModelFactory.NormalBlockStateFactory().setName(factory_instance.name).addVariant(

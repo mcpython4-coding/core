@@ -1,4 +1,4 @@
-{   "parent": "block/block",
+{   "parent": "minecraft:block/block",
     "textures": {
         "particle": "block/dirt",
         "top": "block/grass_path_top",

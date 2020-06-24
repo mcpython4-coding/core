@@ -18,7 +18,7 @@ class BlockModelFactory:
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def __init__(self):
         self.name = None
-        self.parent = "block/block"
+        self.parent = "minecraft:block/block"
         self.elements = None
         self.textures = None
 

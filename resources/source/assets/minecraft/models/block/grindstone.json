@@ -1,5 +1,5 @@
 {
-    "parent": "block/block",
+    "parent": "minecraft:block/block",
     "textures": {
         "pivot": "block/grindstone_pivot",
         "round": "block/grindstone_round",

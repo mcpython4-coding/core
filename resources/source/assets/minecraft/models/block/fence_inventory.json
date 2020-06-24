@@ -1,4 +1,4 @@
-{   "parent": "block/block",
+{   "parent": "minecraft:block/block",
     "display": {
         "gui": {
             "rotation": [ 30, 135, 0 ],

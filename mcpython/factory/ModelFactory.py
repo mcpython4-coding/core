@@ -15,7 +15,7 @@ import deprecation
 class ModelFactory:
 
     @deprecation.deprecated("dev2-2", "a1.5.0")
-    def __init__(self, name: str, parent="block/block"):
+    def __init__(self, name: str, parent="minecraft:block/block"):
         self.name = name
         self.parent = parent
         self.elements = []

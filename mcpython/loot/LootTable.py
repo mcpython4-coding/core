@@ -29,6 +29,7 @@ class LootTableTypes(enum.Enum):
     GIFT = 6
     ADVANCEMENT_REWARD = 7
     GENERIC = 8
+    BARTER = 9
 
 
 class LootTablePoolEntryType(enum.Enum):

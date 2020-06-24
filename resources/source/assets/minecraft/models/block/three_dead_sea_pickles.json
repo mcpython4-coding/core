@@ -1,5 +1,5 @@
 {
-    "parent": "block/block",
+    "parent": "minecraft:block/block",
     "textures": {
         "particle": "block/sea_pickle",
         "all": "block/sea_pickle"

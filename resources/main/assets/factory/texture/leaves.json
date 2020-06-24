@@ -1,7 +1,7 @@
 {
   "images": [
-    "block/acacia_leaves", "block/birch_leaves", "block/dark_oak_leaves", "block/jungle_leaves", "block/oak_leaves",
-    "block/spruce_leaves"
+    "minecraft:block/acacia_leaves", "minecraft:block/birch_leaves", "minecraft:block/dark_oak_leaves", "minecraft:block/jungle_leaves", "minecraft:block/oak_leaves",
+    "minecraft:block/spruce_leaves"
   ],
   "transforms": [
     {"image": [0, 1, 2, 3, 4, 5], "mode": "resize", "store": [0, 1, 2, 3, 4, 5], "size": [16, 16]},

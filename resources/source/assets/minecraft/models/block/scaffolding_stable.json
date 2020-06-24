@@ -1,5 +1,5 @@
 {
-    "parent": "block/block",
+    "parent": "minecraft:block/block",
     "textures": {
         "particle": "block/scaffolding_top",
         "top": "block/scaffolding_top",

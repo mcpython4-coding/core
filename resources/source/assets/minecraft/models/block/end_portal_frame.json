@@ -1,4 +1,4 @@
-{   "parent": "block/block",
+{   "parent": "minecraft:block/block",
     "textures": {
         "particle": "block/end_portal_frame_side",
         "bottom": "block/end_stone",

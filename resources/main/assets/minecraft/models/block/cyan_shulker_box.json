@@ -1,6 +1,6 @@
 {
-    "parent": "block/cube_all",
+    "parent": "minecraft:block/cube_all",
     "textures": {
-        "all": "block/cyan_shulker_box"
+        "all": "minecraft:block/cyan_shulker_box"
     }
 }
