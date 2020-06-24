@@ -178,8 +178,8 @@ def load_blocks():
     # missing: wheat, farmland; oak, spruce, birch, jungle, acacia and dark oak signs & doors & pressure plates, ladder,
     # rail, lever, stone pressure plate
 
-    full_template.setName("redstone_ore").setStrenght(3.).setDefaultModelState({"lit": "false"}).setBestTools(
-        ToolType.PICKAXE).setMinimumToolLevel(3).finish()
+    full_template.setName("redstone_ore").setStrenght(3.).setBestTools(
+        ToolType.PICKAXE).setMinimumToolLevel(3).finish()  # setDefaultModelState({"lit": "false"}).
 
     # missing: redstone torch, stone button, snow
 

@@ -154,7 +154,7 @@ class StateBlockItemGenerator(State.State):
             # event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
             return
         except:
-            print(self.tasks[self.blockindex])
+            logger.println(self.tasks[self.blockindex])
             raise
         self.parts[1].progress = self.blockindex+1
         self.parts[1].text = "{}/{}: {}".format(self.blockindex+1, len(self.tasks), self.tasks[self.blockindex])

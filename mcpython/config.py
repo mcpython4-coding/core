@@ -14,7 +14,7 @@ VERSION_TYPE = "dev"
 VERSION_NAME = "snapshot dev 4"
 
 DEVELOPING_FOR = "20w26a"
-DEVELOPMENT_COUNTER = 1
+DEVELOPMENT_COUNTER = 2
 
 # list of all versions since 19w52a to indicate order of release; used in save files todo: export to other file
 VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20w12a", "20w12b", "20w14a",
@@ -162,8 +162,9 @@ def load():
             import pyglet
 
             def on_shuffle(dt):
+                import logger
                 if G.world.world_loaded:
-                    print("shuffling data...")
+                    logger.println("shuffling data...")
                     G.eventhandler.call("data:shuffle:all")
 
             pyglet.clock.schedule_interval(on_shuffle, SHUFFLE_INTERVAL)

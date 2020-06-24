@@ -86,7 +86,7 @@ def download_skin(username: str, store: str):
         logger.println("loading skin from cache...")
         shutil.copy(G.build+"/skins/{}.png".format(username), store)
         return
-    print("downloading skin for '{}'".format(username))
+    logger.println("downloading skin for '{}'".format(username))
     if os.path.exists(store):
         os.remove(store)
 

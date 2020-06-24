@@ -121,7 +121,7 @@ class ModelHandler:
     def add_face_to_batch(self, block, face, batches) -> list:
         if block.NAME not in self.blockstates:
             logger.println("[FATAL] block data for block '{}' not found!".format(block.NAME))
-            print("possible:", self.blockstates.keys())
+            logger.println("possible:", self.blockstates.keys())
             return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
@@ -132,7 +132,7 @@ class ModelHandler:
     def draw_face(self, block, face):
         if block.NAME not in self.blockstates:
             logger.println("[FATAL] block data for block '{}' not found!".format(block.NAME))
-            print("possible:", self.blockstates.keys())
+            logger.println("possible:", self.blockstates.keys())
             return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check

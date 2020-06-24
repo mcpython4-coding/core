@@ -284,8 +284,8 @@ def read(file: str, mode: typing.Union[None, str] = None):
                 try:
                     return x.read(file, mode)
                 except json.JSONDecodeError:
-                    print("json error in file {}".format(file))
-                    raise
+                    logger.write_exception("json error in file {}".format(file))
+                    continue
         raise RuntimeError("can't find resource named {}".format(resource))
     if not exists(file, transform=False):
         file = transform_name(file)

@@ -10,9 +10,12 @@ import mcpython.factory.BlockFactory
 import mcpython.factory.BlockModelFactory
 import mcpython.event.Registry
 import globals as G
+import logger
+import deprecation
 # todo: re-write to be based on new data gen system
 
 
+@deprecation.deprecated("dev4-2", "a1.4.0")
 class IAdvancedBlockFactoryMode(mcpython.event.Registry.IRegistryContent):
     TYPE = "minecraft:advanced_block_factory_mode"
 
@@ -20,14 +23,18 @@ class IAdvancedBlockFactoryMode(mcpython.event.Registry.IRegistryContent):
     OPTIONAL_SETTINGS = []
 
     @classmethod
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def work(cls, factory_instance, settings: dict):
         raise NotImplementedError()
 
 
-advanced_block_factory_mode_registry = mcpython.event.Registry.Registry("advanced_block_factory_mode",
-                                                               ["minecraft:advanced_block_factory_mode"])
+advanced_block_factory_mode_registry = mcpython.event.Registry.Registry(
+    "advanced_block_factory_mode", ["minecraft:advanced_block_factory_mode"], dump_content_in_saves=False,
+    injection_function=lambda x: logger.println("[DEPRECATION][WARN] object '{}' was registered to "
+                                                "AdvancedBlockFactory-registry which is deprecated".format(x)))
 
 
+@deprecation.deprecated("dev4-2", "a1.4.0")
 @G.registry
 class FullCube(IAdvancedBlockFactoryMode):
     NAME = "minecraft:model_full_cube"
@@ -36,6 +43,7 @@ class FullCube(IAdvancedBlockFactoryMode):
     OPTIONAL_SETTINGS = []
 
     @classmethod
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def work(cls, factory_instance, settings: dict):
         if "texture" in settings:
             assert type(settings["texture"]) == str
@@ -50,6 +58,7 @@ class FullCube(IAdvancedBlockFactoryMode):
             "default", factory_instance.name).finish()
 
 
+@deprecation.deprecated("dev4-2", "a1.4.0")
 @G.registry
 class SlabBlock(IAdvancedBlockFactoryMode):
     NAME = "minecraft:model_slab_block"
@@ -58,6 +67,7 @@ class SlabBlock(IAdvancedBlockFactoryMode):
     OPTIONAL_SETTINGS = []
 
     @classmethod
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def work(cls, factory_instance, settings: dict):
         if "texture" in settings:
             assert type(settings["texture"]) == str
@@ -80,49 +90,60 @@ class SlabBlock(IAdvancedBlockFactoryMode):
         factory_instance.block_factory.setSlab()
 
 
+@deprecation.deprecated("dev4-2", "a1.4.0")
 class SimpleBlockFactoryHelper(mcpython.factory.BlockFactory.BlockFactory):
     """
     representation of an BlockFactory linked to an AdvancedBlockFactory for returning back to the AdvancedBlockFactory
     """
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def __init__(self, master):
         super().__init__()
         self.master = master
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def getMaster(self):
         return self.master
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def finish(self, register=True):
         self.master.finish()
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def default_finish(self):
         super().finish()
 
 
+@deprecation.deprecated("dev4-2", "a1.4.0")
 class AdvancedBlockFactory:
     """
     factory class for blocks without the data FILES located. Generating when needed
     """
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def __init__(self):
         self.name = None
         self.block_factory = SimpleBlockFactoryHelper(self)
         self.mode = FullCube
         self.settings = None
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def setName(self, name: str):
         self.name = name
         self.block_factory.setName(name)
         return self
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def getSimpleFactory(self):
         return self.block_factory
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def setMode(self, name: str):
         assert self.settings is None
         self.mode = advanced_block_factory_mode_registry.registered_object_map[name]
         return self
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def setModelConfig(self, key, value):
         assert self.mode is not None
         assert any([key in l for l in self.mode.REQUIRED_SETTINGS]) or key in self.mode.OPTIONAL_SETTINGS
@@ -130,6 +151,7 @@ class AdvancedBlockFactory:
         self.settings[key] = value
         return self
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def finish(self):
         assert self.mode is not None
         assert self.settings is not None or len(self.mode.REQUIRED_SETTINGS) == 0
@@ -141,6 +163,7 @@ class AdvancedBlockFactory:
         G.modloader.mods[modname].eventbus.subscribe("stage:block:load", self.finish_up,
                                                      info="loading block {}".format(blockname))
 
+    @deprecation.deprecated("dev4-2", "a1.4.0")
     def finish_up(self):
         self.mode.work(self, self.settings)
         self.block_factory.finish_up()

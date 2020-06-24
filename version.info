@@ -1173,3 +1173,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: event system has now an call_cancelable() function to call an function with an provider for canceling it
 [uuk]: improved /clear command
 [uuk]: ParsingCommandInfo has now an chat-attribute storing an Chat-instance
+[uuk]: deprecated AdvancedBlockFactory

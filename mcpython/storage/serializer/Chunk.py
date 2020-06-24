@@ -221,7 +221,6 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
 
             def add(blockinstance):
                 if blockinstance is None: return
-                if d["name"] == "minecraft:chest": print(d["name"], d["custom"], blockinstance.position)
                 blockinstance.load(d["custom"])
                 inventories = blockinstance.get_inventories()
                 if "inventories" not in d: return

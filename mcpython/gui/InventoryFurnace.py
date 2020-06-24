@@ -81,9 +81,9 @@ class InventoryFurnace(mcpython.gui.Inventory.Inventory):
             if self.slots[2].itemstack.get_item_name() is not None and (
                     self.slots[2].itemstack.get_item_name() != recipe.output or
                     self.slots[2].itemstack.amount >= self.slots[2].itemstack.item.STACK_SIZE):
-                if not self.slots[2].itemstack.is_empty():
-                    print(self.slots[2].itemstack.get_item_name() != recipe.output,
-                          self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
+                # if not self.slots[2].itemstack.is_empty():
+                #     print(self.slots[2].itemstack.get_item_name() != recipe.output,
+                #           self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
                 self.reset()
                 return
             self.recipe: mcpython.gui.crafting.FurnaceCrafting.FurnesRecipe = recipe

@@ -161,3 +161,6 @@ issue 217:
 
 issue 218:
     bug: game crashes when using e.g. "/tp @s 10 10 10" in chat
+
+issue 219:
+    bug: errors with block showing are printed multiply times in BlockItemGenerator
