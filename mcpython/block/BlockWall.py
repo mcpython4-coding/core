@@ -75,33 +75,13 @@ class IWall(mcpython.block.Block.Block):
 
 
 @G.registry
-class AndesiteWall(IWall):
-    NAME = "minecraft:andesite_wall"
-
-
-@G.registry
 class BrickWall(IWall):
     NAME = "minecraft:brick_wall"
 
 
 @G.registry
-class CobblestoneWall(IWall):
-    NAME = "minecraft:cobblestone_wall"
-
-
-@G.registry
-class DioriteWall(IWall):
-    NAME = "minecraft:diorite_wall"
-
-
-@G.registry
 class EndStoneBrickWall(IWall):
     NAME = "minecraft:end_stone_brick_wall"
-
-
-@G.registry
-class GraniteWall(IWall):
-    NAME = "minecraft:granite_wall"
 
 
 @G.registry

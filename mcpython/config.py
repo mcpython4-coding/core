@@ -98,6 +98,13 @@ ENABLE_PROFILER_TICK = False
 SHUFFLE_DATA = False
 SHUFFLE_INTERVAL = -1
 
+ENABLED_EXTRA_BLOCKS = {
+    "minecraft:stone_wall": False, "minecraft:polished_granite_wall": False,
+    "minecraft:polished_diorite_wall": False, "minecraft:polished_andesite_wall": False, "minecraft:dirt_slab": False,
+    "minecraft:dirt_wall": False, "minecraft:coarse_dirt_slab": False, "minecraft:coarse_dirt_wall": False,
+    "minecraft:bedrock_slab": False, "minecraft:bedrock_wall": False
+}
+
 
 def load():
     import mcpython.mod.ConfigFile
@@ -123,6 +130,9 @@ def load():
 
     biomeconfig = mcpython.mod.ConfigFile.ConfigFile("biomes", "minecraft")
     biomeconfig.add_entry("minecraft:plains", mcpython.mod.ConfigFile.ListDataMapper().append(10).append(30))
+
+    block_config = mcpython.mod.ConfigFile.ConfigFile("blocks", "minecraft")
+    [block_config.add_entry(key, mcpython.mod.ConfigFile.BooleanDataMapper()) for key in ENABLED_EXTRA_BLOCKS]
 
     @G.modloader("minecraft", "stage:mod:config:work")
     def load_data():
@@ -168,6 +178,9 @@ def load():
                     G.eventhandler.call("data:shuffle:all")
 
             pyglet.clock.schedule_interval(on_shuffle, SHUFFLE_INTERVAL)
+
+        for key in ENABLED_EXTRA_BLOCKS:
+            ENABLED_EXTRA_BLOCKS[key] = block_config[key].read()
 
         # todo: add doc strings into config files
 

@@ -59,6 +59,7 @@ changelog of snapshot [next] (theme: fixing stuff)
     - SHIFT-drag support in inventories
     - improved command handling
     - deprecated old AdvancedBlockFactory system
+    - added CombinedBlockFactory system for doing fancy stuff with data gen & in-game objects at ones
 
     fixed issues:
         from previous snapshot:

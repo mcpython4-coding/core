@@ -35,34 +35,10 @@ def load_blocks():
 
     colors = mcpython.util.enums.COLORS
 
-    # missing: air
-
-    # full_template.setName("stone").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    full_template.setName("granite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    full_template.setName("polished_granite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
-        1).finish()
-    full_template.setName("diorite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    full_template.setName("polished_diorite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
-        1).finish()
-    full_template.setName("andesite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
-        1).finish()
-    full_template.setName("polished_andesite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
-        1).finish()
-    full_template.setName("dirt").setStrenght(.5).setBestTools(ToolType.SHOVEL).finish()
-    full_template.setName("coarse_dirt").setStrenght(.5).setBestTools(ToolType.SHOVEL).finish()
     full_template.setName("podzol").setDefaultModelState({"snowy": "false"}).setStrenght(.5).setBestTools(
         ToolType.SHOVEL).finish()
-    full_template.setName("cobblestone").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
-        1).finish()
 
-    full_template.setName("oak_planks").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
-    full_template.setName("spruce_planks").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
-    full_template.setName("birch_planks").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
-    full_template.setName("jungle_planks").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
-    full_template.setName("acacia_planks").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
-    full_template.setName("dark_oak_planks").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
-
-    # missing: oak, spruce, birch, jungle, acacia and dark oak saplings
+    # missing: air, oak, spruce, birch, jungle, acacia and dark oak saplings
 
     full_template.setName("bedrock").setStrenght(-1, 3600000).finish()
 
@@ -329,8 +305,6 @@ def load_blocks():
     slab_template.setName("jungle_slab").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
     slab_template.setName("acacia_slab").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
     slab_template.setName("dark_oak_slab").setStrenght(2., 3.).setBestTools(ToolType.AXE).finish()
-    slab_template.setName("stone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
-        1).finish()
     slab_template.setName("smooth_stone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
         1).finish()
     slab_template.setName("sandstone_slab").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
@@ -405,31 +379,76 @@ def load_blocks():
     # diorite and granite stairs; mossy stone brick stairs, end stone brick stairs, stone stairs, smooth sandstone
     # stairs, smooth quartz stairs; granite, andesite and diorite stairs; red nether brick stairs, smooth red sandstone
 
-    slab_template.setName("polished_granite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     slab_template.setName("smooth_red_sandstone_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     slab_template.setName("mossy_stone_brick_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    slab_template.setName("polished_diorite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     slab_template.setName("mossy_cobblestone_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     slab_template.setName("end_stone_brick_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     slab_template.setName("smooth_sandstone_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     slab_template.setName("smooth_quartz_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    slab_template.setName("granite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    slab_template.setName("andesite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     slab_template.setName("red_nether_brick_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    slab_template.setName("polished_andesite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    slab_template.setName("diorite_slab").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
     # missing: scaffolding, loom, smoker, blast furnace, cartography table, fletching table, grindstone, lectern,
     # smithing table, stonecutter, bell, lantern, campfire, sweet berry bush, structure block, jigsaw, composter, bee
     # nest, beehive, honey block, honeycomb block
 
 
-mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:factory_usage", load_blocks, info="loading block definitions")
+mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:factory_usage", load_blocks,
+                                                     info="loading block definitions")
 
 
 @G.modloader("minecraft", "stage:combined_factory:blocks")
 def combined_load():
+    from mcpython.config import ENABLED_EXTRA_BLOCKS as BLOCKS
+
+    def set_stone_properties(_, factory):
+        factory: factory.setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1)
+
     config = mcpython.datagen.Configuration.DataGeneratorConfig(
-        "minecraft", G.local+"/resources/generated").setDefaultNamespace("minecraft")
-    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:stone", "minecraft:block/stone",
-                                                       enable=(True, True, False))
+        "minecraft", G.local + "/resources/generated").setDefaultNamespace("minecraft")
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:stone", enable=(True, True, BLOCKS["minecraft:stone_wall"]), callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:granite", callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:polished_granite", callback=set_stone_properties,
+        enable=(True, True, BLOCKS["minecraft:polished_granite_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:diorite", callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:polished_diorite", callback=set_stone_properties,
+        enable=(True, True, BLOCKS["minecraft:polished_diorite_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:andesite", callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:polished_andesite", callback=set_stone_properties,
+        enable=(True, True, BLOCKS["minecraft:polished_andesite_wall"]))
+
+    def dirt_callback(_, factory):
+        factory.setStrenght(.5).setBestTools(ToolType.SHOVEL)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:dirt", callback=dirt_callback,
+        enable=(True, BLOCKS["minecraft:dirt_slab"], BLOCKS["minecraft:dirt_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:coarse_dirt", callback=dirt_callback,
+        enable=(True, BLOCKS["minecraft:coarse_dirt_slab"], BLOCKS["minecraft:coarse_dirt_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:cobblestone", callback=set_stone_properties)
+
+    def wood_callback(_, factory):
+        factory.setStrenght(2., 3.).setBestTools(ToolType.AXE)
+
+    for wood in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "crimson", "warped"]:
+        CombinedBlockFactory.generate_full_block_slab_wall(
+            config, "minecraft:{}_planks".format(wood), callback=wood_callback,
+            slab_name="minecraft:{}_slab".format(wood), enable=(True, True, False))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:bedrock",
+        callback=lambda _, factory: factory.setStrenght(-1, 3600000).setBreakAbleFlag(False),
+        enable=(True, BLOCKS["minecraft:bedrock_slab"], BLOCKS["minecraft:bedrock_wall"]))

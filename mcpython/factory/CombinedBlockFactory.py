@@ -16,16 +16,21 @@ from mcpython.datagen.BlockModelGenerator import ModelRepresentation
 import mcpython.block.BlockWall
 
 
-def generate_full_block_slab_wall(config: mcpython.datagen.Configuration.DataGeneratorConfig, name: str, texture: str,
-                                  enable=(True, True, True)):
+def generate_full_block_slab_wall(config: mcpython.datagen.Configuration.DataGeneratorConfig, name: str,
+                                  texture: str = None, enable=(True, True, True), callback=None,
+                                  slab_name=None, wall_name=None):
+    if texture is None: texture = "{}:block/{}".format(*name.split(":"))
     modname, raw_name = name.split(":")
+    if slab_name is None: slab_name = name + "_slab"
+    if wall_name is None: wall_name = name + "_wall"
     if enable[0]:
-        CombinedFullBlockFactory(modname, config).setName(name).setTextureVariable("all", texture)
+        CombinedFullBlockFactory(modname, config, on_create_callback=callback).setName(name).setTextureVariable(
+            "all", texture)
     if enable[1]:
-        CombinedSlabFactory(texture, modname, config, full_model="{}:block/{}".format(modname, raw_name)).setName(
-            name + "_slab")
+        CombinedSlabFactory(texture, modname, config, full_model="{}:block/{}".format(modname, raw_name),
+                            on_create_callback=callback).setName(slab_name)
     if enable[2]:
-        CombinedWallFactory(texture, modname, config).setName(name+"_wall")
+        CombinedWallFactory(texture, modname, config, on_create_callback=callback).setName(wall_name)
 
 
 class CombinedFullBlockFactoryMode(enum.Enum):

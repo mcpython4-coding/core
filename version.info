@@ -1176,3 +1176,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: deprecated AdvancedBlockFactory
 [uuk]: added CombinedBlockFactory as an replacement. It handles both block models (as data gen) and the BlockFactory
        calls by its own.
+[uuk]: added config options for some additional blocks (see config.py for the definition OR
+       %home%/config/minecraft/blocks.conf
+[uuk]: this adds ontop of minecraft with data generators new content
