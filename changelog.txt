@@ -58,6 +58,7 @@ changelog of snapshot [next] (theme: fixing stuff)
     - changed how item textures are baked together
     - SHIFT-drag support in inventories
     - improved command handling
+    - deprecated old AdvancedBlockFactory system
 
     fixed issues:
         from previous snapshot:

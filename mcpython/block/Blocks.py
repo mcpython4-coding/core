@@ -10,6 +10,8 @@ import mcpython.factory.BlockFactory
 import globals as G
 from mcpython.util.enums import ToolType
 import mcpython.mod.ModMcpython
+from mcpython.factory import CombinedBlockFactory
+import mcpython.datagen.Configuration
 
 
 def remove_if_downer_block_not_solid(blockinstance):
@@ -35,7 +37,7 @@ def load_blocks():
 
     # missing: air
 
-    full_template.setName("stone").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    # full_template.setName("stone").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     full_template.setName("granite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     full_template.setName("polished_granite").setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
         1).finish()
@@ -423,3 +425,11 @@ def load_blocks():
 
 
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:factory_usage", load_blocks, info="loading block definitions")
+
+
+@G.modloader("minecraft", "stage:combined_factory:blocks")
+def combined_load():
+    config = mcpython.datagen.Configuration.DataGeneratorConfig(
+        "minecraft", G.local+"/resources/generated").setDefaultNamespace("minecraft")
+    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:stone", "minecraft:block/stone",
+                                                       enable=(True, True, False))

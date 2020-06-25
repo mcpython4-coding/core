@@ -122,6 +122,7 @@ class BlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator):
             if type(model) == str:
                 modelx[i] = ModelRepresentation(model)
         self.states.append((state, tuple(modelx)))
+        return self
 
     def generate(self):
         data = {"variants": {}}
@@ -162,11 +163,12 @@ class MultiPartBlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator
             if type(model) == str:
                 modelx[i] = ModelRepresentation(model)
         self.states.append((state, modelx))
+        return self
 
     def generate(self):
         data = {"multipart": []}
         for state, model in self.states:
-            m = model[0].wrap() if len(model) == 1 else [e.wrap() for e in model]
+            m = model[0].wrap(self.config) if len(model) == 1 else [e.wrap() for e in model]
             d = {"apply": m}
             c = self._encode_condition(state)
             if c is not None: d["when"] = c

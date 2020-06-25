@@ -1174,3 +1174,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: improved /clear command
 [uuk]: ParsingCommandInfo has now an chat-attribute storing an Chat-instance
 [uuk]: deprecated AdvancedBlockFactory
+[uuk]: added CombinedBlockFactory as an replacement. It handles both block models (as data gen) and the BlockFactory
+       calls by its own.

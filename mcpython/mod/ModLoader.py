@@ -149,6 +149,10 @@ class LoadingStages:
     CONFIGS = LoadingStage("loading mod config", "stage:mod:config:define", "stage:mod:config:load",
                            "stage:mod:config:work")
 
+    # Stage collection for combined factories
+    COMBINED_FACTORIES = LoadingStage("working on combined factories", "stage:combined_factory:blocks",
+                                      "stage:combined_factory:build")
+
     # blocks, items, inventories, ... all stuff to register
     BLOCKS = LoadingStage("block loading phase", "stage:block:factory:prepare",
                           "stage:block:factory_usage", "stage:block:factory:finish", "stage:block:load",
@@ -201,8 +205,8 @@ class LoadingStages:
 # the order of stages todo: make serialized from config file
 LOADING_ORDER: list = [
     LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.EXTRA_RESOURCE_LOCATIONS,
-    LoadingStages.PREBUILD, LoadingStages.CONFIGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.INVENTORIES,
-    LoadingStages.COMMANDS, LoadingStages.ENTITIES
+    LoadingStages.PREBUILD, LoadingStages.CONFIGS, LoadingStages.COMBINED_FACTORIES, LoadingStages.BLOCKS,
+    LoadingStages.ITEMS, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.ENTITIES
 ]
 
 

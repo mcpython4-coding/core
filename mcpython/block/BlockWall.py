@@ -23,7 +23,8 @@ class IWall(mcpython.block.Block.Block):
         self.face_solid = {face: False for face in mcpython.util.enums.EnumSide.iterate()}
 
     def get_model_state(self) -> dict:
-        state = {key: str(self.connections[key]).lower() for key in self.connections}
+        state = {key: "low" if self.connections[key] else "unset" for key in self.connections}
+        state["up"] = str(self.connections["up"]).lower()
         return state
 
     def on_block_update(self):
@@ -65,8 +66,8 @@ class IWall(mcpython.block.Block.Block):
                 for south in range(2):
                     for west in range(2):
                         for up in range(2):
-                            states.append({"north": str(bool(north)).lower(), "east": str(bool(east)).lower(),
-                                           "south": str(bool(south)).lower(), "west": str(bool(west)).lower(),
+                            states.append({"north": "low" if north else "unset", "east": "low" if north else "unset",
+                                           "south": "low" if north else "unset", "west": "low" if north else "unset",
                                            "up": str(bool(up)).lower()})
         return states
 
