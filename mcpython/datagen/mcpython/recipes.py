@@ -571,16 +571,13 @@ def generate_recipes():
     config.shaped_recipe(abo).setEntries(adT, aeU).setOutput(abo).setGroup(abq)
     config.shaped_recipe("acacia_sign").setEntries(aan, aeU).setEntries(ajg, ajH).setOutput(
         (3, "acacia_sign")).setGroup(ajO)
-    config.shaped_recipe("acacia_slab").setEntries(abd, aeU).setOutput((6, "acacia_slab")).setGroup(agr)
     config.shaped_recipe("acacia_stairs").setEntries(aak, aeU).setOutput((4, "acacia_stairs")).setGroup(afa)
     config.shaped_recipe("acacia_trapdoor").setEntries(aan, aeU).setOutput((2, "acacia_trapdoor")).setGroup(adf)
     config.shaped_recipe("acacia_wood").setEntries(aau, "acacia_log").setOutput((3, "acacia_wood")).setGroup(ajN)
     config.shaped_recipe("activator_rail").setEntries(aiT, adD).setEntries(adC, ajH).setEntries(aam, agy).setOutput(
         (6, "activator_rail"))
     config.shapeless_recipe(aia).addInput(aiy, 1).addInput(agh, 1).setOutput((2, aia))
-    config.shaped_recipe("andesite_slab").setEntries(abd, aia).setOutput((6, "andesite_slab"))
     config.shaped_recipe("andesite_stairs").setEntries(aak, aia).setOutput((4, "andesite_stairs"))
-    config.shaped_recipe("andesite_wall").setEntries(aan, aia).setOutput((6, "andesite_wall"))
     config.shaped_recipe(ajz).setEntries(abd, agv).setEntries(aat, agy).setOutput(ajz)
     config.shaped_recipe(agu).setEntries([(0, 0), (0, 2), (1, 0), (1, 1), (2, 0), (2, 2)], ajH).setEntries(ajg,
                                                                                                            acA).setOutput(
@@ -605,7 +602,6 @@ def generate_recipes():
     config.shaped_recipe(abG).setEntries(adT, afA).setOutput(abG).setGroup(abq)
     config.shaped_recipe("birch_sign").setEntries(aan, afA).setEntries(ajg, ajH).setOutput((3, "birch_sign")).setGroup(
         ajO)
-    config.shaped_recipe("birch_slab").setEntries(abd, afA).setOutput((6, "birch_slab")).setGroup(agr)
     config.shaped_recipe("birch_stairs").setEntries(aak, afA).setOutput((4, "birch_stairs")).setGroup(afa)
     config.shaped_recipe("birch_trapdoor").setEntries(aan, afA).setOutput((2, "birch_trapdoor")).setGroup(adf)
     config.shaped_recipe("birch_wood").setEntries(aau, "birch_log").setOutput((3, "birch_wood")).setGroup(ajN)
@@ -710,9 +706,7 @@ def generate_recipes():
     config.smelting_recipe("coal_from_blasting", abX).add_ingredient(ait).setXp(ake).setOutput(ajT).setCookingTime(akf)
     config.smelting_recipe("coal_from_smelting").add_ingredient(ait).setXp(ake).setOutput(ajT)
     config.shaped_recipe("coarse_dirt").setEntries(ady, "dirt").setEntries(adv, ajo).setOutput((4, "coarse_dirt"))
-    config.shaped_recipe("cobblestone_slab").setEntries(abd, agh).setOutput((6, "cobblestone_slab"))
     config.shaped_recipe("cobblestone_stairs").setEntries(aak, agh).setOutput((4, "cobblestone_stairs"))
-    config.shaped_recipe("cobblestone_wall").setEntries(aan, agh).setOutput((6, "cobblestone_wall"))
     config.shaped_recipe(ahi).setEntries(aaV, adD).setEntries(aiT, ajl).setEntries(abb, ajA).setOutput(ahi)
     config.shaped_recipe(aiE).setEntries(aax, agy).setEntries(aiT, aib).setOutput(aiE)
     config.shaped_recipe(ahp).setEntries(aah, aeu).setOutput(ahp)
@@ -769,7 +763,6 @@ def generate_recipes():
     config.shaped_recipe(aba).setEntries(adT, adx).setOutput(aba).setGroup(abq)
     config.shaped_recipe("crimson_sign").setEntries(aan, adx).setEntries(ajg, ajH).setOutput(
         (3, "crimson_sign")).setGroup(ajO)
-    config.shaped_recipe("crimson_slab").setEntries(abd, adx).setOutput((6, "crimson_slab")).setGroup(agr)
     config.shaped_recipe("crimson_stairs").setEntries(aak, adx).setOutput((4, "crimson_stairs")).setGroup(afa)
     config.shaped_recipe("crimson_trapdoor").setEntries(aan, adx).setOutput((2, "crimson_trapdoor")).setGroup(adf)
     config.shaped_recipe(aiu).setEntries(adU, ajh).setEntries([(0, 0), (1, 2), (2, 0)], ajH).setEntries(aiX,
@@ -806,7 +799,6 @@ def generate_recipes():
     config.shaped_recipe(aaS).setEntries(adT, adk).setOutput(aaS).setGroup(abq)
     config.shaped_recipe("dark_oak_sign").setEntries(aan, adk).setEntries(ajg, ajH).setOutput(
         (3, "dark_oak_sign")).setGroup(ajO)
-    config.shaped_recipe("dark_oak_slab").setEntries(abd, adk).setOutput((6, "dark_oak_slab")).setGroup(agr)
     config.shaped_recipe("dark_oak_stairs").setEntries(aak, adk).setOutput((4, "dark_oak_stairs")).setGroup(afa)
     config.shaped_recipe("dark_oak_trapdoor").setEntries(aan, adk).setOutput((2, "dark_oak_trapdoor")).setGroup(adf)
     config.shaped_recipe("dark_oak_wood").setEntries(aau, "dark_oak_log").setOutput((3, "dark_oak_wood")).setGroup(ajN)
@@ -831,9 +823,7 @@ def generate_recipes():
     config.shaped_recipe(adL).setEntries(aed, ajH).setEntries(ajp, aiB).setOutput(adL)
     config.shaped_recipe(aet).setEntries(ajk, ajH).setEntries(adE, aiB).setOutput(aet)
     config.shaped_recipe(aiy).setEntries(adv, ajl).setEntries(ady, agh).setOutput((2, aiy))
-    config.shaped_recipe("diorite_slab").setEntries(abd, aiy).setOutput((6, "diorite_slab"))
     config.shaped_recipe("diorite_stairs").setEntries(aak, aiy).setOutput((4, "diorite_stairs"))
-    config.shaped_recipe("diorite_wall").setEntries(aan, aiy).setOutput((6, "diorite_wall"))
     config.shaped_recipe(ahG).setEntries(ajg, aib).setEntries(aag, agh).setEntries(aiT, ajW).setOutput(ahG)
     config.shapeless_recipe(agY).addInput(acU, 1).setOutput((9, agY))
     config.shapeless_recipe(acU).addInput(agY, 9).setOutput(acU)
@@ -893,9 +883,7 @@ def generate_recipes():
         agc).setCookingTime(akf)
     config.smelting_recipe("gold_nugget_from_smelting").add_ingredient(aab).setXp(ake).setOutput(agc)
     config.shapeless_recipe(aix).addInput(aiy, 1).addInput(ajl, 1).setOutput(aix)
-    config.shaped_recipe("granite_slab").setEntries(abd, aix).setOutput((6, "granite_slab"))
     config.shaped_recipe("granite_stairs").setEntries(aak, aix).setOutput((4, "granite_stairs"))
-    config.shaped_recipe("granite_wall").setEntries(aan, aix).setOutput((6, "granite_wall"))
     config.shaped_recipe(agk).setEntries(aan, aho).setEntries(ajg, ajH).setOutput(agk).setGroup(aiZ)
     config.shaped_recipe(ahX).setEntries(abd, aho).setEntries(abj, aiz).setOutput(ahX).setGroup(ajY)
     config.shapeless_recipe("gray_bed_from_white_bed").addInput(ahI, 1).addInput(aic, 1).setOutput(ahX).setGroup(aim)
@@ -975,7 +963,6 @@ def generate_recipes():
     config.shaped_recipe(abx).setEntries(adT, aev).setOutput(abx).setGroup(abq)
     config.shaped_recipe("jungle_sign").setEntries(aan, aev).setEntries(ajg, ajH).setOutput(
         (3, "jungle_sign")).setGroup(ajO)
-    config.shaped_recipe("jungle_slab").setEntries(abd, aev).setOutput((6, "jungle_slab")).setGroup(agr)
     config.shaped_recipe("jungle_stairs").setEntries(aak, aev).setOutput((4, "jungle_stairs")).setGroup(afa)
     config.shaped_recipe("jungle_trapdoor").setEntries(aan, aev).setOutput((2, "jungle_trapdoor")).setGroup(adf)
     config.shaped_recipe("jungle_wood").setEntries(aau, "jungle_log").setOutput((3, "jungle_wood")).setGroup(ajN)
@@ -1130,7 +1117,6 @@ def generate_recipes():
     config.shapeless_recipe(agN).addInput("#oak_logs", 1).setOutput((4, agN)).setGroup(aiV)
     config.shaped_recipe(abY).setEntries(adT, agN).setOutput(abY).setGroup(abq)
     config.shaped_recipe("oak_sign").setEntries(aan, agN).setEntries(ajg, ajH).setOutput((3, "oak_sign")).setGroup(ajO)
-    config.shaped_recipe("oak_slab").setEntries(abd, agN).setOutput((6, "oak_slab")).setGroup(agr)
     config.shaped_recipe("oak_stairs").setEntries(aak, agN).setOutput((4, "oak_stairs")).setGroup(afa)
     config.shaped_recipe("oak_trapdoor").setEntries(aan, agN).setOutput((2, "oak_trapdoor")).setGroup(adf)
     config.shaped_recipe("oak_wood").setEntries(aau, "oak_log").setOutput((3, "oak_wood")).setGroup(ajN)
@@ -1199,10 +1185,8 @@ def generate_recipes():
     config.shaped_recipe("polished_blackstone_stairs").setEntries(aak, abN).setOutput((4, "polished_blackstone_stairs"))
     config.shaped_recipe("polished_blackstone_wall").setEntries(aan, abN).setOutput((6, "polished_blackstone_wall"))
     config.shaped_recipe(acN).setEntries(aau, aiy).setOutput((4, acN))
-    config.shaped_recipe("polished_diorite_slab").setEntries(abd, acN).setOutput((6, "polished_diorite_slab"))
     config.shaped_recipe("polished_diorite_stairs").setEntries(aak, acN).setOutput((4, "polished_diorite_stairs"))
     config.shaped_recipe(acJ).setEntries(aau, aix).setOutput((4, acJ))
-    config.shaped_recipe("polished_granite_slab").setEntries(abd, acJ).setOutput((6, "polished_granite_slab"))
     config.shaped_recipe("polished_granite_stairs").setEntries(aak, acJ).setOutput((4, "polished_granite_stairs"))
     config.smelting_recipe(abP).add_ingredient("chorus_fruit").setXp(ake).setOutput(abP)
     config.shaped_recipe("powered_rail").setEntries(ajg, aib).setEntries(aiT, ajH).setEntries(aam, ahh).setOutput(
@@ -1341,7 +1325,6 @@ def generate_recipes():
     config.shaped_recipe(abm).setEntries(adT, aeO).setOutput(abm).setGroup(abq)
     config.shaped_recipe("spruce_sign").setEntries(aan, aeO).setEntries(ajg, ajH).setOutput(
         (3, "spruce_sign")).setGroup(ajO)
-    config.shaped_recipe("spruce_slab").setEntries(abd, aeO).setOutput((6, "spruce_slab")).setGroup(agr)
     config.shaped_recipe("spruce_stairs").setEntries(aak, aeO).setOutput((4, "spruce_stairs")).setGroup(afa)
     config.shaped_recipe("spruce_trapdoor").setEntries(aan, aeO).setOutput((2, "spruce_trapdoor")).setGroup(adf)
     config.shaped_recipe("spruce_wood").setEntries(aau, "spruce_log").setOutput((3, "spruce_wood")).setGroup(ajN)
@@ -1360,7 +1343,6 @@ def generate_recipes():
     config.shaped_recipe(aeD).setEntries(adO, ajH).setEntries(abd, abl).setOutput(aeD)
     config.shaped_recipe(abE).setEntries(adT, ajA).setOutput(abE)
     config.shaped_recipe(afu).setEntries(aed, ajH).setEntries(ajp, abl).setOutput(afu)
-    config.shaped_recipe(agW).setEntries(abd, ajA).setOutput((6, agW))
     config.shaped_recipe("stone_stairs").setEntries(aak, ajA).setOutput((4, "stone_stairs"))
     config.shaped_recipe(afR).setEntries(ajk, ajH).setEntries(adE, abl).setOutput(afR)
     config.shaped_recipe("stripped_acacia_wood").setEntries(aau, "stripped_acacia_log").setOutput(
@@ -1401,7 +1383,6 @@ def generate_recipes():
     config.shaped_recipe(abt).setEntries(adT, aeZ).setOutput(abt).setGroup(abq)
     config.shaped_recipe("warped_sign").setEntries(aan, aeZ).setEntries(ajg, ajH).setOutput(
         (3, "warped_sign")).setGroup(ajO)
-    config.shaped_recipe("warped_slab").setEntries(abd, aeZ).setOutput((6, "warped_slab")).setGroup(agr)
     config.shaped_recipe("warped_stairs").setEntries(aak, aeZ).setOutput((4, "warped_stairs")).setGroup(afa)
     config.shaped_recipe("warped_trapdoor").setEntries(aan, aeZ).setOutput((2, "warped_trapdoor")).setGroup(adf)
     config.shapeless_recipe(ajr).addInput(ahy, 1).setOutput((9, ajr))

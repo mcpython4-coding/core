@@ -75,36 +75,6 @@ class IWall(mcpython.block.Block.Block):
 
 
 @G.registry
-class BrickWall(IWall):
-    NAME = "minecraft:brick_wall"
-
-
-@G.registry
-class EndStoneBrickWall(IWall):
-    NAME = "minecraft:end_stone_brick_wall"
-
-
-@G.registry
-class MossyCobblestoneWall(IWall):
-    NAME = "minecraft:mossy_cobblestone_wall"
-
-
-@G.registry
-class MossyStoneBrickWall(IWall):
-    NAME = "minecraft:mossy_stone_brick_wall"
-
-
-@G.registry
-class NetherBrickWall(IWall):
-    NAME = "minecraft:nether_brick_wall"
-
-
-@G.registry
-class PrismarineWall(IWall):
-    NAME = "minecraft:prismarine_wall"
-
-
-@G.registry
 class PrismarineWall(IWall):
     NAME = "minecraft:prismarine_wall"
 
@@ -117,14 +87,3 @@ class RedNetherBrickWall(IWall):
 @G.registry
 class RedSandstoneWall(IWall):
     NAME = "minecraft:red_sandstone_wall"
-
-
-@G.registry
-class SandstoneWall(IWall):
-    NAME = "minecraft:sandstone_wall"
-
-
-@G.registry
-class StoneBrickWall(IWall):
-    NAME = "minecraft:stone_brick_wall"
-

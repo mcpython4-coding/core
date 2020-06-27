@@ -10,6 +10,7 @@ import mcpython.datagen.Configuration
 import PIL.Image
 import mcpython.ResourceLocator
 import mcpython.util.texture
+import logger
 
 
 class TextureConstructor(mcpython.datagen.Configuration.IDataGenerator):
@@ -36,8 +37,11 @@ class TextureConstructor(mcpython.datagen.Configuration.IDataGenerator):
         :param position: the position to add on
         :param rescale: rescale of the image
         """
-        self.actions.append((0, location_or_image if type(location_or_image) == PIL.Image.Image else
-                             mcpython.ResourceLocator.read(location_or_image, "pil"), position, rescale))
+        try:
+            self.actions.append((0, location_or_image if type(location_or_image) == PIL.Image.Image else
+                                 mcpython.ResourceLocator.read(location_or_image, "pil"), position, rescale))
+        except:
+            logger.write_exception("[ERROR] failed to add image layer from file {}".format(location_or_image))
         return self
 
     def add_coloring_layer(self, location_or_image, color: tuple, position=(0, 0), rescale=(1, 1)):
@@ -48,8 +52,12 @@ class TextureConstructor(mcpython.datagen.Configuration.IDataGenerator):
         :param position: the position to add on
         :param rescale: rescale of the image
         """
-        self.actions.append((0, location_or_image if type(location_or_image) == PIL.Image.Image else
-                             mcpython.ResourceLocator.read(location_or_image, "pil"), color, position, rescale))
+        try:
+            self.actions.append((1, location_or_image if type(location_or_image) == PIL.Image.Image else
+                                 mcpython.ResourceLocator.read(location_or_image, "pil"), color, position, rescale))
+        except:
+            logger.write_exception("[ERROR] failed to add colorized layer from file {} with color {}".format(
+                location_or_image, color))
         return self
 
     def generate(self):

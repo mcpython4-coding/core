@@ -7,6 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import math
+import sys
 
 MC_VERSION_BASE = "1.15.2"
 VERSION_TYPE = "dev"
@@ -98,12 +99,52 @@ ENABLE_PROFILER_TICK = False
 SHUFFLE_DATA = False
 SHUFFLE_INTERVAL = -1
 
+# an list of additional blocks to enable/disable when needed
+# WARNING: this content is generated ONTOP of minecraft's content an uses their textures to generate. Please note
+#          that any of these objects look like original ones, but they are not (currently)
+# WARNING: All additional blocks have currently no own loot table for drops. These might change in the future,
+#          but until than, they are PURELY decorative blocks
+# WARNING: As these blocks are not part of the "normal" game, when they are enabled, they may NOT have the same
+#          behaviour flags build-in than the original ones (think about how an sand slab would behave)
+# WARNING: block behaviour is mostly copied from base block and as so, e.g. bedrock slabs are unbreakable in survival
+
 ENABLED_EXTRA_BLOCKS = {
     "minecraft:stone_wall": False, "minecraft:polished_granite_wall": False,
     "minecraft:polished_diorite_wall": False, "minecraft:polished_andesite_wall": False, "minecraft:dirt_slab": False,
     "minecraft:dirt_wall": False, "minecraft:coarse_dirt_slab": False, "minecraft:coarse_dirt_wall": False,
-    "minecraft:bedrock_slab": False, "minecraft:bedrock_wall": False
+    "minecraft:bedrock_slab": False, "minecraft:bedrock_wall": False, "minecraft:sand_slab": False,
+    "minecraft:sand_wall": False, "minecraft:red_sand_slab": False, "minecraft:red_sand_wall": False,
+    "minecraft:gravel_slab": False, "minecraft:gravel_wall": False, "minecraft:grass_slab": False,
+    "minecraft:ancient_debris_slab": False, "minecraft:ancient_debris_wall": False, "minecraft:clay_slab": False,
+    "minecraft:clay_wall": False, "minecraft:cracked_nether_brick_slab": False,
+    "minecraft:cracked_nether_brick_wall": False, "minecraft:cracked_polished_blackstone_brick_slab": False,
+    "minecraft:cracked_polished_blackstone_brick_wall": False, "minecraft:crying_obsidian_slab": False,
+    "minecraft:crying_obsidian_wall": False, "minecraft:cut_sandstone_wall": False,
+    "minecraft:cut_red_sandstone_wall": False, "minecraft:dark_prismarine_wall": False,
+    "minecraft:end_stone_slab": False, "minecraft:end_stone_wall": False, "minecraft:gilded_blackstone_slab": False,
+    "minecraft:gilded_blackstone_wall": False, "minecraft:glowstone_slab": False, "minecraft:glowstone_wall": False,
+    "minecraft:magma_block_slab": False, "minecraft:magma_block_wall": False, "minecraft:nether_wart_block_slab": False,
+    "minecraft:nether_wart_block_wall": False
 }
+
+# I'm to lazy to write these...
+for wood in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "crimson", "warped"]:
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_plank_wall".format(wood)] = False  # Oh, fancy, but what about fences?
+
+for color in ["white", "orange", "magenta", "light_blue", "lime", "pink", "gray", "light_gray", "cyan",
+              "purple", "blue", "brown", "green", "red", "black"]:
+
+    # colored slabs and walls, why not? (excluding powder as it is something "special")
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_wool_slab".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_wool_wall".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_concrete_slab".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_concrete_wall".format(color)] = False
+
+    # someone asked for more color, here you go!
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_stained_glass_slab".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_stained_glass_wall".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_terracotta_slab".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_terracotta_wall".format(color)] = False
 
 
 def load():
@@ -179,8 +220,12 @@ def load():
 
             pyglet.clock.schedule_interval(on_shuffle, SHUFFLE_INTERVAL)
 
-        for key in ENABLED_EXTRA_BLOCKS:
-            ENABLED_EXTRA_BLOCKS[key] = block_config[key].read()
+        if "--enable-all-blocks" not in sys.argv:
+            for key in ENABLED_EXTRA_BLOCKS:
+                ENABLED_EXTRA_BLOCKS[key] = block_config[key].read()
+        else:  # we want to enable ALL without affecting the config file
+            for key in ENABLED_EXTRA_BLOCKS:
+                ENABLED_EXTRA_BLOCKS[key] = True
 
         # todo: add doc strings into config files
 

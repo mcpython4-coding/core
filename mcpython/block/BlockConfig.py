@@ -10,6 +10,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 classes will be removed in the future as they can be replaced by tags
 """
 import mcpython.ResourceLocator
+import logger
 
 
 class BlockConfigEntry:
@@ -50,5 +51,8 @@ for file in mcpython.ResourceLocator.get_all_entries_special("assets/config/bloc
     if file.endswith("/"): continue
     name = file.split("/")[-1].split(".")[0]
     if name not in ENTRYS: ENTRYS[name] = BlockConfigEntry(name)
-    ENTRYS[name].add_data(mcpython.ResourceLocator.read(file, mode="json"))
+    try:
+        ENTRYS[name].add_data(mcpython.ResourceLocator.read(file, mode="json"))
+    except:
+        logger.write_exception("[ERROR] failed to load block config file {}".format(file))
 

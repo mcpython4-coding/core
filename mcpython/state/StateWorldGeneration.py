@@ -9,6 +9,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import os
 import random
 import shutil
+import sys
 
 from pyglet.window import key
 
@@ -107,8 +108,13 @@ class StateWorldGeneration(State.State):
         except ValueError:
             logger.write_exception(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
-            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(
-                G.build + "/skin.png")
+            try:
+                mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(
+                    G.build + "/skin.png")
+            except:
+                logger.write_exception(
+                    "[FATAL] failed to load fallback skin. This is an serious issue!")
+                sys.exit(-1)
         mcpython.world.player.Player.RENDERER.reload()
         G.world.active_player = playername
         G.world.get_active_player().set_to_spawn_point()

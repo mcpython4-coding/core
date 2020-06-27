@@ -212,6 +212,12 @@ class BlockFactory:
         :return: the BlockFactory instance. When the template exists, it will be an copy of the active without the
             template instance
         """
+        if self.name.count(":") == 0:
+            logger.println("[BLOCK FACTORY][FATAL] 'setName' was set to an not-prefixed name '{}'".format(self.name))
+            logger.println("[BLOCK FACTORY][FATAL] out of these error, the block is NOT constructed")
+            logger.println("[BLOCK FACTORY][FATAL] (P.s. this does mean also that setGlobalModName() was not set)")
+            logger.println("[BLOCK FACTORY][FATAL] (This could be an wrong template setup for the block factory)")
+            return
         if self.modname is None:
             modname, blockname = tuple(self.name.split(":"))
         else:
@@ -408,6 +414,11 @@ class BlockFactory:
         """
         assert type(name) == str
         self.name = ("" if self.modname is None or ":" in name else (self.modname + ":")) + name
+        if self.name.count(":") == 0:
+            import traceback
+
+            logger.println("[BLOCK FACTORY][WARN] 'setName' was set to an not-prefixed name '{}'".format(self.name))
+            traceback.print_stack()
         return self
 
     def setCreateCallback(self, function):

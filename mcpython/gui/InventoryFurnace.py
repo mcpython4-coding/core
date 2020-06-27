@@ -16,10 +16,15 @@ import pyglet
 import time
 import logger
 import mcpython.ResourceLocator
+import sys
 
 
-arrow = mcpython.ResourceLocator.read("build/texture/gui/furnace_arrow.png", "pyglet")
-fire = mcpython.ResourceLocator.read("build/texture/gui/furnace_fire.png", "pyglet")
+try:
+    arrow = mcpython.ResourceLocator.read("build/texture/gui/furnace_arrow.png", "pyglet")
+    fire = mcpython.ResourceLocator.read("build/texture/gui/furnace_fire.png", "pyglet")
+except:
+    logger.write_exception("[FATAL] failed to load furnace gui parts")
+    sys.exit(-1)
 
 
 class InventoryFurnace(mcpython.gui.Inventory.Inventory):

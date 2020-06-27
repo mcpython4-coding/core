@@ -1177,5 +1177,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added CombinedBlockFactory as an replacement. It handles both block models (as data gen) and the BlockFactory
        calls by its own.
 [uuk]: added config options for some additional blocks (see config.py for the definition OR
-       %home%/config/minecraft/blocks.conf
+       %home%/config/minecraft/blocks.conf) with optional their recipes
 [uuk]: this adds ontop of minecraft with data generators new content
+[uuk]: added some blocks from 1.16
+[uuk]: added --enable-all-blocks runtime flag for enabling all optional blocks

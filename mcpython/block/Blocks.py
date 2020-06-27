@@ -35,22 +35,29 @@ def load_blocks():
 
     colors = mcpython.util.enums.COLORS
 
+    # missing: air, oak, spruce, birch, jungle, acacia and dark oak saplings, water and lava, dispenser
+    # note block; white, orange, magenta, light blue, yellow, lime, pink, gray, light gray, cyan, purple, blue,
+    # brown, green, red and black bed; powered and detector rail, sticky piston, cobweb, grass, fern, dead bush,
+    # seagrass, tall seagrass, piston, dandelion, poppy, blue orchid, allium, azure bluet, red tulip, orange tulip,
+    # white tulip, pink tulip, oxeye daisy, cornflower, wither rose, lily of the valley, brown mushroom, tnt
+
     full_template.setName("podzol").setDefaultModelState({"snowy": "false"}).setStrenght(.5).setBestTools(
         ToolType.SHOVEL).finish()
 
-    # missing: air, oak, spruce, birch, jungle, acacia and dark oak saplings
-
-    full_template.setName("bedrock").setStrenght(-1, 3600000).finish()
-
-    # missing: water and lava
-
-    falling_template.setName("sand").setStrenght(.5).setBestTools(ToolType.SHOVEL).finish()
-    falling_template.setName("red_sand").setStrenght(.5).setBestTools(ToolType.SHOVEL).finish()
-    falling_template.setName("gravel").setStrenght(.6).setBestTools(ToolType.SHOVEL).finish()
+    log_template.setName("basalt").setStrenght(1.25, 4.2).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    log_template.setName("polished_basalt").setStrenght(1.25, 4.2).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        1).finish()
 
     full_template.setName("gold_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(3).finish()
     full_template.setName("iron_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
     full_template.setName("coal_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
+    full_template.setName("lapis_ore").setStrenght(3).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
+
+    full_template.setName("lapis_block").setStrenght(3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
+    full_template.setName("gold_block").setStrenght(3., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        3).finish()
+    full_template.setName("iron_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+        2).finish()
 
     log_template.setName("oak_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("spruce_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
@@ -58,6 +65,8 @@ def load_blocks():
     log_template.setName("jungle_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("acacia_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("dark_oak_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
+    log_template.setName("crimson_stem").setStrenght(2.).setBestTools(ToolType.AXE).finish()
+    log_template.setName("warped_stem").setStrenght(2.).setBestTools(ToolType.AXE).finish()
 
     log_template.setName("stripped_oak_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("stripped_spruce_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
@@ -65,6 +74,8 @@ def load_blocks():
     log_template.setName("stripped_jungle_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("stripped_acacia_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("stripped_dark_oak_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
+    log_template.setName("stripped_crimson_stem").setStrenght(2.).setBestTools(ToolType.AXE).finish()
+    log_template.setName("stripped_warped_stem").setStrenght(2.).setBestTools(ToolType.AXE).finish()
 
     log_template.setName("oak_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("spruce_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
@@ -72,6 +83,8 @@ def load_blocks():
     log_template.setName("jungle_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("acacia_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("dark_oak_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
+    log_template.setName("crimson_hyphae").setStrenght(2.).setBestTools(ToolType.AXE).finish()
+    log_template.setName("warped_hyphae").setStrenght(2.).setBestTools(ToolType.AXE).finish()
 
     log_template.setName("stripped_oak_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("stripped_spruce_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
@@ -79,6 +92,8 @@ def load_blocks():
     log_template.setName("stripped_jungle_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("stripped_acacia_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("stripped_dark_oak_wood").setStrenght(2.).setBestTools(ToolType.AXE).finish()
+    log_template.setName("stripped_crimson_hyphae").setStrenght(2.).setBestTools(ToolType.AXE).finish()
+    log_template.setName("stripped_warped_hyphae").setStrenght(2.).setBestTools(ToolType.AXE).finish()
 
     full_template.setName("oak_leaves").setAllSideSolid(False).setStrenght(.2).enableRandomTicks().setBestTools(
         ToolType.SHEAR).finish()
@@ -95,50 +110,6 @@ def load_blocks():
 
     full_template.setName("sponge").setStrenght(.6).finish()
     full_template.setName("wet_sponge").setStrenght(.6).finish()
-
-    full_template.setName("glass").setAllSideSolid(False).setStrenght(.3).setBestTools(ToolType.PICKAXE).finish()
-
-    full_template.setName("lapis_ore").setStrenght(3).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
-    full_template.setName("lapis_block").setStrenght(3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
-
-    # missing: dispenser
-
-    full_template.setName("sandstone").setBestTools(ToolType.PICKAXE).setStrenght(.8).setMinimumToolLevel(1).finish()
-    full_template.setName("cut_sandstone").setBestTools(ToolType.PICKAXE).setStrenght(.8).setMinimumToolLevel(
-        1).finish()
-
-    # missing: note block; white, orange, magenta, light blue, yellow, lime, pink, gray, light gray, cyan, purple, blue,
-    # brown, green, red and black bed; powered and detector rail, sticky piston, cobweb, grass, fern, dead bush,
-    # seagrass, tall seagrass, piston
-
-    full_template.setName("white_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("orange_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("magenta_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("light_blue_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("yellow_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("lime_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("pink_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("gray_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("light_gray_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("cyan_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("purple_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("blue_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("brown_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("green_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("red_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-    full_template.setName("black_wool").setStrenght(.6).setBestTools(ToolType.SHEAR).finish()
-
-    # missing: dandelion, poppy, blue orchid, allium, azure bluet, red tulip, orange tulip, white tulip, pink tulip,
-    # oxeye daisy, cornflower, wither rose, lily of the valley, brown mushroom
-
-    full_template.setName("gold_block").setStrenght(3., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
-        3).finish()
-    full_template.setName("iron_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
-        2).finish()
-
-    full_template.setName("bricks").setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-
-    # missing: tnt
 
     full_template.setName("bookshelf").setStrenght(1.5).setBestTools(ToolType.AXE).finish()
 
@@ -167,8 +138,6 @@ def load_blocks():
 
     # missing: cactus
 
-    full_template.setName("clay").setStrenght(.6).setBestTools(ToolType.SHOVEL).finish()
-
     # missing: sugar can, jukebox
 
     full_template.setName("pumpkin").setStrenght(1.).setBestTools(ToolType.AXE).finish()
@@ -184,10 +153,6 @@ def load_blocks():
         ToolType.AXE).setBlockItemGeneratorState({"facing": "east"}).finish()
 
     # missing: cake, repeater
-
-    for color in colors:
-        full_template.setName("{}_stained_glass".format(color)).setAllSideSolid(False).setStrenght(.3).setBestTools(
-            ToolType.PICKAXE).finish()
 
     # missing: oak, spruce, birch, jungle, acacia and dark oak trapdoors
 
@@ -250,10 +215,6 @@ def load_blocks():
         3).finish()
 
     # missing: quartz stairs, activator rail, dropper
-
-    for color in colors:
-        full_template.setName("{}_terracotta".format(color)).setStrenght(1.25, 4.2).setBestTools(
-            ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
     # missing colored glass panes, slime block
 
@@ -361,12 +322,6 @@ def load_blocks():
 
     # missing: structure void, observer, colored glazed terracotta
 
-    for color in colors:
-        full_template.setName("{}_concrete".format(color)).setStrenght(1.8).setBestTools(ToolType.PICKAXE). \
-            setMinimumToolLevel(1).finish()
-        falling_template.setName("{}_concrete_powder".format(color)).setStrenght(.5).setBestTools(
-            ToolType.SHOVEL).finish()
-
     # missing: kelp, kelp plant
 
     full_template.setName("dried_kelp_block").setStrenght(.5, 2.5).setBestTools(ToolType.AXE).finish()
@@ -403,11 +358,57 @@ def combined_load():
     def set_stone_properties(_, factory):
         factory: factory.setStrenght(1.5, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1)
 
+    def set_nether_brick(_, factory):
+        factory: factory.setStrenght(2, 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1)
+
     config = mcpython.datagen.Configuration.DataGeneratorConfig(
         "minecraft", G.local + "/resources/generated").setDefaultNamespace("minecraft")
 
     CombinedBlockFactory.generate_full_block_slab_wall(
         config, "minecraft:stone", enable=(True, True, BLOCKS["minecraft:stone_wall"]), callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:bricks", slab_name="minecraft:brick_slab", wall_name="minecraft:brick_wall",
+        callback=lambda _, factory: factory.setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:blackstone", callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:clay", callback=lambda _, factory: factory.setStrenght(.6).setBestTools(ToolType.SHOVEL),
+        enable=(True, BLOCKS["minecraft:clay_slab"], BLOCKS["minecraft:clay_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:cracked_nether_bricks", slab_name="minecraft:cracked_nether_brick_slab",
+        wall_name="minecraft:cracked_nether_brick_wall", callback=set_nether_brick,
+        enable=(True, BLOCKS["minecraft:cracked_nether_brick_slab"], BLOCKS["minecraft:cracked_nether_brick_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:cracked_polished_blackstone_bricks", callback=set_nether_brick,
+        slab_name="minecraft:cracked_polished_blackstone_brick_slab",
+        wall_name="minecraft:cracked_polished_blackstone_brick_wall",
+        enable=(True, BLOCKS["minecraft:cracked_polished_blackstone_brick_slab"],
+                BLOCKS["minecraft:cracked_polished_blackstone_brick_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:cracked_stone_bricks", slab_name="minecraft:cracked_stone_brick_slab",
+        wall_name="minecraft:cracked_stone_brick_wall", callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:crying_obsidian", enable=(True, BLOCKS["minecraft:crying_obsidian_slab"],
+                                                     BLOCKS["minecraft:crying_obsidian_wall"]),
+        callback=lambda _, factory: factory.setStrenght(50, 1200).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(5))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:gilded_blackstone", enable=(True, BLOCKS["minecraft:gilded_blackstone_slab"],
+                                                       BLOCKS["minecraft:gilded_blackstone_wall"]),
+        callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:mossy_cobblestone", callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:mossy_stone_bricks", slab_name="minecraft:mossy_cobblestone_brick_slab",
+        wall_name="minecraft:mossy_stone_brick_wall", callback=set_stone_properties)
 
     CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:granite", callback=set_stone_properties)
 
@@ -446,9 +447,93 @@ def combined_load():
     for wood in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "crimson", "warped"]:
         CombinedBlockFactory.generate_full_block_slab_wall(
             config, "minecraft:{}_planks".format(wood), callback=wood_callback,
-            slab_name="minecraft:{}_slab".format(wood), enable=(True, True, False))
+            slab_name="minecraft:{}_slab".format(wood),
+            enable=(True, True, BLOCKS["minecraft:{}_plank_wall".format(wood)]))
 
     CombinedBlockFactory.generate_full_block_slab_wall(
         config, "minecraft:bedrock",
         callback=lambda _, factory: factory.setStrenght(-1, 3600000).setBreakAbleFlag(False),
         enable=(True, BLOCKS["minecraft:bedrock_slab"], BLOCKS["minecraft:bedrock_wall"]))
+
+    def fall_able_callback(_, factory):
+        factory.setStrenght(.5).setBestTools(ToolType.SHOVEL).setFallable()
+
+    for m in ["sand", "red_sand", "gravel"]:
+        CombinedBlockFactory.generate_full_block_slab_wall(
+            config, "minecraft:{}".format(m), callback=fall_able_callback,
+            enable=(True, BLOCKS["minecraft:{}_slab".format(m)], BLOCKS["minecraft:{}_wall".format(m)]))
+
+    def set_glass(_, factory):
+        factory.setAllSideSolid(False).setStrenght(.3).setBestTools(ToolType.PICKAXE)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:glass", callback=set_glass, enable=(True, BLOCKS["minecraft:grass_slab"], False))
+
+    def set_sandstone(_, factory):
+        factory.setBestTools(ToolType.PICKAXE).setStrenght(.8).setMinimumToolLevel(1)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:sandstone", callback=set_sandstone)
+    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:cut_sandstone", callback=set_sandstone,
+                                                       enable=(True, True, BLOCKS["minecraft:cut_sandstone_wall"]))
+    CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:cut_red_sandstone", callback=set_sandstone,
+                                                       enable=(True, True, BLOCKS["minecraft:cut_red_sandstone_wall"]))
+
+    def set_wool(_, factory): factory.setStrenght(.6).setBestTools(ToolType.SHEAR)
+    def set_concrete(_, factory): factory.setStrenght(1.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1)
+    def set_concrete_powder(_, factory): factory.setStrenght(.5).setBestTools(ToolType.SHOVEL).setFallable()
+    def set_terracotta(_, factory): factory.setStrenght(1.25, 4.2).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1)
+
+    for c in ["white", "orange", "magenta", "light_blue", "lime", "pink", "gray", "light_gray", "cyan",
+              "purple", "blue", "brown", "green", "red", "black"]:
+        CombinedBlockFactory.generate_full_block_slab_wall(
+            config, "minecraft:{}_wool".format(c), callback=set_wool,
+            enable=(True, BLOCKS["minecraft:{}_wool_slab".format(c)], BLOCKS["minecraft:{}_wool_wall".format(c)]))
+        CombinedBlockFactory.generate_full_block_slab_wall(
+            config, "minecraft:{}_concrete".format(c), callback=set_concrete,
+            enable=(True, BLOCKS["minecraft:{}_concrete_slab".format(c)],
+                    BLOCKS["minecraft:{}_concrete_wall".format(c)]))
+        CombinedBlockFactory.generate_full_block_slab_wall(
+            config, "minecraft:{}_concrete_powder".format(c), callback=set_concrete_powder, enable=(True, False, False))
+        CombinedBlockFactory.generate_full_block_slab_wall(
+            config, "minecraft:{}_stained_glass".format(c), callback=set_glass,
+            enable=(True, BLOCKS["minecraft:{}_stained_glass_slab".format(c)],
+                    BLOCKS["minecraft:{}_stained_glass_wall".format(c)]))
+        CombinedBlockFactory.generate_full_block_slab_wall(
+            config, "minecraft:{}_terracotta".format(c), callback=set_terracotta,
+            enable=(True, BLOCKS["minecraft:{}_terracotta_slab".format(c)],
+                    BLOCKS["minecraft:{}_terracotta_wall".format(c)]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:dark_prismarine", callback=set_stone_properties, enable=(True, True, BLOCKS[
+            "minecraft:dark_prismarine_wall"]))
+
+    def set_end_stone(_, factory): factory.setStrenght(3, 9).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:end_stone", callback=set_end_stone, enable=(True, BLOCKS["minecraft:end_stone_slab"],
+                                                                       BLOCKS["minecraft:end_stone_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:end_stone_bricks", slab_name="minecraft:end_stone_brick_slab",
+        wall_name="minecraft:end_stone_brick_wall", callback=set_end_stone)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:glowstone", callback=lambda _, factory: factory.setStrenght(.3),
+        enable=(True, BLOCKS["minecraft:glowstone_slab"], BLOCKS["minecraft:glowstone_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:magma_block", enable=(True, BLOCKS["minecraft:magma_block_slab"],
+                                                 BLOCKS["minecraft:magma_block_wall"]),
+        callback=lambda _, factory: factory.setStrenght(.5).setBestTools(ToolType.PICKAXE),
+        texture="minecraft:block/magma")
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:nether_bricks", slab_name="minecraft:nether_brick_slab",
+        wall_name="minecraft:nether_brick_wall",
+        callback=lambda _, factory: factory.setStrenght(2., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:nether_wart_block", enable=(True, BLOCKS["minecraft:nether_wart_block_slab"],
+                                                       BLOCKS["minecraft:nether_wart_block_wall"]),
+        callback=lambda _, factory: factory.setStrenght(1.).setBestTools(ToolType.PICKAXE))
+

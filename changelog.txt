@@ -31,6 +31,7 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - launcher system to download mc assets separately [10]
     - entity AI system
     - rendering layer system
+    - make loot table system only load needed loot tables, etc.
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -60,6 +61,9 @@ changelog of snapshot [next] (theme: fixing stuff)
     - improved command handling
     - deprecated old AdvancedBlockFactory system
     - added CombinedBlockFactory system for doing fancy stuff with data gen & in-game objects at ones
+    - updated textures to 1.16 and added content of the update
+    - added --enable-all-blocks runtime flag for enabling all optional blocks
+    todo: add data gen for loot tables & use them in combined block factory system
 
     fixed issues:
         from previous snapshot:

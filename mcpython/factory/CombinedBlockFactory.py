@@ -14,11 +14,16 @@ import enum
 import typing
 from mcpython.datagen.BlockModelGenerator import ModelRepresentation
 import mcpython.block.BlockWall
+from mcpython.datagen.RecipeGenerator import ShapedRecipeGenerator
+
+
+WALL_TEMPLATE = sum([[(x, y) for y in range(2)] for x in range(3)], [])
+SLAB_TEMPLATE = [(x, 0) for x in range(3)]
 
 
 def generate_full_block_slab_wall(config: mcpython.datagen.Configuration.DataGeneratorConfig, name: str,
                                   texture: str = None, enable=(True, True, True), callback=None,
-                                  slab_name=None, wall_name=None):
+                                  slab_name=None, wall_name=None, generate_recipes=(True, True)):
     if texture is None: texture = "{}:block/{}".format(*name.split(":"))
     modname, raw_name = name.split(":")
     if slab_name is None: slab_name = name + "_slab"
@@ -31,6 +36,12 @@ def generate_full_block_slab_wall(config: mcpython.datagen.Configuration.DataGen
                             on_create_callback=callback).setName(slab_name)
     if enable[2]:
         CombinedWallFactory(texture, modname, config, on_create_callback=callback).setName(wall_name)
+    if generate_recipes[0] and enable[1]:
+        mcpython.datagen.RecipeGenerator.ShapedRecipeGenerator(slab_name, config).setEntries(
+            SLAB_TEMPLATE, name).setOutput((6, slab_name)).setGroup("slab")
+    if generate_recipes[1] and enable[2]:
+        mcpython.datagen.RecipeGenerator.ShapedRecipeGenerator(wall_name, config).setEntries(
+            WALL_TEMPLATE, name).setOutput((6, wall_name)).setGroup("wall")
 
 
 class CombinedFullBlockFactoryMode(enum.Enum):
