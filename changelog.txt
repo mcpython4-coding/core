@@ -5,11 +5,9 @@ todo: make into an .md file
 planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
         before next stable release):
     - optimize texture reload with everything (re-block-item-factories, reload block models,
-        reload item texture, gui textures, ...), config reload [1,y]
-    - add combined data generators & factories [1,y]
+        reload item texture, gui textures, ...), config reload [1]
     - add more factories for various parts (better block models, block states, full block factory, ...) [2]
     - add scoreboards with commands, execute entry, ... [5]
-    - make commands more fail-save [2,y]
     - make world gen more fail-save [2,y]
     - add ores [4]
     - add mcpi API support [10]
@@ -29,9 +27,9 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - implement more UI element parsers [5]
     - port every state configuration to config files [6]
     - launcher system to download mc assets separately [10]
-    - entity AI system
-    - rendering layer system
-    - make loot table system only load needed loot tables, etc.
+    - entity AI system [30]
+    - rendering layer system [20]
+    - make loot table system only load needed loot tables, etc. [10]
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -53,7 +51,7 @@ information on development:
         its id.
 
 
-changelog of snapshot [next] (theme: fixing stuff)
+changelog of snapshot [next] (theme: fixing stuff & upgrading base to 1.16)
     - improved rendering system by using MatrixStack's and RenderingHelper-instances
     - improved data fixer system
     - changed how item textures are baked together
@@ -63,6 +61,8 @@ changelog of snapshot [next] (theme: fixing stuff)
     - added CombinedBlockFactory system for doing fancy stuff with data gen & in-game objects at ones
     - updated textures to 1.16 and added content of the update
     - added --enable-all-blocks runtime flag for enabling all optional blocks
+    - added profiler for world generation
+
     todo: add data gen for loot tables & use them in combined block factory system
 
     fixed issues:

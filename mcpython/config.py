@@ -95,6 +95,7 @@ ENABLE_PROFILING = False
 
 ENABLE_PROFILER_DRAW = True
 ENABLE_PROFILER_TICK = False
+ENABLE_PROFILER_GENERATION = False
 
 SHUFFLE_DATA = False
 SHUFFLE_INTERVAL = -1
@@ -169,9 +170,8 @@ def load():
     rendering = mcpython.mod.ConfigFile.DictDataMapper().add_entry("use_missing_texture_on_missing_faces",
                                                                    False).add_entry(
         "fog_distance", 60).add_entry("chunk_generation_range", 1).add_entry("write_not_formatted_exceptions", False)
-    profiler = mcpython.mod.ConfigFile.DictDataMapper().add_entry("enable", False).add_entry("total_draw",
-                                                                                             True).add_entry(
-        "total_tick", False)
+    profiler = mcpython.mod.ConfigFile.DictDataMapper().add_entry("enable", False).add_entry(
+        "total_draw", True).add_entry("total_tick", False).add_entry("generation", False)
     misc = mcpython.mod.ConfigFile.DictDataMapper().add_entry("enable_mixing_data", False).add_entry(
         "auto_shuffle_interval", -1)
 
@@ -209,10 +209,11 @@ def load():
         global BIOME_HEIGHT_RANGE_MAP
         BIOME_HEIGHT_RANGE_MAP["minecraft:plains"] = biomeconfig["minecraft:plains"].read()
 
-        global ENABLE_PROFILING, ENABLE_PROFILER_DRAW, ENABLE_PROFILER_TICK
+        global ENABLE_PROFILING, ENABLE_PROFILER_DRAW, ENABLE_PROFILER_TICK, ENABLE_PROFILER_GENERATION
         ENABLE_PROFILING = profiler["enable"].read()
         ENABLE_PROFILER_DRAW = profiler["total_draw"].read()
         ENABLE_PROFILER_TICK = profiler["total_tick"].read()
+        ENABLE_PROFILER_GENERATION = profiler["generation"].read()
 
         global SHUFFLE_DATA, SHUFFLE_INTERVAL
         SHUFFLE_DATA = misc["enable_mixing_data"].read()

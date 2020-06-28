@@ -6,6 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
+import cProfile
 import os
 import random
 import shutil
@@ -13,10 +14,12 @@ import sys
 
 from pyglet.window import key
 
-import mcpython.ResourceLocator
-import mcpython.chat.DataPack
 import globals as G
 import logger
+import mcpython.ResourceLocator
+import mcpython.chat.DataPack
+import mcpython.config
+import mcpython.config
 import mcpython.mod.ModMcpython
 import mcpython.state.StatePartConfigBackground
 import mcpython.state.ui.UIPartLable
@@ -25,7 +28,6 @@ import mcpython.util.math
 import mcpython.util.opengl
 import mcpython.world.player
 from . import State
-import mcpython.config
 
 
 class StateWorldGeneration(State.State):
@@ -34,6 +36,7 @@ class StateWorldGeneration(State.State):
     def __init__(self):
         State.State.__init__(self)
         self.status_table = {}
+        self.profiler = cProfile.Profile()
 
     def get_parts(self) -> list:
         return [mcpython.state.StatePartConfigBackground.StatePartConfigBackground(),
@@ -56,6 +59,7 @@ class StateWorldGeneration(State.State):
             self.finish()
 
     def on_activate(self):
+        if mcpython.config.ENABLE_PROFILER_GENERATION: self.profiler.enable()
         if os.path.exists(G.world.savefile.directory):
             logger.println("deleting old world...")
             shutil.rmtree(G.world.savefile.directory)
@@ -88,6 +92,7 @@ class StateWorldGeneration(State.State):
                 self.status_table[(cx, cz)] = 0
 
     def finish(self):
+        master = self
         # read in the config
 
         for pos in self.status_table:
@@ -147,6 +152,11 @@ class StateWorldGeneration(State.State):
 
         if mcpython.config.SHUFFLE_DATA and mcpython.config.SHUFFLE_INTERVAL > 0:
             G.eventhandler.call("data:shuffle:all")
+
+        if mcpython.config.ENABLE_PROFILER_GENERATION:
+            master.profiler.disable()
+            master.profiler.print_stats(1)
+            master.profiler.clear()
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
