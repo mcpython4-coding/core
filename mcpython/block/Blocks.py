@@ -52,12 +52,14 @@ def load_blocks():
     full_template.setName("iron_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
     full_template.setName("coal_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     full_template.setName("lapis_ore").setStrenght(3).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
+    log_template.setName("ancient_debris").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(5).finish()
 
     full_template.setName("lapis_block").setStrenght(3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
     full_template.setName("gold_block").setStrenght(3., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
         3).finish()
     full_template.setName("iron_block").setStrenght(5., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
         2).finish()
+    full_template.setName("netherite_block").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(5).finish()
 
     log_template.setName("oak_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
     log_template.setName("spruce_log").setStrenght(2.).setBestTools(ToolType.AXE).finish()
@@ -439,6 +441,12 @@ def combined_load():
         config, "minecraft:coarse_dirt", callback=dirt_callback,
         enable=(True, BLOCKS["minecraft:coarse_dirt_slab"], BLOCKS["minecraft:coarse_dirt_wall"]))
 
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:polished_blackstone", callback=set_stone_properties)
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:polished_blackstone_bricks", callback=set_stone_properties,
+        slab_name="minecraft:polished_blackstone_brick_slab", wall_name="minecraft:polished_blackstone_brick_wall")
+
     CombinedBlockFactory.generate_full_block_slab_wall(config, "minecraft:cobblestone", callback=set_stone_properties)
 
     def wood_callback(_, factory):
@@ -536,4 +544,37 @@ def combined_load():
         config, "minecraft:nether_wart_block", enable=(True, BLOCKS["minecraft:nether_wart_block_slab"],
                                                        BLOCKS["minecraft:nether_wart_block_wall"]),
         callback=lambda _, factory: factory.setStrenght(1.).setBestTools(ToolType.PICKAXE))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:netherrack", enable=(True, BLOCKS["minecraft:netherrack_slab"],
+                                                BLOCKS["minecraft:netherrack_wall"]),
+        callback=set_stone_properties)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:obsidian", enable=(True, BLOCKS["minecraft:obsidian_slab"],
+                                              BLOCKS["minecraft:obsidian_wall"]),
+        callback=lambda _, factory: factory.setStrenght(50., 1200.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+            5))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:prismarine", callback=lambda _, factory: factory.setStrenght(1.5, 6.).setBestTools(
+            ToolType.PICKAXE).setMinimumToolLevel(1))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:prismarine_bricks", callback=lambda _, factory: factory.setStrenght(1.5, 6.).setBestTools(
+            ToolType.PICKAXE).setMinimumToolLevel(1), slab_name="minecraft:prismarine_brick_slab",
+        wall_name="minecraft:prismarine_brick_wall", enable=(True, True, BLOCKS["minecraft:prismarine_brick_wall"]))
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:purpur_block", callback=lambda _, factory: factory.setStrenght(1.5, 6.).setBestTools(
+            ToolType.PICKAXE).setMinimumToolLevel(1), slab_name="minecraft:purpur_slab",
+        wall_name="minecraft:purpur_wall", enable=(True, True, BLOCKS["minecraft:purpur_wall"]))
+
+    def set_quartz(_, factory):
+        factory.setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(3)
+
+    CombinedBlockFactory.generate_full_block_slab_wall(
+        config, "minecraft:quartz_bricks", callback=set_quartz, slab_name="minecraft:quartz_brick_slab",
+        enable=(True, BLOCKS["minecraft:quartz_brick_slab"], BLOCKS["minecraft:quartz_brick_wall"]),
+        wall_name="minecraft:quartz_brick_wall")
 

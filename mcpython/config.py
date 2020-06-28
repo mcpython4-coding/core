@@ -99,14 +99,20 @@ ENABLE_PROFILER_TICK = False
 SHUFFLE_DATA = False
 SHUFFLE_INTERVAL = -1
 
-# an list of additional blocks to enable/disable when needed
-# WARNING: this content is generated ONTOP of minecraft's content an uses their textures to generate. Please note
-#          that any of these objects look like original ones, but they are not (currently)
-# WARNING: All additional blocks have currently no own loot table for drops. These might change in the future,
-#          but until than, they are PURELY decorative blocks
-# WARNING: As these blocks are not part of the "normal" game, when they are enabled, they may NOT have the same
-#          behaviour flags build-in than the original ones (think about how an sand slab would behave)
-# WARNING: block behaviour is mostly copied from base block and as so, e.g. bedrock slabs are unbreakable in survival
+"""
+an list of additional blocks to enable/disable when needed
+WARNING: this content is generated ONTOP of minecraft's content an uses their textures to generate. Please note
+         that any of these objects look like original ones, but they are not (currently)
+WARNING: All additional blocks have currently no own loot table for drops. These might change in the future,
+         but until than, they are PURELY decorative blocks
+WARNING: As these blocks are not part of the "normal" game, when they are enabled, they may NOT have the same
+         behaviour flags build-in than the original ones (think about how an sand slab would behave)
+WARNING: block behaviour is mostly copied from base block and as so, e.g. bedrock slabs are unbreakable in survival
+
+WARNING (for modders): You might add your own entries onto this table. But make sure that you DO CHECK if they are
+                       in the table when you read for block creation. Also note, these file is located in the 
+                       minecraft-folder of the config folder.
+"""
 
 ENABLED_EXTRA_BLOCKS = {
     "minecraft:stone_wall": False, "minecraft:polished_granite_wall": False,
@@ -124,7 +130,10 @@ ENABLED_EXTRA_BLOCKS = {
     "minecraft:end_stone_slab": False, "minecraft:end_stone_wall": False, "minecraft:gilded_blackstone_slab": False,
     "minecraft:gilded_blackstone_wall": False, "minecraft:glowstone_slab": False, "minecraft:glowstone_wall": False,
     "minecraft:magma_block_slab": False, "minecraft:magma_block_wall": False, "minecraft:nether_wart_block_slab": False,
-    "minecraft:nether_wart_block_wall": False
+    "minecraft:nether_wart_block_wall": False, "minecraft:netherrack_slab": False, "minecraft:netherrack_wall": False,
+    "minecraft:obsidian_slab": False, "minecraft:obsidian_wall": False, "minecraft:prismarine_brick_wall": False,
+    "minecraft:purpur_wall": False, "minecraft:quartz_wall": False, "minecraft:quartz_brick_slab": False,
+    "minecraft:quartz_brick_wall": False
 }
 
 # I'm to lazy to write these...
