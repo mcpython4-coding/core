@@ -61,10 +61,16 @@ interaction:
     "user:keyboard:press": called with symbol and modifiers when the user presses an key on the keyboard
     "user:keyboard:release": called with symbol and modifiers when the user releases an key on the keyboard
     "user:window:resize": called with the new size as x and y when the user resize the window
+
+drawing:
+    "render:draw:pre_clear"
+    "render:draw:pre_setup"
+    "render:draw:2d:background_pre"
     "render:draw:3d": called to draw in 3d
     "render:draw:2d:background", "render:draw:2d" and "render:draw:2d:overlay": called to draw 2d, called in the order
         listed here
     "user:keyboard:enter": called with the text if the player enters an text
+    "render:draw:post:cleanup"
 
 states:
     "state:switch:pre": called by StateHandler before the state is switched, cancelable

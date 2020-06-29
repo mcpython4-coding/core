@@ -364,19 +364,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("user:window:resize", width, height)
 
     def set_2d(self):
-        """
-        Configure OpenGL to draw in 2d.
-        """
-        width, height = self.get_size()
-        viewport = self.get_viewport_size()
-        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("set_2d", width=max(1, width), height=max(1, height),
-                                                                viewport_0=max(1, viewport[0]),
-                                                                viewport_1=max(1, viewport[1]))
+        G.rendering_helper.setup2d()
 
     def set_3d(self, position=None, rotation=None):
-        """
-        Configure OpenGL to draw in 3d.
-        """
         if G.world.get_active_player() is None: return
         if G.rendering_helper.default_3d_stack is None:
             G.rendering_helper.default_3d_stack = G.rendering_helper.get_dynamic_3d_matrix_stack()
@@ -386,17 +376,26 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         """
         Called by pyglet to draw the canvas.
         """
+        # make sure that the state of the rendering helper is saved for later usage
         status = G.rendering_helper.save_status(add_to_stack=False)
+
+        # check for profiling
         if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.enable()
-        self.clear()
-        self.set_3d()
-        G.eventhandler.call("render:draw:3d")
+
+        G.eventhandler.call("render:draw:pre_clear")
+        self.clear()  # clear the screen
+        G.eventhandler.call("render:draw:pre_setup")
         self.set_2d()
-        G.eventhandler.call("render:draw:2d:background")
-        G.eventhandler.call("render:draw:2d")
-        G.eventhandler.call("render:draw:2d:overlay")
+        G.eventhandler.call("render:draw:2d:background_pre")
+        self.set_3d()  # setup for 3d drawing
+        G.eventhandler.call("render:draw:3d")  # call general 3d rendering event
+        self.set_2d()  # setup for 2d rendering
+        G.eventhandler.call("render:draw:2d:background")  # call pre 2d
+        G.eventhandler.call("render:draw:2d")  # call normal 2d
+        G.eventhandler.call("render:draw:2d:overlay")  # call overlay 2d
         if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.disable()
         G.rendering_helper.apply(status)
+        G.eventhandler.call("render:draw:post:cleanup")
 
     def draw_focused_block(self):
         """

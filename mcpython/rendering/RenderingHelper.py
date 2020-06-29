@@ -137,3 +137,14 @@ class RenderingHelper:
         base.addTranslate3d(lambda: [-e for e in G.world.get_active_player().position])
         return base
 
+    def setup2d(self, anchor=(0, 0), z_buffer=0):
+        self.glDisable(_gl.GL_DEPTH_TEST)
+        _gl.glViewport(0, 0, *G.window.get_viewport_size())
+        _gl.glMatrixMode(_gl.GL_PROJECTION)
+        _gl.glLoadIdentity()
+        width, height = s = G.window.get_size()
+        _gl.glOrtho(0, width, 0, height, -1, 1)
+        _gl.glMatrixMode(_gl.GL_MODELVIEW)
+        _gl.glLoadIdentity()
+        _gl.glTranslated(*[-s[i]*anchor[i] for i in range(2)], -z_buffer)
+
