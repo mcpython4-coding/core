@@ -1182,3 +1182,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added some blocks from 1.16
 [uuk]: added --enable-all-blocks runtime flag for enabling all optional blocks
 [uuk]: added profiler for world generation
+[uuk]: fixed a few bugs around RenderingHelper (issue 220)

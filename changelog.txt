@@ -71,6 +71,7 @@ changelog of snapshot [next] (theme: fixing stuff & upgrading base to 1.16)
             - world selection screen was not rendering all possible worlds
             - ShiftContainer was miss-behaving in certain cases
             - registry info was not dumping data correctly
+            - rendering helper was miss-doing some stuff
 
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
     Rendering:

@@ -200,3 +200,4 @@ issue 214: world selection list was rendering wrong; fixed on 20.06.2020 by uuk
 issue 215: can't shift-click out of certain slots, caused by ShiftContainer-miss-behaviour; fixed on 22.06.2020 by uuk
 issue 216: RegistryInfo serializer was dumping registry data from registries marked not for dumping: fixed on 23.06.2020
            by uuk
+issue 220: RenderingHelper's apply method was not working; fixed on 01.07.2020 by uuk

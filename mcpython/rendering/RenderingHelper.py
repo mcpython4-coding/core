@@ -87,7 +87,10 @@ class RenderingHelper:
         """
         if data is None: data = self.status_table
         for key in data:
-            self.set_flag(key, data[key])
+            if data[key]:
+                _gl.glEnable(key)
+            else:
+                _gl.glDisable(key)
         return self
 
     def get_default_3d_matrix_stack(self, base=None) -> mcpython.rendering.MatrixStack.MatrixStack:
@@ -139,12 +142,13 @@ class RenderingHelper:
 
     def setup2d(self, anchor=(0, 0), z_buffer=0):
         self.glDisable(_gl.GL_DEPTH_TEST)
-        _gl.glViewport(0, 0, *G.window.get_viewport_size())
+        _gl.glViewport(0, 0, *[max(1, e) for e in G.window.get_viewport_size()])
         _gl.glMatrixMode(_gl.GL_PROJECTION)
         _gl.glLoadIdentity()
         width, height = s = G.window.get_size()
-        _gl.glOrtho(0, width, 0, height, -1, 1)
+        _gl.glOrtho(0, max(1, width), 0, max(1, height), -1, 1)
         _gl.glMatrixMode(_gl.GL_MODELVIEW)
         _gl.glLoadIdentity()
         _gl.glTranslated(*[-s[i]*anchor[i] for i in range(2)], -z_buffer)
+        self.apply()
 

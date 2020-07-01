@@ -364,13 +364,20 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("user:window:resize", width, height)
 
     def set_2d(self):
-        G.rendering_helper.setup2d()
+        width, height = self.get_size()
+        viewport = self.get_viewport_size()
+        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("set_2d", width=max(1, width), height=max(1, height),
+                                                                viewport_0=max(1, viewport[0]),
+                                                                viewport_1=max(1, viewport[1]))
+        # G.rendering_helper.setup2d()
+        pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
     def set_3d(self, position=None, rotation=None):
         if G.world.get_active_player() is None: return
         if G.rendering_helper.default_3d_stack is None:
             G.rendering_helper.default_3d_stack = G.rendering_helper.get_dynamic_3d_matrix_stack()
         G.rendering_helper.default_3d_stack.apply()
+        pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
 
     def on_draw(self):
         """
