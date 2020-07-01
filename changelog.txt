@@ -72,6 +72,7 @@ changelog of snapshot [next] (theme: fixing stuff & upgrading base to 1.16)
             - ShiftContainer was miss-behaving in certain cases
             - registry info was not dumping data correctly
             - rendering helper was miss-doing some stuff
+            - exceptions when no save file exists
 
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
     Rendering:

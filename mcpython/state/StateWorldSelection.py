@@ -144,6 +144,8 @@ class StateWorldSelection(State.State):
         self.parts[4].set_status(1)
 
     def reload_world_icons(self):
+        if not os.path.exists(mcpython.storage.SaveFile.SAVE_DIRECTORY):
+            os.makedirs(mcpython.storage.SaveFile.SAVE_DIRECTORY)
         wx, wy = G.window.get_size()
         self.world_data.clear()
         for directory in os.listdir(mcpython.storage.SaveFile.SAVE_DIRECTORY):
