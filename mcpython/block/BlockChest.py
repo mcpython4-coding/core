@@ -82,7 +82,7 @@ class BlockChest(Block.Block):
     def get_inventories(self):
         return [self.inventory]
 
-    def get_provided_slots(self, side): return self.inventory.slots
+    def get_provided_slot_lists(self, side): return self.inventory.slots, self.inventory.slots
 
     def set_model_state(self, state: dict):
         if "side" in state:

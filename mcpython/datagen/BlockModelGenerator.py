@@ -48,7 +48,7 @@ class ModelRepresentation:
         will encode your data to an json-able dict
         """
         if self.wrap_cache is not None: return self.wrap_cache
-        data = {"model": self.model if ":" in self.model and config.default_namespace is not None else
+        data = {"model": self.model if ":" in self.model or config.default_namespace is None else
                 config.default_namespace + ":" + self.model}
         if self.r_x != 0: data["x"] = self.r_x
         if self.r_y != 0: data["y"] = self.r_y

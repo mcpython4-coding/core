@@ -59,7 +59,7 @@ def chunk_generate(chunk):
             heigthmap[(x, z)] = [(0, 10)]
 
     if G.world.get_active_player().gamemode != 3: G.world.get_active_player().set_gamemode(3)
-    G.window.flying = True
+    G.world.get_active_player().flying = True
 
 
 config = {"layers": []}

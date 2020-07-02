@@ -52,7 +52,7 @@ def load_blocks():
     full_template.setName("iron_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
     full_template.setName("coal_ore").setStrenght(3., 3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1).finish()
     full_template.setName("lapis_ore").setStrenght(3).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
-    log_template.setName("ancient_debris").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(5).finish()
+    full_template.setName("ancient_debris").setBestTools(ToolType.PICKAXE).setMinimumToolLevel(5).finish()
 
     full_template.setName("lapis_block").setStrenght(3.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(2).finish()
     full_template.setName("gold_block").setStrenght(3., 6.).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(

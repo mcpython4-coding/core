@@ -10,6 +10,7 @@ import globals as G
 import mcpython.block.Block
 from pyglet.window import key, mouse
 import mcpython.gui.InventoryFurnace
+from mcpython.util.enums import EnumSide
 
 
 @G.registry
@@ -59,7 +60,13 @@ class BlockFurnace(mcpython.block.Block.Block):
 
     def get_inventories(self): return [self.inventory]
 
-    def get_provided_slots(self, side): return self.inventory.slots
+    def get_provided_slot_lists(self, side):
+        if side == EnumSide.TOP:
+            return [self.inventory.slots[36]], []
+        elif side == EnumSide.DOWN:
+            return [], [self.inventory.slots[38]]
+        else:
+            return [self.inventory.slots[37]], []
 
     def on_remove(self):
         if not G.world.gamerulehandler.table["doTileDrops"].status.status: return

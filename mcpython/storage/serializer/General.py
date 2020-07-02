@@ -86,7 +86,10 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         # apply data fixers for creating mod data
         for modname in G.modloader.mods:
             if modname not in data["mods"]:
-                savefile.apply_mod_fixer(modname, None)
+                try:
+                    savefile.apply_mod_fixer(modname, None)
+                except mcpython.storage.SaveFile.DataFixerNotFoundException:
+                    pass
 
         # the chunks scheduled for generation
         [G.worldgenerationhandler.add_chunk_to_generation_list(e[0], dimension=e[1]) for e in data["chunks_to_generate"]]

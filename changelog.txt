@@ -30,6 +30,7 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - entity AI system [30]
     - rendering layer system [20]
     - make loot table system only load needed loot tables, etc. [10]
+    - an indicator for corrupted save files (add an number to an counter and remove when action finished)
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,

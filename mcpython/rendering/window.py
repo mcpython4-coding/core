@@ -68,9 +68,6 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
 
-        # When flying gravity has no effect and speed is increased. todo: move to player
-        self.flying = False
-
         # Strafing is moving lateral to the direction you are facing,
         # e.g. moving to the left or right while continuing to face forward.
         #
@@ -130,6 +127,14 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:game_crash", self.close)
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:copy_block_or_entity_data",
                                                                self.get_block_entity_info)
+
+    @deprecation.deprecated("dev4-3", "a1.2.0")
+    def get_flying(self): return G.world.get_active_player().is_flying
+
+    @deprecation.deprecated("dev4-3", "a1.2.0")
+    def set_flying(self, flying): G.world.get_active_player().is_flying = flying
+
+    flying = property(get_flying, set_flying)
 
     def print_profiler(self, dt=None):
         """
@@ -269,7 +274,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                         # falling / rising.
                         self.dy = 0
                     if face == (0, -1, 0):
-                        G.window.flying = False
+                        G.world.get_active_player().flying = False
                         if G.world.get_active_player().gamemode in (
                                 0, 2) and G.world.get_active_player().fallen_since_y is not None:
                             dy = G.world.get_active_player().fallen_since_y - G.world.get_active_player().position[

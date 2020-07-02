@@ -283,7 +283,7 @@ class World:
             G.dimensionhandler.init_dims()
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
-        G.window.flying = False
+        G.world.get_active_player().flying = False
         for inv in G.world.get_active_player().inventories.values(): inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         G.worldgenerationhandler.task_handler.clear()
