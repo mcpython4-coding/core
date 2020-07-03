@@ -56,7 +56,7 @@ class StateWorldGenerationConfig(State.State):
         G.statehandler.switch_to("minecraft:startmenu")
 
     def on_generate_press(self, x, y):
-        filename = self.parts[8].entered_text
+        filename = self.parts[9].entered_text
         if filename == "": filename = "New World"
         G.world.cleanup(remove_dims=True, filename=filename)
         self.generate()

@@ -75,6 +75,7 @@ changelog of snapshot [next] (theme: fixing stuff & upgrading base to 1.16)
             - exceptions when no save file exists
             - data fixer results may not be saved correctly
             - exception when world selection screen is empty
+            - world selection screen was parsing name incorrectly
 
         long-term issues:
             - rendering helper was miss-doing some stuff
