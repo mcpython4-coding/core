@@ -104,6 +104,9 @@ class SaveFile:
         self.save_in_progress = False
 
     def region_iterator(self):
+        """
+        Iterator iterating over ALL region files from an save file
+        """
         for dim in os.listdir(self.directory + "/dim"):
             for region in os.listdir(self.directory + "/dim/" + dim):
                 yield dim, region
@@ -183,9 +186,13 @@ class SaveFile:
         if name not in self.storage_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
         fixer: mcpython.storage.datafixers.IDataFixer.IStorageVersionFixer = \
             self.storage_fixer_registry.registered_object_map[name]
-        fixer.apply(self, *args, **kwargs)
-        for name, args, kwargs in fixer.GROUP_FIXER_NAMES:
-            self.apply_group_fixer(*args, **kwargs)
+        try:
+            fixer.apply(self, *args, **kwargs)
+            for name, args, kwargs in fixer.GROUP_FIXER_NAMES:
+                self.apply_group_fixer(*args, **kwargs)
+        except:
+            logger.write_exception("during data-fixing storage version '{}'".format(name))
+            G.statehandler.switch_to("minecraft:startmenu")
 
     def apply_group_fixer(self, name: str, *args, **kwargs):
         """
@@ -198,9 +205,13 @@ class SaveFile:
         if name not in self.group_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
         fixer: mcpython.storage.datafixers.IDataFixer.IGroupFixer = \
             self.group_fixer_registry.registered_object_map[name]
-        fixer.apply(self, *args, **kwargs)
-        for name, args, kwargs in fixer.PART_FIXER_NAMES:
-            self.apply_part_fixer(name, *args, **kwargs)
+        try:
+            fixer.apply(self, *args, **kwargs)
+            for name, args, kwargs in fixer.PART_FIXER_NAMES:
+                self.apply_part_fixer(name, *args, **kwargs)
+        except:
+            logger.write_exception("during data-fixing group fixer '{}'".format(name))
+            G.statehandler.switch_to("minecraft:startmenu")
 
     def apply_part_fixer(self, name: str, *args, **kwargs):
         """
@@ -212,7 +223,11 @@ class SaveFile:
         """
         if name not in self.part_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
         fixer: mcpython.storage.datafixers.IDataFixer.IPartFixer = self.part_fixer_registry.registered_object_map[name]
-        fixer.apply(self, *args, **kwargs)
+        try:
+            fixer.apply(self, *args, **kwargs)
+        except:
+            logger.write_exception("during data-fixing part '{}'".format(name))
+            G.statehandler.switch_to("minecraft:startmenu")
 
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
         """
@@ -241,9 +256,15 @@ class SaveFile:
                 fixer: mcpython.storage.datafixers.IDataFixer.IModVersionFixer = min(
                     possible_fixers, key=lambda v: self._get_distance(v, source_version))
 
-            fixer.apply(self, *args, **kwargs)
-            [self.apply_group_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES]
-            [self.apply_part_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.PART_FIXER_NAMES]
+            try:
+                fixer.apply(self, *args, **kwargs)
+                [self.apply_group_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES]
+                [self.apply_part_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.PART_FIXER_NAMES]
+            except:
+                logger.write_exception("during data-fixing mod {} from {} to {}".format(
+                    modname, fixer.FIXES_FROM, fixer.FIXES_TO))
+                G.statehandler.switch_to("minecraft:startmenu")
+                return
 
             source_version = fixer.FIXES_TO
 
@@ -282,7 +303,10 @@ class SaveFile:
         :param part: the part to save
         :param kwargs: the kwargs to give the saver
         """
-        self.get_serializer_for(part).save(data, self, **kwargs)
+        try:
+            self.get_serializer_for(part).save(data, self, **kwargs)
+        except:
+            logger.write_exception("during dumping {} to '{}'".format(data, part))
 
     # Helper functions for fixers, loaders and savers
     # todo: add nbt serializer
@@ -336,8 +360,11 @@ class SaveFile:
         file = os.path.join(self.directory, file)
         d = os.path.dirname(file)
         if not os.path.isdir(d): os.makedirs(d)
-        data = json.dumps(data)
-        with open(file, mode="w") as f: f.write(data)
+        try:
+            data = json.dumps(data)
+            with open(file, mode="w") as f: f.write(data)
+        except:
+            logger.write_exception("during dumping {} to '{}'".format(data, file))
 
     def dump_file_pickle(self, file: str, data):
         """
@@ -348,8 +375,11 @@ class SaveFile:
         file = os.path.join(self.directory, file)
         d = os.path.dirname(file)
         if not os.path.isdir(d): os.makedirs(d)
-        data = pickle.dumps(data)
-        with open(file, mode="wb") as f: return f.write(data)
+        try:
+            data = pickle.dumps(data)
+            with open(file, mode="wb") as f: return f.write(data)
+        except:
+            logger.write_exception("during dumping {} to '{}'".format(data, file))
 
     def dump_raw(self, file: str, data: bytes):
         """
@@ -363,7 +393,7 @@ class SaveFile:
         with open(file, mode="wb") as f: return f.write(data)
 
     @deprecation.deprecated("dev3-1", "a1.3.0")
-    def upgrade(self, part=None, version=None, to=None, **kwargs):
+    def upgrade(self, **kwargs):
         raise mcpython.storage.datafixer.IDataFixer.DataFixerException("unimplemented")
 
 

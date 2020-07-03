@@ -202,3 +202,4 @@ issue 216: RegistryInfo serializer was dumping registry data from registries mar
            by uuk
 issue 220: RenderingHelper's apply method was not working; fixed on 01.07.2020 by uuk
 issue 221: exception when save list is empty; fixed on 01.07.2020 by uuk
+issue 222: some chunk part fixer results were not stored properly; fixed on 03.07.2020 by uuk

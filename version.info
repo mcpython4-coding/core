@@ -1183,3 +1183,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added --enable-all-blocks runtime flag for enabling all optional blocks
 [uuk]: added profiler for world generation
 [uuk]: fixed a few bugs around RenderingHelper (issue 220)
+[uuk]: fixed exception when no world is found (issue 221)
+[uuk]: fixed some chunk-related DataFixerPart-fixers-results not being saved back to the game files (issue 222)

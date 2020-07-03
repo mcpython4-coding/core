@@ -8,7 +8,7 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
         reload item texture, gui textures, ...), config reload [1]
     - add more factories for various parts (better block models, block states, full block factory, ...) [2]
     - add scoreboards with commands, execute entry, ... [5]
-    - make world gen more fail-save [2,y]
+    - make world gen more fail-save [2]
     - add ores [4]
     - add mcpi API support [10]
     - an logging update [4]
@@ -30,7 +30,7 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - entity AI system [30]
     - rendering layer system [20]
     - make loot table system only load needed loot tables, etc. [10]
-    - an indicator for corrupted save files (add an number to an counter and remove when action finished)
+    - an indicator for corrupted save files (add an number to an counter and remove when action finished) [1]
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -72,8 +72,12 @@ changelog of snapshot [next] (theme: fixing stuff & upgrading base to 1.16)
             - world selection screen was not rendering all possible worlds
             - ShiftContainer was miss-behaving in certain cases
             - registry info was not dumping data correctly
-            - rendering helper was miss-doing some stuff
             - exceptions when no save file exists
+            - data fixer results may not be saved correctly
+            - exception when world selection screen is empty
+
+        long-term issues:
+            - rendering helper was miss-doing some stuff
 
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
     Rendering:
