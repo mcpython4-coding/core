@@ -55,8 +55,11 @@ def chunk_generate(chunk):
             block, state = blockmap[(x, z)]
             block = chunk.add_block((x, 10, z), block, block_update=False)
             block.set_model_state(state)
-            block.face_state.update(redraw_complete=True)
-            heigthmap[(x, z)] = [(0, 10)]
+            block.face_state.update()
+            heigthmap[(x, z)] = [(0, 30)]
+        for x in range(16):
+            for z in range(16):
+                chunk.add_block((cx*16+x, 5,  cz*16+z), "minecraft:barrier")
 
     if G.world.get_active_player().gamemode != 3: G.world.get_active_player().set_gamemode(3)
     G.world.get_active_player().flying = True
