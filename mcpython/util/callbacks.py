@@ -10,5 +10,6 @@ import webbrowser
 
 
 def open_github_project():
+    # todo: merge into usages
     webbrowser.open("https://github.com/mcpython4-coding/core")
 

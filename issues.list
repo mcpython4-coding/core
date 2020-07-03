@@ -108,11 +108,9 @@ issue 165:
     bug: changing chunks in an big world takes ages
     fix: see issue 164
 
-issue 166:
-    bug: world generation is slow
-
 issue 168:
     bug: when starting in-game generation, game hangs for an short moment
+    fix: make generation off-thread
 
 issue 175:
     bug: structures overlapping into not-generated chunks are not shown when the chunks respecify are generated
@@ -120,7 +118,7 @@ issue 175:
         generation is requested
 
 issue 176:
-    bug: structures overlapping into not-generated chunks are not saved
+    bug: structures overlapping into not-generated chunks are not saved (?)
     fix: see issue 175
 
 issue 177:
@@ -129,10 +127,10 @@ issue 177:
 
 issue 178:
     bug: hotbar is not transparent(rendered)
-    fix: enable alpha blending
+    fix: enable alpha blending in this phase
 
 issue 185:
-    bug: in big worlds, chunks can get randomly hidden
+    bug: in big worlds, chunks can get randomly hidden (or unloaded?) [e.g. debug world]
     fix: implement chunk load ticket system
 
 issue 196:
@@ -151,13 +149,14 @@ issue 201:
 
 issue 203:
     bug: when loading an previous debug world, exceptions are printed out
-    fix: set world generator to the one loaded from world
+    fix: set world generator to the one loaded from world, not the one selected when lauching the game
 
 issue 204:
     bug: debug world generates start chest
+    fix: add option to enable start chest gen
 
 issue 217:
-    bug: chest content can get lost
+    bug: chest content can get lost [see warnings in log]
 
 issue 218:
     bug: game crashes when using e.g. "/tp @s 10 10 10" in chat

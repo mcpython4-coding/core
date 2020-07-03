@@ -1186,3 +1186,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed exception when no world is found (issue 221)
 [uuk]: fixed some chunk-related DataFixerPart-fixers-results not being saved back to the game files (issue 222)
 [uuk]: fixed world name selection issue (issue 223)
+[uuk]: imrpvoed cases for data generators

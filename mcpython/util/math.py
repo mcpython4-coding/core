@@ -194,8 +194,8 @@ def rotate_point(point, origin, rotation):
     rx = math.pi * rx / 180
     ry = math.pi * ry / 180
     rz = math.pi * rz / 180
-    x -= ox;
-    y -= oy;
+    x -= ox
+    y -= oy
     z -= oz
 
     nx = x * math.cos(rz) - y * math.sin(rz)
