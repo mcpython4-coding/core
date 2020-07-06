@@ -147,10 +147,6 @@ issue 201:
     fix: implement system to have an event bus for an generator mode only active when in an world with these world
         generator
 
-issue 203:
-    bug: when loading an previous debug world, exceptions are printed out
-    fix: set world generator to the one loaded from world, not the one selected when lauching the game
-
 issue 204:
     bug: debug world generates start chest
     fix: add option to enable start chest gen

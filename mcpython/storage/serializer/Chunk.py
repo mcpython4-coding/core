@@ -249,7 +249,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             if d["name"] not in G.registry.get_by_name("block").registered_object_map:
                 # todo: add missing texture block -> insert here
                 logger.println("[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block".
-                    format(d["name"], chunk, dimension))
+                               format(d["name"], chunk, dimension))
                 data["block_palette"][i] = {"shown": False, "name": "minecraft:air", "custom": {}}
                 continue
         for rel_position in data["blocks"].keys():
@@ -274,19 +274,25 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                                                                          on_add=add, immediate=flag)
 
         positions = []
-        for x in range(chunk[0]*16, chunk[0]*16+16):
-            positions.extend([(x, z) for z in range(chunk[1]*16, chunk[1]*16+16)])
+        for x in range(chunk[0] * 16, chunk[0] * 16 + 16):
+            positions.extend([(x, z) for z in range(chunk[1] * 16, chunk[1] * 16 + 16)])
 
-        try:
-            chunk_instance.set_value("landmassmap", {pos: data["maps"]["landmass_palette"][data["maps"]["landmass_map"][i]]
-                                                     for i, pos in enumerate(positions)})
-            biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in enumerate(positions)}
-            chunk_instance.set_value("biomemap", biome_map)
-            chunk_instance.set_value("heightmap", {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
-        except IndexError:
-            logger.write_exception("[CHUNK][CORRUPTED] palette map exception in chunk '{}' in dimension '{}'".format(
-                chunk, dimension),
-                                   "this might indicate an unsuccessful save of the world!")
+        if "landmass_map" in data["maps"] and "biome" in data["maps"] and "height" in data["maps"] and \
+                sum([len(data["maps"][key]) for key in data["maps"]]) == len(data["maps"]) * 256:
+            try:
+                chunk_instance.set_value("landmassmap",
+                                         {pos: data["maps"]["landmass_palette"][data["maps"]["landmass_map"][i]]
+                                          for i, pos in enumerate(positions)})
+                biome_map = {pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]] for i, pos in
+                             enumerate(positions)}
+                chunk_instance.set_value("biomemap", biome_map)
+                chunk_instance.set_value("heightmap",
+                                         {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
+            except IndexError:
+                logger.write_exception(
+                    "[CHUNK][CORRUPTED] palette map exception in chunk '{}' in dimension '{}'".format(
+                        chunk, dimension),
+                    "this might indicate an unsuccessful save of the world!")
 
         for entity in data["entities"]:
             if entity["type"] == "minecraft:player": continue
@@ -429,4 +435,3 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
 
         G.worldgenerationhandler.enable_generation = True  # re-enable world gen as we are finished
         # todo: make sure that this is always set back to True, also on error
-
