@@ -63,8 +63,7 @@ changelog of snapshot [next] (theme: fixing stuff & upgrading base to 1.16)
     - updated textures to 1.16 and added content of the update
     - added --enable-all-blocks runtime flag for enabling all optional blocks
     - added profiler for world generation
-
-    todo: add data gen for loot tables & use them in combined block factory system
+    - added button to delete world in world selection screen
 
     fixed issues:
         from previous snapshot:

@@ -27,6 +27,7 @@ import mcpython.util.opengl
 import mcpython.util.texture
 from . import State
 from .ui import UIPartButton, UIPartScrollBar
+import shutil
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
     mcpython.ResourceLocator.read("assets/missingtexture.png", "pil").resize((50, 50), PIL.Image.NEAREST))
@@ -42,6 +43,12 @@ class StateWorldSelection(State.State):
         self.world_data = []  # the data representing the world list; first goes first in list from above
         self.selected_world = None
         self.selection_sprite = pyglet.sprite.Sprite(WORLD_SELECTION_SELECT)
+        del self.eventbus
+        self.eventbus = G.eventhandler.create_bus(active=False, crash_on_error=False)
+        for statepart in self.parts:
+            statepart.master = [self]  # StateParts get an list of steps to get to them as an list
+            statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
+        self.bind_to_eventbus()
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
@@ -51,7 +58,7 @@ class StateWorldSelection(State.State):
         self.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
 
     def on_resize(self, wx, wy):
-        self.parts[4].set_size_respective((wx - 80, 105), wy - 195)
+        self.parts[-1].set_size_respective((wx - 80, 105), wy - 195)
         self.recalculate_sprite_position()
 
     def get_parts(self) -> list:
@@ -61,15 +68,17 @@ class StateWorldSelection(State.State):
                                           on_press=self.on_new_world_press),
                 UIPartButton.UIPartButton((150, 20), "play!", (-105, 60), anchor_button="MM",
                                           anchor_window="MD", on_press=self.on_world_load_press),
-                UIPartButton.UIPartButton((150, 20), "back", (-105, 20), anchor_window="MD", anchor_button="MM",
+                UIPartButton.UIPartButton((150, 20), "back", (-105, 20), anchor_window="MD", anchor_button="MD",
                                           on_press=self.on_back_press),
+                UIPartButton.UIPartButton((150, 20), "delete", (105, 20), anchor_window="MD", anchor_button="MD",
+                                          on_press=self.on_delete_press),
                 UIPartScrollBar.UIScrollBar((wx - 80, 105), wy - 195, on_scroll=self.on_scroll)]
 
     def on_mouse_press(self, x, y, button, modifiers):
         if not button == mouse.LEFT: return
         wx, _ = G.window.get_size()
         wx -= 120
-        for i, (_, icon, _) in enumerate(self.world_data):
+        for i, (_, icon, _, _) in enumerate(self.world_data):
             px, py = icon.position
             if 0 <= x - px <= wx - 130 and 0 <= y - py <= 50:
                 if 0 <= x - px <= 50:
@@ -86,13 +95,13 @@ class StateWorldSelection(State.State):
         self.recalculate_sprite_position()
 
     def on_mouse_scroll(self, x, y, dx, dy):
-        self.parts[4].move(dy * 4)
+        self.parts[-1].move(dy * 4)
 
     def recalculate_sprite_position(self):
         wx, wy = G.window.get_size()
-        status = (1 - self.parts[4].get_status()) * len(self.world_data) * 20
+        status = (1 - self.parts[-1].get_status()) * len(self.world_data) * 20
         ay = wy + status - 150
-        for i, (_, sprite, labels) in enumerate(self.world_data):
+        for i, (_, sprite, labels, _) in enumerate(self.world_data):
             sprite.x = 50
             sprite.y = ay
             dy = ay
@@ -103,7 +112,7 @@ class StateWorldSelection(State.State):
             ay -= 60
 
         if (wy - 140) / 60 > len(self.world_data):
-            self.parts[4].active = False
+            self.parts[-1].active = False
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
@@ -114,16 +123,16 @@ class StateWorldSelection(State.State):
             self.enter_world(self.selected_world)
         elif symbol == key.UP and self.selected_world is not None and self.selected_world > 0:
             self.selected_world -= 1
-            self.parts[4].move(60)
+            self.parts[-1].move(60)
         elif symbol == key.DOWN and self.selected_world is not None and self.selected_world < len(self.world_data) - 1:
             self.selected_world += 1
-            self.parts[4].move(-60)
+            self.parts[-1].move(-60)
 
     def on_draw_2d_post(self):
         wx, wy = G.window.get_size()
         pyglet.gl.glClearColor(1., 1., 1., 1.)
         x, y = G.window.mouse_position
-        for i, (_, icon, labels) in enumerate(self.world_data):
+        for i, (_, icon, labels, _) in enumerate(self.world_data):
             if icon.y < 105 or icon.y > wy - 110: continue
             icon.draw()
             for label in labels:
@@ -141,7 +150,7 @@ class StateWorldSelection(State.State):
     def activate(self):
         super().activate()
         self.reload_world_icons()
-        self.parts[4].set_status(1)
+        self.parts[-1].set_status(1)
 
     def reload_world_icons(self):
         if not os.path.exists(mcpython.storage.SaveFile.SAVE_DIRECTORY):
@@ -169,17 +178,22 @@ class StateWorldSelection(State.State):
                               data["game version"], edit)),
                           pyglet.text.Label("last loaded with {} mod{}".format(
                               len(data["mods"]), "" if len(data["mods"]) <= 1 else "s"))]
-                self.world_data.append((edit_date, sprite, labels))
+                self.world_data.append((edit_date, sprite, labels, path))
         self.world_data.sort(key=lambda d: -d[0].timestamp())
         self.recalculate_sprite_position()
         if (wy - 140) / 60 > len(self.world_data):
-            self.parts[4].active = False
+            self.parts[-1].active = False
 
     def on_back_press(self, *_):
         G.statehandler.switch_to("minecraft:startmenu")
 
     def on_new_world_press(self, *_):
         G.statehandler.switch_to("minecraft:world_generation_config")
+
+    def on_delete_press(self, *_):
+        if self.selected_world is None: return
+        shutil.rmtree(self.world_data[self.selected_world][3])
+        self.reload_world_icons()
 
     def on_world_load_press(self, *_):
         if self.selected_world is None: return

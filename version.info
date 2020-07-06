@@ -1189,3 +1189,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: imrpvoed cases for data generators
 [uuk]: fixed duplicated states in debug world (issue 224)
 [uuk]: fixed loading of debug worlds (issue 203)
+[uuk]: added delete world button to world selection screen
