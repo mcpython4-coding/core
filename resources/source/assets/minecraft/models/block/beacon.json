@@ -1,10 +1,10 @@
 {   "parent": "minecraft:block/block",
     "ambientocclusion": false,
     "textures": {
-        "particle": "block/glass",
-        "glass": "block/glass",
-        "obsidian": "block/obsidian",
-        "beacon": "block/beacon"
+        "particle": "minecraft:block/glass",
+        "glass": "minecraft:block/glass",
+        "obsidian": "minecraft:block/obsidian",
+        "beacon": "minecraft:block/beacon"
     },
     "elements": [
         {   "__comment": "Glass shell",

@@ -1,7 +1,7 @@
 {
     "parent": "minecraft:block/block",
     "textures": {
-        "all": "block/turtle_egg",
+        "all": "minecraft:block/turtle_egg",
         "particle": "#all"
     },
     "elements": [

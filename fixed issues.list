@@ -204,3 +204,4 @@ issue 220: RenderingHelper's apply method was not working; fixed on 01.07.2020 b
 issue 221: exception when save list is empty; fixed on 01.07.2020 by uuk
 issue 222: some chunk part fixer results were not stored properly; fixed on 03.07.2020 by uuk
 issue 223: world gen config screen was parsing world name wrong; fixed on 03.07.2020 by uuk
+issue 224: debug world was displaying some blocks duplicated; fixed on 06.07.2020 by uuk

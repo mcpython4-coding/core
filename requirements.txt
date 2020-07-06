@@ -7,3 +7,4 @@ toml==0.10.1
 requests==2.23.0
 deprecation==2.1.0
 simplejson==3.17.0
+Deprecated==1.2.10

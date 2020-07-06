@@ -244,7 +244,7 @@ class BlockModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
         if self.parent != "minecraft:block/block" and self.elements:
             logger.println("[DATA GEN][WARN] block model {} has unusual parent and elements set".format(self.name))
         data = {"parent": self.parent}
-        if self.ambientocclusion: data["ambientocclusion"] = self.ambientocclusion
+        if not self.ambientocclusion: data["ambientocclusion"] = self.ambientocclusion
         if len(self.display) > 0:
             data["display"] = {}
             for key in self.display:

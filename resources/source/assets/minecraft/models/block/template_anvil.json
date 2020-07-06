@@ -1,7 +1,7 @@
 {   "parent": "minecraft:block/block",
     "textures": {
-        "particle": "block/anvil",
-        "body": "block/anvil"
+        "particle": "minecraft:block/anvil",
+        "body": "minecraft:block/anvil"
     },
     "display": {
         "fixed": {

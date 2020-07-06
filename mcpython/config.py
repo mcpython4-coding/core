@@ -116,45 +116,56 @@ WARNING (for modders): You might add your own entries onto this table. But make 
 """
 
 ENABLED_EXTRA_BLOCKS = {
-    "minecraft:stone_wall": False, "minecraft:polished_granite_wall": False,
-    "minecraft:polished_diorite_wall": False, "minecraft:polished_andesite_wall": False, "minecraft:dirt_slab": False,
-    "minecraft:dirt_wall": False, "minecraft:coarse_dirt_slab": False, "minecraft:coarse_dirt_wall": False,
-    "minecraft:bedrock_slab": False, "minecraft:bedrock_wall": False, "minecraft:sand_slab": False,
-    "minecraft:sand_wall": False, "minecraft:red_sand_slab": False, "minecraft:red_sand_wall": False,
-    "minecraft:gravel_slab": False, "minecraft:gravel_wall": False, "minecraft:grass_slab": False,
-    "minecraft:ancient_debris_slab": False, "minecraft:ancient_debris_wall": False, "minecraft:clay_slab": False,
-    "minecraft:clay_wall": False, "minecraft:cracked_nether_brick_slab": False,
-    "minecraft:cracked_nether_brick_wall": False, "minecraft:cracked_polished_blackstone_brick_slab": False,
-    "minecraft:cracked_polished_blackstone_brick_wall": False, "minecraft:crying_obsidian_slab": False,
-    "minecraft:crying_obsidian_wall": False, "minecraft:cut_sandstone_wall": False,
-    "minecraft:cut_red_sandstone_wall": False, "minecraft:dark_prismarine_wall": False,
-    "minecraft:end_stone_slab": False, "minecraft:end_stone_wall": False, "minecraft:gilded_blackstone_slab": False,
-    "minecraft:gilded_blackstone_wall": False, "minecraft:glowstone_slab": False, "minecraft:glowstone_wall": False,
-    "minecraft:magma_block_slab": False, "minecraft:magma_block_wall": False, "minecraft:nether_wart_block_slab": False,
-    "minecraft:nether_wart_block_wall": False, "minecraft:netherrack_slab": False, "minecraft:netherrack_wall": False,
-    "minecraft:obsidian_slab": False, "minecraft:obsidian_wall": False, "minecraft:prismarine_brick_wall": False,
-    "minecraft:purpur_wall": False, "minecraft:quartz_wall": False, "minecraft:quartz_brick_slab": False,
-    "minecraft:quartz_brick_wall": False
+    "minecraft:bedrock_slab": False, "minecraft:bedrock_wall": False, "minecraft:terracotta_slab": False,
+    "minecraft:terracotta_wall": False, "minecraft:glass_slab": False, "minecraft:glass_wall": False,
+    "minecraft:chiseled_polished_blackstone_slab": False, "minecraft:chiseled_polished_blackstone_wall": False,
+    "minecraft:cracked_polished_blackstone_brick_slab": False, "minecraft:chiseled_nether_brick_slab": False,
+    "minecraft:cracked_polished_blackstone_brick_wall": False, "minecraft:chiseled_nether_brick_wall": False,
+    "minecraft:cracked_nether_brick_slab": False, "minecraft:cracked_nether_brick_wall": False,
+    "minecraft:quartz_brick_slab": False, "minecraft:quartz_brick_wall": False, "minecraft:smooth_quart_wall": False,
+    "minecraft:chiseled_stone_brick_slab": False, "minecraft:chiseled_stone_brick_wall": False,
+    "minecraft:clay_slab": False, "minecraft:clay_wall": False, "minecraft:coal_block_slab": False,
+    "minecraft:coal_block_wall": False, "minecraft:coarse_dirt_slab": False, "minecraft:coarse_dirt_wall": False,
+    "minecraft:cracked_stone_brick_slab": False, "minecraft:cracked_stone_brick_wall": False,
+    "minecraft:end_stone_slab": False, "minecraft:end_stone_wall": False, "minecraft:stone_wall": False,
+    "minecraft:crying_obsidian_slab": False, "minecraft:crying_obsidian_wall": False, "minecraft:obsidian_slab": False,
+    "minecraft:obsidian_wall": False, "minecraft:dark_prismarine_wall": False, "minecraft:prismarine_brick_wall": False,
+    "minecraft:diamond_block_slab": False, "minecraft:diamond_block_wall": False, "minecraft:dirt_slab": False,
+    "minecraft:dirt_wall": False, "minecraft:emerald_block_slab": False, "minecraft:emerald_block_wall": False,
+    "minecraft:glowstone_slab": False, "minecraft:glowstone_wall": False, "minecraft:gold_block_slab": False,
+    "minecraft:gold_block_wall": False, "minecraft:honeycomb_block_slab": False, "minecraft:iron_block_slab": False,
+    "minecraft:honeycomb_block_wall": False, "minecraft:iron_block_wall": False, "minecraft:lapis_block_slab": False,
+    "minecraft:lapis_block_wall": False, "minecraft:magma_block_slab": False, "minecraft:magma_block_wall": False,
+    "minecraft:nether_wart_block_slab": False, "minecraft:nether_wart_block_wall": False,
+    "minecraft:netherite_block_slab": False, "minecraft:netherite_block_wall": False,
+    "minecraft:purpur_block_wall": False, "minecraft:redstone_block_slab": False, "minecraft:shroomlight_slab": False,
+    "minecraft:redstone_block_wall": False, "minecraft:shroomlight_wall": False, "minecraft:snow_block_wall": False,
+    "minecraft:soul_sand_slab": False, "minecraft:soul_sand_wall": False
 }
 
 # I'm to lazy to write these...
+for wood in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak"]:
+    pass
+
+for wood in ["crimson", "warped"]:
+    pass
+
 for wood in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "crimson", "warped"]:
-    ENABLED_EXTRA_BLOCKS["minecraft:{}_plank_wall".format(wood)] = False  # Oh, fancy, but what about fences?
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_wall".format(wood)] = False
 
 for color in ["white", "orange", "magenta", "light_blue", "lime", "pink", "gray", "light_gray", "cyan",
               "purple", "blue", "brown", "green", "red", "black"]:
-
-    # colored slabs and walls, why not? (excluding powder as it is something "special")
-    ENABLED_EXTRA_BLOCKS["minecraft:{}_wool_slab".format(color)] = False
-    ENABLED_EXTRA_BLOCKS["minecraft:{}_wool_wall".format(color)] = False
     ENABLED_EXTRA_BLOCKS["minecraft:{}_concrete_slab".format(color)] = False
     ENABLED_EXTRA_BLOCKS["minecraft:{}_concrete_wall".format(color)] = False
-
-    # someone asked for more color, here you go!
-    ENABLED_EXTRA_BLOCKS["minecraft:{}_stained_glass_slab".format(color)] = False
-    ENABLED_EXTRA_BLOCKS["minecraft:{}_stained_glass_wall".format(color)] = False
     ENABLED_EXTRA_BLOCKS["minecraft:{}_terracotta_slab".format(color)] = False
     ENABLED_EXTRA_BLOCKS["minecraft:{}_terracotta_wall".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_wool_slab".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_wool_wall".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_stained_glass_slab".format(color)] = False
+    ENABLED_EXTRA_BLOCKS["minecraft:{}_stained_glass_wall".format(color)] = False
+
+for stone in ["andesite", "granite", "diorite"]:
+    ENABLED_EXTRA_BLOCKS["minecraft:polished_{}_wall".format(stone)] = False
 
 
 def load():
@@ -233,7 +244,7 @@ def load():
         if "--enable-all-blocks" not in sys.argv:
             for key in ENABLED_EXTRA_BLOCKS:
                 ENABLED_EXTRA_BLOCKS[key] = block_config[key].read()
-        else:  # we want to enable ALL without affecting the config file
+        else:  # we want to enable ALL without writing them to the config file
             for key in ENABLED_EXTRA_BLOCKS:
                 ENABLED_EXTRA_BLOCKS[key] = True
 

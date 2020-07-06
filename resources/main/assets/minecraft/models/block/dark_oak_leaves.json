@@ -1,6 +1,0 @@
-{
-    "parent": "minecraft:block/leaves",
-    "textures": {
-        "all": "build/texture/blocks/dark_oak_leaves.png"
-    }
-}

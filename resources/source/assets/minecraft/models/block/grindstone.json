@@ -1,11 +1,11 @@
 {
     "parent": "minecraft:block/block",
     "textures": {
-        "pivot": "block/grindstone_pivot",
-        "round": "block/grindstone_round",
-        "side": "block/grindstone_side",
-        "particle": "block/grindstone_side",
-        "leg": "block/dark_oak_log"
+        "pivot": "minecraft:block/grindstone_pivot",
+        "round": "minecraft:block/grindstone_round",
+        "side": "minecraft:block/grindstone_side",
+        "particle": "minecraft:block/grindstone_side",
+        "leg": "minecraft:block/dark_oak_log"
     },
     "elements": [
         {

@@ -75,15 +75,10 @@ class IWall(mcpython.block.Block.Block):
 
 
 @G.registry
-class PrismarineWall(IWall):
-    NAME = "minecraft:prismarine_wall"
-
-
-@G.registry
-class RedNetherBrickWall(IWall):
-    NAME = "minecraft:red_nether_brick_wall"
-
-
-@G.registry
 class RedSandstoneWall(IWall):
     NAME = "minecraft:red_sandstone_wall"
+
+
+@G.registry
+class SandstoneWall(IWall):
+    NAME = "minecraft:sandstone_wall"

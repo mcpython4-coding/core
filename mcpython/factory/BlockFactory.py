@@ -96,7 +96,7 @@ class BlockFactory:
         self.name = None
         self.modname = None
         self.breakable = True
-        self.modelstates = [{}]
+        self.modelstates = []
         self.solid_faces = None
 
         self.create_callback = None
@@ -212,13 +212,14 @@ class BlockFactory:
         :return: the BlockFactory instance. When the template exists, it will be an copy of the active without the
             template instance
         """
+        # logger.println("[INFO] finishing up '{}'".format(self.name))
         if self.name.count(":") == 0:
             logger.println("[BLOCK FACTORY][FATAL] 'setName' was set to an not-prefixed name '{}'".format(self.name))
             logger.println("[BLOCK FACTORY][FATAL] out of these error, the block is NOT constructed")
             logger.println("[BLOCK FACTORY][FATAL] (P.s. this does mean also that setGlobalModName() was not set)")
             logger.println("[BLOCK FACTORY][FATAL] (This could be an wrong template setup for the block factory)")
             return
-        if self.modname is None:
+        if self.modname is None or self.name.count(":") > 0:
             modname, blockname = tuple(self.name.split(":"))
         else:
             modname, blockname = self.modname, self.name
@@ -288,10 +289,18 @@ class BlockFactory:
 
             @staticmethod
             def get_all_model_states():
-                states = self.modelstates.copy()
-                [states.extend(e.get_all_model_states()) for e in self.baseclass]
-                if states.count({}) != len(states):
-                    while {} in states: states.remove({})
+                raw_states = self.modelstates.copy()
+                [raw_states.extend(e.get_all_model_states()) for e in self.baseclass]
+
+                while {} in raw_states: raw_states.remove({})  # we don't need them now
+
+                # make the entries unique!
+                states = []
+                for e in raw_states:
+                    if e not in states: states.append(e)
+
+                if len(states) == 0: states.append({})  # if we have no, this is the default one
+
                 return states
 
             def __init__(self, *args, **kwargs):

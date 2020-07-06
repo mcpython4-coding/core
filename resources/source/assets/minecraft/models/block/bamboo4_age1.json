@@ -1,7 +1,7 @@
 {
     "textures": {
-        "all": "block/bamboo_stalk",
-        "particle": "block/bamboo_stalk"
+        "all": "minecraft:block/bamboo_stalk",
+        "particle": "minecraft:block/bamboo_stalk"
     },
     "elements": [
         {   "from": [ 6.5, 0, 6.5 ],

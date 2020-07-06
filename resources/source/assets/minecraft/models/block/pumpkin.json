@@ -8,7 +8,7 @@
         }
     },
     "textures": {
-        "end": "block/pumpkin_top",
-        "side": "block/pumpkin_side"
+        "end": "minecraft:block/pumpkin_top",
+        "side": "minecraft:block/pumpkin_side"
     }
 }

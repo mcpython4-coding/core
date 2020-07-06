@@ -1,7 +1,7 @@
 {
     "parent": "minecraft:block/block",
     "textures": {
-        "bottom": "block/chorus_plant",
+        "bottom": "minecraft:block/chorus_plant",
         "particle": "#texture"
     },
     "elements": [

@@ -1,6 +1,6 @@
 {
     "textures": {
-        "particle": "block/water_still"
+        "particle": "minecraft:block/water_still"
     }
 }
 

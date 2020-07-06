@@ -12,6 +12,7 @@ import os
 import simplejson
 import logger
 import PIL.Image
+import time
 
 
 class IDataGenerator:
@@ -107,17 +108,18 @@ class DataGeneratorConfig:
         Internal function to build the config
         Will decide if the system should data-gen or not
         """
-        if (not G.data_gen or G.dev_environment) and self.modname != "minecraft": return
-        if (G.data_gen and not G.dev_environment) and self.modname == "minecraft": return
+        if not G.data_gen or (not G.dev_environment and self.modname == "minecraft"): return
 
         if not self.enabled: return
         logger.println("[INFO] building data generators for '{}'...".format(self.modname))
+        start = time.time()
         for element in self.elements:
             try:
                 element.generate()
             except:
                 logger.write_exception("during building {}".format(element))
-        logger.println("[INFO] finished!")
+        self.elements.clear()  # remove them as we might want to gc them
+        logger.println("[INFO] finished in {}s".format(time.time()-start))
 
     def write(self, data, *args):
         """

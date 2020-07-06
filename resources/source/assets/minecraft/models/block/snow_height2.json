@@ -1,7 +1,7 @@
 {   "parent": "minecraft:block/thin_block",
     "textures": {
-        "particle": "block/snow",
-        "texture": "block/snow"
+        "particle": "minecraft:block/snow",
+        "texture": "minecraft:block/snow"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],
