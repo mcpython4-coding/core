@@ -9,7 +9,7 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import math
 import sys
 
-MC_VERSION_BASE = "1.15.2"
+MC_VERSION_BASE = "1.16.1"
 VERSION_TYPE = "dev"
 # possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
 VERSION_NAME = "snapshot dev 4"

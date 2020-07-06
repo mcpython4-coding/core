@@ -24,7 +24,7 @@ class ItemStack:
             if item_name_or_instance in G.registry.get_by_name("item").registered_object_map:
                 self.item = G.registry.get_by_name("item").registered_object_map[item_name_or_instance]()
             else:
-                logger.println("can't find item named {}".format(item_name_or_instance))
+                logger.println("can't find item named '{}'".format(item_name_or_instance))
                 self.item = None
         else:
             self.item = None

@@ -36,45 +36,45 @@ def load_blocks():
     falling_template = full_template.copy().resetTemplate().setFallable().setTemplate()
     slab_template = full_template.copy().resetTemplate().setSlab().setTemplate()
 
-    full_template.setName("ancient_debris").finish()
-    full_template.setName("barrier").setBreakAbleFlag(False).setAllSideSolid(False).finish()
-    full_template.setName("chiseled_quartz_block").setStrenght(.8).setBestTools(
+    full_template("ancient_debris").finish()
+    full_template("barrier").setBreakAbleFlag(False).setAllSideSolid(False).finish()
+    full_template("chiseled_quartz_block").setStrenght(.8).setBestTools(
         ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    full_template.setName("quartz_block").setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+    full_template("quartz_block").setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
         1).finish()
-    slab_template.setName("quartz_slab").setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
+    slab_template("quartz_slab").setStrenght(.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
         1).finish()
-    full_template.setName("smooth_stone").setStrenght(1.5, 6).setBestTools(
+    full_template("smooth_stone").setStrenght(1.5, 6).setBestTools(
         ToolType.PICKAXE).setMinimumToolLevel(1).finish()
-    slab_template.setName("smooth_stone_slab").setStrenght(1.5, 6).setBestTools(
+    slab_template("smooth_stone_slab").setStrenght(1.5, 6).setBestTools(
         ToolType.PICKAXE).setMinimumToolLevel(1).finish()
 
-    full_template.setName("cut_red_sandstone").finish()
-    slab_template.setName("cut_red_sandstone_slab").finish()
-    full_template.setName("cut_sandstone").finish()
-    slab_template.setName("cut_sandstone_slab").finish()
+    full_template("cut_red_sandstone").finish()
+    slab_template("cut_red_sandstone_slab").finish()
+    full_template("cut_sandstone").finish()
+    slab_template("cut_sandstone_slab").finish()
 
-    full_template.setName("red_sandstone").finish()
-    slab_template.setName("red_sandstone_slab").finish()
+    full_template("red_sandstone").finish()
+    slab_template("red_sandstone_slab").finish()
 
-    full_template.setName("sandstone").finish()
-    slab_template.setName("sandstone_slab").finish()
+    full_template("sandstone").finish()
+    slab_template("sandstone_slab").finish()
 
-    full_template.setName("dried_kelp_block").finish()
+    full_template("dried_kelp_block").finish()
 
-    log_template.setName("minecraft:hay_block").finish()
+    log_template("minecraft:hay_block").finish()
 
-    full_template.setName("pumpkin").finish()
-    full_template.setName("jack_o_lantern").setHorizontalOrientable().finish()
-    full_template.setName("melon").finish()
+    full_template("pumpkin").finish()
+    full_template("jack_o_lantern").setHorizontalOrientable().finish()
+    full_template("melon").finish()
 
-    full_template.setName("mycelium").setDefaultModelState({"snowy": "false"}).finish()
-    full_template.setName("podzol").setDefaultModelState({"snowy": "false"}).finish()
+    full_template("mycelium").setDefaultModelState({"snowy": "false"}).finish()
+    full_template("podzol").setDefaultModelState({"snowy": "false"}).finish()
 
-    full_template.setName("netherrack").finish()
+    full_template("netherrack").finish()
 
-    full_template.setName("quartz_block").finish()
-    slab_template.setName("quartz_slab").finish()
+    full_template("quartz_block").finish()
+    slab_template("quartz_slab").finish()
 
 
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:factory_usage", load_blocks,

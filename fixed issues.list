@@ -206,3 +206,7 @@ issue 222: some chunk part fixer results were not stored properly; fixed on 03.0
 issue 223: world gen config screen was parsing world name wrong; fixed on 03.07.2020 by uuk
 issue 224: debug world was displaying some blocks duplicated; fixed on 06.07.2020 by uuk
 issue 203: exception when loading an world saved as debug world; fixed on 06.07.2020 by uuk
+issue 225: .setGlobalModName() on ItemFactories did not work as needed; fixed on 06.07.2020 by uuk
+issue 226: when ItemAtlas scheduled missing texture for texture, it still crashed; fixed on 06.07.2020 by uuk
+issue 227: ItemFactory's template system was broken; fixed on 06.07.2020 by uuk
+issue 228: logger was prefixing every part with time, not only the front; fixed on 06.07.2020 by uuk

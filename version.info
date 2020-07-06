@@ -1190,3 +1190,10 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed duplicated states in debug world (issue 224)
 [uuk]: fixed loading of debug worlds (issue 203)
 [uuk]: added delete world button to world selection screen
+[uuk]: .setGlobalModName() on ItemFactory did not work correctly (issue 225)
+[uuk]: fixed ItemAtlas crashing when item file not found (issue 226)
+[uuk]: fixed ItemFactory's template system (issue 227)
+[uuk]: ItemFactory & BlockFactory have now an template-option to finish when previous data gotten on setName() before
+       doing an new item / block
+[uuk]: item name can now be based to the constructor of ItemFactory and to the () of an instance
+[uuk]: fixed logger prefixing every part with time (issue 228)

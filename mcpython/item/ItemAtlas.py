@@ -72,7 +72,11 @@ class ItemAtlasHandler:
             if file == "assets/missingtexture.png":
                 self.allocation_table[ofile] = (0, (0, 0))
                 continue
-            image = mcpython.ResourceLocator.read(file, "pil")
+            if mcpython.ResourceLocator.exists(file):
+                image = mcpython.ResourceLocator.read(file, "pil")
+            else:
+                self.allocation_table[ofile] = (0, (0, 0))
+                return
             if file not in self.prevent_resize: image = image.resize((32, 32), PIL.Image.NEAREST)
             for i, atlas in enumerate(self.atlases):
                 if len(atlas.free_space) > 0:

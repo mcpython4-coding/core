@@ -93,6 +93,8 @@ class BlockFactory:
 
         self.on_class_create = on_class_create
 
+        self.set_name_finises_previous = False
+
         self.name = None
         self.modname = None
         self.breakable = True
@@ -127,6 +129,11 @@ class BlockFactory:
 
         self.template = None
 
+    def __call__(self, name: str = None):
+        if name is not None:
+            self.setName(name)
+        return self
+
     def copy(self):
         """
         will copy the BlockFactory-object with all its content (including its template-link)
@@ -157,11 +164,12 @@ class BlockFactory:
         obj.template = self.template
         return obj
 
-    def setTemplate(self):
+    def setTemplate(self, set_name_finises_previous=False):
         """
         sets the current status as "template". This status will be set to on every .finish() call, but will not affect
         the new generated entry.
         """
+        self.set_name_finises_previous = set_name_finises_previous
         self.template = self.copy()
         return self
 
@@ -422,6 +430,7 @@ class BlockFactory:
         :param name: The name of the block
         """
         assert type(name) == str
+        if self.set_name_finises_previous and self.name is not None: self.finish()
         self.name = ("" if self.modname is None or ":" in name else (self.modname + ":")) + name
         if self.name.count(":") == 0:
             import traceback

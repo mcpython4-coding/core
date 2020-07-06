@@ -67,7 +67,7 @@ def println(*msg, sep=" ", end="\n", write_into_console=True, write_into_log_fil
     :param write_into_log_file: if the data should be written into the log file
     """
     now = datetime.now()
-    msg = ["[{}][{}][{}][{}][{}][{}] ".format(now.year, now.month, now.day, now.hour, now.minute, now.second)+escape(
+    msg = ["[{}][{}][{}][{}][{}][{}] ".format(now.year, now.month, now.day, now.hour, now.minute, now.second)]+[escape(
         str(e).replace("\\", "/")) for e in msg]
     if write_into_console: print(*msg, sep=sep, end=end)
     if write_into_log_file:
