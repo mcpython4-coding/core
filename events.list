@@ -1,3 +1,8 @@
+Every event here listed with "<...>" is an older event which (might) get updated in the near future to another event.
+These events WILL mostly get removed in the future. Make sure that you are aware of that!!!!!!
+
+At the end of the file, you will find an list of removed events from this file and their former usage.
+
 
 commands:
     command:clear(CancelAbleEvent, ParsingCommandInfo): called when /clear is executed
@@ -48,7 +53,12 @@ items:
     "itemhandler:build:atlases:load": called by ItemHandler when the table of item data is loaded
 
 mod loader:
-    "modloader:mod_found": called by ModLoader when an mod-instance was created
+    modloader:location_search(list[str]): called by ModLoader with the list of possible mod directories/files.
+        used to modify things
+    modloader:mod_entered_stage(CancelAbleEvent, stage, event, Mod): called by ModLoader when an new stage for an mod is
+        started. When canceled, event cluster for mod will be skipped
+    modloader:mod_registered(CancelAbleEvent, Mod): called by ModLoader when an new mod tries to be loaded. canceling
+        will prevent the mod from registering
 
 interaction:
     "gameloop:tick:start": called on beginning of every tick with the elapsed time since last tick
@@ -114,4 +124,5 @@ data generation [loading event]:
 removed:
     "command:clear:start": previous event for /clear command
     "command:clear:end": previous event for /clear command
+    "modloader:mod_found": previous called by ModLoader when an mod-instance was created
 

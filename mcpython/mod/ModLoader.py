@@ -91,8 +91,11 @@ class LoadingStage:
         if self.active_mod_index >= len(G.modloader.mods):
             self.active_mod_index = 0
             if len(self.eventnames) == 0: return self.finish(astate)
-            self.active_event_name = self.eventnames.pop(0)
+            self.active_event_name = self.eventnames.pop(0)  # todo: is there an better way?
             modinst: mcpython.mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
+            if not G.eventhandler.call_cancelable("modloader:mod_entered_stage", self.name, self.active_event_name, modinst):
+                self.active_mod_index += 1
+                return
             self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
             astate.parts[2].progress_max = self.max_progress
             astate.parts[2].progress = 0
@@ -226,6 +229,7 @@ LOADING_ORDER += [
 class ModLoaderAnnotation:
     """
     representation of an @G.modloader([...]) annotation
+    todo: make use lambdas
     """
 
     def __init__(self, modname: str, eventname: str, info=None):
@@ -318,6 +322,9 @@ class ModLoader:
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
+
+        G.eventhandler.call("modloader:location_search", modlocations)
+
         for i, location in enumerate(modlocations):
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i+1)
         return modlocations
@@ -574,7 +581,8 @@ class ModLoader:
         will add an mod-instance into the inner system
         :param modinstance: the mod instance to add
         """
-        G.eventhandler.call("modloader:mod_found", modinstance)
+        if not G.eventhandler.call_cancelable("modloader:mod_registered", modinstance):
+            return
         self.mods[modinstance.name] = modinstance
         self.found_mods.append(modinstance)
         modinstance.path = self.active_directory
