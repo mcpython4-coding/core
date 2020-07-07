@@ -149,6 +149,7 @@ issue 201:
 
 issue 204:
     bug: debug world generates start chest
+    caused by: missing configuration for starter chest in world gen options
     fix: add option to enable start chest gen
 
 issue 217:

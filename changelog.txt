@@ -68,6 +68,7 @@ changelog of snapshot [next] (theme: fixing stuff & upgrading base to 1.16)
         the future as it will get replaced by reload-registries-events)
     - added /execute in <dimension id> sub-command
     - /teleport allows now the player to also change dimension
+    - implemented base generator for the nether
 
     fixed issues:
         from previous snapshot:
@@ -87,6 +88,7 @@ changelog of snapshot [next] (theme: fixing stuff & upgrading base to 1.16)
             - .setGlobalModName() on ItemFactory did not work correctly
             - ItemAtlas was crashing on missing texture file instead of replacing with missingtexture.png
             - ItemFactory's template system was broken
+            - changing dimension did not work in a lot of cases
 
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
     Rendering:

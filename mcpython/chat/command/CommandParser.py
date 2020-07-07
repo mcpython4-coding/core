@@ -29,8 +29,7 @@ class ParsingCommandInfo:
         return ParsingCommandInfo(entity=self.entity, position=self.position, dimension=self.dimension, chat=self.chat)
 
     def __str__(self):
-        return "ParsingCommandInfo(entity={},position={},dimension={})".format(self.entity, self.position,
-                                                                               self.dimension.id)
+        return "ParsingCommandInfo(entity={},position={},dimension={})".format(self.entity, self.position, self.dimension)
 
 
 class CommandParser:
