@@ -71,6 +71,10 @@ class LoadingStage:
         """
         G.modloader.active_loading_stage += 1
         if G.modloader.active_loading_stage >= len(LOADING_ORDER):
+
+            logger.println("[INFO] locking registries...")  # ... and do similar stuff :-)
+            G.eventhandler.call("modloader:finished")
+
             G.statehandler.switch_to("minecraft:blockitemgenerator")
             G.modloader.finished = True
             return True

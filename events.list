@@ -59,6 +59,7 @@ mod loader:
         started. When canceled, event cluster for mod will be skipped
     modloader:mod_registered(CancelAbleEvent, Mod): called by ModLoader when an new mod tries to be loaded. canceling
         will prevent the mod from registering
+    modloader:finished(): called by ModLoader when it finished loading
 
 interaction:
     "gameloop:tick:start": called on beginning of every tick with the elapsed time since last tick

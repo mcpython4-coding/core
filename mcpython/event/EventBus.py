@@ -6,11 +6,15 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
-import globals as G
+import importlib
 import sys
 import time
+import typing
+
+import deprecation
+
+import globals as G
 import logger
-import importlib
 
 
 class CancelAbleEvent:
@@ -25,9 +29,18 @@ class EventBus:
     """
     An class for bundling event calls to instances of this to make it easy to add/remove big event notations.
     It should be something like an sub-eventhandler
+
+    todo: make thread-safe
     """
 
-    def __init__(self, args=(), kwargs={}, crash_on_error=True):
+    def __init__(self, args: typing.Iterable = (), kwargs: dict = None, crash_on_error: bool = True):
+        """
+        Creates an new EventBus instance
+        :param args: the args to send to every function call
+        :param kwargs: the kwargs to send to every function call
+        :param crash_on_error: if an crash should be triggered on an exception of an func
+        """
+        if kwargs is None: kwargs = {}
         self.event_subscriptions = {}  # name -> (function, args, kwargs)[
         self.extra_arguments = (args, kwargs)
         self.crash_on_error = crash_on_error
@@ -37,7 +50,7 @@ class EventBus:
         if G.debugevents:
             with open(G.local+"/debug/eventbus_{}.txt".format(self.id), mode="w") as f: f.write("//debug profile")
 
-    def subscribe(self, eventname: str, function, *args, info=None, **kwargs):
+    def subscribe(self, eventname: str, function: typing.Callable, *args, info=None, **kwargs):
         """
         add an function to the event bus by event name. If event name does NOT exists, it will be created localy
         :param eventname: the event to listen to on this bis
@@ -51,8 +64,9 @@ class EventBus:
         self.event_subscriptions[eventname].append((function, args, kwargs, info))
         if G.debugevents:
             with open(G.local+"/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
-                f.write("\nevent subscription of {} to {}".format(function, eventname))
+                f.write("\nevent subscription of '{}' to '{}'".format(function, eventname))
 
+    @deprecation.deprecated("dev4-3", "a1.3.0")
     def subscribe_package_load(self, eventname, package):
         self.subscribe(eventname, lambda *_: importlib.import_module(package))
 
@@ -70,9 +84,9 @@ class EventBus:
         self.event_subscriptions[event_name].remove(function)
         if G.debugevents:
             with open(G.local+"/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
-                f.write("\nevent unsubscribe of {} to event {}".format(function, event_name))
+                f.write("\nevent unsubscribe of '{}' to event '{}'".format(function, event_name))
 
-    def call(self, event_name, *args, **kwargs):
+    def call(self, event_name: str, *args, **kwargs):
         """
         call an event on this event bus. also works when deactivated
         :param event_name: the name of the event to call
@@ -93,24 +107,40 @@ class EventBus:
             except SystemExit: raise
             except:
                 exception_occ = True
-                logger.write_exception("during calling function: {} with arguments: {}".format(function, list(
+                logger.write_exception("during calling function: {} with arguments: {}, {}".format(function, list(
                     args)+list(self.extra_arguments[0])+list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs},
                                                                                                sep="\n"),
-                                       "function info: '{}'".format(info))
+                                       "function info: '{}'".format(info) if info is not None else "")
             if G.debugevents:
                 with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:
                     f.write("\nevent call of '{}' takes {}s until finish".format(function, dif))
         if exception_occ and self.crash_on_error:
-            logger.println("\nout of the above reasons, the game has crashes")
+            logger.println("\nout of the above reasons, the game has crashed")
             sys.exit(-1)
         return result
 
-    def call_cancelable(self, event_name, *args, **kwargs):
+    def call_cancelable(self, event_name: str, *args, **kwargs):
+        """
+        Will call an cancel able event.
+        Works the same way as call, but will use call_until() with an CancelAbleEvent as first parameter which is checked after each call
+        :param event_name: the name to call
+        :param args: args to call with
+        :param kwargs:  kwargs to call with
+        :return: if it was canceled or not
+        """
         handler = CancelAbleEvent()
         self.call_until(event_name, lambda _: handler.canceled, *((handler,)+args), **kwargs)
         return handler
 
-    def call_until(self, event_name, check_function, *args, **kwargs):
+    def call_until(self, event_name: str, check_function: typing.Callable[[typing.Any], bool], *args, **kwargs):
+        """
+        Will call the event stack until an check_function returns True or all subscriptions where done
+        :param event_name: the name of the event
+        :param check_function: the check function to call with
+        :param args: the args to call with
+        :param kwargs: the kwargs to call with
+        :return: the result in the moment of True or None
+        """
         if event_name not in self.event_subscriptions: return None
         for function, eargs, ekwargs in self.event_subscriptions[event_name]:
             start = time.time()
@@ -127,7 +157,6 @@ class EventBus:
             except:
                 logger.write_exception()
                 raise
-        return None
 
     def activate(self):
         G.eventhandler.activate_bus(self)

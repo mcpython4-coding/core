@@ -8,6 +8,8 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import logger
+import logger
+import mcpython.event.EventHandler
 
 
 class IRegistryContent:
@@ -39,13 +41,18 @@ class Registry:
         self.CANCEL_REGISTRATION = False
         self.dump_content_in_saves = dump_content_in_saves
 
+        mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("modloader:finished", self.lock)
+
     def is_valid(self, obj: IRegistryContent):
         return not self.locked and obj.TYPE in self.registry_type_names
 
     def register(self, obj: IRegistryContent, override_existing=True):
-        if self.locked: raise ValueError("can't register an object to an locked registry")
+        if self.locked:
+            logger.println("[WARN] can't register object {} to locked registry '{}'".format(obj, self.name))
+            logger.println("[WARN] this feature of registering post-freeze WILL be removed in the future")
         if obj.NAME == "minecraft:unknown_registry_content":
-            raise ValueError("can't register unnamed object {}".format(obj))
+            logger.println("can't register unnamed object {}".format(obj))
+            return
         self.CANCEL_REGISTRATION = False
         G.eventhandler.call("registry:{}:on_object_register".format(self.name), self, obj)
         if self.CANCEL_REGISTRATION: return
