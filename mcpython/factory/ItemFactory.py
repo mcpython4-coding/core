@@ -89,7 +89,7 @@ class ItemFactory:
             modname, itemname = copied.modname, copied.name
         if not G.prebuilding and not task_list:
             G.modloader.mods[modname].eventbus.subscribe("stage:item:load", copied.finish_up, register,
-                                                         info="loading item named {}".format(itemname))
+                                                         info="loading item named '{}'".format(itemname))
         else:
             copied.TASKS.append((copied, register))
 

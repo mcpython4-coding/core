@@ -19,9 +19,10 @@ import mcpython.gui.Slot
 import mcpython.mod.ModMcpython
 import mcpython.rendering.EntityRenderer
 import mcpython.util.math
+import globals as G
 
 
-@globals.registry
+@G.registry
 class Player(mcpython.entity.Entity.Entity):
     RENDERER = mcpython.rendering.EntityRenderer.EntityRenderer("minecraft:player")
 
@@ -289,9 +290,16 @@ class Player(mcpython.entity.Entity.Entity):
             del inventory
 
     def __str__(self):
-        return "Player(dim={},pos={},rot={},name=\"{}\")".format(
-            self.dimension.id, self.position, self.rotation, self.name)
+        return "Player(dim={},pos={},rot={},name=\"{}\",chunk={})".format(
+            self.dimension.id, self.position, self.rotation, self.name, self.chunk.position)
 
     def on_inventory_cleared(self):
         self.xp = 0
         self.xp_level = 0
+
+    def teleport(self, position, dimension=None, force_chunk_save_update=False):
+        before = self.chunk.dimension if self.chunk is not None else None
+        super().teleport(position, dimension, force_chunk_save_update)
+        if (self.chunk.dimension if self.chunk is not None else None) != before and self == G.world.get_active_player():
+            self.chunk.dimension.world.join_dimension(self.chunk.dimension.id)
+

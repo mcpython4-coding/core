@@ -7,6 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import time
+import typing
 
 import globals as G
 import logger
@@ -316,19 +317,20 @@ class WorldGenerationHandler:
         self.enable_auto_gen = False  # if chunks around the player should be generated when needed
         self.task_handler = WorldGenerationTaskHandler()
 
-    def add_chunk_to_generation_list(self, chunk, dimension=None, prior=False, force_generate=False, immediate=False,
-                                     generate_add=False):
+    def add_chunk_to_generation_list(self, chunk, dimension=None, force_generate=False, immediate=False,
+                                     generate_add=False, prior=False):
         """
         adds chunk schedule to the system
         will set the loaded-flag of the chunk during the process
         will schedule the internal _add_chunk function
         :param chunk: the chunk
         :param dimension: optional: if chunk is tuple, if another dim than active should be used
-        :param prior: not used anymore, only for backward compatibility todo: remove
         :param force_generate: if generation should take place also when auto-gen is disabled
-        :param generate_add: not used anymore, only for backward compatibility todo: remove
         :param immediate: if _add_chunk should be called immediate or not [can help in cases where TaskHandler stops
             running tasks when in-generation progress]
+
+        :param generate_add: not used anymore, only for backward compatibility todo: remove
+        :param prior: not used anymore, only for backward compatibility todo: remove
         """
         if not self.enable_auto_gen and not force_generate: return
         if type(chunk) == tuple:
@@ -349,6 +351,9 @@ class WorldGenerationHandler:
         """
         dimension = chunk.dimension
         configname = dimension.worldgenerationconfig["configname"]
+
+        if configname not in self.configs: return   # no config found means no generation
+
         config = self.configs[configname]
         reference = WorldGenerationTaskHandlerReference(self.task_handler, chunk)
         for layername in config["layers"]:
@@ -374,14 +379,16 @@ class WorldGenerationHandler:
             dimension.worldgenerationconfigobjects[layername] = cconfig
             cconfig.layer = layer
 
-    def generate_chunk(self, chunk: mcpython.world.Chunk.Chunk, dimension=None, check_chunk=True):
+    def generate_chunk(self, chunk: typing.Union[mcpython.world.Chunk.Chunk, tuple], dimension=None, check_chunk=True):
         if not self.enable_generation: return
         if check_chunk and chunk.generated: return
         if type(chunk) == tuple:
             if dimension is None:
                 chunk = G.world.get_active_dimension().get_chunk(*chunk, generate=False)
-            else:
+            elif type(dimension) == int:
                 chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
+            else:
+                chunk = dimension.get_chunk(*chunk, generate=False)
         chunk.loaded = True
         logger.println("generating", chunk.position)
         dimension = chunk.dimension
@@ -389,10 +396,10 @@ class WorldGenerationHandler:
         config = self.configs[configname]
         if "on_chunk_generate_pre" in config:
             config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
-        m = len(config["layers"])
+        # m = len(config["layers"])
         handler = WorldGenerationTaskHandlerReference(self.task_handler, chunk)
         for i, layername in enumerate(config["layers"]):
-            logger.println("\rgenerating layer {} ({}/{})".format(layername, i + 1, m), end="")
+            # logger.println("\rgenerating layer {} ({}/{})".format(layername, i + 1, m), end="")
             layer = self.layers[layername]
             layer.add_generate_functions_to_chunk(dimension.worldgenerationconfigobjects[layername], handler)
             G.worldgenerationhandler.task_handler.process_tasks()
@@ -400,15 +407,12 @@ class WorldGenerationHandler:
         G.eventhandler.call("worldgen:chunk:finished", chunk)
         chunk.generated = True
         chunk.loaded = True
-        # G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
-        #                             dimension=chunk.dimension.id, chunk=chunk.position)
 
     def register_layer(self, layer: mcpython.world.gen.layer.Layer.Layer):
-        # logger.println(layer, layer.get_name())
-        self.layers[layer.NAME] = layer
+        self.layers[layer.NAME] = layer  # todo: make more fancy
 
     def register_feature(self, decorator):
-        pass
+        pass  # todo: implement
 
     def register_world_gen_config(self, name: str, layerconfig: dict):
         self.configs[name] = layerconfig
@@ -434,7 +438,7 @@ def load_layers():
 
 
 def load_modes():
-    from .mode import (DefaultOverWorldGenerator, DebugOverWorldGenerator)
+    from .mode import (DefaultOverWorldGenerator, DebugOverWorldGenerator, DefaultNetherWorldGenerator)
 
 
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:worldgen:layer", load_layers,

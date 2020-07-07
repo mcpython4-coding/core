@@ -70,12 +70,6 @@ class StateWorldLoading(State.State):
         for cx in range(-3, 4):
             for cz in range(-3, 4):
                 self.status_table[(cx, cz)] = 0
-                c = G.world.get_active_dimension().get_chunk(cx, cz, generate=False)
-                """
-                G.worldgenerationhandler.task_handler.schedule_invoke(
-                    c, lambda: G.world.savefile.read("minecraft:chunk", dimension=G.world.active_dimension,
-                                                     chunk=(cx, cz), immediate=False))
-                c.generated = True"""
                 G.world.savefile.read("minecraft:chunk", dimension=G.world.active_dimension, chunk=(cx, cz),
                                       immediate=False)
         G.worldgenerationhandler.enable_generation = True

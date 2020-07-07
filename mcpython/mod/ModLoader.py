@@ -149,14 +149,15 @@ class LoadingStages:
     # if your mod has other resource locations...
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
-    # deprecated (but removal in long future) system of preparing data, but storing them in an "cache"
+    # deprecated (but removal in future) system of preparing data, but storing them in an "cache"
+    # should be replaced by data gen and similar
     PREBUILD = LoadingStage("prebuilding", "stage:prebuild:addition", "stage:prebuild:do")
 
     # first: create ConfigFile objects, second: internally, third: do something with the data
     CONFIGS = LoadingStage("loading mod config", "stage:mod:config:define", "stage:mod:config:load",
                            "stage:mod:config:work")
 
-    # Stage collection for combined factories
+    # Stage collection for combined factories, last for building them
     COMBINED_FACTORIES = LoadingStage("working on combined factories", "stage:combined_factory:blocks",
                                       "stage:combined_factory:build")
 

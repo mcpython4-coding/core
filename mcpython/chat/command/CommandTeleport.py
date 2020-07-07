@@ -31,12 +31,12 @@ class CommandTeleport(mcpython.chat.command.Command.Command):
         if modes[1][0] == 0:  # tp [selector]
             if modes[2][0] == 0:  # tp [selector] [selector]
                 for entity in values[0]:
-                    entity.position = tuple(values[1][0].position)
+                    entity.teleport(tuple(values[1][0].position), info.dimension if info.dimension is not None else entity.chunk.dimension.id)
             else:  # tp [selector] [position]
                 for entity in values[0]:
-                    entity.position = tuple(values[1][0])
+                    entity.teleport(tuple(values[1][0]), info.dimension if info.dimension is not None else entity.chunk.dimension.id)
         else:  # tp [position]
-            G.world.get_active_player().position = tuple(values[0])
+            G.world.get_active_player().teleport(tuple(values[0]), info.dimension if info.dimension is not None else G.world.get_active_player().chunk.dimension.id)
 
     @staticmethod
     def get_help() -> list:

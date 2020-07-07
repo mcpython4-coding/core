@@ -106,6 +106,9 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             logger.println("[WARN] dimension {} named '{}' is arrival in save but not registered in game".format(
                 dim, data["dimensions"][dim]))
 
+        if "active_dimension" in data:
+            G.world.join_dimension(data["active_dimension"])
+
     @classmethod
     def save(cls, data, savefile):
         data = {
@@ -116,7 +119,8 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             "mods": {mod.name: mod.version for mod in G.modloader.mods.values()},
             "chunks_to_generate": [(chunk.position, chunk.dimension.id) for chunk in
                                    G.worldgenerationhandler.task_handler.chunks],
-            "dimensions": {dimension.id: dimension.name for dimension in G.world.dimensions.values()}
+            "dimensions": {dimension.id: dimension.name for dimension in G.world.dimensions.values()},
+            "active_dimension": G.world.get_active_player().dimension.id
         }
         savefile.dump_file_json("level.json", data)
 

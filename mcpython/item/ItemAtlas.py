@@ -34,8 +34,7 @@ class ItemAtlasHandler:
         if not mcpython.ResourceLocator.exists(file):
             self.file_relocate[file] = "assets/missingtexture.png"
             self.scheduled_item_files.add("assets/missingtexture.png")
-            logger.println("[WARN] image at '{}' could not be allocated. Replacing with missing texture...".format(
-                file))
+            logger.println("[WARN] image at '{}' could not be allocated. Replacing with missing texture...".format(file))
         self.scheduled_item_files.add(mcpython.ResourceLocator.transform_name(file, raise_on_error=False))
 
     def load(self):
@@ -58,9 +57,6 @@ class ItemAtlasHandler:
             self.atlas_files.append(d["table"])
 
     def build(self):
-        """
-        todo: erase cache data on reload & reload texture files
-        """
         if len(self.atlases) == 0:
             self.atlases.append(mcpython.texture.TextureAtlas.TextureAtlas())
             self.atlas_files.append({})
