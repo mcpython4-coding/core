@@ -258,8 +258,8 @@ class StatePartGame(StatePart.StatePart):
         """
         player = G.world.get_active_player()
         speed = mcpython.config.SPEED_DICT[player.gamemode][(0 if not G.window.keys[key.LSHIFT] else 1) +
-                                                     (0 if not G.window.flying else 2)]
-        if not G.window.flying and G.window.dy == 0:
+                                                     (0 if not G.world.get_active_player().flying else 2)]
+        if not G.world.get_active_player().flying and G.window.dy == 0:
             x, y, z = mcpython.util.math.normalize(player.position)
             block_inst = G.world.get_active_dimension().get_block((x, y-2, z))
             if block_inst is not None and type(block_inst) != str and \
@@ -272,7 +272,7 @@ class StatePartGame(StatePart.StatePart):
         # New position in space, before accounting for gravity.
         dx, dy, dz = dx * d, dy * d, dz * d
         # gravity
-        if not G.window.flying:
+        if not G.world.get_active_player().flying:
             # Update your vertical speed: if you are falling, speed up until you
             # hit terminal velocity; if you are jumping, slow down until you
             # start falling.
@@ -364,7 +364,7 @@ class StatePartGame(StatePart.StatePart):
             G.window.strafe[1] = 1
         elif symbol == key.SPACE and G.world.get_active_player().inventories["chat"] not in G.inventoryhandler.opened_inventorystack:
             if self.double_space_cooldown and time.time() - self.double_space_cooldown < 0.5 and G.world.get_active_player().gamemode == 1:
-                G.window.flying = not G.window.flying
+                G.world.get_active_player().flying = not G.world.get_active_player().flying
                 self.double_space_cooldown = None
             else:
                 if G.window.dy == 0:

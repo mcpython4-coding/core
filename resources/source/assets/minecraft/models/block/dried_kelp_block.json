@@ -1,13 +1,13 @@
 {
-    "parent": "block/block",
+    "parent": "minecraft:block/block",
     "textures": {
-        "particle": "block/dried_kelp_side",
-        "down": "block/dried_kelp_bottom",
-        "up": "block/dried_kelp_top",
-        "north": "block/dried_kelp_side",
-        "east": "block/dried_kelp_side",
-        "south": "block/dried_kelp_side",
-        "west": "block/dried_kelp_side"
+        "particle": "minecraft:block/dried_kelp_side",
+        "down": "minecraft:block/dried_kelp_bottom",
+        "up": "minecraft:block/dried_kelp_top",
+        "north": "minecraft:block/dried_kelp_side",
+        "east": "minecraft:block/dried_kelp_side",
+        "south": "minecraft:block/dried_kelp_side",
+        "west": "minecraft:block/dried_kelp_side"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

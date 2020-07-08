@@ -16,16 +16,20 @@ class ParsingCommandInfo:
     info which stores information about the active executed command
     """
 
-    def __init__(self, entity=None, position=None, dimension=None):
+    def __init__(self, entity=None, position=None, dimension=None, chat=None):
         self.entity = entity if entity else G.world.get_active_player()
         self.position = position if position else self.entity.position
         self.dimension = dimension if dimension is not None else self.entity.dimension.id
+        self.chat = chat if chat is not None else G.chat
 
     def copy(self):
         """
         :return: a copy of itself
         """
-        return ParsingCommandInfo(entity=self.entity, position=self.position, dimension=self.dimension)
+        return ParsingCommandInfo(entity=self.entity, position=self.position, dimension=self.dimension, chat=self.chat)
+
+    def __str__(self):
+        return "ParsingCommandInfo(entity={},position={},dimension={})".format(self.entity, self.position, self.dimension)
 
 
 class CommandParser:
@@ -67,13 +71,14 @@ class CommandParser:
             try:
                 values, trace = self._convert_to_values(split, parsebridge, info)
             except:
-                logger.write_exception("[CHAT][EXCEPTION] during parsing values")
+                logger.write_exception("[CHAT][EXCEPTION] during parsing values for command {}".format(command.NAME))
                 return
             if values is None: return
             try:
                 command.parse(values, trace, info)
             except:
-                logger.write_exception("[CHAT][EXCEPTION] during executing command")
+                logger.write_exception("[CHAT][EXCEPTION] during executing command {} with {}".format(command.NAME,
+                                                                                                      info))
         else:
             logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
 
@@ -87,8 +92,7 @@ class CommandParser:
         """
         if len(command) == 1 and not all(
                 [subcommand.mode == mcpython.chat.command.Command.ParseMode.OPTIONAL for subcommand in
-                 parsebridge.sub_commands]
-        ):
+                 parsebridge.sub_commands]):
             logger.println("unable to parse command. please use /help <command name> command to get exact command "
                            "syntax")
             return None, None

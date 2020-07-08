@@ -23,6 +23,7 @@ import mcpython.world.Dimension
 import mcpython.world.GameRule
 import mcpython.world.gen.WorldGenerationHandler
 import mcpython.world.player
+import logger
 
 
 class World:
@@ -120,15 +121,21 @@ class World:
         :param save_current: unused, deprecated; always set to True now
         todo: move to player
         """
+        logger.println("changing dimension to '{}'...".format(dim_id))
         self.CANCEL_DIM_CHANGE = False
         G.eventhandler.call("dimension:chane:pre", self.active_dimension, dim_id)
-        if self.CANCEL_DIM_CHANGE: return
+        if self.CANCEL_DIM_CHANGE:
+            logger.println("interrupted!")
+            return
         sector = mcpython.util.math.sectorize(G.world.get_active_player().position)
+        logger.println("unloading chunks...")
         self.change_chunks(sector, None)
         old = self.active_dimension
         self.active_dimension = dim_id
+        logger.println("loading new chunks...")
         self.change_chunks(None, sector)
         G.eventhandler.call("dimension:chane:post", old, dim_id)
+        logger.println("finished!")
 
     def get_dimension(self, dim_id: int) -> mcpython.world.Dimension.Dimension:
         """
@@ -204,7 +211,7 @@ class World:
     def change_sectors(self, before, after, immediate=False, generate_chunks=True, load_immediate=False):
         self.change_chunks(before, after, generate_chunks, load_immediate)
 
-    def change_chunks(self, before: typing.Tuple[int, int], after: typing.Tuple[int, int], generate_chunks=True,
+    def change_chunks(self, before: typing.Union[typing.Tuple[int, int], None], after: typing.Union[typing.Tuple[int, int], None], generate_chunks=True,
                       load_immediate=True):
         """
         Move from chunk `before` to chunk `after`
@@ -283,7 +290,7 @@ class World:
             G.dimensionhandler.init_dims()
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
-        G.window.flying = False
+        G.world.get_active_player().flying = False
         for inv in G.world.get_active_player().inventories.values(): inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         G.worldgenerationhandler.task_handler.clear()

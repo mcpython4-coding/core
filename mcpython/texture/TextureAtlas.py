@@ -14,7 +14,6 @@ import os
 import mcpython.mod.ModMcpython
 import mcpython.config
 
-
 MISSING_TEXTURE = mcpython.ResourceLocator.read("assets/missingtexture.png", "pil").resize((16, 16), PIL.Image.NEAREST)
 
 
@@ -53,15 +52,16 @@ class TextureAtlasGenerator:
         return [(atlas.add_image(image), atlas) for image in images]
 
     def add_image_files(self, files: list, modname: str, one_atlased=True) -> list:
-        return self.add_images([mcpython.ResourceLocator.read(x, "pil") for x in files], modname, one_atlased=one_atlased)
+        return self.add_images([mcpython.ResourceLocator.read(x, "pil") for x in files], modname,
+                               one_atlased=one_atlased)
 
     def output(self):
         # todo: add per-mod, at end of every processing of models
         G.eventhandler.call("textures:atlas:build:pre")
-        os.makedirs(G.tmp.name+"/textureatlases")
+        os.makedirs(G.tmp.name + "/textureatlases")
         for modname in self.atlases:
             for i, atlas in enumerate(self.atlases[modname]):
-                location = G.tmp.name+"/textureatlases/atlas_{}_{}_{}x{}.png".format(modname, i, *atlas.image_size)
+                location = G.tmp.name + "/textureatlases/atlas_{}_{}_{}x{}.png".format(modname, i, *atlas.image_size)
                 atlas.texture.save(location)
                 atlas.group = pyglet.graphics.TextureGroup(pyglet.image.load(location).get_texture())
         G.eventhandler.call("textures:atlas:build:post")
@@ -105,7 +105,7 @@ class TextureAtlas:
         else:
             x, y = position
             self.free_space.remove(position)
-        self.texture.paste(image, (x*self.image_size[0], (self.size[1]-y-1 if self.pyglet_special_pos else y) *
+        self.texture.paste(image, (x * self.image_size[0], (self.size[1] - y - 1 if self.pyglet_special_pos else y) *
                                    self.image_size[1]))
         pos = x, y
         x += 1
@@ -122,7 +122,5 @@ class TextureAtlas:
 
 handler = TextureAtlasGenerator()
 
-
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:textureatlas:bake", handler.output,
-                                            info="building texture atlases...")
-
+                                                     info="building texture atlases...")

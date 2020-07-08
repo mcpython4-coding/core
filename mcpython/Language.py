@@ -8,6 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import mcpython.ResourceLocator
+import logger
 
 LANGUAGES = {}  # table of data of Languages
 # change this for having another language, you have to include the needed lang files yourself :/
@@ -51,8 +52,11 @@ class Language:
         :param file: the file to load, as ResourceLocate-able
         :param name: the name of the language to use or None for generation from file name
         """
-        Language.from_data(file.split("/")[-1].split(".")[0] if name is None else name,
-                           mcpython.ResourceLocator.read(file, "json").copy())
+        try:
+            Language.from_data(file.split("/")[-1].split(".")[0] if name is None else name,
+                               mcpython.ResourceLocator.read(file, "json").copy())
+        except:
+            logger.write_exception("[ERROR] failed to load language file {}".format(file))
 
     @classmethod
     def from_old_data(cls, file: str, name=None):
@@ -64,7 +68,12 @@ class Language:
         name = file.split("/")[-1].split(".")[0] if name is None else name
         if name not in LANGUAGES: LANGUAGES[name] = cls()
         language = LANGUAGES[name]
-        for line in mcpython.ResourceLocator.read(file).decode("UTF-8").split("\n"):
+        try:
+            lines = mcpython.ResourceLocator.read(file).decode("UTF-8").split("\n")
+        except:
+            logger.write_exception("[ERROR] failed to load (old) language file {}".format(file))
+            return
+        for line in lines:
             if line.startswith("#"): continue
             if line.count(" ") + line.count("   ") + line.count("\r") >= len(line): continue
             pre, *post = line.split("=")

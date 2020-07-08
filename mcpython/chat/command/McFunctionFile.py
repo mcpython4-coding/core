@@ -8,12 +8,16 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 import globals as G
 import mcpython.ResourceLocator
+import logger
 
 
 class McFunctionFile:
     @classmethod
     def from_file(cls, file: str, name: str):
-        return cls(mcpython.ResourceLocator.read(file).decode("utf-8"), name)
+        try:
+            return cls(mcpython.ResourceLocator.read(file).decode("utf-8"), name)
+        except:
+            logger.write_exception("[WARN] failed to load function file {}".format(file))
 
     def __init__(self, data: str, name: str):
         self.lines = data.split("\n")

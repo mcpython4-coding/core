@@ -12,6 +12,7 @@ import os
 import simplejson
 import logger
 import PIL.Image
+import time
 
 
 class IDataGenerator:
@@ -42,6 +43,10 @@ class DataGeneratorConfig:
             group is "assets" or "data", namespace is the namespace, sub-group is e.g. recipes or textures and path is
             the path to store under, like in "minecraft:block/example" it is block/example.<what file ending ever>
         """
+        self.enabled = True
+        if modname not in G.modloader.mods:
+            logger.println("[WARN] mod allocated for ({}) not found! Skipping build...".format(modname))
+            self.enabled = False
         self.output_folder = output_folder
         self.modname = modname
         self.file_scheme = file_scheme
@@ -100,13 +105,21 @@ class DataGeneratorConfig:
 
     def __build(self):
         """
-        internal function to build the config
+        Internal function to build the config
+        Will decide if the system should data-gen or not
         """
+        if not G.data_gen or (not G.dev_environment and self.modname == "minecraft"): return
+
+        if not self.enabled: return
+        logger.println("[INFO] building data generators for '{}'...".format(self.modname))
+        start = time.time()
         for element in self.elements:
             try:
                 element.generate()
             except:
                 logger.write_exception("during building {}".format(element))
+        self.elements.clear()  # remove them as we might want to gc them
+        logger.println("[INFO] finished in {}s".format(time.time()-start))
 
     def write(self, data, *args):
         """
@@ -138,7 +151,8 @@ class DataGeneratorConfig:
 
     def write_json(self, data, *args):
         """
-        will write data in human-readable json mode (with \n in place and right indent)
+        Will write data in human-readable json mode (with \n in place and right indent) via the simple json format
+        It will sort the keys
         :param data: the data to save
         :param args: the args to pass to self.write()
         """

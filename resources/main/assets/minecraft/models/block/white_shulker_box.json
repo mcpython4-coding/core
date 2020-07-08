@@ -1,6 +1,6 @@
 {
-    "parent": "block/cube_all",
+    "parent": "minecraft:block/cube_all",
     "textures": {
-        "all": "block/white_shulker_box"
+        "all": "minecraft:block/white_shulker_box"
     }
 }

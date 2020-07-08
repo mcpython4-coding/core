@@ -42,7 +42,7 @@ def transform_to_item_stack(item, table: dict) -> list:
         for v in values: value += v
         return value
     else:
-        print("can't cast '"+str(item)+"' to valid itemlist")
+        logger.println("can't cast '"+str(item)+"' to valid itemlist")
         return []
 
 

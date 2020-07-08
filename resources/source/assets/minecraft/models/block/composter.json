@@ -1,11 +1,11 @@
 {
-    "parent": "block/block",
+    "parent": "minecraft:block/block",
     "textures": {
-        "particle": "block/composter_side",
-        "top": "block/composter_top",
-        "bottom": "block/composter_bottom",
-        "side": "block/composter_side",
-        "inside": "block/composter_bottom"
+        "particle": "minecraft:block/composter_side",
+        "top": "minecraft:block/composter_top",
+        "bottom": "minecraft:block/composter_bottom",
+        "side": "minecraft:block/composter_side",
+        "inside": "minecraft:block/composter_bottom"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

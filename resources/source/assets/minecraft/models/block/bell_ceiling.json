@@ -1,7 +1,7 @@
 {
     "textures": {
-        "particle": "block/bell_bottom",
-        "bar": "block/dark_oak_planks"
+        "particle": "minecraft:block/bell_bottom",
+        "bar": "minecraft:block/dark_oak_planks"
     },
     "elements": [
         {

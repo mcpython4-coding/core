@@ -12,6 +12,7 @@ import mcpython.item.ItemTool
 import mcpython.item.ItemArmor
 import globals as G
 import deprecation
+import logger
 
 
 # todo: add ItemFactoryHandler which make it possible to add custom functions & custom class constructing
@@ -23,8 +24,10 @@ class ItemFactory:
         for itemfactory, flag in cls.TASKS:
             itemfactory.finish_up(flag)
 
-    def __init__(self):
-        self.name = None
+    def __init__(self, name=None):
+        self.set_name_finises_previous = False
+
+        self.name = name
         self.modname = None
         self.itemfile = None
         self.used_itemfiles = []
@@ -52,31 +55,47 @@ class ItemFactory:
 
         self.template = None
 
-    def setTemplate(self):
+    def __call__(self, name: str = None):
+        if name is not None:
+            self.setName(name)
+        return self
+
+    def setTemplate(self, set_name_finises_previous=False):
         """
         sets the current status as "template". This status will be set to on every .finish() call, but will not affect
         the new generated entry.
         """
+        self.set_name_finises_previous = set_name_finises_previous
         self.template = self.copy()
         return self
 
     def setToTemplate(self):
         if self.template is not None:
-            self.__dict__ = self.template.__dict__
+            self.__dict__ = self.template.__dict__.copy()
 
     def resetTemplate(self):
         self.template = None
+        return self
 
     def finish(self, register=True, task_list=False):
-        if self.modname is None:
-            modname, itemname = tuple(self.name.split(":"))
+        # logger.println("scheduling finishing '{}' of {}".format(self.name, self))
+
+        copied = self.copy()
+        copied.resetTemplate()
+
+        if copied.modname is None:
+            modname, itemname = tuple(copied.name.split(":"))
         else:
-            modname, itemname = self.modname, self.name
+            modname, itemname = copied.modname, copied.name
         if not G.prebuilding and not task_list:
-            G.modloader.mods[modname].eventbus.subscribe("stage:item:load", self._finish, register,
-                                                         info="loading item named {}".format(itemname))
+            G.modloader.mods[modname].eventbus.subscribe("stage:item:load", copied.finish_up, register,
+                                                         info="loading item named '{}'".format(itemname))
         else:
-            self.TASKS.append((self, register))
+            copied.TASKS.append((copied, register))
+
+        self.setToTemplate()
+
+        return copied
 
     def copy(self):
         obj = type(self)()
@@ -93,9 +112,16 @@ class ItemFactory:
         :param register: if the result should be registered to the registry
         todo: clean up this mess!!!!!
         """
+        # logger.println("finishing '{}' of {}".format(self.name, self))
+
         master = self
 
-        class baseclass(object): pass
+        assert self.name is not None, "name must be set"
+
+        if self.modname is not None and self.name.count(":") == 0:
+            self.name = self.modname + ":" + self.name
+
+        class BaseClass(object): pass
 
         if self.itemfile is None:
             self.itemfile = "{}:item/{}".format(*self.name.split(":"))
@@ -106,9 +132,9 @@ class ItemFactory:
 
         # go over the whole list and create every time an new sub-class based on old and item of list
         for cls in self.baseclass:
-            class baseclass(baseclass, cls): pass
+            class BaseClass(BaseClass, cls): pass
 
-        class ConstructedItem(baseclass):  # and now insert these class into the ConstructedItem-class
+        class ConstructedItem(BaseClass):  # and now insert these class into the ConstructedItem-class
             @classmethod
             def get_used_texture_files(cls): return master.used_itemfiles
 
@@ -183,11 +209,14 @@ class ItemFactory:
         return self
 
     def setGlobalModName(self, name: str):
+        if name.endswith(":"): name = name[:-1]
         self.modname = name
         return self
 
     def setName(self, name: str):
-        self.name = ("" if self.modname is None else self.modname) + name
+        if self.set_name_finises_previous and self.name is not None:
+            self.finish()
+        self.name = ("" if self.modname is None else self.modname + ":") + name
         return self
 
     def setDefaultItemFile(self, itemfile: str):

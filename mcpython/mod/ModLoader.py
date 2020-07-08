@@ -71,6 +71,10 @@ class LoadingStage:
         """
         G.modloader.active_loading_stage += 1
         if G.modloader.active_loading_stage >= len(LOADING_ORDER):
+
+            logger.println("[INFO] locking registries...")  # ... and do similar stuff :-)
+            G.eventhandler.call("modloader:finished")
+
             G.statehandler.switch_to("minecraft:blockitemgenerator")
             G.modloader.finished = True
             return True
@@ -91,8 +95,11 @@ class LoadingStage:
         if self.active_mod_index >= len(G.modloader.mods):
             self.active_mod_index = 0
             if len(self.eventnames) == 0: return self.finish(astate)
-            self.active_event_name = self.eventnames.pop(0)
+            self.active_event_name = self.eventnames.pop(0)  # todo: is there an better way?
             modinst: mcpython.mod.Mod.Mod = G.modloader.mods[G.modloader.modorder[self.active_mod_index]]
+            if not G.eventhandler.call_cancelable("modloader:mod_entered_stage", self.name, self.active_event_name, modinst):
+                self.active_mod_index += 1
+                return
             self.max_progress = len(modinst.eventbus.event_subscriptions[self.active_event_name])
             astate.parts[2].progress_max = self.max_progress
             astate.parts[2].progress = 0
@@ -142,12 +149,17 @@ class LoadingStages:
     # if your mod has other resource locations...
     EXTRA_RESOURCE_LOCATIONS = LoadingStage("resource addition", "stage:additional_resources")
 
-    # deprecated (but removal in long future) system of preparing data, but storing them in an "cache"
+    # deprecated (but removal in future) system of preparing data, but storing them in an "cache"
+    # should be replaced by data gen and similar
     PREBUILD = LoadingStage("prebuilding", "stage:prebuild:addition", "stage:prebuild:do")
 
     # first: create ConfigFile objects, second: internally, third: do something with the data
     CONFIGS = LoadingStage("loading mod config", "stage:mod:config:define", "stage:mod:config:load",
                            "stage:mod:config:work")
+
+    # Stage collection for combined factories, last for building them
+    COMBINED_FACTORIES = LoadingStage("working on combined factories", "stage:combined_factory:blocks",
+                                      "stage:combined_factory:build")
 
     # blocks, items, inventories, ... all stuff to register
     BLOCKS = LoadingStage("block loading phase", "stage:block:factory:prepare",
@@ -201,8 +213,8 @@ class LoadingStages:
 # the order of stages todo: make serialized from config file
 LOADING_ORDER: list = [
     LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.EXTRA_RESOURCE_LOCATIONS,
-    LoadingStages.PREBUILD, LoadingStages.CONFIGS, LoadingStages.BLOCKS, LoadingStages.ITEMS, LoadingStages.INVENTORIES,
-    LoadingStages.COMMANDS, LoadingStages.ENTITIES
+    LoadingStages.PREBUILD, LoadingStages.CONFIGS, LoadingStages.COMBINED_FACTORIES, LoadingStages.BLOCKS,
+    LoadingStages.ITEMS, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.ENTITIES
 ]
 
 
@@ -222,6 +234,7 @@ LOADING_ORDER += [
 class ModLoaderAnnotation:
     """
     representation of an @G.modloader([...]) annotation
+    todo: make use lambdas
     """
 
     def __init__(self, modname: str, eventname: str, info=None):
@@ -314,6 +327,9 @@ class ModLoader:
                 for _ in range(2): sys.argv.pop(i)
             else:
                 i += 1
+
+        G.eventhandler.call("modloader:location_search", modlocations)
+
         for i, location in enumerate(modlocations):
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i+1)
         return modlocations
@@ -385,11 +401,15 @@ class ModLoader:
         for modname in self.lasttime_mods.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(self.lasttime_mods[modname]):
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
+                logger.println("rebuild mode due to mod change (remove / version change)")
                 G.prebuilding = True
+                G.data_gen = True
         for modname in self.mods.keys():
             if modname not in self.lasttime_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
                 G.prebuilding = True
+                G.data_gen = True
+                logger.println("rebuild mode due to mod change (addition)")
 
     def write_mod_info(self):
         """
@@ -568,7 +588,8 @@ class ModLoader:
         will add an mod-instance into the inner system
         :param modinstance: the mod instance to add
         """
-        G.eventhandler.call("modloader:mod_found", modinstance)
+        if not G.eventhandler.call_cancelable("modloader:mod_registered", modinstance):
+            return
         self.mods[modinstance.name] = modinstance
         self.found_mods.append(modinstance)
         modinstance.path = self.active_directory
@@ -683,7 +704,7 @@ G.modloader = ModLoader()
 # this is needed as this depends on above but also above on the import
 import mcpython.mod.ModMcpython
 import mcpython.mod.ConfigFile
-from mcpython.datagen.mcpython import recipes, block_models
+from mcpython.datagen.mcpython import recipes, textures
 
 
 @G.modloader("minecraft", "special:exit")

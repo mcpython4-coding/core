@@ -13,21 +13,21 @@ issue 23: [fixed in generation improvements]
 issue 28: [caused by issue 185]
     bug: F3+A - hot-key does not reload the world correctly
     since: unknown, found after fixing issue 19 & implementing hot-keys
-    possible fix: rewrite this part of Chunk's method's
+    possible fix: rewrite this part of the method of the Chunk-class
 
 issue 34:
     bug: jumping from downwards into an block, you get damage
     since: block damage was introduced
-    fix: rewrite collision system
+    fix: rewrite collision system & check for overlap value
 
 issue 35:
-    bug: going inside an non-full block will give you damage instead of bouncing of the block
+    bug: going inside an non-full block will give you damage instead of bouncing of the block (e.g. glass)
     since: block damage was introduced
     fix: check for solid block
     better fix: use rewritten collision system based on AABB's to determine if you are in an block or not
 
 issue 55:
-    bug: alpha textures are rendered not behind alpha-textures
+    bug: alpha textures are not rendered behind alpha-textures
     since: alpha rendering was implemented
     fix: order alpha face rendering! (maybe implement an AlphaRenderingRenderer extends ICustomDrawRenderer)
 
@@ -108,11 +108,9 @@ issue 165:
     bug: changing chunks in an big world takes ages
     fix: see issue 164
 
-issue 166:
-    bug: world generation is slow
-
 issue 168:
     bug: when starting in-game generation, game hangs for an short moment
+    fix: make generation off-thread
 
 issue 175:
     bug: structures overlapping into not-generated chunks are not shown when the chunks respecify are generated
@@ -120,7 +118,7 @@ issue 175:
         generation is requested
 
 issue 176:
-    bug: structures overlapping into not-generated chunks are not saved
+    bug: structures overlapping into not-generated chunks are not saved (?)
     fix: see issue 175
 
 issue 177:
@@ -129,10 +127,10 @@ issue 177:
 
 issue 178:
     bug: hotbar is not transparent(rendered)
-    fix: enable alpha blending
+    fix: enable alpha blending in this phase
 
 issue 185:
-    bug: in big worlds, chunks can get randomly hidden
+    bug: in big worlds, chunks can get randomly hidden (or unloaded?) [e.g. debug world]
     fix: implement chunk load ticket system
 
 issue 196:
@@ -149,11 +147,18 @@ issue 201:
     fix: implement system to have an event bus for an generator mode only active when in an world with these world
         generator
 
-issue 203:
-    bug: when loading an previous debug world, exceptions are printed out
-    fix: set world generator to the one loaded from world
-
 issue 204:
     bug: debug world generates start chest
+    caused by: missing configuration for starter chest in world gen options
+    fix: add option to enable start chest gen
 
-[211-212]
+issue 217:
+    bug: chest content can get lost [see warnings in log]
+
+issue 218:
+    bug: game crashes when using e.g. "/tp @s 10 10 10" in chat
+
+issue 219:
+    bug: errors with block showing are printed multiply times in BlockItemGenerator
+
+[220-229]

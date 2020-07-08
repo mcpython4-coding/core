@@ -30,7 +30,7 @@ class PlayerData(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             player.position = pd["position"]
             player.rotation = pd["rotation"]
             G.world.join_dimension(pd["dimension"], save_current=False)
-            G.window.flying = pd["flying"]
+            G.world.get_active_player().flying = pd["flying"]
             for name in pd["inventory links"]:
                 savefile.read("minecraft:inventory", inventory=player.inventories[name],
                               path="players/{}/inventory/{}".format(player.name, name))
@@ -51,7 +51,7 @@ class PlayerData(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                 "xp level": player.xp_level,
                 "fallen since y": player.fallen_since_y,
                 "active inventory slot": player.active_inventory_slot,
-                "flying": G.window.flying,
+                "flying": G.world.get_active_player().flying,
                 "inventory links": {name: player.inventories[name].uuid.int for name in player.inventories}
             }
             [savefile.dump(None, "minecraft:inventory", inventory=player.inventories[name],

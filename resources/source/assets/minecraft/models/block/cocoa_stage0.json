@@ -1,8 +1,8 @@
 {
     "ambientocclusion": false,
     "textures": {
-        "particle": "block/cocoa_stage0",
-        "cocoa": "block/cocoa_stage0"
+        "particle": "minecraft:block/cocoa_stage0",
+        "cocoa": "minecraft:block/cocoa_stage0"
     },
     "elements": [
         {   "from": [ 6, 7, 11 ],

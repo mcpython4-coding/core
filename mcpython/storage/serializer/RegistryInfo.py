@@ -43,6 +43,7 @@ class RegistryInfo(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     def save(cls, data, savefile):
         data = {}
         for registry in G.registry.registries:
+            if not registry.dump_content_in_saves: continue
             rdata = []
             for obj in registry.registered_object_map.values(): rdata.append(obj.compressed_info())
             data[registry.name] = rdata

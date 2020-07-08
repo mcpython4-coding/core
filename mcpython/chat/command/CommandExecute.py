@@ -26,6 +26,8 @@ class CommandExecute(mcpython.chat.command.Command.Command):
             SubCommand(ParseType.SELECTOR))
         execute_at = SubCommand(ParseType.DEFINIED_STRING, "at", mode=ParseMode.OPTIONAL).add_subcommand(
             SubCommand(ParseType.POSITION))
+        execute_in = SubCommand(ParseType.DEFINIED_STRING, "in", mode=ParseMode.OPTIONAL).add_subcommand(
+            SubCommand(ParseType.INT))
         # missing: blocks, data, score
         execute_if = SubCommand(ParseType.DEFINIED_STRING, "if", mode=ParseMode.OPTIONAL).add_subcommand(
             SubCommand(ParseType.DEFINIED_STRING, "block").add_subcommand(
@@ -41,8 +43,8 @@ class CommandExecute(mcpython.chat.command.Command.Command):
         )
         execute_unless = SubCommand(ParseType.DEFINIED_STRING, "unless", mode=ParseMode.OPTIONAL)
         execute_unless.sub_commands = execute_if.sub_commands
-        sub_commands = [execute_as, execute_at, execute_if, execute_run]
-        sub_commands_ends = [execute_as.sub_commands[0], execute_at.sub_commands[0],
+        sub_commands = [execute_as, execute_at, execute_in, execute_if, execute_run]
+        sub_commands_ends = [execute_as.sub_commands[0], execute_at.sub_commands[0], execute_in.sub_commands[0],
                              execute_if.sub_commands[0].sub_commands[0].sub_commands[0],
                              execute_if.sub_commands[1].sub_commands[0],
                              execute_unless.sub_commands[0].sub_commands[0].sub_commands[0],
@@ -73,7 +75,7 @@ class CommandExecute(mcpython.chat.command.Command.Command):
             return
         elif command == "at":
             index += 2
-            for position in values[index + 1]:
+            for position in values[index - 1]:
                 info.position = position
                 CommandExecute._parse_subcommand(index, values[index], values, info)
             return
@@ -96,6 +98,11 @@ class CommandExecute(mcpython.chat.command.Command.Command):
 
             # should we exit?
             if command == "unless" if flag else command == "if": return
+        elif command == "in":
+            info.dimension = values[index+1]
+            index += 2
+            CommandExecute._parse_subcommand(index, values[index], values, info)
+            return
         elif command == "run":
             # execute command
             G.commandparser.parse("/"+" ".join(values[index+1]), info=info)
@@ -106,6 +113,6 @@ class CommandExecute(mcpython.chat.command.Command.Command):
 
     @staticmethod
     def get_help() -> list:
-        return ["/execute \\as <selector>\\at <position>\\if / unless \\block <position> <blockname>\\entity <selector>"
+        return ["/execute \\as <selector>\\at <position>\\in <dimension id>\\if / unless \\block <position> <blockname>\\entity <selector>"
                 "\\ \\ run <command>: execute command with given arguments"]
 

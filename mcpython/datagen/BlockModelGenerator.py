@@ -11,6 +11,7 @@ import typing
 import mcpython.util.enums
 import simplejson
 import mcpython.datagen.Configuration
+import logger
 
 
 def encode_model_key(key):
@@ -47,7 +48,7 @@ class ModelRepresentation:
         will encode your data to an json-able dict
         """
         if self.wrap_cache is not None: return self.wrap_cache
-        data = {"model": self.model if ":" in self.model and config.default_namespace is not None else
+        data = {"model": self.model if ":" in self.model or config.default_namespace is None else
                 config.default_namespace + ":" + self.model}
         if self.r_x != 0: data["x"] = self.r_x
         if self.r_y != 0: data["y"] = self.r_y
@@ -76,11 +77,11 @@ class SingleFaceConfiguration:
         self.texture = texture if texture.startswith("#") else "#" + texture
         self.uv = uv
         if any([e < 0 or e > 1 for e in uv]):
-            print("[DATA GEN][WARN] provided uv coordinates for side {} are out of bound".format(face))
+            logger.println("[DATA GEN][WARN] provided uv coordinates for side {} are out of bound".format(face))
         if cullface is None: cullface = self.face
         self.cullface = cullface if type(cullface) != str else mcpython.util.enums.EnumSide[cullface]
         if rotation % 90 != 0:
-            print("[DATA GEN][WARN] provided non-90-multiple {} for texture rotation for face {}".format(
+            logger.println("[DATA GEN][WARN] provided non-90-multiple {} for texture rotation for face {}".format(
                 rotation, face))
         self.rotation = rotation % 360
 
@@ -121,6 +122,7 @@ class BlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator):
             if type(model) == str:
                 modelx[i] = ModelRepresentation(model)
         self.states.append((state, tuple(modelx)))
+        return self
 
     def generate(self):
         data = {"variants": {}}
@@ -161,11 +163,12 @@ class MultiPartBlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator
             if type(model) == str:
                 modelx[i] = ModelRepresentation(model)
         self.states.append((state, modelx))
+        return self
 
     def generate(self):
         data = {"multipart": []}
         for state, model in self.states:
-            m = model[0].wrap() if len(model) == 1 else [e.wrap() for e in model]
+            m = model[0].wrap(self.config) if len(model) == 1 else [e.wrap() for e in model]
             d = {"apply": m}
             c = self._encode_condition(state)
             if c is not None: d["when"] = c
@@ -239,9 +242,9 @@ class BlockModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
 
     def generate(self):
         if self.parent != "minecraft:block/block" and self.elements:
-            print("[DATA GEN][WARN] block model {} has unusual parent and elements set".format(self.name))
+            logger.println("[DATA GEN][WARN] block model {} has unusual parent and elements set".format(self.name))
         data = {"parent": self.parent}
-        if self.ambientocclusion: data["ambientocclusion"] = self.ambientocclusion
+        if not self.ambientocclusion: data["ambientocclusion"] = self.ambientocclusion
         if len(self.display) > 0:
             data["display"] = {}
             for key in self.display:

@@ -40,7 +40,7 @@ class CommandRegistryInfo(mcpython.chat.command.Command.Command):
             logger.println("values in registry {}".format(values[0]))
             for key in registry.registered_object_map.keys():
                 element = registry.registered_object_map[key]
-                logger.println(key, element, element.INFO)
+                logger.println(key, element, element.INFO, sep=" ")
 
     @staticmethod
     def get_help() -> list:

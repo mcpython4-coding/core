@@ -67,7 +67,7 @@ def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
         _positions = positions
         positions = [0] * len(positions)
         for i, e in enumerate(_positions):
-            positions[(i+reindex) % 4] = e
+            positions[(i + reindex) % 4] = e
     return sum(positions, tuple())
 
 
@@ -112,11 +112,14 @@ def normalize(position):
 
     """
     try:
+        if type(position) in (tuple, list, set) and len(position) != 3:
+            logger.println("[FATAL] invalid position '{}'".format(position))
+            return position
         x, y, z = position if type(position) == tuple else tuple(position)
         x, y, z = (int(round(x)), int(round(y)), int(round(z)))
         return x, y, z
     except:
-        logger.println(position)
+        logger.println("[FATAL] error during parsing position {}".format(position))
         raise
 
 
@@ -161,23 +164,26 @@ def topological_sort(items):
     raises no exception.
     """
     provided = set()
-    while items:
-        remaining_items = []
-        emitted = False
-
-        for item, dependencies in items:
-            if provided.issuperset(dependencies):
-                yield item
-                provided.add(item)
-                emitted = True
-            else:
-                remaining_items.append((item, dependencies))
-
-        if not emitted:
-            logger.println("[TOPOSORT][FATAL] failed to sort dependency graph {}".format(items))
-            raise ValueError()
-
-        items = remaining_items
+    items = list(items)
+    missing = []
+    previous_missing = 0
+    result = []
+    while len(items) > 0 or len(missing) > 0:
+        if len(items) == 0:
+            if len(missing) == previous_missing:
+                logger.println(provided)
+                logger.println(missing)
+                raise ValueError("error during sorting dependency graph")
+            previous_missing = len(missing)
+            items += missing
+            missing.clear()
+        key, depend = items.pop(0)
+        if all([e in provided for e in depend]):
+            provided.add(key)
+            result.append(key)
+        else:
+            missing.append((key, depend))
+    return result
 
 
 def rotate_point(point, origin, rotation):
@@ -188,10 +194,12 @@ def rotate_point(point, origin, rotation):
     rx = math.pi * rx / 180
     ry = math.pi * ry / 180
     rz = math.pi * rz / 180
-    x -= ox; y -= oy; z -= oz
+    x -= ox
+    y -= oy
+    z -= oz
 
-    nx = x*math.cos(rz) - y*math.sin(rz)
-    ny = x*math.sin(rz) + y*math.cos(rz)
+    nx = x * math.cos(rz) - y * math.sin(rz)
+    ny = x * math.sin(rz) + y * math.cos(rz)
     x, y = nx, ny
 
     nx = x * math.cos(ry) - z * math.sin(ry)
@@ -203,4 +211,3 @@ def rotate_point(point, origin, rotation):
     y, z = ny, nz
 
     return x + ox, y + oy, z + oz
-

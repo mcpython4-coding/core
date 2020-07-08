@@ -6,6 +6,8 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
+# This is an semi-stable API for drawing stuff on the screen.
+# todo: implement via pyglet's shape module & use batches
 import pyglet.gl as gl
 import pyglet
 import math

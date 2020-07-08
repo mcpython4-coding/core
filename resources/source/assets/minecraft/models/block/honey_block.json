@@ -1,9 +1,9 @@
-{   "parent": "block/block",
+{   "parent": "minecraft:block/block",
     "textures": {
-        "particle": "block/honey_block_top",
-        "down": "block/honey_block_bottom",
-        "up": "block/honey_block_top",
-        "side": "block/honey_block_side"
+        "particle": "minecraft:block/honey_block_top",
+        "down": "minecraft:block/honey_block_bottom",
+        "up": "minecraft:block/honey_block_top",
+        "side": "minecraft:block/honey_block_side"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

@@ -16,6 +16,7 @@ import globals as G
 import mcpython.item.ItemTool
 import mcpython.util.enums
 from . import Block
+import logger
 
 BBOX = mcpython.block.BoundingBox.BoundingBox((14/16, 14/16, 14/16), (1/16, 1/16, 1/16))  # the bounding box of the chest
 
@@ -81,7 +82,7 @@ class BlockChest(Block.Block):
     def get_inventories(self):
         return [self.inventory]
 
-    def get_provided_slots(self, side): return self.inventory.slots
+    def get_provided_slot_lists(self, side): return self.inventory.slots, self.inventory.slots
 
     def set_model_state(self, state: dict):
         if "side" in state:
@@ -112,10 +113,10 @@ class BlockChest(Block.Block):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_remove(self):
-        if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
-        for slot in self.inventory.slots:
-            G.world.get_active_player().pick_up(slot.get_itemstack().copy())
-            slot.get_itemstack().clean()
+        if G.world.gamerulehandler.table["doTileDrops"].status.status:
+            for slot in self.inventory.slots:
+                G.world.get_active_player().pick_up(slot.get_itemstack().copy())
+                slot.get_itemstack().clean()
         G.inventoryhandler.hide(self.inventory)
         del self.inventory
 
@@ -129,6 +130,12 @@ class BlockChest(Block.Block):
     def load(self, data):
         if "model" in data:
             self.set_model_state(data["model"])
+        else:
+            logger.println("[SERIALIZER][WARN] BlockChest at {} is missing model state in save files".format(
+                self.position))
         if "loot_table" in data:
             self.loot_table_link = data["loot_table"]
+        else:
+            logger.println("[SERIALIZER][WARN] BlockChest at {} is missing loot table in save files".format(
+                self.position))
 

@@ -23,7 +23,8 @@ class IWall(mcpython.block.Block.Block):
         self.face_solid = {face: False for face in mcpython.util.enums.EnumSide.iterate()}
 
     def get_model_state(self) -> dict:
-        state = {key: str(self.connections[key]).lower() for key in self.connections}
+        state = {key: "low" if self.connections[key] else "unset" for key in self.connections}
+        state["up"] = str(self.connections["up"]).lower()
         return state
 
     def on_block_update(self):
@@ -65,72 +66,12 @@ class IWall(mcpython.block.Block.Block):
                 for south in range(2):
                     for west in range(2):
                         for up in range(2):
-                            states.append({"north": str(bool(north)).lower(), "east": str(bool(east)).lower(),
-                                           "south": str(bool(south)).lower(), "west": str(bool(west)).lower(),
+                            states.append({"north": "low" if north else "unset", "east": "low" if north else "unset",
+                                           "south": "low" if north else "unset", "west": "low" if north else "unset",
                                            "up": str(bool(up)).lower()})
         return states
 
 # create all classes for the blocks
-
-
-@G.registry
-class AndesiteWall(IWall):
-    NAME = "minecraft:andesite_wall"
-
-
-@G.registry
-class BrickWall(IWall):
-    NAME = "minecraft:brick_wall"
-
-
-@G.registry
-class CobblestoneWall(IWall):
-    NAME = "minecraft:cobblestone_wall"
-
-
-@G.registry
-class DioriteWall(IWall):
-    NAME = "minecraft:diorite_wall"
-
-
-@G.registry
-class EndStoneBrickWall(IWall):
-    NAME = "minecraft:end_stone_brick_wall"
-
-
-@G.registry
-class GraniteWall(IWall):
-    NAME = "minecraft:granite_wall"
-
-
-@G.registry
-class MossyCobblestoneWall(IWall):
-    NAME = "minecraft:mossy_cobblestone_wall"
-
-
-@G.registry
-class MossyStoneBrickWall(IWall):
-    NAME = "minecraft:mossy_stone_brick_wall"
-
-
-@G.registry
-class NetherBrickWall(IWall):
-    NAME = "minecraft:nether_brick_wall"
-
-
-@G.registry
-class PrismarineWall(IWall):
-    NAME = "minecraft:prismarine_wall"
-
-
-@G.registry
-class PrismarineWall(IWall):
-    NAME = "minecraft:prismarine_wall"
-
-
-@G.registry
-class RedNetherBrickWall(IWall):
-    NAME = "minecraft:red_nether_brick_wall"
 
 
 @G.registry
@@ -141,9 +82,3 @@ class RedSandstoneWall(IWall):
 @G.registry
 class SandstoneWall(IWall):
     NAME = "minecraft:sandstone_wall"
-
-
-@G.registry
-class StoneBrickWall(IWall):
-    NAME = "minecraft:stone_brick_wall"
-

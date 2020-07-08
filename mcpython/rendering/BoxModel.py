@@ -209,8 +209,7 @@ class BaseBoxModel:
     an non-model-bound boxmodel class
     """
 
-    def __init__(self, relative_position: tuple, size: tuple, texture, texture_region=[(0, 0, 1, 1)]*6,
-                 rotation=(0, 0, 0), rotation_center=None):
+    def __init__(self, relative_position: tuple, size: tuple, texture, texture_region=None, rotation=(0, 0, 0), rotation_center=None):
         """
         creates an new renderer for the box-model
         :param relative_position: where to position the box relative to draw position
@@ -220,6 +219,7 @@ class BaseBoxModel:
         :param rotation: how to rotate the bbox
         :param rotation_center: where to rotate the box around
         """
+        if texture_region is None: texture_region = [(0, 0, 1, 1)] * 6
         self.relative_position = relative_position
         self.size = size
         self.texture = texture if type(texture) == pyglet.graphics.TextureGroup else pyglet.graphics.TextureGroup(

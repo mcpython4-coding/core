@@ -19,9 +19,10 @@ import mcpython.gui.Slot
 import mcpython.mod.ModMcpython
 import mcpython.rendering.EntityRenderer
 import mcpython.util.math
+import globals as G
 
 
-@globals.registry
+@G.registry
 class Player(mcpython.entity.Entity.Entity):
     RENDERER = mcpython.rendering.EntityRenderer.EntityRenderer("minecraft:player")
 
@@ -37,9 +38,11 @@ class Player(mcpython.entity.Entity.Entity):
 
     def __init__(self, name="unknown", dimension=None):
         super().__init__(dimension=dimension)
-        self.name: str = name
-        self.gamemode: int = -1
-        self.set_gamemode(1)
+
+        self.name: str = name  # the name of the player
+        self.gamemode: int = -1  # the current gamemode
+        self.set_gamemode(1)  # and set it
+
         self.hearts: int = 20
         self.hunger: int = 20
         self.xp: int = 0
@@ -47,9 +50,9 @@ class Player(mcpython.entity.Entity.Entity):
         self.armor_level = 0
         self.armor_toughness = 0
 
-        self.fallen_since_y = -1 
+        self.flying = False  # are we currently flying?
 
-        self.inventories: dict = {}
+        self.fallen_since_y = -1  # how far did we fall?
 
         self.inventory_order: list = [  # an ([inventoryindexname: str], [reversed slots: bool}) list
             ("hotbar", False),
@@ -58,23 +61,27 @@ class Player(mcpython.entity.Entity.Entity):
 
         self.iconparts = []
 
-        self.active_inventory_slot: int = 0
+        self.active_inventory_slot: int = 0  # which slot is currently selected
 
+        # used for determine if we can access stuff now or must wait
         if not globals.modloader.finished:
             mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:inventories", self.create_inventories,
                                                                  info="setting up player inventory")
         else:
             self.create_inventories()
+
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:get_player_position", self.hotkey_get_position)
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:gamemode_1-3_toggle", self.toggle_gamemode)
 
     def hotkey_get_position(self):
         if self != globals.world.get_active_player(): return
+
         import clipboard
         clipboard.copy("/tp @p {} {} {}".format(*self.position))
 
     def toggle_gamemode(self):
         if self != globals.world.get_active_player(): return
+
         if self.gamemode == 1: self.set_gamemode(3)
         elif self.gamemode == 3: self.set_gamemode(1)
 
@@ -283,5 +290,16 @@ class Player(mcpython.entity.Entity.Entity):
             del inventory
 
     def __str__(self):
-        return "Player(dim={},pos={},rot={},name=\"{}\")".format(
-            self.dimension.id, self.position, self.rotation, self.name)
+        return "Player(dim={},pos={},rot={},name=\"{}\",chunk={})".format(
+            self.dimension.id, self.position, self.rotation, self.name, self.chunk.position)
+
+    def on_inventory_cleared(self):
+        self.xp = 0
+        self.xp_level = 0
+
+    def teleport(self, position, dimension=None, force_chunk_save_update=False):
+        before = self.chunk.dimension if self.chunk is not None else None
+        super().teleport(position, dimension, force_chunk_save_update)
+        if (self.chunk.dimension if self.chunk is not None else None) != before and self == G.world.get_active_player():
+            self.chunk.dimension.world.join_dimension(self.chunk.dimension.id)
+

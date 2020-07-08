@@ -93,10 +93,12 @@ class BlockFactory:
 
         self.on_class_create = on_class_create
 
+        self.set_name_finises_previous = False
+
         self.name = None
         self.modname = None
         self.breakable = True
-        self.modelstates = [{}]
+        self.modelstates = []
         self.solid_faces = None
 
         self.create_callback = None
@@ -126,6 +128,11 @@ class BlockFactory:
         self.baseclass = [mcpython.block.Block.Block]
 
         self.template = None
+
+    def __call__(self, name: str = None):
+        if name is not None:
+            self.setName(name)
+        return self
 
     def copy(self):
         """
@@ -157,11 +164,12 @@ class BlockFactory:
         obj.template = self.template
         return obj
 
-    def setTemplate(self):
+    def setTemplate(self, set_name_finises_previous=False):
         """
         sets the current status as "template". This status will be set to on every .finish() call, but will not affect
         the new generated entry.
         """
+        self.set_name_finises_previous = set_name_finises_previous
         self.template = self.copy()
         return self
 
@@ -212,7 +220,14 @@ class BlockFactory:
         :return: the BlockFactory instance. When the template exists, it will be an copy of the active without the
             template instance
         """
-        if self.modname is None:
+        # logger.println("[INFO] finishing up '{}'".format(self.name))
+        if self.name.count(":") == 0:
+            logger.println("[BLOCK FACTORY][FATAL] 'setName' was set to an not-prefixed name '{}'".format(self.name))
+            logger.println("[BLOCK FACTORY][FATAL] out of these error, the block is NOT constructed")
+            logger.println("[BLOCK FACTORY][FATAL] (P.s. this does mean also that setGlobalModName() was not set)")
+            logger.println("[BLOCK FACTORY][FATAL] (This could be an wrong template setup for the block factory)")
+            return
+        if self.modname is None or self.name.count(":") > 0:
             modname, blockname = tuple(self.name.split(":"))
         else:
             modname, blockname = self.modname, self.name
@@ -282,10 +297,18 @@ class BlockFactory:
 
             @staticmethod
             def get_all_model_states():
-                states = self.modelstates.copy()
-                [states.extend(e.get_all_model_states()) for e in self.baseclass]
-                if states.count({}) != len(states):
-                    while {} in states: states.remove({})
+                raw_states = self.modelstates.copy()
+                [raw_states.extend(e.get_all_model_states()) for e in self.baseclass]
+
+                while {} in raw_states: raw_states.remove({})  # we don't need them now
+
+                # make the entries unique!
+                states = []
+                for e in raw_states:
+                    if e not in states: states.append(e)
+
+                if len(states) == 0: states.append({})  # if we have no, this is the default one
+
                 return states
 
             def __init__(self, *args, **kwargs):
@@ -407,7 +430,13 @@ class BlockFactory:
         :param name: The name of the block
         """
         assert type(name) == str
+        if self.set_name_finises_previous and self.name is not None: self.finish()
         self.name = ("" if self.modname is None or ":" in name else (self.modname + ":")) + name
+        if self.name.count(":") == 0:
+            import traceback
+
+            logger.println("[BLOCK FACTORY][WARN] 'setName' was set to an not-prefixed name '{}'".format(self.name))
+            traceback.print_stack()
         return self
 
     def setCreateCallback(self, function):

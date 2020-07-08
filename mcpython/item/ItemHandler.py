@@ -10,6 +10,7 @@ import globals as G
 import mcpython.ResourceLocator
 import mcpython.event.Registry
 import mcpython.texture.TextureAtlas
+import mcpython.item.ItemAtlas
 import json
 import os
 import PIL.Image
@@ -19,102 +20,55 @@ import mcpython.mod.ModMcpython
 import logger
 
 
-TEXTURE_ATLASES = []
+COLLECTED_ITEMS = []
+
+ITEM_ATLAS = mcpython.item.ItemAtlas.ItemAtlasHandler()
 
 
 def build():
-    if not os.path.exists(G.build+"/itematlases"):
-        os.makedirs(G.build+"/itematlases")
-
-    logger.println("building item texture atlases...")
-    G.eventhandler.call("itemhandler:build:atlases:save")
-    indexdata = {}
-    for i, textureatlas in enumerate(TEXTURE_ATLASES):
-        file = "atlas_{}.png".format(i)
-        textureatlas.texture.save(G.build+"/itematlases/"+file)
-        textureatlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.build+"/itematlases/"+file),
-                                                      *textureatlas.size)
-        indexdata[file] = {"size": textureatlas.size, "loaded_item_file_names": textureatlas.images,
-                           "locations": textureatlas.imagelocations}
-    indexdata["loaded_item_file_names"] = items.itemindextable
-    with open(G.build+"/itematlases/index.json", mode="w") as f:
-        json.dump(indexdata, f)
+    ITEM_ATLAS.build()
+    ITEM_ATLAS.dump()
+    for itemclass in COLLECTED_ITEMS:
+        for file in itemclass.get_used_texture_files():
+            items.itemindextable[itemclass.NAME][file] = ITEM_ATLAS.get_texture_info(file)
 
 
 def load_data(from_block_item_generator=False):
-    if G.prebuilding and not from_block_item_generator: return
-    G.eventhandler.call("itemhandler:build:atlases:load")
-    if not os.path.exists(G.build+"/itematlases"):
-        os.makedirs(G.build+"/itematlases")
-    elif os.path.exists(G.build+"/itematlases/index.json"):
-        with open(G.build+"/itematlases/index.json") as f:
-            indextable = json.load(f)
-        for file in os.listdir(G.build+"/itematlases"):
-            if not file.endswith(".json") and file in indextable:
-                atlas = mcpython.texture.TextureAtlas.TextureAtlas(size=indextable[file]["size"], image_size=(32, 32),
-                                                          add_missing_texture=False, pyglet_special_pos=False)
-                image = PIL.Image.open(G.build+"/itematlases/"+file)
-                atlas.texture = image
-                atlas.images = indextable[file]["loaded_item_file_names"]
-                atlas.imagelocations = indextable[file]["locations"]
-                TEXTURE_ATLASES.append(atlas)
-                if not G.prebuilding:
-                    atlas.group = pyglet.image.ImageGrid(pyglet.image.load(G.build+"/itematlases/" + file),
-                                                         *atlas.size)
-        items.itemindextable = indextable["loaded_item_file_names"]
-        if not G.prebuilding:
-            with open(G.build+"/itemblockfactory.json") as f:
-                data = json.load(f)
-            for entry in data[:]:
-                name = entry[0]
-                obj = mcpython.factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(entry[1])
-                blocktable = G.registry.get_by_name("block").registered_object_map
-                if name in blocktable:
-                    block = blocktable[name]
-                    block.modify_block_item(obj)
-                    obj.finish()
-                else:
-                    logger.println("[ERROR] during constructing block item for '{}': Failed to find block in active "
-                                   "registry".format(name))
-                    data.remove(entry)
-            with open(G.build+"/itemblockfactory.json", mode="w") as f:
-                json.dump(data, f)
+    if not G.prebuilding and os.path.exists(G.build + "/itemblockfactory.json"):
+        collected_overflow = []
+        with open(G.build + "/itemblockfactory.json") as f:
+            data = json.load(f)
+        for entry in data[:]:
+            name = entry[0]
+            obj = mcpython.factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(
+                entry[1])
+            blocktable = G.registry.get_by_name("block").registered_object_map
+            if name in blocktable:
+                block = blocktable[name]
+                block.modify_block_item(obj)
+                obj.finish()
+            else:
+                collected_overflow.append(entry)
+                data.remove(entry)
+        if len(collected_overflow) > 0:
+            logger.write_into_container(["-'{}'".format(e[0]) for e in collected_overflow],
+                                        header=["MCPYTHON REGISTRY CHANGE - Following BlockItemTextures", "are obsolete as this blocks are missing"])
+        with open(G.build + "/itemblockfactory.json", mode="w") as f:
+            json.dump(data, f)
+    ITEM_ATLAS.load()
 
 
-def add_to_image_atlas(textureatlas, image, file):
-    pos = textureatlas.add_image(image, ind=file)
-    pos = (textureatlas.size[1] - pos[1] - 1, pos[0])
-    return pos, TEXTURE_ATLASES.index(textureatlas)
+def add_to_image_atlas(file):
+    ITEM_ATLAS.schedule_item_file(file)
 
 
 def register_item(registry, itemclass):
     items.registered_object_map[itemclass.NAME.split(":")[-1]] = itemclass
     if itemclass.NAME in items.itemindextable: return
-    table = items.itemindextable
-    table.setdefault(itemclass.NAME, {})
-    try:
-        files = itemclass.get_used_texture_files()
-        try:
-            images = [mcpython.ResourceLocator.read(file, "pil").resize((32, 32), PIL.Image.NEAREST) for file in files]
-        except ValueError:
-            images = [mcpython.texture.TextureAtlas.MISSING_TEXTURE] * len(files)
-            logger.write_exception("during not finding files: {}".format(files))
-        flag = True
-        for textureatlas in TEXTURE_ATLASES:
-            if textureatlas.is_free_for(files):
-                for i, image in enumerate(images):
-                    table[itemclass.NAME][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
-                flag = False
-                break
-        if flag:
-            textureatlas = mcpython.texture.TextureAtlas.TextureAtlas(add_missing_texture=False, image_size=(32, 32),
-                                                             pyglet_special_pos=False, size=(16, 16))
-            TEXTURE_ATLASES.append(textureatlas)
-            for i, image in enumerate(images):
-                table[itemclass.NAME][files[i]] = add_to_image_atlas(textureatlas, image, files[i])
-    except:
-        logger.println("information for exception: ", itemclass.NAME, itemclass.get_used_texture_files())
-        raise
+    items.itemindextable.setdefault(itemclass.NAME, {})
+    for file in itemclass.get_used_texture_files():
+        add_to_image_atlas(file)
+    COLLECTED_ITEMS.append(itemclass)
 
 
 items = mcpython.event.Registry.Registry("item", ["minecraft:item"], injection_function=register_item)

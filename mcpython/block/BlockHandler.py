@@ -11,6 +11,7 @@ import mcpython.block.Block
 import mcpython.event.Registry
 import mcpython.mod.ModMcpython
 import logger
+from mcpython.block.Block import Block
 
 
 def register_block(registry, blockclass):
@@ -30,13 +31,13 @@ def register_block(registry, blockclass):
             blockclass.CAN_MOBS_SPAWN_ON = blockclass.SOLID
 
         if not blockclass.ENABLE_RANDOM_TICKS:
-            try:
-                instance.on_random_update()
-                logger.println("[WARN] block {} has not set ENABLE_RANDOM_TICKS, but the event function was changed!"
-                               .format(blockclass.NAME))
+
+            # check for functional identical parts
+            if instance.on_random_update.__code__ != Block.on_random_update.__code__:
+                logger.println("[WARN] block '{}' has not set ENABLE_RANDOM_TICKS, but the event function was changed "
+                               "from {} to {}!".format(blockclass.NAME, blockclass.on_random_update,
+                                                       Block.on_random_update))
                 blockclass.ENABLE_RANDOM_TICKS = True
-            except IOError:
-                pass
 
 
 block_registry = mcpython.event.Registry.Registry("block", ["minecraft:block_registry"], injection_function=register_block)

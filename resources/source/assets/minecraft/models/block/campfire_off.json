@@ -1,5 +1,5 @@
 {
-    "parent": "block/block",
+    "parent": "minecraft:block/block",
     "display": {
         "head": {
             "rotation": [ 0, 0, 0 ],
@@ -8,8 +8,8 @@
         }
     },
     "textures": {
-        "particle": "block/campfire_log",
-        "log": "block/campfire_log"
+        "particle": "minecraft:block/campfire_log",
+        "log": "minecraft:block/campfire_log"
     },
     "elements": [
         {

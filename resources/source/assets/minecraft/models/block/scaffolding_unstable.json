@@ -1,10 +1,10 @@
 {
-    "parent": "block/block",
+    "parent": "minecraft:block/block",
     "textures": {
-        "particle": "block/scaffolding_top",
-        "top": "block/scaffolding_top",
-        "side": "block/scaffolding_side",
-        "bottom": "block/scaffolding_bottom"
+        "particle": "minecraft:block/scaffolding_top",
+        "top": "minecraft:block/scaffolding_top",
+        "side": "minecraft:block/scaffolding_side",
+        "bottom": "minecraft:block/scaffolding_bottom"
     },
     "elements": [
         {

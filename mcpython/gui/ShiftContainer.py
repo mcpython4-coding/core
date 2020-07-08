@@ -9,6 +9,10 @@ blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
 
 
 class ShiftContainer:
+    """
+    container class holding information on which inventory parts can be shift-clicked
+    """
+
     def __init__(self):
         self.container_A = list()
         self.container_B = list()
@@ -25,14 +29,14 @@ class ShiftContainer:
         if len(opposite) == 0:
             return False
         for slot2 in opposite:
-            if slot2.itemstack.item == slot.itemstack.item and slot.interaction_mode[1] and slot.interaction_mode[2]:
+            if slot2.itemstack.item == slot.itemstack.item and slot.interaction_mode[1]:
                 delta = min(slot.itemstack.amount if count is None else count,
-                            slot2.itemstack.item.STACK_SIZE-slot2.itemstack.amount)
+                            slot2.itemstack.item.STACK_SIZE - slot2.itemstack.amount)
                 slot2.itemstack.add_amount(delta)
                 slot.itemstack.add_amount(-delta)
                 if slot.itemstack.is_empty() or count is not None: return True
         for slot2 in opposite:
-            if slot2.itemstack.is_empty() and slot.interaction_mode[1] and slot.interaction_mode[2]:
+            if slot2.itemstack.is_empty() and slot.interaction_mode[1]:
                 if count is None:
                     slot2.set_itemstack(slot.itemstack.copy())
                     slot.itemstack.clean()
@@ -41,4 +45,3 @@ class ShiftContainer:
                     slot.itemstack.add_amount(-count)
                 return True
         return False
-

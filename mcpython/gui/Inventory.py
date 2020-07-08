@@ -50,7 +50,11 @@ class Inventory:
         todo: make public
         """
         if self.get_config_file():
-            self.config = mcpython.ResourceLocator.read(self.get_config_file(), "json")
+            try:
+                self.config = mcpython.ResourceLocator.read(self.get_config_file(), "json")
+            except:
+                logger.write_exception("[FATAL] failed to load inventory config file {} for inventory {}".format(
+                    self.get_config_file(), self))
         else:
             self.config = {}
             return
@@ -67,9 +71,13 @@ class Inventory:
             if "allow_player_add_to_free_place" in entry:
                 self.slots[sid].interaction_mode[2] = entry["allow_player_add_to_free_place"]
             if "empty_slot_image" in entry:
-                image = mcpython.ResourceLocator.read(entry["empty_slot_image"], "pil")
-                image = mcpython.util.texture.to_pyglet_image(image.resize((32, 32), PIL.Image.NEAREST))
-                self.slots[sid].empty_image = pyglet.sprite.Sprite(image)
+                try:
+                    image = mcpython.ResourceLocator.read(entry["empty_slot_image"], "pil")
+                    image = mcpython.util.texture.to_pyglet_image(image.resize((32, 32), PIL.Image.NEAREST))
+                    self.slots[sid].empty_image = pyglet.sprite.Sprite(image)
+                except:
+                    logger.write_exception("[FATAL] failed to load empty slot image from {}".format(
+                        entry["empty_slot_image"]))
             if "allowed_tags" in entry:
                 self.slots[sid].allowed_item_tags = entry["allowed_tags"]
         if "image_size" in self.config:
@@ -81,12 +89,22 @@ class Inventory:
         if "image_position" in self.config:
             self.position = self.config["image_position"]
         if "image_location" in self.config:
-            if mcpython.ResourceLocator.exists(self.config["image_location"]):
-                self.bgsprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read(self.config["image_location"], "pyglet"))
-            else:
-                self.bgsprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read("assets/missingtexture.png", "pyglet"))
+            try:
+                if mcpython.ResourceLocator.exists(self.config["image_location"]):
+                    self.bgsprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read(
+                        self.config["image_location"], "pyglet"))
+                else:
+                    self.bgsprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read(
+                        "assets/missingtexture.png", "pyglet"))
+            except:
+                logger.write_exception("[FATAL] failed to load background image {}".format(
+                    self.config["image_location"]))
         if "bg_image_pos" in self.config:
             self.bg_image_pos = tuple(self.config["bg_image_pos"])
+        self.on_reload()
+
+    def on_reload(self):
+        pass
 
     def create_slots(self) -> list:  # todo: remove
         """

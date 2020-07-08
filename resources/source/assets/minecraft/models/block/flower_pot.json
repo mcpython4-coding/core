@@ -1,9 +1,9 @@
 {
     "ambientocclusion": false,
     "textures": {
-        "particle": "block/flower_pot",
-        "flowerpot": "block/flower_pot",
-        "dirt": "block/dirt"
+        "particle": "minecraft:block/flower_pot",
+        "flowerpot": "minecraft:block/flower_pot",
+        "dirt": "minecraft:block/dirt"
     },
     "elements": [
         {   "from": [ 5, 0, 5 ],
@@ -49,7 +49,7 @@
         {   "from": [ 6, 0, 6 ],
             "to": [ 10, 4, 10 ],
             "faces": {
-                "down": { "uv": [ 6, 6, 10, 10 ], "texture": "#flowerpot", "cullface": "down" },
+                "down": { "uv": [ 6, 12, 10, 16 ], "texture": "#flowerpot", "cullface": "down" },
                 "up":   { "uv": [ 6, 6, 10, 10 ], "texture": "#dirt" }
             }
         }

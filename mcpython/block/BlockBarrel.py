@@ -12,6 +12,7 @@ from pyglet.window import mouse, key
 import mcpython.util.enums
 import pyglet
 import mcpython.gui.InventoryBarrel
+import logger
 
 
 @G.registry
@@ -40,7 +41,7 @@ class BlockBarrel(Block.Block):
             elif dy < 0: self.facing = "up"
 
     def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
-        if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
+        if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:  # open the inv when needed
             G.inventoryhandler.show(self.inventory)
             return True
         else:
@@ -52,7 +53,7 @@ class BlockBarrel(Block.Block):
     HARDNESS = 2.5
     BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.AXE]
 
-    def get_provided_slots(self, side): return self.inventory.slots
+    def get_provided_slot_lists(self, side): return self.inventory.slots, self.inventory.slots
 
     def set_model_state(self, state: dict):
         if "side" in state:

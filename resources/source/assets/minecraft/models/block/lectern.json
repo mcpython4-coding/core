@@ -1,5 +1,5 @@
 {
-    "parent": "block/block",
+    "parent": "minecraft:block/block",
     "display": {
         "firstperson_righthand": {
             "rotation": [ 0, 135, 0 ],
@@ -8,12 +8,12 @@
         }
     },
     "textures": {
-        "particle": "block/lectern_sides",
-        "bottom": "block/oak_planks",
-        "base": "block/lectern_base",
-        "front": "block/lectern_front",
-        "sides": "block/lectern_sides",
-        "top": "block/lectern_top"
+        "particle": "minecraft:block/lectern_sides",
+        "bottom": "minecraft:block/oak_planks",
+        "base": "minecraft:block/lectern_base",
+        "front": "minecraft:block/lectern_front",
+        "sides": "minecraft:block/lectern_sides",
+        "top": "minecraft:block/lectern_top"
     },
     "elements": [
         {

@@ -39,7 +39,7 @@ def create_shulker_box(name):
         MINIMUM_TOOL_LEVEL = 0
         BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.AXE]
 
-        def get_provided_slots(self, side): return self.inventory.slots
+        def get_provided_slot_lists(self, side): return self.inventory.slots, self.inventory.slots
 
         @classmethod
         def modify_block_item(cls, itemconstructor: mcpython.factory.ItemFactory.ItemFactory):

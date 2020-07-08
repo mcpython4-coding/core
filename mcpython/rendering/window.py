@@ -68,9 +68,6 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
 
-        # When flying gravity has no effect and speed is increased. todo: move to player
-        self.flying = False
-
         # Strafing is moving lateral to the direction you are facing,
         # e.g. moving to the left or right while continuing to face forward.
         #
@@ -130,6 +127,14 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:game_crash", self.close)
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:copy_block_or_entity_data",
                                                                self.get_block_entity_info)
+
+    @deprecation.deprecated("dev4-3", "a1.2.0")
+    def get_flying(self): return G.world.get_active_player().is_flying
+
+    @deprecation.deprecated("dev4-3", "a1.2.0")
+    def set_flying(self, flying): G.world.get_active_player().is_flying = flying
+
+    flying = property(get_flying, set_flying)
 
     def print_profiler(self, dt=None):
         """
@@ -269,7 +274,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                         # falling / rising.
                         self.dy = 0
                     if face == (0, -1, 0):
-                        G.window.flying = False
+                        G.world.get_active_player().flying = False
                         if G.world.get_active_player().gamemode in (
                                 0, 2) and G.world.get_active_player().fallen_since_y is not None:
                             dy = G.world.get_active_player().fallen_since_y - G.world.get_active_player().position[
@@ -364,46 +369,45 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("user:window:resize", width, height)
 
     def set_2d(self):
-        """
-        Configure OpenGL to draw in 2d.
-        """
         width, height = self.get_size()
         viewport = self.get_viewport_size()
         mcpython.rendering.OpenGLSetupFile.execute_file_by_name("set_2d", width=max(1, width), height=max(1, height),
                                                                 viewport_0=max(1, viewport[0]),
                                                                 viewport_1=max(1, viewport[1]))
+        # G.rendering_helper.setup2d()
+        pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
     def set_3d(self, position=None, rotation=None):
-        """
-        Configure OpenGL to draw in 3d.
-        """
-        width, height = self.get_size()
-        viewport = self.get_framebuffer_size()
-        if rotation is None: rotation = G.world.get_active_player().rotation
-        if position is None: position = G.world.get_active_player().position
-        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("set_3d", width=width, height=height,
-                                                                viewport_0=max(1, viewport[0]),
-                                                                viewport_1=max(1, viewport[1]), rotation_x=rotation[0],
-                                                                rotation_y=rotation[1], position_x=position[0],
-                                                                position_y=position[1], position_z=position[2],
-                                                                trans_rot_x=math.cos(math.radians(rotation[0])),
-                                                                trans_rot_y=math.sin(math.radians(rotation[0])))
+        if G.world.get_active_player() is None: return
+        if G.rendering_helper.default_3d_stack is None:
+            G.rendering_helper.default_3d_stack = G.rendering_helper.get_dynamic_3d_matrix_stack()
+        G.rendering_helper.default_3d_stack.apply()
+        pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
 
     def on_draw(self):
         """
         Called by pyglet to draw the canvas.
         """
+        # make sure that the state of the rendering helper is saved for later usage
         status = G.rendering_helper.save_status(add_to_stack=False)
+
+        # check for profiling
         if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.enable()
-        self.clear()
-        self.set_3d()
-        G.eventhandler.call("render:draw:3d")
+
+        G.eventhandler.call("render:draw:pre_clear")
+        self.clear()  # clear the screen
+        G.eventhandler.call("render:draw:pre_setup")
         self.set_2d()
-        G.eventhandler.call("render:draw:2d:background")
-        G.eventhandler.call("render:draw:2d")
-        G.eventhandler.call("render:draw:2d:overlay")
+        G.eventhandler.call("render:draw:2d:background_pre")
+        self.set_3d()  # setup for 3d drawing
+        G.eventhandler.call("render:draw:3d")  # call general 3d rendering event
+        self.set_2d()  # setup for 2d rendering
+        G.eventhandler.call("render:draw:2d:background")  # call pre 2d
+        G.eventhandler.call("render:draw:2d")  # call normal 2d
+        G.eventhandler.call("render:draw:2d:overlay")  # call overlay 2d
         if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.disable()
         G.rendering_helper.apply(status)
+        G.eventhandler.call("render:draw:post:cleanup")
 
     def draw_focused_block(self):
         """

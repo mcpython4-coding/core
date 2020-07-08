@@ -44,14 +44,19 @@ try:
     import globals as G
 
     # check if build folder exists, if not, we need to create its content
-    if not os.path.exists(G.build+""):
+    if not os.path.exists(G.build):
+        logger.println("rebuild mode due to missing cache folder")
         G.prebuilding = True
 
     import mcpython.ResourceLocator
     mcpython.ResourceLocator.load_resource_packs()
 
-    if os.path.exists(G.build+""):
-        mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
+    if os.path.exists(G.build):
+        try:
+            mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
+        except:
+            logger.write_exception("[FATAL] failed to load default skin")
+            sys.exit(-1)
 
     import mcpython.mod.ModLoader
 
@@ -99,9 +104,13 @@ try:
         import pyglet
         # todo: move size to config.py
         mcpython.rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
-        G.window.set_icon(mcpython.ResourceLocator.read("icon_16x16.png", "pyglet"),
-                          mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"))
-        G.eventhandler.call("game:gameloop_startup")
+        try:
+            G.window.set_icon(mcpython.ResourceLocator.read("icon_16x16.png", "pyglet"),
+                              mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"))
+            G.eventhandler.call("game:gameloop_startup")
+        except:
+            logger.write_exception("[FATAL] failed to load window images")
+            sys.exit(-1)
         try:
             pyglet.app.run()
         except:

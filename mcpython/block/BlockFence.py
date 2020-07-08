@@ -114,6 +114,20 @@ class SpruceFence(IWoodenFence):
 
 
 @G.registry
+class CrimsonFence(IFence):
+    FENCE_TYPE_NAME = {"minecraft:wooden_fence", "minecraft:nether_fence"}
+
+    NAME = "minecraft:crimson_fence"
+
+
+@G.registry
+class WarpedFence(IFence):
+    FENCE_TYPE_NAME = {"minecraft:wooden_fence", "minecraft:nether_fence"}
+
+    NAME = "minecraft:warped_fence"
+
+
+@G.registry
 class NetherBrickFence(IFence):
     NAME = "minecraft:nether_brick_fence"
 

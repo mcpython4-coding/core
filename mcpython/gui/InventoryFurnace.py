@@ -16,10 +16,15 @@ import pyglet
 import time
 import logger
 import mcpython.ResourceLocator
+import sys
 
 
-arrow = mcpython.ResourceLocator.read("build/texture/gui/furnace_arrow.png", "pyglet")
-fire = mcpython.ResourceLocator.read("build/texture/gui/furnace_fire.png", "pyglet")
+try:
+    arrow = mcpython.ResourceLocator.read("build/texture/gui/furnace_arrow.png", "pyglet")
+    fire = mcpython.ResourceLocator.read("build/texture/gui/furnace_fire.png", "pyglet")
+except:
+    logger.write_exception("[FATAL] failed to load furnace gui parts")
+    sys.exit(-1)
 
 
 class InventoryFurnace(mcpython.gui.Inventory.Inventory):
@@ -81,9 +86,9 @@ class InventoryFurnace(mcpython.gui.Inventory.Inventory):
             if self.slots[2].itemstack.get_item_name() is not None and (
                     self.slots[2].itemstack.get_item_name() != recipe.output or
                     self.slots[2].itemstack.amount >= self.slots[2].itemstack.item.STACK_SIZE):
-                if not self.slots[2].itemstack.is_empty():
-                    print(self.slots[2].itemstack.get_item_name() != recipe.output,
-                          self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
+                # if not self.slots[2].itemstack.is_empty():
+                #     print(self.slots[2].itemstack.get_item_name() != recipe.output,
+                #           self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
                 self.reset()
                 return
             self.recipe: mcpython.gui.crafting.FurnaceCrafting.FurnesRecipe = recipe

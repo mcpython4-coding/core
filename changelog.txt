@@ -2,29 +2,35 @@ Changelog since cleanup-branch of 31.01.2020
 todo: make into an .md file
 
 
-planned for the future:
+planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
+        before next stable release):
     - optimize texture reload with everything (re-block-item-factories, reload block models,
-        reload item texture, gui textures, ...), config reload
-    - add more factories for various parts (better block models, block states, full block factory, ...) [data gens?]
-    - add scoreboards with commands, execute entry, ...
-    - make commands more fail-save
-    - make world gen more fail-save
-    - add ores
-    - add mcpi API support
-    - an logging update
-    - improve item texture atlas system (it seems not very stable when adding new items without rebuilding)
-    - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum
-    - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality]
+        reload item texture, gui textures, ...), config reload [1]
+    - add more factories for various parts (better block models, block states, full block factory, ...) [2]
+    - add scoreboards with commands, execute entry, ... [5]
+    - make world gen more fail-save [2]
+    - add ores [4]
+    - add mcpi API support [10]
+    - an logging update [4]
+    - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum [7]
+    - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality] [5]
     - add an line into logging where the system searches for the location where the error occur and will link the mod
-        caused it into the log
-    - parser for the new mc dimension config format
-    - mdk kit with setup and launcher binding
-    - add an mode where the window opens only when the load is complete
+        caused it into the log [6]
+    - parser for the new mc dimension config format [20]
+    - mdk kit with setup and launcher binding [11]
+    - add an mode where the window opens only when the load is complete [100]
     - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
-        and when the user tries to go back to start menu, the game is closing. [change button text for that]
-    - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
-    - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html)
-    - implement lighting
+        and when the user tries to go back to start menu, the game is closing. [change button text for that] [100]
+    - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation [30]
+    - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html) [110]
+    - implement lighting [1000]
+    - implement more UI element parsers [5]
+    - port every state configuration to config files [6]
+    - launcher system to download mc assets separately [10]
+    - entity AI system [30]
+    - rendering layer system [20]
+    - make loot table system only load needed loot tables, etc. [10]
+    - an indicator for corrupted save files (add an number to an counter and remove when action finished) [1]
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -45,21 +51,89 @@ information on development:
         first obscures of the bug the list of issues with an short description and when based on an github bug report
         its id.
 
+
+changelog of snapshot 20w28a released on 08.07.2020 (theme: fixing stuff & upgrading base to 1.16)
+    - updated textures to 1.16 and added content of the update
+
+    Rendering:
+        - improved rendering system by using MatrixStack's and RenderingHelper-instances
+        - changed how item textures are baked together
+        - added button to delete world in world selection screen
+
+    World Format:
+        - improved data fixer system
+
+    Gameplay:
+        - SHIFT-drag support in inventories
+
+    Commands:
+        - improved command handling
+        - added /execute in <dimension id> sub-command
+        - /teleport allows now the player to also change dimension
+
+    Data Gen:
+        - deprecated old AdvancedBlockFactory system
+        - added CombinedBlockFactory system for doing fancy stuff with data gen & in-game objects at ones
+        - added --enable-all-blocks runtime flag for enabling all optional blocks
+
+    Profiler:
+        - added profiler for world generation
+
+    Registries:
+        - registries get now "locked" after mod loading finished (they are still write-able, but this will get removed in
+            the future as it will get replaced by reload-registries-events)
+
+    World Generation:
+        - implemented base generator for the nether
+
+    fixed issues:
+        from previous snapshot:
+            - ordering of world selection list was wrong
+            - world selection screen was not rendering all possible worlds
+            - ShiftContainer was miss-behaving in certain cases
+            - registry info was not dumping data correctly
+            - exceptions when no save file exists
+            - data fixer results may not be saved correctly
+            - exception when world selection screen is empty
+            - world selection screen was parsing name incorrectly
+
+        long-term issues:
+            - rendering helper was miss-doing some stuff
+            - debug world was displaying some block states more than one time
+            - exceptions were printed into log when loading an saved debug world
+            - .setGlobalModName() on ItemFactory did not work correctly
+            - ItemAtlas was crashing on missing texture file instead of replacing with missingtexture.png
+            - ItemFactory's template system was broken
+            - changing dimension did not work in a lot of cases
+
 changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
-    - added state part serializer for progress bar
-    - rewritten data fixer system. Incompatible with old one. Old stuff still arrival, but deprecated
-    - old worlds are still load-able as data-fixers were ported
-    - improved loading & generation screens
-    - added /shuffledata command for shuffling recipes & loot table outputs with other ones
-        (must be activated in config files)
-    - added data gen system for textures
-    - changed order of loading stages to be more functional
-    - changed some logging systems
-    - implemented two new loot table conditions: minecraft:block_state_property and minecraft:damage_source_properties
-    - added DamageSource class
-    - improved code
-    - implemented world list with selection. Moved world name enter into world generation settings screen
-    - added UI element for scroll bars
+    Rendering:
+        - added state part serializer for progress bar
+        - generation screens
+        - implemented world list with selection. Moved world name enter into world generation settings screen
+        - added UI element for scroll bars
+
+    Saves:
+        - rewritten data fixer system. Incompatible with old one. Old stuff still arrival, but deprecated
+        - old worlds are still load-able as data-fixers were ported
+
+    Console:
+        - improved loading
+        - changed some logging systems
+
+    Commands:
+        - added /shuffledata command for shuffling recipes & loot table outputs with other ones
+            (must be activated in config files)
+
+    Modding:
+        - added data gen system for textures
+        - changed order of loading stages to be more functional
+
+    Loot tables:
+        - implemented two new loot table conditions: minecraft:block_state_property and minecraft:damage_source_properties
+
+    Entity API:
+        - added DamageSource class
 
     fixed issues:
         long-term issues:

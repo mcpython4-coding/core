@@ -1,8 +1,17 @@
+Every event here listed with "<...>" is an older event which (might) get updated in the near future to another event.
+These events WILL mostly get removed in the future. Make sure that you are aware of that!!!!!!
+
+At the end of the file, you will find an list of removed events from this file and their former usage.
+
 
 commands:
-    "command:clear:start": called by command "/clear" on beginning to clearing inventory, cancelable in
-        CommandClear-class, [cancels the real "clear", but will call all following subscribers]
-    "command:clear:end": called by command "/clear" on end of clearing inventory
+    command:clear(CancelAbleEvent, ParsingCommandInfo): called when /clear is executed
+    command:clear:entity(CancelAbleEvent, ParsingCommandInfo, Entity): called for every entity affected by /clear.
+        Will cancel /clear only for THIS entity
+    command:clear:finish(ParsingCommandInfo): called by command "/clear" on end of clearing inventory
+
+    command:clone:block_map(ParsingCommandInfo, dict): called when data is collected together with the data table
+
     "command:give:start": called by command "/give" on beginning of adding items, called with ItemStack-parameter,
         cancelable in CommandGive-class [cancels the "real" giving, but will call all following subscribers]
     "command:help:generate_pages": called on CommandHelp's page generation, called with the page list as an parameter
@@ -44,7 +53,13 @@ items:
     "itemhandler:build:atlases:load": called by ItemHandler when the table of item data is loaded
 
 mod loader:
-    "modloader:mod_found": called by ModLoader when an mod-instance was created
+    modloader:location_search(list[str]): called by ModLoader with the list of possible mod directories/files.
+        used to modify things
+    modloader:mod_entered_stage(CancelAbleEvent, stage, event, Mod): called by ModLoader when an new stage for an mod is
+        started. When canceled, event cluster for mod will be skipped
+    modloader:mod_registered(CancelAbleEvent, Mod): called by ModLoader when an new mod tries to be loaded. canceling
+        will prevent the mod from registering
+    modloader:finished(): called by ModLoader when it finished loading
 
 interaction:
     "gameloop:tick:start": called on beginning of every tick with the elapsed time since last tick
@@ -57,10 +72,16 @@ interaction:
     "user:keyboard:press": called with symbol and modifiers when the user presses an key on the keyboard
     "user:keyboard:release": called with symbol and modifiers when the user releases an key on the keyboard
     "user:window:resize": called with the new size as x and y when the user resize the window
+
+drawing:
+    "render:draw:pre_clear"
+    "render:draw:pre_setup"
+    "render:draw:2d:background_pre"
     "render:draw:3d": called to draw in 3d
     "render:draw:2d:background", "render:draw:2d" and "render:draw:2d:overlay": called to draw 2d, called in the order
         listed here
     "user:keyboard:enter": called with the text if the player enters an text
+    "render:draw:post:cleanup"
 
 states:
     "state:switch:pre": called by StateHandler before the state is switched, cancelable
@@ -100,4 +121,9 @@ hotkeys:
 
 data generation [loading event]:
     "special:datagen:configure": called by the data generation system in order for mods to generate their datagens
+
+removed:
+    "command:clear:start": previous event for /clear command
+    "command:clear:end": previous event for /clear command
+    "modloader:mod_found": previous called by ModLoader when an mod-instance was created
 

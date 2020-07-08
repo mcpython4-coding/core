@@ -15,7 +15,7 @@ from mcpython.chat.command.Command import ParseBridge, ParseType, SubCommand
 @G.registry
 class CommandDatapack(mcpython.chat.command.Command.Command):
     """
-    command /datapack
+    Class holding the /datapack command
     """
 
     NAME = "minecraft:datapack"
@@ -38,23 +38,29 @@ class CommandDatapack(mcpython.chat.command.Command.Command):
             for datapack in mcpython.chat.DataPack.datapackhandler.data_packs:
                 if datapack.name == values[1] and mcpython.chat.DataPack.DataPackStatus.DEACTIVATED:
                     datapack.set_status(mcpython.chat.DataPack.DataPackStatus.ACTIVATED)
+
         elif values[0] == "disable":
             for datapack in mcpython.chat.DataPack.datapackhandler.data_packs:
                 if datapack.name == values[1] and mcpython.chat.DataPack.DataPackStatus.ACTIVATED:
                     datapack.set_status(mcpython.chat.DataPack.DataPackStatus.DEACTIVATED)
+
         elif values[0] == "list":
-            G.chat.print_ln("count: {}".format(len(mcpython.chat.DataPack.datapackhandler.data_packs)))
+            info.chat.print_ln("count: {}".format(len(mcpython.chat.DataPack.datapackhandler.data_packs)))
             for datapack in mcpython.chat.DataPack.datapackhandler.data_packs:
-                G.chat.print_ln("- datapack '{}' - status: {}".format(datapack.name, datapack.status.name))
+                info.chat.print_ln("- datapack '{}' - status: {}".format(datapack.name, datapack.status.name))
+
         elif values[0] == "release":
             mcpython.chat.DataPack.datapackhandler.cleanup()
         else:
             G.chat.print_ln("failed to execute command. invalid syntax")
 
+        else:
+            info.chat.print_ln("failed to execute command. invalid syntax")
+
     @staticmethod
     def get_help() -> list:
-        return ["/datapack enable <name>: enables an datapack",
-                "/datapack disable <name>: disables an datapack",
+        return ["/datapack enable <name>: enables an datapack with name <name>",
+                "/datapack disable <name>: disables an datapack with name <name>",
                 "/datapack list: lists all arrival datapacks with status",
                 "/datapack release: unloads all datapacks, decrease memory usage, makes deleting datapacks possible."]
 

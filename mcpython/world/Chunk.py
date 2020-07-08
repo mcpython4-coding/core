@@ -160,7 +160,7 @@ class Chunk:
                 return
             blockobj = table[block_name](position, *args, **kwargs)
         if self.now.day == 13 and self.now.month == 1 and "diorite" in blockobj.NAME:
-            print("[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
+            logger.println("[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
                 blockobj.NAME))
             # for developers: easter egg! [DO NOT REMOVE, UUK'S EASTER EGG]
             return self.add_block(position, "minecraft:stone")

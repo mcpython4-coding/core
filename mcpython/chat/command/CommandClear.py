@@ -14,12 +14,19 @@ from mcpython.chat.command.Command import ParseBridge, ParseType, ParseMode
 @G.registry
 class CommandClear(mcpython.chat.command.Command.Command):
     """
-    command /clear
+    Class for the /clear command
+
+    events:
+        - command:clear(CancelAbleEvent, ParsingCommandInfo): called when /clear is executed
+        - command:clear:entity(CancelAbleEvent, ParsingCommandInfo, Entity): called for every entity affected by /clear.
+            Will cancel /clear only for THIS entity
+        - command:clear:finish(ParsingCommandInfo): called by command "/clear" on end of clearing inventory
+
+        removed:
+        - command:clear:start & command:clear:end
     """
 
     NAME = "minecraft:clear"
-
-    CANCEL_CLEAR = False  # cancel the clear-execute
 
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
@@ -28,23 +35,26 @@ class CommandClear(mcpython.chat.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        cls.CANCEL_CLEAR = False
-        G.eventhandler.call("command:clear:start")
-        if cls.CANCEL_CLEAR: return
-        if len(values) == 0: values.append([G.world.get_active_player()])
+        if G.eventhandler.call_cancelable("command:clear", info): return   # event for canceling such event
+
+        # when the entity(s) is/are not provided, replace by executing one
+        if len(values) == 0: values.append([info.entity])
+
         for entity in values[0]:  # iterate over all entities
+            if G.eventhandler.call_cancelable("command:clear:entity", info, entity): continue
+
             if not hasattr(entity, "inventories"):  # has it an inventory?
-                G.chat.print_ln("entity '{}' has no inventories!".format(entity))
+                info.chat.print_ln("invalid target entity: {}".format(entity))
                 continue
-            for inventory in entity.get_inventories():
-                inventory.clear()  # clear every inventory
-            if hasattr(entity, "xp"):
-                entity.xp = 0
-                entity.xp_level = 0
-        G.inventoryhandler.moving_slot.get_itemstack().clean()
-        G.eventhandler.call("command:clear:end")
+
+            for inventory in entity.get_inventories():  # iterate over all inventories ...
+                inventory.clear()  # ... and clear them
+
+        G.inventoryhandler.moving_slot.get_itemstack().clean()  # make sure that he has nothing in his hand
+
+        G.eventhandler.call("command:clear:end", info)  # and call the event that we are done
 
     @staticmethod
     def get_help() -> list:
-        return ["/clear [<selector: entitys>: default=@s]: clear inventory of given entity(s)"]
+        return ["/clear [<selector: entities>: default=@s]: clear inventory of given entity(s)"]
 

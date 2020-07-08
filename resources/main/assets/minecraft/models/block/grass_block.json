@@ -1,11 +1,11 @@
 {
-    "parent": "block/cube",
+    "parent": "minecraft:block/cube",
     "textures": {
-        "down": "block/dirt",
+        "down": "minecraft:block/dirt",
         "up": "build/texture/blocks/grass_block_top.png",
-        "north": "block/grass_block_side",
-        "east": "block/grass_block_side",
-        "south": "block/grass_block_side",
-        "west": "block/grass_block_side"
+        "north": "minecraft:block/grass_block_side",
+        "east": "minecraft:block/grass_block_side",
+        "south": "minecraft:block/grass_block_side",
+        "west": "minecraft:block/grass_block_side"
     }
 }

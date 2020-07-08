@@ -20,6 +20,7 @@ class Model:
         self.texture_addresses = {}
         self.texturerename = {}
         if self.parent:
+            if ":" not in self.parent: self.parent = "minecraft:" + self.parent
             if self.parent not in G.modelhandler.models:
                 G.modelhandler.load_model(self.parent)
             self.parent = G.modelhandler.models[self.parent]

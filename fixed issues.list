@@ -194,4 +194,20 @@ issue 174: loading bars in mod loading where not in the middle of the screen; fi
 issue 202: loading and generating progress % was calculated wrong; fixed on 11.06.2020 by uuk
 issue 211: when closing the game while the main inventory is open, items could get saved in the crafting grid;
            fixed on 12.06.2020 by uuk
-issue 212: /clone was not updating visual status of blocks
+issue 212: /clone was not updating visual status of blocks; fixed by uuk
+issue 213: world selection list was wrong way round sorted; fixed on 20.06.2020 by uuk
+issue 214: world selection list was rendering wrong; fixed on 20.06.2020 by uuk
+issue 215: can't shift-click out of certain slots, caused by ShiftContainer-miss-behaviour; fixed on 22.06.2020 by uuk
+issue 216: RegistryInfo serializer was dumping registry data from registries marked not for dumping: fixed on 23.06.2020
+           by uuk
+issue 220: RenderingHelper's apply method was not working; fixed on 01.07.2020 by uuk
+issue 221: exception when save list is empty; fixed on 01.07.2020 by uuk
+issue 222: some chunk part fixer results were not stored properly; fixed on 03.07.2020 by uuk
+issue 223: world gen config screen was parsing world name wrong; fixed on 03.07.2020 by uuk
+issue 224: debug world was displaying some blocks duplicated; fixed on 06.07.2020 by uuk
+issue 203: exception when loading an world saved as debug world; fixed on 06.07.2020 by uuk
+issue 225: .setGlobalModName() on ItemFactories did not work as needed; fixed on 06.07.2020 by uuk
+issue 226: when ItemAtlas scheduled missing texture for texture, it still crashed; fixed on 06.07.2020 by uuk
+issue 227: ItemFactory's template system was broken; fixed on 06.07.2020 by uuk
+issue 228: logger was prefixing every part with time, not only the front; fixed on 06.07.2020 by uuk
+issue 229: Player.teleport() was not updating G.world's active dimension; fixed on 06.07.2020 by uuk

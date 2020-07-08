@@ -68,6 +68,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                 data = entry["apply"]
                 if type(data) == dict:
                     model, config, _ = BlockState.decode_entry(data)
+                    if model not in G.modelhandler.models: continue
                     result += G.modelhandler.models[model].add_face_to_batch(block.position, batch, config, face)
                 else:
                     if block.block_state is None:

@@ -103,9 +103,8 @@ class Slot:
             PYGLET_IMAGE_HOVERING.draw()
         if not self.itemstack.is_empty() and (self.itemstack.item.get_default_item_image_location() !=
                                               self.__last_item_file or self.sprite is None):
-            pos, index = mcpython.item.ItemHandler.items.itemindextable[self.itemstack.get_item_name()][
+            image = mcpython.item.ItemHandler.items.itemindextable[self.itemstack.get_item_name()][
                 self.itemstack.item.get_active_image_location()]
-            image = mcpython.item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         elif self.itemstack.is_empty():
             self.sprite = None
@@ -122,6 +121,7 @@ class Slot:
         these code draws only the lable, before, normal draw should be executed for correcrt setup
         """
         if self.itemstack.amount > 1:
+            if self.sprite is None: return
             # don't know why this is needed, but it is needed for fixing issue 106
             self.amount_label.anchor_x = "right"
 
@@ -156,6 +156,9 @@ class Slot:
 
     def __str__(self):
         return "Slot(position=({},{}),itemstack={})".format(*self.position, self.itemstack)
+
+    def __repr__(self):
+        return str(self)
 
 
 class SlotCopy:
@@ -212,9 +215,8 @@ class SlotCopy:
             PYGLET_IMAGE_HOVERING.draw()
         if not self.itemstack.is_empty() and (self.itemstack.item.get_default_item_image_location() !=
                                               self.__last_item_file or self.sprite is None):
-            pos, index = mcpython.item.ItemHandler.items.itemindextable[self.itemstack.get_item_name()][
+            image = mcpython.item.ItemHandler.items.itemindextable[self.itemstack.get_item_name()][
                 self.itemstack.item.get_active_image_location()]
-            image = mcpython.item.ItemHandler.TEXTURE_ATLASES[index].group[tuple(pos)]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         elif self.itemstack.is_empty():
             self.sprite = None
@@ -244,7 +246,10 @@ class SlotCopy:
             self.itemstack.item.set_data(data["itemstack"]["data"])
 
     def __str__(self):
-        return "Slot(position=({},{}),itemstack={})".format(*self.position, self.itemstack)
+        return "Slot(position=({},{}),itemstack={},type='copy')".format(*self.position, self.itemstack)
+
+    def __repr__(self):
+        return str(self)
 
 
 class SlotInfiniteStack(Slot):

@@ -74,7 +74,7 @@ class DimensionHandler:
         """
         self.add_dimension(DimensionDefinition("overworld", {"configname": (
             "default_overworld" if "--debug-world" not in sys.argv else "debug_overworld")}).setStaticId(0))
-        self.add_dimension(DimensionDefinition("nether", {"configname": None}).setStaticId(-1))
+        self.add_dimension(DimensionDefinition("nether", {"configname": "default_nether"}).setStaticId(-1))
         self.add_dimension(DimensionDefinition("end", {"configname": None}).setStaticId(1))
 
     def add_dimension(self, dim: DimensionDefinition):

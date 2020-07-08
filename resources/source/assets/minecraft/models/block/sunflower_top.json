@@ -1,10 +1,10 @@
 {
     "ambientocclusion": false,
     "textures": {
-        "particle": "block/sunflower_front",
-        "cross": "block/sunflower_top",
-        "back": "block/sunflower_back",
-        "front": "block/sunflower_front"
+        "particle": "minecraft:block/sunflower_front",
+        "cross": "minecraft:block/sunflower_top",
+        "back": "minecraft:block/sunflower_back",
+        "front": "minecraft:block/sunflower_front"
     },
     "elements": [
         {   "from": [ 0.8, 0, 8 ],

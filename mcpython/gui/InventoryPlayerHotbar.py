@@ -15,9 +15,14 @@ import mcpython.ResourceLocator
 import time
 import mcpython.util.opengl
 import mcpython.event.EventHandler
+import logger
+import sys
 
-
-base: pyglet.image.AbstractImage = mcpython.ResourceLocator.read("gui/icons", "pyglet")
+try:
+    base: pyglet.image.AbstractImage = mcpython.ResourceLocator.read("gui/icons", "pyglet")
+except:
+    logger.write_exception("[FATAL] failed to load hotbar image")
+    sys.exit(-1)
 
 
 def _get_tex_region(rx, ry, rex, rey):
@@ -79,7 +84,8 @@ class InventoryPlayerHotbar(mcpython.gui.Inventory.Inventory):
             self.get_select_sprite()
         else:
             self.selected_sprite = None
-            mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("stage:blockitemfactory:finish", self.get_select_sprite)
+            mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("stage:blockitemfactory:finish",
+                                                                   self.get_select_sprite)
         self.lable = pyglet.text.Label(color=(255, 255, 255, 255))
         self.last_index = 0
         self.last_item = None
@@ -89,7 +95,7 @@ class InventoryPlayerHotbar(mcpython.gui.Inventory.Inventory):
 
     def get_select_sprite(self):
         self.selected_sprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read("build/texture/gui/selected_slot.png",
-                                                                         "pyglet"))
+                                                                                  "pyglet"))
 
     @staticmethod
     def get_config_file():
@@ -186,7 +192,7 @@ class InventoryPlayerHotbar(mcpython.gui.Inventory.Inventory):
         G.world.get_active_player().iconparts[0][0].blit(x, y)
         active_progress = G.world.get_active_player().xp / G.world.get_active_player().get_needed_xp_for_next_level()
         G.world.get_active_player().iconparts[0][1].get_region(
-            x=0, y=0, height=10, width=round(362*active_progress)+1).blit(x, y)
+            x=0, y=0, height=10, width=round(362 * active_progress) + 1).blit(x, y)
         if G.world.get_active_player().xp_level != 0:
             self.lable.x = wx // 2
             self.lable.y = hy + 65
@@ -201,11 +207,12 @@ class InventoryPlayerHotbar(mcpython.gui.Inventory.Inventory):
         for _ in range(10):
             TEXTURES.armor[0].blit(x, y, width=18, height=18)
             if armor > 0:
-                TEXTURES.armor[int(armor != 1)+1].blit(x, y, width=18, height=18)
+                TEXTURES.armor[int(armor != 1) + 1].blit(x, y, width=18, height=18)
                 armor -= 2
             x += 16
 
-    def is_closable_by_escape(self) -> bool: return False
+    def is_closable_by_escape(self) -> bool:
+        return False
 
-    def is_always_open(self) -> bool: return True
-
+    def is_always_open(self) -> bool:
+        return True

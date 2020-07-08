@@ -142,8 +142,9 @@ def build():
     shutil.copy(local + "/changelog.txt", folder + "/changelog.txt")
 
     print("collecting data generations...")
-    subprocess.call(["py", "-3.8", local+"/__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"],
-                    stdout=sys.stdout)
+    # 1. we don't want an window, 2. we want to include ALL possible block-data (is selective loaded with the EU config)
+    subprocess.call(["py", "-3.8", local+"/__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window",
+                     "--enable-all-blocks"], stdout=sys.stdout, stderr=sys.stderr)  # and write console to these console
 
     print("collecting assets...")  #
     copytree(local + "/resources/source", folder)
