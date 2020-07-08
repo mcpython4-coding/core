@@ -54,9 +54,6 @@ class CommandDatapack(mcpython.chat.command.Command.Command):
         else:
             G.chat.print_ln("failed to execute command. invalid syntax")
 
-        else:
-            info.chat.print_ln("failed to execute command. invalid syntax")
-
     @staticmethod
     def get_help() -> list:
         return ["/datapack enable <name>: enables an datapack with name <name>",
