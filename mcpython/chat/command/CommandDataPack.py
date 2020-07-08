@@ -51,6 +51,8 @@ class CommandDatapack(mcpython.chat.command.Command.Command):
 
         elif values[0] == "release":
             mcpython.chat.DataPack.datapackhandler.cleanup()
+        else:
+            G.chat.print_ln("failed to execute command. invalid syntax")
 
         else:
             info.chat.print_ln("failed to execute command. invalid syntax")
