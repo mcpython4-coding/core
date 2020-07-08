@@ -52,6 +52,9 @@ information on development:
         its id.
 
 
+changelog of snapshot [next] (theme: )
+
+
 changelog of snapshot 20w28a released on 08.07.2020 (theme: fixing stuff & upgrading base to 1.16)
     - updated textures to 1.16 and added content of the update
 

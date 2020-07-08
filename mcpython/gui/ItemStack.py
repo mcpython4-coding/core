@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
+blocks based on 1.16.1.jar of minecraft"""
 import globals as G
 import mcpython.item.Item
 import logger
@@ -24,7 +24,7 @@ class ItemStack:
             if item_name_or_instance in G.registry.get_by_name("item").registered_object_map:
                 self.item = G.registry.get_by_name("item").registered_object_map[item_name_or_instance]()
             else:
-                logger.println("can't find item named '{}'".format(item_name_or_instance))
+                logger.println("[FATAL] can't find item named '{}'".format(item_name_or_instance))
                 self.item = None
         else:
             self.item = None
@@ -35,7 +35,7 @@ class ItemStack:
         copy the itemstack
         :return: copy of itself
         """
-        # todo: create an new item instance & copy data
+        # todo: copy item data
         return ItemStack(self.item, self.amount)
 
     def clean(self):
@@ -67,11 +67,12 @@ class ItemStack:
 
     def add_amount(self, amount, check_overflow=True):
         self.set_amount(self.amount + amount)
-        if self.amount == 0: self.clean()
+        if self.amount <= 0: self.clean()
         if self.item and self.item.STACK_SIZE < self.amount and check_overflow: self.amount = self.item.STACK_SIZE
         return self
 
     def __str__(self):
+        # todo: include item data
         return "ItemStack(item='{}',amount='{}'{})".format(self.get_item_name(), self.amount, "" if self.is_empty() else
                                                            ",data={}".format(self.item.get_data()))
 

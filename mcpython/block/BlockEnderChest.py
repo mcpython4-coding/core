@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
+blocks based on 1.16.1.jar of minecraft"""
 from pyglet.window import mouse, key
 
 import globals as G

@@ -5,23 +5,23 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.15.2.jar of minecraft, downloaded on 1th of February, 2020"""
+blocks based on 1.16.1.jar of minecraft"""
 import math
 import sys
 
 MC_VERSION_BASE = "1.16.1"
-VERSION_TYPE = "snapshot"
+VERSION_TYPE = "dev"
 # possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
-VERSION_NAME = "20w28a"
+VERSION_NAME = "snapshot dev 5"
 
-DEVELOPING_FOR = "20w28a"
-DEVELOPMENT_COUNTER = 3
+DEVELOPING_FOR = "20w29a"
+DEVELOPMENT_COUNTER = 1
 
 # list of all versions since 19w52a to indicate order of release; used in save files todo: export to other file
 VERSION_ORDER = ["19w52a", "20w05a", "20w07a", "20w09a", "20w10a", "20w11a", "20w12a", "20w12b", "20w14a",
                  "a1.0.0", "a1.0.1", "snapshot dev 1 cycle 1", "snapshot dev 1 cycle 2",
                  "snapshot dev 1 cycle 3", "snapshot dev 1 cycle 4", "20w22a", "snapshot dev 1",
-                 "snapshot dev 2", "20w24a", "snapshot dev 3", "20w25a", "snapshot dev 4", VERSION_NAME]
+                 "snapshot dev 2", "20w24a", "snapshot dev 3", "20w25a", "snapshot dev 4", "20w28a", VERSION_NAME]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE)
