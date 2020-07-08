@@ -403,10 +403,12 @@ class ModLoader:
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
                 logger.println("rebuild mode due to mod change (remove / version change)")
                 G.prebuilding = True
+                G.data_gen = True
         for modname in self.mods.keys():
             if modname not in self.lasttime_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
                 G.prebuilding = True
+                G.data_gen = True
                 logger.println("rebuild mode due to mod change (addition)")
 
     def write_mod_info(self):

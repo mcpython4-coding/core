@@ -52,23 +52,39 @@ information on development:
         its id.
 
 
-changelog of snapshot [next] (theme: fixing stuff & upgrading base to 1.16)
-    - improved rendering system by using MatrixStack's and RenderingHelper-instances
-    - improved data fixer system
-    - changed how item textures are baked together
-    - SHIFT-drag support in inventories
-    - improved command handling
-    - deprecated old AdvancedBlockFactory system
-    - added CombinedBlockFactory system for doing fancy stuff with data gen & in-game objects at ones
+changelog of snapshot 20w28a released on 08.07.2020 (theme: fixing stuff & upgrading base to 1.16)
     - updated textures to 1.16 and added content of the update
-    - added --enable-all-blocks runtime flag for enabling all optional blocks
-    - added profiler for world generation
-    - added button to delete world in world selection screen
-    - registries get now "locked" after mod loading finished (they are still write-able, but this will get removed in
-        the future as it will get replaced by reload-registries-events)
-    - added /execute in <dimension id> sub-command
-    - /teleport allows now the player to also change dimension
-    - implemented base generator for the nether
+
+    Rendering:
+        - improved rendering system by using MatrixStack's and RenderingHelper-instances
+        - changed how item textures are baked together
+        - added button to delete world in world selection screen
+
+    World Format:
+        - improved data fixer system
+
+    Gameplay:
+        - SHIFT-drag support in inventories
+
+    Commands:
+        - improved command handling
+        - added /execute in <dimension id> sub-command
+        - /teleport allows now the player to also change dimension
+
+    Data Gen:
+        - deprecated old AdvancedBlockFactory system
+        - added CombinedBlockFactory system for doing fancy stuff with data gen & in-game objects at ones
+        - added --enable-all-blocks runtime flag for enabling all optional blocks
+
+    Profiler:
+        - added profiler for world generation
+
+    Registries:
+        - registries get now "locked" after mod loading finished (they are still write-able, but this will get removed in
+            the future as it will get replaced by reload-registries-events)
+
+    World Generation:
+        - implemented base generator for the nether
 
     fixed issues:
         from previous snapshot:

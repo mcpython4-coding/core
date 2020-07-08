@@ -54,6 +54,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
             G.statehandler.update_exclusive()
             G.statehandler.states["minecraft:game"].parts[0].activate_keyboard = True
         for inventory in G.inventoryhandler.opened_inventorystack:
+            G.rendering_helper.enableAlpha()  # make sure that it is enabled
             inventory.draw(hoveringslot=hoveringslot)
         if G.inventoryhandler.moving_slot.get_itemstack().item:
             G.inventoryhandler.moving_slot.position = G.window.mouse_position

@@ -97,12 +97,14 @@ mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", 
 if not os.path.exists(G.build+"/info.json"):
     logger.println("rebuild mode due missing info file")
     G.prebuilding = True
+    G.data_gen = True
 else:
     with open(G.build+"/info.json") as f:
         data = json.load(f)
     if not data["finished"]:
         logger.println("rebuild mode due to unfinished cache")
         G.prebuilding = True
+        G.data_gen = True
 
 if G.prebuilding:
     mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:do", execute, info="doing prebuild tasks")

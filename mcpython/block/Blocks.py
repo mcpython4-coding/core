@@ -161,9 +161,7 @@ def load_wood(config: DataGeneratorConfig):
             front_texture="minecraft:block/stripped_{}_log".format(wood_type),
             side_texture="minecraft:block/stripped_{}_log".format(wood_type), callback=set_wood)
 
-        CombinedBlockFactory.generate_full_block(
-            config, "minecraft:{}_leaves".format(wood_type), callback=set_leaves,
-            texture="build/texture/blocks/{}_leaves.png".format(wood_type))
+        CombinedBlockFactory.generate_full_block(config, "minecraft:{}_leaves".format(wood_type), callback=set_leaves)
 
     for wood_type in ["crimson", "warped"]:
         CombinedBlockFactory.generate_log_block(config, "minecraft:{}_stem".format(wood_type), callback=set_stem)

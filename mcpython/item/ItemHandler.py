@@ -35,6 +35,7 @@ def build():
 
 def load_data(from_block_item_generator=False):
     if not G.prebuilding and os.path.exists(G.build + "/itemblockfactory.json"):
+        collected_overflow = []
         with open(G.build + "/itemblockfactory.json") as f:
             data = json.load(f)
         for entry in data[:]:
@@ -47,9 +48,11 @@ def load_data(from_block_item_generator=False):
                 block.modify_block_item(obj)
                 obj.finish()
             else:
-                logger.println("[ERROR] during constructing block item for '{}': Failed to find block in active "
-                               "registry".format(name))
+                collected_overflow.append(entry)
                 data.remove(entry)
+        if len(collected_overflow) > 0:
+            logger.write_into_container(["-'{}'".format(e[0]) for e in collected_overflow],
+                                        header=["MCPYTHON REGISTRY CHANGE - Following BlockItemTextures", "are obsolete as this blocks are missing"])
         with open(G.build + "/itemblockfactory.json", mode="w") as f:
             json.dump(data, f)
     ITEM_ATLAS.load()

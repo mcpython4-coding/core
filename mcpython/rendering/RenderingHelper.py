@@ -152,3 +152,14 @@ class RenderingHelper:
         _gl.glTranslated(*[-s[i]*anchor[i] for i in range(2)], -z_buffer)
         self.apply()
 
+    @classmethod
+    def enableAlpha(cls):
+        _gl.glDisable(_gl.GL_CULL_FACE)
+        _gl.glEnable(_gl.GL_BLEND)
+        _gl.glBlendFunc(_gl.GL_SRC_ALPHA, _gl.GL_ONE_MINUS_SRC_ALPHA)
+
+    @classmethod
+    def disableAlpha(cls):
+        _gl.glBlendFunc(_gl.GL_ONE, _gl.GL_ZERO)
+        _gl.glEnable(_gl.GL_CULL_FACE)
+

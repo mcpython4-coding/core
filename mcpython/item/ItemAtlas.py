@@ -105,7 +105,8 @@ class ItemAtlasHandler:
         file = mcpython.ResourceLocator.transform_name(file, raise_on_error=False)
         if file not in self.allocation_table:
             self.schedule_item_file(file)
-            logger.println("[FATAL] tries to access '{}' which is not arrival".format(file))
+            # logger.println("[FATAL] tried to access '{}' (which is not arrival) for getting texture info for atlas".format(file))
+            # logger.println("[FATAL] this normally indicates an missing addition to the texture atlas or an broken rendering system")
             return self.atlases[0], (0, 0)
 
         atlas_id, position = self.allocation_table[file]

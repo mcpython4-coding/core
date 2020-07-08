@@ -1200,3 +1200,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added preparing for locked registries (currently only warned by the system)
 [uuk]: added /execute in sub-command
 [uuk]: /teleport will now teleport the player also into the new dimension when needed
+[uuk]: added helper functions to RenderingHelper for setting alpha on/off
+[uuk]: prebuilding will now enable data gen
+[uuk]: released snapshot 20w28a
