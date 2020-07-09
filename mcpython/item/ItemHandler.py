@@ -18,6 +18,7 @@ import pyglet
 import mcpython.factory.ItemFactory
 import mcpython.mod.ModMcpython
 import logger
+import mcpython.gui.HoveringItemBox
 
 
 COLLECTED_ITEMS = []
@@ -35,15 +36,15 @@ def build():
 
 def load_data(from_block_item_generator=False):
     if not G.prebuilding and os.path.exists(G.build + "/itemblockfactory.json"):
-        collected_overflow = []
+        collected_overflow = []  # an list of items which we don't need anymore, so we can warn the user
         with open(G.build + "/itemblockfactory.json") as f:
             data = json.load(f)
         for entry in data[:]:
             name = entry[0]
-            obj = mcpython.factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(
-                entry[1])
             blocktable = G.registry.get_by_name("block").registered_object_map
             if name in blocktable:
+                obj = mcpython.factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(
+                    entry[1]).setToolTipRenderer(mcpython.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP)
                 block = blocktable[name]
                 block.modify_block_item(obj)
                 obj.finish()
@@ -52,7 +53,8 @@ def load_data(from_block_item_generator=False):
                 data.remove(entry)
         if len(collected_overflow) > 0:
             logger.write_into_container(["-'{}'".format(e[0]) for e in collected_overflow],
-                                        header=["MCPYTHON REGISTRY CHANGE - Following BlockItemTextures", "are obsolete as this blocks are missing"])
+                                        header=["MCPYTHON REGISTRY CHANGE - Following BlockItemTextures", "are obsolete as this blocks are missing.",
+                                                "They are removed from the system"])
         with open(G.build + "/itemblockfactory.json", mode="w") as f:
             json.dump(data, f)
     ITEM_ATLAS.load()

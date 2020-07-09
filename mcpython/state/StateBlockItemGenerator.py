@@ -24,6 +24,7 @@ import mcpython.mod.ModMcpython
 import logger
 import mcpython.state.StateModLoading
 import psutil
+import mcpython.gui.HoveringItemBox
 
 
 class StateBlockItemGenerator(State.State):
@@ -211,7 +212,7 @@ class StateBlockItemGenerator(State.State):
     def generate_item(self, blockname, file):
         if blockname in G.registry.get_by_name("item").registered_object_map: return
         self.table.append([blockname, file])
-        obj = mcpython.factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True)
+        obj = mcpython.factory.ItemFactory.ItemFactory().setDefaultItemFile(file).setName(blockname).setHasBlockFlag(True).setToolTipRenderer(mcpython.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP)
         block = G.world.get_active_dimension().get_block((0, 0, 0))
         if type(block) != str and block is not None: block.modify_block_item(obj)
         obj.finish(task_list=True)

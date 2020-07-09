@@ -11,6 +11,7 @@ import globals as G
 import random
 from mcpython.util.enums import ToolType
 import mcpython.mod.ModMcpython
+import mcpython.gui.HoveringItemBox
 
 
 def load_item():
@@ -178,7 +179,7 @@ def load_item():
 
     template("arrow")
 
-    template("barrier").setHasBlockFlag(True)
+    template("barrier").setHasBlockFlag(True).setToolTipRenderer(mcpython.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP)
 
     template.finish()
 
