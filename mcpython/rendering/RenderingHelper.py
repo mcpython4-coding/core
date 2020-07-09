@@ -19,12 +19,15 @@ class RenderingHelper:
     """
     class for helping storing an gl status and exchanging it, rolling back, ...
     todo: add setup functions for various systems
+
+    todo: add checks if this is the rendering process
     """
 
     def __init__(self):
         """
         creates an new rendering helper.
         WARNING: multiple instances may work NOT well together as they are based on the same gl backend
+            -> todo: make shared
         """
         self.status_table = {}
         self.saved = collections.deque()
@@ -54,6 +57,9 @@ class RenderingHelper:
                 del status[key]
         for key in status:
             self.set_flag(key, status[key])
+
+    def deleteSavedStates(self):
+        self.saved.clear()
 
     def glEnable(self, flag: int):
         """
@@ -100,6 +106,7 @@ class RenderingHelper:
         :param base: the MatrixStack-instance to set into
         :return: the MatrixStack instance
         WARNING: all transformations will be applied ON TOP of the base-MatrixStack if its provided
+        Use get_dynamic_3d_matrix_stack() where possible & reuse
         """
         if base is None: base = mcpython.rendering.MatrixStack.MatrixStack()
         width, height = G.window.get_size()
@@ -121,7 +128,7 @@ class RenderingHelper:
     def get_dynamic_3d_matrix_stack(self, base=None) -> mcpython.rendering.MatrixStack.LinkedMatrixStack:
         """
         same as get_default_3d_matrix_stack, but the matrix stack is an LinkedMatrixStack with links to player position,
-            etc.
+            etc. (so it dynamically updates itself when the player changes the parameters)
         [see above]
         """
         if base is None: base = mcpython.rendering.MatrixStack.LinkedMatrixStack()
@@ -141,6 +148,11 @@ class RenderingHelper:
         return base
 
     def setup2d(self, anchor=(0, 0), z_buffer=0):
+        """
+        will setup an 2d environment
+        :param anchor: the anchor in the window as an tuple of two floats representing an move as factors to the window size
+        :param z_buffer: the layer in which to render
+        """
         self.glDisable(_gl.GL_DEPTH_TEST)
         _gl.glViewport(0, 0, *[max(1, e) for e in G.window.get_viewport_size()])
         _gl.glMatrixMode(_gl.GL_PROJECTION)
@@ -152,14 +164,18 @@ class RenderingHelper:
         _gl.glTranslated(*[-s[i]*anchor[i] for i in range(2)], -z_buffer)
         self.apply()
 
-    @classmethod
-    def enableAlpha(cls):
-        _gl.glDisable(_gl.GL_CULL_FACE)
-        _gl.glEnable(_gl.GL_BLEND)
+    def enableAlpha(self):
+        """
+        will enable alpha blending
+        """
+        self.glDisable(_gl.GL_CULL_FACE)
+        self.glEnable(_gl.GL_BLEND)
         _gl.glBlendFunc(_gl.GL_SRC_ALPHA, _gl.GL_ONE_MINUS_SRC_ALPHA)
 
-    @classmethod
-    def disableAlpha(cls):
+    def disableAlpha(self):
+        """
+        will disable alpha rendering
+        """
         _gl.glBlendFunc(_gl.GL_ONE, _gl.GL_ZERO)
-        _gl.glEnable(_gl.GL_CULL_FACE)
+        self.glEnable(_gl.GL_CULL_FACE)
 

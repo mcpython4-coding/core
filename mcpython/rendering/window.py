@@ -53,6 +53,12 @@ class NoWindow:
 
 
 class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow):
+    """
+    Class representing the game window.
+    Interacts with the pyglet backend.
+
+    todo: move the pyglet-engine-calls to here to make it possible to exchange the backend
+    """
 
     def __init__(self, *args, **kwargs):
         """
@@ -128,17 +134,10 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:copy_block_or_entity_data",
                                                                self.get_block_entity_info)
 
-    @deprecation.deprecated("dev4-3", "a1.2.0")
-    def get_flying(self): return G.world.get_active_player().is_flying
-
-    @deprecation.deprecated("dev4-3", "a1.2.0")
-    def set_flying(self, flying): G.world.get_active_player().is_flying = flying
-
-    flying = property(get_flying, set_flying)
-
     def print_profiler(self, dt=None):
         """
         will print the enabled profiler(s)
+        todo: move to separated Profiler class
         """
         if not mcpython.config.ENABLE_PROFILING: return
 
@@ -208,6 +207,8 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         """
         This method is scheduled to be called repeatedly by the pyglet clock.
         :param dt: The change in time since the last call.
+
+        todo: move to TickHandler
         """
         if mcpython.config.ENABLE_PROFILER_TICK and mcpython.config.ENABLE_PROFILING: self.tick_profiler.enable()
         G.eventhandler.call("gameloop:tick:start", dt)
@@ -241,6 +242,8 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         :param position: The (x, y, z) position to check for collisions at.
         :param height: The height of the player.
         :return The new position of the player taking into account collisions.
+
+        todo: move to physic package
         """
         # How much overlap with a dimension of a surrounding block you need to
         # have to count as a collision. If 0, touching terrain at all counts as
@@ -337,6 +340,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         :param x, y: The coordinates of the mouse click. Always center of the screen if the mouse is captured.
         :param dx, dy : The movement of the mouse.
 
+        todo: use pyglet's MouseHandler for tracking the mouse position and buttons
         """
         G.eventhandler.call("user:mouse:motion", x, y, dx, dy)
         self.mouse_position = (x, y)
@@ -369,6 +373,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("user:window:resize", width, height)
 
     def set_2d(self):
+        # todo: move to RenderingHelper
         width, height = self.get_size()
         viewport = self.get_viewport_size()
         mcpython.rendering.OpenGLSetupFile.execute_file_by_name("set_2d", width=max(1, width), height=max(1, height),
@@ -378,6 +383,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
     def set_3d(self, position=None, rotation=None):
+        # todo: move to RenderingHelper
         if G.world.get_active_player() is None: return
         if G.rendering_helper.default_3d_stack is None:
             G.rendering_helper.default_3d_stack = G.rendering_helper.get_dynamic_3d_matrix_stack()
@@ -387,9 +393,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
     def on_draw(self):
         """
         Called by pyglet to draw the canvas.
+        todo: move to separated configurable rendering pipeline
         """
+        G.rendering_helper.deleteSavedStates()  # make sure that everything is cleared
         # make sure that the state of the rendering helper is saved for later usage
-        status = G.rendering_helper.save_status(add_to_stack=False)
+        state = G.rendering_helper.save_status(False)
 
         # check for profiling
         if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.enable()
@@ -406,12 +414,14 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("render:draw:2d")  # call normal 2d
         G.eventhandler.call("render:draw:2d:overlay")  # call overlay 2d
         if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.disable()
-        G.rendering_helper.apply(status)
+        G.rendering_helper.apply(state)
         G.eventhandler.call("render:draw:post:cleanup")
+        G.rendering_helper.deleteSavedStates()
 
     def draw_focused_block(self):
         """
         Draw black edges around the block that is currently under the crosshairs.
+        todo: move to special helper class
         """
         vector = self.get_sight_vector()
         block = G.world.hit_test(G.world.get_active_player().position, vector)[0]
@@ -422,6 +432,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
     def draw_label(self):
         """
         Draw the label in the top left of the screen.
+        todo: move to special helper class
         """
         x, y, z = G.world.get_active_player().position
         nx, ny, nz = mcpython.util.math.normalize(G.world.get_active_player().position)
@@ -460,6 +471,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
     def get_block_entity_info(self):
         """
         used by hotkey for copying entity data to the clipboard
+        todo: move to special helper class
         """
         import clipboard
         vector = self.get_sight_vector()
@@ -472,6 +484,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
     def draw_reticle(self):
         """
         Draw the crosshairs in the center of the screen.
+        todo: move to special helper class
         """
         pyglet.gl.glColor3d(255, 255, 255)
         wx, wy = self.get_size()
@@ -497,3 +510,13 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             G.world.savefile.save_world(override=True)
         self.set_fullscreen(False)
         self.close()
+
+    @deprecation.deprecated("dev4-3", "a1.2.0")
+    def get_flying(self):
+        return G.world.get_active_player().is_flying
+
+    @deprecation.deprecated("dev4-3", "a1.2.0")
+    def set_flying(self, flying):
+        G.world.get_active_player().is_flying = flying
+
+    flying = property(get_flying, set_flying)

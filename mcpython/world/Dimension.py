@@ -190,7 +190,8 @@ class Dimension:
     def draw(self):
         self.batches[0].draw()
         # draw with alpha
-        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_on")
+        # status = G.rendering_helper.save_status()
+        G.rendering_helper.enableAlpha()
         self.batches[1].draw()
         x, z = mcpython.util.math.sectorize(G.world.get_active_player().position)
         pad = 4
@@ -200,7 +201,8 @@ class Dimension:
                 chunk = self.get_chunk(cx, cz, create=False)
                 if chunk is not None:
                     chunk.draw()
-        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_off")
+        G.rendering_helper.disableAlpha()
+        # G.rendering_helper.apply(status)
         
     def __del__(self):
         self.chunks.clear()
