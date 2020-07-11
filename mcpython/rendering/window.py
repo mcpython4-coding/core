@@ -234,7 +234,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("gameloop:tick:end", dt)
         if mcpython.config.ENABLE_PROFILER_TICK and mcpython.config.ENABLE_PROFILING: self.tick_profiler.disable()
 
-    def collide(self, position, height):
+    def collide(self, position: tuple, height: tuple):
         """
         Checks to see if the player at the given `position` and `height`
         is colliding with any blocks in the world.
@@ -244,6 +244,8 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         :return The new position of the player taking into account collisions.
 
         todo: move to physic package
+        todo: make player based
+        todo: make account player & block hit box
         """
         # How much overlap with a dimension of a surrounding block you need to
         # have to count as a collision. If 0, touching terrain at all counts as
@@ -265,11 +267,15 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                     op[1] -= dy
                     op[i] += face[i]
                     chunk = G.world.get_active_dimension().get_chunk_for_position(tuple(op), generate=False)
-                    blockstate = chunk.get_block(tuple(op)) is not None
+                    block = chunk.get_block(tuple(op))
+                    blockstate = block is not None
                     if not chunk.generated:
                         if G.world.config["enable_world_barrier"]:
                             blockstate = True
                     if not blockstate:
+                        continue
+                    if block.NO_COLLISION:
+                        block.on_no_collide_collide(G.world.get_active_player())
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):

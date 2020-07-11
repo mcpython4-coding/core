@@ -1210,3 +1210,6 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed alpha functions of RenderingHelper
 [uuk]: made it possible to call certain loading stages on world reload
 [uuk]: added helper functions for inserting new loading stages
+[uuk]: fixed some block model rendering issues (issue 233)
+[uuk]: added NO_COLLIDE option to Block-class and an function called when the player is in the block and has NO_COLLIDE
+       on
