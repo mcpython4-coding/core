@@ -106,6 +106,7 @@ class EventBus:
                                **{**kwargs, **self.extra_arguments[1], **ekwargs}), info))
                 dif = time.time() - start
             except SystemExit: raise
+            except MemoryError: sys.exit(-1)
             except:
                 exception_occ = True
                 logger.write_exception("during calling function: {} with arguments: {}, {}".format(function, list(
@@ -154,6 +155,7 @@ class EventBus:
                         f.write("\nevent call of {} takes {}s until finish".format(function, dif))
                 if check_function(result):
                     return result
+            except MemoryError: sys.exit(-1)
             except SystemExit: raise
             except:
                 logger.write_exception()
@@ -189,8 +191,8 @@ class EventBus:
             try:
                 result.append((function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
                                         **{**kwargs, **self.extra_arguments[1], **ekwargs}), info))
-            except SystemExit:
-                raise
+            except SystemExit: raise
+            except MemoryError: sys.exit(-1)
             except:
                 exception_occ = True
                 logger.write_exception("during calling function:", function, "with arguments:", list(args) + list(

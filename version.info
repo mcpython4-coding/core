@@ -1220,3 +1220,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: World.get_dimension() accepts now an dimension name str
 [uuk]: added special region in player data for dimension stuff
 [uuk]: added DataFixer for player data
+[uuk]: MemoryError is handled now as an fatal error and will crash the game

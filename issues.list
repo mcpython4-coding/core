@@ -164,3 +164,6 @@ issue 230: [similar to issue 9]
 
 issue 234:
     bug: cleanup of world does not reset which dimension currently in
+
+issue 235:
+    bug: tools are CONSUMED when using them
