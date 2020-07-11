@@ -61,6 +61,8 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         self.parent = None  # the entity this is riding
         self.child = None  # the entity this is ridden by
 
+        self.nbt_data = {}
+
     def __del__(self):
         del self.chunk
 

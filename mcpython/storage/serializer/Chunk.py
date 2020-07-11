@@ -308,6 +308,8 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             entity_instance.rotation = entity["rotation"]
             entity_instance.harts = entity["harts"]
             entity_instance.load(entity["custom"])
+            if "nbt" in entity:
+                entity.nbt_data = entity["nbt"]
 
         chunk_instance.loaded = True
         G.worldgenerationhandler.enable_generation = True
@@ -388,7 +390,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         # todo: move completely to Entity-API
         for entity in chunk_instance.entities:
             edata = {"type": entity.NAME, "position": entity.position, "rotation": entity.rotation,
-                     "harts": entity.harts, "uuid": str(entity.uuid), "custom": entity.dump()}
+                     "harts": entity.harts, "uuid": str(entity.uuid), "custom": entity.dump(), "nbt": entity.nbt_data}
             cdata["entities"].append(edata)
 
         if override:  # we want to re-dump all data maps
