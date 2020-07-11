@@ -277,7 +277,8 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                     if not blockstate:
                         continue
                     if block.NO_COLLISION:
-                        block.on_no_collide_collide(G.world.get_active_player(), block.position in previous_positions)
+                        if block is not None:
+                            block.on_no_collide_collide(G.world.get_active_player(), block.position in previous_positions)
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):

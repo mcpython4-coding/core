@@ -215,3 +215,4 @@ issue 231: alpha rendering of blocks was broken; fixed on 09.07.2020 by uuk
 issue 232: RenderingHelper's alpha on/off functions were not working correctly; fixed on 09.07.2020 by uuk
 issue 233: BoxModel's rendering code was not rendering vertices <-> texture correctly; fixed on 11.07.0202 by uuk
     causing issue 129: some faces of fences and walls are not rendered with texture; fixed on 11.07.2020 by uuk
+issue 234: active dimension is not reset when changing world; fixed on 11.07.2020 by uuk

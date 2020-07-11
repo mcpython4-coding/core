@@ -1,7 +1,6 @@
 
 
-add am replacement for features.py
-implement auto-all-py import system which replaces the main-files entry in the mod.json
+add an replacement for features.py  [ Capabilities? ]
 
 make cancelable events only call further functions when event was not canceled (maybe special func on EventBus?)
 

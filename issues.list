@@ -162,8 +162,5 @@ issue 230: [similar to issue 9]
     bug: items are not arrival when rebuilding or doing similar things
     work-around: restart the client, works than as expected
 
-issue 234:
-    bug: cleanup of world does not reset which dimension currently in
-
 issue 235:
     bug: tools are CONSUMED when using them

@@ -282,6 +282,7 @@ class World:
         :param add_player: if the player should be added
         todo: make split up into smaller functions
         """
+        self.active_dimension = 0
         for dimension in self.dimensions.values():
             dimension: mcpython.world.Dimension.Dimension
             for chunk in dimension.chunks.values():

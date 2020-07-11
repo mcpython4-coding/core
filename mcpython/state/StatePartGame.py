@@ -176,7 +176,7 @@ class StatePartGame(StatePart.StatePart):
                         chunk.remove_block(blockpos)
                         chunk.on_block_updated(blockpos)
                         chunk.check_neighbors(blockpos)
-                # todo: check if breakable in gamemode 2
+                # todo: check if breakable in gamemode 2 by comparing item holders
 
     def on_right_click_interaction_update(self, dt):
         player = G.world.get_active_player()
