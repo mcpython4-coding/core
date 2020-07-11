@@ -61,7 +61,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         self.parent = None  # the entity this is riding
         self.child = None  # the entity this is ridden by
 
-        self.nbt_data = {}
+        self.nbt_data = {}  # dict holding entity data, automatically saved & loaded, when loading, data is put ontop of the existing dict
 
     def __del__(self):
         del self.chunk

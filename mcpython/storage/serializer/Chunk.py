@@ -309,7 +309,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             entity_instance.harts = entity["harts"]
             entity_instance.load(entity["custom"])
             if "nbt" in entity:
-                entity.nbt_data = entity["nbt"]
+                entity.nbt_data.update(entity["nbt"])
 
         chunk_instance.loaded = True
         G.worldgenerationhandler.enable_generation = True
