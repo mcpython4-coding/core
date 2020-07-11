@@ -56,6 +56,11 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         self.uuid = uuid.uuid4()
         self.movement = (0, 0, 0)
 
+        self.entity_height = 0  # the height of the entity, for positioning the child entity
+
+        self.parent = None  # the entity this is riding
+        self.child = None  # the entity this is ridden by
+
     def __del__(self):
         del self.chunk
 

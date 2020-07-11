@@ -12,6 +12,8 @@ import pyglet.gl as _gl
 class MatrixStack:
     """
     class handling an configuration of transformations for applying
+    todo: optimise
+    todo: use pyglet.matrix instead [pyglet 2 needed]
     """
 
     def __init__(self):

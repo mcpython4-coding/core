@@ -158,7 +158,7 @@ issue 218:
 issue 219:
     bug: errors with block showing are printed multiply times in BlockItemGenerator
 
-issue 230: [similar to issue 9]
+issue 230: [similar to former issue 9]
     bug: items are not arrival when rebuilding or doing similar things
     work-around: restart the client, works than as expected
 

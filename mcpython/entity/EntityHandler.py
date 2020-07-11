@@ -35,6 +35,14 @@ class EntityHandler:
     def tick(self):
         for entity in self.entity_map.values():
             entity.tick()
+            if entity.parent is None and entity.child is not None:  # update the positions of the childs
+                x, y, z = entity.position
+                y += entity.entity_height
+                child = entity.child
+                while child is not None:
+                    child.position = (x, y, z)
+                    y += child.entity_height
+                    child = child.child
 
 
 G.entityhandler = EntityHandler()
