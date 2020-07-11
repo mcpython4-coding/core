@@ -285,7 +285,7 @@ class StatePartGame(StatePart.StatePart):
         x, y, z = player.position
         before = mcpython.util.math.positionToChunk(player.position)
         if player.gamemode != 3:
-            x, y, z = G.window.collide((x + dx, y + dy, z + dz), 2)
+            x, y, z = G.window.collide((x + dx, y + dy, z + dz), 2, player.position)
         else:
             x, y, z = x + dx, y + dy, z + dz
         if G.window.dy < 0 and player.fallen_since_y is None:

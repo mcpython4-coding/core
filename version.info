@@ -1210,6 +1210,13 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed alpha functions of RenderingHelper
 [uuk]: made it possible to call certain loading stages on world reload
 [uuk]: added helper functions for inserting new loading stages
-[uuk]: fixed some block model rendering issues (issue 233)
+[uuk]: fixed some block model rendering issues (issue 233, 129)
 [uuk]: added NO_COLLIDE option to Block-class and an function called when the player is in the block and has NO_COLLIDE
        on
+[uuk]: added nether portal block
+[uuk]: changed behaviour of /fill-command: block updates are called when all block are placed, not when the block is
+       added
+[uuk]: changed behaviour of /setblock-command: block update self is set to False
+[uuk]: World.get_dimension() accepts now an dimension name str
+[uuk]: added special region in player data for dimension stuff
+[uuk]: added DataFixer for player data

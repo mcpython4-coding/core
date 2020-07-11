@@ -37,12 +37,17 @@ class CommandFill(mcpython.chat.command.Command.Command):
         if fy > ty: ty, fy = fy, ty
         if fz > tz: tz, fz = fz, tz
         # iterate over all blocks
+        positions = []
         for x in range(round(fx), round(tx)+1):
             for y in range(round(fy), round(ty)+1):
                 for z in range(round(fz), round(tz)+1):
                     block = dimension.get_block((x, y, z))
                     if not replace or (block and block.NAME == replace):  # check for replace block
-                        dimension.get_chunk_for_position((x, y, z)).add_block((x, y, z), values[2])
+                        chunk = dimension.get_chunk_for_position((x, y, z))
+                        chunk.add_block((x, y, z), values[2], block_update=False)
+                        positions.append((chunk, (x, y, z)))
+        for chunk, position in positions:
+            chunk.on_block_updated(position)
 
     @staticmethod
     def get_help() -> list:

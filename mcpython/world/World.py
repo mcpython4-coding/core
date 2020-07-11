@@ -144,6 +144,9 @@ class World:
         :return: the dimension instance or None if it does not exist
         """
         if dim_id in self.dimensions: return self.dimensions[dim_id]
+        for dimension in self.dimensions.values():
+            if dimension.name == dim_id:
+                return dimension
 
     def hit_test(self, position: typing.Tuple[float, float, float], vector: typing.Tuple[float, float, float],
                  max_distance: int = 8) -> typing.Union[

@@ -125,6 +125,13 @@ class Block(mcpython.event.Registry.IRegistryContent):
         """
         return False
 
+    def on_no_collide_collide(self, player, previous: bool):
+        """
+        Called when NO_COLLIDE is True and the player is in the block every collision check
+        :param player: the player entering the block
+        :param previous: if the player was in the block before
+        """
+
     def save(self):
         """
         :return: an pickle-able object representing the whole block, not including inventories
@@ -233,8 +240,3 @@ class Block(mcpython.event.Registry.IRegistryContent):
         :return: an list of slot of the side
         """
         return []
-
-    def on_no_collide_collide(self, player):
-        """
-        Called when NO_COLLIDE is True and the player is in the block every collision check
-        """

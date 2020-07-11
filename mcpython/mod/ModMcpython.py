@@ -16,7 +16,7 @@ VERSION_POST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 def parse_version(string: str) -> tuple:
     if type(string) == str and string[2] == "w":  # snapshot
         # type - alpha (0), pre - 1, post - 2, point - 0, a, b, c, build
-        return 0, 1, 2, 0, int(string[:2]), int(string[3:5]), VERSION_POST.index(string[5]), mcpython.config.DEVELOPMENT_COUNTER
+        return 0, 1, 1, 0, int(string[:2]), int(string[3:5]), VERSION_POST.index(string[5]), mcpython.config.DEVELOPMENT_COUNTER
     elif type(string) == str:
         if string.startswith("snapshot dev "):
             previous = parse_version(mcpython.config.DEVELOPING_FOR)

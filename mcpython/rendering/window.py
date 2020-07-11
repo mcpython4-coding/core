@@ -234,19 +234,21 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("gameloop:tick:end", dt)
         if mcpython.config.ENABLE_PROFILER_TICK and mcpython.config.ENABLE_PROFILING: self.tick_profiler.disable()
 
-    def collide(self, position: tuple, height: tuple):
+    def collide(self, position: tuple, height: int, previous=None):
         """
         Checks to see if the player at the given `position` and `height`
         is colliding with any blocks in the world.
 
         :param position: The (x, y, z) position to check for collisions at.
         :param height: The height of the player.
+        :param previous: the previous position the player was, for the block collision API, optional
         :return The new position of the player taking into account collisions.
 
         todo: move to physic package
         todo: make player based
         todo: make account player & block hit box
         """
+        previous_positions = sum(self.get_colliding_blocks(previous, height), []) if previous is not None else []
         # How much overlap with a dimension of a surrounding block you need to
         # have to count as a collision. If 0, touching terrain at all counts as
         # a collision. If .49, you sink into the ground, as if walking through
@@ -275,7 +277,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                     if not blockstate:
                         continue
                     if block.NO_COLLISION:
-                        block.on_no_collide_collide(G.world.get_active_player())
+                        block.on_no_collide_collide(G.world.get_active_player(), block.position in previous_positions)
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
@@ -293,6 +295,46 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                             G.world.get_active_player().fallen_since_y = None
                     break
         return tuple(p)
+
+    def get_colliding_blocks(self, position: tuple, height: int) -> tuple:
+        """
+        Similar to collide(), but will simply return an list of block-positions the player collides with and an list of blocks the player is in, but should not collide
+        :param position: the position to use as center
+        :param height: the height of the player
+        :return: an tuple of colliding full blocks and colliding no collision blocks
+        """
+        positions_colliding = []
+        positions_no_colliding = []
+        pad = 0.1
+        p = list(position)
+        np = normalize(position)
+        for face in ADVANCED_FACES:  # check all surrounding blocks
+            for i in range(3):  # check each dimension independently
+                if not face[i]:
+                    continue
+                # How much overlap you have with this dimension.
+                d = (p[i] - np[i]) * face[i]
+                if d < pad:
+                    continue
+                for dy in range(height):  # check each height
+                    op = list(np)
+                    op[1] -= dy
+                    op[i] += face[i]
+                    chunk = G.world.get_active_dimension().get_chunk_for_position(tuple(op), generate=False)
+                    block = chunk.get_block(tuple(op))
+                    blockstate = block is not None
+                    if not chunk.generated:
+                        if G.world.config["enable_world_barrier"]:
+                            blockstate = True
+                    if not blockstate:
+                        continue
+                    if block.NO_COLLISION:
+                        positions_no_colliding.append(block.position)
+                        continue
+                    p[i] -= (d - pad) * face[i]
+                    positions_colliding.append(block.position)
+                    break
+        return positions_colliding, positions_no_colliding
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         """

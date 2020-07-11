@@ -48,7 +48,7 @@ def load():
     """
     loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
     """
-    from . import (BlockGrassBlock, BlockDirt, BlockCraftingTable, BlockChest, BlockEnderChest,
+    from . import (BlockGrassBlock, BlockDirt, BlockCraftingTable, BlockChest, BlockEnderChest, BlockNetherPortal,
                    BlockShulkerBox, BlockCarpet, BlockFurnace, BlockBarrel, BlockCoralBlock, BlockFence, BlockWall)
 
 

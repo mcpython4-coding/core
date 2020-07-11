@@ -50,6 +50,9 @@ class Player(mcpython.entity.Entity.Entity):
         self.armor_level = 0
         self.armor_toughness = 0
 
+        self.in_nether_portal_since = None
+        self.should_leave_nether_portal_before_dim_change = False
+
         self.flying = False  # are we currently flying?
 
         self.fallen_since_y = -1  # how far did we fall?

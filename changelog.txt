@@ -56,11 +56,21 @@ changelog of snapshot [next] (theme: )
     - added tooltip system for items with their backends at Item-class and factory methods at ItemFactory
     - added possibility to register an event name for execution on mod bus on reload
     - blocks can now have no collision with the player
+    - added nether portal block
+    - /fill command will now update blocks at the end, not at the start
+    - /setblock command will now not update the block itself
+    - World.get_dimension() accepts now the dimension name, not only the id
+    - player data of saves contains now an special region for dimension stuff
+    - added data fixer part for player data
 
     fixed issues:
         from previous snapshot:
             - alpha rendering for blocks was broken
             - RenderingHelper's alpha on/off functions were not working
+
+        long-term issues:
+            - block model rendering was in some cases not rendering correctly
+                -> some fence & wall faces were rendering without texture
 
 
 changelog of snapshot 20w28a released on 08.07.2020 (theme: fixing stuff & upgrading base to 1.16)
