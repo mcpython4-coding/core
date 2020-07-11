@@ -127,7 +127,7 @@ class World:
         if self.CANCEL_DIM_CHANGE:
             logger.println("interrupted!")
             return
-        sector = mcpython.util.math.sectorize(G.world.get_active_player().position)
+        sector = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
         logger.println("unloading chunks...")
         self.change_chunks(sector, None)
         old = self.active_dimension

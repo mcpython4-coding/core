@@ -85,7 +85,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :param dimension: to which dimension-id to teleport to, if None, no dimension change is used
         :param force_chunk_save_update: if the system should force to update were player data is stored
         """
-        if self.chunk is None: sector_before = mcpython.util.math.sectorize(self.position)
+        if self.chunk is None: sector_before = mcpython.util.math.positionToChunk(self.position)
         else: sector_before = self.chunk.position
         if self.chunk is None: before_dim = None
         else: before_dim = self.chunk.dimension.id
@@ -94,7 +94,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         dimension = G.world.get_dimension(dimension_id)
         self.__position = position
         if dimension is None: return
-        sector_after = mcpython.util.math.sectorize(self.position)
+        sector_after = mcpython.util.math.positionToChunk(self.position)
         if sector_before != sector_after or before_dim != dimension_id or force_chunk_save_update:
             if self.chunk and self in self.chunk.entities:
                 self.chunk.entities.remove(self)

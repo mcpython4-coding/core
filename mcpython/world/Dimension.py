@@ -155,7 +155,7 @@ class Dimension:
         """
         if issubclass(type(position), mcpython.block.Block.Block):
             position = position.position
-        return self.get_chunk(*mcpython.util.math.sectorize(position), **kwargs)
+        return self.get_chunk(*mcpython.util.math.positionToChunk(position), **kwargs)
 
     @deprecation.deprecated("dev1-4", "a1.3.0")
     def get_block(self, position: typing.Tuple[int, int, int]) -> typing.Union[mcpython.block.Block.Block, str, None]:
@@ -193,7 +193,7 @@ class Dimension:
         # status = G.rendering_helper.save_status()
         G.rendering_helper.enableAlpha()
         self.batches[1].draw()
-        x, z = mcpython.util.math.sectorize(G.world.get_active_player().position)
+        x, z = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
         pad = 4
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):

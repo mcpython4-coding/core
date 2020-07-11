@@ -224,7 +224,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                            str(dt - 0.05) + " seconds")
         if any(type(x) == mcpython.state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
             G.worldgenerationhandler.task_handler.process_tasks(timer=0.02)
-        sector = sectorize(G.world.get_active_player().position)
+        sector = positionToChunk(G.world.get_active_player().position)
         if sector != self.sector:
             pyglet.clock.schedule_once(lambda _: G.world.change_chunks(self.sector, sector), 0.1)
             if self.sector is None:
@@ -438,7 +438,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         nx, ny, nz = mcpython.util.math.normalize(G.world.get_active_player().position)
         if not G.world.gamerulehandler.table["showCoordinates"].status.status:
             x = y = z = "?"
-        chunk = G.world.get_active_dimension().get_chunk(*mcpython.util.math.sectorize(
+        chunk = G.world.get_active_dimension().get_chunk(*mcpython.util.math.positionToChunk(
             G.world.get_active_player().position), create=False)
         self.label.text = '%02d (%.2f, %.2f, %.2f) [region %01d %01d], gamemode %01d' % (
             pyglet.clock.get_fps(), x, y, z, 0, 0, G.world.get_active_player().gamemode)

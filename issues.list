@@ -165,4 +165,4 @@ issue 230: [similar to issue 9]
     bug: items are not arrival when rebuilding or doing similar things
     work-around: restart the client, works than as expected
 
-[231-232]
+[231-233]

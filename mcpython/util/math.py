@@ -22,7 +22,7 @@ def get_max_y(pos):
     return chunk.get_maximum_y_coordinate_from_generation(*pos)
 
 
-@deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
+@deprecation.deprecated(deprecated_in="dev1-1", removed_in="v1.2.0 alpha")
 def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
     """
     Same as cube_vertices_better, but will return all summed up instead of separated lists
@@ -30,7 +30,18 @@ def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True
     return sum(cube_vertices_better(x, y, z, nx, ny, nz, faces=faces), [])
 
 
-def cube_vertices_better(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
+def cube_vertices_better(x: float, y: float, z: float, nx: float, ny: float, nz: float, faces=(True, True, True, True, True, True)):
+    """
+    Similar to cube_vertices, but will return it per-face instead of an whole array of data
+    :param x: the x position
+    :param y: the y position
+    :param z: the z position
+    :param nx: the size in x direction
+    :param ny: the size in y direction
+    :param nz: the size in z direction
+    :param faces: which faces to generate
+    :return: an tuple of length 6 representing each face
+    """
     top = [x - nx, y + ny, z - nz, x - nx, y + ny, z + nz, x + nx, y + ny, z + nz, x + nx, y + ny, z - nz] if faces[0] \
         else []
     bottom = [x - nx, y - ny, z - nz, x + nx, y - ny, z - nz, x + nx, y - ny, z + nz, x - nx, y - ny, z + nz] if \
@@ -71,7 +82,7 @@ def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
     return sum(positions, tuple())
 
 
-@deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
+@deprecation.deprecated(deprecated_in="dev1-1", removed_in="v1.2.0 alpha")
 def tex_coords(*args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)):
     """
     same as tex_coords_better, but returns everything in an single list instead of an list of tuples
@@ -99,16 +110,12 @@ def tex_coord_factor(fx, fy, tx, ty): return fx, fy, tx, fy, tx, ty, fx, ty
 
 
 def normalize(position):
-    """ Accepts `position` of arbitrary precision and returns the block
+    """
+    Accepts `position` of arbitrary precision and returns the block
     containing that position.
 
-    Parameters
-    ----------
-    position : tuple of len 3
-
-    Returns
-    -------
-    block_position : tuple of ints of len 3
+    :param position: the position
+    :return block_position: the rounded position
 
     """
     try:
@@ -124,6 +131,11 @@ def normalize(position):
 
 
 def normalize_ceil(position):
+    """
+    Same as normalize(position), but with math.ceil() instead of round()
+    :param position: the position
+    :return: the ceil-ed position
+    """
     try:
         x, y, z = position if type(position) == tuple else tuple(position)
         x, y, z = (int(math.ceil(x)), int(math.ceil(y)), int(math.ceil(z)))
@@ -133,17 +145,16 @@ def normalize_ceil(position):
         raise
 
 
-def sectorize(position):
-    """ Returns a tuple representing the sector for the given `position`.
+@deprecation.deprecated("dev5-1", "a1.5.0")
+def sectorize(position): return positionToChunk(position)
 
-    Parameters
-    ----------
-    position : tuple of len 3
 
-    Returns
-    -------
-    sector : tuple of len 3
+def positionToChunk(position):
+    """
+    Returns a tuple representing the chunk for the given `position`.
 
+    :param position: the position
+    :return: the chunk
     """
     x, y, z = normalize(position)
     x, z = x // 16, z // 16
@@ -187,6 +198,13 @@ def topological_sort(items):
 
 
 def rotate_point(point, origin, rotation):
+    """
+    Helper function for rotating an point around another one
+    :param point: the point to rotate
+    :param origin: the origin to rotate around
+    :param rotation: the rotation angle
+    :return: the rotated point
+    """
     # code translated from https://stackoverflow.com/questions/13275719/rotate-a-3d-point-around-another-one
     x, y, z = point
     ox, oy, oz = origin

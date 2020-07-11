@@ -208,7 +208,7 @@ class Player(mcpython.entity.Entity.Entity):
                 self.hearts = 20
                 self.hunger = 20
                 return
-        sector = mcpython.util.math.sectorize(self.position)
+        sector = mcpython.util.math.positionToChunk(self.position)
         globals.world.change_chunks(sector, None)
         self.reset_moving_slot()
         if not globals.world.gamerulehandler.table["keepInventory"].status.status:
@@ -229,7 +229,7 @@ class Player(mcpython.entity.Entity.Entity):
         self.armor_level = 0
         self.armor_toughness = 0
         globals.eventhandler.call("player:die", self)
-        sector = mcpython.util.math.sectorize(self.position)
+        sector = mcpython.util.math.positionToChunk(self.position)
         globals.world.change_chunks(None, sector)
         # todo: recalculate armor level!
 
