@@ -42,6 +42,7 @@ class EventBus:
         """
         if kwargs is None: kwargs = {}
         self.event_subscriptions = {}  # name -> (function, args, kwargs)[
+        self.popped_event_subscriptions = {}
         self.extra_arguments = (args, kwargs)
         self.crash_on_error = crash_on_error
         self.sub_buses = []
@@ -182,7 +183,8 @@ class EventBus:
             raise RuntimeError("can't run event. EventBus is for the event '{}' empty".format(eventname))
         exception_occ = False
         for _ in range(amount):
-            function, eargs, ekwargs, info = self.event_subscriptions[eventname].pop(0)
+            function, eargs, ekwargs, info = d = self.event_subscriptions[eventname].pop(0)
+            self.popped_event_subscriptions.setdefault(eventname, []).append(d)
             start = time.time()
             try:
                 result.append((function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
@@ -202,4 +204,12 @@ class EventBus:
             logger.println("\nout of the above reasons, the game has crashes")
             sys.exit(-1)
         return result
+
+    def resetEventStack(self, eventname: str):
+        """
+        Will reset all event subscriptions which where popped from the normal list
+        :param eventname: the name of the event to restore
+        """
+        self.event_subscriptions.setdefault(eventname, []).extend(self.popped_event_subscriptions.setdefault(eventname, []))
+        del self.popped_event_subscriptions[eventname]
 

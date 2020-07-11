@@ -231,6 +231,18 @@ LOADING_ORDER += [
 ]
 
 
+def insertAfter(to_insert: LoadingStage, after: LoadingStage) -> bool:
+    if after not in LOADING_ORDER: return False
+    LOADING_ORDER.insert(LOADING_ORDER.index(after)+1, to_insert)
+    return True
+
+
+def insertBefore(to_insert: LoadingStage, before: LoadingStage) -> bool:
+    if before not in LOADING_ORDER: return False
+    LOADING_ORDER.insert(LOADING_ORDER.index(before), to_insert)
+    return True
+
+
 class ModLoaderAnnotation:
     """
     representation of an @G.modloader([...]) annotation
@@ -282,6 +294,22 @@ class ModLoader:
         elif not G.prebuilding:
             logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
         self.finished = False
+        self.reload_stages = []
+        mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("command:reload:end", self.execute_reload_stages)
+
+    def registerReloadAssignedLoadingStage(self, stage: str):
+        """
+        Will register an loading stage as one to executed on every reload
+        :param stage: the event name of the stage
+        """
+        self.reload_stages.append(stage)
+
+    def execute_reload_stages(self):
+        for event_name in self.reload_stages:
+            for i in range(len(self.mods)):
+                instance = G.modloader.mods[G.modloader.modorder[i]]
+                instance.eventbus.resetEventStack(event_name)
+                instance.eventbus.call(event_name)
 
     def __call__(self, modname: str, eventname: str, info=None) -> ModLoaderAnnotation:
         """

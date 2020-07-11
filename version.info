@@ -1208,3 +1208,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added corresponding extension functions to Item-class and ItemFactory-system
 [uuk]: fixed alpha rendering for blocks (issue 231)
 [uuk]: fixed alpha functions of RenderingHelper
+[uuk]: made it possible to call certain loading stages on world reload
+[uuk]: added helper functions for inserting new loading stages

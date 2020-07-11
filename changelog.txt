@@ -54,6 +54,7 @@ information on development:
 
 changelog of snapshot [next] (theme: )
     - added tooltip system for items with their backends at Item-class and factory methods at ItemFactory
+    - added possibility to register an event name for execution on mod bus on reload
 
     fixed issues:
         from previous snapshot:
