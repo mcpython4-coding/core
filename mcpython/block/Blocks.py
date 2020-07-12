@@ -76,6 +76,8 @@ def load_blocks():
     full_template("quartz_block").finish()
     slab_template("quartz_slab").finish()
 
+    full_template.setName("oak_stairs").setDefaultModelState("facing=east,half=bottom,shape=inner_left").finish()
+
 
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:factory_usage", load_blocks,
                                                      info="loading block definitions")

@@ -6,14 +6,17 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
-import mcpython.ResourceLocator
-import mcpython.util.math
-import mcpython.rendering.model.Model
-import mcpython.mod.ModMcpython
-import logger
-import mcpython.util.enums
+import gc
 import sys
+
+import globals as G
+import logger
+import mcpython.mod.ModMcpython
+import mcpython.rendering.model.Model
+import mcpython.rendering.model.BlockState
+import mcpython.ResourceLocator
+import mcpython.util.enums
+import mcpython.util.math
 
 
 class ModelHandler:
@@ -24,7 +27,6 @@ class ModelHandler:
         self.blockstates = {}
         self.lookup_locations = []  # todo: change to set
         self.dependence_list = []  # todo: clear when not needed
-        # todo: add reload compatibility
 
     def add_from_mod(self, modname: str):
         """
@@ -56,18 +58,21 @@ class ModelHandler:
         """
         self.found_models[name] = data
 
-    def build(self):
-        [self.let_subscribe_to_build(model) for model in self.used_models]  # todo: use set intersection
+    def build(self, immediate=False):
+        [self.let_subscribe_to_build(model, immediate=immediate) for model in self.used_models]  # todo: use set intersection
 
-    def let_subscribe_to_build(self, model):
+    def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
         if modname not in G.modloader.mods: modname = "minecraft"
-        G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake_prepare", self.special_build, model,
-                                                     info="filtering model '{}'".format(model))
+        if immediate:
+            self.special_build(model)
+        else:
+            G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake_prepare", self.special_build, model,
+                                                         info="filtering model '{}'".format(model))
 
-    def special_build(self, used):
+    def special_build(self, used: str):
         if used.count(":") == 0:
-            logger.println("[WARN] deprecated access to model without minecraft-prefix to {}".format(used))
+            logger.println("[WARN] deprecated access to model without minecraft-prefix to '{}'".format(used))
             used = "minecraft:" + used
         if used not in self.found_models:
             logger.println("model error: can't locate model for '{}'".format(used))
@@ -84,20 +89,23 @@ class ModelHandler:
             depend = []
         self.dependence_list.append((used, [e if ":" in e else "minecraft:" + e for e in depend]))
 
-    def process_models(self):
+    def process_models(self, immediate=False):
         try:
             sorted_models = mcpython.util.math.topological_sort(self.dependence_list)
-            sorted_models.remove("minecraft:block/block")
+            sorted_models.remove("minecraft:block/block")  # This is the build-in model and we don't need it
         except ValueError:
             logger.println(self.found_models, "\n", self.dependence_list)
             logger.write_exception("top-sort error during sorting models")
             sys.exit(-1)
         sorted_models = list(set(sorted_models))
-        self.dependence_list = []  # decrease memory usage
+        self.dependence_list.clear()  # decrease memory usage
         for x in sorted_models:
             modname = x.split(":")[0] if x.count(":") == 1 else "minecraft"
-            G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake", self.load_model, x,
-                                                         info="baking model '{}'".format(x))
+            if immediate:
+                self.load_model(x)
+            else:
+                G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake", self.load_model, x,
+                                                             info="baking model '{}'".format(x))
 
     def load_model(self, name: str):
         if ":" not in name: name = "minecraft:" + name
@@ -145,6 +153,26 @@ class ModelHandler:
 
     def get_bbox(self, block):
         return self.blockstates[block.NAME].loader.transform_to_hitbox(block)
+
+    def reload_models(self):
+        logger.println("deleting content of models...")
+        # clear the list holding the data...
+        self.models.clear()
+        self.found_models.clear()
+        self.dependence_list.clear()
+        self.blockstates.clear()
+        gc.collect()  # ... and now delete the content
+
+        logger.println("loading models...")
+        # and now start reloading models...
+        self.search()
+        for directory, modname in mcpython.rendering.model.BlockState.BlockStateDefinition.LOOKUP_DIRECTORIES:
+            mcpython.rendering.model.BlockState.BlockStateDefinition.from_directory(directory, modname, immediate=True)
+        G.eventhandler.call("data:blockstates:custom_injection", self)
+        G.eventhandler.call("data:models:custom_injection", self)
+        self.build(immediate=True)
+        self.process_models(immediate=True)
+        logger.println("finished!")
 
 
 G.modelhandler = ModelHandler()

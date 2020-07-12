@@ -307,9 +307,9 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                 continue
             entity_instance.rotation = entity["rotation"]
             entity_instance.harts = entity["harts"]
-            entity_instance.load(entity["custom"])
             if "nbt" in entity:
                 entity_instance.nbt_data.update(entity["nbt"])
+            entity_instance.load(entity["custom"])
 
         chunk_instance.loaded = True
         chunk_instance.is_ready = True

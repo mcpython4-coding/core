@@ -63,7 +63,8 @@ changelog of snapshot [next] (theme: )
     - World.get_dimension() accepts now the dimension name, not only the id
     - player data of saves contains now an special region for dimension stuff
     - added data fixer part for player data
-    - gameplay stuff is now handled over so-called IGamePlayFeature-classes
+    - improved entity model rendering code
+    - improved reload system
 
     fixed issues:
         from previous snapshot:

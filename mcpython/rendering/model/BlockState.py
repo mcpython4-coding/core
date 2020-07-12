@@ -200,17 +200,22 @@ class DefaultDecoder(IBlockStateDecoder):
 
 class BlockStateDefinition:
     TO_CREATE = set()
-
-    @staticmethod
-    def from_directory(directory: str, modname: str):
-        for file in mcpython.ResourceLocator.get_all_entries(directory):
-            if not file.endswith("/"):
-                BlockStateDefinition.from_file(file, modname)
+    LOOKUP_DIRECTORIES = set()
 
     @classmethod
-    def from_file(cls, file: str, modname: str):
-        G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_create", cls._from_file, file,
-                                                     info="loading block state {}".format(file))
+    def from_directory(cls, directory: str, modname: str, immediate=False):
+        for file in mcpython.ResourceLocator.get_all_entries(directory):
+            if not file.endswith("/"):
+                cls.from_file(file, modname, immediate=immediate)
+        cls.LOOKUP_DIRECTORIES.add((directory,  modname))
+
+    @classmethod
+    def from_file(cls, file: str, modname: str, immediate=False):
+        if immediate:
+            cls._from_file(file)
+        else:
+            G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_create", cls._from_file, file,
+                                                         info="loading block state {}".format(file))
         cls.TO_CREATE.add(file)
 
     @classmethod
@@ -227,7 +232,7 @@ class BlockStateDefinition:
     @classmethod
     def from_data(cls, name, data):
         mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_create", cls._from_data, name, data,
-                                                    info="loading block state {}".format(name))
+                                                             info="loading block state {}".format(name))
 
     @classmethod
     def _from_data(cls, name, data):
@@ -293,6 +298,6 @@ class BlockState:
 
 
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
-                                            "assets/minecraft/blockstates", "minecraft",
-                                            info="searching for block states")
+                                                     "assets/minecraft/blockstates", "minecraft",
+                                                     info="searching for block states")
 

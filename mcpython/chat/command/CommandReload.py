@@ -11,6 +11,7 @@ import gc
 import globals as G
 import mcpython.chat.DataPack
 import mcpython.chat.command.Command
+import mcpython.config
 import mcpython.event.EventHandler
 import mcpython.event.TickHandler
 import mcpython.rendering.EntityRenderer
@@ -28,8 +29,6 @@ class CommandReload(mcpython.chat.command.Command.Command):
 
     NAME = "minecraft:reload"
 
-    CANCEL_RELOAD = False
-
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "reload"
@@ -40,24 +39,33 @@ class CommandReload(mcpython.chat.command.Command.Command):
 
     @classmethod
     def reload(cls):
-        cls.CANCEL_RELOAD = False
-        G.eventhandler.call("command:reload:start")
-        if cls.CANCEL_RELOAD: return
-        if G.dev_environment:
-            # todo: same parameters as this launch!
-            subprocess.Popen([sys.executable, G.local+"/__main__.py", "--data-gen", "--exit-after-data-gen",
-                              "--no-window"], stderr=sys.stderr)
+        G.window.print_profiler()  # print the profiler's
+        if not G.eventhandler.call_cancelable("data:reload:cancel"): return
         mcpython.chat.DataPack.datapackhandler.reload()  # reloads all data packs
         G.taghandler.reload()  # reloads all tags
         G.craftinghandler.reload_crafting_recipes()  # reloads all recipes
+        G.loottablehandler.reload()
+
+        # as we are reloading, this may get mixed up...
+        G.craftinghandler.recipe_relink_table.clear()
+        G.loottablehandler.relink_table.clear()
+        G.eventhandler.call("data:shuffle:clear")
+        if mcpython.config.SHUFFLE_DATA:  # .. and we need to re-do if needed
+            G.eventhandler.call("data:shuffle:all")
+
         G.inventoryhandler.reload_config()  # reloads inventory configuration
-        mcpython.rendering.OpenGLSetupFile.FILES.clear()
+        G.modelhandler.reload_models()
+        mcpython.rendering.OpenGLSetupFile.FILES.clear()  # remove all loaded OpenGL conifg ifles
         mcpython.rendering.OpenGLSetupFile.execute_file_by_name("setup")  # re-setup opengl
-        # todo: reload block state files, block model files, regenerate block item images, regenerate item atlases
+        # todo: regenerate block item images, regenerate item atlases
+
+        # reload entity model files
         [e.reload() for e in mcpython.rendering.EntityRenderer.RENDERERS]
-        G.eventhandler.call("command:reload:end")
+
+        G.eventhandler.call("data:reload:work")
+
         gc.collect()  # make sure that memory was cleaned up
-        G.window.print_profiler()
+        G.window.print_profiler()  # and now print the profile's (if needed)
 
     @staticmethod
     def get_help() -> list:

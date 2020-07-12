@@ -112,13 +112,13 @@ class Player(mcpython.entity.Entity.Entity):
         # if it is a repr of the gamemode, get the int gamemode
         # else, return the int
         if gamemode == 0:
-            globals.window.flying = False
+            self.flying = False
         elif gamemode == 1:
             pass
         elif gamemode == 2:
-            globals.window.flying = False
+            self.flying = False
         elif gamemode == 3:
-            globals.window.flying = True
+            self.flying = True
         else:
             raise ValueError("can't cast {} to valid gamemode".format(gamemode))
         self.gamemode = gamemode
@@ -228,7 +228,7 @@ class Player(mcpython.entity.Entity.Entity):
         self.xp_level = 0
         self.hearts = 20
         self.hunger = 20
-        globals.window.flying = False if self.gamemode != 3 else True
+        self.flying = False if self.gamemode != 3 else True
         self.armor_level = 0
         self.armor_toughness = 0
         globals.eventhandler.call("player:die", self)

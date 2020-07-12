@@ -14,6 +14,7 @@ import uuid
 import mcpython.util.math
 import logger
 import traceback
+import mcpython.entity.DamageSource
 
 
 class Entity(mcpython.event.Registry.IRegistryContent):
@@ -113,7 +114,6 @@ class Entity(mcpython.event.Registry.IRegistryContent):
                 self.chunk.entities.remove(self)
             self.chunk = dimension.get_chunk_for_position(self.position)
             self.chunk.entities.add(self)
-            print("writing {} into {}".format(self, self.chunk))
 
     # interaction functions
 
@@ -124,7 +124,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :param msg: the msg to tell
         """
 
-    def kill(self, drop_items=True, kill_animation=True):
+    def kill(self, drop_items=True, kill_animation=True, damage_source: mcpython.entity.DamageSource.DamageSource=None):
         """
         Called to kill the entity [remove the entity from world]
         THIS IS THE FINAL REMOVAL METHOD. THIS DOES NOT HAVE MUCH CHECKS IF IT SHOULD BE ABLE TO BE KILLED!
@@ -132,6 +132,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         Is not affected by nbt-tag "invulnerable". Must be handled separately.
         :param drop_items: if items should be dropped
         :param kill_animation: if the kill animation should be played
+        :param damage_source: the source of the damage
         todo: drop items if selected
         todo: play kill animation if selected
         """
@@ -149,7 +150,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         """
         return False
 
-    def damage(self, damage, reason=None):
+    def damage(self, damage, reason: mcpython.entity.DamageSource.DamageSource=None):
         """
         applies damage to the entity
         FOR MODER:
@@ -157,7 +158,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
             - you may want to apply armor calculation code
             - you may want to override this method for an custom implementation
         :param damage: the damage to apply
-        :param reason: the reason for the damage, may be entity or str [something like DamageSource in mc]
+        :param reason: the reason for the damage, as an DamageSource-instance
         """
         self.harts -= damage
         if self.harts <= 0:
@@ -210,6 +211,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         dumps the entity into an save-able version
         :return: an pickle-able version, excluding position, rotation and harts, should include inventory serializer
             calls to make sure that everything works
+        The nbt data is auto-saved
         """
 
     def load(self, data):
@@ -218,5 +220,6 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         For Moder:
             you CAN include an version entry to make sure you can fix the data version
         :param data: the data to load from
+        The nbt data is auto-loaded before this event is called
         """
 

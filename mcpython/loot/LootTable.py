@@ -51,6 +51,14 @@ class LootTableHandler:
         self.relink_table = {}
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:shuffle:all", self.shuffle_data)
 
+        self.mod_names_to_load = set()
+
+    def reload(self):
+        self.loot_tables.clear()
+        for modname in self.mod_names_to_load:
+            self.for_mod_name(modname)
+        G.eventhandler.call("data:loot_tables:custom_inject", self)
+
     def shuffle_data(self):
         ccopy = list(self.loot_tables.keys())
         for key in self.loot_tables:
@@ -100,6 +108,7 @@ class LootTableHandler:
         for path in mcpython.ResourceLocator.get_all_entries("data/{}/loot_tables".format(directoryname)):
             if path.endswith("/"): continue
             self._add_load(modinstance, path)
+        self.mod_names_to_load.add(modname)
 
     def _add_load(self, modinstance, path):
         modinstance.eventbus.subscribe("stage:loottables:load", lambda: self.from_file(path),
