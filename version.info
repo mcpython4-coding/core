@@ -1228,3 +1228,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: recipe data & loot table data is now re-shuffled to prevent links to recipes not anymore loaded in the system
 [uuk]: loot tables are now also reloaded when entering /reload
 [uuk]: /reload will now NOT re-run data gens
+[uuk]: tooltip contains now full qualified registry name
+[uuk]: added api management system

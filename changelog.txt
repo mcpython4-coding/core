@@ -65,6 +65,7 @@ changelog of snapshot [next] (theme: )
     - added data fixer part for player data
     - improved entity model rendering code
     - improved reload system
+    - added api management system
 
     fixed issues:
         from previous snapshot:

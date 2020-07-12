@@ -143,6 +143,9 @@ class LoadingStages:
 
     # used to do the magic stuff to set up your system
     PREPARE = LoadingStage("preparation phase", "stage:pre", "stage:mod:init")
+
+    API_MANAGEMENT = LoadingStage("working on api system", "stage:api:define", "stage:api:check", "stage:api:retrieve")
+
     # this special phase is for adding new loading phases, if you want to
     ADD_LOADING_STAGES = LoadingStage("loading stage register phase", "stage:addition_of_stages")
 
@@ -212,7 +215,7 @@ class LoadingStages:
 
 # the order of stages todo: make serialized from config file
 LOADING_ORDER: list = [
-    LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.EXTRA_RESOURCE_LOCATIONS,
+    LoadingStages.PREPARE, LoadingStages.API_MANAGEMENT, LoadingStages.ADD_LOADING_STAGES, LoadingStages.EXTRA_RESOURCE_LOCATIONS,
     LoadingStages.PREBUILD, LoadingStages.CONFIGS, LoadingStages.COMBINED_FACTORIES, LoadingStages.BLOCKS,
     LoadingStages.ITEMS, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.ENTITIES
 ]

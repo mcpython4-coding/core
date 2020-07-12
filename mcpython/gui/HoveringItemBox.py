@@ -62,7 +62,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
         if localized_name == "ConstructedItem": localized_name = "!MissingName!{{{};{}x}}".format(item_name, itemstack.amount)
         stuff = [self.default_style.format(color=itemstack.item.ITEM_NAME_COLOR, text=localized_name)] + \
             [self.default_style.format(color="gray", text=mcpython.Language.translate(line)) for line in itemstack.item.getAdditionalTooltipText(itemstack, self)] + \
-            [self.default_style.format(color="blue", text="<b><i>" + item_name.split(":")[0] + "</i></b>")]
+            [self.default_style.format(color="gray", text=item_name), self.default_style.format(color="blue", text="<b><i>" + item_name.split(":")[0] + "</i></b>")]
         return stuff
 
 
