@@ -70,9 +70,13 @@ changelog of snapshot [next] (theme: )
             - alpha rendering for blocks was broken
             - RenderingHelper's alpha on/off functions were not working
 
+        from development versions for a1.1.0:
+            - EntityModelGenerator was not parsing states correctly (20w24a)
+
         long-term issues:
             - block model rendering was in some cases not rendering correctly
                 -> some fence & wall faces were rendering without texture
+            - Chunk deserializer was not setting chunks properties properly leading into not rendering entities
 
 
 changelog of snapshot 20w28a released on 08.07.2020 (theme: fixing stuff & upgrading base to 1.16)

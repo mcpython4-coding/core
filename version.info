@@ -1221,3 +1221,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added special region in player data for dimension stuff
 [uuk]: added DataFixer for player data
 [uuk]: MemoryError is handled now as an fatal error and will crash the game
+[uuk]: improved EntityModelGenerator code (issue 236)
+[uuk]: fixed rendering of chunks (issue 237)

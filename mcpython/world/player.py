@@ -39,23 +39,23 @@ class Player(mcpython.entity.Entity.Entity):
     def __init__(self, name="unknown", dimension=None):
         super().__init__(dimension=dimension)
 
-        self.name: str = name  # the name of the player
-        self.gamemode: int = -1  # the current gamemode
+        self.name: str = name  # the name of the player  todo: move into nbt
+        self.gamemode: int = -1  # the current gamemode todo: move into nbt
         self.set_gamemode(1)  # and set it
 
-        self.hearts: int = 20
-        self.hunger: int = 20
-        self.xp: int = 0
-        self.xp_level: int = 0
-        self.armor_level = 0
-        self.armor_toughness = 0
+        self.hearts: int = 20  # todo: move into nbt
+        self.hunger: int = 20  # todo: move into nbt
+        self.xp: int = 0  # todo: move into nbt
+        self.xp_level: int = 0  # todo: move into nbt
+        self.armor_level = 0  # todo: move into nbt
+        self.armor_toughness = 0  # todo: move into nbt
 
-        self.in_nether_portal_since = None
-        self.should_leave_nether_portal_before_dim_change = False
+        self.in_nether_portal_since = None  # todo: move into nbt
+        self.should_leave_nether_portal_before_dim_change = False  # todo: move into nbt
 
-        self.flying = False  # are we currently flying?
+        self.flying = False  # are we currently flying?  # todo: move into nbt
 
-        self.fallen_since_y = -1  # how far did we fall?
+        self.fallen_since_y = -1  # how far did we fall?  # todo: move into nbt
 
         self.inventory_order: list = [  # an ([inventoryindexname: str], [reversed slots: bool}) list
             ("hotbar", False),
@@ -64,7 +64,7 @@ class Player(mcpython.entity.Entity.Entity):
 
         self.iconparts = []
 
-        self.active_inventory_slot: int = 0  # which slot is currently selected
+        self.active_inventory_slot: int = 0  # which slot is currently selected todo: move into nbt
 
         # used for determine if we can access stuff now or must wait
         if not globals.modloader.finished:

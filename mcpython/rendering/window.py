@@ -276,9 +276,8 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                             blockstate = True
                     if not blockstate:
                         continue
-                    if block.NO_COLLISION:
-                        if block is not None:
-                            block.on_no_collide_collide(G.world.get_active_player(), block.position in previous_positions)
+                    if block is not None and type(block) != str and block.NO_COLLISION:
+                        block.on_no_collide_collide(G.world.get_active_player(), block.position in previous_positions)
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
@@ -323,13 +322,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                     op[i] += face[i]
                     chunk = G.world.get_active_dimension().get_chunk_for_position(tuple(op), generate=False)
                     block = chunk.get_block(tuple(op))
-                    blockstate = block is not None
-                    if not chunk.generated:
-                        if G.world.config["enable_world_barrier"]:
-                            blockstate = True
-                    if not blockstate:
+                    if block is None:
                         continue
-                    if block.NO_COLLISION:
+                    if type(block) != str and block.NO_COLLISION:
                         positions_no_colliding.append(block.position)
                         continue
                     p[i] -= (d - pad) * face[i]

@@ -77,10 +77,13 @@ class EntityRenderer:
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
                         mcpython.ResourceLocator.read("assets/missingtexture.png", "pyglet").get_texture())
                 reloaded.append(texture)
+            if "invert_indexes" not in box or not box["invert_indexes"]:
+                uv = [tuple([float(x)/self.texture_size[i % 2] for i, x in enumerate(e.split("|"))]) for e in box["uv"]]
+            else:
+                uv = [tuple([(float(x) if i % 2 == 0 else self.texture_size[i % 2]-float(x))/self.texture_size[i % 2] for i, x in enumerate(e.split("|"))]) for e in box["uv"]]
             self.box_models[boxname] = mcpython.rendering.BoxModel.BaseBoxModel(
                 box["position"] if "position" in box else (0, 0, 0), tuple([e/16 for e in box["size"]]), group,
-                [tuple([float(x)/self.texture_size[i%2] for i, x in enumerate(e.split("|"))]) for e in box["uv"]],
-                box["rotation"] if "rotation" in box else (0, 0, 0), box["center"] if "center" in box else (0, 0, 0))
+                uv, box["rotation"] if "rotation" in box else (0, 0, 0), box["center"] if "center" in box else (0, 0, 0))
         for state in self.data["states"]:
             d = self.data["states"][state]
             self.states[state] = d["boxes"]
