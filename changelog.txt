@@ -66,6 +66,7 @@ changelog of snapshot [next] (theme: )
     - improved entity model rendering code
     - improved reload system
     - added api management system
+    - added MDK system
 
     fixed issues:
         from previous snapshot:
