@@ -51,8 +51,10 @@ registry:
     "datapack:search": called when it is searched for datapacks
 
 inventory:
-    "inventory:show": called by InventoryHandler with the inventory if its shown
-    "inventory:hide": called by InventoryHandler with the inventory if its hidden
+    inventory:show(Inventory): called by InventoryHandler with the inventory if its shown
+    inventory:show:{class name}(Inventory): Special event for class inventory show
+    inventory:hide(Inventory): called by InventoryHandler with the inventory if its hidden
+    inventory:hide:{class name}(Inventory): Special event for class inventory hide
 
 items:
     "itemhandler:build:atlases:save": called by ItemHandler when the table of item data is saved

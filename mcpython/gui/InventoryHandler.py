@@ -298,6 +298,7 @@ class InventoryHandler:
         inventory.on_activate()
         self.update_shift_container()
         G.eventhandler.call("inventory:show", inventory)
+        G.eventhandler.call("inventory:show:{}".format(inventory.__class__.__name__), inventory)
 
     def hide(self, inventory):
         """
@@ -310,6 +311,7 @@ class InventoryHandler:
         self.opened_inventorystack.remove(inventory)
         self.update_shift_container()
         G.eventhandler.call("inventory:hide", inventory)
+        G.eventhandler.call("inventory:hide:{}".format(inventory.__class__.__name__), inventory)
 
     def remove_one_from_stack(self):
         """

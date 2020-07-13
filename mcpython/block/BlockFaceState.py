@@ -72,11 +72,10 @@ class BlockFaceState:
             return
         self.custom_renderer.draw(self.block.position, self.block)
 
-    def update(self, redraw_complete=False):
+    def update(self, redraw_complete=True):
         """
         updates the block face state
         :param redraw_complete: if all sides should be re-drawn
-        todo: make redraw-complete always True or default to True
         """
         state = G.world.get_active_dimension().get_chunk_for_position(self.block.position).exposed_faces(
             self.block.position)
