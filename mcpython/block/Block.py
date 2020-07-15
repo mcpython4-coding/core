@@ -56,6 +56,8 @@ class Block(mcpython.event.Registry.IRegistryContent):
 
     ENABLE_RANDOM_TICKS = False  # if the random tick function should be called if needed or not
 
+    NO_COLLISION = False
+
     def __init__(self, position: tuple, set_to=None, real_hit=None, state=None, player=None):
         """
         creates new Block-instance.
@@ -122,6 +124,13 @@ class Block(mcpython.event.Registry.IRegistryContent):
         :return: if default logic should be interrupted or not
         """
         return False
+
+    def on_no_collide_collide(self, player, previous: bool):
+        """
+        Called when NO_COLLIDE is True and the player is in the block every collision check
+        :param player: the player entering the block
+        :param previous: if the player was in the block before
+        """
 
     def save(self):
         """

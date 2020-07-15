@@ -7,12 +7,43 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.storage.serializer.IDataSerializer
+import mcpython.storage.datafixers.IDataFixer
 import globals as G
+import time
+
+
+class PlayerDataFixer(mcpython.storage.datafixers.IDataFixer.IPartFixer):
+    """
+    fixer for fixing player data
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:player_data"
+
+    @classmethod
+    def fix(cls, savefile, player, data) -> dict:
+        """
+        will apply the fix
+        :param savefile: the savefile to use
+        :param player: the player used or None if not provided
+        :param data: the data used
+        :return: the fixed data
+        """
 
 
 @G.registry
 class PlayerData(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:player_data"
+
+    @classmethod
+    def apply_part_fixer(cls, savefile, fixer):
+        if issubclass(fixer, PlayerDataFixer):
+            data = savefile.access_file_json("players.json")
+            for name in data:
+                pdata = data[name]
+                player = G.world.players[name] if name not in G.world.players else None
+                pdata = fixer.fix(savefile, player, pdata)
+                data[name] = pdata
+            savefile.dump_file_json("players.json", data)
 
     @classmethod
     def load(cls, savefile):
@@ -34,6 +65,10 @@ class PlayerData(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             for name in pd["inventory links"]:
                 savefile.read("minecraft:inventory", inventory=player.inventories[name],
                               path="players/{}/inventory/{}".format(player.name, name))
+            if "dimension_data" in pd:
+                if pd["dimension_data"]["nether_portal"]["portal_inner_time"] is not None:
+                    player.in_nether_portal_since = time.time() - pd["dimension_data"]["nether_portal"]["portal_inner_time"]
+                player.should_leave_nether_portal_before_dim_change = pd["dimension_data"]["nether_portal"]["portal_need_leave_before_change"]
 
     @classmethod
     def save(cls, data, savefile):
@@ -52,7 +87,13 @@ class PlayerData(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                 "fallen since y": player.fallen_since_y,
                 "active inventory slot": player.active_inventory_slot,
                 "flying": G.world.get_active_player().flying,
-                "inventory links": {name: player.inventories[name].uuid.int for name in player.inventories}
+                "inventory links": {name: player.inventories[name].uuid.int for name in player.inventories},
+                "dimension_data": {
+                    "nether_portal": {
+                        "portal_inner_time": None if player.in_nether_portal_since is None else time.time() - player.in_nether_portal_since,
+                        "portal_need_leave_before_change": player.should_leave_nether_portal_before_dim_change
+                    }
+                }
             }
             [savefile.dump(None, "minecraft:inventory", inventory=player.inventories[name],
                            path="players/{}/inventory/{}".format(player.name, name)) for name in player.inventories]

@@ -4,7 +4,7 @@ todo: make into an .md file
 
 planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
         before next stable release):
-    - optimize texture reload with everything (re-block-item-factories, reload block models,
+    - optimize texture reload with everything (re-block-item-factories,
         reload item texture, gui textures, ...), config reload [1]
     - add more factories for various parts (better block models, block states, full block factory, ...) [2]
     - add scoreboards with commands, execute entry, ... [5]
@@ -17,7 +17,7 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log [6]
     - parser for the new mc dimension config format [20]
-    - mdk kit with setup and launcher binding [11]
+    - mdk launcher binding [11]
     - add an mode where the window opens only when the load is complete [100]
     - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
         and when the user tries to go back to start menu, the game is closing. [change button text for that] [100]
@@ -31,6 +31,7 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - rendering layer system [20]
     - make loot table system only load needed loot tables, etc. [10]
     - an indicator for corrupted save files (add an number to an counter and remove when action finished) [1]
+    - BlockItemGenerator should directly inject its images into the item atlas system, not store them somewhere [4]
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -52,11 +53,50 @@ information on development:
         its id.
 
 
-changelog of snapshot [next] (theme: )
+changelog of a1.0.0: (excluding the changes from the snapshots below)
+    Rendering:
+        - added tooltip system for items with their backends at Item-class and factory methods at ItemFactory
+        - improved entity model rendering code
+
+    Modding:
+        - added possibility to register an event name for execution on mod bus on reload
+        - improved reload system
+        - added api management system
+        - added MDK system
+
+    Gameplay:
+        - blocks can now have no collision with the player
+
+    Blocks:
+        - added nether portal block
+
+    Commands:
+        - /fill command will now update blocks at the end, not at the start
+        - /setblock command will now not update the block itself
+
+    World:
+        - World.get_dimension() accepts now the dimension name, not only the id
+
+    Saves:
+        - player data of saves contains now an special region for dimension stuff
+        - added data fixer part for player data
+
+    fixed issues:
+        from previous snapshot:
+            - alpha rendering for blocks was broken
+            - RenderingHelper's alpha on/off functions were not working
+
+        from development versions for a1.1.0:
+            - EntityModelGenerator was not parsing states correctly (20w24a)
+
+        long-term issues:
+            - block model rendering was in some cases not rendering correctly
+                -> some fence & wall faces were rendering without texture
+            - Chunk deserializer was not setting chunks properties properly leading into not rendering entities
 
 
 changelog of snapshot 20w28a released on 08.07.2020 (theme: fixing stuff & upgrading base to 1.16)
-    - updated textures to 1.16 and added content of the update
+    updated resources to 1.16 and added (some) content of the update
 
     Rendering:
         - improved rendering system by using MatrixStack's and RenderingHelper-instances

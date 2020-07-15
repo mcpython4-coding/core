@@ -211,3 +211,11 @@ issue 226: when ItemAtlas scheduled missing texture for texture, it still crashe
 issue 227: ItemFactory's template system was broken; fixed on 06.07.2020 by uuk
 issue 228: logger was prefixing every part with time, not only the front; fixed on 06.07.2020 by uuk
 issue 229: Player.teleport() was not updating G.world's active dimension; fixed on 06.07.2020 by uuk
+issue 231: alpha rendering of blocks was broken; fixed on 09.07.2020 by uuk
+issue 232: RenderingHelper's alpha on/off functions were not working correctly; fixed on 09.07.2020 by uuk
+issue 233: BoxModel's rendering code was not rendering vertices <-> texture correctly; fixed on 11.07.0202 by uuk
+    causing issue 129: some faces of fences and walls are not rendered with texture; fixed on 11.07.2020 by uuk
+issue 234: active dimension is not reset when changing world; fixed on 11.07.2020 by uuk
+issue 236: EntityModelGenerator was not parsing states correctly; fixed on 12.07.2020 by uuk
+issue 237: Chunk deserializer was not setting is_ready to True leading into entities not rendering; fixed on 12.07.2020
+           by uuk

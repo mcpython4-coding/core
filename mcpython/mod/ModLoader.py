@@ -143,6 +143,9 @@ class LoadingStages:
 
     # used to do the magic stuff to set up your system
     PREPARE = LoadingStage("preparation phase", "stage:pre", "stage:mod:init")
+
+    API_MANAGEMENT = LoadingStage("working on api system", "stage:api:define", "stage:api:check", "stage:api:retrieve")
+
     # this special phase is for adding new loading phases, if you want to
     ADD_LOADING_STAGES = LoadingStage("loading stage register phase", "stage:addition_of_stages")
 
@@ -212,7 +215,7 @@ class LoadingStages:
 
 # the order of stages todo: make serialized from config file
 LOADING_ORDER: list = [
-    LoadingStages.PREPARE, LoadingStages.ADD_LOADING_STAGES, LoadingStages.EXTRA_RESOURCE_LOCATIONS,
+    LoadingStages.PREPARE, LoadingStages.API_MANAGEMENT, LoadingStages.ADD_LOADING_STAGES, LoadingStages.EXTRA_RESOURCE_LOCATIONS,
     LoadingStages.PREBUILD, LoadingStages.CONFIGS, LoadingStages.COMBINED_FACTORIES, LoadingStages.BLOCKS,
     LoadingStages.ITEMS, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.ENTITIES
 ]
@@ -229,6 +232,18 @@ LOADING_ORDER += [
     LoadingStages.MODEL_FACTORY, LoadingStages.BLOCKSTATE, LoadingStages.BLOCK_MODEL, LoadingStages.BAKE,
     LoadingStages.WORLDGEN, LoadingStages.FILE_INTERFACE, LoadingStages.STATES, LoadingStages.POST
 ]
+
+
+def insertAfter(to_insert: LoadingStage, after: LoadingStage) -> bool:
+    if after not in LOADING_ORDER: return False
+    LOADING_ORDER.insert(LOADING_ORDER.index(after)+1, to_insert)
+    return True
+
+
+def insertBefore(to_insert: LoadingStage, before: LoadingStage) -> bool:
+    if before not in LOADING_ORDER: return False
+    LOADING_ORDER.insert(LOADING_ORDER.index(before), to_insert)
+    return True
 
 
 class ModLoaderAnnotation:
@@ -282,6 +297,22 @@ class ModLoader:
         elif not G.prebuilding:
             logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
         self.finished = False
+        self.reload_stages = []
+        mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("command:reload:end", self.execute_reload_stages)
+
+    def registerReloadAssignedLoadingStage(self, stage: str):
+        """
+        Will register an loading stage as one to executed on every reload
+        :param stage: the event name of the stage
+        """
+        self.reload_stages.append(stage)
+
+    def execute_reload_stages(self):
+        for event_name in self.reload_stages:
+            for i in range(len(self.mods)):
+                instance = G.modloader.mods[G.modloader.modorder[i]]
+                instance.eventbus.resetEventStack(event_name)
+                instance.eventbus.call(event_name)
 
     def __call__(self, modname: str, eventname: str, info=None) -> ModLoaderAnnotation:
         """
@@ -704,7 +735,7 @@ G.modloader = ModLoader()
 # this is needed as this depends on above but also above on the import
 import mcpython.mod.ModMcpython
 import mcpython.mod.ConfigFile
-from mcpython.datagen.mcpython import recipes, textures
+from mcpython.datagen.mcpython import recipes, textures, entity
 
 
 @G.modloader("minecraft", "special:exit")

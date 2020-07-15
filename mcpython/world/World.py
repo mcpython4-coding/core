@@ -127,7 +127,7 @@ class World:
         if self.CANCEL_DIM_CHANGE:
             logger.println("interrupted!")
             return
-        sector = mcpython.util.math.sectorize(G.world.get_active_player().position)
+        sector = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
         logger.println("unloading chunks...")
         self.change_chunks(sector, None)
         old = self.active_dimension
@@ -144,6 +144,9 @@ class World:
         :return: the dimension instance or None if it does not exist
         """
         if dim_id in self.dimensions: return self.dimensions[dim_id]
+        for dimension in self.dimensions.values():
+            if dimension.name == dim_id:
+                return dimension
 
     def hit_test(self, position: typing.Tuple[float, float, float], vector: typing.Tuple[float, float, float],
                  max_distance: int = 8) -> typing.Union[
@@ -279,6 +282,7 @@ class World:
         :param add_player: if the player should be added
         todo: make split up into smaller functions
         """
+        self.active_dimension = 0
         for dimension in self.dimensions.values():
             dimension: mcpython.world.Dimension.Dimension
             for chunk in dimension.chunks.values():
@@ -294,6 +298,7 @@ class World:
         for inv in G.world.get_active_player().inventories.values(): inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         G.worldgenerationhandler.task_handler.clear()
+        G.entityhandler.entity_map.clear()
         self.players.clear()
         if add_player: self.add_player("unknown")
         if filename is not None:

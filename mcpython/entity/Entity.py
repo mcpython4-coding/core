@@ -14,6 +14,7 @@ import uuid
 import mcpython.util.math
 import logger
 import traceback
+import mcpython.entity.DamageSource
 
 
 class Entity(mcpython.event.Registry.IRegistryContent):
@@ -48,15 +49,22 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         for moder: you SHOULD implement an custom constructor which set the bellow values to an "good" value
         """
         self.dimension = G.world.get_active_dimension() if dimension is None else dimension
-        self.__position = (0, 0, 0)
-        self.rotation = (0, 0, 0)
+        self.unsafe_position = (0, 0, 0)  # todo: move to nbt
+        self.rotation = (0, 0, 0)  # todo: move to nbt
         self.inventories = {}
-        self.harts = 0
-        self.chunk = None if self.dimension is None else self.dimension.get_chunk_for_position(self.__position)
+        self.harts = 0  # todo: move to nbt
+        self.chunk = None if self.dimension is None else self.dimension.get_chunk_for_position(self.unsafe_position)
         self.uuid = uuid.uuid4()
-        self.movement = (0, 0, 0)
+
+        self.entity_height = 0  # the height of the entity, for positioning the child entity
+
+        self.parent = None  # the entity this is riding todo: move into nbt
+        self.child = None  # the entity this is ridden by  todo: move into nbt
+
+        self.nbt_data = {"motion": (0, 0, 0), "invulnerable": False}  # dict holding entity data, automatically saved & loaded, when loading, data is put ontop of the existing dict
 
     def __del__(self):
+        if not hasattr(self, "chunk"): return
         del self.chunk
 
     def __str__(self):
@@ -64,7 +72,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
 
     # system for moving
 
-    def get_position(self): return self.__position
+    def get_position(self): return self.unsafe_position
 
     def set_position(self, position: tuple):
         if type(position) not in (tuple, list, set):
@@ -75,8 +83,14 @@ class Entity(mcpython.event.Registry.IRegistryContent):
 
     position = property(get_position, set_position)
 
+    def get_motion(self): return self.nbt_data.setdefault("motion", (0, 0, 0))
+
+    def set_motion(self, motion: tuple): self.nbt_data["motion"] = motion
+
+    movement = motion = property(get_motion, set_motion)
+
     # only for some small use-cases. WARNING: will  N O T  do any internal handling for updating the position
-    def set_position_unsafe(self, position: tuple): self.__position = position
+    def set_position_unsafe(self, position: tuple): self.unsafe_position = position
 
     def teleport(self, position, dimension=None, force_chunk_save_update=False):
         """
@@ -85,16 +99,16 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :param dimension: to which dimension-id to teleport to, if None, no dimension change is used
         :param force_chunk_save_update: if the system should force to update were player data is stored
         """
-        if self.chunk is None: sector_before = mcpython.util.math.sectorize(self.position)
+        if self.chunk is None: sector_before = mcpython.util.math.positionToChunk(self.position)
         else: sector_before = self.chunk.position
         if self.chunk is None: before_dim = None
         else: before_dim = self.chunk.dimension.id
         if dimension is None: dimension_id = before_dim if before_dim is not None else 0
         else: dimension_id = dimension
         dimension = G.world.get_dimension(dimension_id)
-        self.__position = position
+        self.unsafe_position = position
         if dimension is None: return
-        sector_after = mcpython.util.math.sectorize(self.position)
+        sector_after = mcpython.util.math.positionToChunk(self.position)
         if sector_before != sector_after or before_dim != dimension_id or force_chunk_save_update:
             if self.chunk and self in self.chunk.entities:
                 self.chunk.entities.remove(self)
@@ -110,12 +124,17 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :param msg: the msg to tell
         """
 
-    def kill(self, drop_items=True, kill_animation=True):
+    def kill(self, drop_items=True, kill_animation=True, damage_source: mcpython.entity.DamageSource.DamageSource=None):
         """
-        called to kill the entity [remove the entity from world]
+        Called to kill the entity [remove the entity from world]
+        THIS IS THE FINAL REMOVAL METHOD. THIS DOES NOT HAVE MUCH CHECKS IF IT SHOULD BE ABLE TO BE KILLED!
+
+        Is not affected by nbt-tag "invulnerable". Must be handled separately.
         :param drop_items: if items should be dropped
         :param kill_animation: if the kill animation should be played
-        todo: drop items
+        :param damage_source: the source of the damage
+        todo: drop items if selected
+        todo: play kill animation if selected
         """
         if self.chunk is not None and self in self.chunk.entities:
             self.chunk.entities.remove(self)
@@ -124,13 +143,15 @@ class Entity(mcpython.event.Registry.IRegistryContent):
 
     def pick_up(self, itemstack: mcpython.gui.ItemStack.ItemStack) -> bool:
         """
-        let the entity pick up an item and insert it into its inventory
+        Let the entity pick up an item and insert it into its inventory
         :param itemstack: the itemstack to use
         :return: if it was successful or not
         for moder: see world/player.py as an example how this could work
+        Subclasses should implement this when they have an inventory for it
         """
+        return False
 
-    def damage(self, damage, reason=None):
+    def damage(self, damage, reason: mcpython.entity.DamageSource.DamageSource = None):
         """
         applies damage to the entity
         FOR MODER:
@@ -138,7 +159,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
             - you may want to apply armor calculation code
             - you may want to override this method for an custom implementation
         :param damage: the damage to apply
-        :param reason: the reason for the damage, may be entity or str [something like DamageSource in mc]
+        :param reason: the reason for the damage, as an DamageSource-instance
         """
         self.harts -= damage
         if self.harts <= 0:
@@ -191,6 +212,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         dumps the entity into an save-able version
         :return: an pickle-able version, excluding position, rotation and harts, should include inventory serializer
             calls to make sure that everything works
+        The nbt data is auto-saved
         """
 
     def load(self, data):
@@ -199,5 +221,6 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         For Moder:
             you CAN include an version entry to make sure you can fix the data version
         :param data: the data to load from
+        The nbt data is auto-loaded before this event is called
         """
 

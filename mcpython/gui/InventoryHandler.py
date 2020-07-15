@@ -13,6 +13,7 @@ from pyglet.window import key, mouse
 import mcpython.gui.Slot
 import mcpython.gui.ShiftContainer
 import logger
+import mcpython.gui.HoveringItemBox
 
 
 class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
@@ -28,6 +29,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
         self.moving_itemstack = None
         self.mode = 0  # possible: 0 - None, 1: equal on all slots, 2: on every slot one more, 3: fill up slots
         self.original_amount = []
+        self.tool_tip_renderer = mcpython.gui.HoveringItemBox.HoveringItemBoxProvider()
 
     def bind_to_eventbus(self):
         self.master[0].eventbus.subscribe("user:keyboard:press", self.on_key_press)
@@ -46,7 +48,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
             slot.on_button_press(x, y, symbol, modifiers)
 
     def on_draw_2d(self):
-        hoveringslot = self._get_slot_for(*G.window.mouse_position)
+        hoveringslot, hoveringinvenory = self._get_slot_inventory_for(*G.window.mouse_position)
         if any([inventory.is_blocking_interactions() for inventory in G.inventoryhandler.opened_inventorystack]):
             G.window.set_exclusive_mouse(False)
             G.statehandler.states["minecraft:game"].parts[0].activate_keyboard = False
@@ -56,10 +58,19 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
         for inventory in G.inventoryhandler.opened_inventorystack:
             G.rendering_helper.enableAlpha()  # make sure that it is enabled
             inventory.draw(hoveringslot=hoveringslot)
-        if G.inventoryhandler.moving_slot.get_itemstack().item:
+        if not G.inventoryhandler.moving_slot.get_itemstack().is_empty():
             G.inventoryhandler.moving_slot.position = G.window.mouse_position
             G.inventoryhandler.moving_slot.draw(0, 0)
             G.inventoryhandler.moving_slot.draw_lable(0, 0)
+
+        # First, render tooltip for item attached to the mouse, and than for the over the mouse is
+        if self.moving_itemstack is not None and not G.inventoryhandler.moving_slot.get_itemstack().is_empty():
+            x, y = G.window.mouse_position
+            self.tool_tip_renderer.renderFor(G.inventoryhandler.moving_slot.get_itemstack(), (x+32, y+32))
+        elif hoveringslot is not None and not hoveringslot.get_itemstack().is_empty():
+            x, y = hoveringslot.position
+            ix, iy = hoveringinvenory.get_position()
+            self.tool_tip_renderer.renderFor(hoveringslot.get_itemstack(), (x+ix+32, y+iy+32))
 
     def _get_slot_for(self, x, y) -> mcpython.gui.Slot.Slot:
         """
@@ -76,6 +87,23 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
                 sy += dy
                 if 0 <= x - sx <= 32 and 0 <= y - sy <= 32:
                     return slot
+
+    def _get_slot_inventory_for(self, x, y):
+        """
+        get slot for position
+        :param x: the x position
+        :param y: the y position
+        :return: the slot and the inventory or None and None if none found
+        """
+        for inventory in G.inventoryhandler.opened_inventorystack:
+            dx, dy = inventory.get_position()
+            for slot in inventory.get_interaction_slots():
+                sx, sy = slot.position
+                sx += dx
+                sy += dy
+                if 0 <= x - sx <= 32 and 0 <= y - sy <= 32:
+                    return slot, inventory
+        return None, None
 
     def on_mouse_press(self, x, y, button, modifiers):
         if G.window.exclusive: return  # when no mouse interaction is active, do nothing
@@ -270,6 +298,7 @@ class InventoryHandler:
         inventory.on_activate()
         self.update_shift_container()
         G.eventhandler.call("inventory:show", inventory)
+        G.eventhandler.call("inventory:show:{}".format(inventory.__class__.__name__), inventory)
 
     def hide(self, inventory):
         """
@@ -282,6 +311,7 @@ class InventoryHandler:
         self.opened_inventorystack.remove(inventory)
         self.update_shift_container()
         G.eventhandler.call("inventory:hide", inventory)
+        G.eventhandler.call("inventory:hide:{}".format(inventory.__class__.__name__), inventory)
 
     def remove_one_from_stack(self):
         """

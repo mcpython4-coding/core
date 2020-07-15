@@ -13,6 +13,11 @@ COLORS = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", 
 
 
 class EnumSide(enum.Enum):
+    """
+    Enum holding the 6 different sides of an Block.
+    Also used for defining axis where it points in the direction
+    """
+
     TOP = UP = U = (0, 1, 0, "up")
     BOTTOM = DOWN = D = (0, -1, 0, "down")
     NORTH = N = (-1, 0, 0, "north")
@@ -22,13 +27,27 @@ class EnumSide(enum.Enum):
 
     @classmethod
     def iterate(cls):
+        """
+        Iterator for the faces
+        """
         return FACE_ORDER
 
-    def __init__(self, dx, dy, dz, normal_name):
+    def __init__(self, dx: int, dy: int, dz: int, normal_name: str):
+        """
+        Constructs an new enum instance
+        :param dx: the delta in x
+        :param dy: the delta in y
+        :param dz: the delta in z
+        :param normal_name: the normal name of the face
+        """
         self.relative = self.dx, self.dy, self.dz = dx, dy, dz
         self.normal_name = normal_name
 
     def invert(self):
+        """
+        Will invert the face to its opposite
+        :return: the opposite face
+        """
         if self == EnumSide.U: return EnumSide.D
         if self == EnumSide.D: return EnumSide.U
         if self == EnumSide.N: return EnumSide.S
@@ -43,7 +62,7 @@ class EnumSide(enum.Enum):
     def __hash__(self):
         return hash(self.relative)
 
-    def rotate(self, rotation):
+    def rotate(self, rotation: tuple):
         face = self
         for i in range(3):
             if face in ROTATE[i]:
@@ -53,7 +72,7 @@ class EnumSide(enum.Enum):
                 face = ROTATE[i][index]
         return face
 
-    def rotate_reverse(self, rotation):
+    def rotate_reverse(self, rotation: tuple):
         face = self
         for i in range(3):
             if face in ROTATE[i]:

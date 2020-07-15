@@ -18,6 +18,7 @@ class Item(mcpython.event.Registry.IRegistryContent):
 
     STACK_SIZE = 64
     HAS_BLOCK = True
+    ITEM_NAME_COLOR = "white"
 
     @classmethod
     def get_used_texture_files(cls):  # WARNING: will be removed during item rendering update; todo: make attribute
@@ -66,4 +67,11 @@ class Item(mcpython.event.Registry.IRegistryContent):
     def set_data(self, data):
         if data != "no:data":
             logger.println("[WARNING] data-deserialization did NOT expect data, but data '{}' was got".format(data))
+
+    def get_tooltip_provider(self):
+        import mcpython.gui.HoveringItemBox
+        return mcpython.gui.HoveringItemBox.DEFAULT_ITEM_TOOLTIP
+
+    def getAdditionalTooltipText(self, stack, renderer) -> list:
+        return []
 

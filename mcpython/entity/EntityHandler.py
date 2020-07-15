@@ -13,13 +13,17 @@ import logger
 
 
 class EntityHandler:
+    """
+    Handler for entities in the current world
+    """
+
     def __init__(self):
         self.registry = mcpython.event.Registry.Registry("registry", ["minecraft:entity"])
         self.entity_map = {}
 
     def add_entity(self, name, position, *args, dimension=None, uuid=None, check_summon=False, **kwargs):
         if dimension is None: dimension = G.world.get_active_dimension()
-        if type(dimension) == int: dimension = G.world.dimensions[dimension]
+        if type(dimension) in (str, int): dimension = G.world.get_dimension(dimension)
         if name not in self.registry.registered_object_map:
             raise ValueError("unknown entity type name: '{}'".format(name))
         entity = self.registry.registered_object_map[name]
@@ -35,6 +39,20 @@ class EntityHandler:
     def tick(self):
         for entity in self.entity_map.values():
             entity.tick()
+            if entity.parent is None and entity.child is not None:  # update the positions of the childs
+                x, y, z = entity.position
+                y += entity.entity_height
+                child = entity.child
+                while child is not None:
+                    child.position = (x, y, z)
+                    y += child.entity_height
+                    child = child.child
+
+            if not entity.nbt_data["invulnerable"] and entity.position[1] < -1000:  # check if it has fallen to far down so it should be killed
+                entity.kill()
+
+            # todo: add collision & falling system
+            # todo: add max entities standing in one space handler
 
 
 G.entityhandler = EntityHandler()

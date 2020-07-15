@@ -42,6 +42,7 @@ class EventBus:
         """
         if kwargs is None: kwargs = {}
         self.event_subscriptions = {}  # name -> (function, args, kwargs)[
+        self.popped_event_subscriptions = {}
         self.extra_arguments = (args, kwargs)
         self.crash_on_error = crash_on_error
         self.sub_buses = []
@@ -105,6 +106,7 @@ class EventBus:
                                **{**kwargs, **self.extra_arguments[1], **ekwargs}), info))
                 dif = time.time() - start
             except SystemExit: raise
+            except MemoryError: sys.exit(-1)
             except:
                 exception_occ = True
                 logger.write_exception("during calling function: {} with arguments: {}, {}".format(function, list(
@@ -153,6 +155,7 @@ class EventBus:
                         f.write("\nevent call of {} takes {}s until finish".format(function, dif))
                 if check_function(result):
                     return result
+            except MemoryError: sys.exit(-1)
             except SystemExit: raise
             except:
                 logger.write_exception()
@@ -182,13 +185,14 @@ class EventBus:
             raise RuntimeError("can't run event. EventBus is for the event '{}' empty".format(eventname))
         exception_occ = False
         for _ in range(amount):
-            function, eargs, ekwargs, info = self.event_subscriptions[eventname].pop(0)
+            function, eargs, ekwargs, info = d = self.event_subscriptions[eventname].pop(0)
+            self.popped_event_subscriptions.setdefault(eventname, []).append(d)
             start = time.time()
             try:
                 result.append((function(*list(args) + list(self.extra_arguments[0]) + list(eargs),
                                         **{**kwargs, **self.extra_arguments[1], **ekwargs}), info))
-            except SystemExit:
-                raise
+            except SystemExit: raise
+            except MemoryError: sys.exit(-1)
             except:
                 exception_occ = True
                 logger.write_exception("during calling function:", function, "with arguments:", list(args) + list(
@@ -202,4 +206,12 @@ class EventBus:
             logger.println("\nout of the above reasons, the game has crashes")
             sys.exit(-1)
         return result
+
+    def resetEventStack(self, eventname: str):
+        """
+        Will reset all event subscriptions which where popped from the normal list
+        :param eventname: the name of the event to restore
+        """
+        self.event_subscriptions.setdefault(eventname, []).extend(self.popped_event_subscriptions.setdefault(eventname, []))
+        del self.popped_event_subscriptions[eventname]
 

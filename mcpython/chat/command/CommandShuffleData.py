@@ -28,7 +28,7 @@ class CommandShuffleData(mcpython.chat.command.Command.Command):
     @classmethod
     def parse(cls, values: list, modes: list, info):
         if not mcpython.config.SHUFFLE_DATA:
-            G.chat.print_ln("can't shuffle data as shuffeling is disabled")
+            info.chat.print_ln("can't shuffle data as shuffeling is disabled")
             return
         G.eventhandler.call("data:shuffle:all")
 

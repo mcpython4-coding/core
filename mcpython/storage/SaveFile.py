@@ -142,10 +142,14 @@ class SaveFile:
             logger.println("[WARN] save '{}' not found, falling back to selection menu".format(self.directory))
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:world_selection")
+            return
         except:
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
             logger.write_exception("exception during loading world. falling back to start menu...")
+            return
+        # todo: load data packs for save files and than enable the below
+        # G.commandparser.parse("/reload")
 
     def save_world(self, *_, override=False):
         """

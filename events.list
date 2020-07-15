@@ -17,10 +17,6 @@ commands:
     "command:help:generate_pages": called on CommandHelp's page generation, called with the page list as an parameter
     "command:registryinfo:parse": called by command "/registryinfo" on executing the command. cancelable in
         CommandRegistryInfo-class [cancels the "normal" parser, but will call all following subscribers]
-    "command:reload:start": called by command "/reload" on executing the command. cancelable in CommandReload-class
-        [cancels the "normal" reload, but will call all following subscribers]
-    "command:reload:end": called after successful execution of "/reload" command
-    "data:shuffle:all": called by /shuffledata when it is time to shuffle it
 
     "command:parse_bridge:setup": called by ParseBridge when an new event was registered, called with command and
         ParseBridge-object, cancelable in G.commandparser.CANCEL_REGISTER [cancels the annotation into the system,
@@ -31,6 +27,16 @@ commands:
 
     "chat:text_enter": called by chat when ENTER is pressed, cancelable in G.chat [cancels the execution, but will call
         all following subscribers]
+
+Reloading:
+    data:reload:cancel(CancelAbleEvent): called when the system should reload. Canceling will cancel reload
+    data:reload:work(): called to reload stuff
+    data:blockstates:custom_injection(ModelHandler): called by ModelHandler to re-inject custom block state definitions
+    data:models:custom_injection(ModelHandler): called by the ModelHandler to re-inject custom models
+    data:loot_tables:custom_inject(LootTableHandler): called by LootTableHandler to re-inject custom loot tables
+
+    data:shuffle:all: called by /shuffledata when it is time to shuffle it
+    data:shuffle:clear: called to clear up the shuffling (if needed) when e.g. exiting an world
 
 crafting:
     "craftinghandler:reload:start": called on beginning to reload recipes
@@ -45,8 +51,10 @@ registry:
     "datapack:search": called when it is searched for datapacks
 
 inventory:
-    "inventory:show": called by InventoryHandler with the inventory if its shown
-    "inventory:hide": called by InventoryHandler with the inventory if its hidden
+    inventory:show(Inventory): called by InventoryHandler with the inventory if its shown
+    inventory:show:{class name}(Inventory): Special event for class inventory show
+    inventory:hide(Inventory): called by InventoryHandler with the inventory if its hidden
+    inventory:hide:{class name}(Inventory): Special event for class inventory hide
 
 items:
     "itemhandler:build:atlases:save": called by ItemHandler when the table of item data is saved
@@ -126,4 +134,6 @@ removed:
     "command:clear:start": previous event for /clear command
     "command:clear:end": previous event for /clear command
     "modloader:mod_found": previous called by ModLoader when an mod-instance was created
+    "command:reload:start": previous reload event
+    "command:reload:end": previous reload event
 

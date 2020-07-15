@@ -1,4 +1,4 @@
-[Discord](https://discord.gg/KY3agaW)
+[Discord](https://discord.gg/C46NGxv)
 
 # mcpython-4
 This is the fourth version of an minecraft-like, python-written game based on forgleman's code.

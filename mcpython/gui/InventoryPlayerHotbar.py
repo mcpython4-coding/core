@@ -118,7 +118,10 @@ class InventoryPlayerHotbar(mcpython.gui.Inventory.Inventory):
         x, y = self.get_position()
         if self.bgsprite:
             self.bgsprite.position = (x + self.bg_image_pos[0], y + self.bg_image_pos[1])
+            # G.rendering_helper.save_status()
+            # G.rendering_helper.enableAlpha()
             self.bgsprite.draw()
+            # G.rendering_helper.pop_status()
         self.on_draw_over_backgroundimage()
         for slot in self.slots:
             slot.draw(x, y)  # change to default implementation: do NOT render hovering entry

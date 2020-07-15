@@ -33,7 +33,7 @@ class CommandGenerate(mcpython.chat.command.Command.Command):
             chunkf = tuple(values[:2])
             chunkt = tuple(values[2:]) if len(values) > 2 else chunkf
         else:
-            chunkf = chunkt = mcpython.util.math.sectorize(G.world.get_active_player().position)
+            chunkf = chunkt = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
         fx, fz = chunkf
         tx, tz = chunkt
         if fx > tx: fx, tx = tx, fx

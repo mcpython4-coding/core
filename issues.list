@@ -52,9 +52,6 @@ issue 122:
     bug: z-fighting at border between two fences
     possible fix: decrease box size of fences "by hand" (manipulate model data)
 
-issue 129:
-    bug: some fence faces are not rendered [invalid texture rotation, internal miss-match in order of texture-coord?]
-
 issue 139:
     bug: during in-game generation, block faces of neighbor chunks are not updated
     possible fix: update all blocks next to the new chunk OR remove the hide-faces in not generated chunks
@@ -161,6 +158,11 @@ issue 218:
 issue 219:
     bug: errors with block showing are printed multiply times in BlockItemGenerator
 
-issue 230: [similar to issue 9]
+issue 230: [similar to former issue 9]
     bug: items are not arrival when rebuilding or doing similar things
     work-around: restart the client, works than as expected
+
+issue 235:
+    bug: tools are CONSUMED when using them
+
+[236-237]

@@ -31,15 +31,17 @@ class Chunk:
         :param name: the name of the attribute
         :param reference: the reference to use; unused internally
         :param default: the default value
-        :param authcode: deprecated
+        :param authcode: deprecated, will be removed
+        WARNING: content must be saved separately
         """
         Chunk.attributes[name] = (reference, default, None)
 
     def __init__(self, dimension, position: typing.Tuple[int, int]):
         """
-        will create an new chunk instance
+        Will create an new chunk instance
         :param dimension: the world.Dimension.Dimension object used to store this chunk
         :param position: the position of the chunk
+        WARNING: use Dimension.get_chunk() where possible
         """
         self.dimension = dimension
         self.position = position
@@ -57,13 +59,19 @@ class Chunk:
         self.entities = set()
 
     def get_maximum_y_coordinate_from_generation(self, x: int, z: int) -> int:
+        """
+        Helper function for getting the y height at the given xz generation based on the generation code
+        :param x: the x coord
+        :param z: the y corrd
+        :return: the y value at that position
+        """
         height_map = self.get_value('heightmap')
         y = height_map[x, z][0][1] if (x, z) in height_map else 0
         return y
 
     def set_value(self, name: str, value):
         """
-        will set an attribute of the chunk
+        Will set an attribute of the chunk
         :param name: the name to use
         :param value: the value to use
         """
@@ -71,7 +79,7 @@ class Chunk:
 
     def get_value(self, name: str):
         """
-        will get the value of the given name
+        Will get the value of the given name
         :param name: the name to get
         :return: the data stored
         """
@@ -79,7 +87,7 @@ class Chunk:
 
     def draw(self):
         """
-        will draw the chunk with the content for it
+        Will draw the chunk with the content for it
         """
         if not self.is_ready: return
         if not self.visible: return

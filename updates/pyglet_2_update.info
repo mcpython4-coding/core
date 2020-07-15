@@ -4,4 +4,5 @@ Every feature by pyglet should be automatically ported, but the following things
 project:
 - setup 2d/3d/alpha on/off
 - util/opengl.py stuff
-- BoxModel rendering, EntityRenderer,
+- BoxModel rendering, EntityRenderer
+- use pyglet.matrix where rendering/MatrixStack is used

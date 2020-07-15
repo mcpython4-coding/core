@@ -155,7 +155,7 @@ class Dimension:
         """
         if issubclass(type(position), mcpython.block.Block.Block):
             position = position.position
-        return self.get_chunk(*mcpython.util.math.sectorize(position), **kwargs)
+        return self.get_chunk(*mcpython.util.math.positionToChunk(position), **kwargs)
 
     @deprecation.deprecated("dev1-4", "a1.3.0")
     def get_block(self, position: typing.Tuple[int, int, int]) -> typing.Union[mcpython.block.Block.Block, str, None]:
@@ -190,9 +190,10 @@ class Dimension:
     def draw(self):
         self.batches[0].draw()
         # draw with alpha
-        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_on")
+        # status = G.rendering_helper.save_status()
+        G.rendering_helper.enableAlpha()
         self.batches[1].draw()
-        x, z = mcpython.util.math.sectorize(G.world.get_active_player().position)
+        x, z = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
         pad = 4
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):
@@ -200,7 +201,8 @@ class Dimension:
                 chunk = self.get_chunk(cx, cz, create=False)
                 if chunk is not None:
                     chunk.draw()
-        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("world/alpha_off")
+        G.rendering_helper.disableAlpha()
+        # G.rendering_helper.apply(status)
         
     def __del__(self):
         self.chunks.clear()

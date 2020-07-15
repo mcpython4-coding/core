@@ -101,7 +101,7 @@ class TickHandler:
         self.bind(function, tick * 2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
-        cx, cz = mcpython.util.math.sectorize(G.world.get_active_player().position)
+        cx, cz = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
         for dx in range(-mcpython.config.RANDOM_TICK_RANGE, mcpython.config.RANDOM_TICK_RANGE + 1):
             for dz in range(-mcpython.config.RANDOM_TICK_RANGE, mcpython.config.RANDOM_TICK_RANGE + 1):
                 if dx ** 2 + dz ** 2 <= mcpython.config.RANDOM_TICK_RANGE ** 2:

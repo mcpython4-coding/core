@@ -141,7 +141,7 @@ class StateWorldGeneration(State.State):
         G.eventhandler.call("on_game_enter")
 
         # add surrounding chunks to load list
-        G.world.change_chunks(None, mcpython.util.math.sectorize(G.world.get_active_player().position))
+        G.world.change_chunks(None, mcpython.util.math.positionToChunk(G.world.get_active_player().position))
         G.world.savefile.save_world()
 
         # set player position

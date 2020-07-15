@@ -36,7 +36,7 @@ class Blockinfo:
 
         for block, state in blocklist:
             x, y = rx * 4, ry * 4
-            chunk = mcpython.util.math.sectorize((x, 0, y))
+            chunk = mcpython.util.math.positionToChunk((x, 0, y))
             cls.TABLE.setdefault(chunk, {})[(x, y)] = (block.NAME, state)
             rx += 1
             if x >= hsize:

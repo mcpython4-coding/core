@@ -100,6 +100,7 @@ class BlockFactory:
         self.breakable = True
         self.modelstates = []
         self.solid_faces = None
+        self.no_collision = False
 
         self.create_callback = None
         self.delete_callback = None
@@ -294,6 +295,8 @@ class BlockFactory:
             CAN_MOBS_SPAWN_ON = self.can_mobs_spawn_on
 
             ENABLE_RANDOM_TICKS = self.random_ticks_enabled
+
+            NO_COLLISION = self.no_collision
 
             @staticmethod
             def get_all_model_states():
@@ -679,4 +682,8 @@ class BlockFactory:
         :param resistance: the resistance of the block
         """
         self.blast_resistance = resistance
+        return self
+
+    def setNoCollision(self, value: bool = True):
+        self.no_collision = value
         return self

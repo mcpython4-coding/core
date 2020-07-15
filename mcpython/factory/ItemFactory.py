@@ -55,6 +55,10 @@ class ItemFactory:
 
         self.template = None
 
+        self.tooltip_renderer = None
+        self.tooltip_extra = None
+        self.tooltip_color = "white"
+
     def __call__(self, name: str = None):
         if name is not None:
             self.setName(name)
@@ -142,6 +146,8 @@ class ItemFactory:
 
             HAS_BLOCK = master.has_block
 
+            ITEM_NAME_COLOR = master.tooltip_color
+
             def get_block(self) -> str: return master.blockname
 
             @staticmethod
@@ -194,6 +200,18 @@ class ItemFactory:
         if master.fuel_level is not None:
             class ConstructedItem(ConstructedItem):
                 FUEL = master.fuel_level
+
+        if master.tooltip_renderer is not None:
+            class ConstructedItem(ConstructedItem):
+                @classmethod
+                def get_tooltip_provider(cls):
+                    return master.tooltip_renderer
+
+        if master.tooltip_extra is not None:
+            class ConstructedItem(ConstructedItem):
+                @classmethod
+                def getAdditionalTooltipText(cls, *_) -> list:
+                    return master.tooltip_extra
 
         if register: G.registry.register(ConstructedItem)
 
@@ -301,5 +319,18 @@ class ItemFactory:
 
     def setFuelLevel(self, level):
         self.fuel_level = level
+        return self
+
+    def setToolTipRenderer(self, renderer):
+        self.tooltip_renderer = renderer
+        return self
+
+    def setTooltipExtraLines(self, lines):
+        if type(lines) == str: lines = lines.split("\n")
+        self.tooltip_extra = lines
+        return self
+
+    def setToolTipItemNameColor(self, color_name: str):
+        self.tooltip_color = color_name
         return self
 
