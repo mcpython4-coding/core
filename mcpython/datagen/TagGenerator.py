@@ -18,9 +18,13 @@ class TagGenerator(mcpython.datagen.Configuration.IDataGenerator):
         self.affected = set()
 
     def add_affected(self, *affected):
-        self.affected += affected
+        self.affected.update(affected)
 
     def generate(self):
-        self.config.write_json({"replace": self.override, "values": list(self.affected)}, "data", "tags/"+self.group,
-                               self.name+".json")
+        if self.name.count(":") == 0:
+            self.config.write_json({"replace": self.override, "values": list(self.affected)}, "data", "tags/"+self.group,
+                                   self.name+".json")
+        else:
+            self.config.write_json({"replace": self.override, "values": list(self.affected)}, "data", self.name.split(":")[0], "tags/" + self.group,
+                                   self.name.split(":")[1] + ".json")
 
