@@ -53,20 +53,33 @@ information on development:
         its id.
 
 
-changelog of snapshot [next] (theme: )
-    - added tooltip system for items with their backends at Item-class and factory methods at ItemFactory
-    - added possibility to register an event name for execution on mod bus on reload
-    - blocks can now have no collision with the player
-    - added nether portal block
-    - /fill command will now update blocks at the end, not at the start
-    - /setblock command will now not update the block itself
-    - World.get_dimension() accepts now the dimension name, not only the id
-    - player data of saves contains now an special region for dimension stuff
-    - added data fixer part for player data
-    - improved entity model rendering code
-    - improved reload system
-    - added api management system
-    - added MDK system
+changelog of a1.0.0: (excluding the changes from the snapshots below)
+    Rendering:
+        - added tooltip system for items with their backends at Item-class and factory methods at ItemFactory
+        - improved entity model rendering code
+
+    Modding:
+        - added possibility to register an event name for execution on mod bus on reload
+        - improved reload system
+        - added api management system
+        - added MDK system
+
+    Gameplay:
+        - blocks can now have no collision with the player
+
+    Blocks:
+        - added nether portal block
+
+    Commands:
+        - /fill command will now update blocks at the end, not at the start
+        - /setblock command will now not update the block itself
+
+    World:
+        - World.get_dimension() accepts now the dimension name, not only the id
+
+    Saves:
+        - player data of saves contains now an special region for dimension stuff
+        - added data fixer part for player data
 
     fixed issues:
         from previous snapshot:
