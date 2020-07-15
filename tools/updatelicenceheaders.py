@@ -12,7 +12,7 @@ import os
 def update_licence_headers_in_project(project_home, header):
     for root, _, files in os.walk(project_home, topdown=False):
         for file in files:
-            if file.endswith(".py") and "mods" not in root:
+            if file.endswith(".py") and "mods" not in root and not file.replace("\\", "/").endswith("mdk/tools/mod.py"):
                 cfile = os.path.join(root, file)
                 with open(cfile) as f:
                     data = f.read()
