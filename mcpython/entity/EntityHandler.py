@@ -13,6 +13,10 @@ import logger
 
 
 class EntityHandler:
+    """
+    Handler for entities in the current world
+    """
+
     def __init__(self):
         self.registry = mcpython.event.Registry.Registry("registry", ["minecraft:entity"])
         self.entity_map = {}

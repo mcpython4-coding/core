@@ -4,7 +4,7 @@ todo: make into an .md file
 
 planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
         before next stable release):
-    - optimize texture reload with everything (re-block-item-factories, reload block models,
+    - optimize texture reload with everything (re-block-item-factories,
         reload item texture, gui textures, ...), config reload [1]
     - add more factories for various parts (better block models, block states, full block factory, ...) [2]
     - add scoreboards with commands, execute entry, ... [5]
@@ -17,7 +17,7 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log [6]
     - parser for the new mc dimension config format [20]
-    - mdk kit with setup and launcher binding [11]
+    - mdk launcher binding [11]
     - add an mode where the window opens only when the load is complete [100]
     - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
         and when the user tries to go back to start menu, the game is closing. [change button text for that] [100]

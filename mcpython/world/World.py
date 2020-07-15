@@ -298,6 +298,7 @@ class World:
         for inv in G.world.get_active_player().inventories.values(): inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         G.worldgenerationhandler.task_handler.clear()
+        G.entityhandler.entity_map.clear()
         self.players.clear()
         if add_player: self.add_player("unknown")
         if filename is not None:

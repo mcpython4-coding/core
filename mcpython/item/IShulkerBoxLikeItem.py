@@ -9,5 +9,10 @@ blocks based on 1.16.1.jar of minecraft"""
 
 
 class IShulkerBoxLikeItem:
+    """
+    Base class for every item which should be not movable into containers like shulker boxes
+    todo: move to tags
+    """
+
     def is_blocked_in(self, inventory) -> bool: return True
 

@@ -147,10 +147,11 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :param itemstack: the itemstack to use
         :return: if it was successful or not
         for moder: see world/player.py as an example how this could work
+        Subclasses should implement this when they have an inventory for it
         """
         return False
 
-    def damage(self, damage, reason: mcpython.entity.DamageSource.DamageSource=None):
+    def damage(self, damage, reason: mcpython.entity.DamageSource.DamageSource = None):
         """
         applies damage to the entity
         FOR MODER:
