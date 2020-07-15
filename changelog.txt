@@ -56,6 +56,7 @@ information on development:
 changelog of snapshot [next]
     - MDK has now an function to change the target version
     - DataGenerator system allows now to add new data generators during data-gen-ing
+    - MDK can access now versions from an launcher instance
 
 
 changelog of a1.0.0: (excluding the changes from the snapshots below)
