@@ -83,12 +83,12 @@ python __main__.py --addmoddir <directory in which the mods are located>
 ```
 Or, if you want to select single files, run:
 ```shell script
-python __main__.py --addmodfile <file for the mod>
+python __main__.py --addmodfile <f for the mod>
 ```
 
 You can also disable single mods by filename:
 ```shell script
-python __main__.py --removemodfile <file of the mod>
+python __main__.py --removemodfile <f of the mod>
 ```
 
 Or, if you wish to remove an mod by the name of it, use:

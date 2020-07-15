@@ -76,7 +76,7 @@ def _copytree(entries, src, dst, symlinks, ignore, copy_function,
                 copytree(srcobj, dstname, symlinks, ignore, copy_function,
                          dirs_exist_ok=dirs_exist_ok)
             else:
-                # Will raise a SpecialFileError for unsupported file types
+                # Will raise a SpecialFileError for unsupported f types
                 copy_function(srcobj, dstname)
         # catch the Error from the recursive copytree so that we can
         # continue with other files
@@ -87,7 +87,7 @@ def _copytree(entries, src, dst, symlinks, ignore, copy_function,
     try:
         shutil.copystat(src, dst)
     except OSError as why:
-        # Copying file access times may fail on Windows
+        # Copying f access times may fail on Windows
         if getattr(why, 'winerror', None) is None:
             errors.append((src, dst, str(why)))
     if errors:
