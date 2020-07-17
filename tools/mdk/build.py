@@ -51,8 +51,6 @@ if not os.path.isdir(local+"/builds"):
 
 name = input("name of the build? ")
 
-# todo: implement
-"""
 print("creating dev-version...")
 
 with zipfile.ZipFile(local+"/builds/"+name+"_dev.zip", mode="w") as instance:
@@ -60,11 +58,75 @@ with zipfile.ZipFile(local+"/builds/"+name+"_dev.zip", mode="w") as instance:
     for root, dirs, files in os.walk(local + "/tmp"):
         for f in files:
             file = os.path.join(root, f)
-            local = file[root_l:]
-            instance.write(file, local)
+            localized = file[root_l:]
+            instance.write(file, localized)
 
-print("filtering code...")  
-"""
+print("filtering code...")
+
+
+root_l = len(local + "/tmp/")
+for root, dirs, files in os.walk(local + "/tmp"):
+    for loc in files:
+        if not loc.endswith(".py"): continue  # only python files to work with
+        file = os.path.join(root, loc)
+        print("transforming file '{}'".format(file[root_l:]))
+        with open(file) as f:
+            data = f.readlines()
+
+        result = []  # here we store the context
+        in_multi_line_comment = 0
+        for line_n, line in enumerate(data):
+            line = line[:-1]
+            multi_line_change = False
+            index = None
+            in_string = 0
+            skip_entries = 0
+            for i, e in enumerate(line):
+                if e == '"' and not (i > 0 and line[i-1] == "\\"):
+                    if len(line) > i + 1 and line[i:i+3] == '"""':
+                        if in_multi_line_comment == 0:
+                            in_multi_line_comment = 1
+                            line = line[:index]
+                            multi_line_change = True
+                        elif in_multi_line_comment == 1:
+                            in_multi_line_comment = 0
+                            multi_line_change = True
+                    elif in_string == 0:
+                        in_string = 1
+                    elif in_string == 1:
+                        in_string = 0
+                elif e == "'" and not (i > 0 and line[i-1] == "\\"):
+                    if len(line) > i + 1 and line[i:i+3] == "'''":
+                        if in_multi_line_comment == 0:
+                            in_multi_line_comment = 2
+                            line = line[:index]
+                            multi_line_change = True
+                        elif in_multi_line_comment == 2:
+                            in_multi_line_comment = 0
+                            multi_line_change = True
+                    elif in_string == 0:
+                        in_string = 2
+                    elif in_string == 2:
+                        in_string = 0
+                elif e == "#" and in_string == 0 and index is None:
+                    index = i
+                    break
+            if index is not None:
+                line = line[:index]
+            if not (not multi_line_change and in_multi_line_comment != 0):
+                result.append(line)
+
+        with open(file, mode="w") as f:
+            i = 0
+            while i < len(result):
+                line = result[i]
+                if len(line.strip()) == 0 or line.strip() in ("'''", '"""'):
+                    result.pop(i)
+                else:
+                    i += 1
+            f.write("\n".join(result))
+
+# todo: check for compression in imports
 
 print("creating end user version...")
 

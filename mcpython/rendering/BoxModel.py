@@ -26,8 +26,13 @@ SIMILAR_VERTEX = {}
 
 
 class BoxModel:
-    def __init__(self, data: dict, model):
+    @classmethod
+    def new(cls, data: dict, model=None):
+        return cls(data, model)
+
+    def __init__(self, data: dict, model=None):
         # todo: move most of the code here to the build function
+        self.atlas = None
         self.__data = data  # todo: remove
         self.model = model
         self.boxposition = [x / 16 for x in data["from"]]
@@ -45,10 +50,9 @@ class BoxModel:
         for face in mcpython.util.enums.EnumSide.iterate():
             facename = face.normal_name
             if facename in data["faces"]:
-                face = mcpython.util.enums.EnumSide[facename.upper()]
                 f = data["faces"][facename]
                 addr = f["texture"]
-                self.faces[face] = model.get_texture_position(addr)
+                self.faces[face] = model.get_texture_position(addr) if model is not None else None
                 index = SIDE_ORDER.index(face)
                 if "uv" in f:
                     uvs = tuple(f["uv"])
@@ -75,7 +79,7 @@ class BoxModel:
         self.tex_data = None
         self.deactive = None
 
-        if model.drawable and self.model.texture_atlas:
+        if model is not None and model.drawable and self.model.texture_atlas:
             if G.modloader.finished:
                 self.build()
             else:
@@ -94,13 +98,15 @@ class BoxModel:
 
     data = property(get_data, set_data)
 
-    def build(self):
+    def build(self, atlas=None):
+        if atlas is None: atlas = self.model.texture_atlas
         up, down, north, east, south, west = array = tuple([self.faces[x] if self.faces[x] is not None else (0, 0)
                                                             for x in mcpython.util.enums.EnumSide.iterate()])
         self.tex_data = mcpython.util.math.tex_coords_better(up, down, north, east, south, west, tex_region=self.texregion,
-                                                             size=self.model.texture_atlas.size, rotation=self.texregionrotate)
+                                                             size=atlas.size, rotation=self.texregionrotate)
         self.deactive = {face: array[i] == (0, 0) or array[i] is None for i, face in enumerate(
             mcpython.util.enums.EnumSide.iterate())}
+        self.atlas = atlas
         # todo: can we upload vertices to GPU in advance?
         # todo: can we pre-calculated rotated variants
 
@@ -158,7 +164,7 @@ class BoxModel:
         """
         vertex = self.get_vertex_variant(rotation, position)
         if type(batch) == list:
-            batch = batch[0] if self.model.name not in mcpython.block.BlockConfig.ENTRYS["alpha"] else batch[1]
+            batch = batch[0] if self.model is not None and self.model.name not in mcpython.block.BlockConfig.ENTRYS["alpha"] else batch[1]
         result = []
         for face in mcpython.util.enums.EnumSide.iterate():  # todo: can we add everything at ones?
             i = UV_ORDER.index(face)
@@ -166,7 +172,7 @@ class BoxModel:
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
                 if not mcpython.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and self.deactive[face.rotate(rotation)]: continue
-                result.append(batch.add(4, pyglet.gl.GL_QUADS, self.model.texture_atlas.group,
+                result.append(batch.add(4, pyglet.gl.GL_QUADS, self.atlas.group,
                                         ('v3f/static', vertex[i]), ('t2f/static', self.tex_data[i2])))
         return result
 
@@ -184,7 +190,7 @@ class BoxModel:
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
                 if not mcpython.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and self.deactive[face.rotate(rotation)]: continue
-                self.model.texture_atlas.group.set_state()
+                self.atlas.group.set_state()
                 pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v3f/static', vertex[i]), ('t2f/static', self.tex_data[i]))
                 self.model.texture_atlas.group.unset_state()
 

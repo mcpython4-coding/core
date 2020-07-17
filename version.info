@@ -1235,3 +1235,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: mdk has now an script for changing the target version
 [uuk]: data generators can now also add new data generators
 [uuk]: mdk can now use versions from an launcher instance
+[uuk]: mdk is now able to build code
+[uuk]: Slot can now have an check function

@@ -27,7 +27,7 @@ class Slot:
 
     def __init__(self, itemstack=None, position=(0, 0), allow_player_remove=True, allow_player_insert=True,
                  allow_player_add_to_free_place=True, on_update=None, allow_half_getting=True, on_shift_click=None,
-                 empty_image=None, allowed_item_tags=None, allowed_item_test=None, on_button_press=None, capacity=None):
+                 empty_image=None, allowed_item_tags=None, allowed_item_test=None, on_button_press=None, capacity=None, check_function=None):
         """
         creates an new slot
         :param itemstack: the itemstack to use
@@ -40,6 +40,7 @@ class Slot:
         :param on_shift_click: called when shift-clicked on the block, should return if normal logic should go on or not
         :param on_button_press: called when an button is pressed when hovering above the slot
         :param capacity: the max item count for the slot
+        :param check_function: an function to check if the item is valid, signature: (Slot, ItemStack) -> bool
         """
         self.__itemstack = itemstack if itemstack else mcpython.gui.ItemStack.ItemStack.get_empty()
         self.position = position
@@ -64,6 +65,7 @@ class Slot:
         self.allowed_item_func = allowed_item_test
         self.on_button_press = on_button_press
         self.__capacity = capacity
+        self.check_function = check_function
 
     def get_capacity(self):
         return self.__capacity if self.__capacity is not None else (64 if self.itemstack.is_empty() else self.itemstack.
@@ -131,6 +133,9 @@ class Slot:
             self.amount_label.draw()
 
     def can_set_item(self, itemstack) -> bool:
+        if callable(self.check_function):
+            if not self.check_function(self, itemstack):
+                return False
         itemname = itemstack.get_item_name()
         flag1 = self.allowed_item_tags is not None
         flag2 = flag1 and (any([G.taghandler.has_entry_tag(itemname, "items", x) for x in
@@ -159,6 +164,8 @@ class Slot:
 
     def __repr__(self):
         return str(self)
+
+    def getParent(self): return self
 
 
 class SlotCopy:
@@ -250,6 +257,9 @@ class SlotCopy:
 
     def __repr__(self):
         return str(self)
+
+    def getParent(self):
+        return self.master
 
 
 class SlotInfiniteStack(Slot):
