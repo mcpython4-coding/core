@@ -17,6 +17,7 @@ import mcpython.rendering.model.BlockState
 import mcpython.ResourceLocator
 import mcpython.util.enums
 import mcpython.util.math
+import json
 
 
 class ModelHandler:
@@ -79,7 +80,11 @@ class ModelHandler:
             return
         file = self.found_models[used]
         if type(file) == str:
-            data = mcpython.ResourceLocator.read(file, "json")
+            try:
+                data = mcpython.ResourceLocator.read(file, "json")
+            except json.decoder.JSONDecodeError:
+                data = {"parent": "minecraft:block/cube_all", "textures": {"all": "assets/missingtexture.png"}}
+                logger.write_exception("during loading model from file {}, now replaced by missing texture".format(file))
         else:
             data = file
         if "parent" in data:

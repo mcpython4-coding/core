@@ -341,9 +341,11 @@ class BlockFactory:
 
         if self.solid_faces:
             class ConstructedBlock(ConstructedBlock):
-                self.face_solid = {side: master.solid_faces[side] if side in master.solid_faces else all(
-                    [not hasattr(baseclass2, "face_solid") or baseclass2.face_solid[side] for baseclass2 in
-                     master.baseclass]) for side in mcpython.util.enums.EnumSide.iterate()}
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, **kwargs)
+                    self.face_solid = {side: master.solid_faces[side] if side in master.solid_faces else all(
+                        [not hasattr(baseclass2, "face_solid") or baseclass2.face_solid[side] for baseclass2 in
+                         master.baseclass]) for side in mcpython.util.enums.EnumSide.iterate()}
 
         if master.randomupdate_callback:
             class ConstructedBlock(ConstructedBlock):
