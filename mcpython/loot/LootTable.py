@@ -121,7 +121,8 @@ class LootTableHandler:
         name = data["function"]
         if name in mcpython.loot.LootTableFunction.loottablefunctionregistry.registered_object_map:
             return mcpython.loot.LootTableFunction.loottablefunctionregistry.registered_object_map[name](data)
-        raise ValueError("unable to decode loot table function '{}'".format(name))
+        logger.println("unable to decode loot table function '{}'".format(name))
+        return
 
     def parse_condition(self, data: dict) -> mcpython.loot.LootTableCondition.ILootTableCondition:
         name = data["condition"]
@@ -142,6 +143,7 @@ class LootTablePoolEntry:
             obj.conditions = [handler.parse_condition(cond) for cond in data["conditions"]]
         if "functions" in data:
             obj.functions = [handler.parse_function(func) for func in data["functions"]]
+            while None in obj.functions: obj.functions.remove(None)
         if "name" in data:
             obj.name = data["name"]
         if "children" in data:

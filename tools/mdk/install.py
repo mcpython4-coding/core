@@ -82,7 +82,7 @@ elif v == 3:
     d = {"url": None, "path": version.path, "home": local+"/cache/home", "build": local+"/cache/build"}
 elif v == 4:
     directory = input("please select the dev directory: ")
-    d = {"url": None, "path": directory, "home": directory+"/home", "build": directory+"/home/build"}
+    d = {"url": None, "path": directory, "home": local+"/cache/home", "build": local+"/cache/build"}
 else:
     raise ValueError("unsupported operation: "+str(v))
 

@@ -56,7 +56,7 @@ if a == "1":
         version = launcher.Launcher.Version.user_selects()
         version.download()
 
-        d = {"url": None, "path": version.path, "home": local + "/cache/home", "build": local + "/cache/build"}
+        d = {"url": None, "path": version.path, "home": local+"/cache/home", "build": local+"/cache/build"}
     elif v == 4:
         directory = input("please select the dev directory: ")
         d = {"url": None, "path": directory, "home": directory + "/home", "build": directory + "/home/build"}

@@ -219,3 +219,4 @@ issue 234: active dimension is not reset when changing world; fixed on 11.07.202
 issue 236: EntityModelGenerator was not parsing states correctly; fixed on 12.07.2020 by uuk
 issue 237: Chunk deserializer was not setting is_ready to True leading into entities not rendering; fixed on 12.07.2020
            by uuk
+issue 238: IHorizontalOrientableBlock was not working correctly; fixed on 18.07.2020 by uuk

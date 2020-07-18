@@ -59,6 +59,9 @@ changelog of snapshot [next]
     - MDK can access now versions from an launcher instance
     - MDK is now capable of building the mod into one final zipfile
 
+    fixed issues:
+        - IHorizontalOrientableBlock was behaving incorrectly
+
 
 changelog of a1.0.0: (excluding the changes from the snapshots below)
     Rendering:

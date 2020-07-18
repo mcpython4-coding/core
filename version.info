@@ -1239,3 +1239,5 @@ sstarted these clone on 12th of July, 2019
 [uuk]: Slot can now have an check function
 [uuk]: made model loading json-error save
 [uuk]: fixed BlockFactories solid function
+[uuk]: Furnace is now using IHorizontalOrientableBlock-class
+[uuk]: fixed IHorizontalOrientableBlock-class (issue 238)
