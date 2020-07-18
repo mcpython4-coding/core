@@ -1241,3 +1241,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed BlockFactories solid function
 [uuk]: Furnace is now using IHorizontalOrientableBlock-class
 [uuk]: fixed IHorizontalOrientableBlock-class (issue 238)
+[uuk]: fixed ItemAtlas not baking in some cases (issue 230)

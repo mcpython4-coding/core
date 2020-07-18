@@ -62,6 +62,9 @@ changelog of snapshot [next]
     fixed issues:
         - IHorizontalOrientableBlock was behaving incorrectly
 
+        from previous release:
+            - ItemAtlas was baking some item images in some cases not correctly
+
 
 changelog of a1.0.0: (excluding the changes from the snapshots below)
     Rendering:

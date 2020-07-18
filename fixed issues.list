@@ -220,3 +220,4 @@ issue 236: EntityModelGenerator was not parsing states correctly; fixed on 12.07
 issue 237: Chunk deserializer was not setting is_ready to True leading into entities not rendering; fixed on 12.07.2020
            by uuk
 issue 238: IHorizontalOrientableBlock was not working correctly; fixed on 18.07.2020 by uuk
+issue 230: ItemAtlas was not baking new images from BlockItemGenerator correctly; fixed on 18.07.2020 by uuk
