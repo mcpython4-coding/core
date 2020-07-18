@@ -80,5 +80,3 @@ class BlockEnderChest(Block.Block):
     def on_remove(self):
         G.inventoryhandler.hide(self.inventory)
 
-
-BlockChest = BlockEnderChest  # todo: remove in a1.2.0

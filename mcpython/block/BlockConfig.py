@@ -44,15 +44,14 @@ class BlockConfigEntry:
 
 
 ENTRIES = dict()  # the entries
-ENTRYS = ENTRIES  # todo: remove in a1.2.0
 
 
 for file in mcpython.ResourceLocator.get_all_entries_special("assets/config/block"):
     if file.endswith("/"): continue
     name = file.split("/")[-1].split(".")[0]
-    if name not in ENTRYS: ENTRYS[name] = BlockConfigEntry(name)
+    if name not in ENTRIES: ENTRIES[name] = BlockConfigEntry(name)
     try:
-        ENTRYS[name].add_data(mcpython.ResourceLocator.read(file, mode="json"))
+        ENTRIES[name].add_data(mcpython.ResourceLocator.read(file, mode="json"))
     except:
         logger.write_exception("[ERROR] failed to load block config file {}".format(file))
 

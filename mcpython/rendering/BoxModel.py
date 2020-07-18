@@ -33,7 +33,6 @@ class BoxModel:
     def __init__(self, data: dict, model=None):
         # todo: move most of the code here to the build function
         self.atlas = None
-        self.__data = data  # todo: remove
         self.model = model
         self.boxposition = [x / 16 for x in data["from"]]
         self.boxsize = (data["to"][0] - data["from"][0], data["to"][1] - data["from"][1],
@@ -87,16 +86,6 @@ class BoxModel:
 
         self.raw_vertices = mcpython.util.math.cube_vertices_better(0, 0, 0, self.boxsize[0] / 32, self.boxsize[1] / 32,
                                                                     self.boxsize[2] / 32, [True] * 6)
-
-    @deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
-    def get_data(self):
-        return self.__data
-
-    @deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
-    def set_data(self, data):
-        self.__data = data
-
-    data = property(get_data, set_data)
 
     def build(self, atlas=None):
         if atlas is None: atlas = self.model.texture_atlas
@@ -164,7 +153,7 @@ class BoxModel:
         """
         vertex = self.get_vertex_variant(rotation, position)
         if type(batch) == list:
-            batch = batch[0] if self.model is not None and self.model.name not in mcpython.block.BlockConfig.ENTRYS["alpha"] else batch[1]
+            batch = batch[0] if self.model is not None and self.model.name not in mcpython.block.BlockConfig.ENTRIES["alpha"] else batch[1]
         result = []
         for face in mcpython.util.enums.EnumSide.iterate():  # todo: can we add everything at ones?
             i = UV_ORDER.index(face)
@@ -205,11 +194,6 @@ class BoxModel:
         face = face.rotate(rotation)
         return self.draw(position, rotation, active_faces={i: x == face for i, x in enumerate(
             mcpython.util.enums.EnumSide.iterate())})
-
-    @deprecation.deprecated(deprecated_in="snapshot dev 1 cycle 1", removed_in="v1.2.0 alpha")
-    def copy(self, new_model=None):
-        # todo: remove together with self.data-attribute
-        return BoxModel(self.data, new_model if new_model is not None else self.model)
 
 
 class BaseBoxModel:

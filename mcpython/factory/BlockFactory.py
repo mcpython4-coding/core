@@ -247,10 +247,6 @@ class BlockFactory:
                                                          info="loading block {}".format(blockname))
         return obj
 
-    @deprecation.deprecated("dev1-2", "a1.2.0")
-    def _finish(self, register: bool):
-        self.finish_up()
-
     def finish_up(self):
         """
         will finish up the system

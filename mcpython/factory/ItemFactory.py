@@ -106,10 +106,6 @@ class ItemFactory:
         obj.__dict__ = self.__dict__.copy()
         return obj
 
-    @deprecation.deprecated("dev1-2", "a1.2.0")
-    def _finish(self, register):
-        self.finish_up(register)
-
     def finish_up(self, register=False):
         """
         will finish up the creation

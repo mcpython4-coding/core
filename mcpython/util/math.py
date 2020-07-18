@@ -22,14 +22,6 @@ def get_max_y(pos):
     return chunk.get_maximum_y_coordinate_from_generation(*pos)
 
 
-@deprecation.deprecated(deprecated_in="dev1-1", removed_in="v1.2.0 alpha")
-def cube_vertices(x, y, z, nx, ny, nz, faces=(True, True, True, True, True, True)):
-    """
-    Same as cube_vertices_better, but will return all summed up instead of separated lists
-    """
-    return sum(cube_vertices_better(x, y, z, nx, ny, nz, faces=faces), [])
-
-
 def cube_vertices_better(x: float, y: float, z: float, nx: float, ny: float, nz: float, faces=(True, True, True, True, True, True)):
     """
     Similar to cube_vertices, but will return it per-face instead of an whole array of data
@@ -80,15 +72,6 @@ def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
         for i, e in enumerate(_positions):
             positions[(i + reindex) % 4] = e
     return sum(positions, tuple())
-
-
-@deprecation.deprecated(deprecated_in="dev1-1", removed_in="v1.2.0 alpha")
-def tex_coords(*args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)):
-    """
-    same as tex_coords_better, but returns everything in an single list instead of an list of tuples
-    todo: when removed, rename later the new one to this
-    """
-    return sum(tex_coords_better(*args, size=size, tex_region=tex_region, rotation=rotation), tuple())
 
 
 def tex_coords_better(*args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)) -> list:

@@ -554,13 +554,3 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             G.world.savefile.save_world(override=True)
         self.set_fullscreen(False)
         self.close()
-
-    @deprecation.deprecated("dev4-3", "a1.2.0")
-    def get_flying(self):
-        return G.world.get_active_player().is_flying
-
-    @deprecation.deprecated("dev4-3", "a1.2.0")
-    def set_flying(self, flying):
-        G.world.get_active_player().is_flying = flying
-
-    flying = property(get_flying, set_flying)

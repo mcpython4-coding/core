@@ -253,10 +253,6 @@ class Chunk:
         else:
             G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
 
-    @deprecation.deprecated("dev1-4", "a1.2.0")
-    def _show_block(self, position, block=None):
-        self.world[position].face_state.update()
-
     def hide_block(self, position: typing.Union[typing.Tuple[int, int, int], Block.Block], immediate=True):
         """
         Hide the block at the given `position`. Hiding does not remove the
@@ -272,11 +268,6 @@ class Chunk:
             self.world[position].face_state.hide_all()
         else:
             G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
-
-    @deprecation.deprecated("dev1-4", "a1.2.0")
-    def _hide_block(self, position):
-        if position not in self.world: return
-        self.world[position].face_state.hide_all()
 
     def show(self, force=False):
         """
