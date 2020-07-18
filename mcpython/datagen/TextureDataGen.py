@@ -60,6 +60,14 @@ class TextureConstructor(mcpython.datagen.Configuration.IDataGenerator):
                 location_or_image, color))
         return self
 
+    def add_alpha_composite_layer(self, location_or_image, position=(0, 0)):
+        try:
+            self.actions.append((2, location_or_image if type(location_or_image) == PIL.Image.Image else
+                                 mcpython.ResourceLocator.read(location_or_image, "pil"), position))
+        except:
+            logger.write_exception("failed to add alpha composite layer")
+        return self
+
     def generate(self):
         image = PIL.Image.new("RGBA", self.image_size, (0, 0, 0, 0))
         for action, *data in self.actions:
@@ -72,5 +80,7 @@ class TextureConstructor(mcpython.datagen.Configuration.IDataGenerator):
                 sx, sy = i.size
                 px, py = data[3]
                 image.alpha_composite(i.resize((sx * px, sy * py), PIL.Image.NEAREST).convert("RGBA"), data[2])
+            elif action == 2:
+                image.alpha_composite(data[0], data[1])
         self.config.write(image, "assets", "textures", self.name+".png")
 

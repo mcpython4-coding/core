@@ -144,6 +144,7 @@ class ModelHandler:
 
     def draw_face(self, block, face):
         if block.NAME not in self.blockstates:
+            # todo: add option to disable these prints
             logger.println("[FATAL] block state for block '{}' not found!".format(block.NAME))
             logger.println("possible:", self.blockstates.keys())
             return []

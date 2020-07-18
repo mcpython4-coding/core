@@ -110,8 +110,8 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model = G.modelhandler.models[model]
                     for boxmodel in model.boxmodels:
                         bbox.bboxes.append(mcpython.block.BoundingBox.BoundingBox(tuple([e / 16 for e in boxmodel.boxsize]),
-                                                                         tuple([e / 16 for e in boxmodel.rposition]),
-                                                                         rotation=config["rotation"]))
+                                                                                  tuple([e / 16 for e in boxmodel.rposition]),
+                                                                                  rotation=config["rotation"]))
                 else:
                     if blockinstance.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
@@ -122,8 +122,8 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model = G.modelhandler.models[model]
                     for boxmodel in model.boxmodels:
                         bbox.bboxes.append(mcpython.block.BoundingBox.BoundingBox(tuple([e / 16 for e in boxmodel.boxsize]),
-                                                                         tuple([e / 16 for e in boxmodel.rposition]),
-                                                                         rotation=config["rotation"]))
+                                                                                  tuple([e / 16 for e in boxmodel.rposition]),
+                                                                                  rotation=config["rotation"]))
         return bbox
 
     def draw_face(self, block, face):
@@ -184,8 +184,8 @@ class DefaultDecoder(IBlockStateDecoder):
                 for boxmodel in model.boxmodels:
                     rotation = config["rotation"]
                     bbox.bboxes.append(mcpython.block.BoundingBox.BoundingBox(tuple([e / 16 for e in boxmodel.boxsize]),
-                                                                     tuple([e / 16 for e in boxmodel.rposition]),
-                                                                     rotation=rotation))
+                                                                              tuple([e / 16 for e in boxmodel.rposition]),
+                                                                              rotation=rotation))
         return bbox
 
     def draw_face(self, block, face):
@@ -207,7 +207,7 @@ class BlockStateDefinition:
         for file in mcpython.ResourceLocator.get_all_entries(directory):
             if not file.endswith("/"):
                 cls.from_file(file, modname, immediate=immediate)
-        cls.LOOKUP_DIRECTORIES.add((directory,  modname))
+        cls.LOOKUP_DIRECTORIES.add((directory, modname))
 
     @classmethod
     def from_file(cls, file: str, modname: str, immediate=False):
@@ -222,10 +222,11 @@ class BlockStateDefinition:
     def _from_file(cls, file: str):
         try:
             s = file.split("/")
-            modname = s[s.index("blockstates")-1]
+            modname = s[s.index("blockstates") - 1]
             return BlockStateDefinition(mcpython.ResourceLocator.read(file, "json"), "{}:{}".format(
                 modname, s[-1].split(".")[0]))
-        except BlockStateNotNeeded: pass
+        except BlockStateNotNeeded:
+            pass
         except:
             logger.write_exception("error during loading model from file '{}'".format(file))
 
@@ -238,7 +239,8 @@ class BlockStateDefinition:
     def _from_data(cls, name, data):
         try:
             return BlockStateDefinition(data, name)
-        except BlockStateNotNeeded: pass  # do we need this model?
+        except BlockStateNotNeeded:
+            pass  # do we need this model?
         except:
             logger.write_exception("error during loading model for '{}' from data {}".format(name, data))
 
@@ -253,9 +255,11 @@ class BlockStateDefinition:
         else:
             raise ValueError("can't find matching loader for model {}".format(name))
 
-    def add_face_to_batch(self, block, batch, face): return self.loader.add_face_to_batch(block, batch, face)
+    def add_face_to_batch(self, block, batch, face):
+        return self.loader.add_face_to_batch(block, batch, face)
 
-    def draw_face(self, block, face): self.loader.draw_face(block, face)
+    def draw_face(self, block, face):
+        self.loader.draw_face(block, face)
 
 
 class BlockState:
@@ -300,4 +304,3 @@ class BlockState:
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
                                                      "assets/minecraft/blockstates", "minecraft",
                                                      info="searching for block states")
-

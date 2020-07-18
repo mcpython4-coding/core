@@ -54,7 +54,7 @@ print("creating main files...")
 with open(local + "/source/{}/{}.py".format(mod_name, mod_name_camel_case), mode="w") as target, open(local+"/tools/mod.py") as template:
     target.write(template.read().format(CAMEL_NAME=mod_name_camel_case, VERSION=version, NAME=mod_name))
 
-v = int(input("newest dev: (1), newest release (2), launcher profile (3): "))
+v = int(input("newest dev: (1), newest release (2), launcher profile (3), dev environment (4): "))
 
 print("getting newest version...")
 url = None
@@ -64,7 +64,7 @@ if v == 1:
     url = "https://github.com/mcpython4-coding/core/archive/dev.zip"
 elif v == 2:
     url = "https://github.com/mcpython4-coding/core/archive/release.zip"
-else:
+elif v == 3:
     directory = input("please select the launcher directory: ")
     sys.path.append(directory)
     import launcher.Launcher
@@ -80,6 +80,11 @@ else:
     version.download()
 
     d = {"url": None, "path": version.path, "home": local+"/cache/home", "build": local+"/cache/build"}
+elif v == 4:
+    directory = input("please select the dev directory: ")
+    d = {"url": None, "path": directory, "home": directory+"/home", "build": directory+"/home/build"}
+else:
+    raise ValueError("unsupported operation: "+str(v))
 
 if v in (1, 2):
     download_file(url, local+"/cache/core.zip")
