@@ -34,6 +34,7 @@ class BoxModel:
         # todo: move most of the code here to the build function
         self.atlas = None
         self.model = model
+        self.data = data
         self.boxposition = [x / 16 for x in data["from"]]
         self.boxsize = (data["to"][0] - data["from"][0], data["to"][1] - data["from"][1],
                         data["to"][2] - data["from"][2])
@@ -195,6 +196,9 @@ class BoxModel:
         return self.draw(position, rotation, active_faces={i: x == face for i, x in enumerate(
             mcpython.util.enums.EnumSide.iterate())})
 
+    def copy(self, new_model=None):
+        return BoxModel(self.data, new_model if new_model is not None else self.model)
+
 
 class BaseBoxModel:
     """
@@ -225,11 +229,11 @@ class BaseBoxModel:
         self.recalculate_cache()
 
     def recalculate_cache(self):
-        vertices = mcpython.util.math.cube_vertices(*self.relative_position, *[self.size[i] / 2 for i in range(3)])
+        vertices = sum(mcpython.util.math.cube_vertices_better(*self.relative_position, *[self.size[i] / 2 for i in range(3)]), [])
         self.vertex_cache.clear()
         for i in range(len(vertices) // 3):
             self.vertex_cache.append(mcpython.util.math.rotate_point(vertices[i * 3:i * 3 + 3], self.rotation_center, self.__rotation))
-        self.texture_cache = mcpython.util.math.tex_coords(*[(0, 0)] * 6, size=(1, 1), tex_region=self.__texture_region)
+        self.texture_cache = sum(mcpython.util.math.tex_coords_better(*[(0, 0)] * 6, size=(1, 1), tex_region=self.__texture_region), tuple())
 
     def get_rotation(self):
         return self.__rotation
