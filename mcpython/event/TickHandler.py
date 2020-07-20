@@ -53,6 +53,7 @@ class TickHandler:
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
                     return
+        G.entityhandler.tick()
         if any(type(x) == mcpython.state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
             mcpython.chat.DataPack.datapackhandler.try_call_function("#minecraft:tick")
             if self.enable_random_ticks:

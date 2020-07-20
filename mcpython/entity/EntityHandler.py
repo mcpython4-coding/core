@@ -37,7 +37,7 @@ class EntityHandler:
         return entity
 
     def tick(self):
-        for entity in self.entity_map.values():
+        for entity in list(self.entity_map.values()):
             entity.tick()
             if entity.parent is None and entity.child is not None:  # update the positions of the childs
                 x, y, z = entity.position
@@ -59,7 +59,7 @@ G.entityhandler = EntityHandler()
 
 
 def load():
-    from mcpython.entity import (Entity)
+    from mcpython.entity import (Entity, FallingBlockEntity)
 
 
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:entities", load)

@@ -202,7 +202,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         can be used to update animations, movement, do path finding stuff, damage other entities, ...
         """
         x, y, z = self.position
-        dx, dy, dz = self.movement
+        dx, dy, dz = self.nbt_data["motion"]
         self.teleport((x+dx, y+dy, z+dz))
 
     # data serialisation
