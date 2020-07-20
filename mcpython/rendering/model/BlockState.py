@@ -264,7 +264,7 @@ class BlockStateDefinition:
 
 class BlockState:
     def __init__(self, data):
-        self.models = []  # (model, config)
+        self.models = []  # (model, config, weight)
         if type(data) == dict:
             if "model" in data:
                 self.models.append(self.decode_entry(data))
@@ -280,7 +280,7 @@ class BlockState:
         G.modelhandler.used_models.append(model)
         rotations = (data["x"] if "x" in data else 0, data["y"] if "y" in data else 0,
                      data["z"] if "z" in data else 0)
-        return model, {"rotation": rotations}, 1 if "weight" not in data else data["weight"]
+        return model, {"rotation": rotations, "uv_lock": data.setdefault("uvlock", False)}, 1 if "weight" not in data else data["weight"]
 
     def add_face_to_batch(self, block, batch, face):
         if block.block_state is None or block.block_state < 0 or block.block_state > len(self.models):

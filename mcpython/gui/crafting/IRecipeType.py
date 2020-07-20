@@ -12,7 +12,7 @@ import uuid
 
 class IRecipe:
     @staticmethod
-    def get_recipe_names() -> list:
+    def get_recipe_names() -> list:  # todo: make attribute
         raise NotImplementedError()
 
     @classmethod

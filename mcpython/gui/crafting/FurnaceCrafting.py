@@ -12,13 +12,24 @@ import mcpython.gui.crafting.GridRecipes
 
 
 @G.craftinghandler
-class FurnesRecipe(mcpython.gui.crafting.IRecipeType.IRecipe):
-    @staticmethod
-    def get_recipe_names() -> list:
-        return ["minecraft:smelting", "minecraft:blasting", "minecraft:smoking"]
+class FurnaceRecipe(mcpython.gui.crafting.IRecipeType.IRecipe):
+    """
+    Interface for decoding an furnace-like recipe
+    """
+
+    # The list of type descriptors to decode
+    RECIPE_NAMES = ["minecraft:smelting", "minecraft:blasting", "minecraft:smoking"]
 
     @classmethod
-    def from_data(cls, data: dict):
+    def get_recipe_names(cls) -> list: return cls.RECIPE_NAMES
+
+    @classmethod
+    def from_data(cls, data: dict) -> "FurnaceRecipe":
+        """
+        Loader function for an furnace crafting recipe
+        :param data: the data to load
+        :return: the recipe instance created
+        """
         inputs = [x[0] for x in mcpython.gui.crafting.GridRecipes.transform_to_item_stack(data["ingredient"], {})]
         result = data["result"]
         return cls(data["type"], inputs, result, data["experience"], data["cookingtime"] / 20)
@@ -33,4 +44,7 @@ class FurnesRecipe(mcpython.gui.crafting.IRecipeType.IRecipe):
 
     def register(self):
         [G.craftinghandler.furnace_recipes.setdefault(self.type, {}).setdefault(e, self) for e in self.input]
+
+
+FurnesRecipe = FurnaceRecipe  # todo: remove in a1.4.0
 

@@ -142,13 +142,14 @@ class BoxModel:
             self.rotated_vertices[rotation] = [[(e[0] - x, e[1] - y, e[2] - z) for e in m] for m in vertex_r]
         return [sum(e, tuple()) for e in vertex_r]
 
-    def add_to_batch(self, position, batch, rotation, active_faces=None):
+    def add_to_batch(self, position, batch, rotation, active_faces=None, uv_lock=False):
         """
         adds the box model to the batch
         :param position: the position based on
         :param batch: the batches to select from
         :param rotation: the rotation to use
         :param active_faces: which faces to show
+        :param uv_lock: if the uv's should be locked in place or not
         :return: an vertex-list-list
         todo: make active_faces an dict of faces -> state, not an order-defined list
         """
@@ -157,6 +158,7 @@ class BoxModel:
             batch = batch[0] if self.model is not None and self.model.name not in mcpython.block.BlockConfig.ENTRIES["alpha"] else batch[1]
         result = []
         for face in mcpython.util.enums.EnumSide.iterate():  # todo: can we add everything at ones?
+            if uv_lock: face = face.rotate(rotation)
             i = UV_ORDER.index(face)
             i2 = SIDE_ORDER.index(face)
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
@@ -166,16 +168,18 @@ class BoxModel:
                                         ('v3f/static', vertex[i]), ('t2f/static', self.tex_data[i2])))
         return result
 
-    def draw(self, position, rotation, active_faces=None):
+    def draw(self, position, rotation, active_faces=None, uv_lock=False):
         """
         draws the BoxModel direct into the world
         WARNING: use batches for better performance
         :param position: the position to draw on
         :param rotation: the rotation to draw with
+        :param uv_lock: if the uv's should be locked in place or not
         :param active_faces: which faces to draw
         """
         vertex = self.get_vertex_variant(rotation, position)
         for face in mcpython.util.enums.EnumSide.iterate():  # todo: can we add everything at ones?
+            if uv_lock: face = face.rotate(rotation)
             i = UV_ORDER.index(face)
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
@@ -184,17 +188,17 @@ class BoxModel:
                 pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v3f/static', vertex[i]), ('t2f/static', self.tex_data[i]))
                 self.model.texture_atlas.group.unset_state()
 
-    def add_face_to_batch(self, position, batch, rotation, face):
+    def add_face_to_batch(self, position, batch, rotation, face, uv_lock=False):
         if rotation == (90, 90, 0): rotation = (0, 0, 90)
         face = face.rotate(rotation)
         return self.add_to_batch(position, batch, rotation, active_faces={i: x == face for i, x in enumerate(
-            mcpython.util.enums.EnumSide.iterate())})
+            mcpython.util.enums.EnumSide.iterate())}, uv_lock=uv_lock)
 
-    def draw_face(self, position, rotation, face):
+    def draw_face(self, position, rotation, face, uv_lock=False):
         if rotation == (90, 90, 0): rotation = (0, 0, 90)
         face = face.rotate(rotation)
         return self.draw(position, rotation, active_faces={i: x == face for i, x in enumerate(
-            mcpython.util.enums.EnumSide.iterate())})
+            mcpython.util.enums.EnumSide.iterate())}, uv_lock=uv_lock)
 
     def copy(self, new_model=None):
         return BoxModel(self.data, new_model if new_model is not None else self.model)

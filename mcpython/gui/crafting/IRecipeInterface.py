@@ -10,5 +10,8 @@ import globals as G
 
 
 class IRecipeInterface:
+    """
+    Base class for every recipe providing interface
+    """
     NAME = "minecraft:unknown_recipe_interface"
 

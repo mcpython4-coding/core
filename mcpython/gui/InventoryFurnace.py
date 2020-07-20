@@ -91,7 +91,7 @@ class InventoryFurnace(mcpython.gui.Inventory.Inventory):
                 #           self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
                 self.reset()
                 return
-            self.recipe: mcpython.gui.crafting.FurnaceCrafting.FurnesRecipe = recipe
+            self.recipe: mcpython.gui.crafting.FurnaceCrafting.FurnaceRecipe = recipe
             self.block.active = True
             self.block.face_state.update()
         else:

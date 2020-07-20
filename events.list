@@ -42,6 +42,9 @@ crafting:
     "craftinghandler:reload:start": called on beginning to reload recipes
     "craftinghandler:reload:finish": called on end of reloading recipes
 
+    gui:crafting:grid:output:remove(GridRecipeInterface, Slot output, Slot[][] input, IRecipeType recipe):
+        called when an grid output is removed leading into an crafting update
+
 registry:
     "registry:{registry name}:on_object_register": called when an object is registered
     "datapack:load": called when an new datapack is loaded with the datapack object

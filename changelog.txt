@@ -59,6 +59,7 @@ changelog of snapshot [next]
     - MDK can access now versions from an launcher instance
     - MDK is now capable of building the mod into one final zipfile
     - added data generators for more stuff
+    - improved crafting system
 
     fixed issues:
         - IHorizontalOrientableBlock was behaving incorrectly

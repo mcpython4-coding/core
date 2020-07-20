@@ -20,6 +20,7 @@ import json
 
 class CraftingHandler:
     def __init__(self):
+        # todo: add special registry for recipes
         self.recipeinfotable = {}
 
         self.recipe_table = {}
