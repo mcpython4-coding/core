@@ -13,7 +13,7 @@ blocks based on 1.16.1.jar of minecraft"""
 # file licensed under the licence in licenses/LICENSE_mcskinview
 # modified for this project to match the overall system
 # modified for newer skin textures
-
+from mcpython.util.net import SimulatedResponse, get_url
 import io
 import json
 import os
@@ -33,57 +33,11 @@ userid_url = "https://api.mojang.com/users/profiles/minecraft/{username}"
 userinfo_url = "https://sessionserver.mojang.com/session/minecraft/profile/{userid}"
 
 
-class SimulatedResponse:
-    """
-    Simulated response
-    """
-
-    def __init__(self, content, is_json, raw=None):
-        self.content = content
-        self.is_json = is_json
-        self.status_code = 200
-        self.raw = raw
-
-    def json(self):
-        if self.is_json:
-            return json.loads(self.content)
-        return None
-
-
 def find_texture_info(properties):
     for prop in properties:
         if prop['name'] == 'textures':
             return json.loads(b64decode(prop['value'], validate=True).decode('utf-8'))
     return None
-
-
-def get_url(url, **kwargs):
-    """
-    gets the content of an URL as an requests.get() or an an SimulatedResponse-instance
-    :param url: the url to download from
-    :param kwargs: kwargs to requests.get() with
-    :return: the content
-    """
-    if SIMULATE:
-        raw = None
-        # These files are not provided in the git repo because I consider them
-        # kind of sensitive.  Feel free to provide your own in their place.
-        if url.startswith('https://api.mojang.com/users/profiles/minecraft/'):
-            with open(G.build+'/simulated_userid_response.json', 'r') as f:
-                content = f.read()
-            is_json = True
-        elif url.startswith('https://sessionserver.mojang.com/session/minecraft/profile/'):
-            with open(G.build+'/simulated_userinfo_response.json', 'r') as f:
-                content = f.read()
-            is_json = True
-        else:
-            with open(G.build+'/simulated_skin_response.png', 'rb') as f:
-                content = f.read()
-            is_json = False
-            raw = io.BytesIO(content)
-        return SimulatedResponse(content, is_json, raw)
-    else:
-        return requests.get(url, **kwargs)
 
 
 def download_skin(username: str, store: str):
