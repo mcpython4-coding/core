@@ -223,3 +223,4 @@ issue 238: IHorizontalOrientableBlock was not working correctly; fixed on 18.07.
 issue 230: ItemAtlas was not baking new images from BlockItemGenerator correctly; fixed on 18.07.2020 by uuk
 issue 239: an second player is spawned in world when entering an world; fixed on 20.07.2020 by uuk
 issue 240: Entity's tick() function was not called; fixed on 20.07.2020 by uuk
+issue 241: block command entry was not accepting minecraft:air as an block; fixed on 20.07.2020 by uuk

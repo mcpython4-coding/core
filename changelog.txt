@@ -69,6 +69,10 @@ changelog of snapshot [next]
         from previous release:
             - ItemAtlas was baking some item images in some cases not correctly
 
+        long term issues:
+            - Entity.tick() was never called
+            - command entry for blocks was not accepting air
+
 
 changelog of a1.0.0: (excluding the changes from the snapshots below)
     Rendering:
