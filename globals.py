@@ -8,6 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 import os, sys, tempfile
 import mcpython.rendering.RenderingHelper
+# todo: create MCPYTHON-class (as main game class) replacing this mess
 
 prebuilding = "--rebuild" in sys.argv
 debugevents = "--debugevents" in sys.argv

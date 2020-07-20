@@ -158,6 +158,10 @@ def build():
         d = f.read().replace("dev_environment = True", "dev_environment = False", 1)
     with open(folder + "/globals.py", mode="w") as f:
         f.write(d)
+    with open(folder+"/installer.py") as f:
+        d = f.read().replace('subprocess.Popen([sys.executable, "./__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"], stdout=sys.stdout)', "")
+    with open(folder+"/installer.py", mode="w") as f:
+        f.write(d)
     with open(folder+"/mcpython/config.py") as f:
         d = f.read()
     local_space = {}
