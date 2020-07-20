@@ -71,7 +71,7 @@ class StateWorldLoading(State.State):
             for cz in range(-3, 4):
                 self.status_table[(cx, cz)] = 0
                 # todo: fix bug: something is wrong here...
-                # G.world.savefile.read("minecraft:chunk", dimension=G.world.active_dimension, chunk=(cx, cz),
+                # G.world.savefile.read("minecraft:chunk", dimension=G.world.get_active_player().dimension.id, chunk=(cx, cz),
                 #                       immediate=False)
         G.worldgenerationhandler.enable_generation = True
 

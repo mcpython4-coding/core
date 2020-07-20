@@ -78,7 +78,7 @@ class PlayerData(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             data[player.name] = {
                 "position": player.position,
                 "rotation": player.rotation,
-                "dimension": G.world.active_dimension,
+                "dimension": G.world.get_active_player().dimension.id,
                 "gamemode": player.gamemode,
                 "hearts": player.hearts,
                 "hunger": player.hunger,

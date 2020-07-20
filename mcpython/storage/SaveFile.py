@@ -169,7 +169,7 @@ class SaveFile:
             for chunk in G.world.get_active_dimension().chunks:
                 # todo: save all loaded dimension, not only the active one
                 if G.world.get_active_dimension().get_chunk(*chunk).loaded:
-                    self.dump(None, "minecraft:chunk", dimension=G.world.active_dimension, chunk=chunk,
+                    self.dump(None, "minecraft:chunk", dimension=G.world.get_active_player().dimension.id, chunk=chunk,
                               override=override)
             logger.println("save complete!")
             G.worldgenerationhandler.enable_generation = True
