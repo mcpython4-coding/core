@@ -735,7 +735,7 @@ G.modloader = ModLoader()
 # this is needed as this depends on above but also above on the import
 import mcpython.mod.ModMcpython
 import mcpython.mod.ConfigFile
-from mcpython.datagen.mcpython import recipes, textures, entity
+from mcpython.datagen.mcpython import recipes, textures, entity, blockmodels
 
 
 @G.modloader("minecraft", "special:exit")

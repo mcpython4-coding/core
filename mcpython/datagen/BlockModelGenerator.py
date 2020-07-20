@@ -36,8 +36,8 @@ class ModelRepresentation:
         :param weight: the weight, when in an list of multiple models
         """
         self.model = model
-        self.r_x = r_x
-        self.r_y = r_y
+        self.r_x = r_x % 360
+        self.r_y = r_y % 360
         self.uvlock = uvlock
         self.weight = weight
 
@@ -52,7 +52,7 @@ class ModelRepresentation:
                 config.default_namespace + ":" + self.model}
         if self.r_x != 0: data["x"] = self.r_x
         if self.r_y != 0: data["y"] = self.r_y
-        if self.uvlock is True: data["uvlock"] = self.uvlock
+        if self.uvlock is True and (self.r_x or self.r_y): data["uvlock"] = self.uvlock
         if self.weight is not None: data["weight"] = self.weight
         self.wrap_cache = data
         return data

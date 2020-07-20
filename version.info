@@ -1243,3 +1243,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed IHorizontalOrientableBlock-class (issue 238)
 [uuk]: fixed ItemAtlas not baking in some cases (issue 230)
 [uuk]: removed all things deprecated for this next release cycle
+[uuk]: a lot of block model related things are now data-gen-ed

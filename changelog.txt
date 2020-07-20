@@ -58,6 +58,7 @@ changelog of snapshot [next]
     - DataGenerator system allows now to add new data generators during data-gen-ing
     - MDK can access now versions from an launcher instance
     - MDK is now capable of building the mod into one final zipfile
+    - added data generators for more stuff
 
     fixed issues:
         - IHorizontalOrientableBlock was behaving incorrectly
