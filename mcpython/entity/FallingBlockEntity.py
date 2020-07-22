@@ -23,7 +23,7 @@ class FallingBlock(mcpython.entity.Entity.Entity):
     def __init__(self, *args, representing_block: mcpython.block.Block.Block = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.block = representing_block  # todo: store in nbt
-        self.nbt_data["motion"] = (0, -.2, 0)
+        self.nbt_data["motion"] = (0, -.4, 0)
 
     def draw(self):
         if self.block is not None:
@@ -37,7 +37,7 @@ class FallingBlock(mcpython.entity.Entity.Entity):
         if (self.position[1] - y <= .1) and not (block is None or type(block) == str):
             if self.block is None:
                 self.kill()
-            elif not block.face_solid[EnumSide.UP]:
+            elif not block.SOLID:
                 self.kill()  # todo: drop item in world
             else:
                 self.chunk.add_block((x, y, z), self.block)
