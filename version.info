@@ -1248,3 +1248,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added FallingBlockEntity replacing old fall code of IFallingBlock
 [uuk]: fixed Entity's tick() function not being called (issue 240)
 [uuk]: fixed block entries in commands not accepting air (issue 241)
+[uuk]: added language file data generator
