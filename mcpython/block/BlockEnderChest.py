@@ -14,7 +14,6 @@ from mcpython.block.BlockChest import BBOX
 from . import Block
 
 
-@G.registry
 class BlockEnderChest(Block.Block):
     """
     class for the ender chest
@@ -79,4 +78,9 @@ class BlockEnderChest(Block.Block):
 
     def on_remove(self):
         G.inventoryhandler.hide(self.inventory)
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(BlockEnderChest)
 

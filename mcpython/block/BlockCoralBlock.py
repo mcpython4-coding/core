@@ -24,7 +24,6 @@ class ICoralBlock(mcpython.block.Block.Block):
             self.position, "{}:dead_{}".format(*self.NAME.split(":")))
 
 
-@G.registry
 class BrainCoralBlock(ICoralBlock):
     """
     class for brain coral block
@@ -33,7 +32,6 @@ class BrainCoralBlock(ICoralBlock):
     NAME: str = "minecraft:brain_coral_block"
 
 
-@G.registry
 class BubbleCoralBlock(ICoralBlock):
     """
     class for bubble coral block
@@ -42,7 +40,6 @@ class BubbleCoralBlock(ICoralBlock):
     NAME: str = "minecraft:bubble_coral_block"
 
 
-@G.registry
 class FireCoralBlock(ICoralBlock):
     """
     class for fire coral block
@@ -51,7 +48,6 @@ class FireCoralBlock(ICoralBlock):
     NAME: str = "minecraft:fire_coral_block"
 
 
-@G.registry
 class HornCoralBlock(ICoralBlock):
     """
     class for horn coral block
@@ -60,7 +56,6 @@ class HornCoralBlock(ICoralBlock):
     NAME: str = "minecraft:horn_coral_block"
 
 
-@G.registry
 class TubeCoralBlock(ICoralBlock):
     """
     class for tube coral block
@@ -69,12 +64,19 @@ class TubeCoralBlock(ICoralBlock):
     NAME: str = "minecraft:tube_coral_block"
 
 
-# the dead variants
-mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_brain_coral_block").finish()
-mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_bubble_coral_block").finish()
-mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_fire_coral_block").finish()
-mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_horn_coral_block").finish()
-mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_tube_coral_block").finish()
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(BrainCoralBlock)
+    G.registry.register(BubbleCoralBlock)
+    G.registry.register(FireCoralBlock)
+    G.registry.register(HornCoralBlock)
+    G.registry.register(TubeCoralBlock)
+    # the dead variants
+    mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_brain_coral_block").finish()
+    mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_bubble_coral_block").finish()
+    mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_fire_coral_block").finish()
+    mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_horn_coral_block").finish()
+    mcpython.factory.BlockFactory.BlockFactory().setName("minecraft:dead_tube_coral_block").finish()
 
 
 # todo: create factory function

@@ -11,7 +11,6 @@ from . import Block
 import mcpython.util.enums
 
 
-@G.registry
 class BlockGrassBlock(Block.Block):
     """
     base class for grass
@@ -39,4 +38,9 @@ class BlockGrassBlock(Block.Block):
                 if blockinst.face_solid[mcpython.util.enums.EnumSide.UP] or blockinst.face_solid[mcpython.util.enums.EnumSide.DOWN]:
                     G.world.get_active_dimension().get_chunk_for_position(self.position).add_block(
                         self.position, "minecraft:dirt")
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(BlockGrassBlock)
 

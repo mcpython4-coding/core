@@ -13,7 +13,6 @@ import mcpython.gui.InventoryFurnace
 from mcpython.util.enums import EnumSide
 
 
-@G.registry
 class BlockFurnace(mcpython.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     """
     class for the furnace block
@@ -68,15 +67,20 @@ class BlockFurnace(mcpython.block.IHorizontalOrientableBlock.IHorizontalOrientab
         del self.inventory
 
 
-@G.registry
 class BlastFurnace(BlockFurnace):
     NAME: str = "minecraft:blast_furnace"
 
     FURNACE_RECIPES: list = ["minecraft:blasting"]
 
 
-@G.registry
 class Smoker(BlockFurnace):
     NAME: str = "minecraft:smoker"
 
     FURNACE_RECIPES: list = ["minecraft:smoking"]
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(BlockFurnace)
+    G.registry.register(BlastFurnace)
+    G.registry.register(Smoker)

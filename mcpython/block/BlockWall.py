@@ -74,11 +74,15 @@ class IWall(mcpython.block.Block.Block):
 # create all classes for the blocks
 
 
-@G.registry
 class RedSandstoneWall(IWall):
     NAME = "minecraft:red_sandstone_wall"
 
 
-@G.registry
 class SandstoneWall(IWall):
     NAME = "minecraft:sandstone_wall"
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(RedSandstoneWall)
+    G.registry.register(SandstoneWall)

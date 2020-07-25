@@ -13,7 +13,6 @@ import mcpython.util.enums
 import mcpython.item.ItemTool
 
 
-@G.registry
 class BlockCraftingTable(Block.Block):
     """
     class for the crafting table
@@ -43,4 +42,9 @@ class BlockCraftingTable(Block.Block):
     @classmethod
     def modify_block_item(cls, itemfactory):
         itemfactory.setFuelLevel(15)
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(BlockCraftingTable)
 

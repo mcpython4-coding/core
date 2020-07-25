@@ -83,53 +83,57 @@ class IWoodenFence(IFence):
     FENCE_TYPE_NAME = {"minecraft:wooden_fence"}
 
 
-@G.registry
 class AcaciaFence(IWoodenFence):
     NAME = "minecraft:acacia_fence"
 
 
-@G.registry
 class BirchFence(IWoodenFence):
     NAME = "minecraft:birch_fence"
 
 
-@G.registry
 class DarkOakFence(IWoodenFence):
     NAME = "minecraft:dark_oak_fence"
 
 
-@G.registry
 class JungleFence(IWoodenFence):
     NAME = "minecraft:jungle_fence"
 
 
-@G.registry
 class OakFence(IWoodenFence):
     NAME = "minecraft:oak_fence"
 
 
-@G.registry
 class SpruceFence(IWoodenFence):
     NAME = "minecraft:spruce_fence"
 
 
-@G.registry
 class CrimsonFence(IFence):
     FENCE_TYPE_NAME = {"minecraft:wooden_fence", "minecraft:nether_fence"}
 
     NAME = "minecraft:crimson_fence"
 
 
-@G.registry
 class WarpedFence(IFence):
     FENCE_TYPE_NAME = {"minecraft:wooden_fence", "minecraft:nether_fence"}
 
     NAME = "minecraft:warped_fence"
 
 
-@G.registry
 class NetherBrickFence(IFence):
     NAME = "minecraft:nether_brick_fence"
 
     FENCE_TYPE_NAME = {"minecraft:nether_fence"}
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(OakFence)
+    G.registry.register(SpruceFence)
+    G.registry.register(DarkOakFence)
+    G.registry.register(JungleFence)
+    G.registry.register(BirchFence)
+    G.registry.register(AcaciaFence)
+    G.registry.register(WarpedFence)
+    G.registry.register(CrimsonFence)
+    G.registry.register(NetherBrickFence)
 

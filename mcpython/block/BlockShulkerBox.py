@@ -59,7 +59,9 @@ def create_shulker_box(name):
             G.inventoryhandler.hide(self.inventory)
 
 
-create_shulker_box("shulker_box")
-for color in mcpython.util.enums.COLORS:
-    create_shulker_box("{}_shulker_box".format(color))
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    create_shulker_box("shulker_box")
+    for color in mcpython.util.enums.COLORS:
+        create_shulker_box("{}_shulker_box".format(color))
 

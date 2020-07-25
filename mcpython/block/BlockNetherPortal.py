@@ -13,7 +13,6 @@ import math
 import logger
 
 
-@G.registry
 class NetherPortalBlock(mcpython.block.Block.Block):
     """
     class for an nether portal
@@ -86,4 +85,9 @@ class NetherPortalBlock(mcpython.block.Block.Block):
                 x, y, z = player.position
                 player.teleport((x * 8, y, z * 8), "overworld")
             player.in_nether_portal_since = None
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(NetherPortalBlock)
 
