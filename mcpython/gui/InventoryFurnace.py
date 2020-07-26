@@ -17,20 +17,23 @@ import time
 import logger
 import mcpython.ResourceLocator
 import sys
-
-
-try:
-    arrow = mcpython.ResourceLocator.read("build/texture/gui/furnace_arrow.png", "pyglet")
-    fire = mcpython.ResourceLocator.read("build/texture/gui/furnace_fire.png", "pyglet")
-except:
-    logger.write_exception("[FATAL] failed to load furnace gui parts")
-    sys.exit(-1)
+import mcpython.event.EventHandler
 
 
 class InventoryFurnace(mcpython.gui.Inventory.Inventory):
     """
     inventory class for the furnace
     """
+
+    arrow = None
+    fire = None
+
+    @classmethod
+    def reload(cls):
+        cls.arrow = mcpython.ResourceLocator.read("build/texture/gui/furnace_arrow.png", "pyglet")
+        cls.fire = mcpython.ResourceLocator.read("build/texture/gui/furnace_fire.png", "pyglet")
+
+    mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", reload)
 
     def __init__(self, block, types):
         super().__init__()
@@ -157,14 +160,14 @@ class InventoryFurnace(mcpython.gui.Inventory.Inventory):
         # draw arrow
         if self.recipe and self.progress > 0:
             try:
-                arrow.get_region(0, 0, round(48 * self.progress), 33).blit(x+159, y+229)
+                self.arrow.get_region(0, 0, round(48 * self.progress), 33).blit(x+159, y+229)
             except ZeroDivisionError:
                 pass
 
         # draw fire
         if self.fuel_max > 0:
             try:
-                fire.get_region(0, 0, 28, round(28 * (self.fuel_left / self.fuel_max))).blit(x+112, y+229)
+                self.fire.get_region(0, 0, 28, round(28 * (self.fuel_left / self.fuel_max))).blit(x+112, y+229)
             except ZeroDivisionError:
                 pass
 
