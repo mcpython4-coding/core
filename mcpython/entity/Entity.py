@@ -37,7 +37,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :param kwargs: kwargs to send to the constructor
         :return: the created entity
         todo: make added to world
-        for moder: use this rather than raw constructor
+        for moder: use this rather than raw constructor as it is the more "safe" way of doing it
         """
         entity = cls(*args, **kwargs)
         entity.position = position
@@ -215,6 +215,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :return: an pickle-able version, excluding position, rotation and harts, should include inventory serializer
             calls to make sure that everything works
         The nbt data is auto-saved
+        Only extra stuff should be saved!
         """
 
     def load(self, data):

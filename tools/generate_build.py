@@ -250,7 +250,10 @@ def build():
                         result.pop(i)
                     else:
                         i += 1
-                f.write("\n".join(result))
+                string = "\n".join(result)
+                while "\n\n" in string:
+                    string = string.replace("\n\n", "\n")
+                f.write(string)
 
     print("zip-ing up...")
     collect_to_zip(folder, out + "/" + target_file + "_undocumented.zip")

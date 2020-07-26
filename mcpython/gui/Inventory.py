@@ -57,6 +57,7 @@ class Inventory:
                     self.get_config_file(), self))
         else:
             self.config = {}
+            self.on_reload()
             return
         for slotid in self.config["slots"] if "slots" in self.config else []:
             sid = int(slotid)
@@ -225,6 +226,12 @@ class Inventory:
         :return: if load is valid or not
         """
         return True
+
+    def post_load(self, data):
+        """
+        serializes stuff after the the slot data is loaded
+        :param data: the data stored
+        """
 
     def save(self):
         """

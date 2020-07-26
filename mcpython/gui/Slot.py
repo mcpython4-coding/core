@@ -96,6 +96,14 @@ class Slot:
         """
         return SlotCopy(self, position=position)
 
+    def deepCopy(self):
+        """
+        This will copy the content of the slot into an Slot-object
+        """
+        return Slot(self.itemstack, self.position, self.interaction_mode[0], self.interaction_mode[1], self.interaction_mode[2],
+                    self.on_update, self.allow_half_getting, self.on_shift_click, self.empty_image,
+                    self.allowed_item_tags, self.allowed_item_func, self.on_button_press, self.__capacity, self.check_function)
+
     def draw(self, dx=0, dy=0, hovering=False):
         """
         draws the slot

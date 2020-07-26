@@ -75,6 +75,7 @@ class PlayerData(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         data = savefile.access_file_json("players.json")
         if data is None: data = {}
         for player in G.world.players.values():
+            # todo: move to player custom save data
             data[player.name] = {
                 "position": player.position,
                 "rotation": player.rotation,

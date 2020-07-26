@@ -19,25 +19,42 @@ improvements for the future:
 
 @G.registry
 class Inventory(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
+    """
+    Inventory serializer class
+    """
     PART = NAME = "minecraft:inventory"
 
     @classmethod
     def load(cls, savefile, inventory: mcpython.gui.Inventory.Inventory, path: str, file=None):
+        """
+        :param inventory: The inventory to save
+        :param path: the path to save under
+        :param file: the file to save into
+        """
         if file is None: file = "inventories.dat"
         data = savefile.access_file_pickle(file)
+
         if data is None: return
         if path not in data: return
+
         data = data[path]
         inventory.uuid = uuid.UUID(int=data["uuid"])
         status = inventory.load(data["custom data"])
         if not status: return
         [inventory.slots[i].load(e) if i < len(inventory.slots) else None for i, e in enumerate(data["slots"])]
+        inventory.post_load(data["custom data"])
 
     @classmethod
     def save(cls, data, savefile, inventory: mcpython.gui.Inventory.Inventory, path: str, file=None, override=False):
+        """
+        :param inventory: The inventory to save
+        :param path: the path to save under
+        :param file: the file to save into
+        """
         if file is None: file = "inventories.dat"
         data = savefile.access_file_pickle(file) if not override else None
         if data is None: data = {}
+
         idata = {"uuid": inventory.uuid.int,
                  "custom data": inventory.save(),
                  "slots": [slot.save() for slot in inventory.slots]}
