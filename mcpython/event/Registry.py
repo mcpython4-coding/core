@@ -38,7 +38,6 @@ class Registry:
         self.locked = False
         self.class_based = class_based
         G.registry.registries.append(self)
-        self.CANCEL_REGISTRATION = False
         self.dump_content_in_saves = dump_content_in_saves
 
         mcpython.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("modloader:finished", self.lock)
@@ -48,14 +47,13 @@ class Registry:
 
     def register(self, obj: IRegistryContent, override_existing=True):
         if self.locked:
-            logger.println("[WARN] can't register object {} to locked registry '{}'".format(obj, self.name))
+            logger.println("[WARN] can't register object '{}' to locked registry '{}'".format(obj, self.name))
             logger.println("[WARN] this feature of registering post-freeze WILL be removed in the future")
         if obj.NAME == "minecraft:unknown_registry_content":
-            logger.println("can't register unnamed object {}".format(obj))
+            logger.println("can't register unnamed object '{}'".format(obj))
+            logger.println("every registry object MUST have an unique name")
             return
-        self.CANCEL_REGISTRATION = False
-        G.eventhandler.call("registry:{}:on_object_register".format(self.name), self, obj)
-        if self.CANCEL_REGISTRATION: return
+        if not G.eventhandler.call_cancelable("registry:{}:register".format(self.name), self, obj, override_existing): return
         if obj.NAME in self.registered_object_map and override_existing: return
         self.registered_object_map[obj.NAME] = obj
         if self.injection_function: self.injection_function(self, obj)

@@ -5,28 +5,22 @@ At the end of the file, you will find an list of removed events from this file a
 
 
 commands:
+    command:parser:execute(CancelAbleEvent, str command, ParsingCommandInfo): called when an command is starting
+        to be executed
+
     command:clear(CancelAbleEvent, ParsingCommandInfo): called when /clear is executed
     command:clear:entity(CancelAbleEvent, ParsingCommandInfo, Entity): called for every entity affected by /clear.
         Will cancel /clear only for THIS entity
     command:clear:finish(ParsingCommandInfo): called by command "/clear" on end of clearing inventory
 
     command:clone:block_map(ParsingCommandInfo, dict): called when data is collected together with the data table
+    commands:registryinfo(CancelAbleEvent, str registry, ParsingCommandInfo): called by /registryinfo when entered
+    command:datapack:release(ParsingCommandInfo): called when /datapack release is called
 
-    "command:give:start": called by command "/give" on beginning of adding items, called with ItemStack-parameter,
-        cancelable in CommandGive-class [cancels the "real" giving, but will call all following subscribers]
-    "command:help:generate_pages": called on CommandHelp's page generation, called with the page list as an parameter
-    "command:registryinfo:parse": called by command "/registryinfo" on executing the command. cancelable in
-        CommandRegistryInfo-class [cancels the "normal" parser, but will call all following subscribers]
-
-    "command:parse_bridge:setup": called by ParseBridge when an new event was registered, called with command and
-        ParseBridge-object, cancelable in G.commandparser.CANCEL_REGISTER [cancels the annotation into the system,
-        but will call all following subscribers]
-    "command:execute_command": called by ParseBridge when an command is executed, called with CommandInfo,
-        string command and split command, cancelable in G.commandparser.CANCEL_COMMAND_EXECUTE [cancels the execution,
-        but will call all following subscribers]
+    "command:help:generate_pages": called on CommandHelp's page generation, called with the page list as an parameter [deprecated]
 
     "chat:text_enter": called by chat when ENTER is pressed, cancelable in G.chat [cancels the execution, but will call
-        all following subscribers]
+        all following subscribers] [deprecated]
 
 Reloading:
     data:reload:cancel(CancelAbleEvent): called when the system should reload. Canceling will cancel reload
@@ -39,14 +33,19 @@ Reloading:
     data:shuffle:clear: called to clear up the shuffling (if needed) when e.g. exiting an world
 
 crafting:
-    "craftinghandler:reload:start": called on beginning to reload recipes
-    "craftinghandler:reload:finish": called on end of reloading recipes
+    craftinghandler:reload:pre(CancelAbleEvent, CraftingHandler): called by crafting handler on reload begin
+    craftinghandler:reload:intermediate(CraftingHandler): called intermediate of reloading
+    craftinghandler:reload:end(CraftingHandler): called after crafting reload
 
     gui:crafting:grid:output:remove(GridRecipeInterface, Slot output, Slot[][] input, IRecipeType recipe):
         called when an grid output is removed leading into an crafting update
 
 registry:
-    "registry:{registry name}:on_object_register": called when an object is registered
+    registry:commands:register(CancelAbleEvent, Command, ParseBridge): called when an command is registered
+
+    registry:{name}:register(CancelAbleEvent, Registry, object content, bool override_existing): called when an
+        object is registered into {name}
+
     "datapack:load": called when an new datapack is loaded with the datapack object
     "datapack:unload:pre": called before datapacks are unloaded
     "datapack:unload:post": called after the datapacks were unloaded
@@ -108,8 +107,19 @@ world generation:
     "worldgen:chunk:finished": called by WorldGenerationHandler when an chunk was finished in generation
     "seed:set": called when an new seed was set, seed is stored in G.world.config["seed"]
 
-game play:
-    "player:die": called by player when it is killed
+gameplay:
+    gameplay:player:pick_up_item(CancelAbleEvent, Player, ItemStack): called by Player class when an item is scheduled
+        for addition to the player inventory
+    gameplay:player:scheduled_die:pre(CancelAbleEvent, Player, bool drop_items, bool kill_animation,
+        DamageSource damage_source, bool test_totem): Called when the player is starting to be killed
+    gameplay:player:scheduled_die:between(CancelAbleEvent, Player, bool drop_items, bool kill_animation,
+        DamageSource damage_source, bool test_totem): Called when the player is killed, but the inventory is not cleared
+    gamplay:player:die(Player, DamageSource): Called when the player died
+
+    world:entity:teleport(CancelAbleEvent, Entity, tuple position, int dimension, bool force_chunk_save_update):
+        called when an entity starts teleport-ing
+    world:entity:teleport:post(Entity): called after an entity was teleported
+
     "world:reset_config": called when the world config should be reset
     "dimension:chane:pre": called before the dimension is changed with from and to, cancelable
     "dimension:chane:post": called after the dimension is changed with from and to
@@ -139,4 +149,12 @@ removed:
     "modloader:mod_found": previous called by ModLoader when an mod-instance was created
     "command:reload:start": previous reload event
     "command:reload:end": previous reload event
+    "command:give:start": previous /give event
+    "player:die": previous kill player event
+    "command:registryinfo:parse": previous registryinfo event
+    "command:parse_bridge:setup": previous command parser event
+    "command:execute_command": previous command execute event
+    "craftinghandler:reload:start": previous crafting handler reload event
+    "craftinghandler:reload:finish": previous crafting handler end event
+    "registry:{registry name}:on_object_register": previous registry enter event
 

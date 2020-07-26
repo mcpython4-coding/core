@@ -39,8 +39,6 @@ class CommandParser:
 
     def __init__(self):
         self.commandparsing = {}  # start -> (Command, ParseBridge)
-        self.CANCEL_REGISTER = False
-        self.CANCEL_COMMAND_EXECUTE = False
 
     def add_command(self, command: mcpython.chat.command.Command):
         """
@@ -48,9 +46,7 @@ class CommandParser:
         :param command: the command to add
         """
         parsebridge = mcpython.chat.command.Command.ParseBridge(command)
-        self.CANCEL_REGISTER = False
-        G.eventhandler.call("command:parse_bridge:setup", command, parsebridge)
-        if self.CANCEL_REGISTER: return
+        if not G.eventhandler.call_cancelable("registry:commands:register", command, parsebridge): return
         for entry in ([parsebridge.main_entry] if type(parsebridge.main_entry) == str else parsebridge.main_entry):
             self.commandparsing[entry] = (command, parsebridge)
 
@@ -59,25 +55,24 @@ class CommandParser:
         pase an command
         :param command: the command to parse
         :param info: the info to use. can be None if one should be generated
+        todo: check permission
         """
         split = command.split(" ") if type(command) == str else list(command)
         pre = split[0]
         if not info: info = ParsingCommandInfo()
-        self.CANCEL_COMMAND_EXECUTE = False
-        G.eventhandler.call("command:execute_command", info, command, split)
-        if self.CANCEL_COMMAND_EXECUTE: return
+        if not G.eventhandler.call_cancelable("command:parser:execute", command, info): return
         if pre[1:] in self.commandparsing:  # is it registered?
             command, parsebridge = self.commandparsing[pre[1:]]
             try:
                 values, trace = self._convert_to_values(split, parsebridge, info)
             except:
-                logger.write_exception("[CHAT][EXCEPTION] during parsing values for command {}".format(command.NAME))
+                logger.write_exception("[CHAT][EXCEPTION] during parsing values for command '{}'".format(command.NAME))
                 return
             if values is None: return
             try:
                 command.parse(values, trace, info)
             except:
-                logger.write_exception("[CHAT][EXCEPTION] during executing command {} with {}".format(command.NAME,
+                logger.write_exception("[CHAT][EXCEPTION] during executing command '{}' with {}".format(command.NAME,
                                                                                                       info))
         else:
             logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))

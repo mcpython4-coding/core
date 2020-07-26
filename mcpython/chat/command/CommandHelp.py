@@ -63,7 +63,7 @@ class CommandHelp(mcpython.chat.command.Command.Command):
                 "/help <command>: returns help for given command if found"]
 
 
-# generate help pages
+# generate help pages  todo: change to an loading stage
 PAGES = []
 for command, _ in G.commandparser.commandparsing.values():
     h = command.get_help()

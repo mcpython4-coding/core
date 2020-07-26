@@ -62,7 +62,9 @@ changelog of snapshot [next]
     - improved crafting system
     - added FallingBlockEntity
     - IFallingBlock is now based around an entity instead of an simple block
-    - added data generator for language files
+    - added data generator for language files and loot tables
+    - changed how the game is launching to an more modify-able way
+    - changed a lot of events
 
     fixed issues:
         - IHorizontalOrientableBlock was behaving incorrectly

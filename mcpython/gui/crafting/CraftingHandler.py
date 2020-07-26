@@ -110,7 +110,7 @@ class CraftingHandler:
                 self.add_recipe_from_file(itemname)
 
     def reload_crafting_recipes(self):
-        G.eventhandler.call("craftinghandler:reload:prepare")
+        if not G.eventhandler.call_cancelable("craftinghandler:reload:pre", self): return
 
         # all shapeless recipes sorted after item count
         self.crafting_recipes_shapeless = {}
@@ -119,7 +119,7 @@ class CraftingHandler:
         # all smelting outputs sorted after ingredient
         self.furnace_recipes = {}
 
-        G.eventhandler.call("craftinghandler:reload:start")
+        G.eventhandler.call("craftinghandler:reload:intermediate", self)
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
             logger.println("\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
@@ -127,7 +127,7 @@ class CraftingHandler:
             self.load(modname, check_mod_dirs=False, load_direct=True)
         logger.println()
 
-        G.eventhandler.call("craftinghandler:reload:finish")
+        G.eventhandler.call("craftinghandler:reload:end", self)
 
 
 G.craftinghandler = CraftingHandler()
