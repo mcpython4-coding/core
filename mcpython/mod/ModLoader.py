@@ -191,7 +191,7 @@ class LoadingStages:
                                  "stage:modefactory:use", "stage:modelfactory:bake", "stage:blockstatefactory:prepare",
                                  "stage:blockstatefactory:use", "stage:blockstatefactory:bake")
     BLOCKSTATE = LoadingStage("blockstate loading phase", "stage:blockstate:register_loaders",
-                              "stage:model:blockstate_search", "stage:model:blockstate_create")
+                              "stage:model:blockstate_search", "stage:model:blockstate_create", "stage:model:blockstate_bake")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_search:intern",
                                "stage:model:model_create")
     BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",

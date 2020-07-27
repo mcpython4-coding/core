@@ -39,6 +39,13 @@ class IBlockStateDecoder(mcpython.event.Registry.IRegistryContent):
     def draw_face(self, block, face):  # optional: draws the BlockState direct without an batch
         pass
 
+    def bake(self) -> bool:
+        """
+        Called when it is time to bake it
+        :return: if it was successful or not
+        """
+        return True
+
 
 blockstatedecoderregistry = mcpython.event.Registry.Registry("blockstates", ["minecraft:blockstate"])
 
@@ -146,6 +153,12 @@ class MultiPartDecoder(IBlockStateDecoder):
 
 @G.registry
 class DefaultDecoder(IBlockStateDecoder):
+    """
+    Decoder for mc block state files.
+    WARNING: the following decoder has some extended features:
+    entry parent: An parent DefaultDecoded blockstate from which states and model aliases should be copied
+    entry alias: An dict of original -> aliased model to transform any model name of this kind in the system with the given model
+    """
     NAME = "minecraft:default_blockstate_loader"
 
     @classmethod
@@ -163,14 +176,36 @@ class DefaultDecoder(IBlockStateDecoder):
             else:
                 keymap = {}
             self.states.append((keymap, BlockState(data["variants"][element])))
+        self.model_alias = {}
+        self.parent = None
+        if "parent" in data: self.parent = data["parent"]
+        if "alias" in data: self.model_alias = data["alias"]
+
+    def bake(self):
+        if self.parent is not None:
+            if self.parent not in G.modelhandler.blockstates:
+                return False
+            self.parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
+            if not self.parent.backed: return False
+            if not issubclass(self.parent.loader, type(self)):
+                raise ValueError("parent must be subclass of start")
+            self.model_alias.update(self.parent.loader.model_alias)
+            self.states += self.parent.loader.states
+        for model in self.model_alias.values():
+            G.modelhandler.used_models.append(model)
+        for _, state in self.states:
+            state: BlockState
+            for i, (model, *d) in enumerate(state.models):
+                if model in self.model_alias:
+                    state.models[i] = (self.model_alias[model],) + tuple(d)
+        return True
 
     def add_face_to_batch(self, block, batch, face):
         data = block.get_model_state()
         for keymap, blockstate in self.states:
             if keymap == data:
                 return blockstate.add_face_to_batch(block, batch, face)
-        logger.println("[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
-            block.NAME, block.position, data, [e[0] for e in self.states]))
+        logger.println("[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(block, data, [e[0] for e in self.states]))
         return []
 
     def transform_to_hitbox(self, blockinstance):
@@ -245,6 +280,7 @@ class BlockStateDefinition:
             logger.write_exception("error during loading model for '{}' from data {}".format(name, data))
 
     def __init__(self, data: dict, name: str):
+        self.name = name
         if name not in G.registry.get_by_name("block").registered_object_map: raise BlockStateNotNeeded()
         G.modelhandler.blockstates[name] = self
         self.loader = None
@@ -254,6 +290,17 @@ class BlockStateDefinition:
                 break
         else:
             raise ValueError("can't find matching loader for model {}".format(name))
+        self.backed = False
+
+        G.modloader.mods[name.split(":")[0]].eventbus.subscribe("stage:model:blockstate_bake", self.bake,
+                                                                info="baking block state {}".format(name))
+
+    def bake(self):
+        if not self.loader.bake():
+            G.modloader.mods[self.name.split(":")[0]].eventbus.subscribe("stage:model:blockstate_bake", self.bake,
+                                                                         info="loading block state {}".format(self.name))
+        else:
+            self.backed = True
 
     def add_face_to_batch(self, block, batch, face):
         return self.loader.add_face_to_batch(block, batch, face)

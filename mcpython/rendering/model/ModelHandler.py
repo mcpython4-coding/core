@@ -76,7 +76,7 @@ class ModelHandler:
             logger.println("[WARN] deprecated access to model without minecraft-prefix to '{}'".format(used))
             used = "minecraft:" + used
         if used not in self.found_models:
-            logger.println("model error: can't locate model for '{}'".format(used))
+            # logger.println("model error: can't locate model for '{}'".format(used))
             return
         file = self.found_models[used]
         if type(file) == str:

@@ -150,7 +150,7 @@ class StateBlockItemGenerator(State.State):
                 blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
             blockinstance.face_state.update(redraw_complete=True)
         except ValueError:
-            logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
+            logger.write_exception("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                            "following exception".format(self.tasks[self.blockindex]))
             self.blockindex += 1
             pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)
