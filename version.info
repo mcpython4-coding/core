@@ -1252,3 +1252,4 @@ sstarted these clone on 12th of July, 2019
 [uuk]: changed how the game is launching itself
 [uuk]: blocks are now not registered via @G.registry
 [uuk]: reworked a lot of events
+[uuk]: fixed slabs not generating correctly (issue 242)

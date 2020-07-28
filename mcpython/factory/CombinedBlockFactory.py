@@ -52,7 +52,7 @@ def generate_full_block(config, name: str, texture: str = None, callback=None):
 def generate_slab_block(config, name: str, texture: str = None, callback=None, generate_recipe=True):
     if texture is None: texture = "{}:block/{}".format(*name.split("_slab")[0].split(":"))
     modname, raw_name = name.split(":") if name.count(":") == 1 else (config.modname, name)
-    CombinedSlabFactory(texture, modname, config, full_model="{}:block/{}".format(modname, raw_name),
+    CombinedSlabFactory(texture, modname, config, full_model="{}:block/{}".format(modname, raw_name.replace("_slab", "")),
                         on_create_callback=callback).setName(name)
     if generate_recipe:
         mcpython.datagen.RecipeGenerator.ShapedRecipeGenerator(name, config).setEntries(
@@ -197,7 +197,7 @@ class CombinedSlabFactory:
                 "all", self.texture)
         mcpython.datagen.BlockModelGenerator.BlockStateGenerator(
             self.config, name).add_state("type=bottom", "{}:block/{}".format(self.modname, name)).add_state(
-            "type=top", "{}:block/{}".format(self.modname, name)).add_state("type=double", self.full_model)
+            "type=top", "{}:block/{}_top".format(self.modname, name)).add_state("type=double", self.full_model)
 
     def __generate_factories(self):
         factory = mcpython.factory.BlockFactory.BlockFactory().setName(self.name).setSlab()
