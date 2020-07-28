@@ -26,7 +26,7 @@ class ModelRepresentation:
     Rendering is implemented by the respective rendering backend
     """
 
-    def __init__(self, model: str, r_x=0, r_y=0, uvlock=False, weight=None):
+    def __init__(self, model: typing.Union[str, "BlockModelGenerator"], r_x=0, r_y=0, uvlock=False, weight=None):
         """
         will create an new entry
         :param model: the model to use as e.g. minecraft:block/stone
@@ -35,7 +35,7 @@ class ModelRepresentation:
         :param uvlock: if uv's should be not affected by rotation
         :param weight: the weight, when in an list of multiple models
         """
-        self.model = model
+        self.model = model if type(model) == str else "{}:block/{}".format(model.config.default_namespace, model.name)
         self.r_x = r_x % 360
         self.r_y = r_y % 360
         self.uvlock = uvlock
@@ -114,7 +114,7 @@ class BlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator):
         self.alias = {}
         self.generate_alias = generate_alias
 
-    def add_state(self, state: typing.Union[None, str, dict, list], *models):
+    def add_state(self, state: typing.Union[None, str, dict, list, "BlockModelGenerator"], *models):
         """
         will add an new possible state into the block state file
         :param state: the state as an str, an dict or an list of states or None for default
@@ -122,7 +122,9 @@ class BlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator):
         """
         modelx = list(models)
         for i, model in enumerate(models):
-            if type(model) == str:
+            if type(model) == BlockModelGenerator:
+                modelx[i] = "{}:block/{}".format(model.config.default_namespace, model.name)
+            elif type(model) == str:
                 modelx[i] = ModelRepresentation(model)
         self.states.append((state, tuple(modelx)))
         return self

@@ -330,7 +330,7 @@ class BlockFactory:
                     baseclass.set_model_state(self, state)
 
             def get_model_state(self):
-                state = {}
+                state = master.custommodelstatefunction(self).copy() if master.custommodelstatefunction is not None else {}
                 for baseclass in master.baseclass:
                     state = {**state, **baseclass.get_model_state(self)}
                 return state
@@ -353,11 +353,6 @@ class BlockFactory:
                     for baseclass in master.baseclass:
                         baseclass.on_block_update(self)
                     master.update_callback(self)
-
-        if master.custommodelstatefunction:
-            class ConstructedBlock(ConstructedBlock):
-                def get_model_state(self) -> dict:
-                    return master.custommodelstatefunction(self)
 
         if master.interaction_callback:
             class ConstructedBlock(ConstructedBlock):

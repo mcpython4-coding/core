@@ -29,7 +29,6 @@ class IHorizontalOrientableBlock(mcpython.block.Block.Block):
                     self.face = mcpython.util.enums.EnumSide.SOUTH
                 elif dz < 0:
                     self.face = mcpython.util.enums.EnumSide.NORTH
-                print(dx, dy, dz, self.face)
 
     def get_model_state(self) -> dict:
         return {self.MODEL_FACE_NAME: self.face.normal_name}

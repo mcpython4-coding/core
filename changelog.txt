@@ -71,6 +71,7 @@ changelog of snapshot [next]
 
         from previous release:
             - ItemAtlas was baking some item images in some cases not correctly
+            - CombinedSlabFactory was not generating block states correctly
 
         long term issues:
             - Entity.tick() was never called
