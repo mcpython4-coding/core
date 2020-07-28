@@ -18,6 +18,7 @@ import mcpython.ResourceLocator
 import mcpython.util.enums
 import mcpython.util.math
 import json
+import mcpython.rendering.ICustomBlockRenderer
 
 
 class ModelHandler:
@@ -139,8 +140,12 @@ class ModelHandler:
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
         if blockstate is None:
-            return self.blockstates["minecraft:missing_texture"].add_face_to_batch(block, batches, face)
-        return blockstate.add_face_to_batch(block, batches, face)
+            vertex = self.blockstates["minecraft:missing_texture"].add_face_to_batch(block, batches, face)
+        else:
+            vertex = blockstate.add_face_to_batch(block, batches, face)
+            if issubclass(type(block.face_state.custom_renderer), mcpython.rendering.ICustomBlockRenderer.ICustomBlockVertexManager):
+                block.face_state.custom_renderer.handle(block, vertex)
+        return vertex
 
     def draw_face(self, block, face):
         if block.NAME not in self.blockstates:

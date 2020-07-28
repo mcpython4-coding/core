@@ -9,7 +9,6 @@ blocks based on 1.16.1.jar of minecraft"""
 
 
 class ICustomBatchBlockRenderer:
-
     def add(self, position, block, face):
         pass
 
@@ -18,7 +17,11 @@ class ICustomBatchBlockRenderer:
 
 
 class ICustomDrawMethodRenderer:
-
     def draw(self, position, block):
+        pass
+
+
+class ICustomBlockVertexManager:
+    def handle(self, block, vertices, face, blockstate):
         pass
 
