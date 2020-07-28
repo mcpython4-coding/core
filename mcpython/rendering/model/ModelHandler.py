@@ -172,6 +172,8 @@ class ModelHandler:
         logger.println("loading models...")
         # and now start reloading models...
         self.search()
+        mcpython.rendering.model.BlockState.BlockStateDefinition.TO_CREATE.clear()
+        mcpython.rendering.model.BlockState.BlockStateDefinition.NEEDED.clear()
         for directory, modname in mcpython.rendering.model.BlockState.BlockStateDefinition.LOOKUP_DIRECTORIES:
             mcpython.rendering.model.BlockState.BlockStateDefinition.from_directory(directory, modname, immediate=True)
         G.eventhandler.call("data:blockstates:custom_injection", self)

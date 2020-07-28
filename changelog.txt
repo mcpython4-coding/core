@@ -65,6 +65,7 @@ changelog of snapshot [next]
     - added data generator for language files and loot tables
     - changed how the game is launching to an more modify-able way
     - changed a lot of events
+    - block states can now have parents and alias model names
 
     fixed issues:
         - IHorizontalOrientableBlock was behaving incorrectly

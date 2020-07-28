@@ -254,13 +254,9 @@ class CombinedWallFactory:
             "wall", self.texture)
         side = "{}:block/{}_side".format(self.modname, name)
         tall = "{}:block/{}_side_tall".format(self.modname, name)
-        mcpython.datagen.BlockModelGenerator.MultiPartBlockStateGenerator(
-            self.config, name).add_state("up=true", "{}:block/{}_post".format(self.modname, name)).add_state(
-            "north=low", side).add_state("east=low", ModelRepresentation(side, r_y=90)).add_state(
-            "south=low", ModelRepresentation(side, r_y=180)).add_state("west=low", ModelRepresentation(
-            side, r_y=270)).add_state("north=tall", tall).add_state(
-            "east=tall", ModelRepresentation(tall, r_y=90)).add_state("south=tall", ModelRepresentation(
-            tall, r_y=180)).add_state("west=tall", ModelRepresentation(tall, r_y=270))
+        post = "{}:block/{}_post".format(self.modname, name)
+        mcpython.datagen.BlockModelGenerator.MultiPartBlockStateGenerator(self.config, name, parent="minecraft:wall_template").addAliasName(
+            "alias:post", post).addAliasName("alias:side", side).addAliasName("alias:tall", tall)
 
     def __generate_factories(self):
         factory = mcpython.factory.BlockFactory.BlockFactory().setName(self.name)
@@ -315,8 +311,8 @@ class CombinedLogFactory:
             "end", self.front_texture).set_texture_variable("side", self.side_texture)
         hor = "{}:block/{}_horizontal".format(self.modname, name)
         mcpython.datagen.BlockModelGenerator.BlockStateGenerator(
-            self.config, name).add_state("axis=x", ModelRepresentation(hor, r_x=90, r_y=90)).add_state(
-            "axis=y", "{}:block/{}".format(self.modname, name)).add_state("axis=z", ModelRepresentation(hor, r_x=90))
+            self.config, name, parent="minecraft:log_template").addAliasName("alias:horizontal", hor).addAliasName(
+            "alias:normal", "{}:block/{}".format(self.modname, name))
 
     def __generate_factories(self):
         factory = mcpython.factory.BlockFactory.BlockFactory().setName(self.name).setLog()

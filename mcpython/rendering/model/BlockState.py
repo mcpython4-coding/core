@@ -13,6 +13,7 @@ import mcpython.mod.ModMcpython
 import logger
 import mcpython.event.Registry
 import mcpython.block.BoundingBox
+import copy
 
 
 class BlockStateNotNeeded(Exception): pass
@@ -56,7 +57,7 @@ class MultiPartDecoder(IBlockStateDecoder):
     Decoder for mc multipart state files.
     WARNING: the following decoder has some extended features:
     entry parent: An parent DefaultDecoded blockstate from which states and model aliases should be copied
-    entry alias: An dict of original -> aliased model to transform any model name of this kind in the system with the given model
+    entry alias: An dict of original -> aliased model to transform any model name of this kind in the system with the given model. Alias names MUST start with alias:
 
     todo: can we optimize it by pre-doing some stuff?
     """
@@ -76,19 +77,22 @@ class MultiPartDecoder(IBlockStateDecoder):
                     G.modelhandler.used_models.append(d["model"])
         self.model_alias = {}
         self.parent = None
-        if "parent" in data: self.parent = data["parent"]
+        if "parent" in data:
+            self.parent = data["parent"]
+            BlockStateDefinition.NEEDED.add(self.parent)
         if "alias" in data: self.model_alias = data["alias"]
         
     def bake(self):
         if self.parent is not None:
             if self.parent not in G.modelhandler.blockstates:
-                return False
-            self.parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
-            if not self.parent.baked: return False
-            if not issubclass(self.parent.loader, type(self)):
+                raise ValueError("block state referencing '{}' is invalid!".format(self.parent))
+            parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
+            if not parent.baked: return False
+            if not issubclass(type(parent.loader), type(self)):
                 raise ValueError("parent must be subclass of start")
-            self.model_alias.update(self.parent.loader.model_alias)
-            self.data["multipart"].extend(self.parent.loader.data["multipart"])
+            self.parent = parent
+            self.model_alias.update(self.parent.loader.model_alias.copy())
+            self.data["multipart"].extend(copy.deepcopy(self.parent.loader.data["multipart"]))
         for model in self.model_alias.values():
             G.modelhandler.used_models.append(model)
         for entry in self.data["multipart"]:
@@ -191,7 +195,7 @@ class DefaultDecoder(IBlockStateDecoder):
     Decoder for mc block state files.
     WARNING: the following decoder has some extended features:
     entry parent: An parent DefaultDecoded blockstate from which states and model aliases should be copied
-    entry alias: An dict of original -> aliased model to transform any model name of this kind in the system with the given model
+    entry alias: An dict of original -> aliased model to transform any model name of this kind in the system with the given model. Alias names MUST start with alias:
     """
     NAME = "minecraft:default_blockstate_loader"
 
@@ -212,19 +216,22 @@ class DefaultDecoder(IBlockStateDecoder):
             self.states.append((keymap, BlockState(data["variants"][element])))
         self.model_alias = {}
         self.parent = None
-        if "parent" in data: self.parent = data["parent"]
+        if "parent" in data:
+            self.parent = data["parent"]
+            BlockStateDefinition.NEEDED.add(self.parent)
         if "alias" in data: self.model_alias = data["alias"]
 
     def bake(self):
         if self.parent is not None:
             if self.parent not in G.modelhandler.blockstates:
-                return False
-            self.parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
-            if not self.parent.baked: return False
-            if not issubclass(self.parent.loader, type(self)):
+                raise ValueError("block state referencing '{}' is invalid!".format(self.parent))
+            parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
+            if not parent.baked: return False
+            if not issubclass(type(parent.loader), type(self)):
                 raise ValueError("parent must be subclass of start")
-            self.model_alias.update(self.parent.loader.model_alias)
-            self.states += self.parent.loader.states
+            self.parent = parent
+            self.model_alias.update(self.parent.loader.model_alias.copy())
+            self.states += [(e, state.copy()) for e, state in self.parent.loader.states]
         for model in self.model_alias.values():
             G.modelhandler.used_models.append(model)
         for _, state in self.states:
@@ -270,6 +277,7 @@ class DefaultDecoder(IBlockStateDecoder):
 class BlockStateDefinition:
     TO_CREATE = set()
     LOOKUP_DIRECTORIES = set()
+    NEEDED = set()  # for parent <-> child connection
 
     @classmethod
     def from_directory(cls, directory: str, modname: str, immediate=False):
@@ -292,8 +300,7 @@ class BlockStateDefinition:
         try:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
-            return BlockStateDefinition(mcpython.ResourceLocator.read(file, "json"), "{}:{}".format(
-                modname, s[-1].split(".")[0]))
+            return BlockStateDefinition(mcpython.ResourceLocator.read(file, "json"), "{}:{}".format(modname, s[-1].split(".")[0]))
         except BlockStateNotNeeded:
             pass
         except:
@@ -315,7 +322,7 @@ class BlockStateDefinition:
 
     def __init__(self, data: dict, name: str):
         self.name = name
-        if name not in G.registry.get_by_name("block").registered_object_map: raise BlockStateNotNeeded()
+        if name not in G.registry.get_by_name("block").registered_object_map and name not in self.NEEDED: raise BlockStateNotNeeded()
         G.modelhandler.blockstates[name] = self
         self.loader = None
         for loader in blockstatedecoderregistry.registered_object_map.values():
@@ -345,6 +352,7 @@ class BlockStateDefinition:
 
 class BlockState:
     def __init__(self, data):
+        self.data = data
         self.models = []  # (model, config, weight)
         if type(data) == dict:
             if "model" in data:
@@ -354,6 +362,9 @@ class BlockState:
             models = [self.decode_entry(x) for x in data]
             self.models += models
             G.modelhandler.used_models += [x[0] for x in models]
+
+    def copy(self):
+        return BlockState(self.data)
 
     @staticmethod
     def decode_entry(data: dict):
@@ -383,5 +394,4 @@ class BlockState:
 
 
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
-                                                     "assets/minecraft/blockstates", "minecraft",
-                                                     info="searching for block states")
+                                                     "assets/minecraft/blockstates", "minecraft", info="searching for block states")

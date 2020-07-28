@@ -146,6 +146,7 @@ class BlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator):
                 model_counter[model.model][1].append(model)
         i = 0
         for name in model_counter:
+            if name in self.alias or name.startswith("alias:"): continue
             if model_counter[name][0] >= limit:
                 alias_name = "alias:{}".format(i)
                 self.addAliasName(alias_name, name)
@@ -219,6 +220,7 @@ class MultiPartBlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator
                 model_counter[model.model][1].append(model)
         i = 0
         for name in model_counter:
+            if name in self.alias or name.startswith("alias:"): continue
             if model_counter[name][0] >= limit:
                 alias_name = "alias:{}".format(i)
                 self.addAliasName(alias_name, name)
