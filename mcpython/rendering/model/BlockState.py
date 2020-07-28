@@ -52,6 +52,14 @@ blockstatedecoderregistry = mcpython.event.Registry.Registry("blockstates", ["mi
 
 @G.registry
 class MultiPartDecoder(IBlockStateDecoder):
+    """
+    Decoder for mc multipart state files.
+    WARNING: the following decoder has some extended features:
+    entry parent: An parent DefaultDecoded blockstate from which states and model aliases should be copied
+    entry alias: An dict of original -> aliased model to transform any model name of this kind in the system with the given model
+
+    todo: can we optimize it by pre-doing some stuff?
+    """
     NAME = "minecraft:multipart_blockstate_loader"
 
     @classmethod
@@ -66,6 +74,32 @@ class MultiPartDecoder(IBlockStateDecoder):
             else:
                 for d in entry["apply"]:
                     G.modelhandler.used_models.append(d["model"])
+        self.model_alias = {}
+        self.parent = None
+        if "parent" in data: self.parent = data["parent"]
+        if "alias" in data: self.model_alias = data["alias"]
+        
+    def bake(self):
+        if self.parent is not None:
+            if self.parent not in G.modelhandler.blockstates:
+                return False
+            self.parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
+            if not self.parent.baked: return False
+            if not issubclass(self.parent.loader, type(self)):
+                raise ValueError("parent must be subclass of start")
+            self.model_alias.update(self.parent.loader.model_alias)
+            self.data["multipart"].extend(self.parent.loader.data["multipart"])
+        for model in self.model_alias.values():
+            G.modelhandler.used_models.append(model)
+        for entry in self.data["multipart"]:
+            data = entry["apply"]
+            if type(data) == dict:
+                if data["model"] in self.model_alias:
+                    data["model"] = self.model_alias[data["model"]]
+            else:
+                for i, e in enumerate(data):
+                    if e["model"] in self.model_alias: data[i]["model"] = self.model_alias[e["model"]]
+        return True
 
     def add_face_to_batch(self, block, batch, face):
         state = block.get_model_state()
@@ -186,7 +220,7 @@ class DefaultDecoder(IBlockStateDecoder):
             if self.parent not in G.modelhandler.blockstates:
                 return False
             self.parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
-            if not self.parent.backed: return False
+            if not self.parent.baked: return False
             if not issubclass(self.parent.loader, type(self)):
                 raise ValueError("parent must be subclass of start")
             self.model_alias.update(self.parent.loader.model_alias)
@@ -290,7 +324,7 @@ class BlockStateDefinition:
                 break
         else:
             raise ValueError("can't find matching loader for model {}".format(name))
-        self.backed = False
+        self.baked = False
 
         G.modloader.mods[name.split(":")[0]].eventbus.subscribe("stage:model:blockstate_bake", self.bake,
                                                                 info="baking block state {}".format(name))
@@ -300,7 +334,7 @@ class BlockStateDefinition:
             G.modloader.mods[self.name.split(":")[0]].eventbus.subscribe("stage:model:blockstate_bake", self.bake,
                                                                          info="loading block state {}".format(self.name))
         else:
-            self.backed = True
+            self.baked = True
 
     def add_face_to_batch(self, block, batch, face):
         return self.loader.add_face_to_batch(block, batch, face)

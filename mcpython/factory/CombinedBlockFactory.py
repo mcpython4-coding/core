@@ -44,8 +44,7 @@ def generate_full_block_slab_wall(config: mcpython.datagen.Configuration.DataGen
 def generate_full_block(config, name: str, texture: str = None, callback=None):
     if texture is None: texture = "{}:block/{}".format(*name.split(":"))
     modname, raw_name = name.split(":")
-    CombinedFullBlockFactory(modname, config, on_create_callback=callback).setName(name).setTextureVariable(
-        "all", texture)
+    CombinedFullBlockFactory(modname, config, on_create_callback=callback).setName(name).setTextureVariable("all", texture)
 
 
 def generate_slab_block(config, name: str, texture: str = None, callback=None, generate_recipe=True, full=None):

@@ -176,10 +176,13 @@ class MultiPartBlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator
     Generator class for an multipart model
     """
 
-    def __init__(self, config, name: str):
+    def __init__(self, config, name: str, parent=None, optimize=True):
         super().__init__(config)
         self.name = name
         self.states = []
+        self.parent = parent
+        self.alias = {}
+        self.optimize = optimize
 
     def add_state(self, state: typing.Union[None, str, dict, list], *models):
         """
@@ -199,8 +202,36 @@ class MultiPartBlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator
         self.states.append((state, modelx))
         return self
 
+    def addAliasName(self, name: str, target: str):
+        self.alias[name] = target
+        return self
+
+    def generateBestAlias(self, limit=2):
+        """
+        Helper function for generating aliases where possible
+        :param limit: when an model alias should be created
+        """
+        model_counter = {}
+        for state, models in self.states:
+            for model in models:
+                model_counter.setdefault(model.model, [0, []])
+                model_counter[model.model][0] += 1
+                model_counter[model.model][1].append(model)
+        i = 0
+        for name in model_counter:
+            if model_counter[name][0] >= limit:
+                alias_name = "alias:{}".format(i)
+                self.addAliasName(alias_name, name)
+                i += 1
+                for model in model_counter[name][1]:
+                    model.model = alias_name
+        return self
+
     def generate(self):
+        if self.optimize: self.generateBestAlias()
         data = {"multipart": []}
+        if self.parent is not None: data["parent"] = self.parent
+        if len(self.alias) > 0: data["alias"] = self.alias
         for state, model in self.states:
             m = model[0].wrap(self.config) if len(model) == 1 else [e.wrap() for e in model]
             d = {"apply": m}
