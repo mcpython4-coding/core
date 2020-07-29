@@ -53,7 +53,7 @@ information on development:
         its id.
 
 
-changelog of snapshot [next]
+changelog of snapshot 20w31a (theme: improvements)
     - MDK has now an function to change the target version
     - DataGenerator system allows now to add new data generators during data-gen-ing
     - MDK can access now versions from an launcher instance
