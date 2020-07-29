@@ -6,8 +6,8 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
         before next stable release):
     - optimize texture reload with everything (re-block-item-factories,
         reload item texture, gui textures, ...), config reload [1]
-    - add more factories for various parts (better block models, block states, full block factory, ...) [2]
-    - add scoreboards with commands, execute entry, ... [5]
+    - add more factories for various parts [2]
+    - add scoreboards with commands, execute command entry, ... [5]
     - make world gen more fail-save [2]
     - add ores [4]
     - add mcpi API support [10]
@@ -51,6 +51,10 @@ information on development:
         both can be followed by an table of issues starting with "fixed issues:" followed by an list of grouped after
         first obscures of the bug the list of issues with an short description and when based on an github bug report
         its id.
+
+
+changelog of snapshot [next]
+
 
 
 changelog of snapshot 20w31a (theme: improvements)
