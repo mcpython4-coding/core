@@ -114,7 +114,7 @@ def generate_recipe_generator(file: str) -> typing.Union[typing.Tuple[str, typin
         return "config.smelting_recipe(\"{}\"{}).add_ingredient({}){}{}".format(
             name, m, i.replace(REPLACE_NAMESPACE, ""), xp, o), ex
     else:
-        print("[WARN] failed to encode file '{}' as type-serializer '{}' is not arrival for encoding".format(file, t))
+        print("[WARN] failed to encode f '{}' as type-serializer '{}' is not arrival for encoding".format(file, t))
 
 
 NAMES = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

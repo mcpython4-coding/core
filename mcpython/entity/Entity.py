@@ -37,7 +37,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :param kwargs: kwargs to send to the constructor
         :return: the created entity
         todo: make added to world
-        for moder: use this rather than raw constructor
+        for moder: use this rather than raw constructor as it is the more "safe" way of doing it
         """
         entity = cls(*args, **kwargs)
         entity.position = position
@@ -99,6 +99,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :param dimension: to which dimension-id to teleport to, if None, no dimension change is used
         :param force_chunk_save_update: if the system should force to update were player data is stored
         """
+        if not G.eventhandler.call_cancelable("world:entity:teleport", self, dimension, force_chunk_save_update): return
         if self.chunk is None: sector_before = mcpython.util.math.positionToChunk(self.position)
         else: sector_before = self.chunk.position
         if self.chunk is None: before_dim = None
@@ -114,6 +115,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
                 self.chunk.entities.remove(self)
             self.chunk = dimension.get_chunk_for_position(self.position)
             self.chunk.entities.add(self)
+        G.eventhandler.call("world:entity:teleport:post", self)
 
     # interaction functions
 
@@ -202,7 +204,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         can be used to update animations, movement, do path finding stuff, damage other entities, ...
         """
         x, y, z = self.position
-        dx, dy, dz = self.movement
+        dx, dy, dz = self.nbt_data["motion"]
         self.teleport((x+dx, y+dy, z+dz))
 
     # data serialisation
@@ -213,6 +215,7 @@ class Entity(mcpython.event.Registry.IRegistryContent):
         :return: an pickle-able version, excluding position, rotation and harts, should include inventory serializer
             calls to make sure that everything works
         The nbt data is auto-saved
+        Only extra stuff should be saved!
         """
 
     def load(self, data):

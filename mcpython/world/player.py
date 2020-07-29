@@ -20,6 +20,7 @@ import mcpython.mod.ModMcpython
 import mcpython.rendering.EntityRenderer
 import mcpython.util.math
 import globals as G
+import mcpython.entity.DamageSource
 
 
 @G.registry
@@ -152,9 +153,10 @@ class Player(mcpython.entity.Entity.Entity):
         :param itemstack: the itemstack to add
         :return: either successful or not
         """
+        if not G.eventhandler.call_cancelable("gameplay:player:pick_up_item", self, itemstack): return
+
         # have we an slot?
-        if type(itemstack) in (
-        mcpython.gui.Slot.Slot, mcpython.gui.Slot.SlotCopy): itemstack = itemstack.get_itemstack()
+        if type(itemstack) in (mcpython.gui.Slot.Slot, mcpython.gui.Slot.SlotCopy): itemstack = itemstack.get_itemstack()
         if type(itemstack) == list:
             return all([self.pick_up(itemstack) for itemstack in itemstack])
 
@@ -198,7 +200,8 @@ class Player(mcpython.entity.Entity.Entity):
             self.create_inventories()
         return self.inventories["hotbar"].slots[self.active_inventory_slot]
 
-    def kill(self, test_totem=True):
+    def kill(self, drop_items=True, kill_animation=True, damage_source: mcpython.entity.DamageSource.DamageSource = None, test_totem=True):
+        if not G.eventhandler.call_cancelable("gameplay:player:scheduled_die:pre", self, drop_items, kill_animation, damage_source, test_totem): return
         if test_totem:
             # todo: add effects
             if self.get_active_inventory_slot().get_itemstack().get_item_name() == "minecraft:totem_of_undying":
@@ -211,6 +214,8 @@ class Player(mcpython.entity.Entity.Entity):
                 self.hearts = 20
                 self.hunger = 20
                 return
+        super().kill()
+        if not G.eventhandler.call_cancelable("gameplay:player:scheduled_die:between", self, drop_items, kill_animation, damage_source, test_totem): return
         sector = mcpython.util.math.positionToChunk(self.position)
         globals.world.change_chunks(sector, None)
         self.reset_moving_slot()
@@ -231,13 +236,14 @@ class Player(mcpython.entity.Entity.Entity):
         self.flying = False if self.gamemode != 3 else True
         self.armor_level = 0
         self.armor_toughness = 0
-        globals.eventhandler.call("player:die", self)
         sector = mcpython.util.math.positionToChunk(self.position)
         globals.world.change_chunks(None, sector)
         # todo: recalculate armor level!
 
         if not globals.world.gamerulehandler.table["doImmediateRespawn"].status.status:
             globals.statehandler.switch_to("minecraft:escape_state")  # todo: add special state [see above]
+
+        G.eventhandler.call("gamplay:player:die", self, damage_source)
 
     def _get_position(self):
         return self.position

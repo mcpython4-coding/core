@@ -53,6 +53,32 @@ information on development:
         its id.
 
 
+changelog of snapshot [next]
+    - MDK has now an function to change the target version
+    - DataGenerator system allows now to add new data generators during data-gen-ing
+    - MDK can access now versions from an launcher instance
+    - MDK is now capable of building the mod into one final zipfile
+    - added data generators for more stuff
+    - improved crafting system
+    - added FallingBlockEntity
+    - IFallingBlock is now based around an entity instead of an simple block
+    - added data generator for language files and loot tables
+    - changed how the game is launching to an more modify-able way
+    - changed a lot of events
+    - block states can now have parents and alias model names
+
+    fixed issues:
+        - IHorizontalOrientableBlock was behaving incorrectly
+
+        from previous release:
+            - ItemAtlas was baking some item images in some cases not correctly
+            - CombinedSlabFactory was not generating block states correctly
+
+        long term issues:
+            - Entity.tick() was never called
+            - command entry for blocks was not accepting air
+
+
 changelog of a1.0.0: (excluding the changes from the snapshots below)
     Rendering:
         - added tooltip system for items with their backends at Item-class and factory methods at ItemFactory

@@ -7,7 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.event.Registry
-import mcpython.mod.ModMcpython
+import globals as G
 
 
 class InvalidSaveException(Exception): pass
@@ -17,28 +17,46 @@ class MissingSaveException(Exception): pass
 
 
 class IDataSerializer(mcpython.event.Registry.IRegistryContent):
+    """
+    Serializer class for any stuff saved in the game files.
+    Used for accessing the data and loading it into an way that the game can understand it.
+    """
+
     TYPE = "minecraft:data_serializer"
     PART = None  # which part it can serialize
 
     @classmethod
     def load(cls, savefile, **kwargs):
+        """
+        Loads stuff into the game
+        :param savefile: the SaveFile object to use
+        :param kwargs: the configuration
+        """
         raise NotImplementedError()
 
     @classmethod
     def save(cls, data, savefile, **kwargs):
+        """
+        Saves data into the storage file
+        :param data: the data to save
+        :param savefile: the SaveFile object to save
+        :param kwargs: the configuration
+        """
         raise NotImplementedError()
 
     @classmethod
     def apply_part_fixer(cls, savefile, fixer):
-        pass
+        """
+        Handler function for applying PartFixer instances into the given system
+        :param savefile: the SaveFile used
+        :param fixer: the fixer instance
+        """
 
 
 dataserializerregistry = mcpython.event.Registry.Registry("dataserializer", ["minecraft:data_serializer"])
 
 
+@G.modloader("minecraft", "stage:serializer:parts")
 def load():
     from mcpython.storage.serializer import (General, PlayerData, Inventory, Chunk, GameRule, RegistryInfo)
-
-
-mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:serializer:parts", load)
 

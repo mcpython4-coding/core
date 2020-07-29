@@ -11,7 +11,6 @@ import mcpython.ResourceLocator
 import globals as G
 import pyglet
 import os
-import mcpython.mod.ModMcpython
 import mcpython.config
 
 MISSING_TEXTURE = mcpython.ResourceLocator.read("assets/missingtexture.png", "pil").resize((16, 16), PIL.Image.NEAREST)
@@ -122,5 +121,4 @@ class TextureAtlas:
 
 handler = TextureAtlasGenerator()
 
-mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:textureatlas:bake", handler.output,
-                                                     info="building texture atlases...")
+G.modloader("minecraft", "stage:textureatlas:bake")(handler.output)

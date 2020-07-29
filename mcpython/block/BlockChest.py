@@ -21,7 +21,6 @@ import logger
 BBOX = mcpython.block.BoundingBox.BoundingBox((14/16, 14/16, 14/16), (1/16, 1/16, 1/16))  # the bounding box of the chest
 
 
-@G.registry
 class BlockChest(Block.Block):
     """
     The Chest block class
@@ -138,4 +137,9 @@ class BlockChest(Block.Block):
         else:
             logger.println("[SERIALIZER][WARN] BlockChest at {} is missing loot table in save files".format(
                 self.position))
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(BlockChest)
 

@@ -121,7 +121,8 @@ class LootTableHandler:
         name = data["function"]
         if name in mcpython.loot.LootTableFunction.loottablefunctionregistry.registered_object_map:
             return mcpython.loot.LootTableFunction.loottablefunctionregistry.registered_object_map[name](data)
-        raise ValueError("unable to decode loot table function '{}'".format(name))
+        logger.println("unable to decode loot table function '{}'".format(name))
+        return
 
     def parse_condition(self, data: dict) -> mcpython.loot.LootTableCondition.ILootTableCondition:
         name = data["condition"]
@@ -142,6 +143,7 @@ class LootTablePoolEntry:
             obj.conditions = [handler.parse_condition(cond) for cond in data["conditions"]]
         if "functions" in data:
             obj.functions = [handler.parse_function(func) for func in data["functions"]]
+            while None in obj.functions: obj.functions.remove(None)
         if "name" in data:
             obj.name = data["name"]
         if "children" in data:
@@ -255,7 +257,17 @@ class LootTable:
 
     @classmethod
     def from_data(cls, data: dict, name: str):
-        obj = cls(LootTableTypes[data["type"].split(":")[-1].upper()] if "type" in data else LootTableTypes.UNSET)
+        try:
+            obj = cls(LootTableTypes[data["type"].split(":")[-1].upper()] if "type" in data else LootTableTypes.UNSET)
+        except KeyError:
+            if "type" in data:
+                logger.println("[WARN] type '{}' not found for loot table '{}'!".format(data["type"], name))
+            else:
+                logger.write_exception("[ERROR] fatal during loading loot table '{}'".format(name))
+            return
+        except:
+            logger.write_exception("[ERROR] fatal during loading loot table '{}'".format(name))
+            return
         handler.loot_tables[name] = obj
         if "pools" in data:
             [obj.pools.append(LootTablePool.from_data(obj, d)) for d in data["pools"]]

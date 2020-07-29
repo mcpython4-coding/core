@@ -19,7 +19,7 @@ class BoundingBox:
 
     def test_point_hit(self, point, boxposition):
         point = mcpython.util.math.rotate_point(point, tuple([boxposition[i] + self.relposition[i] for i in range(3)]),
-                                       rotation=self.rotation)
+                                                rotation=self.rotation)
         x, y, z = point
         sx, sy, sz = tuple([boxposition[i] - 0.5 + self.relposition[i] for i in range(3)])
         ex, ey, ez = tuple([boxposition[i] - 0.5 + self.relposition[i] + self.size[i] for i in range(3)])
@@ -31,12 +31,12 @@ class BoundingBox:
         x += self.relposition[0] - 0.5 + (self.size[0] / 2)
         y += self.relposition[1] - 0.5 + (self.size[1] / 2)
         z += self.relposition[2] - 0.5 + (self.size[2] / 2)
-        vertex_data_ur = mcpython.util.math.cube_vertices(0, 0, 0, *[f/2+0.001 for f in self.size])
+        vertex_data_ur = sum(mcpython.util.math.cube_vertices_better(0, 0, 0, *[f / 2 + 0.001 for f in self.size]), [])
         vertex_data = []
         for i in range(len(vertex_data_ur) // 3):
             nx, ny, nz = x, y, z
-            rx, ry, rz = mcpython.util.math.rotate_point(vertex_data_ur[i*3:i*3+3], (0, 0, 0), rot)
-            vertex_data.extend([nx+rx, ny+ry, nz+rz])
+            rx, ry, rz = mcpython.util.math.rotate_point(vertex_data_ur[i * 3:i * 3 + 3], (0, 0, 0), rot)
+            vertex_data.extend([nx + rx, ny + ry, nz + rz])
         mcpython.rendering.OpenGLSetupFile.execute_file_by_name("draw_line_box", vertex=('v3f/static', vertex_data))
 
 
@@ -57,8 +57,8 @@ class BoundingArea:
             if bbox.test_point_hit(point, boxposition): return True
         return False
 
-    def draw_outline(self, position): [bbox.draw_outline(position) for bbox in self.bboxes]
+    def draw_outline(self, position):
+        [bbox.draw_outline(position) for bbox in self.bboxes]
 
 
 FULL_BLOCK_BOUNDING_BOX = BoundingBox((1, 1, 1))
-

@@ -40,8 +40,8 @@ import deprecation
 # For people which bring their own assets with them: please, if you are not familiar with the whole asset loading
 #   system, use the ResourceLocator.add_resources_by_modname-function to notate your loading to the right events
 
-if not os.path.exists(G.home+"/mods"):
-    os.makedirs(G.home+"/mods")
+if not os.path.exists(G.home + "/mods"):
+    os.makedirs(G.home + "/mods")
 
 
 class LoadingStage:
@@ -71,7 +71,6 @@ class LoadingStage:
         """
         G.modloader.active_loading_stage += 1
         if G.modloader.active_loading_stage >= len(LOADING_ORDER):
-
             logger.println("[INFO] locking registries...")  # ... and do similar stuff :-)
             G.eventhandler.call("modloader:finished")
 
@@ -191,7 +190,7 @@ class LoadingStages:
                                  "stage:modefactory:use", "stage:modelfactory:bake", "stage:blockstatefactory:prepare",
                                  "stage:blockstatefactory:use", "stage:blockstatefactory:bake")
     BLOCKSTATE = LoadingStage("blockstate loading phase", "stage:blockstate:register_loaders",
-                              "stage:model:blockstate_search", "stage:model:blockstate_create")
+                              "stage:model:blockstate_search", "stage:model:blockstate_create", "stage:model:blockstate_bake")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_search:intern",
                                "stage:model:model_create")
     BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",
@@ -220,7 +219,6 @@ LOADING_ORDER: list = [
     LoadingStages.ITEMS, LoadingStages.INVENTORIES, LoadingStages.COMMANDS, LoadingStages.ENTITIES
 ]
 
-
 if G.data_gen:  # only do it in dev-environment
     LOADING_ORDER.append(LoadingStages.DATA_GENERATION)
 
@@ -236,7 +234,7 @@ LOADING_ORDER += [
 
 def insertAfter(to_insert: LoadingStage, after: LoadingStage) -> bool:
     if after not in LOADING_ORDER: return False
-    LOADING_ORDER.insert(LOADING_ORDER.index(after)+1, to_insert)
+    LOADING_ORDER.insert(LOADING_ORDER.index(after) + 1, to_insert)
     return True
 
 
@@ -291,8 +289,8 @@ class ModLoader:
         self.active_loading_stage = 0
         self.lasttime_mods = {}
         self.found_mod_instances = []
-        if os.path.exists(G.build+"/mods.json"):
-            with open(G.build+"/mods.json") as f:
+        if os.path.exists(G.build + "/mods.json"):
+            with open(G.build + "/mods.json") as f:
                 self.lasttime_mods = json.load(f)
         elif not G.prebuilding:
             logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
@@ -362,7 +360,7 @@ class ModLoader:
         G.eventhandler.call("modloader:location_search", modlocations)
 
         for i, location in enumerate(modlocations):
-            logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i+1)
+            logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
         return modlocations
 
     def load_mod_jsons(self, modlocations: list):
@@ -379,16 +377,18 @@ class ModLoader:
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
                         try:
-                            with f.open("mod.json", mode="r") as sf: self.load_mods_json(sf.read(), file)
+                            with f.open("mod.json", mode="r") as sf:
+                                self.load_mods_json(sf.read(), file)
                         except KeyError:
                             try:
-                                with f.open("mod.toml", mode="r") as sf: self.load_mods_toml(sf.read(), file)
+                                with f.open("mod.toml", mode="r") as sf:
+                                    self.load_mods_toml(sf.read(), file)
                             except KeyError:
                                 logger.println("[WARNING] can't locate mod.json file in mod at '{}'".format(file))
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
                     try:
-                        data = importlib.import_module("mods."+file.split("/")[-1].split("\\")[-1].split(".")[0])
+                        data = importlib.import_module("mods." + file.split("/")[-1].split("\\")[-1].split(".")[0])
                     except ModuleNotFoundError:
                         data = importlib.import_module(file.split("/")[-1].split("\\")[-1].split(".")[0])
                     for modinst in self.found_mod_instances: modinst.package = data
@@ -396,10 +396,12 @@ class ModLoader:
                 sys.path.append(file)
                 mcpython.ResourceLocator.RESOURCE_LOCATIONS.insert(0, mcpython.ResourceLocator.ResourceDirectory(file))
                 self.active_directory = file
-                if os.path.exists(file+"/mod.json"):
-                    with open(file+"/mod.json") as sf: self.load_mods_json(sf.read(), file+"/mod.json")
-                elif os.path.exists(file+"/mods.toml"):
-                    with open(file+"/mods.toml") as sf: self.load_mods_toml(sf.read(), file+"/mods.toml")
+                if os.path.exists(file + "/mod.json"):
+                    with open(file + "/mod.json") as sf:
+                        self.load_mods_json(sf.read(), file + "/mod.json")
+                elif os.path.exists(file + "/mods.toml"):
+                    with open(file + "/mods.toml") as sf:
+                        self.load_mods_toml(sf.read(), file + "/mods.toml")
                 else:
                     logger.println("[WARNING] can't locate mod.json file for mod at '{}'".format(file))
 
@@ -414,7 +416,7 @@ class ModLoader:
         while i < len(sys.argv):
             element = sys.argv[i]
             if element == "--removemod":
-                name = sys.argv[i+1]
+                name = sys.argv[i + 1]
                 if name in self.mods:
                     del self.mods[name]
                 else:
@@ -432,7 +434,7 @@ class ModLoader:
         for modname in self.lasttime_mods.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(self.lasttime_mods[modname]):
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
-                logger.println("rebuild mode due to mod change (remove / version change)")
+                logger.println("rebuild mode due to mod change (remove / version change) of {}".format(modname))
                 G.prebuilding = True
                 G.data_gen = True
         for modname in self.mods.keys():
@@ -440,13 +442,13 @@ class ModLoader:
                 # we have an mod which was loaded not previous but now
                 G.prebuilding = True
                 G.data_gen = True
-                logger.println("rebuild mode due to mod change (addition)")
+                logger.println("rebuild mode due to mod change (addition) of {}".format(modname))
 
     def write_mod_info(self):
         """
         writes the data for the mod table into the file
         """
-        with open(G.build+"/mods.json", mode="w") as f:
+        with open(G.build + "/mods.json", mode="w") as f:
             m = {modinst.name: modinst.version for modinst in self.mods.values()}
             json.dump(m, f)
 
@@ -532,13 +534,18 @@ class ModLoader:
                     if "depends" in entry:
                         for depend in entry["depends"]:
                             t = None if "type" not in depend else depend["type"]
-                            if t is None or t == "depend": modinstance.add_dependency(cls.cast_dependency(depend))
+                            if t is None or t == "depend":
+                                modinstance.add_dependency(cls.cast_dependency(depend))
                             elif t == "depend_not_load_order":
                                 modinstance.add_not_load_dependency(cls.cast_dependency(depend))
-                            elif t == "not_compatible": modinstance.add_not_compatible(cls.cast_dependency(depend))
-                            elif t == "load_before": modinstance.add_load_before_if_arrival(cls.cast_dependency(depend))
-                            elif t == "load_after": modinstance.add_load_after_if_arrival(cls.cast_dependency(depend))
-                            elif t == "only_if": modinstance.add_load_only_when_arrival(cls.cast_dependency(depend))
+                            elif t == "not_compatible":
+                                modinstance.add_not_compatible(cls.cast_dependency(depend))
+                            elif t == "load_before":
+                                modinstance.add_load_before_if_arrival(cls.cast_dependency(depend))
+                            elif t == "load_after":
+                                modinstance.add_load_after_if_arrival(cls.cast_dependency(depend))
+                            elif t == "only_if":
+                                modinstance.add_load_only_when_arrival(cls.cast_dependency(depend))
                             elif t == "only_if_not":
                                 modinstance.add_load_only_when_not_arrival(cls.cast_dependency(depend))
                     if "load_resources" in entry and entry["load_resources"]:
@@ -720,25 +727,13 @@ class ModLoader:
         else:
             f, text = None, ""
         astate.parts[2].text = text if text is not None else "function {}".format(f)
-        astate.parts[1].text = "{} ({}/{})".format(modinst.name, stage.active_mod_index+1, len(self.mods))
+        astate.parts[1].text = "{} ({}/{})".format(modinst.name, stage.active_mod_index + 1, len(self.mods))
         astate.parts[1].progress = stage.active_mod_index + 1
-        index = stage.running_event_names.index(stage.active_event_name)+1 if stage.active_event_name in \
-                                                                              stage.running_event_names else 0
+        index = stage.running_event_names.index(stage.active_event_name) + 1 if stage.active_event_name in \
+                                                                                stage.running_event_names else 0
         astate.parts[0].text = "{} ({}/{}) in {} ({}/{})".format(
-            stage.active_event_name, index, len(stage.running_event_names), stage.name, self.active_loading_stage+1,
+            stage.active_event_name, index, len(stage.running_event_names), stage.name, self.active_loading_stage + 1,
             len(LOADING_ORDER))
 
 
 G.modloader = ModLoader()
-
-
-# this is needed as this depends on above but also above on the import
-import mcpython.mod.ModMcpython
-import mcpython.mod.ConfigFile
-from mcpython.datagen.mcpython import recipes, textures, entity
-
-
-@G.modloader("minecraft", "special:exit")
-def exit():
-    sys.exit()
-

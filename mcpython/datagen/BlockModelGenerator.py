@@ -26,7 +26,7 @@ class ModelRepresentation:
     Rendering is implemented by the respective rendering backend
     """
 
-    def __init__(self, model: str, r_x=0, r_y=0, uvlock=False, weight=None):
+    def __init__(self, model: typing.Union[str, "BlockModelGenerator"], r_x=0, r_y=0, uvlock=False, weight=None):
         """
         will create an new entry
         :param model: the model to use as e.g. minecraft:block/stone
@@ -35,9 +35,9 @@ class ModelRepresentation:
         :param uvlock: if uv's should be not affected by rotation
         :param weight: the weight, when in an list of multiple models
         """
-        self.model = model
-        self.r_x = r_x
-        self.r_y = r_y
+        self.model = model if type(model) == str else "{}:block/{}".format(model.config.default_namespace, model.name)
+        self.r_x = r_x % 360
+        self.r_y = r_y % 360
         self.uvlock = uvlock
         self.weight = weight
 
@@ -52,7 +52,7 @@ class ModelRepresentation:
                 config.default_namespace + ":" + self.model}
         if self.r_x != 0: data["x"] = self.r_x
         if self.r_y != 0: data["y"] = self.r_y
-        if self.uvlock is True: data["uvlock"] = self.uvlock
+        if self.uvlock is True and (self.r_x or self.r_y): data["uvlock"] = self.uvlock
         if self.weight is not None: data["weight"] = self.weight
         self.wrap_cache = data
         return data
@@ -106,12 +106,15 @@ class BlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator):
     generator class for an block state
     """
 
-    def __init__(self, config, name: str):
+    def __init__(self, config, name: str, parent=None, generate_alias=2):
         super().__init__(config)
         self.name = name
         self.states = []
+        self.parent = parent
+        self.alias = {}
+        self.generate_alias = generate_alias
 
-    def add_state(self, state: typing.Union[None, str, dict, list], *models):
+    def add_state(self, state: typing.Union[None, str, dict, list, "BlockModelGenerator"], *models):
         """
         will add an new possible state into the block state file
         :param state: the state as an str, an dict or an list of states or None for default
@@ -119,12 +122,41 @@ class BlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator):
         """
         modelx = list(models)
         for i, model in enumerate(models):
-            if type(model) == str:
+            if type(model) == BlockModelGenerator:
+                modelx[i] = "{}:block/{}".format(model.config.default_namespace, model.name)
+            elif type(model) == str:
                 modelx[i] = ModelRepresentation(model)
         self.states.append((state, tuple(modelx)))
         return self
 
+    def addAliasName(self, name: str, target: str):
+        self.alias[name] = target
+        return self
+
+    def generateBestAlias(self, limit=2):
+        """
+        Helper function for generating aliases where possible
+        :param limit: when an model alias should be created
+        """
+        model_counter = {}
+        for state, models in self.states:
+            for model in models:
+                model_counter.setdefault(model.model, [0, []])
+                model_counter[model.model][0] += 1
+                model_counter[model.model][1].append(model)
+        i = 0
+        for name in model_counter:
+            if name in self.alias or name.startswith("alias:"): continue
+            if model_counter[name][0] >= limit:
+                alias_name = "alias:{}".format(i)
+                self.addAliasName(alias_name, name)
+                i += 1
+                for model in model_counter[name][1]:
+                    model.model = alias_name
+        return self
+
     def generate(self):
+        if self.generate_alias > 0: self.generateBestAlias(self.generate_alias)
         data = {"variants": {}}
         for key, model in self.states:
             m = model[0].wrap(self.config) if len(model) == 1 else [e.wrap(self.config) for e in model]
@@ -134,6 +166,9 @@ class BlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator):
             else:
                 data["variants"][encode_model_key(key)] = m
 
+        if self.parent is not None: data["parent"] = self.parent
+        if len(self.alias) > 0: data["alias"] = self.alias
+
         self.config.write_json(data, "assets", "blockstates", self.name+".json")
 
 
@@ -142,10 +177,13 @@ class MultiPartBlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator
     Generator class for an multipart model
     """
 
-    def __init__(self, config, name: str):
+    def __init__(self, config, name: str, parent=None, optimize=True):
         super().__init__(config)
         self.name = name
         self.states = []
+        self.parent = parent
+        self.alias = {}
+        self.optimize = optimize
 
     def add_state(self, state: typing.Union[None, str, dict, list], *models):
         """
@@ -165,8 +203,37 @@ class MultiPartBlockStateGenerator(mcpython.datagen.Configuration.IDataGenerator
         self.states.append((state, modelx))
         return self
 
+    def addAliasName(self, name: str, target: str):
+        self.alias[name] = target
+        return self
+
+    def generateBestAlias(self, limit=2):
+        """
+        Helper function for generating aliases where possible
+        :param limit: when an model alias should be created
+        """
+        model_counter = {}
+        for state, models in self.states:
+            for model in models:
+                model_counter.setdefault(model.model, [0, []])
+                model_counter[model.model][0] += 1
+                model_counter[model.model][1].append(model)
+        i = 0
+        for name in model_counter:
+            if name in self.alias or name.startswith("alias:"): continue
+            if model_counter[name][0] >= limit:
+                alias_name = "alias:{}".format(i)
+                self.addAliasName(alias_name, name)
+                i += 1
+                for model in model_counter[name][1]:
+                    model.model = alias_name
+        return self
+
     def generate(self):
+        if self.optimize: self.generateBestAlias()
         data = {"multipart": []}
+        if self.parent is not None: data["parent"] = self.parent
+        if len(self.alias) > 0: data["alias"] = self.alias
         for state, model in self.states:
             m = model[0].wrap(self.config) if len(model) == 1 else [e.wrap() for e in model]
             d = {"apply": m}

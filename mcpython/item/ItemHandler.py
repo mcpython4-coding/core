@@ -57,7 +57,6 @@ def load_data(from_block_item_generator=False):
                                                 "They are removed from the system"])
         with open(G.build + "/itemblockfactory.json", mode="w") as f:
             json.dump(data, f)
-    ITEM_ATLAS.load()
 
 
 def add_to_image_atlas(file):

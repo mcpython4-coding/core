@@ -54,45 +54,69 @@ print("creating main files...")
 with open(local + "/source/{}/{}.py".format(mod_name, mod_name_camel_case), mode="w") as target, open(local+"/tools/mod.py") as template:
     target.write(template.read().format(CAMEL_NAME=mod_name_camel_case, VERSION=version, NAME=mod_name))
 
-v = int(input("newest dev: (1), newest release (2): "))
+v = int(input("newest dev: (1), newest release (2), launcher profile (3), dev environment (4): "))
 
 print("getting newest version...")
+url = None
+d = None
 
 if v == 1:
     url = "https://github.com/mcpython4-coding/core/archive/dev.zip"
-else:
+elif v == 2:
     url = "https://github.com/mcpython4-coding/core/archive/release.zip"
+elif v == 3:
+    directory = input("please select the launcher directory: ")
+    sys.path.append(directory)
+    import launcher.Launcher
 
-download_file(url, local+"/cache/core.zip")
+    import launcher.globalstorage as G
+    G.local = directory  # re-direct this!
 
-print("extracting code...")
-print()
+    launcher.Launcher.setup()
+    instance = launcher.Launcher.Launcher()
+    instance.load_index()
 
-i = 1
-with zipfile.ZipFile(local+"/cache/core.zip") as f:
-    names = f.namelist()
-    total = len(names)
-    for element in names:
-        if element.replace("\\", "/").endswith("/"): continue
-        print("\rextracting {}/{}: {}".format(i, total, element), end="")
-        r = os.path.join(local+"/cache/core", "/".join(element.replace("\\", "/").split("/")[1:]))
-        create_or_leave(os.path.dirname(r))
-        with open(r, mode="wb") as fw:
-            fw.write(f.read(element))
-        i += 1
-print("\nfinished!")
+    version = launcher.Launcher.Version.user_selects()
+    version.download()
 
-d = {"url": url, "path": local+"/cache/core", "home": local+"/cache/home", "build": local+"/cache/build"}
+    d = {"url": None, "path": version.path, "home": local+"/cache/home", "build": local+"/cache/build"}
+elif v == 4:
+    directory = input("please select the dev directory: ")
+    d = {"url": None, "path": directory, "home": local+"/cache/home", "build": local+"/cache/build"}
+else:
+    raise ValueError("unsupported operation: "+str(v))
+
+if v in (1, 2):
+    download_file(url, local+"/cache/core.zip")
+
+    print("extracting code...")
+    print()
+
+    i = 1
+    with zipfile.ZipFile(local+"/cache/core.zip") as f:
+        names = f.namelist()
+        total = len(names)
+        for element in names:
+            if element.replace("\\", "/").endswith("/"): continue
+            print("\rextracting {}/{}: {}".format(i, total, element), end="")
+            r = os.path.join(local+"/cache/core", "/".join(element.replace("\\", "/").split("/")[1:]))
+            create_or_leave(os.path.dirname(r))
+            with open(r, mode="wb") as fw:
+                fw.write(f.read(element))
+            i += 1
+    print("\nfinished!")
+
+    d = {"url": url, "path": local+"/cache/core", "home": local+"/cache/home", "build": local+"/cache/build"}
 
 with open(local + "/config.json", mode="w") as f:
     json.dump(d, f)
 
 print("installing libraries...")
-subprocess.call([sys.executable, local+"/cache/core/installer.py"], stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
+subprocess.call([sys.executable, d["path"]+"/installer.py"], stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
 
 if v in (1, 2):
     print("doing data-gen as it is an not-build-ed version...")
-    subprocess.call([sys.executable, local+"/cache/core/__main__.py", "--data-gen", "--enable-all-blocks", "--home-folder", d["home"],
+    subprocess.call([sys.executable, d["path"]+"/__main__.py", "--data-gen", "--enable-all-blocks", "--home-folder", d["home"],
                      "--build-folder", d["build"], "--exit-after-data-gen", "--no-window"])
 
 

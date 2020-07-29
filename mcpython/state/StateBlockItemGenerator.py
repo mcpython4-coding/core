@@ -115,9 +115,11 @@ class StateBlockItemGenerator(State.State):
         G.world.cleanup()
         with open(G.build+"/itemblockfactory.json", mode="w") as f:
             json.dump(self.table, f)
+        G.registry.get_by_name("item").unlock()
         mcpython.factory.ItemFactory.ItemFactory.process()
+        G.registry.get_by_name("item").lock()
         mcpython.item.ItemHandler.build()
-        mcpython.item.ItemHandler.load_data(from_block_item_generator=True)
+        mcpython.item.ItemHandler.ITEM_ATLAS.load()
         G.window.set_minimum_size(1, 1)
         G.window.set_maximum_size(100000, 100000)  # only here for making resizing possible again
         mcpython.event.TickHandler.handler.enable_tick_skipping = True
@@ -148,7 +150,7 @@ class StateBlockItemGenerator(State.State):
                 blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
             blockinstance.face_state.update(redraw_complete=True)
         except ValueError:
-            logger.println("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
+            logger.write_exception("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                            "following exception".format(self.tasks[self.blockindex]))
             self.blockindex += 1
             pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)

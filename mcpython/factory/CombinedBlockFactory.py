@@ -16,7 +16,6 @@ from mcpython.datagen.BlockModelGenerator import ModelRepresentation
 import mcpython.block.BlockWall
 from mcpython.datagen.RecipeGenerator import ShapedRecipeGenerator
 
-
 WALL_TEMPLATE = sum([[(x, y) for y in range(2)] for x in range(3)], [])
 SLAB_TEMPLATE = [(x, 0) for x in range(3)]
 
@@ -36,7 +35,7 @@ def generate_full_block_slab_wall(config: mcpython.datagen.Configuration.DataGen
         generate_full_block(config, name, texture if textures is None else textures[0], callback)
     if enable[1] if type(enable[1]) == bool else enable[1][slab_name]:
         generate_slab_block(config, slab_name, texture if textures is None else textures[1], callback,
-                            generate_recipes[0])
+                            generate_recipes[0], full=None if not (enable[0] if type(enable[0]) == bool else enable[0][name]) else "{}:block/{}".format(*name.split(":")))
     if enable[2] if type(enable[2]) == bool else enable[2][wall_name]:
         generate_wall_block(config, wall_name, texture if textures is None else textures[2], callback,
                             generate_recipes[1])
@@ -45,15 +44,14 @@ def generate_full_block_slab_wall(config: mcpython.datagen.Configuration.DataGen
 def generate_full_block(config, name: str, texture: str = None, callback=None):
     if texture is None: texture = "{}:block/{}".format(*name.split(":"))
     modname, raw_name = name.split(":")
-    CombinedFullBlockFactory(modname, config, on_create_callback=callback).setName(name).setTextureVariable(
-        "all", texture)
+    CombinedFullBlockFactory(modname, config, on_create_callback=callback).setName(name).setTextureVariable("all", texture)
 
 
-def generate_slab_block(config, name: str, texture: str = None, callback=None, generate_recipe=True):
+def generate_slab_block(config, name: str, texture: str = None, callback=None, generate_recipe=True, full=None):
     if texture is None: texture = "{}:block/{}".format(*name.split("_slab")[0].split(":"))
     modname, raw_name = name.split(":") if name.count(":") == 1 else (config.modname, name)
-    CombinedSlabFactory(texture, modname, config, full_model="{}:block/{}".format(modname, raw_name),
-                        on_create_callback=callback).setName(name)
+    if full is None: full = "{}:block/{}".format(modname, raw_name.replace("_slab", ""))
+    CombinedSlabFactory(texture, modname, config, full_model=full, on_create_callback=callback).setName(name)
     if generate_recipe:
         mcpython.datagen.RecipeGenerator.ShapedRecipeGenerator(name, config).setEntries(
             SLAB_TEMPLATE, name.split("_slab")[0]).setOutput((6, name)).setGroup("slab")
@@ -197,7 +195,7 @@ class CombinedSlabFactory:
                 "all", self.texture)
         mcpython.datagen.BlockModelGenerator.BlockStateGenerator(
             self.config, name).add_state("type=bottom", "{}:block/{}".format(self.modname, name)).add_state(
-            "type=top", "{}:block/{}".format(self.modname, name)).add_state("type=double", self.full_model)
+            "type=top", "{}:block/{}_top".format(self.modname, name)).add_state("type=double", self.full_model)
 
     def __generate_factories(self):
         factory = mcpython.factory.BlockFactory.BlockFactory().setName(self.name).setSlab()
@@ -256,13 +254,9 @@ class CombinedWallFactory:
             "wall", self.texture)
         side = "{}:block/{}_side".format(self.modname, name)
         tall = "{}:block/{}_side_tall".format(self.modname, name)
-        mcpython.datagen.BlockModelGenerator.MultiPartBlockStateGenerator(
-            self.config, name).add_state("up=true", "{}:block/{}_post".format(self.modname, name)).add_state(
-            "north=low", side).add_state("east=low", ModelRepresentation(side, r_y=90)).add_state(
-            "south=low", ModelRepresentation(side, r_y=180)).add_state("west=low", ModelRepresentation(
-                side, r_y=270)).add_state("north=tall", tall).add_state(
-            "east=tall", ModelRepresentation(tall, r_y=90)).add_state("south=tall", ModelRepresentation(
-                tall, r_y=180)).add_state("west=tall", ModelRepresentation(tall, r_y=270))
+        post = "{}:block/{}_post".format(self.modname, name)
+        mcpython.datagen.BlockModelGenerator.MultiPartBlockStateGenerator(self.config, name, parent="minecraft:wall_template").addAliasName(
+            "alias:post", post).addAliasName("alias:side", side).addAliasName("alias:tall", tall)
 
     def __generate_factories(self):
         factory = mcpython.factory.BlockFactory.BlockFactory().setName(self.name)
@@ -317,8 +311,8 @@ class CombinedLogFactory:
             "end", self.front_texture).set_texture_variable("side", self.side_texture)
         hor = "{}:block/{}_horizontal".format(self.modname, name)
         mcpython.datagen.BlockModelGenerator.BlockStateGenerator(
-            self.config, name).add_state("axis=x", ModelRepresentation(hor, r_x=90, r_y=90)).add_state(
-            "axis=y", "{}:block/{}".format(self.modname, name)).add_state("axis=z", ModelRepresentation(hor, r_x=90))
+            self.config, name, parent="minecraft:log_template").addAliasName("alias:horizontal", hor).addAliasName(
+            "alias:normal", "{}:block/{}".format(self.modname, name))
 
     def __generate_factories(self):
         factory = mcpython.factory.BlockFactory.BlockFactory().setName(self.name).setLog()

@@ -163,7 +163,7 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            flag = entrylist[start] in G.registry.get_by_name("block").full_table  # is this block arrival?
+            flag = entrylist[start] in G.registry.get_by_name("block").full_table or entrylist[start] in ("air", "minecraft:air")  # is this block arrival?
             if not flag:
                 logger.println("[INFORM] invalid due to missing registry entry. Use '/registryinfo block' for an list "
                                "of all found blocks!")

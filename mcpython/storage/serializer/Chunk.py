@@ -169,12 +169,14 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                         if entry["name"] in blocks:
                             palette[i] = fixer.fix(savefile, dim, region, chunk, entry)
                 write_region_data(savefile, dim, region, data)
+
         elif issubclass(fixer, RegionDataFixer):
             for dim, region in savefile.region_iterator():
                 data = access_region_data(savefile, dim, region)
                 if data is None: continue
                 data = fixer.fix(savefile, dim, region, data)
                 write_region_data(savefile, dim, region, data)
+
         elif issubclass(fixer, ChunkDataFixer):
             for dim, region in savefile.region_iterator():
                 data = access_region_data(savefile, dim, region)
@@ -183,6 +185,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                     if chunk == "version": continue
                     data[chunk] = fixer.fix(savefile, dim, region, chunk, data["chunk"])
                 write_region_data(savefile, dim, region, data)
+
         elif issubclass(fixer, BlockRemovalFixer):
             blocks = (fixer.TARGET_BLOCK_NAMES if type(fixer.TARGET_BLOCK_NAMES) in (list, tuple, set) else
                       (fixer.TARGET_BLOCK_NAMES,))
@@ -196,6 +199,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                         if entry["name"] in blocks:
                             palette[i] = fixer.REPLACE
                 write_region_data(savefile, dim, region, data)
+
         elif issubclass(fixer, EntityDataFixer):
             for dim, region in savefile.region_iterator():
                 data = access_region_data(savefile, dim, region)
@@ -207,6 +211,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                         if entity_data["type"] == fixer.TARGET_ENTITY_NAME:
                             fixer.fix(savefile, dim, region, chunk, entity_data)
                 write_region_data(savefile, dim, region, data)
+
         elif issubclass(fixer, EntityRemovalFixer):
             for dim, region in savefile.region_iterator():
                 data = access_region_data(savefile, dim, region)
@@ -218,6 +223,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                         if entity_data["type"] == fixer.TARGET_ENTITY_NAME:
                             cdata["entities"].remove(entity_data)
                 write_region_data(savefile, dim, region, data)
+
         elif issubclass(fixer, ChunkMapDataFixer):
             for dim, region in savefile.region_iterator():
                 data = access_region_data(savefile, dim, region)
@@ -235,6 +241,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             data = access_region_data(savefile, dimension, region)
         except NotImplementedError:
             return
+
         chunk_instance: mcpython.world.Chunk.Chunk = G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
         if chunk_instance.loaded: return
         if data is None: return

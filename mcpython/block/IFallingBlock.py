@@ -25,17 +25,10 @@ class IFallingBlock(mcpython.block.Block.Block):
         x, y, z = self.position
         blockinst = G.world.get_active_dimension().get_block((x, y - 1, z))
         if not blockinst:
-            if mcpython.event.TickHandler.handler.active_tick - self.fall_cooldown >= 10:
-                self.fall_cooldown = mcpython.event.TickHandler.handler.active_tick
-                mcpython.event.TickHandler.handler.bind(self.fall, 10, args=[self])
-            else:
-                mcpython.event.TickHandler.handler.bind(self.on_block_update, 4)
+            G.entityhandler.add_entity("minecraft:falling_block", self.position, representing_block=self)
+            G.world.get_active_dimension().remove_block(self.position)
 
     def fall(self, check=True):
-        """
-        let the block fall
-        :param check: weither to check if the block can fall to that position or not
-        """
         x, y, z = self.position
         if not check or not G.world.get_active_dimension().get_block((x, y - 1, z)):
             G.world.get_active_dimension().remove_block(self.position, blockupdateself=False)

@@ -51,7 +51,6 @@ class World:
 
         # when in an network, stores an reference to all other players
         self.players: typing.Dict[str, mcpython.world.player.Player] = {}
-        # self.add_player("unknown", add_inventories=False)
         self.active_player: str = "unknown"  # todo: make property, make None-able & set default None when not in world
         self.world_loaded = False  # describes if the world is loaded or not
 
@@ -279,7 +278,7 @@ class World:
         will clean up the world
         :param remove_dims: if dimensions should be cleared
         :param filename: the new filename if it changes
-        :param add_player: if the player should be added
+        :param add_player: deprecated
         todo: make split up into smaller functions
         """
         self.active_dimension = 0
@@ -300,7 +299,6 @@ class World:
         G.worldgenerationhandler.task_handler.clear()
         G.entityhandler.entity_map.clear()
         self.players.clear()
-        if add_player: self.add_player("unknown")
         if filename is not None:
             self.setup_by_filename(filename)
         mcpython.chat.DataPack.datapackhandler.cleanup()

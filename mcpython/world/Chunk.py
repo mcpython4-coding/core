@@ -138,7 +138,7 @@ class Chunk:
         """
         return position in self.world or G.worldgenerationhandler.task_handler.get_block(position) is not None
 
-    def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True, blockupdateself=True,
+    def add_block(self, position: tuple, block_name: typing.Union[str, Block.Block], immediate=True, block_update=True, blockupdateself=True,
                   args=[], kwargs={}):
         """
         adds an block to the given position
@@ -161,6 +161,7 @@ class Chunk:
         if issubclass(type(block_name), Block.Block):
             blockobj = block_name
             blockobj.position = position
+            blockobj.face_state.update()
         else:
             table = G.registry.get_by_name("block").full_table
             if block_name not in table:
@@ -253,10 +254,6 @@ class Chunk:
         else:
             G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
 
-    @deprecation.deprecated("dev1-4", "a1.2.0")
-    def _show_block(self, position, block=None):
-        self.world[position].face_state.update()
-
     def hide_block(self, position: typing.Union[typing.Tuple[int, int, int], Block.Block], immediate=True):
         """
         Hide the block at the given `position`. Hiding does not remove the
@@ -272,11 +269,6 @@ class Chunk:
             self.world[position].face_state.hide_all()
         else:
             G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
-
-    @deprecation.deprecated("dev1-4", "a1.2.0")
-    def _hide_block(self, position):
-        if position not in self.world: return
-        self.world[position].face_state.hide_all()
 
     def show(self, force=False):
         """

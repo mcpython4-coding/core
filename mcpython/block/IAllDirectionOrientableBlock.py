@@ -21,13 +21,13 @@ class IAllDirectionOrientableBlock(mcpython.block.Block.Block):
             px, py, pz = self.position
             dx, dy, dz = sx - px, sy - py, sz - pz
             if dx > 0:
-                self.face = mcpython.util.enums.EnumSide.NORTH
-            elif dx < 0:
-                self.face = mcpython.util.enums.EnumSide.SOUTH
-            elif dz > 0:
                 self.face = mcpython.util.enums.EnumSide.EAST
-            elif dz < 0:
+            elif dx < 0:
                 self.face = mcpython.util.enums.EnumSide.WEST
+            elif dz > 0:
+                self.face = mcpython.util.enums.EnumSide.SOUTH
+            elif dz < 0:
+                self.face = mcpython.util.enums.EnumSide.NORTH
             elif dy > 0:
                 self.face = mcpython.util.enums.EnumSide.UP
             elif dy < 0:

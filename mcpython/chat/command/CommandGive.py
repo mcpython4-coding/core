@@ -33,13 +33,9 @@ class CommandGive(mcpython.chat.command.Command.Command):
         stack = mcpython.gui.ItemStack.ItemStack(values[1])  # get the stack to add
         if len(values) > 2: stack.amount = abs(values[2])  # get the amount if provided
         # check for overflow
-        cls.CANCEL_GIVE = False
-        G.eventhandler.call("command:give:start", stack)
-        if cls.CANCEL_GIVE: return
         if stack.amount > stack.item.STACK_SIZE: stack.amount = stack.item.STACK_SIZE
         for player in values[0]:  # iterate over all players to give
             player.pick_up(stack)
-        G.eventhandler.call("command:give:end", stack)
 
     @staticmethod
     def get_help() -> list:

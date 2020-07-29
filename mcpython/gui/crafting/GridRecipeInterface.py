@@ -16,6 +16,10 @@ import logger
 
 
 class GridRecipeInterface(mcpython.gui.crafting.IRecipeInterface.IRecipeInterface):
+    """
+    Recipe interface for an crafting grid of arbitrary size using the default recipe implementation
+    """
+
     NAME = "minecraft:crafting_interface"
 
     def __init__(self, slot_input_map, slot_output_map, maxsize=None, minsize=None, enabled=True,
@@ -47,6 +51,9 @@ class GridRecipeInterface(mcpython.gui.crafting.IRecipeInterface.IRecipeInterfac
         self.shapeless_enabled = enable_shapeless_recipes and enabled
 
     def check_recipe_state(self):
+        """
+        Helper function for re-checking the items in the grid. Auto-called if an slot-itemstack is updated
+        """
         # get info about the items which are in the interface
         itemlenght = 0
         itemtable = {}
@@ -57,9 +64,13 @@ class GridRecipeInterface(mcpython.gui.crafting.IRecipeInterface.IRecipeInterfac
                     itemlenght += 1
                     itemtable[(x, y)] = slot.get_itemstack().get_item_name()
                     shapelessitems.append(slot.get_itemstack().get_item_name())
+
+        # Reset the active stuff
         self.active_recipe = None
         self.slot_output_map.get_itemstack().clean()
+
         if len(shapelessitems) == 0: return  # have we any item in the grid?
+
         shapelessitems.sort()
         itemtable = self._minimize_slotmap(itemtable)
         sx = max(itemtable, key=lambda v: v[0])[0]
@@ -77,7 +88,7 @@ class GridRecipeInterface(mcpython.gui.crafting.IRecipeInterface.IRecipeInterfac
             elif issubclass(type(recipe), mcpython.gui.crafting.GridRecipes.GridShapeless) and self.shapeless_enabled:
                 state = self._check_shapeless(recipe, shapelessitems)
             else:
-                logger.println("recipe {} could NOT be checked".format(recipe))
+                logger.println("recipe {} could NOT be checked as it is not an subclass of an supported recipe".format(recipe))
                 continue
             if state:
                 self.active_recipe = recipe
@@ -153,7 +164,8 @@ class GridRecipeInterface(mcpython.gui.crafting.IRecipeInterface.IRecipeInterfac
 
     def on_output_update(self, player=False):
         if not self.active_recipe: return
-        if self.slot_output_map.get_itemstack().is_empty() and player:  # have we removed items?
+        if self.slot_output_map.get_itemstack().is_empty() and player:  # have we removed items and where they removed by the player?
+            G.eventhandler.call("gui:crafting:grid:output:remove", self, self.slot_output_map, self.slot_input_map, self.active_recipe)
             self.remove_input()
             self.check_recipe_state()
             if all([all([slot.get_itemstack().is_empty() for slot in row]) for row in self.slot_input_map]):
@@ -161,6 +173,7 @@ class GridRecipeInterface(mcpython.gui.crafting.IRecipeInterface.IRecipeInterfac
             self.update_output()
 
     def on_output_shift_click(self, slot, x, y, button, modifiers, player):
+        # todo: check by every call if the player can pick up more items of this kind
         if not self.active_recipe: return
         old_recipe = self.active_recipe
         count = 0
@@ -174,3 +187,8 @@ class GridRecipeInterface(mcpython.gui.crafting.IRecipeInterface.IRecipeInterfac
             G.world.get_active_player().pick_up(itemstack.copy().set_amount(max_size))
             count -= max_size
         G.world.get_active_player().pick_up(itemstack.copy().set_amount(count))
+        G.eventhandler.call("gui:crafting:grid:output:remove", self, self.slot_output_map, self.slot_input_map, self.active_recipe)
+        self.check_recipe_state()
+        if all([all([slot.get_itemstack().is_empty() for slot in row]) for row in self.slot_input_map]):
+            self.active_recipe = None
+        self.update_output()

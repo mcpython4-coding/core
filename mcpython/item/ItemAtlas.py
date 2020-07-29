@@ -35,6 +35,7 @@ class ItemAtlasHandler:
             self.file_relocate[file] = "assets/missingtexture.png"
             self.scheduled_item_files.add("assets/missingtexture.png")
             logger.println("[WARN] image at '{}' could not be allocated. Replacing with missing texture...".format(file))
+            return
         self.scheduled_item_files.add(mcpython.ResourceLocator.transform_name(file, raise_on_error=False))
 
     def load(self):
@@ -44,6 +45,7 @@ class ItemAtlasHandler:
             data = pickle.load(f)
         if data["version"] != LATEST_INFO_VERSION:
             logger.println("[FATAL] invalid item atlas version {} (not supported)".format(data["version"]))
+            logger.println("[FATAL] skipping loading old item atlas...}")
             return
         self.allocation_table = data["allocation"]
         self.file_relocate.update(**data["relocate"])
@@ -65,14 +67,14 @@ class ItemAtlasHandler:
             if file in self.file_relocate:
                 file = self.file_relocate[file]
             if file in self.allocation_table: continue
-            if file == "assets/missingtexture.png":
+            if "assets/missingtexture.png" in file:
                 self.allocation_table[ofile] = (0, (0, 0))
                 continue
             if mcpython.ResourceLocator.exists(file):
                 image = mcpython.ResourceLocator.read(file, "pil")
             else:
-                self.allocation_table[ofile] = (0, (0, 0))
-                return
+                self.allocation_table[ofile] = (0, (0, 0))  # replace it by missing texture and end
+                continue
             if file not in self.prevent_resize: image = image.resize((32, 32), PIL.Image.NEAREST)
             for i, atlas in enumerate(self.atlases):
                 if len(atlas.free_space) > 0:

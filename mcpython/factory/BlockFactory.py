@@ -247,10 +247,6 @@ class BlockFactory:
                                                          info="loading block {}".format(blockname))
         return obj
 
-    @deprecation.deprecated("dev1-2", "a1.2.0")
-    def _finish(self, register: bool):
-        self.finish_up()
-
     def finish_up(self):
         """
         will finish up the system
@@ -334,16 +330,18 @@ class BlockFactory:
                     baseclass.set_model_state(self, state)
 
             def get_model_state(self):
-                state = {}
+                state = master.custommodelstatefunction(self).copy() if master.custommodelstatefunction is not None else {}
                 for baseclass in master.baseclass:
                     state = {**state, **baseclass.get_model_state(self)}
                 return state
 
         if self.solid_faces:
             class ConstructedBlock(ConstructedBlock):
-                self.face_solid = {side: master.solid_faces[side] if side in master.solid_faces else all(
-                    [not hasattr(baseclass2, "face_solid") or baseclass2.face_solid[side] for baseclass2 in
-                     master.baseclass]) for side in mcpython.util.enums.EnumSide.iterate()}
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, **kwargs)
+                    self.face_solid = {side: master.solid_faces[side] if side in master.solid_faces else all(
+                        [not hasattr(baseclass2, "face_solid") or baseclass2.face_solid[side] for baseclass2 in
+                         master.baseclass]) for side in mcpython.util.enums.EnumSide.iterate()}
 
         if master.randomupdate_callback:
             class ConstructedBlock(ConstructedBlock):
@@ -355,11 +353,6 @@ class BlockFactory:
                     for baseclass in master.baseclass:
                         baseclass.on_block_update(self)
                     master.update_callback(self)
-
-        if master.custommodelstatefunction:
-            class ConstructedBlock(ConstructedBlock):
-                def get_model_state(self) -> dict:
-                    return master.custommodelstatefunction(self)
 
         if master.interaction_callback:
             class ConstructedBlock(ConstructedBlock):

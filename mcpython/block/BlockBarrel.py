@@ -15,7 +15,6 @@ import mcpython.gui.InventoryBarrel
 import logger
 
 
-@G.registry
 class BlockBarrel(Block.Block):
     """
     class for the Barrel-Block
@@ -93,4 +92,9 @@ class BlockBarrel(Block.Block):
     @classmethod
     def modify_block_item(cls, itemfactory):
         itemfactory.setFuelLevel(15)
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(BlockBarrel)
 

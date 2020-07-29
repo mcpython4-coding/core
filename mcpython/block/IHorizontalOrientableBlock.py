@@ -22,13 +22,13 @@ class IHorizontalOrientableBlock(mcpython.block.Block.Block):
             dx, dy, dz = sx - px, sy - py, sz - pz
             if dy == 0:
                 if dx > 0:
-                    self.face = mcpython.util.enums.EnumSide.NORTH
-                elif dx < 0:
-                    self.face = mcpython.util.enums.EnumSide.SOUTH
-                elif dz > 0:
                     self.face = mcpython.util.enums.EnumSide.EAST
-                elif dz < 0:
+                elif dx < 0:
                     self.face = mcpython.util.enums.EnumSide.WEST
+                elif dz > 0:
+                    self.face = mcpython.util.enums.EnumSide.SOUTH
+                elif dz < 0:
+                    self.face = mcpython.util.enums.EnumSide.NORTH
 
     def get_model_state(self) -> dict:
         return {self.MODEL_FACE_NAME: self.face.normal_name}

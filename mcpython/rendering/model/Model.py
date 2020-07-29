@@ -52,13 +52,13 @@ class Model:
         if not self.drawable: raise NotImplementedError("can't draw an model which has not definined textures")
         data = []
         for boxmodel in self.boxmodels:
-            data += boxmodel.add_face_to_batch(position, batch, config["rotation"], face)
+            data += boxmodel.add_face_to_batch(position, batch, config["rotation"], face, uv_lock=config.setdefault("uvlock", False))
         return data
 
     def draw_face(self, position, config, face):
         if not self.drawable: raise NotImplementedError("can't draw an model which has not definined textures")
         for boxmodel in self.boxmodels:
-            boxmodel.draw_face(position, config["rotation"], face)
+            boxmodel.draw_face(position, config["rotation"], face, uv_lock=config.setdefault("uvlock", False))
 
     def get_texture_position(self, name: str) -> tuple:
         if not self.drawable: return 0, 0

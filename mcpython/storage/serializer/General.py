@@ -53,8 +53,6 @@ class General(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
         if savefile.version != mcpython.storage.SaveFile.LATEST_VERSION: return
 
         playername = data["player name"]
-        if playername not in G.world.players: G.world.add_player(playername)
-        G.world.active_player = playername
 
         try:
             mcpython.util.getskin.download_skin(playername, G.build+"/skin.png")

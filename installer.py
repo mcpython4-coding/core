@@ -15,6 +15,6 @@ installation code for setting up your python
 
 subprocess.Popen([sys.executable, "-m", "pip", "install", "-r", "./requirements.txt"],
                  stdout=sys.stdout, stderr=sys.stderr)
-# todo: add check for dev env
-# subprocess.Popen([sys.executable, "./__main__.py", "--data-gen", "--exit-after-data-gen"], stdout=sys.stdout)
+# THE FOLLOWING LINE IS  O N L Y  PRESENT IN DEV ENVIRONMENT
+subprocess.Popen([sys.executable, "./__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"], stdout=sys.stdout)
 

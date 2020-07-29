@@ -113,13 +113,15 @@ class DataGeneratorConfig:
         if not self.enabled: return
         logger.println("[INFO] building data generators for '{}'...".format(self.modname))
         start = time.time()
-        for element in self.elements:
+        total = 0
+        while len(self.elements) > 0:
+            element = self.elements.pop(0)
+            total += 1
             try:
                 element.generate()
             except:
                 logger.write_exception("during building {}".format(element))
-        self.elements.clear()  # remove them as we might want to gc them
-        logger.println("[INFO] finished in {}s".format(time.time()-start))
+        logger.println("[INFO] finished in {}s ({} tasks to do)".format(time.time() - start, total))
 
     def write(self, data, *args):
         """

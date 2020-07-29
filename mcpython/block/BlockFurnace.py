@@ -7,14 +7,13 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import globals as G
-import mcpython.block.Block
+import mcpython.block.IHorizontalOrientableBlock
 from pyglet.window import key, mouse
 import mcpython.gui.InventoryFurnace
 from mcpython.util.enums import EnumSide
 
 
-@G.registry
-class BlockFurnace(mcpython.block.Block.Block):
+class BlockFurnace(mcpython.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     """
     class for the furnace block
     """
@@ -27,29 +26,20 @@ class BlockFurnace(mcpython.block.Block.Block):
         creates an furnace block in the world
         """
         super().__init__(*args, **kwargs)
-        self.facing = "north"
         self.active = False
         self.inventory = mcpython.gui.InventoryFurnace.InventoryFurnace(self, self.FURNACE_RECIPES)
-        if self.set_to is not None:
-            dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
-            if dx > 0:   self.facing = "south"
-            elif dx < 0: self.facing = "north"
-            elif dz > 0: self.facing = "west"
-            elif dz < 0: self.facing = "east"
 
     def get_model_state(self) -> dict:
-        return {"facing": self.facing, "lit": str(self.active).lower()}
+        return {"facing": self.face.normal_name, "lit": str(self.active).lower()}
 
     def set_model_state(self, state: dict):
-        if "facing" in state: self.facing = state["facing"]
+        super().set_model_state(state)
         if "lit" in state: self.active = state["lit"] == "true"
 
-    @staticmethod
-    def get_all_model_states() -> list:
-        return [{"facing": "north", "lit": "false"}, {"facing": "east", "lit": "false"},
-                {"facing": "south", "lit": "false"}, {"facing": "west", "lit": "false"},
-                {"facing": "north", "lit": "true"}, {"facing": "east", "lit": "true"},
-                {"facing": "south", "lit": "true"}, {"facing": "west", "lit": "true"}]
+    @classmethod
+    def get_all_model_states(cls) -> list:
+        states = super().get_all_model_states()
+        return [{"active": "false", **e} for e in states] + [{"active": "true", **e} for e in states]
 
     def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
@@ -77,15 +67,20 @@ class BlockFurnace(mcpython.block.Block.Block):
         del self.inventory
 
 
-@G.registry
 class BlastFurnace(BlockFurnace):
     NAME: str = "minecraft:blast_furnace"
 
     FURNACE_RECIPES: list = ["minecraft:blasting"]
 
 
-@G.registry
 class Smoker(BlockFurnace):
     NAME: str = "minecraft:smoker"
 
     FURNACE_RECIPES: list = ["minecraft:smoking"]
+
+
+@G.modloader("minecraft", "stage:block:load")
+def load():
+    G.registry.register(BlockFurnace)
+    G.registry.register(BlastFurnace)
+    G.registry.register(Smoker)

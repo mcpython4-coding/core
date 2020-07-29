@@ -17,6 +17,8 @@ import mcpython.rendering.model.BlockState
 import mcpython.ResourceLocator
 import mcpython.util.enums
 import mcpython.util.math
+import json
+import mcpython.rendering.ICustomBlockRenderer
 
 
 class ModelHandler:
@@ -75,11 +77,15 @@ class ModelHandler:
             logger.println("[WARN] deprecated access to model without minecraft-prefix to '{}'".format(used))
             used = "minecraft:" + used
         if used not in self.found_models:
-            logger.println("model error: can't locate model for '{}'".format(used))
+            # logger.println("model error: can't locate model for '{}'".format(used))
             return
         file = self.found_models[used]
         if type(file) == str:
-            data = mcpython.ResourceLocator.read(file, "json")
+            try:
+                data = mcpython.ResourceLocator.read(file, "json")
+            except json.decoder.JSONDecodeError:
+                data = {"parent": "minecraft:block/cube_all", "textures": {"all": "assets/missingtexture.png"}}
+                logger.write_exception("during loading model from file {}, now replaced by missing texture".format(file))
         else:
             data = file
         if "parent" in data:
@@ -134,11 +140,16 @@ class ModelHandler:
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
         if blockstate is None:
-            return self.blockstates["minecraft:missing_texture"].add_face_to_batch(block, batches, face)
-        return blockstate.add_face_to_batch(block, batches, face)
+            vertex = self.blockstates["minecraft:missing_texture"].add_face_to_batch(block, batches, face)
+        else:
+            vertex = blockstate.add_face_to_batch(block, batches, face)
+            if issubclass(type(block.face_state.custom_renderer), mcpython.rendering.ICustomBlockRenderer.ICustomBlockVertexManager):
+                block.face_state.custom_renderer.handle(block, vertex)
+        return vertex
 
     def draw_face(self, block, face):
         if block.NAME not in self.blockstates:
+            # todo: add option to disable these prints
             logger.println("[FATAL] block state for block '{}' not found!".format(block.NAME))
             logger.println("possible:", self.blockstates.keys())
             return []
@@ -166,6 +177,8 @@ class ModelHandler:
         logger.println("loading models...")
         # and now start reloading models...
         self.search()
+        mcpython.rendering.model.BlockState.BlockStateDefinition.TO_CREATE.clear()
+        mcpython.rendering.model.BlockState.BlockStateDefinition.NEEDED.clear()
         for directory, modname in mcpython.rendering.model.BlockState.BlockStateDefinition.LOOKUP_DIRECTORIES:
             mcpython.rendering.model.BlockState.BlockStateDefinition.from_directory(directory, modname, immediate=True)
         G.eventhandler.call("data:blockstates:custom_injection", self)
