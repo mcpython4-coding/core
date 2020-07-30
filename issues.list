@@ -161,5 +161,4 @@ issue 219:
 issue 235:
     bug: tools are CONSUMED when using them
 
-issue 243:
-    bug: you can create stacks with more than max stack-size when combining them
+[243]

@@ -20,6 +20,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
     """
     class for inventories as state
     todo: make A LOT OF THINGS public and static
+    todo: move inventory interaction handling to seperated class
     """
 
     def __init__(self):
@@ -78,6 +79,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
         :param x: the x position
         :param y: the y position
         :return: the slot or None if none found
+        todo: move to InventoryHandler
         """
         for inventory in G.inventoryhandler.opened_inventorystack:
             dx, dy = inventory.get_position()
@@ -94,6 +96,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
         :param x: the x position
         :param y: the y position
         :return: the slot and the inventory or None and None if none found
+        todo: move to InventoryHandler
         """
         for inventory in G.inventoryhandler.opened_inventorystack:
             dx, dy = inventory.get_position()
@@ -110,6 +113,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
         slot: mcpython.gui.Slot.Slot = self._get_slot_for(x, y)
         if slot is None: return
         self.moving_itemstack = G.inventoryhandler.moving_slot.itemstack.copy()
+        moving_itemstack = G.inventoryhandler.moving_slot.itemstack
         if modifiers & key.MOD_SHIFT:
             if slot.on_shift_click:
                 try:
@@ -121,22 +125,21 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
             if G.inventoryhandler.shift_container is not None and \
                 G.inventoryhandler.shift_container.move_to_opposite(slot): return
         if button == mouse.LEFT:
-            if G.inventoryhandler.moving_slot.itemstack.is_empty():
+            if self.moving_itemstack.is_empty():
                 if not slot.interaction_mode[0]: return
                 G.inventoryhandler.moving_slot.set_itemstack(slot.itemstack.copy())
                 slot.itemstack.clean()
                 slot.call_update(True)
-            elif not slot.interaction_mode[1] and slot.itemstack == self.moving_itemstack:
-                if not slot.interaction_mode[0]: return
-                total = min(slot.itemstack.item.STACK_SIZE, slot.itemstack.amount + G.inventoryhandler.moving_slot.itemstack.amount)
-                G.inventoryhandler.moving_slot.itemstack.set_amount(total)
-                slot.itemstack.add_amount(-total+G.inventoryhandler.moving_slot.itemstack.amount)
+            elif slot.interaction_mode[1] and slot.itemstack == moving_itemstack:
+                target = min(slot.itemstack.item.STACK_SIZE, slot.itemstack.amount + moving_itemstack.amount)
+                moving_itemstack.set_amount(moving_itemstack.amount-(target-slot.itemstack.amount))
+                slot.itemstack.set_amount(target)
                 slot.call_update(True)
             else:
                 self.mode = 1
                 self.on_mouse_drag(x, y, 0, 0, button, modifiers)
         elif button == mouse.RIGHT:
-            if G.inventoryhandler.moving_slot.itemstack.is_empty() and slot.allow_half_getting:
+            if moving_itemstack.is_empty() and slot.allow_half_getting:
                 if not slot.interaction_mode[0]: return
                 amount = slot.itemstack.amount
                 G.inventoryhandler.moving_slot.set_itemstack(slot.itemstack.copy().set_amount(amount-amount//2))
@@ -146,7 +149,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
                 self.mode = 2
                 self.on_mouse_drag(x, y, 0, 0, button, modifiers)
         elif button == mouse.MIDDLE:
-            if G.inventoryhandler.moving_slot.itemstack.is_empty() and G.world.get_active_player().gamemode == 1:
+            if moving_itemstack.is_empty() and G.world.get_active_player().gamemode == 1:
                 G.inventoryhandler.moving_slot.set_itemstack(slot.itemstack.copy().set_amount(
                     slot.itemstack.item.STACK_SIZE))
             elif G.world.get_active_player().gamemode == 1:

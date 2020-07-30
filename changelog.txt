@@ -54,7 +54,9 @@ information on development:
 
 
 changelog of snapshot [next]
-
+    fixed issues:
+        long term issues:
+            - InventoryHandler was handling some itemstack's wrong leading into itemstack's with higher stack size
 
 
 changelog of snapshot 20w31a (theme: improvements)
