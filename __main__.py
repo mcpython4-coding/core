@@ -25,6 +25,7 @@ try:
 except SystemExit:
     sys.exit(-1)
 except:
+    # todo: move this part to LaunchWrapper as clean() function
     import mcpython.ResourceLocator
 
     mcpython.ResourceLocator.close_all_resources()
@@ -35,6 +36,7 @@ except:
         pass
     sys.exit(-1)
 
+# todo: move this part to LaunchWrapper as clean() function
 import mcpython.ResourceLocator
 mcpython.ResourceLocator.close_all_resources()
 G.eventhandler.call("game:close")

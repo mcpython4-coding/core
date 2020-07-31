@@ -16,6 +16,7 @@ import mcpython.event.Registry
 import mcpython.gui.ItemStack
 import mcpython.gui.Slot
 import mcpython.util.enums
+import pickle
 
 
 class Block(mcpython.event.Registry.IRegistryContent):
@@ -113,16 +114,19 @@ class Block(mcpython.event.Registry.IRegistryContent):
         Is also invoked on "normal" block update
         """
 
-    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple):
         """
         Called when the player pressed on mouse button on the block.
         :param player: the entity instance that interacts. WARNING: may not be an player instance
-        :param itemstack: the itemstack hold in hand
         :param button: the button pressed
         :param modifiers: the modifiers hold during press
-        :param exact_hit: where the block was hit at
+        :param hit_position: where the block was hit at
         :return: if default logic should be interrupted or not
         """
+        self.on_player_interact(player, player.get_active_inventory_slot().get_itemstack(), button, modifiers, hit_position)
+        return False
+
+    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
         return False
 
     def on_no_collide_collide(self, player, previous: bool):
@@ -133,11 +137,13 @@ class Block(mcpython.event.Registry.IRegistryContent):
         """
 
     def save(self):
-        """
-        :return: an pickle-able object representing the whole block, not including inventories
-        todo: maybe expect bytes?
-        """
         return self.get_model_state()
+
+    def dump(self) -> bytes:
+        """
+        :return: bytes representing the whole block, not including inventories
+        """
+        return pickle.dumps(self.save())
 
     def load(self, data):
         """
@@ -146,6 +152,14 @@ class Block(mcpython.event.Registry.IRegistryContent):
         WARNING: if not providing DataFixers for old mod versions, these data may get very old!
         """
         self.set_model_state(data)
+
+    def inject(self, data: bytes):
+        """
+        loads block data
+        :param data:  the data saved by save()
+        WARNING: if not providing DataFixers for old mod versions, these data may get very old!
+        """
+        self.load(pickle.loads(data) if type(data) == bytes else data)
 
     # block status functions
 
@@ -172,6 +186,7 @@ class Block(mcpython.event.Registry.IRegistryContent):
         """
         the active model state
         :return: the model state as an dict
+        todo: allow string
         """
         return {}
 
@@ -181,13 +196,19 @@ class Block(mcpython.event.Registry.IRegistryContent):
         :param state: the state to set as an dict
         """
 
-    def get_view_bbox(self) -> typing.Union[mcpython.block.BoundingBox.BoundingBox,
-                                            mcpython.block.BoundingBox.BoundingArea]:
+    def get_view_bbox(self) -> typing.Union[mcpython.block.BoundingBox.BoundingBox, mcpython.block.BoundingBox.BoundingArea]:
         """
-        used to get the bbox of the block
+        used to get the bbox of the block for ray collision
         :return: the bbox instance
         """
         return mcpython.block.BoundingBox.FULL_BLOCK_BOUNDING_BOX  # per default, every block is full
+
+    def get_collision_bbox(self) -> typing.Union[mcpython.block.BoundingBox.BoundingBox, mcpython.block.BoundingBox.BoundingArea]:
+        """
+        used to get the bbox of the block for phyical body collision
+        :return: the bbox instance
+        """
+        return self.get_view_bbox()
 
     def on_request_item_for_block(self, itemstack: mcpython.gui.ItemStack.ItemStack):
         """

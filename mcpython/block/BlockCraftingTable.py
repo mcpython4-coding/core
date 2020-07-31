@@ -20,7 +20,7 @@ class BlockCraftingTable(Block.Block):
 
     NAME: str = "minecraft:crafting_table"
 
-    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             G.inventoryhandler.show(G.world.get_active_player().inventories["crafting_table"])
             return True

@@ -78,8 +78,8 @@ class StatePartGame(StatePart.StatePart):
             cls.braketime = None  # no braketime because no block
         else:
             hardness = block.HARDNESS
-            itemstack = G.world.get_active_player().get_active_inventory_slot().get_itemstack()
-            istool = itemstack.item and issubclass(type(itemstack.item), ItemTool.ItemTool)
+            itemstack = G.world.get_active_player().get_active_inventory_slot().get_itemstack().copy()
+            istool = not itemstack.is_empty() and issubclass(type(itemstack.item), ItemTool.ItemTool)
             toollevel = itemstack.item.TOOL_LEVEL if istool else 0
             if not istool or not any([x in block.BEST_TOOLS_TO_BREAK for x in itemstack.item.TOOL_TYPE]):
                 cls.braketime = (1.5 if block.MINIMUM_TOOL_LEVEL <= toollevel else 5) * hardness
@@ -90,8 +90,10 @@ class StatePartGame(StatePart.StatePart):
 
     def __init__(self, activate_physics=True, activate_mouse=True, activate_keyboard=True, activate_3d_draw=True,
                  activate_focused_block=True, glcolor3d=(1., 1., 1.), activate_crosshair=True, activate_lable=True,
-                 clearcolor=(0.5, 0.69, 1.0, 1), active_hotkeys=ALL_KEY_COMBOS):
+                 clearcolor=(0.5, 0.69, 1.0, 1), active_hotkeys=None):
         super().__init__()
+        if active_hotkeys is None:
+            active_hotkeys = ALL_KEY_COMBOS
         self.activate_physics = activate_physics
         self.__activate_mouse = activate_mouse
         self.activate_keyboard = activate_keyboard
@@ -110,7 +112,8 @@ class StatePartGame(StatePart.StatePart):
         else:
             G.world.get_active_player().reset_moving_slot()
 
-    def get_mouse_active(self): return self.__activate_mouse
+    def get_mouse_active(self):
+        return self.__activate_mouse
 
     activate_mouse = property(get_mouse_active, set_mouse_active)
 
@@ -185,6 +188,7 @@ class StatePartGame(StatePart.StatePart):
                     issubclass(type(player.get_active_inventory_slot().get_itemstack().item), ItemFood.ItemFood):
                 itemfood = player.get_active_inventory_slot().get_itemstack().item
                 if itemfood.on_eat():
+                    print("eating...=")
                     self.set_cooldown = time.time() - 1
                     player.get_active_inventory_slot().get_itemstack().add_amount(-1)
                     if player.get_active_inventory_slot().get_itemstack().amount == 0:
@@ -200,7 +204,7 @@ class StatePartGame(StatePart.StatePart):
                         x, y, z = previous
                         px, _, pz = mcpython.util.math.normalize(player.position)
                         py = math.ceil(player.position[1])
-                        if not (x == px and z == pz and py-1 <= y <= py) and not G.world.get_active_dimension().\
+                        if not (x == px and z == pz and py - 1 <= y <= py) and not G.world.get_active_dimension(). \
                                 get_block(previous):
                             chunk = G.world.get_active_dimension().get_chunk_for_position(previous)
                             chunk.add_block(
@@ -258,15 +262,15 @@ class StatePartGame(StatePart.StatePart):
         """
         player = G.world.get_active_player()
         speed = mcpython.config.SPEED_DICT[player.gamemode][(0 if not G.window.keys[key.LSHIFT] else 1) +
-                                                     (0 if not G.world.get_active_player().flying else 2)]
+                                                            (0 if not G.world.get_active_player().flying else 2)]
         if not G.world.get_active_player().flying and G.window.dy == 0:
             x, y, z = mcpython.util.math.normalize(player.position)
-            block_inst = G.world.get_active_dimension().get_block((x, y-2, z))
+            block_inst = G.world.get_active_dimension().get_block((x, y - 2, z))
             if block_inst is not None and type(block_inst) != str and \
                     block_inst.CUSTOM_WALING_SPEED_MULTIPLIER is not None:
                 speed *= block_inst.CUSTOM_WALING_SPEED_MULTIPLIER
         if player.gamemode in (0, 2) and G.window.keys[key.LSHIFT]:
-            player.hunger -= dt*0.2
+            player.hunger -= dt * 0.2
         d = dt * speed  # distance covered this tick.
         dx, dy, dz = G.window.get_motion_vector()
         # New position in space, before accounting for gravity.
@@ -280,7 +284,7 @@ class StatePartGame(StatePart.StatePart):
             G.window.dy = max(G.window.dy, -TERMINAL_VELOCITY)
             dy += G.window.dy * dt
         elif self.activate_keyboard and not (G.window.keys[key.SPACE] and G.window.keys[key.LSHIFT]):
-            dy = dt*6 if G.window.keys[key.SPACE] else (-dt*6 if G.window.keys[key.LSHIFT] else 0)
+            dy = dt * 6 if G.window.keys[key.SPACE] else (-dt * 6 if G.window.keys[key.LSHIFT] else 0)
         # collisions
         x, y, z = player.position
         before = mcpython.util.math.positionToChunk(player.position)
@@ -327,8 +331,7 @@ class StatePartGame(StatePart.StatePart):
             if slot.get_itemstack().item.on_player_interact(player, block, button, modifiers):
                 cancel = True
         if block and type(block) != str:
-            if not cancel and block.on_player_interact(player, slot.get_itemstack(), button,
-                                                       modifiers, hitpos):
+            if not cancel and block.on_player_interaction(player, button, modifiers, hitpos):
                 cancel = True
         if cancel:
             self.set_cooldown = time.time()
@@ -408,4 +411,3 @@ class StatePartGame(StatePart.StatePart):
             G.window.draw_label()
         if self.activate_crosshair:
             G.window.draw_reticle()
-

@@ -50,3 +50,4 @@ marked for removal in alpha 1.5.0:
     BlockModelFactory.py, ModelFactory.py, RecipeFactory.py (replaced by data gen)
     [1] texture factory system, replace by data gen
     [2] math.sectorize()
+    [0] Block.on_player_interact, Block.save(), Block.load()

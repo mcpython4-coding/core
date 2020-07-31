@@ -100,6 +100,7 @@ class LootTableHandler:
             table_name = self.relink_table[table_name]
         if table_name in self.loot_tables:
             return self.loot_tables[table_name].roll(block=block, player=player)
+        # todo: add option to print an warning here
         return [mcpython.gui.ItemStack.ItemStack(block.NAME)]
 
     def for_mod_name(self, modname, directoryname=None):
@@ -122,13 +123,12 @@ class LootTableHandler:
         if name in mcpython.loot.LootTableFunction.loottablefunctionregistry.registered_object_map:
             return mcpython.loot.LootTableFunction.loottablefunctionregistry.registered_object_map[name](data)
         logger.println("unable to decode loot table function '{}'".format(name))
-        return
 
     def parse_condition(self, data: dict) -> mcpython.loot.LootTableCondition.ILootTableCondition:
         name = data["condition"]
         if name in mcpython.loot.LootTableCondition.loottableconditionregistry.registered_object_map:
             return mcpython.loot.LootTableCondition.loottableconditionregistry.registered_object_map[name](data)
-        raise ValueError("unable to decode loot table condition '{}'".format(name))
+        logger.println("unable to decode loot table condition '{}'".format(name))
 
 
 handler = G.loottablehandler = LootTableHandler()

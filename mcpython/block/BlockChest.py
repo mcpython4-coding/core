@@ -66,7 +66,7 @@ class BlockChest(Block.Block):
         blockinst = G.world.get_active_dimension().get_block((x, y+1, z))
         return blockinst is None or not blockinst.face_solid[mcpython.util.enums.EnumSide.DOWN]
 
-    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT and self.can_open_inventory():
             if self.loot_table_link:
                 self.inventory.insert_items(G.loottablehandler.roll(self.loot_table_link, block=self,

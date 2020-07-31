@@ -41,7 +41,7 @@ class BlockFurnace(mcpython.block.IHorizontalOrientableBlock.IHorizontalOrientab
         states = super().get_all_model_states()
         return [{"active": "false", **e} for e in states] + [{"active": "true", **e} for e in states]
 
-    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interaction(self, player, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             G.inventoryhandler.show(self.inventory)
             return True

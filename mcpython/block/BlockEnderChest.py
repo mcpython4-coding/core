@@ -40,7 +40,7 @@ class BlockEnderChest(Block.Block):
 
     NAME = "minecraft:enderchest"
 
-    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             G.inventoryhandler.show(self.inventory)
             return True

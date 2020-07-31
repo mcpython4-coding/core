@@ -266,7 +266,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
 
             def add(blockinstance):
                 if blockinstance is None: return
-                blockinstance.load(d["custom"])
+                blockinstance.inject(d["custom"])
                 inventories = blockinstance.get_inventories()
                 if "inventories" not in d: return
                 for i, path in enumerate(d["inventories"]):
@@ -373,7 +373,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                     del cdata["blocks"][rel_position]  # ok, old data MUST be removed
                 continue
             block = chunk_instance.world[position]
-            block_data = {"custom": block.save(), "name": block.NAME, "shown": any(block.face_state.faces.values())}
+            block_data = {"custom": block.dump(), "name": block.NAME, "shown": any(block.face_state.faces.values())}
 
             # inventory data
             # todo: move to custom function in Block-class

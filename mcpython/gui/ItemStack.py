@@ -62,7 +62,7 @@ class ItemStack:
 
     def set_amount(self, amount):
         self.amount = amount
-        if self.amount == 0: self.clean()
+        if self.amount <= 0: self.clean()
         return self
 
     def add_amount(self, amount, check_overflow=True):
