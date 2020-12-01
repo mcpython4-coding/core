@@ -7,9 +7,8 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import importlib
-import logger
 import sys
-import globals as G
+from mcpython import globals as G, logger
 import typing
 
 

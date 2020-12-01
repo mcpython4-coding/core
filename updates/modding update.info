@@ -1,7 +1,0 @@
-
-
-add an replacement for features.py  [ Capabilities? ]
-
-make cancelable events only call further functions when event was not canceled (maybe special func on EventBus?)
-
-make mc's jar downloaded separately downloaded when rebuilding & add some cleanup-code

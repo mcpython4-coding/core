@@ -7,7 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.event.EventHandler
-import globals as G
+from mcpython import globals as G, logger
 import os
 import mcpython.ResourceLocator
 import zipfile
@@ -20,7 +20,6 @@ import mcpython.util.math
 import mcpython.mod.Mod
 import toml
 import mcpython.config
-import logger
 import deprecation
 
 # information for modders: this file contains every event called on the system
@@ -193,6 +192,7 @@ class LoadingStages:
                               "stage:model:blockstate_search", "stage:model:blockstate_create", "stage:model:blockstate_bake")
     BLOCK_MODEL = LoadingStage("block loading phase", "stage:model:model_search", "stage:model:model_search:intern",
                                "stage:model:model_create")
+    ITEM_MODEL = LoadingStage("loading item models", "stage:model:item:search", "stage:model:item:bake")
     BAKE = LoadingStage("texture baking", "stage:model:model_bake_prepare", "stage:model:model_bake_lookup",
                         "stage:model:model_bake:prepare", "stage:model:model_bake", "stage:textureatlas:bake",
                         "stage:boxmodel:bake", "stage:block_boundingbox_get")
@@ -227,7 +227,7 @@ if G.data_gen:  # only do it in dev-environment
 
 LOADING_ORDER += [
     LoadingStages.LANGUAGE, LoadingStages.TAGS, LoadingStages.RECIPE, LoadingStages.LOOT_TABLES,
-    LoadingStages.MODEL_FACTORY, LoadingStages.BLOCKSTATE, LoadingStages.BLOCK_MODEL, LoadingStages.BAKE,
+    LoadingStages.MODEL_FACTORY, LoadingStages.BLOCKSTATE, LoadingStages.ITEM_MODEL, LoadingStages.BLOCK_MODEL, LoadingStages.BAKE,
     LoadingStages.WORLDGEN, LoadingStages.FILE_INTERFACE, LoadingStages.STATES, LoadingStages.POST
 ]
 

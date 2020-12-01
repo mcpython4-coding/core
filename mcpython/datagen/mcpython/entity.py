@@ -6,7 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G
 from mcpython.datagen import Configuration, EntityModelGenerator
 import shutil
 import os
@@ -23,9 +23,6 @@ def generate_recipes():
     """
 
     if "--data-gen" not in sys.argv: return  # data gen only when launched so, not when we think
-    if os.path.exists(DEFAULT_OUTPUT):
-        shutil.rmtree(DEFAULT_OUTPUT)
-    os.makedirs(DEFAULT_OUTPUT)
     config = Configuration.DataGeneratorConfig("minecraft", G.local + "/resources/generated")
     config.setDefaultNamespace("minecraft")
 

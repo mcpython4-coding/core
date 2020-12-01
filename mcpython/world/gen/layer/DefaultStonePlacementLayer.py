@@ -7,7 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 
-import globals as G
+from mcpython import globals as G
 from mcpython.world.gen.layer.Layer import Layer, LayerConfig
 
 

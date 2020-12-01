@@ -10,9 +10,8 @@ import mcpython.item.Item
 import mcpython.item.ItemFood
 import mcpython.item.ItemTool
 import mcpython.item.ItemArmor
-import globals as G
+from mcpython import globals as G, logger
 import deprecation
-import logger
 
 
 # todo: add ItemFactoryHandler which make it possible to add custom functions & custom class constructing

@@ -6,8 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.chat.command.Command
 import mcpython.gui.ItemStack
 from mcpython.chat.command.Command import ParseBridge, ParseType, SubCommand
@@ -42,7 +41,7 @@ class CommandItemInfo(mcpython.chat.command.Command.Command):
                 logger.println("info to inventory {} of player".format(inventorykey))
                 for i, slot in enumerate(G.world.get_active_player().inventories[inventorykey].slots):
                     if not slot.get_itemstack().is_empty():
-                        logger.println("slot {}".format(i+1))
+                        logger.println("slot {}".format(i + 1))
                         CommandItemInfo.print_info(slot.get_itemstack())
         elif modes[1][1] == 2:  # from item name
             stack = mcpython.gui.ItemStack.ItemStack(values[1])
@@ -51,10 +50,10 @@ class CommandItemInfo(mcpython.chat.command.Command.Command):
             block = G.world.get_active_dimension().get_block(values[2])
             if type(block) == str: return
             for i, inventory in enumerate(block.get_inventories()):
-                logger.println("inventory {}".format(i+1))
+                logger.println("inventory {}".format(i + 1))
                 for si, slot in enumerate(inventory.slots):
                     if not slot.get_itemstack().is_empty():
-                        logger.println("slot {}".format(si+1))
+                        logger.println("slot {}".format(si + 1))
                         CommandItemInfo.print_info(slot.get_itemstack())
 
     @staticmethod

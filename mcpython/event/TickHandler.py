@@ -6,14 +6,13 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G, logger
 import pyglet
 import mcpython.util.math
 import random
 import mcpython.config
 import mcpython.chat.DataPack
 import mcpython.state.StatePartGame
-import logger
 
 
 class TickHandler:

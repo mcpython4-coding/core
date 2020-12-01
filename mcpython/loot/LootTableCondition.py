@@ -8,7 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.event.Registry
 import mcpython.entity.DamageSource
-import globals as G
+from mcpython import globals as G
 import random
 
 

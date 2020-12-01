@@ -1262,3 +1262,19 @@ sstarted these clone on 12th of July, 2019
        - Block.dump(self) -> bytes
        - Block.inject(data: bytes)
        - Block.get_collision_bbox()
+
+[uuk]: paused the project until 1.12.2020
+[uuk]: the following will be braking changes
+        the following symbols are used for indication of task type:
+            B: bug/issue
+            R: refactor
+            D: deletion
+            F: feature
+    [uuk]: dumped library versions
+    [uuk]: upgraded python target to 3.9.0
+R   [uuk]: moved globals.py to mcpython/globals.py, logger.py to mcpython/logger.py
+R   [uuk]: moved installer.py to tools/installer.py
+R   [uuk]: moved changelog.txt, deprecated.txt, events.list, fixed issues.list, issues.list and version.info to doc/...
+D   [uuk]: removed updates-folder, README_old.md
+F   [uuk]: added --no-log-escape option to remove escaping paths
+B   [uuk]: fixed escaping dict not working correctly in some cases

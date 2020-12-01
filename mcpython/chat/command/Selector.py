@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 import math
 import random
 
-import globals as G
+from mcpython import globals as G
 import mcpython.event.Registry
 
 

@@ -6,15 +6,13 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
-from mcpython.state.ui import (UIPartImage)
+from mcpython import globals as G, logger
 import pyglet
 import mcpython.ResourceLocator
 import mcpython.util.texture
 import PIL.Image
 import uuid
 import random
-import logger
 import deprecation
 
 

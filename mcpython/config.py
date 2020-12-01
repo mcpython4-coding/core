@@ -173,7 +173,7 @@ for stone in ["andesite", "granite", "diorite"]:
 
 def load():
     import mcpython.mod.ConfigFile
-    import globals as G
+    from mcpython import globals as G
 
     config = mcpython.mod.ConfigFile.ConfigFile("main", "minecraft")
     speeds = mcpython.mod.ConfigFile.DictDataMapper().add_entry("walking", 5).add_entry("sprinting", 8).add_entry(
@@ -237,7 +237,7 @@ def load():
             import pyglet
 
             def on_shuffle(dt):
-                import logger
+                from mcpython import logger
                 if G.world.world_loaded:
                     logger.println("shuffling data...")
                     G.eventhandler.call("data:shuffle:all")

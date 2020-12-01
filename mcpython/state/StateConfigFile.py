@@ -11,8 +11,7 @@ import typing
 import mcpython.ResourceLocator
 import mcpython.event.EventHandler
 import mcpython.event.Registry
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.state.State
 import mcpython.state.StatePart
 

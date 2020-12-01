@@ -6,8 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.chat.command.Command
 
 
@@ -73,7 +72,7 @@ class CommandParser:
                 command.parse(values, trace, info)
             except:
                 logger.write_exception("[CHAT][EXCEPTION] during executing command '{}' with {}".format(command.NAME,
-                                                                                                      info))
+                                                                                                        info))
         else:
             logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
 

@@ -6,8 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.chat.command.Command
 from mcpython.chat.command.Command import SubCommand, ParseType, ParseMode, ParseBridge
 
@@ -52,9 +51,9 @@ class CommandHelp(mcpython.chat.command.Command.Command):
             if c not in G.registry.get_by_name("command").commandentries:
                 logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(c))
                 return
-            logger.println("------------------"+"-"*len(c))
+            logger.println("------------------" + "-" * len(c))
             logger.println("- HELP PAGE FOR {} -".format(c))
-            logger.println("------------------"+"-"*len(c))
+            logger.println("------------------" + "-" * len(c))
             logger.println("\n".join(G.registry.get_by_name("command").commandentries[c].get_help()))
 
     @staticmethod

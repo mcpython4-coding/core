@@ -8,7 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 # util functions from manipulating image data and converting between different formats
 import PIL.Image
-import globals as G
+from mcpython import globals as G
 import pyglet
 
 

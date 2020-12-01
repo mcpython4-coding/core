@@ -6,10 +6,9 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G, logger
 import typing
 import mcpython.datagen.Configuration
-import logger
 
 
 class ILootTableCondition:
@@ -275,7 +274,7 @@ class LootTableGenerator(mcpython.datagen.Configuration.IDataGenerator):
             try:
                 data["pools"].append(pool.serialize())
             except:
-                logger.println("during serializing {} (number {})".format(pool, i+1))
+                logger.println("during serializing {} (number {})".format(pool, i + 1))
                 raise
         self.config.write_json(data, "data", "loot_tables", self.name+".json")
 

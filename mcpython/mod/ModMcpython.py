@@ -8,7 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.mod.Mod
 import mcpython.config
-import logger
+from mcpython import logger
 
 VERSION_POST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 

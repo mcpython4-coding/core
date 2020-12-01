@@ -12,7 +12,7 @@ import typing
 import deprecation
 import pyglet
 
-import globals as G
+from mcpython import globals as G
 import mcpython.block.Block
 import mcpython.mod.ModMcpython
 import mcpython.rendering.OpenGLSetupFile

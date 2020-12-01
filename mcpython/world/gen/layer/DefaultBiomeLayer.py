@@ -10,7 +10,7 @@ import random
 
 import opensimplex
 
-import globals as G
+from mcpython import globals as G
 import mcpython.event.EventHandler
 import mcpython.world.Chunk
 import mcpython.world.gen.biome.BiomeHandler

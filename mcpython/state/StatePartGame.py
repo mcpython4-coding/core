@@ -7,7 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 from . import StatePart
-import globals as G
+from .. import globals as G
 from mcpython.config import FLYING_SPEED, WALKING_SPEED, GRAVITY, TERMINAL_VELOCITY, PLAYER_HEIGHT, JUMP_SPEED
 from pyglet.window import key, mouse
 import pyglet

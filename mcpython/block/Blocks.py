@@ -7,12 +7,11 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.factory.BlockFactory
-import globals as G
+from mcpython import globals as G
 from mcpython.util.enums import ToolType
 import mcpython.mod.ModMcpython
 from mcpython.factory import CombinedBlockFactory
 import mcpython.datagen.Configuration
-from mcpython.factory.BlockFactory import BlockFactory
 from mcpython.datagen.Configuration import DataGeneratorConfig
 from mcpython.config import ENABLED_EXTRA_BLOCKS as BLOCKS
 

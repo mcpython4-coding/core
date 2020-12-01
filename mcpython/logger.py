@@ -13,7 +13,7 @@ import sys
 from datetime import datetime
 
 import mcpython.config
-import globals as G
+from mcpython import globals as G
 import traceback
 
 # adapted from mc version 1.15.2, decompiled with mc-forge located under net.minecraft.crash.CrashReport
@@ -43,6 +43,8 @@ inter_home = os.path.dirname(sys.executable).replace("\\", "/")
 
 
 ESCAPE = {G.local: "%LOCAL%", inter_home: "%PYTHON%", G.home: "%HOME%", G.build: "%BUILD%"}
+if "--no-log-escape" in sys.argv:
+    ESCAPE.clear()
 
 
 def escape(string: str) -> str:
@@ -114,8 +116,10 @@ def write_exception(*info):
     """
     pdata = [["EXCEPTION", random.choice(FUNNY_STRINGS)]+list(info)]
     sdata = traceback.format_stack()[:-2]
-    data = traceback.format_exc().replace("\\", "/").replace(G.local, "%LOCAL%").replace(inter_home, "%PYTHON%").split(
-        "\n")
+    data = traceback.format_exc()
+    for key in ESCAPE:
+        data = data.replace(key, ESCAPE[key])
+    data = data.split("\n")
     pdata.append([data[0]]+"".join(sdata).split("\n")+data[1:-1])
     write_into_container(*pdata)
     if mcpython.config.WRITE_NOT_FORMATTED_EXCEPTION:

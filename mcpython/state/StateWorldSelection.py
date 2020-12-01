@@ -14,7 +14,7 @@ import PIL.Image
 import pyglet
 from pyglet.window import key, mouse
 
-import globals as G
+from .. import globals as G
 import mcpython.ResourceLocator
 import mcpython.chat.DataPack
 import mcpython.mod.ModMcpython

@@ -10,8 +10,7 @@ import os
 import sys
 from abc import ABC
 
-import globals as G
-import logger
+from mcpython import globals as G, logger
 
 if not os.path.isdir(G.home + "/config"):
     os.makedirs(G.home + "/config")

@@ -9,14 +9,13 @@ blocks based on 1.16.1.jar of minecraft"""
 from . import State, StatePartGame
 from .ui import UIPartButton, UIPartTextInput
 from .ui.UIPartTextInput import INT_PATTERN
-import globals as G
+from .. import globals as G, logger
 import mcpython.util.math
 from pyglet.window import key
 import pyglet
 import random
 import mcpython.mod.ModMcpython
 import mcpython.state.StatePartConfigBackground
-import logger
 import mcpython.chat.DataPack
 import mcpython.state.StateWorldGeneration
 

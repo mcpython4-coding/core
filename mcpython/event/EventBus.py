@@ -13,8 +13,7 @@ import typing
 
 import deprecation
 
-import globals as G
-import logger
+from mcpython import globals as G, logger
 
 
 class CancelAbleEvent:
@@ -110,8 +109,8 @@ class EventBus:
             except:
                 exception_occ = True
                 logger.write_exception("during calling function: {} with arguments: {}, {}".format(function, list(
-                    args)+list(self.extra_arguments[0])+list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs},
-                                                                                               sep="\n"),
+                    args) + list(self.extra_arguments[0]) + list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs},
+                                                                                                   sep="\n"),
                                        "function info: '{}'".format(info) if info is not None else "")
             if G.debugevents:
                 with open(G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a") as f:

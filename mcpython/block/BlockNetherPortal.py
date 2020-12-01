@@ -6,11 +6,10 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.block.Block
 import time
 import math
-import logger
 
 
 class NetherPortalBlock(mcpython.block.Block.Block):

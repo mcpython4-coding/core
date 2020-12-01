@@ -6,10 +6,9 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G
 import mcpython.block.Block
 import mcpython.event.TickHandler
-import enum
 import mcpython.util.enums
 import mcpython.block.BoundingBox
 from mcpython.util.enums import SlabModes

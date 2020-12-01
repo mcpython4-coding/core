@@ -6,14 +6,13 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.gui.crafting.IRecipeType
 import mcpython.ResourceLocator
 import mcpython.item.ItemHandler
 import mcpython.mod.ModMcpython
 import mcpython.event.EventHandler
 import sys
-import logger
 import random
 import json
 
@@ -88,7 +87,7 @@ class CraftingHandler:
         try:
             data = json.loads(data)
         except:
-            logger.write_exception("during decoding recipe from file '{}'".format(file), "'"+data+"'")
+            logger.write_exception("during decoding recipe from file '{}'".format(file), "'" + data + "'")
             return
         s = file.split("/")
         name = "{}:{}".format(s[s.index("data")+1], "/".join(s[s.index("recipes")+1:]))

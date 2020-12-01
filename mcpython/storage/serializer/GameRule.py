@@ -7,8 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.storage.serializer.IDataSerializer
-import globals as G
-import mcpython.world.GameRule
+from mcpython import globals as G
 import mcpython.storage.datafixers.IDataFixer
 
 

@@ -10,8 +10,7 @@ import pyglet
 import mcpython.ResourceLocator
 import mcpython.config
 import math
-import logger
-
+from mcpython import logger
 
 FILES = {}
 

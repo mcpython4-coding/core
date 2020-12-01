@@ -8,7 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.state.State
 from mcpython.state.ui import (UIPartLable, UIPartButton, UIPartProgressBar)
-import globals as G
+from mcpython import globals as G
 import pyglet
 import mcpython.util.math
 import mcpython.mod.ModMcpython

@@ -9,8 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 import gc
 import sys
 
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.mod.ModMcpython
 import mcpython.rendering.model.Model
 import mcpython.rendering.model.BlockState

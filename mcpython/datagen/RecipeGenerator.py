@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 import mcpython.datagen.Configuration
 import mcpython.gui.ItemStack
 import typing
-import logger
+from mcpython import logger
 
 
 class ICraftingKeyEncoder:

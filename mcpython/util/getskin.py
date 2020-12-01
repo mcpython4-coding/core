@@ -13,8 +13,7 @@ blocks based on 1.16.1.jar of minecraft"""
 # file licensed under the licence in licenses/LICENSE_mcskinview
 # modified for this project to match the overall system
 # modified for newer skin textures
-from mcpython.util.net import SimulatedResponse, get_url
-import io
+from mcpython.util.net import get_url
 import json
 import os
 import shutil
@@ -23,8 +22,7 @@ from base64 import b64decode
 import PIL.Image
 import requests
 
-import globals as G
-import logger
+from mcpython import globals as G, logger
 
 DEBUG = False
 SIMULATE = False

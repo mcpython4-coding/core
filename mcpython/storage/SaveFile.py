@@ -13,8 +13,7 @@ import sys
 
 import deprecation
 
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.event.Registry
 import mcpython.storage.datafixer.IDataFixer
 import mcpython.storage.datafixers.IDataFixer

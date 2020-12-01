@@ -28,9 +28,8 @@ what does this system do?
 import json
 import os
 import shutil
-import logger
 
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.event.Registry
 import mcpython.mod.ModMcpython
 

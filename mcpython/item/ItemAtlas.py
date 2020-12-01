@@ -9,8 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 import mcpython.texture.TextureAtlas
 import mcpython.ResourceLocator
 import mcpython.util.texture
-import logger
-import globals as G
+from mcpython import globals as G, logger
 import pickle
 import os
 import PIL.Image
@@ -21,7 +20,7 @@ LATEST_INFO_VERSION = 2
 
 
 class ItemAtlasHandler:
-    def __init__(self):
+    def __init__(self, folder=G.build+"/itematlases"):
         self.scheduled_item_files = set()
         self.atlases = []
         self.atlas_files = []
@@ -29,6 +28,7 @@ class ItemAtlasHandler:
         self.allocation_table = {}
         self.file_relocate = {}
         self.prevent_resize = set()
+        self.folder = folder
 
     def schedule_item_file(self, file: str):
         if not mcpython.ResourceLocator.exists(file):
@@ -40,8 +40,8 @@ class ItemAtlasHandler:
 
     def load(self):
         if G.prebuilding: return
-        if not os.path.isfile(G.build+"/itematlases/info.pkl"): return
-        with open(G.build+"/itematlases/info.pkl", mode="rb") as f:
+        if not os.path.isfile(self.folder+"/info.pkl"): return
+        with open(self.folder+"/info.pkl", mode="rb") as f:
             data = pickle.load(f)
         if data["version"] != LATEST_INFO_VERSION:
             logger.println("[FATAL] invalid item atlas version {} (not supported)".format(data["version"]))
@@ -50,7 +50,7 @@ class ItemAtlasHandler:
         self.allocation_table = data["allocation"]
         self.file_relocate.update(**data["relocate"])
         for i, d in enumerate(data["atlases"]):
-            f = G.build + "/itematlases/atlas_{}.png".format(i)
+            f = self.folder+"/atlas_{}.png".format(i)
             if not os.path.exists(f): continue
             atlas = mcpython.texture.TextureAtlas.TextureAtlas()
             atlas.texture = PIL.Image.open(f)
@@ -95,12 +95,12 @@ class ItemAtlasHandler:
     def dump(self):
         data = {"version": LATEST_INFO_VERSION, "atlases": [], "allocation": self.allocation_table,
                 "relocate": self.file_relocate}
-        if not os.path.exists(G.build+"/itematlases"):
-            os.makedirs(G.build+"/itematlases")
+        if not os.path.exists(self.folder):
+            os.makedirs(self.folder)
         for i, atlas in enumerate(self.atlases):
-            atlas.texture.save(G.build+"/itematlases/atlas_{}.png".format(i))
+            atlas.texture.save(self.folder+"/atlas_{}.png".format(i))
             data["atlases"].append({"id": i, "table": self.atlas_files[i], "free": atlas.free_space})
-        with open(G.build+"/itematlases/info.pkl", mode="wb") as f:
+        with open(self.folder+"/info.pkl", mode="wb") as f:
             pickle.dump(data, f)
 
     def get_texture_info(self, file: str):
@@ -109,7 +109,7 @@ class ItemAtlasHandler:
             self.schedule_item_file(file)
             # logger.println("[FATAL] tried to access '{}' (which is not arrival) for getting texture info for atlas".format(file))
             # logger.println("[FATAL] this normally indicates an missing addition to the texture atlas or an broken rendering system")
-            return self.atlases[0], (0, 0)
+            return self.atlas_grids[0][0, 0]
 
         atlas_id, position = self.allocation_table[file]
         x, y = position[0], position[1]

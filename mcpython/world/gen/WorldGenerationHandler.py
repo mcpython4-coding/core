@@ -9,8 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 import time
 import typing
 
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.mod.ModMcpython
 import mcpython.world.Chunk
 import mcpython.world.Dimension
@@ -156,7 +155,7 @@ class WorldGenerationTaskHandler:
             logger.println("[WORLD][HANDLER] processing chunk {}".format(chunk))
         if self._process_0_array(chunk) or self._process_1_array(chunk) or self._process_2_array(chunk):
             if log_msg:
-                logger.println("executing took {}s in chunk {}".format(time.time()-start, chunk))
+                logger.println("executing took {}s in chunk {}".format(time.time() - start, chunk))
             return 2
         if self.get_task_count_for_chunk(chunk) == 0:
             self.chunks.remove(chunk)
@@ -433,12 +432,11 @@ G.worldgenerationhandler = WorldGenerationHandler()
 
 
 def load_layers():
-    from .layer import (DefaultBedrockLayer, DefaultBiomeLayer, DefaultHeightMapLayer, DefaultLandMassLayer,
-                        DefaultStonePlacementLayer, DefaultTemperatureLayer, DefaultTopLayerLayer, DefaultTreeLayer)
+    pass
 
 
 def load_modes():
-    from .mode import (DefaultOverWorldGenerator, DebugOverWorldGenerator, DefaultNetherWorldGenerator)
+    pass
 
 
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:worldgen:layer", load_layers,

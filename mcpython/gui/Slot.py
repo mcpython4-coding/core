@@ -6,12 +6,12 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G, logger
 import pyglet
 import mcpython.gui.ItemStack
 import mcpython.item.ItemHandler
 import mcpython.ResourceLocator
-import logger
+import mcpython.rendering.model.ItemModel
 
 
 SLOT_WIDTH = 32
@@ -122,8 +122,9 @@ class Slot:
                 self.empty_image.position = (self.position[0] + dx, self.position[1] + dy)
                 self.empty_image.draw()
         if self.sprite is not None:
-            self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
-            self.sprite.draw()
+            # self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
+            # self.sprite.draw()
+            mcpython.rendering.model.ItemModel.handler.draw(self.itemstack.get_item_name(), (self.position[0] + dx, self.position[1] + dy), "gui", {})
         self.__last_item_file = self.itemstack.item.get_default_item_image_location() if self.itemstack.item else None
 
     def draw_lable(self, x, y):

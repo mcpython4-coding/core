@@ -7,10 +7,9 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import sys
-import logger
-import globals as G
+from mcpython import globals as G, logger
 
-if sys.version_info.major < 3 or sys.version_info.minor < 7:  # everything lower is not supported!
+if sys.version_info.major < 3 or sys.version_info.minor < 9:  # everything lower is not supported!
     print("[WARN] you are using an not supported version of python. Game will not run!")
     sys.exit(-1)
 
@@ -29,7 +28,7 @@ except:
     import mcpython.ResourceLocator
 
     mcpython.ResourceLocator.close_all_resources()
-    logger.write_exception("general loading exception")
+    logger.write_exception("general uncaught exception")
     try:
         G.tmp.cleanup()
     except NameError:

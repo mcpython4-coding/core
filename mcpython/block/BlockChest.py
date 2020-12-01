@@ -12,11 +12,10 @@ import pyglet
 from pyglet.window import mouse, key
 
 import mcpython.block.BoundingBox
-import globals as G
+from .. import globals as G, logger
 import mcpython.item.ItemTool
 import mcpython.util.enums
 from . import Block
-import logger
 
 BBOX = mcpython.block.BoundingBox.BoundingBox((14/16, 14/16, 14/16), (1/16, 1/16, 1/16))  # the bounding box of the chest
 

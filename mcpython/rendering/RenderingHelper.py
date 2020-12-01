@@ -11,7 +11,7 @@ import math
 
 import pyglet.gl as _gl
 
-import globals as G
+from mcpython import globals as G
 import mcpython.rendering.MatrixStack
 
 

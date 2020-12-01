@@ -7,12 +7,11 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.gui.ItemStack
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.event.Registry
 import mcpython.entity.EntityHandler
 import uuid
 import mcpython.util.math
-import logger
 import traceback
 import mcpython.entity.DamageSource
 

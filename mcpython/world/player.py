@@ -6,8 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals
-import logger
+from mcpython import globals, globals as G, logger
 import mcpython.ResourceLocator
 import mcpython.chat.Chat
 import mcpython.entity.Entity
@@ -19,7 +18,6 @@ import mcpython.gui.Slot
 import mcpython.mod.ModMcpython
 import mcpython.rendering.EntityRenderer
 import mcpython.util.math
-import globals as G
 import mcpython.entity.DamageSource
 
 

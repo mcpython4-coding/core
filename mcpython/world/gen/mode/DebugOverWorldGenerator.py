@@ -8,7 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 import math
 
-import globals as G
+from mcpython import globals as G
 import mcpython.event.EventHandler
 import mcpython.event.Registry
 import mcpython.mod.ModMcpython

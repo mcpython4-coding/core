@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft"""
 classes will be removed in the future as they can be replaced by tags
 """
 import mcpython.ResourceLocator
-import logger
+from mcpython import logger
 
 
 class BlockConfigEntry:

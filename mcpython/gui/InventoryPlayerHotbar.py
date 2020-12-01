@@ -6,7 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.gui.Inventory
 import mcpython.gui.InventoryHandler
 import mcpython.gui.Slot
@@ -15,7 +15,6 @@ import mcpython.ResourceLocator
 import time
 import mcpython.util.opengl
 import mcpython.event.EventHandler
-import logger
 import sys
 
 try:

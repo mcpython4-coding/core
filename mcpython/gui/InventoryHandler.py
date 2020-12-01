@@ -6,13 +6,12 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.gui.Inventory
 import mcpython.state.StatePart
 from pyglet.window import key, mouse
 import mcpython.gui.Slot
 import mcpython.gui.ShiftContainer
-import logger
 import mcpython.gui.HoveringItemBox
 
 

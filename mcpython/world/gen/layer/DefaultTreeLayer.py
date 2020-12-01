@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 
 import random
 
-import globals as G
+from mcpython import globals as G
 import mcpython.world.Chunk
 from mcpython.world.gen.layer.Layer import Layer, LayerConfig
 

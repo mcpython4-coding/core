@@ -9,8 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 import mcpython.factory.BlockFactory
 import mcpython.factory.BlockModelFactory
 import mcpython.event.Registry
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import deprecation
 # todo: re-write to be based on new data gen system
 

@@ -6,13 +6,12 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from .. import globals as G, logger
 from . import Block
 from pyglet.window import mouse, key
 import mcpython.util.enums
 import pyglet
 import mcpython.gui.InventoryBarrel
-import logger
 
 
 class BlockBarrel(Block.Block):

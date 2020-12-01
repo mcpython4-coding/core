@@ -6,7 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G
 
 config = {"layers": ["landmass_default", "temperaturemap", "biomemap_default", "heightmap_default", "bedrock_default",
                      "stone_default", "top_layer_default", "tree_default"]}

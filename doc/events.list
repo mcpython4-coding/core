@@ -59,6 +59,9 @@ inventory:
     inventory:hide:{class name}(Inventory): Special event for class inventory hide
 
 items:
+    item:bake:pre(ItemModelHandler): called by ItemModelHandler before baking the models
+    item:bake:post(ItemModelHandler): called by ItemModelHandler after baking the models
+
     "itemhandler:build:atlases:save": called by ItemHandler when the table of item data is saved
     "itemhandler:build:atlases:load": called by ItemHandler when the table of item data is loaded
 

@@ -8,10 +8,9 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.storage.serializer.IDataSerializer
 import mcpython.storage.datafixers.IDataFixer
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.world.Chunk
 import mcpython.util.enums
-import logger
 import uuid
 
 

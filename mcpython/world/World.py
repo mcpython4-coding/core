@@ -12,7 +12,7 @@ import typing
 import deprecation
 import pyglet
 
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.chat.DataPack
 import mcpython.config
 import mcpython.state.StatePartGame
@@ -23,7 +23,6 @@ import mcpython.world.Dimension
 import mcpython.world.GameRule
 import mcpython.world.gen.WorldGenerationHandler
 import mcpython.world.player
-import logger
 
 
 class World:

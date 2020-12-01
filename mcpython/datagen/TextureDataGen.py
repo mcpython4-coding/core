@@ -10,7 +10,7 @@ import mcpython.datagen.Configuration
 import PIL.Image
 import mcpython.ResourceLocator
 import mcpython.util.texture
-import logger
+from mcpython import logger
 
 
 class TextureConstructor(mcpython.datagen.Configuration.IDataGenerator):

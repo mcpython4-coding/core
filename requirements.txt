@@ -1,9 +1,9 @@
-psutil==5.7.2
-Pillow==7.2.0
-pyglet==1.5.7
+psutil==5.7.3
+Pillow==8.0.1
+pyglet==1.5.11
 opensimplex==0.3
 clipboard==0.0.4
-toml==0.10.1
-requests==2.24.0
+toml==0.10.2
+requests==2.25.0
 deprecation==2.1.0
 simplejson==3.17.2

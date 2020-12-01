@@ -8,14 +8,13 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 from . import State
 import mcpython.state.ui.UIPartLable
-import globals as G
+from .. import globals as G, logger
 import mcpython.util.math
 from pyglet.window import key
 import pyglet
 import random
 import mcpython.mod.ModMcpython
 import mcpython.state.StatePartConfigBackground
-import logger
 import mcpython.chat.DataPack
 import time
 import mcpython.util.opengl

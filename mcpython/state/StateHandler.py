@@ -6,9 +6,8 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from .. import globals as G, logger
 from . import State
-import logger
 import mcpython.event.TickHandler
 import mcpython.state.StateConfigFile
 
@@ -54,9 +53,5 @@ handler = G.statehandler = StateHandler()
 
 
 def load():
-    from . import (StateGame, StateEscape, StateStartMenu, StateGameInfo, StateBlockItemGenerator,
-                   StateWorldGenerationConfig, StateModLoading)
-    import mcpython.gui.InventoryHandler
-
     handler.switch_to("minecraft:modloading")  # this is the first state todo: make config for it
 

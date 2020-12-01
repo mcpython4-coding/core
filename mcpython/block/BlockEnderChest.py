@@ -8,7 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 from pyglet.window import mouse, key
 
-import globals as G
+from .. import globals as G
 import mcpython.util.enums
 from mcpython.block.BlockChest import BBOX
 from . import Block

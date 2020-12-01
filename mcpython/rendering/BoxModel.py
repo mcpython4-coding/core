@@ -15,7 +15,7 @@ import mcpython.config
 import mcpython.mod.ModMcpython
 import mcpython.ResourceLocator
 import deprecation
-import globals as G
+from mcpython import globals as G
 
 UV_ORDER = [mcpython.util.enums.EnumSide.UP, mcpython.util.enums.EnumSide.DOWN, mcpython.util.enums.EnumSide.WEST,
             mcpython.util.enums.EnumSide.EAST, mcpython.util.enums.EnumSide.NORTH, mcpython.util.enums.EnumSide.SOUTH]

@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 from . import State, StatePartGame
 from .ui import UIPartProgressBar
 import mcpython.event.EventInfo
-import globals as G
+from .. import globals as G, logger
 import pyglet
 import os
 import mcpython.ResourceLocator
@@ -21,10 +21,10 @@ import json
 import mcpython.factory.ItemFactory
 import mcpython.item.ItemHandler
 import mcpython.mod.ModMcpython
-import logger
 import mcpython.state.StateModLoading
 import psutil
 import mcpython.gui.HoveringItemBox
+import mcpython.rendering.model.ItemModel
 
 
 class StateBlockItemGenerator(State.State):
@@ -125,6 +125,7 @@ class StateBlockItemGenerator(State.State):
         mcpython.event.TickHandler.handler.enable_tick_skipping = True
         with open(G.build+"/info.json", mode="w") as f:
             json.dump({"finished": True}, f)
+        mcpython.rendering.model.ItemModel.handler.bake()
         G.tickhandler.enable_random_ticks = True
         G.world.hide_faces_to_ungenerated_chunks = True
         G.window.set_fullscreen("--fullscreen" in sys.argv)
@@ -218,6 +219,9 @@ class StateBlockItemGenerator(State.State):
         block = G.world.get_active_dimension().get_block((0, 0, 0))
         if type(block) != str and block is not None: block.modify_block_item(obj)
         obj.finish(task_list=True)
+        model = mcpython.rendering.model.ItemModel.ItemModel(blockname)
+        model.addTextureLayer(0, file)
+        mcpython.rendering.model.ItemModel.handler.models[blockname] = model
         self.tries = 0
         self.SETUP_TIME = 1
         self.CLEANUP_TIME = 1

@@ -8,7 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 blocks based on 1.16.1.jar of minecraft"""
 from . import State, StatePartGame
 import mcpython.gui.InventoryHandler
-import globals as G
+from .. import globals as G
 from pyglet.window import key
 import mcpython.event.TickHandler
 import pyglet

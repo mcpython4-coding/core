@@ -10,7 +10,7 @@ import mcpython.state.StatePart
 import pyglet
 import PIL.Image
 import mcpython.ResourceLocator
-import globals as G
+from mcpython import globals as G
 import mcpython.util.texture
 
 

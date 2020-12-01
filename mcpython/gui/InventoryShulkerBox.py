@@ -10,7 +10,7 @@ import mcpython.gui.InventoryChest
 import mcpython.item.IShulkerBoxLikeItem
 import pyglet
 import mcpython.event.EventHandler
-import globals as G
+from mcpython import globals as G
 
 
 class InventoryShulkerBox(mcpython.gui.InventoryChest.InventoryChest):

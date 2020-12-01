@@ -6,7 +6,7 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.ResourceLocator
 import mcpython.event.Registry
 import mcpython.texture.TextureAtlas
@@ -17,8 +17,8 @@ import PIL.Image
 import pyglet
 import mcpython.factory.ItemFactory
 import mcpython.mod.ModMcpython
-import logger
 import mcpython.gui.HoveringItemBox
+import mcpython.rendering.model.ItemModel
 
 
 COLLECTED_ITEMS = []
@@ -48,6 +48,9 @@ def load_data(from_block_item_generator=False):
                 block = blocktable[name]
                 block.modify_block_item(obj)
                 obj.finish()
+                model = mcpython.rendering.model.ItemModel.ItemModel(name)
+                model.addTextureLayer(0, entry[1])
+                mcpython.rendering.model.ItemModel.handler.models[name] = model
             else:
                 collected_overflow.append(entry)
                 data.remove(entry)

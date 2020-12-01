@@ -9,8 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 import os
 import sys
 
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.config
 import mcpython.ResourceLocator
 
@@ -62,6 +61,8 @@ class LaunchWrapper:
 
         import mcpython.rendering.model.ModelHandler
         import mcpython.tags.TagHandler
+
+        import mcpython.rendering.model.ItemModel
 
         import mcpython.texture.factory
         import mcpython.setup

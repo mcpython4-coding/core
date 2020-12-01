@@ -6,11 +6,10 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.ResourceLocator
 import random
 import mcpython.mod.ModMcpython
-import logger
 import mcpython.event.Registry
 import mcpython.block.BoundingBox
 import copy

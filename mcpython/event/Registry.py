@@ -6,9 +6,8 @@ original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
 blocks based on 1.16.1.jar of minecraft"""
-import globals as G
-import logger
-import logger
+from mcpython import globals as G, logger
+import mcpython.logger
 import mcpython.event.EventHandler
 
 

@@ -11,7 +11,7 @@ import random
 
 import opensimplex
 
-import globals as G
+from mcpython import globals as G
 import mcpython.event.EventHandler
 import mcpython.world.Chunk
 from mcpython.world.gen.layer.Layer import Layer, LayerConfig

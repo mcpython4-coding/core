@@ -7,9 +7,8 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import mcpython.gui.crafting.IRecipeType
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.gui.ItemStack
-import logger
 
 
 def transform_to_item_stack(item, table: dict) -> list:
@@ -42,7 +41,7 @@ def transform_to_item_stack(item, table: dict) -> list:
         for v in values: value += v
         return value
     else:
-        logger.println("can't cast '"+str(item)+"' to valid itemlist")
+        logger.println("can't cast '" + str(item) + "' to valid itemlist")
         return []
 
 

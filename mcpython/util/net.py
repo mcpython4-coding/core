@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 import json
 import io
 import requests
-import globals as G
+from mcpython import globals as G
 
 
 class SimulatedResponse:

@@ -10,12 +10,11 @@ import mcpython.ResourceLocator
 import enum
 import random
 import mcpython.gui.ItemStack
-import globals as G
+from mcpython import globals as G, logger
 import mcpython.mod.ModMcpython
 import mcpython.loot.LootTableCondition
 import mcpython.loot.LootTableFunction
 import mcpython.event.EventHandler
-import logger
 import random
 
 

@@ -9,8 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 import enum
 import os
 
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.ResourceLocator
 import mcpython.chat.command.CommandParser
 import mcpython.chat.command.McFunctionFile

@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft"""
 from . import State, StatePartGame
 from .ui import UIPartButton, UIPartLable
 import mcpython.event.EventInfo
-import globals as G
+from .. import globals as G
 from pyglet.window import key
 import pyglet
 import mcpython.state.StateGame

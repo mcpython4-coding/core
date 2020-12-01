@@ -13,8 +13,7 @@ import clipboard
 import pyglet
 from pyglet.window import key
 
-import globals as G
-import logger
+from mcpython import globals as G, logger
 import mcpython.chat.command.CommandHandler
 import mcpython.event.EventBus
 import mcpython.event.EventHandler
