@@ -57,7 +57,7 @@ class DataPackHandler:
             G.eventhandler.call("datapack:load", datapack)
             return datapack
         except:
-            logger.write_exception("during loading data pack from {}".format(directory))
+            logger.print_exception("during loading data pack from {}".format(directory))
 
     def reload(self):
         """
@@ -152,7 +152,7 @@ class DataPack:
                         self.access.read(file, None).decode("UTF-8"), name)
         except:
             self.status = DataPackStatus.SYSTEM_ERROR
-            logger.write_exception("error during loading data pack '{}'".format(self.name))
+            logger.print_exception("error during loading data pack '{}'".format(self.name))
             return
         self.status = DataPackStatus.ACTIVATED
 
@@ -168,7 +168,7 @@ class DataPack:
             self.function_table.clear()  # unload all .mcfunction files
         except:
             self.status = DataPackStatus.SYSTEM_ERROR
-            logger.write_exception("error during unloading data pack '{}'".format(self.name))
+            logger.print_exception("error during unloading data pack '{}'".format(self.name))
             return
         self.status = DataPackStatus.UNLOADED  # we have successfully unloaded the data-pack
         if self.access: self.access.close()  # remove access to the file system

@@ -198,6 +198,7 @@ def load_resource_packs():
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.home))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.build))
     if G.dev_environment:  # only in dev-environment we need these special folders...
+        print(G.local)
         RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/main"))
         RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/generated"))
         RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/source"))
@@ -283,7 +284,7 @@ def read(file: str, mode: typing.Union[None, str] = None):
                 try:
                     return x.read(file, mode)
                 except json.JSONDecodeError:
-                    logger.write_exception("json error in file {}".format(file))
+                    logger.print_exception("json error in file {}".format(file))
                     continue
         raise RuntimeError("can't find resource named {}".format(resource))
     if not exists(file, transform=False):

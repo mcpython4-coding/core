@@ -62,7 +62,7 @@ class TickHandler:
             try:
                 func(*args, **kwargs)
             except:
-                logger.write_exception("exception during invoking", "{}({},{})".format(
+                logger.print_exception("exception during invoking", "{}({},{})".format(
                     func, ", ".join(args), ", ".join(["{}={}".format(key, kwargs[key]) for key in kwargs])))
 
     def schedule_once(self, function, *args, **kwargs):

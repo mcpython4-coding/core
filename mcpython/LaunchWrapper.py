@@ -94,7 +94,7 @@ class LaunchWrapper:
             try:
                 mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build + "/skin.png")
             except:
-                logger.write_exception("[FATAL] failed to load default skin")
+                logger.print_exception("[FATAL] failed to load default skin")
                 sys.exit(-1)
 
     def load_mods(self):
@@ -118,13 +118,13 @@ class LaunchWrapper:
                               mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"))
             G.eventhandler.call("game:gameloop_startup")
         except:
-            logger.write_exception("[FATAL] failed to load window images")
+            logger.print_exception("[FATAL] failed to load window images")
             sys.exit(-1)
         try:
             pyglet.app.run()
         except SystemExit:
             raise
         except:
-            logger.write_exception("ERROR DURING RUNTIME")
+            logger.print_exception("ERROR DURING RUNTIME")
             raise
 

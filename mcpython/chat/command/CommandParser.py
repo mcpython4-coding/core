@@ -65,13 +65,13 @@ class CommandParser:
             try:
                 values, trace = self._convert_to_values(split, parsebridge, info)
             except:
-                logger.write_exception("[CHAT][EXCEPTION] during parsing values for command '{}'".format(command.NAME))
+                logger.print_exception("[CHAT][EXCEPTION] during parsing values for command '{}'".format(command.NAME))
                 return
             if values is None: return
             try:
                 command.parse(values, trace, info)
             except:
-                logger.write_exception("[CHAT][EXCEPTION] during executing command '{}' with {}".format(command.NAME,
+                logger.print_exception("[CHAT][EXCEPTION] during executing command '{}' with {}".format(command.NAME,
                                                                                                         info))
         else:
             logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))

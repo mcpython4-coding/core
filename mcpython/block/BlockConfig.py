@@ -53,5 +53,5 @@ for file in mcpython.ResourceLocator.get_all_entries_special("assets/config/bloc
     try:
         ENTRIES[name].add_data(mcpython.ResourceLocator.read(file, mode="json"))
     except:
-        logger.write_exception("[ERROR] failed to load block config file {}".format(file))
+        logger.print_exception("[ERROR] failed to load block config file {}".format(file))
 

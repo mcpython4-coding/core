@@ -55,7 +55,7 @@ class Language:
             Language.from_data(file.split("/")[-1].split(".")[0] if name is None else name,
                                mcpython.ResourceLocator.read(file, "json").copy())
         except:
-            logger.write_exception("[ERROR] failed to load language file {}".format(file))
+            logger.print_exception("[ERROR] failed to load language file {}".format(file))
 
     @classmethod
     def from_old_data(cls, file: str, name=None):
@@ -70,7 +70,7 @@ class Language:
         try:
             lines = mcpython.ResourceLocator.read(file).decode("UTF-8").split("\n")
         except:
-            logger.write_exception("[ERROR] failed to load (old) language file {}".format(file))
+            logger.print_exception("[ERROR] failed to load (old) language file {}".format(file))
             return
         for line in lines:
             if line.startswith("#"): continue

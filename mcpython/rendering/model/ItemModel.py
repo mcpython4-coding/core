@@ -134,7 +134,7 @@ class ItemModelHandler:
             try:
                 model.bake(self)
             except:
-                logger.write_exception("error during baking item model for '{}'".format(model.item))
+                logger.print_exception("error during baking item model for '{}'".format(model.item))
         self.atlas.build()
         self.atlas.dump()
         G.eventhandler.call("item:bake:post", self)

@@ -295,7 +295,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
                 chunk_instance.set_value("heightmap",
                                          {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)})
             except IndexError:
-                logger.write_exception(
+                logger.print_exception(
                     "[CHUNK][CORRUPTED] palette map exception in chunk '{}' in dimension '{}'".format(
                         chunk, dimension),
                     "this might indicate an unsuccessful save of the world!")
@@ -308,7 +308,7 @@ class Chunk(mcpython.storage.serializer.IDataSerializer.IDataSerializer):
             except ValueError:
                 continue
             except:
-                logger.write_exception("error during loading entity data {} in chunk {} in dimension '{}'".format(
+                logger.print_exception("error during loading entity data {} in chunk {} in dimension '{}'".format(
                     entity, chunk, dimension))
                 continue
             entity_instance.rotation = entity["rotation"]

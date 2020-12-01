@@ -20,7 +20,7 @@ import sys
 try:
     base: pyglet.image.AbstractImage = mcpython.ResourceLocator.read("gui/icons", "pyglet")
 except:
-    logger.write_exception("[FATAL] failed to load hotbar image")
+    logger.print_exception("[FATAL] failed to load hotbar image")
     sys.exit(-1)
 
 

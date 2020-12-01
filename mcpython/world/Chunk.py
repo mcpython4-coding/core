@@ -199,7 +199,7 @@ class Chunk:
                             try:
                                 b.on_block_update()
                             except:
-                                logger.write_exception("during block-updating block {}".format(b))
+                                logger.print_exception("during block-updating block {}".format(b))
 
     def remove_block(self, position: typing.Union[typing.Tuple[int, int, int], Block.Block], immediate: bool = True,
                      block_update: bool = True, blockupdateself: bool = True):

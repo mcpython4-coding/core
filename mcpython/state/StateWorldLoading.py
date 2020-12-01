@@ -62,7 +62,7 @@ class StateWorldLoading(State.State):
             G.statehandler.switch_to("minecraft:startmenu")
             return
         except:
-            logger.write_exception("failed to load world")
+            logger.print_exception("failed to load world")
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
             return

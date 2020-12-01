@@ -16,7 +16,7 @@ class McFunctionFile:
         try:
             return cls(mcpython.ResourceLocator.read(file).decode("utf-8"), name)
         except:
-            logger.write_exception("[WARN] failed to load function file {}".format(file))
+            logger.print_exception("[WARN] failed to load function file {}".format(file))
 
     def __init__(self, data: str, name: str):
         self.lines = data.split("\n")

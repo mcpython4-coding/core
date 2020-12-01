@@ -70,10 +70,14 @@ class StateBlockItemGenerator(State.State):
         self.parts[1].size = (w-20, 20)
 
     def on_activate(self):
-        G.world.cleanup()
-        G.dimensionhandler.init_dims()
-        G.world.hide_faces_to_ungenerated_chunks = False
-        G.tickhandler.enable_random_ticks = False
+        try:
+            G.world.cleanup()
+            G.dimensionhandler.init_dims()
+            G.world.hide_faces_to_ungenerated_chunks = False
+            G.tickhandler.enable_random_ticks = False
+        except:
+            logger.print_exception("[FATAL] failed to open world for blockitemgenerator")
+            sys.exit(-1)
         self.tasks = list(G.registry.get_by_name("block").registered_object_map.keys())
         if not os.path.isdir(G.build+"/generated_items"): os.makedirs(G.build+"/generated_items")
         if not G.prebuilding:
@@ -151,7 +155,7 @@ class StateBlockItemGenerator(State.State):
                 blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
             blockinstance.face_state.update(redraw_complete=True)
         except ValueError:
-            logger.write_exception("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
+            logger.print_exception("[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                            "following exception".format(self.tasks[self.blockindex]))
             self.blockindex += 1
             pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)

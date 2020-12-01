@@ -119,7 +119,7 @@ class DataGeneratorConfig:
             try:
                 element.generate()
             except:
-                logger.write_exception("during building {}".format(element))
+                logger.print_exception("during building {}".format(element))
         logger.println("[INFO] finished in {}s ({} tasks to do)".format(time.time() - start, total))
 
     def write(self, data, *args):

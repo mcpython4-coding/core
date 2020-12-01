@@ -303,7 +303,7 @@ class BlockStateDefinition:
         except BlockStateNotNeeded:
             pass
         except:
-            logger.write_exception("error during loading model from file '{}'".format(file))
+            logger.print_exception("error during loading model from file '{}'".format(file))
 
     @classmethod
     def from_data(cls, name, data):
@@ -317,7 +317,7 @@ class BlockStateDefinition:
         except BlockStateNotNeeded:
             pass  # do we need this model?
         except:
-            logger.write_exception("error during loading model for '{}' from data {}".format(name, data))
+            logger.print_exception("error during loading model for '{}' from data {}".format(name, data))
 
     def __init__(self, data: dict, name: str):
         self.name = name

@@ -262,10 +262,10 @@ class LootTable:
             if "type" in data:
                 logger.println("[WARN] type '{}' not found for loot table '{}'!".format(data["type"], name))
             else:
-                logger.write_exception("[ERROR] fatal during loading loot table '{}'".format(name))
+                logger.print_exception("[ERROR] fatal during loading loot table '{}'".format(name))
             return
         except:
-            logger.write_exception("[ERROR] fatal during loading loot table '{}'".format(name))
+            logger.print_exception("[ERROR] fatal during loading loot table '{}'".format(name))
             return
         handler.loot_tables[name] = obj
         if "pools" in data:

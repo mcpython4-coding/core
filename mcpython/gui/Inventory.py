@@ -51,7 +51,7 @@ class Inventory:
             try:
                 self.config = mcpython.ResourceLocator.read(self.get_config_file(), "json")
             except:
-                logger.write_exception("[FATAL] failed to load inventory config file {} for inventory {}".format(
+                logger.print_exception("[FATAL] failed to load inventory config file {} for inventory {}".format(
                     self.get_config_file(), self))
         else:
             self.config = {}
@@ -75,7 +75,7 @@ class Inventory:
                     image = mcpython.util.texture.to_pyglet_image(image.resize((32, 32), PIL.Image.NEAREST))
                     self.slots[sid].empty_image = pyglet.sprite.Sprite(image)
                 except:
-                    logger.write_exception("[FATAL] failed to load empty slot image from {}".format(
+                    logger.print_exception("[FATAL] failed to load empty slot image from {}".format(
                         entry["empty_slot_image"]))
             if "allowed_tags" in entry:
                 self.slots[sid].allowed_item_tags = entry["allowed_tags"]
@@ -96,7 +96,7 @@ class Inventory:
                     self.bgsprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read(
                         "assets/missingtexture.png", "pyglet"))
             except:
-                logger.write_exception("[FATAL] failed to load background image {}".format(
+                logger.print_exception("[FATAL] failed to load background image {}".format(
                     self.config["image_location"]))
         if "bg_image_pos" in self.config:
             self.bg_image_pos = tuple(self.config["bg_image_pos"])

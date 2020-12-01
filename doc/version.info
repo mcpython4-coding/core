@@ -1267,6 +1267,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: the following will be braking changes
         the following symbols are used for indication of task type:
             B: bug/issue
+            [B]: in-dev bug during this branch
             R: refactor
             D: deletion
             F: feature
@@ -1278,3 +1279,8 @@ R   [uuk]: moved changelog.txt, deprecated.txt, events.list, fixed issues.list, 
 D   [uuk]: removed updates-folder, README_old.md
 F   [uuk]: added --no-log-escape option to remove escaping paths
 B   [uuk]: fixed escaping dict not working correctly in some cases
+[B] [uuk]: globals.py was pointing to wrong home
+F   [uuk]: logger has now an print_stack() function to print only the current call stack
+F   [uuk]: switching to an unknown state is now FATAL and will close the game
+R   [uuk]: renamed logger.write_exception to logger.print_exception
+[B] [uuk]: fixed refactor bugs

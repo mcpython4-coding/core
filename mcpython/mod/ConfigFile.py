@@ -395,7 +395,7 @@ class ConfigFile:
                 self.main_tag = old_buffer
                 return
             except:
-                logger.write_exception("loading config file {}".format(self.file))
+                logger.print_exception("loading config file {}".format(self.file))
         self.write()
 
     def read(self):
@@ -410,7 +410,7 @@ class ConfigFile:
             mapper = bufferToMapper(d)
             self.main_tag.integrate(mapper)
         except:
-            logger.write_exception("during loading config file '{}'".format(self.file))
+            logger.print_exception("during loading config file '{}'".format(self.file))
 
     def write(self):
         data = "// mcpython config file\nVERSION=1.0.0\nPROVIDING_MOD={}\nPROVIDING_MOD_VERSION={}\n\n{}".format(

@@ -14,7 +14,7 @@ prebuilding = "--rebuild" in sys.argv
 debugevents = "--debugevents" in sys.argv
 dev_environment = True  # dynamical set on build
 
-local = os.path.dirname(__file__).replace("\\", "/")
+local = os.path.dirname(os.path.dirname(__file__)).replace("\\", "/")
 home = local+"/home" if "--home-folder" not in sys.argv else sys.argv[sys.argv.index("--home-folder")+1]
 build = home+"/build" if "--build-folder" not in sys.argv else sys.argv[sys.argv.index("--build-folder")+1]
 tmp = tempfile.TemporaryDirectory()

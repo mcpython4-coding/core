@@ -84,7 +84,7 @@ class Slot:
             try:
                 f(player=player)
             except:
-                logger.write_exception("during invoking {} for slot {}".format(f, self))
+                logger.print_exception("during invoking {} for slot {}".format(f, self))
 
     itemstack = property(get_itemstack, set_itemstack)
 
@@ -154,7 +154,7 @@ class Slot:
         try:
             return not (flag1 or flag3) or (flag1 and flag2) or (flag3 and flag4)
         except:
-            logger.write_exception("[GUI][ERROR] error during executing check func '{}'".format(self.allowed_item_func))
+            logger.print_exception("[GUI][ERROR] error during executing check func '{}'".format(self.allowed_item_func))
             return False
 
     def save(self):

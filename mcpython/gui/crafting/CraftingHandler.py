@@ -81,13 +81,13 @@ class CraftingHandler:
         try:
             data = mcpython.ResourceLocator.read(file).decode("utf-8")
         except:
-            logger.write_exception("during loading recipe file '{}'".format(file))
+            logger.print_exception("during loading recipe file '{}'".format(file))
             return
         if len(data.strip()) == 0: return
         try:
             data = json.loads(data)
         except:
-            logger.write_exception("during decoding recipe from file '{}'".format(file), "'" + data + "'")
+            logger.print_exception("during decoding recipe from file '{}'".format(file), "'" + data + "'")
             return
         s = file.split("/")
         name = "{}:{}".format(s[s.index("data")+1], "/".join(s[s.index("recipes")+1:]))

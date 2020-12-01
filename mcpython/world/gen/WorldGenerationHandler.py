@@ -196,7 +196,7 @@ class WorldGenerationTaskHandler:
                 try:
                     data[0](*data[1], **data[2])
                 except:
-                    logger.write_exception("during invoking '{}' with *{} and **{}".format(*data))
+                    logger.print_exception("during invoking '{}' with *{} and **{}".format(*data))
                 return True
         return False
 
@@ -432,11 +432,12 @@ G.worldgenerationhandler = WorldGenerationHandler()
 
 
 def load_layers():
-    pass
+    from .layer import (DefaultBedrockLayer, DefaultBiomeLayer, DefaultHeightMapLayer, DefaultLandMassLayer,
+                        DefaultStonePlacementLayer, DefaultTemperatureLayer, DefaultTopLayerLayer, DefaultTreeLayer)
 
 
 def load_modes():
-    pass
+    from .mode import (DefaultOverWorldGenerator, DebugOverWorldGenerator, DefaultNetherWorldGenerator)
 
 
 mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:worldgen:layer", load_layers,

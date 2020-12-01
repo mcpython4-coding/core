@@ -10,6 +10,7 @@ from .. import globals as G, logger
 from . import State
 import mcpython.event.TickHandler
 import mcpython.state.StateConfigFile
+import sys
 
 
 class StateHandler:
@@ -27,8 +28,8 @@ class StateHandler:
 
     def _switch_to(self, statename: str):
         if statename not in self.states:
-            logger.println("[WARNING] state '{}' does not exists".format(statename))
-            return
+            logger.print_stack("state '{}' does not exists".format(statename))
+            sys.exit(-10)
         self.CANCEL_SWITCH_STATE = False
         G.eventhandler.call("state:switch:pre", statename)
         if self.CANCEL_SWITCH_STATE: return
@@ -53,5 +54,9 @@ handler = G.statehandler = StateHandler()
 
 
 def load():
+    from . import (StateGame, StateEscape, StateStartMenu, StateGameInfo, StateBlockItemGenerator,
+                   StateWorldGenerationConfig, StateModLoading)
+    import mcpython.gui.InventoryHandler
+
     handler.switch_to("minecraft:modloading")  # this is the first state todo: make config for it
 

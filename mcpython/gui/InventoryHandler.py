@@ -119,7 +119,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
                     flag = slot.on_shift_click(slot, x, y, button, modifiers, G.world.get_active_player())
                     if flag is not True: return  # no default logic should go on
                 except:
-                    logger.write_exception("during shift-clicking {}, the function {} crashed".format(
+                    logger.print_exception("during shift-clicking {}, the function {} crashed".format(
                         slot, slot.on_shift_click))
             if G.inventoryhandler.shift_container is not None and \
                 G.inventoryhandler.shift_container.move_to_opposite(slot): return
@@ -207,7 +207,7 @@ class OpenedInventoryStatePart(mcpython.state.StatePart.StatePart):
                     flag = slot.on_shift_click(slot, x, y, button, modifiers, G.world.get_active_player())
                     if flag is not True: return  # no default logic should go on
                 except:
-                    logger.write_exception("during shift-clicking {}, the function {} crashed".format(
+                    logger.print_exception("during shift-clicking {}, the function {} crashed".format(
                         slot, slot.on_shift_click))
             if G.inventoryhandler.shift_container is not None and \
                 G.inventoryhandler.shift_container.move_to_opposite(slot): return

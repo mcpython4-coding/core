@@ -110,13 +110,13 @@ class StateWorldGeneration(State.State):
         try:
             mcpython.util.getskin.download_skin(playername, G.build + "/skin.png")
         except ValueError:
-            logger.write_exception(
+            logger.print_exception(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
             try:
                 mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(
                     G.build + "/skin.png")
             except:
-                logger.write_exception(
+                logger.print_exception(
                     "[FATAL] failed to load fallback skin. This is an serious issue!")
                 sys.exit(-1)
         mcpython.world.player.Player.RENDERER.reload()

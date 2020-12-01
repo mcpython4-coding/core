@@ -108,7 +108,7 @@ class EventBus:
             except MemoryError: sys.exit(-1)
             except:
                 exception_occ = True
-                logger.write_exception("during calling function: {} with arguments: {}, {}".format(function, list(
+                logger.print_exception("during calling function: {} with arguments: {}, {}".format(function, list(
                     args) + list(self.extra_arguments[0]) + list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs},
                                                                                                    sep="\n"),
                                        "function info: '{}'".format(info) if info is not None else "")
@@ -157,7 +157,7 @@ class EventBus:
             except MemoryError: sys.exit(-1)
             except SystemExit: raise
             except:
-                logger.write_exception()
+                logger.print_exception()
                 raise
 
     def activate(self):
@@ -194,7 +194,7 @@ class EventBus:
             except MemoryError: sys.exit(-1)
             except:
                 exception_occ = True
-                logger.write_exception("during calling function:", function, "with arguments:", list(args) + list(
+                logger.print_exception("during calling function:", function, "with arguments:", list(args) + list(
                     self.extra_arguments[0]) + list(eargs), {**kwargs, **self.extra_arguments[1], **ekwargs},
                                        "function info:", info)
             dif = time.time() - start

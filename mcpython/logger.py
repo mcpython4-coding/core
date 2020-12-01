@@ -109,7 +109,7 @@ def write_into_container(*container_areas, style=("+", "-", "|"), header=None, o
     println(horizontal_line)
 
 
-def write_exception(*info):
+def print_exception(*info):
     """
     write the current exception into console and log
     :param info: the info to use
@@ -126,6 +126,13 @@ def write_exception(*info):
         println(info, write_into_log_file=False)
         traceback.print_stack()
         traceback.print_exc()
+
+
+def print_stack(*info):
+    pdata = [["TRACE", random.choice(FUNNY_STRINGS)] + list(info)]
+    sdata = traceback.format_stack()[:-2]
+    pdata.append("".join(sdata).split("\n"))
+    write_into_container(*pdata)
 
 
 println("""MCPYTHON version {} ({}) running on {}

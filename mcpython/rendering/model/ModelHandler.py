@@ -84,7 +84,7 @@ class ModelHandler:
                 data = mcpython.ResourceLocator.read(file, "json")
             except json.decoder.JSONDecodeError:
                 data = {"parent": "minecraft:block/cube_all", "textures": {"all": "assets/missingtexture.png"}}
-                logger.write_exception("during loading model from file {}, now replaced by missing texture".format(file))
+                logger.print_exception("during loading model from file {}, now replaced by missing texture".format(file))
         else:
             data = file
         if "parent" in data:
@@ -100,7 +100,7 @@ class ModelHandler:
             sorted_models.remove("minecraft:block/block")  # This is the build-in model and we don't need it
         except ValueError:
             logger.println(self.found_models, "\n", self.dependence_list)
-            logger.write_exception("top-sort error during sorting models")
+            logger.print_exception("top-sort error during sorting models")
             sys.exit(-1)
         sorted_models = list(set(sorted_models))
         self.dependence_list.clear()  # decrease memory usage
@@ -129,7 +129,7 @@ class ModelHandler:
                                                                          name.split(":")[0] if name.count(":") == 1 else
                                                                          "minecraft")
         except:
-            logger.write_exception("error during loading model '{}' named '{}'".format(location, name))
+            logger.print_exception("error during loading model '{}' named '{}'".format(location, name))
 
     def add_face_to_batch(self, block, face, batches) -> list:
         if block.NAME not in self.blockstates:

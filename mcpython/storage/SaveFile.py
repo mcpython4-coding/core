@@ -145,7 +145,7 @@ class SaveFile:
         except:
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
-            logger.write_exception("exception during loading world. falling back to start menu...")
+            logger.print_exception("exception during loading world. falling back to start menu...")
             return
         # todo: load data packs for save files and than enable the below
         # G.commandparser.parse("/reload")
@@ -175,7 +175,7 @@ class SaveFile:
         except:
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
-            logger.write_exception("exception during saving world. falling back to start menu...")
+            logger.print_exception("exception during saving world. falling back to start menu...")
         self.save_in_progress = False
 
     def apply_storage_fixer(self, name: str, *args, **kwargs):
@@ -194,7 +194,7 @@ class SaveFile:
             for name, args, kwargs in fixer.GROUP_FIXER_NAMES:
                 self.apply_group_fixer(*args, **kwargs)
         except:
-            logger.write_exception("during data-fixing storage version '{}'".format(name))
+            logger.print_exception("during data-fixing storage version '{}'".format(name))
             G.statehandler.switch_to("minecraft:startmenu")
 
     def apply_group_fixer(self, name: str, *args, **kwargs):
@@ -213,7 +213,7 @@ class SaveFile:
             for name, args, kwargs in fixer.PART_FIXER_NAMES:
                 self.apply_part_fixer(name, *args, **kwargs)
         except:
-            logger.write_exception("during data-fixing group fixer '{}'".format(name))
+            logger.print_exception("during data-fixing group fixer '{}'".format(name))
             G.statehandler.switch_to("minecraft:startmenu")
 
     def apply_part_fixer(self, name: str, *args, **kwargs):
@@ -229,7 +229,7 @@ class SaveFile:
         try:
             fixer.apply(self, *args, **kwargs)
         except:
-            logger.write_exception("during data-fixing part '{}'".format(name))
+            logger.print_exception("during data-fixing part '{}'".format(name))
             G.statehandler.switch_to("minecraft:startmenu")
 
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
@@ -264,7 +264,7 @@ class SaveFile:
                 [self.apply_group_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES]
                 [self.apply_part_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.PART_FIXER_NAMES]
             except:
-                logger.write_exception("during data-fixing mod {} from {} to {}".format(
+                logger.print_exception("during data-fixing mod {} from {} to {}".format(
                     modname, fixer.FIXES_FROM, fixer.FIXES_TO))
                 G.statehandler.switch_to("minecraft:startmenu")
                 return
@@ -296,7 +296,7 @@ class SaveFile:
         try:
             return self.get_serializer_for(part).load(self, **kwargs)
         except mcpython.storage.serializer.IDataSerializer.InvalidSaveException:
-            logger.write_exception("during reading part '{}' from save files under '{}' with arguments {}".
+            logger.print_exception("during reading part '{}' from save files under '{}' with arguments {}".
                                    format(part, self.directory, kwargs))
 
     def dump(self, data, part, **kwargs):
@@ -309,7 +309,7 @@ class SaveFile:
         try:
             self.get_serializer_for(part).save(data, self, **kwargs)
         except:
-            logger.write_exception("during dumping {} to '{}'".format(data, part))
+            logger.print_exception("during dumping {} to '{}'".format(data, part))
 
     # Helper functions for fixers, loaders and savers
     # todo: add nbt serializer
@@ -367,7 +367,7 @@ class SaveFile:
             data = json.dumps(data)
             with open(file, mode="w") as f: f.write(data)
         except:
-            logger.write_exception("during dumping {} to '{}'".format(data, file))
+            logger.print_exception("during dumping {} to '{}'".format(data, file))
 
     def dump_file_pickle(self, file: str, data):
         """
@@ -382,7 +382,7 @@ class SaveFile:
             data = pickle.dumps(data)
             with open(file, mode="wb") as f: return f.write(data)
         except:
-            logger.write_exception("during dumping {} to '{}'".format(data, file))
+            logger.print_exception("during dumping {} to '{}'".format(data, file))
 
     def dump_raw(self, file: str, data: bytes):
         """
