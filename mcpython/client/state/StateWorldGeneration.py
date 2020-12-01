@@ -17,7 +17,7 @@ import sys
 
 from pyglet.window import key
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.ResourceLocator
 import mcpython.client.chat.DataPack
 import mcpython.common.config

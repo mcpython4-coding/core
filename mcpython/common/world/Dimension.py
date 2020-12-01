@@ -15,7 +15,7 @@ import typing
 import deprecation
 import pyglet
 
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.common.block.Block
 import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.OpenGLSetupFile

@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import json
 import io
 import requests
-from mcpython import globals as G
+from mcpython import shared as G
 
 
 class SimulatedResponse:

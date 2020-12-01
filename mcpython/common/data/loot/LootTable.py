@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.ResourceLocator
 import enum
 import mcpython.client.gui.ItemStack
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.common.mod.ModMcpython
 import mcpython.common.data.loot.LootTableCondition
 import mcpython.common.data.loot.LootTableFunction

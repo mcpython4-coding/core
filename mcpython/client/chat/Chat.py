@@ -16,7 +16,7 @@ import clipboard
 import pyglet
 from pyglet.window import key
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.client.chat.command.CommandHandler
 import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler

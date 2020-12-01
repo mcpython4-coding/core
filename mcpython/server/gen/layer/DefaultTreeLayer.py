@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 
 import random
 
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.common.world.Chunk
 from mcpython.server.gen.layer.Layer import Layer, LayerConfig
 

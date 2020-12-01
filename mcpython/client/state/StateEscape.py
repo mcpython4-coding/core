@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from . import State, StatePartGame
 from .ui import UIPartButton, UIPartLable
 import mcpython.common.event.EventInfo
-from mcpython import globals as G
+from mcpython import shared as G
 from pyglet.window import key
 import pyglet
 import mcpython.client.state.StateGame

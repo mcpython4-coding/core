@@ -14,7 +14,7 @@ import math
 
 import pyglet.gl as _gl
 
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.client.rendering.MatrixStack
 
 

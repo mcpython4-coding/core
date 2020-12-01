@@ -16,7 +16,7 @@ import typing
 
 import deprecation
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 
 
 class CancelAbleEvent:

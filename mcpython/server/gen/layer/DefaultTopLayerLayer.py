@@ -14,7 +14,7 @@ import random
 
 import opensimplex
 
-from mcpython import globals as G
+from mcpython import shared as G
 from mcpython.server.gen.layer.Layer import Layer, LayerConfig
 
 

@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.gui.crafting.IRecipeType
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.client.gui.crafting.GridRecipes
 
 

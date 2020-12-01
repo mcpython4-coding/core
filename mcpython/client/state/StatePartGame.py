@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from . import StatePart
-from mcpython import globals as G
+from mcpython import shared as G
 from mcpython.common.config import FLYING_SPEED, GRAVITY, TERMINAL_VELOCITY, JUMP_SPEED
 from pyglet.window import key, mouse
 import pyglet

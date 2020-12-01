@@ -1290,6 +1290,8 @@ F   [uuk]: loading code is now preferring info from exceptions
 [B] [uuk]: fixed world loading
 B   [uuk]: mods.json was not correctly written to files
 F   [uuk]: using now black formatting
+    [uuk]: started looking over all files
+R   [uuk]: renamed globals.py to shared.py
 
 Roadmap:
     - setup black formatting

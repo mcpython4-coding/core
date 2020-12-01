@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from . import State
 from .ui import UIPartButton, UIPartTextInput
 from .ui.UIPartTextInput import INT_PATTERN
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.util.math
 from pyglet.window import key
 import pyglet

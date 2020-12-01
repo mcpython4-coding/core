@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from . import State
 import mcpython.client.state.ui.UIPartLable
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.util.math
 from pyglet.window import key
 import mcpython.common.mod.ModMcpython

@@ -17,7 +17,7 @@ import mcpython.common.block.BlockConfig
 import mcpython.common.config
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLocator
-from mcpython import globals as G
+from mcpython import shared as G
 
 UV_ORDER = [
     mcpython.util.enums.EnumSide.UP,

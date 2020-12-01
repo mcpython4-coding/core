@@ -16,7 +16,7 @@ import sys
 
 import deprecation
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.common.event.Registry
 import mcpython.server.storage.datafixer.IDataFixer
 import mcpython.server.storage.datafixers.IDataFixer

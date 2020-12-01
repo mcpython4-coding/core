@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.event.Registry
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.client.gui.ItemStack
 import random
 

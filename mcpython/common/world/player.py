@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import globals, globals as G, logger
+from mcpython import shared, shared as G, logger
 import mcpython.ResourceLocator
 import mcpython.client.chat.Chat
 import mcpython.common.entity.Entity
@@ -79,7 +79,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         )
 
         # used for determine if we can access stuff now or must wait
-        if not globals.modloader.finished:
+        if not shared.modloader.finished:
             mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                 "stage:inventories",
                 self.create_inventories,
@@ -96,7 +96,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         )
 
     def hotkey_get_position(self):
-        if self != globals.world.get_active_player():
+        if self != shared.world.get_active_player():
             return
 
         import clipboard
@@ -104,7 +104,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         clipboard.copy("/tp @p {} {} {}".format(*self.position))
 
     def toggle_gamemode(self):
-        if self != globals.world.get_active_player():
+        if self != shared.world.get_active_player():
             return
 
         if self.gamemode == 1:
@@ -296,19 +296,19 @@ class Player(mcpython.common.entity.Entity.Entity):
         ):
             return
         sector = mcpython.util.math.positionToChunk(self.position)
-        globals.world.change_chunks(sector, None)
+        shared.world.change_chunks(sector, None)
         self.reset_moving_slot()
-        if not globals.world.gamerulehandler.table["keepInventory"].status.status:
-            globals.commandparser.parse("/clear")  # todo: drop items
-        if globals.world.gamerulehandler.table["showDeathMessages"].status.status:
+        if not shared.world.gamerulehandler.table["keepInventory"].status.status:
+            shared.commandparser.parse("/clear")  # todo: drop items
+        if shared.world.gamerulehandler.table["showDeathMessages"].status.status:
             logger.println(
                 "[CHAT] player {} died".format(self.name)
             )  # todo: add death screen
         self.set_to_spawn_point()
         self.active_inventory_slot = 0
-        globals.window.dy = 0
-        globals.chat.close()
-        globals.inventoryhandler.close_all_inventories()
+        shared.window.dy = 0
+        shared.chat.close()
+        shared.inventoryhandler.close_all_inventories()
         # todo: drop xp
         self.xp = 0
         self.xp_level = 0
@@ -318,11 +318,11 @@ class Player(mcpython.common.entity.Entity.Entity):
         self.armor_level = 0
         self.armor_toughness = 0
         sector = mcpython.util.math.positionToChunk(self.position)
-        globals.world.change_chunks(None, sector)
+        shared.world.change_chunks(None, sector)
         # todo: recalculate armor level!
 
-        if not globals.world.gamerulehandler.table["doImmediateRespawn"].status.status:
-            globals.statehandler.switch_to(
+        if not shared.world.gamerulehandler.table["doImmediateRespawn"].status.status:
+            shared.statehandler.switch_to(
                 "minecraft:escape_state"
             )  # todo: add special state [see above]
 
@@ -358,23 +358,23 @@ class Player(mcpython.common.entity.Entity.Entity):
                 self.kill()
 
     def reset_moving_slot(self):
-        self.pick_up(globals.inventoryhandler.moving_slot.get_itemstack().copy())
-        globals.inventoryhandler.moving_slot.get_itemstack().clean()
+        self.pick_up(shared.inventoryhandler.moving_slot.get_itemstack().copy())
+        shared.inventoryhandler.moving_slot.get_itemstack().clean()
 
     def set_to_spawn_point(self):
         x, _, z = mcpython.util.math.normalize(self.position)
         self.position = (
-            globals.world.spawnpoint[0],
+            shared.world.spawnpoint[0],
             self.dimension.get_chunk_for_position(
                 self.position
             ).get_maximum_y_coordinate_from_generation(x, z)
             + 3,
-            globals.world.spawnpoint[1],
+            shared.world.spawnpoint[1],
         )
 
     def tell(self, msg: str):
-        if self == globals.world.get_active_player():
-            globals.chat.print_ln(msg)
+        if self == shared.world.get_active_player():
+            shared.chat.print_ln(msg)
         else:
             pass  # todo: send through network
 
@@ -384,7 +384,7 @@ class Player(mcpython.common.entity.Entity.Entity):
             self.set_position_unsafe(position)
         rx, ry, rz = self.rotation if rotation is None else rotation
         rotation_whole = (0, rx + 90, 0)
-        if self != globals.world.get_active_player() or full is True:
+        if self != shared.world.get_active_player() or full is True:
             self.RENDERER.draw(self, "outer", rotation=rotation_whole)
         else:
             if (

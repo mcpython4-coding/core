@@ -15,7 +15,7 @@ import typing
 import deprecation
 import pyglet
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.client.chat.DataPack
 import mcpython.common.config
 import mcpython.client.state.StatePartGame

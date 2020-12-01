@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 # util functions from manipulating image data and converting between different formats
 import PIL.Image
-from mcpython import globals as G
+from mcpython import shared as G
 import pyglet
 
 

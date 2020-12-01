@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import PIL.Image
 import mcpython.ResourceLocator
-from mcpython import globals as G
+from mcpython import shared as G
 import pyglet
 import os
 import mcpython.common.config

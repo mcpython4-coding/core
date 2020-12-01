@@ -13,7 +13,7 @@ import random
 
 import opensimplex
 
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.common.event.EventHandler
 import mcpython.server.gen.biome.BiomeHandler
 from mcpython.server.gen.layer.Layer import Layer, LayerConfig

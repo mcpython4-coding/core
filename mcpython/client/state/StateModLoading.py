@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from . import State
 from .ui import UIPartProgressBar
-from mcpython import globals as G
+from mcpython import shared as G
 import pyglet
 import psutil
 

@@ -282,7 +282,7 @@ for stone in ["andesite", "granite", "diorite"]:
 
 def load():
     import mcpython.common.mod.ConfigFile
-    from mcpython import globals as G
+    from mcpython import shared as G
 
     config = mcpython.common.mod.ConfigFile.ConfigFile("main", "minecraft")
     speeds = (

@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import gc
 import sys
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.model.Model
 import mcpython.client.rendering.model.BlockState

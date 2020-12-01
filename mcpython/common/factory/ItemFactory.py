@@ -13,7 +13,7 @@ import mcpython.common.item.Item
 import mcpython.common.item.ItemFood
 import mcpython.common.item.ItemTool
 import mcpython.common.item.ItemArmor
-from mcpython import globals as G
+from mcpython import shared as G
 
 
 # todo: add ItemFactoryHandler which make it possible to add custom functions & custom class constructing

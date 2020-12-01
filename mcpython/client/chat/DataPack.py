@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import enum
 import os
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.ResourceLocator
 import mcpython.client.chat.command.CommandParser
 import mcpython.client.chat.command.McFunctionFile

@@ -32,7 +32,7 @@ import json
 import os
 import shutil
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 

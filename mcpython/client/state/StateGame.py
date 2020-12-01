@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from . import State, StatePartGame
 import mcpython.client.gui.InventoryHandler
-from mcpython import globals as G
+from mcpython import shared as G
 from pyglet.window import key
 import mcpython.common.event.TickHandler
 import pyglet

@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import pyglet
 import PIL.Image
 import mcpython.ResourceLocator
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.util.texture
 
 

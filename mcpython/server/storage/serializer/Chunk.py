@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.server.storage.serializer.IDataSerializer
 import mcpython.server.storage.datafixers.IDataFixer
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.common.world.Chunk
 import mcpython.util.enums
 import uuid

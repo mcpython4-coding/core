@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.Block
 import mcpython.common.block.BoundingBox
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.client.gui.ItemStack
 import mcpython.util.enums
 

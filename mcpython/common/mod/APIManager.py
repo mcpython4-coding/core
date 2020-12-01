@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import importlib
 import sys
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import typing
 
 

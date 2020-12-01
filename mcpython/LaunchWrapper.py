@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import os
 import sys
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import mcpython.common.config
 import mcpython.ResourceLocator
 
@@ -147,3 +147,21 @@ class LaunchWrapper:
         except:
             logger.print_exception("ERROR DURING RUNTIME")
             raise
+
+    def error_clean(self):
+        import mcpython.ResourceLocator
+
+        mcpython.ResourceLocator.close_all_resources()
+        logger.print_exception("general uncaught exception during running the game")
+        try:
+            G.tmp.cleanup()
+        except NameError:
+            pass
+        sys.exit(-1)
+
+    def clean(self):
+        import mcpython.ResourceLocator
+
+        mcpython.ResourceLocator.close_all_resources()
+        G.eventhandler.call("game:close")
+        G.tmp.cleanup()

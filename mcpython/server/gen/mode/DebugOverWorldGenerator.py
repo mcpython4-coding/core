@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import math
 
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.common.event.EventHandler
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython

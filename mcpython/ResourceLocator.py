@@ -23,7 +23,7 @@ functions to access data:
 How mods do interact with these?
     Mod files are automatically added to these system to make it easier to add own resources
 """
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 import zipfile
 import json
 import PIL.Image

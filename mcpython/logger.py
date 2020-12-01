@@ -16,7 +16,7 @@ import sys
 from datetime import datetime
 
 import mcpython.common.config
-from mcpython import globals as G
+from mcpython import shared as G
 import traceback
 
 # adapted from mc version 1.15.2, decompiled with mc-forge located under net.minecraft.crash.CrashReport

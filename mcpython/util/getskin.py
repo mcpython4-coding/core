@@ -25,7 +25,7 @@ from base64 import b64decode
 import PIL.Image
 import requests
 
-from mcpython import globals as G, logger
+from mcpython import shared as G, logger
 
 DEBUG = False
 SIMULATE = False

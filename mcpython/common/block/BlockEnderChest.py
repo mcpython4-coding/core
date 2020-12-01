@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from pyglet.window import mouse, key
 
-from mcpython import globals as G
+from mcpython import shared as G
 import mcpython.util.enums
 from mcpython.common.block.BlockChest import BBOX
 from . import Block

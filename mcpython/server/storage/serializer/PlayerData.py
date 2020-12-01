@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.server.storage.serializer.IDataSerializer
 import mcpython.server.storage.datafixers.IDataFixer
-from mcpython import globals as G
+from mcpython import shared as G
 import time
 
 
