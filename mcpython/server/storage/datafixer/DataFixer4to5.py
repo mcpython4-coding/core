@@ -30,16 +30,23 @@ class ChunkFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
     @classmethod
     @deprecation.deprecated("dev3-1", "a1.3.0")
     def fix(cls, savefile, dimension, region):
-        data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
-        if data is None: return
-        if data["version"] != 4: return
+        data = savefile.access_file_pickle(
+            "dim/{}/{}_{}.region".format(dimension, *region)
+        )
+        if data is None:
+            return
+        if data["version"] != 4:
+            return
         data["version"] = 5
         for chunk in data.keys():
-            if chunk == "version": continue
+            if chunk == "version":
+                continue
             cdata = data[chunk]
             if "entities" not in cdata:
                 cdata["entities"] = []
-        savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
+        savefile.dump_file_pickle(
+            "dim/{}/{}_{}.region".format(dimension, *region), data
+        )
 
 
 @deprecation.deprecated("dev3-1", "a1.3.0")
@@ -53,4 +60,3 @@ class InventoryFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
         data = savefile.access_file_pickle(file)
         data["version"] = 5
         savefile.dump_file_pickle(file, data)
-

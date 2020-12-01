@@ -18,7 +18,11 @@ import mcpython.client.gui.HoveringItemBox
 
 
 def load_item():
-    template = mcpython.common.factory.ItemFactory.ItemFactory().setGlobalModName("minecraft").setTemplate(True)
+    template = (
+        mcpython.common.factory.ItemFactory.ItemFactory()
+        .setGlobalModName("minecraft")
+        .setTemplate(True)
+    )
 
     template("apple").setFoodValue(4)
     template("baked_potato").setFoodValue(5)
@@ -140,15 +144,31 @@ def load_item():
     # tools
 
     template("shears").setToolType([ToolType.SHEAR]).setToolBrakeMutli(5)
-    for tooltype, toolname in [(ToolType.PICKAXE, "pickaxe"), (ToolType.AXE, "axe"), (ToolType.SWORD, "sword"),
-                               (ToolType.HOE, "hoe"), (ToolType.SHOVEL, "shovel")]:
-        template("wooden_{}".format(toolname)).setToolType([tooltype]).setToolBrakeMutli(2).setToolLevel(
-            1).setFuelLevel(10)
-        template("stone_{}".format(toolname)).setToolType([tooltype]).setToolBrakeMutli(4).setToolLevel(2)
-        template("iron_{}".format(toolname)).setToolType([tooltype]).setToolBrakeMutli(6).setToolLevel(3)
-        template("golden_{}".format(toolname)).setToolType([tooltype]).setToolBrakeMutli(8).setToolLevel(4)
-        template("diamond_{}".format(toolname)).setToolType([tooltype]).setToolBrakeMutli(12).setToolLevel(5)
-        template("netherite_{}".format(toolname)).setToolType([tooltype]).setToolBrakeMutli(14).setToolLevel(6)
+    for tooltype, toolname in [
+        (ToolType.PICKAXE, "pickaxe"),
+        (ToolType.AXE, "axe"),
+        (ToolType.SWORD, "sword"),
+        (ToolType.HOE, "hoe"),
+        (ToolType.SHOVEL, "shovel"),
+    ]:
+        template("wooden_{}".format(toolname)).setToolType(
+            [tooltype]
+        ).setToolBrakeMutli(2).setToolLevel(1).setFuelLevel(10)
+        template("stone_{}".format(toolname)).setToolType([tooltype]).setToolBrakeMutli(
+            4
+        ).setToolLevel(2)
+        template("iron_{}".format(toolname)).setToolType([tooltype]).setToolBrakeMutli(
+            6
+        ).setToolLevel(3)
+        template("golden_{}".format(toolname)).setToolType(
+            [tooltype]
+        ).setToolBrakeMutli(8).setToolLevel(4)
+        template("diamond_{}".format(toolname)).setToolType(
+            [tooltype]
+        ).setToolBrakeMutli(12).setToolLevel(5)
+        template("netherite_{}".format(toolname)).setToolType(
+            [tooltype]
+        ).setToolBrakeMutli(14).setToolLevel(6)
 
     for color in mcpython.util.enums.COLORS:
         template("{}_dye".format(color))
@@ -183,10 +203,12 @@ def load_item():
     template("arrow")
 
     template("barrier").setHasBlockFlag(True).setToolTipRenderer(
-        mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP)
+        mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
+    )
 
     template.finish()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:item:factory_usage", load_item, info="generating items")
-
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:item:factory_usage", load_item, info="generating items"
+)

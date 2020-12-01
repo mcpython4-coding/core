@@ -43,18 +43,22 @@ class BlockConfigEntry:
         """
         return item in self.affects
 
-    def __contains__(self, item): return self.contains(item)
+    def __contains__(self, item):
+        return self.contains(item)
 
 
 ENTRIES = dict()  # the entries
 
 
 for file in mcpython.ResourceLocator.get_all_entries_special("assets/config/block"):
-    if file.endswith("/"): continue
+    if file.endswith("/"):
+        continue
     name = file.split("/")[-1].split(".")[0]
-    if name not in ENTRIES: ENTRIES[name] = BlockConfigEntry(name)
+    if name not in ENTRIES:
+        ENTRIES[name] = BlockConfigEntry(name)
     try:
         ENTRIES[name].add_data(mcpython.ResourceLocator.read(file, mode="json"))
     except:
-        logger.print_exception("[ERROR] failed to load block config file {}".format(file))
-
+        logger.print_exception(
+            "[ERROR] failed to load block config file {}".format(file)
+        )

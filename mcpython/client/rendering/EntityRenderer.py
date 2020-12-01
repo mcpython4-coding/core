@@ -75,18 +75,48 @@ class EntityRenderer:
             else:
                 if mcpython.ResourceLocator.exists(texture):
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.ResourceLocator.read(texture, "pyglet").get_texture())
+                        mcpython.ResourceLocator.read(texture, "pyglet").get_texture()
+                    )
                 else:
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.ResourceLocator.read("assets/missing_texture.png", "pyglet").get_texture())
+                        mcpython.ResourceLocator.read(
+                            "assets/missing_texture.png", "pyglet"
+                        ).get_texture()
+                    )
                 reloaded.append(texture)
             if "invert_indexes" not in box or not box["invert_indexes"]:
-                uv = [tuple([float(x)/self.texture_size[i % 2] for i, x in enumerate(e.split("|"))]) for e in box["uv"]]
+                uv = [
+                    tuple(
+                        [
+                            float(x) / self.texture_size[i % 2]
+                            for i, x in enumerate(e.split("|"))
+                        ]
+                    )
+                    for e in box["uv"]
+                ]
             else:
-                uv = [tuple([(float(x) if i % 2 == 0 else self.texture_size[i % 2]-float(x))/self.texture_size[i % 2] for i, x in enumerate(e.split("|"))]) for e in box["uv"]]
+                uv = [
+                    tuple(
+                        [
+                            (
+                                float(x)
+                                if i % 2 == 0
+                                else self.texture_size[i % 2] - float(x)
+                            )
+                            / self.texture_size[i % 2]
+                            for i, x in enumerate(e.split("|"))
+                        ]
+                    )
+                    for e in box["uv"]
+                ]
             self.box_models[boxname] = mcpython.client.rendering.BoxModel.BaseBoxModel(
-                box["position"] if "position" in box else (0, 0, 0), tuple([e/16 for e in box["size"]]), group,
-                uv, box["rotation"] if "rotation" in box else (0, 0, 0), box["center"] if "center" in box else (0, 0, 0))
+                box["position"] if "position" in box else (0, 0, 0),
+                tuple([e / 16 for e in box["size"]]),
+                group,
+                uv,
+                box["rotation"] if "rotation" in box else (0, 0, 0),
+                box["center"] if "center" in box else (0, 0, 0),
+            )
         for state in self.data["states"]:
             d = self.data["states"][state]
             self.states[state] = d["boxes"]
@@ -105,18 +135,42 @@ class EntityRenderer:
             rotation_2 = (0, 0, 0) if "rotation" not in d else d["rotation"]
             rotation_center = (0, 0, 0) if "center" not in d else d["center"]
             dx, dy, dz = (0, 0, 0) if "position" not in d else d["position"]
-            box.draw((x+dx, y+dy, z+dz), rotation=tuple([rotation[i]+rotation_2[i]+(
-                    0 if part_rotation is None or d["box"] not in part_rotation else part_rotation[d["box"]][i])
-                                                    for i in range(3)]),
-                     rotation_center=rotation_center)
+            box.draw(
+                (x + dx, y + dy, z + dz),
+                rotation=tuple(
+                    [
+                        rotation[i]
+                        + rotation_2[i]
+                        + (
+                            0
+                            if part_rotation is None or d["box"] not in part_rotation
+                            else part_rotation[d["box"]][i]
+                        )
+                        for i in range(3)
+                    ]
+                ),
+                rotation_center=rotation_center,
+            )
 
-    def draw_box(self, entity, boxname, position=(0, 0, 0), rotation=(0, 0, 0), rotation_center=(0, 0, 0)):
+    def draw_box(
+        self,
+        entity,
+        boxname,
+        position=(0, 0, 0),
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+    ):
         x, y, z = entity.position
         box = self.box_models[boxname]
-        box.draw((x + position[0], y + position[1], z + position[2]),
-                 rotation=rotation, rotation_center=rotation_center)
+        box.draw(
+            (x + position[0], y + position[1], z + position[2]),
+            rotation=rotation,
+            rotation_center=rotation_center,
+        )
 
-    def add_to_batch(self, batch, entity, state, rotation=(0, 0, 0), part_rotation=None):
+    def add_to_batch(
+        self, batch, entity, state, rotation=(0, 0, 0), part_rotation=None
+    ):
         """
         adds the entity to an batch. Useful mostly for static entities like static complex block elements
         :param batch: the batch to use
@@ -134,10 +188,24 @@ class EntityRenderer:
             rotation_2 = (0, 0, 0) if "rotation" not in d else d["rotation"]
             rotation_center = (0, 0, 0) if "center" not in d else d["center"]
             dx, dy, dz = (0, 0, 0) if "position" not in d else d["position"]
-            data.extend(box.add_to_batch(
-                batch, (x+dx, y+dy, z+dz), rotation=tuple([rotation[i]+rotation_2[i]+(
-                    0 if part_rotation is None or d["box"] not in part_rotation else part_rotation[d["box"]][i])
-                                                    for i in range(3)]),
-                rotation_center=rotation_center))
+            data.extend(
+                box.add_to_batch(
+                    batch,
+                    (x + dx, y + dy, z + dz),
+                    rotation=tuple(
+                        [
+                            rotation[i]
+                            + rotation_2[i]
+                            + (
+                                0
+                                if part_rotation is None
+                                or d["box"] not in part_rotation
+                                else part_rotation[d["box"]][i]
+                            )
+                            for i in range(3)
+                        ]
+                    ),
+                    rotation_center=rotation_center,
+                )
+            )
         return data
-

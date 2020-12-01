@@ -18,8 +18,13 @@ class KeyMouseBinding:
     class holding an key or mouse binding
     """
 
-    def __init__(self, name: str, group_name: str, default: typing.Union[int, typing.Iterable[int]],
-                 default_mod: typing.Union[int, typing.Iterable[int]] = 0):
+    def __init__(
+        self,
+        name: str,
+        group_name: str,
+        default: typing.Union[int, typing.Iterable[int]],
+        default_mod: typing.Union[int, typing.Iterable[int]] = 0,
+    ):
         self.name = name
         self.group_name = group_name
         self.key_or_button = default
@@ -27,12 +32,15 @@ class KeyMouseBinding:
 
     def applies(self, key_or_button, mod) -> bool:
         if type(self.key_or_button) in (list, set, tuple):
-            if not all([key_or_button & b for b in self.key_or_button]): return False
+            if not all([key_or_button & b for b in self.key_or_button]):
+                return False
         else:
-            if not key_or_button & self.key_or_button: return False
+            if not key_or_button & self.key_or_button:
+                return False
         if type(self.mod) in (list, set, tuple):
-            if not all([mod & b for b in self.mod]): return False
+            if not all([mod & b for b in self.mod]):
+                return False
         else:
-            if not mod & self.mod: return False
+            if not mod & self.mod:
+                return False
         return True
-

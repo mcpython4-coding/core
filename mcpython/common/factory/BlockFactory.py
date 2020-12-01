@@ -143,23 +143,40 @@ class BlockFactory:
         :return: an copy of this
         """
         obj = BlockFactory()
-        if self.name is not None: obj.setName(self.name)
+        if self.name is not None:
+            obj.setName(self.name)
         obj.setGlobalModName(self.modname).setBreakAbleFlag(self.breakable)
         obj.modelstates = self.modelstates.copy()
-        if self.solid_faces is not None: obj.solid_faces = self.solid_faces.copy()
+        if self.solid_faces is not None:
+            obj.solid_faces = self.solid_faces.copy()
 
-        obj.create_callback, obj.delete_callback = self.create_callback, self.delete_callback
-        obj.randomupdate_callback, obj.update_callback = self.randomupdate_callback, self.update_callback
+        obj.create_callback, obj.delete_callback = (
+            self.create_callback,
+            self.delete_callback,
+        )
+        obj.randomupdate_callback, obj.update_callback = (
+            self.randomupdate_callback,
+            self.update_callback,
+        )
         obj.interaction_callback = self.interaction_callback
 
-        obj.hardness, obj.minmum_toollevel, obj.besttools = self.hardness, self.minmum_toollevel, self.besttools.copy()
-        obj.speed_multiplier, obj.block_item_generator_state = self.speed_multiplier, self.block_item_generator_state
+        obj.hardness, obj.minmum_toollevel, obj.besttools = (
+            self.hardness,
+            self.minmum_toollevel,
+            self.besttools.copy(),
+        )
+        obj.speed_multiplier, obj.block_item_generator_state = (
+            self.speed_multiplier,
+            self.block_item_generator_state,
+        )
         obj.face_name, obj.blast_resistance = self.face_name, self.blast_resistance
 
         obj.customsolidsidefunction = self.customsolidsidefunction
         obj.custommodelstatefunction = self.custommodelstatefunction
         obj.customitemstackmodifcationfunction = self.customitemstackmodifcationfunction
-        obj.customblockitemmodificationfunction = self.customblockitemmodificationfunction
+        obj.customblockitemmodificationfunction = (
+            self.customblockitemmodificationfunction
+        )
 
         obj.islog = self.islog
 
@@ -182,23 +199,45 @@ class BlockFactory:
         """
         assert self.template is not None
         template = self.template
-        if template.name is not None: self.setName(template.name)
+        if template.name is not None:
+            self.setName(template.name)
         self.setGlobalModName(template.modname).setBreakAbleFlag(template.breakable)
         self.modelstates = template.modelstates.copy()
-        if template.solid_faces is not None: self.solid_faces = template.solid_faces.copy()
+        if template.solid_faces is not None:
+            self.solid_faces = template.solid_faces.copy()
 
-        self.create_callback, self.delete_callback = template.create_callback, template.delete_callback
-        self.randomupdate_callback, self.update_callback = template.randomupdate_callback, template.update_callback
+        self.create_callback, self.delete_callback = (
+            template.create_callback,
+            template.delete_callback,
+        )
+        self.randomupdate_callback, self.update_callback = (
+            template.randomupdate_callback,
+            template.update_callback,
+        )
         self.interaction_callback = template.interaction_callback
 
-        self.hardness, self.minmum_toollevel, self.besttools = template.hardness, template.minmum_toollevel, template.besttools.copy()
-        self.speed_multiplier, self.block_item_generator_state = template.speed_multiplier, template.block_item_generator_state
-        self.face_name, self.blast_resistance = template.face_name, template.blast_resistance
+        self.hardness, self.minmum_toollevel, self.besttools = (
+            template.hardness,
+            template.minmum_toollevel,
+            template.besttools.copy(),
+        )
+        self.speed_multiplier, self.block_item_generator_state = (
+            template.speed_multiplier,
+            template.block_item_generator_state,
+        )
+        self.face_name, self.blast_resistance = (
+            template.face_name,
+            template.blast_resistance,
+        )
 
         self.customsolidsidefunction = template.customsolidsidefunction
         self.custommodelstatefunction = template.custommodelstatefunction
-        self.customitemstackmodifcationfunction = template.customitemstackmodifcationfunction
-        self.customblockitemmodificationfunction = template.customblockitemmodificationfunction
+        self.customitemstackmodifcationfunction = (
+            template.customitemstackmodifcationfunction
+        )
+        self.customblockitemmodificationfunction = (
+            template.customblockitemmodificationfunction
+        )
 
         self.random_ticks_enabled = False
 
@@ -225,16 +264,27 @@ class BlockFactory:
         """
         # logger.println("[INFO] finishing up '{}'".format(self.name))
         if self.name.count(":") == 0:
-            logger.println("[BLOCK FACTORY][FATAL] 'setName' was set to an not-prefixed name '{}'".format(self.name))
-            logger.println("[BLOCK FACTORY][FATAL] out of these error, the block is NOT constructed")
-            logger.println("[BLOCK FACTORY][FATAL] (P.s. this does mean also that setGlobalModName() was not set)")
-            logger.println("[BLOCK FACTORY][FATAL] (This could be an wrong template setup for the block factory)")
+            logger.println(
+                "[BLOCK FACTORY][FATAL] 'setName' was set to an not-prefixed name '{}'".format(
+                    self.name
+                )
+            )
+            logger.println(
+                "[BLOCK FACTORY][FATAL] out of these error, the block is NOT constructed"
+            )
+            logger.println(
+                "[BLOCK FACTORY][FATAL] (P.s. this does mean also that setGlobalModName() was not set)"
+            )
+            logger.println(
+                "[BLOCK FACTORY][FATAL] (This could be an wrong template setup for the block factory)"
+            )
             return
         if self.modname is None or self.name.count(":") > 0:
             modname, blockname = tuple(self.name.split(":"))
         else:
             modname, blockname = self.modname, self.name
-        if modname not in G.modloader.mods: modname = "minecraft"
+        if modname not in G.modloader.mods:
+            modname = "minecraft"
         if self.template is None:
             obj = self
         else:
@@ -245,8 +295,11 @@ class BlockFactory:
         if immediate:
             obj.finish_up()
         else:
-            G.modloader.mods[modname].eventbus.subscribe("stage:block:load", obj.finish_up,
-                                                         info="loading block {}".format(blockname))
+            G.modloader.mods[modname].eventbus.subscribe(
+                "stage:block:load",
+                obj.finish_up,
+                info="loading block {}".format(blockname),
+            )
         return obj
 
     def finish_up(self):
@@ -258,20 +311,27 @@ class BlockFactory:
         assert self.name is not None
 
         if self.hardness is None:
-            logger.println("[WARN] hardness-attribute of block '{}' not set. This will get incompatible in the future!".
-                           format(self.name))
+            logger.println(
+                "[WARN] hardness-attribute of block '{}' not set. This will get incompatible in the future!".format(
+                    self.name
+                )
+            )
             self.hardness = 1
 
         if self.blast_resistance is None:
-            logger.println("[WARN] blast-resistance-attribute of block {} not set. "
-                           "This will get incompatible in the future!".format(self.name))
+            logger.println(
+                "[WARN] blast-resistance-attribute of block {} not set. "
+                "This will get incompatible in the future!".format(self.name)
+            )
             self.blast_resistance = 1
 
         class Baseclass(object):
             pass
 
         for cls in self.baseclass:
-            class Baseclass(Baseclass, cls): pass
+
+            class Baseclass(Baseclass, cls):
+                pass
 
         master = self
 
@@ -301,14 +361,17 @@ class BlockFactory:
                 raw_states = self.modelstates.copy()
                 [raw_states.extend(e.get_all_model_states()) for e in self.baseclass]
 
-                while {} in raw_states: raw_states.remove({})  # we don't need them now
+                while {} in raw_states:
+                    raw_states.remove({})  # we don't need them now
 
                 # make the entries unique!
                 states = []
                 for e in raw_states:
-                    if e not in states: states.append(e)
+                    if e not in states:
+                        states.append(e)
 
-                if len(states) == 0: states.append({})  # if we have no, this is the default one
+                if len(states) == 0:
+                    states.append({})  # if we have no, this is the default one
 
                 return states
 
@@ -316,12 +379,14 @@ class BlockFactory:
                 super().__init__(*args, **kwargs)
                 for baseclass in master.baseclass:
                     baseclass.__init__(self, *args, **kwargs)
-                if master.create_callback: master.create_callback(self)
+                if master.create_callback:
+                    master.create_callback(self)
 
             def on_remove(self):
                 for baseclass in master.baseclass:
                     baseclass.on_remove(self)
-                if master.delete_callback: master.delete_callback(self)
+                if master.delete_callback:
+                    master.delete_callback(self)
 
             HARDNESS = master.hardness
             MINIMUM_TOOL_LEVEL = master.minmum_toollevel
@@ -332,24 +397,41 @@ class BlockFactory:
                     baseclass.set_model_state(self, state)
 
             def get_model_state(self):
-                state = master.custommodelstatefunction(self).copy() if master.custommodelstatefunction is not None else {}
+                state = (
+                    master.custommodelstatefunction(self).copy()
+                    if master.custommodelstatefunction is not None
+                    else {}
+                )
                 for baseclass in master.baseclass:
                     state = {**state, **baseclass.get_model_state(self)}
                 return state
 
         if self.solid_faces:
+
             class ConstructedBlock(ConstructedBlock):
                 def __init__(self, *args, **kwargs):
                     super().__init__(*args, **kwargs)
-                    self.face_solid = {side: master.solid_faces[side] if side in master.solid_faces else all(
-                        [not hasattr(baseclass2, "face_solid") or baseclass2.face_solid[side] for baseclass2 in
-                         master.baseclass]) for side in mcpython.util.enums.EnumSide.iterate()}
+                    self.face_solid = {
+                        side: master.solid_faces[side]
+                        if side in master.solid_faces
+                        else all(
+                            [
+                                not hasattr(baseclass2, "face_solid")
+                                or baseclass2.face_solid[side]
+                                for baseclass2 in master.baseclass
+                            ]
+                        )
+                        for side in mcpython.util.enums.EnumSide.iterate()
+                    }
 
         if master.randomupdate_callback:
+
             class ConstructedBlock(ConstructedBlock):
-                def on_random_update(self): master.randomupdate_callback(self)
+                def on_random_update(self):
+                    master.randomupdate_callback(self)
 
         if master.update_callback:
+
             class ConstructedBlock(ConstructedBlock):
                 def on_block_update(self):
                     for baseclass in master.baseclass:
@@ -357,28 +439,37 @@ class BlockFactory:
                     master.update_callback(self)
 
         if master.interaction_callback:
+
             class ConstructedBlock(ConstructedBlock):
-                def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
-                    return master.interaction_callback(self, player, itemstack, button, modifiers, exact_hit)
+                def on_player_interact(
+                    self, player, itemstack, button, modifiers, exact_hit
+                ) -> bool:
+                    return master.interaction_callback(
+                        self, player, itemstack, button, modifiers, exact_hit
+                    )
 
         if master.customitemstackmodifcationfunction:
+
             class ConstructedBlock(ConstructedBlock):
                 def on_request_item_for_block(self, itemstack):
                     master.customitemstackmodifcationfunction(self, itemstack)
 
         if master.customblockitemmodificationfunction:
+
             class ConstructedBlock(ConstructedBlock):
                 @classmethod
                 def modify_block_item(cls, itemconstructor):
                     master.customblockitemmodificationfunction(cls, itemconstructor)
 
         if master.face_name:
+
             class ConstructedBlock(ConstructedBlock):
                 MODEL_FACE_NAME = master.face_name
 
         if callable(self.on_class_create):
             r = self.on_class_create(ConstructedBlock)
-            if r is not None: ConstructedBlock = r
+            if r is not None:
+                ConstructedBlock = r
 
         G.registry.register(ConstructedBlock)
 
@@ -428,12 +519,19 @@ class BlockFactory:
         :param name: The name of the block
         """
         assert type(name) == str
-        if self.set_name_finises_previous and self.name is not None: self.finish()
-        self.name = ("" if self.modname is None or ":" in name else (self.modname + ":")) + name
+        if self.set_name_finises_previous and self.name is not None:
+            self.finish()
+        self.name = (
+            "" if self.modname is None or ":" in name else (self.modname + ":")
+        ) + name
         if self.name.count(":") == 0:
             import traceback
 
-            logger.println("[BLOCK FACTORY][WARN] 'setName' was set to an not-prefixed name '{}'".format(self.name))
+            logger.println(
+                "[BLOCK FACTORY][WARN] 'setName' was set to an not-prefixed name '{}'".format(
+                    self.name
+                )
+            )
             traceback.print_stack()
         return self
 
@@ -494,7 +592,8 @@ class BlockFactory:
         """
         assert callable(function)
         self.customsolidsidefunction = function
-        if self.solid_faces is not None: self.solid_faces.clear()  # only one at a time is allowed
+        if self.solid_faces is not None:
+            self.solid_faces.clear()  # only one at a time is allowed
         return self
 
     def setSolidSideTableEntry(self, side, state: bool):
@@ -503,8 +602,10 @@ class BlockFactory:
         :param side: the side to set
         :param state: the state to set to
         """
-        if self.solid_faces is None: self.solid_faces = {}
-        if self.customsolidsidefunction: self.customsolidsidefunction = None  # only one at a time is allowed
+        if self.solid_faces is None:
+            self.solid_faces = {}
+        if self.customsolidsidefunction:
+            self.customsolidsidefunction = None  # only one at a time is allowed
         self.solid_faces[side] = state
         return self
 
@@ -527,7 +628,8 @@ class BlockFactory:
         if type(state) == str:
             state = {e.split("=")[0]: e.split("=")[1] for e in state.split(",")}
 
-        def get_state(*_): return state
+        def get_state(*_):
+            return state
 
         self.setCustomModelStateFunction(get_state)
         return self
@@ -603,8 +705,9 @@ class BlockFactory:
         :param blast_resistance: value for blast resistance, if None, hardness is used
         """
         self.setHardness(hardness)
-        self.setBlastResistance(blast_resistance if blast_resistance is not None else
-                                hardness)
+        self.setBlastResistance(
+            blast_resistance if blast_resistance is not None else hardness
+        )
         return self
 
     def enableRandomTicks(self):

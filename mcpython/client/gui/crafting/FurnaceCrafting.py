@@ -24,7 +24,8 @@ class FurnaceRecipe(mcpython.client.gui.crafting.IRecipeType.IRecipe):
     RECIPE_NAMES = ["minecraft:smelting", "minecraft:blasting", "minecraft:smoking"]
 
     @classmethod
-    def get_recipe_names(cls) -> list: return cls.RECIPE_NAMES
+    def get_recipe_names(cls) -> list:
+        return cls.RECIPE_NAMES
 
     @classmethod
     def from_data(cls, data: dict) -> "FurnaceRecipe":
@@ -33,9 +34,16 @@ class FurnaceRecipe(mcpython.client.gui.crafting.IRecipeType.IRecipe):
         :param data: the data to load
         :return: the recipe instance created
         """
-        inputs = [x[0] for x in mcpython.client.gui.crafting.GridRecipes.transform_to_item_stack(data["ingredient"], {})]
+        inputs = [
+            x[0]
+            for x in mcpython.client.gui.crafting.GridRecipes.transform_to_item_stack(
+                data["ingredient"], {}
+            )
+        ]
         result = data["result"]
-        return cls(data["type"], inputs, result, data["experience"], data["cookingtime"] / 20)
+        return cls(
+            data["type"], inputs, result, data["experience"], data["cookingtime"] / 20
+        )
 
     def __init__(self, t, i, o, xp, time):
         super().__init__()
@@ -46,8 +54,12 @@ class FurnaceRecipe(mcpython.client.gui.crafting.IRecipeType.IRecipe):
         self.type = t
 
     def register(self):
-        [G.craftinghandler.furnace_recipes.setdefault(self.type, {}).setdefault(e, self) for e in self.input]
+        [
+            G.craftinghandler.furnace_recipes.setdefault(self.type, {}).setdefault(
+                e, self
+            )
+            for e in self.input
+        ]
 
 
 FurnesRecipe = FurnaceRecipe  # todo: remove in a1.4.0
-

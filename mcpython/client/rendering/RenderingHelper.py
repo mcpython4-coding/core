@@ -44,7 +44,8 @@ class RenderingHelper:
         :return: the copy of the status, injectable into apply()
         """
         status = self.status_table.copy()
-        if add_to_stack: self.saved.append(status)
+        if add_to_stack:
+            self.saved.append(status)
         return status
 
     def pop_status(self):
@@ -86,15 +87,18 @@ class RenderingHelper:
         :param flag: the gl-enum-int to use
         :param status: the status to set
         """
-        if status: self.glEnable(flag)
-        else: self.glDisable(flag)
+        if status:
+            self.glEnable(flag)
+        else:
+            self.glDisable(flag)
 
     def apply(self, data=None):
         """
         will apply an status
         :param data: the data to apply or None to use the active one (to make sure everything is set correctly)
         """
-        if data is None: data = self.status_table
+        if data is None:
+            data = self.status_table
         for key in data:
             if data[key]:
                 _gl.glEnable(key)
@@ -102,7 +106,9 @@ class RenderingHelper:
                 _gl.glDisable(key)
         return self
 
-    def get_default_3d_matrix_stack(self, base=None) -> mcpython.client.rendering.MatrixStack.MatrixStack:
+    def get_default_3d_matrix_stack(
+        self, base=None
+    ) -> mcpython.client.rendering.MatrixStack.MatrixStack:
         """
         will create an MatrixStack-instance with the active transformation for the active player
         Will set up perspective for 3d rendering with these stack
@@ -111,7 +117,8 @@ class RenderingHelper:
         WARNING: all transformations will be applied ON TOP of the base-MatrixStack if its provided
         Use get_dynamic_3d_matrix_stack() where possible & reuse
         """
-        if base is None: base = mcpython.client.rendering.MatrixStack.MatrixStack()
+        if base is None:
+            base = mcpython.client.rendering.MatrixStack.MatrixStack()
         width, height = G.window.get_size()
         self.glEnable(_gl.GL_DEPTH_TEST)
         viewport = G.window.get_viewport_size()
@@ -128,25 +135,41 @@ class RenderingHelper:
         base.addTranslate3d(-x, -y, -z)
         return base
 
-    def get_dynamic_3d_matrix_stack(self, base=None) -> mcpython.client.rendering.MatrixStack.LinkedMatrixStack:
+    def get_dynamic_3d_matrix_stack(
+        self, base=None
+    ) -> mcpython.client.rendering.MatrixStack.LinkedMatrixStack:
         """
         same as get_default_3d_matrix_stack, but the matrix stack is an LinkedMatrixStack with links to player position,
             etc. (so it dynamically updates itself when the player changes the parameters)
         [see above]
         """
-        if base is None: base = mcpython.client.rendering.MatrixStack.LinkedMatrixStack()
+        if base is None:
+            base = mcpython.client.rendering.MatrixStack.LinkedMatrixStack()
         self.glEnable(_gl.GL_DEPTH_TEST)
-        base.addViewport(lambda: (0, 0, max(1, G.window.get_viewport_size()[0]),
-                                  max(1, G.window.get_viewport_size()[1])))
+        base.addViewport(
+            lambda: (
+                0,
+                0,
+                max(1, G.window.get_viewport_size()[0]),
+                max(1, G.window.get_viewport_size()[1]),
+            )
+        )
         base.addMatrixMode(_gl.GL_PROJECTION)
         base.addLoadIdentity()
-        base.addGluPerspective(lambda: (65.0, G.window.get_size()[0] / G.window.get_size()[1], 0.1, 60.0))
+        base.addGluPerspective(
+            lambda: (65.0, G.window.get_size()[0] / G.window.get_size()[1], 0.1, 60.0)
+        )
         base.addMatrixMode(_gl.GL_MODELVIEW)
         base.addLoadIdentity()
         base.addRotate3d(lambda: (G.world.get_active_player().rotation[0], 0, 1, 0))
-        base.addRotate3d(lambda: (-G.world.get_active_player().rotation[1],
-                                  math.cos(math.radians(G.world.get_active_player().rotation[0])), 0,
-                                  math.sin(math.radians(G.world.get_active_player().rotation[0]))))
+        base.addRotate3d(
+            lambda: (
+                -G.world.get_active_player().rotation[1],
+                math.cos(math.radians(G.world.get_active_player().rotation[0])),
+                0,
+                math.sin(math.radians(G.world.get_active_player().rotation[0])),
+            )
+        )
         base.addTranslate3d(lambda: [-e for e in G.world.get_active_player().position])
         return base
 
@@ -164,7 +187,7 @@ class RenderingHelper:
         _gl.glOrtho(0, max(1, width), 0, max(1, height), -1, 1)
         _gl.glMatrixMode(_gl.GL_MODELVIEW)
         _gl.glLoadIdentity()
-        _gl.glTranslated(*[-s[i]*anchor[i] for i in range(2)], -z_buffer)
+        _gl.glTranslated(*[-s[i] * anchor[i] for i in range(2)], -z_buffer)
         self.apply()
 
     def enableAlpha(self):
@@ -181,4 +204,3 @@ class RenderingHelper:
         """
         _gl.glBlendFunc(_gl.GL_ONE, _gl.GL_ZERO)
         self.glEnable(_gl.GL_CULL_FACE)
-

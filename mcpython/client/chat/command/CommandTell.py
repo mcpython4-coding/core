@@ -25,8 +25,11 @@ class CommandTell(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = ["tell", "msg", "w"]
-        parsebridge.add_subcommand(SubCommand(ParseType.SELECTOR).add_subcommand(SubCommand(
-            ParseType.OPEN_END_UNDEFINITED_STRING)))
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.SELECTOR).add_subcommand(
+                SubCommand(ParseType.OPEN_END_UNDEFINITED_STRING)
+            )
+        )
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -36,7 +39,8 @@ class CommandTell(mcpython.client.chat.command.Command.Command):
 
     @staticmethod
     def get_help() -> list:
-        return ["/tell <selector> <msg>: tells an player an message",
-                "/msg <selector> <msg>: tells an player an message",
-                "/w <selector> <msg>: tells an player an message"]
-
+        return [
+            "/tell <selector> <msg>: tells an player an message",
+            "/msg <selector> <msg>: tells an player an message",
+            "/w <selector> <msg>: tells an player an message",
+        ]

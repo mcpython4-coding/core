@@ -38,8 +38,9 @@ class TagHandler:
         :param replace: if data should be replaced or not
         :return:
         """
-        self.taggroups.setdefault(taggroup, mcpython.common.data.tags.TagGroup.TagGroup(taggroup)).add_from_data(tagname, data,
-                                                                                                                 replace)
+        self.taggroups.setdefault(
+            taggroup, mcpython.common.data.tags.TagGroup.TagGroup(taggroup)
+        ).add_from_data(tagname, data, replace)
 
     def add_locations(self, locations: list):
         """
@@ -60,23 +61,34 @@ class TagHandler:
         will load the tags
         :param direct_call: if build now or in the loading stage for it
         """
-        for row in [mcpython.ResourceLocator.get_all_entries(x) for x in self.taglocations]:
+        for row in [
+            mcpython.ResourceLocator.get_all_entries(x) for x in self.taglocations
+        ]:
             for address in row:
-                if address.endswith("/"): continue
+                if address.endswith("/"):
+                    continue
                 data = mcpython.ResourceLocator.read(address, "json")
                 s = address.split("/")
                 modname = s[s.index("data") + 1]
-                name = "#{}:{}".format(modname, "/".join(s[s.index("tags") + 2:]).split(".")[0])
-                G.taghandler.from_data(s[s.index("tags") + 1], name, data,
-                                       data["replace"] if "replace" in data else True)
+                name = "#{}:{}".format(
+                    modname, "/".join(s[s.index("tags") + 2 :]).split(".")[0]
+                )
+                G.taghandler.from_data(
+                    s[s.index("tags") + 1],
+                    name,
+                    data,
+                    data["replace"] if "replace" in data else True,
+                )
         for taggroup in G.taghandler.taggroups.values():
             if direct_call:
                 # logger.println("loading tag-group {}".format(taggroup.name))
                 taggroup.build()
             else:
-                mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:tag:load", taggroup.build,
-                                                                     info="loading tag-group '{}'".format(
-                                                                         taggroup.name))
+                mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+                    "stage:tag:load",
+                    taggroup.build,
+                    info="loading tag-group '{}'".format(taggroup.name),
+                )
 
     def get_tag_for(self, name: str, group: str) -> mcpython.common.data.tags.Tag.Tag:
         """
@@ -123,8 +135,15 @@ def add_from_location(loc: str):
     :param loc: the namespace
     WARNING: when adding outside normal build period, errors may occur
     """
-    G.taghandler.taglocations += [x.format(loc) for x in ["data/{}/tags/items", "data/{}/tags/naming",
-                                                          "data/{}/tags/blocks", "data/{}/tags/functions"]]
+    G.taghandler.taglocations += [
+        x.format(loc)
+        for x in [
+            "data/{}/tags/items",
+            "data/{}/tags/naming",
+            "data/{}/tags/blocks",
+            "data/{}/tags/functions",
+        ]
+    ]
 
 
 @G.modloader("minecraft", "stage:tag:group", "adding tag group locations")

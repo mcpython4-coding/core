@@ -15,9 +15,11 @@ import mcpython.common.event.Registry
 
 class GameRuleDataType:
     @classmethod
-    def is_valid_value(cls, data: str): raise NotImplementedError()
+    def is_valid_value(cls, data: str):
+        raise NotImplementedError()
 
-    def copy(self): raise NotImplementedError()
+    def copy(self):
+        raise NotImplementedError()
 
     def save(self):
         """
@@ -41,11 +43,14 @@ class GameRuleTypeBoolean(GameRuleDataType):
         data = data.lower()
         self.status = data in ("true", "1")
 
-    def copy(self): return GameRuleTypeBoolean(str(self.status))
+    def copy(self):
+        return GameRuleTypeBoolean(str(self.status))
 
-    def save(self): return self.status
+    def save(self):
+        return self.status
 
-    def load(self, data): self.status = data
+    def load(self, data):
+        self.status = data
 
 
 class GameRuleTypeInt(GameRuleDataType):
@@ -60,11 +65,14 @@ class GameRuleTypeInt(GameRuleDataType):
     def __init__(self, data: str):
         self.status = int(data)
 
-    def copy(self): return GameRuleTypeInt(str(self.status))
+    def copy(self):
+        return GameRuleTypeInt(str(self.status))
 
-    def save(self): return self.status
+    def save(self):
+        return self.status
 
-    def load(self, data): self.status = data
+    def load(self, data):
+        self.status = data
 
 
 class GameRule(mcpython.common.event.Registry.IRegistryContent):
@@ -80,14 +88,18 @@ class GameRule(mcpython.common.event.Registry.IRegistryContent):
         self.status = self.VALUE_TYPE(value)
 
 
-gamerule_registry = mcpython.common.event.Registry.Registry("gamerule", ["minecraft:game_rule"])
+gamerule_registry = mcpython.common.event.Registry.Registry(
+    "gamerule", ["minecraft:game_rule"]
+)
 
 
 @G.registry
 class GameRuleDoImmediateRespawn(GameRule):
     NAME = "doImmediateRespawn"
     VALUE_TYPE = GameRuleTypeBoolean
-    DEFAULT_VALUE = GameRuleTypeBoolean("true")  # todo: change to false when correct DeathScreen is implemented
+    DEFAULT_VALUE = GameRuleTypeBoolean(
+        "true"
+    )  # todo: change to false when correct DeathScreen is implemented
 
 
 @G.registry
@@ -165,5 +177,6 @@ class GameRuleHandler:
     def __init__(self, world):
         self.table = {}
         for gamerule in gamerule_registry.registered_object_map.keys():
-            self.table[gamerule] = gamerule_registry.registered_object_map[gamerule](world)
-
+            self.table[gamerule] = gamerule_registry.registered_object_map[gamerule](
+                world
+            )

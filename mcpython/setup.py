@@ -41,12 +41,15 @@ class IPrepareAbleTask(mcpython.common.event.Registry.IRegistryContent):
     TYPE = "minecraft:prebuild_task"
 
     @staticmethod
-    def dump_data(directory: str): pass
+    def dump_data(directory: str):
+        pass
 
     USES_DIRECTORY = True
 
 
-taskregistry = mcpython.common.event.Registry.Registry("preparetasks", ["minecraft:prebuild_task"])
+taskregistry = mcpython.common.event.Registry.Registry(
+    "preparetasks", ["minecraft:prebuild_task"]
+)
 
 
 def add():
@@ -58,13 +61,17 @@ def add():
         def dump_data(directory: str):
             for _ in range(10):
                 try:
-                    shutil.rmtree(G.build+"")
+                    shutil.rmtree(G.build + "")
                     break
-                except PermissionError: pass
-                except OSError: pass
+                except PermissionError:
+                    pass
+                except OSError:
+                    pass
             else:
-                raise IOError("can't remove 'build'-folder. please make sure that no file is opened")
-            os.makedirs(G.build+"")
+                raise IOError(
+                    "can't remove 'build'-folder. please make sure that no file is opened"
+                )
+            os.makedirs(G.build + "")
 
         USES_DIRECTORY = False
 
@@ -80,28 +87,31 @@ def add():
 
 
 def execute():
-    if not os.path.exists(G.build+""):
-        os.makedirs(G.build+"")
-    with open(G.build+"/info.json", mode="w") as f:
+    if not os.path.exists(G.build + ""):
+        os.makedirs(G.build + "")
+    with open(G.build + "/info.json", mode="w") as f:
         json.dump({"finished": False}, f)
     for iprepareabletask in taskregistry.registered_object_map.values():
-        directory = G.build+"/"+iprepareabletask.NAME
+        directory = G.build + "/" + iprepareabletask.NAME
         if iprepareabletask.USES_DIRECTORY:
-            if os.path.exists(directory): shutil.rmtree(directory)
+            if os.path.exists(directory):
+                shutil.rmtree(directory)
             os.makedirs(directory)
         iprepareabletask.dump_data(directory)
     G.eventhandler.call("prebuilding:finished")
 
 
 # todo: split up into different sub-calls
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", add, info="adding prebuild tasks")
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:prebuild:addition", add, info="adding prebuild tasks"
+)
 
-if not os.path.exists(G.build+"/info.json"):
+if not os.path.exists(G.build + "/info.json"):
     logger.println("rebuild mode due missing info file")
     G.prebuilding = True
     G.data_gen = True
 else:
-    with open(G.build+"/info.json") as f:
+    with open(G.build + "/info.json") as f:
         data = json.load(f)
     if not data["finished"]:
         logger.println("rebuild mode due to unfinished cache")
@@ -109,4 +119,6 @@ else:
         G.data_gen = True
 
 if G.prebuilding:
-    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:do", execute, info="doing prebuild tasks")
+    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+        "stage:prebuild:do", execute, info="doing prebuild tasks"
+    )

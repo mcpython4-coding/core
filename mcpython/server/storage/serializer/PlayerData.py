@@ -66,17 +66,29 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
             G.world.join_dimension(pd["dimension"], save_current=False)
             G.world.get_active_player().flying = pd["flying"]
             for name in pd["inventory links"]:
-                savefile.read("minecraft:inventory", inventory=player.inventories[name],
-                              path="players/{}/inventory/{}".format(player.name, name))
+                savefile.read(
+                    "minecraft:inventory",
+                    inventory=player.inventories[name],
+                    path="players/{}/inventory/{}".format(player.name, name),
+                )
             if "dimension_data" in pd:
-                if pd["dimension_data"]["nether_portal"]["portal_inner_time"] is not None:
-                    player.in_nether_portal_since = time.time() - pd["dimension_data"]["nether_portal"]["portal_inner_time"]
-                player.should_leave_nether_portal_before_dim_change = pd["dimension_data"]["nether_portal"]["portal_need_leave_before_change"]
+                if (
+                    pd["dimension_data"]["nether_portal"]["portal_inner_time"]
+                    is not None
+                ):
+                    player.in_nether_portal_since = (
+                        time.time()
+                        - pd["dimension_data"]["nether_portal"]["portal_inner_time"]
+                    )
+                player.should_leave_nether_portal_before_dim_change = pd[
+                    "dimension_data"
+                ]["nether_portal"]["portal_need_leave_before_change"]
 
     @classmethod
     def save(cls, data, savefile):
         data = savefile.access_file_json("players.json")
-        if data is None: data = {}
+        if data is None:
+            data = {}
         for player in G.world.players.values():
             # todo: move to player custom save data
             data[player.name] = {
@@ -91,15 +103,26 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
                 "fallen since y": player.fallen_since_y,
                 "active inventory slot": player.active_inventory_slot,
                 "flying": G.world.get_active_player().flying,
-                "inventory links": {name: player.inventories[name].uuid.int for name in player.inventories},
+                "inventory links": {
+                    name: player.inventories[name].uuid.int
+                    for name in player.inventories
+                },
                 "dimension_data": {
                     "nether_portal": {
-                        "portal_inner_time": None if player.in_nether_portal_since is None else time.time() - player.in_nether_portal_since,
-                        "portal_need_leave_before_change": player.should_leave_nether_portal_before_dim_change
+                        "portal_inner_time": None
+                        if player.in_nether_portal_since is None
+                        else time.time() - player.in_nether_portal_since,
+                        "portal_need_leave_before_change": player.should_leave_nether_portal_before_dim_change,
                     }
-                }
+                },
             }
-            [savefile.dump(None, "minecraft:inventory", inventory=player.inventories[name],
-                           path="players/{}/inventory/{}".format(player.name, name)) for name in player.inventories]
+            [
+                savefile.dump(
+                    None,
+                    "minecraft:inventory",
+                    inventory=player.inventories[name],
+                    path="players/{}/inventory/{}".format(player.name, name),
+                )
+                for name in player.inventories
+            ]
         savefile.dump_file_json("players.json", data)
-

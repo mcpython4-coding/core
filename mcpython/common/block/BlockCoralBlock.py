@@ -24,7 +24,8 @@ class ICoralBlock(mcpython.common.block.Block.Block):
     def on_random_update(self):
         # todo: add water check; not arrival as it is not implemented
         G.world.get_active_dimension().get_chunk_for_position(self.position).add_block(
-            self.position, "{}:dead_{}".format(*self.NAME.split(":")))
+            self.position, "{}:dead_{}".format(*self.NAME.split(":"))
+        )
 
 
 class BrainCoralBlock(ICoralBlock):
@@ -75,12 +76,21 @@ def load():
     G.registry.register(HornCoralBlock)
     G.registry.register(TubeCoralBlock)
     # the dead variants
-    mcpython.common.factory.BlockFactory.BlockFactory().setName("minecraft:dead_brain_coral_block").finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName("minecraft:dead_bubble_coral_block").finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName("minecraft:dead_fire_coral_block").finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName("minecraft:dead_horn_coral_block").finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName("minecraft:dead_tube_coral_block").finish()
+    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+        "minecraft:dead_brain_coral_block"
+    ).finish()
+    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+        "minecraft:dead_bubble_coral_block"
+    ).finish()
+    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+        "minecraft:dead_fire_coral_block"
+    ).finish()
+    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+        "minecraft:dead_horn_coral_block"
+    ).finish()
+    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+        "minecraft:dead_tube_coral_block"
+    ).finish()
 
 
 # todo: create factory function
-

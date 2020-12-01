@@ -35,4 +35,3 @@ class StatePart:
         for statepart in self.parts:
             statepart.master = self.master + [self]
             statepart.bind_to_eventbus()
-

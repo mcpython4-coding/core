@@ -27,7 +27,11 @@ class InventoryPlayerMain(mcpython.client.gui.Inventory.Inventory):
         self.hotbar = hotbar
         super().__init__()
         inputs = [self.slots[40:42], self.slots[42:44]]
-        self.recipeinterface = mcpython.client.gui.crafting.GridRecipeInterface.GridRecipeInterface(inputs, self.slots[44])
+        self.recipeinterface = (
+            mcpython.client.gui.crafting.GridRecipeInterface.GridRecipeInterface(
+                inputs, self.slots[44]
+            )
+        )
 
     @staticmethod
     def get_config_file() -> str or None:
@@ -35,10 +39,21 @@ class InventoryPlayerMain(mcpython.client.gui.Inventory.Inventory):
 
     def create_slots(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
-        return [self.hotbar.slots[i].copy() for i in range(9)] + [mcpython.client.gui.Slot.Slot() for _ in range(27)] + \
-               [mcpython.client.gui.Slot.Slot(allow_player_add_to_free_place=False, on_update=self.armor_update) for _ in range(4)] + \
-               [mcpython.client.gui.Slot.Slot(allow_player_add_to_free_place=False) for _ in range(5)] + [
-                   mcpython.client.gui.Slot.Slot()]
+        return (
+            [self.hotbar.slots[i].copy() for i in range(9)]
+            + [mcpython.client.gui.Slot.Slot() for _ in range(27)]
+            + [
+                mcpython.client.gui.Slot.Slot(
+                    allow_player_add_to_free_place=False, on_update=self.armor_update
+                )
+                for _ in range(4)
+            ]
+            + [
+                mcpython.client.gui.Slot.Slot(allow_player_add_to_free_place=False)
+                for _ in range(5)
+            ]
+            + [mcpython.client.gui.Slot.Slot()]
+        )
 
     def armor_update(self, player=None):
         # todo: add toughness
@@ -46,7 +61,10 @@ class InventoryPlayerMain(mcpython.client.gui.Inventory.Inventory):
         points = 0
         for slot in self.slots[35:40]:
             if slot.get_itemstack().item:
-                if issubclass(type(slot.get_itemstack().item), mcpython.common.item.ItemArmor.ItemArmor):
+                if issubclass(
+                    type(slot.get_itemstack().item),
+                    mcpython.common.item.ItemArmor.ItemArmor,
+                ):
                     points += slot.get_itemstack().item.DEFENSE_POINTS
         G.world.get_active_player().armor_level = points
 
@@ -64,6 +82,7 @@ class InventoryPlayerMain(mcpython.client.gui.Inventory.Inventory):
         G.statehandler.active_state.parts[0].activate_mouse = True
 
     def update_shift_container(self):
-        G.inventoryhandler.shift_container.container_A = self.slots[:9] + self.slots[36:41]
+        G.inventoryhandler.shift_container.container_A = (
+            self.slots[:9] + self.slots[36:41]
+        )
         G.inventoryhandler.shift_container.container_B = self.slots[9:36]
-

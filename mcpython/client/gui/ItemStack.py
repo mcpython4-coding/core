@@ -18,15 +18,22 @@ class ItemStack:
     base class for item stored somewhere
     todo: add function to copy content from one ItemStack to another
     """
-    
+
     def __init__(self, item_name_or_instance, amount=1):
         if issubclass(type(item_name_or_instance), mcpython.common.item.Item.Item):
             self.item = item_name_or_instance
         elif type(item_name_or_instance) == str:
-            if item_name_or_instance in G.registry.get_by_name("item").registered_object_map:
-                self.item = G.registry.get_by_name("item").registered_object_map[item_name_or_instance]()
+            if (
+                item_name_or_instance
+                in G.registry.get_by_name("item").registered_object_map
+            ):
+                self.item = G.registry.get_by_name("item").registered_object_map[
+                    item_name_or_instance
+                ]()
             else:
-                logger.println("[FATAL] can't find item named '{}'".format(item_name_or_instance))
+                logger.println(
+                    "[FATAL] can't find item named '{}'".format(item_name_or_instance)
+                )
                 self.item = None
         else:
             self.item = None
@@ -55,26 +62,34 @@ class ItemStack:
         return ItemStack(None)
 
     def __eq__(self, other):
-        if not type(other) == ItemStack: return False
+        if not type(other) == ItemStack:
+            return False
         return self.item == other.item and self.amount == other.amount
 
-    def is_empty(self): return self.amount == 0 or self.item is None
+    def is_empty(self):
+        return self.amount == 0 or self.item is None
 
-    def get_item_name(self): return self.item.NAME if self.item else None
+    def get_item_name(self):
+        return self.item.NAME if self.item else None
 
     def set_amount(self, amount):
         self.amount = amount
-        if self.amount <= 0: self.clean()
+        if self.amount <= 0:
+            self.clean()
         return self
 
     def add_amount(self, amount, check_overflow=True):
         self.set_amount(self.amount + amount)
-        if self.amount <= 0: self.clean()
-        if self.item and self.item.STACK_SIZE < self.amount and check_overflow: self.amount = self.item.STACK_SIZE
+        if self.amount <= 0:
+            self.clean()
+        if self.item and self.item.STACK_SIZE < self.amount and check_overflow:
+            self.amount = self.item.STACK_SIZE
         return self
 
     def __str__(self):
         # todo: include item data
-        return "ItemStack(item='{}',amount='{}'{})".format(self.get_item_name(), self.amount, "" if self.is_empty() else
-                                                           ",data={}".format(self.item.get_data()))
-
+        return "ItemStack(item='{}',amount='{}'{})".format(
+            self.get_item_name(),
+            self.amount,
+            "" if self.is_empty() else ",data={}".format(self.item.get_data()),
+        )

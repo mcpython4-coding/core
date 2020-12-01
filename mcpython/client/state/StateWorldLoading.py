@@ -31,24 +31,42 @@ class StateWorldLoading(State.State):
         self.finished_chunks = 0
 
     def get_parts(self) -> list:
-        return [mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
-                mcpython.client.state.ui.UIPartLable.UIPartLable("0%", (0, 50), anchor_lable="MM", anchor_window="MD",
-                                                                 color=(255, 255, 255, 255)),
-                mcpython.client.state.ui.UIPartLable.UIPartLable("(0/0/0)", (0, 30), anchor_lable="MM", anchor_window="MD",
-                                                                 color=(255, 255, 255, 255))]
+        return [
+            mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
+            mcpython.client.state.ui.UIPartLable.UIPartLable(
+                "0%",
+                (0, 50),
+                anchor_lable="MM",
+                anchor_window="MD",
+                color=(255, 255, 255, 255),
+            ),
+            mcpython.client.state.ui.UIPartLable.UIPartLable(
+                "(0/0/0)",
+                (0, 30),
+                anchor_lable="MM",
+                anchor_window="MD",
+                color=(255, 255, 255, 255),
+            ),
+        ]
 
     def on_update(self, dt):
         G.worldgenerationhandler.task_handler.process_tasks(timer=0.8)
         for chunk in self.status_table:
             c = G.worldgenerationhandler.task_handler.get_task_count_for_chunk(
-                G.world.get_active_dimension().get_chunk(*chunk))
+                G.world.get_active_dimension().get_chunk(*chunk)
+            )
             self.status_table[chunk] = 1 / c if c > 0 else -1
         if len(G.worldgenerationhandler.task_handler.chunks) == 0:
             G.statehandler.switch_to("minecraft:game")
             G.world.world_loaded = True
-            if mcpython.common.config.SHUFFLE_DATA and mcpython.common.config.SHUFFLE_INTERVAL > 0:
+            if (
+                mcpython.common.config.SHUFFLE_DATA
+                and mcpython.common.config.SHUFFLE_INTERVAL > 0
+            ):
                 G.eventhandler.call("data:shuffle:all")
-        self.parts[1].text = "{}%".format(round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10)
+        self.parts[1].text = "{}%".format(
+            round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10
+        )
 
     def on_activate(self):
         G.worldgenerationhandler.enable_generation = False
@@ -57,7 +75,9 @@ class StateWorldLoading(State.State):
         try:
             G.world.savefile.load_world()
         except IOError:  # todo: add own exception class as IOError may be raised somewhere else in the script
-            logger.println("failed to load world. data-fixer failed with NoDataFixerFoundException")
+            logger.println(
+                "failed to load world. data-fixer failed with NoDataFixerFoundException"
+            )
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
             return
@@ -101,8 +121,12 @@ class StateWorldLoading(State.State):
             self.parts[1].text = "0%"
             self.parts[2].text = "0/0/0"
         else:
-            self.parts[1].text = "{}%".format(round(self.calculate_percentage_of_progress() * 1000) / 10)
-            self.parts[2].text = "{}/{}/{}".format(*G.worldgenerationhandler.task_handler.get_total_task_stats())
+            self.parts[1].text = "{}%".format(
+                round(self.calculate_percentage_of_progress() * 1000) / 10
+            )
+            self.parts[2].text = "{}/{}/{}".format(
+                *G.worldgenerationhandler.task_handler.get_total_task_stats()
+            )
 
         for cx, cz in self.status_table:
             status = self.status_table[(cx, cz)]
@@ -113,7 +137,9 @@ class StateWorldLoading(State.State):
                 color = (0, 255, 0)
             else:
                 color = (136, 0, 255)
-            mcpython.util.opengl.draw_rectangle((mx + cx * 10, my + cz * 10), (10, 10), color)
+            mcpython.util.opengl.draw_rectangle(
+                (mx + cx * 10, my + cz * 10), (10, 10), color
+            )
 
 
 worldloading = None

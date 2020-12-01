@@ -17,5 +17,5 @@ class IShulkerBoxLikeItem:
     todo: move to tags
     """
 
-    def is_blocked_in(self, inventory) -> bool: return True
-
+    def is_blocked_in(self, inventory) -> bool:
+        return True

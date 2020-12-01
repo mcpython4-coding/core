@@ -18,6 +18,7 @@ class ParseType(enum.Enum):
     """
     An enum for command entrys
     """
+
     DEFINIED_STRING = 0  # a definied string like "as"
     INT = 1  # an int. may be negative
     STRING = 2  # an string in "" or ''. not mixed. may have spaces in it
@@ -97,7 +98,8 @@ class ParseBridge:
         :param subcommand: the subcommand to add or an ParseType
         :return: the object invoked on (the self)
         """
-        if type(subcommand) == ParseType: subcommand = SubCommand(subcommand)
+        if type(subcommand) == ParseType:
+            subcommand = SubCommand(subcommand)
         self.sub_commands.append(subcommand)
         return self
 
@@ -133,4 +135,3 @@ class Command(mcpython.common.event.Registry.IRegistryContent):
         todo: make translated
         """
         return []
-

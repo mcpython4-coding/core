@@ -36,27 +36,40 @@ class World:
     def __init__(self, filename: str = None):
         G.world = self
         # todo: add some more variation
-        self.spawnpoint: typing.Tuple[int, int] = (random.randint(0, 15), random.randint(0, 15))
-        self.dimensions: typing.Dict[int, mcpython.world.Dimension.Dimension] = {}  # todo: change for str-based
+        self.spawnpoint: typing.Tuple[int, int] = (
+            random.randint(0, 15),
+            random.randint(0, 15),
+        )
+        self.dimensions: typing.Dict[
+            int, mcpython.world.Dimension.Dimension
+        ] = {}  # todo: change for str-based
         G.dimensionhandler.init_dims()
-        self.active_dimension: int = 0  # todo: change to str; todo: move to player; todo: make property
+        self.active_dimension: int = (
+            0  # todo: change to str; todo: move to player; todo: make property
+        )
         # container for world-related config; contains: seed [build in] todo: move to config class
         self.config: typing.Dict[str, typing.Any] = {}
         self.gamerulehandler: typing.Union[
-            mcpython.common.world.GameRule.GameRuleHandler, None] = None  # the gamerule handler fort his world
+            mcpython.common.world.GameRule.GameRuleHandler, None
+        ] = None  # the gamerule handler fort his world
         self.reset_config()  # will reset the config
         self.CANCEL_DIM_CHANGE: bool = False  # flag for canceling the dim change event
         self.hide_faces_to_ungenerated_chunks: bool = True  # todo: move to configs
-        self.filename: str = "tmp" if filename is None else filename  # the file-name to use, todo: make None if not needed
-        self.savefile: mcpython.server.storage.SaveFile.SaveFile = mcpython.server.storage.SaveFile.SaveFile(
-            self.filename)  # the save file instance
+        self.filename: str = (
+            "tmp" if filename is None else filename
+        )  # the file-name to use, todo: make None if not needed
+        self.savefile: mcpython.server.storage.SaveFile.SaveFile = (
+            mcpython.server.storage.SaveFile.SaveFile(self.filename)
+        )  # the save file instance
 
         # when in an network, stores an reference to all other players
         self.players: typing.Dict[str, mcpython.world.player.Player] = {}
         self.active_player: str = "unknown"  # todo: make property, make None-able & set default None when not in world
         self.world_loaded = False  # describes if the world is loaded or not
 
-    def add_player(self, name: str, add_inventories: bool = True, override: bool = True):
+    def add_player(
+        self, name: str, add_inventories: bool = True, override: bool = True
+    ):
         """
         will add an new player into the world
         :param name: the name of the player to create
@@ -64,21 +77,30 @@ class World:
         :param override: if the player should be re-created if it exists in memory
         :return: the player instance
         """
-        if not override and name in self.players: return self.players[name]
-        self.players[name] = G.entityhandler.add_entity("minecraft:player", (0, 0, 0), name)
+        if not override and name in self.players:
+            return self.players[name]
+        self.players[name] = G.entityhandler.add_entity(
+            "minecraft:player", (0, 0, 0), name
+        )
         if add_inventories:
             self.players[name].create_inventories()
         return self.players[name]
 
-    def get_active_player(self, create: bool = True) -> typing.Union[mcpython.common.world.player.Player, None]:
+    def get_active_player(
+        self, create: bool = True
+    ) -> typing.Union[mcpython.common.world.player.Player, None]:
         """
         returns the player instance for this client
         :param create: if the player should be created or not
         :return: the player instance or None if no player is set
         """
-        if not create and self.active_player is None: return
-        return self.players[self.active_player] if self.active_player in self.players else self.add_player(
-            self.active_player)
+        if not create and self.active_player is None:
+            return
+        return (
+            self.players[self.active_player]
+            if self.active_player in self.players
+            else self.add_player(self.active_player)
+        )
 
     def reset_config(self):
         """
@@ -91,7 +113,9 @@ class World:
         G.eventhandler.call("world:reset_config")
         self.gamerulehandler = mcpython.common.world.GameRule.GameRuleHandler(self)
 
-    def get_active_dimension(self) -> typing.Union[mcpython.common.world.Dimension.Dimension, None]:
+    def get_active_dimension(
+        self,
+    ) -> typing.Union[mcpython.common.world.Dimension.Dimension, None]:
         """
         will return the dimension the player is in
         :return: the dimension or None if no dimension is set
@@ -100,7 +124,9 @@ class World:
         """
         return self.get_dimension(self.active_dimension)
 
-    def add_dimension(self, dim_id: int, name: str, dim_config=None, config=None) -> mcpython.common.world.Dimension.Dimension:
+    def add_dimension(
+        self, dim_id: int, name: str, dim_config=None, config=None
+    ) -> mcpython.common.world.Dimension.Dimension:
         """
         will add an new dimension into the system
         :param dim_id: the id to create under
@@ -109,9 +135,13 @@ class World:
         :param dim_config: the dim_config to use as gen config
         :return: the dimension instance
         """
-        if dim_config is None: dim_config = config
-        if dim_config is None: dim_config = {}
-        dim = self.dimensions[dim_id] = mcpython.common.world.Dimension.Dimension(self, dim_id, name, genconfig=dim_config)
+        if dim_config is None:
+            dim_config = config
+        if dim_config is None:
+            dim_config = {}
+        dim = self.dimensions[dim_id] = mcpython.common.world.Dimension.Dimension(
+            self, dim_id, name, genconfig=dim_config
+        )
         G.worldgenerationhandler.setup_dimension(dim, config)
         return dim
 
@@ -128,7 +158,9 @@ class World:
         if self.CANCEL_DIM_CHANGE:
             logger.println("interrupted!")
             return
-        sector = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
+        sector = mcpython.util.math.positionToChunk(
+            G.world.get_active_player().position
+        )
         logger.println("unloading chunks...")
         self.change_chunks(sector, None)
         old = self.active_dimension
@@ -144,15 +176,25 @@ class World:
         :param dim_id: the id to use
         :return: the dimension instance or None if it does not exist
         """
-        if dim_id in self.dimensions: return self.dimensions[dim_id]
+        if dim_id in self.dimensions:
+            return self.dimensions[dim_id]
         for dimension in self.dimensions.values():
             if dimension.name == dim_id:
                 return dimension
 
-    def hit_test(self, position: typing.Tuple[float, float, float], vector: typing.Tuple[float, float, float],
-                 max_distance: int = 8) -> typing.Union[
-            typing.Tuple[typing.Tuple[int, int, int], typing.Tuple[int, int, int], typing.Tuple[float, float, float]],
-            typing.Tuple[None, None, None]]:
+    def hit_test(
+        self,
+        position: typing.Tuple[float, float, float],
+        vector: typing.Tuple[float, float, float],
+        max_distance: int = 8,
+    ) -> typing.Union[
+        typing.Tuple[
+            typing.Tuple[int, int, int],
+            typing.Tuple[int, int, int],
+            typing.Tuple[float, float, float],
+        ],
+        typing.Tuple[None, None, None],
+    ]:
         """
         Line of sight search from current position. If a block is
         intersected it is returned, along with the block previously in the line
@@ -166,7 +208,9 @@ class World:
 
         todo: cache the bbox of the block
         """
-        m = G.world.gamerulehandler.table["hitTestSteps"].status.status  # get m from the gamerule
+        m = G.world.gamerulehandler.table[
+            "hitTestSteps"
+        ].status.status  # get m from the gamerule
         x, y, z = position
         dx, dy, dz = vector
         dx /= m
@@ -176,7 +220,11 @@ class World:
         for _ in range(max_distance * m):
             key = mcpython.util.math.normalize((x, y, z))
             blocki = self.get_active_dimension().get_block(key)
-            if blocki and type(blocki) != str and blocki.get_view_bbox().test_point_hit((x, y, z), blocki.position):
+            if (
+                blocki
+                and type(blocki) != str
+                and blocki.get_view_bbox().test_point_hit((x, y, z), blocki.position)
+            ):
                 return key, previous, (x, y, z)
             if key != previous:
                 previous = key
@@ -186,9 +234,13 @@ class World:
         return None, None, None
 
     @deprecation.deprecated("dev1-4", "a1.3.0")
-    def show_sector(self, sector): self.show_chunk(sector)
+    def show_sector(self, sector):
+        self.show_chunk(sector)
 
-    def show_chunk(self, chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.Chunk.Chunk]):
+    def show_chunk(
+        self,
+        chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.Chunk.Chunk],
+    ):
         """
         Ensure all blocks in the given chunk that should be shown are
         drawn to the canvas.
@@ -199,9 +251,13 @@ class World:
         chunk.show()
 
     @deprecation.deprecated("dev1-4", "a1.3.0")
-    def hide_sector(self, sector, immediate=False): self.hide_chunk(sector)
+    def hide_sector(self, sector, immediate=False):
+        self.hide_chunk(sector)
 
-    def hide_chunk(self, chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.Chunk.Chunk]):
+    def hide_chunk(
+        self,
+        chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.Chunk.Chunk],
+    ):
         """
         Ensure all blocks in the given chunk that should be hidden are
         removed from the canvas.
@@ -212,11 +268,18 @@ class World:
         chunk.hide()
 
     @deprecation.deprecated("dev1-4", "a1.3.0")
-    def change_sectors(self, before, after, immediate=False, generate_chunks=True, load_immediate=False):
+    def change_sectors(
+        self, before, after, immediate=False, generate_chunks=True, load_immediate=False
+    ):
         self.change_chunks(before, after, generate_chunks, load_immediate)
 
-    def change_chunks(self, before: typing.Union[typing.Tuple[int, int], None], after: typing.Union[typing.Tuple[int, int], None], generate_chunks=True,
-                      load_immediate=True):
+    def change_chunks(
+        self,
+        before: typing.Union[typing.Tuple[int, int], None],
+        after: typing.Union[typing.Tuple[int, int], None],
+        generate_chunks=True,
+        load_immediate=True,
+    ):
         """
         Move from chunk `before` to chunk `after`
         :param before: the chunk before
@@ -242,24 +305,44 @@ class World:
         for chunk in hide:
             pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
             if G.world.get_active_dimension().get_chunk(*chunk, generate=False).loaded:
-                G.tickhandler.schedule_once(G.world.savefile.dump, None, "minecraft:chunk",
-                                            dimension=self.active_dimension, chunk=chunk)
+                G.tickhandler.schedule_once(
+                    G.world.savefile.dump,
+                    None,
+                    "minecraft:chunk",
+                    dimension=self.active_dimension,
+                    chunk=chunk,
+                )
         for chunk in show:
             pyglet.clock.schedule_once(lambda _: self.show_chunk(chunk), 0.1)
             if not load_immediate:
-                pyglet.clock.schedule_once(lambda _: G.world.savefile.read(
-                    "minecraft:chunk", dimension=self.active_dimension, chunk=chunk), 0.1)
+                pyglet.clock.schedule_once(
+                    lambda _: G.world.savefile.read(
+                        "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
+                    ),
+                    0.1,
+                )
             else:
-                G.world.savefile.read("minecraft:chunk", dimension=self.active_dimension, chunk=chunk)
+                G.world.savefile.read(
+                    "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
+                )
 
-        if not after: return
+        if not after:
+            return
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):
-                if generate_chunks and abs(dx) <= mcpython.common.config.CHUNK_GENERATION_RANGE and \
-                        abs(dz) <= mcpython.common.config.CHUNK_GENERATION_RANGE and self.config["enable_auto_gen"]:
-                    chunk = self.get_active_dimension().get_chunk(dx + after[0], dz + after[1], generate=False)
+                if (
+                    generate_chunks
+                    and abs(dx) <= mcpython.common.config.CHUNK_GENERATION_RANGE
+                    and abs(dz) <= mcpython.common.config.CHUNK_GENERATION_RANGE
+                    and self.config["enable_auto_gen"]
+                ):
+                    chunk = self.get_active_dimension().get_chunk(
+                        dx + after[0], dz + after[1], generate=False
+                    )
                     if not chunk.generated:
-                        G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)
+                        G.worldgenerationhandler.add_chunk_to_generation_list(
+                            chunk, prior=True
+                        )
 
     def cleanup(self, remove_dims=False, filename=None):
         """
@@ -282,7 +365,8 @@ class World:
         [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
         self.reset_config()
         G.world.get_active_player().flying = False
-        for inv in G.world.get_active_player().inventories.values(): inv.clear()
+        for inv in G.world.get_active_player().inventories.values():
+            inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         G.worldgenerationhandler.task_handler.clear()
         G.entityhandler.entity_map.clear()

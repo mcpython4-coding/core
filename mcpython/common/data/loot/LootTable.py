@@ -50,7 +50,9 @@ class LootTableHandler:
         self.loot_tables = {}
 
         self.relink_table = {}
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:shuffle:all", self.shuffle_data)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "data:shuffle:all", self.shuffle_data
+        )
 
         self.mod_names_to_load = set()
 
@@ -68,7 +70,8 @@ class LootTableHandler:
             ccopy.remove(relinked)
 
     def __getitem__(self, item):
-        if item in self.relink_table: item = self.relink_table[item]
+        if item in self.relink_table:
+            item = self.relink_table[item]
         return self.loot_tables[item]
 
     def roll(self, name: str, *args, relink=True, **kwargs) -> list:
@@ -105,30 +108,59 @@ class LootTableHandler:
         return [mcpython.client.gui.ItemStack.ItemStack(block.NAME)]
 
     def for_mod_name(self, modname, directoryname=None):
-        if directoryname is None: directoryname = modname
-        modinstance = G.modloader.mods[modname] if modname in G.modloader.mods else G.modloader.mods["minecraft"]
-        for path in mcpython.ResourceLocator.get_all_entries("data/{}/loot_tables".format(directoryname)):
-            if path.endswith("/"): continue
+        if directoryname is None:
+            directoryname = modname
+        modinstance = (
+            G.modloader.mods[modname]
+            if modname in G.modloader.mods
+            else G.modloader.mods["minecraft"]
+        )
+        for path in mcpython.ResourceLocator.get_all_entries(
+            "data/{}/loot_tables".format(directoryname)
+        ):
+            if path.endswith("/"):
+                continue
             self._add_load(modinstance, path)
         self.mod_names_to_load.add(modname)
 
     def _add_load(self, modinstance, path):
-        modinstance.eventbus.subscribe("stage:loottables:load", lambda: self.from_file(path),
-                                       info="loading loot table '{}'".format(path))
+        modinstance.eventbus.subscribe(
+            "stage:loottables:load",
+            lambda: self.from_file(path),
+            info="loading loot table '{}'".format(path),
+        )
 
     def from_file(self, file: str):
         LootTable.from_file(file)
 
-    def parse_function(self, data: dict) -> mcpython.common.data.loot.LootTableFunction.ILootTableFunction:
+    def parse_function(
+        self, data: dict
+    ) -> mcpython.common.data.loot.LootTableFunction.ILootTableFunction:
         name = data["function"]
-        if name in mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.registered_object_map:
-            return mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.registered_object_map[name](data)
+        if (
+            name
+            in mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.registered_object_map
+        ):
+            return mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.registered_object_map[
+                name
+            ](
+                data
+            )
         logger.println("unable to decode loot table function '{}'".format(name))
 
-    def parse_condition(self, data: dict) -> mcpython.common.data.loot.LootTableCondition.ILootTableCondition:
+    def parse_condition(
+        self, data: dict
+    ) -> mcpython.common.data.loot.LootTableCondition.ILootTableCondition:
         name = data["condition"]
-        if name in mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.registered_object_map:
-            return mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.registered_object_map[name](data)
+        if (
+            name
+            in mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.registered_object_map
+        ):
+            return mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.registered_object_map[
+                name
+            ](
+                data
+            )
         logger.println("unable to decode loot table condition '{}'".format(name))
 
 
@@ -138,13 +170,18 @@ handler = G.loottablehandler = LootTableHandler()
 class LootTablePoolEntry:
     @classmethod
     def from_data(cls, pool, data: dict):
-        obj = cls(entry_type=LootTablePoolEntryType[data["type"].split(":")[-1].upper()])
+        obj = cls(
+            entry_type=LootTablePoolEntryType[data["type"].split(":")[-1].upper()]
+        )
         obj.pool = pool
         if "conditions" in data:
-            obj.conditions = [handler.parse_condition(cond) for cond in data["conditions"]]
+            obj.conditions = [
+                handler.parse_condition(cond) for cond in data["conditions"]
+            ]
         if "functions" in data:
             obj.functions = [handler.parse_function(func) for func in data["functions"]]
-            while None in obj.functions: obj.functions.remove(None)
+            while None in obj.functions:
+                obj.functions.remove(None)
         if "name" in data:
             obj.name = data["name"]
         if "children" in data:
@@ -169,16 +206,25 @@ class LootTablePoolEntry:
         self.quality = 0
 
     def roll(self, *args, **kwargs):
-        if self.entry_type == LootTablePoolEntryType.UNSET: raise ValueError("type not set")
-        if not all([cond.check(self, *args, **kwargs) for cond in self.conditions]): return None
+        if self.entry_type == LootTablePoolEntryType.UNSET:
+            raise ValueError("type not set")
+        if not all([cond.check(self, *args, **kwargs) for cond in self.conditions]):
+            return None
         items = []
         if self.entry_type == LootTablePoolEntryType.ITEM:
             items.append(mcpython.client.gui.ItemStack.ItemStack(self.name))
         elif self.entry_type == LootTablePoolEntryType.TAG:
             if self.expand:
-                items.append(mcpython.client.gui.ItemStack.ItemStack(random.choice(G.taghandler.get_tag_for(self.name, "items"))))
+                items.append(
+                    mcpython.client.gui.ItemStack.ItemStack(
+                        random.choice(G.taghandler.get_tag_for(self.name, "items"))
+                    )
+                )
             else:
-                items += [mcpython.client.gui.ItemStack.ItemStack(name) for name in G.taghandler.get_tag_for(self.name, "items")]
+                items += [
+                    mcpython.client.gui.ItemStack.ItemStack(name)
+                    for name in G.taghandler.get_tag_for(self.name, "items")
+                ]
         elif self.entry_type == LootTablePoolEntryType.LOOT_TABLE:
             items += handler.roll(self.name, *args, **kwargs)
         elif self.entry_type == LootTablePoolEntryType.GROUP:
@@ -186,13 +232,15 @@ class LootTablePoolEntry:
         elif self.entry_type == LootTablePoolEntryType.ALTERNATIVES:
             for entry in self.children:
                 item = entry.roll(*args, **kwargs)
-                if item is None: continue
+                if item is None:
+                    continue
                 items += item
                 break
         elif self.entry_type == LootTablePoolEntryType.SEQUENCE:
             for entry in self.children:
                 item = entry.roll(*args, **kwargs)
-                if item is None: break
+                if item is None:
+                    break
                 items += item
         elif self.entry_type == LootTablePoolEntryType.DYNAMIC:
             raise NotImplementedError()
@@ -206,11 +254,15 @@ class LootTablePool:
         obj = cls()
         obj.table = table
         if "conditions" in data:
-            obj.conditions = [handler.parse_condition(cond) for cond in data["conditions"]]
+            obj.conditions = [
+                handler.parse_condition(cond) for cond in data["conditions"]
+            ]
         if "functions" in data:
             obj.functions = [handler.parse_function(func) for func in data["functions"]]
         if "entries" in data:
-            obj.entries = [LootTablePoolEntry.from_data(obj, d) for d in data["entries"]]
+            obj.entries = [
+                LootTablePoolEntry.from_data(obj, d) for d in data["entries"]
+            ]
             obj.entry_weights = [entry.weight for entry in obj.entries]
         if "rolls" in data:
             if type(data["rolls"]) in (int, float):
@@ -229,7 +281,10 @@ class LootTablePool:
         self.table = None
 
     def roll(self, *args, **kwargs):
-        if not all([condition.check(self, *args, **kwargs) for condition in self.conditions]): return []
+        if not all(
+            [condition.check(self, *args, **kwargs) for condition in self.conditions]
+        ):
+            return []
         items = []
         i = random.randint(*self.roll_range)
         done = []
@@ -241,8 +296,10 @@ class LootTablePool:
                 items += item
                 i -= 1
             else:
-                if entry not in done: done.append(entry)
-                elif len(done) == len(self.entries): break
+                if entry not in done:
+                    done.append(entry)
+                elif len(done) == len(self.entries):
+                    break
         [func.apply(items) for func in self.functions]
         return items
 
@@ -252,22 +309,37 @@ class LootTable:
     def from_file(cls, file: str, name=None):
         if name is None:
             s = file.split("/")
-            name = "{}:{}/{}".format(s[s.index("data")+1], s[s.index("data")+3],
-                                     "/".join(s[s.index("data")+4:]).split(".")[0])
+            name = "{}:{}/{}".format(
+                s[s.index("data") + 1],
+                s[s.index("data") + 3],
+                "/".join(s[s.index("data") + 4 :]).split(".")[0],
+            )
         cls.from_data(mcpython.ResourceLocator.read(file, "json"), name)
 
     @classmethod
     def from_data(cls, data: dict, name: str):
         try:
-            obj = cls(LootTableTypes[data["type"].split(":")[-1].upper()] if "type" in data else LootTableTypes.UNSET)
+            obj = cls(
+                LootTableTypes[data["type"].split(":")[-1].upper()]
+                if "type" in data
+                else LootTableTypes.UNSET
+            )
         except KeyError:
             if "type" in data:
-                logger.println("[WARN] type '{}' not found for loot table '{}'!".format(data["type"], name))
+                logger.println(
+                    "[WARN] type '{}' not found for loot table '{}'!".format(
+                        data["type"], name
+                    )
+                )
             else:
-                logger.print_exception("[ERROR] fatal during loading loot table '{}'".format(name))
+                logger.print_exception(
+                    "[ERROR] fatal during loading loot table '{}'".format(name)
+                )
             return
         except:
-            logger.print_exception("[ERROR] fatal during loading loot table '{}'".format(name))
+            logger.print_exception(
+                "[ERROR] fatal during loading loot table '{}'".format(name)
+            )
             return
         handler.loot_tables[name] = obj
         if "pools" in data:
@@ -289,5 +361,6 @@ def init():
     handler.for_mod_name("minecraft")
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:loottables:locate", init)
-
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:loottables:locate", init
+)

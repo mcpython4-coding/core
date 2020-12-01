@@ -19,7 +19,8 @@ if not os.path.isdir(G.home + "/config"):
     os.makedirs(G.home + "/config")
 
 
-class InvalidMapperData(Exception): pass
+class InvalidMapperData(Exception):
+    pass
 
 
 class StringParsingPool:
@@ -29,7 +30,7 @@ class StringParsingPool:
 
     def __init__(self, text: str):
         self.data = text.split("\n")
-    
+
     def pop_line(self) -> str:
         return self.data.pop(0).lstrip()
 
@@ -67,7 +68,9 @@ def toDataMapper(value):
         return BooleanDataMapper(value)
     else:
         for mapper in MAPPERS:
-            if issubclass(mapper, ICustomDataMapper) and mapper.valid_value_to_parse(value):
+            if issubclass(mapper, ICustomDataMapper) and mapper.valid_value_to_parse(
+                value
+            ):
                 return mapper.parse(value)
         return StringDataMapper(value)
 
@@ -113,8 +116,12 @@ class IDataMapper:
         will integrate the data from other into this
         :param other: the mapper to integrate
         """
-        if type(self) != type(other): raise ValueError("invalid integration mapper target: {} (source: {})".format(
-            type(other), type(self)))
+        if type(self) != type(other):
+            raise ValueError(
+                "invalid integration mapper target: {} (source: {})".format(
+                    type(other), type(self)
+                )
+            )
         self.write(other.read())
 
 
@@ -174,7 +181,7 @@ class DictDataMapper(IDataMapper):
         data = "D{\n"
         for key in self.value:
             d = self.value[key][0].serialize()
-            d = "    "+"\n    ".join(d.split("\n"))
+            d = "    " + "\n    ".join(d.split("\n"))
             if self.value[key][1] is not None:
                 data += "\n//{}\n{} -> {{\n{}\n}}n".format(self.value[key][1], key, d)
             else:
@@ -192,15 +199,19 @@ class DictDataMapper(IDataMapper):
             l = d.pop_line()
             if l == "}":
                 break
-            if l.startswith("//"): continue
+            if l.startswith("//"):
+                continue
             if "->" in l:
-                obj[l.split(" -> {")[0]] = bufferToMapper(d)  # handle the following like an data buffer
+                obj[l.split(" -> {")[0]] = bufferToMapper(
+                    d
+                )  # handle the following like an data buffer
                 if d.get_line() == "}":
                     d.pop_line()
         return obj
 
     def integrate(self, other):
-        if type(self) != type(other): raise ValueError("invalid integration mapper target: {}".format(other))
+        if type(self) != type(other):
+            raise ValueError("invalid integration mapper target: {}".format(other))
         for key in other.value:
             if key in self.value:  # remove any key above the needed
                 self.value[key][0].integrate(other.value[key][0])
@@ -239,7 +250,9 @@ class ListDataMapper(IDataMapper):
             self.value.append(toDataMapper(v))
 
     def serialize(self) -> str:
-        return "L[\n{}\n]".format("    "+"\n    ".join([e.serialize() for e in self.value]))
+        return "L[\n{}\n]".format(
+            "    " + "\n    ".join([e.serialize() for e in self.value])
+        )
 
     @classmethod
     def deserialize(cls, d: StringParsingPool):
@@ -253,7 +266,8 @@ class ListDataMapper(IDataMapper):
                 d.pop_line()
                 break
             value = bufferToMapper(d)
-            if value is None: continue
+            if value is None:
+                continue
             obj.value.append(value)
         return obj
 
@@ -283,7 +297,7 @@ class IntDataMapper(IDataMapper):
 
 
 class FloatDataMapper(IDataMapper):
-    def __init__(self, value=0.):
+    def __init__(self, value=0.0):
         super().__init__(value)
 
     def read(self):
@@ -345,7 +359,14 @@ class BooleanDataMapper(IDataMapper):
         return BooleanDataMapper(value=d.pop_line()[1:].lower() == "true")
 
 
-MAPPERS = [DictDataMapper, ListDataMapper, IntDataMapper, FloatDataMapper, StringDataMapper, BooleanDataMapper]
+MAPPERS = [
+    DictDataMapper,
+    ListDataMapper,
+    IntDataMapper,
+    FloatDataMapper,
+    StringDataMapper,
+    BooleanDataMapper,
+]
 
 
 def stringToMapper(d: str) -> IDataMapper:
@@ -371,8 +392,12 @@ class ConfigFile:
         self.file_name = file_name
         self.assigned_mod = assigned_mod
         self.main_tag = DictDataMapper()
-        self.file = G.home+"/config/{}/{}.conf".format(assigned_mod, file_name)
-        G.modloader(self.assigned_mod, "stage:mod:config:load", "building config file {}".format(self.file))(self.build)
+        self.file = G.home + "/config/{}/{}.conf".format(assigned_mod, file_name)
+        G.modloader(
+            self.assigned_mod,
+            "stage:mod:config:load",
+            "building config file {}".format(self.file),
+        )(self.build)
 
     def add_entry(self, key: str, default_mapper=None, description=None):
         self.main_tag.add_entry(key, default_mapper, description)
@@ -408,7 +433,8 @@ class ConfigFile:
         assert d.pop_line() == "VERSION=1.0.0"
         assert d.pop_line() == "PROVIDING_MOD={}".format(self.assigned_mod)
         d.pop_line()
-        while len(d.get_line().strip()) == 0: d.pop_line()
+        while len(d.get_line().strip()) == 0:
+            d.pop_line()
         try:
             mapper = bufferToMapper(d)
             self.main_tag.integrate(mapper)
@@ -417,9 +443,13 @@ class ConfigFile:
 
     def write(self):
         data = "// mcpython config file\nVERSION=1.0.0\nPROVIDING_MOD={}\nPROVIDING_MOD_VERSION={}\n\n{}".format(
-            self.assigned_mod, G.modloader.mods[self.assigned_mod].version, self.main_tag.serialize())
+            self.assigned_mod,
+            G.modloader.mods[self.assigned_mod].version,
+            self.main_tag.serialize(),
+        )
         d = os.path.dirname(self.file)
-        if not os.path.isdir(d): os.makedirs(d)
+        if not os.path.isdir(d):
+            os.makedirs(d)
         with open(self.file, mode="w") as f:
             f.write(data)
 
@@ -427,4 +457,5 @@ class ConfigFile:
 @G.modloader("minecraft", "stage:mod:config:define")
 def load():
     import mcpython.common.config
+
     mcpython.common.config.load()

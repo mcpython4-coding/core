@@ -16,11 +16,16 @@ import mcpython.client.gui.InventoryFurnace
 from mcpython.util.enums import EnumSide
 
 
-class BlockFurnace(mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock):
+class BlockFurnace(
+    mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock
+):
     """
     class for the furnace block
     """
-    FURNACE_RECIPES: list = ["minecraft:smelting"]  # the list of recipe groups to use for this furnace
+
+    FURNACE_RECIPES: list = [
+        "minecraft:smelting"
+    ]  # the list of recipe groups to use for this furnace
 
     NAME: str = "minecraft:furnace"
 
@@ -30,19 +35,24 @@ class BlockFurnace(mcpython.common.block.IHorizontalOrientableBlock.IHorizontalO
         """
         super().__init__(*args, **kwargs)
         self.active = False
-        self.inventory = mcpython.client.gui.InventoryFurnace.InventoryFurnace(self, self.FURNACE_RECIPES)
+        self.inventory = mcpython.client.gui.InventoryFurnace.InventoryFurnace(
+            self, self.FURNACE_RECIPES
+        )
 
     def get_model_state(self) -> dict:
         return {"facing": self.face.normal_name, "lit": str(self.active).lower()}
 
     def set_model_state(self, state: dict):
         super().set_model_state(state)
-        if "lit" in state: self.active = state["lit"] == "true"
+        if "lit" in state:
+            self.active = state["lit"] == "true"
 
     @classmethod
     def get_all_model_states(cls) -> list:
         states = super().get_all_model_states()
-        return [{"active": "false", **e} for e in states] + [{"active": "true", **e} for e in states]
+        return [{"active": "false", **e} for e in states] + [
+            {"active": "true", **e} for e in states
+        ]
 
     def on_player_interaction(self, player, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
@@ -51,7 +61,8 @@ class BlockFurnace(mcpython.common.block.IHorizontalOrientableBlock.IHorizontalO
         else:
             return False
 
-    def get_inventories(self): return [self.inventory]
+    def get_inventories(self):
+        return [self.inventory]
 
     def get_provided_slot_lists(self, side):
         if side == EnumSide.TOP:
@@ -62,7 +73,8 @@ class BlockFurnace(mcpython.common.block.IHorizontalOrientableBlock.IHorizontalO
             return [self.inventory.slots[37]], []
 
     def on_remove(self):
-        if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
+        if not G.world.gamerulehandler.table["doTileDrops"].status.status:
+            return
         for slot in self.inventory.slots:
             G.world.get_active_player().pick_up(slot.itemstack.copy())
             slot.itemstack.clean()

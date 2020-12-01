@@ -29,8 +29,11 @@ def colorize(mask: PIL.Image.Image, color: tuple) -> PIL.Image.Image:
         for y in range(mask.size[1]):
             color_alpha = mask.getpixel((x, y))
             if color_alpha:
-                colorp = (color[0] * color_alpha // 255, color[1] * color_alpha // 255,
-                          color[2] * color_alpha // 255)
+                colorp = (
+                    color[0] * color_alpha // 255,
+                    color[1] * color_alpha // 255,
+                    color[2] * color_alpha // 255,
+                )
                 new_image.putpixel((x, y), colorp)
     return new_image
 
@@ -41,8 +44,8 @@ def to_pyglet_image(image: PIL.Image.Image) -> pyglet.image.AbstractImage:
     :param image: the image to transform
     :return: the transformed one
     """
-    image.save(G.tmp.name+"/imagehelper_topyglet.png")
-    return pyglet.image.load(G.tmp.name+"/imagehelper_topyglet.png")
+    image.save(G.tmp.name + "/imagehelper_topyglet.png")
+    return pyglet.image.load(G.tmp.name + "/imagehelper_topyglet.png")
 
 
 def to_pillow_image(image: pyglet.image.AbstractImage) -> PIL.Image.Image:
@@ -51,8 +54,8 @@ def to_pillow_image(image: pyglet.image.AbstractImage) -> PIL.Image.Image:
     :param image: the image to transform
     :return: the transformed one
     """
-    image.save(G.tmp.name+"/imagehelper_topillow.png")
-    return PIL.Image.open(G.tmp.name+"/imagehelper_topillow.png")
+    image.save(G.tmp.name + "/imagehelper_topillow.png")
+    return PIL.Image.open(G.tmp.name + "/imagehelper_topillow.png")
 
 
 def to_pyglet_sprite(image: PIL.Image.Image) -> pyglet.sprite.Sprite:
@@ -62,5 +65,3 @@ def to_pyglet_sprite(image: PIL.Image.Image) -> pyglet.sprite.Sprite:
     :return: the sprite
     """
     return pyglet.sprite.Sprite(to_pyglet_image(image))
-
-

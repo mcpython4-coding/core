@@ -30,19 +30,31 @@ class ChunkFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
     @classmethod
     @deprecation.deprecated("dev3-1", "a1.3.0")
     def fix(cls, savefile, dimension, region):
-        data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
-        if data is None: return
-        if data["version"] != 3: return
+        data = savefile.access_file_pickle(
+            "dim/{}/{}_{}.region".format(dimension, *region)
+        )
+        if data is None:
+            return
+        if data["version"] != 3:
+            return
         data["version"] = 4
         for chunk in data.keys():
-            if chunk == "version": continue
+            if chunk == "version":
+                continue
             cdata = data[chunk]
             blocks = cdata["blocks"]
             cdata["blocks"] = {}
             for position in blocks:
-                cdata["blocks"][(position[0] - chunk[0] * 16, position[1],
-                                 position[2] - chunk[2] * 16)] = blocks[position]
-        savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
+                cdata["blocks"][
+                    (
+                        position[0] - chunk[0] * 16,
+                        position[1],
+                        position[2] - chunk[2] * 16,
+                    )
+                ] = blocks[position]
+        savefile.dump_file_pickle(
+            "dim/{}/{}_{}.region".format(dimension, *region), data
+        )
 
 
 @G.registry
@@ -58,4 +70,3 @@ class InventoryFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
         data = savefile.access_file_pickle(file)
         data["version"] = 4
         savefile.dump_file_pickle(file, data)
-

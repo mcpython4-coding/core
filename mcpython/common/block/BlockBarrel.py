@@ -29,20 +29,30 @@ class BlockBarrel(Block.Block):
         Creates an new BlockBarrel-class
         """
         super().__init__(*args, **kwargs)
-        self.facing: str = "up"   # the direction the block faces to
+        self.facing: str = "up"  # the direction the block faces to
         self.opened: bool = False  # if the barrel is open
         self.inventory = mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
         if self.set_to is not None:  # check for direction from setting
             dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
-            if dx > 0:   self.facing = "west"
-            elif dz > 0: self.facing = "north"
-            elif dx < 0: self.facing = "east"
-            elif dz < 0: self.facing = "south"
-            elif dy > 0: self.facing = "down"
-            elif dy < 0: self.facing = "up"
+            if dx > 0:
+                self.facing = "west"
+            elif dz > 0:
+                self.facing = "north"
+            elif dx < 0:
+                self.facing = "east"
+            elif dz < 0:
+                self.facing = "south"
+            elif dy > 0:
+                self.facing = "down"
+            elif dy < 0:
+                self.facing = "up"
 
-    def on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple):
-        if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:  # open the inv when needed
+    def on_player_interaction(
+        self, player, button: int, modifiers: int, hit_position: tuple
+    ):
+        if (
+            button == mouse.RIGHT and not modifiers & key.MOD_SHIFT
+        ):  # open the inv when needed
             G.inventoryhandler.show(self.inventory)
             return True
         else:
@@ -54,7 +64,8 @@ class BlockBarrel(Block.Block):
     HARDNESS = 2.5
     BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.AXE]
 
-    def get_provided_slot_lists(self, side): return self.inventory.slots, self.inventory.slots
+    def get_provided_slot_lists(self, side):
+        return self.inventory.slots, self.inventory.slots
 
     def set_model_state(self, state: dict):
         if "side" in state:
@@ -69,9 +80,17 @@ class BlockBarrel(Block.Block):
 
     @staticmethod
     def get_all_model_states() -> list:
-        facing = [{"facing": "north"}, {"facing": "east"}, {"facing": "south"},
-                  {"facing": "west"}, {"facing": "up"}, {"facing": "down"}]
-        return [{"open": "false", **e} for e in facing] + [{"open": "true", **e} for e in facing]
+        facing = [
+            {"facing": "north"},
+            {"facing": "east"},
+            {"facing": "south"},
+            {"facing": "west"},
+            {"facing": "up"},
+            {"facing": "down"},
+        ]
+        return [{"open": "false", **e} for e in facing] + [
+            {"open": "true", **e} for e in facing
+        ]
 
     @classmethod
     def set_block_data(cls, iteminst, block):
@@ -79,12 +98,16 @@ class BlockBarrel(Block.Block):
             block.inventory = iteminst.inventory.copy()
 
     def on_request_item_for_block(self, itemstack):
-        if G.window.keys[pyglet.window.key.LCTRL] and G.world.get_active_player().gamemode == 1 and G.window.mouse_pressing[
-                pyglet.window.mouse.MIDDLE]:
+        if (
+            G.window.keys[pyglet.window.key.LCTRL]
+            and G.world.get_active_player().gamemode == 1
+            and G.window.mouse_pressing[pyglet.window.mouse.MIDDLE]
+        ):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_remove(self):
-        if not G.world.gamerulehandler.table["doTileDrops"].status.status: return
+        if not G.world.gamerulehandler.table["doTileDrops"].status.status:
+            return
         for slot in self.inventory.slots:
             G.world.get_active_player().pick_up(slot.itemstack.copy())
             slot.itemstack.clean()
@@ -99,4 +122,3 @@ class BlockBarrel(Block.Block):
 @G.modloader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BlockBarrel)
-

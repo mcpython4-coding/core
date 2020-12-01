@@ -92,28 +92,63 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
 
         # Convenience list of num keys, todo: move to config.py
         self.num_keys = [
-            key._1, key._2, key._3, key._4, key._5,
-            key._6, key._7, key._8, key._9]
+            key._1,
+            key._2,
+            key._3,
+            key._4,
+            key._5,
+            key._6,
+            key._7,
+            key._8,
+            key._9,
+        ]
 
         # Instance of the model that handles the world.  todo: remove attribute
         self.world = G.world
 
         # The label that is displayed in the top left of the canvas.  todo: move to separated class
-        self.label = pyglet.text.Label('', font_name='Arial', font_size=10,
-                                       x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
-                                       color=(0, 0, 0, 255))
-        self.label2 = pyglet.text.Label('', font_name='Arial', font_size=10,
-                                        x=10, y=self.height - 22, anchor_x='left', anchor_y='top',
-                                        color=(0, 0, 0, 255))
-        self.label3 = pyglet.text.Label('', font_name='Arial', font_size=10,
-                                        x=self.width - 10, y=self.height - 34, anchor_x='right', anchor_y='top',
-                                        color=(0, 0, 0, 255))
+        self.label = pyglet.text.Label(
+            "",
+            font_name="Arial",
+            font_size=10,
+            x=10,
+            y=self.height - 10,
+            anchor_x="left",
+            anchor_y="top",
+            color=(0, 0, 0, 255),
+        )
+        self.label2 = pyglet.text.Label(
+            "",
+            font_name="Arial",
+            font_size=10,
+            x=10,
+            y=self.height - 22,
+            anchor_x="left",
+            anchor_y="top",
+            color=(0, 0, 0, 255),
+        )
+        self.label3 = pyglet.text.Label(
+            "",
+            font_name="Arial",
+            font_size=10,
+            x=self.width - 10,
+            y=self.height - 34,
+            anchor_x="right",
+            anchor_y="top",
+            color=(0, 0, 0, 255),
+        )
 
-        self.cpu_usage = psutil.cpu_percent(interval=None)  # todo: move to separated class
+        self.cpu_usage = psutil.cpu_percent(
+            interval=None
+        )  # todo: move to separated class
         self.cpu_usage_timer = 0  # todo: move to separated class
 
         # storing mouse information todo: use pyglet's mouse handler
-        self.mouse_pressing = {mouse.LEFT: False, mouse.RIGHT: False, mouse.MIDDLE: False}
+        self.mouse_pressing = {
+            mouse.LEFT: False,
+            mouse.RIGHT: False,
+            mouse.MIDDLE: False,
+        }
         self.mouse_position = (0, 0)
 
         self.draw_profiler = cProfile.Profile()  # todo: move to separated class
@@ -130,18 +165,25 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
 
         # todo: move to seperated class
         self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
-            mcpython.ResourceLocator.read("gui/icons", "pil").crop((0, 0, 15, 15)).resize((30, 30), PIL.Image.NEAREST))
+            mcpython.ResourceLocator.read("gui/icons", "pil")
+            .crop((0, 0, 15, 15))
+            .resize((30, 30), PIL.Image.NEAREST)
+        )
 
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:game_crash", self.close)
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:copy_block_or_entity_data",
-                                                                      self.get_block_entity_info)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "hotkey:game_crash", self.close
+        )
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "hotkey:copy_block_or_entity_data", self.get_block_entity_info
+        )
 
     def print_profiler(self, dt=None):
         """
         will print the enabled profiler(s)
         todo: move to separated Profiler class
         """
-        if not mcpython.common.config.ENABLE_PROFILING: return
+        if not mcpython.common.config.ENABLE_PROFILING:
+            return
 
         if mcpython.common.config.ENABLE_PROFILER_DRAW:
             self.draw_profiler.print_stats(1)
@@ -155,7 +197,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         """
         will set the caption of the window to the default one
         """
-        self.set_caption("mcpython 4 - {}".format(mcpython.common.config.FULL_VERSION_NAME))
+        self.set_caption(
+            "mcpython 4 - {}".format(mcpython.common.config.FULL_VERSION_NAME)
+        )
 
     def set_exclusive_mouse(self, exclusive):
         """
@@ -212,7 +256,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
 
         todo: move to TickHandler
         """
-        if mcpython.common.config.ENABLE_PROFILER_TICK and mcpython.common.config.ENABLE_PROFILING: self.tick_profiler.enable()
+        if (
+            mcpython.common.config.ENABLE_PROFILER_TICK
+            and mcpython.common.config.ENABLE_PROFILING
+        ):
+            self.tick_profiler.enable()
         G.eventhandler.call("gameloop:tick:start", dt)
 
         self.cpu_usage_timer += dt
@@ -222,19 +270,31 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
 
         # todo: change to attribute in State-class
         if dt > 3 and G.statehandler.active_state.NAME not in ["minecraft:modloading"]:
-            logger.println("[warning] running behind normal tick, did you overload game? missing " +
-                           str(dt - 0.05) + " seconds")
-        if any(type(x) == mcpython.client.state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
+            logger.println(
+                "[warning] running behind normal tick, did you overload game? missing "
+                + str(dt - 0.05)
+                + " seconds"
+            )
+        if any(
+            type(x) == mcpython.client.state.StatePartGame.StatePartGame
+            for x in G.statehandler.active_state.parts
+        ):
             G.worldgenerationhandler.task_handler.process_tasks(timer=0.02)
         sector = positionToChunk(G.world.get_active_player().position)
         if sector != self.sector:
-            pyglet.clock.schedule_once(lambda _: G.world.change_chunks(self.sector, sector), 0.1)
+            pyglet.clock.schedule_once(
+                lambda _: G.world.change_chunks(self.sector, sector), 0.1
+            )
             if self.sector is None:
                 G.worldgenerationhandler.task_handler.process_tasks()
             self.sector = sector
 
         G.eventhandler.call("gameloop:tick:end", dt)
-        if mcpython.common.config.ENABLE_PROFILER_TICK and mcpython.common.config.ENABLE_PROFILING: self.tick_profiler.disable()
+        if (
+            mcpython.common.config.ENABLE_PROFILER_TICK
+            and mcpython.common.config.ENABLE_PROFILING
+        ):
+            self.tick_profiler.disable()
 
     def collide(self, position: tuple, height: int, previous=None):
         """
@@ -250,7 +310,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         todo: make player based
         todo: make account player & block hit box
         """
-        previous_positions = sum(self.get_colliding_blocks(previous, height), []) if previous is not None else []
+        previous_positions = (
+            sum(self.get_colliding_blocks(previous, height), [])
+            if previous is not None
+            else []
+        )
         # How much overlap with a dimension of a surrounding block you need to
         # have to count as a collision. If 0, touching terrain at all counts as
         # a collision. If .49, you sink into the ground, as if walking through
@@ -270,7 +334,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                     op = list(np)
                     op[1] -= dy
                     op[i] += face[i]
-                    chunk = G.world.get_active_dimension().get_chunk_for_position(tuple(op), generate=False)
+                    chunk = G.world.get_active_dimension().get_chunk_for_position(
+                        tuple(op), generate=False
+                    )
                     block = chunk.get_block(tuple(op))
                     blockstate = block is not None
                     if not chunk.generated:
@@ -279,7 +345,10 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                     if not blockstate:
                         continue
                     if block is not None and type(block) != str and block.NO_COLLISION:
-                        block.on_no_collide_collide(G.world.get_active_player(), block.position in previous_positions)
+                        block.on_no_collide_collide(
+                            G.world.get_active_player(),
+                            block.position in previous_positions,
+                        )
                         continue
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
@@ -288,11 +357,21 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                         self.dy = 0
                     if face == (0, -1, 0):
                         G.world.get_active_player().flying = False
-                        if G.world.get_active_player().gamemode in (
-                                0, 2) and G.world.get_active_player().fallen_since_y is not None:
-                            dy = G.world.get_active_player().fallen_since_y - G.world.get_active_player().position[
-                                1] - 3
-                            if dy > 0 and G.world.gamerulehandler.table["fallDamage"].status.status:
+                        if (
+                            G.world.get_active_player().gamemode in (0, 2)
+                            and G.world.get_active_player().fallen_since_y is not None
+                        ):
+                            dy = (
+                                G.world.get_active_player().fallen_since_y
+                                - G.world.get_active_player().position[1]
+                                - 3
+                            )
+                            if (
+                                dy > 0
+                                and G.world.gamerulehandler.table[
+                                    "fallDamage"
+                                ].status.status
+                            ):
                                 G.world.get_active_player().damage(dy)
                             G.world.get_active_player().fallen_since_y = None
                     break
@@ -322,7 +401,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                     op = list(np)
                     op[1] -= dy
                     op[i] += face[i]
-                    chunk = G.world.get_active_dimension().get_chunk_for_position(tuple(op), generate=False)
+                    chunk = G.world.get_active_dimension().get_chunk_for_position(
+                        tuple(op), generate=False
+                    )
                     block = chunk.get_block(tuple(op))
                     if block is None:
                         continue
@@ -354,7 +435,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         self.mouse_pressing[button] = False
         G.eventhandler.call("user:mouse:release", x, y, button, modifiers)
 
-    def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int):
+    def on_mouse_drag(
+        self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int
+    ):
         """
         called when the mouse moves over the screen while one or more buttons are pressed
         :param x: the new x position
@@ -422,17 +505,24 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         # todo: move to RenderingHelper
         width, height = self.get_size()
         viewport = self.get_viewport_size()
-        mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name("set_2d", width=max(1, width), height=max(1, height),
-                                                                       viewport_0=max(1, viewport[0]),
-                                                                       viewport_1=max(1, viewport[1]))
+        mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name(
+            "set_2d",
+            width=max(1, width),
+            height=max(1, height),
+            viewport_0=max(1, viewport[0]),
+            viewport_1=max(1, viewport[1]),
+        )
         # G.rendering_helper.setup2d()
         pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
     def set_3d(self, position=None, rotation=None):
         # todo: move to RenderingHelper
-        if G.world.get_active_player() is None: return
+        if G.world.get_active_player() is None:
+            return
         if G.rendering_helper.default_3d_stack is None:
-            G.rendering_helper.default_3d_stack = G.rendering_helper.get_dynamic_3d_matrix_stack()
+            G.rendering_helper.default_3d_stack = (
+                G.rendering_helper.get_dynamic_3d_matrix_stack()
+            )
         G.rendering_helper.default_3d_stack.apply()
         pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
 
@@ -446,7 +536,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         state = G.rendering_helper.save_status(False)
 
         # check for profiling
-        if mcpython.common.config.ENABLE_PROFILER_DRAW and mcpython.common.config.ENABLE_PROFILING: self.draw_profiler.enable()
+        if (
+            mcpython.common.config.ENABLE_PROFILER_DRAW
+            and mcpython.common.config.ENABLE_PROFILING
+        ):
+            self.draw_profiler.enable()
 
         G.eventhandler.call("render:draw:pre_clear")
         self.clear()  # clear the screen
@@ -459,7 +553,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("render:draw:2d:background")  # call pre 2d
         G.eventhandler.call("render:draw:2d")  # call normal 2d
         G.eventhandler.call("render:draw:2d:overlay")  # call overlay 2d
-        if mcpython.common.config.ENABLE_PROFILER_DRAW and mcpython.common.config.ENABLE_PROFILING: self.draw_profiler.disable()
+        if (
+            mcpython.common.config.ENABLE_PROFILER_DRAW
+            and mcpython.common.config.ENABLE_PROFILING
+        ):
+            self.draw_profiler.disable()
         G.rendering_helper.apply(state)
         G.eventhandler.call("render:draw:post:cleanup")
         G.rendering_helper.deleteSavedStates()
@@ -473,7 +571,8 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         block = G.world.hit_test(G.world.get_active_player().position, vector)[0]
         if block:
             block = G.world.get_active_dimension().get_block(block)
-            if block: block.get_view_bbox().draw_outline(block.position)
+            if block:
+                block.get_view_bbox().draw_outline(block.position)
 
     def draw_label(self):
         """
@@ -484,18 +583,36 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         nx, ny, nz = mcpython.util.math.normalize(G.world.get_active_player().position)
         if not G.world.gamerulehandler.table["showCoordinates"].status.status:
             x = y = z = "?"
-        chunk = G.world.get_active_dimension().get_chunk(*mcpython.util.math.positionToChunk(
-            G.world.get_active_player().position), create=False)
-        self.label.text = '%02d (%.2f, %.2f, %.2f) [region %01d %01d], gamemode %01d' % (
-            pyglet.clock.get_fps(), x, y, z, 0, 0, G.world.get_active_player().gamemode)
+        chunk = G.world.get_active_dimension().get_chunk(
+            *mcpython.util.math.positionToChunk(G.world.get_active_player().position),
+            create=False
+        )
+        self.label.text = (
+            "%02d (%.2f, %.2f, %.2f) [region %01d %01d], gamemode %01d"
+            % (
+                pyglet.clock.get_fps(),
+                x,
+                y,
+                z,
+                0,
+                0,
+                G.world.get_active_player().gamemode,
+            )
+        )
         vector = G.window.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(G.world.get_active_player().position, vector)
+        blockpos, previous, hitpos = G.world.hit_test(
+            G.world.get_active_player().position, vector
+        )
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
-            if type(blockname) != str: blockname = blockname.NAME
+            if type(blockname) != str:
+                blockname = blockname.NAME
             self.label2.text = "looking at '{}(position={})'".format(
-                blockname, blockpos if G.world.gamerulehandler.table["showCoordinates"].status.status else
-                ("?", "?", "?"))
+                blockname,
+                blockpos
+                if G.world.gamerulehandler.table["showCoordinates"].status.status
+                else ("?", "?", "?"),
+            )
             self.label2.draw()
             self.label3.y = self.height - 34
         else:
@@ -511,7 +628,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         total_m = psutil.virtual_memory().total
         with process.oneshot():
             self.label3.text = "CPU usage: {}%; Memory usage: {}MB/{}MB ({}%)".format(
-                self.cpu_usage, used_m // 2 ** 20, total_m // 2 ** 20, round(used_m / total_m * 10000) / 100)
+                self.cpu_usage,
+                used_m // 2 ** 20,
+                total_m // 2 ** 20,
+                round(used_m / total_m * 10000) / 100,
+            )
         self.label3.draw()
 
     def get_block_entity_info(self):
@@ -520,11 +641,15 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         todo: move to special helper class
         """
         import clipboard
+
         vector = self.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(G.world.get_active_player().position, vector)
+        blockpos, previous, hitpos = G.world.hit_test(
+            G.world.get_active_player().position, vector
+        )
         if blockpos:
             blockname = G.world.get_active_dimension().get_block(blockpos)
-            if type(blockname) != str: blockname = blockname.NAME
+            if type(blockname) != str:
+                blockname = blockname.NAME
             clipboard.copy(blockname)
 
     def draw_reticle(self):
@@ -534,8 +659,10 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         """
         pyglet.gl.glColor3d(255, 255, 255)
         wx, wy = self.get_size()
-        self.CROSSHAIRS_TEXTURE.blit(wx // 2 - self.CROSSHAIRS_TEXTURE.width // 2,
-                                     wy // 2 - self.CROSSHAIRS_TEXTURE.height // 2)
+        self.CROSSHAIRS_TEXTURE.blit(
+            wx // 2 - self.CROSSHAIRS_TEXTURE.width // 2,
+            wy // 2 - self.CROSSHAIRS_TEXTURE.height // 2,
+        )
 
     def on_text(self, text: str):
         """
@@ -549,7 +676,8 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         called when the window tries to close itself
         cleans up some stuff before closing
         """
-        if G.world.savefile.save_in_progress: return
+        if G.world.savefile.save_in_progress:
+            return
         if G.world.world_loaded:
             # have we an world which should be saved?
             G.world.get_active_player().inventories["main"].remove_items_from_crafting()

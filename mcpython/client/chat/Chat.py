@@ -51,11 +51,15 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
             self.lable.text = "<font color='white'>" + text + "_</font>"
             return
         try:
-            self.lable.text = "<font color='white'>{}<u>{}</u>{}</font>".format(text[:underline_index],
-                                                                                text[underline_index],
-                                                                                text[1 + underline_index:])
+            self.lable.text = "<font color='white'>{}<u>{}</u>{}</font>".format(
+                text[:underline_index],
+                text[underline_index],
+                text[1 + underline_index :],
+            )
         except IndexError:
-            self.lable.text = "<font color='white'>" + text + "<span>&#95;</span></font>"
+            self.lable.text = (
+                "<font color='white'>" + text + "<span>&#95;</span></font>"
+            )
 
     def on_activate(self):
         """
@@ -77,7 +81,9 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         called to draw the background of the inventory
         """
         wx, _ = G.window.get_size()
-        mcpython.util.opengl.draw_rectangle((10, 10), (wx - 20, 20), color=(.0, .0, .0, .8))
+        mcpython.util.opengl.draw_rectangle(
+            (10, 10), (wx - 20, 20), color=(0.0, 0.0, 0.0, 0.8)
+        )
 
     def on_draw_overlay(self):
         """
@@ -105,14 +111,20 @@ class Chat:
         self.historyindex = -1
         self.active_index = -1
         self.CANCEL_INPUT = False
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:clear_chat", self.clear)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "hotkey:clear_chat", self.clear
+        )
 
     def enter(self, text: str):
         """
         called when text is entered
         :param text: the text that is entered
         """
-        self.text = self.text[:self.active_index + 1] + text + self.text[self.active_index + 1:]
+        self.text = (
+            self.text[: self.active_index + 1]
+            + text
+            + self.text[self.active_index + 1 :]
+        )
         self.active_index += len(text)
 
     def on_key_press(self, symbol, modifiers):
@@ -123,10 +135,14 @@ class Chat:
         todo: split up into parts
         """
         if symbol == 65288:  # BACK
-            self.text = self.text[:self.active_index - 1] + self.text[self.active_index:]
+            self.text = (
+                self.text[: self.active_index - 1] + self.text[self.active_index :]
+            )
             self.active_index -= 1
         elif symbol == key.DELETE and self.active_index < len(self.text):
-            self.text = self.text[:self.active_index] + self.text[self.active_index + 1:]
+            self.text = (
+                self.text[: self.active_index] + self.text[self.active_index + 1 :]
+            )
         elif symbol == 65360:
             self.active_index = 0  # begin key
         elif symbol == key.END:
@@ -134,7 +150,10 @@ class Chat:
         elif symbol == key.ENTER:  # execute command
             self.CANCEL_INPUT = False
             G.eventhandler.call("chat:text_enter", self.text)
-            logger.println("[CHAT][INFO] entered text: '{}'".format(self.text), write_into_console=False)
+            logger.println(
+                "[CHAT][INFO] entered text: '{}'".format(self.text),
+                write_into_console=False,
+            )
             if self.CANCEL_INPUT:
                 self.history.insert(0, self.text)
                 self.close()
@@ -146,11 +165,15 @@ class Chat:
                 self.print_ln(self.text)
             self.history.insert(0, self.text)
             self.close()
-        elif symbol == key.UP and self.historyindex < len(self.history) - 1:  # go one item up in the history
+        elif (
+            symbol == key.UP and self.historyindex < len(self.history) - 1
+        ):  # go one item up in the history
             self.historyindex += 1
             self.text = self.history[self.historyindex]
             self.active_index = len(self.text)
-        elif symbol == key.DOWN and self.historyindex >= 0:  # go one item down in the history
+        elif (
+            symbol == key.DOWN and self.historyindex >= 0
+        ):  # go one item down in the history
             self.historyindex -= 1
             if self.historyindex != -1:
                 self.text = self.history[self.historyindex]

@@ -21,17 +21,26 @@ class ParsingCommandInfo:
     def __init__(self, entity=None, position=None, dimension=None, chat=None):
         self.entity = entity if entity else G.world.get_active_player()
         self.position = position if position else self.entity.position
-        self.dimension = dimension if dimension is not None else self.entity.dimension.id
+        self.dimension = (
+            dimension if dimension is not None else self.entity.dimension.id
+        )
         self.chat = chat if chat is not None else G.chat
 
     def copy(self):
         """
         :return: a copy of itself
         """
-        return ParsingCommandInfo(entity=self.entity, position=self.position, dimension=self.dimension, chat=self.chat)
+        return ParsingCommandInfo(
+            entity=self.entity,
+            position=self.position,
+            dimension=self.dimension,
+            chat=self.chat,
+        )
 
     def __str__(self):
-        return "ParsingCommandInfo(entity={},position={},dimension={})".format(self.entity, self.position, self.dimension)
+        return "ParsingCommandInfo(entity={},position={},dimension={})".format(
+            self.entity, self.position, self.dimension
+        )
 
 
 class CommandParser:
@@ -48,8 +57,15 @@ class CommandParser:
         :param command: the command to add
         """
         parsebridge = mcpython.client.chat.command.Command.ParseBridge(command)
-        if not G.eventhandler.call_cancelable("registry:commands:register", command, parsebridge): return
-        for entry in ([parsebridge.main_entry] if type(parsebridge.main_entry) == str else parsebridge.main_entry):
+        if not G.eventhandler.call_cancelable(
+            "registry:commands:register", command, parsebridge
+        ):
+            return
+        for entry in (
+            [parsebridge.main_entry]
+            if type(parsebridge.main_entry) == str
+            else parsebridge.main_entry
+        ):
             self.commandparsing[entry] = (command, parsebridge)
 
     def parse(self, command: str, info=None):
@@ -61,23 +77,35 @@ class CommandParser:
         """
         split = command.split(" ") if type(command) == str else list(command)
         pre = split[0]
-        if not info: info = ParsingCommandInfo()
-        if not G.eventhandler.call_cancelable("command:parser:execute", command, info): return
+        if not info:
+            info = ParsingCommandInfo()
+        if not G.eventhandler.call_cancelable("command:parser:execute", command, info):
+            return
         if pre[1:] in self.commandparsing:  # is it registered?
             command, parsebridge = self.commandparsing[pre[1:]]
             try:
                 values, trace = self._convert_to_values(split, parsebridge, info)
             except:
-                logger.print_exception("[CHAT][EXCEPTION] during parsing values for command '{}'".format(command.NAME))
+                logger.print_exception(
+                    "[CHAT][EXCEPTION] during parsing values for command '{}'".format(
+                        command.NAME
+                    )
+                )
                 return
-            if values is None: return
+            if values is None:
+                return
             try:
                 command.parse(values, trace, info)
             except:
-                logger.print_exception("[CHAT][EXCEPTION] during executing command '{}' with {}".format(command.NAME,
-                                                                                                        info))
+                logger.print_exception(
+                    "[CHAT][EXCEPTION] during executing command '{}' with {}".format(
+                        command.NAME, info
+                    )
+                )
         else:
-            logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
+            logger.println(
+                "[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre)
+            )
 
     def _convert_to_values(self, command, parsebridge, info, index=1) -> tuple:
         """
@@ -88,43 +116,81 @@ class CommandParser:
         :param index: the index to start on
         """
         if len(command) == 1 and not all(
-                [subcommand.mode == mcpython.client.chat.command.Command.ParseMode.OPTIONAL for subcommand in
-                 parsebridge.sub_commands]):
-            logger.println("unable to parse command. please use /help <command name> command to get exact command "
-                           "syntax")
+            [
+                subcommand.mode
+                == mcpython.client.chat.command.Command.ParseMode.OPTIONAL
+                for subcommand in parsebridge.sub_commands
+            ]
+        ):
+            logger.println(
+                "unable to parse command. please use /help <command name> command to get exact command "
+                "syntax"
+            )
             return None, None
         active_entry = parsebridge
         values = []
         array = [parsebridge]
         commandregistry = G.registry.get_by_name("command")
-        while len(active_entry.sub_commands) > 0 and index < len(command):  # iterate over the whole command
+        while len(active_entry.sub_commands) > 0 and index < len(
+            command
+        ):  # iterate over the whole command
             flag1 = False
-            for subcommand in active_entry.sub_commands:  # go through all commands and check if valid
-                if not flag1 and commandregistry.commandentries[subcommand.type].is_valid(
-                        command, index, subcommand.args, subcommand.kwargs):  # is valid
-                    array.append((subcommand, active_entry.sub_commands.index(subcommand)))
+            for (
+                subcommand
+            ) in (
+                active_entry.sub_commands
+            ):  # go through all commands and check if valid
+                if not flag1 and commandregistry.commandentries[
+                    subcommand.type
+                ].is_valid(
+                    command, index, subcommand.args, subcommand.kwargs
+                ):  # is valid
+                    array.append(
+                        (subcommand, active_entry.sub_commands.index(subcommand))
+                    )
                     active_entry = subcommand
-                    index, value = commandregistry.commandentries[subcommand.type].parse(
-                        command, index, info, subcommand.args, subcommand.kwargs)
+                    index, value = commandregistry.commandentries[
+                        subcommand.type
+                    ].parse(command, index, info, subcommand.args, subcommand.kwargs)
                     values.append(value)  # set value
                     flag1 = True
             if not flag1:
-                if all([subcommand.mode == mcpython.client.chat.command.Command.ParseMode.OPTIONAL for subcommand in
-                        active_entry.sub_commands]):
+                if all(
+                    [
+                        subcommand.mode
+                        == mcpython.client.chat.command.Command.ParseMode.OPTIONAL
+                        for subcommand in active_entry.sub_commands
+                    ]
+                ):
                     logger.println([x.mode for x in active_entry.sub_commands])
                     return values, array
                 else:
-                    logger.println("[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}:".
-                                   format(len(array)+1))
-                    logger.println(" - missing one of the following entries: {}".format([subcommand.type for subcommand
-                                                                                         in active_entry.sub_commands]))
+                    logger.println(
+                        "[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}:".format(
+                            len(array) + 1
+                        )
+                    )
+                    logger.println(
+                        " - missing one of the following entries: {}".format(
+                            [
+                                subcommand.type
+                                for subcommand in active_entry.sub_commands
+                            ]
+                        )
+                    )
                     logger.println(" - gotten values: {}".format(values))
                     return None, array
-        if all([x.mode == mcpython.client.chat.command.Command.ParseMode.OPTIONAL for x in active_entry.sub_commands]):
+        if all(
+            [
+                x.mode == mcpython.client.chat.command.Command.ParseMode.OPTIONAL
+                for x in active_entry.sub_commands
+            ]
+        ):
             return values, array
-        logger.println("command is not ended correct. please look at the command syntax.")
+        logger.println(
+            "command is not ended correct. please look at the command syntax."
+        )
         return None, array
 
 
 G.commandparser = CommandParser()
-

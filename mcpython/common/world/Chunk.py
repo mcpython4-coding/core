@@ -25,7 +25,9 @@ class Chunk:
 
     now = datetime.datetime.now()  # when is now?
 
-    attributes = {}  # an dict representing the default attributes of an chunk; todo: replace by class-based system
+    attributes = (
+        {}
+    )  # an dict representing the default attributes of an chunk; todo: replace by class-based system
 
     @staticmethod
     def add_default_attribute(name: str, reference, default, authcode=None):
@@ -49,14 +51,17 @@ class Chunk:
         self.dimension = dimension
         self.position = position
         self.world = {}
-        self.is_ready = False  # used when the chunks gets invalid or is loaded at the moment
+        self.is_ready = (
+            False  # used when the chunks gets invalid or is loaded at the moment
+        )
         self.visible = False  # used when the chunk should be visible
         self.loaded = False  # used if load success
         self.generated = False  # used if generation success
         self.attr = {}  # todo: rewrite!
         for attr in self.attributes.keys():
             v = self.attributes[attr][1]
-            if hasattr(v, "copy") and callable(v.copy): v = v.copy()
+            if hasattr(v, "copy") and callable(v.copy):
+                v = v.copy()
             self.attr[attr] = v
         self.positions_updated_since_last_save = set()
         self.entities = set()
@@ -68,7 +73,7 @@ class Chunk:
         :param z: the y corrd
         :return: the y value at that position
         """
-        height_map = self.get_value('heightmap')
+        height_map = self.get_value("heightmap")
         y = height_map[x, z][0][1] if (x, z) in height_map else 0
         return y
 
@@ -92,18 +97,27 @@ class Chunk:
         """
         Will draw the chunk with the content for it
         """
-        if not self.is_ready: return
-        if not self.visible: return
+        if not self.is_ready:
+            return
+        if not self.visible:
+            return
         if not self.loaded:
-            G.tickhandler.schedule_once(G.world.savefile.read, "minecraft:chunk", dimension=self.dimension.id,
-                                        chunk=self.position)
+            G.tickhandler.schedule_once(
+                G.world.savefile.read,
+                "minecraft:chunk",
+                dimension=self.dimension.id,
+                chunk=self.position,
+            )
         for entity in self.entities:
             entity.draw()
 
     @deprecation.deprecated("dev3-1", "a1.3.0")
-    def exposed(self, position): return any(self.exposed_faces(position).values())
+    def exposed(self, position):
+        return any(self.exposed_faces(position).values())
 
-    def exposed_faces(self, position: typing.Tuple[int, int, int]) -> typing.Dict[mcpython.util.enums.EnumSide, bool]:
+    def exposed_faces(
+        self, position: typing.Tuple[int, int, int]
+    ) -> typing.Dict[mcpython.util.enums.EnumSide, bool]:
         """
         returns an dict of the exposed status of every face of the given block
         :param position: the position to check
@@ -112,7 +126,8 @@ class Chunk:
         x, y, z = position
         faces = {}
         blockinst = self.get_block(position)
-        if blockinst is None or type(blockinst) == str: return {x: True for x in mcpython.util.enums.EnumSide.iterate()}
+        if blockinst is None or type(blockinst) == str:
+            return {x: True for x in mcpython.util.enums.EnumSide.iterate()}
         for face in mcpython.util.enums.EnumSide.iterate():
             dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)
@@ -139,10 +154,21 @@ class Chunk:
         :param position: the position to check
         :return: if there is an block
         """
-        return position in self.world or G.worldgenerationhandler.task_handler.get_block(position) is not None
+        return (
+            position in self.world
+            or G.worldgenerationhandler.task_handler.get_block(position) is not None
+        )
 
-    def add_block(self, position: tuple, block_name: typing.Union[str, Block.Block], immediate=True, block_update=True, blockupdateself=True,
-                  args=[], kwargs={}):
+    def add_block(
+        self,
+        position: tuple,
+        block_name: typing.Union[str, Block.Block],
+        immediate=True,
+        block_update=True,
+        blockupdateself=True,
+        args=[],
+        kwargs={},
+    ):
         """
         adds an block to the given position
         :param position: the position to add
@@ -154,13 +180,17 @@ class Chunk:
         :param kwargs: the kwargs to create the block with
         :return: the block instance or None if it could not be created
         """
-        if position[1] < 0 or position[1] > 255: return
+        if position[1] < 0 or position[1] > 255:
+            return
         if position != mcpython.util.math.normalize(position):
-            raise ValueError("position '{}' is no valid block position".format(position))
+            raise ValueError(
+                "position '{}' is no valid block position".format(position)
+            )
         # logger.println("adding", block_name, "at", position)
         if position in self.world:
             self.remove_block(position, immediate=immediate, block_update=block_update)
-        if block_name in [None, "air", "minecraft:air"]: return
+        if block_name in [None, "air", "minecraft:air"]:
+            return
         if issubclass(type(block_name), Block.Block):
             blockobj = block_name
             blockobj.position = position
@@ -168,12 +198,19 @@ class Chunk:
         else:
             table = G.registry.get_by_name("block").full_table
             if block_name not in table:
-                logger.println("[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(block_name))
+                logger.println(
+                    "[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(
+                        block_name
+                    )
+                )
                 return
             blockobj = table[block_name](position, *args, **kwargs)
         if self.now.day == 13 and self.now.month == 1 and "diorite" in blockobj.NAME:
-            logger.println("[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
-                blockobj.NAME))
+            logger.println(
+                "[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
+                    blockobj.NAME
+                )
+            )
             # for developers: easter egg! [DO NOT REMOVE, UUK'S EASTER EGG]
             return self.add_block(position, "minecraft:stone")
         self.world[position] = blockobj
@@ -186,7 +223,9 @@ class Chunk:
         self.positions_updated_since_last_save.add(position)
         return blockobj
 
-    def on_block_updated(self, position: typing.Tuple[float, float, float], itself=True):
+    def on_block_updated(
+        self, position: typing.Tuple[float, float, float], itself=True
+    ):
         """
         will call to the neighbor blocks an block update
         :param position: the position in the center
@@ -196,16 +235,27 @@ class Chunk:
         for dx in range(-1, 2):
             for dy in range(-1, 2):
                 for dz in range(-1, 2):
-                    if [dx, dy, dz].count(0) >= 2 and not (not itself and dx == dy == dz == 0):
-                        b: Block.Block = self.dimension.get_block((x + dx, y + dy, z + dz))
+                    if [dx, dy, dz].count(0) >= 2 and not (
+                        not itself and dx == dy == dz == 0
+                    ):
+                        b: Block.Block = self.dimension.get_block(
+                            (x + dx, y + dy, z + dz)
+                        )
                         if b and type(b) != str:
                             try:
                                 b.on_block_update()
                             except:
-                                logger.print_exception("during block-updating block {}".format(b))
+                                logger.print_exception(
+                                    "during block-updating block {}".format(b)
+                                )
 
-    def remove_block(self, position: typing.Union[typing.Tuple[int, int, int], Block.Block], immediate: bool = True,
-                     block_update: bool = True, blockupdateself: bool = True):
+    def remove_block(
+        self,
+        position: typing.Union[typing.Tuple[int, int, int], Block.Block],
+        immediate: bool = True,
+        block_update: bool = True,
+        blockupdateself: bool = True,
+    ):
         """
         Remove the block at the given `position`.
         :param position: The (x, y, z) position of the block to remove.
@@ -213,7 +263,8 @@ class Chunk:
         :param block_update: Whether an block-update should be called or not
         :param blockupdateself: Whether the block to remove should get an block-update or not
         """
-        if position not in self.world: return
+        if position not in self.world:
+            return
         if issubclass(type(position), Block.Block):
             position = position.position
         self.world[position].on_remove()
@@ -239,10 +290,15 @@ class Chunk:
             key = (x + dx, y + dy, z + dz)
             b = self.dimension.get_block(key)
             # chunk = self.dimension.get_chunk_for_position(key, generate=False)
-            if b is None or type(b) == str: continue
+            if b is None or type(b) == str:
+                continue
             b.face_state.update(redraw_complete=True)
 
-    def show_block(self, position: typing.Union[typing.Tuple[int, int, int], Block.Block], immediate: bool = True):
+    def show_block(
+        self,
+        position: typing.Union[typing.Tuple[int, int, int], Block.Block],
+        immediate: bool = True,
+    ):
         """
         Show the block at the given `position`. This method assumes the
         block has already been added with add_block()
@@ -251,13 +307,18 @@ class Chunk:
         """
         if issubclass(type(position), Block.Block):
             position = position.position
-        if position not in self.world: return
+        if position not in self.world:
+            return
         if immediate:
             self.world[position].face_state.update(redraw_complete=True)
         else:
             G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
 
-    def hide_block(self, position: typing.Union[typing.Tuple[int, int, int], Block.Block], immediate=True):
+    def hide_block(
+        self,
+        position: typing.Union[typing.Tuple[int, int, int], Block.Block],
+        immediate=True,
+    ):
         """
         Hide the block at the given `position`. Hiding does not remove the
         block from the world.
@@ -268,7 +329,8 @@ class Chunk:
         if issubclass(type(position), Block.Block):
             position = position.position
         if immediate:
-            if position not in self.world: return
+            if position not in self.world:
+                return
             self.world[position].face_state.hide_all()
         else:
             G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
@@ -278,7 +340,8 @@ class Chunk:
         will show the chunk
         :param force: if the chunk show should be forced or not
         """
-        if self.visible and not force: return
+        if self.visible and not force:
+            return
         self.visible = True
         self.update_visible()
 
@@ -287,7 +350,8 @@ class Chunk:
         will hide the chunk
         :param force: if the chunk hide should be forced or not
         """
-        if not self.visible and not force: return
+        if not self.visible and not force:
+            return
         self.visible = False
         self.hide_all()
 
@@ -314,7 +378,9 @@ class Chunk:
         """
         for position in self.world.keys():
             if immediate:
-                G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
+                G.worldgenerationhandler.task_handler.schedule_visual_update(
+                    self, position
+                )
             else:
                 self.update_visible_block(position, hide=hide)
 
@@ -326,7 +392,9 @@ class Chunk:
         for position in self.world:
             self.hide_block(position, immediate=immediate)
 
-    def get_block(self, position: typing.Tuple[int, int, int]) -> typing.Union[Block.Block, str, None]:
+    def get_block(
+        self, position: typing.Tuple[int, int, int]
+    ) -> typing.Union[Block.Block, str, None]:
         """
         will get the block at an given position
         :param position: the position to check for
@@ -334,8 +402,11 @@ class Chunk:
         todo: split up into get_block_generated and get_block_un_generated
         """
         position = mcpython.util.math.normalize(position)
-        return self.world[position] if position in self.world else G.worldgenerationhandler.task_handler.get_block(
-            position, chunk=self)
+        return (
+            self.world[position]
+            if position in self.world
+            else G.worldgenerationhandler.task_handler.get_block(position, chunk=self)
+        )
 
     def __del__(self):
         G.worldgenerationhandler.task_handler.clear_chunk(self)
@@ -349,4 +420,6 @@ class Chunk:
         del self.dimension
 
     def __str__(self):
-        return "Chunk(dimension={},position={})".format(self.dimension.id, self.position)
+        return "Chunk(dimension={},position={})".format(
+            self.dimension.id, self.position
+        )

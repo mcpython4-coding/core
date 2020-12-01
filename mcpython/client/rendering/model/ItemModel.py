@@ -44,12 +44,19 @@ class DefaultLoader(IItemModelLoader):
         if "display" in data:
             for name in data["display"]:
                 e = data["display"][name]
-                model.addDisplayTransform(name, e.setdefault("rotation", (0, 0, 0)), e.setdefault("translation", (0, 0, 0)), e.setdefault("scale", (1, 1, 1)))
+                model.addDisplayTransform(
+                    name,
+                    e.setdefault("rotation", (0, 0, 0)),
+                    e.setdefault("translation", (0, 0, 0)),
+                    e.setdefault("scale", (1, 1, 1)),
+                )
         texture_variables = {}
         if "textures" in data:
             for name in data["textures"]:
                 if name.startswith("layer"):
-                    model.addTextureLayer(int(name.split("layer")[-1]), data["textures"][name])
+                    model.addTextureLayer(
+                        int(name.split("layer")[-1]), data["textures"][name]
+                    )
                 else:
                     texture_variables[name] = data["textures"][name]
         if "gui_light" in data:
@@ -86,12 +93,15 @@ class ItemModel:
         self.parents.append(parent)
         return self
 
-    def addDisplayTransform(self, name: str, rotation=(0, 0, 0), translation=(0, 0, 0), scale=(1, 1, 1)):
+    def addDisplayTransform(
+        self, name: str, rotation=(0, 0, 0), translation=(0, 0, 0), scale=(1, 1, 1)
+    ):
         self.displays[name] = (rotation, translation, scale)
         return self
 
     def addTextureLayer(self, number: int, file: str):
-        if number >= len(self.layers): self.layers += [None] * (number - len(self.layers) + 1)
+        if number >= len(self.layers):
+            self.layers += [None] * (number - len(self.layers) + 1)
         self.layers[number] = file
         return self
 
@@ -101,14 +111,21 @@ class ItemModel:
 
     def bake(self, helper: "ItemModelHandler"):
         for texture in self.layers:
-            if texture is None: continue
+            if texture is None:
+                continue
             helper.atlas.schedule_item_file(texture)
 
-    def add_to_batch(self, position: tuple, batch, context: str, state: dict) -> mcpython.client.rendering.BatchHelper.BatchReference:
+    def add_to_batch(
+        self, position: tuple, batch, context: str, state: dict
+    ) -> mcpython.client.rendering.BatchHelper.BatchReference:
         pass
 
     def draw(self, position: tuple, context: str, state: dict):
-        rot, pos, scale = ((0, 0, 0), (0, 0, 0), (1, 1, 1)) if context not in self.displays else self.displays[context]
+        rot, pos, scale = (
+            ((0, 0, 0), (0, 0, 0), (1, 1, 1))
+            if context not in self.displays
+            else self.displays[context]
+        )
         for layer in self.layers:
             handler.atlas.get_texture_info(layer).blit(*position)
 
@@ -116,7 +133,9 @@ class ItemModel:
 class ItemModelHandler:
     def __init__(self):
         self.models = {}
-        self.atlas = mcpython.common.item.ItemAtlas.ItemAtlasHandler(folder=G.build + "/tmp_items")
+        self.atlas = mcpython.common.item.ItemAtlas.ItemAtlasHandler(
+            folder=G.build + "/tmp_items"
+        )
         G.modloader("minecraft", "stage:model:item:bake")(self.bake)
 
     @staticmethod
@@ -126,7 +145,8 @@ class ItemModelHandler:
 
     def from_folder(self, folder: str, modname: str):
         for file in mcpython.ResourceLocator.get_all_entries(folder):
-            if file.endswith("/"): continue
+            if file.endswith("/"):
+                continue
             item = "{}:{}".format(modname, file.split("/")[-1].split(".")[0])
             self.models[item] = ItemModel.from_file(file, item)
 
@@ -137,12 +157,16 @@ class ItemModelHandler:
             try:
                 model.bake(self)
             except:
-                logger.print_exception("error during baking item model for '{}'".format(model.item))
+                logger.print_exception(
+                    "error during baking item model for '{}'".format(model.item)
+                )
         self.atlas.build()
         self.atlas.dump()
         G.eventhandler.call("item:bake:post", self)
 
-    def add_to_batch(self, itemname, *args, **kwargs) -> mcpython.client.rendering.BatchHelper.BatchReference:
+    def add_to_batch(
+        self, itemname, *args, **kwargs
+    ) -> mcpython.client.rendering.BatchHelper.BatchReference:
         return self.models[itemname].add_to_batch(*args, **kwargs)
 
     def draw(self, itemname, *args, **kwargs):
@@ -150,4 +174,3 @@ class ItemModelHandler:
 
 
 handler = ItemModelHandler()
-

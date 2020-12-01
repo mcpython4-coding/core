@@ -25,25 +25,31 @@ def decode_items_without_quotes(d) -> str:
     if type(d) == list:
         return str([decode_items_without_quotes(e) for e in d])
     elif type(d) == dict:
-        if "item" in d: return d["item"].replace(REPLACE_NAMESPACE, "")
+        if "item" in d:
+            return d["item"].replace(REPLACE_NAMESPACE, "")
         return "#{}".format(d["tag"]).replace(REPLACE_NAMESPACE, "")
 
 
 def decode_item(d) -> str:
-    if type(d) == list: return str([decode_items_without_quotes(e) for e in d])
+    if type(d) == list:
+        return str([decode_items_without_quotes(e) for e in d])
     elif type(d) == dict:
-        if "item" in d: return "\"{}\"".format(d["item"]).replace(REPLACE_NAMESPACE, "")
-        return "\"#{}\"".format(d["tag"]).replace(REPLACE_NAMESPACE, "")
+        if "item" in d:
+            return '"{}"'.format(d["item"]).replace(REPLACE_NAMESPACE, "")
+        return '"#{}"'.format(d["tag"]).replace(REPLACE_NAMESPACE, "")
     raise NotImplementedError()
 
 
-def generate_recipe_generator(file: str) -> typing.Union[typing.Tuple[str, typing.Iterable[str]], None]:
+def generate_recipe_generator(
+    file: str,
+) -> typing.Union[typing.Tuple[str, typing.Iterable[str]], None]:
     with open(file) as f:
         data = json.load(f)
     name = file.split("/")[-1].split(".")[0]
     t = data["type"]
     if t == "minecraft:crafting_shaped":
-        if REMOVE_TRANSLATED_FILES: os.remove(file)
+        if REMOVE_TRANSLATED_FILES:
+            os.remove(file)
         ex = set()
         i = []
         item_to_pos = {}
@@ -63,61 +69,90 @@ def generate_recipe_generator(file: str) -> typing.Union[typing.Tuple[str, typin
             i.append(".setEntries({}, {})".format(pos, item))
             ex.add(pos)
             ex.add(item)
-        oitem = '"{}"'.format(data["result"]["item"]) if "count" not in data["result"] else "({}, \"{}\")".format(
-            data["result"]["count"], data["result"]["item"])
+        oitem = (
+            '"{}"'.format(data["result"]["item"])
+            if "count" not in data["result"]
+            else '({}, "{}")'.format(data["result"]["count"], data["result"]["item"])
+        )
         oitem = oitem.replace(REPLACE_NAMESPACE, "")
         ex.add(oitem)
         o = ".setOutput({})".format(oitem)
         if "group" in data:
-            o += ".setGroup(\"{}\")".format(data["group"])
+            o += '.setGroup("{}")'.format(data["group"])
             ex.add('"{}"'.format(data["group"]))
 
-        return "config.shaped_recipe(\"{}\"){}{}".format(name, "".join(i), o), ex
+        return 'config.shaped_recipe("{}"){}{}'.format(name, "".join(i), o), ex
     elif t == "minecraft:crafting_shapeless":
-        if REMOVE_TRANSLATED_FILES: os.remove(file)
+        if REMOVE_TRANSLATED_FILES:
+            os.remove(file)
         i = []
         ex = set()
         entry_counter = collections.defaultdict(lambda: 0)
         for entry in data["ingredients"]:
             if "tag" in entry:
-                entry_counter["#"+entry["tag"]] += 1
+                entry_counter["#" + entry["tag"]] += 1
             elif "item" in entry:
                 entry_counter[entry["item"]] += 1
             elif type(entry) == list:
                 pass
         for key in entry_counter:
             item = '"{}"'.format(key)
-            i.append(".addInput({}, {})".format(item.replace(REPLACE_NAMESPACE, ""), entry_counter[key]))
+            i.append(
+                ".addInput({}, {})".format(
+                    item.replace(REPLACE_NAMESPACE, ""), entry_counter[key]
+                )
+            )
             ex.add(item)
-        oitem = '"{}"'.format(data["result"]["item"]) if "count" not in data["result"] else "({}, \"{}\")".format(
-            data["result"]["count"], data["result"]["item"])
+        oitem = (
+            '"{}"'.format(data["result"]["item"])
+            if "count" not in data["result"]
+            else '({}, "{}")'.format(data["result"]["count"], data["result"]["item"])
+        )
         oitem = oitem.replace(REPLACE_NAMESPACE, "")
         ex.add(oitem)
         o = ".setOutput({})".format(oitem)
         if "group" in data:
-            o += ".setGroup(\"{}\")".format(data["group"])
+            o += '.setGroup("{}")'.format(data["group"])
             ex.add('"{}"'.format(data["group"]))
-        return "config.shapeless_recipe(\"{}\"){}{}".format(name, "".join(i), o), ex
-    elif t in ["minecraft:smelting", 'minecraft:campfire_cooking', 'minecraft:smoking', 'minecraft:blasting']:
-        if REMOVE_TRANSLATED_FILES: os.remove(file)
+        return 'config.shapeless_recipe("{}"){}{}'.format(name, "".join(i), o), ex
+    elif t in [
+        "minecraft:smelting",
+        "minecraft:campfire_cooking",
+        "minecraft:smoking",
+        "minecraft:blasting",
+    ]:
+        if REMOVE_TRANSLATED_FILES:
+            os.remove(file)
         ex = set()
-        m = "" if t == "minecraft:smelting" else ', "{}"'.format(t, ex.add('"{}"'.format(t)))
+        m = (
+            ""
+            if t == "minecraft:smelting"
+            else ', "{}"'.format(t, ex.add('"{}"'.format(t)))
+        )
         i = decode_item(data["ingredient"])
         ex.add(i)
         xp = ".setXp({})".format(data["experience"])
         ex.add(str(data["experience"]))
-        o = ".setOutput(\"{}\")".format(data["result"]).replace(REPLACE_NAMESPACE, "")
+        o = '.setOutput("{}")'.format(data["result"]).replace(REPLACE_NAMESPACE, "")
         ex.add('"{}"'.format(data["result"].replace(REPLACE_NAMESPACE, "")))
         if "group" in data:
-            o += ".setGroup(\"{}\")".format(data["group"])
+            o += '.setGroup("{}")'.format(data["group"])
             ex.add('"{}"'.format(data["group"]))
         if "cookingtime" in data and data["cookingtime"] != 200:
             o += ".setCookingTime({})".format(data["cookingtime"])
             ex.add(str(data["cookingtime"]))
-        return "config.smelting_recipe(\"{}\"{}).add_ingredient({}){}{}".format(
-            name, m, i.replace(REPLACE_NAMESPACE, ""), xp, o), ex
+        return (
+            'config.smelting_recipe("{}"{}).add_ingredient({}){}{}'.format(
+                name, m, i.replace(REPLACE_NAMESPACE, ""), xp, o
+            ),
+            ex,
+        )
     else:
-        print("[WARN] failed to encode f '{}' as type-serializer '{}' is not arrival for encoding".format(file, t))
+        print(
+            "[WARN] failed to encode f '{}' as type-serializer '{}' is not arrival for encoding".format(
+                file, t
+            )
+        )
 
 
 NAMES = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -137,7 +172,8 @@ def generate_recipe_generators(directory: str) -> str:
     for root, dirs, files in os.walk(directory):
         for file in files:
             d = generate_recipe_generator(os.path.join(root, file).replace("\\", "/"))
-            if d is None: continue
+            if d is None:
+                continue
             en, ex = d
             content.append(en)
             exchangeable.update(set(ex))
@@ -147,14 +183,14 @@ def generate_recipe_generators(directory: str) -> str:
     exchangeable = list(exchangeable)
     exchangeable.sort(key=lambda e: -len(e))
     for replace in exchangeable:
-        if string.count(replace) <= 1: continue
+        if string.count(replace) <= 1:
+            continue
         name = next(names)
-        while name in ["and"]: name = next(names)
+        while name in ["and"]:
+            name = next(names)
         string = string.replace(replace, name)
         front.append("{} = {}".format(name, replace))
     return "\n".join(front) + "\n" + string
 
 
-print(generate_recipe_generators(local+"/resources/source/data/minecraft/recipes"))
-
-
+print(generate_recipe_generators(local + "/resources/source/data/minecraft/recipes"))

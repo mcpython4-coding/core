@@ -12,11 +12,12 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.item.ItemTool
 
 
-class ItemArmor(mcpython.common.item.ItemTool.ItemTool):  # todo: change to IItemWithDamageBar-class
+class ItemArmor(
+    mcpython.common.item.ItemTool.ItemTool
+):  # todo: change to IItemWithDamageBar-class
     DEFENSE_POINTS = 0
 
     def getDefensePoints(self):  # todo: remove
         return self.DEFENSE_POINTS
 
     STACK_SIZE = 1
-

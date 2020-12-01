@@ -35,13 +35,17 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
 
     def on_activate(self):
         super().on_activate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("user:keyboard:press", self.on_key_press)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "user:keyboard:press", self.on_key_press
+        )
         self.block.opened = True
         self.block.face_state.update()
 
     def on_deactivate(self):
         super().on_deactivate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            "user:keyboard:press", self.on_key_press
+        )
         self.block.opened = False
         self.block.face_state.update()
 
@@ -56,10 +60,14 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
             self.bgsprite.position = (x, y)
             self.bgsprite.draw()
         self.on_draw_over_backgroundimage()
-        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
+        for slot in (
+            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        ):
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
-        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
+        for slot in (
+            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        ):
             slot.draw_lable(x, y)
         self.on_draw_overlay()
 
@@ -67,9 +75,11 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
         return G.world.get_active_player().inventories["main"].slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == pyglet.window.key.E: G.inventoryhandler.hide(self)
+        if symbol == pyglet.window.key.E:
+            G.inventoryhandler.hide(self)
 
     def update_shift_container(self):
-        G.inventoryhandler.shift_container.container_A = G.world.get_active_player().inventories["main"].slots[:36]
+        G.inventoryhandler.shift_container.container_A = (
+            G.world.get_active_player().inventories["main"].slots[:36]
+        )
         G.inventoryhandler.shift_container.container_B = self.slots
-

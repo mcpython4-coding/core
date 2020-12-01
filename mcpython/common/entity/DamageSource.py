@@ -43,8 +43,8 @@ class DamageSource:
 
     def __eq__(self, other):
         for attribute in self.__attributes:
-            if other.getAttribute(attribute) is None: continue
-            if other.getAttribute(attribute) != self.getAttribute(attribute): return False
+            if other.getAttribute(attribute) is None:
+                continue
+            if other.getAttribute(attribute) != self.getAttribute(attribute):
+                return False
         return True
-
-

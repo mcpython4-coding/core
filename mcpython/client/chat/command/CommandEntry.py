@@ -32,7 +32,7 @@ class CommandEntry(mcpython.common.event.Registry.IRegistryContent):
         :param kwargs: overgiven optional creative arguments
         :return: an (new start, value)-tuple
         """
-        return start+1, None
+        return start + 1, None
 
     @staticmethod
     def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
@@ -57,10 +57,12 @@ def load():
         NAME = ParseType.DEFINIED_STRING
 
         @staticmethod
-        def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple: return start + 1, entrylist[start]
+        def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
+            return start + 1, entrylist[start]
 
         @staticmethod
-        def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool: return entrylist[start] == arguments[0]
+        def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
+            return entrylist[start] == arguments[0]
 
     @G.registry
     class IntEntry(CommandEntry):
@@ -71,7 +73,8 @@ def load():
         NAME = ParseType.INT
 
         @staticmethod
-        def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple: return start + 1, int(entrylist[start])
+        def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
+            return start + 1, int(entrylist[start])
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
@@ -130,7 +133,8 @@ def load():
             return start + 1, entrylist[start]
 
         @staticmethod
-        def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool: return True
+        def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
+            return True
 
     @G.registry
     class FloatEntry(CommandEntry):
@@ -141,7 +145,8 @@ def load():
         NAME = ParseType.FLOAT
 
         @staticmethod
-        def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple: return start + 1, float(entrylist[start])
+        def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
+            return start + 1, float(entrylist[start])
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
@@ -150,7 +155,7 @@ def load():
                 return True
             except:
                 return False
-            
+
     @G.registry
     class BlockNameEntry(CommandEntry):
         """
@@ -165,12 +170,19 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            flag = entrylist[start] in G.registry.get_by_name("block").full_table or entrylist[start] in ("air", "minecraft:air")  # is this block arrival?
+            flag = entrylist[start] in G.registry.get_by_name(
+                "block"
+            ).full_table or entrylist[start] in (
+                "air",
+                "minecraft:air",
+            )  # is this block arrival?
             if not flag:
-                logger.println("[INFORM] invalid due to missing registry entry. Use '/registryinfo block' for an list "
-                               "of all found blocks!")
+                logger.println(
+                    "[INFORM] invalid due to missing registry entry. Use '/registryinfo block' for an list "
+                    "of all found blocks!"
+                )
             return flag
-        
+
     @G.registry
     class ItemNameEntry(CommandEntry):
         """
@@ -185,12 +197,16 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            flag = entrylist[start] in G.registry.get_by_name("item").registered_object_map  # is this item arrival?
+            flag = (
+                entrylist[start] in G.registry.get_by_name("item").registered_object_map
+            )  # is this item arrival?
             if not flag:
-                logger.println("[INFORM] invalid due to missing registry entry. Use '/registryinfo item' for an list "
-                               "of all found blocks")
+                logger.println(
+                    "[INFORM] invalid due to missing registry entry. Use '/registryinfo item' for an list "
+                    "of all found blocks"
+                )
             return flag
-        
+
     @G.registry
     class SelectorEntry(CommandEntry):
         """
@@ -203,15 +219,19 @@ def load():
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
             entry = entrylist[start]
             for selector in G.registry.get_by_name("command").selector:
-                if selector.is_valid(entry):  # is this the selector we are searching for?
-                    return start + 1, selector.parse(entry, info) 
+                if selector.is_valid(
+                    entry
+                ):  # is this the selector we are searching for?
+                    return start + 1, selector.parse(entry, info)
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             entry = entrylist[start]
             # have we any valid selector?
-            return any([x.is_valid(entry) for x in G.registry.get_by_name("command").selector])
-        
+            return any(
+                [x.is_valid(entry) for x in G.registry.get_by_name("command").selector]
+            )
+
     @G.registry
     class PositionEntry(CommandEntry):
         """
@@ -223,8 +243,13 @@ def load():
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
             if SelectorEntry.is_valid(entrylist, start, arguments, kwargs):
-                return start + 1, SelectorEntry.parse(entrylist, start, info, arguments, kwargs)[0].position
-            x, y, z = tuple(entrylist[start:start+3])
+                return (
+                    start + 1,
+                    SelectorEntry.parse(entrylist, start, info, arguments, kwargs)[
+                        0
+                    ].position,
+                )
+            x, y, z = tuple(entrylist[start : start + 3])
             x = PositionEntry._parse_coordinate_to_real(x, 0, info)
             y = PositionEntry._parse_coordinate_to_real(y, 1, info)
             z = PositionEntry._parse_coordinate_to_real(z, 2, info)
@@ -251,11 +276,14 @@ def load():
             if SelectorEntry.is_valid(entrylist, start, arguments, kwargs):
                 return True
             try:
-                [float(x) if not x.startswith("~") else None for x in entrylist[start:start + 3]]
+                [
+                    float(x) if not x.startswith("~") else None
+                    for x in entrylist[start : start + 3]
+                ]
                 return True
             except ValueError:
                 return False
-            
+
     @G.registry
     class SelectDefinitedStringEntry(CommandEntry):
         """
@@ -283,11 +311,15 @@ def load():
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
             end = start + (kwargs["max"] if "max" in kwargs else len(entrylist))
-            return len(entrylist) - 1, (entrylist[start:] if len(entrylist) < end else entrylist[start:end])
+            return len(entrylist) - 1, (
+                entrylist[start:] if len(entrylist) < end else entrylist[start:end]
+            )
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            return (kwargs["min"] if "min" in kwargs else 0) <= len(entrylist) - start + 1  # if length is in range
+            return (kwargs["min"] if "min" in kwargs else 0) <= len(
+                entrylist
+            ) - start + 1  # if length is in range
 
     @G.registry
     class BooleanEntry(CommandEntry):
@@ -302,5 +334,3 @@ def load():
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             return any([entrylist[start] in array for array in BooleanEntry.TABLE])
-
-

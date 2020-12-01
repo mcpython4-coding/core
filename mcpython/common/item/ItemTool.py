@@ -25,7 +25,8 @@ class ItemTool(mcpython.common.item.Item.Item):
         super().__init__()
 
     def __eq__(self, other):
-        if not issubclass(type(other), ItemTool): return False
+        if not issubclass(type(other), ItemTool):
+            return False
         return other.NAME == self.NAME
 
     def get_tool_level(self):  # todo: remove
@@ -36,4 +37,3 @@ class ItemTool(mcpython.common.item.Item.Item):
 
     def get_speed_multiplyer(self, itemstack):
         return 1
-

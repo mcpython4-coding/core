@@ -24,22 +24,31 @@ class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
         return slots
 
     def test_for_shulker(self, itemstack):
-        if itemstack.item and issubclass(type(itemstack.item), mcpython.common.item.IShulkerBoxLikeItem.IShulkerBoxLikeItem):
+        if itemstack.item and issubclass(
+            type(itemstack.item),
+            mcpython.common.item.IShulkerBoxLikeItem.IShulkerBoxLikeItem,
+        ):
             return not itemstack.item.is_blocked_in(self)
         return True
 
     def on_activate(self):
         super().on_activate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("user:keyboard:press", self.on_key_press)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "user:keyboard:press", self.on_key_press
+        )
 
     def on_deactivate(self):
         super().on_deactivate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            "user:keyboard:press", self.on_key_press
+        )
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == pyglet.window.key.E: G.inventoryhandler.hide(self)
+        if symbol == pyglet.window.key.E:
+            G.inventoryhandler.hide(self)
 
     def update_shift_container(self):
-        G.inventoryhandler.shift_container.container_A = G.world.get_active_player().inventories["main"].slots[:36]
+        G.inventoryhandler.shift_container.container_A = (
+            G.world.get_active_player().inventories["main"].slots[:36]
+        )
         G.inventoryhandler.shift_container.container_B = self.slots
-

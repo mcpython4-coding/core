@@ -22,57 +22,128 @@ WALL_TEMPLATE = sum([[(x, y) for y in range(2)] for x in range(3)], [])
 SLAB_TEMPLATE = [(x, 0) for x in range(3)]
 
 
-def generate_full_block_slab_wall(config: mcpython.common.data.datagen.Configuration.DataGeneratorConfig, name: str,
-                                  texture: str = None, enable=(True, True, True), callback=None,
-                                  slab_name=None, wall_name=None, generate_recipes=(True, True), textures=None):
-    assert textures is None or (type(textures) in (list, set, tuple) and len(textures) <= 3), \
-        "textures must be either None or iterable of length 3 or less"
-    if texture is None: texture = "{}:block/{}".format(*name.split(":"))
-    if slab_name is None: slab_name = name + "_slab"
-    if wall_name is None: wall_name = name + "_wall"
+def generate_full_block_slab_wall(
+    config: mcpython.common.data.datagen.Configuration.DataGeneratorConfig,
+    name: str,
+    texture: str = None,
+    enable=(True, True, True),
+    callback=None,
+    slab_name=None,
+    wall_name=None,
+    generate_recipes=(True, True),
+    textures=None,
+):
+    assert textures is None or (
+        type(textures) in (list, set, tuple) and len(textures) <= 3
+    ), "textures must be either None or iterable of length 3 or less"
+    if texture is None:
+        texture = "{}:block/{}".format(*name.split(":"))
+    if slab_name is None:
+        slab_name = name + "_slab"
+    if wall_name is None:
+        wall_name = name + "_wall"
     if type(enable) == dict:
-        enable = (True if name not in enable else enable[name], True if slab_name not in enable else enable[slab_name],
-                  True if wall_name not in enable else enable[wall_name])
+        enable = (
+            True if name not in enable else enable[name],
+            True if slab_name not in enable else enable[slab_name],
+            True if wall_name not in enable else enable[wall_name],
+        )
     if enable[0] if type(enable[0]) == bool else enable[0][name]:
-        generate_full_block(config, name, texture if textures is None else textures[0], callback)
+        generate_full_block(
+            config, name, texture if textures is None else textures[0], callback
+        )
     if enable[1] if type(enable[1]) == bool else enable[1][slab_name]:
-        generate_slab_block(config, slab_name, texture if textures is None else textures[1], callback,
-                            generate_recipes[0], full=None if not (enable[0] if type(enable[0]) == bool else enable[0][name]) else "{}:block/{}".format(*name.split(":")))
+        generate_slab_block(
+            config,
+            slab_name,
+            texture if textures is None else textures[1],
+            callback,
+            generate_recipes[0],
+            full=None
+            if not (enable[0] if type(enable[0]) == bool else enable[0][name])
+            else "{}:block/{}".format(*name.split(":")),
+        )
     if enable[2] if type(enable[2]) == bool else enable[2][wall_name]:
-        generate_wall_block(config, wall_name, texture if textures is None else textures[2], callback,
-                            generate_recipes[1])
+        generate_wall_block(
+            config,
+            wall_name,
+            texture if textures is None else textures[2],
+            callback,
+            generate_recipes[1],
+        )
 
 
 def generate_full_block(config, name: str, texture: str = None, callback=None):
-    if texture is None: texture = "{}:block/{}".format(*name.split(":"))
+    if texture is None:
+        texture = "{}:block/{}".format(*name.split(":"))
     modname, raw_name = name.split(":")
-    CombinedFullBlockFactory(modname, config, on_create_callback=callback).setName(name).setTextureVariable("all", texture)
+    CombinedFullBlockFactory(modname, config, on_create_callback=callback).setName(
+        name
+    ).setTextureVariable("all", texture)
 
 
-def generate_slab_block(config, name: str, texture: str = None, callback=None, generate_recipe=True, full=None):
-    if texture is None: texture = "{}:block/{}".format(*name.split("_slab")[0].split(":"))
-    modname, raw_name = name.split(":") if name.count(":") == 1 else (config.modname, name)
-    if full is None: full = "{}:block/{}".format(modname, raw_name.replace("_slab", ""))
-    CombinedSlabFactory(texture, modname, config, full_model=full, on_create_callback=callback).setName(name)
+def generate_slab_block(
+    config,
+    name: str,
+    texture: str = None,
+    callback=None,
+    generate_recipe=True,
+    full=None,
+):
+    if texture is None:
+        texture = "{}:block/{}".format(*name.split("_slab")[0].split(":"))
+    modname, raw_name = (
+        name.split(":") if name.count(":") == 1 else (config.modname, name)
+    )
+    if full is None:
+        full = "{}:block/{}".format(modname, raw_name.replace("_slab", ""))
+    CombinedSlabFactory(
+        texture, modname, config, full_model=full, on_create_callback=callback
+    ).setName(name)
     if generate_recipe:
-        mcpython.common.data.datagen.RecipeGenerator.ShapedRecipeGenerator(name, config).setEntries(
-            SLAB_TEMPLATE, name.split("_slab")[0]).setOutput((6, name)).setGroup("slab")
+        mcpython.common.data.datagen.RecipeGenerator.ShapedRecipeGenerator(
+            name, config
+        ).setEntries(SLAB_TEMPLATE, name.split("_slab")[0]).setOutput(
+            (6, name)
+        ).setGroup(
+            "slab"
+        )
 
 
-def generate_wall_block(config, name: str, texture: str = None, callback=None, generate_recipe=True):
-    if texture is None: texture = "{}:block/{}".format(*name.split("_wall")[0].split(":"))
+def generate_wall_block(
+    config, name: str, texture: str = None, callback=None, generate_recipe=True
+):
+    if texture is None:
+        texture = "{}:block/{}".format(*name.split("_wall")[0].split(":"))
     modname, raw_name = name.split(":")
-    CombinedWallFactory(texture, modname, config, on_create_callback=callback).setName(name)
+    CombinedWallFactory(texture, modname, config, on_create_callback=callback).setName(
+        name
+    )
     if generate_recipe:
-        mcpython.common.data.datagen.RecipeGenerator.ShapedRecipeGenerator(name, config).setEntries(
-            WALL_TEMPLATE, name.split("_wall")[0]).setOutput((6, name)).setGroup("wall")
+        mcpython.common.data.datagen.RecipeGenerator.ShapedRecipeGenerator(
+            name, config
+        ).setEntries(WALL_TEMPLATE, name.split("_wall")[0]).setOutput(
+            (6, name)
+        ).setGroup(
+            "wall"
+        )
 
 
-def generate_log_block(config, name: str, front_texture: str = None, side_texture: str = None, callback=None):
-    if front_texture is None: front_texture = "{}:block/{}_top".format(*name.split(":"))
-    if side_texture is None: side_texture = "{}:block/{}".format(*name.split(":"))
+def generate_log_block(
+    config,
+    name: str,
+    front_texture: str = None,
+    side_texture: str = None,
+    callback=None,
+):
+    if front_texture is None:
+        front_texture = "{}:block/{}_top".format(*name.split(":"))
+    if side_texture is None:
+        side_texture = "{}:block/{}".format(*name.split(":"))
     modname, raw_name = name.split(":")
-    CombinedLogFactory(front_texture, side_texture, modname, config, on_create_callback=callback).setName(name)
+    CombinedLogFactory(
+        front_texture, side_texture, modname, config, on_create_callback=callback
+    ).setName(name)
 
 
 class CombinedFullBlockFactoryMode(enum.Enum):
@@ -85,7 +156,10 @@ class CombinedFullBlockFactoryMode(enum.Enum):
     BOTTOM_TOP = ("minecraft:block/cube_bottom_top", {"bottom", "top", "side"})
     COLUMN = ("minecraft:block/cube_column", {"end", "side"})
     COLUMN_HORIZONTAL = ("minecraft:block/cube_column_horizontal", {"end", "side"})
-    DIRECTIONAL = ("minecraft:block/cube_directional", {"up", "down", "north", "south", "east", "west"})
+    DIRECTIONAL = (
+        "minecraft:block/cube_directional",
+        {"up", "down", "north", "south", "east", "west"},
+    )
     TOP = ("minecraft:block/cube_top", {"top", "side"})
 
     def __init__(self, parent_name: str, texture_names: set):
@@ -102,10 +176,13 @@ class CombinedFullBlockFactory:
     GLOBAL_NAME = None
 
     def __init__(self, modname=None, config=None, on_create_callback=None):
-        if modname is None: modname = self.GLOBAL_NAME
+        if modname is None:
+            modname = self.GLOBAL_NAME
         assert modname is not None, "modname must be set locally or globally"
-        if config is None: config = mcpython.datagen.Configuration.DataGeneratorConfig(modname,
-                                                                                       G.modloader.mods[modname].path)
+        if config is None:
+            config = mcpython.datagen.Configuration.DataGeneratorConfig(
+                modname, G.modloader.mods[modname].path
+            )
         self.config = config
         self.mode = CombinedFullBlockFactoryMode.CUBE_ALL
         self.textures = {}
@@ -126,22 +203,34 @@ class CombinedFullBlockFactory:
         self.textures[name] = location
 
     def build(self):
-        assert all([name in self.textures for name in self.mode.texture_names]), "all needed texture names MUST be set"
+        assert all(
+            [name in self.textures for name in self.mode.texture_names]
+        ), "all needed texture names MUST be set"
         assert self.name is not None, "name must be set"
         G.modloader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
-        G.modloader(self.modname, "stage:block:factory_usage")(self.__generate_factories)
+        G.modloader(self.modname, "stage:block:factory_usage")(
+            self.__generate_factories
+        )
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
-        model_gen = mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
-            self.config, name, parent=self.mode.parent)
-        [model_gen.set_texture_variable(name, self.textures[name]) for name in self.textures]
+        model_gen = (
+            mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+                self.config, name, parent=self.mode.parent
+            )
+        )
+        [
+            model_gen.set_texture_variable(name, self.textures[name])
+            for name in self.textures
+        ]
         mcpython.common.data.datagen.BlockModelGenerator.BlockStateGenerator(
-            self.config, name).add_state(None, "{}:block/{}".format(self.modname, name))
+            self.config, name
+        ).add_state(None, "{}:block/{}".format(self.modname, name))
 
     def __generate_factories(self):
         factory = mcpython.common.factory.BlockFactory.BlockFactory().setName(self.name)
-        if self.on_create_callback is not None: self.on_create_callback(self, factory)
+        if self.on_create_callback is not None:
+            self.on_create_callback(self, factory)
         factory.finish()
 
 
@@ -153,7 +242,14 @@ class CombinedSlabFactory:
     GLOBAL_NAME = None
     SLAB_TEXTURES = {"top", "bottom", "side"}
 
-    def __init__(self, texture: str, modname=None, config=None, on_create_callback=None, full_model=None):
+    def __init__(
+        self,
+        texture: str,
+        modname=None,
+        config=None,
+        on_create_callback=None,
+        full_model=None,
+    ):
         """
         will create an n ew CombinedSlabFactory
         :param texture: the texture for the slab
@@ -162,10 +258,13 @@ class CombinedSlabFactory:
         :param on_create_callback: callback when BlockFactory is active
         :param full_model: the model for the full block, if existent
         """
-        if modname is None: modname = self.GLOBAL_NAME
+        if modname is None:
+            modname = self.GLOBAL_NAME
         assert modname is not None, "modname must be set locally or globally"
-        if config is None: config = mcpython.common.data.datagen.Configuration.DataGeneratorConfig(modname,
-                                                                                       G.modloader.mods[modname].path)
+        if config is None:
+            config = mcpython.common.data.datagen.Configuration.DataGeneratorConfig(
+                modname, G.modloader.mods[modname].path
+            )
         self.config = config
         self.texture = texture
         self.modname = modname
@@ -181,27 +280,39 @@ class CombinedSlabFactory:
     def build(self):
         assert self.name is not None, "name must be set"
         G.modloader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
-        G.modloader(self.modname, "stage:block:factory_usage")(self.__generate_factories)
+        G.modloader(self.modname, "stage:block:factory_usage")(
+            self.__generate_factories
+        )
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
         mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
-            self.config, name, parent="minecraft:block/slab").set_texture_variables(self.texture, *self.SLAB_TEXTURES)
+            self.config, name, parent="minecraft:block/slab"
+        ).set_texture_variables(self.texture, *self.SLAB_TEXTURES)
         mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
             self.config, name + "_top", parent="minecraft:block/slab_top"
         ).set_texture_variables(self.texture, *self.SLAB_TEXTURES)
         if not self.full_model:
             self.full_model = "{}:block/{}_double".format(self.modname, self.name)
             mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
-                self.config, name + "_double", parent="minecraft:block/cube_all").set_texture_variable(
-                "all", self.texture)
+                self.config, name + "_double", parent="minecraft:block/cube_all"
+            ).set_texture_variable("all", self.texture)
         mcpython.common.data.datagen.BlockModelGenerator.BlockStateGenerator(
-            self.config, name).add_state("type=bottom", "{}:block/{}".format(self.modname, name)).add_state(
-            "type=top", "{}:block/{}_top".format(self.modname, name)).add_state("type=double", self.full_model)
+            self.config, name
+        ).add_state("type=bottom", "{}:block/{}".format(self.modname, name)).add_state(
+            "type=top", "{}:block/{}_top".format(self.modname, name)
+        ).add_state(
+            "type=double", self.full_model
+        )
 
     def __generate_factories(self):
-        factory = mcpython.common.factory.BlockFactory.BlockFactory().setName(self.name).setSlab()
-        if self.on_create_callback is not None: self.on_create_callback(self, factory)
+        factory = (
+            mcpython.common.factory.BlockFactory.BlockFactory()
+            .setName(self.name)
+            .setSlab()
+        )
+        if self.on_create_callback is not None:
+            self.on_create_callback(self, factory)
         factory.finish()
 
 
@@ -212,7 +323,9 @@ class CombinedWallFactory:
 
     GLOBAL_NAME = None
 
-    def __init__(self, texture: str, modname=None, config=None, on_create_callback=None):
+    def __init__(
+        self, texture: str, modname=None, config=None, on_create_callback=None
+    ):
         """
         will create an n ew CombinedWallFactory
         :param texture: the texture for the slab
@@ -220,10 +333,13 @@ class CombinedWallFactory:
         :param config: the config to use
         :param on_create_callback: callback when BlockFactory is active
         """
-        if modname is None: modname = self.GLOBAL_NAME
+        if modname is None:
+            modname = self.GLOBAL_NAME
         assert modname is not None, "modname must be set locally or globally"
-        if config is None: config = mcpython.common.data.datagen.Configuration.DataGeneratorConfig(modname,
-                                                                                       G.modloader.mods[modname].path)
+        if config is None:
+            config = mcpython.common.data.datagen.Configuration.DataGeneratorConfig(
+                modname, G.modloader.mods[modname].path
+            )
         self.config = config
         self.texture = texture
         self.modname = modname
@@ -243,27 +359,35 @@ class CombinedWallFactory:
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
         mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
-            self.config, name + "_inventory", parent="minecraft:block/wall_inventory").set_texture_variable(
-            "wall", self.texture)
+            self.config, name + "_inventory", parent="minecraft:block/wall_inventory"
+        ).set_texture_variable("wall", self.texture)
         mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
-            self.config, name + "_post", parent="minecraft:block/template_wall_post").set_texture_variable(
-            "wall", self.texture)
+            self.config, name + "_post", parent="minecraft:block/template_wall_post"
+        ).set_texture_variable("wall", self.texture)
         mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
-            self.config, name + "_side", parent="minecraft:block/template_wall_side").set_texture_variable(
-            "wall", self.texture)
+            self.config, name + "_side", parent="minecraft:block/template_wall_side"
+        ).set_texture_variable("wall", self.texture)
         mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
-            self.config, name + "_side_tall", parent="minecraft:block/template_wall_side_tall").set_texture_variable(
-            "wall", self.texture)
+            self.config,
+            name + "_side_tall",
+            parent="minecraft:block/template_wall_side_tall",
+        ).set_texture_variable("wall", self.texture)
         side = "{}:block/{}_side".format(self.modname, name)
         tall = "{}:block/{}_side_tall".format(self.modname, name)
         post = "{}:block/{}_post".format(self.modname, name)
-        mcpython.common.data.datagen.BlockModelGenerator.MultiPartBlockStateGenerator(self.config, name, parent="minecraft:wall_template").addAliasName(
-            "alias:post", post).addAliasName("alias:side", side).addAliasName("alias:tall", tall)
+        mcpython.common.data.datagen.BlockModelGenerator.MultiPartBlockStateGenerator(
+            self.config, name, parent="minecraft:wall_template"
+        ).addAliasName("alias:post", post).addAliasName(
+            "alias:side", side
+        ).addAliasName(
+            "alias:tall", tall
+        )
 
     def __generate_factories(self):
         factory = mcpython.common.factory.BlockFactory.BlockFactory().setName(self.name)
         factory.baseclass = [mcpython.common.block.BlockWall.IWall]
-        if self.on_create_callback is not None: self.on_create_callback(self, factory)
+        if self.on_create_callback is not None:
+            self.on_create_callback(self, factory)
         factory.finish()
 
 
@@ -274,7 +398,14 @@ class CombinedLogFactory:
 
     GLOBAL_NAME = None
 
-    def __init__(self, front_texture: str, side_texture: str, modname=None, config=None, on_create_callback=None):
+    def __init__(
+        self,
+        front_texture: str,
+        side_texture: str,
+        modname=None,
+        config=None,
+        on_create_callback=None,
+    ):
         """
         will create an new CombinedWallFactory
         :param texture: the texture for the slab
@@ -282,10 +413,13 @@ class CombinedLogFactory:
         :param config: the config to use
         :param on_create_callback: callback when BlockFactory is active
         """
-        if modname is None: modname = self.GLOBAL_NAME
+        if modname is None:
+            modname = self.GLOBAL_NAME
         assert modname is not None, "modname must be set locally or globally"
-        if config is None: config = mcpython.common.data.datagen.Configuration.DataGeneratorConfig(modname,
-                                                                                       G.modloader.mods[modname].path)
+        if config is None:
+            config = mcpython.common.data.datagen.Configuration.DataGeneratorConfig(
+                modname, G.modloader.mods[modname].path
+            )
         self.config = config
         self.front_texture = front_texture
         self.side_texture = side_texture
@@ -306,19 +440,32 @@ class CombinedLogFactory:
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
         mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
-            self.config, name, parent="minecraft:block/cube_column").set_texture_variable(
-            "end", self.front_texture).set_texture_variable("side", self.side_texture)
+            self.config, name, parent="minecraft:block/cube_column"
+        ).set_texture_variable("end", self.front_texture).set_texture_variable(
+            "side", self.side_texture
+        )
         mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
-            self.config, name + "_horizontal", parent="minecraft:block/cube_column_horizontal").set_texture_variable(
-            "end", self.front_texture).set_texture_variable("side", self.side_texture)
+            self.config,
+            name + "_horizontal",
+            parent="minecraft:block/cube_column_horizontal",
+        ).set_texture_variable("end", self.front_texture).set_texture_variable(
+            "side", self.side_texture
+        )
         hor = "{}:block/{}_horizontal".format(self.modname, name)
         mcpython.common.data.datagen.BlockModelGenerator.BlockStateGenerator(
-            self.config, name, parent="minecraft:log_template").addAliasName("alias:horizontal", hor).addAliasName(
-            "alias:normal", "{}:block/{}".format(self.modname, name))
+            self.config, name, parent="minecraft:log_template"
+        ).addAliasName("alias:horizontal", hor).addAliasName(
+            "alias:normal", "{}:block/{}".format(self.modname, name)
+        )
 
     def __generate_factories(self):
-        factory = mcpython.common.factory.BlockFactory.BlockFactory().setName(self.name).setLog()
-        if self.on_create_callback is not None: self.on_create_callback(self, factory)
+        factory = (
+            mcpython.common.factory.BlockFactory.BlockFactory()
+            .setName(self.name)
+            .setLog()
+        )
+        if self.on_create_callback is not None:
+            self.on_create_callback(self, factory)
         factory.finish()
 
 

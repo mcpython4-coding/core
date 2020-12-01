@@ -11,8 +11,24 @@ This project is not official by mojang and does not relate to it.
 """
 import enum
 
-COLORS = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
-          "purple", "blue", "brown", "green", "red", "black"]
+COLORS = [
+    "white",
+    "orange",
+    "magenta",
+    "light_blue",
+    "yellow",
+    "lime",
+    "pink",
+    "gray",
+    "light_gray",
+    "cyan",
+    "purple",
+    "blue",
+    "brown",
+    "green",
+    "red",
+    "black",
+]
 
 
 class EnumSide(enum.Enum):
@@ -51,12 +67,18 @@ class EnumSide(enum.Enum):
         Will invert the face to its opposite
         :return: the opposite face
         """
-        if self == EnumSide.U: return EnumSide.D
-        if self == EnumSide.D: return EnumSide.U
-        if self == EnumSide.N: return EnumSide.S
-        if self == EnumSide.S: return EnumSide.S
-        if self == EnumSide.E: return EnumSide.W
-        if self == EnumSide.W: return EnumSide.E
+        if self == EnumSide.U:
+            return EnumSide.D
+        if self == EnumSide.D:
+            return EnumSide.U
+        if self == EnumSide.N:
+            return EnumSide.S
+        if self == EnumSide.S:
+            return EnumSide.S
+        if self == EnumSide.E:
+            return EnumSide.W
+        if self == EnumSide.W:
+            return EnumSide.E
         raise ValueError("can't convert '{}' to inverted variant".format(self))
 
     def __eq__(self, other):
@@ -86,12 +108,21 @@ class EnumSide(enum.Enum):
         return face
 
 
-FACE_ORDER = [EnumSide.UP, EnumSide.DOWN, EnumSide.NORTH, EnumSide.SOUTH, EnumSide.EAST, EnumSide.WEST]
+FACE_ORDER = [
+    EnumSide.UP,
+    EnumSide.DOWN,
+    EnumSide.NORTH,
+    EnumSide.SOUTH,
+    EnumSide.EAST,
+    EnumSide.WEST,
+]
 
 # How to rotate the different faces?
-ROTATE = ([EnumSide.WEST, EnumSide.DOWN, EnumSide.EAST, EnumSide.UP],
-          [EnumSide.NORTH, EnumSide.EAST, EnumSide.SOUTH, EnumSide.WEST],
-          [EnumSide.NORTH, EnumSide.UP, EnumSide.SOUTH, EnumSide.DOWN])
+ROTATE = (
+    [EnumSide.WEST, EnumSide.DOWN, EnumSide.EAST, EnumSide.UP],
+    [EnumSide.NORTH, EnumSide.EAST, EnumSide.SOUTH, EnumSide.WEST],
+    [EnumSide.NORTH, EnumSide.UP, EnumSide.SOUTH, EnumSide.DOWN],
+)
 
 
 class LogAxis(enum.Enum):
@@ -129,4 +160,3 @@ class ButtonMode(enum.Enum):
     DISABLED = 0
     ENABLED = 1
     HOVERING = 2
-

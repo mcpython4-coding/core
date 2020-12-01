@@ -29,9 +29,13 @@ def transform_to_item_stack(item, table: dict) -> list:
         return [(itemname, item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
         try:
-            entries = G.taghandler.taggroups["items"].tags["#"+item["tag"]].entries
+            entries = G.taghandler.taggroups["items"].tags["#" + item["tag"]].entries
         except (KeyError, IndexError):
-            logger.println("tag loading issue for recipe transform of {} to valid item list".format(item))
+            logger.println(
+                "tag loading issue for recipe transform of {} to valid item list".format(
+                    item
+                )
+            )
             return []
         for item in entries[:]:
             if item not in G.registry.get_by_name("item").registered_object_map:
@@ -41,7 +45,8 @@ def transform_to_item_stack(item, table: dict) -> list:
     elif type(item) == list:  # have we an list of items?
         values = [transform_to_item_stack(x, table) for x in item]
         value = []
-        for v in values: value += v
+        for v in values:
+            value += v
         return value
     else:
         logger.println("can't cast '" + str(item) + "' to valid itemlist")
@@ -60,14 +65,17 @@ class GridShaped(mcpython.client.gui.crafting.IRecipeType.IRecipe):
         table = {}
         for item in data["key"]:
             item_list = transform_to_item_stack(data["key"][item], table)
-            if len(item_list) == 0: return
+            if len(item_list) == 0:
+                return
             table[item] = item_list
         grid = {}
         for y, row in enumerate(pattern):
             for x, key in enumerate(row):
-                if key != " ": grid[(x, y)] = table[key]
+                if key != " ":
+                    grid[(x, y)] = table[key]
         out = transform_to_item_stack(data["result"], table)
-        if len(out) == 0: return
+        if len(out) == 0:
+            return
         return cls(grid, out[0])
 
     def __init__(self, inputs, output):
@@ -79,8 +87,9 @@ class GridShaped(mcpython.client.gui.crafting.IRecipeType.IRecipe):
         self.bboxsize = (sx, sy)
 
     def register(self):
-        G.craftinghandler.crafting_recipes_shaped.setdefault(len(self.inputs), {}).setdefault(
-            self.bboxsize, []).append(self)
+        G.craftinghandler.crafting_recipes_shaped.setdefault(
+            len(self.inputs), {}
+        ).setdefault(self.bboxsize, []).append(self)
 
 
 @G.craftinghandler
@@ -93,7 +102,8 @@ class GridShapeless(mcpython.client.gui.crafting.IRecipeType.IRecipe):
     def from_data(cls, data: dict):
         inputs = [transform_to_item_stack(x, {}) for x in data["ingredients"]]
         out = transform_to_item_stack(data["result"], {})
-        if any([len(x) == 0 for x in inputs]) or len(out) == 0: return
+        if any([len(x) == 0 for x in inputs]) or len(out) == 0:
+            return
         return cls(inputs, out[0])
 
     def __init__(self, inputs, output):
@@ -102,5 +112,6 @@ class GridShapeless(mcpython.client.gui.crafting.IRecipeType.IRecipe):
         self.output = output
 
     def register(self):
-        G.craftinghandler.crafting_recipes_shapeless.setdefault(len(self.inputs), []).append(self)
-
+        G.craftinghandler.crafting_recipes_shapeless.setdefault(
+            len(self.inputs), []
+        ).append(self)

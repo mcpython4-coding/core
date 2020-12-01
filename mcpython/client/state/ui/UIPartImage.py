@@ -16,8 +16,17 @@ from . import UIPart
 
 
 class UIPartImage(UIPart.UIPart):
-    def __init__(self, image: pyglet.sprite.Sprite, position, anchor_window="WS", on_press=None,
-                 press=mcpython.common.event.EventInfo.MousePressEventInfo(pyglet.window.mouse.LEFT), anchor_image="WS"):
+    def __init__(
+        self,
+        image: pyglet.sprite.Sprite,
+        position,
+        anchor_window="WS",
+        on_press=None,
+        press=mcpython.common.event.EventInfo.MousePressEventInfo(
+            pyglet.window.mouse.LEFT
+        ),
+        anchor_image="WS",
+    ):
         """
         creates an new UIPartButton
         :param position: the position of the button
@@ -25,8 +34,12 @@ class UIPartImage(UIPart.UIPart):
         :param anchor_image: the anchor on the button
         :param anchor_window: the anchor on the window
         """
-        super().__init__(position, (image.width, image.height), anchor_element=anchor_image,
-                         anchor_window=anchor_window)
+        super().__init__(
+            position,
+            (image.width, image.height),
+            anchor_element=anchor_image,
+            anchor_window=anchor_window,
+        )
         self.image = image
         self.press: mcpython.common.event.EventInfo.MousePressEventInfo = press
 
@@ -40,7 +53,7 @@ class UIPartImage(UIPart.UIPart):
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()
         sx, sy = self.image.image.width, self.image.image.height
-        self.press.area = ((mx, my), (mx+sx, my+sy))
+        self.press.area = ((mx, my), (mx + sx, my + sy))
         if self.press.equals(x, y, button, modifiers):
             if self.on_press:
                 self.on_press(x, y)
@@ -50,4 +63,3 @@ class UIPartImage(UIPart.UIPart):
         wx, wy = size = self.image.image.width, self.image.image.height
         self.image.position = (x + size[0] // 2 - wx // 2, y + size[1] // 2 - wy // 2)
         self.image.draw()
-

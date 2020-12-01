@@ -52,10 +52,15 @@ class Inventory:
         """
         if self.get_config_file():
             try:
-                self.config = mcpython.ResourceLocator.read(self.get_config_file(), "json")
+                self.config = mcpython.ResourceLocator.read(
+                    self.get_config_file(), "json"
+                )
             except:
-                logger.print_exception("[FATAL] failed to load inventory config file {} for inventory {}".format(
-                    self.get_config_file(), self))
+                logger.print_exception(
+                    "[FATAL] failed to load inventory config file {} for inventory {}".format(
+                        self.get_config_file(), self
+                    )
+                )
         else:
             self.config = {}
             self.on_reload()
@@ -71,15 +76,24 @@ class Inventory:
             if "allow_player_remove" in entry:
                 self.slots[sid].interaction_mode[0] = entry["allow_player_remove"]
             if "allow_player_add_to_free_place" in entry:
-                self.slots[sid].interaction_mode[2] = entry["allow_player_add_to_free_place"]
+                self.slots[sid].interaction_mode[2] = entry[
+                    "allow_player_add_to_free_place"
+                ]
             if "empty_slot_image" in entry:
                 try:
-                    image = mcpython.ResourceLocator.read(entry["empty_slot_image"], "pil")
-                    image = mcpython.util.texture.to_pyglet_image(image.resize((32, 32), PIL.Image.NEAREST))
+                    image = mcpython.ResourceLocator.read(
+                        entry["empty_slot_image"], "pil"
+                    )
+                    image = mcpython.util.texture.to_pyglet_image(
+                        image.resize((32, 32), PIL.Image.NEAREST)
+                    )
                     self.slots[sid].empty_image = pyglet.sprite.Sprite(image)
                 except:
-                    logger.print_exception("[FATAL] failed to load empty slot image from {}".format(
-                        entry["empty_slot_image"]))
+                    logger.print_exception(
+                        "[FATAL] failed to load empty slot image from {}".format(
+                            entry["empty_slot_image"]
+                        )
+                    )
             if "allowed_tags" in entry:
                 self.slots[sid].allowed_item_tags = entry["allowed_tags"]
         if "image_size" in self.config:
@@ -93,14 +107,23 @@ class Inventory:
         if "image_location" in self.config:
             try:
                 if mcpython.ResourceLocator.exists(self.config["image_location"]):
-                    self.bgsprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read(
-                        self.config["image_location"], "pyglet"))
+                    self.bgsprite = pyglet.sprite.Sprite(
+                        mcpython.ResourceLocator.read(
+                            self.config["image_location"], "pyglet"
+                        )
+                    )
                 else:
-                    self.bgsprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read(
-                        "assets/missing_texture.png", "pyglet"))
+                    self.bgsprite = pyglet.sprite.Sprite(
+                        mcpython.ResourceLocator.read(
+                            "assets/missing_texture.png", "pyglet"
+                        )
+                    )
             except:
-                logger.print_exception("[FATAL] failed to load background image {}".format(
-                    self.config["image_location"]))
+                logger.print_exception(
+                    "[FATAL] failed to load background image {}".format(
+                        self.config["image_location"]
+                    )
+                )
         if "bg_image_pos" in self.config:
             self.bg_image_pos = tuple(self.config["bg_image_pos"])
         self.on_reload()
@@ -160,9 +183,11 @@ class Inventory:
         called when the inventory is hidden
         """
 
-    def is_closable_by_escape(self) -> bool: return True  # todo: make attribute
+    def is_closable_by_escape(self) -> bool:
+        return True  # todo: make attribute
 
-    def is_always_open(self) -> bool: return False  # todo: make attribute
+    def is_always_open(self) -> bool:
+        return False  # todo: make attribute
 
     def draw(self, hoveringslot=None):
         """
@@ -171,7 +196,10 @@ class Inventory:
         self.on_draw_background()
         x, y = self._get_position()
         if self.bgsprite:
-            self.bgsprite.position = (x + self.bg_image_pos[0], y + self.bg_image_pos[1])
+            self.bgsprite.position = (
+                x + self.bg_image_pos[0],
+                y + self.bg_image_pos[1],
+            )
             self.bgsprite.draw()
         self.on_draw_over_backgroundimage()
         for slot in self.slots:
@@ -206,17 +234,19 @@ class Inventory:
 
     def on_world_cleared(self):  # todo: remove
         [slot.get_itemstack().clean() for slot in self.slots]
-        if self in G.inventoryhandler.opened_inventorystack: G.inventoryhandler.hide(self)
+        if self in G.inventoryhandler.opened_inventorystack:
+            G.inventoryhandler.hide(self)
 
     def get_interaction_slots(self):  # todo: make attribute
         return self.slots
 
     def clear(self):
-        for slot in self.slots: slot.get_itemstack().clean()
+        for slot in self.slots:
+            slot.get_itemstack().clean()
 
     def copy(self):
         obj = self.__class__()
-        for i in range(3*9):
+        for i in range(3 * 9):
             obj.slots[i].set_itemstack(self.slots[i].get_itemstack().copy())
         return obj
 
@@ -241,25 +271,39 @@ class Inventory:
         """
         return "no:data"
 
-    def insert_items(self, items: list, random_check_order=False, insert_when_same_item=True):
+    def insert_items(
+        self, items: list, random_check_order=False, insert_when_same_item=True
+    ):
         while len(items) > 0:
-            self.insert_item(items.pop(0), random_check_order=random_check_order,
-                             insert_when_same_item=insert_when_same_item)
+            self.insert_item(
+                items.pop(0),
+                random_check_order=random_check_order,
+                insert_when_same_item=insert_when_same_item,
+            )
 
-    def insert_item(self, itemstack, random_check_order=False, insert_when_same_item=True):
-        if itemstack.is_empty(): return
+    def insert_item(
+        self, itemstack, random_check_order=False, insert_when_same_item=True
+    ):
+        if itemstack.is_empty():
+            return
         slots = self.slots.copy()
-        if random_check_order: random.shuffle(slots)
+        if random_check_order:
+            random.shuffle(slots)
         for slot in slots:
             if slot.itemstack.is_empty():
                 slot.set_itemstack(itemstack)
                 return
             elif slot.itemstack.get_item_name() == itemstack.get_item_name():
-                if slot.itemstack.amount + itemstack.amount <= itemstack.item.STACK_SIZE:
+                if (
+                    slot.itemstack.amount + itemstack.amount
+                    <= itemstack.item.STACK_SIZE
+                ):
                     slot.itemstack.add_amount(itemstack.amount)
                     return
                 elif insert_when_same_item:
-                    overflow = itemstack.amount - (itemstack.item.STACK_SIZE - slot.itemstack.amount)
+                    overflow = itemstack.amount - (
+                        itemstack.item.STACK_SIZE - slot.itemstack.amount
+                    )
                     slot.itemstack.amount = itemstack.item.STACK_SIZE
                     itemstack.set_amount(overflow)
         logger.println("itemstack overflow: ".format(itemstack))
@@ -271,12 +315,11 @@ class Inventory:
 
     def __del__(self):
         # we do not care about it when it is None [gc-sided deletion at the end of the program]
-        if G is None or G.inventoryhandler is None: return
+        if G is None or G.inventoryhandler is None:
+            return
         if self in G.inventoryhandler.alwaysopened:
             G.inventoryhandler.alwaysopened.remove(self)
         G.inventoryhandler.hide(self)
         if self in G.inventoryhandler.inventorys:
             G.inventoryhandler.inventorys.remove(self)
         G.inventoryhandler.update_shift_container()
-
-

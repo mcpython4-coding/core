@@ -48,7 +48,7 @@ class MatrixStack:
         return len(self.operation_stack) - 1
 
     def addViewport(self, *args):
-        self.operation_stack.append((3,)+args)
+        self.operation_stack.append((3,) + args)
         return len(self.operation_stack) - 1
 
     def addMatrixMode(self, mode):
@@ -59,7 +59,7 @@ class MatrixStack:
         self.operation_stack.append((5,))
 
     def addGluPerspective(self, *args):
-        self.operation_stack.append((6,)+args)
+        self.operation_stack.append((6,) + args)
         return len(self.operation_stack) - 1
 
     def modifyOperation(self, operation_id: int, *data):
@@ -68,7 +68,9 @@ class MatrixStack:
         :param operation_id: the id of the operation
         :param data: the data to use
         """
-        self.operation_stack[operation_id] = (self.operation_stack[operation_id][0],)+data
+        self.operation_stack[operation_id] = (
+            self.operation_stack[operation_id][0],
+        ) + data
 
     def copy(self, include_template_stack=True):
         """
@@ -122,15 +124,15 @@ class LinkedMatrixStack(MatrixStack):
     """
 
     def addTranslate3d(self, *args) -> int:
-        self.operation_stack.append((0,)+args)
+        self.operation_stack.append((0,) + args)
         return len(self.operation_stack) - 1
 
     def addRotate3d(self, *args) -> int:
-        self.operation_stack.append((1,)+args)
+        self.operation_stack.append((1,) + args)
         return len(self.operation_stack) - 1
 
     def addScale3d(self, *args) -> int:
-        self.operation_stack.append((2,)+args)
+        self.operation_stack.append((2,) + args)
         return len(self.operation_stack) - 1
 
     def apply(self):
@@ -140,21 +142,40 @@ class LinkedMatrixStack(MatrixStack):
         _gl.glLoadIdentity()
         for opcode, *d in self.operation_stack:
             if opcode == 0:
-                _gl.glTranslated(*([e if not callable(e) else e() for e in d] if not callable(d[0]) or len(d) != 1 else
-                                   d[0]()))
+                _gl.glTranslated(
+                    *(
+                        [e if not callable(e) else e() for e in d]
+                        if not callable(d[0]) or len(d) != 1
+                        else d[0]()
+                    )
+                )
             elif opcode == 1:
-                _gl.glRotated(*([e if not callable(e) else e() for e in d] if not callable(d[0]) or len(d) != 1 else
-                                d[0]()))
+                _gl.glRotated(
+                    *(
+                        [e if not callable(e) else e() for e in d]
+                        if not callable(d[0]) or len(d) != 1
+                        else d[0]()
+                    )
+                )
             elif opcode == 2:
                 _gl.glScaled(*[e if not callable(e) else e() for e in d])
             elif opcode == 3:
-                _gl.glViewport(*([e if not callable(e) else e() for e in d] if not callable(d[0]) or len(d) != 1 else
-                                 d[0]()))
+                _gl.glViewport(
+                    *(
+                        [e if not callable(e) else e() for e in d]
+                        if not callable(d[0]) or len(d) != 1
+                        else d[0]()
+                    )
+                )
             elif opcode == 4:
                 _gl.glMatrixMode(d[0] if not callable(d[0]) else d[0]())
             elif opcode == 5:
                 _gl.glLoadIdentity()
             elif opcode == 6:
-                _gl.gluPerspective(*([e if not callable(e) else e() for e in d] if not callable(d[0]) or len(d) != 1
-                                     else d[0]()))
-
+                _gl.gluPerspective(
+                    *(
+                        [e if not callable(e) else e() for e in d]
+                        if not callable(d[0]) or len(d) != 1
+                        else d[0]()
+                    )
+                )

@@ -27,4 +27,3 @@ class ICustomDrawMethodRenderer:
 class ICustomBlockVertexManager:
     def handle(self, block, vertices, face, blockstate):
         pass
-

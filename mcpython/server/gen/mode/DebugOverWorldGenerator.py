@@ -23,7 +23,9 @@ class Blockinfo:
 
     @classmethod
     def construct(cls):
-        BLOCKS: mcpython.common.event.Registry.Registry = G.registry.get_by_name("block")
+        BLOCKS: mcpython.common.event.Registry.Registry = G.registry.get_by_name(
+            "block"
+        )
 
         blocktable = list(BLOCKS.registered_object_map.values())
         blocktable.sort(key=lambda x: x.NAME)
@@ -49,7 +51,11 @@ class Blockinfo:
 
 def chunk_generate(chunk):
     cx, cz = chunk.position
-    if G.world.get_active_dimension().worldgenerationconfig["configname"] != "debug_overworld": return
+    if (
+        G.world.get_active_dimension().worldgenerationconfig["configname"]
+        != "debug_overworld"
+    ):
+        return
 
     if (cx, cz) in Blockinfo.TABLE:
         heigthmap = chunk.get_value("heightmap")
@@ -62,9 +68,10 @@ def chunk_generate(chunk):
             heigthmap[(x, z)] = [(0, 30)]
         for x in range(16):
             for z in range(16):
-                chunk.add_block((cx*16+x, 5,  cz*16+z), "minecraft:barrier")
+                chunk.add_block((cx * 16 + x, 5, cz * 16 + z), "minecraft:barrier")
 
-    if G.world.get_active_player().gamemode != 3: G.world.get_active_player().set_gamemode(3)
+    if G.world.get_active_player().gamemode != 3:
+        G.world.get_active_player().set_gamemode(3)
     G.world.get_active_player().flying = True
 
 
@@ -72,6 +79,9 @@ config = {"layers": []}
 
 G.worldgenerationhandler.register_world_gen_config("debug_overworld", config)
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:post", Blockinfo.construct,
-                                                     info="constructing debug world info")
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("worldgen:chunk:finished", chunk_generate)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:post", Blockinfo.construct, info="constructing debug world info"
+)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "worldgen:chunk:finished", chunk_generate
+)

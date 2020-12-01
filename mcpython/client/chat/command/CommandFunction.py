@@ -12,7 +12,12 @@ This project is not official by mojang and does not relate to it.
 from mcpython import globals as G
 import mcpython.client.chat.DataPack
 import mcpython.client.chat.command.Command
-from mcpython.client.chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
+from mcpython.client.chat.command.Command import (
+    ParseBridge,
+    ParseType,
+    ParseMode,
+    SubCommand,
+)
 
 
 @G.registry
@@ -26,7 +31,9 @@ class CommandFunction(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "function"
-        parsebridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL))
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL)
+        )
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -36,4 +43,3 @@ class CommandFunction(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def get_help() -> list:
         return ["/function <name>: runs the function named name from an datapack"]
-

@@ -36,13 +36,20 @@ def register_block(registry, blockclass):
 
             # check for functional identical parts
             if instance.on_random_update.__code__ != Block.on_random_update.__code__:
-                logger.println("[WARN] block '{}' has not set ENABLE_RANDOM_TICKS, but the event function was changed "
-                               "from {} to {}!".format(blockclass.NAME, blockclass.on_random_update,
-                                                       Block.on_random_update))
+                logger.println(
+                    "[WARN] block '{}' has not set ENABLE_RANDOM_TICKS, but the event function was changed "
+                    "from {} to {}!".format(
+                        blockclass.NAME,
+                        blockclass.on_random_update,
+                        Block.on_random_update,
+                    )
+                )
                 blockclass.ENABLE_RANDOM_TICKS = True
 
 
-block_registry = mcpython.common.event.Registry.Registry("block", ["minecraft:block_registry"], injection_function=register_block)
+block_registry = mcpython.common.event.Registry.Registry(
+    "block", ["minecraft:block_registry"], injection_function=register_block
+)
 block_registry.full_table = {}  # an table of localized & un-localized block names
 
 
@@ -50,12 +57,27 @@ def load():
     """
     loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
     """
-    from . import (BlockGrassBlock, BlockDirt, BlockCraftingTable, BlockChest, BlockEnderChest, BlockNetherPortal,
-                   BlockShulkerBox, BlockCarpet, BlockFurnace, BlockBarrel, BlockCoralBlock, BlockFence, BlockWall)
+    from . import (
+        BlockGrassBlock,
+        BlockDirt,
+        BlockCraftingTable,
+        BlockChest,
+        BlockEnderChest,
+        BlockNetherPortal,
+        BlockShulkerBox,
+        BlockCarpet,
+        BlockFurnace,
+        BlockBarrel,
+        BlockCoralBlock,
+        BlockFence,
+        BlockWall,
+    )
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:load", load, info="loading special blocks")
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:block:load", load, info="loading special blocks"
+)
 
 
-from . import (IFallingBlock, ILog)
+from . import IFallingBlock, ILog
 from . import Blocks

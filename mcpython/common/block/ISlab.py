@@ -18,9 +18,11 @@ from mcpython.util.enums import SlabModes
 
 
 BBOX_DICT = {
-    SlabModes.TOP: mcpython.common.block.BoundingBox.BoundingBox((1, 0.5, 1), (0, 0.5, 0)),
+    SlabModes.TOP: mcpython.common.block.BoundingBox.BoundingBox(
+        (1, 0.5, 1), (0, 0.5, 0)
+    ),
     SlabModes.BOTTOM: mcpython.common.block.BoundingBox.BoundingBox((1, 0.5, 1)),
-    SlabModes.DOUBLE: mcpython.common.block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
+    SlabModes.DOUBLE: mcpython.common.block.BoundingBox.FULL_BLOCK_BOUNDING_BOX,
 }
 
 
@@ -35,7 +37,9 @@ class ISlab(mcpython.common.block.Block.Block):
             self.type = SlabModes.TOP
         else:
             self.type = SlabModes.BOTTOM
-        self.face_solid = {face: False for face in mcpython.util.enums.EnumSide.iterate()}
+        self.face_solid = {
+            face: False for face in mcpython.util.enums.EnumSide.iterate()
+        }
 
     def get_model_state(self):
         return {"type": self.type.name.lower()}
@@ -48,9 +52,11 @@ class ISlab(mcpython.common.block.Block.Block):
     def get_all_model_states() -> list:
         return [{"type": x.name.upper()} for x in SlabModes]
 
-    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interact(
+        self, player, itemstack, button, modifiers, exact_hit
+    ) -> bool:
         # todo: add half -> double convert
         return False
 
-    def get_view_bbox(self): return BBOX_DICT[self.type]
-
+    def get_view_bbox(self):
+        return BBOX_DICT[self.type]

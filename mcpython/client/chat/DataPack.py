@@ -39,14 +39,16 @@ class DataPackHandler:
 
     def __init__(self):
         self.data_packs = []
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("game:close", self.cleanup)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "game:close", self.cleanup
+        )
 
     def _load(self):
         """
         will load all data packs
         """
-        for path in os.listdir(G.home+"/datapacks"):
-            self.data_packs.append(self._load_datapack(G.home+"/datapacks/"+path))
+        for path in os.listdir(G.home + "/datapacks"):
+            self.data_packs.append(self._load_datapack(G.home + "/datapacks/" + path))
         G.eventhandler.call("datapack:search")
 
     def _load_datapack(self, directory: str):
@@ -66,14 +68,19 @@ class DataPackHandler:
         """
         reloads all data packs
         """
-        old_status_table = {datapack.name: datapack.status for datapack in self.data_packs}
+        old_status_table = {
+            datapack.name: datapack.status for datapack in self.data_packs
+        }
         self.cleanup()
         self._load()
         G.eventhandler.call("datapack:reload")
         # restore old state
         for datapack in self.data_packs:
             if datapack.name in old_status_table:
-                if old_status_table[datapack.name] in (DataPackStatus.ACTIVATED, DataPackStatus.DEACTIVATED):
+                if old_status_table[datapack.name] in (
+                    DataPackStatus.ACTIVATED,
+                    DataPackStatus.DEACTIVATED,
+                ):
                     datapack.status = old_status_table[datapack.name]
 
     def cleanup(self):
@@ -81,7 +88,8 @@ class DataPackHandler:
         removes all data packs from the system
         """
         G.eventhandler.call("datapack:unload:pre")
-        for datapack in self.data_packs: datapack.unload()
+        for datapack in self.data_packs:
+            datapack.unload()
         self.data_packs.clear()
         G.eventhandler.call("datapack:unload:post")
 
@@ -133,29 +141,43 @@ class DataPack:
         """
         will load the data pack
         """
-        if self.status == DataPackStatus.SYSTEM_ERROR: return
+        if self.status == DataPackStatus.SYSTEM_ERROR:
+            return
         # when the data pack was active, unload it first
         try:
-            if self.status in (DataPackStatus.ACTIVATED, DataPackStatus.DEACTIVATED): self.unload()
-            self.access = mcpython.ResourceLocator.ResourceDirectory(self.directory) if os.path.isdir(
-                self.directory) else \
-                mcpython.ResourceLocator.ResourceZipFile(self.directory)
+            if self.status in (DataPackStatus.ACTIVATED, DataPackStatus.DEACTIVATED):
+                self.unload()
+            self.access = (
+                mcpython.ResourceLocator.ResourceDirectory(self.directory)
+                if os.path.isdir(self.directory)
+                else mcpython.ResourceLocator.ResourceZipFile(self.directory)
+            )
             info = self.access.read("pack.mcmeta", "json")["pack"]
             if info["pack_format"] not in (1, 2, 3):
                 self.status = DataPackStatus.ERROR
-                logger.println("[DATAPACK][ERROR] datapack version '{}' can't be loaded".format(info["pack_format"]))
+                logger.println(
+                    "[DATAPACK][ERROR] datapack version '{}' can't be loaded".format(
+                        info["pack_format"]
+                    )
+                )
                 return
             self.description = info["description"]
             for file in self.access.get_all_entries_in_directory("data"):
-                if file.endswith("/"): continue
+                if file.endswith("/"):
+                    continue
                 split = file.split("/")
                 if "function" in file:
                     name = "{}:{}".format(split[1], "/".join(split[3:]).split(".")[0])
-                    self.function_table[name] = mcpython.client.chat.command.McFunctionFile.McFunctionFile(
-                        self.access.read(file, None).decode("UTF-8"), name)
+                    self.function_table[
+                        name
+                    ] = mcpython.client.chat.command.McFunctionFile.McFunctionFile(
+                        self.access.read(file, None).decode("UTF-8"), name
+                    )
         except:
             self.status = DataPackStatus.SYSTEM_ERROR
-            logger.print_exception("error during loading data pack '{}'".format(self.name))
+            logger.print_exception(
+                "error during loading data pack '{}'".format(self.name)
+            )
             return
         self.status = DataPackStatus.ACTIVATED
 
@@ -163,18 +185,27 @@ class DataPack:
         """
         will unload the datapack
         """
-        if self.status == DataPackStatus.SYSTEM_ERROR: return
-        if self.status == DataPackStatus.INACTIVE or self.status == DataPackStatus.UNLOADED:
+        if self.status == DataPackStatus.SYSTEM_ERROR:
+            return
+        if (
+            self.status == DataPackStatus.INACTIVE
+            or self.status == DataPackStatus.UNLOADED
+        ):
             raise ValueError("can't un-load an not loaded datapack")
-        self.status = DataPackStatus.DEACTIVATED   # deactivated access during working
+        self.status = DataPackStatus.DEACTIVATED  # deactivated access during working
         try:
             self.function_table.clear()  # unload all .mcfunction files
         except:
             self.status = DataPackStatus.SYSTEM_ERROR
-            logger.print_exception("error during unloading data pack '{}'".format(self.name))
+            logger.print_exception(
+                "error during unloading data pack '{}'".format(self.name)
+            )
             return
-        self.status = DataPackStatus.UNLOADED  # we have successfully unloaded the data-pack
-        if self.access: self.access.close()  # remove access to the file system
+        self.status = (
+            DataPackStatus.UNLOADED
+        )  # we have successfully unloaded the data-pack
+        if self.access:
+            self.access.close()  # remove access to the file system
         self.access = None  # an remove the instance
 
     def set_status(self, status: DataPackStatus):
@@ -182,9 +213,16 @@ class DataPack:
         sets the status of the data pack
         :param status: the status to set
         """
-        if status == self.status: return
+        if status == self.status:
+            return
         self.status = status
-        if status == DataPackStatus.ACTIVATED and self.access not in mcpython.ResourceLocator.RESOURCE_LOCATIONS:
+        if (
+            status == DataPackStatus.ACTIVATED
+            and self.access not in mcpython.ResourceLocator.RESOURCE_LOCATIONS
+        ):
             mcpython.ResourceLocator.RESOURCE_LOCATIONS.append(self.access)
-        elif status == DataPackStatus.DEACTIVATED and self.access in mcpython.ResourceLocator.RESOURCE_LOCATIONS:
+        elif (
+            status == DataPackStatus.DEACTIVATED
+            and self.access in mcpython.ResourceLocator.RESOURCE_LOCATIONS
+        ):
             mcpython.ResourceLocator.RESOURCE_LOCATIONS.remove(self.access)

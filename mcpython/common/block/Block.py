@@ -46,7 +46,9 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
     HARDNESS: float = 1  # the hardness of the block
     BLAST_RESISTANCE: float = 0  # how good it is in resisting explosions
     MINIMUM_TOOL_LEVEL: float = 0  # the minimum tool level
-    BEST_TOOLS_TO_BREAK: typing.List[mcpython.util.enums.ToolType] = []  # the tools best to break
+    BEST_TOOLS_TO_BREAK: typing.List[
+        mcpython.util.enums.ToolType
+    ] = []  # the tools best to break
 
     # if the block is solid; None is unset and set by system by checking face_solid on an block instance
     # WARNING: in the future, these auto-set will be removed todo: do so
@@ -58,11 +60,15 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
     # if mobs can spawn on the block; None is unset and set by system to SOLID
     CAN_MOBS_SPAWN_ON: typing.Union[bool, None] = None
 
-    ENABLE_RANDOM_TICKS = False  # if the random tick function should be called if needed or not
+    ENABLE_RANDOM_TICKS = (
+        False  # if the random tick function should be called if needed or not
+    )
 
     NO_COLLISION = False
 
-    def __init__(self, position: tuple, set_to=None, real_hit=None, state=None, player=None):
+    def __init__(
+        self, position: tuple, set_to=None, real_hit=None, state=None, player=None
+    ):
         """
         creates new Block-instance.
         sets up basic stuff and creates the attributes
@@ -75,10 +81,13 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         self.position = position
         self.set_to = set_to
         self.real_hit = real_hit
-        if state is not None: self.set_model_state(state)
+        if state is not None:
+            self.set_model_state(state)
         self.face_state = mcpython.common.block.BlockFaceState.BlockFaceState(self)
         self.block_state = None
-        self.face_solid = {face: True for face in mcpython.util.enums.EnumSide.iterate()}
+        self.face_solid = {
+            face: True for face in mcpython.util.enums.EnumSide.iterate()
+        }
         self.uuid = uuid.uuid4()
         self.injected_redstone_power = {}
 
@@ -117,7 +126,9 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         Is also invoked on "normal" block update
         """
 
-    def on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple):
+    def on_player_interaction(
+        self, player, button: int, modifiers: int, hit_position: tuple
+    ):
         """
         Called when the player pressed on mouse button on the block.
         :param player: the entity instance that interacts. WARNING: may not be an player instance
@@ -126,10 +137,18 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         :param hit_position: where the block was hit at
         :return: if default logic should be interrupted or not
         """
-        self.on_player_interact(player, player.get_active_inventory_slot().get_itemstack(), button, modifiers, hit_position)
+        self.on_player_interact(
+            player,
+            player.get_active_inventory_slot().get_itemstack(),
+            button,
+            modifiers,
+            hit_position,
+        )
         return False
 
-    def on_player_interact(self, player, itemstack, button, modifiers, exact_hit) -> bool:
+    def on_player_interact(
+        self, player, itemstack, button, modifiers, exact_hit
+    ) -> bool:
         return False
 
     def on_no_collide_collide(self, player, previous: bool):
@@ -199,23 +218,35 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         :param state: the state to set as an dict
         """
 
-    def get_view_bbox(self) -> typing.Union[
-        mcpython.common.block.BoundingBox.BoundingBox, mcpython.common.block.BoundingBox.BoundingArea]:
+    def get_view_bbox(
+        self,
+    ) -> typing.Union[
+        mcpython.common.block.BoundingBox.BoundingBox,
+        mcpython.common.block.BoundingBox.BoundingArea,
+    ]:
         """
         used to get the bbox of the block for ray collision
         :return: the bbox instance
         """
-        return mcpython.common.block.BoundingBox.FULL_BLOCK_BOUNDING_BOX  # per default, every block is full
+        return (
+            mcpython.common.block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
+        )  # per default, every block is full
 
-    def get_collision_bbox(self) -> typing.Union[
-        mcpython.common.block.BoundingBox.BoundingBox, mcpython.common.block.BoundingBox.BoundingArea]:
+    def get_collision_bbox(
+        self,
+    ) -> typing.Union[
+        mcpython.common.block.BoundingBox.BoundingBox,
+        mcpython.common.block.BoundingBox.BoundingArea,
+    ]:
         """
         used to get the bbox of the block for phyical body collision
         :return: the bbox instance
         """
         return self.get_view_bbox()
 
-    def on_request_item_for_block(self, itemstack: mcpython.client.gui.ItemStack.ItemStack):
+    def on_request_item_for_block(
+        self, itemstack: mcpython.client.gui.ItemStack.ItemStack
+    ):
         """
         used when an item is requested exactly for this block. Useful for setting custom data to the itemstack
         :param itemstack: the itemstack generated for the block
@@ -237,7 +268,9 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         :param side: the side to use
         :return: the value, as an integer between 0 and 15
         """
-        return max(self.get_redstone_source_power(side), *self.injected_redstone_power.values())
+        return max(
+            self.get_redstone_source_power(side), *self.injected_redstone_power.values()
+        )
 
     def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide):
         """
@@ -250,16 +283,21 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
     # registry setup functions, will be removed in future
 
     @classmethod
-    def modify_block_item(cls, itemconstructor): pass  # todo: add an table for subscriptions
+    def modify_block_item(cls, itemconstructor):
+        pass  # todo: add an table for subscriptions
 
     @staticmethod
-    def get_all_model_states() -> list: return [{}]  # todo: make attribute or external config file
+    def get_all_model_states() -> list:
+        return [{}]  # todo: make attribute or external config file
 
     # deprecated stuff
 
     @deprecation.deprecated("dev1-2", "a1.3.0")
-    def get_provided_slots(self, side: mcpython.util.enums.EnumSide) -> typing.List[
-            typing.Union[mcpython.client.gui.Slot.Slot, mcpython.client.gui.Slot.SlotCopy]]:
+    def get_provided_slots(
+        self, side: mcpython.util.enums.EnumSide
+    ) -> typing.List[
+        typing.Union[mcpython.client.gui.Slot.Slot, mcpython.client.gui.Slot.SlotCopy]
+    ]:
         """
         gets the slots for an given side
         :param side: the side to check

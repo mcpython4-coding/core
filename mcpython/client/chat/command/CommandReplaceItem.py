@@ -12,7 +12,12 @@ This project is not official by mojang and does not relate to it.
 from mcpython import globals as G
 import mcpython.client.chat.command.Command
 import mcpython.client.gui.ItemStack
-from mcpython.client.chat.command.Command import ParseType, ParseMode, SubCommand, ParseBridge
+from mcpython.client.chat.command.Command import (
+    ParseType,
+    ParseMode,
+    SubCommand,
+    ParseBridge,
+)
 
 
 @G.registry
@@ -28,12 +33,28 @@ class CommandReplaceItem(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "replaceitem"
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "block").add_subcommand(
-            SubCommand(ParseType.POSITION).add_subcommand(SubCommand(ParseType.INT).add_subcommand(
-                SubCommand(ParseType.ITEMNAME).add_subcommand(SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL))))))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "entity").add_subcommand(
-            SubCommand(ParseType.SELECTOR).add_subcommand(SubCommand(ParseType.INT).add_subcommand(
-                SubCommand(ParseType.ITEMNAME).add_subcommand(SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL))))))
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.DEFINIED_STRING, "block").add_subcommand(
+                SubCommand(ParseType.POSITION).add_subcommand(
+                    SubCommand(ParseType.INT).add_subcommand(
+                        SubCommand(ParseType.ITEMNAME).add_subcommand(
+                            SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
+                        )
+                    )
+                )
+            )
+        )
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.DEFINIED_STRING, "entity").add_subcommand(
+                SubCommand(ParseType.SELECTOR).add_subcommand(
+                    SubCommand(ParseType.INT).add_subcommand(
+                        SubCommand(ParseType.ITEMNAME).add_subcommand(
+                            SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
+                        )
+                    )
+                )
+            )
+        )
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -49,12 +70,18 @@ class CommandReplaceItem(mcpython.client.chat.command.Command.Command):
                     G.chat.print_ln("[ERROR] slot id must be greater than 0")
                     return
                 if slot_id >= len(inventory.slots):
-                    G.chat.print_ln("[ERROR] slot id {} is bigger than slot count {}".format(slot_id,
-                                                                                             len(inventory.slots)))
+                    G.chat.print_ln(
+                        "[ERROR] slot id {} is bigger than slot count {}".format(
+                            slot_id, len(inventory.slots)
+                        )
+                    )
                     return
                 slot = inventory.slots[slot_id]
                 slot.set_itemstack(
-                    mcpython.client.gui.ItemStack.ItemStack(values[3], 1 if len(values) == 4 else values[4]))
+                    mcpython.client.gui.ItemStack.ItemStack(
+                        values[3], 1 if len(values) == 4 else values[4]
+                    )
+                )
             else:
                 G.chat.print_ln("[ERROR] at position {} is no block".format(values[1]))
         elif values[0] == "entity":
@@ -64,15 +91,22 @@ class CommandReplaceItem(mcpython.client.chat.command.Command.Command):
                     G.chat.print_ln("[ERROR] slot id must be greater than 0")
                     return
                 if slot_id >= len(entity.inventory_slots):
-                    G.chat.print_ln("[ERROR] slot id {} is bigger than slot count {}".format(
-                        slot_id, len(entity.inventory_slots)))
+                    G.chat.print_ln(
+                        "[ERROR] slot id {} is bigger than slot count {}".format(
+                            slot_id, len(entity.inventory_slots)
+                        )
+                    )
                     return
                 slot = entity.inventory_slots[slot_id]
                 slot.set_itemstack(
-                    mcpython.client.gui.ItemStack.ItemStack(values[3], 1 if len(values) == 4 else values[4]))
+                    mcpython.client.gui.ItemStack.ItemStack(
+                        values[3], 1 if len(values) == 4 else values[4]
+                    )
+                )
 
     @staticmethod
     def get_help() -> list:
-        return ["/replaceitem block <position> <slot> <item> [<amount>]: sets an slot of an block-inventory",
-                "/replaceitem entity <selector> <slot> <item> [<amount>]: sets an slot in an entity-inventory"]
-
+        return [
+            "/replaceitem block <position> <slot> <item> [<amount>]: sets an slot of an block-inventory",
+            "/replaceitem entity <selector> <slot> <item> [<amount>]: sets an slot in an entity-inventory",
+        ]

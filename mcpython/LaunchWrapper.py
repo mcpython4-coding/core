@@ -30,6 +30,7 @@ class LaunchWrapper:
         import mcpython.common.event.EventHandler
 
         import mcpython.ResourceLocator
+
         mcpython.ResourceLocator.load_resource_packs()
 
         self.setup_files()
@@ -47,7 +48,12 @@ class LaunchWrapper:
 
         import mcpython.common.mod.ModMcpython
         import mcpython.common.mod.ConfigFile
-        from mcpython.common.data.datagen.mcpython import recipes, textures, entity, blockmodels
+        from mcpython.common.data.datagen.mcpython import (
+            recipes,
+            textures,
+            entity,
+            blockmodels,
+        )
 
         @G.modloader("minecraft", "special:exit")
         def exit():
@@ -82,9 +88,11 @@ class LaunchWrapper:
         logger.println("---------------" + "-" * len(version))
 
     def setup_files(self):
-        if not os.path.exists(G.home + "/datapacks"): os.makedirs(G.home + "/datapacks")
+        if not os.path.exists(G.home + "/datapacks"):
+            os.makedirs(G.home + "/datapacks")
 
-        if not os.path.isdir(G.home): os.makedirs(G.home)
+        if not os.path.isdir(G.home):
+            os.makedirs(G.home)
 
         sys.path.append(G.local + "/mcpython")
 
@@ -95,7 +103,9 @@ class LaunchWrapper:
 
         if os.path.exists(G.build):  # copy default skin to make it start correctly
             try:
-                mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build + "/skin.png")
+                mcpython.ResourceLocator.read(
+                    "assets/minecraft/textures/entity/steve.png", "pil"
+                ).save(G.build + "/skin.png")
             except:
                 logger.print_exception("[FATAL] failed to load default skin")
                 sys.exit(-1)
@@ -111,15 +121,21 @@ class LaunchWrapper:
 
         # Create the world instance
         import mcpython.common.world.World
+
         G.world = mcpython.common.world.World.World()
 
         import pyglet
         import mcpython.client.rendering.window
+
         # todo: move size to config files
-        mcpython.client.rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
+        mcpython.client.rendering.window.Window(
+            width=800, height=600, resizable=True
+        ).reset_caption()
         try:
-            G.window.set_icon(mcpython.ResourceLocator.read("icon_16x16.png", "pyglet"),
-                              mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"))
+            G.window.set_icon(
+                mcpython.ResourceLocator.read("icon_16x16.png", "pyglet"),
+                mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"),
+            )
             G.eventhandler.call("game:gameloop_startup")
         except:
             logger.print_exception("[FATAL] failed to load window images")
@@ -131,4 +147,3 @@ class LaunchWrapper:
         except:
             logger.print_exception("ERROR DURING RUNTIME")
             raise
-

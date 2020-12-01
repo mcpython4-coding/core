@@ -11,7 +11,12 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import globals as G, logger
 import mcpython.client.chat.command.Command
-from mcpython.client.chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
+from mcpython.client.chat.command.Command import (
+    ParseBridge,
+    ParseType,
+    ParseMode,
+    SubCommand,
+)
 
 
 @G.registry
@@ -25,8 +30,11 @@ class CommandSummon(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "summon"
-        parsebridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES).add_subcommand(
-            SubCommand(ParseType.POSITION, mode=ParseMode.OPTIONAL)))
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.STRING_WITHOUT_QUOTES).add_subcommand(
+                SubCommand(ParseType.POSITION, mode=ParseMode.OPTIONAL)
+            )
+        )
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -35,9 +43,10 @@ class CommandSummon(mcpython.client.chat.command.Command.Command):
         try:
             G.entityhandler.add_entity(values[0], position, check_summon=True)
         except ValueError:
-            logger.println("[COMMAND][SUMMON] entity type '{}' not found!".format(values[0]))
+            logger.println(
+                "[COMMAND][SUMMON] entity type '{}' not found!".format(values[0])
+            )
 
     @staticmethod
     def get_help() -> list:
         return []
-

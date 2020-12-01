@@ -36,9 +36,13 @@ class TagGroup:
         :return:
         """
         if replace:
-            self.tags[tagname] = mcpython.common.data.tags.Tag.Tag.from_data(self, tagname, data)
+            self.tags[tagname] = mcpython.common.data.tags.Tag.Tag.from_data(
+                self, tagname, data
+            )
         else:
-            self.tags.setdefault(tagname, mcpython.common.data.tags.Tag.Tag(self, tagname, [])).entries.extend(data["values"])
+            self.tags.setdefault(
+                tagname, mcpython.common.data.tags.Tag.Tag(self, tagname, [])
+            ).entries.extend(data["values"])
 
     def build(self):
         """
@@ -59,12 +63,14 @@ class TagGroup:
         :param obj:
         :param cache: if data should be cached
         """
-        if obj in self.cache: return self.cache[obj]
+        if obj in self.cache:
+            return self.cache[obj]
         result = []
         for tag_name in self.tags:
             if obj in self.tags[tag_name].entries:
                 result.append(tag_name)
-        if cache: self.cache[obj] = result
+        if cache:
+            self.cache[obj] = result
         return result
 
     def provides_object_tag(self, obj, tag_name: str) -> bool:
@@ -82,6 +88,6 @@ class TagGroup:
         :param taglist: the list of tag names to check
         """
         for tag in taglist:
-            if self.provides_object_tag(obj, tag): return True
+            if self.provides_object_tag(obj, tag):
+                return True
         return False
-

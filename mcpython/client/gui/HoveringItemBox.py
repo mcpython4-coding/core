@@ -22,7 +22,10 @@ class IHoveringItemBoxDefinitionPlugin:
     Multiple plugins can co-exists. They are applied in order of registration.
     Please make sure that you look for changes before applying your changes (as you might interfere with stuff from another plugin)
     """
-    def manipulateShownText(self, slot: mcpython.client.gui.ItemStack.ItemStack, text: list):
+
+    def manipulateShownText(
+        self, slot: mcpython.client.gui.ItemStack.ItemStack, text: list
+    ):
         raise NotImplementedError()
 
 
@@ -38,7 +41,9 @@ class IHoveringItemBoxDefinition:
         """
         cls.PLUGINS = []
 
-    def getHoveringText(self, itemstack: mcpython.client.gui.ItemStack.ItemStack) -> list:
+    def getHoveringText(
+        self, itemstack: mcpython.client.gui.ItemStack.ItemStack
+    ) -> list:
         raise NotImplementedError()
 
     @classmethod
@@ -52,20 +57,47 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
     Uses the default Item-class-methods to render certain stuff
     """
 
-    def __init__(self, default_style="<font color='{color}'>{text}</font>", localize_builder="item.{}.{}"):
+    def __init__(
+        self,
+        default_style="<font color='{color}'>{text}</font>",
+        localize_builder="item.{}.{}",
+    ):
         self.localize_builder = localize_builder
         self.default_style = default_style
 
-    def getHoveringText(self, itemstack: mcpython.client.gui.ItemStack.ItemStack) -> list:
-        if itemstack.is_empty(): return []
+    def getHoveringText(
+        self, itemstack: mcpython.client.gui.ItemStack.ItemStack
+    ) -> list:
+        if itemstack.is_empty():
+            return []
         item_name = itemstack.get_item_name()
         raw = self.localize_builder.format(*item_name.split(":"))
         localized_name = mcpython.client.Language.get(raw)
-        if raw == localized_name: localized_name = itemstack.item.__class__.__name__
-        if localized_name == "ConstructedItem": localized_name = "!MissingName!{{{};{}x}}".format(item_name, itemstack.amount)
-        stuff = [self.default_style.format(color=itemstack.item.ITEM_NAME_COLOR, text=localized_name)] + \
-                [self.default_style.format(color="gray", text=mcpython.client.Language.translate(line)) for line in itemstack.item.getAdditionalTooltipText(itemstack, self)] + \
-                [self.default_style.format(color="gray", text=item_name), self.default_style.format(color="blue", text="<b><i>" + item_name.split(":")[0] + "</i></b>")]
+        if raw == localized_name:
+            localized_name = itemstack.item.__class__.__name__
+        if localized_name == "ConstructedItem":
+            localized_name = "!MissingName!{{{};{}x}}".format(
+                item_name, itemstack.amount
+            )
+        stuff = (
+            [
+                self.default_style.format(
+                    color=itemstack.item.ITEM_NAME_COLOR, text=localized_name
+                )
+            ]
+            + [
+                self.default_style.format(
+                    color="gray", text=mcpython.client.Language.translate(line)
+                )
+                for line in itemstack.item.getAdditionalTooltipText(itemstack, self)
+            ]
+            + [
+                self.default_style.format(color="gray", text=item_name),
+                self.default_style.format(
+                    color="blue", text="<b><i>" + item_name.split(":")[0] + "</i></b>"
+                ),
+            ]
+        )
         return stuff
 
 
@@ -75,7 +107,9 @@ DefaultHoveringItemBoxDefinition.setup()
 # Feel free to override, but use IHoveringItemBoxDefinitionPlugin were possible instead
 # Everything here MUST extend IHoveringItemBoxDefinition.
 DEFAULT_ITEM_TOOLTIP = DefaultHoveringItemBoxDefinition()
-DEFAULT_BLOCK_ITEM_TOOLTIP = DefaultHoveringItemBoxDefinition(localize_builder="block.{}.{}")
+DEFAULT_BLOCK_ITEM_TOOLTIP = DefaultHoveringItemBoxDefinition(
+    localize_builder="block.{}.{}"
+)
 
 
 class HoveringItemBoxProvider:
@@ -106,16 +140,23 @@ class HoveringItemBoxProvider:
             for plugin in self.cached_provider.PLUGINS:
                 plugin.manipulateShownText(itemstack, self.cached_text)
             if len(self.labels) > len(self.cached_text):
-                [label.delete() for label in self.labels[len(self.cached_text):]]
-                self.labels = self.labels[:len(self.cached_text)]
-            if len(self.labels) < len(self.cached_text): self.labels += [pyglet.text.HTMLLabel(batch=self.label_batch) for _ in
-                                                                         range(len(self.cached_text)-len(self.labels))]
+                [label.delete() for label in self.labels[len(self.cached_text) :]]
+                self.labels = self.labels[: len(self.cached_text)]
+            if len(self.labels) < len(self.cached_text):
+                self.labels += [
+                    pyglet.text.HTMLLabel(batch=self.label_batch)
+                    for _ in range(len(self.cached_text) - len(self.labels))
+                ]
             for i, line in enumerate(self.cached_text):
                 text = pyglet.text.decode_html(line)
                 self.labels[i].document = text
                 self.labels[i].anchor_y = "top"
-            self.bg_rectangle.width = max([label.content_width for label in self.labels]) + 10
-            self.bg_rectangle.height = sum([label.content_height // 2 for label in self.labels]) + 10
+            self.bg_rectangle.width = (
+                max([label.content_width for label in self.labels]) + 10
+            )
+            self.bg_rectangle.height = (
+                sum([label.content_height // 2 for label in self.labels]) + 10
+            )
         self.bg_rectangle.position = position
         self.bg_rectangle.draw()
         y = position[1] + self.bg_rectangle.height
@@ -134,4 +175,3 @@ class HoveringItemBoxProvider:
         self.last_slot = None
         self.cached_text = None
         self.cached_provider = None
-

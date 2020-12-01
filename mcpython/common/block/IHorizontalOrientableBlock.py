@@ -42,5 +42,7 @@ class IHorizontalOrientableBlock(mcpython.common.block.Block.Block):
 
     @classmethod
     def get_all_model_states(cls) -> list:
-        return [{cls.MODEL_FACE_NAME: face.name} for face in mcpython.util.enums.EnumSide.iterate()[2:]]
-
+        return [
+            {cls.MODEL_FACE_NAME: face.name}
+            for face in mcpython.util.enums.EnumSide.iterate()[2:]
+        ]

@@ -27,4 +27,3 @@ def init():
     @G.modloader("{NAME}", "stage:item:factory_usage")
     def load_item_factories():  # ... and here the items!
         pass
-

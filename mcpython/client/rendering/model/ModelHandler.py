@@ -49,7 +49,7 @@ class ModelHandler:
             for model in found_models:
                 s = model.split("/")
                 mod_fix = s[s.index("block") - 2]
-                address_fix = "/".join(s[s.index("block") + 1:])
+                address_fix = "/".join(s[s.index("block") + 1 :])
                 name = mod_fix + ":block/" + ".".join(address_fix.split(".")[:-1])
                 self.found_models[name] = model
         G.eventhandler.call("modelhandler:searched")
@@ -63,20 +63,32 @@ class ModelHandler:
         self.found_models[name] = data
 
     def build(self, immediate=False):
-        [self.let_subscribe_to_build(model, immediate=immediate) for model in self.used_models]  # todo: use set intersection
+        [
+            self.let_subscribe_to_build(model, immediate=immediate)
+            for model in self.used_models
+        ]  # todo: use set intersection
 
     def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
-        if modname not in G.modloader.mods: modname = "minecraft"
+        if modname not in G.modloader.mods:
+            modname = "minecraft"
         if immediate:
             self.special_build(model)
         else:
-            G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake_prepare", self.special_build, model,
-                                                         info="filtering model '{}'".format(model))
+            G.modloader.mods[modname].eventbus.subscribe(
+                "stage:model:model_bake_prepare",
+                self.special_build,
+                model,
+                info="filtering model '{}'".format(model),
+            )
 
     def special_build(self, used: str):
         if used.count(":") == 0:
-            logger.println("[WARN] deprecated access to model without minecraft-prefix to '{}'".format(used))
+            logger.println(
+                "[WARN] deprecated access to model without minecraft-prefix to '{}'".format(
+                    used
+                )
+            )
             used = "minecraft:" + used
         if used not in self.found_models:
             # logger.println("model error: can't locate model for '{}'".format(used))
@@ -86,8 +98,15 @@ class ModelHandler:
             try:
                 data = mcpython.ResourceLocator.read(file, "json")
             except json.decoder.JSONDecodeError:
-                data = {"parent": "minecraft:block/cube_all", "textures": {"all": "assets/missing_texture.png"}}
-                logger.print_exception("during loading model from file {}, now replaced by missing texture".format(file))
+                data = {
+                    "parent": "minecraft:block/cube_all",
+                    "textures": {"all": "assets/missing_texture.png"},
+                }
+                logger.print_exception(
+                    "during loading model from file {}, now replaced by missing texture".format(
+                        file
+                    )
+                )
         else:
             data = file
         if "parent" in data:
@@ -95,12 +114,16 @@ class ModelHandler:
             depend = [data["parent"]]
         else:
             depend = []
-        self.dependence_list.append((used, [e if ":" in e else "minecraft:" + e for e in depend]))
+        self.dependence_list.append(
+            (used, [e if ":" in e else "minecraft:" + e for e in depend])
+        )
 
     def process_models(self, immediate=False):
         try:
             sorted_models = mcpython.util.math.topological_sort(self.dependence_list)
-            sorted_models.remove("minecraft:block/block")  # This is the build-in model and we don't need it
+            sorted_models.remove(
+                "minecraft:block/block"
+            )  # This is the build-in model and we don't need it
         except ValueError:
             logger.println(self.found_models, "\n", self.dependence_list)
             logger.print_exception("top-sort error during sorting models")
@@ -112,46 +135,65 @@ class ModelHandler:
             if immediate:
                 self.load_model(x)
             else:
-                G.modloader.mods[modname].eventbus.subscribe("stage:model:model_bake", self.load_model, x,
-                                                             info="baking model '{}'".format(x))
+                G.modloader.mods[modname].eventbus.subscribe(
+                    "stage:model:model_bake",
+                    self.load_model,
+                    x,
+                    info="baking model '{}'".format(x),
+                )
 
     def load_model(self, name: str):
-        if ":" not in name: name = "minecraft:" + name
-        if name in self.models: return
+        if ":" not in name:
+            name = "minecraft:" + name
+        if name in self.models:
+            return
         location = self.found_models[name]
         try:
             if type(location) == str:
                 modeldata = mcpython.ResourceLocator.read(location, "json")
-                self.models[name] = mcpython.client.rendering.model.Model.Model(modeldata.copy(),
-                                                                         "block/" + location.split("/")[-1].split(".")[
-                                                                             0],
-                                                                                name.split(":")[0] if name.count(":") == 1 else
-                                                                         "minecraft")
+                self.models[name] = mcpython.client.rendering.model.Model.Model(
+                    modeldata.copy(),
+                    "block/" + location.split("/")[-1].split(".")[0],
+                    name.split(":")[0] if name.count(":") == 1 else "minecraft",
+                )
             else:
-                self.models[name] = mcpython.client.rendering.model.Model.Model(location.copy(), name,
-                                                                                name.split(":")[0] if name.count(":") == 1 else
-                                                                         "minecraft")
+                self.models[name] = mcpython.client.rendering.model.Model.Model(
+                    location.copy(),
+                    name,
+                    name.split(":")[0] if name.count(":") == 1 else "minecraft",
+                )
         except:
-            logger.print_exception("error during loading model '{}' named '{}'".format(location, name))
+            logger.print_exception(
+                "error during loading model '{}' named '{}'".format(location, name)
+            )
 
     def add_face_to_batch(self, block, face, batches) -> list:
         if block.NAME not in self.blockstates:
-            logger.println("[FATAL] block state for block '{}' not found!".format(block.NAME))
+            logger.println(
+                "[FATAL] block state for block '{}' not found!".format(block.NAME)
+            )
             return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
         if blockstate is None:
-            vertex = self.blockstates["minecraft:missing_texture"].add_face_to_batch(block, batches, face)
+            vertex = self.blockstates["minecraft:missing_texture"].add_face_to_batch(
+                block, batches, face
+            )
         else:
             vertex = blockstate.add_face_to_batch(block, batches, face)
-            if issubclass(type(block.face_state.custom_renderer), mcpython.client.rendering.ICustomBlockRenderer.ICustomBlockVertexManager):
+            if issubclass(
+                type(block.face_state.custom_renderer),
+                mcpython.client.rendering.ICustomBlockRenderer.ICustomBlockVertexManager,
+            ):
                 block.face_state.custom_renderer.handle(block, vertex)
         return vertex
 
     def draw_face(self, block, face):
         if block.NAME not in self.blockstates:
             # todo: add option to disable these prints
-            logger.println("[FATAL] block state for block '{}' not found!".format(block.NAME))
+            logger.println(
+                "[FATAL] block state for block '{}' not found!".format(block.NAME)
+            )
             return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
@@ -179,8 +221,15 @@ class ModelHandler:
         self.search()
         mcpython.client.rendering.model.BlockState.BlockStateDefinition.TO_CREATE.clear()
         mcpython.client.rendering.model.BlockState.BlockStateDefinition.NEEDED.clear()
-        for directory, modname in mcpython.client.rendering.model.BlockState.BlockStateDefinition.LOOKUP_DIRECTORIES:
-            mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_directory(directory, modname, immediate=True)
+        for (
+            directory,
+            modname,
+        ) in (
+            mcpython.client.rendering.model.BlockState.BlockStateDefinition.LOOKUP_DIRECTORIES
+        ):
+            mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_directory(
+                directory, modname, immediate=True
+            )
         G.eventhandler.call("data:blockstates:custom_injection", self)
         G.eventhandler.call("data:models:custom_injection", self)
         self.build(immediate=True)
@@ -190,12 +239,20 @@ class ModelHandler:
 
 G.modelhandler = ModelHandler()
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod,
-                                                     "minecraft",
-                                                     info="searching for block models for minecraft")
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_create", G.modelhandler.search,
-                                                     info="loading found models")
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake_prepare", G.modelhandler.build,
-                                                     info="filtering models")
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:model_bake:prepare", G.modelhandler.process_models,
-                                                     info="preparing model data")
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:model:model_search",
+    G.modelhandler.add_from_mod,
+    "minecraft",
+    info="searching for block models for minecraft",
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:model:model_create", G.modelhandler.search, info="loading found models"
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:model:model_bake_prepare", G.modelhandler.build, info="filtering models"
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:model:model_bake:prepare",
+    G.modelhandler.process_models,
+    info="preparing model data",
+)

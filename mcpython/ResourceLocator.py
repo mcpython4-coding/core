@@ -103,9 +103,9 @@ class ResourceZipFile(IResourceLocation):
         elif mode == "json":
             return json.loads(self.archive.read(filename))
         elif mode == "pil":
-            with open(G.tmp.name+"/resource_output.png", mode="wb") as f:
+            with open(G.tmp.name + "/resource_output.png", mode="wb") as f:
                 f.write(self.archive.read(filename))
-            return PIL.Image.open(G.tmp.name+"/resource_output.png")
+            return PIL.Image.open(G.tmp.name + "/resource_output.png")
         elif mode == "pyglet":
             return mcpython.util.texture.to_pyglet_image(self.read(filename, "pil"))
         else:
@@ -118,8 +118,10 @@ class ResourceZipFile(IResourceLocation):
         result = []
         for entry in self.archive.namelist():
             if entry.startswith(directory):
-                if go_sub or (directory.count("/") == entry.count("/") - 1 and
-                              directory.count("\\") == directory.count("\\")):
+                if go_sub or (
+                    directory.count("/") == entry.count("/") - 1
+                    and directory.count("\\") == directory.count("\\")
+                ):
                     result.append(entry)
         return result
 
@@ -145,26 +147,35 @@ class ResourceDirectory(IResourceLocation):
             file = self.path + ("" if filename.startswith("/") else "/") + filename
         with open(file, mode="rb") as f:
             data: bytes = f.read()
-        if mode is None: return data
-        if mode == "json": return json.loads(data.decode("UTF-8"))
-        if mode == "pil": return PIL.Image.open(os.path.join(self.path, filename))
+        if mode is None:
+            return data
+        if mode == "json":
+            return json.loads(data.decode("UTF-8"))
+        if mode == "pil":
+            return PIL.Image.open(os.path.join(self.path, filename))
         if mode == "pyglet":
             return mcpython.util.texture.to_pyglet_image(self.read(filename, "pil"))
 
     def get_all_entries_in_directory(self, directory: str) -> list:
-        if not os.path.isdir(self.path + "/" + directory): return []
+        if not os.path.isdir(self.path + "/" + directory):
+            return []
         file_list = []
-        for root, dirs, files in os.walk(self.path+"/"+directory):
+        for root, dirs, files in os.walk(self.path + "/" + directory):
             for name in files:
                 file = os.path.join(root, name).replace("\\", "/")
-                file_list.append("/".join(file.split("/")[self.path.count("/")+1:]))
+                file_list.append("/".join(file.split("/")[self.path.count("/") + 1 :]))
             for name in dirs:
                 file = os.path.join(root, name).replace("\\", "/")
-                file_list.append("/".join(file.split("/")[self.path.count("/") + 1:]) + "/")
+                file_list.append(
+                    "/".join(file.split("/")[self.path.count("/") + 1 :]) + "/"
+                )
         return file_list
 
 
-RESOURCE_PACK_LOADERS = [ResourceZipFile, ResourceDirectory]  # data loaders for the resource locations
+RESOURCE_PACK_LOADERS = [
+    ResourceZipFile,
+    ResourceDirectory,
+]  # data loaders for the resource locations
 RESOURCE_LOCATIONS = []  # an list of all resource locations in the system
 
 
@@ -173,18 +184,26 @@ def load_resource_packs():
     will load the resource packs found in the paths for it
     """
     close_all_resources()
-    if not os.path.exists(G.home+"/resourcepacks"):
-        os.makedirs(G.home+"/resourcepacks")
-    for file in os.listdir(G.home+"/resourcepacks"):
-        if file in ["{}.jar".format(mcpython.common.config.MC_VERSION_BASE), "minecraft.zip"]: continue
-        file = G.home+"/resourcepacks/" + file
+    if not os.path.exists(G.home + "/resourcepacks"):
+        os.makedirs(G.home + "/resourcepacks")
+    for file in os.listdir(G.home + "/resourcepacks"):
+        if file in [
+            "{}.jar".format(mcpython.common.config.MC_VERSION_BASE),
+            "minecraft.zip",
+        ]:
+            continue
+        file = G.home + "/resourcepacks/" + file
         flag = True
         for source in RESOURCE_PACK_LOADERS:
             if flag and source.is_valid(file):
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
-            logger.println("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(file))
+            logger.println(
+                "[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(
+                    file
+                )
+            )
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
@@ -197,7 +216,9 @@ def load_resource_packs():
             i += 2
         else:
             i += 1
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.local))   # for local access, may be not needed
+    RESOURCE_LOCATIONS.append(
+        ResourceDirectory(G.local)
+    )  # for local access, may be not needed
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.home))
     RESOURCE_LOCATIONS.append(ResourceDirectory(G.build))
     if G.dev_environment:  # only in dev-environment we need these special folders...
@@ -219,7 +240,13 @@ def close_all_resources():
         G.eventhandler.call("resources:close")
 
 
-MC_IMAGE_LOCATIONS = ["block", "gui", "item", "entity", "model"]  # how mc locations look like
+MC_IMAGE_LOCATIONS = [
+    "block",
+    "gui",
+    "item",
+    "entity",
+    "model",
+]  # how mc locations look like
 
 
 def transform_name(file: str, raise_on_error=True) -> str:
@@ -233,12 +260,20 @@ def transform_name(file: str, raise_on_error=True) -> str:
     f = file.split(":")
     if any([f[-1].startswith(x) for x in MC_IMAGE_LOCATIONS]):
         if len(f) == 1:
-            f = "assets/minecraft/textures/{}/{}.png".format(f[0].split("/")[0], "/".join(f[0].split("/")[1:]))
+            f = "assets/minecraft/textures/{}/{}.png".format(
+                f[0].split("/")[0], "/".join(f[0].split("/")[1:])
+            )
         else:
-            f = "assets/{}/textures/{}/{}.png".format(f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:]))
+            f = "assets/{}/textures/{}/{}.png".format(
+                f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:])
+            )
         return f
     if raise_on_error:
-        logger.println("can't transform name '{}' to valid path. Replacing with missing texture...".format(file))
+        logger.println(
+            "can't transform name '{}' to valid path. Replacing with missing texture...".format(
+                file
+            )
+        )
         return "assets/missing_texture.png"
     return file
 
@@ -250,8 +285,11 @@ def exists(file: str, transform=True):
     :param transform: if it should be transformed for check
     :return: if it exists or not
     """
-    if file.startswith("build/"): file = file.replace("build/", G.build + "/", 1)
-    if file.startswith("@"):  # special resource notation, can be used for accessing special ResourceLocations
+    if file.startswith("build/"):
+        file = file.replace("build/", G.build + "/", 1)
+    if file.startswith(
+        "@"
+    ):  # special resource notation, can be used for accessing special ResourceLocations
         data = file.split("|")
         resource = data[0][1:]
         file = "|".join(data[1:])
@@ -277,12 +315,16 @@ def read(file: str, mode: typing.Union[None, str] = None):
     :param mode: the mode to load in, or None for binary
     :return: the content
     """
-    if file.startswith("build/"): file = file.replace("build/", G.build + "/", 1)
-    if file.startswith("@"):  # special resource notation, can be used for accessing special ResourceLocations
+    if file.startswith("build/"):
+        file = file.replace("build/", G.build + "/", 1)
+    if file.startswith(
+        "@"
+    ):  # special resource notation, can be used for accessing special ResourceLocations
         data = file.split("|")
         resource = data[0][1:]
         file = "|".join(data[1:])
-        if file.startswith("build/"): file = file.replace("build/", G.build + "/", 1)
+        if file.startswith("build/"):
+            file = file.replace("build/", G.build + "/", 1)
         for x in RESOURCE_LOCATIONS:
             if x.path == resource:
                 try:
@@ -293,9 +335,9 @@ def read(file: str, mode: typing.Union[None, str] = None):
         raise RuntimeError("can't find resource named {}".format(resource))
     if not exists(file, transform=False):
         file = transform_name(file)
-    if os.path.exists(G.local+"/"+file):  # special, local-only location
+    if os.path.exists(G.local + "/" + file):  # special, local-only location
         if mode == "pil":
-            return PIL.Image.open(G.local+"/"+file)
+            return PIL.Image.open(G.local + "/" + file)
     loc = RESOURCE_LOCATIONS[:]
     for x in loc:
         if x.is_in_path(file):
@@ -331,7 +373,10 @@ def get_all_entries_special(directory: str) -> list:
     """
     result = []
     for x in RESOURCE_LOCATIONS:
-        result += ["@{}|{}".format(x.path, s) for s in x.get_all_entries_in_directory(directory)]
+        result += [
+            "@{}|{}".format(x.path, s)
+            for s in x.get_all_entries_in_directory(directory)
+        ]
     return result
 
 
@@ -341,23 +386,43 @@ def add_resources_by_modname(modname, pathname=None):
     :param modname: the name of the mod for the loading stages
     :param pathname: the namespace or None if the same as the mod name
     """
-    if pathname is None: pathname = modname
+    if pathname is None:
+        pathname = modname
     from mcpython.client.rendering.model.BlockState import BlockStateDefinition
     import mcpython.client.Language
     import mcpython.client.gui.crafting.CraftingHandler
     import mcpython.common.data.tags.TagHandler
     import mcpython.common.data.loot.LootTable
-    G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,
-                                                 info="loading crafting recipes for mod {}".format(modname))
-    G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
-                                                 info="searching for block models for mod {}".format(modname))
-    G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
-                                                 "assets/{}/blockstates".format(pathname), modname,
-                                                 info="searching for block states for mod {}".format(modname))
-    G.modloader.mods[modname].eventbus.subscribe("stage:tag:group", lambda: mcpython.common.data.tags.TagHandler.add_from_location(
-        pathname), info="adding tag groups for mod {}".format(modname))
-    mcpython.client.Language.from_mod_name(modname)
-    G.modloader.mods[modname].eventbus.subscribe("stage:loottables:load", lambda: mcpython.common.data.loot.LootTable.
-                                                 handler.for_mod_name(modname, pathname),
-                                                 info="adding loot tables for mod {}".format(modname))
 
+    G.modloader.mods[modname].eventbus.subscribe(
+        "stage:recipes",
+        G.craftinghandler.load,
+        pathname,
+        info="loading crafting recipes for mod {}".format(modname),
+    )
+    G.modloader.mods[modname].eventbus.subscribe(
+        "stage:model:model_search",
+        G.modelhandler.add_from_mod,
+        pathname,
+        info="searching for block models for mod {}".format(modname),
+    )
+    G.modloader.mods[modname].eventbus.subscribe(
+        "stage:model:blockstate_search",
+        BlockStateDefinition.from_directory,
+        "assets/{}/blockstates".format(pathname),
+        modname,
+        info="searching for block states for mod {}".format(modname),
+    )
+    G.modloader.mods[modname].eventbus.subscribe(
+        "stage:tag:group",
+        lambda: mcpython.common.data.tags.TagHandler.add_from_location(pathname),
+        info="adding tag groups for mod {}".format(modname),
+    )
+    mcpython.client.Language.from_mod_name(modname)
+    G.modloader.mods[modname].eventbus.subscribe(
+        "stage:loottables:load",
+        lambda: mcpython.common.data.loot.LootTable.handler.for_mod_name(
+            modname, pathname
+        ),
+        info="adding loot tables for mod {}".format(modname),
+    )

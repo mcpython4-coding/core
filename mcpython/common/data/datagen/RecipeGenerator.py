@@ -22,11 +22,13 @@ class ICraftingKeyEncoder:
 
     # checks if the given data can be encoded with these instance
     @classmethod
-    def valid(cls, data) -> bool: raise NotImplementedError()
+    def valid(cls, data) -> bool:
+        raise NotImplementedError()
 
     # encodes certain data
     @classmethod
-    def encode(cls, data, config): raise NotImplementedError()
+    def encode(cls, data, config):
+        raise NotImplementedError()
 
 
 class ItemStackEncoder(ICraftingKeyEncoder):
@@ -35,6 +37,7 @@ class ItemStackEncoder(ICraftingKeyEncoder):
     WARNING: in normal mode, ItemStacks can NOT be used as they are based on the item-registry which is not yet
         filled with data
     """
+
     @classmethod
     def valid(cls, data) -> bool:
         return type(data) == ItemStack
@@ -56,7 +59,8 @@ class TagEncoder(ICraftingKeyEncoder):
     @classmethod
     def encode(cls, data: str, config):
         tag = data[1:]
-        if ":" not in tag and config.default_namespace is not None: tag = config.default_namespace + ":" + tag
+        if ":" not in tag and config.default_namespace is not None:
+            tag = config.default_namespace + ":" + tag
         return {"tag": tag}
 
 
@@ -71,7 +75,8 @@ class StringTypedItem(ICraftingKeyEncoder):
 
     @classmethod
     def encode(cls, data, config):
-        if ":" not in data and config.default_namespace is not None: data = config.default_namespace + ":" + data
+        if ":" not in data and config.default_namespace is not None:
+            data = config.default_namespace + ":" + data
         return {"item": data}
 
 
@@ -145,7 +150,8 @@ class ShapedRecipeGenerator(IDataGenerator):
         return self
 
     def setOutput(self, stack: typing.Union[typing.Tuple[int, str], str]):
-        if type(stack) == str: stack = (1, stack)
+        if type(stack) == str:
+            stack = (1, stack)
         self.output = stack
         return self
 
@@ -168,8 +174,12 @@ class ShapedRecipeGenerator(IDataGenerator):
         for i, entry in enumerate(self.types):
             table[INDICATOR_LIST[i]] = encode_data(entry, self.config)
 
-        data = {"type": "minecraft:crafting_shaped", "pattern": pattern, "key": table, "result": {
-            "count": self.output[0], "item": self.output[1]}}
+        data = {
+            "type": "minecraft:crafting_shaped",
+            "pattern": pattern,
+            "key": table,
+            "result": {"count": self.output[0], "item": self.output[1]},
+        }
         if self.group is not None:
             data["group"] = self.group
 
@@ -189,7 +199,8 @@ class ShapelessGenerator(IDataGenerator):
         return self
 
     def setOutput(self, stack: typing.Union[typing.Tuple[int, str], str]):
-        if type(stack) == str: stack = (1, stack)
+        if type(stack) == str:
+            stack = (1, stack)
         self.output = stack
         return self
 
@@ -199,7 +210,11 @@ class ShapelessGenerator(IDataGenerator):
 
     def addInputs(self, *identifiers):
         if len(identifiers) == 1 and type(identifiers) == list:
-            logger.println("[WARNING] did you mean *[...] instead of [...] for generator named {}?".format(self.name))
+            logger.println(
+                "[WARNING] did you mean *[...] instead of [...] for generator named {}?".format(
+                    self.name
+                )
+            )
         self.inputs += identifiers
         return self
 
@@ -207,9 +222,11 @@ class ShapelessGenerator(IDataGenerator):
         if self.output is None:
             logger.println("recipe {} is missing output!".format(self.name))
             return
-        data = {"type": "minecraft:crafting_shapeless",
-                "ingredients": [encode_data(e, self.config) for e in self.inputs],
-                "result": {"count": self.output[0], "item": self.output[1]}}
+        data = {
+            "type": "minecraft:crafting_shapeless",
+            "ingredients": [encode_data(e, self.config) for e in self.inputs],
+            "result": {"count": self.output[0], "item": self.output[1]},
+        }
         if self.group is not None:
             data["group"] = self.group
 
@@ -255,9 +272,17 @@ class SmeltingGenerator(IDataGenerator):
         return self
 
     def generate(self):
-        inp = encode_data(self.inputs[0], self.config) if len(self.inputs) == 1 else [encode_data(e, self.config) for e
-                                                                                      in self.inputs]
-        data = {"type": self.mode, "ingredient": inp, "result": self.output,
-                "experience": self.xp, "cookingtime": self.cooking_time}
+        inp = (
+            encode_data(self.inputs[0], self.config)
+            if len(self.inputs) == 1
+            else [encode_data(e, self.config) for e in self.inputs]
+        )
+        data = {
+            "type": self.mode,
+            "ingredient": inp,
+            "result": self.output,
+            "experience": self.xp,
+            "cookingtime": self.cooking_time,
+        }
 
         self.config.write_json(data, "data", "recipes", self.name + ".json")

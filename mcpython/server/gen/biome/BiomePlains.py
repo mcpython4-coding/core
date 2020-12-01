@@ -20,7 +20,7 @@ class Plains(Biome.Biome):
 
     @staticmethod
     def get_temperature() -> float:
-        return .8
+        return 0.8
 
     @staticmethod
     def get_weight() -> int:
@@ -36,4 +36,3 @@ class Plains(Biome.Biome):
 
 
 G.biomehandler.register(Plains, [0])
-

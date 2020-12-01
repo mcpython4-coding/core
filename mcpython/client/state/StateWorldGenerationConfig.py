@@ -25,40 +25,95 @@ import mcpython.client.state.StateWorldGeneration
 class StateWorldGenerationConfig(State.State):
     NAME = "minecraft:world_generation_config"
 
-    def __init__(self): State.State.__init__(self)
+    def __init__(self):
+        State.State.__init__(self)
 
     def get_parts(self) -> list:
-        parts = [UIPartButton.UIPartButton((300, 20), "#*gui.back*#", (-320, 20), anchor_window="MD",
-                                           on_press=self.on_back_press),
-                 UIPartButton.UIPartButton((300, 20), "#*multiplayer.status.finished*#", (20, 20), anchor_window="MD",
-                                           on_press=self.on_generate_press),
-                 UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
-                                                 (-320, 200), anchor_window="MD",
-                                                 text_constructor="#*special.worldgeneration.enable_auo_gen*#: {}"),
-                 UIPartButton.UIPartToggleButton((300, 20), ["#*special.value.true*#", "#*special.value.false*#"],
-                                                 (20, 200), anchor_window="MD",
-                                                 text_constructor="#*special.worldgeneration.enable_barrier*#: {}")]
-        text = [UIPartTextInput.UIPartTextInput((300, 40), (20, 50), anchor_window="MD",
-                                                empty_overlay_text="#*special.worldgeneration.seed_empty*#"),
-                UIPartTextInput.UIPartTextInput((300, 40), (-320, 50), anchor_window="MD",
-                                                empty_overlay_text="#*special.worldgeneration.playername_empty*#"),
-                UIPartTextInput.UIPartTextInput((300, 40), (-320, 100), anchor_window="MD", pattern=INT_PATTERN,
-                                                empty_overlay_text="#*special.worldgeneration.worldsize|x|3*#"),
-                UIPartTextInput.UIPartTextInput((300, 40), (20, 100), anchor_window="MD", pattern=INT_PATTERN,
-                                                empty_overlay_text="#*special.worldgeneration.worldsize|y|3*#"),
-                UIPartTextInput.UIPartTextInput((640, 40), (0, 170), anchor_window="MD", anchor_ti="MM",
-                                                empty_overlay_text="World Name")]
+        parts = [
+            UIPartButton.UIPartButton(
+                (300, 20),
+                "#*gui.back*#",
+                (-320, 20),
+                anchor_window="MD",
+                on_press=self.on_back_press,
+            ),
+            UIPartButton.UIPartButton(
+                (300, 20),
+                "#*multiplayer.status.finished*#",
+                (20, 20),
+                anchor_window="MD",
+                on_press=self.on_generate_press,
+            ),
+            UIPartButton.UIPartToggleButton(
+                (300, 20),
+                ["#*special.value.true*#", "#*special.value.false*#"],
+                (-320, 200),
+                anchor_window="MD",
+                text_constructor="#*special.worldgeneration.enable_auo_gen*#: {}",
+            ),
+            UIPartButton.UIPartToggleButton(
+                (300, 20),
+                ["#*special.value.true*#", "#*special.value.false*#"],
+                (20, 200),
+                anchor_window="MD",
+                text_constructor="#*special.worldgeneration.enable_barrier*#: {}",
+            ),
+        ]
+        text = [
+            UIPartTextInput.UIPartTextInput(
+                (300, 40),
+                (20, 50),
+                anchor_window="MD",
+                empty_overlay_text="#*special.worldgeneration.seed_empty*#",
+            ),
+            UIPartTextInput.UIPartTextInput(
+                (300, 40),
+                (-320, 50),
+                anchor_window="MD",
+                empty_overlay_text="#*special.worldgeneration.playername_empty*#",
+            ),
+            UIPartTextInput.UIPartTextInput(
+                (300, 40),
+                (-320, 100),
+                anchor_window="MD",
+                pattern=INT_PATTERN,
+                empty_overlay_text="#*special.worldgeneration.worldsize|x|3*#",
+            ),
+            UIPartTextInput.UIPartTextInput(
+                (300, 40),
+                (20, 100),
+                anchor_window="MD",
+                pattern=INT_PATTERN,
+                empty_overlay_text="#*special.worldgeneration.worldsize|y|3*#",
+            ),
+            UIPartTextInput.UIPartTextInput(
+                (640, 40),
+                (0, 170),
+                anchor_window="MD",
+                anchor_ti="MM",
+                empty_overlay_text="World Name",
+            ),
+        ]
 
-        parts.append(UIPartTextInput.TextInputTabHandler([text[2], text[3], text[1], text[0]]))
+        parts.append(
+            UIPartTextInput.TextInputTabHandler([text[2], text[3], text[1], text[0]])
+        )
 
-        return parts + text + [mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground()]
+        return (
+            parts
+            + text
+            + [
+                mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground()
+            ]
+        )
 
     def on_back_press(self, x, y):
         G.statehandler.switch_to("minecraft:startmenu")
 
     def on_generate_press(self, x, y):
         filename = self.parts[9].entered_text
-        if filename == "": filename = "New World"
+        if filename == "":
+            filename = "New World"
         G.world.cleanup(remove_dims=True, filename=filename)
         self.generate()
 
@@ -78,7 +133,7 @@ class StateWorldGenerationConfig(State.State):
 
     @staticmethod
     def on_draw_2d_pre():
-        pyglet.gl.glClearColor(1., 1., 1., 1.)
+        pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
 
     def on_activate(self):
         for part in self.parts:
@@ -99,4 +154,3 @@ def create():
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
-

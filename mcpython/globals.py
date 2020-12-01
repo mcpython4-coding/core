@@ -11,6 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import os, sys, tempfile
 import mcpython.client.rendering.RenderingHelper
+
 # todo: create MCPYTHON-class (as main game class) replacing this mess
 
 prebuilding = "--rebuild" in sys.argv
@@ -18,8 +19,16 @@ debugevents = "--debugevents" in sys.argv
 dev_environment = True  # dynamical set on build
 
 local = os.path.dirname(os.path.dirname(__file__)).replace("\\", "/")
-home = local+"/home" if "--home-folder" not in sys.argv else sys.argv[sys.argv.index("--home-folder")+1]
-build = home+"/build" if "--build-folder" not in sys.argv else sys.argv[sys.argv.index("--build-folder")+1]
+home = (
+    local + "/home"
+    if "--home-folder" not in sys.argv
+    else sys.argv[sys.argv.index("--home-folder") + 1]
+)
+build = (
+    home + "/build"
+    if "--build-folder" not in sys.argv
+    else sys.argv[sys.argv.index("--build-folder") + 1]
+)
 tmp = tempfile.TemporaryDirectory()
 
 data_gen = ("--data-gen" in sys.argv or "--rebuild" in sys.argv) and dev_environment
@@ -55,4 +64,3 @@ modloader = None
 rendering_helper = mcpython.client.rendering.RenderingHelper.RenderingHelper()
 
 NEXT_EVENT_BUS_ID = 0
-

@@ -25,8 +25,9 @@ class ILootTableFunction(mcpython.common.event.Registry.IRegistryContent):
         pass
 
 
-loottablefunctionregistry = mcpython.common.event.Registry.Registry("loottablefunctionregistry",
-                                                    registry_type_names=["minecraft:loot_table_function"])
+loottablefunctionregistry = mcpython.common.event.Registry.Registry(
+    "loottablefunctionregistry", registry_type_names=["minecraft:loot_table_function"]
+)
 
 
 @G.registry
@@ -102,10 +103,15 @@ class FurnaceSmelt(ILootTableFunction):
     def apply(self, items: list, *args, **kwargs):
         for i, itemstack in enumerate(items.copy()):
             itemname = itemstack.get_item_name()
-            if itemname is None: continue
+            if itemname is None:
+                continue
             if itemname in G.craftinghandler.furnace_recipes["minecraft:smelting"]:
-                result = G.craftinghandler.furnace_recipes["minecraft:smelting"][itemname]
-                items[i] = mcpython.client.gui.ItemStack.ItemStack(result.output, itemstack.amount)
+                result = G.craftinghandler.furnace_recipes["minecraft:smelting"][
+                    itemname
+                ]
+                items[i] = mcpython.client.gui.ItemStack.ItemStack(
+                    result.output, itemstack.amount
+                )
 
 
 @G.registry
@@ -149,13 +155,21 @@ class SetCount(ILootTableFunction):
                     itemstack.set_amount(self.data["count"])
                 else:
                     if self.data["count"]["type"] == "minecraft:uniform":
-                        count = random.randint(self.data["count"]["min"], self.data["count"]["max"])
+                        count = random.randint(
+                            self.data["count"]["min"], self.data["count"]["max"]
+                        )
                     elif self.data["count"]["type"] == "minecraft:binomial":
                         count = 0
                         for _ in range(self.data["count"]["n"]):
-                            if random.randint(1, round(1/self.data["count"]["p"])) == 1: count += 1
+                            if (
+                                random.randint(1, round(1 / self.data["count"]["p"]))
+                                == 1
+                            ):
+                                count += 1
                     else:
-                        raise ValueError("unknown set type: '{}'".format(self.data["count"]["type"]))
+                        raise ValueError(
+                            "unknown set type: '{}'".format(self.data["count"]["type"])
+                        )
                     itemstack.set_amount(count)
 
 
@@ -187,4 +201,3 @@ class SetNBT(ILootTableFunction):
 class SetStewEffect(ILootTableFunction):
     NAME = "minecraft:set_stew_effect"
     # todo: implement
-

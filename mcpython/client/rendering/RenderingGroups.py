@@ -43,4 +43,3 @@ class MatrixStackGroup(pyglet.graphics.Group):
 
     def unset_state(self):
         pass
-

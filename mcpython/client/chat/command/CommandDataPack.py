@@ -26,10 +26,16 @@ class CommandDatapack(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "datapack"
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "enable").add_subcommand(SubCommand(
-            ParseType.STRING_WITHOUT_QUOTES)))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "disable").add_subcommand(SubCommand(
-            ParseType.STRING_WITHOUT_QUOTES)))
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.DEFINIED_STRING, "enable").add_subcommand(
+                SubCommand(ParseType.STRING_WITHOUT_QUOTES)
+            )
+        )
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.DEFINIED_STRING, "disable").add_subcommand(
+                SubCommand(ParseType.STRING_WITHOUT_QUOTES)
+            )
+        )
         parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "list"))
 
         # own implementation, will force-delete the assets access of all data-packs, very unstable
@@ -39,18 +45,36 @@ class CommandDatapack(mcpython.client.chat.command.Command.Command):
     def parse(cls, values: list, modes: list, info):
         if values[0] == "enable":
             for datapack in mcpython.client.chat.DataPack.datapackhandler.data_packs:
-                if datapack.name == values[1] and mcpython.client.chat.DataPack.DataPackStatus.DEACTIVATED:
-                    datapack.set_status(mcpython.client.chat.DataPack.DataPackStatus.ACTIVATED)
+                if (
+                    datapack.name == values[1]
+                    and mcpython.client.chat.DataPack.DataPackStatus.DEACTIVATED
+                ):
+                    datapack.set_status(
+                        mcpython.client.chat.DataPack.DataPackStatus.ACTIVATED
+                    )
 
         elif values[0] == "disable":
             for datapack in mcpython.client.chat.DataPack.datapackhandler.data_packs:
-                if datapack.name == values[1] and mcpython.client.chat.DataPack.DataPackStatus.ACTIVATED:
-                    datapack.set_status(mcpython.client.chat.DataPack.DataPackStatus.DEACTIVATED)
+                if (
+                    datapack.name == values[1]
+                    and mcpython.client.chat.DataPack.DataPackStatus.ACTIVATED
+                ):
+                    datapack.set_status(
+                        mcpython.client.chat.DataPack.DataPackStatus.DEACTIVATED
+                    )
 
         elif values[0] == "list":
-            info.chat.print_ln("count: {}".format(len(mcpython.client.chat.DataPack.datapackhandler.data_packs)))
+            info.chat.print_ln(
+                "count: {}".format(
+                    len(mcpython.client.chat.DataPack.datapackhandler.data_packs)
+                )
+            )
             for datapack in mcpython.client.chat.DataPack.datapackhandler.data_packs:
-                info.chat.print_ln("- datapack '{}' - status: {}".format(datapack.name, datapack.status.name))
+                info.chat.print_ln(
+                    "- datapack '{}' - status: {}".format(
+                        datapack.name, datapack.status.name
+                    )
+                )
 
         elif values[0] == "release":
             G.eventhandler.call("command:datapack:release", info)
@@ -60,8 +84,9 @@ class CommandDatapack(mcpython.client.chat.command.Command.Command):
 
     @staticmethod
     def get_help() -> list:
-        return ["/datapack enable <name>: enables an datapack with name <name>",
-                "/datapack disable <name>: disables an datapack with name <name>",
-                "/datapack list: lists all arrival datapacks with status",
-                "/datapack release: unloads all datapacks, decrease memory usage, makes deleting datapacks possible."]
-
+        return [
+            "/datapack enable <name>: enables an datapack with name <name>",
+            "/datapack disable <name>: disables an datapack with name <name>",
+            "/datapack list: lists all arrival datapacks with status",
+            "/datapack release: unloads all datapacks, decrease memory usage, makes deleting datapacks possible.",
+        ]

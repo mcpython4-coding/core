@@ -21,15 +21,18 @@ class EventHandler:
     def create_bus(self, *args, active=True, **kwargs) -> EventBus:
         bus = EventBus(*args, **kwargs)
         self.buses.append(bus)
-        if active: self.active_buses.append(bus)
+        if active:
+            self.active_buses.append(bus)
         return bus
 
     def activate_bus(self, bus: EventBus):
-        if bus in self.active_buses: return
+        if bus in self.active_buses:
+            return
         self.active_buses.append(bus)
 
     def deactivate_bus(self, bus: EventBus):
-        if bus not in self.active_buses: return
+        if bus not in self.active_buses:
+            return
         self.active_buses.remove(bus)
 
     def call(self, eventname, *args, **kwargs):
@@ -43,11 +46,11 @@ class EventHandler:
                 return False
         return True
 
-    def __call__(self, *args, **kwargs): self.call(*args, **kwargs)
+    def __call__(self, *args, **kwargs):
+        self.call(*args, **kwargs)
 
 
 G.eventhandler = EventHandler()
 
 PUBLIC_EVENT_BUS = G.eventhandler.create_bus(crash_on_error=False)
 LOADING_EVENT_BUS = G.eventhandler.create_bus()
-

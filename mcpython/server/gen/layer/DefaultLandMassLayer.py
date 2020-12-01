@@ -48,12 +48,25 @@ class DefaultLandMassLayer(Layer):
         chunk = reference.chunk
         cx, cz = chunk.position
         landmap = chunk.get_value("landmassmap")
-        factor = 10**config.size
-        for x in range(cx*16, cx*16+16):
-            for z in range(cz*16, cz*16+16):
-                v = sum([DefaultLandMassLayer.noise1.noise2d(x/factor, z/factor) * 0.5 + 0.5,
-                         DefaultLandMassLayer.noise2.noise2d(x/factor, z/factor) * 0.5 + 0.5,
-                         DefaultLandMassLayer.noise3.noise2d(x/factor, z/factor) * 0.5 + 0.5]) / 3
+        factor = 10 ** config.size
+        for x in range(cx * 16, cx * 16 + 16):
+            for z in range(cz * 16, cz * 16 + 16):
+                v = (
+                    sum(
+                        [
+                            DefaultLandMassLayer.noise1.noise2d(x / factor, z / factor)
+                            * 0.5
+                            + 0.5,
+                            DefaultLandMassLayer.noise2.noise2d(x / factor, z / factor)
+                            * 0.5
+                            + 0.5,
+                            DefaultLandMassLayer.noise3.noise2d(x / factor, z / factor)
+                            * 0.5
+                            + 0.5,
+                        ]
+                    )
+                    / 3
+                )
                 v *= len(config.masses)
                 v = round(v)
                 if v == len(config.masses):
@@ -61,6 +74,10 @@ class DefaultLandMassLayer(Layer):
                 landmap[(x, z)] = config.masses[v]
 
 
-authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute("landmassmap", DefaultLandMassLayer, {})
+authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
+    "landmassmap", DefaultLandMassLayer, {}
+)
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("seed:set", DefaultLandMassLayer.update_seed)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "seed:set", DefaultLandMassLayer.update_seed
+)

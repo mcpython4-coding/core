@@ -17,7 +17,6 @@ import deprecation
 
 @deprecation.deprecated("dev2-2", "a1.5.0")
 class BlockModelFactory:
-
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def __init__(self):
         self.name = None
@@ -36,7 +35,15 @@ class BlockModelFactory:
         return self
 
     @deprecation.deprecated("dev2-2", "a1.5.0")
-    def addElement(self, f: tuple, t: tuple, textures: list, rotation=None, uvs=[(0, 0, 1, 1)]*6, texture_rotation=[0]*6):
+    def addElement(
+        self,
+        f: tuple,
+        t: tuple,
+        textures: list,
+        rotation=None,
+        uvs=[(0, 0, 1, 1)] * 6,
+        texture_rotation=[0] * 6,
+    ):
         """
         will add an visual element to the model
         :param f: coords where to start
@@ -53,7 +60,8 @@ class BlockModelFactory:
 
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def setTexture(self, key: str, texture: str):
-        if self.textures is None: self.textures = {}
+        if self.textures is None:
+            self.textures = {}
         self.textures[key] = texture
         return self
 
@@ -73,22 +81,30 @@ class BlockModelFactory:
             for f, t, textures, rotation, uvs, texture_rotation in self.elements:
                 d = {"from": f, "to": t}
                 if rotation is not None:
-                    d["rotation"] = {"origin": rotation[0], "axis": rotation[1], "angle": rotation[2]}
+                    d["rotation"] = {
+                        "origin": rotation[0],
+                        "axis": rotation[1],
+                        "angle": rotation[2],
+                    }
                     if len(rotation) > 3:
                         d["rotation"]["rescale"] = rotation[3]
                 for i, face in enumerate(mcpython.util.enums.EnumSide.iterate()):
                     e = {"texture": textures[i]}
-                    if uvs is not None: e["uv"] = uvs[i]
-                    if texture_rotation is not None: e["rotation"] = texture_rotation[i]
+                    if uvs is not None:
+                        e["uv"] = uvs[i]
+                    if texture_rotation is not None:
+                        e["rotation"] = texture_rotation[i]
                     d["faces"][face.normal_name] = e
                 data["elements"].append(d)
-        G.modloader(self.name.split(":")[0], "stage:model:model_search",
-                    lambda: G.modelhandler.add_from_data(self.name, data))
+        G.modloader(
+            self.name.split(":")[0],
+            "stage:model:model_search",
+            lambda: G.modelhandler.add_from_data(self.name, data),
+        )
 
 
 @deprecation.deprecated("dev2-2", "a1.5.0")
 class NormalBlockStateFactory:
-
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def __init__(self):
         self.name = None
@@ -107,7 +123,9 @@ class NormalBlockStateFactory:
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish(self):
         assert self.name is not None
-        G.modloader(self.name.split(":")[0], "stage:blockstatefactory:bake")(self.finish_up)
+        G.modloader(self.name.split(":")[0], "stage:blockstatefactory:bake")(
+            self.finish_up
+        )
 
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish_up(self):
@@ -119,5 +137,7 @@ class NormalBlockStateFactory:
                 d.append({"model": e} if type(e) == str else e)
             data["variants"][key] = d
         G.modloader(self.name.split(":")[0], "stage:model:blockstate_search")(
-            mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_data(self.name, data))
-
+            mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_data(
+                self.name, data
+            )
+        )

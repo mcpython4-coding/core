@@ -56,10 +56,16 @@ def load():
         @staticmethod
         def parse(entry, config):
             players = list(G.world.players.values())
-            if len(players) == 0: return []
+            if len(players) == 0:
+                return []
             x, y, z = config.position
-            players.sort(key=lambda player: math.sqrt((x - player.position[0]) ** 2 + (y - player.position[1]) ** 2 +
-                                                      (z + player.position[2]) ** 2))
+            players.sort(
+                key=lambda player: math.sqrt(
+                    (x - player.position[0]) ** 2
+                    + (y - player.position[1]) ** 2
+                    + (z + player.position[2]) ** 2
+                )
+            )
             return [players[0]]
 
     @G.registry
@@ -96,6 +102,6 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            if entry == "@e": return list(G.entityhandler.entity_map.values())
+            if entry == "@e":
+                return list(G.entityhandler.entity_map.values())
             raise NotImplementedError()  # todo: implement
-

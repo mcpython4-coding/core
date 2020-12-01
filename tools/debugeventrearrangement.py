@@ -18,10 +18,12 @@ local = os.path.dirname(os.path.dirname(__file__))
 
 
 def transform_profile(file):
-    with open(file) as f: data = f.readlines()[1:]
+    with open(file) as f:
+        data = f.readlines()[1:]
     table = {}
     for line in data:
-        if line.startswith("//") or line.startswith("event subscription of"): continue
+        if line.startswith("//") or line.startswith("event subscription of"):
+            continue
         sp = line.split(" ")
         if line.startswith("event call of"):
             function = " ".join(sp[3:-4])
@@ -30,11 +32,11 @@ def transform_profile(file):
     for entry in table.keys():
         times = table[entry]["times"]
         table[entry]["avg"] = sum(times) / len(times)
-    with open(local+"/debug/"+file.split("/")[-1]+".json", mode="w") as f:
+    with open(local + "/debug/" + file.split("/")[-1] + ".json", mode="w") as f:
         json.dump(table, f)
 
 
 if __name__ == "__main__":
-    for profile in os.listdir(local+"/debug"):
+    for profile in os.listdir(local + "/debug"):
         if profile.startswith("eventbus_") and profile.endswith(".txt"):
-            transform_profile(local+"/debug/"+profile)
+            transform_profile(local + "/debug/" + profile)

@@ -15,7 +15,9 @@ import shutil
 import os
 import sys
 
-DEFAULT_OUTPUT = G.local + "/resources/generated"  # where to output data - in dev environment
+DEFAULT_OUTPUT = (
+    G.local + "/resources/generated"
+)  # where to output data - in dev environment
 
 
 @G.modloader("minecraft", "special:datagen:configure")
@@ -24,9 +26,12 @@ def generate_recipes():
     generator for all recipes in minecraft
     """
 
-    if "--data-gen" not in sys.argv: return  # data gen only when launched so, not when we think
+    if "--data-gen" not in sys.argv:
+        return  # data gen only when launched so, not when we think
     if os.path.exists(DEFAULT_OUTPUT):
         shutil.rmtree(DEFAULT_OUTPUT)
     os.makedirs(DEFAULT_OUTPUT)
-    config = Configuration.DataGeneratorConfig("minecraft", G.local + "/resources/generated")
+    config = Configuration.DataGeneratorConfig(
+        "minecraft", G.local + "/resources/generated"
+    )
     config.setDefaultNamespace("minecraft")

@@ -93,8 +93,12 @@ class ItemFactory:
         else:
             modname, itemname = copied.modname, copied.name
         if not G.prebuilding and not task_list:
-            G.modloader.mods[modname].eventbus.subscribe("stage:item:load", copied.finish_up, register,
-                                                         info="loading item named '{}'".format(itemname))
+            G.modloader.mods[modname].eventbus.subscribe(
+                "stage:item:load",
+                copied.finish_up,
+                register,
+                info="loading item named '{}'".format(itemname),
+            )
         else:
             copied.TASKS.append((copied, register))
 
@@ -122,7 +126,8 @@ class ItemFactory:
         if self.modname is not None and self.name.count(":") == 0:
             self.name = self.modname + ":" + self.name
 
-        class BaseClass(object): pass
+        class BaseClass(object):
+            pass
 
         if self.itemfile is None:
             self.itemfile = "{}:item/{}".format(*self.name.split(":"))
@@ -133,11 +138,16 @@ class ItemFactory:
 
         # go over the whole list and create every time an new sub-class based on old and item of list
         for cls in self.baseclass:
-            class BaseClass(BaseClass, cls): pass
 
-        class ConstructedItem(BaseClass):  # and now insert these class into the ConstructedItem-class
+            class BaseClass(BaseClass, cls):
+                pass
+
+        class ConstructedItem(
+            BaseClass
+        ):  # and now insert these class into the ConstructedItem-class
             @classmethod
-            def get_used_texture_files(cls): return master.used_itemfiles
+            def get_used_texture_files(cls):
+                return master.used_itemfiles
 
             NAME = master.name
 
@@ -145,27 +155,40 @@ class ItemFactory:
 
             ITEM_NAME_COLOR = master.tooltip_color
 
-            def get_block(self) -> str: return master.blockname
+            def get_block(self) -> str:
+                return master.blockname
 
             @staticmethod
-            def get_default_item_image_location() -> str: return master.itemfile
+            def get_default_item_image_location() -> str:
+                return master.itemfile
 
-            def get_active_image_location(self): return master.itemfile
+            def get_active_image_location(self):
+                return master.itemfile
 
             def __init__(self):
-                if master.creation_callback: master.creation_callback(self)
+                if master.creation_callback:
+                    master.creation_callback(self)
 
             STACK_SIZE = master.stacksize
 
             def on_player_interact(self, player, block, button, modifiers) -> bool:
-                return master.interaction_callback(block, button, modifiers) if master.interaction_callback else False
+                return (
+                    master.interaction_callback(block, button, modifiers)
+                    if master.interaction_callback
+                    else False
+                )
 
             def on_set_from_item(self, block):
                 if master.customfromitemfunction:
                     master.customfromitemfunction(self, block)
 
-        if mcpython.common.item.ItemFood.ItemFood in self.baseclass:  # is food stuff active?
-            class ConstructedItem(ConstructedItem):  # so construct an new class with additional functions
+        if (
+            mcpython.common.item.ItemFood.ItemFood in self.baseclass
+        ):  # is food stuff active?
+
+            class ConstructedItem(
+                ConstructedItem
+            ):  # so construct an new class with additional functions
                 def on_eat(self):
                     """
                     called when the player eats the item
@@ -175,56 +198,75 @@ class ItemFactory:
                         return True
                     if G.world.get_active_player().hunger == 20:
                         return False
-                    G.world.get_active_player().hunger = min(self.HUNGER_ADDITION+G.world.get_active_player().hunger, 20)
+                    G.world.get_active_player().hunger = min(
+                        self.HUNGER_ADDITION + G.world.get_active_player().hunger, 20
+                    )
                     return True
 
                 HUNGER_ADDITION = master.hungerregen
 
         if mcpython.common.item.ItemTool.ItemTool in self.baseclass:  # is an tool
-            class ConstructedItem(ConstructedItem):  # so construct an new class with additional functions
+
+            class ConstructedItem(
+                ConstructedItem
+            ):  # so construct an new class with additional functions
                 TOOL_LEVEL = master.tool_level
 
                 TOOL_TYPE = master.tool_type
 
                 def get_speed_multiplyer(self, itemstack):
-                    return master.tool_speed_multi if not master.tool_speed_callback else master.tool_speed_callback(
-                        itemstack)
+                    return (
+                        master.tool_speed_multi
+                        if not master.tool_speed_callback
+                        else master.tool_speed_callback(itemstack)
+                    )
 
         if master.armor_points:
+
             class ConstructedItem(ConstructedItem):
                 DEFENSE_POINTS = master.armor_points
 
         if master.fuel_level is not None:
+
             class ConstructedItem(ConstructedItem):
                 FUEL = master.fuel_level
 
         if master.tooltip_renderer is not None:
+
             class ConstructedItem(ConstructedItem):
                 @classmethod
                 def get_tooltip_provider(cls):
                     return master.tooltip_renderer
 
         if master.tooltip_extra is not None:
+
             class ConstructedItem(ConstructedItem):
                 @classmethod
                 def getAdditionalTooltipText(cls, *_) -> list:
                     return master.tooltip_extra
 
-        if register: G.registry.register(ConstructedItem)
+        if register:
+            G.registry.register(ConstructedItem)
 
-    def setBaseClass(self, baseclass):   # overwrites all previous base classes and replace them with the new(s)
+    def setBaseClass(
+        self, baseclass
+    ):  # overwrites all previous base classes and replace them with the new(s)
         self.baseclass = baseclass if type(baseclass) == list else [baseclass]
         return self
 
     def setBaseClassByName(self, baseclassname: str):
-        if baseclassname == "food" and mcpython.common.item.ItemFood.ItemFood not in self.baseclass:
+        if (
+            baseclassname == "food"
+            and mcpython.common.item.ItemFood.ItemFood not in self.baseclass
+        ):
             self.baseclass.append(mcpython.common.item.ItemFood.ItemFood)
         elif baseclassname == "default":
             self.setBaseClass(mcpython.common.item.Item.Item)
         return self
 
     def setGlobalModName(self, name: str):
-        if name.endswith(":"): name = name[:-1]
+        if name.endswith(":"):
+            name = name[:-1]
         self.modname = name
         return self
 
@@ -323,11 +365,11 @@ class ItemFactory:
         return self
 
     def setTooltipExtraLines(self, lines):
-        if type(lines) == str: lines = lines.split("\n")
+        if type(lines) == str:
+            lines = lines.split("\n")
         self.tooltip_extra = lines
         return self
 
     def setToolTipItemNameColor(self, color_name: str):
         self.tooltip_color = color_name
         return self
-

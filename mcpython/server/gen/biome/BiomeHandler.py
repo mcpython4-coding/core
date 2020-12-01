@@ -17,7 +17,9 @@ class BiomeHandler:
     def __init__(self):
         self.registrylist = []
         self.biomes = {}
-        self.biometable = {}  # {dim: int -> {landmass: str -> {temperature: int -> [biomename with weights]}}}}
+        self.biometable = (
+            {}
+        )  # {dim: int -> {landmass: str -> {temperature: int -> [biomename with weights]}}}}
 
     def register(self, biome, dimensions=[]):
         self(biome)
@@ -32,21 +34,36 @@ class BiomeHandler:
 
     def add_biome_to_dim(self, dim: int, biomename: str):
         biome = self.biomes[biomename]
-        if dim not in self.biometable: self.biometable[dim] = {}
-        if biome.get_landmass() not in self.biometable[dim]: self.biometable[dim][biome.get_landmass()] = {}
+        if dim not in self.biometable:
+            self.biometable[dim] = {}
+        if biome.get_landmass() not in self.biometable[dim]:
+            self.biometable[dim][biome.get_landmass()] = {}
         if biome.get_temperature() not in self.biometable[dim][biome.get_landmass()]:
             self.biometable[dim][biome.get_landmass()][biome.get_temperature()] = []
-        self.biometable[dim][biome.get_landmass()][biome.get_temperature()] += [biomename] * biome.get_weight()
+        self.biometable[dim][biome.get_landmass()][biome.get_temperature()] += [
+            biomename
+        ] * biome.get_weight()
 
     def remove_biome_from_dim(self, dim: int, biomename: str):
         biome = self.biomes[biomename]
         while biomename in self.biometable[dim][biome.get_landmass()]:
-            self.biometable[dim][biome.get_landmass()][biome.get_temperature()].remove(biomename)
+            self.biometable[dim][biome.get_landmass()][biome.get_temperature()].remove(
+                biomename
+            )
 
     def is_biome_in_dim(self, dim: int, biomename: str):
-        return any([biomename in x for x in self.biometable[dim][self.biomes[biomename].get_landmass()].values()])
+        return any(
+            [
+                biomename in x
+                for x in self.biometable[dim][
+                    self.biomes[biomename].get_landmass()
+                ].values()
+            ]
+        )
 
-    def get_biomes_for_dimension(self, dim: int, landmass: str, weighted=False, temperature=None) -> list:
+    def get_biomes_for_dimension(
+        self, dim: int, landmass: str, weighted=False, temperature=None
+    ) -> list:
         if temperature is None:
             l = []
             for ll in self.biometable[dim][landmass]:
@@ -58,9 +75,15 @@ class BiomeHandler:
         return list(tuple(l)) if not weighted else l
 
     def get_sum_weight_count(self, dim: int, landmass: str, temperature=None) -> int:
-        return len(self.get_biomes_for_dimension(dim, landmass, weighted=True, temperature=temperature))
+        return len(
+            self.get_biomes_for_dimension(
+                dim, landmass, weighted=True, temperature=temperature
+            )
+        )
 
-    def get_biome_at(self, landmass: str, dim: int, selectvalue: float, temperature: float) -> str:
+    def get_biome_at(
+        self, landmass: str, dim: int, selectvalue: float, temperature: float
+    ) -> str:
         """
         gets an biome with given info
         :param landmass: the landmass to choise from
@@ -70,12 +93,15 @@ class BiomeHandler:
         :return: the biome which was selected
         """
         temperatures = list(self.biometable[dim][landmass].keys())
-        temperatures.sort(key=lambda x: abs(temperature-x))
+        temperatures.sort(key=lambda x: abs(temperature - x))
         temperature = temperatures[0]
-        biomes = self.get_biomes_for_dimension(dim, landmass, weighted=True, temperature=temperature)
+        biomes = self.get_biomes_for_dimension(
+            dim, landmass, weighted=True, temperature=temperature
+        )
         selectvalue *= len(biomes)
         selectvalue = round(selectvalue)
-        if selectvalue == len(biomes): selectvalue = 0
+        if selectvalue == len(biomes):
+            selectvalue = 0
         return biomes[selectvalue]
 
 
@@ -86,4 +112,6 @@ def load():
     from . import BiomePlains
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:worldgen:biomes", load, info="loading biomes")
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:worldgen:biomes", load, info="loading biomes"
+)

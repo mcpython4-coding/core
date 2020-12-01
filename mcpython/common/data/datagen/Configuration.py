@@ -36,7 +36,12 @@ class DataGeneratorConfig:
     Used to store some global stuff
     """
 
-    def __init__(self, modname: str, output_folder: str, file_scheme: str = "{group}/{namespace}/{sub-group}/{path}"):
+    def __init__(
+        self,
+        modname: str,
+        output_folder: str,
+        file_scheme: str = "{group}/{namespace}/{sub-group}/{path}",
+    ):
         """
         creates an new configuration object for an data generation
         :param modname: the mod-name to use
@@ -47,7 +52,11 @@ class DataGeneratorConfig:
         """
         self.enabled = True
         if modname not in G.modloader.mods:
-            logger.println("[WARN] mod allocated for ({}) not found! Skipping build...".format(modname))
+            logger.println(
+                "[WARN] mod allocated for ({}) not found! Skipping build...".format(
+                    modname
+                )
+            )
             self.enabled = False
         self.output_folder = output_folder
         self.modname = modname
@@ -77,6 +86,7 @@ class DataGeneratorConfig:
         :param name: the name to generate under; used for the path-formatter
         """
         import mcpython.common.data.datagen.RecipeGenerator
+
         return mcpython.datagen.RecipeGenerator.ShapedRecipeGenerator(name, self)
 
     def shapeless_recipe(self, name: str):
@@ -85,7 +95,8 @@ class DataGeneratorConfig:
         :param name: the name to generate under; used for the path-formatter
         """
         import mcpython.common.data.datagen.RecipeGenerator
-        return mcpython.datagen.RecipeGenerator.ShapelessGenerator(name,  self)
+
+        return mcpython.datagen.RecipeGenerator.ShapelessGenerator(name, self)
 
     def one_to_one(self, name: str, i, o):
         """
@@ -103,17 +114,24 @@ class DataGeneratorConfig:
                      ... send to constructor of class
         """
         import mcpython.common.data.datagen.RecipeGenerator
-        return mcpython.datagen.RecipeGenerator.SmeltingGenerator(args[0], self, *args[1:], **kwargs)
+
+        return mcpython.datagen.RecipeGenerator.SmeltingGenerator(
+            args[0], self, *args[1:], **kwargs
+        )
 
     def __build(self):
         """
         Internal function to build the config
         Will decide if the system should data-gen or not
         """
-        if not G.data_gen or (not G.dev_environment and self.modname == "minecraft"): return
+        if not G.data_gen or (not G.dev_environment and self.modname == "minecraft"):
+            return
 
-        if not self.enabled: return
-        logger.println("[INFO] building data generators for '{}'...".format(self.modname))
+        if not self.enabled:
+            return
+        logger.println(
+            "[INFO] building data generators for '{}'...".format(self.modname)
+        )
         start = time.time()
         total = 0
         while len(self.elements) > 0:
@@ -123,7 +141,9 @@ class DataGeneratorConfig:
                 element.generate()
             except:
                 logger.print_exception("during building {}".format(element))
-        logger.println("[INFO] finished in {}s ({} tasks to do)".format(time.time() - start, total))
+        logger.println(
+            "[INFO] finished in {}s ({} tasks to do)".format(time.time() - start, total)
+        )
 
     def write(self, data, *args):
         """
@@ -137,10 +157,14 @@ class DataGeneratorConfig:
         elif len(args) == 3:
             group, sub_group, path = args
             namespace = self.modname
-        else: raise ValueError("invalid target {}!".format(args))
-        file = "{}/{}/{}/{}/{}".format(self.output_folder, group, namespace, sub_group, path)
+        else:
+            raise ValueError("invalid target {}!".format(args))
+        file = "{}/{}/{}/{}/{}".format(
+            self.output_folder, group, namespace, sub_group, path
+        )
         d = os.path.dirname(file)
-        if not os.path.exists(d): os.makedirs(d)
+        if not os.path.exists(d):
+            os.makedirs(d)
         if type(data) == str:
             with open(file, mode="w") as f:
                 f.write(data)
@@ -161,4 +185,3 @@ class DataGeneratorConfig:
         :param args: the args to pass to self.write()
         """
         self.write(simplejson.dumps(data, sort_keys=True, indent="  "), *args)
-

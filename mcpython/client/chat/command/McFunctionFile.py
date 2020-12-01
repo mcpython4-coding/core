@@ -19,7 +19,9 @@ class McFunctionFile:
         try:
             return cls(mcpython.ResourceLocator.read(file).decode("utf-8"), name)
         except:
-            logger.print_exception("[WARN] failed to load function file {}".format(file))
+            logger.print_exception(
+                "[WARN] failed to load function file {}".format(file)
+            )
 
     def __init__(self, data: str, name: str):
         self.lines = data.split("\n")
@@ -29,8 +31,10 @@ class McFunctionFile:
         count = 0
         for line in self.lines:
             if not line.startswith("#"):
-                if line.count(" ") + line.count("   ") == len(line): continue
-                G.commandparser.parse("/"+line, info.copy())
+                if line.count(" ") + line.count("   ") == len(line):
+                    continue
+                G.commandparser.parse("/" + line, info.copy())
                 count += 1
-        G.chat.print_ln("executed {} commands from function {}".format(count, self.name))
-
+        G.chat.print_ln(
+            "executed {} commands from function {}".format(count, self.name)
+        )

@@ -46,14 +46,16 @@ class GameRule(mcpython.server.storage.serializer.IDataSerializer.IDataSerialize
     def apply_part_fixer(cls, savefile, fixer):
         if issubclass(fixer, GameRuleFixer):
             data = savefile.access_file_json("gamerules.json")
-            if data is None: return
+            if data is None:
+                return
             for name in data:
                 if name in fixer.TARGET_GAMERULE_NAME:
                     data[name] = fixer.fix(savefile, data[name])
             savefile.dump_file_json("gamerules.json", data)
         elif issubclass(fixer, GameRuleRemovalFixer):
             data = savefile.access_file_json("gamerules.json")
-            if data is None: return
+            if data is None:
+                return
             for name in data:
                 if name in fixer.TARGET_GAMERULE_NAME:
                     del data[name]
@@ -62,12 +64,15 @@ class GameRule(mcpython.server.storage.serializer.IDataSerializer.IDataSerialize
     @classmethod
     def load(cls, savefile):
         data = savefile.access_file_json("gamerules.json")
-        if data is None: pass
+        if data is None:
+            pass
         for name in data:
             G.world.gamerulehandler.table[name].status.load(data[name])
 
     @classmethod
     def save(cls, data, savefile):
-        data = {gamerule.NAME: gamerule.status.save() for gamerule in G.world.gamerulehandler.table.values()}
+        data = {
+            gamerule.NAME: gamerule.status.save()
+            for gamerule in G.world.gamerulehandler.table.values()
+        }
         savefile.dump_file_json("gamerules.json", data)
-

@@ -38,4 +38,3 @@ class CommandShuffleData(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def get_help() -> list:
         return ["/shuffledata: will shuffle a lot of data when enabled in configs"]
-

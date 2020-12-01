@@ -31,10 +31,16 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
 
     @classmethod
     def reload(cls):
-        cls.arrow = mcpython.ResourceLocator.read("build/texture/gui/furnace_arrow.png", "pyglet")
-        cls.fire = mcpython.ResourceLocator.read("build/texture/gui/furnace_fire.png", "pyglet")
+        cls.arrow = mcpython.ResourceLocator.read(
+            "build/texture/gui/furnace_arrow.png", "pyglet"
+        )
+        cls.fire = mcpython.ResourceLocator.read(
+            "build/texture/gui/furnace_fire.png", "pyglet"
+        )
 
-    mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", reload)
+    mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        "data:reload:work", reload
+    )
 
     def __init__(self, block, types):
         super().__init__()
@@ -60,7 +66,13 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         self.old_item_name = None
 
     def update_status(self):
-        if any([self.slots[0].itemstack.get_item_name() in G.craftinghandler.furnace_recipes[x] for x in self.types]):
+        if any(
+            [
+                self.slots[0].itemstack.get_item_name()
+                in G.craftinghandler.furnace_recipes[x]
+                for x in self.types
+            ]
+        ):
             if self.fuel_left == 0:
                 if self.slots[1].itemstack.is_empty():
                     self.reset()
@@ -71,31 +83,41 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
                     self.fuel_max = fuel
                     self.fuel_left += fuel
                 except AttributeError:
-                    logger.println("[FUEL][WARNING] item '{}' was marked as fuel but did NOT have FUEL-attribute".
-                                   format(self.slots[1].itemstack.get_item_name()))
+                    logger.println(
+                        "[FUEL][WARNING] item '{}' was marked as fuel but did NOT have FUEL-attribute".format(
+                            self.slots[1].itemstack.get_item_name()
+                        )
+                    )
                     self.reset()
                     return
                 self.slots[1].itemstack.add_amount(-1)
-            if self.slots[0].itemstack.get_item_name() == self.old_item_name: return
+            if self.slots[0].itemstack.get_item_name() == self.old_item_name:
+                return
             self.old_item_name = self.slots[0].itemstack.get_item_name()
             self.smelt_start = time.time()
             for x in self.types:
                 if self.old_item_name in G.craftinghandler.furnace_recipes[x]:
-                    recipe = G.craftinghandler.check_relink(G.craftinghandler.furnace_recipes[x][self.old_item_name])
+                    recipe = G.craftinghandler.check_relink(
+                        G.craftinghandler.furnace_recipes[x][self.old_item_name]
+                    )
                     break
             else:
                 logger.println("[ERROR] no recipe found")
                 self.reset()
                 return
             if self.slots[2].itemstack.get_item_name() is not None and (
-                    self.slots[2].itemstack.get_item_name() != recipe.output or
-                    self.slots[2].itemstack.amount >= self.slots[2].itemstack.item.STACK_SIZE):
+                self.slots[2].itemstack.get_item_name() != recipe.output
+                or self.slots[2].itemstack.amount
+                >= self.slots[2].itemstack.item.STACK_SIZE
+            ):
                 # if not self.slots[2].itemstack.is_empty():
                 #     print(self.slots[2].itemstack.get_item_name() != recipe.output,
                 #           self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
                 self.reset()
                 return
-            self.recipe: mcpython.client.gui.crafting.FurnaceCrafting.FurnaceRecipe = recipe
+            self.recipe: mcpython.client.gui.crafting.FurnaceCrafting.FurnaceRecipe = (
+                recipe
+            )
             self.block.active = True
             self.block.face_state.update()
         else:
@@ -103,10 +125,19 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
 
     def create_slots(self) -> list:
         # 36 slots of main, 1 input, 1 fuel and 1 output
-        slots = [mcpython.client.gui.Slot.Slot(on_update=self.on_input_update, on_shift_click=self.on_shift),
-                 mcpython.client.gui.Slot.Slot(on_update=self.on_fuel_slot_update, on_shift_click=self.on_shift,
-                                               allowed_item_test=self.is_fuel),
-                 mcpython.client.gui.Slot.Slot(on_update=self.on_output_update, on_shift_click=self.on_shift)]
+        slots = [
+            mcpython.client.gui.Slot.Slot(
+                on_update=self.on_input_update, on_shift_click=self.on_shift
+            ),
+            mcpython.client.gui.Slot.Slot(
+                on_update=self.on_fuel_slot_update,
+                on_shift_click=self.on_shift,
+                allowed_item_test=self.is_fuel,
+            ),
+            mcpython.client.gui.Slot.Slot(
+                on_update=self.on_output_update, on_shift_click=self.on_shift
+            ),
+        ]
         return slots
 
     @classmethod
@@ -122,8 +153,10 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
             slot.itemstack.set_amount(slot_copy.itemstack.amount)
 
     def on_input_update(self, player=False):
-        if self.slots[0].itemstack.is_empty(): self.reset()
-        else: self.update_status()
+        if self.slots[0].itemstack.is_empty():
+            self.reset()
+        else:
+            self.update_status()
 
     def on_fuel_slot_update(self, player=False):
         self.update_status()
@@ -134,18 +167,30 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
     def on_activate(self):
         super().on_activate()
         try:
-            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
-            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("gameloop:tick:end", self.on_tick)
+            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+                "user:keyboard:press", self.on_key_press
+            )
+            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+                "gameloop:tick:end", self.on_tick
+            )
         except ValueError:
             pass
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("user:keyboard:press", self.on_key_press)
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("gameloop:tick:end", self.on_tick)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "user:keyboard:press", self.on_key_press
+        )
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "gameloop:tick:end", self.on_tick
+        )
 
     def on_deactivate(self):
         super().on_deactivate()
         G.world.get_active_player().reset_moving_slot()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("user:keyboard:press", self.on_key_press)
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe("gameloop:tick:end", self.on_tick)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            "user:keyboard:press", self.on_key_press
+        )
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            "gameloop:tick:end", self.on_tick
+        )
 
     def draw(self, hoveringslot=None):
         """
@@ -161,21 +206,29 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         # draw arrow
         if self.recipe and self.progress > 0:
             try:
-                self.arrow.get_region(0, 0, round(48 * self.progress), 33).blit(x+159, y+229)
+                self.arrow.get_region(0, 0, round(48 * self.progress), 33).blit(
+                    x + 159, y + 229
+                )
             except ZeroDivisionError:
                 pass
 
         # draw fire
         if self.fuel_max > 0:
             try:
-                self.fire.get_region(0, 0, 28, round(28 * (self.fuel_left / self.fuel_max))).blit(x+112, y+229)
+                self.fire.get_region(
+                    0, 0, 28, round(28 * (self.fuel_left / self.fuel_max))
+                ).blit(x + 112, y + 229)
             except ZeroDivisionError:
                 pass
 
-        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
+        for slot in (
+            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        ):
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
-        for slot in G.world.get_active_player().inventories["main"].slots[:36] + self.slots:
+        for slot in (
+            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        ):
             slot.draw_lable(x, y)
         self.on_draw_overlay()
 
@@ -183,11 +236,12 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         return G.world.get_active_player().inventories["main"].slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == pyglet.window.key.E: G.inventoryhandler.hide(self)
+        if symbol == pyglet.window.key.E:
+            G.inventoryhandler.hide(self)
 
     def on_tick(self, dt):
         if self.fuel_left > 0:
-            self.fuel_left = max(self.fuel_left - round(dt*100)/100, 0)
+            self.fuel_left = max(self.fuel_left - round(dt * 100) / 100, 0)
         if self.recipe is not None:
             if self.fuel_left == 0:
                 if self.progress > 0.99:
@@ -199,12 +253,16 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
             self.progress = min(elapsed_time / self.recipe.time, 1)
             if self.progress >= 1:
                 self.finish()
-        elif not self.slots[0].itemstack.is_empty() and (not self.slots[1].itemstack.is_empty() or self.fuel_left > 0):
+        elif not self.slots[0].itemstack.is_empty() and (
+            not self.slots[1].itemstack.is_empty() or self.fuel_left > 0
+        ):
             self.update_status()
 
     def finish(self):
         if self.slots[2].itemstack.is_empty():
-            self.slots[2].set_itemstack(mcpython.client.gui.ItemStack.ItemStack(self.recipe.output))
+            self.slots[2].set_itemstack(
+                mcpython.client.gui.ItemStack.ItemStack(self.recipe.output)
+            )
         else:
             if self.slots[2].itemstack.item.STACK_SIZE > self.slots[2].itemstack.amount:
                 self.slots[2].itemstack.add_amount(1)
@@ -225,5 +283,9 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         return True
 
     def save(self):
-        return {"fuel": self.fuel_left, "max fuel": self.fuel_max, "xp": self.xp_stored, "progress": self.progress}
-
+        return {
+            "fuel": self.fuel_left,
+            "max fuel": self.fuel_max,
+            "xp": self.xp_stored,
+            "progress": self.progress,
+        }

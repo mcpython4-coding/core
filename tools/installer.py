@@ -12,6 +12,7 @@ This project is not official by mojang and does not relate to it.
 import subprocess
 import sys
 import os
+
 """
 installation code for setting up your python
 """
@@ -19,8 +20,19 @@ installation code for setting up your python
 home = os.path.dirname(os.path.dirname(__file__))
 
 
-subprocess.Popen([sys.executable, "-m", "pip", "install", "-r", "./requirements.txt"],
-                 stdout=sys.stdout, stderr=sys.stderr)
+subprocess.Popen(
+    [sys.executable, "-m", "pip", "install", "-r", "./requirements.txt"],
+    stdout=sys.stdout,
+    stderr=sys.stderr,
+)
 # THE FOLLOWING LINE IS  O N L Y  PRESENT IN DEV ENVIRONMENT
-subprocess.Popen([sys.executable, home+"/__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"], stdout=sys.stdout)
-
+subprocess.Popen(
+    [
+        sys.executable,
+        home + "/__main__.py",
+        "--data-gen",
+        "--exit-after-data-gen",
+        "--no-window",
+    ],
+    stdout=sys.stdout,
+)

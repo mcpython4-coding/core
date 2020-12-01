@@ -19,24 +19,24 @@ local = os.path.dirname(__file__)
 
 print("collecting files...")
 
-if os.path.exists(local+"/tmp"):
-    shutil.rmtree(local+"/tmp")
-os.makedirs(local+"/tmp")
+if os.path.exists(local + "/tmp"):
+    shutil.rmtree(local + "/tmp")
+os.makedirs(local + "/tmp")
 
-pre = len(local+"/source/")
+pre = len(local + "/source/")
 
-for root, dirs, files in os.walk(local+"/source"):
+for root, dirs, files in os.walk(local + "/source"):
     for f in files:
         file = os.path.join(root, f)
         localized = file[pre:]
-        target = local+"/tmp/"+localized
+        target = local + "/tmp/" + localized
         d = os.path.dirname(target)
         if not os.path.exists(d):
             os.makedirs(d)
         shutil.copy(file, target)
 
-if os.path.isdir(local+"/api"):
-    for folder in os.listdir(local+"/api"):
+if os.path.isdir(local + "/api"):
+    for folder in os.listdir(local + "/api"):
         root_l = len(local + "/api/" + folder) + 1
         for root, dirs, files in os.walk(local + "/api/" + folder):
             for f in files:
@@ -49,14 +49,14 @@ if os.path.isdir(local+"/api"):
                 shutil.copy(file, target)
 
 
-if not os.path.isdir(local+"/builds"):
-    os.makedirs(local+"/builds")
+if not os.path.isdir(local + "/builds"):
+    os.makedirs(local + "/builds")
 
 name = input("name of the build? ")
 
 print("creating dev-version...")
 
-with zipfile.ZipFile(local+"/builds/"+name+"_dev.zip", mode="w") as instance:
+with zipfile.ZipFile(local + "/builds/" + name + "_dev.zip", mode="w") as instance:
     root_l = len(local + "/tmp/")
     for root, dirs, files in os.walk(local + "/tmp"):
         for f in files:
@@ -70,7 +70,8 @@ print("filtering code...")
 root_l = len(local + "/tmp/")
 for root, dirs, files in os.walk(local + "/tmp"):
     for loc in files:
-        if not loc.endswith(".py"): continue  # only python files to work with
+        if not loc.endswith(".py"):
+            continue  # only python files to work with
         file = os.path.join(root, loc)
         print("transforming file '{}'".format(file[root_l:]))
         with open(file) as f:
@@ -85,8 +86,8 @@ for root, dirs, files in os.walk(local + "/tmp"):
             in_string = 0
             skip_entries = 0
             for i, e in enumerate(line):
-                if e == '"' and not (i > 0 and line[i-1] == "\\"):
-                    if len(line) > i + 1 and line[i:i+3] == '"""':
+                if e == '"' and not (i > 0 and line[i - 1] == "\\"):
+                    if len(line) > i + 1 and line[i : i + 3] == '"""':
                         if in_multi_line_comment == 0:
                             in_multi_line_comment = 1
                             line = line[:index]
@@ -98,8 +99,8 @@ for root, dirs, files in os.walk(local + "/tmp"):
                         in_string = 1
                     elif in_string == 1:
                         in_string = 0
-                elif e == "'" and not (i > 0 and line[i-1] == "\\"):
-                    if len(line) > i + 1 and line[i:i+3] == "'''":
+                elif e == "'" and not (i > 0 and line[i - 1] == "\\"):
+                    if len(line) > i + 1 and line[i : i + 3] == "'''":
                         if in_multi_line_comment == 0:
                             in_multi_line_comment = 2
                             line = line[:index]
@@ -133,7 +134,7 @@ for root, dirs, files in os.walk(local + "/tmp"):
 
 print("creating end user version...")
 
-with zipfile.ZipFile(local+"/builds/"+name+".zip", mode="w") as instance:
+with zipfile.ZipFile(local + "/builds/" + name + ".zip", mode="w") as instance:
     root_l = len(local + "/tmp/")
     for root, dirs, files in os.walk(local + "/tmp"):
         for f in files:
@@ -141,15 +142,17 @@ with zipfile.ZipFile(local+"/builds/"+name+".zip", mode="w") as instance:
             localized = file[root_l:]
             instance.write(file, localized)
 
-if os.path.exists(local+"/api.json"):
+if os.path.exists(local + "/api.json"):
     print("creating api-build")
 
-    with open(local+"/api.json") as f:
+    with open(local + "/api.json") as f:
         data = json.load(f)
 
     for name in data:
         if data[name]["source"]:
-            with zipfile.ZipFile(local + "/builds/" + name + "_api_{}.zip".format(name), mode="w") as instance:
+            with zipfile.ZipFile(
+                local + "/builds/" + name + "_api_{}.zip".format(name), mode="w"
+            ) as instance:
                 root_l = len(local + "/api/{}/".format(name))
                 for root, dirs, files in os.walk(local + "/api/{}".format(name)):
                     for f in files:
@@ -158,5 +161,4 @@ if os.path.exists(local+"/api.json"):
                         instance.write(file, localized)
 
 print("cleaning up...")
-shutil.rmtree(local+"/tmp")
-
+shutil.rmtree(local + "/tmp")

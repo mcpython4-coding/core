@@ -24,16 +24,29 @@ INT_PATTERN_POSITIVE = INT_PATTERN[1:]
 
 
 class UIPartTextInput(UIPart.UIPart):
-    def __init__(self, size, position, anchor_ti="LD", anchor_window="LD", pattern=ALL_PATTERN, default_text="",
-                 text_size=10, on_text_update=None, on_enter_press=None, empty_overlay_text=""):
-        super().__init__(position, size, anchor_element=anchor_ti, anchor_window=anchor_window)
+    def __init__(
+        self,
+        size,
+        position,
+        anchor_ti="LD",
+        anchor_window="LD",
+        pattern=ALL_PATTERN,
+        default_text="",
+        text_size=10,
+        on_text_update=None,
+        on_enter_press=None,
+        empty_overlay_text="",
+    ):
+        super().__init__(
+            position, size, anchor_element=anchor_ti, anchor_window=anchor_window
+        )
         self.pattern = pattern
         self.default_text = self.entered_text = default_text
         self.text_size = text_size
         self.selected = False
         self.on_text_update = on_text_update
         self.on_enter_press = on_enter_press
-        self.lable = pyglet.text.Label(color=(255, 255, 255, 255), anchor_y='center')
+        self.lable = pyglet.text.Label(color=(255, 255, 255, 255), anchor_y="center")
         self.empty_overlay_text = empty_overlay_text
 
         # self.update_lable()
@@ -43,13 +56,17 @@ class UIPartTextInput(UIPart.UIPart):
         self.lable.x, self.lable.y = x + 5, y + self.bboxsize[1] // 2
         if not self.selected and self.entered_text == "":
             if self.empty_overlay_text != "":
-                self.lable.text = mcpython.client.Language.translate(self.empty_overlay_text)
+                self.lable.text = mcpython.client.Language.translate(
+                    self.empty_overlay_text
+                )
                 self.lable.color = (150, 150, 150, 255)
                 self.lable.font_size = self.bboxsize[1] // 4
         else:
             self.lable.color = (255, 255, 255, 255)
             self.lable.font_size = self.bboxsize[1] // 3
-            self.lable.text = self.entered_text + (" " if time.time() // 2 % 2 == 0 or not self.selected else "_")
+            self.lable.text = self.entered_text + (
+                " " if time.time() // 2 % 2 == 0 or not self.selected else "_"
+            )
             while self.lable.content_height > self.bboxsize[0] - 6:
                 self.lable.text = self.lable.text[1:]
 
@@ -65,7 +82,9 @@ class UIPartTextInput(UIPart.UIPart):
         x, y = self.get_real_position()
         sx, sy = self.bboxsize
         mcpython.util.opengl.draw_rectangle((x, y), (sx, sy))
-        mcpython.util.opengl.draw_line_rectangle((x+2, y+1), (sx-3, sy-3), color=(1., 1., 1.))
+        mcpython.util.opengl.draw_line_rectangle(
+            (x + 2, y + 1), (sx - 3, sy - 3), color=(1.0, 1.0, 1.0)
+        )
         self.lable.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
@@ -97,7 +116,8 @@ class UIPartTextInput(UIPart.UIPart):
             if self.on_text_update:
                 self.on_text_update()
 
-    def reset(self): self.entered_text = self.default_text
+    def reset(self):
+        self.entered_text = self.default_text
 
 
 class TextInputTabHandler(mcpython.client.state.StatePart.StatePart):
@@ -114,10 +134,11 @@ class TextInputTabHandler(mcpython.client.state.StatePart.StatePart):
             for i, uiparttextinput in enumerate(self.textinputs):
                 if uiparttextinput.selected:
                     uiparttextinput.selected = False
-                    reindex = i+1 if not mod & pyglet.window.key.MOD_SHIFT else i-1
-                    if reindex < 0: reindex = len(self.textinputs) - 1
-                    if reindex >= len(self.textinputs): reindex = 0
+                    reindex = i + 1 if not mod & pyglet.window.key.MOD_SHIFT else i - 1
+                    if reindex < 0:
+                        reindex = len(self.textinputs) - 1
+                    if reindex >= len(self.textinputs):
+                        reindex = 0
                     self.textinputs[reindex].selected = True
                     return
             self.textinputs[0].selected = True
-

@@ -19,19 +19,28 @@ class IRegistryContent:
     TYPE = "minecraft:unknown_registry_content_type"
 
     @classmethod
-    def on_register(cls, registry): pass
+    def on_register(cls, registry):
+        pass
 
-    INFO = None   # can be used to display any special info in e.g. /registryinfo-command
+    INFO = None  # can be used to display any special info in e.g. /registryinfo-command
 
     # returns some information about the class stored in registry. used in saves to determine if registry was changed,
     # so could also include an version. Must be pickle-able
     @classmethod
-    def compressed_info(cls): return cls.NAME
+    def compressed_info(cls):
+        return cls.NAME
 
 
 class Registry:
-    def __init__(self, name: str, registry_type_names: list, injection_function=None,
-                 allow_argument_injection=False, class_based=True, dump_content_in_saves=True):
+    def __init__(
+        self,
+        name: str,
+        registry_type_names: list,
+        injection_function=None,
+        allow_argument_injection=False,
+        class_based=True,
+        dump_content_in_saves=True,
+    ):
         self.name = name
         self.registry_type_names = registry_type_names
         self.injection_function = injection_function
@@ -42,32 +51,47 @@ class Registry:
         G.registry.registries.append(self)
         self.dump_content_in_saves = dump_content_in_saves
 
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("modloader:finished", self.lock)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "modloader:finished", self.lock
+        )
 
     def is_valid(self, obj: IRegistryContent):
         return not self.locked and obj.TYPE in self.registry_type_names
 
     def register(self, obj: IRegistryContent, override_existing=True):
         if self.locked:
-            logger.println("[WARN] can't register object '{}' to locked registry '{}'".format(obj, self.name))
-            logger.println("[WARN] this feature of registering post-freeze WILL be removed in the future")
+            logger.println(
+                "[WARN] can't register object '{}' to locked registry '{}'".format(
+                    obj, self.name
+                )
+            )
+            logger.println(
+                "[WARN] this feature of registering post-freeze WILL be removed in the future"
+            )
         if obj.NAME == "minecraft:unknown_registry_content":
             logger.println("can't register unnamed object '{}'".format(obj))
             logger.println("every registry object MUST have an unique name")
             return
-        if not G.eventhandler.call_cancelable("registry:{}:register".format(self.name), self, obj, override_existing): return
-        if obj.NAME in self.registered_object_map and override_existing: return
+        if not G.eventhandler.call_cancelable(
+            "registry:{}:register".format(self.name), self, obj, override_existing
+        ):
+            return
+        if obj.NAME in self.registered_object_map and override_existing:
+            return
         self.registered_object_map[obj.NAME] = obj
-        if self.injection_function: self.injection_function(self, obj)
+        if self.injection_function:
+            self.injection_function(self, obj)
         obj.on_register(self)
 
-    def lock(self): self.locked = True
+    def lock(self):
+        self.locked = True
 
-    def unlock(self): self.locked = False
+    def unlock(self):
+        self.locked = False
 
 
 class RegistryInjectionHolder:
-    def __init__(self, *args, **kwargs):   # todo: do something with the args and kwargs!
+    def __init__(self, *args, **kwargs):  # todo: do something with the args and kwargs!
         self.args = args
         self.kwargs = kwargs
         self.injectable = None
@@ -82,20 +106,30 @@ class RegistryHandler:
         self.registries = []
 
     def __call__(self, *args, **kwargs):
-        if len(args) == len(kwargs) == 0: raise ValueError("can't register. no object provided")
+        if len(args) == len(kwargs) == 0:
+            raise ValueError("can't register. no object provided")
         elif len(args) > 1 or len(kwargs) > 0:  # create an injectable object instance
             return RegistryInjectionHolder(*args, **kwargs)
         elif type(args[0]) == RegistryInjectionHolder:
             if not issubclass(args[0].inhectable, IRegistryContent):
-                raise ValueError("can't register. Object {} is NO sub-class of IRegistryContent".format(
-                    args[0].injectable))
+                raise ValueError(
+                    "can't register. Object {} is NO sub-class of IRegistryContent".format(
+                        args[0].injectable
+                    )
+                )
             for registry in self.registries:
-                if registry.allow_argumented_injection and registry.is_valid(args[0].injectable):
+                if registry.allow_argumented_injection and registry.is_valid(
+                    args[0].injectable
+                ):
                     registry.register(args[0])
                 return args[0].injectable
         else:
             if not issubclass(args[0], IRegistryContent):
-                raise ValueError("can't register. Object {} is NO sub-class of IRegistryContent".format(args[0]))
+                raise ValueError(
+                    "can't register. Object {} is NO sub-class of IRegistryContent".format(
+                        args[0]
+                    )
+                )
             for registry in self.registries:
                 if registry.is_valid(args[0]):
                     registry.register(args[0])
@@ -103,7 +137,8 @@ class RegistryHandler:
 
     def get_by_name(self, name: str) -> Registry:
         for registry in self.registries:
-            if registry.name == name: return registry
+            if registry.name == name:
+                return registry
         return None
 
     def register(self, *args, **kwargs):
@@ -114,4 +149,3 @@ class RegistryHandler:
 
 
 G.registry = RegistryHandler()
-

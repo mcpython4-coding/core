@@ -45,5 +45,6 @@ class IAllDirectionOrientableBlock(mcpython.common.block.Block.Block):
 
     @classmethod
     def get_all_model_states(cls) -> list:
-        return [{cls.MODEL_FACE_NAME: face.name} for face in util.enums.EnumSide.iterate()]
-
+        return [
+            {cls.MODEL_FACE_NAME: face.name} for face in util.enums.EnumSide.iterate()
+        ]

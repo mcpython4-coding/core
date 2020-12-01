@@ -25,42 +25,67 @@ class Inventory(mcpython.server.storage.serializer.IDataSerializer.IDataSerializ
     """
     Inventory serializer class
     """
+
     PART = NAME = "minecraft:inventory"
 
     @classmethod
-    def load(cls, savefile, inventory: mcpython.client.gui.Inventory.Inventory, path: str, file=None):
+    def load(
+        cls,
+        savefile,
+        inventory: mcpython.client.gui.Inventory.Inventory,
+        path: str,
+        file=None,
+    ):
         """
         :param inventory: The inventory to save
         :param path: the path to save under
         :param file: the file to save into
         """
-        if file is None: file = "inventories.dat"
+        if file is None:
+            file = "inventories.dat"
         data = savefile.access_file_pickle(file)
 
-        if data is None: return
-        if path not in data: return
+        if data is None:
+            return
+        if path not in data:
+            return
 
         data = data[path]
         inventory.uuid = uuid.UUID(int=data["uuid"])
         status = inventory.load(data["custom data"])
-        if not status: return
-        [inventory.slots[i].load(e) if i < len(inventory.slots) else None for i, e in enumerate(data["slots"])]
+        if not status:
+            return
+        [
+            inventory.slots[i].load(e) if i < len(inventory.slots) else None
+            for i, e in enumerate(data["slots"])
+        ]
         inventory.post_load(data["custom data"])
 
     @classmethod
-    def save(cls, data, savefile, inventory: mcpython.client.gui.Inventory.Inventory, path: str, file=None, override=False):
+    def save(
+        cls,
+        data,
+        savefile,
+        inventory: mcpython.client.gui.Inventory.Inventory,
+        path: str,
+        file=None,
+        override=False,
+    ):
         """
         :param inventory: The inventory to save
         :param path: the path to save under
         :param file: the file to save into
         """
-        if file is None: file = "inventories.dat"
+        if file is None:
+            file = "inventories.dat"
         data = savefile.access_file_pickle(file) if not override else None
-        if data is None: data = {}
+        if data is None:
+            data = {}
 
-        idata = {"uuid": inventory.uuid.int,
-                 "custom data": inventory.save(),
-                 "slots": [slot.save() for slot in inventory.slots]}
+        idata = {
+            "uuid": inventory.uuid.int,
+            "custom data": inventory.save(),
+            "slots": [slot.save() for slot in inventory.slots],
+        }
         data[path] = idata
         savefile.dump_file_pickle(file, data)
-

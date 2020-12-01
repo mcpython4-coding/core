@@ -30,10 +30,17 @@ class IFence(mcpython.common.block.Block.Block):
         will create the fence
         """
         super().__init__(*args, **kwargs)
-        self.connections = {"north": False, "east": False, "south": False, "west": False}
+        self.connections = {
+            "north": False,
+            "east": False,
+            "south": False,
+            "west": False,
+        }
         if self.NAME in G.modelhandler.blockstates:
             self.on_block_update()
-        self.face_solid = {face: False for face in mcpython.util.enums.EnumSide.iterate()}
+        self.face_solid = {
+            face: False for face in mcpython.util.enums.EnumSide.iterate()
+        }
 
     def get_model_state(self) -> dict:
         state = {key: str(self.connections[key]).lower() for key in self.connections}
@@ -42,15 +49,31 @@ class IFence(mcpython.common.block.Block.Block):
     def on_block_update(self):
         x, y, z = self.position
 
-        block_north: mcpython.common.block.Block.Block = G.world.get_active_dimension().get_block((x + 1, y, z))
-        block_east: mcpython.common.block.Block.Block = G.world.get_active_dimension().get_block((x, y, z + 1))
-        block_south: mcpython.common.block.Block.Block = G.world.get_active_dimension().get_block((x - 1, y, z))
-        block_west: mcpython.common.block.Block.Block = G.world.get_active_dimension().get_block((x, y, z - 1))
+        block_north: mcpython.common.block.Block.Block = (
+            G.world.get_active_dimension().get_block((x + 1, y, z))
+        )
+        block_east: mcpython.common.block.Block.Block = (
+            G.world.get_active_dimension().get_block((x, y, z + 1))
+        )
+        block_south: mcpython.common.block.Block.Block = (
+            G.world.get_active_dimension().get_block((x - 1, y, z))
+        )
+        block_west: mcpython.common.block.Block.Block = (
+            G.world.get_active_dimension().get_block((x, y, z - 1))
+        )
 
-        self.connections["east"] = self.connects_to(mcpython.util.enums.EnumSide.NORTH, block_north)
-        self.connections["south"] = self.connects_to(mcpython.util.enums.EnumSide.EAST, block_east)
-        self.connections["west"] = self.connects_to(mcpython.util.enums.EnumSide.SOUTH, block_south)
-        self.connections["north"] = self.connects_to(mcpython.util.enums.EnumSide.WEST, block_west)
+        self.connections["east"] = self.connects_to(
+            mcpython.util.enums.EnumSide.NORTH, block_north
+        )
+        self.connections["south"] = self.connects_to(
+            mcpython.util.enums.EnumSide.EAST, block_east
+        )
+        self.connections["west"] = self.connects_to(
+            mcpython.util.enums.EnumSide.SOUTH, block_south
+        )
+        self.connections["north"] = self.connects_to(
+            mcpython.util.enums.EnumSide.WEST, block_west
+        )
 
         self.face_state.update(redraw_complete=True)
 
@@ -65,15 +88,28 @@ class IFence(mcpython.common.block.Block.Block):
             for east in range(2):
                 for south in range(2):
                     for west in range(2):
-                        states.append({"north": str(bool(north)).lower(), "east": str(bool(east)).lower(),
-                                       "south": str(bool(south)).lower(), "west": str(bool(west)).lower()})
+                        states.append(
+                            {
+                                "north": str(bool(north)).lower(),
+                                "east": str(bool(east)).lower(),
+                                "south": str(bool(south)).lower(),
+                                "west": str(bool(west)).lower(),
+                            }
+                        )
         return states
 
-    def connects_to(self, face: mcpython.util.enums.EnumSide, blockinstance: mcpython.common.block.Block.Block):
-        if blockinstance is None or type(blockinstance) == str: return False
+    def connects_to(
+        self,
+        face: mcpython.util.enums.EnumSide,
+        blockinstance: mcpython.common.block.Block.Block,
+    ):
+        if blockinstance is None or type(blockinstance) == str:
+            return False
         return blockinstance.face_solid[face.invert()] or (
-                issubclass(type(blockinstance), IFence) and len(self.FENCE_TYPE_NAME.intersection(
-                    blockinstance.FENCE_TYPE_NAME)) > 0)
+            issubclass(type(blockinstance), IFence)
+            and len(self.FENCE_TYPE_NAME.intersection(blockinstance.FENCE_TYPE_NAME))
+            > 0
+        )
 
     BLOCK_ITEM_GENERATOR_STATE = {"east": "true", "west": "true"}
 
@@ -139,4 +175,3 @@ def load():
     G.registry.register(WarpedFence)
     G.registry.register(CrimsonFence)
     G.registry.register(NetherBrickFence)
-

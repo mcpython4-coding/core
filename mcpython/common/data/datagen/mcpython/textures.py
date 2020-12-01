@@ -14,16 +14,21 @@ from mcpython.common.data.datagen.Configuration import DataGeneratorConfig
 from mcpython.common.data.datagen.TextureDataGen import TextureConstructor
 import sys
 
-DEFAULT_OUTPUT = G.local + "/resources/generated"  # where to output data - in dev environment
+DEFAULT_OUTPUT = (
+    G.local + "/resources/generated"
+)  # where to output data - in dev environment
 
 
 @G.modloader("minecraft", "special:datagen:configure")
 def load_block_states():
-    if "--data-gen" not in sys.argv: return  # data gen only when launched so, not when we think
+    if "--data-gen" not in sys.argv:
+        return  # data gen only when launched so, not when we think
     config = DataGeneratorConfig("minecraft", G.local + "/resources/generated")
     config.setDefaultNamespace("minecraft")
 
     for wood_type in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak"]:
-        TextureConstructor(config, "block/{}_leaves".format(wood_type), (16, 16)).add_coloring_layer(
-            "minecraft:block/{}_leaves".format(wood_type), (201, 248, 153))
-
+        TextureConstructor(
+            config, "block/{}_leaves".format(wood_type), (16, 16)
+        ).add_coloring_layer(
+            "minecraft:block/{}_leaves".format(wood_type), (201, 248, 153)
+        )

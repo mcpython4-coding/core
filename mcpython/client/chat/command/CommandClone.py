@@ -28,17 +28,30 @@ class CommandClone(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "clone"
-        parsebridge.add_subcommand(ParseType.POSITION.add_subcommand(ParseType.POSITION.add_subcommand(
-            ParseType.STRING_WITHOUT_QUOTES.set_mode(ParseMode.OPTIONAL).add_subcommand(
-                ParseType.STRING_WITHOUT_QUOTES.set_mode(ParseMode.OPTIONAL).add_subcommand(
-                    ParseType.BLOCKNAME.set_mode(ParseMode.OPTIONAL))))))
+        parsebridge.add_subcommand(
+            ParseType.POSITION.add_subcommand(
+                ParseType.POSITION.add_subcommand(
+                    ParseType.STRING_WITHOUT_QUOTES.set_mode(
+                        ParseMode.OPTIONAL
+                    ).add_subcommand(
+                        ParseType.STRING_WITHOUT_QUOTES.set_mode(
+                            ParseMode.OPTIONAL
+                        ).add_subcommand(
+                            ParseType.BLOCKNAME.set_mode(ParseMode.OPTIONAL)
+                        )
+                    )
+                )
+            )
+        )
 
     @staticmethod
     def parse(values: list, modes: list, info):
         # todo: split up into three functions in an util/world.py for moving modes
 
         if 3 < len(values) < 6 and values[3] == "filtered":
-            info.chat.print_ln("[SYNTAX][ERROR] when setting filtered, tile name must be set")
+            info.chat.print_ln(
+                "[SYNTAX][ERROR] when setting filtered, tile name must be set"
+            )
             return
         block_map = {}  # the map holding the blocks to clone
 
@@ -52,25 +65,42 @@ class CommandClone(mcpython.client.chat.command.Command.Command):
         fy, ey = min(fy, ey), max(fy, ey)
         fz, ez = min(fz, ez), max(fz, ez)
 
-        if len(values) > 4 and values[4] != "force" and fx <= dx <= ex and fy <= dy <= ey and fz <= dz <= ez:
-            info.chat.print_ln("[CLONE][ERROR] can't clone in non-force mode an overlapping region")
+        if (
+            len(values) > 4
+            and values[4] != "force"
+            and fx <= dx <= ex
+            and fy <= dy <= ey
+            and fz <= dz <= ez
+        ):
+            info.chat.print_ln(
+                "[CLONE][ERROR] can't clone in non-force mode an overlapping region"
+            )
             return
 
         dimension = info.entity.dimension
-        for x in range(fx, ex+1):
-            for y in range(fy, ey+1):
-                for z in range(fz, ez+1):
+        for x in range(fx, ex + 1):
+            for y in range(fy, ey + 1):
+                for z in range(fz, ez + 1):
                     rx, ry, rz = x - fx, y - fy, z - fz  # calculate the real position
 
                     chunk = dimension.get_chunk_for_position((rx, ry, rz))
                     block = chunk.get_block((x, y, z))  # and get the real block
-                    if type(block) == str: block = None  # if it is not generated yet, it is AIR for the moment
+                    if type(block) == str:
+                        block = (
+                            None  # if it is not generated yet, it is AIR for the moment
+                        )
 
                     if len(values) == 3 or len(values) > 3 and values[3] == "normal":
                         block_map[(rx, ry, rz)] = block
-                    elif len(values) > 3 and values[3] == "filtered" and block.NAME == values[5]:
+                    elif (
+                        len(values) > 3
+                        and values[3] == "filtered"
+                        and block.NAME == values[5]
+                    ):
                         block_map[(rx, ry, rz)] = block
-                    elif len(values) > 3 and values[3] == "masked" and block is not None:
+                    elif (
+                        len(values) > 3 and values[3] == "masked" and block is not None
+                    ):
                         block_map[(rx, ry, rz)] = block
                     if len(values) > 4 and values[4] == "move":
                         dimension.remove_block((x, y, z))
@@ -85,11 +115,14 @@ class CommandClone(mcpython.client.chat.command.Command.Command):
             if block_map[(x, y, z)] is None:
                 chunk.remove_block((x, y, z))
             else:
-                block = chunk.add_block((x+dx, y+dy, z+dz), block_map[(x, y, z)].NAME)
+                block = chunk.add_block(
+                    (x + dx, y + dy, z + dz), block_map[(x, y, z)].NAME
+                )
                 block.set_model_state(block_map[(x, y, z)].get_model_state())
                 block.face_state.update()
 
     @staticmethod
     def get_help() -> list:
-        return ["/clone <edge 1> <edge 2> <to> [<mask mode>] [<clone mode>] [<tile name>]: clones an area"]
-
+        return [
+            "/clone <edge 1> <edge 2> <to> [<mask mode>] [<clone mode>] [<tile name>]: clones an area"
+        ]

@@ -13,10 +13,12 @@ import mcpython.common.event.Registry
 from mcpython import globals as G
 
 
-class InvalidSaveException(Exception): pass
+class InvalidSaveException(Exception):
+    pass
 
 
-class MissingSaveException(Exception): pass
+class MissingSaveException(Exception):
+    pass
 
 
 class IDataSerializer(mcpython.common.event.Registry.IRegistryContent):
@@ -56,10 +58,18 @@ class IDataSerializer(mcpython.common.event.Registry.IRegistryContent):
         """
 
 
-dataserializerregistry = mcpython.common.event.Registry.Registry("dataserializer", ["minecraft:data_serializer"])
+dataserializerregistry = mcpython.common.event.Registry.Registry(
+    "dataserializer", ["minecraft:data_serializer"]
+)
 
 
 @G.modloader("minecraft", "stage:serializer:parts")
 def load():
-    from mcpython.server.storage.serializer import (General, PlayerData, Inventory, Chunk, GameRule, RegistryInfo)
-
+    from mcpython.server.storage.serializer import (
+        General,
+        PlayerData,
+        Inventory,
+        Chunk,
+        GameRule,
+        RegistryInfo,
+    )

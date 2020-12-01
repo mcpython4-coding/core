@@ -41,7 +41,8 @@ class CommandReload(mcpython.client.chat.command.Command.Command):
     @classmethod
     def reload(cls):
         G.window.print_profiler()  # print the profiler's
-        if not G.eventhandler.call_cancelable("data:reload:cancel"): return
+        if not G.eventhandler.call_cancelable("data:reload:cancel"):
+            return
         mcpython.client.chat.DataPack.datapackhandler.reload()  # reloads all data packs
         G.taghandler.reload()  # reloads all tags
         G.craftinghandler.reload_crafting_recipes()  # reloads all recipes
@@ -57,7 +58,9 @@ class CommandReload(mcpython.client.chat.command.Command.Command):
         G.inventoryhandler.reload_config()  # reloads inventory configuration
         G.modelhandler.reload_models()
         mcpython.client.rendering.OpenGLSetupFile.FILES.clear()  # remove all loaded OpenGL conifg ifles
-        mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name("setup")  # re-setup opengl
+        mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name(
+            "setup"
+        )  # re-setup opengl
         # todo: regenerate block item images, regenerate item atlases
 
         # reload entity model files
@@ -75,11 +78,19 @@ class CommandReload(mcpython.client.chat.command.Command.Command):
 
 def reload_chunks():
     dim = G.world.get_active_dimension()
-    for i, chunk in enumerate(list(dim.chunks.values())):  # iterate over all active chunks
-        G.window.set_caption("preparing chunk {}/{} at {}".format(i + 1, len(dim.chunks), chunk.position))
+    for i, chunk in enumerate(
+        list(dim.chunks.values())
+    ):  # iterate over all active chunks
+        G.window.set_caption(
+            "preparing chunk {}/{} at {}".format(i + 1, len(dim.chunks), chunk.position)
+        )
         chunk.update_visible(immediate=True)
     G.window.set_caption("finished!")
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:chunk_reload", reload_chunks)
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("hotkey:reload_textures", CommandReload.reload)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "hotkey:chunk_reload", reload_chunks
+)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "hotkey:reload_textures", CommandReload.reload
+)

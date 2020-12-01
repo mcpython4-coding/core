@@ -25,7 +25,9 @@ class ILootTableCondition(mcpython.common.event.Registry.IRegistryContent):
         return False
 
 
-loottableconditionregistry = mcpython.common.event.Registry.Registry("loot_table_registry", ["minecraft:loot_table_condition"])
+loottableconditionregistry = mcpython.common.event.Registry.Registry(
+    "loot_table_registry", ["minecraft:loot_table_condition"]
+)
 
 
 @G.registry
@@ -37,7 +39,9 @@ class Alternative(ILootTableCondition):
         self.conditions = [G.loottablehandler.parse_condition(d) for d in data["terms"]]
 
     def check(self, source, *args, **kwargs) -> bool:
-        return any([condition.check(source, *args, **kwargs) for condition in self.conditions])
+        return any(
+            [condition.check(source, *args, **kwargs) for condition in self.conditions]
+        )
 
 
 @G.registry
@@ -50,12 +54,16 @@ class BlockStateProperty(ILootTableCondition):
         self.state = data["properties"] if "properties" in data else {}
 
     def check(self, source, *args, block=None, **kwargs) -> bool:
-        if block is None: return False
-        if block.NAME != self.name: return False
-        if len(self.state) == 0: return True
+        if block is None:
+            return False
+        if block.NAME != self.name:
+            return False
+        if len(self.state) == 0:
+            return True
         state = block.get_model_state()
         for key in self.state:
-            if key not in state or state[key] != self.state[key]: return False
+            if key not in state or state[key] != self.state[key]:
+                return False
         return True
 
 
@@ -69,7 +77,9 @@ class DamageSourceProperties(ILootTableCondition):
         if "bypasses_armor" in data:
             self.source.setAttribute("bypasses_armor", data["bypasses_armor"])
         if "bypasses_invulnerability" in data:
-            self.source.setAttribute("bypasses_invulnerability", data["bypasses_invulnerability"])
+            self.source.setAttribute(
+                "bypasses_invulnerability", data["bypasses_invulnerability"]
+            )
         if "bypasses_magic" in data:
             self.source.setAttribute("bypasses_magic", data["bypasses_magic"])
         if "is_explosion" in data:
@@ -84,7 +94,8 @@ class DamageSourceProperties(ILootTableCondition):
         # todo: add direct_entity & source_entity
 
     def check(self, source, *args, damage_source=None, **kwargs) -> bool:
-        if damage_source is None: return False
+        if damage_source is None:
+            return False
         return self.source == damage_source
 
 
@@ -135,7 +146,7 @@ class RandomChance(ILootTableCondition):
     NAME = "minecraft:random_chance"
 
     def check(self, source, *args, **kwargs) -> bool:
-        return random.randint(1, round(1/self.data["chance"])) == 1
+        return random.randint(1, round(1 / self.data["chance"])) == 1
 
 
 @G.registry
@@ -155,7 +166,8 @@ class SurvivesExplosion(ILootTableCondition):
     NAME = "minecraft:survives_explosion"
     # todo: implement
 
-    def check(self, source, *args, **kwargs) -> bool: return True
+    def check(self, source, *args, **kwargs) -> bool:
+        return True
 
 
 @G.registry
@@ -180,6 +192,3 @@ class ToolEnchantment(ILootTableCondition):
 class WeatherCheck(ILootTableCondition):
     NAME = "minecraft:weather_check"
     # todo: implement
-
-
-

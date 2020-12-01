@@ -30,12 +30,17 @@ class ChunkFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
     @classmethod
     @deprecation.deprecated("dev3-1", "a1.3.0")
     def fix(cls, savefile, dimension, region):
-        data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
-        if data is None: return
-        if data["version"] != 1: return
+        data = savefile.access_file_pickle(
+            "dim/{}/{}_{}.region".format(dimension, *region)
+        )
+        if data is None:
+            return
+        if data["version"] != 1:
+            return
         data["version"] = 2
         for chunk in data.keys():
-            if chunk == "version": continue
+            if chunk == "version":
+                continue
             cdata = data[chunk]
             if "temperature" in cdata:
                 del cdata["temperature"]
@@ -52,14 +57,18 @@ class ChunkFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
                     else:
                         index = cdata["maps"]["landmass_palette"].index(mass)
                     cdata["maps"]["landmass_map"].append(index)
-        savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
+        savefile.dump_file_pickle(
+            "dim/{}/{}_{}.region".format(dimension, *region), data
+        )
 
 
 @deprecation.deprecated("dev3-1", "a1.3.0")
 class InventoryFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
     NAME = "1-2:minecraft:inventory_file"
     TRANSFORMS = (1, 2)  # from, to
-    PART = "minecraft:inventory_file"  # which part it fixes, only one per part is executed
+    PART = (
+        "minecraft:inventory_file"  # which part it fixes, only one per part is executed
+    )
 
     @classmethod
     @deprecation.deprecated("dev3-1", "a1.3.0")
@@ -67,4 +76,3 @@ class InventoryFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
         data = savefile.access_file_pickle(file)
         data["version"] = 2
         savefile.dump_file_pickle(file, data)
-

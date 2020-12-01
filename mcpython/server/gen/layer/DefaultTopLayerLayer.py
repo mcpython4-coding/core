@@ -33,9 +33,11 @@ class DefaultTopLayerLayer(Layer):
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         factor = 10 ** config.size
-        for x in range(chunk.position[0]*16, chunk.position[0]*16+16):
-            for z in range(chunk.position[1]*16, chunk.position[1]*16+16):
-                reference.schedule_invoke(cls.generate_xz, reference, x, z, config, factor)
+        for x in range(chunk.position[0] * 16, chunk.position[0] * 16 + 16):
+            for z in range(chunk.position[1] * 16, chunk.position[1] * 16 + 16):
+                reference.schedule_invoke(
+                    cls.generate_xz, reference, x, z, config, factor
+                )
 
     @staticmethod
     def generate_xz(reference, x, z, config, factor):
@@ -43,20 +45,23 @@ class DefaultTopLayerLayer(Layer):
         heightmap = chunk.get_value("heightmap")
         mheight = heightmap[(x, z)][0][1]
         biome = G.biomehandler.biomes[chunk.get_value("biomemap")[(x, z)]]
-        noisevalue = DefaultTopLayerLayer.noise.noise2d(x/factor, z/factor) * 0.5 + 0.5
+        noisevalue = (
+            DefaultTopLayerLayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
+        )
         r = biome.get_top_layer_height_range()
         noisevalue *= r[1] - r[0]
         noisevalue += r[0]
         height = round(noisevalue)
         decorators = biome.get_top_layer_configuration(height)
         for i in range(height):
-            y = mheight - (height-i-1)
+            y = mheight - (height - i - 1)
             block = reference.get_block((x, y, z))
-            if block and (block if type(block) == str else block.NAME) in ["minecraft:stone"]:
+            if block and (block if type(block) == str else block.NAME) in [
+                "minecraft:stone"
+            ]:
                 if i == height - 1:
                     reference.schedule_block_add((x, y, z), decorators[i])
                 else:
-                    reference.schedule_block_add((x, y, z), decorators[i], immediate=i >= height - 1)
-
-
-
+                    reference.schedule_block_add(
+                        (x, y, z), decorators[i], immediate=i >= height - 1
+                    )

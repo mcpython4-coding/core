@@ -11,7 +11,12 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import globals as G, logger
 import mcpython.client.chat.command.Command
-from mcpython.client.chat.command.Command import SubCommand, ParseType, ParseMode, ParseBridge
+from mcpython.client.chat.command.Command import (
+    SubCommand,
+    ParseType,
+    ParseMode,
+    ParseBridge,
+)
 
 
 @G.registry
@@ -27,42 +32,54 @@ class CommandHelp(mcpython.client.chat.command.Command.Command):
         parsebridge.main_entry = ["help", "?"]
         parsebridge.add_subcommand(
             SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
-        ).add_subcommand(
-            SubCommand(ParseType.STRING, mode=ParseMode.OPTIONAL)
-        )
+        ).add_subcommand(SubCommand(ParseType.STRING, mode=ParseMode.OPTIONAL))
 
     @staticmethod
     def parse(values: list, modes: list, info):
-        if len(values) == 0: values.append(1)
+        if len(values) == 0:
+            values.append(1)
         if type(values[0]) == int:
             page: int = values[0]
             start = (page - 1) * LINES_PER_PAGE
             end = start + LINES_PER_PAGE - 1
             if start < 0:
-                logger.println("[CHAT][COMMANDPARSER][ERROR] value must be greater than 0")
+                logger.println(
+                    "[CHAT][COMMANDPARSER][ERROR] value must be greater than 0"
+                )
                 return
             if end >= len(PAGES):
                 end = len(PAGES)
-            pages = PAGES[start-1 if start != 0 else 0:end]
+            pages = PAGES[start - 1 if start != 0 else 0 : end]
             logger.println("--------------" + "-" * len(str(page)))
             logger.println("- HELP PAGE {} -".format(page))
             logger.println("--------------" + "-" * len(str(page)))
             logger.println("\n".join(pages))
         elif type(values[0]) == str:
             c: str = values[0]
-            if c.startswith("/"): c = c[1:]
+            if c.startswith("/"):
+                c = c[1:]
             if c not in G.registry.get_by_name("command").commandentries:
-                logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(c))
+                logger.println(
+                    "[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(
+                        c
+                    )
+                )
                 return
             logger.println("------------------" + "-" * len(c))
             logger.println("- HELP PAGE FOR {} -".format(c))
             logger.println("------------------" + "-" * len(c))
-            logger.println("\n".join(G.registry.get_by_name("command").commandentries[c].get_help()))
+            logger.println(
+                "\n".join(
+                    G.registry.get_by_name("command").commandentries[c].get_help()
+                )
+            )
 
     @staticmethod
     def get_help() -> list:
-        return ["/help [<page>: default=1]: returns the help at the given page",
-                "/help <command>: returns help for given command if found"]
+        return [
+            "/help [<page>: default=1]: returns the help at the given page",
+            "/help <command>: returns help for given command if found",
+        ]
 
 
 # generate help pages  todo: change to an loading stage
@@ -76,4 +93,3 @@ G.eventhandler.call("command:help:generate_pages", PAGES)
 PAGES.sort(key=lambda x: x.split(" ")[0])
 
 LINES_PER_PAGE = 10  # an internal config, can be changed
-

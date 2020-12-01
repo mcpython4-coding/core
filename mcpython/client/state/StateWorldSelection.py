@@ -33,9 +33,14 @@ from .ui import UIPartButton, UIPartScrollBar
 import shutil
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
-    mcpython.ResourceLocator.read("assets/missing_texture.png", "pil").resize((50, 50), PIL.Image.NEAREST))
+    mcpython.ResourceLocator.read("assets/missing_texture.png", "pil").resize(
+        (50, 50), PIL.Image.NEAREST
+    )
+)
 WORLD_SELECTION = mcpython.ResourceLocator.read("minecraft:gui/world_selection", "pil")
-WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(WORLD_SELECTION.crop((0, 0, 32, 32)))
+WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(
+    WORLD_SELECTION.crop((0, 0, 32, 32))
+)
 
 
 class StateWorldSelection(State.State):
@@ -43,13 +48,17 @@ class StateWorldSelection(State.State):
 
     def __init__(self):
         super().__init__()
-        self.world_data = []  # the data representing the world list; first goes first in list from above
+        self.world_data = (
+            []
+        )  # the data representing the world list; first goes first in list from above
         self.selected_world = None
         self.selection_sprite = pyglet.sprite.Sprite(WORLD_SELECTION_SELECT)
         del self.eventbus
         self.eventbus = G.eventhandler.create_bus(active=False, crash_on_error=False)
         for statepart in self.parts:
-            statepart.master = [self]  # StateParts get an list of steps to get to them as an list
+            statepart.master = [
+                self
+            ]  # StateParts get an list of steps to get to them as an list
             statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
         self.bind_to_eventbus()
 
@@ -66,19 +75,48 @@ class StateWorldSelection(State.State):
 
     def get_parts(self) -> list:
         wx, wy = G.window.get_size()
-        return [mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
-                UIPartButton.UIPartButton((150, 20), "generate new", (105, 60), anchor_button="MM", anchor_window="MD",
-                                          on_press=self.on_new_world_press),
-                UIPartButton.UIPartButton((150, 20), "play!", (-105, 60), anchor_button="MM",
-                                          anchor_window="MD", on_press=self.on_world_load_press),
-                UIPartButton.UIPartButton((150, 20), "back", (-105, 20), anchor_window="MD", anchor_button="MD",
-                                          on_press=self.on_back_press),
-                UIPartButton.UIPartButton((150, 20), "delete", (105, 20), anchor_window="MD", anchor_button="MD",
-                                          on_press=self.on_delete_press),
-                UIPartScrollBar.UIScrollBar((wx - 80, 105), wy - 195, on_scroll=self.on_scroll)]
+        return [
+            mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
+            UIPartButton.UIPartButton(
+                (150, 20),
+                "generate new",
+                (105, 60),
+                anchor_button="MM",
+                anchor_window="MD",
+                on_press=self.on_new_world_press,
+            ),
+            UIPartButton.UIPartButton(
+                (150, 20),
+                "play!",
+                (-105, 60),
+                anchor_button="MM",
+                anchor_window="MD",
+                on_press=self.on_world_load_press,
+            ),
+            UIPartButton.UIPartButton(
+                (150, 20),
+                "back",
+                (-105, 20),
+                anchor_window="MD",
+                anchor_button="MD",
+                on_press=self.on_back_press,
+            ),
+            UIPartButton.UIPartButton(
+                (150, 20),
+                "delete",
+                (105, 20),
+                anchor_window="MD",
+                anchor_button="MD",
+                on_press=self.on_delete_press,
+            ),
+            UIPartScrollBar.UIScrollBar(
+                (wx - 80, 105), wy - 195, on_scroll=self.on_scroll
+            ),
+        ]
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if not button == mouse.LEFT: return
+        if not button == mouse.LEFT:
+            return
         wx, _ = G.window.get_size()
         wx -= 120
         for i, (_, icon, _, _) in enumerate(self.world_data):
@@ -122,33 +160,51 @@ class StateWorldSelection(State.State):
             self.on_back_press(0, 0)
         elif symbol == key.R:  # "R" will reload the world list
             self.reload_world_icons()
-        elif symbol == key.ENTER and self.selected_world is not None:  # selecting world & pressing enter will launch it
+        elif (
+            symbol == key.ENTER and self.selected_world is not None
+        ):  # selecting world & pressing enter will launch it
             self.enter_world(self.selected_world)
-        elif symbol == key.UP and self.selected_world is not None and self.selected_world > 0:
+        elif (
+            symbol == key.UP
+            and self.selected_world is not None
+            and self.selected_world > 0
+        ):
             self.selected_world -= 1
             self.parts[-1].move(60)
-        elif symbol == key.DOWN and self.selected_world is not None and self.selected_world < len(self.world_data) - 1:
+        elif (
+            symbol == key.DOWN
+            and self.selected_world is not None
+            and self.selected_world < len(self.world_data) - 1
+        ):
             self.selected_world += 1
             self.parts[-1].move(-60)
 
     def on_draw_2d_post(self):
         wx, wy = G.window.get_size()
-        pyglet.gl.glClearColor(1., 1., 1., 1.)
+        pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
         x, y = G.window.mouse_position
         for i, (_, icon, labels, _) in enumerate(self.world_data):
-            if icon.y < 105 or icon.y > wy - 110: continue
+            if icon.y < 105 or icon.y > wy - 110:
+                continue
             icon.draw()
             for label in labels:
                 label.draw()
             if i == self.selected_world:
                 x, y = icon.position
-                mcpython.util.opengl.draw_line_rectangle((x - 2, y - 2), (wx - 130, 54), (1, 1, 1))
+                mcpython.util.opengl.draw_line_rectangle(
+                    (x - 2, y - 2), (wx - 130, 54), (1, 1, 1)
+                )
             px, py = icon.position
             if 0 <= x - px <= wx and 0 <= y - py <= 50:
                 if 0 <= x - px <= 50:
-                    self.selection_sprite.position = icon.position[0] + 25 - 16, icon.position[1] + 25 - 16
+                    self.selection_sprite.position = (
+                        icon.position[0] + 25 - 16,
+                        icon.position[1] + 25 - 16,
+                    )
                     self.selection_sprite.draw()
-        mcpython.util.opengl.draw_line_rectangle((45, 100), (wx - 90, wy - 160), (1, 1, 1))
+        mcpython.util.opengl.draw_line_rectangle(
+            (45, 100), (wx - 90, wy - 160), (1, 1, 1)
+        )
 
     def activate(self):
         super().activate()
@@ -161,7 +217,9 @@ class StateWorldSelection(State.State):
         wx, wy = G.window.get_size()
         self.world_data.clear()
         for directory in os.listdir(mcpython.server.storage.SaveFile.SAVE_DIRECTORY):
-            path = os.path.join(mcpython.server.storage.SaveFile.SAVE_DIRECTORY, directory).replace("\\", "/")
+            path = os.path.join(
+                mcpython.server.storage.SaveFile.SAVE_DIRECTORY, directory
+            ).replace("\\", "/")
             if os.path.isdir(path) and os.path.isfile(path + "/level.json"):
                 if os.path.isfile(path + "/icon.png"):
                     icon = pyglet.image.load(path + "/icon.png")
@@ -170,17 +228,27 @@ class StateWorldSelection(State.State):
                 sprite = pyglet.sprite.Sprite(icon)
                 with open(path + "/level.json") as f:
                     data = json.load(f)
-                edit_date = datetime.datetime.fromtimestamp(os.path.getmtime(path + "/level.json"))
+                edit_date = datetime.datetime.fromtimestamp(
+                    os.path.getmtime(path + "/level.json")
+                )
                 diff = datetime.datetime.now() - edit_date
                 if diff.days < 5:
                     edit = "{} days ago".format(diff.days)
                 else:
                     edit = "on {}".format(edit_date.isoformat())
-                labels = [pyglet.text.Label(directory),
-                          pyglet.text.Label("last played in version '{}' {}".format(
-                              data["game version"], edit)),
-                          pyglet.text.Label("last loaded with {} mod{}".format(
-                              len(data["mods"]), "" if len(data["mods"]) <= 1 else "s"))]
+                labels = [
+                    pyglet.text.Label(directory),
+                    pyglet.text.Label(
+                        "last played in version '{}' {}".format(
+                            data["game version"], edit
+                        )
+                    ),
+                    pyglet.text.Label(
+                        "last loaded with {} mod{}".format(
+                            len(data["mods"]), "" if len(data["mods"]) <= 1 else "s"
+                        )
+                    ),
+                ]
                 self.world_data.append((edit_date, sprite, labels, path))
         self.world_data.sort(key=lambda d: -d[0].timestamp())
         self.recalculate_sprite_position()
@@ -194,12 +262,14 @@ class StateWorldSelection(State.State):
         G.statehandler.switch_to("minecraft:world_generation_config")
 
     def on_delete_press(self, *_):
-        if self.selected_world is None: return
+        if self.selected_world is None:
+            return
         shutil.rmtree(self.world_data[self.selected_world][3])
         self.reload_world_icons()
 
     def on_world_load_press(self, *_):
-        if self.selected_world is None: return
+        if self.selected_world is None:
+            return
         self.enter_world(self.selected_world)
 
     def enter_world(self, number: int):

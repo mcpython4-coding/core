@@ -38,7 +38,9 @@ class CraftingHandler:
 
         self.loaded_mod_dirs = set()
 
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:shuffle:all", self.shuffle_data)
+        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            "data:shuffle:all", self.shuffle_data
+        )
 
     def shuffle_data(self):
         recipe_groups = {}
@@ -59,12 +61,17 @@ class CraftingHandler:
 
     def __call__(self, obj):
         if issubclass(obj, mcpython.client.gui.crafting.IRecipeType.IRecipe):
-            [self.recipeinfotable.setdefault(name, obj) for name in obj.get_recipe_names()]
+            [
+                self.recipeinfotable.setdefault(name, obj)
+                for name in obj.get_recipe_names()
+            ]
         else:
             raise ValueError()
         return obj
 
-    def add_recipe(self, recipe: mcpython.client.gui.crafting.IRecipeType.IRecipe, name):
+    def add_recipe(
+        self, recipe: mcpython.client.gui.crafting.IRecipeType.IRecipe, name
+    ):
         recipe.name = name
         recipe.register()
         self.recipe_table[name] = recipe
@@ -86,33 +93,54 @@ class CraftingHandler:
         except:
             logger.print_exception("during loading recipe file '{}'".format(file))
             return
-        if len(data.strip()) == 0: return
+        if len(data.strip()) == 0:
+            return
         try:
             data = json.loads(data)
         except:
-            logger.print_exception("during decoding recipe from file '{}'".format(file), "'" + data + "'")
+            logger.print_exception(
+                "during decoding recipe from file '{}'".format(file), "'" + data + "'"
+            )
             return
         s = file.split("/")
-        name = "{}:{}".format(s[s.index("data")+1], "/".join(s[s.index("recipes")+1:]))
+        name = "{}:{}".format(
+            s[s.index("data") + 1], "/".join(s[s.index("recipes") + 1 :])
+        )
         result = self.add_recipe_from_data(data, name)
         if result is None and "--debugrecipes" in sys.argv:
-            logger.println("error in decoding recipe from file {}: type '{}' not found".format(file, data["type"]))
+            logger.println(
+                "error in decoding recipe from file {}: type '{}' not found".format(
+                    file, data["type"]
+                )
+            )
 
     def load(self, modname, check_mod_dirs=True, load_direct=False):
         if modname in self.loaded_mod_dirs and check_mod_dirs:
-            logger.println("ERROR: mod '{}' has tried to load crafting recipes twice or more".format(modname))
+            logger.println(
+                "ERROR: mod '{}' has tried to load crafting recipes twice or more".format(
+                    modname
+                )
+            )
             return  # make sure to load only ones!
         self.loaded_mod_dirs.add(modname)
-        for itemname in mcpython.ResourceLocator.get_all_entries("data/{}/recipes".format(modname)):
-            if itemname.endswith("/"): continue
+        for itemname in mcpython.ResourceLocator.get_all_entries(
+            "data/{}/recipes".format(modname)
+        ):
+            if itemname.endswith("/"):
+                continue
             if not load_direct:
-                G.modloader.mods[modname].eventbus.subscribe("stage:recipe:bake", self.add_recipe_from_file, itemname,
-                                                             info="loading crafting recipe from {}".format(itemname))
+                G.modloader.mods[modname].eventbus.subscribe(
+                    "stage:recipe:bake",
+                    self.add_recipe_from_file,
+                    itemname,
+                    info="loading crafting recipe from {}".format(itemname),
+                )
             else:
                 self.add_recipe_from_file(itemname)
 
     def reload_crafting_recipes(self):
-        if not G.eventhandler.call_cancelable("craftinghandler:reload:pre", self): return
+        if not G.eventhandler.call_cancelable("craftinghandler:reload:pre", self):
+            return
 
         # all shapeless recipes sorted after item count
         self.crafting_recipes_shapeless = {}
@@ -124,8 +152,12 @@ class CraftingHandler:
         G.eventhandler.call("craftinghandler:reload:intermediate", self)
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
-            logger.println("\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
-                modname, i+1, len(self.loaded_mod_dirs)), end="")
+            logger.println(
+                "\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
+                    modname, i + 1, len(self.loaded_mod_dirs)
+                ),
+                end="",
+            )
             self.load(modname, check_mod_dirs=False, load_direct=True)
         logger.println()
 
@@ -139,8 +171,12 @@ def load_recipe_providers():
     pass
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipe:groups", load_recipe_providers,
-                                            info="loading crafting recipe groups")
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:recipes", G.craftinghandler.load, "minecraft",
-                                            info="loading crafting recipes")
-
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:recipe:groups", load_recipe_providers, info="loading crafting recipe groups"
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:recipes",
+    G.craftinghandler.load,
+    "minecraft",
+    info="loading crafting recipes",
+)

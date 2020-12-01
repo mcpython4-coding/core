@@ -28,7 +28,7 @@ class TickHandler:
         self.active_tick = 0
         self.next_ticket_id = 0
         self.results = {}
-        pyglet.clock.schedule_interval(self.tick, 1/20)
+        pyglet.clock.schedule_interval(self.tick, 1 / 20)
         self.lost_time = 0
         self.enable_tick_skipping = False
         self.instant_ticks = False
@@ -47,7 +47,9 @@ class TickHandler:
         while self.lost_time > 1 / 20:
             self.lost_time -= 1 / 20
             if self.active_tick in self.tick_array:
-                for ticketid, function, args, kwargs, ticketupdate in self.tick_array[self.active_tick]:
+                for ticketid, function, args, kwargs, ticketupdate in self.tick_array[
+                    self.active_tick
+                ]:
                     result = function(*args, **kwargs)
                     if ticketid:
                         self.results[ticketid] = result
@@ -56,8 +58,13 @@ class TickHandler:
                     self.lost_time = 0
                     return
         G.entityhandler.tick()
-        if any(type(x) == mcpython.client.state.StatePartGame.StatePartGame for x in G.statehandler.active_state.parts):
-            mcpython.client.chat.DataPack.datapackhandler.try_call_function("#minecraft:tick")
+        if any(
+            type(x) == mcpython.client.state.StatePartGame.StatePartGame
+            for x in G.statehandler.active_state.parts
+        ):
+            mcpython.client.chat.DataPack.datapackhandler.try_call_function(
+                "#minecraft:tick"
+            )
             if self.enable_random_ticks:
                 pyglet.clock.schedule_once(self.send_random_ticks, 0)
         while len(self.execute_array) > 0:
@@ -65,8 +72,14 @@ class TickHandler:
             try:
                 func(*args, **kwargs)
             except:
-                logger.print_exception("exception during invoking", "{}({},{})".format(
-                    func, ", ".join(args), ", ".join(["{}={}".format(key, kwargs[key]) for key in kwargs])))
+                logger.print_exception(
+                    "exception during invoking",
+                    "{}({},{})".format(
+                        func,
+                        ", ".join(args),
+                        ", ".join(["{}={}".format(key, kwargs[key]) for key in kwargs]),
+                    ),
+                )
 
     def schedule_once(self, function, *args, **kwargs):
         """
@@ -76,7 +89,9 @@ class TickHandler:
         """
         self.execute_array.append((function, args, kwargs))
 
-    def bind(self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}):
+    def bind(
+        self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}
+    ):
         """
         bind an function to an given tick
         :param function: the function to bind
@@ -92,7 +107,8 @@ class TickHandler:
         if isdelta:
             tick += self.active_tick
         # logger.println(function, tick, self.active_tick)
-        if tick not in self.tick_array: self.tick_array[tick] = []
+        if tick not in self.tick_array:
+            self.tick_array[tick] = []
         if ticketfunction:
             ticketid = self.next_ticket_id
             self.next_ticket_id += 1
@@ -104,17 +120,35 @@ class TickHandler:
         self.bind(function, tick * 2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
-        cx, cz = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
-        for dx in range(-mcpython.common.config.RANDOM_TICK_RANGE, mcpython.common.config.RANDOM_TICK_RANGE + 1):
-            for dz in range(-mcpython.common.config.RANDOM_TICK_RANGE, mcpython.common.config.RANDOM_TICK_RANGE + 1):
+        cx, cz = mcpython.util.math.positionToChunk(
+            G.world.get_active_player().position
+        )
+        for dx in range(
+            -mcpython.common.config.RANDOM_TICK_RANGE,
+            mcpython.common.config.RANDOM_TICK_RANGE + 1,
+        ):
+            for dz in range(
+                -mcpython.common.config.RANDOM_TICK_RANGE,
+                mcpython.common.config.RANDOM_TICK_RANGE + 1,
+            ):
                 if dx ** 2 + dz ** 2 <= mcpython.common.config.RANDOM_TICK_RANGE ** 2:
                     x = cx + dx
                     z = cz + dz
                     for dy in range(16):
-                        for _ in range(G.world.gamerulehandler.table["randomTickSpeed"].status.status):
-                            ddx, ddy, ddz = random.randint(0, 15), random.randint(0, 255), random.randint(0, 15)
+                        for _ in range(
+                            G.world.gamerulehandler.table[
+                                "randomTickSpeed"
+                            ].status.status
+                        ):
+                            ddx, ddy, ddz = (
+                                random.randint(0, 15),
+                                random.randint(0, 255),
+                                random.randint(0, 15),
+                            )
                             position = (x + ddx, ddy, z + ddz)
-                            blockinst = G.world.get_active_dimension().get_block(position)
+                            blockinst = G.world.get_active_dimension().get_block(
+                                position
+                            )
                             if blockinst is not None and type(blockinst) != str:
                                 if blockinst.ENABLE_RANDOM_TICKS:
                                     blockinst.on_random_update()

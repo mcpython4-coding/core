@@ -23,14 +23,18 @@ class ILog(mcpython.common.block.Block.Block):
         super().__init__(*args, **kwargs)
         self.axis = LogAxis.Y
         if self.set_to:
-            dx, dy, dz = abs(self.set_to[0] - self.position[0]), abs(self.set_to[1] - self.position[0]), \
-                         abs(self.set_to[2] - self.position[2])
+            dx, dy, dz = (
+                abs(self.set_to[0] - self.position[0]),
+                abs(self.set_to[1] - self.position[0]),
+                abs(self.set_to[2] - self.position[2]),
+            )
             if dx:
                 self.axis = LogAxis.X
             elif dz:
                 self.axis = LogAxis.Z
 
-    def get_model_state(self): return {"axis": self.axis.name.lower()}
+    def get_model_state(self):
+        return {"axis": self.axis.name.lower()}
 
     def set_model_state(self, state: dict):
         if "axis" in state:
@@ -40,4 +44,3 @@ class ILog(mcpython.common.block.Block.Block):
     @staticmethod
     def get_all_model_states() -> list:
         return [{"axis": "x"}, {"axis": "y"}, {"axis": "z"}]
-

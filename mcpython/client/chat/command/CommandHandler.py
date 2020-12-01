@@ -19,34 +19,68 @@ import mcpython.common.mod.ModMcpython
 
 
 def register_command(registry, command):
-    if issubclass(command, mcpython.client.chat.command.Command.Command):  # is it an command
+    if issubclass(
+        command, mcpython.client.chat.command.Command.Command
+    ):  # is it an command
         G.commandparser.add_command(command)
-    elif issubclass(command, mcpython.client.chat.command.CommandEntry.CommandEntry):  # or an command entry
+    elif issubclass(
+        command, mcpython.client.chat.command.CommandEntry.CommandEntry
+    ):  # or an command entry
         commandregistry.commandentries[command.NAME] = command
-    elif issubclass(command, mcpython.client.chat.command.Selector.Selector):  # or an selector?
+    elif issubclass(
+        command, mcpython.client.chat.command.Selector.Selector
+    ):  # or an selector?
         commandregistry.selector.append(command)
     else:
         raise ValueError("can't register object {} to commandhandler".format(command))
 
 
-commandregistry = mcpython.common.event.Registry.Registry("command", ["minecraft:command", "minecraft:command_entry",
-                                                               "minecraft:selector"],
-                                                   injection_function=register_command)
+commandregistry = mcpython.common.event.Registry.Registry(
+    "command",
+    ["minecraft:command", "minecraft:command_entry", "minecraft:selector"],
+    injection_function=register_command,
+)
 commandregistry.commandentries = {}
 commandregistry.selector = []
 
 
 def load_commands():
-    from . import (CommandClear, CommandClone, CommandDataPack, CommandExecute, CommandFill, CommandFunction,
-                   CommandGamemode, CommandGameRule, CommandGenerate, CommandGive, CommandItemInfo,
-                   CommandKill, CommandLoot, CommandRegistryInfo, CommandReload, CommandReplaceItem,
-                   CommandSetblock, CommandSummon, CommandTeleport, CommandTell, CommandXp, CommandShuffleData)
+    from . import (
+        CommandClear,
+        CommandClone,
+        CommandDataPack,
+        CommandExecute,
+        CommandFill,
+        CommandFunction,
+        CommandGamemode,
+        CommandGameRule,
+        CommandGenerate,
+        CommandGive,
+        CommandItemInfo,
+        CommandKill,
+        CommandLoot,
+        CommandRegistryInfo,
+        CommandReload,
+        CommandReplaceItem,
+        CommandSetblock,
+        CommandSummon,
+        CommandTeleport,
+        CommandTell,
+        CommandXp,
+        CommandShuffleData,
+    )
 
     # register this at the end
 
     from . import CommandHelp
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:commands", load_commands, info="loading commands")
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:command:entries", mcpython.client.chat.command.CommandEntry.load)
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:command:selectors", mcpython.client.chat.command.Selector.load)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:commands", load_commands, info="loading commands"
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:command:entries", mcpython.client.chat.command.CommandEntry.load
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:command:selectors", mcpython.client.chat.command.Selector.load
+)

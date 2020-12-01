@@ -20,23 +20,43 @@ import mcpython.common.mod.ModMcpython
 
 
 # todo: use pyglet.image.Image.get_region(area)
-sprite = mcpython.util.texture.to_pyglet_sprite(mcpython.ResourceLocator.read("gui/demo_background", mode="pil").crop((0, 0, 248, 166)))
+sprite = mcpython.util.texture.to_pyglet_sprite(
+    mcpython.ResourceLocator.read("gui/demo_background", mode="pil").crop(
+        (0, 0, 248, 166)
+    )
+)
 
 
 class StateGameInfo(mcpython.client.state.State.State):
     NAME = "minecraft:gameinfo"
 
     @staticmethod
-    def is_mouse_exclusive(): return False
+    def is_mouse_exclusive():
+        return False
 
     def get_parts(self) -> list:
-        parts = [mcpython.client.state.StatePartGame.StatePartGame(activate_physics=False, activate_mouse=False,
-                                                                   activate_keyboard=False, activate_focused_block=False),
-                 UIPartImage.UIPartImage(sprite, (0, 0), anchor_window="MM", anchor_image="MM")]
+        parts = [
+            mcpython.client.state.StatePartGame.StatePartGame(
+                activate_physics=False,
+                activate_mouse=False,
+                activate_keyboard=False,
+                activate_focused_block=False,
+            ),
+            UIPartImage.UIPartImage(
+                sprite, (0, 0), anchor_window="MM", anchor_image="MM"
+            ),
+        ]
         y = 40
         for i in range(7):
-            parts.append(UIPartLable.UIPartLable("#*special.gameinfo.line{}*#".format(i + 1),
-                                                 (0, y), anchor_lable="MM", anchor_window="MM", text_size=10))
+            parts.append(
+                UIPartLable.UIPartLable(
+                    "#*special.gameinfo.line{}*#".format(i + 1),
+                    (0, y),
+                    anchor_lable="MM",
+                    anchor_window="MM",
+                    text_size=10,
+                )
+            )
             y -= 12
         return parts
 
@@ -63,4 +83,3 @@ def create():
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
-

@@ -29,24 +29,33 @@ class DefaultTreeLayer(Layer):
         cz *= 16
         for x in range(16):
             for z in range(16):
-                reference.schedule_invoke(DefaultTreeLayer.generate_position, cx+x, cz+z, reference, config)
+                reference.schedule_invoke(
+                    DefaultTreeLayer.generate_position,
+                    cx + x,
+                    cz + z,
+                    reference,
+                    config,
+                )
 
     @staticmethod
     def generate_position(x, z, reference, config):
         chunk = reference.chunk
         treemap = chunk.get_value("treeblocked")
-        if (x, z) in treemap: return  # is an tree nearby?
+        if (x, z) in treemap:
+            return  # is an tree nearby?
         biome = G.biomehandler.biomes[chunk.get_value("biomemap")[(x, z)]]
         height = chunk.get_value("heightmap")[(x, z)][0][1]
         trees = biome.get_trees()
         # todo: make noise-based
         for IFeature, chance in trees:
             if random.randint(1, chance) == 1:
-                IFeature.place(chunk.dimension, x, height+1, z)
+                IFeature.place(chunk.dimension, x, height + 1, z)
                 for dx in range(-2, 3):
                     for dz in range(-2, 3):
-                        treemap.append((x+dx, z+dz))
+                        treemap.append((x + dx, z + dz))
                 return
 
 
-authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute("treeblocked", DefaultTreeLayer, [])
+authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
+    "treeblocked", DefaultTreeLayer, []
+)

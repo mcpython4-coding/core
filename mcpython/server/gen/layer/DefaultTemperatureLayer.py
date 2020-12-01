@@ -34,7 +34,7 @@ class DefaultTemperatureLayer(Layer):
         if not hasattr(config, "min"):
             config.min = -0.5
         if not hasattr(config, "max"):
-            config.max = 2.
+            config.max = 2.0
         if not hasattr(config, "size"):
             config.size = 2
 
@@ -45,17 +45,21 @@ class DefaultTemperatureLayer(Layer):
         chunk = reference.chunk
         cx, cz = chunk.position
         temperaturemap = chunk.get_value("temperaturemap")
-        factor = 10**config.size
+        factor = 10 ** config.size
         r = [config.min, config.max]
-        for x in range(cx*16, cx*16+16):
-            for z in range(cz*16, cz*16+16):
-                v = DefaultTemperatureLayer.noise.noise2d(x/factor, z/factor)
-                v = v / 2. + .5
+        for x in range(cx * 16, cx * 16 + 16):
+            for z in range(cz * 16, cz * 16 + 16):
+                v = DefaultTemperatureLayer.noise.noise2d(x / factor, z / factor)
+                v = v / 2.0 + 0.5
                 v *= abs(r[0] - r[1])
                 v += r[0]
                 temperaturemap[(x, z)] = v
 
 
-authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute("temperaturemap", DefaultTemperatureLayer, {})
+authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
+    "temperaturemap", DefaultTemperatureLayer, {}
+)
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("seed:set", DefaultTemperatureLayer.update_seed)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "seed:set", DefaultTemperatureLayer.update_seed
+)

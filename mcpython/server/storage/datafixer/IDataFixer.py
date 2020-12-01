@@ -15,7 +15,8 @@ import deprecation
 
 
 @deprecation.deprecated("dev3-1", "a1.3.0")
-class DataFixerException(Exception): pass
+class DataFixerException(Exception):
+    pass
 
 
 @deprecation.deprecated("dev3-1", "a1.3.0")
@@ -38,13 +39,20 @@ class IGeneralDataFixer(mcpython.common.event.Registry.IRegistryContent):
     UPGRADES_TO = None
 
 
-datafixerregistry = None  # mcpython.event.Registry.Registry("datafixers", ["minecraft:datafixer"])
+datafixerregistry = (
+    None  # mcpython.event.Registry.Registry("datafixers", ["minecraft:datafixer"])
+)
 generaldatafixerregistry = None  # mcpython.event.Registry.Registry("generaldatafixers", ["minecraft:general_datafixer"])
 
 
 @deprecation.deprecated("dev3-1", "a1.3.0")
 def load_general_fixer():
-    from mcpython.server.storage.datafixer import DataFixer3to4, DataFixer1to2, DataFixer2to3, DataFixer4to5
+    from mcpython.server.storage.datafixer import (
+        DataFixer3to4,
+        DataFixer1to2,
+        DataFixer2to3,
+        DataFixer4to5,
+    )
 
 
 @deprecation.deprecated("dev3-1", "a1.3.0")

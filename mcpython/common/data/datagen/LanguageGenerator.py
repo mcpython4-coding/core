@@ -13,7 +13,9 @@ import mcpython.common.data.datagen.Configuration
 
 
 class LanguageGenerator(mcpython.datagen.Configuration.IDataGenerator):
-    def __init__(self, config: mcpython.datagen.Configuration.DataGeneratorConfig, lang_name: str):
+    def __init__(
+        self, config: mcpython.datagen.Configuration.DataGeneratorConfig, lang_name: str
+    ):
         super().__init__(config)
         self.lang_name = lang_name
         self.table = {}
@@ -23,5 +25,4 @@ class LanguageGenerator(mcpython.datagen.Configuration.IDataGenerator):
         return self
 
     def generate(self):
-        self.config.write_json(self.table, "assets", "lang", self.lang_name+".json")
-
+        self.config.write_json(self.table, "assets", "lang", self.lang_name + ".json")

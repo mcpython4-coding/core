@@ -52,4 +52,3 @@ class Biome(mcpython.common.event.Registry.IRegistryContent):
         :return: an IOre[
         """
         return [ores.CoalOre]
-

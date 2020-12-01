@@ -52,4 +52,3 @@ class ChunkDataFixer1to2(mcpython.server.storage.serializer.Chunk.ChunkDataFixer
                     index = cdata["maps"]["landmass_palette"].index(mass)
                 cdata["maps"]["landmass_map"].append(index)
         return cdata
-

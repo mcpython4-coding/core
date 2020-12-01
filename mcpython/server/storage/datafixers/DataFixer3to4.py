@@ -36,6 +36,7 @@ class ChunkDataFixer3to4(mcpython.server.storage.serializer.Chunk.ChunkDataFixer
         blocks = cdata["blocks"]
         cdata["blocks"] = {}
         for position in blocks:
-            cdata["blocks"][(position[0] - chunk[0] * 16, position[1],
-                             position[2] - chunk[2] * 16)] = blocks[position]
+            cdata["blocks"][
+                (position[0] - chunk[0] * 16, position[1], position[2] - chunk[2] * 16)
+            ] = blocks[position]
         return cdata

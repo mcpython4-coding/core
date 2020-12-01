@@ -20,7 +20,8 @@ class StateStartMenu(mcpython.client.state.State.State):
     NAME = "minecraft:startmenu"
     CONFIG_LOCATION = "data/minecraft/states/start_menu.json"
 
-    def __init__(self):  super().__init__()
+    def __init__(self):
+        super().__init__()
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
@@ -38,7 +39,8 @@ class StateStartMenu(mcpython.client.state.State.State):
         G.window.close()
 
     @staticmethod
-    def on_draw_2d_pre(): pyglet.gl.glClearColor(1., 1., 1., 1.)
+    def on_draw_2d_pre():
+        pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
 
     @staticmethod
     def on_key_press(key, modifier):
@@ -55,4 +57,3 @@ def create():
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
-

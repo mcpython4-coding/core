@@ -24,8 +24,11 @@ def get(key, formatting=None):
     :param formatting: an list of formatting to use
     :return:
     """
-    return LANGUAGES[ACTIVE_LANGUAGE].read_value(key).format(*list(
-        formatting) if formatting is not None else [])
+    return (
+        LANGUAGES[ACTIVE_LANGUAGE]
+        .read_value(key)
+        .format(*list(formatting) if formatting is not None else [])
+    )
 
 
 def translate(s: str):
@@ -37,8 +40,8 @@ def translate(s: str):
     while s.count("#*") > 0 and s.count("*#") > 0:
         start = s.index("#*")
         end = s.index("*#")
-        substring = s[start+2:end].split("|")
-        s = s[:start] + get(substring[0], formatting=substring[1:]) + s[end+2:]
+        substring = s[start + 2 : end].split("|")
+        s = s[:start] + get(substring[0], formatting=substring[1:]) + s[end + 2 :]
     return s
 
 
@@ -55,10 +58,14 @@ class Language:
         :param name: the name of the language to use or None for generation from file name
         """
         try:
-            Language.from_data(file.split("/")[-1].split(".")[0] if name is None else name,
-                               mcpython.ResourceLocator.read(file, "json").copy())
+            Language.from_data(
+                file.split("/")[-1].split(".")[0] if name is None else name,
+                mcpython.ResourceLocator.read(file, "json").copy(),
+            )
         except:
-            logger.print_exception("[ERROR] failed to load language file {}".format(file))
+            logger.print_exception(
+                "[ERROR] failed to load language file {}".format(file)
+            )
 
     @classmethod
     def from_old_data(cls, file: str, name=None):
@@ -68,16 +75,21 @@ class Language:
         :param name: the name to load under, or None if to read from the file name
         """
         name = file.split("/")[-1].split(".")[0] if name is None else name
-        if name not in LANGUAGES: LANGUAGES[name] = cls()
+        if name not in LANGUAGES:
+            LANGUAGES[name] = cls()
         language = LANGUAGES[name]
         try:
             lines = mcpython.ResourceLocator.read(file).decode("UTF-8").split("\n")
         except:
-            logger.print_exception("[ERROR] failed to load (old) language file {}".format(file))
+            logger.print_exception(
+                "[ERROR] failed to load (old) language file {}".format(file)
+            )
             return
         for line in lines:
-            if line.startswith("#"): continue
-            if line.count(" ") + line.count("   ") + line.count("\r") >= len(line): continue
+            if line.startswith("#"):
+                continue
+            if line.count(" ") + line.count("   ") + line.count("\r") >= len(line):
+                continue
             pre, *post = line.split("=")
             language.table[pre] = "=".join(post)
 
@@ -110,19 +122,29 @@ def from_directory(directory: str, modname: str):
     :param directory: the directory name
     :param modname: the mod name
     """
-    if not modname in G.modloader.mods: modname = "minecraft"
+    if not modname in G.modloader.mods:
+        modname = "minecraft"
     files = mcpython.ResourceLocator.get_all_entries_special(directory)
     m = len(files)
     for i, f in enumerate(files):
         if f.endswith(".json"):  # new language format
-            G.modloader.mods[modname].eventbus.subscribe("stage:language", Language.from_file, f[:],
-                                                         info="loading language file {} ({}/{})".format(f, i+1, m))
+            G.modloader.mods[modname].eventbus.subscribe(
+                "stage:language",
+                Language.from_file,
+                f[:],
+                info="loading language file {} ({}/{})".format(f, i + 1, m),
+            )
         elif f.endswith(".lang"):  # old language format
-            G.modloader.mods[modname].eventbus.subscribe("stage:language", Language.from_old_data, f[:],
-                                                         info="loading language file {} ({}/{})".format(f, i + 1, m))
+            G.modloader.mods[modname].eventbus.subscribe(
+                "stage:language",
+                Language.from_old_data,
+                f[:],
+                info="loading language file {} ({}/{})".format(f, i + 1, m),
+            )
 
 
-def from_mod_name(modname: str): from_directory("assets/{}/lang".format(modname), modname)
+def from_mod_name(modname: str):
+    from_directory("assets/{}/lang".format(modname), modname)
 
 
 from_mod_name("minecraft")
@@ -130,4 +152,3 @@ from_mod_name("mcpython")
 
 # todo: make load of only the active language and load others when needed -> reduce RAM usage
 # todo: make an sys.argv option to disable loading & translating
-

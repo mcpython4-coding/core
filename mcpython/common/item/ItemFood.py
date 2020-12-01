@@ -21,11 +21,12 @@ class ItemFood(mcpython.common.item.Item.Item):
         """
         if G.world.get_active_player().hunger == 20:
             return False
-        G.world.get_active_player().hunger = min(self.HUNGER_ADDITION+G.world.get_active_player().hunger, 20)
+        G.world.get_active_player().hunger = min(
+            self.HUNGER_ADDITION + G.world.get_active_player().hunger, 20
+        )
         return True
 
     HUNGER_ADDITION = None
 
     def get_eat_hunger_addition(self) -> int:
         return self.HUNGER_ADDITION
-

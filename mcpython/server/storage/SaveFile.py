@@ -61,19 +61,29 @@ History of save versions:
 G.STORAGE_VERSION = LATEST_VERSION = 6  # the latest version, used for upgrading
 
 # where the stuff should be saved
-SAVE_DIRECTORY = G.home + "/saves" if "--saves-directory" not in sys.argv else \
-    sys.argv[sys.argv.index("--saves-directory") + 1]
+SAVE_DIRECTORY = (
+    G.home + "/saves"
+    if "--saves-directory" not in sys.argv
+    else sys.argv[sys.argv.index("--saves-directory") + 1]
+)
 
 
-class DataFixerNotFoundException(Exception): pass
+class DataFixerNotFoundException(Exception):
+    pass
 
 
-def register_storage_fixer(_, fixer: mcpython.server.storage.datafixers.IDataFixer.IStorageVersionFixer):
+def register_storage_fixer(
+    _, fixer: mcpython.server.storage.datafixers.IDataFixer.IStorageVersionFixer
+):
     SaveFile.storage_version_fixers.setdefault(fixer.FIXES_FROM, []).append(fixer)
 
 
-def register_mod_fixer(_, fixer: mcpython.server.storage.datafixers.IDataFixer.IModVersionFixer):
-    SaveFile.mod_fixers.setdefault(fixer.MOD_NAME, {}).setdefault(fixer.FIXES_FROM, []).append(fixer)
+def register_mod_fixer(
+    _, fixer: mcpython.server.storage.datafixers.IDataFixer.IModVersionFixer
+):
+    SaveFile.mod_fixers.setdefault(fixer.MOD_NAME, {}).setdefault(
+        fixer.FIXES_FROM, []
+    ).append(fixer)
 
 
 class SaveFile:
@@ -86,15 +96,23 @@ class SaveFile:
     mod_fixers = {}
 
     storage_fixer_registry = mcpython.common.event.Registry.Registry(
-        "storage_fixer", ["minecraft:storage_version_fixer"], injection_function=register_storage_fixer,
-        dump_content_in_saves=False)
+        "storage_fixer",
+        ["minecraft:storage_version_fixer"],
+        injection_function=register_storage_fixer,
+        dump_content_in_saves=False,
+    )
     mod_fixer_registry = mcpython.common.event.Registry.Registry(
-        "mod_fixer", ["minecraft:mod_version_fixer"], injection_function=register_mod_fixer,
-        dump_content_in_saves=False)
-    group_fixer_registry = mcpython.common.event.Registry.Registry("group_fixer", ["minecraft:group_fixer"],
-                                                            dump_content_in_saves=False)
-    part_fixer_registry = mcpython.common.event.Registry.Registry("part_fixer", ["minecraft:part_fixer"],
-                                                           dump_content_in_saves=False)
+        "mod_fixer",
+        ["minecraft:mod_version_fixer"],
+        injection_function=register_mod_fixer,
+        dump_content_in_saves=False,
+    )
+    group_fixer_registry = mcpython.common.event.Registry.Registry(
+        "group_fixer", ["minecraft:group_fixer"], dump_content_in_saves=False
+    )
+    part_fixer_registry = mcpython.common.event.Registry.Registry(
+        "part_fixer", ["minecraft:part_fixer"], dump_content_in_saves=False
+    )
 
     def __init__(self, directory_name: str):
         """
@@ -122,15 +140,18 @@ class SaveFile:
             self.read("minecraft:general")
             while self.version != LATEST_VERSION:
                 if self.version not in self.storage_version_fixers:
-                    logger.println("[ERROR] unable to data-fix world. No data fixer found for version {}".format(
-                        self.version))
+                    logger.println(
+                        "[ERROR] unable to data-fix world. No data fixer found for version {}".format(
+                            self.version
+                        )
+                    )
                     G.world.cleanup()
                     G.statehandler.switch_to("minecraft:startmenu")
                     return
                 fixers = self.storage_version_fixers[self.version]
                 if len(fixers) > 1:
                     # search for the one fixing to the nearest version to the searched for
-                    fixer = min(fixers, key=lambda f: abs(LATEST_VERSION-f.FIXES_TO))
+                    fixer = min(fixers, key=lambda f: abs(LATEST_VERSION - f.FIXES_TO))
                 else:
                     fixer = fixers[0]
                 self.apply_storage_fixer(fixer.NAME)
@@ -141,14 +162,20 @@ class SaveFile:
             self.read("minecraft:gamerule")
             self.read("minecraft:registry_info_serializer")
         except mcpython.server.storage.serializer.IDataSerializer.MissingSaveException:
-            logger.println("[WARN] save '{}' not found, falling back to selection menu".format(self.directory))
+            logger.println(
+                "[WARN] save '{}' not found, falling back to selection menu".format(
+                    self.directory
+                )
+            )
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:world_selection")
             return
         except:
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
-            logger.print_exception("exception during loading world. falling back to start menu...")
+            logger.print_exception(
+                "exception during loading world. falling back to start menu..."
+            )
             return
         # todo: load data packs for save files and than enable the below
         # G.commandparser.parse("/reload")
@@ -159,7 +186,8 @@ class SaveFile:
         :param _: used when used by special event triggers
         :param override: flag for saving the chunks
         """
-        if self.save_in_progress: raise IOError("can't save world. save in process")
+        if self.save_in_progress:
+            raise IOError("can't save world. save in process")
         try:
             self.save_in_progress = True
             G.worldgenerationhandler.enable_generation = False
@@ -171,14 +199,21 @@ class SaveFile:
             for chunk in G.world.get_active_dimension().chunks:
                 # todo: save all loaded dimension, not only the active one
                 if G.world.get_active_dimension().get_chunk(*chunk).loaded:
-                    self.dump(None, "minecraft:chunk", dimension=G.world.get_active_player().dimension.id, chunk=chunk,
-                              override=override)
+                    self.dump(
+                        None,
+                        "minecraft:chunk",
+                        dimension=G.world.get_active_player().dimension.id,
+                        chunk=chunk,
+                        override=override,
+                    )
             logger.println("save complete!")
             G.worldgenerationhandler.enable_generation = True
         except:
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
-            logger.print_exception("exception during saving world. falling back to start menu...")
+            logger.print_exception(
+                "exception during saving world. falling back to start menu..."
+            )
         self.save_in_progress = False
 
     def apply_storage_fixer(self, name: str, *args, **kwargs):
@@ -189,15 +224,19 @@ class SaveFile:
         :param kwargs: the kwargs to use
         :raises DataFixerNotFoundException: if the name is invalid
         """
-        if name not in self.storage_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
-        fixer: mcpython.server.storage.datafixers.IDataFixer.IStorageVersionFixer = \
+        if name not in self.storage_fixer_registry.registered_object_map:
+            raise DataFixerNotFoundException(name)
+        fixer: mcpython.server.storage.datafixers.IDataFixer.IStorageVersionFixer = (
             self.storage_fixer_registry.registered_object_map[name]
+        )
         try:
             fixer.apply(self, *args, **kwargs)
             for name, args, kwargs in fixer.GROUP_FIXER_NAMES:
                 self.apply_group_fixer(*args, **kwargs)
         except:
-            logger.print_exception("during data-fixing storage version '{}'".format(name))
+            logger.print_exception(
+                "during data-fixing storage version '{}'".format(name)
+            )
             G.statehandler.switch_to("minecraft:startmenu")
 
     def apply_group_fixer(self, name: str, *args, **kwargs):
@@ -208,9 +247,11 @@ class SaveFile:
         :param kwargs: the kwargs to use
         :raises DataFixerNotFoundException: if the name is invalid
         """
-        if name not in self.group_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
-        fixer: mcpython.server.storage.datafixers.IDataFixer.IGroupFixer = \
+        if name not in self.group_fixer_registry.registered_object_map:
+            raise DataFixerNotFoundException(name)
+        fixer: mcpython.server.storage.datafixers.IDataFixer.IGroupFixer = (
             self.group_fixer_registry.registered_object_map[name]
+        )
         try:
             fixer.apply(self, *args, **kwargs)
             for name, args, kwargs in fixer.PART_FIXER_NAMES:
@@ -227,8 +268,11 @@ class SaveFile:
         :param kwargs: the kwargs
         :raises DataFixerNotFoundException: if the name is invalid
         """
-        if name not in self.part_fixer_registry.registered_object_map: raise DataFixerNotFoundException(name)
-        fixer: mcpython.server.storage.datafixers.IDataFixer.IPartFixer = self.part_fixer_registry.registered_object_map[name]
+        if name not in self.part_fixer_registry.registered_object_map:
+            raise DataFixerNotFoundException(name)
+        fixer: mcpython.server.storage.datafixers.IDataFixer.IPartFixer = (
+            self.part_fixer_registry.registered_object_map[name]
+        )
         try:
             fixer.apply(self, *args, **kwargs)
         except:
@@ -244,31 +288,47 @@ class SaveFile:
         :param kwargs: kwargs to call with
         :raises DataFixerNotFoundException: if the name is invalid
         """
-        if modname not in self.mod_fixers or modname not in G.modloader.mods: raise DataFixerNotFoundException(modname)
+        if modname not in self.mod_fixers or modname not in G.modloader.mods:
+            raise DataFixerNotFoundException(modname)
         instance = G.modloader.mods[modname]
         fixers = self.mod_fixers[modname]
         while instance.version != source_version:
             possible_fixers = set()
             for fixer in fixers:
-                if source_version is None or (len(fixer.FIXES_FROM) == len(source_version) and
-                                              source_version <= fixer.FIXES_FROM):
+                if source_version is None or (
+                    len(fixer.FIXES_FROM) == len(source_version)
+                    and source_version <= fixer.FIXES_FROM
+                ):
                     possible_fixers.add(fixer)
 
-            if len(possible_fixers) == 0: return
+            if len(possible_fixers) == 0:
+                return
 
             if source_version is not None or len(possible_fixers) == 1:
-                fixer: mcpython.server.storage.datafixers.IDataFixer.IModVersionFixer = fixers[0]
+                fixer: mcpython.server.storage.datafixers.IDataFixer.IModVersionFixer = fixers[
+                    0
+                ]
             else:
                 fixer: mcpython.server.storage.datafixers.IDataFixer.IModVersionFixer = min(
-                    possible_fixers, key=lambda v: self._get_distance(v, source_version))
+                    possible_fixers, key=lambda v: self._get_distance(v, source_version)
+                )
 
             try:
                 fixer.apply(self, *args, **kwargs)
-                [self.apply_group_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES]
-                [self.apply_part_fixer(name, *args, **kwargs) for (name, args, kwargs) in fixer.PART_FIXER_NAMES]
+                [
+                    self.apply_group_fixer(name, *args, **kwargs)
+                    for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES
+                ]
+                [
+                    self.apply_part_fixer(name, *args, **kwargs)
+                    for (name, args, kwargs) in fixer.PART_FIXER_NAMES
+                ]
             except:
-                logger.print_exception("during data-fixing mod {} from {} to {}".format(
-                    modname, fixer.FIXES_FROM, fixer.FIXES_TO))
+                logger.print_exception(
+                    "during data-fixing mod {} from {} to {}".format(
+                        modname, fixer.FIXES_FROM, fixer.FIXES_TO
+                    )
+                )
                 G.statehandler.switch_to("minecraft:startmenu")
                 return
 
@@ -284,7 +344,11 @@ class SaveFile:
 
     @classmethod
     def get_serializer_for(cls, part):
-        for serializer in mcpython.server.storage.serializer.IDataSerializer.dataserializerregistry.registered_object_map.values():
+        for (
+            serializer
+        ) in (
+            mcpython.server.storage.serializer.IDataSerializer.dataserializerregistry.registered_object_map.values()
+        ):
             if serializer.PART == part:
                 return serializer
         raise ValueError("can't find serializer named '{}'".format(part))
@@ -299,8 +363,11 @@ class SaveFile:
         try:
             return self.get_serializer_for(part).load(self, **kwargs)
         except mcpython.server.storage.serializer.IDataSerializer.InvalidSaveException:
-            logger.print_exception("during reading part '{}' from save files under '{}' with arguments {}".
-                                   format(part, self.directory, kwargs))
+            logger.print_exception(
+                "during reading part '{}' from save files under '{}' with arguments {}".format(
+                    part, self.directory, kwargs
+                )
+            )
 
     def dump(self, data, part, **kwargs):
         """
@@ -324,12 +391,15 @@ class SaveFile:
         :return: the data of the file or None if an error has occur
         """
         file = os.path.join(self.directory, file)
-        if not os.path.isfile(file): return
+        if not os.path.isfile(file):
+            return
         try:
             with open(file) as f:
                 return json.load(f)
         except json.decoder.JSONDecodeError:
-            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
+            logger.println(
+                "[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file)
+            )
             return
 
     def access_file_pickle(self, file: str):
@@ -339,12 +409,15 @@ class SaveFile:
         :return: the data of the file or None if an error has occur
         """
         file = os.path.join(self.directory, file)
-        if not os.path.isfile(file): return
+        if not os.path.isfile(file):
+            return
         try:
             with open(file, mode="rb") as f:
                 return pickle.load(f)
         except (pickle.UnpicklingError, EOFError):
-            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
+            logger.println(
+                "[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file)
+            )
             return
 
     def access_raw(self, file: str):
@@ -354,8 +427,10 @@ class SaveFile:
         :return: the data of the file or None if an error has occur
         """
         file = os.path.join(self.directory, file)
-        if not os.path.isfile(file): return
-        with open(file, mode="rb") as f: return f.read()
+        if not os.path.isfile(file):
+            return
+        with open(file, mode="rb") as f:
+            return f.read()
 
     def dump_file_json(self, file: str, data):
         """
@@ -365,10 +440,12 @@ class SaveFile:
         """
         file = os.path.join(self.directory, file)
         d = os.path.dirname(file)
-        if not os.path.isdir(d): os.makedirs(d)
+        if not os.path.isdir(d):
+            os.makedirs(d)
         try:
             data = json.dumps(data)
-            with open(file, mode="w") as f: f.write(data)
+            with open(file, mode="w") as f:
+                f.write(data)
         except:
             logger.print_exception("during dumping {} to '{}'".format(data, file))
 
@@ -380,10 +457,12 @@ class SaveFile:
         """
         file = os.path.join(self.directory, file)
         d = os.path.dirname(file)
-        if not os.path.isdir(d): os.makedirs(d)
+        if not os.path.isdir(d):
+            os.makedirs(d)
         try:
             data = pickle.dumps(data)
-            with open(file, mode="wb") as f: return f.write(data)
+            with open(file, mode="wb") as f:
+                return f.write(data)
         except:
             logger.print_exception("during dumping {} to '{}'".format(data, file))
 
@@ -395,14 +474,24 @@ class SaveFile:
         """
         file = os.path.join(self.directory, file)
         d = os.path.dirname(file)
-        if not os.path.isdir(d): os.makedirs(d)
-        with open(file, mode="wb") as f: return f.write(data)
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        with open(file, mode="wb") as f:
+            return f.write(data)
 
     @deprecation.deprecated("dev3-1", "a1.3.0")
     def upgrade(self, **kwargs):
-        raise mcpython.server.storage.datafixer.IDataFixer.DataFixerException("unimplemented")
+        raise mcpython.server.storage.datafixer.IDataFixer.DataFixerException(
+            "unimplemented"
+        )
 
 
 @G.modloader("minecraft", "stage:datafixer:general")
 def load_elements():
-    from mcpython.server.storage.datafixers import (DataFixer1to2, DataFixer2to3, DataFixer3to4, DataFixer4to5, DataFixer5to6)
+    from mcpython.server.storage.datafixers import (
+        DataFixer1to2,
+        DataFixer2to3,
+        DataFixer3to4,
+        DataFixer4to5,
+        DataFixer5to6,
+    )

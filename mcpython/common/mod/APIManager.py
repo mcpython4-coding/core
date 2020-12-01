@@ -67,30 +67,42 @@ class APIManager:
     def registerAPIShipment(self, name: str, module: str, version: tuple):
         self.api_shipments[name].append((module, version))
 
-    def registerAPIImplementation(self, name: str, module: str, version: tuple, *compatible_versions):
+    def registerAPIImplementation(
+        self, name: str, module: str, version: tuple, *compatible_versions
+    ):
         self.api_implementations[name] = (module, version, compatible_versions)
         return self
 
     def getAPI(self, name: str, version: tuple):
-        if type(self.api_cache[name]) != dict: return self.api_cache[name]
+        if type(self.api_cache[name]) != dict:
+            return self.api_cache[name]
         return self.api_cache[name][version]
 
     def check_compatibility_and_load(self):
         error = []
         for name in self.api_implementations:
-            if name not in self.api_shipments: continue
+            if name not in self.api_shipments:
+                continue
             module, version, compatible = self.api_implementations[name]
             for _, v in self.api_shipments[name]:
                 if v != version and v not in compatible:
-                    error.append((name, (version,)+tuple(compatible), v))
+                    error.append((name, (version,) + tuple(compatible), v))
         if len(error) > 0:
-            logger.write_into_container(["- {} is needed in {} but compatible is only {}".format(name, need, ver) for name, ver, need in error])
+            logger.write_into_container(
+                [
+                    "- {} is needed in {} but compatible is only {}".format(
+                        name, need, ver
+                    )
+                    for name, ver, need in error
+                ]
+            )
             sys.exit(-1)
         for name in self.api_shipments:
             if name not in self.api_shipments:
                 self.api_cache[name] = {}
                 for module, version in self.api_shipments[name]:
-                    if version in self.api_cache[name]: continue
+                    if version in self.api_cache[name]:
+                        continue
                     module = importlib.import_module(module)
                     module.IS_IMPLEMENTED = False
                     module.API_VERSION = version
@@ -102,10 +114,22 @@ class APIManager:
             module.API_VERSION = version
             self.api_cache[name] = module
         if len(self.api_cache) > 0:
-            logger.write_into_container(["'{}' in version {} located under '{}' (implemented: {})".format(
-                name, self.api_implementations[name][1] if name in self.api_implementations else ", ".join([str(e) for e in self.api_cache[name].keys()]),
-                self.api_implementations[name][0] if name in self.api_implementations else ", ".join(str(e[0]) for e in self.api_shipments),
-                str(name in self.api_implementations).lower()) for name in self.api_cache], header=["API IMPLEMENTATION DETAILS"])
+            logger.write_into_container(
+                [
+                    "'{}' in version {} located under '{}' (implemented: {})".format(
+                        name,
+                        self.api_implementations[name][1]
+                        if name in self.api_implementations
+                        else ", ".join([str(e) for e in self.api_cache[name].keys()]),
+                        self.api_implementations[name][0]
+                        if name in self.api_implementations
+                        else ", ".join(str(e[0]) for e in self.api_shipments),
+                        str(name in self.api_implementations).lower(),
+                    )
+                    for name in self.api_cache
+                ],
+                header=["API IMPLEMENTATION DETAILS"],
+            )
 
 
 manager = APIManager()
@@ -133,4 +157,3 @@ class ImplementableFeature:
     def implementation(self, function: typing.Callable):
         self.implementation_function = function
         return function
-

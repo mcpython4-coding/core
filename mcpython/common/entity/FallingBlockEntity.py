@@ -20,12 +20,18 @@ class FallingBlock(mcpython.common.entity.Entity.Entity):
     """
     Class for the falling block entity
     """
+
     NAME = "minecraft:falling_block"
 
-    def __init__(self, *args, representing_block: mcpython.common.block.Block.Block = None, **kwargs):
+    def __init__(
+        self,
+        *args,
+        representing_block: mcpython.common.block.Block.Block = None,
+        **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.block = representing_block  # todo: store in nbt
-        self.nbt_data["motion"] = (0, -.4, 0)
+        self.nbt_data["motion"] = (0, -0.4, 0)
 
     def draw(self):
         if self.block is not None:
@@ -35,8 +41,8 @@ class FallingBlock(mcpython.common.entity.Entity.Entity):
     def tick(self):
         super().tick()
         x, y, z = mcpython.util.math.normalize(self.position)
-        block = self.chunk.get_block((x, y-1, z))
-        if (self.position[1] - y <= .1) and not (block is None or type(block) == str):
+        block = self.chunk.get_block((x, y - 1, z))
+        if (self.position[1] - y <= 0.1) and not (block is None or type(block) == str):
             if self.block is None:
                 self.kill()
             elif not block.SOLID:
@@ -47,4 +53,3 @@ class FallingBlock(mcpython.common.entity.Entity.Entity):
 
     def kill(self, *args, **kwargs):
         super().kill(*args, **kwargs)
-

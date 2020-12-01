@@ -18,17 +18,19 @@ import mcpython.common.item.IShulkerBoxLikeItem
 
 
 def create_shulker_box(name):
-
     @G.registry
     class BlockShulkerBox(Block.Block):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             import mcpython.client.gui.InventoryShulkerBox as InventoryShulkerBox
+
             self.inventory = InventoryShulkerBox.InventoryShulkerBox()
 
         NAME = "minecraft:{}".format(name)
 
-        def on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple):
+        def on_player_interaction(
+            self, player, button: int, modifiers: int, hit_position: tuple
+        ):
             if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
                 G.inventoryhandler.show(self.inventory)
                 return True
@@ -42,12 +44,17 @@ def create_shulker_box(name):
         MINIMUM_TOOL_LEVEL = 0
         BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.AXE]
 
-        def get_provided_slot_lists(self, side): return self.inventory.slots, self.inventory.slots
+        def get_provided_slot_lists(self, side):
+            return self.inventory.slots, self.inventory.slots
 
         @classmethod
-        def modify_block_item(cls, itemconstructor: mcpython.common.factory.ItemFactory.ItemFactory):
+        def modify_block_item(
+            cls, itemconstructor: mcpython.common.factory.ItemFactory.ItemFactory
+        ):
             itemconstructor.setMaxStackSize(1)
-            itemconstructor.baseclass.append(mcpython.common.item.IShulkerBoxLikeItem.IShulkerBoxLikeItem)
+            itemconstructor.baseclass.append(
+                mcpython.common.item.IShulkerBoxLikeItem.IShulkerBoxLikeItem
+            )
             itemconstructor.setCustomFromItemFunction(cls.set_block_data)
 
         @classmethod
@@ -67,4 +74,3 @@ def load():
     create_shulker_box("shulker_box")
     for color in mcpython.util.enums.COLORS:
         create_shulker_box("{}_shulker_box".format(color))
-

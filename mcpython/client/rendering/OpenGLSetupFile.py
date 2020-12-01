@@ -50,18 +50,28 @@ class OpenGLSetupFile:
 
     def execute(self, **kwargs):
         for line in self.data:
-            if line.startswith("//"): continue
-            if line.count(" ") + line.count("   ") == len(line): continue
+            if line.startswith("//"):
+                continue
+            if line.count(" ") + line.count("   ") == len(line):
+                continue
             if line.startswith("gl") and line[2] != line[2].lower():
                 gl_command = line.split("(")[0]
                 gl_function = getattr(pyglet.gl, gl_command)
                 param_raw = line.split("(")[1].split(")")[0]
                 if len(param_raw) > 0:
-                    gl_function(*[self._transform_value(e, **kwargs) for e in param_raw.split(", ")])
+                    gl_function(
+                        *[
+                            self._transform_value(e, **kwargs)
+                            for e in param_raw.split(", ")
+                        ]
+                    )
                 else:
                     gl_function()
             elif line.startswith("set"):
-                self._set_value(line.split(" ")[1], self._transform_value(line.split("-> ")[1], **kwargs))
+                self._set_value(
+                    line.split(" ")[1],
+                    self._transform_value(line.split("-> ")[1], **kwargs),
+                )
             elif line.startswith("subcall"):
                 execute_file_by_name(line.split(" ")[1], **kwargs)
             elif line.startswith("glu") and line[3] != line[3].lower():
@@ -69,7 +79,12 @@ class OpenGLSetupFile:
                 glu_function = getattr(pyglet.gl, glu_command)
                 param_raw = line.split("(")[1].split(")")[0]
                 if len(param_raw) > 0:
-                    glu_function(*[self._transform_value(e, **kwargs) for e in param_raw.split(", ")])
+                    glu_function(
+                        *[
+                            self._transform_value(e, **kwargs)
+                            for e in param_raw.split(", ")
+                        ]
+                    )
                 else:
                     glu_function()
             elif line.startswith("invoke "):
@@ -77,7 +92,11 @@ class OpenGLSetupFile:
                 invoke = raw.split("(")[0]
                 if invoke.startswith("pyglet.graphics."):
                     getattr(pyglet.graphics, ".".join(invoke.split(".")[2:]))(
-                        *[self._transform_value(e, **kwargs) for e in raw.split("(")[1][:-1].split(", ")])
+                        *[
+                            self._transform_value(e, **kwargs)
+                            for e in raw.split("(")[1][:-1].split(", ")
+                        ]
+                    )
                 else:
                     raise ValueError("can't invoke function '{}'".format(invoke))
             else:
@@ -95,13 +114,20 @@ class OpenGLSetupFile:
             return getattr(mcpython.common.config, name.split(" ")[1])
         elif name.startswith("sum "):
             raw = " ".join(name.split(" ")[1:])
-            return sum([self._transform_value(e[1:-1].replace(" //", " ")) for e in raw.split(" | ")])
+            return sum(
+                [
+                    self._transform_value(e[1:-1].replace(" //", " "))
+                    for e in raw.split(" | ")
+                ]
+            )
         elif name.startswith("neg "):
             raw = " ".join(name.split(" ")[1:])
             return -self._transform_value(raw[1:-1], **kwargs)
         elif name.startswith("div "):
             raw = " ".join(name.split(" ")[1:]).split(" | ")
-            return self._transform_value(raw[0][1:-1], **kwargs) / self._transform_value(raw[1][1:-1], **kwargs)
+            return self._transform_value(
+                raw[0][1:-1], **kwargs
+            ) / self._transform_value(raw[1][1:-1], **kwargs)
         elif name.startswith("glFloat"):
             return float(name.split(" ")[1])
         elif name.startswith("glInt "):
@@ -120,4 +146,3 @@ class OpenGLSetupFile:
         for element in address.split(".")[1:-1]:
             trace = getattr(trace, element)
         setattr(trace, address.split(".")[-1], value)
-

@@ -16,7 +16,6 @@ import deprecation
 
 @deprecation.deprecated("dev2-2", "a1.5.0")
 class ModelFactory:
-
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def __init__(self, name: str, parent="minecraft:block/block"):
         self.name = name
@@ -26,14 +25,22 @@ class ModelFactory:
 
     def add_drawing_box(self, position, size, texturenames):
         for i, element in enumerate(texturenames):
-            if not element.startswith("#"): texturenames[i] = "#" + element
-        self.elements.append({"from": position, "to": [position[i] + size[i] for i in range(3)],
-                              "faces": {"down": {"texture": texturenames[1], "cullface": "down"},
-                                        "up": {"texture": texturenames[0], "cullface": "up"},
-                                        "north": {"texture": texturenames[2], "cullface": "north"},
-                                        "south": {"texture": texturenames[4], "cullface": "south"},
-                                        "west": {"texture": texturenames[5], "cullface": "west"},
-                                        "east": {"texture": texturenames[3], "cullface": "east"}}})
+            if not element.startswith("#"):
+                texturenames[i] = "#" + element
+        self.elements.append(
+            {
+                "from": position,
+                "to": [position[i] + size[i] for i in range(3)],
+                "faces": {
+                    "down": {"texture": texturenames[1], "cullface": "down"},
+                    "up": {"texture": texturenames[0], "cullface": "up"},
+                    "north": {"texture": texturenames[2], "cullface": "north"},
+                    "south": {"texture": texturenames[4], "cullface": "south"},
+                    "west": {"texture": texturenames[5], "cullface": "west"},
+                    "east": {"texture": texturenames[3], "cullface": "east"},
+                },
+            }
+        )
         return self
 
     @deprecation.deprecated("dev2-2", "a1.5.0")
@@ -44,6 +51,10 @@ class ModelFactory:
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish(self):
         data = {"parent": self.parent}
-        if len(self.elements) > 0: data["elements"] = self.elements
-        if len(self.textures) > 0: data["textures"] = self.textures
-        G.modelhandler.models[self.name] = mcpython.client.rendering.model.Model.Model(data, self.name, self.name.split(":")[0])
+        if len(self.elements) > 0:
+            data["elements"] = self.elements
+        if len(self.textures) > 0:
+            data["textures"] = self.textures
+        G.modelhandler.models[self.name] = mcpython.client.rendering.model.Model.Model(
+            data, self.name, self.name.split(":")[0]
+        )

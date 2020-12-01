@@ -31,10 +31,13 @@ class CommandRegistryInfo(mcpython.client.chat.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        if not G.eventhandler.call_cancelable("commands:registryinfo", values[0], info): return
+        if not G.eventhandler.call_cancelable("commands:registryinfo", values[0], info):
+            return
         registry = G.registry.get_by_name(values[0])
         if registry is None:
-            logger.println("[CHAT][ERROR] selected unknown registry: '{}'".format(values[0]))
+            logger.println(
+                "[CHAT][ERROR] selected unknown registry: '{}'".format(values[0])
+            )
             return
         if len(values) == 1:
             logger.println("values in registry '{}'".format(values[0]))
@@ -44,5 +47,6 @@ class CommandRegistryInfo(mcpython.client.chat.command.Command.Command):
 
     @staticmethod
     def get_help() -> list:
-        return ["/registryinfo <registry> [<attribute>]: gives info to selected registry"]
-
+        return [
+            "/registryinfo <registry> [<attribute>]: gives info to selected registry"
+        ]

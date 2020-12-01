@@ -9,22 +9,11 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import globals as G
-import uuid
+import subprocess
+import os
+import sys
 
 
-class IRecipe:
-    @staticmethod
-    def get_recipe_names() -> list:  # todo: make attribute
-        raise NotImplementedError()
+home = os.path.dirname(os.path.dirname(__file__))
 
-    @classmethod
-    def from_data(cls, data: dict):
-        return cls()
-
-    def __init__(self):
-        self.uuid = uuid.uuid4()
-        self.name = None
-
-    def register(self):
-        pass
+subprocess.call([sys.executable, "-m", "black", home])

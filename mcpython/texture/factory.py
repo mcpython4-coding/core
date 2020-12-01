@@ -23,7 +23,10 @@ class ITextureChange(mcpython.common.event.Registry.IRegistryContent):
     TYPE = "minecraft:texture_change"
 
     @staticmethod
-    def convert(images: list, image: PIL.Image.Image, *args, **kwargs) -> PIL.Image.Image: raise NotImplementedError()
+    def convert(
+        images: list, image: PIL.Image.Image, *args, **kwargs
+    ) -> PIL.Image.Image:
+        raise NotImplementedError()
 
 
 class TextureFactory:
@@ -36,7 +39,9 @@ class TextureFactory:
 
     def transform(self, images: list, image, mode, *args, **kwargs):
         if mode not in self.changer:
-            raise ValueError("unknown task named '{}'. please use only registered tasks".format(mode))
+            raise ValueError(
+                "unknown task named '{}'. please use only registered tasks".format(mode)
+            )
         texturechange: ITextureChange = self.changer[mode]
         return texturechange.convert(images, image, *args, **kwargs)
 
@@ -45,7 +50,8 @@ class TextureFactory:
 
     def apply_from_data(self, data: dict):
         images = [mcpython.ResourceLocator.read(x, "pil") for x in data["images"]]
-        if "space" in data: images += [None] * data["space"]
+        if "space" in data:
+            images += [None] * data["space"]
         for entry in data["transforms"]:
             image = entry["image"]
             out = entry["store"]
@@ -54,27 +60,35 @@ class TextureFactory:
             entry.pop("store")
             entry.pop("mode")
             if type(image) == list:
-                if type(out) != list: raise ValueError("can't cast data {} to valid results".format(data))
+                if type(out) != list:
+                    raise ValueError("can't cast data {} to valid results".format(data))
                 for i, e in enumerate(image):
                     images[out[i]] = self.transform(images, images[e], mode, **entry)
             else:
                 images[out] = self.transform(images, images[image], mode, **entry)
         for store in data["store"]:
-            f = G.build+"/texture/"+store["location"]
+            f = G.build + "/texture/" + store["location"]
             d = os.path.dirname(f)
-            if not os.path.exists(d): os.makedirs(d)
+            if not os.path.exists(d):
+                os.makedirs(d)
             images[store["id"]].save(f)
 
     def load(self):
-        entries = mcpython.ResourceLocator.get_all_entries_special("assets/factory/texture")
+        entries = mcpython.ResourceLocator.get_all_entries_special(
+            "assets/factory/texture"
+        )
         for entry in entries:
-            if entry.endswith("/"): continue
+            if entry.endswith("/"):
+                continue
             self.apply_from_file(entry)
 
 
 G.texturefactoryhandler = TextureFactory()
-texturechanges = mcpython.common.event.Registry.Registry("texturechanges", ["minecraft:texture_change"],
-                                         injection_function=TextureFactory.add_transform)
+texturechanges = mcpython.common.event.Registry.Registry(
+    "texturechanges",
+    ["minecraft:texture_change"],
+    injection_function=TextureFactory.add_transform,
+)
 
 
 @G.registry
@@ -83,7 +97,9 @@ class TextureResize(ITextureChange):
 
     @staticmethod
     def convert(images: list, image: PIL.Image.Image, size=None) -> PIL.Image.Image:
-        return image.resize(size, PIL.Image.NEAREST)  # todo: implement option to choose mode
+        return image.resize(
+            size, PIL.Image.NEAREST
+        )  # todo: implement option to choose mode
 
 
 @G.registry
@@ -109,7 +125,9 @@ class TextureRebase(ITextureChange):
     NAME = "rebase"
 
     @staticmethod
-    def convert(images: list, image: PIL.Image.Image, size=None, position=(0, 0)) -> PIL.Image.Image:
+    def convert(
+        images: list, image: PIL.Image.Image, size=None, position=(0, 0)
+    ) -> PIL.Image.Image:
         base = PIL.Image.new("RGBA", size)
         base.paste(image, position)
         return base
@@ -120,8 +138,9 @@ class TextureCombine(ITextureChange):
     NAME = "combine"
 
     @staticmethod
-    def convert(images: list, image: PIL.Image.Image, base=None, position=(0, 0)) -> PIL.Image.Image:
+    def convert(
+        images: list, image: PIL.Image.Image, base=None, position=(0, 0)
+    ) -> PIL.Image.Image:
         imageb: PIL.Image.Image = images[base].copy()
         imageb.paste(image, position)
         return imageb
-

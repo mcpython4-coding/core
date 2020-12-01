@@ -25,8 +25,15 @@ class ILootTableFunction:
 
 
 class ApplyBonus(ILootTableFunction):
-    def __init__(self, enchantment: str, formula: str = "uniform_bonus_count", extra=None, probability=None,
-                 bonus_multiplier=None, conditions=None):
+    def __init__(
+        self,
+        enchantment: str,
+        formula: str = "uniform_bonus_count",
+        extra=None,
+        probability=None,
+        bonus_multiplier=None,
+        conditions=None,
+    ):
         self.enchantment = enchantment
         self.formula = formula
         self.extra = extra
@@ -35,12 +42,23 @@ class ApplyBonus(ILootTableFunction):
         self.conditions = conditions
 
     def serialize(self):
-        d = {"function": "apply_bonus", "enchantment": self.enchantment, "formula": self.formula}
-        if self.extra is not None or self.probability is not None or self.bonus_multiplier is not None:
+        d = {
+            "function": "apply_bonus",
+            "enchantment": self.enchantment,
+            "formula": self.formula,
+        }
+        if (
+            self.extra is not None
+            or self.probability is not None
+            or self.bonus_multiplier is not None
+        ):
             d["parameters"] = {}
-            if self.extra is not None: d["parameters"]["extra"] = self.extra
-            if self.probability is not None: d["parameters"]["probability"] = self.probability
-            if self.bonus_multiplier is not None: d["parameters"]["bonusMultiplier"] = self.bonus_multiplier
+            if self.extra is not None:
+                d["parameters"]["extra"] = self.extra
+            if self.probability is not None:
+                d["parameters"]["probability"] = self.probability
+            if self.bonus_multiplier is not None:
+                d["parameters"]["bonusMultiplier"] = self.bonus_multiplier
         if self.conditions is not None:
             d["conditions"] = [condition.serialize() for condition in self.conditions]
         return d
@@ -71,7 +89,11 @@ class CopyNBT(ILootTableFunction):
         return self
 
     def serialize(self):
-        return {"source": self.source, "ops": [operation.serialize() for operation in self.operations], "function": "copy_nbt"}
+        return {
+            "source": self.source,
+            "ops": [operation.serialize() for operation in self.operations],
+            "function": "copy_nbt",
+        }
 
 
 class CopyState(ILootTableFunction):
@@ -84,7 +106,11 @@ class CopyState(ILootTableFunction):
         return self
 
     def serialize(self):
-        return {"function": "copy_state", "block": self.block, "properties": self.copy_properties}
+        return {
+            "function": "copy_state",
+            "block": self.block,
+            "properties": self.copy_properties,
+        }
 
 
 class EnchantRandomly(ILootTableFunction):
@@ -115,8 +141,12 @@ class ILootTableEntry:
         return self
 
     def serialize(self) -> typing.Dict[str, typing.Any]:
-        return {"conditions": [condition.serialize() for condition in self.conditions], "weight": self.weight,
-                "functions": [function.serialize() for function in self.functions], "quality": self.quality}
+        return {
+            "conditions": [condition.serialize() for condition in self.conditions],
+            "weight": self.weight,
+            "functions": [function.serialize() for function in self.functions],
+            "quality": self.quality,
+        }
 
 
 class ItemLootTableEntry(ILootTableEntry):
@@ -234,7 +264,11 @@ class DynamicLootTableEntry(ILootTableEntry):
 
 
 class LootTablePool:
-    def __init__(self, rolls: typing.Union[int, typing.Tuple[int, int]] = 1, bonus_rolls: typing.Union[int, typing.Tuple[int, int]] = 1):
+    def __init__(
+        self,
+        rolls: typing.Union[int, typing.Tuple[int, int]] = 1,
+        bonus_rolls: typing.Union[int, typing.Tuple[int, int]] = 1,
+    ):
         self.rolls = rolls
         self.bonus_rolls = bonus_rolls
         self.conditions = []
@@ -251,8 +285,13 @@ class LootTablePool:
         pass
 
     def serialize(self):
-        return {"entries": [entry.serialize() for entry in self.entries], "functions": [function.serialize() for function in self.functions],
-                "conditions": [condition.serialize() for condition in self.conditions], "rolls": self.rolls, "bonus_rolls": self.bonus_rolls}
+        return {
+            "entries": [entry.serialize() for entry in self.entries],
+            "functions": [function.serialize() for function in self.functions],
+            "conditions": [condition.serialize() for condition in self.conditions],
+            "rolls": self.rolls,
+            "bonus_rolls": self.bonus_rolls,
+        }
 
 
 class LootTableGenerator(mcpython.datagen.Configuration.IDataGenerator):
@@ -272,14 +311,12 @@ class LootTableGenerator(mcpython.datagen.Configuration.IDataGenerator):
 
     def generate(self):
         data = {"pools": []}
-        if self.type is not None: data["type"] = self.type
+        if self.type is not None:
+            data["type"] = self.type
         for i, pool in enumerate(self.pools):
             try:
                 data["pools"].append(pool.serialize())
             except:
                 logger.println("during serializing {} (number {})".format(pool, i + 1))
                 raise
-        self.config.write_json(data, "data", "loot_tables", self.name+".json")
-
-
-
+        self.config.write_json(data, "data", "loot_tables", self.name + ".json")

@@ -32,20 +32,31 @@ def build():
     ITEM_ATLAS.dump()
     for itemclass in COLLECTED_ITEMS:
         for file in itemclass.get_used_texture_files():
-            items.itemindextable[itemclass.NAME][file] = ITEM_ATLAS.get_texture_info(file)
+            items.itemindextable[itemclass.NAME][file] = ITEM_ATLAS.get_texture_info(
+                file
+            )
 
 
 def load_data(from_block_item_generator=False):
     if not G.prebuilding and os.path.exists(G.build + "/itemblockfactory.json"):
-        collected_overflow = []  # an list of items which we don't need anymore, so we can warn the user
+        collected_overflow = (
+            []
+        )  # an list of items which we don't need anymore, so we can warn the user
         with open(G.build + "/itemblockfactory.json") as f:
             data = json.load(f)
         for entry in data[:]:
             name = entry[0]
             blocktable = G.registry.get_by_name("block").registered_object_map
             if name in blocktable:
-                obj = mcpython.common.factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(
-                    entry[1]).setToolTipRenderer(mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP)
+                obj = (
+                    mcpython.common.factory.ItemFactory.ItemFactory()
+                    .setName(name)
+                    .setHasBlockFlag(True)
+                    .setDefaultItemFile(entry[1])
+                    .setToolTipRenderer(
+                        mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
+                    )
+                )
                 block = blocktable[name]
                 block.modify_block_item(obj)
                 obj.finish()
@@ -56,9 +67,14 @@ def load_data(from_block_item_generator=False):
                 collected_overflow.append(entry)
                 data.remove(entry)
         if len(collected_overflow) > 0:
-            logger.write_into_container(["-'{}'".format(e[0]) for e in collected_overflow],
-                                        header=["MCPYTHON REGISTRY CHANGE - Following BlockItemTextures", "are obsolete as this blocks are missing.",
-                                                "They are removed from the system"])
+            logger.write_into_container(
+                ["-'{}'".format(e[0]) for e in collected_overflow],
+                header=[
+                    "MCPYTHON REGISTRY CHANGE - Following BlockItemTextures",
+                    "are obsolete as this blocks are missing.",
+                    "They are removed from the system",
+                ],
+            )
         with open(G.build + "/itemblockfactory.json", mode="w") as f:
             json.dump(data, f)
 
@@ -69,14 +85,17 @@ def add_to_image_atlas(file):
 
 def register_item(registry, itemclass):
     items.registered_object_map[itemclass.NAME.split(":")[-1]] = itemclass
-    if itemclass.NAME in items.itemindextable: return
+    if itemclass.NAME in items.itemindextable:
+        return
     items.itemindextable.setdefault(itemclass.NAME, {})
     for file in itemclass.get_used_texture_files():
         add_to_image_atlas(file)
     COLLECTED_ITEMS.append(itemclass)
 
 
-items = mcpython.common.event.Registry.Registry("item", ["minecraft:item"], injection_function=register_item)
+items = mcpython.common.event.Registry.Registry(
+    "item", ["minecraft:item"], injection_function=register_item
+)
 items.itemindextable = {}
 
 
@@ -84,8 +103,11 @@ def load_items():
     pass
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:block:overwrite", load_data, info="loading prepared item data")
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:item:load", load_items, info="loading items")
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:block:overwrite", load_data, info="loading prepared item data"
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:item:load", load_items, info="loading items"
+)
 
 import mcpython.common.item.Items
-

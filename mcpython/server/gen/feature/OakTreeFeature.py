@@ -21,13 +21,17 @@ class OakTreeNormalFeature:
         height = random.randint(*heightrange)
         # place the logs
         for dy in range(height):
-            dimension.get_chunk_for_position((x, y, z)).add_block((x, y+dy, z), "minecraft:oak_log")
+            dimension.get_chunk_for_position((x, y, z)).add_block(
+                (x, y + dy, z), "minecraft:oak_log"
+            )
         # place the leaves
-        for dy in range(height-2, height+1):
+        for dy in range(height - 2, height + 1):
             for dx in range(-3, 4):
                 for dz in range(-3, 4):
-                    chunk = dimension.get_chunk_for_position((x+dx, y, z+dz))
-                    if (dx ** 2 + dz ** 2 + dy ** 2 / 4) ** (1/2.25) < 3.5 and not \
-                            chunk.is_position_blocked((x+dx, y+dy, z+dz)):
-                        chunk.add_block((x+dx, y+dy, z+dz), "minecraft:oak_leaves")
-
+                    chunk = dimension.get_chunk_for_position((x + dx, y, z + dz))
+                    if (dx ** 2 + dz ** 2 + dy ** 2 / 4) ** (
+                        1 / 2.25
+                    ) < 3.5 and not chunk.is_position_blocked((x + dx, y + dy, z + dz)):
+                        chunk.add_block(
+                            (x + dx, y + dy, z + dz), "minecraft:oak_leaves"
+                        )

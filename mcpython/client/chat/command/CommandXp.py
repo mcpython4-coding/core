@@ -11,7 +11,12 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import globals as G
 import mcpython.client.chat.command.Command
-from mcpython.client.chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
+from mcpython.client.chat.command.Command import (
+    ParseBridge,
+    ParseType,
+    ParseMode,
+    SubCommand,
+)
 
 
 @G.registry
@@ -25,19 +30,39 @@ class CommandXp(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = ["xp", "experience"]
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "add").add_subcommand(
-            SubCommand(ParseType.SELECTOR).add_subcommand(SubCommand(ParseType.INT).add_subcommand(
-                SubCommand(ParseType.DEFINIED_STRING, "points", mode=ParseMode.OPTIONAL)
-            ).add_subcommand(
-                SubCommand(ParseType.DEFINIED_STRING, "levels", mode=ParseMode.OPTIONAL)
-            ))
-        )).add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "set").add_subcommand(
-            SubCommand(ParseType.SELECTOR).add_subcommand(SubCommand(ParseType.INT).add_subcommand(
-                SubCommand(ParseType.DEFINIED_STRING, "points", mode=ParseMode.OPTIONAL)
-            ).add_subcommand(
-                SubCommand(ParseType.DEFINIED_STRING, "levels", mode=ParseMode.OPTIONAL)
-            ))
-        ))
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.DEFINIED_STRING, "add").add_subcommand(
+                SubCommand(ParseType.SELECTOR).add_subcommand(
+                    SubCommand(ParseType.INT)
+                    .add_subcommand(
+                        SubCommand(
+                            ParseType.DEFINIED_STRING, "points", mode=ParseMode.OPTIONAL
+                        )
+                    )
+                    .add_subcommand(
+                        SubCommand(
+                            ParseType.DEFINIED_STRING, "levels", mode=ParseMode.OPTIONAL
+                        )
+                    )
+                )
+            )
+        ).add_subcommand(
+            SubCommand(ParseType.DEFINIED_STRING, "set").add_subcommand(
+                SubCommand(ParseType.SELECTOR).add_subcommand(
+                    SubCommand(ParseType.INT)
+                    .add_subcommand(
+                        SubCommand(
+                            ParseType.DEFINIED_STRING, "points", mode=ParseMode.OPTIONAL
+                        )
+                    )
+                    .add_subcommand(
+                        SubCommand(
+                            ParseType.DEFINIED_STRING, "levels", mode=ParseMode.OPTIONAL
+                        )
+                    )
+                )
+            )
+        )
 
     @staticmethod
     def parse(values: list, modes: list, info):
@@ -54,6 +79,7 @@ class CommandXp(mcpython.client.chat.command.Command.Command):
 
     @staticmethod
     def get_help() -> list:
-        return ["/xp add <selector> <level> [points|levels]: add xp to entity",
-                "/xp set <selector> <level> [points|levels]: set xp level of entity"]
-
+        return [
+            "/xp add <selector> <level> [points|levels]: add xp to entity",
+            "/xp set <selector> <level> [points|levels]: set xp level of entity",
+        ]

@@ -29,7 +29,10 @@ class BlockEnderChest(Block.Block):
         super().__init__(*args, **kwargs)
         self.front_side = mcpython.util.enums.EnumSide.N
         if self.real_hit:
-            dx, dz = self.real_hit[0] - self.position[0], self.real_hit[1] - self.position[1]
+            dx, dz = (
+                self.real_hit[0] - self.position[0],
+                self.real_hit[1] - self.position[1],
+            )
             if dx > 0 and abs(dx) > abs(dz):
                 self.front_side = mcpython.util.enums.EnumSide.N
             elif dx < 0 and abs(dx) > abs(dz):
@@ -39,11 +42,15 @@ class BlockEnderChest(Block.Block):
             elif dz < 0 and abs(dx) < abs(dz):
                 self.front_side = mcpython.util.enums.EnumSide.W
         self.inventory = G.world.get_active_player().inventories["enderchest"]
-        self.face_solid = {face: False for face in mcpython.util.enums.EnumSide.iterate()}
+        self.face_solid = {
+            face: False for face in mcpython.util.enums.EnumSide.iterate()
+        }
 
     NAME = "minecraft:enderchest"
 
-    def on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple):
+    def on_player_interaction(
+        self, player, button: int, modifiers: int, hit_position: tuple
+    ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             G.inventoryhandler.show(self.inventory)
             return True
@@ -73,8 +80,12 @@ class BlockEnderChest(Block.Block):
 
     @staticmethod
     def get_all_model_states() -> list:
-        return [{"side": mcpython.util.enums.EnumSide.N}, {"side": mcpython.util.enums.EnumSide.E},
-                {"side": mcpython.util.enums.EnumSide.S}, {"side": mcpython.util.enums.EnumSide.W}]
+        return [
+            {"side": mcpython.util.enums.EnumSide.N},
+            {"side": mcpython.util.enums.EnumSide.E},
+            {"side": mcpython.util.enums.EnumSide.S},
+            {"side": mcpython.util.enums.EnumSide.W},
+        ]
 
     def get_view_bbox(self):
         return BBOX
@@ -86,4 +97,3 @@ class BlockEnderChest(Block.Block):
 @G.modloader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BlockEnderChest)
-

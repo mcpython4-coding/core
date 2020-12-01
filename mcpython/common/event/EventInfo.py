@@ -44,13 +44,29 @@ class MousePressEventInfo(IEventInfo):
         self.area = area
 
     def equals(self, x, y, button, modifiers):
-        return button == self.mouse and all([modifiers & x for x in self.modifier]) and (
-            (self.area[0][0] <= x <= self.area[1][0] and self.area[0][1] <= y <= self.area[1][1]) if self.area else True
+        return (
+            button == self.mouse
+            and all([modifiers & x for x in self.modifier])
+            and (
+                (
+                    self.area[0][0] <= x <= self.area[1][0]
+                    and self.area[0][1] <= y <= self.area[1][1]
+                )
+                if self.area
+                else True
+            )
         )
 
 
 class CallbackHelper:
-    def __init__(self, function, args=[], kwargs={}, extra_arg_filter=None, enable_extra_args=True):
+    def __init__(
+        self,
+        function,
+        args=[],
+        kwargs={},
+        extra_arg_filter=None,
+        enable_extra_args=True,
+    ):
         """
         creates an new object
         :param function: the function to call
@@ -69,7 +85,8 @@ class CallbackHelper:
         if self.enable_extra_args:
             if self.filter:
                 args, kwargs = self.filter(args, kwargs)
-            return self.function(*list(args)+list(self.args), **{**kwargs, **self.kwargs})
+            return self.function(
+                *list(args) + list(self.args), **{**kwargs, **self.kwargs}
+            )
         else:
             return self.function(*self.args, **self.kwargs)
-

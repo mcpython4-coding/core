@@ -11,7 +11,12 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import globals as G
 import mcpython.client.chat.command.Command
-from mcpython.client.chat.command.Command import ParseType, ParseMode, SubCommand, ParseBridge
+from mcpython.client.chat.command.Command import (
+    ParseType,
+    ParseMode,
+    SubCommand,
+    ParseBridge,
+)
 
 
 @G.registry
@@ -26,8 +31,11 @@ class CommandGamerule(mcpython.client.chat.command.Command.Command):
 
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES).add_subcommand(SubCommand(
-            ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL)))
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.STRING_WITHOUT_QUOTES).add_subcommand(
+                SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL)
+            )
+        )
         parsebridge.main_entry = "gamerule"
 
     @classmethod
@@ -39,14 +47,20 @@ class CommandGamerule(mcpython.client.chat.command.Command.Command):
         if len(values) > 1:
             value = values[1]
             if G.world.gamerulehandler.table[rule].status.is_valid_value(value):
-                G.world.gamerulehandler.table[rule].status = G.world.gamerulehandler.table[rule].status.__class__(value)
+                G.world.gamerulehandler.table[
+                    rule
+                ].status = G.world.gamerulehandler.table[rule].status.__class__(value)
             else:
-                G.chat.print_ln("invalid value '{}' for gamerule '{}'".format(value, rule))
+                G.chat.print_ln(
+                    "invalid value '{}' for gamerule '{}'".format(value, rule)
+                )
         else:
-            G.chat.print_ln("value of gamerule '{}': {}".format(
-                rule, G.world.gamerulehandler.table[rule].status.status))
+            G.chat.print_ln(
+                "value of gamerule '{}': {}".format(
+                    rule, G.world.gamerulehandler.table[rule].status.status
+                )
+            )
 
     @staticmethod
     def get_help() -> list:
         return ["/gamerule <name> [<value>]"]
-

@@ -28,15 +28,12 @@ class DefaultBedrockLayer(Layer):
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        for x in range(chunk.position[0]*16, chunk.position[0]*16+16):
-            for z in range(chunk.position[1]*16, chunk.position[1]*16+16):
+        for x in range(chunk.position[0] * 16, chunk.position[0] * 16 + 16):
+            for z in range(chunk.position[1] * 16, chunk.position[1] * 16 + 16):
                 reference.schedule_block_add((x, 0, z), "minecraft:bedrock")
         chunk = reference.chunk
-        for x in range(chunk.position[0]*16, chunk.position[0]*16+16):
-            for z in range(chunk.position[1]*16, chunk.position[1]*16+16):
+        for x in range(chunk.position[0] * 16, chunk.position[0] * 16 + 16):
+            for z in range(chunk.position[1] * 16, chunk.position[1] * 16 + 16):
                 for y in range(1, 5):
                     if random.randint(1, config.bedrockchance) == 1:
                         reference.schedule_block_add((x, y, z), "minecraft:bedrock")
-
-
-

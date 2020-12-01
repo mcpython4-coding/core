@@ -20,15 +20,19 @@ class BackgroundHandler:
     batch = pyglet.graphics.Batch()
     objects = []
     background_raw: PIL.Image.Image = mcpython.ResourceLocator.read(
-        "assets/minecraft/textures/gui/options_background.png", "pil")
+        "assets/minecraft/textures/gui/options_background.png", "pil"
+    )
     background_size = (32, 32)
-    background_image = mcpython.util.texture.to_pyglet_image(background_raw.resize(background_size, PIL.Image.NEAREST))
+    background_image = mcpython.util.texture.to_pyglet_image(
+        background_raw.resize(background_size, PIL.Image.NEAREST)
+    )
 
     old_win_size = None
 
     @classmethod
     def recreate(cls, wx, wy):
-        if cls.old_win_size == (wx, wy): return
+        if cls.old_win_size == (wx, wy):
+            return
         cls.old_win_size = (wx, wy)
         [obj.delete() for obj in cls.objects]
         cls.objects.clear()
@@ -49,7 +53,8 @@ class StatePartConfigBackground(mcpython.client.state.StatePart.StatePart):
         self.master[0].eventbus.subscribe("render:draw:2d:background", self.draw)
         self.master[0].eventbus.subscribe("user:window:resize", self.resize)
 
-    def draw(self): BackgroundHandler.batch.draw()
+    def draw(self):
+        BackgroundHandler.batch.draw()
 
-    def resize(self, x, y): BackgroundHandler.recreate(x, y)
-
+    def resize(self, x, y):
+        BackgroundHandler.recreate(x, y)

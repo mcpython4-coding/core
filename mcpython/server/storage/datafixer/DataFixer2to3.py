@@ -30,17 +30,26 @@ class ChunkFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
     @classmethod
     @deprecation.deprecated("dev3-1", "a1.3.0")
     def fix(cls, savefile, dimension, region):
-        data = savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
-        if data is None: return
-        if data["version"] != 2: return
+        data = savefile.access_file_pickle(
+            "dim/{}/{}_{}.region".format(dimension, *region)
+        )
+        if data is None:
+            return
+        if data["version"] != 2:
+            return
         data["version"] = 3
         for chunk in data:
             if chunk != "version":
                 chunk_data = data[chunk]
                 for palette in chunk_data["block_palette"]:
                     if palette["name"] == "minecraft:chest":
-                        palette["custom"] = {"model": palette["custom"], "loot_table": None}
-        savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
+                        palette["custom"] = {
+                            "model": palette["custom"],
+                            "loot_table": None,
+                        }
+        savefile.dump_file_pickle(
+            "dim/{}/{}_{}.region".format(dimension, *region), data
+        )
 
 
 @deprecation.deprecated("dev3-1", "a1.3.0")
@@ -55,4 +64,3 @@ class InventoryFixer(mcpython.storage.datafixer.IDataFixer.IDataFixer):
         data = savefile.access_file_pickle(file)
         data["version"] = 3
         savefile.dump_file_pickle(file, data)
-

@@ -19,21 +19,38 @@ VERSION_POST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 def parse_version(string: str) -> tuple:
     if type(string) == str and string[2] == "w":  # snapshot
         # type - alpha (0), pre - 1, post - 2, point - 0, a, b, c, build
-        return 0, 1, 1, 0, int(string[:2]), int(string[3:5]), VERSION_POST.index(string[5]), mcpython.common.config.DEVELOPMENT_COUNTER
+        return (
+            0,
+            1,
+            1,
+            0,
+            int(string[:2]),
+            int(string[3:5]),
+            VERSION_POST.index(string[5]),
+            mcpython.common.config.DEVELOPMENT_COUNTER,
+        )
     elif type(string) == str:
         if string.startswith("snapshot dev "):
             previous = parse_version(mcpython.common.config.DEVELOPING_FOR)
             return previous[:-1] + (mcpython.common.config.DEVELOPMENT_COUNTER,)
         else:  # format: [type][a].[b].[c]
             c = string[1:].split(".")
-            return "abr".index(string[0]), int(c[0]), int(c[1]), int(c[2]), mcpython.common.config.DEVELOPMENT_COUNTER
+            return (
+                "abr".index(string[0]),
+                int(c[0]),
+                int(c[1]),
+                int(c[2]),
+                mcpython.common.config.DEVELOPMENT_COUNTER,
+            )
     else:
         logger.println("[WARN] version entry {} wrong formatted".format(string))
         return tuple(string.split("."))
 
 
 # create the mod
-mcpython = mcpython.common.mod.Mod.Mod("minecraft", parse_version(mcpython.common.config.VERSION_NAME))
+mcpython = mcpython.common.mod.Mod.Mod(
+    "minecraft", parse_version(mcpython.common.config.VERSION_NAME)
+)
 
 
 def init():
@@ -41,4 +58,3 @@ def init():
 
 
 mcpython.eventbus.subscribe("stage:mod:init", init)
-

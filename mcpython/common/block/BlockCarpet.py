@@ -29,17 +29,28 @@ class ICarpet(mcpython.common.block.Block.Block):
         """
         super().__init__(*args, **kwargs)
         self.face_solid = {
-            face: face == mcpython.util.enums.EnumSide.DOWN for face in mcpython.util.enums.EnumSide.iterate()}
+            face: face == mcpython.util.enums.EnumSide.DOWN
+            for face in mcpython.util.enums.EnumSide.iterate()
+        }
 
     def on_block_update(self):
         x, y, z = self.position
-        blockinst: mcpython.common.block.Block.Block = G.world.get_active_dimension().get_block((x, y - 1, z))
-        if blockinst is None or (type(blockinst) != str and not blockinst.face_solid[mcpython.util.enums.EnumSide.UP]):
-            G.world.get_active_dimension().get_chunk_for_position((x, y, z)).remove_block(
-                (x, y, z), block_update=False)
-            G.world.get_active_player().pick_up(mcpython.client.gui.ItemStack.ItemStack("minecraft:carpet"))
+        blockinst: mcpython.common.block.Block.Block = (
+            G.world.get_active_dimension().get_block((x, y - 1, z))
+        )
+        if blockinst is None or (
+            type(blockinst) != str
+            and not blockinst.face_solid[mcpython.util.enums.EnumSide.UP]
+        ):
+            G.world.get_active_dimension().get_chunk_for_position(
+                (x, y, z)
+            ).remove_block((x, y, z), block_update=False)
+            G.world.get_active_player().pick_up(
+                mcpython.client.gui.ItemStack.ItemStack("minecraft:carpet")
+            )
 
-    def get_view_bbox(self): return carpet_bbox
+    def get_view_bbox(self):
+        return carpet_bbox
 
     @classmethod
     def modify_block_item(cls, itemfactory):

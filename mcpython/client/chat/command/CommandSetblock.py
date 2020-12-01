@@ -26,14 +26,19 @@ class CommandSetblock(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "setblock"
-        parsebridge.add_subcommand(SubCommand(ParseType.POSITION).add_subcommand(SubCommand(ParseType.BLOCKNAME)))
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.POSITION).add_subcommand(
+                SubCommand(ParseType.BLOCKNAME)
+            )
+        )
 
     @staticmethod
     def parse(values: list, modes: list, info):
         position = mcpython.util.math.normalize(values[0])
-        G.world.dimensions[info.dimension].get_chunk_for_position(position).add_block(position, values[1], blockupdateself=False)
+        G.world.dimensions[info.dimension].get_chunk_for_position(position).add_block(
+            position, values[1], blockupdateself=False
+        )
 
     @staticmethod
     def get_help() -> list:
         return ["/setblock <position> <blockname>"]
-

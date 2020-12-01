@@ -13,7 +13,9 @@ from mcpython import globals as G
 from mcpython.common.data.datagen import Configuration
 import sys
 
-DEFAULT_OUTPUT = G.local + "/resources/generated"  # where to output data - in dev environment
+DEFAULT_OUTPUT = (
+    G.local + "/resources/generated"
+)  # where to output data - in dev environment
 
 
 @G.modloader("minecraft", "special:datagen:configure")
@@ -23,8 +25,11 @@ def generate_recipes():
     Values from minecraft forge's decompiled mc code, for mc version 1.16.1
     """
 
-    if "--data-gen" not in sys.argv: return  # data gen only when launched so, not when we think
-    config = Configuration.DataGeneratorConfig("minecraft", G.local + "/resources/generated")
+    if "--data-gen" not in sys.argv:
+        return  # data gen only when launched so, not when we think
+    config = Configuration.DataGeneratorConfig(
+        "minecraft", G.local + "/resources/generated"
+    )
     config.setDefaultNamespace("minecraft")
 
     """

@@ -14,6 +14,7 @@ import mcpython.factory.BlockModelFactory
 import mcpython.event.Registry
 from mcpython import globals as G, logger
 import deprecation
+
 # todo: re-write to be based on new data gen system
 
 
@@ -31,9 +32,14 @@ class IAdvancedBlockFactoryMode(mcpython.event.Registry.IRegistryContent):
 
 
 advanced_block_factory_mode_registry = mcpython.event.Registry.Registry(
-    "advanced_block_factory_mode", ["minecraft:advanced_block_factory_mode"], dump_content_in_saves=False,
-    injection_function=lambda x: logger.println("[DEPRECATION][WARN] object '{}' was registered to "
-                                                "AdvancedBlockFactory-registry which is deprecated".format(x)))
+    "advanced_block_factory_mode",
+    ["minecraft:advanced_block_factory_mode"],
+    dump_content_in_saves=False,
+    injection_function=lambda x: logger.println(
+        "[DEPRECATION][WARN] object '{}' was registered to "
+        "AdvancedBlockFactory-registry which is deprecated".format(x)
+    ),
+)
 
 
 @deprecation.deprecated("dev4-2", "a1.4.0")
@@ -49,15 +55,23 @@ class FullCube(IAdvancedBlockFactoryMode):
     def work(cls, factory_instance, settings: dict):
         if "texture" in settings:
             assert type(settings["texture"]) == str
-            mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("block/cube_all").\
-                setTexture("all", settings["texture"]).finish()
+            mcpython.factory.BlockModelFactory.BlockModelFactory().setName(
+                factory_instance.name
+            ).setParent("block/cube_all").setTexture(
+                "all", settings["texture"]
+            ).finish()
         elif "textures" in settings:
             assert type(settings["textures"]) == dict
-            obj = mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("minecraft:block/cube")
+            obj = (
+                mcpython.factory.BlockModelFactory.BlockModelFactory()
+                .setName(factory_instance.name)
+                .setParent("minecraft:block/cube")
+            )
             obj.textures = settings["textures"]
             obj.finish()
-        mcpython.factory.BlockModelFactory.NormalBlockStateFactory().setName(factory_instance.name).addVariant(
-            "default", factory_instance.name).finish()
+        mcpython.factory.BlockModelFactory.NormalBlockStateFactory().setName(
+            factory_instance.name
+        ).addVariant("default", factory_instance.name).finish()
 
 
 @deprecation.deprecated("dev4-2", "a1.4.0")
@@ -74,20 +88,39 @@ class SlabBlock(IAdvancedBlockFactoryMode):
         if "texture" in settings:
             assert type(settings["texture"]) == str
             tex = settings["texture"]
-            mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("block/slab"). \
-                setTexture("top", tex).setTexture("bottom", tex).setTexture("side", tex).finish()
-            mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name+"_top").setParent(
-                "block/slab_top").setTexture("top", tex).setTexture("bottom", tex).setTexture("side", tex).finish()
-            mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent(
-                "block/cube_all_full").setTexture("all", tex).finish()
+            mcpython.factory.BlockModelFactory.BlockModelFactory().setName(
+                factory_instance.name
+            ).setParent("block/slab").setTexture("top", tex).setTexture(
+                "bottom", tex
+            ).setTexture(
+                "side", tex
+            ).finish()
+            mcpython.factory.BlockModelFactory.BlockModelFactory().setName(
+                factory_instance.name + "_top"
+            ).setParent("block/slab_top").setTexture("top", tex).setTexture(
+                "bottom", tex
+            ).setTexture(
+                "side", tex
+            ).finish()
+            mcpython.factory.BlockModelFactory.BlockModelFactory().setName(
+                factory_instance.name
+            ).setParent("block/cube_all_full").setTexture("all", tex).finish()
         elif "textures" in settings:
             assert type(settings["textures"]) == dict
-            obj = mcpython.factory.BlockModelFactory.BlockModelFactory().setName(factory_instance.name).setParent("minecraft:block/cube")
+            obj = (
+                mcpython.factory.BlockModelFactory.BlockModelFactory()
+                .setName(factory_instance.name)
+                .setParent("minecraft:block/cube")
+            )
             obj.textures = settings["textures"]
             obj.finish()
-        mcpython.factory.BlockModelFactory.NormalBlockStateFactory().setName(factory_instance.name).addVariant(
-            "type=bottom", factory_instance.name).addVariant("type=top", factory_instance.name+"_top").addVariant(
-            "type=double", factory_instance.name+"_full").finish()
+        mcpython.factory.BlockModelFactory.NormalBlockStateFactory().setName(
+            factory_instance.name
+        ).addVariant("type=bottom", factory_instance.name).addVariant(
+            "type=top", factory_instance.name + "_top"
+        ).addVariant(
+            "type=double", factory_instance.name + "_full"
+        ).finish()
 
         factory_instance.block_factory.setSlab()
 
@@ -148,8 +181,12 @@ class AdvancedBlockFactory:
     @deprecation.deprecated("dev4-2", "a1.4.0")
     def setModelConfig(self, key, value):
         assert self.mode is not None
-        assert any([key in l for l in self.mode.REQUIRED_SETTINGS]) or key in self.mode.OPTIONAL_SETTINGS
-        if self.settings is None: self.settings = {}
+        assert (
+            any([key in l for l in self.mode.REQUIRED_SETTINGS])
+            or key in self.mode.OPTIONAL_SETTINGS
+        )
+        if self.settings is None:
+            self.settings = {}
         self.settings[key] = value
         return self
 
@@ -161,12 +198,15 @@ class AdvancedBlockFactory:
         assert k in self.mode.REQUIRED_SETTINGS, "configuration MUST be allowed!"
         assert self.name is not None
         modname, blockname = tuple(self.name.split(":"))
-        if modname not in G.modloader.mods: modname = "minecraft"
-        G.modloader.mods[modname].eventbus.subscribe("stage:block:load", self.finish_up,
-                                                     info="loading block {}".format(blockname))
+        if modname not in G.modloader.mods:
+            modname = "minecraft"
+        G.modloader.mods[modname].eventbus.subscribe(
+            "stage:block:load",
+            self.finish_up,
+            info="loading block {}".format(blockname),
+        )
 
     @deprecation.deprecated("dev4-2", "a1.4.0")
     def finish_up(self):
         self.mode.work(self, self.settings)
         self.block_factory.finish_up()
-

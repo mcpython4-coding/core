@@ -11,7 +11,12 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import globals as G
 import mcpython.client.chat.command.Command
-from mcpython.client.chat.command.Command import ParseBridge, ParseType, ParseMode, SubCommand
+from mcpython.client.chat.command.Command import (
+    ParseBridge,
+    ParseType,
+    ParseMode,
+    SubCommand,
+)
 
 
 @G.registry
@@ -25,15 +30,17 @@ class CommandKill(mcpython.client.chat.command.Command.Command):
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
         parsebridge.main_entry = "kill"
-        parsebridge.add_subcommand(SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL))
+        parsebridge.add_subcommand(
+            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)
+        )
 
     @staticmethod
     def parse(values: list, modes: list, info):
-        if len(values) == 0: values.append([G.world.get_active_player()])
+        if len(values) == 0:
+            values.append([G.world.get_active_player()])
         for entity in values[0]:
             entity.kill(test_totem=False)  # kill all entities selected
 
     @staticmethod
     def get_help() -> list:
         return ["/kill [<selector>: default=@s]: kills entity(s)"]
-

@@ -36,4 +36,3 @@ class ChunkFixer2to3(mcpython.server.storage.serializer.Chunk.BlockPartFixer):
     def fix(cls, savefile, dimension, region, chunk, palette):
         palette["custom"] = {"model": palette["custom"], "loot_table": None}
         return palette
-

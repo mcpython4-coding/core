@@ -32,5 +32,6 @@ class RegionDataFixer5to6(mcpython.server.storage.serializer.Chunk.RegionDataFix
 
     @classmethod
     def fix(cls, savefile, dimension, region, data):
-        if "version" in data: del data["version"]
+        if "version" in data:
+            del data["version"]
         return data

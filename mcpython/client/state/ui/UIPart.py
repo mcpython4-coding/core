@@ -42,4 +42,3 @@ class UIPart(mcpython.client.state.StatePart.StatePart):
         elif self.anchor_window[1] == "N":
             y = wy - abs(y)
         return x, y
-

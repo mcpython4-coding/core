@@ -23,7 +23,7 @@ LATEST_INFO_VERSION = 2
 
 
 class ItemAtlasHandler:
-    def __init__(self, folder=G.build+"/itematlases"):
+    def __init__(self, folder=G.build + "/itematlases"):
         self.scheduled_item_files = set()
         self.atlases = []
         self.atlas_files = []
@@ -37,24 +37,37 @@ class ItemAtlasHandler:
         if not mcpython.ResourceLocator.exists(file):
             self.file_relocate[file] = "assets/missing_texture.png"
             self.scheduled_item_files.add("assets/missing_texture.png")
-            logger.println("[WARN] image at '{}' could not be allocated. Replacing with missing texture...".format(file))
+            logger.println(
+                "[WARN] image at '{}' could not be allocated. Replacing with missing texture...".format(
+                    file
+                )
+            )
             return
-        self.scheduled_item_files.add(mcpython.ResourceLocator.transform_name(file, raise_on_error=False))
+        self.scheduled_item_files.add(
+            mcpython.ResourceLocator.transform_name(file, raise_on_error=False)
+        )
 
     def load(self):
-        if G.prebuilding: return
-        if not os.path.isfile(self.folder+"/info.pkl"): return
-        with open(self.folder+"/info.pkl", mode="rb") as f:
+        if G.prebuilding:
+            return
+        if not os.path.isfile(self.folder + "/info.pkl"):
+            return
+        with open(self.folder + "/info.pkl", mode="rb") as f:
             data = pickle.load(f)
         if data["version"] != LATEST_INFO_VERSION:
-            logger.println("[FATAL] invalid item atlas version {} (not supported)".format(data["version"]))
+            logger.println(
+                "[FATAL] invalid item atlas version {} (not supported)".format(
+                    data["version"]
+                )
+            )
             logger.println("[FATAL] skipping loading old item atlas...}")
             return
         self.allocation_table = data["allocation"]
         self.file_relocate.update(**data["relocate"])
         for i, d in enumerate(data["atlases"]):
-            f = self.folder+"/atlas_{}.png".format(i)
-            if not os.path.exists(f): continue
+            f = self.folder + "/atlas_{}.png".format(i)
+            if not os.path.exists(f):
+                continue
             atlas = mcpython.texture.TextureAtlas.TextureAtlas()
             atlas.texture = PIL.Image.open(f)
             atlas.free_space = d["free"]
@@ -69,16 +82,21 @@ class ItemAtlasHandler:
             ofile = file
             if file in self.file_relocate:
                 file = self.file_relocate[file]
-            if file in self.allocation_table: continue
+            if file in self.allocation_table:
+                continue
             if "assets/missing_texture.png" in file:
                 self.allocation_table[ofile] = (0, (0, 0))
                 continue
             if mcpython.ResourceLocator.exists(file):
                 image = mcpython.ResourceLocator.read(file, "pil")
             else:
-                self.allocation_table[ofile] = (0, (0, 0))  # replace it by missing texture and end
+                self.allocation_table[ofile] = (
+                    0,
+                    (0, 0),
+                )  # replace it by missing texture and end
                 continue
-            if file not in self.prevent_resize: image = image.resize((32, 32), PIL.Image.NEAREST)
+            if file not in self.prevent_resize:
+                image = image.resize((32, 32), PIL.Image.NEAREST)
             for i, atlas in enumerate(self.atlases):
                 if len(atlas.free_space) > 0:
                     pos = atlas.add_image(image)
@@ -96,14 +114,20 @@ class ItemAtlasHandler:
             self.atlas_grids.append(pyglet.image.ImageGrid(image, *atlas.size))
 
     def dump(self):
-        data = {"version": LATEST_INFO_VERSION, "atlases": [], "allocation": self.allocation_table,
-                "relocate": self.file_relocate}
+        data = {
+            "version": LATEST_INFO_VERSION,
+            "atlases": [],
+            "allocation": self.allocation_table,
+            "relocate": self.file_relocate,
+        }
         if not os.path.exists(self.folder):
             os.makedirs(self.folder)
         for i, atlas in enumerate(self.atlases):
-            atlas.texture.save(self.folder+"/atlas_{}.png".format(i))
-            data["atlases"].append({"id": i, "table": self.atlas_files[i], "free": atlas.free_space})
-        with open(self.folder+"/info.pkl", mode="wb") as f:
+            atlas.texture.save(self.folder + "/atlas_{}.png".format(i))
+            data["atlases"].append(
+                {"id": i, "table": self.atlas_files[i], "free": atlas.free_space}
+            )
+        with open(self.folder + "/info.pkl", mode="wb") as f:
             pickle.dump(data, f)
 
     def get_texture_info(self, file: str):
@@ -117,4 +141,3 @@ class ItemAtlasHandler:
         atlas_id, position = self.allocation_table[file]
         x, y = position[0], position[1]
         return self.atlas_grids[atlas_id][y, x]
-

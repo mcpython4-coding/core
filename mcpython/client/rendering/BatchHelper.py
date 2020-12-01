@@ -31,4 +31,3 @@ class BatchReference:
         self.delete_able.clear()
         self.callbacks.clear()
         del self
-

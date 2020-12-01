@@ -17,8 +17,19 @@ import mcpython.client.Language
 
 
 class UIPartLable(UIPart.UIPart):
-    def __init__(self, text, position, press=mcpython.common.event.EventInfo.MousePressEventInfo(pyglet.window.mouse.LEFT),
-                 anchor_lable="WS", anchor_window="WS", on_press=None, color=(0, 0, 0, 255), text_size=20):
+    def __init__(
+        self,
+        text,
+        position,
+        press=mcpython.common.event.EventInfo.MousePressEventInfo(
+            pyglet.window.mouse.LEFT
+        ),
+        anchor_lable="WS",
+        anchor_window="WS",
+        on_press=None,
+        color=(0, 0, 0, 255),
+        text_size=20,
+    ):
         """
         creates an new UIPartButton
         :param text: the text of the lable
@@ -30,8 +41,11 @@ class UIPartLable(UIPart.UIPart):
         :param color: the color of the text to use
         :param text_size: the size of the text
         """
-        super().__init__(position, 0, anchor_window=anchor_window, anchor_element=anchor_lable)
-        if len(color) != 4: raise ValueError("color must be an tuple of (r, g, b, a)")
+        super().__init__(
+            position, 0, anchor_window=anchor_window, anchor_element=anchor_lable
+        )
+        if len(color) != 4:
+            raise ValueError("color must be an tuple of (r, g, b, a)")
         self.text = text
         self.press: mcpython.common.event.EventInfo.MousePressEventInfo = press
         self.color = color
@@ -53,7 +67,7 @@ class UIPartLable(UIPart.UIPart):
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()
         sx, sy = self.lable.content_width, self.lable.content_width
-        self.press.area = ((mx, my), (mx+sx, my+sy))
+        self.press.area = ((mx, my), (mx + sx, my + sy))
         if self.press.equals(x, y, button, modifiers):
             if self.on_press:
                 self.on_press(x, y)
@@ -69,4 +83,3 @@ class UIPartLable(UIPart.UIPart):
         self.lable.font_size = self.text_size
         self.lable.text = mcpython.client.Language.translate(self.text)
         self.lable.draw()
-

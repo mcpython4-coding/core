@@ -41,9 +41,9 @@ class DefaultHeightMapLayer(Layer):
         chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
         cx, cz = chunk.position
-        factor = 10**config.size
-        for x in range(cx*16, cx*16+16):
-            for z in range(cz*16, cz*16+16):
+        factor = 10 ** config.size
+        for x in range(cx * 16, cx * 16 + 16):
+            for z in range(cz * 16, cz * 16 + 16):
                 heightmap[(x, z)] = cls.get_height_at(chunk, x, z, factor)
                 # chunk.add_add_block_gen_task((x, heightmap[(x, z)][0][1], z), "minecraft:stone")
 
@@ -59,6 +59,10 @@ class DefaultHeightMapLayer(Layer):
         return info
 
 
-authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute("heightmap", DefaultHeightMapLayer, {})
+authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
+    "heightmap", DefaultHeightMapLayer, {}
+)
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("seed:set", DefaultHeightMapLayer.update_seed)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "seed:set", DefaultHeightMapLayer.update_seed
+)

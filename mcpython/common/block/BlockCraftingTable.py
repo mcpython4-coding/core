@@ -23,9 +23,13 @@ class BlockCraftingTable(Block.Block):
 
     NAME: str = "minecraft:crafting_table"
 
-    def on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple):
+    def on_player_interaction(
+        self, player, button: int, modifiers: int, hit_position: tuple
+    ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            G.inventoryhandler.show(G.world.get_active_player().inventories["crafting_table"])
+            G.inventoryhandler.show(
+                G.world.get_active_player().inventories["crafting_table"]
+            )
             return True
         else:
             return False
@@ -40,7 +44,9 @@ class BlockCraftingTable(Block.Block):
     BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.AXE]
 
     def on_remove(self):
-        G.inventoryhandler.hide(G.world.get_active_player().inventories["crafting_table"])
+        G.inventoryhandler.hide(
+            G.world.get_active_player().inventories["crafting_table"]
+        )
 
     @classmethod
     def modify_block_item(cls, itemfactory):
@@ -50,4 +56,3 @@ class BlockCraftingTable(Block.Block):
 @G.modloader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BlockCraftingTable)
-

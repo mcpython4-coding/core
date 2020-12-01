@@ -43,15 +43,27 @@ class DefaultBiomeMapLayer(Layer):
         biomemap = chunk.get_value("biomemap")
         landmap = chunk.get_value("landmassmap")
         temperaturemap = chunk.get_value("temperaturemap")
-        factor = 10**config.size
-        for x in range(cx*16, cx*16+16):
-            for z in range(cz*16, cz*16+16):
+        factor = 10 ** config.size
+        for x in range(cx * 16, cx * 16 + 16):
+            for z in range(cz * 16, cz * 16 + 16):
                 landmass = landmap[(x, z)]
-                v = DefaultBiomeMapLayer.noise.noise3d(x/factor, z/factor, x*z/factor**2) * 0.5 + 0.5
-                biomemap[(x, z)] = G.biomehandler.get_biome_at(landmass, config.dimension, v, temperaturemap[(x, z)])
+                v = (
+                    DefaultBiomeMapLayer.noise.noise3d(
+                        x / factor, z / factor, x * z / factor ** 2
+                    )
+                    * 0.5
+                    + 0.5
+                )
+                biomemap[(x, z)] = G.biomehandler.get_biome_at(
+                    landmass, config.dimension, v, temperaturemap[(x, z)]
+                )
         chunk.set_value("biomemap", biomemap)
 
 
-authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute("biomemap", DefaultBiomeMapLayer, {})
+authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
+    "biomemap", DefaultBiomeMapLayer, {}
+)
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("seed:set", DefaultBiomeMapLayer.update_seed)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "seed:set", DefaultBiomeMapLayer.update_seed
+)

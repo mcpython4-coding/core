@@ -39,18 +39,27 @@ def collect_to_zip(source, file):
         for root, dirs, files in os.walk(source):
             for file in files:
                 t = os.path.join(root, file)
-                m = t[len(source) + 1:]
+                m = t[len(source) + 1 :]
                 f.write(t, m)
 
 
-def _copytree(entries, src, dst, symlinks, ignore, copy_function,
-              ignore_dangling_symlinks, dirs_exist_ok=False):
+def _copytree(
+    entries,
+    src,
+    dst,
+    symlinks,
+    ignore,
+    copy_function,
+    ignore_dangling_symlinks,
+    dirs_exist_ok=False,
+):
     if ignore is not None:
         ignored_names = ignore(src, {x.name for x in entries})
     else:
         ignored_names = set()
 
-    if not os.path.isdir(dst): os.makedirs(dst, exist_ok=dirs_exist_ok)
+    if not os.path.isdir(dst):
+        os.makedirs(dst, exist_ok=dirs_exist_ok)
     errors = []
     use_srcentry = copy_function is shutil.copy2 or copy_function is shutil.copy
 
@@ -62,7 +71,7 @@ def _copytree(entries, src, dst, symlinks, ignore, copy_function,
         srcobj = srcentry if use_srcentry else srcname
         try:
             is_symlink = srcentry.is_symlink()
-            if is_symlink and os.name == 'nt':
+            if is_symlink and os.name == "nt":
                 # Special check for directory junctions, which appear as
                 # symlinks but we want to recurse.
                 lstat = srcentry.stat(follow_symlinks=False)
@@ -82,13 +91,25 @@ def _copytree(entries, src, dst, symlinks, ignore, copy_function,
                         continue
                     # otherwise let the copy occur. copy2 will raise an error
                     if srcentry.is_dir():
-                        copytree(srcobj, dstname, symlinks, ignore,
-                                 copy_function, dirs_exist_ok=dirs_exist_ok)
+                        copytree(
+                            srcobj,
+                            dstname,
+                            symlinks,
+                            ignore,
+                            copy_function,
+                            dirs_exist_ok=dirs_exist_ok,
+                        )
                     else:
                         copy_function(srcobj, dstname)
             elif srcentry.is_dir():
-                copytree(srcobj, dstname, symlinks, ignore, copy_function,
-                         dirs_exist_ok=dirs_exist_ok)
+                copytree(
+                    srcobj,
+                    dstname,
+                    symlinks,
+                    ignore,
+                    copy_function,
+                    dirs_exist_ok=dirs_exist_ok,
+                )
             else:
                 # Will raise a SpecialFileError for unsupported f types
                 copy_function(srcobj, dstname)
@@ -102,30 +123,55 @@ def _copytree(entries, src, dst, symlinks, ignore, copy_function,
         shutil.copystat(src, dst)
     except OSError as why:
         # Copying f access times may fail on Windows
-        if getattr(why, 'winerror', None) is None:
+        if getattr(why, "winerror", None) is None:
             errors.append((src, dst, str(why)))
     if errors:
         raise shutil.Error(errors)
     return dst
 
 
-def copytree(src, dst, symlinks=False, ignore=None, copy_function=shutil.copy2,
-             ignore_dangling_symlinks=False, dirs_exist_ok=False):
+def copytree(
+    src,
+    dst,
+    symlinks=False,
+    ignore=None,
+    copy_function=shutil.copy2,
+    ignore_dangling_symlinks=False,
+    dirs_exist_ok=False,
+):
     sys.audit("shutil.copytree", src, dst)
     with os.scandir(src) as itr:
         entries = list(itr)
-    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
-                     ignore=ignore, copy_function=copy_function,
-                     ignore_dangling_symlinks=ignore_dangling_symlinks,
-                     dirs_exist_ok=dirs_exist_ok)
+    return _copytree(
+        entries=entries,
+        src=src,
+        dst=dst,
+        symlinks=symlinks,
+        ignore=ignore,
+        copy_function=copy_function,
+        ignore_dangling_symlinks=ignore_dangling_symlinks,
+        dirs_exist_ok=dirs_exist_ok,
+    )
 
 
-local = os.path.dirname(os.path.dirname(__file__)) if "--source" not in sys.argv else sys.argv[
-    sys.argv.index("--source") + 1]
-folder = local + "/tools/build" if "--target" not in sys.argv else sys.argv[sys.argv.index("--target") + 1]
-out = local + "/tools/builds" if "--builds" not in sys.argv else sys.argv[sys.argv.index("--builds") + 1]
+local = (
+    os.path.dirname(os.path.dirname(__file__))
+    if "--source" not in sys.argv
+    else sys.argv[sys.argv.index("--source") + 1]
+)
+folder = (
+    local + "/tools/build"
+    if "--target" not in sys.argv
+    else sys.argv[sys.argv.index("--target") + 1]
+)
+out = (
+    local + "/tools/builds"
+    if "--builds" not in sys.argv
+    else sys.argv[sys.argv.index("--builds") + 1]
+)
 
-if not os.path.exists(out): os.makedirs(out)
+if not os.path.exists(out):
+    os.makedirs(out)
 
 
 def build():
@@ -138,13 +184,16 @@ def build():
 
     print("collection python files...")
     for root, dirs, files in os.walk(local):
-        if "tools" in root: continue
+        if "tools" in root:
+            continue
         for file in files:
-            if not file.endswith(".py"): continue
+            if not file.endswith(".py"):
+                continue
             f = os.path.join(root, file)
-            t = folder + "/" + f[len(local):]
+            t = folder + "/" + f[len(local) :]
             d = os.path.dirname(t)
-            if not os.path.exists(d): os.makedirs(d)
+            if not os.path.exists(d):
+                os.makedirs(d)
             shutil.copy(f, t)
 
     print("collecting licences...")
@@ -157,37 +206,59 @@ def build():
 
     print("collecting data generators...")
     # 1. we don't want an window, 2. we want to include ALL possible block-data (is selective loaded with the End User config)
-    subprocess.call(["py", "-3.8", local+"/__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window",
-                     "--enable-all-blocks"], stdout=sys.stdout, stderr=sys.stderr)  # and write console to these console
+    subprocess.call(
+        [
+            "py",
+            "-3.8",
+            local + "/__main__.py",
+            "--data-gen",
+            "--exit-after-data-gen",
+            "--no-window",
+            "--enable-all-blocks",
+        ],
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+    )  # and write console to these console
 
     print("collecting assets...")  #
     copytree(local + "/resources/source", folder)
     copytree(local + "/resources/generated", folder)
     copytree(local + "/resources/main", folder)
-    
-    shutil.copy(local+"/requirements.txt", folder+"/requirements.txt")
+
+    shutil.copy(local + "/requirements.txt", folder + "/requirements.txt")
 
     print("modifying source...")
     with open(folder + "/globals.py") as f:
         d = f.read().replace("dev_environment = True", "dev_environment = False", 1)
     with open(folder + "/globals.py", mode="w") as f:
         f.write(d)
-    with open(folder+"/installer.py") as f:
-        d = f.read().replace('subprocess.Popen([sys.executable, "./__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"], stdout=sys.stdout)', "")
-    with open(folder+"/installer.py", mode="w") as f:
+    with open(folder + "/installer.py") as f:
+        d = f.read().replace(
+            'subprocess.Popen([sys.executable, "./__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"], stdout=sys.stdout)',
+            "",
+        )
+    with open(folder + "/installer.py", mode="w") as f:
         f.write(d)
-    with open(folder+"/mcpython/config.py") as f:
+    with open(folder + "/mcpython/config.py") as f:
         d = f.read()
     local_space = {}
     exec(d, {}, local_space)
-    with open(folder+"/version.json", mode="w") as f:
-        json.dump({
-            "type": local_space["VERSION_TYPE"], "base": local_space["MC_VERSION_BASE"],
-            "name": local_space["VERSION_NAME"], "heading": local_space["DEVELOPING_FOR"]}, f)
+    with open(folder + "/version.json", mode="w") as f:
+        json.dump(
+            {
+                "type": local_space["VERSION_TYPE"],
+                "base": local_space["MC_VERSION_BASE"],
+                "name": local_space["VERSION_NAME"],
+                "heading": local_space["DEVELOPING_FOR"],
+            },
+            f,
+        )
 
     print("zip-ing up stuff...")
     now = datetime.datetime.now()
-    target_file = "build_{}_{}_{}_{}_{}_{}".format(now.year, now.month, now.day, now.hour, now.minute, now.second)
+    target_file = "build_{}_{}_{}_{}_{}_{}".format(
+        now.year, now.month, now.day, now.hour, now.minute, now.second
+    )
 
     collect_to_zip(folder, out + "/" + target_file + ".zip")
 
@@ -196,7 +267,8 @@ def build():
     root_l = len(folder) + 1
     for root, dirs, files in os.walk(folder):
         for loc in files:
-            if not loc.endswith(".py"): continue  # only python files to work with
+            if not loc.endswith(".py"):
+                continue  # only python files to work with
             file = os.path.join(root, loc)
             print("transforming file '{}'".format(file[root_l:]))
             with open(file) as f:
@@ -212,7 +284,7 @@ def build():
                 skip_entries = 0
                 for i, e in enumerate(line):
                     if e == '"' and not (i > 0 and line[i - 1] == "\\"):
-                        if len(line) > i + 1 and line[i:i + 3] == '"""':
+                        if len(line) > i + 1 and line[i : i + 3] == '"""':
                             if in_multi_line_comment == 0:
                                 in_multi_line_comment = 1
                                 line = line[:index]
@@ -225,7 +297,7 @@ def build():
                         elif in_string == 1:
                             in_string = 0
                     elif e == "'" and not (i > 0 and line[i - 1] == "\\"):
-                        if len(line) > i + 1 and line[i:i + 3] == "'''":
+                        if len(line) > i + 1 and line[i : i + 3] == "'''":
                             if in_multi_line_comment == 0:
                                 in_multi_line_comment = 2
                                 line = line[:index]
@@ -264,7 +336,7 @@ def build():
     shutil.rmtree(folder)
 
     print("build finished in {}s".format(time.time() - start))
-    return target_file+".zip", target_file+"_undocumented.zip"
+    return target_file + ".zip", target_file + "_undocumented.zip"
 
 
 if __name__ == "__main__":

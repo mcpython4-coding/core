@@ -32,8 +32,17 @@ class EntityModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
         self.y_inverted = state
         return self
 
-    def add_box(self, name: str, texture: str, tex_size: tuple, position: tuple, rotation: tuple, size: tuple,
-                center: tuple, uv=None):
+    def add_box(
+        self,
+        name: str,
+        texture: str,
+        tex_size: tuple,
+        position: tuple,
+        rotation: tuple,
+        size: tuple,
+        center: tuple,
+        uv=None,
+    ):
         """
         will add one new box to the entity model
         :param name: the name of the box
@@ -47,7 +56,9 @@ class EntityModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
         """
         if uv is None:
             uv = [(0, 0, 1, 1)] * 6
-        if type(uv) == tuple and len(uv) == 2:  # Ok, we have the offset in x and y direction, so parse it in the normal way
+        if (
+            type(uv) == tuple and len(uv) == 2
+        ):  # Ok, we have the offset in x and y direction, so parse it in the normal way
             dx, dy = uv
             sx, sy, sz = size
             uv = [
@@ -56,13 +67,25 @@ class EntityModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
                 (dx + sz, dy + sz, dx + sz + dx, dy + sz + sy),
                 (dx + 2 * sz + sx, dy + sz, dx + 2 * sz + 2 * dx, dy + sz + sy),
                 (dx, dy + sz, dy + sz, dy + sz + sy),
-                (dx + sz + sx, dy + sz, dx + 2 * sz + sx, dy + sz + sy)
+                (dx + sz + sx, dy + sz, dx + 2 * sz + sx, dy + sz + sy),
             ]
         self.boxes[name] = texture, tex_size, position, rotation, size, center, uv
         return self
 
-    def addBox(self, name: str, texture: str, tex_size: tuple, position: tuple, size: tuple, uv: tuple, rotation_center=(0, 0, 0), rotation=(0, 0, 0)):
-        self.add_box(name, texture, tex_size, position, rotation, size, rotation_center, uv)
+    def addBox(
+        self,
+        name: str,
+        texture: str,
+        tex_size: tuple,
+        position: tuple,
+        size: tuple,
+        uv: tuple,
+        rotation_center=(0, 0, 0),
+        rotation=(0, 0, 0),
+    ):
+        self.add_box(
+            name, texture, tex_size, position, rotation, size, rotation_center, uv
+        )
         return self
 
     def add_state(self, name: str, *boxes):
@@ -83,19 +106,38 @@ class EntityModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
             # create uv strings from tuples
             for i, entry in enumerate(uv):
                 if type(entry) == tuple:
-                    uv[i] = "|".join([str(e if not self.y_inverted and i % 2 != 0 else size[1] - float(e)) for i, e in enumerate(entry)])
+                    uv[i] = "|".join(
+                        [
+                            str(
+                                e
+                                if not self.y_inverted and i % 2 != 0
+                                else size[1] - float(e)
+                            )
+                            for i, e in enumerate(entry)
+                        ]
+                    )
 
-            data["boxes"][key] = {"texture": texture, "texture_size": tex_size, "position": [e / 16 for e in position],
-                                  "rotation": rotation, "size": size, "center": [e / 16 for e in center], "uv": uv}
+            data["boxes"][key] = {
+                "texture": texture,
+                "texture_size": tex_size,
+                "position": [e / 16 for e in position],
+                "rotation": rotation,
+                "size": size,
+                "center": [e / 16 for e in center],
+                "uv": uv,
+            }
 
         for key in self.states:
             boxes = []
             for box in self.states[key]:
                 if type(box) == tuple:
                     e = {"box": box[0]}
-                    if len(box) > 1: e["position"] = box[1]
-                    if len(box) > 2: e["rotation"] = box[2]
-                    if len(box) > 3: e["center"] = box[3]
+                    if len(box) > 1:
+                        e["position"] = box[1]
+                    if len(box) > 2:
+                        e["rotation"] = box[2]
+                    if len(box) > 3:
+                        e["center"] = box[3]
                 else:
                     e = {"box": box}
                 boxes.append(e)

@@ -31,7 +31,9 @@ class State(IRegistryContent):
         self.eventbus = G.eventhandler.create_bus(active=False, crash_on_error=False)
         self.bind_to_eventbus()
         for statepart in self.parts:
-            statepart.master = [self]  # StateParts get an list of steps to get to them as an list
+            statepart.master = [
+                self
+            ]  # StateParts get an list of steps to get to them as an list
             statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
         G.statehandler.add_state(self)
 
@@ -58,4 +60,3 @@ class State(IRegistryContent):
 
     def on_deactivate(self):  # todo: remove
         pass
-
