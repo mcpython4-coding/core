@@ -195,9 +195,7 @@ class WorldGenerationTaskHandler:
             or self._process_2_array(chunk)
         ):
             if log_msg:
-                logger.println(
-                    "executing took {}s in chunk {}".format(time.time() - start, chunk)
-                )
+                logger.println("executing took {}s in chunk {}".format(time.time() - start, chunk))
             return 2
         if self.get_task_count_for_chunk(chunk) == 0:
             self.chunks.remove(chunk)

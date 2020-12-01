@@ -64,11 +64,9 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
         try:
             mcpython.util.getskin.download_skin(playername, G.build + "/skin.png")
         except ValueError:
-            logger.println(
-                "[ERROR] failed to receive skin for '{}'. Falling back to default".format(
-                    playername
-                )
-            )
+            logger.println("[ERROR] failed to receive skin for '{}'. Falling back to default".format(
+                playername
+            ))
             mcpython.ResourceLocator.read(
                 "assets/minecraft/textures/entity/steve.png", "pil"
             ).save(G.build + "/skin.png")
@@ -78,34 +76,26 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
         G.eventhandler.call("seed:set")
 
         if data["game version"] not in mcpython.common.config.VERSION_ORDER:
-            logger.println(
-                "Future version are NOT supported. Loading may NOT work (but we try to)"
-            )
-            logger.println(
-                "Whatever happens to you saves now, we CAN NOT give you help. For your information, "
-            )
+            logger.println("Future version are NOT supported. Loading may NOT work (but we try to)")
+            logger.println("Whatever happens to you saves now, we CAN NOT give you help. For your information, ")
             logger.println("it was last loaded in '{}'".format(data["game version"]))
 
         for modname in data["mods"]:
             if modname not in G.modloader.mods:
-                logger.println(
-                    "[WARNING] mod '{}' is missing. This may break your world!".format(
-                        modname
-                    )
-                )
+                logger.println("[WARNING] mod '{}' is missing. This may break your world!".format(
+                    modname
+                ))
             elif G.modloader.mods[modname].version != tuple(data["mods"][modname]):
                 try:
                     savefile.apply_mod_fixer(modname, tuple(data["mods"][modname]))
                 except mcpython.server.storage.SaveFile.DataFixerNotFoundException:
                     if modname != "minecraft":
-                        logger.println(
-                            "[WARN] mod {} did not provide data-fixers for mod version change "
-                            "which occur between the sessions (from {} to {})".format(
-                                modname,
-                                tuple(data["mods"][modname]),
-                                G.modloader.mods[modname].version,
-                            )
-                        )
+                        logger.println("[WARN] mod {} did not provide data-fixers for mod version change "
+                                       "which occur between the sessions (from {} to {})".format(
+                            modname,
+                            tuple(data["mods"][modname]),
+                            G.modloader.mods[modname].version,
+                        ))
 
         # apply data fixers for creating mod data
         for modname in G.modloader.mods:
@@ -124,24 +114,18 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
         for dimension in G.world.dimensions.values():
             if str(dimension.id) in data["dimensions"]:
                 if data["dimensions"][str(dimension.id)] != dimension.name:
-                    logger.println(
-                        "[WARN] dimension name changed for dim {} from '{}' to '{}'".format(
-                            dimension.id,
-                            data["dimensions"][str(dimension.id)],
-                            dimension.name,
-                        )
-                    )
+                    logger.println("[WARN] dimension name changed for dim {} from '{}' to '{}'".format(
+                        dimension.id,
+                        data["dimensions"][str(dimension.id)],
+                        dimension.name,
+                    ))
                 del data["dimensions"][str(dimension.id)]
             else:
-                logger.println(
-                    "[WARN] dimension {} not arrival in save".format(dimension.id)
-                )
+                logger.println("[WARN] dimension {} not arrival in save".format(dimension.id))
         for dim in data["dimensions"]:
-            logger.println(
-                "[WARN] dimension {} named '{}' is arrival in save but not registered in game".format(
-                    dim, data["dimensions"][dim]
-                )
-            )
+            logger.println("[WARN] dimension {} named '{}' is arrival in save but not registered in game".format(
+                dim, data["dimensions"][dim]
+            ))
 
         if "active_dimension" in data:
             G.world.join_dimension(data["active_dimension"])

@@ -75,9 +75,7 @@ class StateWorldLoading(State.State):
         try:
             G.world.savefile.load_world()
         except IOError:  # todo: add own exception class as IOError may be raised somewhere else in the script
-            logger.println(
-                "failed to load world. data-fixer failed with NoDataFixerFoundException"
-            )
+            logger.println("failed to load world. data-fixer failed with NoDataFixerFoundException")
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:startmenu")
             return

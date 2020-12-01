@@ -69,9 +69,7 @@ def download_skin(username: str, store: str):
     r = get_url(userinfo_url.format(userid=userid))
     userinfo = r.json()
     if "error" in userinfo:
-        logger.println(
-            "[SERVER] {}: {}".format(userinfo["error"], userinfo["errorMessage"])
-        )
+        logger.println("[SERVER] {}: {}".format(userinfo["error"], userinfo["errorMessage"]))
         raise ValueError()
     try:
         texture_info = find_texture_info(userinfo["properties"])

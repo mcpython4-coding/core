@@ -264,20 +264,12 @@ class BlockFactory:
         """
         # logger.println("[INFO] finishing up '{}'".format(self.name))
         if self.name.count(":") == 0:
-            logger.println(
-                "[BLOCK FACTORY][FATAL] 'setName' was set to an not-prefixed name '{}'".format(
-                    self.name
-                )
-            )
-            logger.println(
-                "[BLOCK FACTORY][FATAL] out of these error, the block is NOT constructed"
-            )
-            logger.println(
-                "[BLOCK FACTORY][FATAL] (P.s. this does mean also that setGlobalModName() was not set)"
-            )
-            logger.println(
-                "[BLOCK FACTORY][FATAL] (This could be an wrong template setup for the block factory)"
-            )
+            logger.println("[BLOCK FACTORY][FATAL] 'setName' was set to an not-prefixed name '{}'".format(
+                self.name
+            ))
+            logger.println("[BLOCK FACTORY][FATAL] out of these error, the block is NOT constructed")
+            logger.println("[BLOCK FACTORY][FATAL] (P.s. this does mean also that setGlobalModName() was not set)")
+            logger.println("[BLOCK FACTORY][FATAL] (This could be an wrong template setup for the block factory)")
             return
         if self.modname is None or self.name.count(":") > 0:
             modname, blockname = tuple(self.name.split(":"))
@@ -314,15 +306,12 @@ class BlockFactory:
             logger.println(
                 "[WARN] hardness-attribute of block '{}' not set. This will get incompatible in the future!".format(
                     self.name
-                )
-            )
+                ))
             self.hardness = 1
 
         if self.blast_resistance is None:
-            logger.println(
-                "[WARN] blast-resistance-attribute of block {} not set. "
-                "This will get incompatible in the future!".format(self.name)
-            )
+            logger.println("[WARN] blast-resistance-attribute of block {} not set. "
+                           "This will get incompatible in the future!".format(self.name))
             self.blast_resistance = 1
 
         class Baseclass(object):
@@ -527,11 +516,9 @@ class BlockFactory:
         if self.name.count(":") == 0:
             import traceback
 
-            logger.println(
-                "[BLOCK FACTORY][WARN] 'setName' was set to an not-prefixed name '{}'".format(
-                    self.name
-                )
-            )
+            logger.println("[BLOCK FACTORY][WARN] 'setName' was set to an not-prefixed name '{}'".format(
+                self.name
+            ))
             traceback.print_stack()
         return self
 

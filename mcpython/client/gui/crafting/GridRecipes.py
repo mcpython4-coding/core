@@ -31,11 +31,9 @@ def transform_to_item_stack(item, table: dict) -> list:
         try:
             entries = G.taghandler.taggroups["items"].tags["#" + item["tag"]].entries
         except (KeyError, IndexError):
-            logger.println(
-                "tag loading issue for recipe transform of {} to valid item list".format(
-                    item
-                )
-            )
+            logger.println("tag loading issue for recipe transform of {} to valid item list".format(
+                item
+            ))
             return []
         for item in entries[:]:
             if item not in G.registry.get_by_name("item").registered_object_map:

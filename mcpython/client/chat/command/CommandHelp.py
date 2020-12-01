@@ -43,9 +43,7 @@ class CommandHelp(mcpython.client.chat.command.Command.Command):
             start = (page - 1) * LINES_PER_PAGE
             end = start + LINES_PER_PAGE - 1
             if start < 0:
-                logger.println(
-                    "[CHAT][COMMANDPARSER][ERROR] value must be greater than 0"
-                )
+                logger.println("[CHAT][COMMANDPARSER][ERROR] value must be greater than 0")
                 return
             if end >= len(PAGES):
                 end = len(PAGES)
@@ -59,20 +57,16 @@ class CommandHelp(mcpython.client.chat.command.Command.Command):
             if c.startswith("/"):
                 c = c[1:]
             if c not in G.registry.get_by_name("command").commandentries:
-                logger.println(
-                    "[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(
-                        c
-                    )
-                )
+                logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(
+                    c
+                ))
                 return
             logger.println("------------------" + "-" * len(c))
             logger.println("- HELP PAGE FOR {} -".format(c))
             logger.println("------------------" + "-" * len(c))
-            logger.println(
-                "\n".join(
-                    G.registry.get_by_name("command").commandentries[c].get_help()
-                )
-            )
+            logger.println("\n".join(
+                G.registry.get_by_name("command").commandentries[c].get_help()
+            ))
 
     @staticmethod
     def get_help() -> list:

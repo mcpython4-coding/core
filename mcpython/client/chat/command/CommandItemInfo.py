@@ -80,11 +80,9 @@ class CommandItemInfo(mcpython.client.chat.command.Command.Command):
             logger.println("-has block: {}".format(itemstack.item.HAS_BLOCK))
             if itemstack.item.HAS_BLOCK:
                 logger.println("-blockname: {}".format(itemstack.item.get_block()))
-            logger.println(
-                "-itemfile: '{}'".format(
-                    itemstack.item.get_default_item_image_location()
-                )
-            )
+            logger.println("-itemfile: '{}'".format(
+                itemstack.item.get_default_item_image_location()
+            ))
             logger.println("-max stack size: {}".format(itemstack.item.STACK_SIZE))
             tags = []
             for tag in G.taghandler.taggroups["items"].tags.values():

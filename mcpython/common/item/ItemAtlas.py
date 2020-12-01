@@ -37,11 +37,9 @@ class ItemAtlasHandler:
         if not mcpython.ResourceLocator.exists(file):
             self.file_relocate[file] = "assets/missing_texture.png"
             self.scheduled_item_files.add("assets/missing_texture.png")
-            logger.println(
-                "[WARN] image at '{}' could not be allocated. Replacing with missing texture...".format(
-                    file
-                )
-            )
+            logger.println("[WARN] image at '{}' could not be allocated. Replacing with missing texture...".format(
+                file
+            ))
             return
         self.scheduled_item_files.add(
             mcpython.ResourceLocator.transform_name(file, raise_on_error=False)
@@ -55,11 +53,9 @@ class ItemAtlasHandler:
         with open(self.folder + "/info.pkl", mode="rb") as f:
             data = pickle.load(f)
         if data["version"] != LATEST_INFO_VERSION:
-            logger.println(
-                "[FATAL] invalid item atlas version {} (not supported)".format(
-                    data["version"]
-                )
-            )
+            logger.println("[FATAL] invalid item atlas version {} (not supported)".format(
+                data["version"]
+            ))
             logger.println("[FATAL] skipping loading old item atlas...}")
             return
         self.allocation_table = data["allocation"]

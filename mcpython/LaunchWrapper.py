@@ -11,25 +11,37 @@ This project is not official by mojang and does not relate to it.
 """
 import os
 import sys
+import typing
 
-from mcpython import shared as G, logger
-import mcpython.common.config
 import mcpython.ResourceLocator
+import mcpython.common.config
+from mcpython import shared, logger
 
 
 class LaunchWrapper:
-    def __init__(self):  # todo: store in globals.py
+    """
+    Class for launching the game in an certain configuration
+    Loads all needed part and executed the loading task cycle.
+    todo: move globals.py content into here & remove globals.py
+    """
+
+    def __init__(self):
         pass
 
-    def inject_sys_argv(self):  # todo: all sys.argv parsing belongs here
-        pass
+    def inject_sys_argv(self, argv: typing.List[str]):
+        """
+        Currently unused helper function for loading the sys.argv config into the game
+        todo: all sys.argv parsing belongs here
+        """
 
     def setup(self):
-        self.print_header()
-
-        import mcpython.common.event.EventHandler
+        """
+        Setup general stuff which does not take long to complete
+        Loads first modules into memory
+        """
 
         import mcpython.ResourceLocator
+        import mcpython.common.event.EventHandler
 
         mcpython.ResourceLocator.load_resource_packs()
 
@@ -41,11 +53,13 @@ class LaunchWrapper:
 
         self.setup_registries()
 
-        G.eventhandler.call("game:startup")
+        shared.eventhandler.call("game:startup")
 
     def setup_registries(self):
+        """
+        Helper functions for loading the modules which create registries
+        """
         import mcpython.common.mod.ModLoader
-
         import mcpython.common.mod.ModMcpython
         import mcpython.common.mod.ConfigFile
         from mcpython.common.data.datagen.mcpython import (
@@ -55,7 +69,7 @@ class LaunchWrapper:
             blockmodels,
         )
 
-        @G.modloader("minecraft", "special:exit")
+        @shared.modloader("minecraft", "special:exit")
         def exit():
             sys.exit()
 
@@ -77,66 +91,90 @@ class LaunchWrapper:
         import mcpython.setup
 
     def setup_opengl(self):
+        """
+        Helper function for OpenGL setup
+        todo: DO NOT USE OpenGLSetupFile
+        """
+
         import mcpython.client.rendering.OpenGLSetupFile
 
         mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name("setup")
 
     def print_header(self):
+        """
+        Prints an header describing the program name and its version
+        """
+
         version = mcpython.common.config.FULL_VERSION_NAME.upper()
         logger.println("---------------" + "-" * len(version))
         logger.println("- MCPYTHON 4 {} -".format(version))
         logger.println("---------------" + "-" * len(version))
 
     def setup_files(self):
-        if not os.path.exists(G.home + "/datapacks"):
-            os.makedirs(G.home + "/datapacks")
+        """
+        Setup for certain files in the system.
+        """
 
-        if not os.path.isdir(G.home):
-            os.makedirs(G.home)
+        if not os.path.exists(shared.home + "/datapacks"):
+            os.makedirs(shared.home + "/datapacks")
 
-        sys.path.append(G.local + "/mcpython")
+        if not os.path.isdir(shared.home):
+            os.makedirs(shared.home)
+
+        sys.path.append(shared.local + "/mcpython")
 
         # check if build folder exists, if not, we need to create its content
-        if not os.path.exists(G.build):
+        if not os.path.exists(shared.build):
             logger.println("rebuild mode due to missing cache folder")
-            G.prebuilding = True
+            shared.prebuilding = True
 
-        if os.path.exists(G.build):  # copy default skin to make it start correctly
+        if os.path.exists(shared.build):  # copy default skin to make it start correctly
             try:
                 mcpython.ResourceLocator.read(
                     "assets/minecraft/textures/entity/steve.png", "pil"
-                ).save(G.build + "/skin.png")
+                ).save(shared.build + "/skin.png")
             except:
                 logger.print_exception("[FATAL] failed to load default skin")
                 sys.exit(-1)
 
     def load_mods(self):
-        G.modloader.look_out()
-        G.modloader.sort_mods()
-        G.modloader.write_mod_info()
+        """
+        Do ModLoader inital stuff
+        """
+        shared.modloader.look_out()
+        shared.modloader.sort_mods()
+        shared.modloader.write_mod_info()
 
     def launch(self):
-        logger.println("tmp storage at {}".format(G.tmp.name))
+        """
+        Launches the game in the current configuration
+        Starts the main cycle of pyglet
+
+        todo: move state selection here
+        """
+
+        logger.println("tmp storage at {}".format(shared.tmp.name))
         self.load_mods()
 
         # Create the world instance
         import mcpython.common.world.World
 
-        G.world = mcpython.common.world.World.World()
+        shared.world = mcpython.common.world.World.World()
 
         import pyglet
         import mcpython.client.rendering.window
 
-        # todo: move size to config files
+        # todo: move size to config files / sys.argv
         mcpython.client.rendering.window.Window(
             width=800, height=600, resizable=True
         ).reset_caption()
         try:
-            G.window.set_icon(
+            # todo: can we find an better icon?
+            shared.window.set_icon(
                 mcpython.ResourceLocator.read("icon_16x16.png", "pyglet"),
                 mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"),
             )
-            G.eventhandler.call("game:gameloop_startup")
+            shared.eventhandler.call("game:gameloop_startup")
         except:
             logger.print_exception("[FATAL] failed to load window images")
             sys.exit(-1)
@@ -149,19 +187,29 @@ class LaunchWrapper:
             raise
 
     def error_clean(self):
+        """
+        Helper function for cleaning up in an half-inited environment
+        (save)
+        Will enforce cleanup when possible
+        """
         import mcpython.ResourceLocator
 
         mcpython.ResourceLocator.close_all_resources()
         logger.print_exception("general uncaught exception during running the game")
         try:
-            G.tmp.cleanup()
+            shared.tmp.cleanup()
         except NameError:
             pass
-        sys.exit(-1)
+        except:
+            logger.print_exception("cleanup exception")
 
     def clean(self):
+        """
+        Helper function for normal cleanup
+        (not save)
+        """
         import mcpython.ResourceLocator
 
         mcpython.ResourceLocator.close_all_resources()
-        G.eventhandler.call("game:close")
-        G.tmp.cleanup()
+        shared.eventhandler.call("game:close")
+        shared.tmp.cleanup()

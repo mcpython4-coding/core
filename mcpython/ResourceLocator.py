@@ -199,11 +199,9 @@ def load_resource_packs():
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
-            logger.println(
-                "[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(
-                    file
-                )
-            )
+            logger.println("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(
+                file
+            ))
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
@@ -269,11 +267,9 @@ def transform_name(file: str, raise_on_error=True) -> str:
             )
         return f
     if raise_on_error:
-        logger.println(
-            "can't transform name '{}' to valid path. Replacing with missing texture...".format(
-                file
-            )
-        )
+        logger.println("can't transform name '{}' to valid path. Replacing with missing texture...".format(
+            file
+        ))
         return "assets/missing_texture.png"
     return file
 

@@ -150,10 +150,7 @@ class Chat:
         elif symbol == key.ENTER:  # execute command
             self.CANCEL_INPUT = False
             G.eventhandler.call("chat:text_enter", self.text)
-            logger.println(
-                "[CHAT][INFO] entered text: '{}'".format(self.text),
-                write_into_console=False,
-            )
+            logger.println("[CHAT][INFO] entered text: '{}'".format(self.text), console=False)
             if self.CANCEL_INPUT:
                 self.history.insert(0, self.text)
                 self.close()

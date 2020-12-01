@@ -43,11 +43,9 @@ class EntityHandler:
             raise ValueError("unknown entity type name: '{}'".format(name))
         entity = self.registry.registered_object_map[name]
         if not entity.SUMMON_ABLE and check_summon:
-            logger.println(
-                "[WARN] tried to summon an not-summon-able entity named '{}' at '{}'".format(
-                    name, position
-                )
-            )
+            logger.println("[WARN] tried to summon an not-summon-able entity named '{}' at '{}'".format(
+                name, position
+            ))
             return
         entity = entity.create_new(position, *args, dimension=dimension, **kwargs)
         if uuid is not None:

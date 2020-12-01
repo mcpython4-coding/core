@@ -103,9 +103,7 @@ class CommandParser:
                     )
                 )
         else:
-            logger.println(
-                "[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre)
-            )
+            logger.println("[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre))
 
     def _convert_to_values(self, command, parsebridge, info, index=1) -> tuple:
         """
@@ -122,10 +120,8 @@ class CommandParser:
                 for subcommand in parsebridge.sub_commands
             ]
         ):
-            logger.println(
-                "unable to parse command. please use /help <command name> command to get exact command "
-                "syntax"
-            )
+            logger.println("unable to parse command. please use /help <command name> command to get exact command "
+                           "syntax")
             return None, None
         active_entry = parsebridge
         values = []
@@ -168,16 +164,13 @@ class CommandParser:
                     logger.println(
                         "[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}:".format(
                             len(array) + 1
-                        )
-                    )
-                    logger.println(
-                        " - missing one of the following entries: {}".format(
-                            [
-                                subcommand.type
-                                for subcommand in active_entry.sub_commands
-                            ]
-                        )
-                    )
+                        ))
+                    logger.println(" - missing one of the following entries: {}".format(
+                        [
+                            subcommand.type
+                            for subcommand in active_entry.sub_commands
+                        ]
+                    ))
                     logger.println(" - gotten values: {}".format(values))
                     return None, array
         if all(
@@ -187,9 +180,7 @@ class CommandParser:
             ]
         ):
             return values, array
-        logger.println(
-            "command is not ended correct. please look at the command syntax."
-        )
+        logger.println("command is not ended correct. please look at the command syntax.")
         return None, array
 
 

@@ -232,21 +232,17 @@ class StateBlockItemGenerator(State.State):
 
     def _error_counter(self, image, blockname):
         if self.tries >= 10:
-            logger.println(
-                "[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
-                    self.tasks[self.blockindex]
-                )
-            )
+            logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
+                self.tasks[self.blockindex]
+            ))
             self.last_image = image
             file = G.build + "/blockitemgenerator_fail_{}_of_{}.png".format(
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__")
             )
             image.save(file)
-            logger.println(
-                "[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(
-                    file
-                )
-            )
+            logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(
+                file
+            ))
             file = "assets/missing_texture.png"  # use missing texture instead
             self.generate_item(blockname, file)
             mcpython.common.event.TickHandler.handler.bind(

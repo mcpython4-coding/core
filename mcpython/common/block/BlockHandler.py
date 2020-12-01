@@ -36,14 +36,12 @@ def register_block(registry, blockclass):
 
             # check for functional identical parts
             if instance.on_random_update.__code__ != Block.on_random_update.__code__:
-                logger.println(
-                    "[WARN] block '{}' has not set ENABLE_RANDOM_TICKS, but the event function was changed "
-                    "from {} to {}!".format(
-                        blockclass.NAME,
-                        blockclass.on_random_update,
-                        Block.on_random_update,
-                    )
-                )
+                logger.println("[WARN] block '{}' has not set ENABLE_RANDOM_TICKS, but the event function was changed "
+                               "from {} to {}!".format(
+                    blockclass.NAME,
+                    blockclass.on_random_update,
+                    Block.on_random_update,
+                ))
                 blockclass.ENABLE_RANDOM_TICKS = True
 
 

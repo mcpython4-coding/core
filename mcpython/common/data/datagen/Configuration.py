@@ -52,11 +52,9 @@ class DataGeneratorConfig:
         """
         self.enabled = True
         if modname not in G.modloader.mods:
-            logger.println(
-                "[WARN] mod allocated for ({}) not found! Skipping build...".format(
-                    modname
-                )
-            )
+            logger.println("[WARN] mod allocated for ({}) not found! Skipping build...".format(
+                modname
+            ))
             self.enabled = False
         self.output_folder = output_folder
         self.modname = modname
@@ -129,9 +127,7 @@ class DataGeneratorConfig:
 
         if not self.enabled:
             return
-        logger.println(
-            "[INFO] building data generators for '{}'...".format(self.modname)
-        )
+        logger.println("[INFO] building data generators for '{}'...".format(self.modname))
         start = time.time()
         total = 0
         while len(self.elements) > 0:
@@ -141,9 +137,7 @@ class DataGeneratorConfig:
                 element.generate()
             except:
                 logger.print_exception("during building {}".format(element))
-        logger.println(
-            "[INFO] finished in {}s ({} tasks to do)".format(time.time() - start, total)
-        )
+        logger.println("[INFO] finished in {}s ({} tasks to do)".format(time.time() - start, total))
 
     def write(self, data, *args):
         """

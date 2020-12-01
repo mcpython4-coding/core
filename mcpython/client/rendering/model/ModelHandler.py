@@ -84,11 +84,9 @@ class ModelHandler:
 
     def special_build(self, used: str):
         if used.count(":") == 0:
-            logger.println(
-                "[WARN] deprecated access to model without minecraft-prefix to '{}'".format(
-                    used
-                )
-            )
+            logger.println("[WARN] deprecated access to model without minecraft-prefix to '{}'".format(
+                used
+            ))
             used = "minecraft:" + used
         if used not in self.found_models:
             # logger.println("model error: can't locate model for '{}'".format(used))
@@ -169,9 +167,7 @@ class ModelHandler:
 
     def add_face_to_batch(self, block, face, batches) -> list:
         if block.NAME not in self.blockstates:
-            logger.println(
-                "[FATAL] block state for block '{}' not found!".format(block.NAME)
-            )
+            logger.println("[FATAL] block state for block '{}' not found!".format(block.NAME))
             return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
@@ -191,9 +187,7 @@ class ModelHandler:
     def draw_face(self, block, face):
         if block.NAME not in self.blockstates:
             # todo: add option to disable these prints
-            logger.println(
-                "[FATAL] block state for block '{}' not found!".format(block.NAME)
-            )
+            logger.println("[FATAL] block state for block '{}' not found!".format(block.NAME))
             return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check

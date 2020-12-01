@@ -35,9 +35,7 @@ class CommandRegistryInfo(mcpython.client.chat.command.Command.Command):
             return
         registry = G.registry.get_by_name(values[0])
         if registry is None:
-            logger.println(
-                "[CHAT][ERROR] selected unknown registry: '{}'".format(values[0])
-            )
+            logger.println("[CHAT][ERROR] selected unknown registry: '{}'".format(values[0]))
             return
         if len(values) == 1:
             logger.println("values in registry '{}'".format(values[0]))

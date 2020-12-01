@@ -108,19 +108,15 @@ class CraftingHandler:
         )
         result = self.add_recipe_from_data(data, name)
         if result is None and "--debugrecipes" in sys.argv:
-            logger.println(
-                "error in decoding recipe from file {}: type '{}' not found".format(
-                    file, data["type"]
-                )
-            )
+            logger.println("error in decoding recipe from file {}: type '{}' not found".format(
+                file, data["type"]
+            ))
 
     def load(self, modname, check_mod_dirs=True, load_direct=False):
         if modname in self.loaded_mod_dirs and check_mod_dirs:
-            logger.println(
-                "ERROR: mod '{}' has tried to load crafting recipes twice or more".format(
-                    modname
-                )
-            )
+            logger.println("ERROR: mod '{}' has tried to load crafting recipes twice or more".format(
+                modname
+            ))
             return  # make sure to load only ones!
         self.loaded_mod_dirs.add(modname)
         for itemname in mcpython.ResourceLocator.get_all_entries(
@@ -152,12 +148,9 @@ class CraftingHandler:
         G.eventhandler.call("craftinghandler:reload:intermediate", self)
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
-            logger.println(
-                "\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
-                    modname, i + 1, len(self.loaded_mod_dirs)
-                ),
-                end="",
-            )
+            logger.println("\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
+                modname, i + 1, len(self.loaded_mod_dirs)
+            ), end="")
             self.load(modname, check_mod_dirs=False, load_direct=True)
         logger.println()
 

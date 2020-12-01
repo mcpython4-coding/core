@@ -1292,6 +1292,8 @@ B   [uuk]: mods.json was not correctly written to files
 F   [uuk]: using now black formatting
     [uuk]: started looking over all files
 R   [uuk]: renamed globals.py to shared.py
+    [uuk]: written docs for files
+[B] [uuk]: fixed logger not escaping all strings correctly
 
 Roadmap:
     - setup black formatting

@@ -113,11 +113,9 @@ class GridRecipeInterface(
             ):
                 state = self._check_shapeless(recipe, shapelessitems)
             else:
-                logger.println(
-                    "recipe {} could NOT be checked as it is not an subclass of an supported recipe".format(
-                        recipe
-                    )
-                )
+                logger.println("recipe {} could NOT be checked as it is not an subclass of an supported recipe".format(
+                    recipe
+                ))
                 continue
             if state:
                 self.active_recipe = recipe

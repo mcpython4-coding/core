@@ -31,9 +31,7 @@ class ItemStack:
                     item_name_or_instance
                 ]()
             else:
-                logger.println(
-                    "[FATAL] can't find item named '{}'".format(item_name_or_instance)
-                )
+                logger.println("[FATAL] can't find item named '{}'".format(item_name_or_instance))
                 self.item = None
         else:
             self.item = None

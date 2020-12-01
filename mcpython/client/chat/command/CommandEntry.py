@@ -177,10 +177,8 @@ def load():
                 "minecraft:air",
             )  # is this block arrival?
             if not flag:
-                logger.println(
-                    "[INFORM] invalid due to missing registry entry. Use '/registryinfo block' for an list "
-                    "of all found blocks!"
-                )
+                logger.println("[INFORM] invalid due to missing registry entry. Use '/registryinfo block' for an list "
+                               "of all found blocks!")
             return flag
 
     @G.registry
@@ -201,10 +199,8 @@ def load():
                 entrylist[start] in G.registry.get_by_name("item").registered_object_map
             )  # is this item arrival?
             if not flag:
-                logger.println(
-                    "[INFORM] invalid due to missing registry entry. Use '/registryinfo item' for an list "
-                    "of all found blocks"
-                )
+                logger.println("[INFORM] invalid due to missing registry entry. Use '/registryinfo item' for an list "
+                               "of all found blocks")
             return flag
 
     @G.registry

@@ -60,14 +60,10 @@ class Registry:
 
     def register(self, obj: IRegistryContent, override_existing=True):
         if self.locked:
-            logger.println(
-                "[WARN] can't register object '{}' to locked registry '{}'".format(
-                    obj, self.name
-                )
-            )
-            logger.println(
-                "[WARN] this feature of registering post-freeze WILL be removed in the future"
-            )
+            logger.println("[WARN] can't register object '{}' to locked registry '{}'".format(
+                obj, self.name
+            ))
+            logger.println("[WARN] this feature of registering post-freeze WILL be removed in the future")
         if obj.NAME == "minecraft:unknown_registry_content":
             logger.println("can't register unnamed object '{}'".format(obj))
             logger.println("every registry object MUST have an unique name")

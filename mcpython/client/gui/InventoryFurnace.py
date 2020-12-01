@@ -86,8 +86,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
                     logger.println(
                         "[FUEL][WARNING] item '{}' was marked as fuel but did NOT have FUEL-attribute".format(
                             self.slots[1].itemstack.get_item_name()
-                        )
-                    )
+                        ))
                     self.reset()
                     return
                 self.slots[1].itemstack.add_amount(-1)

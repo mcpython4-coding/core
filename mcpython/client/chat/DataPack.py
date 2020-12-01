@@ -155,11 +155,9 @@ class DataPack:
             info = self.access.read("pack.mcmeta", "json")["pack"]
             if info["pack_format"] not in (1, 2, 3):
                 self.status = DataPackStatus.ERROR
-                logger.println(
-                    "[DATAPACK][ERROR] datapack version '{}' can't be loaded".format(
-                        info["pack_format"]
-                    )
-                )
+                logger.println("[DATAPACK][ERROR] datapack version '{}' can't be loaded".format(
+                    info["pack_format"]
+                ))
                 return
             self.description = info["description"]
             for file in self.access.get_all_entries_in_directory("data"):

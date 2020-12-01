@@ -301,9 +301,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         if not shared.world.gamerulehandler.table["keepInventory"].status.status:
             shared.commandparser.parse("/clear")  # todo: drop items
         if shared.world.gamerulehandler.table["showDeathMessages"].status.status:
-            logger.println(
-                "[CHAT] player {} died".format(self.name)
-            )  # todo: add death screen
+            logger.println("[CHAT] player {} died".format(self.name))  # todo: add death screen
         self.set_to_spawn_point()
         self.active_inventory_slot = 0
         shared.window.dy = 0

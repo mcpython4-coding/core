@@ -244,11 +244,9 @@ class StateConfigFile:
             for name in self.data["parts"]:
                 d = self.data["parts"][name]
                 if d["type"] not in entry_registry.registered_object_map:
-                    logger.println(
-                        "[WARN] type '{}' as '{}' for state {} not found!".format(
-                            d["type"], name, state_instance.NAME
-                        )
-                    )
+                    logger.println("[WARN] type '{}' as '{}' for state {} not found!".format(
+                        d["type"], name, state_instance.NAME
+                    ))
                     continue
                 prev = (
                     state_instance.part_dict[name]

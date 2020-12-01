@@ -290,8 +290,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                 logger.println(
                     "[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block".format(
                         d["name"], chunk, dimension
-                    )
-                )
+                    ))
                 data["block_palette"][i] = {
                     "shown": False,
                     "name": "minecraft:air",

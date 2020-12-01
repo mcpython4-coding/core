@@ -35,10 +35,8 @@ advanced_block_factory_mode_registry = mcpython.event.Registry.Registry(
     "advanced_block_factory_mode",
     ["minecraft:advanced_block_factory_mode"],
     dump_content_in_saves=False,
-    injection_function=lambda x: logger.println(
-        "[DEPRECATION][WARN] object '{}' was registered to "
-        "AdvancedBlockFactory-registry which is deprecated".format(x)
-    ),
+    injection_function=lambda x: logger.println("[DEPRECATION][WARN] object '{}' was registered to "
+                                                "AdvancedBlockFactory-registry which is deprecated".format(x)),
 )
 
 

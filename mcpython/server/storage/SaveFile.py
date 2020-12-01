@@ -140,11 +140,9 @@ class SaveFile:
             self.read("minecraft:general")
             while self.version != LATEST_VERSION:
                 if self.version not in self.storage_version_fixers:
-                    logger.println(
-                        "[ERROR] unable to data-fix world. No data fixer found for version {}".format(
-                            self.version
-                        )
-                    )
+                    logger.println("[ERROR] unable to data-fix world. No data fixer found for version {}".format(
+                        self.version
+                    ))
                     G.world.cleanup()
                     G.statehandler.switch_to("minecraft:startmenu")
                     return
@@ -162,11 +160,9 @@ class SaveFile:
             self.read("minecraft:gamerule")
             self.read("minecraft:registry_info_serializer")
         except mcpython.server.storage.serializer.IDataSerializer.MissingSaveException:
-            logger.println(
-                "[WARN] save '{}' not found, falling back to selection menu".format(
-                    self.directory
-                )
-            )
+            logger.println("[WARN] save '{}' not found, falling back to selection menu".format(
+                self.directory
+            ))
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:world_selection")
             return
@@ -397,9 +393,7 @@ class SaveFile:
             with open(file) as f:
                 return json.load(f)
         except json.decoder.JSONDecodeError:
-            logger.println(
-                "[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file)
-            )
+            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
             return
 
     def access_file_pickle(self, file: str):
@@ -415,9 +409,7 @@ class SaveFile:
             with open(file, mode="rb") as f:
                 return pickle.load(f)
         except (pickle.UnpicklingError, EOFError):
-            logger.println(
-                "[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file)
-            )
+            logger.println("[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file))
             return
 
     def access_raw(self, file: str):

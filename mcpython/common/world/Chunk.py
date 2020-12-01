@@ -198,19 +198,15 @@ class Chunk:
         else:
             table = G.registry.get_by_name("block").full_table
             if block_name not in table:
-                logger.println(
-                    "[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(
-                        block_name
-                    )
-                )
+                logger.println("[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(
+                    block_name
+                ))
                 return
             blockobj = table[block_name](position, *args, **kwargs)
         if self.now.day == 13 and self.now.month == 1 and "diorite" in blockobj.NAME:
-            logger.println(
-                "[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
-                    blockobj.NAME
-                )
-            )
+            logger.println("[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
+                blockobj.NAME
+            ))
             # for developers: easter egg! [DO NOT REMOVE, UUK'S EASTER EGG]
             return self.add_block(position, "minecraft:stone")
         self.world[position] = blockobj

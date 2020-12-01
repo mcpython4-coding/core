@@ -43,9 +43,7 @@ class CommandSummon(mcpython.client.chat.command.Command.Command):
         try:
             G.entityhandler.add_entity(values[0], position, check_summon=True)
         except ValueError:
-            logger.println(
-                "[COMMAND][SUMMON] entity type '{}' not found!".format(values[0])
-            )
+            logger.println("[COMMAND][SUMMON] entity type '{}' not found!".format(values[0]))
 
     @staticmethod
     def get_help() -> list:

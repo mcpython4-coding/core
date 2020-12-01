@@ -319,11 +319,9 @@ class DefaultDecoder(IBlockStateDecoder):
         for keymap, blockstate in self.states:
             if keymap == data:
                 return blockstate.add_face_to_batch(block, batch, face)
-        logger.println(
-            "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
-                block, data, [e[0] for e in self.states]
-            )
-        )
+        logger.println("[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
+            block, data, [e[0] for e in self.states]
+        ))
         return []
 
     def transform_to_hitbox(self, blockinstance):
@@ -352,11 +350,9 @@ class DefaultDecoder(IBlockStateDecoder):
             if keymap == data:
                 blockstate.draw_face(block, face)
                 return
-        logger.println(
-            "[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
-                block.NAME, block.position, data, [e[0] for e in self.states]
-            )
-        )
+        logger.println("[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
+            block.NAME, block.position, data, [e[0] for e in self.states]
+        ))
 
 
 class BlockStateDefinition:
@@ -504,9 +500,7 @@ class BlockState:
         result = []
         model, config, _ = self.models[block.block_state]
         if model not in G.modelhandler.models:
-            logger.println(
-                "can't find model named '{}' to add at {}".format(model, block.position)
-            )
+            logger.println("can't find model named '{}' to add at {}".format(model, block.position))
             return result
         result += G.modelhandler.models[model].add_face_to_batch(
             block.position, batch, config, face

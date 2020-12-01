@@ -10,7 +10,6 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import os, sys, tempfile
-import mcpython.client.rendering.RenderingHelper
 
 # todo: create MCPYTHON-class (as main game class) replacing this mess
 
@@ -60,6 +59,10 @@ entityhandler = None
 modelhandler = None
 
 modloader = None
+
+
+# todo: move to separated file
+import mcpython.client.rendering.RenderingHelper
 
 rendering_helper = mcpython.client.rendering.RenderingHelper.RenderingHelper()
 

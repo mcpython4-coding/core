@@ -106,11 +106,9 @@ class SingleFaceConfiguration:
         self.texture = texture if texture.startswith("#") else "#" + texture
         self.uv = uv
         if any([e < 0 or e > 1 for e in uv]):
-            logger.println(
-                "[DATA GEN][WARN] provided uv coordinates for side {} are out of bound".format(
-                    face
-                )
-            )
+            logger.println("[DATA GEN][WARN] provided uv coordinates for side {} are out of bound".format(
+                face
+            ))
         if cullface is None:
             cullface = self.face
         self.cullface = (
@@ -119,11 +117,9 @@ class SingleFaceConfiguration:
             else mcpython.util.enums.EnumSide[cullface]
         )
         if rotation % 90 != 0:
-            logger.println(
-                "[DATA GEN][WARN] provided non-90-multiple {} for texture rotation for face {}".format(
-                    rotation, face
-                )
-            )
+            logger.println("[DATA GEN][WARN] provided non-90-multiple {} for texture rotation for face {}".format(
+                rotation, face
+            ))
         self.rotation = rotation % 360
 
         self.wrap_cache = None
@@ -407,11 +403,9 @@ class BlockModelGenerator(IDataGenerator):
 
     def generate(self):
         if self.parent != "minecraft:block/block" and self.elements:
-            logger.println(
-                "[DATA GEN][WARN] block model {} has unusual parent and elements set".format(
-                    self.name
-                )
-            )
+            logger.println("[DATA GEN][WARN] block model {} has unusual parent and elements set".format(
+                self.name
+            ))
         data = {"parent": self.parent}
         if not self.ambientocclusion:
             data["ambientocclusion"] = self.ambientocclusion
