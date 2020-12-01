@@ -5,14 +5,17 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import mcpython.common.event.EventInfo
 import pyglet
 from pyglet.window import mouse
 import mcpython.ResourceLocator
 from . import UIPart
 import mcpython.util.opengl
-import mcpython.Language
+import mcpython.client.Language
 from mcpython.util.enums import ButtonMode
 
 image = mcpython.ResourceLocator.read("gui/widgets", "pyglet")
@@ -112,7 +115,7 @@ class UIPartButton(UIPart.UIPart):
         )
         x, y = self.get_real_position()
         draw_button((x, y), self.bboxsize, mode)
-        self.lable.text = mcpython.Language.translate(self.text)
+        self.lable.text = mcpython.client.Language.translate(self.text)
         wx, wy = self.lable.content_width, self.lable.content_height
         self.lable.x = x + self.bboxsize[0] // 2 - wx // 2
         self.lable.y = y + self.bboxsize[1] // 2 - wy // 3
@@ -169,11 +172,11 @@ class UIPartToggleButton(UIPartButton):
     def _generate_text(self):
         text = self.textpages[self.index]
         if type(self.textconstructor) == str:
-            self.text = mcpython.Language.translate(self.textconstructor.format(text))
+            self.text = mcpython.client.Language.translate(self.textconstructor.format(text))
         elif callable(self.textconstructor):
-            self.text = mcpython.Language.translate(self.textconstructor(text))
+            self.text = mcpython.client.Language.translate(self.textconstructor(text))
         else:
-            self.text = mcpython.Language.translate(text)
+            self.text = mcpython.client.Language.translate(text)
 
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()

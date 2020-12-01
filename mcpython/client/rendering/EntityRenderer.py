@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import mcpython.client.rendering.BoxModel
 import mcpython.ResourceLocator
 import pyglet
@@ -75,7 +78,7 @@ class EntityRenderer:
                         mcpython.ResourceLocator.read(texture, "pyglet").get_texture())
                 else:
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.ResourceLocator.read("assets/missingtexture.png", "pyglet").get_texture())
+                        mcpython.ResourceLocator.read("assets/missing_texture.png", "pyglet").get_texture())
                 reloaded.append(texture)
             if "invert_indexes" not in box or not box["invert_indexes"]:
                 uv = [tuple([float(x)/self.texture_size[i % 2] for i, x in enumerate(e.split("|"))]) for e in box["uv"]]

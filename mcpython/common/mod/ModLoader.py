@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import mcpython.common.event.EventHandler
 from mcpython import globals as G, logger
 import os
@@ -19,7 +22,7 @@ import mcpython.client.state.StateModLoading
 import mcpython.util.math
 import mcpython.common.mod.Mod
 import toml
-import mcpython.config
+import mcpython.common.config
 import deprecation
 
 # information for modders: this file contains every event called on the system
@@ -409,7 +412,6 @@ class ModLoader:
         """
         will load all mods arrival
         """
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("prebuilding:finished", self.write_mod_info)
         modlocations = self.get_locations()
         self.load_mod_jsons(modlocations)
         i = 0
@@ -603,7 +605,8 @@ class ModLoader:
                 sys.exit(-1)
             version = data["loaderVersion"]
             if version.endswith("["):
-                mc_version = mcpython.config.VERSION_ORDER[mcpython.config.VERSION_ORDER.index(version[:-1]):]
+                mc_version = mcpython.common.config.VERSION_ORDER[
+                             mcpython.common.config.VERSION_ORDER.index(version[:-1]):]
             elif version.count("[") == version.count("]") == 0:
                 mc_version = version.split("|")
             else:

@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import mcpython.common.factory.BlockFactory
 from mcpython import globals as G
 from mcpython.util.enums import ToolType
@@ -13,7 +16,7 @@ import mcpython.common.mod.ModMcpython
 from mcpython.common.factory import CombinedBlockFactory
 import mcpython.common.data.datagen.Configuration
 from mcpython.common.data.datagen.Configuration import DataGeneratorConfig
-from mcpython.config import ENABLED_EXTRA_BLOCKS as BLOCKS
+from mcpython.common.config import ENABLED_EXTRA_BLOCKS as BLOCKS
 
 
 def remove_if_downer_block_not_solid(blockinstance):

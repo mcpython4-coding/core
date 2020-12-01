@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from mcpython import globals as G, logger
 import pyglet
 import mcpython.ResourceLocator
@@ -94,7 +97,7 @@ class Inventory:
                         self.config["image_location"], "pyglet"))
                 else:
                     self.bgsprite = pyglet.sprite.Sprite(mcpython.ResourceLocator.read(
-                        "assets/missingtexture.png", "pyglet"))
+                        "assets/missing_texture.png", "pyglet"))
             except:
                 logger.print_exception("[FATAL] failed to load background image {}".format(
                     self.config["image_location"]))

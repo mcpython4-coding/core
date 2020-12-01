@@ -1285,6 +1285,10 @@ F   [uuk]: switching to an unknown state is now FATAL and will close the game
 R   [uuk]: renamed logger.write_exception to logger.print_exception
 [B] [uuk]: fixed refactor bugs
 R   [uuk]: major refactoring: file structure [this might have broken everything]
+F   [uuk]: loading code is now preferring info from exceptions
+    [uuk]: changed licence headers
+[B] [uuk]: fixed world loading
+B   [uuk]: mods.json was not correctly written to files
 
 Roadmap:
     - setup black formatting
@@ -1297,3 +1301,10 @@ Roadmap:
     - add client & server annotations, check code for side
     - migrate globals to global game instance
     - add off-process system for world gen
+    - fix item atlases
+    - remove setup / prebuild system COMPLETELY
+    - remove all deprecated stuff
+    - upgrade blocks & textures to 1.16.4 or latest snapshot
+    - rewrite how assets are stored
+    - do not hardcode ANY constants, move them to an public space / config files / resource data
+    - clean up changelog.txt, issues.txt and fixed_issues.txt

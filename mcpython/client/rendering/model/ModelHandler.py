@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import gc
 import sys
 
@@ -83,7 +86,7 @@ class ModelHandler:
             try:
                 data = mcpython.ResourceLocator.read(file, "json")
             except json.decoder.JSONDecodeError:
-                data = {"parent": "minecraft:block/cube_all", "textures": {"all": "assets/missingtexture.png"}}
+                data = {"parent": "minecraft:block/cube_all", "textures": {"all": "assets/missing_texture.png"}}
                 logger.print_exception("during loading model from file {}, now replaced by missing texture".format(file))
         else:
             data = file
@@ -134,7 +137,6 @@ class ModelHandler:
     def add_face_to_batch(self, block, face, batches) -> list:
         if block.NAME not in self.blockstates:
             logger.println("[FATAL] block state for block '{}' not found!".format(block.NAME))
-            logger.println("possible:", self.blockstates.keys())
             return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
@@ -150,7 +152,6 @@ class ModelHandler:
         if block.NAME not in self.blockstates:
             # todo: add option to disable these prints
             logger.println("[FATAL] block state for block '{}' not found!".format(block.NAME))
-            logger.println("possible:", self.blockstates.keys())
             return []
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check

@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 """
 specifications for the resource loader system
 
@@ -27,7 +30,7 @@ import PIL.Image
 import os
 import mcpython.util.texture
 import sys
-import mcpython.config
+import mcpython.common.config
 import typing
 
 
@@ -173,7 +176,7 @@ def load_resource_packs():
     if not os.path.exists(G.home+"/resourcepacks"):
         os.makedirs(G.home+"/resourcepacks")
     for file in os.listdir(G.home+"/resourcepacks"):
-        if file in ["{}.jar".format(mcpython.config.MC_VERSION_BASE), "minecraft.zip"]: continue
+        if file in ["{}.jar".format(mcpython.common.config.MC_VERSION_BASE), "minecraft.zip"]: continue
         file = G.home+"/resourcepacks/" + file
         flag = True
         for source in RESOURCE_PACK_LOADERS:
@@ -235,7 +238,8 @@ def transform_name(file: str, raise_on_error=True) -> str:
             f = "assets/{}/textures/{}/{}.png".format(f[0], f[1].split("/")[0], "/".join(f[1].split("/")[1:]))
         return f
     if raise_on_error:
-        raise NotImplementedError("can't transform name '{}' to valid path".format(file))
+        logger.println("can't transform name '{}' to valid path. Replacing with missing texture...".format(file))
+        return "assets/missing_texture.png"
     return file
 
 
@@ -339,7 +343,7 @@ def add_resources_by_modname(modname, pathname=None):
     """
     if pathname is None: pathname = modname
     from mcpython.client.rendering.model.BlockState import BlockStateDefinition
-    import mcpython.Language
+    import mcpython.client.Language
     import mcpython.client.gui.crafting.CraftingHandler
     import mcpython.common.data.tags.TagHandler
     import mcpython.common.data.loot.LootTable
@@ -352,7 +356,7 @@ def add_resources_by_modname(modname, pathname=None):
                                                  info="searching for block states for mod {}".format(modname))
     G.modloader.mods[modname].eventbus.subscribe("stage:tag:group", lambda: mcpython.common.data.tags.TagHandler.add_from_location(
         pathname), info="adding tag groups for mod {}".format(modname))
-    mcpython.Language.from_mod_name(modname)
+    mcpython.client.Language.from_mod_name(modname)
     G.modloader.mods[modname].eventbus.subscribe("stage:loottables:load", lambda: mcpython.common.data.loot.LootTable.
                                                  handler.for_mod_name(modname, pathname),
                                                  info="adding loot tables for mod {}".format(modname))

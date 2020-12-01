@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import cProfile
 import os
 import random
@@ -17,8 +20,8 @@ from pyglet.window import key
 from mcpython import globals as G, logger
 import mcpython.ResourceLocator
 import mcpython.client.chat.DataPack
-import mcpython.config
-import mcpython.config
+import mcpython.common.config
+import mcpython.common.config
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.ui.UIPartLable
@@ -58,7 +61,7 @@ class StateWorldGeneration(State.State):
             self.finish()
 
     def on_activate(self):
-        if mcpython.config.ENABLE_PROFILER_GENERATION: self.profiler.enable()
+        if mcpython.common.config.ENABLE_PROFILER_GENERATION: self.profiler.enable()
         if os.path.exists(G.world.savefile.directory):
             logger.println("deleting old world...")
             shutil.rmtree(G.world.savefile.directory)
@@ -149,10 +152,10 @@ class StateWorldGeneration(State.State):
 
         G.world.world_loaded = True
 
-        if mcpython.config.SHUFFLE_DATA and mcpython.config.SHUFFLE_INTERVAL > 0:
+        if mcpython.common.config.SHUFFLE_DATA and mcpython.common.config.SHUFFLE_INTERVAL > 0:
             G.eventhandler.call("data:shuffle:all")
 
-        if mcpython.config.ENABLE_PROFILER_GENERATION:
+        if mcpython.common.config.ENABLE_PROFILER_GENERATION:
             master.profiler.disable()
             master.profiler.print_stats(1)
             master.profiler.clear()

@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import datetime
 import json
 import os
@@ -30,7 +33,7 @@ from .ui import UIPartButton, UIPartScrollBar
 import shutil
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
-    mcpython.ResourceLocator.read("assets/missingtexture.png", "pil").resize((50, 50), PIL.Image.NEAREST))
+    mcpython.ResourceLocator.read("assets/missing_texture.png", "pil").resize((50, 50), PIL.Image.NEAREST))
 WORLD_SELECTION = mcpython.ResourceLocator.read("minecraft:gui/world_selection", "pil")
 WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(WORLD_SELECTION.crop((0, 0, 32, 32)))
 

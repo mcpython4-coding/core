@@ -5,13 +5,16 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from . import UIPart
 import pyglet.window.key
 import time
 import mcpython.util.opengl
 import pyglet
-import mcpython.Language
+import mcpython.client.Language
 import mcpython.client.state.StatePart
 import clipboard
 
@@ -40,7 +43,7 @@ class UIPartTextInput(UIPart.UIPart):
         self.lable.x, self.lable.y = x + 5, y + self.bboxsize[1] // 2
         if not self.selected and self.entered_text == "":
             if self.empty_overlay_text != "":
-                self.lable.text = mcpython.Language.translate(self.empty_overlay_text)
+                self.lable.text = mcpython.client.Language.translate(self.empty_overlay_text)
                 self.lable.color = (150, 150, 150, 255)
                 self.lable.font_size = self.bboxsize[1] // 4
         else:

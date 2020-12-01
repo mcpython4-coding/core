@@ -5,10 +5,13 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import pyglet
 import mcpython.ResourceLocator
-import mcpython.config
+import mcpython.common.config
 import math
 from mcpython import logger
 
@@ -89,7 +92,7 @@ class OpenGLSetupFile:
             t = name.split(" ")[1:]
             return (pyglet.gl.GLfloat * len(t))(*[float(e) for e in t])
         elif name.startswith("config "):
-            return getattr(mcpython.config, name.split(" ")[1])
+            return getattr(mcpython.common.config, name.split(" ")[1])
         elif name.startswith("sum "):
             raw = " ".join(name.split(" ")[1:])
             return sum([self._transform_value(e[1:-1].replace(" //", " ")) for e in raw.split(" | ")])

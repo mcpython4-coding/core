@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from mcpython import globals as G, logger
 import mcpython.ResourceLocator
 import mcpython.common.event.Registry
@@ -41,7 +44,7 @@ def load_data(from_block_item_generator=False):
             name = entry[0]
             blocktable = G.registry.get_by_name("block").registered_object_map
             if name in blocktable:
-                obj = mcpython.factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(
+                obj = mcpython.common.factory.ItemFactory.ItemFactory().setName(name).setHasBlockFlag(True).setDefaultItemFile(
                     entry[1]).setToolTipRenderer(mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP)
                 block = blocktable[name]
                 block.modify_block_item(obj)

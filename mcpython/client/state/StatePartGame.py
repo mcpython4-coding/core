@@ -5,14 +5,17 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from . import StatePart
 from mcpython import globals as G
-from mcpython.config import FLYING_SPEED, GRAVITY, TERMINAL_VELOCITY, JUMP_SPEED
+from mcpython.common.config import FLYING_SPEED, GRAVITY, TERMINAL_VELOCITY, JUMP_SPEED
 from pyglet.window import key, mouse
 import pyglet
 import mcpython.client.gui.ItemStack
-import mcpython.config
+import mcpython.common.config
 import mcpython.util.math
 import time
 import mcpython.common.item.ItemFood as ItemFood
@@ -261,8 +264,8 @@ class StatePartGame(StatePart.StatePart):
 
         """
         player = G.world.get_active_player()
-        speed = mcpython.config.SPEED_DICT[player.gamemode][(0 if not G.window.keys[key.LSHIFT] else 1) +
-                                                            (0 if not G.world.get_active_player().flying else 2)]
+        speed = mcpython.common.config.SPEED_DICT[player.gamemode][(0 if not G.window.keys[key.LSHIFT] else 1) +
+                                                                   (0 if not G.world.get_active_player().flying else 2)]
         if not G.world.get_active_player().flying and G.window.dy == 0:
             x, y, z = mcpython.util.math.normalize(player.position)
             block_inst = G.world.get_active_dimension().get_block((x, y - 2, z))

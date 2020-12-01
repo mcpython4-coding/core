@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from . import State, StatePartGame
 from .ui import UIPartProgressBar
 import mcpython.common.event.EventInfo
@@ -201,7 +204,7 @@ class StateBlockItemGenerator(State.State):
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__"))
             image.save(file)
             logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(file))
-            file = "assets/missingtexture.png"  # use missing texture instead
+            file = "assets/missing_texture.png"  # use missing texture instead
             self.generate_item(blockname, file)
             mcpython.common.event.TickHandler.handler.bind(G.world.get_active_dimension().remove_block, 4, args=[(0, 0, 0)])
             pyglet.clock.schedule_once(self.add_new_screen, 0.5)

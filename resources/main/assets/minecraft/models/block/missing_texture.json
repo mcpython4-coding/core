@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "assets/missingtexture.png"
+    "all": "assets/missing_texture.png"
   }
 }

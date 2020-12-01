@@ -5,12 +5,15 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from mcpython import globals as G, logger
 import pyglet
 import mcpython.util.math
 import random
-import mcpython.config
+import mcpython.common.config
 import mcpython.client.chat.DataPack
 import mcpython.client.state.StatePartGame
 
@@ -102,9 +105,9 @@ class TickHandler:
 
     def send_random_ticks(self, *args, **kwargs):
         cx, cz = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
-        for dx in range(-mcpython.config.RANDOM_TICK_RANGE, mcpython.config.RANDOM_TICK_RANGE + 1):
-            for dz in range(-mcpython.config.RANDOM_TICK_RANGE, mcpython.config.RANDOM_TICK_RANGE + 1):
-                if dx ** 2 + dz ** 2 <= mcpython.config.RANDOM_TICK_RANGE ** 2:
+        for dx in range(-mcpython.common.config.RANDOM_TICK_RANGE, mcpython.common.config.RANDOM_TICK_RANGE + 1):
+            for dz in range(-mcpython.common.config.RANDOM_TICK_RANGE, mcpython.common.config.RANDOM_TICK_RANGE + 1):
+                if dx ** 2 + dz ** 2 <= mcpython.common.config.RANDOM_TICK_RANGE ** 2:
                     x = cx + dx
                     z = cz + dz
                     for dy in range(16):

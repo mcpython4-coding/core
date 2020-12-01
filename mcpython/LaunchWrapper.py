@@ -5,12 +5,15 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import os
 import sys
 
 from mcpython import globals as G, logger
-import mcpython.config
+import mcpython.common.config
 import mcpython.ResourceLocator
 
 
@@ -73,7 +76,7 @@ class LaunchWrapper:
         mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name("setup")
 
     def print_header(self):
-        version = mcpython.config.FULL_VERSION_NAME.upper()
+        version = mcpython.common.config.FULL_VERSION_NAME.upper()
         logger.println("---------------" + "-" * len(version))
         logger.println("- MCPYTHON 4 {} -".format(version))
         logger.println("---------------" + "-" * len(version))
@@ -100,6 +103,7 @@ class LaunchWrapper:
     def load_mods(self):
         G.modloader.look_out()
         G.modloader.sort_mods()
+        G.modloader.write_mod_info()
 
     def launch(self):
         logger.println("tmp storage at {}".format(G.tmp.name))

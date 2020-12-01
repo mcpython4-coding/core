@@ -5,13 +5,16 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 
 import mcpython.util.math
 import mcpython.util.enums
 import pyglet
 import mcpython.common.block.BlockConfig
-import mcpython.config
+import mcpython.common.config
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLocator
 from mcpython import globals as G
@@ -162,7 +165,7 @@ class BoxModel:
             i2 = SIDE_ORDER.index(face)
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
-                if not mcpython.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and self.deactive[face.rotate(rotation)]: continue
+                if not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and self.deactive[face.rotate(rotation)]: continue
                 result.append(batch.add(4, pyglet.gl.GL_QUADS, self.atlas.group,
                                         ('v3f/static', vertex[i]), ('t2f/static', self.tex_data[i2])))
         return result
@@ -182,7 +185,7 @@ class BoxModel:
             i = UV_ORDER.index(face)
             if active_faces is None or (active_faces[i] if type(active_faces) == list else (
                     i not in active_faces or active_faces[i])):
-                if not mcpython.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and self.deactive[face.rotate(rotation)]: continue
+                if not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE and self.deactive[face.rotate(rotation)]: continue
                 self.atlas.group.set_state()
                 pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, ('v3f/static', vertex[i]), ('t2f/static', self.tex_data[i]))
                 self.model.texture_atlas.group.unset_state()

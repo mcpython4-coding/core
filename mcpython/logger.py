@@ -5,14 +5,17 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import os
 import platform
 import random
 import sys
 from datetime import datetime
 
-import mcpython.config
+import mcpython.common.config
 from mcpython import globals as G
 import traceback
 
@@ -122,7 +125,7 @@ def print_exception(*info):
     data = data.split("\n")
     pdata.append([data[0]]+"".join(sdata).split("\n")+data[1:-1])
     write_into_container(*pdata)
-    if mcpython.config.WRITE_NOT_FORMATTED_EXCEPTION:
+    if mcpython.common.config.WRITE_NOT_FORMATTED_EXCEPTION:
         println(info, write_into_log_file=False)
         traceback.print_stack()
         traceback.print_exc()
@@ -140,7 +143,7 @@ machine: {}
 processor: {}
 python version: {}, implementation: {}
 """.format(
-    mcpython.config.VERSION_NAME, mcpython.config.VERSION_TYPE, platform.system().replace("Darwin", "MacOS"),
+    mcpython.common.config.VERSION_NAME, mcpython.common.config.VERSION_TYPE, platform.system().replace("Darwin", "MacOS"),
     platform.machine(), platform.processor(), platform.python_version(), platform.python_implementation()
 ), write_into_console=False)
 

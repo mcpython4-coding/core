@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 
 import PIL.Image
 import psutil
@@ -17,13 +20,13 @@ import cProfile
 import mcpython.ResourceLocator
 import mcpython.common.event.EventHandler
 import mcpython.common.event.TickHandler
-import mcpython.config
+import mcpython.common.config
 import mcpython.client.rendering.OpenGLSetupFile
 import mcpython.client.state.StateHandler
 import mcpython.client.state.StatePartGame
 import mcpython.util.math
 import mcpython.util.texture
-from mcpython.config import *  # todo: remove
+from mcpython.common.config import *  # todo: remove
 from mcpython.util.math import *  # todo: remove
 
 
@@ -138,13 +141,13 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         will print the enabled profiler(s)
         todo: move to separated Profiler class
         """
-        if not mcpython.config.ENABLE_PROFILING: return
+        if not mcpython.common.config.ENABLE_PROFILING: return
 
-        if mcpython.config.ENABLE_PROFILER_DRAW:
+        if mcpython.common.config.ENABLE_PROFILER_DRAW:
             self.draw_profiler.print_stats(1)
             self.draw_profiler.clear()
 
-        if mcpython.config.ENABLE_PROFILER_TICK:
+        if mcpython.common.config.ENABLE_PROFILER_TICK:
             self.tick_profiler.print_stats(1)
             self.tick_profiler.clear()
 
@@ -152,7 +155,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         """
         will set the caption of the window to the default one
         """
-        self.set_caption("mcpython 4 - {}".format(mcpython.config.FULL_VERSION_NAME))
+        self.set_caption("mcpython 4 - {}".format(mcpython.common.config.FULL_VERSION_NAME))
 
     def set_exclusive_mouse(self, exclusive):
         """
@@ -209,11 +212,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
 
         todo: move to TickHandler
         """
-        if mcpython.config.ENABLE_PROFILER_TICK and mcpython.config.ENABLE_PROFILING: self.tick_profiler.enable()
+        if mcpython.common.config.ENABLE_PROFILER_TICK and mcpython.common.config.ENABLE_PROFILING: self.tick_profiler.enable()
         G.eventhandler.call("gameloop:tick:start", dt)
 
         self.cpu_usage_timer += dt
-        if self.cpu_usage_timer > mcpython.config.CPU_USAGE_REFRESH_TIME:
+        if self.cpu_usage_timer > mcpython.common.config.CPU_USAGE_REFRESH_TIME:
             self.cpu_usage = psutil.cpu_percent(interval=None)
             self.cpu_usage_timer = 0
 
@@ -231,7 +234,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             self.sector = sector
 
         G.eventhandler.call("gameloop:tick:end", dt)
-        if mcpython.config.ENABLE_PROFILER_TICK and mcpython.config.ENABLE_PROFILING: self.tick_profiler.disable()
+        if mcpython.common.config.ENABLE_PROFILER_TICK and mcpython.common.config.ENABLE_PROFILING: self.tick_profiler.disable()
 
     def collide(self, position: tuple, height: int, previous=None):
         """
@@ -443,7 +446,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         state = G.rendering_helper.save_status(False)
 
         # check for profiling
-        if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.enable()
+        if mcpython.common.config.ENABLE_PROFILER_DRAW and mcpython.common.config.ENABLE_PROFILING: self.draw_profiler.enable()
 
         G.eventhandler.call("render:draw:pre_clear")
         self.clear()  # clear the screen
@@ -456,7 +459,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         G.eventhandler.call("render:draw:2d:background")  # call pre 2d
         G.eventhandler.call("render:draw:2d")  # call normal 2d
         G.eventhandler.call("render:draw:2d:overlay")  # call overlay 2d
-        if mcpython.config.ENABLE_PROFILER_DRAW and mcpython.config.ENABLE_PROFILING: self.draw_profiler.disable()
+        if mcpython.common.config.ENABLE_PROFILER_DRAW and mcpython.common.config.ENABLE_PROFILING: self.draw_profiler.disable()
         G.rendering_helper.apply(state)
         G.eventhandler.call("render:draw:post:cleanup")
         G.rendering_helper.deleteSavedStates()

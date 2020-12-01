@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from mcpython import globals as G, logger
 import mcpython.ResourceLocator
 import random
@@ -225,7 +228,8 @@ class DefaultDecoder(IBlockStateDecoder):
     def bake(self):
         if self.parent is not None:
             if self.parent not in G.modelhandler.blockstates:
-                raise ValueError("block state referencing '{}' is invalid!".format(self.parent))
+                print("block state referencing '{}' is invalid!".format(self.parent))
+                return
             parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
             if not parent.baked: return False
             if not issubclass(type(parent.loader), type(self)):
@@ -382,7 +386,8 @@ class BlockState:
         result = []
         model, config, _ = self.models[block.block_state]
         if model not in G.modelhandler.models:
-            raise ValueError("can't find model named '{}' to add at {}".format(model, block.position))
+            logger.println("can't find model named '{}' to add at {}".format(model, block.position))
+            return result
         result += G.modelhandler.models[model].add_face_to_batch(block.position, batch, config, face)
         return result
 
@@ -396,4 +401,4 @@ class BlockState:
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
-                                                     "assets/minecraft/blockstates", "minecraft", info="searching for block states")
+                                                            "assets/minecraft/blockstates", "minecraft", info="searching for block states")

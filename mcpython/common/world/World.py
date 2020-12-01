@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import random
 import typing
 
@@ -14,7 +17,7 @@ import pyglet
 
 from mcpython import globals as G, logger
 import mcpython.client.chat.DataPack
-import mcpython.config
+import mcpython.common.config
 import mcpython.client.state.StatePartGame
 import mcpython.server.storage.SaveFile
 import mcpython.util.math
@@ -252,8 +255,8 @@ class World:
         if not after: return
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):
-                if generate_chunks and abs(dx) <= mcpython.config.CHUNK_GENERATION_RANGE and \
-                        abs(dz) <= mcpython.config.CHUNK_GENERATION_RANGE and self.config["enable_auto_gen"]:
+                if generate_chunks and abs(dx) <= mcpython.common.config.CHUNK_GENERATION_RANGE and \
+                        abs(dz) <= mcpython.common.config.CHUNK_GENERATION_RANGE and self.config["enable_auto_gen"]:
                     chunk = self.get_active_dimension().get_chunk(dx + after[0], dz + after[1], generate=False)
                     if not chunk.generated:
                         G.worldgenerationhandler.add_chunk_to_generation_list(chunk, prior=True)

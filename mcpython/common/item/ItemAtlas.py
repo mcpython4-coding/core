@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import mcpython.texture.TextureAtlas
 import mcpython.ResourceLocator
 import mcpython.util.texture
@@ -32,8 +35,8 @@ class ItemAtlasHandler:
 
     def schedule_item_file(self, file: str):
         if not mcpython.ResourceLocator.exists(file):
-            self.file_relocate[file] = "assets/missingtexture.png"
-            self.scheduled_item_files.add("assets/missingtexture.png")
+            self.file_relocate[file] = "assets/missing_texture.png"
+            self.scheduled_item_files.add("assets/missing_texture.png")
             logger.println("[WARN] image at '{}' could not be allocated. Replacing with missing texture...".format(file))
             return
         self.scheduled_item_files.add(mcpython.ResourceLocator.transform_name(file, raise_on_error=False))
@@ -67,7 +70,7 @@ class ItemAtlasHandler:
             if file in self.file_relocate:
                 file = self.file_relocate[file]
             if file in self.allocation_table: continue
-            if "assets/missingtexture.png" in file:
+            if "assets/missing_texture.png" in file:
                 self.allocation_table[ofile] = (0, (0, 0))
                 continue
             if mcpython.ResourceLocator.exists(file):

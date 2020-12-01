@@ -5,13 +5,16 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import gc
 
 from mcpython import globals as G
 import mcpython.client.chat.DataPack
 import mcpython.client.chat.command.Command
-import mcpython.config
+import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.event.TickHandler
 import mcpython.client.rendering.EntityRenderer
@@ -48,7 +51,7 @@ class CommandReload(mcpython.client.chat.command.Command.Command):
         G.craftinghandler.recipe_relink_table.clear()
         G.loottablehandler.relink_table.clear()
         G.eventhandler.call("data:shuffle:clear")
-        if mcpython.config.SHUFFLE_DATA:  # .. and we need to re-do if needed
+        if mcpython.common.config.SHUFFLE_DATA:  # .. and we need to re-do if needed
             G.eventhandler.call("data:shuffle:all")
 
         G.inventoryhandler.reload_config()  # reloads inventory configuration

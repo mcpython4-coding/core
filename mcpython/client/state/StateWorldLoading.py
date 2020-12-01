@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from . import State
 import mcpython.client.state.ui.UIPartLable
 from mcpython import globals as G, logger
@@ -15,7 +18,7 @@ import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.chat.DataPack
 import mcpython.util.opengl
-import mcpython.config
+import mcpython.common.config
 
 
 class StateWorldLoading(State.State):
@@ -43,7 +46,7 @@ class StateWorldLoading(State.State):
         if len(G.worldgenerationhandler.task_handler.chunks) == 0:
             G.statehandler.switch_to("minecraft:game")
             G.world.world_loaded = True
-            if mcpython.config.SHUFFLE_DATA and mcpython.config.SHUFFLE_INTERVAL > 0:
+            if mcpython.common.config.SHUFFLE_DATA and mcpython.common.config.SHUFFLE_INTERVAL > 0:
                 G.eventhandler.call("data:shuffle:all")
         self.parts[1].text = "{}%".format(round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10)
 

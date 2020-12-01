@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import json
 import os
 import pickle
@@ -137,7 +140,7 @@ class SaveFile:
             self.read("minecraft:player_data")
             self.read("minecraft:gamerule")
             self.read("minecraft:registry_info_serializer")
-        except mcpython.storage.serializer.IDataSerializer.MissingSaveException:
+        except mcpython.server.storage.serializer.IDataSerializer.MissingSaveException:
             logger.println("[WARN] save '{}' not found, falling back to selection menu".format(self.directory))
             G.world.cleanup()
             G.statehandler.switch_to("minecraft:world_selection")

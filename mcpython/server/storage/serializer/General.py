@@ -5,10 +5,13 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from mcpython import globals as G, logger
 import mcpython.ResourceLocator
-import mcpython.config
+import mcpython.common.config
 import mcpython.server.storage.SaveFile
 import mcpython.server.storage.datafixers.IDataFixer
 import mcpython.server.storage.serializer.IDataSerializer
@@ -58,12 +61,12 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
         except ValueError:
             logger.println("[ERROR] failed to receive skin for '{}'. Falling back to default".format(playername))
             mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build+"/skin.png")
-        mcpython.world.player.Player.RENDERER.reload()
+        mcpython.common.world.player.Player.RENDERER.reload()
 
         G.world.config = data["config"]
         G.eventhandler.call("seed:set")
 
-        if data["game version"] not in mcpython.config.VERSION_ORDER:
+        if data["game version"] not in mcpython.common.config.VERSION_ORDER:
             logger.println("Future version are NOT supported. Loading may NOT work (but we try to)")
             logger.println("Whatever happens to you saves now, we CAN NOT give you help. For your information, ")
             logger.println("it was last loaded in '{}'".format(data["game version"]))
@@ -112,7 +115,7 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
             "storage version": savefile.version,  # the storage version stored in
             "player name": G.world.get_active_player().name,  # the name of the player the world played in
             "config": G.world.config,  # the world config
-            "game version": mcpython.config.VERSION_NAME,
+            "game version": mcpython.common.config.VERSION_NAME,
             "mods": {mod.name: mod.version for mod in G.modloader.mods.values()},
             "chunks_to_generate": [(chunk.position, chunk.dimension.id) for chunk in
                                    G.worldgenerationhandler.task_handler.chunks],

@@ -5,12 +5,15 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from mcpython import globals as G
 import mcpython.client.chat.command.Command
 import mcpython.client.gui.ItemStack
 from mcpython.client.chat.command.Command import ParseBridge
-import mcpython.config
+import mcpython.common.config
 
 
 @G.registry
@@ -27,7 +30,7 @@ class CommandShuffleData(mcpython.client.chat.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        if not mcpython.config.SHUFFLE_DATA:
+        if not mcpython.common.config.SHUFFLE_DATA:
             info.chat.print_ln("can't shuffle data as shuffeling is disabled")
             return
         G.eventhandler.call("data:shuffle:all")
