@@ -24,7 +24,7 @@ class LaunchWrapper:
     def setup(self):
         self.print_header()
 
-        import mcpython.event.EventHandler
+        import mcpython.common.event.EventHandler
 
         import mcpython.ResourceLocator
         mcpython.ResourceLocator.load_resource_packs()
@@ -33,44 +33,44 @@ class LaunchWrapper:
 
         self.setup_opengl()
 
-        import mcpython.state.StateHandler
+        import mcpython.client.state.StateHandler
 
         self.setup_registries()
 
         G.eventhandler.call("game:startup")
 
     def setup_registries(self):
-        import mcpython.mod.ModLoader
+        import mcpython.common.mod.ModLoader
 
-        import mcpython.mod.ModMcpython
-        import mcpython.mod.ConfigFile
-        from mcpython.datagen.mcpython import recipes, textures, entity, blockmodels
+        import mcpython.common.mod.ModMcpython
+        import mcpython.common.mod.ConfigFile
+        from mcpython.common.data.datagen.mcpython import recipes, textures, entity, blockmodels
 
         @G.modloader("minecraft", "special:exit")
         def exit():
             sys.exit()
 
-        import mcpython.event.Registry
-        import mcpython.block.BlockHandler
-        import mcpython.item.ItemHandler
-        import mcpython.entity.EntityHandler
-        import mcpython.world.gen.WorldGenerationHandler
-        import mcpython.world.gen.biome.BiomeHandler
-        import mcpython.world.gen.layer
-        import mcpython.world.gen.feature
+        import mcpython.common.event.Registry
+        import mcpython.common.block.BlockHandler
+        import mcpython.common.item.ItemHandler
+        import mcpython.common.entity.EntityHandler
+        import mcpython.server.gen.WorldGenerationHandler
+        import mcpython.server.gen.biome.BiomeHandler
+        import mcpython.server.gen.layer
+        import mcpython.server.gen.feature
 
-        import mcpython.rendering.model.ModelHandler
-        import mcpython.tags.TagHandler
+        import mcpython.client.rendering.model.ModelHandler
+        import mcpython.common.data.tags.TagHandler
 
-        import mcpython.rendering.model.ItemModel
+        import mcpython.client.rendering.model.ItemModel
 
         import mcpython.texture.factory
         import mcpython.setup
 
     def setup_opengl(self):
-        import mcpython.rendering.OpenGLSetupFile
+        import mcpython.client.rendering.OpenGLSetupFile
 
-        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("setup")
+        mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name("setup")
 
     def print_header(self):
         version = mcpython.config.FULL_VERSION_NAME.upper()
@@ -106,13 +106,13 @@ class LaunchWrapper:
         self.load_mods()
 
         # Create the world instance
-        import mcpython.world.World
-        G.world = mcpython.world.World.World()
+        import mcpython.common.world.World
+        G.world = mcpython.common.world.World.World()
 
         import pyglet
-        import mcpython.rendering.window
+        import mcpython.client.rendering.window
         # todo: move size to config files
-        mcpython.rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
+        mcpython.client.rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
         try:
             G.window.set_icon(mcpython.ResourceLocator.read("icon_16x16.png", "pyglet"),
                               mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"))

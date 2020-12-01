@@ -1264,7 +1264,7 @@ sstarted these clone on 12th of July, 2019
        - Block.get_collision_bbox()
 
 [uuk]: paused the project until 1.12.2020
-[uuk]: the following will be braking changes
+[uuk]: the following will be braking changes. During development, nothing may be stable!!!!!
         the following symbols are used for indication of task type:
             B: bug/issue
             [B]: in-dev bug during this branch
@@ -1284,3 +1284,16 @@ F   [uuk]: logger has now an print_stack() function to print only the current ca
 F   [uuk]: switching to an unknown state is now FATAL and will close the game
 R   [uuk]: renamed logger.write_exception to logger.print_exception
 [B] [uuk]: fixed refactor bugs
+R   [uuk]: major refactoring: file structure [this might have broken everything]
+
+Roadmap:
+    - setup black formatting
+    - refactor classes & functions
+    - create doc & unit tests for code
+    - revisit build system
+    - change resource loading system
+    - remove OpenGLSetupFile system
+    - change how data generators work
+    - add client & server annotations, check code for side
+    - migrate globals to global game instance
+    - add off-process system for world gen

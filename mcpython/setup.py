@@ -30,11 +30,11 @@ import os
 import shutil
 
 from mcpython import globals as G, logger
-import mcpython.event.Registry
-import mcpython.mod.ModMcpython
+import mcpython.common.event.Registry
+import mcpython.common.mod.ModMcpython
 
 
-class IPrepareAbleTask(mcpython.event.Registry.IRegistryContent):
+class IPrepareAbleTask(mcpython.common.event.Registry.IRegistryContent):
     TYPE = "minecraft:prebuild_task"
 
     @staticmethod
@@ -43,7 +43,7 @@ class IPrepareAbleTask(mcpython.event.Registry.IRegistryContent):
     USES_DIRECTORY = True
 
 
-taskregistry = mcpython.event.Registry.Registry("preparetasks", ["minecraft:prebuild_task"])
+taskregistry = mcpython.common.event.Registry.Registry("preparetasks", ["minecraft:prebuild_task"])
 
 
 def add():
@@ -91,7 +91,7 @@ def execute():
 
 
 # todo: split up into different sub-calls
-mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", add, info="adding prebuild tasks")
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:addition", add, info="adding prebuild tasks")
 
 if not os.path.exists(G.build+"/info.json"):
     logger.println("rebuild mode due missing info file")
@@ -106,4 +106,4 @@ else:
         G.data_gen = True
 
 if G.prebuilding:
-    mcpython.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:do", execute, info="doing prebuild tasks")
+    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:prebuild:do", execute, info="doing prebuild tasks")

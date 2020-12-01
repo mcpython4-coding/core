@@ -7,7 +7,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 blocks based on 1.16.1.jar of minecraft"""
 import os, sys, tempfile
-import mcpython.rendering.RenderingHelper
+import mcpython.client.rendering.RenderingHelper
 # todo: create MCPYTHON-class (as main game class) replacing this mess
 
 prebuilding = "--rebuild" in sys.argv
@@ -49,7 +49,7 @@ modelhandler = None
 
 modloader = None
 
-rendering_helper = mcpython.rendering.RenderingHelper.RenderingHelper()
+rendering_helper = mcpython.client.rendering.RenderingHelper.RenderingHelper()
 
 NEXT_EVENT_BUS_ID = 0
 

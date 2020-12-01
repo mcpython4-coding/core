@@ -11,12 +11,12 @@ import mcpython.util.texture
 import PIL.Image
 import mcpython.ResourceLocator
 import os
-import mcpython.event.Registry
+import mcpython.common.event.Registry
 
 print("someone loaded mcpython.texture.factory... a bad thing !!!! (deprecated :-( )")
 
 
-class ITextureChange(mcpython.event.Registry.IRegistryContent):
+class ITextureChange(mcpython.common.event.Registry.IRegistryContent):
     TYPE = "minecraft:texture_change"
 
     @staticmethod
@@ -70,7 +70,7 @@ class TextureFactory:
 
 
 G.texturefactoryhandler = TextureFactory()
-texturechanges = mcpython.event.Registry.Registry("texturechanges", ["minecraft:texture_change"],
+texturechanges = mcpython.common.event.Registry.Registry("texturechanges", ["minecraft:texture_change"],
                                          injection_function=TextureFactory.add_transform)
 
 

@@ -172,31 +172,31 @@ for stone in ["andesite", "granite", "diorite"]:
 
 
 def load():
-    import mcpython.mod.ConfigFile
+    import mcpython.common.mod.ConfigFile
     from mcpython import globals as G
 
-    config = mcpython.mod.ConfigFile.ConfigFile("main", "minecraft")
-    speeds = mcpython.mod.ConfigFile.DictDataMapper().add_entry("walking", 5).add_entry("sprinting", 8).add_entry(
+    config = mcpython.common.mod.ConfigFile.ConfigFile("main", "minecraft")
+    speeds = mcpython.common.mod.ConfigFile.DictDataMapper().add_entry("walking", 5).add_entry("sprinting", 8).add_entry(
         "flying", 15).add_entry("fly_sprinting", 18).add_entry("gamemode_3", 20).add_entry("gamemode_3_sprinting", 25)
-    physics = mcpython.mod.ConfigFile.DictDataMapper().add_entry("gravity", 20).add_entry("terminal_velocity", 50)
-    timing = mcpython.mod.ConfigFile.DictDataMapper().add_entry("random_tick_range", 2).add_entry(
+    physics = mcpython.common.mod.ConfigFile.DictDataMapper().add_entry("gravity", 20).add_entry("terminal_velocity", 50)
+    timing = mcpython.common.mod.ConfigFile.DictDataMapper().add_entry("random_tick_range", 2).add_entry(
         "cpu_usage_refresh_time", .8)
-    rendering = mcpython.mod.ConfigFile.DictDataMapper().add_entry("use_missing_texture_on_missing_faces",
+    rendering = mcpython.common.mod.ConfigFile.DictDataMapper().add_entry("use_missing_texture_on_missing_faces",
                                                                    False).add_entry(
         "fog_distance", 60).add_entry("chunk_generation_range", 1).add_entry("write_not_formatted_exceptions", False)
-    profiler = mcpython.mod.ConfigFile.DictDataMapper().add_entry("enable", False).add_entry(
+    profiler = mcpython.common.mod.ConfigFile.DictDataMapper().add_entry("enable", False).add_entry(
         "total_draw", True).add_entry("total_tick", False).add_entry("generation", False)
-    misc = mcpython.mod.ConfigFile.DictDataMapper().add_entry("enable_mixing_data", False).add_entry(
+    misc = mcpython.common.mod.ConfigFile.DictDataMapper().add_entry("enable_mixing_data", False).add_entry(
         "auto_shuffle_interval", -1)
 
     config.add_entry("physics", physics).add_entry("speeds", speeds).add_entry("timing", timing).add_entry(
         "rendering", rendering).add_entry("profiler", profiler).add_entry("misc", misc)
 
-    biomeconfig = mcpython.mod.ConfigFile.ConfigFile("biomes", "minecraft")
-    biomeconfig.add_entry("minecraft:plains", mcpython.mod.ConfigFile.ListDataMapper().append(10).append(30))
+    biomeconfig = mcpython.common.mod.ConfigFile.ConfigFile("biomes", "minecraft")
+    biomeconfig.add_entry("minecraft:plains", mcpython.common.mod.ConfigFile.ListDataMapper().append(10).append(30))
 
-    block_config = mcpython.mod.ConfigFile.ConfigFile("blocks", "minecraft")
-    [block_config.add_entry(key, mcpython.mod.ConfigFile.BooleanDataMapper()) for key in ENABLED_EXTRA_BLOCKS]
+    block_config = mcpython.common.mod.ConfigFile.ConfigFile("blocks", "minecraft")
+    [block_config.add_entry(key, mcpython.common.mod.ConfigFile.BooleanDataMapper()) for key in ENABLED_EXTRA_BLOCKS]
 
     @G.modloader("minecraft", "stage:mod:config:work")
     def load_data():

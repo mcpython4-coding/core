@@ -338,11 +338,11 @@ def add_resources_by_modname(modname, pathname=None):
     :param pathname: the namespace or None if the same as the mod name
     """
     if pathname is None: pathname = modname
-    from mcpython.rendering.model.BlockState import BlockStateDefinition
+    from mcpython.client.rendering.model.BlockState import BlockStateDefinition
     import mcpython.Language
-    import mcpython.gui.crafting.CraftingHandler
-    import mcpython.tags.TagHandler
-    import mcpython.loot.LootTable
+    import mcpython.client.gui.crafting.CraftingHandler
+    import mcpython.common.data.tags.TagHandler
+    import mcpython.common.data.loot.LootTable
     G.modloader.mods[modname].eventbus.subscribe("stage:recipes", G.craftinghandler.load, pathname,
                                                  info="loading crafting recipes for mod {}".format(modname))
     G.modloader.mods[modname].eventbus.subscribe("stage:model:model_search", G.modelhandler.add_from_mod, pathname,
@@ -350,10 +350,10 @@ def add_resources_by_modname(modname, pathname=None):
     G.modloader.mods[modname].eventbus.subscribe("stage:model:blockstate_search", BlockStateDefinition.from_directory,
                                                  "assets/{}/blockstates".format(pathname), modname,
                                                  info="searching for block states for mod {}".format(modname))
-    G.modloader.mods[modname].eventbus.subscribe("stage:tag:group", lambda: mcpython.tags.TagHandler.add_from_location(
+    G.modloader.mods[modname].eventbus.subscribe("stage:tag:group", lambda: mcpython.common.data.tags.TagHandler.add_from_location(
         pathname), info="adding tag groups for mod {}".format(modname))
     mcpython.Language.from_mod_name(modname)
-    G.modloader.mods[modname].eventbus.subscribe("stage:loottables:load", lambda: mcpython.loot.LootTable.
+    G.modloader.mods[modname].eventbus.subscribe("stage:loottables:load", lambda: mcpython.common.data.loot.LootTable.
                                                  handler.for_mod_name(modname, pathname),
                                                  info="adding loot tables for mod {}".format(modname))
 
