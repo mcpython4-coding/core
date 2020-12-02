@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.config
 import mcpython.server.storage.SaveFile
 import mcpython.server.storage.datafixers.IDataFixer
@@ -67,8 +67,8 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
             logger.println("[ERROR] failed to receive skin for '{}'. Falling back to default".format(
                 playername
             ))
-            mcpython.ResourceLocator.read(
-                "assets/minecraft/textures/entity/steve.png", "pil"
+            mcpython.ResourceLoader.read_image(
+                "assets/minecraft/textures/entity/steve.png"
             ).save(G.build + "/skin.png")
         mcpython.common.world.player.Player.RENDERER.reload()
 

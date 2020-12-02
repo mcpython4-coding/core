@@ -10,14 +10,14 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import PIL.Image
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 from mcpython import shared as G
 import pyglet
 import os
 import mcpython.common.config
 
-MISSING_TEXTURE = mcpython.ResourceLocator.read(
-    "assets/missing_texture.png", "pil"
+MISSING_TEXTURE = mcpython.ResourceLoader.read_image(
+    "assets/missing_texture.png"
 ).resize((16, 16), PIL.Image.NEAREST)
 
 
@@ -40,7 +40,7 @@ class TextureAtlasGenerator:
         return self.atlases[modname][-1].add_image(image), self.atlases[-1]
 
     def add_image_file(self, file: str, modname: str) -> tuple:
-        return self.add_image(mcpython.ResourceLocator.read(file, "pil"), modname)
+        return self.add_image(mcpython.ResourceLoader.read_image(file), modname)
 
     def add_images(self, images: list, modname, one_atlased=True) -> list:
         if len(images) == 0:
@@ -60,7 +60,7 @@ class TextureAtlasGenerator:
 
     def add_image_files(self, files: list, modname: str, one_atlased=True) -> list:
         return self.add_images(
-            [mcpython.ResourceLocator.read(x, "pil") for x in files],
+            [mcpython.ResourceLoader.read_image(x) for x in files],
             modname,
             one_atlased=one_atlased,
         )

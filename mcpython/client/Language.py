@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 
 LANGUAGES = {}  # table of data of Languages
 # change this for having another language, you have to include the needed lang files yourself :/
@@ -60,7 +60,7 @@ class Language:
         try:
             Language.from_data(
                 file.split("/")[-1].split(".")[0] if name is None else name,
-                mcpython.ResourceLocator.read(file, "json").copy(),
+                mcpython.ResourceLoader.read_json(file).copy(),
             )
         except:
             logger.print_exception(
@@ -79,7 +79,7 @@ class Language:
             LANGUAGES[name] = cls()
         language = LANGUAGES[name]
         try:
-            lines = mcpython.ResourceLocator.read(file).decode("UTF-8").split("\n")
+            lines = mcpython.ResourceLoader.read_raw(file).decode("UTF-8").split("\n")
         except:
             logger.print_exception(
                 "[ERROR] failed to load (old) language file {}".format(file)
@@ -124,7 +124,7 @@ def from_directory(directory: str, modname: str):
     """
     if not modname in G.modloader.mods:
         modname = "minecraft"
-    files = mcpython.ResourceLocator.get_all_entries_special(directory)
+    files = list(mcpython.ResourceLoader.get_all_entries_special(directory))
     m = len(files)
     for i, f in enumerate(files):
         if f.endswith(".json"):  # new language format

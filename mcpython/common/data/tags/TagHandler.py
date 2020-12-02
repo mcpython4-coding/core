@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.mod.ModMcpython
 import mcpython.common.data.tags.Tag
 import mcpython.common.data.tags.TagGroup
@@ -62,12 +62,12 @@ class TagHandler:
         :param direct_call: if build now or in the loading stage for it
         """
         for row in [
-            mcpython.ResourceLocator.get_all_entries(x) for x in self.taglocations
+            mcpython.ResourceLoader.get_all_entries(x) for x in self.taglocations
         ]:
             for address in row:
                 if address.endswith("/"):
                     continue
-                data = mcpython.ResourceLocator.read(address, "json")
+                data = mcpython.ResourceLoader.read_json(address)
                 s = address.split("/")
                 modname = s[s.index("data") + 1]
                 name = "#{}:{}".format(

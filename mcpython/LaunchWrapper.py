@@ -13,7 +13,7 @@ import os
 import sys
 import typing
 
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.config
 from mcpython import shared, logger
 
@@ -40,10 +40,10 @@ class LaunchWrapper:
         Loads first modules into memory
         """
 
-        import mcpython.ResourceLocator
+        import mcpython.ResourceLoader
         import mcpython.common.event.EventHandler
 
-        mcpython.ResourceLocator.load_resource_packs()
+        mcpython.ResourceLoader.load_resource_packs()
 
         self.setup_files()
 
@@ -130,8 +130,8 @@ class LaunchWrapper:
 
         if os.path.exists(shared.build):  # copy default skin to make it start correctly
             try:
-                mcpython.ResourceLocator.read(
-                    "assets/minecraft/textures/entity/steve.png", "pil"
+                mcpython.ResourceLoader.read_image(
+                    "assets/minecraft/textures/entity/steve.png"
                 ).save(shared.build + "/skin.png")
             except:
                 logger.print_exception("[FATAL] failed to load default skin")
@@ -171,8 +171,8 @@ class LaunchWrapper:
         try:
             # todo: can we find an better icon?
             shared.window.set_icon(
-                mcpython.ResourceLocator.read("icon_16x16.png", "pyglet"),
-                mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"),
+                mcpython.ResourceLoader.read_pyglet_image("icon_16x16.png"),
+                mcpython.ResourceLoader.read_pyglet_image("icon_32x32.png"),
             )
             shared.eventhandler.call("game:gameloop_startup")
         except:
@@ -192,9 +192,9 @@ class LaunchWrapper:
         (save)
         Will enforce cleanup when possible
         """
-        import mcpython.ResourceLocator
+        import mcpython.ResourceLoader
 
-        mcpython.ResourceLocator.close_all_resources()
+        mcpython.ResourceLoader.close_all_resources()
         logger.print_exception("general uncaught exception during running the game")
         try:
             shared.tmp.cleanup()
@@ -208,8 +208,8 @@ class LaunchWrapper:
         Helper function for normal cleanup
         (not save)
         """
-        import mcpython.ResourceLocator
+        import mcpython.ResourceLoader
 
-        mcpython.ResourceLocator.close_all_resources()
+        mcpython.ResourceLoader.close_all_resources()
         shared.eventhandler.call("game:close")
         shared.tmp.cleanup()

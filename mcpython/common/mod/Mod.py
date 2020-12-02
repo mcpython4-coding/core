@@ -177,11 +177,11 @@ class Mod:
         """
         if path_name is None:
             path_name = self.name
-        import mcpython.ResourceLocator
+        import mcpython.ResourceLoader
 
         self.eventbus.subscribe(
             "stage:mod:init",
-            lambda: mcpython.ResourceLocator.add_resources_by_modname(
+            lambda: mcpython.ResourceLoader.add_resources_by_modname(
                 self.name, path_name
             ),
             info="adding resources",

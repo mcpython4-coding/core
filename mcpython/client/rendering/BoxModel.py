@@ -16,7 +16,7 @@ import pyglet
 import mcpython.common.block.BlockConfig
 import mcpython.common.config
 import mcpython.common.mod.ModMcpython
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 from mcpython import shared as G
 
 UV_ORDER = [
@@ -384,7 +384,7 @@ class BaseBoxModel:
             texture
             if type(texture) == pyglet.graphics.TextureGroup
             else pyglet.graphics.TextureGroup(
-                mcpython.ResourceLocator.read(texture, "pyglet").get_texture()
+                mcpython.ResourceLoader.read_pyglet_image(texture).get_texture()
             )
         )
         self.__texture_region = texture_region

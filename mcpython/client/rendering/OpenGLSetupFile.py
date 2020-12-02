@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import pyglet
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.config
 import math
 from mcpython import logger
@@ -37,13 +37,13 @@ class OpenGLSetupFile:
     def from_name(cls, name: str):
         mod = name.split(":")[0] if ":" in name else "minecraft"
         path = "assets/{}/rendering/opengl_setup/{}.gl".format(mod, name.split(":")[-1])
-        if not mcpython.ResourceLocator.exists(path):
+        if not mcpython.ResourceLoader.exists(path):
             raise IOError("file for '{}' not found!".format(name))
         return cls.from_file(path)
 
     @classmethod
     def from_file(cls, file: str):
-        return cls(mcpython.ResourceLocator.read(file).decode("UTF-8"))
+        return cls(mcpython.ResourceLoader.read_raw(file).decode("UTF-8"))
 
     def __init__(self, data: str):
         self.data = data.replace("\r", "").split("\n")

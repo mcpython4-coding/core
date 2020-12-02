@@ -13,7 +13,7 @@ import enum
 import os
 
 from mcpython import shared as G, logger
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.client.chat.command.CommandParser
 import mcpython.client.chat.command.McFunctionFile
 import mcpython.common.event.EventHandler
@@ -148,9 +148,9 @@ class DataPack:
             if self.status in (DataPackStatus.ACTIVATED, DataPackStatus.DEACTIVATED):
                 self.unload()
             self.access = (
-                mcpython.ResourceLocator.ResourceDirectory(self.directory)
+                mcpython.ResourceLoader.ResourceDirectory(self.directory)
                 if os.path.isdir(self.directory)
-                else mcpython.ResourceLocator.ResourceZipFile(self.directory)
+                else mcpython.ResourceLoader.ResourceZipFile(self.directory)
             )
             info = self.access.read("pack.mcmeta", "json")["pack"]
             if info["pack_format"] not in (1, 2, 3):
@@ -216,11 +216,11 @@ class DataPack:
         self.status = status
         if (
             status == DataPackStatus.ACTIVATED
-            and self.access not in mcpython.ResourceLocator.RESOURCE_LOCATIONS
+            and self.access not in mcpython.ResourceLoader.RESOURCE_LOCATIONS
         ):
-            mcpython.ResourceLocator.RESOURCE_LOCATIONS.append(self.access)
+            mcpython.ResourceLoader.RESOURCE_LOCATIONS.append(self.access)
         elif (
             status == DataPackStatus.DEACTIVATED
-            and self.access in mcpython.ResourceLocator.RESOURCE_LOCATIONS
+            and self.access in mcpython.ResourceLoader.RESOURCE_LOCATIONS
         ):
-            mcpython.ResourceLocator.RESOURCE_LOCATIONS.remove(self.access)
+            mcpython.ResourceLoader.RESOURCE_LOCATIONS.remove(self.access)

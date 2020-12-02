@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.event.EventHandler
 import mcpython.common.event.Registry
 from mcpython import shared as G, logger
@@ -220,7 +220,7 @@ class StateConfigFile:
         Constructs an new deserializer for an file
         """
         self.file = file
-        self.data = mcpython.ResourceLocator.read(file, "json")
+        self.data = mcpython.ResourceLoader.read_json(file)
         self.injected_objects = set()
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "command:reload:end", self.reload
@@ -269,7 +269,7 @@ class StateConfigFile:
         Called by the system on data reload
         Will internally re-call the inject()-function on every state
         """
-        self.data = mcpython.ResourceLocator.read(self.file, "json")
+        self.data = mcpython.ResourceLoader.read_json(self.file)
         for state_instance in self.injected_objects:
             self.inject(state_instance)
 

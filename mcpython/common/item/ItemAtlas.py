@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.texture.TextureAtlas
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.util.texture
 from mcpython import shared as G, logger
 import pickle
@@ -34,7 +34,7 @@ class ItemAtlasHandler:
         self.folder = folder
 
     def schedule_item_file(self, file: str):
-        if not mcpython.ResourceLocator.exists(file):
+        if not mcpython.ResourceLoader.exists(file):
             self.file_relocate[file] = "assets/missing_texture.png"
             self.scheduled_item_files.add("assets/missing_texture.png")
             logger.println("[WARN] image at '{}' could not be allocated. Replacing with missing texture...".format(
@@ -42,7 +42,7 @@ class ItemAtlasHandler:
             ))
             return
         self.scheduled_item_files.add(
-            mcpython.ResourceLocator.transform_name(file, raise_on_error=False)
+            mcpython.ResourceLoader.transform_name(file, raise_on_error=False)
         )
 
     def load(self):
@@ -83,8 +83,8 @@ class ItemAtlasHandler:
             if "assets/missing_texture.png" in file:
                 self.allocation_table[ofile] = (0, (0, 0))
                 continue
-            if mcpython.ResourceLocator.exists(file):
-                image = mcpython.ResourceLocator.read(file, "pil")
+            if mcpython.ResourceLoader.exists(file):
+                image = mcpython.ResourceLoader.read_image(file)
             else:
                 self.allocation_table[ofile] = (
                     0,
@@ -127,7 +127,7 @@ class ItemAtlasHandler:
             pickle.dump(data, f)
 
     def get_texture_info(self, file: str):
-        file = mcpython.ResourceLocator.transform_name(file, raise_on_error=False)
+        file = mcpython.ResourceLoader.transform_name(file, raise_on_error=False)
         if file not in self.allocation_table:
             self.schedule_item_file(file)
             # logger.println("[FATAL] tried to access '{}' (which is not arrival) for getting texture info for atlas".format(file))

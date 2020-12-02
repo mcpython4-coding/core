@@ -14,14 +14,14 @@ import mcpython.client.state.State
 import mcpython.client.state.StatePartGame
 from mcpython.client.state.ui import UIPartImage, UIPartLable
 import mcpython.util.texture
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 from pyglet.window import key
 import mcpython.common.mod.ModMcpython
 
 
 # todo: use pyglet.image.Image.get_region(area)
 sprite = mcpython.util.texture.to_pyglet_sprite(
-    mcpython.ResourceLocator.read("gui/demo_background", mode="pil").crop(
+    mcpython.ResourceLoader.read_image("gui/demo_background").crop(
         (0, 0, 248, 166)
     )
 )

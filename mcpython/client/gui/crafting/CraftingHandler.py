@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
 import mcpython.client.gui.crafting.IRecipeType
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.item.ItemHandler
 import mcpython.common.mod.ModMcpython
 import mcpython.common.event.EventHandler
@@ -89,7 +89,7 @@ class CraftingHandler:
 
     def add_recipe_from_file(self, file: str):
         try:
-            data = mcpython.ResourceLocator.read(file).decode("utf-8")
+            data = mcpython.ResourceLoader.read_raw(file).decode("utf-8")
         except:
             logger.print_exception("during loading recipe file '{}'".format(file))
             return
@@ -119,7 +119,7 @@ class CraftingHandler:
             ))
             return  # make sure to load only ones!
         self.loaded_mod_dirs.add(modname)
-        for itemname in mcpython.ResourceLocator.get_all_entries(
+        for itemname in mcpython.ResourceLoader.get_all_entries(
             "data/{}/recipes".format(modname)
         ):
             if itemname.endswith("/"):

@@ -1294,6 +1294,9 @@ F   [uuk]: using now black formatting
 R   [uuk]: renamed globals.py to shared.py
     [uuk]: written docs for files
 [B] [uuk]: fixed logger not escaping all strings correctly
+R   [uuk]: refactored some files... again...
+F   [uuk]: changed how the ResourceLoader is operating
+F   [uuk]: speed up resource zipfile lookup by using an name table cache for the existence check and iterators
 
 Roadmap:
     - setup black formatting

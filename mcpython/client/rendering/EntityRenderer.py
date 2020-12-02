@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.rendering.BoxModel
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import pyglet
 
 
@@ -62,7 +62,7 @@ class EntityRenderer:
             }
         }
         """
-        self.data = mcpython.ResourceLocator.read(self.path, "json")
+        self.data = mcpython.ResourceLoader.read_json(self.path)
         self.box_models.clear()
         self.states.clear()
         reloaded = []
@@ -73,14 +73,14 @@ class EntityRenderer:
             if texture in TEXTURES and texture in reloaded:
                 group = TEXTURES[texture]
             else:
-                if mcpython.ResourceLocator.exists(texture):
+                if mcpython.ResourceLoader.exists(texture):
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.ResourceLocator.read(texture, "pyglet").get_texture()
+                        mcpython.ResourceLoader.read_pyglet_image(texture).get_texture()
                     )
                 else:
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.ResourceLocator.read(
-                            "assets/missing_texture.png", "pyglet"
+                        mcpython.ResourceLoader.read_pyglet_image(
+                            "assets/missing_texture.png"
                         ).get_texture()
                     )
                 reloaded.append(texture)

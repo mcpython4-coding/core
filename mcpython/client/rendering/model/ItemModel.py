@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.rendering.BatchHelper
 import mcpython.client.rendering.BoxModel
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.item.ItemAtlas
 from mcpython import shared as G, logger
 
@@ -74,7 +74,7 @@ LOADERS = [DefaultLoader]
 class ItemModel:
     @classmethod
     def from_file(cls, file: str, item: str):
-        data = mcpython.ResourceLocator.read(file, "json")
+        data = mcpython.ResourceLoader.read_json(file)
         model = cls(item)
         for loader in LOADERS:
             if loader.validate(data):
@@ -144,7 +144,7 @@ class ItemModelHandler:
         handler.from_folder("assets/minecraft/models/item", "minecraft")
 
     def from_folder(self, folder: str, modname: str):
-        for file in mcpython.ResourceLocator.get_all_entries(folder):
+        for file in mcpython.ResourceLoader.get_all_entries(folder):
             if file.endswith("/"):
                 continue
             item = "{}:{}".format(modname, file.split("/")[-1].split(".")[0])

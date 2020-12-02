@@ -16,7 +16,7 @@ from mcpython import shared as G, logger
 import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.model.Model
 import mcpython.client.rendering.model.BlockState
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.util.enums
 import mcpython.util.math
 import json
@@ -45,7 +45,7 @@ class ModelHandler:
         todo: add datapack locations
         """
         for location in self.lookup_locations:
-            found_models = mcpython.ResourceLocator.get_all_entries(location)
+            found_models = mcpython.ResourceLoader.get_all_entries(location)
             for model in found_models:
                 s = model.split("/")
                 mod_fix = s[s.index("block") - 2]
@@ -94,7 +94,7 @@ class ModelHandler:
         file = self.found_models[used]
         if type(file) == str:
             try:
-                data = mcpython.ResourceLocator.read(file, "json")
+                data = mcpython.ResourceLoader.read_json(file)
             except json.decoder.JSONDecodeError:
                 data = {
                     "parent": "minecraft:block/cube_all",
@@ -148,7 +148,7 @@ class ModelHandler:
         location = self.found_models[name]
         try:
             if type(location) == str:
-                modeldata = mcpython.ResourceLocator.read(location, "json")
+                modeldata = mcpython.ResourceLoader.read_json(location)
                 self.models[name] = mcpython.client.rendering.model.Model.Model(
                     modeldata.copy(),
                     "block/" + location.split("/")[-1].split(".")[0],

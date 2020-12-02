@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared, shared as G, logger
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.client.chat.Chat
 import mcpython.common.entity.Entity
 import mcpython.common.event.EventHandler
@@ -126,7 +126,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         ] = mcpython.client.gui.InventoryChest.InventoryChest()
         self.inventories["crafting_table"] = InvCrafting.InventoryCraftingTable()
 
-        if mcpython.ResourceLocator.exists("build/texture/gui/icons/xp_bar_empty.png"):
+        if mcpython.ResourceLoader.exists("build/texture/gui/icons/xp_bar_empty.png"):
             self.load_xp_icons()
         else:
             mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
@@ -136,11 +136,11 @@ class Player(mcpython.common.entity.Entity.Entity):
     def load_xp_icons(self):
         self.iconparts = [
             (
-                mcpython.ResourceLocator.read(
-                    "build/texture/gui/icons/xp_bar_empty.png", "pyglet"
+                mcpython.ResourceLoader.read_pyglet_image(
+                    "build/texture/gui/icons/xp_bar_empty.png"
                 ),
-                mcpython.ResourceLocator.read(
-                    "build/texture/gui/icons/xp_bar.png", "pyglet"
+                mcpython.ResourceLoader.read_pyglet_image(
+                    "build/texture/gui/icons/xp_bar.png"
                 ),
             )
         ]

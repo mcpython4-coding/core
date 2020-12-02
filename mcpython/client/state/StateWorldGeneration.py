@@ -18,7 +18,7 @@ import sys
 from pyglet.window import key
 
 from mcpython import shared as G, logger
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.client.chat.DataPack
 import mcpython.common.config
 import mcpython.common.config
@@ -150,8 +150,8 @@ class StateWorldGeneration(State.State):
                 )
             )
             try:
-                mcpython.ResourceLocator.read(
-                    "assets/minecraft/textures/entity/steve.png", "pil"
+                mcpython.ResourceLoader.read_image(
+                    "assets/minecraft/textures/entity/steve.png"
                 ).save(G.build + "/skin.png")
             except:
                 logger.print_exception(

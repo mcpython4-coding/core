@@ -14,15 +14,15 @@ import mcpython.client.gui.Inventory
 import mcpython.client.gui.InventoryHandler
 import mcpython.client.gui.Slot
 import pyglet
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import time
 import mcpython.util.opengl
 import mcpython.common.event.EventHandler
 import sys
 
 try:
-    base: pyglet.image.AbstractImage = mcpython.ResourceLocator.read(
-        "gui/icons", "pyglet"
+    base: pyglet.image.AbstractImage = mcpython.ResourceLoader.read_pyglet_image(
+        "gui/icons"
     )
 except:
     logger.print_exception("[FATAL] failed to load hotbar image")
@@ -106,7 +106,7 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
 
     def __init__(self):
         super().__init__()
-        if mcpython.ResourceLocator.exists("build/texture/gui/selected_slot.png"):
+        if mcpython.ResourceLoader.exists("build/texture/gui/selected_slot.png"):
             self.get_select_sprite()
         else:
             self.selected_sprite = None
@@ -122,8 +122,8 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
 
     def get_select_sprite(self):
         self.selected_sprite = pyglet.sprite.Sprite(
-            mcpython.ResourceLocator.read(
-                "build/texture/gui/selected_slot.png", "pyglet"
+            mcpython.ResourceLoader.read_pyglet_image(
+                "build/texture/gui/selected_slot.png"
             )
         )
 

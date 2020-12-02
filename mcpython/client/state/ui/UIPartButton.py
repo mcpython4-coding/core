@@ -12,13 +12,13 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.event.EventInfo
 import pyglet
 from pyglet.window import mouse
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 from . import UIPart
 import mcpython.util.opengl
 import mcpython.client.Language
 from mcpython.util.enums import ButtonMode
 
-image = mcpython.ResourceLocator.read("gui/widgets", "pyglet")
+image = mcpython.ResourceLoader.read_pyglet_image("gui/widgets")
 disabled = image.get_region(2, 256 - 46 - 17, 196, 14)
 enabled = image.get_region(2, 256 - 66 - 17, 196, 14)
 hovering = image.get_region(2, 256 - 86 - 17, 196, 14)

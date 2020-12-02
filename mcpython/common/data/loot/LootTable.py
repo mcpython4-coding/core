@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import enum
 import mcpython.client.gui.ItemStack
 from mcpython import shared as G, logger
@@ -115,7 +115,7 @@ class LootTableHandler:
             if modname in G.modloader.mods
             else G.modloader.mods["minecraft"]
         )
-        for path in mcpython.ResourceLocator.get_all_entries(
+        for path in mcpython.ResourceLoader.get_all_entries(
             "data/{}/loot_tables".format(directoryname)
         ):
             if path.endswith("/"):
@@ -314,7 +314,7 @@ class LootTable:
                 s[s.index("data") + 3],
                 "/".join(s[s.index("data") + 4 :]).split(".")[0],
             )
-        cls.from_data(mcpython.ResourceLocator.read(file, "json"), name)
+        cls.from_data(mcpython.ResourceLoader.read_json(file), name)
 
     @classmethod
     def from_data(cls, data: dict, name: str):

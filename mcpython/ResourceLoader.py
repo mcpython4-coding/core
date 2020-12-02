@@ -9,6 +9,21 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import json
+import os
+import sys
+import typing
+import zipfile
+from abc import ABC
+import itertools
+
+import PIL.Image
+
+import mcpython.common.config
+import mcpython.util.texture
+from mcpython import logger
+from mcpython import shared
+
 """
 specifications for the resource loader system
 
@@ -19,28 +34,19 @@ functions to access data:
         assets/minecraft/textures/block/dirt.png)
     exists(filename: str) -> bool: returns if an directory exists somewhere
     read(filename: str, mode=select from None for bytes, "json", "pil", "pyglet") -> object: loads the file
-    
+
 How mods do interact with these?
     Mod files are automatically added to these system to make it easier to add own resources
 """
-from mcpython import shared as G, logger
-import zipfile
-import json
-import PIL.Image
-import os
-import mcpython.util.texture
-import sys
-import mcpython.common.config
-import typing
 
 
-class IResourceLocation:
+class IResourceLocator(ABC):
     """
-    base class for an class holding an link to an resource system
+    Base class for an class holding an link to an resource source, like and directory or zip-file
     """
 
     @staticmethod
-    def is_valid(path: str) -> bool:
+    def is_valid(path) -> bool:
         """
         checks if an location is valid as an source
         :param path: the path to check
@@ -48,42 +54,58 @@ class IResourceLocation:
         """
         raise NotImplementedError()
 
-    def is_in_path(self, filename: str) -> bool:
+    def is_in_path(self, path) -> bool:
         """
         checks if an local file-name is in the given path
-        :param filename: the file name to check
+        :param path: the file path to check
         :return: if it is in the path
         """
         raise NotImplementedError()
 
-    def read(self, filename: str, mode: str):
+    def read_raw(self, path) -> bytes:
         """
-        will read an file into the system
-        :param filename: the file name to use
-        :param mode: the mode to use
-        :return: the content of the file loaded in the correct mode
+        will read an file into the system in binary mode
+        :param path: the file name to use
+        :return: the content of the file loaded in binary
         """
         raise NotImplementedError()
+
+    def read_image(self, path) -> PIL.Image.Image:
+        """
+        will read an file into the system as an PIL.Image.Image
+        :param path: the file name to use
+        :return: the content of the file loaded as image
+        """
+        raise NotImplementedError()
+
+    def read_decoding(self, path, encoding: str) -> str:
+        """
+        will read an file into the system as an string
+        :param path: the file name to use
+        :param encoding: the encoding to use
+        :return: the content of the file loaded as string
+        """
+        return self.read_raw(path).decode(encoding)
 
     def close(self):
         """
-        implement if you need to close an resource on end
+        Called when the resource path should be closed
         """
 
-    def get_all_entries_in_directory(self, directory: str) -> list:
+    def get_all_entries_in_directory(self, directory: str, go_sub=True) -> typing.Iterator[str]:
         """
-        should return all entries in an local directory
+        Should return all entries in an local directory
         :param directory: the directory to check
+        :param go_sub: if sub directories should be iterated or not
         :return: an list of data
-
-        todo: make generator
         """
         raise NotImplementedError()
 
 
-class ResourceZipFile(IResourceLocation):
+class ResourceZipFile(IResourceLocator):
     """
-    implementation for archives
+    Implementation for archives
+    todo: can we cache the namelist?
     """
 
     @staticmethod
@@ -93,42 +115,35 @@ class ResourceZipFile(IResourceLocation):
     def __init__(self, path: str):
         self.archive = zipfile.ZipFile(path)
         self.path = path
+        self.namelist_cache = self.archive.namelist()
 
     def is_in_path(self, filename: str) -> bool:
-        return filename in self.archive.namelist()
+        return filename in self.namelist_cache
 
-    def read(self, filename: str, mode: str):
-        if mode is None:
-            return self.archive.read(filename)
-        elif mode == "json":
-            return json.loads(self.archive.read(filename))
-        elif mode == "pil":
-            with open(G.tmp.name + "/resource_output.png", mode="wb") as f:
-                f.write(self.archive.read(filename))
-            return PIL.Image.open(G.tmp.name + "/resource_output.png")
-        elif mode == "pyglet":
-            return mcpython.util.texture.to_pyglet_image(self.read(filename, "pil"))
-        else:
-            raise ValueError("unsupported mode {}".format(mode))
+    def read_raw(self, path) -> bytes:
+        return self.archive.read(path)
+
+    def read_image(self, path) -> PIL.Image.Image:
+        with open(shared.tmp.name + "/resource_output.png", mode="wb") as f:
+            f.write(self.archive.read(path))
+        return PIL.Image.open(shared.tmp.name + "/resource_output.png")
 
     def close(self):
         self.archive.close()
 
-    def get_all_entries_in_directory(self, directory: str, go_sub=True) -> list:
-        result = []
-        for entry in self.archive.namelist():
+    def get_all_entries_in_directory(self, directory: str, go_sub=True) -> typing.Iterator[str]:
+        for entry in self.namelist_cache:
             if entry.startswith(directory):
                 if go_sub or (
                     directory.count("/") == entry.count("/") - 1
                     and directory.count("\\") == directory.count("\\")
                 ):
-                    result.append(entry)
-        return result
+                    yield entry
 
 
-class ResourceDirectory(IResourceLocation):
+class ResourceDirectory(IResourceLocator):
     """
-    implementation for raw directories
+    Implementation for raw directories
     """
 
     @staticmethod
@@ -141,35 +156,28 @@ class ResourceDirectory(IResourceLocation):
     def is_in_path(self, filename: str) -> bool:
         return os.path.isfile(os.path.join(self.path, filename))
 
-    def read(self, filename: str, mode: str):
-        file = filename
-        if not os.path.exists(file):
-            file = self.path + ("" if filename.startswith("/") else "/") + filename
-        with open(file, mode="rb") as f:
+    def read_raw(self, path) -> bytes:
+        if not os.path.exists(path):
+            path = self.path + ("" if path.startswith("/") else "/") + path
+        with open(path, mode="rb") as f:
             data: bytes = f.read()
-        if mode is None:
-            return data
-        if mode == "json":
-            return json.loads(data.decode("UTF-8"))
-        if mode == "pil":
-            return PIL.Image.open(os.path.join(self.path, filename))
-        if mode == "pyglet":
-            return mcpython.util.texture.to_pyglet_image(self.read(filename, "pil"))
+        return data
 
-    def get_all_entries_in_directory(self, directory: str) -> list:
+    def read_image(self, path) -> PIL.Image.Image:
+        return PIL.Image.open(os.path.join(self.path, path))
+
+    def get_all_entries_in_directory(self, directory: str, go_sub=True) -> typing.Iterator[str]:
         if not os.path.isdir(self.path + "/" + directory):
             return []
-        file_list = []
+        if not go_sub:
+            return ((f := os.path.join(self.path, directory, e)) + ("" if os.path.isdir(f) else "/") for e in os.listdir(directory))
         for root, dirs, files in os.walk(self.path + "/" + directory):
             for name in files:
                 file = os.path.join(root, name).replace("\\", "/")
-                file_list.append("/".join(file.split("/")[self.path.count("/") + 1 :]))
+                yield "/".join(file.split("/")[self.path.count("/") + 1:])
             for name in dirs:
                 file = os.path.join(root, name).replace("\\", "/")
-                file_list.append(
-                    "/".join(file.split("/")[self.path.count("/") + 1 :]) + "/"
-                )
-        return file_list
+                yield "/".join(file.split("/")[self.path.count("/") + 1:]) + "/"
 
 
 RESOURCE_PACK_LOADERS = [
@@ -177,6 +185,7 @@ RESOURCE_PACK_LOADERS = [
     ResourceDirectory,
 ]  # data loaders for the resource locations
 RESOURCE_LOCATIONS = []  # an list of all resource locations in the system
+# todo: add manager class for this
 
 
 def load_resource_packs():
@@ -184,15 +193,15 @@ def load_resource_packs():
     will load the resource packs found in the paths for it
     """
     close_all_resources()
-    if not os.path.exists(G.home + "/resourcepacks"):
-        os.makedirs(G.home + "/resourcepacks")
-    for file in os.listdir(G.home + "/resourcepacks"):
+    if not os.path.exists(shared.home + "/resourcepacks"):
+        os.makedirs(shared.home + "/resourcepacks")
+    for file in os.listdir(shared.home + "/resourcepacks"):
         if file in [
             "{}.jar".format(mcpython.common.config.MC_VERSION_BASE),
             "minecraft.zip",
         ]:
             continue
-        file = G.home + "/resourcepacks/" + file
+        file = shared.home + "/resourcepacks/" + file
         flag = True
         for source in RESOURCE_PACK_LOADERS:
             if flag and source.is_valid(file):
@@ -215,16 +224,16 @@ def load_resource_packs():
         else:
             i += 1
     RESOURCE_LOCATIONS.append(
-        ResourceDirectory(G.local)
+        ResourceDirectory(shared.local)
     )  # for local access, may be not needed
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.home))
-    RESOURCE_LOCATIONS.append(ResourceDirectory(G.build))
-    if G.dev_environment:  # only in dev-environment we need these special folders...
-        print(G.local)
-        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/main"))
-        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/generated"))
-        RESOURCE_LOCATIONS.append(ResourceDirectory(G.local + "/resources/source"))
-    G.eventhandler.call("resources:load")
+    RESOURCE_LOCATIONS.append(ResourceDirectory(shared.home))
+    RESOURCE_LOCATIONS.append(ResourceDirectory(shared.build))
+    if shared.dev_environment:  # only in dev-environment we need these special folders...
+        print(shared.local)
+        RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/main"))
+        RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/generated"))
+        RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/source"))
+    shared.eventhandler.call("resources:load")
 
 
 def close_all_resources():
@@ -234,8 +243,8 @@ def close_all_resources():
     for item in RESOURCE_LOCATIONS:
         item.close()
     RESOURCE_LOCATIONS.clear()
-    if G.eventhandler:
-        G.eventhandler.call("resources:close")
+    if shared.eventhandler:
+        shared.eventhandler.call("resources:close")
 
 
 MC_IMAGE_LOCATIONS = [
@@ -267,7 +276,7 @@ def transform_name(file: str, raise_on_error=True) -> str:
             )
         return f
     if raise_on_error:
-        logger.println("can't transform name '{}' to valid path. Replacing with missing texture...".format(
+        logger.println("can't find '{}' in resource system. Replacing with missing texture image...".format(
             file
         ))
         return "assets/missing_texture.png"
@@ -282,7 +291,7 @@ def exists(file: str, transform=True):
     :return: if it exists or not
     """
     if file.startswith("build/"):
-        file = file.replace("build/", G.build + "/", 1)
+        file = file.replace("build/", shared.build + "/", 1)
     if file.startswith(
         "@"
     ):  # special resource notation, can be used for accessing special ResourceLocations
@@ -292,7 +301,7 @@ def exists(file: str, transform=True):
         for x in RESOURCE_LOCATIONS:
             if x.path == resource:
                 return x.is_in_path(file)
-        raise RuntimeError("can't find resource named '{}'".format(resource))
+        return False
     for x in RESOURCE_LOCATIONS:
         if x.is_in_path(file):
             return True
@@ -304,15 +313,14 @@ def exists(file: str, transform=True):
     return False
 
 
-def read(file: str, mode: typing.Union[None, str] = None):
+def read_raw(file: str):
     """
-    will read the content of an file
+    will read the content of an file in binary mode
     :param file: the file to load
-    :param mode: the mode to load in, or None for binary
     :return: the content
     """
     if file.startswith("build/"):
-        file = file.replace("build/", G.build + "/", 1)
+        file = file.replace("build/", shared.build + "/", 1)
     if file.startswith(
         "@"
     ):  # special resource notation, can be used for accessing special ResourceLocations
@@ -320,60 +328,103 @@ def read(file: str, mode: typing.Union[None, str] = None):
         resource = data[0][1:]
         file = "|".join(data[1:])
         if file.startswith("build/"):
-            file = file.replace("build/", G.build + "/", 1)
+            file = file.replace("build/", shared.build + "/", 1)
         for x in RESOURCE_LOCATIONS:
+            x: IResourceLocator
             if x.path == resource:
                 try:
-                    return x.read(file, mode)
-                except json.JSONDecodeError:
-                    logger.print_exception("json error in file {}".format(file))
-                    continue
+                    return x.read_raw(file)
+                except:
+                    logger.println("exception during loading file '{}'".format(file))
+                    raise
         raise RuntimeError("can't find resource named {}".format(resource))
     if not exists(file, transform=False):
         file = transform_name(file)
-    if os.path.exists(G.local + "/" + file):  # special, local-only location
-        if mode == "pil":
-            return PIL.Image.open(G.local + "/" + file)
     loc = RESOURCE_LOCATIONS[:]
     for x in loc:
         if x.is_in_path(file):
             try:
-                return x.read(file, mode)
+                return x.read_raw(file)
             except:
                 logger.println("exception during loading file '{}'".format(file))
                 raise
     raise ValueError("can't find resource '{}' in any path".format(file))
 
 
-def get_all_entries(directory: str) -> list:
+def read_image(file: str):
+    """
+    will read the content of an file in binary mode
+    :param file: the file to load
+    :return: the content
+    """
+    if file.startswith("build/"):
+        file = file.replace("build/", shared.build + "/", 1)
+    if file.startswith(
+        "@"
+    ):  # special resource notation, can be used for accessing special ResourceLocations
+        data = file.split("|")
+        resource = data[0][1:]
+        file = "|".join(data[1:])
+        if file.startswith("build/"):
+            file = file.replace("build/", shared.build + "/", 1)
+        for x in RESOURCE_LOCATIONS:
+            x: IResourceLocator
+            if x.path == resource:
+                try:
+                    return x.read_image(file)
+                except:
+                    logger.println("exception during loading file '{}'".format(file))
+                    raise
+        raise RuntimeError("can't find resource named {}".format(resource))
+    if not exists(file, transform=False):
+        file = transform_name(file)
+    loc = RESOURCE_LOCATIONS[:]
+    for x in loc:
+        if x.is_in_path(file):
+            try:
+                return x.read_image(file)
+            except:
+                logger.println("exception during loading file '{}'".format(file))
+                raise
+    raise ValueError("can't find resource '{}' in any path".format(file))
+
+
+def read_json(file):
+    return json.loads(read_raw(file).decode("utf-8"))
+
+
+def read_pyglet_image(file):
+    return mcpython.util.texture.to_pyglet_image(read_image(file))
+
+
+def get_all_entries(directory: str) -> typing.Iterator[str]:
     """
     will get all files & directories [ending with an "/"] of an given directory across all resource locations
     :param directory: the directory to use
     :return: an list of all found files
-    todo: make return an generator
     """
     result = []
     loc = RESOURCE_LOCATIONS
     loc.reverse()
+    iterators = []
     for x in loc:
-        result += x.get_all_entries_in_directory(directory)
-    return list(set(result))
+        iterators.append(x.get_all_entries_in_directory(directory))
+    return itertools.chain.from_iterable(iterators)
 
 
-def get_all_entries_special(directory: str) -> list:
+def get_all_entries_special(directory: str) -> typing.Iterator[str]:
     """
     returns all entries found with their corresponding '@[path]:file'-notation
     :param directory: the directory to searc from
     :return: an list of found resources
-    todo: make use an generator
     """
-    result = []
+    iterators = []
     for x in RESOURCE_LOCATIONS:
-        result += [
+        iterators.append((
             "@{}|{}".format(x.path, s)
             for s in x.get_all_entries_in_directory(directory)
-        ]
-    return result
+        ))
+    return itertools.chain.from_iterable(iterators)
 
 
 def add_resources_by_modname(modname, pathname=None):
@@ -390,32 +441,32 @@ def add_resources_by_modname(modname, pathname=None):
     import mcpython.common.data.tags.TagHandler
     import mcpython.common.data.loot.LootTable
 
-    G.modloader.mods[modname].eventbus.subscribe(
+    shared.modloader.mods[modname].eventbus.subscribe(
         "stage:recipes",
-        G.craftinghandler.load,
+        shared.craftinghandler.load,
         pathname,
         info="loading crafting recipes for mod {}".format(modname),
     )
-    G.modloader.mods[modname].eventbus.subscribe(
+    shared.modloader.mods[modname].eventbus.subscribe(
         "stage:model:model_search",
-        G.modelhandler.add_from_mod,
+        shared.modelhandler.add_from_mod,
         pathname,
         info="searching for block models for mod {}".format(modname),
     )
-    G.modloader.mods[modname].eventbus.subscribe(
+    shared.modloader.mods[modname].eventbus.subscribe(
         "stage:model:blockstate_search",
         BlockStateDefinition.from_directory,
         "assets/{}/blockstates".format(pathname),
         modname,
         info="searching for block states for mod {}".format(modname),
     )
-    G.modloader.mods[modname].eventbus.subscribe(
+    shared.modloader.mods[modname].eventbus.subscribe(
         "stage:tag:group",
         lambda: mcpython.common.data.tags.TagHandler.add_from_location(pathname),
         info="adding tag groups for mod {}".format(modname),
     )
     mcpython.client.Language.from_mod_name(modname)
-    G.modloader.mods[modname].eventbus.subscribe(
+    shared.modloader.mods[modname].eventbus.subscribe(
         "stage:loottables:load",
         lambda: mcpython.common.data.loot.LootTable.handler.for_mod_name(
             modname, pathname

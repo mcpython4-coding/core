@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared as G
 import mcpython.util.texture
 import PIL.Image
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import os
 import mcpython.common.event.Registry
 
@@ -46,10 +46,10 @@ class TextureFactory:
         return texturechange.convert(images, image, *args, **kwargs)
 
     def apply_from_file(self, file):
-        self.apply_from_data(mcpython.ResourceLocator.read(file, "json"))
+        self.apply_from_data(mcpython.ResourceLoader.read_json(file))
 
     def apply_from_data(self, data: dict):
-        images = [mcpython.ResourceLocator.read(x, "pil") for x in data["images"]]
+        images = [mcpython.ResourceLoader.read_image(x) for x in data["images"]]
         if "space" in data:
             images += [None] * data["space"]
         for entry in data["transforms"]:
@@ -74,7 +74,7 @@ class TextureFactory:
             images[store["id"]].save(f)
 
     def load(self):
-        entries = mcpython.ResourceLocator.get_all_entries_special(
+        entries = mcpython.ResourceLoader.get_all_entries_special(
             "assets/factory/texture"
         )
         for entry in entries:

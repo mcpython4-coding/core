@@ -17,7 +17,7 @@ from pyglet.gl import *
 from pyglet.window import key, mouse
 import cProfile
 
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.event.EventHandler
 import mcpython.common.event.TickHandler
 import mcpython.common.config
@@ -165,7 +165,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
 
         # todo: move to seperated class
         self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
-            mcpython.ResourceLocator.read("gui/icons", "pil")
+            mcpython.ResourceLoader.read_image("gui/icons")
             .crop((0, 0, 15, 15))
             .resize((30, 30), PIL.Image.NEAREST)
         )

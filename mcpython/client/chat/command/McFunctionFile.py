@@ -10,14 +10,14 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 
 
 class McFunctionFile:
     @classmethod
     def from_file(cls, file: str, name: str):
         try:
-            return cls(mcpython.ResourceLocator.read(file).decode("utf-8"), name)
+            return cls(mcpython.ResourceLoader.read_raw(file).decode("utf-8"), name)
         except:
             logger.print_exception(
                 "[WARN] failed to load function file {}".format(file)

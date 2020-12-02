@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import pyglet
 import PIL.Image
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 from mcpython import shared as G
 import mcpython.util.texture
 
@@ -19,8 +19,8 @@ import mcpython.util.texture
 class BackgroundHandler:
     batch = pyglet.graphics.Batch()
     objects = []
-    background_raw: PIL.Image.Image = mcpython.ResourceLocator.read(
-        "assets/minecraft/textures/gui/options_background.png", "pil"
+    background_raw: PIL.Image.Image = mcpython.ResourceLoader.read_image(
+        "assets/minecraft/textures/gui/options_background.png"
     )
     background_size = (32, 32)
     background_image = mcpython.util.texture.to_pyglet_image(

@@ -18,7 +18,7 @@ import pyglet
 from pyglet.window import key, mouse
 
 from mcpython import shared as G
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.client.chat.DataPack
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
@@ -33,11 +33,11 @@ from .ui import UIPartButton, UIPartScrollBar
 import shutil
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
-    mcpython.ResourceLocator.read("assets/missing_texture.png", "pil").resize(
+    mcpython.ResourceLoader.read_image("assets/missing_texture.png").resize(
         (50, 50), PIL.Image.NEAREST
     )
 )
-WORLD_SELECTION = mcpython.ResourceLocator.read("minecraft:gui/world_selection", "pil")
+WORLD_SELECTION = mcpython.ResourceLoader.read_image("minecraft:gui/world_selection")
 WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(
     WORLD_SELECTION.crop((0, 0, 32, 32))
 )

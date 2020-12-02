@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import logger
 import mcpython.common.data.datagen.Configuration
 import PIL.Image
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.util.texture
 
 

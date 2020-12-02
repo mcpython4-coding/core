@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 """
 classes will be removed in the future as they can be replaced by tags
 """
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 from mcpython import logger
 
 
@@ -50,14 +50,14 @@ class BlockConfigEntry:
 ENTRIES = dict()  # the entries
 
 
-for file in mcpython.ResourceLocator.get_all_entries_special("assets/config/block"):
+for file in mcpython.ResourceLoader.get_all_entries_special("assets/config/block"):
     if file.endswith("/"):
         continue
     name = file.split("/")[-1].split(".")[0]
     if name not in ENTRIES:
         ENTRIES[name] = BlockConfigEntry(name)
     try:
-        ENTRIES[name].add_data(mcpython.ResourceLocator.read(file, mode="json"))
+        ENTRIES[name].add_data(mcpython.ResourceLoader.read_json(file))
     except:
         logger.print_exception(
             "[ERROR] failed to load block config file {}".format(file)

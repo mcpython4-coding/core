@@ -13,11 +13,11 @@ import PIL.Image
 import pyglet
 from pyglet.window import mouse
 
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.util.texture
 
-IMAGE = mcpython.ResourceLocator.read(
-    "assets/minecraft/textures/gui/container/creative_inventory/tabs.png", "pil"
+IMAGE = mcpython.ResourceLoader.read_image(
+    "assets/minecraft/textures/gui/container/creative_inventory/tabs.png"
 )
 scroll_active = mcpython.util.texture.to_pyglet_image(
     IMAGE.crop((233, 0, 243, 14)).resize((20, 28), PIL.Image.NEAREST)

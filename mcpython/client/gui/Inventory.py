@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
 import pyglet
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import uuid
@@ -52,8 +52,8 @@ class Inventory:
         """
         if self.get_config_file():
             try:
-                self.config = mcpython.ResourceLocator.read(
-                    self.get_config_file(), "json"
+                self.config = mcpython.ResourceLoader.read_json(
+                    self.get_config_file()
                 )
             except:
                 logger.print_exception(
@@ -81,8 +81,8 @@ class Inventory:
                 ]
             if "empty_slot_image" in entry:
                 try:
-                    image = mcpython.ResourceLocator.read(
-                        entry["empty_slot_image"], "pil"
+                    image = mcpython.ResourceLoader.read_image(
+                        entry["empty_slot_image"]
                     )
                     image = mcpython.util.texture.to_pyglet_image(
                         image.resize((32, 32), PIL.Image.NEAREST)
@@ -106,16 +106,16 @@ class Inventory:
             self.position = self.config["image_position"]
         if "image_location" in self.config:
             try:
-                if mcpython.ResourceLocator.exists(self.config["image_location"]):
+                if mcpython.ResourceLoader.exists(self.config["image_location"]):
                     self.bgsprite = pyglet.sprite.Sprite(
-                        mcpython.ResourceLocator.read(
-                            self.config["image_location"], "pyglet"
+                        mcpython.ResourceLoader.read_pyglet_image(
+                            self.config["image_location"]
                         )
                     )
                 else:
                     self.bgsprite = pyglet.sprite.Sprite(
-                        mcpython.ResourceLocator.read(
-                            "assets/missing_texture.png", "pyglet"
+                        mcpython.ResourceLoader.read_pyglet_image(
+                            "assets/missing_texture.png"
                         )
                     )
             except:

@@ -15,7 +15,7 @@ import mcpython.common.event.EventInfo
 from mcpython import shared as G, logger
 import pyglet
 import os
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.item.Item
 import mcpython.common.event.TickHandler
 import PIL.Image, PIL.ImageDraw
@@ -212,7 +212,7 @@ class StateBlockItemGenerator(State.State):
         blockname = self.tasks[self.blockindex]
         file = "generated_items/{}.png".format("__".join(blockname.split(":")))
         pyglet.image.get_buffer_manager().get_color_buffer().save(G.build + "/" + file)
-        image: PIL.Image.Image = mcpython.ResourceLocator.read(file, "pil")
+        image: PIL.Image.Image = mcpython.ResourceLoader.read_image(file)
         if image.getbbox() is None or len(image.histogram()) <= 1:
             pyglet.clock.schedule_once(self.take_image, 0.05)
             # event.TickHandler.handler.bind(self.take_image, 1)

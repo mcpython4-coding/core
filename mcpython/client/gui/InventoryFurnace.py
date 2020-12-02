@@ -17,7 +17,7 @@ import mcpython.client.gui.crafting.FurnaceCrafting
 import mcpython.common.event.EventHandler
 import pyglet
 import time
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import mcpython.common.event.EventHandler
 
 
@@ -31,11 +31,11 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
 
     @classmethod
     def reload(cls):
-        cls.arrow = mcpython.ResourceLocator.read(
-            "build/texture/gui/furnace_arrow.png", "pyglet"
+        cls.arrow = mcpython.ResourceLoader.read_pyglet_image(
+            "build/texture/gui/furnace_arrow.png"
         )
-        cls.fire = mcpython.ResourceLocator.read(
-            "build/texture/gui/furnace_fire.png", "pyglet"
+        cls.fire = mcpython.ResourceLoader.read_pyglet_image(
+            "build/texture/gui/furnace_fire.png"
         )
 
     mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(

@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.event.EventHandler
 from mcpython import shared as G, logger
 import os
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import zipfile
 import sys
 import json
@@ -527,8 +527,8 @@ class ModLoader:
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
-                    mcpython.ResourceLocator.RESOURCE_LOCATIONS.insert(
-                        0, mcpython.ResourceLocator.ResourceZipFile(file)
+                    mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
+                        0, mcpython.ResourceLoader.ResourceZipFile(file)
                     )
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
@@ -557,8 +557,8 @@ class ModLoader:
                         modinst.package = data
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
-                mcpython.ResourceLocator.RESOURCE_LOCATIONS.insert(
-                    0, mcpython.ResourceLocator.ResourceDirectory(file)
+                mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
+                    0, mcpython.ResourceLoader.ResourceDirectory(file)
                 )
                 self.active_directory = file
                 if os.path.exists(file + "/mod.json"):

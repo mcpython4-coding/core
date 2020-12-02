@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
 import random
 import mcpython.common.mod.ModMcpython
 import mcpython.common.event.Registry
@@ -362,7 +362,7 @@ class BlockStateDefinition:
 
     @classmethod
     def from_directory(cls, directory: str, modname: str, immediate=False):
-        for file in mcpython.ResourceLocator.get_all_entries(directory):
+        for file in mcpython.ResourceLoader.get_all_entries(directory):
             if not file.endswith("/"):
                 cls.from_file(file, modname, immediate=immediate)
         cls.LOOKUP_DIRECTORIES.add((directory, modname))
@@ -386,7 +386,7 @@ class BlockStateDefinition:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
             return BlockStateDefinition(
-                mcpython.ResourceLocator.read(file, "json"),
+                mcpython.ResourceLoader.read_json(file),
                 "{}:{}".format(modname, s[-1].split(".")[0]),
             )
         except BlockStateNotNeeded:
@@ -398,7 +398,7 @@ class BlockStateDefinition:
 
     @classmethod
     def from_data(cls, name, data):
-        mcpython.mod.ModMcpython.mcpython.eventbus.subscribe(
+        mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
             "stage:model:blockstate_create",
             cls._from_data,
             name,
