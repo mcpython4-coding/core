@@ -1297,11 +1297,13 @@ R   [uuk]: renamed globals.py to shared.py
 R   [uuk]: refactored some files... again...
 F   [uuk]: changed how the ResourceLoader is operating
 F   [uuk]: speed up resource zipfile lookup by using an name table cache for the existence check and iterators
+R   [uuk]: changed some layout in crafting system
+F   [uuk]: changed how registries do some of the work
+F   [uuk]: implemented DeferredRegistryPipe
 
 Roadmap:
-    - setup black formatting
-    - refactor classes & functions
-    - create doc & unit tests for code
+    - refactor classes & functions [WIP]
+    - create doc  [WIP] & unit tests for code
     - revisit build system
     - change resource loading system
     - remove OpenGLSetupFile system
@@ -1311,8 +1313,9 @@ Roadmap:
     - add off-process system for world gen
     - fix item atlases
     - remove setup / prebuild system COMPLETELY
-    - remove all deprecated stuff
+    - remove all deprecated stuff   [WIP]
     - upgrade blocks & textures to 1.16.4 or latest snapshot
     - rewrite how assets are stored
     - do not hardcode ANY constants, move them to an public space / config files / resource data
     - clean up changelog.txt, issues.txt and fixed_issues.txt
+    - redesign command system

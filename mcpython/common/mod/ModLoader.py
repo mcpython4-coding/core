@@ -73,7 +73,9 @@ class LoadingStage:
         """
         G.modloader.active_loading_stage += 1
         if G.modloader.active_loading_stage >= len(LOADING_ORDER):
-            logger.println("[INFO] locking registries...")  # ... and do similar stuff :-)
+            logger.println(
+                "[INFO] locking registries..."
+            )  # ... and do similar stuff :-)
             G.eventhandler.call("modloader:finished")
 
             G.statehandler.switch_to("minecraft:blockitemgenerator")
@@ -199,6 +201,7 @@ class LoadingStages:
     # first: create ConfigFile objects, second: internally, third: do something with the data
     CONFIGS = LoadingStage(
         "loading mod config",
+        "stage:mod:config:entry_loaders",
         "stage:mod:config:define",
         "stage:mod:config:load",
         "stage:mod:config:work",
@@ -440,7 +443,9 @@ class ModLoader:
             with open(G.build + "/mods.json") as f:
                 self.lasttime_mods = json.load(f)
         elif not G.prebuilding:
-            logger.println("[WARNING] can't locate mods.json in build-folder. This may be an error")
+            logger.println(
+                "[WARNING] can't locate mods.json in build-folder. This may be an error"
+            )
         self.finished = False
         self.reload_stages = []
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
@@ -505,7 +510,8 @@ class ModLoader:
                     logger.println(
                         "[WARNING] it was attempted to remove mod '{}' which was not found in file system".format(
                             file
-                        ))
+                        )
+                    )
                 for _ in range(2):
                     sys.argv.pop(i)
             else:
@@ -540,9 +546,11 @@ class ModLoader:
                                 with f.open("mod.toml", mode="r") as sf:
                                     self.load_mods_toml(sf.read(), file)
                             except KeyError:
-                                logger.println("[WARNING] can't locate mod.json file in mod at '{}'".format(
-                                    file
-                                ))
+                                logger.println(
+                                    "[WARNING] can't locate mod.json file in mod at '{}'".format(
+                                        file
+                                    )
+                                )
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
                     try:
@@ -568,9 +576,11 @@ class ModLoader:
                     with open(file + "/mods.toml") as sf:
                         self.load_mods_toml(sf.read(), file + "/mods.toml")
                 else:
-                    logger.println("[WARNING] can't locate mod.json file for mod at '{}'".format(
-                        file
-                    ))
+                    logger.println(
+                        "[WARNING] can't locate mod.json file for mod at '{}'".format(
+                            file
+                        )
+                    )
 
     def look_out(self):
         """
@@ -586,9 +596,11 @@ class ModLoader:
                 if name in self.mods:
                     del self.mods[name]
                 else:
-                    logger.println("[WARNING] it was attempted to remove mod '{}' which was not registered".format(
-                        name
-                    ))
+                    logger.println(
+                        "[WARNING] it was attempted to remove mod '{}' which was not registered".format(
+                            name
+                        )
+                    )
                 for _ in range(2):
                     sys.argv.pop(i)
             else:
@@ -605,9 +617,11 @@ class ModLoader:
                 self.lasttime_mods[modname]
             ):
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
-                logger.println("rebuild mode due to mod change (remove / version change) of {}".format(
-                    modname
-                ))
+                logger.println(
+                    "rebuild mode due to mod change (remove / version change) of {}".format(
+                        modname
+                    )
+                )
                 G.prebuilding = True
                 G.data_gen = True
         for modname in self.mods.keys():
@@ -615,7 +629,9 @@ class ModLoader:
                 # we have an mod which was loaded not previous but now
                 G.prebuilding = True
                 G.data_gen = True
-                logger.println("rebuild mode due to mod change (addition) of {}".format(modname))
+                logger.println(
+                    "rebuild mode due to mod change (addition) of {}".format(modname)
+                )
 
     def write_mod_info(self):
         """
@@ -641,9 +657,11 @@ class ModLoader:
         :param file: the file allocated (used for warning messages)
         """
         if "version" not in data:
-            logger.println("[MODLOADER][INVALID] the version entry in '{}' has an invalid version format".format(
-                file
-            ))
+            logger.println(
+                "[MODLOADER][INVALID] the version entry in '{}' has an invalid version format".format(
+                    file
+                )
+            )
         else:
             cls.load_json(data, file)
 
@@ -663,8 +681,10 @@ class ModLoader:
             raise IOError("invalid mod.json file found without 'version'-entry")
         version = data["version"]
         if version == "1.1.0":  # 1.1.0: outdated since 04.05.2020
-            logger.println("[WARN] using outdated mod.json format 1.1.0. Latest is 1.2.0. Format may get "
-                           "removed in the future")
+            logger.println(
+                "[WARN] using outdated mod.json format 1.1.0. Latest is 1.2.0. Format may get "
+                "removed in the future"
+            )
             loader = data["loader"] if "loader" in data else "python:default"
             # todo: add registry for loaders
             if loader == "python:default":
@@ -676,13 +696,17 @@ class ModLoader:
                                 location.replace("/", ".").replace("\\", ".")
                             )
                         except ModuleNotFoundError:
-                            logger.println("[MODLOADER][ERROR] can't load mod file {}".format(
-                                location
-                            ))
+                            logger.println(
+                                "[MODLOADER][ERROR] can't load mod file {}".format(
+                                    location
+                                )
+                            )
                             return
             else:
-                logger.println("[MODLOADER][ERROR] found mod.json ({}) which is not using any supported loader"
-                               " ({})".format(file, loader))
+                logger.println(
+                    "[MODLOADER][ERROR] found mod.json ({}) which is not using any supported loader"
+                    " ({})".format(file, loader)
+                )
                 G.window.close()
         elif version == "1.2.0":  # latest
             """
@@ -701,17 +725,21 @@ class ModLoader:
             """
             for entry in data["entries"]:
                 if "name" not in entry:
-                    logger.println("[INVALID] invalid entry found in '{}': missing 'name'-entry".format(
-                        file
-                    ))
+                    logger.println(
+                        "[INVALID] invalid entry found in '{}': missing 'name'-entry".format(
+                            file
+                        )
+                    )
                     continue
                 modname = entry["name"]
                 loader = entry["loader"] if "loader" in entry else "python:default"
                 if loader == "python:default":
                     if "version" not in entry:
-                        logger.println("[INVALID] invalid entry found in '{}': missing 'version'-entry".format(
-                            file
-                        ))
+                        logger.println(
+                            "[INVALID] invalid entry found in '{}': missing 'version'-entry".format(
+                                file
+                            )
+                        )
                         continue
                     version = tuple([int(e) for e in entry["version"].split(".")])
                     modinstance = mcpython.common.mod.Mod.Mod(modname, version)
@@ -752,9 +780,11 @@ class ModLoader:
                                 location.replace("/", ".").replace("\\", ".")
                             )
                         except ModuleNotFoundError:
-                            logger.println("[MODLOADER][ERROR] can't load mod file {}".format(
-                                location
-                            ))
+                            logger.println(
+                                "[MODLOADER][ERROR] can't load mod file {}".format(
+                                    location
+                                )
+                            )
                             return
                 else:
                     raise IOError("invalid loader '{}'".format(loader))
@@ -786,12 +816,16 @@ class ModLoader:
                         location.replace("/", ".").replace("\\", ".")
                     )
                 except ModuleNotFoundError:
-                    logger.println("[MODLOADER][ERROR] can't load mod file {}".format(location))
+                    logger.println(
+                        "[MODLOADER][ERROR] can't load mod file {}".format(location)
+                    )
                     return
         else:
-            logger.println("[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(
-                file
-            ))
+            logger.println(
+                "[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(
+                    file
+                )
+            )
 
     def load_mods_toml(self, data: str, file):
         """
@@ -802,7 +836,9 @@ class ModLoader:
         data = toml.loads(data)
         if "modLoader" in data:
             if data["modLoader"] == "javafml":
-                logger.println("[SOURCE][FATAL] found java mod. As an mod-author, please upgrade to python as javafml")
+                logger.println(
+                    "[SOURCE][FATAL] found java mod. As an mod-author, please upgrade to python as javafml"
+                )
                 sys.exit(-1)
         if "loaderVersion" in data:
             if data["loaderVersion"].startswith("["):
@@ -816,7 +852,9 @@ class ModLoader:
             elif version.count("[") == version.count("]") == 0:
                 mc_version = version.split("|")
             else:
-                logger.println("[SOURCE][FATAL] can't decode version id '{}'".format(version))
+                logger.println(
+                    "[SOURCE][FATAL] can't decode version id '{}'".format(version)
+                )
                 sys.exit(-1)
         else:
             mc_version = None
@@ -912,9 +950,12 @@ class ModLoader:
                     modinfo[depend.name].append(mod.name)
         if len(errors) > 0:
             logger.println("found mods: ")
-            logger.println(" -", "\n - ".join(
-                [modinstance.mod_string() for modinstance in self.mods.values()]
-            ))
+            logger.println(
+                " -",
+                "\n - ".join(
+                    [modinstance.mod_string() for modinstance in self.mods.values()]
+                ),
+            )
             logger.println()
 
             logger.println("errors with mods:")

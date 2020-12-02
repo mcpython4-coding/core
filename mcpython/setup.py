@@ -48,7 +48,7 @@ class IPrepareAbleTask(mcpython.common.event.Registry.IRegistryContent):
 
 
 taskregistry = mcpython.common.event.Registry.Registry(
-    "preparetasks", ["minecraft:prebuild_task"]
+    "preparetasks", ["minecraft:prebuild_task"], "stage:prebuild:addition"
 )
 
 
@@ -91,7 +91,7 @@ def execute():
         os.makedirs(G.build + "")
     with open(G.build + "/info.json", mode="w") as f:
         json.dump({"finished": False}, f)
-    for iprepareabletask in taskregistry.registered_object_map.values():
+    for iprepareabletask in taskregistry.entries.values():
         directory = G.build + "/" + iprepareabletask.NAME
         if iprepareabletask.USES_DIRECTORY:
             if os.path.exists(directory):

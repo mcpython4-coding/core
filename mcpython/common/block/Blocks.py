@@ -14,8 +14,8 @@ from mcpython import shared as G
 from mcpython.util.enums import ToolType
 import mcpython.common.mod.ModMcpython
 from mcpython.common.factory import CombinedBlockFactory
-import mcpython.common.data.datagen.Configuration
-from mcpython.common.data.datagen.Configuration import DataGeneratorConfig
+import mcpython.common.data.gen.Configuration
+from mcpython.common.data.gen.Configuration import DataGeneratorConfig
 from mcpython.common.config import ENABLED_EXTRA_BLOCKS as BLOCKS
 
 

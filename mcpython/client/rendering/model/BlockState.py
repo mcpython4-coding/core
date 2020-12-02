@@ -56,8 +56,8 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
         return True
 
 
-blockstatedecoderregistry = mcpython.common.event.Registry.Registry(
-    "blockstates", ["minecraft:blockstate"]
+blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
+    "blockstates", ["minecraft:blockstate"], "stage:blockstate:register_loaders"
 )
 
 
@@ -319,9 +319,11 @@ class DefaultDecoder(IBlockStateDecoder):
         for keymap, blockstate in self.states:
             if keymap == data:
                 return blockstate.add_face_to_batch(block, batch, face)
-        logger.println("[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
-            block, data, [e[0] for e in self.states]
-        ))
+        logger.println(
+            "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
+                block, data, [e[0] for e in self.states]
+            )
+        )
         return []
 
     def transform_to_hitbox(self, blockinstance):
@@ -350,9 +352,11 @@ class DefaultDecoder(IBlockStateDecoder):
             if keymap == data:
                 blockstate.draw_face(block, face)
                 return
-        logger.println("[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
-            block.NAME, block.position, data, [e[0] for e in self.states]
-        ))
+        logger.println(
+            "[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
+                block.NAME, block.position, data, [e[0] for e in self.states]
+            )
+        )
 
 
 class BlockStateDefinition:
@@ -420,13 +424,13 @@ class BlockStateDefinition:
     def __init__(self, data: dict, name: str):
         self.name = name
         if (
-            name not in G.registry.get_by_name("block").registered_object_map
+            name not in G.registry.get_by_name("block").entries
             and name not in self.NEEDED
         ):
             raise BlockStateNotNeeded()
         G.modelhandler.blockstates[name] = self
         self.loader = None
-        for loader in blockstatedecoderregistry.registered_object_map.values():
+        for loader in blockstate_decoder_registry.entries.values():
             if loader.is_valid(data):
                 self.loader = loader(data, self)
                 break
@@ -500,7 +504,9 @@ class BlockState:
         result = []
         model, config, _ = self.models[block.block_state]
         if model not in G.modelhandler.models:
-            logger.println("can't find model named '{}' to add at {}".format(model, block.position))
+            logger.println(
+                "can't find model named '{}' to add at {}".format(model, block.position)
+            )
             return result
         result += G.modelhandler.models[model].add_face_to_batch(
             block.position, batch, config, face

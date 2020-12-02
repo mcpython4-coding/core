@@ -73,9 +73,11 @@ class Item(mcpython.common.event.Registry.IRegistryContent):
 
     def set_data(self, data):
         if data != "no:data":
-            logger.println("[WARNING] data-deserialization did NOT expect data, but data '{}' was got".format(
-                data
-            ))
+            logger.println(
+                "[WARNING] data-deserialization did NOT expect data, but data '{}' was got".format(
+                    data
+                )
+            )
 
     def get_tooltip_provider(self):
         import mcpython.client.gui.HoveringItemBox

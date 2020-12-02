@@ -21,7 +21,7 @@ class EntityHandler:
 
     def __init__(self):
         self.registry = mcpython.common.event.Registry.Registry(
-            "registry", ["minecraft:entity"]
+            "registry", ["minecraft:entity"], "stage:entities"
         )
         self.entity_map = {}
 
@@ -39,13 +39,15 @@ class EntityHandler:
             dimension = G.world.get_active_dimension()
         if type(dimension) in (str, int):
             dimension = G.world.get_dimension(dimension)
-        if name not in self.registry.registered_object_map:
+        if name not in self.registry.entries:
             raise ValueError("unknown entity type name: '{}'".format(name))
-        entity = self.registry.registered_object_map[name]
+        entity = self.registry.entries[name]
         if not entity.SUMMON_ABLE and check_summon:
-            logger.println("[WARN] tried to summon an not-summon-able entity named '{}' at '{}'".format(
-                name, position
-            ))
+            logger.println(
+                "[WARN] tried to summon an not-summon-able entity named '{}' at '{}'".format(
+                    name, position
+                )
+            )
             return
         entity = entity.create_new(position, *args, dimension=dimension, **kwargs)
         if uuid is not None:

@@ -39,7 +39,7 @@ class IStateConfigEntry(mcpython.common.event.Registry.IRegistryContent):
 
 
 entry_registry = mcpython.common.event.Registry.Registry(
-    "state_definition_entries", ["minecraft:state_definition_entry"]
+    "state_definition_entries", ["minecraft:state_definition_entry"], "stage:mod:config:entry_loaders"
 )
 
 
@@ -243,17 +243,19 @@ class StateConfigFile:
         if "parts" in self.data:
             for name in self.data["parts"]:
                 d = self.data["parts"][name]
-                if d["type"] not in entry_registry.registered_object_map:
-                    logger.println("[WARN] type '{}' as '{}' for state {} not found!".format(
-                        d["type"], name, state_instance.NAME
-                    ))
+                if d["type"] not in entry_registry.entries:
+                    logger.println(
+                        "[WARN] type '{}' as '{}' for state {} not found!".format(
+                            d["type"], name, state_instance.NAME
+                        )
+                    )
                     continue
                 prev = (
                     state_instance.part_dict[name]
                     if name in state_instance.part_dict
                     else None
                 )
-                part = entry_registry.registered_object_map[d["type"]].deserialize(
+                part = entry_registry.entries[d["type"]].deserialize(
                     state_instance, d, prev
                 )
                 state_instance.part_dict[name] = part

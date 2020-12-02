@@ -52,9 +52,7 @@ class Inventory:
         """
         if self.get_config_file():
             try:
-                self.config = mcpython.ResourceLoader.read_json(
-                    self.get_config_file()
-                )
+                self.config = mcpython.ResourceLoader.read_json(self.get_config_file())
             except:
                 logger.print_exception(
                     "[FATAL] failed to load inventory config file {} for inventory {}".format(

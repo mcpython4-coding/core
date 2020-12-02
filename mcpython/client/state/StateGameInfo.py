@@ -21,9 +21,7 @@ import mcpython.common.mod.ModMcpython
 
 # todo: use pyglet.image.Image.get_region(area)
 sprite = mcpython.util.texture.to_pyglet_sprite(
-    mcpython.ResourceLoader.read_image("gui/demo_background").crop(
-        (0, 0, 248, 166)
-    )
+    mcpython.ResourceLoader.read_image("gui/demo_background").crop((0, 0, 248, 166))
 )
 
 

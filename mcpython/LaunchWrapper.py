@@ -62,7 +62,7 @@ class LaunchWrapper:
         import mcpython.common.mod.ModLoader
         import mcpython.common.mod.ModMcpython
         import mcpython.common.mod.ConfigFile
-        from mcpython.common.data.datagen.mcpython import (
+        from mcpython.common.data.gen.mcpython import (
             recipes,
             textures,
             entity,
@@ -77,10 +77,10 @@ class LaunchWrapper:
         import mcpython.common.block.BlockHandler
         import mcpython.common.item.ItemHandler
         import mcpython.common.entity.EntityHandler
-        import mcpython.server.gen.WorldGenerationHandler
-        import mcpython.server.gen.biome.BiomeHandler
-        import mcpython.server.gen.layer
-        import mcpython.server.gen.feature
+        import mcpython.server.worldgen.WorldGenerationHandler
+        import mcpython.server.worldgen.biome.BiomeHandler
+        import mcpython.server.worldgen.layer
+        import mcpython.server.worldgen.feature
 
         import mcpython.client.rendering.model.ModelHandler
         import mcpython.common.data.tags.TagHandler

@@ -9,9 +9,10 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.logger
 import mcpython.common.event.EventHandler
+import typing
 
 
 class IRegistryContent:
@@ -36,19 +37,22 @@ class Registry:
         self,
         name: str,
         registry_type_names: list,
+        phase: str,
         injection_function=None,
         allow_argument_injection=False,
         class_based=True,
         dump_content_in_saves=True,
     ):
         self.name = name
+        self.phase = phase
         self.registry_type_names = registry_type_names
         self.injection_function = injection_function
-        self.allow_argumented_injection = allow_argument_injection
-        self.registered_object_map = {}
+        self.allow_argument_injection = allow_argument_injection
+        self.entries = {}
+        self.full_entries = {}
         self.locked = False
         self.class_based = class_based
-        G.registry.registries.append(self)
+        shared.registry.registries.append(self)
         self.dump_content_in_saves = dump_content_in_saves
 
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
@@ -59,25 +63,37 @@ class Registry:
         return not self.locked and obj.TYPE in self.registry_type_names
 
     def register(self, obj: IRegistryContent, override_existing=True):
+        """
+        Registers an obj to this registry
+        """
         if self.locked:
-            logger.println("[WARN] can't register object '{}' to locked registry '{}'".format(
-                obj, self.name
-            ))
-            logger.println("[WARN] this feature of registering post-freeze WILL be removed in the future")
+            logger.print_stack(
+                "[WARN] can't register object '{}' to locked registry '{}'. Skipping registering...".format(
+                    obj, self.name
+                )
+            )
+            return
         if obj.NAME == "minecraft:unknown_registry_content":
-            logger.println("can't register unnamed object '{}'".format(obj))
-            logger.println("every registry object MUST have an unique name")
+            logger.print_stack("can't register unnamed object '{}'".format(obj),
+                               "every registry object MUST have an unique name")
             return
-        if not G.eventhandler.call_cancelable(
-            "registry:{}:register".format(self.name), self, obj, override_existing
-        ):
+        if obj.NAME in self.entries and override_existing:
+            logger.println("[INFO] skipping register of {} named '{}' into registry '{}' as currently arrival".format(
+                obj, obj.NAME, self.name))
             return
-        if obj.NAME in self.registered_object_map and override_existing:
-            return
-        self.registered_object_map[obj.NAME] = obj
+
+        self.entries[obj.NAME] = obj
+        self.full_entries[obj.NAME] = obj
+        if hasattr(obj.NAME, "split"):
+            self.full_entries[obj.NAME.split(":")[-1]] = obj
         if self.injection_function:
             self.injection_function(self, obj)
         obj.on_register(self)
+
+    def entries_iterator(self) -> typing.Iterable[IRegistryContent]:
+        if self.locked:
+            return self.entries.keys()
+        return self.entries.copy().keys()
 
     def lock(self):
         self.locked = True
@@ -94,7 +110,7 @@ class RegistryInjectionHolder:
 
     def __call__(self, obj):
         self.injectable = obj
-        G.registry(self)
+        shared.registry(self)
 
 
 class RegistryHandler:
@@ -114,7 +130,7 @@ class RegistryHandler:
                     )
                 )
             for registry in self.registries:
-                if registry.allow_argumented_injection and registry.is_valid(
+                if registry.allow_argument_injection and registry.is_valid(
                     args[0].injectable
                 ):
                     registry.register(args[0])
@@ -131,17 +147,28 @@ class RegistryHandler:
                     registry.register(args[0])
                     return args[0]
 
-    def get_by_name(self, name: str) -> Registry:
+    def get_by_name(self, name: str) -> typing.Optional[Registry]:
         for registry in self.registries:
             if registry.name == name:
                 return registry
-        return None
 
     def register(self, *args, **kwargs):
         return self(*args, **kwargs)
 
     def async_register(self, mod: str, phase: str):
-        return lambda obj: G.modloader(mod, phase)(lambda: self.register(obj))
+        return lambda obj: shared.modloader(mod, phase)(lambda: self.register(obj))
+
+    def create_deferred(self, registry: str, mod_name: str):
+        return DeferredRegistryPipe(self.get_by_name(registry), mod_name)
 
 
-G.registry = RegistryHandler()
+shared.registry = RegistryHandler()
+
+
+class DeferredRegistryPipe:
+    def __init__(self, registry: Registry, modname: str):
+        self.registry = registry
+        self.modname = modname
+
+    def run_later(self, lazy: typing.Callable[[], IRegistryContent]):
+        shared.modloader(self.modname, self.registry.phase)(lazy)

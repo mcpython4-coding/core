@@ -46,7 +46,7 @@ def load_data(from_block_item_generator=False):
             data = json.load(f)
         for entry in data[:]:
             name = entry[0]
-            blocktable = G.registry.get_by_name("block").registered_object_map
+            blocktable = G.registry.get_by_name("block").entries
             if name in blocktable:
                 obj = (
                     mcpython.common.factory.ItemFactory.ItemFactory()
@@ -84,7 +84,7 @@ def add_to_image_atlas(file):
 
 
 def register_item(registry, itemclass):
-    items.registered_object_map[itemclass.NAME.split(":")[-1]] = itemclass
+    items.entries[itemclass.NAME.split(":")[-1]] = itemclass
     if itemclass.NAME in items.itemindextable:
         return
     items.itemindextable.setdefault(itemclass.NAME, {})
@@ -94,7 +94,7 @@ def register_item(registry, itemclass):
 
 
 items = mcpython.common.event.Registry.Registry(
-    "item", ["minecraft:item"], injection_function=register_item
+    "item", ["minecraft:item"], "stage:item:load", injection_function=register_item
 )
 items.itemindextable = {}
 

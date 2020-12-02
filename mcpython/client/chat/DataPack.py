@@ -14,8 +14,8 @@ import os
 
 from mcpython import shared as G, logger
 import mcpython.ResourceLoader
-import mcpython.client.chat.command.CommandParser
-import mcpython.client.chat.command.McFunctionFile
+import mcpython.server.command.CommandParser
+import mcpython.server.command.McFunctionFile
 import mcpython.common.event.EventHandler
 
 
@@ -34,7 +34,7 @@ class DataPackStatus(enum.Enum):
 
 class DataPackHandler:
     """
-    handler for data packs
+    handler for datapacks
     """
 
     def __init__(self):
@@ -101,7 +101,7 @@ class DataPackHandler:
         WARNING: will only invoke ONE function/tag from the datapacks, not all
         """
         if info is None:
-            info = mcpython.client.chat.command.CommandParser.ParsingCommandInfo()
+            info = mcpython.server.command.CommandParser.ParsingCommandInfo()
         if name.startswith("#"):  # an tag
             try:
                 tag = G.taghandler.get_tag_for(name, "functions")
@@ -155,9 +155,11 @@ class DataPack:
             info = self.access.read("pack.mcmeta", "json")["pack"]
             if info["pack_format"] not in (1, 2, 3):
                 self.status = DataPackStatus.ERROR
-                logger.println("[DATAPACK][ERROR] datapack version '{}' can't be loaded".format(
-                    info["pack_format"]
-                ))
+                logger.println(
+                    "[DATAPACK][ERROR] datapack version '{}' can't be loaded".format(
+                        info["pack_format"]
+                    )
+                )
                 return
             self.description = info["description"]
             for file in self.access.get_all_entries_in_directory("data"):
@@ -168,7 +170,7 @@ class DataPack:
                     name = "{}:{}".format(split[1], "/".join(split[3:]).split(".")[0])
                     self.function_table[
                         name
-                    ] = mcpython.client.chat.command.McFunctionFile.McFunctionFile(
+                    ] = mcpython.server.command.McFunctionFile.McFunctionFile(
                         self.access.read(file, None).decode("UTF-8"), name
                     )
         except:

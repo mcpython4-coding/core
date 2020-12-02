@@ -92,9 +92,11 @@ class NetherPortalBlock(mcpython.common.block.Block.Block):
             1,
             3,
         ):
-            logger.println("[PORTAL] changing dimension nether <-> overworld... (from: '{}')".format(
-                player.dimension.name
-            ))
+            logger.println(
+                "[PORTAL] changing dimension nether <-> overworld... (from: '{}')".format(
+                    player.dimension.name
+                )
+            )
             # todo: create portal on the other side if needed
             # todo: search for portal on other side
             # todo: make it possible for other entities, not only players (-> API change needed!)

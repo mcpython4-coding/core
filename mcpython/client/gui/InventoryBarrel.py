@@ -13,8 +13,8 @@ from mcpython import shared as G
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.client.gui.ItemStack
-import mcpython.client.gui.crafting.CraftingHandler
-import mcpython.client.gui.crafting.GridRecipeInterface
+import mcpython.client.gui.crafting.CraftingManager
+import mcpython.client.gui.crafting.CraftingGridHelperInterface
 import mcpython.client.gui.ItemStack
 import pyglet
 import mcpython.common.event.EventHandler

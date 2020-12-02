@@ -285,12 +285,13 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.generated = data["generated"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
         for i, d in enumerate(data["block_palette"]):
-            if d["name"] not in G.registry.get_by_name("block").registered_object_map:
+            if d["name"] not in G.registry.get_by_name("block").entries:
                 # todo: add missing texture block -> insert here
                 logger.println(
                     "[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block".format(
                         d["name"], chunk, dimension
-                    ))
+                    )
+                )
                 data["block_palette"][i] = {
                     "shown": False,
                     "name": "minecraft:air",

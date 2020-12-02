@@ -31,27 +31,35 @@ class RegistryInfo(mcpython.server.storage.serializer.IDataSerializer.IDataSeria
             if not registry.dump_content_in_saves:
                 continue
             if registry.name not in data:
-                logger.println("[REGISTRY][WARN] registry '{}' not found in files!".format(
-                    registry.name
-                ))
+                logger.println(
+                    "[REGISTRY][WARN] registry '{}' not found in files!".format(
+                        registry.name
+                    )
+                )
             else:
                 entries = data[registry.name]
                 del data[registry.name]
-                for obj in registry.registered_object_map.values():
+                for obj in registry.entries.values():
                     compressed = obj.compressed_info()
                     if compressed not in entries:
-                        logger.println("[REGISTRY][WARN] object '{}' in registry '{}' not found in saves!".format(
-                            obj.NAME, registry.name
-                        ))
+                        logger.println(
+                            "[REGISTRY][WARN] object '{}' in registry '{}' not found in saves!".format(
+                                obj.NAME, registry.name
+                            )
+                        )
                     else:
                         entries.remove(compressed)
                 for compressed in entries:
-                    logger.println("[REGISTRY][WARN] compressed info '{}' for registry '{}' found in saves, but not in"
-                                   " active registry".format(compressed, registry.name))
+                    logger.println(
+                        "[REGISTRY][WARN] compressed info '{}' for registry '{}' found in saves, but not in"
+                        " active registry".format(compressed, registry.name)
+                    )
         for name in data:
-            logger.println("[REGISTRY][WARN] registry '{}' found in saves, but it is not arrival anymore".format(
-                name
-            ))
+            logger.println(
+                "[REGISTRY][WARN] registry '{}' found in saves, but it is not arrival anymore".format(
+                    name
+                )
+            )
 
     @classmethod
     def save(cls, data, savefile):
@@ -60,7 +68,7 @@ class RegistryInfo(mcpython.server.storage.serializer.IDataSerializer.IDataSeria
             if not registry.dump_content_in_saves:
                 continue
             rdata = []
-            for obj in registry.registered_object_map.values():
+            for obj in registry.entries.values():
                 rdata.append(obj.compressed_info())
             data[registry.name] = rdata
         savefile.dump_file_pickle("registries.dat", data)

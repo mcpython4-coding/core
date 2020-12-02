@@ -26,7 +26,7 @@ class ILootTableFunction(mcpython.common.event.Registry.IRegistryContent):
 
 
 loottablefunctionregistry = mcpython.common.event.Registry.Registry(
-    "loottablefunctionregistry", registry_type_names=["minecraft:loot_table_function"]
+    "loottablefunctionregistry", ["minecraft:loot_table_function"], "stage:loottables:functions"
 )
 
 

@@ -10,9 +10,9 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.common.data.datagen.BlockModelGenerator
-import mcpython.common.data.datagen.Configuration
-import mcpython.common.data.datagen.RecipeGenerator
+import mcpython.common.data.gen.BlockModelGenerator
+import mcpython.common.data.gen.Configuration
+import mcpython.common.data.gen.RecipeGenerator
 import mcpython.common.factory.BlockFactory
 import enum
 import typing
@@ -23,7 +23,7 @@ SLAB_TEMPLATE = [(x, 0) for x in range(3)]
 
 
 def generate_full_block_slab_wall(
-    config: mcpython.common.data.datagen.Configuration.DataGeneratorConfig,
+    config: mcpython.common.data.gen.Configuration.DataGeneratorConfig,
     name: str,
     texture: str = None,
     enable=(True, True, True),
@@ -101,7 +101,7 @@ def generate_slab_block(
         texture, modname, config, full_model=full, on_create_callback=callback
     ).setName(name)
     if generate_recipe:
-        mcpython.common.data.datagen.RecipeGenerator.ShapedRecipeGenerator(
+        mcpython.common.data.gen.RecipeGenerator.ShapedRecipeGenerator(
             name, config
         ).setEntries(SLAB_TEMPLATE, name.split("_slab")[0]).setOutput(
             (6, name)
@@ -120,7 +120,7 @@ def generate_wall_block(
         name
     )
     if generate_recipe:
-        mcpython.common.data.datagen.RecipeGenerator.ShapedRecipeGenerator(
+        mcpython.common.data.gen.RecipeGenerator.ShapedRecipeGenerator(
             name, config
         ).setEntries(WALL_TEMPLATE, name.split("_wall")[0]).setOutput(
             (6, name)
@@ -215,7 +215,7 @@ class CombinedFullBlockFactory:
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
         model_gen = (
-            mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
                 self.config, name, parent=self.mode.parent
             )
         )
@@ -223,7 +223,7 @@ class CombinedFullBlockFactory:
             model_gen.set_texture_variable(name, self.textures[name])
             for name in self.textures
         ]
-        mcpython.common.data.datagen.BlockModelGenerator.BlockStateGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockStateGenerator(
             self.config, name
         ).add_state(None, "{}:block/{}".format(self.modname, name))
 
@@ -262,7 +262,7 @@ class CombinedSlabFactory:
             modname = self.GLOBAL_NAME
         assert modname is not None, "modname must be set locally or globally"
         if config is None:
-            config = mcpython.common.data.datagen.Configuration.DataGeneratorConfig(
+            config = mcpython.common.data.gen.Configuration.DataGeneratorConfig(
                 modname, G.modloader.mods[modname].path
             )
         self.config = config
@@ -286,18 +286,18 @@ class CombinedSlabFactory:
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
-        mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
             self.config, name, parent="minecraft:block/slab"
         ).set_texture_variables(self.texture, *self.SLAB_TEXTURES)
-        mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
             self.config, name + "_top", parent="minecraft:block/slab_top"
         ).set_texture_variables(self.texture, *self.SLAB_TEXTURES)
         if not self.full_model:
             self.full_model = "{}:block/{}_double".format(self.modname, self.name)
-            mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
                 self.config, name + "_double", parent="minecraft:block/cube_all"
             ).set_texture_variable("all", self.texture)
-        mcpython.common.data.datagen.BlockModelGenerator.BlockStateGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockStateGenerator(
             self.config, name
         ).add_state("type=bottom", "{}:block/{}".format(self.modname, name)).add_state(
             "type=top", "{}:block/{}_top".format(self.modname, name)
@@ -337,7 +337,7 @@ class CombinedWallFactory:
             modname = self.GLOBAL_NAME
         assert modname is not None, "modname must be set locally or globally"
         if config is None:
-            config = mcpython.common.data.datagen.Configuration.DataGeneratorConfig(
+            config = mcpython.common.data.gen.Configuration.DataGeneratorConfig(
                 modname, G.modloader.mods[modname].path
             )
         self.config = config
@@ -358,16 +358,16 @@ class CombinedWallFactory:
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
-        mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
             self.config, name + "_inventory", parent="minecraft:block/wall_inventory"
         ).set_texture_variable("wall", self.texture)
-        mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
             self.config, name + "_post", parent="minecraft:block/template_wall_post"
         ).set_texture_variable("wall", self.texture)
-        mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
             self.config, name + "_side", parent="minecraft:block/template_wall_side"
         ).set_texture_variable("wall", self.texture)
-        mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
             self.config,
             name + "_side_tall",
             parent="minecraft:block/template_wall_side_tall",
@@ -375,7 +375,7 @@ class CombinedWallFactory:
         side = "{}:block/{}_side".format(self.modname, name)
         tall = "{}:block/{}_side_tall".format(self.modname, name)
         post = "{}:block/{}_post".format(self.modname, name)
-        mcpython.common.data.datagen.BlockModelGenerator.MultiPartBlockStateGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.MultiPartBlockStateGenerator(
             self.config, name, parent="minecraft:wall_template"
         ).addAliasName("alias:post", post).addAliasName(
             "alias:side", side
@@ -417,7 +417,7 @@ class CombinedLogFactory:
             modname = self.GLOBAL_NAME
         assert modname is not None, "modname must be set locally or globally"
         if config is None:
-            config = mcpython.common.data.datagen.Configuration.DataGeneratorConfig(
+            config = mcpython.common.data.gen.Configuration.DataGeneratorConfig(
                 modname, G.modloader.mods[modname].path
             )
         self.config = config
@@ -439,12 +439,12 @@ class CombinedLogFactory:
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
-        mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
             self.config, name, parent="minecraft:block/cube_column"
         ).set_texture_variable("end", self.front_texture).set_texture_variable(
             "side", self.side_texture
         )
-        mcpython.common.data.datagen.BlockModelGenerator.BlockModelGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
             self.config,
             name + "_horizontal",
             parent="minecraft:block/cube_column_horizontal",
@@ -452,7 +452,7 @@ class CombinedLogFactory:
             "side", self.side_texture
         )
         hor = "{}:block/{}_horizontal".format(self.modname, name)
-        mcpython.common.data.datagen.BlockModelGenerator.BlockStateGenerator(
+        mcpython.common.data.gen.BlockModelGenerator.BlockStateGenerator(
             self.config, name, parent="minecraft:log_template"
         ).addAliasName("alias:horizontal", hor).addAliasName(
             "alias:normal", "{}:block/{}".format(self.modname, name)

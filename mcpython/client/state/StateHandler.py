@@ -46,7 +46,10 @@ class StateHandler:
         self.active_state.activate()
         self.active_state.eventbus.call("user:window:resize", *G.window.get_size())
         G.eventhandler.call("state:switch:post", statename)
-        logger.println("[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename), console=False)
+        logger.println(
+            "[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename),
+            console=False,
+        )
 
     def add_state(self, state_instance: State.State):
         self.states[state_instance.NAME] = state_instance

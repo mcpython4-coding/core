@@ -13,7 +13,7 @@ from mcpython import shared as G, logger
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.client.gui.ItemStack
-import mcpython.client.gui.crafting.FurnaceCrafting
+import mcpython.client.gui.crafting.FurnaceCraftingHelper
 import mcpython.common.event.EventHandler
 import pyglet
 import time
@@ -86,7 +86,8 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
                     logger.println(
                         "[FUEL][WARNING] item '{}' was marked as fuel but did NOT have FUEL-attribute".format(
                             self.slots[1].itemstack.get_item_name()
-                        ))
+                        )
+                    )
                     self.reset()
                     return
                 self.slots[1].itemstack.add_amount(-1)
@@ -114,7 +115,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
                 #           self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
                 self.reset()
                 return
-            self.recipe: mcpython.client.gui.crafting.FurnaceCrafting.FurnaceRecipe = (
+            self.recipe: mcpython.client.gui.crafting.FurnaceCraftingHelper.FurnaceRecipe = (
                 recipe
             )
             self.block.active = True

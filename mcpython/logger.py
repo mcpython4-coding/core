@@ -67,7 +67,9 @@ if not os.path.exists(shared.home + "/logs"):
     os.makedirs(shared.home + "/logs")
 
 log_file_path = datetime.now().strftime(shared.home + "/logs/log_%d.%m.%y_%H.%M.%S.txt")
-execute_able_source = os.path.dirname(sys.executable).replace("\\", "/")  # execute-able home
+execute_able_source = os.path.dirname(sys.executable).replace(
+    "\\", "/"
+)  # execute-able home
 
 
 ESCAPE = {
@@ -168,11 +170,13 @@ def write_into_container(
         println(horizontal_line)
         [println(empty_line) for _ in range(empty_lines_before_separate)]
         for line in area:
-            println(style[2]
-                    + " " * outer_line_distance
-                    + str(line)
-                    + " " * (outer_line_distance + max_characters_in_line - len(str(line)))
-                    + style[2])
+            println(
+                style[2]
+                + " " * outer_line_distance
+                + str(line)
+                + " " * (outer_line_distance + max_characters_in_line - len(str(line)))
+                + style[2]
+            )
         [println(empty_line) for _ in range(empty_lines_before_separate)]
     println(horizontal_line)
 
@@ -205,19 +209,22 @@ def print_stack(*info):
 
 
 # todo: add function for this
-println("""MCPYTHON version {} ({}) running on {}
+println(
+    """MCPYTHON version {} ({}) running on {}
 machine: {}
 processor: {}
 python version: {}, implementation: {}
 """.format(
-    mcpython.common.config.VERSION_NAME,
-    mcpython.common.config.VERSION_TYPE,
-    platform.system().replace("Darwin", "MacOS"),
-    platform.machine(),
-    platform.processor(),
-    platform.python_version(),
-    platform.python_implementation(),
-), console=False)
+        mcpython.common.config.VERSION_NAME,
+        mcpython.common.config.VERSION_TYPE,
+        platform.system().replace("Darwin", "MacOS"),
+        platform.machine(),
+        platform.processor(),
+        platform.python_version(),
+        platform.python_implementation(),
+    ),
+    console=False,
+)
 
 
 def add_funny_line():

@@ -59,7 +59,7 @@ class IDataSerializer(mcpython.common.event.Registry.IRegistryContent):
 
 
 dataserializerregistry = mcpython.common.event.Registry.Registry(
-    "dataserializer", ["minecraft:data_serializer"]
+    "dataserializer", ["minecraft:data_serializer"], "stage:serializer:parts"
 )
 
 

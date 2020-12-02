@@ -63,11 +63,11 @@ class StateBlockItemGenerator(State.State):
                 (10, 10),
                 (G.window.get_size()[0] - 20, 20),
                 progress_items=len(
-                    G.registry.get_by_name("block").registered_object_map.values()
+                    G.registry.get_by_name("block").entries.values()
                 ),
                 status=1,
                 text="0/{}: {}".format(
-                    len(G.registry.get_by_name("block").registered_object_map), None
+                    len(G.registry.get_by_name("block").entries), None
                 ),
             ),
             mcpython.client.state.StateModLoading.modloading.parts[3],
@@ -102,7 +102,7 @@ class StateBlockItemGenerator(State.State):
                 "[FATAL] failed to open world for blockitemgenerator"
             )
             sys.exit(-1)
-        self.tasks = list(G.registry.get_by_name("block").registered_object_map.keys())
+        self.tasks = list(G.registry.get_by_name("block").entries.keys())
         if not os.path.isdir(G.build + "/generated_items"):
             os.makedirs(G.build + "/generated_items")
         if not G.prebuilding:
@@ -111,7 +111,7 @@ class StateBlockItemGenerator(State.State):
                     self.table = json.load(f)
             else:  # make sure it is was reset
                 self.table.clear()
-            items = G.registry.get_by_name("item").registered_object_map
+            items = G.registry.get_by_name("item").entries
             for task in self.tasks[:]:
                 if task in items:
                     self.tasks.remove(task)
@@ -232,17 +232,21 @@ class StateBlockItemGenerator(State.State):
 
     def _error_counter(self, image, blockname):
         if self.tries >= 10:
-            logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
-                self.tasks[self.blockindex]
-            ))
+            logger.println(
+                "[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
+                    self.tasks[self.blockindex]
+                )
+            )
             self.last_image = image
             file = G.build + "/blockitemgenerator_fail_{}_of_{}.png".format(
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__")
             )
             image.save(file)
-            logger.println("[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(
-                file
-            ))
+            logger.println(
+                "[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(
+                    file
+                )
+            )
             file = "assets/missing_texture.png"  # use missing texture instead
             self.generate_item(blockname, file)
             mcpython.common.event.TickHandler.handler.bind(
@@ -261,7 +265,7 @@ class StateBlockItemGenerator(State.State):
         self.tries += 1
 
     def generate_item(self, blockname, file):
-        if blockname in G.registry.get_by_name("item").registered_object_map:
+        if blockname in G.registry.get_by_name("item").entries:
             return
         self.table.append([blockname, file])
         obj = (

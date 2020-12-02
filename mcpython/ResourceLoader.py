@@ -92,7 +92,9 @@ class IResourceLocator(ABC):
         Called when the resource path should be closed
         """
 
-    def get_all_entries_in_directory(self, directory: str, go_sub=True) -> typing.Iterator[str]:
+    def get_all_entries_in_directory(
+        self, directory: str, go_sub=True
+    ) -> typing.Iterator[str]:
         """
         Should return all entries in an local directory
         :param directory: the directory to check
@@ -131,7 +133,9 @@ class ResourceZipFile(IResourceLocator):
     def close(self):
         self.archive.close()
 
-    def get_all_entries_in_directory(self, directory: str, go_sub=True) -> typing.Iterator[str]:
+    def get_all_entries_in_directory(
+        self, directory: str, go_sub=True
+    ) -> typing.Iterator[str]:
         for entry in self.namelist_cache:
             if entry.startswith(directory):
                 if go_sub or (
@@ -166,18 +170,24 @@ class ResourceDirectory(IResourceLocator):
     def read_image(self, path) -> PIL.Image.Image:
         return PIL.Image.open(os.path.join(self.path, path))
 
-    def get_all_entries_in_directory(self, directory: str, go_sub=True) -> typing.Iterator[str]:
+    def get_all_entries_in_directory(
+        self, directory: str, go_sub=True
+    ) -> typing.Iterator[str]:
         if not os.path.isdir(self.path + "/" + directory):
             return []
         if not go_sub:
-            return ((f := os.path.join(self.path, directory, e)) + ("" if os.path.isdir(f) else "/") for e in os.listdir(directory))
+            return (
+                (f := os.path.join(self.path, directory, e))
+                + ("" if os.path.isdir(f) else "/")
+                for e in os.listdir(directory)
+            )
         for root, dirs, files in os.walk(self.path + "/" + directory):
             for name in files:
                 file = os.path.join(root, name).replace("\\", "/")
-                yield "/".join(file.split("/")[self.path.count("/") + 1:])
+                yield "/".join(file.split("/")[self.path.count("/") + 1 :])
             for name in dirs:
                 file = os.path.join(root, name).replace("\\", "/")
-                yield "/".join(file.split("/")[self.path.count("/") + 1:]) + "/"
+                yield "/".join(file.split("/")[self.path.count("/") + 1 :]) + "/"
 
 
 RESOURCE_PACK_LOADERS = [
@@ -208,9 +218,11 @@ def load_resource_packs():
                 RESOURCE_LOCATIONS.append(source(file))
                 flag = False
         if flag:
-            logger.println("[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(
-                file
-            ))
+            logger.println(
+                "[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(
+                    file
+                )
+            )
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
@@ -228,10 +240,14 @@ def load_resource_packs():
     )  # for local access, may be not needed
     RESOURCE_LOCATIONS.append(ResourceDirectory(shared.home))
     RESOURCE_LOCATIONS.append(ResourceDirectory(shared.build))
-    if shared.dev_environment:  # only in dev-environment we need these special folders...
+    if (
+        shared.dev_environment
+    ):  # only in dev-environment we need these special folders...
         print(shared.local)
         RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/main"))
-        RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/generated"))
+        RESOURCE_LOCATIONS.append(
+            ResourceDirectory(shared.local + "/resources/generated")
+        )
         RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/source"))
     shared.eventhandler.call("resources:load")
 
@@ -276,9 +292,11 @@ def transform_name(file: str, raise_on_error=True) -> str:
             )
         return f
     if raise_on_error:
-        logger.println("can't find '{}' in resource system. Replacing with missing texture image...".format(
-            file
-        ))
+        logger.println(
+            "can't find '{}' in resource system. Replacing with missing texture image...".format(
+                file
+            )
+        )
         return "assets/missing_texture.png"
     return file
 
@@ -420,10 +438,12 @@ def get_all_entries_special(directory: str) -> typing.Iterator[str]:
     """
     iterators = []
     for x in RESOURCE_LOCATIONS:
-        iterators.append((
-            "@{}|{}".format(x.path, s)
-            for s in x.get_all_entries_in_directory(directory)
-        ))
+        iterators.append(
+            (
+                "@{}|{}".format(x.path, s)
+                for s in x.get_all_entries_in_directory(directory)
+            )
+        )
     return itertools.chain.from_iterable(iterators)
 
 
@@ -437,7 +457,7 @@ def add_resources_by_modname(modname, pathname=None):
         pathname = modname
     from mcpython.client.rendering.model.BlockState import BlockStateDefinition
     import mcpython.client.Language
-    import mcpython.client.gui.crafting.CraftingHandler
+    import mcpython.client.gui.crafting.CraftingManager
     import mcpython.common.data.tags.TagHandler
     import mcpython.common.data.loot.LootTable
 

@@ -15,7 +15,7 @@ import mcpython.client.chat.Chat
 import mcpython.common.entity.Entity
 import mcpython.common.event.EventHandler
 import mcpython.client.gui.InventoryChest
-import mcpython.client.gui.InventoryPlayerMain
+import mcpython.client.gui.MainPlayerInventory
 import mcpython.client.gui.ItemStack
 import mcpython.client.gui.Slot
 import mcpython.common.mod.ModMcpython
@@ -119,7 +119,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         hotbar = self.inventories["hotbar"] = InvHotbar.InventoryPlayerHotbar()
         self.inventories[
             "main"
-        ] = mcpython.client.gui.InventoryPlayerMain.InventoryPlayerMain(hotbar)
+        ] = mcpython.client.gui.MainPlayerInventory.MainPlayerInventory(hotbar)
         self.inventories["chat"] = mcpython.client.chat.Chat.ChatInventory()
         self.inventories[
             "enderchest"
@@ -301,7 +301,9 @@ class Player(mcpython.common.entity.Entity.Entity):
         if not shared.world.gamerulehandler.table["keepInventory"].status.status:
             shared.commandparser.parse("/clear")  # todo: drop items
         if shared.world.gamerulehandler.table["showDeathMessages"].status.status:
-            logger.println("[CHAT] player {} died".format(self.name))  # todo: add death screen
+            logger.println(
+                "[CHAT] player {} died".format(self.name)
+            )  # todo: add death screen
         self.set_to_spawn_point()
         self.active_inventory_slot = 0
         shared.window.dy = 0

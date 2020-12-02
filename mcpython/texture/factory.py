@@ -87,6 +87,7 @@ G.texturefactoryhandler = TextureFactory()
 texturechanges = mcpython.common.event.Registry.Registry(
     "texturechanges",
     ["minecraft:texture_change"],
+    "stage:prebuild:addition",
     injection_function=TextureFactory.add_transform,
 )
 

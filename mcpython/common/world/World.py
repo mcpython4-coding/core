@@ -24,7 +24,7 @@ import mcpython.util.math
 import mcpython.common.world.Chunk
 import mcpython.common.world.Dimension
 import mcpython.common.world.GameRule
-import mcpython.server.gen.WorldGenerationHandler
+import mcpython.server.worldgen.WorldGenerationHandler
 import mcpython.common.world.player
 
 

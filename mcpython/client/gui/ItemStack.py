@@ -25,13 +25,15 @@ class ItemStack:
         elif type(item_name_or_instance) == str:
             if (
                 item_name_or_instance
-                in G.registry.get_by_name("item").registered_object_map
+                in G.registry.get_by_name("item").entries
             ):
-                self.item = G.registry.get_by_name("item").registered_object_map[
+                self.item = G.registry.get_by_name("item").entries[
                     item_name_or_instance
                 ]()
             else:
-                logger.println("[FATAL] can't find item named '{}'".format(item_name_or_instance))
+                logger.println(
+                    "[FATAL] can't find item named '{}'".format(item_name_or_instance)
+                )
                 self.item = None
         else:
             self.item = None

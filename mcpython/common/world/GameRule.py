@@ -89,7 +89,7 @@ class GameRule(mcpython.common.event.Registry.IRegistryContent):
 
 
 gamerule_registry = mcpython.common.event.Registry.Registry(
-    "gamerule", ["minecraft:game_rule"]
+    "gamerule", ["minecraft:game_rule"], "stage:command:gamerules"
 )
 
 
@@ -176,7 +176,7 @@ class GameRuleHitTestSteps(GameRule):
 class GameRuleHandler:
     def __init__(self, world):
         self.table = {}
-        for gamerule in gamerule_registry.registered_object_map.keys():
-            self.table[gamerule] = gamerule_registry.registered_object_map[gamerule](
+        for gamerule in gamerule_registry.entries.keys():
+            self.table[gamerule] = gamerule_registry.entries[gamerule](
                 world
             )

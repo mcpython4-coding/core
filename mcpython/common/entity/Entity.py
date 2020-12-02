@@ -93,9 +93,11 @@ class Entity(mcpython.common.event.Registry.IRegistryContent):
 
     def set_position(self, position: tuple):
         if type(position) not in (tuple, list, set):
-            logger.println("[FATAL] invalid position for set_position() on {} '{}'".format(
-                self, position
-            ))
+            logger.println(
+                "[FATAL] invalid position for set_position() on {} '{}'".format(
+                    self, position
+                )
+            )
             traceback.print_exc()
             return
         self.teleport(position)

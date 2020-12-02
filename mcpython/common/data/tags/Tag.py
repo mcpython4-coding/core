@@ -63,9 +63,11 @@ class Tag:
             if entry.startswith("#"):
                 if entry not in self.master.tags:
                     if self.load_tries > 4:
-                        logger.println("[TAG][FATAL] failed to load tag {} as tag {} was not found".format(
-                            self.name, entry
-                        ))
+                        logger.println(
+                            "[TAG][FATAL] failed to load tag {} as tag {} was not found".format(
+                                self.name, entry
+                            )
+                        )
                         self.load_tries = 0
                         old_entries.remove(entry)
                         continue

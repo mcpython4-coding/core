@@ -17,7 +17,7 @@ import pyglet
 from pyglet.window import key
 
 from mcpython import shared as G, logger
-import mcpython.client.chat.command.CommandHandler
+import mcpython.server.command.CommandHandler
 import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler
 import mcpython.client.gui.Inventory
@@ -34,7 +34,7 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         creates an new Chat-instance
         """
         super().__init__()
-        self.lable = pyglet.text.HTMLLabel("", x=15, y=15)
+        self.label = pyglet.text.HTMLLabel("", x=15, y=15)
         self.enable_blink = True
         self.timer = time.time()
         self.eventbus = G.eventhandler.create_bus(active=False)
@@ -48,16 +48,16 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         :param underline_index: the index where the "_" is
         """
         if len(text) < underline_index:
-            self.lable.text = "<font color='white'>" + text + "_</font>"
+            self.label.text = "<font color='white'>" + text + "_</font>"
             return
         try:
-            self.lable.text = "<font color='white'>{}<u>{}</u>{}</font>".format(
+            self.label.text = "<font color='white'>{}<u>{}</u>{}</font>".format(
                 text[:underline_index],
                 text[underline_index],
                 text[1 + underline_index :],
             )
         except IndexError:
-            self.lable.text = (
+            self.label.text = (
                 "<font color='white'>" + text + "<span>&#95;</span></font>"
             )
 
@@ -93,8 +93,8 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         if (round(time.time() - self.timer) % 2) == 1:
             self.update_text(text, G.chat.active_index)
         else:
-            self.lable.text = "<font color='white'>" + text + "</font>"
-        self.lable.draw()
+            self.label.text = "<font color='white'>" + text + "</font>"
+        self.label.draw()
 
 
 class Chat:
@@ -150,7 +150,9 @@ class Chat:
         elif symbol == key.ENTER:  # execute command
             self.CANCEL_INPUT = False
             G.eventhandler.call("chat:text_enter", self.text)
-            logger.println("[CHAT][INFO] entered text: '{}'".format(self.text), console=False)
+            logger.println(
+                "[CHAT][INFO] entered text: '{}'".format(self.text), console=False
+            )
             if self.CANCEL_INPUT:
                 self.history.insert(0, self.text)
                 self.close()

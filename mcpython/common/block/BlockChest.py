@@ -167,15 +167,19 @@ class BlockChest(Block.Block):
         if "model" in data:
             self.set_model_state(data["model"])
         else:
-            logger.println("[SERIALIZER][WARN] BlockChest at {} is missing model state in save files".format(
-                self.position
-            ))
+            logger.println(
+                "[SERIALIZER][WARN] BlockChest at {} is missing model state in save files".format(
+                    self.position
+                )
+            )
         if "loot_table" in data:
             self.loot_table_link = data["loot_table"]
         else:
-            logger.println("[SERIALIZER][WARN] BlockChest at {} is missing loot table in save files".format(
-                self.position
-            ))
+            logger.println(
+                "[SERIALIZER][WARN] BlockChest at {} is missing loot table in save files".format(
+                    self.position
+                )
+            )
 
 
 @G.modloader("minecraft", "stage:block:load")

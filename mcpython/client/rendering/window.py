@@ -270,9 +270,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
 
         # todo: change to attribute in State-class
         if dt > 3 and G.statehandler.active_state.NAME not in ["minecraft:modloading"]:
-            logger.println("[warning] running behind normal tick, did you overload game? missing "
-                           + str(dt - 0.05)
-                           + " seconds")
+            logger.println(
+                "[warning] running behind normal tick, did you overload game? missing "
+                + str(dt - 0.05)
+                + " seconds"
+            )
         if any(
             type(x) == mcpython.client.state.StatePartGame.StatePartGame
             for x in G.statehandler.active_state.parts

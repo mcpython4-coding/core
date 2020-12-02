@@ -139,9 +139,9 @@ class LootTableHandler:
         name = data["function"]
         if (
             name
-            in mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.registered_object_map
+            in mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.entries
         ):
-            return mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.registered_object_map[
+            return mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.entries[
                 name
             ](
                 data
@@ -154,9 +154,9 @@ class LootTableHandler:
         name = data["condition"]
         if (
             name
-            in mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.registered_object_map
+            in mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.entries
         ):
-            return mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.registered_object_map[
+            return mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.entries[
                 name
             ](
                 data
@@ -326,9 +326,11 @@ class LootTable:
             )
         except KeyError:
             if "type" in data:
-                logger.println("[WARN] type '{}' not found for loot table '{}'!".format(
-                    data["type"], name
-                ))
+                logger.println(
+                    "[WARN] type '{}' not found for loot table '{}'!".format(
+                        data["type"], name
+                    )
+                )
             else:
                 logger.print_exception(
                     "[ERROR] fatal during loading loot table '{}'".format(name)

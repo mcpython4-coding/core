@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.gui.crafting.GridRecipes
+import mcpython.client.gui.crafting.GridRecipeInstances
 import deprecation
 
 
@@ -30,7 +30,7 @@ class ShapedCraftingRecipeFactory:
 
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish(self):
-        mcpython.client.gui.crafting.GridRecipes.GridShaped(
+        mcpython.client.gui.crafting.GridRecipeInstances.GridShaped(
             self.grid, self.output
         ).register()
 
@@ -51,4 +51,6 @@ class ShapelessCraftingRecipeFactory:
 
     @deprecation.deprecated("dev2-2", "a1.5.0")
     def finish(self):
-        mcpython.client.gui.crafting.GridRecipes.GridShapeless(self.items, self.output)
+        mcpython.client.gui.crafting.GridRecipeInstances.GridShapeless(
+            self.items, self.output
+        )
