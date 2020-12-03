@@ -1,7 +1,7 @@
 {
     "textures": {
-        "particle": "minecraft:block/brewing_stand",
-        "stand": "minecraft:block/brewing_stand"
+        "particle": "block/brewing_stand",
+        "stand": "block/brewing_stand"
     },
     "elements": [
         {   "from": [ -0.41, 0, 8 ],

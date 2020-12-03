@@ -1,9 +1,9 @@
-{   "parent": "minecraft:block/block",
+{   "parent": "block/block",
     "textures": {
-        "particle": "minecraft:block/end_portal_frame_side",
-        "bottom": "minecraft:block/end_stone",
-        "top": "minecraft:block/end_portal_frame_top",
-        "side": "minecraft:block/end_portal_frame_side"
+        "particle": "block/end_portal_frame_side",
+        "bottom": "block/end_stone",
+        "top": "block/end_portal_frame_top",
+        "side": "block/end_portal_frame_side"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

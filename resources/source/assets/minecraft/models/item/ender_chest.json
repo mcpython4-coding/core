@@ -1,6 +1,6 @@
 {
     "parent": "item/chest",
     "textures": {
-        "particle": "minecraft:block/obsidian"
+        "particle": "block/obsidian"
     }
 }

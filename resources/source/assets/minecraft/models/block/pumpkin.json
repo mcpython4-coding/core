@@ -1,5 +1,5 @@
 {
-    "parent": "minecraft:block/cube_column",
+    "parent": "block/cube_column",
     "display": {
         "firstperson_righthand": {
             "rotation": [ 0, 135, 0 ],
@@ -8,7 +8,7 @@
         }
     },
     "textures": {
-        "end": "minecraft:block/pumpkin_top",
-        "side": "minecraft:block/pumpkin_side"
+        "end": "block/pumpkin_top",
+        "side": "block/pumpkin_side"
     }
 }

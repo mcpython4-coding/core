@@ -1,4 +1,4 @@
-{   "parent": "minecraft:block/block",
+{   "parent": "block/block",
     "textures": {
         "particle": "#texture"
     },

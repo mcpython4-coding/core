@@ -1,9 +1,9 @@
-{   "parent": "minecraft:block/block",
+{   "parent": "block/block",
     "ambientocclusion": false,
     "textures": {
-        "texture": "minecraft:block/chorus_plant",
-        "inside": "minecraft:block/chorus_plant",
-        "particle": "minecraft:block/chorus_plant"
+        "texture": "block/chorus_plant",
+        "inside": "block/chorus_plant",
+        "particle": "block/chorus_plant"
     },
     "elements": [
         {   "from": [ 2, 14, 2 ],

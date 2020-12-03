@@ -1,13 +1,13 @@
 {
-    "parent": "minecraft:block/block",
+    "parent": "block/block",
     "display": {
         "head": {
             "translation": [ 0, 10.5, 0 ]
         }
     },
     "textures": {
-        "particle": "minecraft:block/campfire_log",
-        "log": "minecraft:block/campfire_log"
+        "particle": "block/campfire_log",
+        "log": "block/campfire_log"
     },
     "elements": [
         {

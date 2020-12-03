@@ -1,7 +1,7 @@
 {
     "textures": {
-        "particle": "minecraft:block/nether_portal",
-        "portal": "minecraft:block/nether_portal"
+        "particle": "block/nether_portal",
+        "portal": "block/nether_portal"
     },
     "elements": [
         {   "from": [ 0, 0, 6 ],

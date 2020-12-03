@@ -1,8 +1,8 @@
 {
-    "parent": "minecraft:block/block",
+    "parent": "block/block",
     "textures": {
-        "particle": "minecraft:block/sea_pickle",
-        "all": "minecraft:block/sea_pickle"
+        "particle": "block/sea_pickle",
+        "all": "block/sea_pickle"
     },
     "elements": [
         {   "from": [ 2, 0, 2 ],

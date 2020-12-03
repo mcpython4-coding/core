@@ -1,9 +1,9 @@
 {
     "ambientocclusion": false,
     "textures": {
-        "particle": "minecraft:block/cobblestone",
-        "base": "minecraft:block/cobblestone",
-        "lever": "minecraft:block/lever"
+        "particle": "block/cobblestone",
+        "base": "block/cobblestone",
+        "lever": "block/lever"
     },
     "elements": [
         {   "from": [ 5, 0, 4 ],

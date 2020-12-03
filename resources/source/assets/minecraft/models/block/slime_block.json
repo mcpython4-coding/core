@@ -1,7 +1,7 @@
-{   "parent": "minecraft:block/block",
+{   "parent": "block/block",
     "textures": {
-        "particle": "minecraft:block/slime_block",
-        "texture": "minecraft:block/slime_block"
+        "particle": "block/slime_block",
+        "texture": "block/slime_block"
     },
     "elements": [
         {   "from": [ 3, 3, 3 ],

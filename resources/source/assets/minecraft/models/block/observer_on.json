@@ -1,6 +1,6 @@
 {
-    "parent": "minecraft:block/observer",
+    "parent": "block/observer",
     "textures": {
-        "bottom": "minecraft:block/observer_back_on"
+        "bottom": "block/observer_back_on"
     }
 }

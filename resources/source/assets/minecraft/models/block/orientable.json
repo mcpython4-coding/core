@@ -1,5 +1,5 @@
 {
-    "parent": "minecraft:block/orientable_with_bottom",
+    "parent": "block/orientable_with_bottom",
     "textures": {
         "bottom": "#top"
     }

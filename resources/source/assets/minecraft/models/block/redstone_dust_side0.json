@@ -1,6 +1,6 @@
 {
-    "parent": "minecraft:block/redstone_dust_side",
+    "parent": "block/redstone_dust_side",
     "textures": {
-        "line": "minecraft:block/redstone_dust_line0"
+        "line": "block/redstone_dust_line0"
     }
 }

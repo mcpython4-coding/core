@@ -1,10 +1,10 @@
 {
     "ambientocclusion": false,
     "textures": {
-        "particle": "minecraft:block/repeater_on",
-        "slab": "minecraft:block/smooth_stone",
-        "top": "minecraft:block/repeater_on",
-        "lit": "minecraft:block/redstone_torch"
+        "particle": "block/repeater_on",
+        "slab": "block/smooth_stone",
+        "top": "block/repeater_on",
+        "lit": "block/redstone_torch"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

@@ -1,4 +1,4 @@
-{   "parent": "minecraft:block/thin_block",
+{   "parent": "block/thin_block",
     "textures": {
         "particle": "#texture"
     },

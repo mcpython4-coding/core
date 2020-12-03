@@ -1,11 +1,11 @@
 {
-    "parent": "minecraft:block/block",
+    "parent": "block/block",
     "textures": {
-        "bottom": "minecraft:block/observer_back",
-        "side": "minecraft:block/observer_side",
-        "top": "minecraft:block/observer_top",
-        "front": "minecraft:block/observer_front",
-        "particle": "minecraft:block/observer_front"
+        "bottom": "block/observer_back",
+        "side": "block/observer_side",
+        "top": "block/observer_top",
+        "front": "block/observer_front",
+        "particle": "block/observer_front"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

@@ -1,5 +1,5 @@
 {
-    "parent": "minecraft:block/cube",
+    "parent": "block/cube",
     "display": {
         "firstperson_righthand": {
             "rotation": [ 0, 135, 0 ],

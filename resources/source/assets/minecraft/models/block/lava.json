@@ -1,6 +1,6 @@
 {
     "textures": {
-        "particle": "minecraft:block/lava_still"
+        "particle": "block/lava_still"
     }
 }
 
