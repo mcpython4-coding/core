@@ -111,10 +111,6 @@ class Chunk:
         for entity in self.entities:
             entity.draw()
 
-    @deprecation.deprecated("dev3-1", "a1.3.0")
-    def exposed(self, position):
-        return any(self.exposed_faces(position).values())
-
     def exposed_faces(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Dict[mcpython.util.enums.EnumSide, bool]:
@@ -361,10 +357,6 @@ class Chunk:
         self.visible = False
         self.hide_all()
 
-    @deprecation.deprecated("dev1-4", "a1.4.0")
-    def update_visable_block(self, position, hide=True):
-        self.update_visible_block(position, hide)
-
     def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
         self.positions_updated_since_last_save.add(position)
         if not self.exposed(position):
@@ -372,9 +364,8 @@ class Chunk:
         elif hide:
             self.show_block(position)
 
-    @deprecation.deprecated("dev1-4", "a1.4.0")
-    def update_visable(self, hide=True, immediate=False):
-        self.update_visible(hide, immediate)
+    def exposed(self, position):
+        return any(self.exposed_faces(position).values())
 
     def update_visible(self, hide=True, immediate=False):
         """

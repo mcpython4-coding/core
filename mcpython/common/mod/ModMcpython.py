@@ -54,7 +54,8 @@ mcpython = mcpython.common.mod.Mod.Mod(
 
 
 def init():
-    pass
+    import mcpython.common.data.loot.LootTable
+    import mcpython.common.entity.EntityHandler
 
 
 mcpython.eventbus.subscribe("stage:mod:init", init)

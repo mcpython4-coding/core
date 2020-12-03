@@ -1303,12 +1303,13 @@ F   [uuk]: implemented DeferredRegistryPipe
 R   [uuk]: renamed block base class to AbstractBlock
 R   [uuk]: refactored & changed block API
 [B] [uuk]: ResourceLoader.get_all_entries_special() was doing weired stuff
+F   [uuk]: installer.py will download assets separately, they are no longer included in the main system
+F   [uuk]: updated assets to 20w49a
 
 Roadmap:
     - refactor classes & functions [WIP]
     - create doc  [WIP] & unit tests for code
     - revisit build system
-    - change resource loading system
     - remove OpenGLSetupFile system
     - change how data generators work
     - add client & server annotations, check code for side
@@ -1317,7 +1318,6 @@ Roadmap:
     - fix item atlases
     - remove setup / prebuild system COMPLETELY
     - remove all deprecated stuff   [WIP]
-    - upgrade blocks & textures to 1.16.4 or latest snapshot
     - rewrite how assets are stored
     - do not hardcode ANY constants, move them to an public space / config files / resource data
     - clean up changelog.txt, issues.txt and fixed_issues.txt
@@ -1326,3 +1326,4 @@ Roadmap:
     - there should be an interface called ITagable containing an class constructor for creating an list of tags these
         class has, for not needing an lookup in the tag system
     - player inventories should be stored as attributes, not in an dict
+    - fix item rendering in hotbar

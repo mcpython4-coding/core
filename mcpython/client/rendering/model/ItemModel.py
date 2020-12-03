@@ -62,7 +62,8 @@ class DefaultLoader(IItemModelLoader):
         if "gui_light" in data:
             model.lighting = data["gui_light"]
         if "elements" in data:
-            print("[FATAL] failed to decode elements tag!")
+            logger.println("[FATAL] failed to decode elements tag of {} as it is NOT implemented!".format(model))
+            # todo: implement!
         if "overrides" in data:
             for case in data["overrides"]:
                 model.addOverride(case["predicate"], case["model"])
@@ -88,6 +89,9 @@ class ItemModel:
         self.displays = {}
         self.layers = []
         self.overrides = []
+
+    def __repr__(self):
+        return "ItemModel(of='{}')".format(self.item)
 
     def addParent(self, parent: str):
         self.parents.append(parent)

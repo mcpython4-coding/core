@@ -84,11 +84,6 @@ class ModelHandler:
 
     def special_build(self, used: str):
         if used.count(":") == 0:
-            logger.println(
-                "[WARN] deprecated access to model without minecraft-prefix to '{}'".format(
-                    used
-                )
-            )
             used = "minecraft:" + used
         if used not in self.found_models:
             # logger.println("model error: can't locate model for '{}'".format(used))

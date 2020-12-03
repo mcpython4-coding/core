@@ -86,10 +86,10 @@ class LoadingStage:
         new_stage = LOADING_ORDER[G.modloader.active_loading_stage]
         if (
             new_stage.eventnames[0]
-            in G.modloader.mods[G.modloader.modorder[0]].eventbus.event_subscriptions
+            in G.modloader.mods[G.modloader.mod_loading_order[0]].eventbus.event_subscriptions
         ):
             astate.parts[2].progress_max = len(
-                G.modloader.mods[G.modloader.modorder[0]].eventbus.event_subscriptions[
+                G.modloader.mods[G.modloader.mod_loading_order[0]].eventbus.event_subscriptions[
                     new_stage.eventnames[0]
                 ]
             )
@@ -109,7 +109,7 @@ class LoadingStage:
                 0
             )  # todo: is there an better way?
             modinst: mcpython.common.mod.Mod.Mod = G.modloader.mods[
-                G.modloader.modorder[self.active_mod_index]
+                G.modloader.mod_loading_order[self.active_mod_index]
             ]
             if not G.eventhandler.call_cancelable(
                 "modloader:mod_entered_stage",
@@ -129,7 +129,7 @@ class LoadingStage:
             if len(self.eventnames) == 0:
                 return self.finish(astate)
             self.active_event_name = self.eventnames.pop(0)
-        modname = G.modloader.modorder[self.active_mod_index]
+        modname = G.modloader.mod_loading_order[self.active_mod_index]
         modinst: mcpython.common.mod.Mod.Mod = G.modloader.mods[modname]
         try:
             modinst.eventbus.call_as_stack(self.active_event_name)
@@ -141,7 +141,7 @@ class LoadingStage:
                     return self.finish(astate)
                 self.active_event_name = self.eventnames.pop(0)
                 modinst: mcpython.common.mod.Mod.Mod = G.modloader.mods[
-                    G.modloader.modorder[self.active_mod_index]
+                    G.modloader.mod_loading_order[self.active_mod_index]
                 ]
                 if self.active_event_name in modinst.eventbus.event_subscriptions:
                     self.max_progress = len(
@@ -153,7 +153,7 @@ class LoadingStage:
                 astate.parts[2].progress = 0
                 return
             modinst: mcpython.common.mod.Mod.Mod = G.modloader.mods[
-                G.modloader.modorder[self.active_mod_index]
+                G.modloader.mod_loading_order[self.active_mod_index]
             ]
             if self.active_event_name in modinst.eventbus.event_subscriptions:
                 self.max_progress = len(
@@ -425,23 +425,23 @@ class ModLoaderAnnotation:
 
 class ModLoader:
     """
-    the mod loader class
+    The mod loader class
     """
 
     def __init__(self):
         """
         creates an new modloader-instance
         """
-        self.found_mods = []
+        self.located_mods = []
         self.mods = {}
-        self.modorder = []
+        self.mod_loading_order = []
         self.active_directory = None
         self.active_loading_stage = 0
-        self.lasttime_mods = {}
-        self.found_mod_instances = []
+        self.previous_mods = {}
+        self.located_mod_instances = []
         if os.path.exists(G.build + "/mods.json"):
             with open(G.build + "/mods.json") as f:
-                self.lasttime_mods = json.load(f)
+                self.previous_mods = json.load(f)
         elif not G.prebuilding:
             logger.println(
                 "[WARNING] can't locate mods.json in build-folder. This may be an error"
@@ -462,7 +462,7 @@ class ModLoader:
     def execute_reload_stages(self):
         for event_name in self.reload_stages:
             for i in range(len(self.mods)):
-                instance = G.modloader.mods[G.modloader.modorder[i]]
+                instance = G.modloader.mods[G.modloader.mod_loading_order[i]]
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
 
@@ -476,10 +476,14 @@ class ModLoader:
         """
         return ModLoaderAnnotation(modname, eventname, info)
 
+    def __getitem__(self, item):
+        return self.mods[item]
+
     @classmethod
     def get_locations(cls) -> list:
         """
         will return an list of mod locations found for loading
+        todo: split up into smaller portions
         """
         modlocations = []
         locs = [G.home + "/mods"]
@@ -523,13 +527,13 @@ class ModLoader:
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
         return modlocations
 
-    def load_mod_jsons(self, modlocations: list):
+    def load_mod_jsons(self, locations: list):
         """
         will load the mod description files for the given locations and parse their content
-        :param modlocations: the locations found
+        :param locations: the locations found
         """
-        for file in modlocations:
-            self.found_mod_instances.clear()
+        for file in locations:
+            self.located_mod_instances.clear()
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
@@ -561,7 +565,7 @@ class ModLoader:
                         data = importlib.import_module(
                             file.split("/")[-1].split("\\")[-1].split(".")[0]
                         )
-                    for modinst in self.found_mod_instances:
+                    for modinst in self.located_mod_instances:
                         modinst.package = data
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
@@ -611,10 +615,10 @@ class ModLoader:
         """
         will check for changes between versions
         """
-        logger.println("found mod(s): {}".format(len(self.found_mods)))
-        for modname in self.lasttime_mods.keys():
+        logger.println("found mod(s): {}".format(len(self.located_mods)))
+        for modname in self.previous_mods.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(
-                self.lasttime_mods[modname]
+                self.previous_mods[modname]
             ):
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
                 logger.println(
@@ -625,7 +629,7 @@ class ModLoader:
                 G.prebuilding = True
                 G.data_gen = True
         for modname in self.mods.keys():
-            if modname not in self.lasttime_mods:  # any new mods?
+            if modname not in self.previous_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
                 G.prebuilding = True
                 G.data_gen = True
@@ -664,11 +668,6 @@ class ModLoader:
             )
         else:
             cls.load_json(data, file)
-
-    @classmethod
-    @deprecation.deprecated("dev1:2", "a1.2.0")
-    def load_new_json(cls, data: dict, file: str):
-        cls.load_json(data, file)
 
     @classmethod
     def load_json(cls, data: dict, file: str):
@@ -805,28 +804,6 @@ class ModLoader:
             c["versions"] = depend["versions"]
         return mcpython.common.mod.Mod.ModDependency(depend["name"], **c)
 
-    @staticmethod
-    @deprecation.deprecated("dev1:2", "a1.3.0")
-    def _load_from_old_json(data: dict, file: str):
-        if "main files" in data:
-            files = data["main files"]
-            for location in files if type(files) == list else [files]:
-                try:
-                    importlib.import_module(
-                        location.replace("/", ".").replace("\\", ".")
-                    )
-                except ModuleNotFoundError:
-                    logger.println(
-                        "[MODLOADER][ERROR] can't load mod file {}".format(location)
-                    )
-                    return
-        else:
-            logger.println(
-                "[ERROR] mod.json of '{}' does NOT contain an 'main files'-attribute".format(
-                    file
-                )
-            )
-
     def load_mods_toml(self, data: str, file):
         """
         will load an toml-data-object
@@ -861,7 +838,7 @@ class ModLoader:
         self.load_from_decoded_json(
             {"main files": [e["importable"] for e in data["main_files"]]}, file
         )
-        for modinstance in self.found_mod_instances:
+        for modinstance in self.located_mod_instances:
             modinstance.add_dependency(
                 mcpython.common.mod.Mod.ModDependency("minecraft", mc_version)
             )
@@ -872,17 +849,17 @@ class ModLoader:
                     self.mods[modname].add_dependency(dependname)
                     # todo: add version loader
 
-    def add_to_add(self, modinstance: mcpython.common.mod.Mod.Mod):
+    def add_to_add(self, instance: mcpython.common.mod.Mod.Mod):
         """
         will add an mod-instance into the inner system
-        :param modinstance: the mod instance to add
+        :param instance: the mod instance to add
         """
-        if not G.eventhandler.call_cancelable("modloader:mod_registered", modinstance):
+        if not G.eventhandler.call_cancelable("modloader:mod_registered", instance):
             return
-        self.mods[modinstance.name] = modinstance
-        self.found_mods.append(modinstance)
-        modinstance.path = self.active_directory
-        self.found_mod_instances.append(modinstance)
+        self.mods[instance.name] = instance
+        self.located_mods.append(instance)
+        instance.path = self.active_directory
+        self.located_mod_instances.append(instance)
 
     def check_mod_duplicates(self):
         """
@@ -892,7 +869,7 @@ class ModLoader:
         """
         errors = []
         modinfo = {}
-        for mod in self.found_mods:
+        for mod in self.located_mods:
             if mod.name in modinfo:
                 errors.append(
                     " -Mod '{}' has more than one version in the folder. Please load only every mod ONES".format(
@@ -911,7 +888,7 @@ class ModLoader:
         :param modinfo: the mod info dict
         :return: errors and modinfo-tuple
         """
-        for mod in self.found_mods:
+        for mod in self.located_mods:
             for depend in mod.dependinfo[0]:
                 if not depend.arrival():
                     errors.append(
@@ -941,7 +918,7 @@ class ModLoader:
         will create the modorder-list by sorting after dependencies
         """
         errors, modinfo = self.check_dependency_errors(*self.check_mod_duplicates())
-        for mod in self.found_mods:
+        for mod in self.located_mods:
             for depend in mod.dependinfo[4]:
                 if mod.name in modinfo and depend.name not in modinfo[mod.name]:
                     modinfo[mod.name].append(depend.name)
@@ -962,12 +939,12 @@ class ModLoader:
             logger.println(" ", end="")
             logger.println(*errors, sep="\n ")
             sys.exit(-1)
-        self.modorder = list(
+        self.mod_loading_order = list(
             mcpython.util.math.topological_sort(
                 [(key, modinfo[key]) for key in modinfo.keys()]
             )
         )
-        for name in self.modorder:
+        for name in self.mod_loading_order:
             logger.println(" - " + self.mods[name].mod_string())
 
     def process(self):
@@ -997,7 +974,7 @@ class ModLoader:
             G.statehandler.active_state
         )
         modinst: mcpython.common.mod.Mod.Mod = self.mods[
-            self.modorder[stage.active_mod_index]
+            self.mod_loading_order[stage.active_mod_index]
         ]
         if (
             stage.active_event_name in modinst.eventbus.event_subscriptions

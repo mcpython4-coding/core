@@ -1,12 +1,12 @@
 
 [issue 1-8 are part of github-only and are mostly fixed at the moment]
 
-issue 22: [fixed in generation improvements]
+issue 22:
     bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
          is removed, it all updates following bug 23
     strategy: debug where block updates are called & why the block is not updated correct
 
-issue 23: [fixed in generation improvements]
+issue 23:
     bug: when sand is falling, it can fall more than 1 block at a time, see issue 22 for reproducing
     possible reason: fall is active two times in TickHandler
 
@@ -59,7 +59,7 @@ issue 139:
 issue 140:
     bug: (sometimes, )you fall through one or more block (in gamemode 0)
         reproduce:
-            use diamond pickaxe and break stone blocks until bottom of world in gamemode 0
+            use e.g. diamond pickaxe and break stone blocks until bottom of world in gamemode 0
 
 issue 150:
     bug: float point precision loos at high coordinates e.g. [only occur on block rendering]:
@@ -90,7 +90,7 @@ issue 157:
 
 issue 159:
     bug: various maps are stored not chunk-relative making file size big at outer positions
-    fix: implement relative-storage with data-fixer
+    fix: implement relative-storage
 
 issue 161:
     bug: when saving, moving slot is not saved
@@ -98,15 +98,16 @@ issue 161:
     other fix: save moving slot also & load it [warning: also save what inventories are open]
 
 issue 164:
-    bug: saving/loading big worlds take ages
+    bug: saving/loading big worlds take long time
     fix: do NOT load every time the whole .region file, store it in RAM [we have enough of it]
+    additional fix: load them part by part
 
 issue 165:
-    bug: changing chunks in an big world takes ages
+    bug: changing chunks in an big world takes a long time due to internal re-calculations
     fix: see issue 164
 
 issue 168:
-    bug: when starting in-game generation, game hangs for an short moment
+    bug: when starting in-game generation, game hangs for an moment
     fix: make generation off-thread
 
 issue 175:
@@ -120,7 +121,7 @@ issue 176:
 
 issue 177:
     bug: grass block faces generated next to leaves are not visible
-    possible cause: wrong is_solid calculation
+    possible cause: wrong is_solid calculation?
 
 issue 178:
     bug: hotbar is not transparent(rendered)
@@ -129,12 +130,13 @@ issue 178:
 issue 185:
     bug: in big worlds, chunks can get randomly hidden (or unloaded?) [e.g. debug world]
     fix: implement chunk load ticket system
+    root cause search: implement logger for unloading & hiding chunks
 
 issue 196:
     bug: when in gui and picking up an itemstack during holding one, it gets reset
     reproduce: craft one thing with an item in mouse and the item is not picked up
 
-issue 199:
+issue 199:  [removed with save rework]
     bug: dynamic generated dimension ids are not saved in saves leading into miss-matches when changing dimension
          list
     fix: add them to the storage system and re-assign on load
@@ -144,15 +146,15 @@ issue 201:
     fix: implement system to have an event bus for an generator mode only active when in an world with these world
         generator
 
-issue 204:
+issue 204:  [removed with advanced world gen]
     bug: debug world generates start chest
     caused by: missing configuration for starter chest in world gen options
     fix: add option to enable start chest gen
 
-issue 217:
+issue 217:  [removed with save rework]
     bug: chest content can get lost [see warnings in log]
 
-issue 218:
+issue 218: [removed when command rework]
     bug: game crashes when using e.g. "/tp @s 10 10 10" in chat
 
 issue 219:
