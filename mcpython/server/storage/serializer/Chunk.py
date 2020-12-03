@@ -468,7 +468,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                 continue
             block = chunk_instance.world[position]
             block_data = {
-                "custom": block.dump(),
+                "custom": block.dump_data(),
                 "name": block.NAME,
                 "shown": any(block.face_state.faces.values()),
             }

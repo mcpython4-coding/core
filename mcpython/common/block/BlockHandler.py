@@ -10,38 +10,38 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import logger
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
-from mcpython.common.block.Block import Block
+from mcpython.common.block.AbstractBlock import AbstractBlock
 
 
 def register_block(registry, blockclass):
-    if issubclass(blockclass, mcpython.common.block.Block.Block):
+    if issubclass(blockclass, mcpython.common.block.AbstractBlock.AbstractBlock):
         blockclass.on_register(block_registry)  # call event function
         name = blockclass.NAME
         block_registry.full_table[name] = blockclass
         block_registry.full_table[name.split(":")[-1]] = blockclass
-        instance = blockclass((0, 0, 0))
-        if blockclass.SOLID is None:
-            blockclass.SOLID = all(instance.face_solid.values())
+        instance = blockclass()
+        if blockclass.IS_SOLID is None:
+            blockclass.IS_SOLID = all(instance.face_solid.values())
 
-        if blockclass.CONDUCTS_REDSTONE_POWER is None:
-            blockclass.CONDUCTS_REDSTONE_POWER = blockclass.SOLID
+        if blockclass.CAN_CONDUCT_REDSTONE_POWER is None:
+            blockclass.CAN_CONDUCT_REDSTONE_POWER = blockclass.IS_SOLID
 
         if blockclass.CAN_MOBS_SPAWN_ON is None:
-            blockclass.CAN_MOBS_SPAWN_ON = blockclass.SOLID
+            blockclass.CAN_MOBS_SPAWN_ON = blockclass.IS_SOLID
 
         if not blockclass.ENABLE_RANDOM_TICKS:
 
             # check for functional identical parts
-            if instance.on_random_update.__code__ != Block.on_random_update.__code__:
+            if instance.on_random_update.__code__ != AbstractBlock.on_random_update.__code__:
                 logger.println(
                     "[WARN] block '{}' has not set ENABLE_RANDOM_TICKS, but the event function was changed "
                     "from {} to {}!".format(
                         blockclass.NAME,
                         blockclass.on_random_update,
-                        Block.on_random_update,
+                        AbstractBlock.on_random_update,
                     )
                 )
                 blockclass.ENABLE_RANDOM_TICKS = True

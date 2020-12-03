@@ -31,7 +31,7 @@ class Blockinfo:
         blocktable.sort(key=lambda x: x.NAME)
         blocklist = []
         for block in blocktable:
-            for state in block.get_all_model_states():
+            for state in block.DEBUG_WORLD_BLOCK_STATES:
                 blocklist.append((block, state))
 
         size = math.ceil(len(blocklist) ** 0.5)

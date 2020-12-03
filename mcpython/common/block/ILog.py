@@ -10,11 +10,11 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.event.TickHandler
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 from mcpython.util.enums import LogAxis
 
 
-class ILog(mcpython.common.block.Block.Block):
+class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
     base class for logs
     """
@@ -41,6 +41,4 @@ class ILog(mcpython.common.block.Block.Block):
             axis: str = state["axis"]
             self.axis = LogAxis[axis.upper()]
 
-    @staticmethod
-    def get_all_model_states() -> list:
-        return [{"axis": "x"}, {"axis": "y"}, {"axis": "z"}]
+    DEBUG_WORLD_BLOCK_STATES = [{"axis": "x"}, {"axis": "y"}, {"axis": "z"}]

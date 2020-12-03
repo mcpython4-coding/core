@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import datetime
 import typing
 
-import mcpython.common.block.Block as Block
+import mcpython.common.block.AbstractBlock as Block
 import mcpython.util.enums
 import mcpython.util.math
 from mcpython.util.math import *  # todo: remove
@@ -162,12 +162,11 @@ class Chunk:
     def add_block(
         self,
         position: tuple,
-        block_name: typing.Union[str, Block.Block],
+        block_name: typing.Union[str, Block.AbstractBlock],
         immediate=True,
         block_update=True,
         blockupdateself=True,
-        args=[],
-        kwargs={},
+        lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None
     ):
         """
         adds an block to the given position
@@ -176,8 +175,7 @@ class Chunk:
         :param immediate: if the block should be shown if needed
         :param block_update: if an block-update should be send to neighbors blocks
         :param blockupdateself: if the block should get an block-update
-        :param args: the args to create the block with
-        :param kwargs: the kwargs to create the block with
+        :param lazy_setup: an callable for setting up the block instance
         :return: the block instance or None if it could not be created
         """
         if position[1] < 0 or position[1] > 255:
@@ -191,9 +189,11 @@ class Chunk:
             self.remove_block(position, immediate=immediate, block_update=block_update)
         if block_name in [None, "air", "minecraft:air"]:
             return
-        if issubclass(type(block_name), Block.Block):
+        if issubclass(type(block_name), Block.AbstractBlock):
             blockobj = block_name
             blockobj.position = position
+            if lazy_setup is not None:
+                lazy_setup(blockobj)
             blockobj.face_state.update()
         else:
             table = G.registry.get_by_name("block").full_table
@@ -204,7 +204,11 @@ class Chunk:
                     )
                 )
                 return
-            blockobj = table[block_name](position, *args, **kwargs)
+            blockobj = table[block_name]()
+            blockobj.position = position
+            if lazy_setup is not None:
+                lazy_setup(blockobj)
+        blockobj.on_block_added()
         if self.now.day == 13 and self.now.month == 1 and "diorite" in blockobj.NAME:
             logger.println(
                 "[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
@@ -238,7 +242,7 @@ class Chunk:
                     if [dx, dy, dz].count(0) >= 2 and not (
                         not itself and dx == dy == dz == 0
                     ):
-                        b: Block.Block = self.dimension.get_block(
+                        b: Block.AbstractBlock = self.dimension.get_block(
                             (x + dx, y + dy, z + dz)
                         )
                         if b and type(b) != str:
@@ -251,10 +255,11 @@ class Chunk:
 
     def remove_block(
         self,
-        position: typing.Union[typing.Tuple[int, int, int], Block.Block],
+        position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
         immediate: bool = True,
         block_update: bool = True,
         blockupdateself: bool = True,
+        reason=Block.BlockRemovalReason.UNSET,
     ):
         """
         Remove the block at the given `position`.
@@ -262,12 +267,13 @@ class Chunk:
         :param immediate: Whether or not to immediately remove block from canvas.
         :param block_update: Whether an block-update should be called or not
         :param blockupdateself: Whether the block to remove should get an block-update or not
+        :param reason: the reason why the block was removed
         """
         if position not in self.world:
             return
-        if issubclass(type(position), Block.Block):
+        if issubclass(type(position), Block.AbstractBlock):
             position = position.position
-        self.world[position].on_remove()
+        self.world[position].on_block_remove(reason)
         self.world[position].face_state.hide_all()
         del self.world[position]
         if block_update:
@@ -296,7 +302,7 @@ class Chunk:
 
     def show_block(
         self,
-        position: typing.Union[typing.Tuple[int, int, int], Block.Block],
+        position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
         immediate: bool = True,
     ):
         """
@@ -305,7 +311,7 @@ class Chunk:
         :param position: The (x, y, z) position of the block to show.
         :param immediate: Whether or not to show the block immediately.
         """
-        if issubclass(type(position), Block.Block):
+        if issubclass(type(position), Block.AbstractBlock):
             position = position.position
         if position not in self.world:
             return
@@ -316,7 +322,7 @@ class Chunk:
 
     def hide_block(
         self,
-        position: typing.Union[typing.Tuple[int, int, int], Block.Block],
+        position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
         immediate=True,
     ):
         """
@@ -326,7 +332,7 @@ class Chunk:
         :param immediate: Whether or not to immediately remove the block from the canvas.
 
         """
-        if issubclass(type(position), Block.Block):
+        if issubclass(type(position), Block.AbstractBlock):
             position = position.position
         if immediate:
             if position not in self.world:
@@ -394,7 +400,7 @@ class Chunk:
 
     def get_block(
         self, position: typing.Tuple[int, int, int]
-    ) -> typing.Union[Block.Block, str, None]:
+    ) -> typing.Union[Block.AbstractBlock, str, None]:
         """
         will get the block at an given position
         :param position: the position to check for

@@ -1300,6 +1300,8 @@ F   [uuk]: speed up resource zipfile lookup by using an name table cache for the
 R   [uuk]: changed some layout in crafting system
 F   [uuk]: changed how registries do some of the work
 F   [uuk]: implemented DeferredRegistryPipe
+R   [uuk]: renamed block base class to AbstractBlock
+R   [uuk]: refactored & changed block API
 
 Roadmap:
     - refactor classes & functions [WIP]
@@ -1319,3 +1321,7 @@ Roadmap:
     - do not hardcode ANY constants, move them to an public space / config files / resource data
     - clean up changelog.txt, issues.txt and fixed_issues.txt
     - redesign command system
+    - remove BlockConfig system & replace by tags
+    - there should be an interface called ITagable containing an class constructor for creating an list of tags these
+        class has, for not needing an lookup in the tag system
+    - player inventories should be stored as attributes, not in an dict

@@ -9,13 +9,13 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
 from mcpython import shared as G
 import mcpython.util.enums
 
 
-class IFence(mcpython.common.block.Block.Block):
+class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
     Base class for every fence-like block. Expects
     """
@@ -24,6 +24,20 @@ class IFence(mcpython.common.block.Block.Block):
 
     # todo: add bounding-box
     BBOX = None  # the bounding box
+
+    DEBUG_WORLD_BLOCK_STATES = []
+    for north in range(2):
+        for east in range(2):
+            for south in range(2):
+                for west in range(2):
+                    DEBUG_WORLD_BLOCK_STATES.append(
+                        {
+                            "north": str(bool(north)).lower(),
+                            "east": str(bool(east)).lower(),
+                            "south": str(bool(south)).lower(),
+                            "west": str(bool(west)).lower(),
+                        }
+                    )
 
     def __init__(self, *args, **kwargs):
         """
@@ -36,11 +50,13 @@ class IFence(mcpython.common.block.Block.Block):
             "south": False,
             "west": False,
         }
-        if self.NAME in G.modelhandler.blockstates:
-            self.on_block_update()
         self.face_solid = {
             face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
+
+    def on_block_added(self):
+        if self.NAME in G.modelhandler.blockstates:
+            self.on_block_update()
 
     def get_model_state(self) -> dict:
         state = {key: str(self.connections[key]).lower() for key in self.connections}
@@ -49,16 +65,16 @@ class IFence(mcpython.common.block.Block.Block):
     def on_block_update(self):
         x, y, z = self.position
 
-        block_north: mcpython.common.block.Block.Block = (
+        block_north: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x + 1, y, z))
         )
-        block_east: mcpython.common.block.Block.Block = (
+        block_east: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x, y, z + 1))
         )
-        block_south: mcpython.common.block.Block.Block = (
+        block_south: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x - 1, y, z))
         )
-        block_west: mcpython.common.block.Block.Block = (
+        block_west: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x, y, z - 1))
         )
 
@@ -81,27 +97,10 @@ class IFence(mcpython.common.block.Block.Block):
         for key in state:
             self.connections[key] = state[key] == "true"
 
-    @staticmethod
-    def get_all_model_states() -> list:
-        states = []
-        for north in range(2):
-            for east in range(2):
-                for south in range(2):
-                    for west in range(2):
-                        states.append(
-                            {
-                                "north": str(bool(north)).lower(),
-                                "east": str(bool(east)).lower(),
-                                "south": str(bool(south)).lower(),
-                                "west": str(bool(west)).lower(),
-                            }
-                        )
-        return states
-
     def connects_to(
         self,
         face: mcpython.util.enums.EnumSide,
-        blockinstance: mcpython.common.block.Block.Block,
+        blockinstance: mcpython.common.block.AbstractBlock.AbstractBlock,
     ):
         if blockinstance is None or type(blockinstance) == str:
             return False

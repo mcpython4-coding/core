@@ -240,7 +240,7 @@ class StatePartGame(StatePart.StatePart):
                     if (
                         type(block) != str
                         and self.mouse_press_time >= self.braketime
-                        and block.BREAKABLE
+                        and block.IS_BREAKABLE
                     ):
                         if G.world.gamerulehandler.table["doTileDrops"].status.status:
                             items = G.loottablehandler.get_drop_for_block(
@@ -301,11 +301,7 @@ class StatePartGame(StatePart.StatePart):
                             chunk.add_block(
                                 previous,
                                 slot.get_itemstack().item.get_block(),
-                                kwargs={
-                                    "set_to": blockpos,
-                                    "real_hit": hitpos,
-                                    "player": player,
-                                },
+                                lazy_setup=lambda block: block.set_creation_properties(set_to=blockpos, real_hit=hitpos, player=player)
                             )
                             chunk.on_block_updated(previous)
                             slot.get_itemstack().item.on_set_from_item(

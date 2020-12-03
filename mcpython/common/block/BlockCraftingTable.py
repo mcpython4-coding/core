@@ -10,13 +10,13 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-from . import Block
+from . import AbstractBlock
 from pyglet.window import mouse, key
 import mcpython.util.enums
 import mcpython.common.item.ItemTool
 
 
-class BlockCraftingTable(Block.Block):
+class BlockCraftingTable(AbstractBlock.AbstractBlock):
     """
     class for the crafting table
     """
@@ -41,9 +41,9 @@ class BlockCraftingTable(Block.Block):
         return [G.world.get_active_player().inventories["crafting_table"]]
 
     HARDNESS = 2.5
-    BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.AXE]
+    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
-    def on_remove(self):
+    def on_block_remove(self, reason):
         G.inventoryhandler.hide(
             G.world.get_active_player().inventories["crafting_table"]
         )

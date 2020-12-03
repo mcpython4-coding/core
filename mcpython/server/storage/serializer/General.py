@@ -71,7 +71,7 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
             )
             mcpython.ResourceLoader.read_image(
                 "assets/minecraft/textures/entity/steve.png"
-            ).save(G.build + "/skin.png")
+            ).get_save_data(G.build + "/skin.png")
         mcpython.common.world.player.Player.RENDERER.reload()
 
         G.world.config = data["config"]

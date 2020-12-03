@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
 import mcpython.common.entity.Entity
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.util.math
 
 
@@ -26,7 +26,7 @@ class FallingBlock(mcpython.common.entity.Entity.Entity):
     def __init__(
         self,
         *args,
-        representing_block: mcpython.common.block.Block.Block = None,
+        representing_block: mcpython.common.block.AbstractBlock.AbstractBlock = None,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
@@ -45,7 +45,7 @@ class FallingBlock(mcpython.common.entity.Entity.Entity):
         if (self.position[1] - y <= 0.1) and not (block is None or type(block) == str):
             if self.block is None:
                 self.kill()
-            elif not block.SOLID:
+            elif not block.IS_SOLID:
                 self.kill()  # todo: drop item in world
             else:
                 self.chunk.add_block((x, y, z), self.block)

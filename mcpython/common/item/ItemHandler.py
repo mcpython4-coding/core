@@ -57,8 +57,8 @@ def load_data(from_block_item_generator=False):
                         mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
                     )
                 )
-                block = blocktable[name]
-                block.modify_block_item(obj)
+                # block = blocktable[name]
+                # block.modify_block_item(obj)
                 obj.finish()
                 model = mcpython.client.rendering.model.ItemModel.ItemModel(name)
                 model.addTextureLayer(0, entry[1])

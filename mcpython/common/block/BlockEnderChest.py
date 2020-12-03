@@ -14,13 +14,15 @@ from pyglet.window import mouse, key
 from mcpython import shared as G
 import mcpython.util.enums
 from mcpython.common.block.BlockChest import BBOX
-from . import Block
+from . import AbstractBlock
 
 
-class BlockEnderChest(Block.Block):
+class BlockEnderChest(AbstractBlock.AbstractBlock):
     """
     class for the ender chest
     """
+
+    NAME = "minecraft:enderchest"
 
     def __init__(self, *args, **kwargs):
         """
@@ -28,6 +30,12 @@ class BlockEnderChest(Block.Block):
         """
         super().__init__(*args, **kwargs)
         self.front_side = mcpython.util.enums.EnumSide.N
+        self.inventory = G.world.get_active_player().inventories["enderchest"]
+        self.face_solid = {
+            face: False for face in mcpython.util.enums.EnumSide.iterate()
+        }
+
+    def on_block_added(self):
         if self.real_hit:
             dx, dz = (
                 self.real_hit[0] - self.position[0],
@@ -41,12 +49,6 @@ class BlockEnderChest(Block.Block):
                 self.front_side = mcpython.util.enums.EnumSide.E
             elif dz < 0 and abs(dx) < abs(dz):
                 self.front_side = mcpython.util.enums.EnumSide.W
-        self.inventory = G.world.get_active_player().inventories["enderchest"]
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
-        }
-
-    NAME = "minecraft:enderchest"
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple
@@ -62,7 +64,7 @@ class BlockEnderChest(Block.Block):
 
     HARDNESS = 2.5
     MINIMUM_TOOL_LEVEL = 0
-    BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.PICKAXE]
+    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
 
     def get_provided_slots(self, side):
         return self.inventory.slots
@@ -78,19 +80,17 @@ class BlockEnderChest(Block.Block):
     def get_model_state(self) -> dict:
         return {"side": self.front_side.name}
 
-    @staticmethod
-    def get_all_model_states() -> list:
-        return [
-            {"side": mcpython.util.enums.EnumSide.N},
-            {"side": mcpython.util.enums.EnumSide.E},
-            {"side": mcpython.util.enums.EnumSide.S},
-            {"side": mcpython.util.enums.EnumSide.W},
-        ]
+    DEBUG_WORLD_BLOCK_STATES = [
+        {"side": mcpython.util.enums.EnumSide.N},
+        {"side": mcpython.util.enums.EnumSide.E},
+        {"side": mcpython.util.enums.EnumSide.S},
+        {"side": mcpython.util.enums.EnumSide.W},
+    ]
 
     def get_view_bbox(self):
         return BBOX
 
-    def on_remove(self):
+    def on_block_remove(self, reason):
         G.inventoryhandler.hide(self.inventory)
 
 

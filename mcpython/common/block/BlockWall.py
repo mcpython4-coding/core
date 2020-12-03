@@ -9,13 +9,13 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
 from mcpython import shared as G
 import mcpython.util.enums
 
 
-class IWall(mcpython.common.block.Block.Block):
+class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
     # todo: add bounding-box
 
     def __init__(self, *args, **kwargs):
@@ -27,11 +27,13 @@ class IWall(mcpython.common.block.Block.Block):
             "west": False,
             "up": False,
         }
-        if self.NAME in G.modelhandler.blockstates:
-            self.on_block_update()
         self.face_solid = {
             face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
+
+    def on_block_added(self):
+        if self.NAME in G.modelhandler.blockstates:
+            self.on_block_update()
 
     def get_model_state(self) -> dict:
         state = {
@@ -43,16 +45,16 @@ class IWall(mcpython.common.block.Block.Block):
     def on_block_update(self):
         x, y, z = self.position
 
-        block_north: mcpython.common.block.Block.Block = (
+        block_north: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x + 1, y, z))
         )
-        block_east: mcpython.common.block.Block.Block = (
+        block_east: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x, y, z + 1))
         )
-        block_south: mcpython.common.block.Block.Block = (
+        block_south: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x - 1, y, z))
         )
-        block_west: mcpython.common.block.Block.Block = (
+        block_west: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x, y, z - 1))
         )
 
@@ -81,7 +83,7 @@ class IWall(mcpython.common.block.Block.Block):
             self.connections["north"] != self.connections["south"]
             or self.connections["east"] != self.connections["west"]
         )
-        upper_block: mcpython.common.block.Block.Block = (
+        upper_block: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x, y + 1, z))
         )
         if (

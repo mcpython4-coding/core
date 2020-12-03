@@ -10,11 +10,11 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.common.factory.BlockFactory
 
 
-class ICoralBlock(mcpython.common.block.Block.Block):
+class ICoralBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
     base class for every coral block
     """

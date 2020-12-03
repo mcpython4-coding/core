@@ -10,12 +10,12 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.common.event.TickHandler
 import mcpython.common.event.TickHandler
 
 
-class IFallingBlock(mcpython.common.block.Block.Block):
+class IFallingBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
     base injection class for falling block
     """

@@ -10,28 +10,35 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-from . import Block
+from . import AbstractBlock
 from pyglet.window import mouse, key
 import mcpython.util.enums
 import pyglet
 import mcpython.client.gui.InventoryBarrel
 
 
-class BlockBarrel(Block.Block):
+class BlockBarrel(AbstractBlock.AbstractBlock):
     """
     class for the Barrel-Block
     """
 
     NAME: str = "minecraft:barrel"  # the name of the block
 
+    DEBUG_WORLD_BLOCK_STATES = []
+    for face in ["north", "east", "south", "west", "up", "down"]:
+        DEBUG_WORLD_BLOCK_STATES.append({"open": "false", "facing": face})
+        DEBUG_WORLD_BLOCK_STATES.append({"open": "true", "facing": face})
+
     def __init__(self, *args, **kwargs):
         """
         Creates an new BlockBarrel-class
         """
         super().__init__(*args, **kwargs)
-        self.facing: str = "up"  # the direction the block faces to
         self.opened: bool = False  # if the barrel is open
-        self.inventory = mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
+        self.inventory =  mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
+        self.facing: str = "up"  # the direction the block faces to
+
+    def on_block_added(self):
         if self.set_to is not None:  # check for direction from setting
             dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
             if dx > 0:
@@ -62,7 +69,7 @@ class BlockBarrel(Block.Block):
         return [self.inventory]
 
     HARDNESS = 2.5
-    BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.AXE]
+    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
     def get_provided_slot_lists(self, side):
         return self.inventory.slots, self.inventory.slots
@@ -78,20 +85,6 @@ class BlockBarrel(Block.Block):
     def get_model_state(self) -> dict:
         return {"facing": self.facing, "open": str(self.opened).lower()}
 
-    @staticmethod
-    def get_all_model_states() -> list:
-        facing = [
-            {"facing": "north"},
-            {"facing": "east"},
-            {"facing": "south"},
-            {"facing": "west"},
-            {"facing": "up"},
-            {"facing": "down"},
-        ]
-        return [{"open": "false", **e} for e in facing] + [
-            {"open": "true", **e} for e in facing
-        ]
-
     @classmethod
     def set_block_data(cls, iteminst, block):
         if hasattr(iteminst, "inventory"):
@@ -105,7 +98,7 @@ class BlockBarrel(Block.Block):
         ):
             itemstack.item.inventory = self.inventory.copy()
 
-    def on_remove(self):
+    def on_block_remove(self, reason):
         if not G.world.gamerulehandler.table["doTileDrops"].status.status:
             return
         for slot in self.inventory.slots:
@@ -113,10 +106,6 @@ class BlockBarrel(Block.Block):
             slot.itemstack.clean()
         G.inventoryhandler.hide(self.inventory)
         del self.inventory
-
-    @classmethod
-    def modify_block_item(cls, itemfactory):
-        itemfactory.setFuelLevel(15)
 
 
 @G.modloader("minecraft", "stage:block:load")

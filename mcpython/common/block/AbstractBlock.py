@@ -9,9 +9,11 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
 import typing
 import uuid
 import deprecation
+import enum
 
 import mcpython.common.block.BlockFaceState
 import mcpython.common.block.BoundingBox
@@ -22,89 +24,96 @@ import mcpython.util.enums
 import pickle
 
 
-class Block(mcpython.common.event.Registry.IRegistryContent):
-    """
-    (Abstract) base class for all blocks
-    Provides the normal interfaces for an block.
-    All block classes should extend this.
+class BlockRemovalReason(enum.Enum):
+    UNSET = 0
+    PLAYER_REMOVAL = 1
+    PISTON_MOTION = 2
+    EXPLOSION = 3
+    ENTITY_PICKUP = 4
 
-    WARNING: These part should be STABLE. Please do NOT override these class
+
+class AbstractBlock(ABC, mcpython.common.event.Registry.IRegistryContent):
+    """
+    Abstract base class for all blocks
+    All block classes should extend from this
     """
 
-    TYPE: str = "minecraft:block_registry"  # internal registry name
+    TYPE: str = "minecraft:block_registry"  # internal registry type
 
     # used when the player walks in an different speed on this block
     CUSTOM_WALING_SPEED_MULTIPLIER: typing.Union[float, None] = None
 
     # used internally to set the state the BlockItemGenerator uses
-    # todo: make item select
     BLOCK_ITEM_GENERATOR_STATE: typing.Union[dict, None] = None
 
     # If this block can be broken in gamemode 0 and 2
-    BREAKABLE: bool = True
+    IS_BREAKABLE: bool = True
 
     HARDNESS: float = 1  # the hardness of the block
     BLAST_RESISTANCE: float = 0  # how good it is in resisting explosions
     MINIMUM_TOOL_LEVEL: float = 0  # the minimum tool level
-    BEST_TOOLS_TO_BREAK: typing.List[
+    ASSIGNED_TOOLS: typing.List[
         mcpython.util.enums.ToolType
     ] = []  # the tools best to break
 
     # if the block is solid; None is unset and set by system by checking face_solid on an block instance
     # WARNING: in the future, these auto-set will be removed todo: do so
-    SOLID: typing.Union[bool, None] = None
+    IS_SOLID: typing.Union[bool, None] = None
 
     # if the block can conduct redstone power; None is unset and set by system to SOLID
-    CONDUCTS_REDSTONE_POWER: typing.Union[bool, None] = None
+    CAN_CONDUCT_REDSTONE_POWER: typing.Union[bool, None] = None
 
     # if mobs can spawn on the block; None is unset and set by system to SOLID
     CAN_MOBS_SPAWN_ON: typing.Union[bool, None] = None
+    CAN_MOBS_SPAWN_IN = False
 
     ENABLE_RANDOM_TICKS = (
         False  # if the random tick function should be called if needed or not
     )
 
-    NO_COLLISION = False
+    NO_ENTITY_COLLISION = False
+    ENTITY_FALL_MULTIPLIER = 1
 
-    def __init__(
-        self, position: tuple, set_to=None, real_hit=None, state=None, player=None
-    ):
+    DEBUG_WORLD_BLOCK_STATES = [{}]
+
+    def __init__(self):
         """
         creates new Block-instance.
         sets up basic stuff and creates the attributes
-        :param position: the position to create the block on
-        :param set_to: when the block is set to an block, these parameter contains where
-        :param real_hit: were the block the user set to was hit on
-
         Sub-classes may want to override the constructor and super().__init__(...) this
         """
-        self.position = position
-        self.set_to = set_to
-        self.real_hit = real_hit
-        if state is not None:
-            self.set_model_state(state)
+        self.position = None
+        self.dimension = None
+        self.set_to = None
+        self.real_hit = None
         self.face_state = mcpython.common.block.BlockFaceState.BlockFaceState(self)
         self.block_state = None
+        self.set_by = None
         self.face_solid = {
             face: True for face in mcpython.util.enums.EnumSide.iterate()
         }
         self.uuid = uuid.uuid4()
         self.injected_redstone_power = {}
 
-    def __del__(self):
-        """
-        Used for removing the circular dependency between Block and BlockFaceState for gc
-        Internal use only
-        """
-        del self.face_state
+    def set_creation_properties(self, set_to=None, real_hit=None, player=None, state=None):
+        self.set_to = set_to
+        self.real_hit = real_hit
+        self.set_by = player
+        if state is not None:
+            self.set_model_state(state)
+        return self
 
     # block events
 
-    def on_remove(self):
+    def on_block_added(self):
+        pass
+
+    def on_block_remove(self, reason: BlockRemovalReason):
         """
         Called when the block is removed
         Not cancelable. Block show data is removed, but the "current" state of the block is still stored.
         After this, the block might stay for some time in memory, but may also get deleted.
+        :param reason: the reason of the removal
         """
 
     def on_random_update(self):
@@ -137,41 +146,31 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         :param hit_position: where the block was hit at
         :return: if default logic should be interrupted or not
         """
-        self.on_player_interact(
-            player,
-            player.get_active_inventory_slot().get_itemstack(),
-            button,
-            modifiers,
-            hit_position,
-        )
         return False
 
-    def on_player_interact(
-        self, player, itemstack, button, modifiers, exact_hit
-    ) -> bool:
-        return False
-
-    def on_no_collide_collide(self, player, previous: bool):
+    def on_no_collision_collide(self, player, previous: bool):
         """
         Called when NO_COLLIDE is True and the player is in the block every collision check
         :param player: the player entering the block
         :param previous: if the player was in the block before
         """
 
-    def save(self):
+    def get_save_data(self):
         return self.get_model_state()
 
-    def dump(self) -> bytes:
+    def dump_data(self) -> bytes:
         """
         :return: bytes representing the whole block, not including inventories
+        todo: add an saver way of doing this!
         """
-        return pickle.dumps(self.save())
+        return pickle.dumps(self.get_save_data())
 
-    def load(self, data):
+    def load_data(self, data):
         """
         loads block data
-        :param data:  the data saved by save()
+        :param data:  the data saved by get_save_data()
         WARNING: if not providing DataFixers for old mod versions, these data may get very old!
+        todo: add an saver way of doing this!
         """
         self.set_model_state(data)
 
@@ -181,7 +180,7 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         :param data:  the data saved by save()
         WARNING: if not providing DataFixers for old mod versions, these data may get very old!
         """
-        self.load(pickle.loads(data) if type(data) == bytes else data)
+        self.load_data(pickle.loads(data) if type(data) == bytes else data)
 
     # block status functions
 
@@ -189,6 +188,7 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         """
         Called to get an list of inventories
         FOR MODDERS: use get_provided_slot_lists() where possible as it is the more "save" way to interact with the block
+        todo: move to capabilities
         """
         return []
 
@@ -201,6 +201,7 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         :return: an tuple of lists of input slots and output slots
         Slots may be in inputs AND output.
         todo: make default return None, None
+        todo: move to capabilities
         """
         return [], []
 
@@ -208,7 +209,6 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         """
         the active model state
         :return: the model state as an dict
-        todo: allow string
         """
         return {}
 
@@ -216,6 +216,8 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         """
         sets the model state for the block
         :param state: the state to set as an dict
+
+        WARNING: do NOT raise an error if more data is provided, as sub-classes may want to add own data
         """
 
     def get_view_bbox(
@@ -279,28 +281,3 @@ class Block(mcpython.common.event.Registry.IRegistryContent):
         :return: an value between 0 and 15 representing the redstone value
         """
         return 0
-
-    # registry setup functions, will be removed in future
-
-    @classmethod
-    def modify_block_item(cls, itemconstructor):
-        pass  # todo: add an table for subscriptions
-
-    @staticmethod
-    def get_all_model_states() -> list:
-        return [{}]  # todo: make attribute or external config file
-
-    # deprecated stuff
-
-    @deprecation.deprecated("dev1-2", "a1.3.0")
-    def get_provided_slots(
-        self, side: mcpython.util.enums.EnumSide
-    ) -> typing.List[
-        typing.Union[mcpython.client.gui.Slot.Slot, mcpython.client.gui.Slot.SlotCopy]
-    ]:
-        """
-        gets the slots for an given side
-        :param side: the side to check
-        :return: an list of slot of the side
-        """
-        return []

@@ -10,12 +10,12 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import time
 import math
 
 
-class NetherPortalBlock(mcpython.common.block.Block.Block):
+class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
     class for an nether portal
     """
@@ -41,9 +41,7 @@ class NetherPortalBlock(mcpython.common.block.Block.Block):
     def set_model_state(self, state: dict):
         self.axis = state.setdefault("axis", "x")
 
-    @staticmethod
-    def get_all_model_states() -> list:
-        return [{"axis": "x"}, {"axis": "z"}]
+    DEBUG_WORLD_BLOCK_STATES = [{"axis": "x"}, {"axis": "z"}]
 
     def on_block_update(self):
         self.on_redstone_update()
@@ -81,7 +79,7 @@ class NetherPortalBlock(mcpython.common.block.Block.Block):
             return True
         return False
 
-    def on_no_collide_collide(self, player, previous: bool):
+    def on_no_collision_collide(self, player, previous: bool):
         if player.should_leave_nether_portal_before_dim_change and not previous:
             player.should_leave_nether_portal_before_dim_change = False
         elif player.should_leave_nether_portal_before_dim_change:

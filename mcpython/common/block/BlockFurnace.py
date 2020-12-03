@@ -47,12 +47,11 @@ class BlockFurnace(
         if "lit" in state:
             self.active = state["lit"] == "true"
 
-    @classmethod
-    def get_all_model_states(cls) -> list:
-        states = super().get_all_model_states()
-        return [{"active": "false", **e} for e in states] + [
-            {"active": "true", **e} for e in states
-        ]
+    DEBUG_WORLD_BLOCK_STATES = [
+        {mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock.MODEL_FACE_NAME: face.name,
+         "active": "false"} for face in mcpython.util.enums.EnumSide.iterate()[2:]] + [
+        {mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock.MODEL_FACE_NAME: face.name,
+         "active": "true"} for face in mcpython.util.enums.EnumSide.iterate()[2:]]
 
     def on_player_interaction(self, player, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
@@ -72,7 +71,7 @@ class BlockFurnace(
         else:
             return [self.inventory.slots[37]], []
 
-    def on_remove(self):
+    def on_block_remove(self, reason):
         if not G.world.gamerulehandler.table["doTileDrops"].status.status:
             return
         for slot in self.inventory.slots:

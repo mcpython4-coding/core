@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
 import mcpython.client.gui.ItemStack
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.ILog as ILog
 import mcpython.util.enums
@@ -128,7 +128,7 @@ class BlockFactory:
 
         self.islog = False
 
-        self.baseclass = [mcpython.common.block.Block.Block]
+        self.baseclass = [mcpython.common.block.AbstractBlock.AbstractBlock]
 
         self.template = None
 
@@ -384,7 +384,7 @@ class BlockFactory:
 
             def on_remove(self):
                 for baseclass in master.baseclass:
-                    baseclass.on_remove(self)
+                    baseclass.on_block_remove(self)
                 if master.delete_callback:
                     master.delete_callback(self)
 

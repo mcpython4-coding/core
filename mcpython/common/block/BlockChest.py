@@ -18,14 +18,14 @@ import mcpython.common.block.BoundingBox
 from mcpython import shared as G, logger
 import mcpython.common.item.ItemTool
 import mcpython.util.enums
-from . import Block
+from . import AbstractBlock
 
 BBOX = mcpython.common.block.BoundingBox.BoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)
 )  # the bounding box of the chest
 
 
-class BlockChest(Block.Block):
+class BlockChest(AbstractBlock.AbstractBlock):
     """
     The Chest block class
     """
@@ -40,7 +40,14 @@ class BlockChest(Block.Block):
     HARDNESS = 2.5
     BLAST_RESISTANCE = 2.5
 
-    BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.AXE]
+    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
+
+    DEBUG_WORLD_BLOCK_STATES = [
+        {"side": mcpython.util.enums.EnumSide.N},
+        {"side": mcpython.util.enums.EnumSide.E},
+        {"side": mcpython.util.enums.EnumSide.S},
+        {"side": mcpython.util.enums.EnumSide.W},
+    ]
 
     def __init__(self, *args, **kwargs):
         """
@@ -48,6 +55,11 @@ class BlockChest(Block.Block):
         """
         super().__init__(*args, **kwargs)
         self.front_side = mcpython.util.enums.EnumSide.N
+        import mcpython.client.gui.InventoryChest as InventoryChest
+        self.inventory = InventoryChest.InventoryChest()
+        self.loot_table_link = None
+
+    def on_block_added(self):
         if self.real_hit:
             dx, dz = (
                 self.real_hit[0] - self.position[0],
@@ -61,10 +73,6 @@ class BlockChest(Block.Block):
                 self.front_side = mcpython.util.enums.EnumSide.E
             elif dz < 0 and abs(dx) < abs(dz):
                 self.front_side = mcpython.util.enums.EnumSide.W
-        import mcpython.client.gui.InventoryChest as InventoryChest
-
-        self.inventory = InventoryChest.InventoryChest()
-        self.loot_table_link = None
         self.face_solid = {
             face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
@@ -123,15 +131,6 @@ class BlockChest(Block.Block):
             "type": "normal" if not self.is_christmas else "christmas",
         }
 
-    @staticmethod
-    def get_all_model_states() -> list:
-        return [
-            {"side": mcpython.util.enums.EnumSide.N},
-            {"side": mcpython.util.enums.EnumSide.E},
-            {"side": mcpython.util.enums.EnumSide.S},
-            {"side": mcpython.util.enums.EnumSide.W},
-        ]
-
     def get_view_bbox(self):
         return BBOX
 
@@ -148,7 +147,7 @@ class BlockChest(Block.Block):
         ):
             itemstack.item.inventory = self.inventory.copy()
 
-    def on_remove(self):
+    def on_block_remove(self, reason):
         if G.world.gamerulehandler.table["doTileDrops"].status.status:
             for slot in self.inventory.slots:
                 G.world.get_active_player().pick_up(slot.get_itemstack().copy())
@@ -160,10 +159,10 @@ class BlockChest(Block.Block):
     def modify_block_item(cls, itemfactory):
         itemfactory.setFuelLevel(15)
 
-    def save(self):
+    def get_save_data(self):
         return {"model": self.get_model_state(), "loot_table": self.loot_table_link}
 
-    def load(self, data):
+    def load_data(self, data):
         if "model" in data:
             self.set_model_state(data["model"])
         else:

@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
 from mcpython import shared as G
 import mcpython.client.gui.ItemStack
@@ -18,7 +18,7 @@ import mcpython.util.enums
 carpet_bbox = mcpython.common.block.BoundingBox.BoundingBox((1, 1 / 16, 1))
 
 
-class ICarpet(mcpython.common.block.Block.Block):
+class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
     base class for every carpet
     """
@@ -35,7 +35,7 @@ class ICarpet(mcpython.common.block.Block.Block):
 
     def on_block_update(self):
         x, y, z = self.position
-        blockinst: mcpython.common.block.Block.Block = (
+        blockinst: mcpython.common.block.AbstractBlock.AbstractBlock = (
             G.world.get_active_dimension().get_block((x, y - 1, z))
         )
         if blockinst is None or (

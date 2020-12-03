@@ -18,6 +18,7 @@ import mcpython.util.enums
 class BlockFaceState:
     """
     class for face state of the block
+    todo: merge into AbstractBlock
     """
 
     def __init__(self, block):
@@ -147,5 +148,3 @@ class BlockFaceState:
         will delete references to various parts for gc
         """
         self.hide_all()
-        del self.block
-        del self.custom_renderer

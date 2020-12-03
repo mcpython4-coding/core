@@ -9,11 +9,11 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.util.enums
 
 
-class IHorizontalOrientableBlock(mcpython.common.block.Block.Block):
+class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     MODEL_FACE_NAME = "facing"
 
     def __init__(self, *args, **kwargs):
@@ -40,9 +40,4 @@ class IHorizontalOrientableBlock(mcpython.common.block.Block.Block):
         if self.MODEL_FACE_NAME in state:
             self.face = mcpython.util.enums.EnumSide[state["facing"].upper()]
 
-    @classmethod
-    def get_all_model_states(cls) -> list:
-        return [
-            {cls.MODEL_FACE_NAME: face.name}
-            for face in mcpython.util.enums.EnumSide.iterate()[2:]
-        ]
+    DEBUG_WORLD_BLOCK_STATES = [{"facing": face.name} for face in mcpython.util.enums.EnumSide.iterate()[2:]]

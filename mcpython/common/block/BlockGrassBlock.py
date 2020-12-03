@@ -10,11 +10,11 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-from . import Block
+from . import AbstractBlock
 import mcpython.util.enums
 
 
-class BlockGrassBlock(Block.Block):
+class BlockGrassBlock(AbstractBlock.AbstractBlock):
     """
     base class for grass
     """
@@ -23,7 +23,7 @@ class BlockGrassBlock(Block.Block):
 
     HARDNESS = 0.5
     BLAST_RESISTANCE = 0.5
-    BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.SHOVEL]
+    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.SHOVEL]
 
     ENABLE_RANDOM_TICKS = True
 

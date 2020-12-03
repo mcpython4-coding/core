@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.common.event.TickHandler
 import mcpython.util.enums
 import mcpython.common.block.BoundingBox
@@ -26,20 +26,23 @@ BBOX_DICT = {
 }
 
 
-class ISlab(mcpython.common.block.Block.Block):
+class ISlab(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
     base class for slabs
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.type = SlabModes.TOP
+        self.face_solid = {
+            face: False for face in mcpython.util.enums.EnumSide.iterate()
+        }
+
+    def on_block_added(self):
         if self.real_hit and self.real_hit[1] - self.position[1] > 0:
             self.type = SlabModes.TOP
         else:
             self.type = SlabModes.BOTTOM
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
-        }
 
     def get_model_state(self):
         return {"type": self.type.name.lower()}
@@ -48,9 +51,7 @@ class ISlab(mcpython.common.block.Block.Block):
         if "type" in state:
             self.type = SlabModes[state["type"].upper()]
 
-    @staticmethod
-    def get_all_model_states() -> list:
-        return [{"type": x.name.upper()} for x in SlabModes]
+    DEBUG_WORLD_BLOCK_STATES = [{"type": x.name.upper()} for x in SlabModes]
 
     def on_player_interact(
         self, player, itemstack, button, modifiers, exact_hit

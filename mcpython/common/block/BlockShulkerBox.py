@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-from . import Block
+from . import AbstractBlock
 from pyglet.window import mouse, key
 import mcpython.util.enums
 import mcpython.common.factory.ItemFactory
@@ -19,7 +19,7 @@ import mcpython.common.item.IShulkerBoxLikeItem
 
 def create_shulker_box(name):
     @G.registry
-    class BlockShulkerBox(Block.Block):
+    class BlockShulkerBox(AbstractBlock.AbstractBlock):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             import mcpython.client.gui.InventoryShulkerBox as InventoryShulkerBox
@@ -42,7 +42,7 @@ def create_shulker_box(name):
 
         HARDNESS = 2.5
         MINIMUM_TOOL_LEVEL = 0
-        BEST_TOOLS_TO_BREAK = [mcpython.util.enums.ToolType.AXE]
+        ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
         def get_provided_slot_lists(self, side):
             return self.inventory.slots, self.inventory.slots
@@ -65,7 +65,7 @@ def create_shulker_box(name):
         def on_request_item_for_block(self, itemstack):
             itemstack.item.inventory = self.inventory.copy()
 
-        def on_remove(self):
+        def on_block_remove(self, reason):
             G.inventoryhandler.hide(self.inventory)
 
 

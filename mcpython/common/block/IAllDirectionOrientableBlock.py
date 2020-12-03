@@ -9,16 +9,18 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.util.enums
 
 
-class IAllDirectionOrientableBlock(mcpython.common.block.Block.Block):
+class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     MODEL_FACE_NAME = "facing"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.face = mcpython.util.enums.EnumSide.NORTH
+
+    def on_block_added(self):
         if self.set_to:
             sx, sy, sz = self.set_to
             px, py, pz = self.position

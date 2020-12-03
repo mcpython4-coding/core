@@ -16,7 +16,7 @@ import deprecation
 import pyglet
 
 from mcpython import shared as G
-import mcpython.common.block.Block
+import mcpython.common.block.AbstractBlock
 import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.OpenGLSetupFile
 import mcpython.util.math
@@ -179,7 +179,7 @@ class Dimension:
     def get_chunk_for_position(
         self,
         position: typing.Union[
-            typing.Tuple[float, float, float], mcpython.common.block.Block.Block
+            typing.Tuple[float, float, float], mcpython.common.block.AbstractBlock.AbstractBlock
         ],
         **kwargs
     ) -> typing.Union[mcpython.common.world.Chunk.Chunk, None]:
@@ -189,20 +189,20 @@ class Dimension:
         :param kwargs: same as get_chunk()
         :return: the chunk instance or None
         """
-        if issubclass(type(position), mcpython.common.block.Block.Block):
+        if issubclass(type(position), mcpython.common.block.AbstractBlock.AbstractBlock):
             position = position.position
         return self.get_chunk(*mcpython.util.math.positionToChunk(position), **kwargs)
 
     @deprecation.deprecated("dev1-4", "a1.3.0")
     def get_block(
         self, position: typing.Tuple[int, int, int]
-    ) -> typing.Union[mcpython.common.block.Block.Block, str, None]:
+    ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
         chunk = self.get_chunk_for_position(position, generate=False, create=False)
         if chunk is None:
             return
         return chunk.get_block(position)
 
-    @deprecation.deprecated("dev1-4", "a1.3.0")
+    @deprecation.deprecated()
     def add_block(
         self,
         position: tuple,
@@ -210,8 +210,7 @@ class Dimension:
         immediate=True,
         block_update=True,
         blockupdateself=True,
-        args=[],
-        kwargs={},
+        lazy_setup: typing.Callable = None
     ):
         chunk = self.get_chunk_for_position(position, generate=False)
         return chunk.add_block(
@@ -219,12 +218,11 @@ class Dimension:
             blockname,
             immediate=immediate,
             block_update=block_update,
-            args=args,
-            kwargs=kwargs,
+            lazy_setup=lazy_setup,
             blockupdateself=blockupdateself,
         )
 
-    @deprecation.deprecated("dev1-4", "a1.3.0")
+    @deprecation.deprecated()
     def remove_block(
         self, position: tuple, immediate=True, block_update=True, blockupdateself=True
     ):
