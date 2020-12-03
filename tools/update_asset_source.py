@@ -2,10 +2,10 @@ import os
 import requests
 import zipfile
 import shutil
+import sys
 
 home = os.path.dirname(os.path.dirname(__file__)).replace("\\", "/")
-url = input("url to source: ")
-# e.g. https://launcher.mojang.com/v1/objects/818705401f58ee4df2267bf97fa2e0fb6e78ce28/client.jar
+url = input("url to source: ") if len(sys.argv) == 1 else sys.argv[1]
 
 
 print("downloading...")
@@ -22,7 +22,7 @@ print("copying new...")
 
 with zipfile.ZipFile(home+"/tools/source.zip") as f:
     for file in f.namelist():
-        if "assets" in file or "data" in file:
+        if "assets" in file or "data" in file and "net/minecraft" not in file:
             data = f.read(file)
             fd = home+"/resources/source/"+file
             d = os.path.dirname(fd)

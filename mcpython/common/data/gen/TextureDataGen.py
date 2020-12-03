@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import logger
 import mcpython.common.data.gen.Configuration
 import PIL.Image
-import mcpython.ResourceLoader
+import mcpython.ResourceLoader as ResourceLoader
 import mcpython.util.texture
 
 
@@ -46,7 +46,7 @@ class TextureConstructor(mcpython.common.data.gen.Configuration.IDataGenerator):
                     0,
                     location_or_image
                     if type(location_or_image) == PIL.Image.Image
-                    else mcpython.ResourceLocator.read(location_or_image, "pil"),
+                    else ResourceLoader.read_image(location_or_image),
                     position,
                     rescale,
                 )
@@ -75,7 +75,7 @@ class TextureConstructor(mcpython.common.data.gen.Configuration.IDataGenerator):
                     1,
                     location_or_image
                     if type(location_or_image) == PIL.Image.Image
-                    else mcpython.ResourceLocator.read(location_or_image, "pil"),
+                    else ResourceLoader.read_image(location_or_image),
                     color,
                     position,
                     rescale,
@@ -96,7 +96,7 @@ class TextureConstructor(mcpython.common.data.gen.Configuration.IDataGenerator):
                     2,
                     location_or_image
                     if type(location_or_image) == PIL.Image.Image
-                    else mcpython.ResourceLocator.read(location_or_image, "pil"),
+                    else ResourceLoader.read_image(location_or_image),
                     position,
                 )
             )
