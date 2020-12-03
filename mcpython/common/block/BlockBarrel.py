@@ -35,7 +35,7 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
         """
         super().__init__(*args, **kwargs)
         self.opened: bool = False  # if the barrel is open
-        self.inventory =  mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
+        self.inventory = mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
         self.facing: str = "up"  # the direction the block faces to
 
     def on_block_added(self):

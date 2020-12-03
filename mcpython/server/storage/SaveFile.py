@@ -110,10 +110,16 @@ class SaveFile:
         dump_content_in_saves=False,
     )
     group_fixer_registry = mcpython.common.event.Registry.Registry(
-        "group_fixer", ["minecraft:group_fixer"], "stage:datafixer:general", dump_content_in_saves=False
+        "group_fixer",
+        ["minecraft:group_fixer"],
+        "stage:datafixer:general",
+        dump_content_in_saves=False,
     )
     part_fixer_registry = mcpython.common.event.Registry.Registry(
-        "part_fixer", ["minecraft:part_fixer"], "stage:datafixer:parts", dump_content_in_saves=False
+        "part_fixer",
+        ["minecraft:part_fixer"],
+        "stage:datafixer:parts",
+        dump_content_in_saves=False,
     )
 
     def __init__(self, directory_name: str):
@@ -418,7 +424,9 @@ class SaveFile:
                 return pickle.load(f)
         except (pickle.UnpicklingError, EOFError, ModuleNotFoundError):
             logger.println(
-                "[SAVE][CORRUPTED] file '{}' seems to be corrupted. See error message for info".format(file)
+                "[SAVE][CORRUPTED] file '{}' seems to be corrupted. See error message for info".format(
+                    file
+                )
             )
             return
 

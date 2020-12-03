@@ -39,7 +39,9 @@ class IStateConfigEntry(mcpython.common.event.Registry.IRegistryContent):
 
 
 entry_registry = mcpython.common.event.Registry.Registry(
-    "state_definition_entries", ["minecraft:state_definition_entry"], "stage:mod:config:entry_loaders"
+    "state_definition_entries",
+    ["minecraft:state_definition_entry"],
+    "stage:mod:config:entry_loaders",
 )
 
 

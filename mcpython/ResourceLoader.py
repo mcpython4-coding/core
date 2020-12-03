@@ -436,15 +436,15 @@ def get_all_entries_special(directory: str) -> typing.Iterator[str]:
     :param directory: the directory to searc from
     :return: an list of found resources
     """
-    iterators = []
-    for x in RESOURCE_LOCATIONS:
-        iterators.append(
+    return itertools.chain.from_iterable(
+        (
             (
                 "@{}|{}".format(x.path, s)
                 for s in x.get_all_entries_in_directory(directory)
             )
+            for x in RESOURCE_LOCATIONS
         )
-    return itertools.chain.from_iterable(iterators)
+    )
 
 
 def add_resources_by_modname(modname, pathname=None):

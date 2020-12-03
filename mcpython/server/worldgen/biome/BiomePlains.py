@@ -32,7 +32,9 @@ class Plains(Biome.Biome):
 
     @staticmethod
     def get_trees() -> list:
-        return [(mcpython.server.worldgen.feature.OakTreeFeature.OakTreeNormalFeature, 600)]
+        return [
+            (mcpython.server.worldgen.feature.OakTreeFeature.OakTreeNormalFeature, 600)
+        ]
 
 
 G.biomehandler.register(Plains, [0])

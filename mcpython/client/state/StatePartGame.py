@@ -301,7 +301,9 @@ class StatePartGame(StatePart.StatePart):
                             chunk.add_block(
                                 previous,
                                 slot.get_itemstack().item.get_block(),
-                                lazy_setup=lambda block: block.set_creation_properties(set_to=blockpos, real_hit=hitpos, player=player)
+                                lazy_setup=lambda block: block.set_creation_properties(
+                                    set_to=blockpos, real_hit=hitpos, player=player
+                                ),
                             )
                             chunk.on_block_updated(previous)
                             slot.get_itemstack().item.on_set_from_item(

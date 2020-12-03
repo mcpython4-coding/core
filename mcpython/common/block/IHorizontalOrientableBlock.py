@@ -40,4 +40,6 @@ class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlo
         if self.MODEL_FACE_NAME in state:
             self.face = mcpython.util.enums.EnumSide[state["facing"].upper()]
 
-    DEBUG_WORLD_BLOCK_STATES = [{"facing": face.name} for face in mcpython.util.enums.EnumSide.iterate()[2:]]
+    DEBUG_WORLD_BLOCK_STATES = [
+        {"facing": face.name} for face in mcpython.util.enums.EnumSide.iterate()[2:]
+    ]

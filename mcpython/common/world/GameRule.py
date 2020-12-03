@@ -177,6 +177,4 @@ class GameRuleHandler:
     def __init__(self, world):
         self.table = {}
         for gamerule in gamerule_registry.entries.keys():
-            self.table[gamerule] = gamerule_registry.entries[gamerule](
-                world
-            )
+            self.table[gamerule] = gamerule_registry.entries[gamerule](world)

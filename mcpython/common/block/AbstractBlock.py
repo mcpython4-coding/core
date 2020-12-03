@@ -95,7 +95,9 @@ class AbstractBlock(ABC, mcpython.common.event.Registry.IRegistryContent):
         self.uuid = uuid.uuid4()
         self.injected_redstone_power = {}
 
-    def set_creation_properties(self, set_to=None, real_hit=None, player=None, state=None):
+    def set_creation_properties(
+        self, set_to=None, real_hit=None, player=None, state=None
+    ):
         self.set_to = set_to
         self.real_hit = real_hit
         self.set_by = player

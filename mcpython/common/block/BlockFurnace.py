@@ -48,10 +48,18 @@ class BlockFurnace(
             self.active = state["lit"] == "true"
 
     DEBUG_WORLD_BLOCK_STATES = [
-        {mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock.MODEL_FACE_NAME: face.name,
-         "active": "false"} for face in mcpython.util.enums.EnumSide.iterate()[2:]] + [
-        {mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock.MODEL_FACE_NAME: face.name,
-         "active": "true"} for face in mcpython.util.enums.EnumSide.iterate()[2:]]
+        {
+            mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock.MODEL_FACE_NAME: face.name,
+            "active": "false",
+        }
+        for face in mcpython.util.enums.EnumSide.iterate()[2:]
+    ] + [
+        {
+            mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock.MODEL_FACE_NAME: face.name,
+            "active": "true",
+        }
+        for face in mcpython.util.enums.EnumSide.iterate()[2:]
+    ]
 
     def on_player_interaction(self, player, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:

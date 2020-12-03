@@ -214,10 +214,8 @@ class CombinedFullBlockFactory:
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
-        model_gen = (
-            mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
-                self.config, name, parent=self.mode.parent
-            )
+        model_gen = mcpython.common.data.gen.BlockModelGenerator.BlockModelGenerator(
+            self.config, name, parent=self.mode.parent
         )
         [
             model_gen.set_texture_variable(name, self.textures[name])

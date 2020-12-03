@@ -74,12 +74,17 @@ class Registry:
             )
             return
         if obj.NAME == "minecraft:unknown_registry_content":
-            logger.print_stack("can't register unnamed object '{}'".format(obj),
-                               "every registry object MUST have an unique name")
+            logger.print_stack(
+                "can't register unnamed object '{}'".format(obj),
+                "every registry object MUST have an unique name",
+            )
             return
         if obj.NAME in self.entries and override_existing:
-            logger.println("[INFO] skipping register of {} named '{}' into registry '{}' as currently arrival".format(
-                obj, obj.NAME, self.name))
+            logger.println(
+                "[INFO] skipping register of {} named '{}' into registry '{}' as currently arrival".format(
+                    obj, obj.NAME, self.name
+                )
+            )
             return
 
         self.entries[obj.NAME] = obj

@@ -344,7 +344,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                             blockstate = True
                     if not blockstate:
                         continue
-                    if block is not None and type(block) != str and block.NO_ENTITY_COLLISION:
+                    if (
+                        block is not None
+                        and type(block) != str
+                        and block.NO_ENTITY_COLLISION
+                    ):
                         block.on_no_collision_collide(
                             G.world.get_active_player(),
                             block.position in previous_positions,

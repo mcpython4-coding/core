@@ -35,7 +35,10 @@ def register_block(registry, blockclass):
         if not blockclass.ENABLE_RANDOM_TICKS:
 
             # check for functional identical parts
-            if instance.on_random_update.__code__ != AbstractBlock.on_random_update.__code__:
+            if (
+                instance.on_random_update.__code__
+                != AbstractBlock.on_random_update.__code__
+            ):
                 logger.println(
                     "[WARN] block '{}' has not set ENABLE_RANDOM_TICKS, but the event function was changed "
                     "from {} to {}!".format(
@@ -48,7 +51,10 @@ def register_block(registry, blockclass):
 
 
 block_registry = mcpython.common.event.Registry.Registry(
-    "block", ["minecraft:block_registry"], "stage:block:load", injection_function=register_block
+    "block",
+    ["minecraft:block_registry"],
+    "stage:block:load",
+    injection_function=register_block,
 )
 block_registry.full_table = {}  # an table of localized & un-localized block names
 

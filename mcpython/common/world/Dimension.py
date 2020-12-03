@@ -179,7 +179,8 @@ class Dimension:
     def get_chunk_for_position(
         self,
         position: typing.Union[
-            typing.Tuple[float, float, float], mcpython.common.block.AbstractBlock.AbstractBlock
+            typing.Tuple[float, float, float],
+            mcpython.common.block.AbstractBlock.AbstractBlock,
         ],
         **kwargs
     ) -> typing.Union[mcpython.common.world.Chunk.Chunk, None]:
@@ -189,7 +190,9 @@ class Dimension:
         :param kwargs: same as get_chunk()
         :return: the chunk instance or None
         """
-        if issubclass(type(position), mcpython.common.block.AbstractBlock.AbstractBlock):
+        if issubclass(
+            type(position), mcpython.common.block.AbstractBlock.AbstractBlock
+        ):
             position = position.position
         return self.get_chunk(*mcpython.util.math.positionToChunk(position), **kwargs)
 
@@ -210,7 +213,7 @@ class Dimension:
         immediate=True,
         block_update=True,
         blockupdateself=True,
-        lazy_setup: typing.Callable = None
+        lazy_setup: typing.Callable = None,
     ):
         chunk = self.get_chunk_for_position(position, generate=False)
         return chunk.add_block(

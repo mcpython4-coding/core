@@ -56,6 +56,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
         super().__init__(*args, **kwargs)
         self.front_side = mcpython.util.enums.EnumSide.N
         import mcpython.client.gui.InventoryChest as InventoryChest
+
         self.inventory = InventoryChest.InventoryChest()
         self.loot_table_link = None
 

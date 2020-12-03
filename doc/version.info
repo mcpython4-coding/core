@@ -1302,6 +1302,7 @@ F   [uuk]: changed how registries do some of the work
 F   [uuk]: implemented DeferredRegistryPipe
 R   [uuk]: renamed block base class to AbstractBlock
 R   [uuk]: refactored & changed block API
+[B] [uuk]: ResourceLoader.get_all_entries_special() was doing weired stuff
 
 Roadmap:
     - refactor classes & functions [WIP]

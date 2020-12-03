@@ -117,8 +117,7 @@ class CommandParser:
         """
         if len(command) == 1 and not all(
             [
-                subcommand.mode
-                == mcpython.server.command.Command.ParseMode.OPTIONAL
+                subcommand.mode == mcpython.server.command.Command.ParseMode.OPTIONAL
                 for subcommand in parsebridge.sub_commands
             ]
         ):

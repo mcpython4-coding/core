@@ -166,7 +166,7 @@ class Chunk:
         immediate=True,
         block_update=True,
         blockupdateself=True,
-        lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None
+        lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None,
     ):
         """
         adds an block to the given position
