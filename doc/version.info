@@ -1268,7 +1268,7 @@ sstarted these clone on 12th of July, 2019
         the following symbols are used for indication of task type:
             B: bug/issue
             [B]: in-dev bug during this branch
-            R: refactor
+            R: refactor / rewrite
             D: deletion
             F: feature
     [uuk]: dumped library versions
@@ -1305,6 +1305,7 @@ R   [uuk]: refactored & changed block API
 [B] [uuk]: ResourceLoader.get_all_entries_special() was doing weired stuff
 F   [uuk]: installer.py will download assets separately, they are no longer included in the main system
 F   [uuk]: updated assets to 20w49a
+R   [uuk]: rewritten ItemAtlas system
 
 Roadmap:
     - refactor classes & functions [WIP]
@@ -1315,7 +1316,6 @@ Roadmap:
     - add client & server annotations, check code for side
     - migrate globals to global game instance
     - add off-process system for world gen
-    - fix item atlases
     - remove setup / prebuild system COMPLETELY
     - remove all deprecated stuff   [WIP]
     - rewrite how assets are stored
@@ -1327,3 +1327,6 @@ Roadmap:
         class has, for not needing an lookup in the tag system
     - player inventories should be stored as attributes, not in an dict
     - fix item rendering in hotbar
+    - fix respawning in blocks
+    - fix having two separated item atlas storages?
+    - fix beeing able to break blocks in gamemode 0 which you should not be able to

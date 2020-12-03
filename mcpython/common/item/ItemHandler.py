@@ -32,8 +32,8 @@ def build():
     ITEM_ATLAS.dump()
     for itemclass in COLLECTED_ITEMS:
         for file in itemclass.get_used_texture_files():
-            items.itemindextable[itemclass.NAME][file] = ITEM_ATLAS.get_texture_info(
-                file
+            items.itemindextable[itemclass.NAME][file] = ITEM_ATLAS.get_texture_info_or_add(
+                itemclass.NAME+"#?0", file
             )
 
 
@@ -79,17 +79,13 @@ def load_data(from_block_item_generator=False):
             json.dump(data, f)
 
 
-def add_to_image_atlas(file):
-    ITEM_ATLAS.schedule_item_file(file)
-
-
 def register_item(registry, itemclass):
     items.entries[itemclass.NAME.split(":")[-1]] = itemclass
     if itemclass.NAME in items.itemindextable:
         return
     items.itemindextable.setdefault(itemclass.NAME, {})
-    for file in itemclass.get_used_texture_files():
-        add_to_image_atlas(file)
+    for i, file in enumerate(itemclass.get_used_texture_files()):
+        ITEM_ATLAS.add_file("{}#{}".format(itemclass.NAME, i), file)
     COLLECTED_ITEMS.append(itemclass)
 
 

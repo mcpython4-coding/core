@@ -114,10 +114,10 @@ class ItemModel:
         return self
 
     def bake(self, helper: "ItemModelHandler"):
-        for texture in self.layers:
+        for i, texture in enumerate(self.layers):
             if texture is None:
                 continue
-            helper.atlas.schedule_item_file(texture)
+            helper.atlas.add_file("{}#:{}".format(self.item, i), texture)
 
     def add_to_batch(
         self, position: tuple, batch, context: str, state: dict
@@ -125,13 +125,13 @@ class ItemModel:
         pass
 
     def draw(self, position: tuple, context: str, state: dict):
-        rot, pos, scale = (
+        """rot, pos, scale = (
             ((0, 0, 0), (0, 0, 0), (1, 1, 1))
             if context not in self.displays
             else self.displays[context]
-        )
-        for layer in self.layers:
-            handler.atlas.get_texture_info(layer).blit(*position)
+        )"""
+        for i, layer in enumerate(self.layers):
+            handler.atlas.get_texture_info("{}#:{}".format(self.item, i)).blit(*position)
 
 
 class ItemModelHandler:

@@ -209,7 +209,13 @@ class StateBlockItemGenerator(State.State):
             return
         blockname = self.tasks[self.blockindex]
         file = "generated_items/{}.png".format("__".join(blockname.split(":")))
-        pyglet.image.get_buffer_manager().get_color_buffer().save(G.build + "/" + file)
+        try:
+            pyglet.image.get_buffer_manager().get_color_buffer().save(G.build + "/" + file)
+        except PermissionError:
+            logger.print_exception("FATAL DURING SAVING IMAGE FOR {}".format(blockname))
+            pyglet.clock.schedule_once(self.take_image, 0.05)
+            self._error_counter(None, blockname)
+            return
         image: PIL.Image.Image = mcpython.ResourceLoader.read_image(file)
         if image.getbbox() is None or len(image.histogram()) <= 1:
             pyglet.clock.schedule_once(self.take_image, 0.05)
@@ -239,12 +245,13 @@ class StateBlockItemGenerator(State.State):
             file = G.build + "/blockitemgenerator_fail_{}_of_{}.png".format(
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__")
             )
-            image.save(file)
-            logger.println(
-                "[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(
-                    file
+            if image is not None:
+                image.save(file)
+                logger.println(
+                    "[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(
+                        file
+                    )
                 )
-            )
             file = "assets/missing_texture.png"  # use missing texture instead
             self.generate_item(blockname, file)
             mcpython.common.event.TickHandler.handler.bind(
