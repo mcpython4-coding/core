@@ -86,12 +86,14 @@ class LoadingStage:
         new_stage = LOADING_ORDER[G.modloader.active_loading_stage]
         if (
             new_stage.eventnames[0]
-            in G.modloader.mods[G.modloader.mod_loading_order[0]].eventbus.event_subscriptions
+            in G.modloader.mods[
+                G.modloader.mod_loading_order[0]
+            ].eventbus.event_subscriptions
         ):
             astate.parts[2].progress_max = len(
-                G.modloader.mods[G.modloader.mod_loading_order[0]].eventbus.event_subscriptions[
-                    new_stage.eventnames[0]
-                ]
+                G.modloader.mods[
+                    G.modloader.mod_loading_order[0]
+                ].eventbus.event_subscriptions[new_stage.eventnames[0]]
             )
         else:
             astate.parts[2].progress_max = 0

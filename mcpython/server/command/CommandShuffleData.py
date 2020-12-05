@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
 import mcpython.server.command.Command
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 from mcpython.server.command.Command import ParseBridge
 import mcpython.common.config
 

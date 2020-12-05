@@ -12,13 +12,12 @@ This project is not official by mojang and does not relate to it.
 from abc import ABC
 import typing
 import uuid
-import deprecation
 import enum
 
 import mcpython.common.block.BlockFaceState
 import mcpython.common.block.BoundingBox
 import mcpython.common.event.Registry
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import mcpython.client.gui.Slot
 import mcpython.util.enums
 import pickle
@@ -249,7 +248,7 @@ class AbstractBlock(ABC, mcpython.common.event.Registry.IRegistryContent):
         return self.get_view_bbox()
 
     def on_request_item_for_block(
-        self, itemstack: mcpython.client.gui.ItemStack.ItemStack
+        self, itemstack: mcpython.common.container.ItemStack.ItemStack
     ):
         """
         used when an item is requested exactly for this block. Useful for setting custom data to the itemstack

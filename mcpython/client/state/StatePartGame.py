@@ -14,7 +14,7 @@ from mcpython import shared as G
 from mcpython.common.config import FLYING_SPEED, GRAVITY, TERMINAL_VELOCITY, JUMP_SPEED
 from pyglet.window import key, mouse
 import pyglet
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import mcpython.common.config
 import mcpython.util.math
 import time
@@ -331,7 +331,7 @@ class StatePartGame(StatePart.StatePart):
                 chunk = G.world.get_active_dimension().get_chunk_for_position(blockpos)
                 self.mouse_press_time = 0
                 block = G.world.get_active_dimension().get_block(blockpos)
-                itemstack = mcpython.client.gui.ItemStack.ItemStack(
+                itemstack = mcpython.common.container.ItemStack.ItemStack(
                     block.NAME if type(block) != str else block
                 )
                 block = chunk.get_block(blockpos)

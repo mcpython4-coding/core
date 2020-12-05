@@ -32,9 +32,9 @@ def build():
     ITEM_ATLAS.dump()
     for itemclass in COLLECTED_ITEMS:
         for file in itemclass.get_used_texture_files():
-            items.itemindextable[itemclass.NAME][file] = ITEM_ATLAS.get_texture_info_or_add(
-                itemclass.NAME+"#?0", file
-            )
+            items.itemindextable[itemclass.NAME][
+                file
+            ] = ITEM_ATLAS.get_texture_info_or_add(itemclass.NAME + "#?0", file)
 
 
 def load_data(from_block_item_generator=False):

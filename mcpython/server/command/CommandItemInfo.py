@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
 import mcpython.server.command.Command
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 
 
@@ -59,7 +59,7 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
                         logger.println("slot {}".format(i + 1))
                         CommandItemInfo.print_info(slot.get_itemstack())
         elif modes[1][1] == 2:  # from item name
-            stack = mcpython.client.gui.ItemStack.ItemStack(values[1])
+            stack = mcpython.common.container.ItemStack.ItemStack(values[1])
             CommandItemInfo.print_info(stack)
         elif modes[1][1] == 3:  # block inventories
             block = G.world.get_active_dimension().get_block(values[2])

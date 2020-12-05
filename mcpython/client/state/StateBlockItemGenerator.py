@@ -210,7 +210,9 @@ class StateBlockItemGenerator(State.State):
         blockname = self.tasks[self.blockindex]
         file = "generated_items/{}.png".format("__".join(blockname.split(":")))
         try:
-            pyglet.image.get_buffer_manager().get_color_buffer().save(G.build + "/" + file)
+            pyglet.image.get_buffer_manager().get_color_buffer().save(
+                G.build + "/" + file
+            )
         except PermissionError:
             logger.print_exception("FATAL DURING SAVING IMAGE FOR {}".format(blockname))
             pyglet.clock.schedule_once(self.take_image, 0.05)

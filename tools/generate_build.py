@@ -184,8 +184,6 @@ def build():
 
     print("collection python files...")
     for root, dirs, files in os.walk(local):
-        if "tools" in root:
-            continue
         for file in files:
             if not file.endswith(".py"):
                 continue
@@ -202,14 +200,13 @@ def build():
     shutil.copytree(local + "/licences", folder + "/licences")
 
     print("collecting changelog...")
-    shutil.copy(local + "/changelog.txt", folder + "/changelog.txt")
+    shutil.copy(local + "/doc/changelog.txt", folder + "/changelog.txt")
 
     print("collecting data generators...")
     # 1. we don't want an window, 2. we want to include ALL possible block-data (is selective loaded with the End User config)
     subprocess.call(
         [
-            "py",
-            "-3.8",
+            sys.executable,
             local + "/__main__.py",
             "--data-gen",
             "--exit-after-data-gen",
@@ -228,16 +225,16 @@ def build():
     shutil.copy(local + "/requirements.txt", folder + "/requirements.txt")
 
     print("modifying source...")
-    with open(folder + "/globals.py") as f:
+    with open(folder + "/mcpython/shared.py") as f:
         d = f.read().replace("dev_environment = True", "dev_environment = False", 1)
-    with open(folder + "/globals.py", mode="w") as f:
+    with open(folder + "/mcpython/shared.py", mode="w") as f:
         f.write(d)
-    with open(folder + "/installer.py") as f:
+    with open(folder + "/tools/installer.py") as f:
         d = f.read().replace(
             'subprocess.Popen([sys.executable, "./__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"], stdout=sys.stdout)',
             "",
         )
-    with open(folder + "/installer.py", mode="w") as f:
+    with open(folder + "/tools/installer.py", mode="w") as f:
         f.write(d)
     with open(folder + "/mcpython/config.py") as f:
         d = f.read()

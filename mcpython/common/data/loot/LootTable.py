@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.ResourceLoader
 import enum
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 from mcpython import shared as G, logger
 import mcpython.common.mod.ModMcpython
 import mcpython.common.data.loot.LootTableCondition
@@ -105,7 +105,7 @@ class LootTableHandler:
         if table_name in self.loot_tables:
             return self.loot_tables[table_name].roll(block=block, player=player)
         # todo: add option to print an warning here
-        return [mcpython.client.gui.ItemStack.ItemStack(block.NAME)]
+        return [mcpython.common.container.ItemStack.ItemStack(block.NAME)]
 
     def for_mod_name(self, modname, directoryname=None):
         if directoryname is None:
@@ -212,17 +212,17 @@ class LootTablePoolEntry:
             return None
         items = []
         if self.entry_type == LootTablePoolEntryType.ITEM:
-            items.append(mcpython.client.gui.ItemStack.ItemStack(self.name))
+            items.append(mcpython.common.container.ItemStack.ItemStack(self.name))
         elif self.entry_type == LootTablePoolEntryType.TAG:
             if self.expand:
                 items.append(
-                    mcpython.client.gui.ItemStack.ItemStack(
+                    mcpython.common.container.ItemStack.ItemStack(
                         random.choice(G.taghandler.get_tag_for(self.name, "items"))
                     )
                 )
             else:
                 items += [
-                    mcpython.client.gui.ItemStack.ItemStack(name)
+                    mcpython.common.container.ItemStack.ItemStack(name)
                     for name in G.taghandler.get_tag_for(self.name, "items")
                 ]
         elif self.entry_type == LootTablePoolEntryType.LOOT_TABLE:

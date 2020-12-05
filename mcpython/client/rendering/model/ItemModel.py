@@ -62,7 +62,11 @@ class DefaultLoader(IItemModelLoader):
         if "gui_light" in data:
             model.lighting = data["gui_light"]
         if "elements" in data:
-            logger.println("[FATAL] failed to decode elements tag of {} as it is NOT implemented!".format(model))
+            logger.println(
+                "[FATAL] failed to decode elements tag of {} as it is NOT implemented!".format(
+                    model
+                )
+            )
             # todo: implement!
         if "overrides" in data:
             for case in data["overrides"]:
@@ -131,7 +135,9 @@ class ItemModel:
             else self.displays[context]
         )"""
         for i, layer in enumerate(self.layers):
-            handler.atlas.get_texture_info("{}#:{}".format(self.item, i)).blit(*position)
+            handler.atlas.get_texture_info("{}#:{}".format(self.item, i)).blit(
+                *position
+            )
 
 
 class ItemModelHandler:

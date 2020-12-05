@@ -12,10 +12,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared as G
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import mcpython.client.gui.crafting.CraftingManager
 import mcpython.client.gui.crafting.CraftingGridHelperInterface
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import pyglet
 import mcpython.common.event.EventHandler
 
@@ -60,7 +60,7 @@ class InventoryChest(mcpython.client.gui.Inventory.Inventory):
         for slot in (
             G.world.get_active_player().inventories["main"].slots[:36] + self.slots
         ):
-            slot.draw_lable(x, y)
+            slot.draw_label()
         self.on_draw_overlay()
 
     def get_interaction_slots(self):

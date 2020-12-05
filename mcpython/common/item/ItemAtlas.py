@@ -62,7 +62,9 @@ class ItemAtlasHandler:
 
         for file in self.scheduled_item_files:
             if not ResourceLoader.exists(file):
-                self.scheduled_item_files.setdefault("assets/missing_texture.png", []).extend(self.scheduled_item_files[file])
+                self.scheduled_item_files.setdefault(
+                    "assets/missing_texture.png", []
+                ).extend(self.scheduled_item_files[file])
                 continue
 
             if file == "assets/missing_texture.png":
@@ -91,13 +93,15 @@ class ItemAtlasHandler:
         if not os.path.exists(self.folder):
             os.makedirs(self.folder)
         for i, atlas in enumerate(self.atlases):
-            atlas.texture.save(self.folder+"/atlas_{}.png".format(i))
+            atlas.texture.save(self.folder + "/atlas_{}.png".format(i))
 
     def get_texture_info(self, name: str):
         if name not in self.lookup_map:
             logger.print_stack(
-                "[FATAL] tried to access '{}' (which is not arrival) for getting texture info for atlas".format(name),
-                "[FATAL] this normally indicates an missing addition to the texture atlas or an broken rendering system"
+                "[FATAL] tried to access '{}' (which is not arrival) for getting texture info for atlas".format(
+                    name
+                ),
+                "[FATAL] this normally indicates an missing addition to the texture atlas or an broken rendering system",
             )
             return self.grids[0][0, 0]
 

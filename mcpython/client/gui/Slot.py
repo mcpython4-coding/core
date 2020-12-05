@@ -9,9 +9,11 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 from mcpython import shared as G, logger
 import pyglet
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import mcpython.common.item.ItemHandler
 import mcpython.ResourceLoader
 import mcpython.client.rendering.model.ItemModel
@@ -26,7 +28,45 @@ PYGLET_IMAGE_HOVERING = pyglet.sprite.Sprite(
 )
 
 
-class Slot:
+class ISlot(ABC):
+    def get_capacity(self) -> int:
+        raise NotImplementedError()
+
+    def get_itemstack(self) -> mcpython.common.container.ItemStack.ItemStack:
+        raise NotImplementedError()
+
+    def set_itemstack(self, stack: mcpython.common.container.ItemStack.ItemStack, update=True, player=False):
+        raise NotImplementedError()
+
+    def call_update(self, player=False):
+        pass
+
+    def copy(self, position=(0, 0)):
+        raise NotImplementedError()
+
+    def deepCopy(self):
+        raise NotImplementedError()
+
+    def draw(self, dx=0, dy=0, hovering=False):
+        pass
+
+    def draw_label(self):
+        pass
+
+    def can_set_item(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
+        raise NotImplementedError()
+
+    def save(self):
+        pass
+
+    def load(self, data):
+        pass
+
+    def getParent(self) -> "ISlot":
+        raise NotImplementedError()
+
+
+class Slot(ISlot):
     """
     slot class
     """
@@ -65,19 +105,21 @@ class Slot:
         self.__itemstack = (
             itemstack
             if itemstack
-            else mcpython.client.gui.ItemStack.ItemStack.get_empty()
+            else mcpython.common.container.ItemStack.ItemStack.get_empty()
         )
+
         self.position = position
         if self.__itemstack.item:
             pos, index = mcpython.common.item.ItemHandler.items.itemindextable[
                 self.__itemstack.get_item_name()
             ][self.__itemstack.item.get_active_image_location()]
-            image = mcpython.common.item.ItemHandler.TEXTURE_ATLASES[index].group[
+            image = mcpython.common.item.ItemHandler.ITEM_ATLAS.atlases[index].group[
                 tuple(pos)
             ]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         else:
             self.sprite = None
+
         self.amount_label = pyglet.text.Label(
             text=str(self.itemstack.amount), anchor_x="right"
         )
@@ -86,6 +128,7 @@ class Slot:
             if self.__itemstack.item
             else None
         )
+        # todo: make own attributes
         self.interaction_mode = [
             allow_player_remove,
             allow_player_insert,
@@ -103,21 +146,21 @@ class Slot:
         self.__capacity = capacity
         self.check_function = check_function
 
-    def get_capacity(self):
+    def get_capacity(self) -> int:
         return (
             self.__capacity
             if self.__capacity is not None
             else (64 if self.itemstack.is_empty() else self.itemstack.item.STACK_SIZE)
         )
 
-    def get_itemstack(self):
+    def get_itemstack(self) -> mcpython.common.container.ItemStack.ItemStack:
         return self.__itemstack
 
-    def set_itemstack(self, stack, update=True, player=False):
+    def set_itemstack(self, stack: mcpython.common.container.ItemStack.ItemStack, update=True, player=False):
         self.__itemstack = (
             stack
             if stack is not None
-            else mcpython.client.gui.ItemStack.ItemStack.get_empty()
+            else mcpython.common.container.ItemStack.ItemStack.get_empty()
         )
         if update:
             self.call_update(player=player)
@@ -171,9 +214,9 @@ class Slot:
             )
             PYGLET_IMAGE_HOVERING.draw()
         if not self.itemstack.is_empty() and (
-            self.itemstack.item.get_default_item_image_location()
-            != self.__last_item_file
-            or self.sprite is None
+                self.itemstack.item.get_default_item_image_location()
+                != self.__last_item_file
+                or self.sprite is None
         ):
             image = mcpython.common.item.ItemHandler.items.itemindextable[
                 self.itemstack.get_item_name()
@@ -187,24 +230,18 @@ class Slot:
                     self.position[1] + dy,
                 )
                 self.empty_image.draw()
-        if self.sprite is not None:
-            # self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
-            # self.sprite.draw()
-            mcpython.client.rendering.model.ItemModel.handler.draw(
-                self.itemstack.get_item_name(),
-                (self.position[0] + dx, self.position[1] + dy),
-                "gui",
-                {},
-            )
+        if self.sprite:
+            self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
+            self.sprite.draw()
         self.__last_item_file = (
             self.itemstack.item.get_default_item_image_location()
             if self.itemstack.item
             else None
         )
 
-    def draw_lable(self, x, y):
+    def draw_label(self):
         """
-        these code draws only the lable, before, normal draw should be executed for correcrt setup
+        these code draws only the label, before, normal draw should be executed for correct setup
         """
         if self.itemstack.amount > 1:
             if self.sprite is None:
@@ -217,16 +254,16 @@ class Slot:
             self.amount_label.y = self.sprite.y
             self.amount_label.draw()
 
-    def can_set_item(self, itemstack) -> bool:
+    def can_set_item(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
         if callable(self.check_function):
             if not self.check_function(self, itemstack):
                 return False
-        itemname = itemstack.get_item_name()
+        item_name = itemstack.get_item_name()
         flag1 = self.allowed_item_tags is not None
         flag2 = flag1 and (
             any(
                 [
-                    G.taghandler.has_entry_tag(itemname, "items", x)
+                    G.taghandler.has_entry_tag(item_name, "items", x)
                     for x in self.allowed_item_tags
                 ]
             )
@@ -256,7 +293,7 @@ class Slot:
 
     def load(self, data):
         self.set_itemstack(
-            mcpython.client.gui.ItemStack.ItemStack(
+            mcpython.common.container.ItemStack.ItemStack(
                 data["itemstack"]["itemname"], data["itemstack"]["amount"]
             )
         )
@@ -296,7 +333,7 @@ class SlotCopy:
             pos, index = mcpython.common.item.ItemHandler.items.itemindextable[
                 self.get_itemstack().get_item_name()
             ][self.get_itemstack().item.get_active_image_location()]
-            image = mcpython.common.item.ItemHandler.TEXTURE_ATLASES[index].group[
+            image = mcpython.common.item.ItemHandler.ITEM_ATLAS.atlases[index].group[
                 tuple(pos)
             ]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
@@ -372,7 +409,7 @@ class SlotCopy:
             else None
         )
 
-    def draw_lable(self, x, y):
+    def draw_label(self):
         if self.itemstack.amount > 1:
             self.amount_label.text = str(self.itemstack.amount)
             self.amount_label.x = self.sprite.x + SLOT_WIDTH
@@ -394,7 +431,7 @@ class SlotCopy:
 
     def load(self, data):
         self.set_itemstack(
-            mcpython.client.gui.ItemStack.ItemStack(
+            mcpython.common.container.ItemStack.ItemStack(
                 data["itemstack"]["itemname"], data["itemstack"]["amount"]
             )
         )
@@ -478,7 +515,7 @@ class SlotInfiniteStackExchangeable(Slot):
 
     def set_itemstack(self, stack, update=True, player=False):
         self.__itemstack = (
-            stack if stack else mcpython.client.gui.ItemStack.ItemStack.get_empty()
+            stack if stack else mcpython.common.container.ItemStack.ItemStack.get_empty()
         )
         if not stack.itemstack.is_empty():
             self.reference_stack = stack.copy()
@@ -498,7 +535,7 @@ class SlotInfiniteStackExchangeable(Slot):
 class SlotTrashCan(Slot):
     def set_itemstack(self, stack, update=True, player=False):
         self.__itemstack = (
-            stack if stack else mcpython.client.gui.ItemStack.ItemStack.get_empty()
+            stack if stack else mcpython.common.container.ItemStack.ItemStack.get_empty()
         )
         flag = True
         if update:

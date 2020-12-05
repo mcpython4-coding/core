@@ -162,7 +162,7 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
             )  # change to default implementation: do NOT render hovering entry
         self.on_draw_over_image()
         for slot in self.slots:
-            slot.draw_lable(x, y)
+            slot.draw_label()
         self.on_draw_overlay()
 
     def on_draw_over_image(self):

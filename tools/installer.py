@@ -21,7 +21,7 @@ home = os.path.dirname(os.path.dirname(__file__))
 
 
 subprocess.call(
-    [sys.executable, "-m", "pip", "install", "-r", home+"/requirements.txt"],
+    [sys.executable, "-m", "pip", "install", "-r", home + "/requirements.txt"],
     stdout=sys.stdout,
     stderr=sys.stderr,
 )
@@ -30,7 +30,7 @@ subprocess.call(
     [
         sys.executable,
         home + "/tools/update_asset_source.py",
-        "https://launcher.mojang.com/v1/objects/818705401f58ee4df2267bf97fa2e0fb6e78ce28/client.jar"
+        "https://launcher.mojang.com/v1/objects/818705401f58ee4df2267bf97fa2e0fb6e78ce28/client.jar",
     ],
     stdout=sys.stdout,
 )

@@ -14,7 +14,7 @@ import mcpython.client.gui.crafting.IRecipeInterface
 import mcpython.client.gui.crafting.IRecipeType
 import mcpython.client.gui.crafting.GridRecipeInstances
 import mcpython.client.gui.Slot
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 
 
 class CraftingGridHelperInterface(
@@ -192,7 +192,7 @@ class CraftingGridHelperInterface(
         if self.active_recipe:
             recipe = G.craftinghandler.check_relink(self.active_recipe)
             self.slot_output_map.set_itemstack(
-                mcpython.client.gui.ItemStack.ItemStack(
+                mcpython.common.container.ItemStack.ItemStack(
                     recipe.output[0], amount=recipe.output[1]
                 ),
                 update=False,
@@ -247,7 +247,7 @@ class CraftingGridHelperInterface(
         while self.active_recipe == old_recipe:
             itemstack = self.slot_output_map.get_itemstack().copy()
             self.slot_output_map.set_itemstack(
-                mcpython.client.gui.ItemStack.ItemStack.get_empty()
+                mcpython.common.container.ItemStack.ItemStack.get_empty()
             )
             self.slot_output_map.call_update(player=True)
             count += itemstack.amount

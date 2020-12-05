@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared as G, logger
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import mcpython.client.gui.crafting.FurnaceCraftingHelper
 import mcpython.common.event.EventHandler
 import pyglet
@@ -229,7 +229,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         for slot in (
             G.world.get_active_player().inventories["main"].slots[:36] + self.slots
         ):
-            slot.draw_lable(x, y)
+            slot.draw_label()
         self.on_draw_overlay()
 
     def get_interaction_slots(self):
@@ -261,7 +261,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
     def finish(self):
         if self.slots[2].itemstack.is_empty():
             self.slots[2].set_itemstack(
-                mcpython.client.gui.ItemStack.ItemStack(self.recipe.output)
+                mcpython.common.container.ItemStack.ItemStack(self.recipe.output)
             )
         else:
             if self.slots[2].itemstack.item.STACK_SIZE > self.slots[2].itemstack.amount:

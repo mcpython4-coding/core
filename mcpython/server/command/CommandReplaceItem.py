@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
 import mcpython.server.command.Command
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 from mcpython.server.command.Command import (
     ParseType,
     ParseMode,
@@ -78,7 +78,7 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
                     return
                 slot = inventory.slots[slot_id]
                 slot.set_itemstack(
-                    mcpython.client.gui.ItemStack.ItemStack(
+                    mcpython.common.container.ItemStack.ItemStack(
                         values[3], 1 if len(values) == 4 else values[4]
                     )
                 )
@@ -99,7 +99,7 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
                     return
                 slot = entity.inventory_slots[slot_id]
                 slot.set_itemstack(
-                    mcpython.client.gui.ItemStack.ItemStack(
+                    mcpython.common.container.ItemStack.ItemStack(
                         values[3], 1 if len(values) == 4 else values[4]
                     )
                 )

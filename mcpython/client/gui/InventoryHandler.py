@@ -73,7 +73,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         if not G.inventoryhandler.moving_slot.get_itemstack().is_empty():
             G.inventoryhandler.moving_slot.position = G.window.mouse_position
             G.inventoryhandler.moving_slot.draw(0, 0)
-            G.inventoryhandler.moving_slot.draw_lable(0, 0)
+            G.inventoryhandler.moving_slot.draw_label()
 
         # First, render tooltip for item attached to the mouse, and than for the over the mouse is
         if (

@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import pyglet
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import mcpython.client.Language
 
 
@@ -24,7 +24,7 @@ class IHoveringItemBoxDefinitionPlugin:
     """
 
     def manipulateShownText(
-        self, slot: mcpython.client.gui.ItemStack.ItemStack, text: list
+        self, slot: mcpython.common.container.ItemStack.ItemStack, text: list
     ):
         raise NotImplementedError()
 
@@ -42,7 +42,7 @@ class IHoveringItemBoxDefinition:
         cls.PLUGINS = []
 
     def getHoveringText(
-        self, itemstack: mcpython.client.gui.ItemStack.ItemStack
+        self, itemstack: mcpython.common.container.ItemStack.ItemStack
     ) -> list:
         raise NotImplementedError()
 
@@ -66,7 +66,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
         self.default_style = default_style
 
     def getHoveringText(
-        self, itemstack: mcpython.client.gui.ItemStack.ItemStack
+        self, itemstack: mcpython.common.container.ItemStack.ItemStack
     ) -> list:
         if itemstack.is_empty():
             return []
@@ -127,7 +127,7 @@ class HoveringItemBoxProvider:
         self.label_batch = pyglet.graphics.Batch()
         self.bg_rectangle = pyglet.shapes.Rectangle(0, 0, 0, 0, (0, 0, 0))
 
-    def renderFor(self, itemstack: mcpython.client.gui.ItemStack.ItemStack, position):
+    def renderFor(self, itemstack: mcpython.common.container.ItemStack.ItemStack, position):
         """
         will render the ItemBoxProvider for an given slot
         :param itemstack: the slot to render over

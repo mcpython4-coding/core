@@ -1306,6 +1306,10 @@ R   [uuk]: refactored & changed block API
 F   [uuk]: installer.py will download assets separately, they are no longer included in the main system
 F   [uuk]: updated assets to 20w49a
 R   [uuk]: rewritten ItemAtlas system
+    [uuk]: updated build system to reflect last changes
+B   [uuk]: normal slots were drawing item stacks not correctly
+R   [uuk]: renamed some Slot specific methods
+R   [uuk]: moved some files around again
 
 Roadmap:
     - refactor classes & functions [WIP]
@@ -1330,3 +1334,5 @@ Roadmap:
     - fix respawning in blocks
     - fix having two separated item atlas storages?
     - fix beeing able to break blocks in gamemode 0 which you should not be able to
+    - update mdk to the new systems
+    - update doc generator to use tokenize

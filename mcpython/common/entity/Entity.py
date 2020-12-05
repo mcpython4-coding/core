@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 from mcpython import shared as G, logger
 import mcpython.common.event.Registry
 import mcpython.common.entity.EntityHandler
@@ -186,7 +186,7 @@ class Entity(mcpython.common.event.Registry.IRegistryContent):
         if self.uuid in G.entityhandler.entity_map:
             del G.entityhandler.entity_map[self.uuid]
 
-    def pick_up(self, itemstack: mcpython.client.gui.ItemStack.ItemStack) -> bool:
+    def pick_up(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
         """
         Let the entity pick up an item and insert it into its inventory
         :param itemstack: the itemstack to use

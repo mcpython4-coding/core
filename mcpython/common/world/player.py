@@ -16,7 +16,7 @@ import mcpython.common.entity.Entity
 import mcpython.common.event.EventHandler
 import mcpython.client.gui.InventoryChest
 import mcpython.client.gui.MainPlayerInventory
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import mcpython.client.gui.Slot
 import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.EntityRenderer
@@ -184,7 +184,7 @@ class Player(mcpython.common.entity.Entity.Entity):
     def add_xp_level(self, xp_levels: int):
         self.xp_level += xp_levels
 
-    def pick_up(self, itemstack: mcpython.client.gui.ItemStack.ItemStack) -> bool:
+    def pick_up(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
         """
         adds the item onto the itemstack
         :param itemstack: the itemstack to add

@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.ILog as ILog

@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.event.Registry
 from mcpython import shared as G
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import random
 
 
@@ -111,7 +111,7 @@ class FurnaceSmelt(ILootTableFunction):
                 result = G.craftinghandler.furnace_recipes["minecraft:smelting"][
                     itemname
                 ]
-                items[i] = mcpython.client.gui.ItemStack.ItemStack(
+                items[i] = mcpython.common.container.ItemStack.ItemStack(
                     result.output, itemstack.amount
                 )
 

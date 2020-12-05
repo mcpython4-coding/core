@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.gui.crafting.IRecipeType
 from mcpython import shared as G, logger
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 
 
 def transform_to_item_stack(item, table: dict) -> list:

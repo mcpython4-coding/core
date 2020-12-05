@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
 import mcpython.server.command.Command
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 from mcpython.server.command.Command import (
     ParseType,
     ParseMode,
@@ -43,7 +43,7 @@ class CommandGive(mcpython.server.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        stack = mcpython.client.gui.ItemStack.ItemStack(
+        stack = mcpython.common.container.ItemStack.ItemStack(
             values[1]
         )  # get the stack to add
         if len(values) > 2:

@@ -204,7 +204,7 @@ class Inventory:
             slot.draw(x, y, hovering=slot == hoveringslot)
         self.on_draw_over_image()
         for slot in self.slots:
-            slot.draw_lable(x, y)
+            slot.draw_label()
         self.on_draw_overlay()
 
     def on_draw_background(self):  # todo: remove

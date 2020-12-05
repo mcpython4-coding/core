@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared as G
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
-import mcpython.client.gui.ItemStack
+import mcpython.common.container.ItemStack
 import mcpython.client.gui.crafting.CraftingManager
 import mcpython.client.gui.crafting.CraftingGridHelperInterface
 import mcpython.common.item.ItemArmor
@@ -70,7 +70,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         for slot in self.slots[40:-2]:
             slot: mcpython.client.gui.Slot.Slot
             itemstack = slot.get_itemstack()
-            slot.set_itemstack(mcpython.client.gui.ItemStack.ItemStack.get_empty())
+            slot.set_itemstack(mcpython.common.container.ItemStack.ItemStack.get_empty())
             if not G.world.get_active_player().pick_up(itemstack):
                 pass  # todo: drop item as item could not be added to inventory
         self.slots[-2].get_itemstack().clean()
