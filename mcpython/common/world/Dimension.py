@@ -21,6 +21,7 @@ import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.util
 import mcpython.util.math
 import mcpython.common.world.Chunk
+import mcpython.common.world.AbstractInterface
 
 
 class DimensionDefinition:
@@ -124,9 +125,9 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
 )
 
 
-class Dimension:
+class Dimension(mcpython.common.world.AbstractInterface.IDimension):
     """
-    class holding an whole dimension
+    Class holding an whole dimension
     """
 
     def __init__(self, world_in, dim_id: int, name: str, genconfig=None):
@@ -154,7 +155,7 @@ class Dimension:
         cz: int = None,
         generate: bool = True,
         create: bool = True,
-    ) -> typing.Union[mcpython.common.world.Chunk.Chunk, None]:
+    ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
         """
         used to get an chunk instance with an given position
         :param cx: the chunk x position or an tuple of (x, z)
@@ -183,7 +184,7 @@ class Dimension:
             mcpython.common.block.AbstractBlock.AbstractBlock,
         ],
         **kwargs
-    ) -> typing.Union[mcpython.common.world.Chunk.Chunk, None]:
+    ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
         """
         gets an chunk for an position
         :param position: the position to use or the block instance to use
@@ -196,7 +197,7 @@ class Dimension:
             position = position.position
         return self.get_chunk(*mcpython.util.math.positionToChunk(position), **kwargs)
 
-    @deprecation.deprecated("dev1-4", "a1.3.0")
+    @deprecation.deprecated()
     def get_block(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
@@ -206,46 +207,26 @@ class Dimension:
         return chunk.get_block(position)
 
     @deprecation.deprecated()
-    def add_block(
-        self,
-        position: tuple,
-        blockname: str,
-        immediate=True,
-        block_update=True,
-        blockupdateself=True,
-        lazy_setup: typing.Callable = None,
-    ):
+    def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True, block_update_self=True,
+                  lazy_setup: typing.Callable = None):
         chunk = self.get_chunk_for_position(position, generate=False)
-        return chunk.add_block(
-            position,
-            blockname,
-            immediate=immediate,
-            block_update=block_update,
-            lazy_setup=lazy_setup,
-            blockupdateself=blockupdateself,
-        )
+        return chunk.add_block(position, block_name, immediate=immediate, block_update=block_update,
+                               block_update_self=block_update_self, lazy_setup=lazy_setup)
 
     @deprecation.deprecated()
-    def remove_block(
-        self, position: tuple, immediate=True, block_update=True, blockupdateself=True
-    ):
+    def remove_block(self, position: tuple, immediate=True, block_update=True, block_update_self=True):
         chunk = self.get_chunk_for_position(position)
-        chunk.remove_block(
-            position,
-            immediate=immediate,
-            block_update=block_update,
-            blockupdateself=blockupdateself,
-        )
+        chunk.remove_block(position, immediate=immediate, block_update=block_update, block_update_self=block_update_self)
 
-    @deprecation.deprecated("dev1-4", "a1.3.0")
+    @deprecation.deprecated()
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         self.get_chunk_for_position(position).check_neighbors(position)
 
-    @deprecation.deprecated("dev1-4", "a1.3.0")
+    @deprecation.deprecated()
     def show_block(self, position, immediate=True):
         self.get_chunk_for_position(position).show_block(position, immediate=immediate)
 
-    @deprecation.deprecated("dev1-4", "a1.3.0")
+    @deprecation.deprecated()
     def hide_block(self, position, immediate=True):
         self.get_chunk_for_position(position).hide_block(position, immediate=immediate)
 
@@ -261,7 +242,7 @@ class Dimension:
             for dz in range(-pad, pad + 1):
                 cx, cz = x + dx, z + dz
                 chunk = self.get_chunk(cx, cz, create=False)
-                if chunk is not None:
+                if chunk is not None and isinstance(chunk, mcpython.common.world.Chunk.Chunk):
                     chunk.draw()
         G.rendering_helper.disableAlpha()
         # G.rendering_helper.apply(status)

@@ -101,13 +101,9 @@ def generate_slab_block(
         texture, modname, generator, full_model=full, on_create_callback=callback
     ).setName(name)
     if generate_recipe:
-        mcpython.common.data.gen.RecipeGenerator.ShapedRecipeGenerator(
-            name
-        ).setEntries(SLAB_TEMPLATE, name.split("_slab")[0]).setOutput(
-            (6, name)
-        ).setGroup(
-            "slab"
-        )
+        mcpython.common.data.gen.RecipeGenerator.ShapedRecipeGenerator(name).setEntries(
+            SLAB_TEMPLATE, name.split("_slab")[0]
+        ).setOutput((6, name)).setGroup("slab")
 
 
 def generate_wall_block(
@@ -116,17 +112,13 @@ def generate_wall_block(
     if texture is None:
         texture = "{}:block/{}".format(*name.split("_wall")[0].split(":"))
     modname, raw_name = name.split(":")
-    CombinedWallFactory(texture, modname, generator, on_create_callback=callback).setName(
-        name
-    )
+    CombinedWallFactory(
+        texture, modname, generator, on_create_callback=callback
+    ).setName(name)
     if generate_recipe:
-        mcpython.common.data.gen.RecipeGenerator.ShapedRecipeGenerator(
-            name
-        ).setEntries(WALL_TEMPLATE, name.split("_wall")[0]).setOutput(
-            (6, name)
-        ).setGroup(
-            "wall"
-        )
+        mcpython.common.data.gen.RecipeGenerator.ShapedRecipeGenerator(name).setEntries(
+            WALL_TEMPLATE, name.split("_wall")[0]
+        ).setOutput((6, name)).setGroup("wall")
 
 
 def generate_log_block(
@@ -175,7 +167,9 @@ class CombinedFullBlockFactory:
 
     GLOBAL_NAME = None
 
-    def __init__(self, modname: str, generator: DataGeneratorInstance, on_create_callback=None):
+    def __init__(
+        self, modname: str, generator: DataGeneratorInstance, on_create_callback=None
+    ):
         if modname is None:
             modname = self.GLOBAL_NAME
         assert modname is not None, "modname must be set locally or globally"
@@ -210,15 +204,20 @@ class CombinedFullBlockFactory:
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
-        model_gen = mcpython.common.data.gen.BlockModelGenerator.BlockModel(name, parent=self.mode.parent)
+        model_gen = mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+            name, parent=self.mode.parent
+        )
         [
             model_gen.set_texture_variable(name, self.textures[name])
             for name in self.textures
         ]
         self.generator.annotate(model_gen, name)
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockState(
-            name
-        ).add_state(None, "{}:block/{}".format(self.modname, name)), name)
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockState(name).add_state(
+                None, "{}:block/{}".format(self.modname, name)
+            ),
+            name,
+        )
 
     def __generate_factories(self):
         factory = mcpython.common.factory.BlockFactory.BlockFactory().setName(self.name)
@@ -272,24 +271,33 @@ class CombinedSlabFactory:
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockModel(
-            name, parent="minecraft:block/slab"
-        ).set_texture_variables(self.texture, *self.SLAB_TEXTURES), name)
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockModel(
-            name + "_top", parent="minecraft:block/slab_top"
-        ).set_texture_variables(self.texture, *self.SLAB_TEXTURES), name+"_top")
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+                name, parent="minecraft:block/slab"
+            ).set_texture_variables(self.texture, *self.SLAB_TEXTURES),
+            name,
+        )
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+                name + "_top", parent="minecraft:block/slab_top"
+            ).set_texture_variables(self.texture, *self.SLAB_TEXTURES),
+            name + "_top",
+        )
         if not self.full_model:
             self.full_model = "{}:block/{}_double".format(self.modname, self.name)
-            self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockModel(
-                name + "_double", parent="minecraft:block/cube_all"
-            ).set_texture_variable("all", self.texture), self.full_model)
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockState(
-            name
-        ).add_state("type=bottom", "{}:block/{}".format(self.modname, name)).add_state(
-            "type=top", "{}:block/{}_top".format(self.modname, name)
-        ).add_state(
-            "type=double", self.full_model
-        ), name)
+            self.generator.annotate(
+                mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+                    name + "_double", parent="minecraft:block/cube_all"
+                ).set_texture_variable("all", self.texture),
+                self.full_model,
+            )
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockState(name)
+            .add_state("type=bottom", "{}:block/{}".format(self.modname, name))
+            .add_state("type=top", "{}:block/{}_top".format(self.modname, name))
+            .add_state("type=double", self.full_model),
+            name,
+        )
 
     def __generate_factories(self):
         factory = (
@@ -310,7 +318,11 @@ class CombinedWallFactory:
     GLOBAL_NAME = None
 
     def __init__(
-        self, texture: str, modname: str, generator: DataGeneratorInstance, on_create_callback=None
+        self,
+        texture: str,
+        modname: str,
+        generator: DataGeneratorInstance,
+        on_create_callback=None,
     ):
         """
         will create an n ew CombinedWallFactory
@@ -337,29 +349,43 @@ class CombinedWallFactory:
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockModel(
-            name + "_inventory", parent="minecraft:block/wall_inventory"
-        ).set_texture_variable("wall", self.texture), name+"_inventory")
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockModel(
-            name + "_post", parent="minecraft:block/template_wall_post"
-        ).set_texture_variable("wall", self.texture), name+"_post")
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockModel(
-            name + "_side", parent="minecraft:block/template_wall_side"
-        ).set_texture_variable("wall", self.texture), name+"_side")
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockModel(
-            name + "_side_tall",
-            parent="minecraft:block/template_wall_side_tall",
-        ).set_texture_variable("wall", self.texture), name+"_side_all")
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+                name + "_inventory", parent="minecraft:block/wall_inventory"
+            ).set_texture_variable("wall", self.texture),
+            name + "_inventory",
+        )
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+                name + "_post", parent="minecraft:block/template_wall_post"
+            ).set_texture_variable("wall", self.texture),
+            name + "_post",
+        )
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+                name + "_side", parent="minecraft:block/template_wall_side"
+            ).set_texture_variable("wall", self.texture),
+            name + "_side",
+        )
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+                name + "_side_tall",
+                parent="minecraft:block/template_wall_side_tall",
+            ).set_texture_variable("wall", self.texture),
+            name + "_side_all",
+        )
         side = "{}:block/{}_side".format(self.modname, name)
         tall = "{}:block/{}_side_tall".format(self.modname, name)
         post = "{}:block/{}_post".format(self.modname, name)
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.MultiPartBlockState(
-            name, parent="minecraft:wall_template"
-        ).addAliasName("alias:post", post).addAliasName(
-            "alias:side", side
-        ).addAliasName(
-            "alias:tall", tall
-        ), name)
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.MultiPartBlockState(
+                name, parent="minecraft:wall_template"
+            )
+            .addAliasName("alias:post", post)
+            .addAliasName("alias:side", side)
+            .addAliasName("alias:tall", tall),
+            name,
+        )
 
     def __generate_factories(self):
         factory = mcpython.common.factory.BlockFactory.BlockFactory().setName(self.name)
@@ -410,23 +436,32 @@ class CombinedLogFactory:
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockModel(
-            name, parent="minecraft:block/cube_column"
-        ).set_texture_variable("end", self.front_texture).set_texture_variable(
-            "side", self.side_texture
-        ), self.name)
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+                name, parent="minecraft:block/cube_column"
+            )
+            .set_texture_variable("end", self.front_texture)
+            .set_texture_variable("side", self.side_texture),
+            self.name,
+        )
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockModel(
+                name + "_horizontal",
+                parent="minecraft:block/cube_column_horizontal",
+            )
+            .set_texture_variable("end", self.front_texture)
+            .set_texture_variable("side", self.side_texture),
             name + "_horizontal",
-            parent="minecraft:block/cube_column_horizontal",
-        ).set_texture_variable("end", self.front_texture).set_texture_variable(
-            "side", self.side_texture
-        ), name+"_horizontal")
+        )
         hor = "{}:block/{}_horizontal".format(self.modname, name)
-        self.generator.annotate(mcpython.common.data.gen.BlockModelGenerator.BlockState(
-            name, parent="minecraft:log_template"
-        ).addAliasName("alias:horizontal", hor).addAliasName(
-            "alias:normal", "{}:block/{}".format(self.modname, name)
-        ), name)
+        self.generator.annotate(
+            mcpython.common.data.gen.BlockModelGenerator.BlockState(
+                name, parent="minecraft:log_template"
+            )
+            .addAliasName("alias:horizontal", hor)
+            .addAliasName("alias:normal", "{}:block/{}".format(self.modname, name)),
+            name,
+        )
 
     def __generate_factories(self):
         factory = (

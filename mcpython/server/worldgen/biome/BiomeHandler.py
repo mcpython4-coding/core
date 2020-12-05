@@ -15,9 +15,9 @@ import mcpython.common.mod.ModMcpython
 
 class BiomeHandler:
     def __init__(self):
-        self.registrylist = []
+        self.registry_list = []
         self.biomes = {}
-        self.biometable = (
+        self.biome_table = (
             {}
         )  # {dim: int -> {landmass: str -> {temperature: int -> [biomename with weights]}}}}
 
@@ -30,24 +30,24 @@ class BiomeHandler:
         if biome in self.biomes.values():
             raise ValueError("can't add biome. biome is in biome registry")
         self.biomes[biome.NAME] = biome
-        self.registrylist.append(biome)
+        self.registry_list.append(biome)
 
     def add_biome_to_dim(self, dim: int, biomename: str):
         biome = self.biomes[biomename]
-        if dim not in self.biometable:
-            self.biometable[dim] = {}
-        if biome.get_landmass() not in self.biometable[dim]:
-            self.biometable[dim][biome.get_landmass()] = {}
-        if biome.get_temperature() not in self.biometable[dim][biome.get_landmass()]:
-            self.biometable[dim][biome.get_landmass()][biome.get_temperature()] = []
-        self.biometable[dim][biome.get_landmass()][biome.get_temperature()] += [
+        if dim not in self.biome_table:
+            self.biome_table[dim] = {}
+        if biome.get_landmass() not in self.biome_table[dim]:
+            self.biome_table[dim][biome.get_landmass()] = {}
+        if biome.get_temperature() not in self.biome_table[dim][biome.get_landmass()]:
+            self.biome_table[dim][biome.get_landmass()][biome.get_temperature()] = []
+        self.biome_table[dim][biome.get_landmass()][biome.get_temperature()] += [
             biomename
         ] * biome.get_weight()
 
     def remove_biome_from_dim(self, dim: int, biomename: str):
         biome = self.biomes[biomename]
-        while biomename in self.biometable[dim][biome.get_landmass()]:
-            self.biometable[dim][biome.get_landmass()][biome.get_temperature()].remove(
+        while biomename in self.biome_table[dim][biome.get_landmass()]:
+            self.biome_table[dim][biome.get_landmass()][biome.get_temperature()].remove(
                 biomename
             )
 
@@ -55,7 +55,7 @@ class BiomeHandler:
         return any(
             [
                 biomename in x
-                for x in self.biometable[dim][
+                for x in self.biome_table[dim][
                     self.biomes[biomename].get_landmass()
                 ].values()
             ]
@@ -66,12 +66,12 @@ class BiomeHandler:
     ) -> list:
         if temperature is None:
             l = []
-            for ll in self.biometable[dim][landmass]:
+            for ll in self.biome_table[dim][landmass]:
                 l += ll
         else:
-            if temperature not in self.biometable[dim][landmass]:
+            if temperature not in self.biome_table[dim][landmass]:
                 return []
-            l = self.biometable[dim][landmass][temperature]
+            l = self.biome_table[dim][landmass][temperature]
         return list(tuple(l)) if not weighted else l
 
     def get_sum_weight_count(self, dim: int, landmass: str, temperature=None) -> int:
@@ -82,27 +82,27 @@ class BiomeHandler:
         )
 
     def get_biome_at(
-        self, landmass: str, dim: int, selectvalue: float, temperature: float
+        self, landmass: str, dim: int, select_value: float, temperature: float
     ) -> str:
         """
         gets an biome with given info
         :param landmass: the landmass to choise from
         :param dim: the dimension we were in
-        :param selectvalue: an value with which the system decides which biome to select, value from 0. - 1.
+        :param select_value: an value with which the system decides which biome to select, value from 0. - 1.
         :param temperature: the temperature to use
         :return: the biome which was selected
         """
-        temperatures = list(self.biometable[dim][landmass].keys())
+        temperatures = list(self.biome_table[dim][landmass].keys())
         temperatures.sort(key=lambda x: abs(temperature - x))
         temperature = temperatures[0]
         biomes = self.get_biomes_for_dimension(
             dim, landmass, weighted=True, temperature=temperature
         )
-        selectvalue *= len(biomes)
-        selectvalue = round(selectvalue)
-        if selectvalue == len(biomes):
-            selectvalue = 0
-        return biomes[selectvalue]
+        select_value *= len(biomes)
+        select_value = round(select_value)
+        if select_value == len(biomes):
+            select_value = 0
+        return biomes[select_value]
 
 
 G.biomehandler = BiomeHandler()

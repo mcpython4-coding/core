@@ -16,9 +16,10 @@ import mcpython.common.block.AbstractBlock as Block
 import mcpython.util.enums
 import mcpython.util.math
 from mcpython.util.math import *  # todo: remove
+import mcpython.common.world.AbstractInterface
 
 
-class Chunk:
+class Chunk(mcpython.common.world.AbstractInterface.IChunk):
     """
     representation of an chunk in the world
     """
@@ -30,13 +31,12 @@ class Chunk:
     )  # an dict representing the default attributes of an chunk; todo: replace by class-based system
 
     @staticmethod
-    def add_default_attribute(name: str, reference, default, authcode=None):
+    def add_default_attribute(name: str, reference, default):
         """
         will add an config entry into every new chunk instance
         :param name: the name of the attribute
         :param reference: the reference to use; unused internally
         :param default: the default value
-        :param authcode: deprecated, will be removed
         WARNING: content must be saved separately
         """
         Chunk.attributes[name] = (reference, default, None)
@@ -46,7 +46,7 @@ class Chunk:
         Will create an new chunk instance
         :param dimension: the world.Dimension.Dimension object used to store this chunk
         :param position: the position of the chunk
-        WARNING: use Dimension.get_chunk() where possible
+        WARNING: use Dimension.get_chunk() where possible [saver variant]
         """
         self.dimension = dimension
         self.position = position
@@ -155,22 +155,16 @@ class Chunk:
             or G.worldgenerationhandler.task_handler.get_block(position) is not None
         )
 
-    def add_block(
-        self,
-        position: tuple,
-        block_name: typing.Union[str, Block.AbstractBlock],
-        immediate=True,
-        block_update=True,
-        blockupdateself=True,
-        lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None,
-    ):
+    def add_block(self, position: tuple, block_name: typing.Union[str, Block.AbstractBlock], immediate=True,
+                  block_update=True, block_update_self=True,
+                  lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None):
         """
         adds an block to the given position
         :param position: the position to add
         :param block_name: the name of the block or an instance of it
         :param immediate: if the block should be shown if needed
         :param block_update: if an block-update should be send to neighbors blocks
-        :param blockupdateself: if the block should get an block-update
+        :param block_update_self: if the block should get an block-update
         :param lazy_setup: an callable for setting up the block instance
         :return: the block instance or None if it could not be created
         """
@@ -218,7 +212,7 @@ class Chunk:
             if self.exposed(position):
                 self.show_block(position)
             if block_update:
-                self.on_block_updated(position, itself=blockupdateself)
+                self.on_block_updated(position, itself=block_update_self)
             self.check_neighbors(position)
         self.positions_updated_since_last_save.add(position)
         return blockobj
@@ -249,20 +243,15 @@ class Chunk:
                                     "during block-updating block {}".format(b)
                                 )
 
-    def remove_block(
-        self,
-        position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
-        immediate: bool = True,
-        block_update: bool = True,
-        blockupdateself: bool = True,
-        reason=Block.BlockRemovalReason.UNSET,
-    ):
+    def remove_block(self, position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
+                     immediate: bool = True, block_update: bool = True, block_update_self: bool = True,
+                     reason=Block.BlockRemovalReason.UNSET):
         """
         Remove the block at the given `position`.
         :param position: The (x, y, z) position of the block to remove.
         :param immediate: Whether or not to immediately remove block from canvas.
         :param block_update: Whether an block-update should be called or not
-        :param blockupdateself: Whether the block to remove should get an block-update or not
+        :param block_update_self: Whether the block to remove should get an block-update or not
         :param reason: the reason why the block was removed
         """
         if position not in self.world:
@@ -273,7 +262,7 @@ class Chunk:
         self.world[position].face_state.hide_all()
         del self.world[position]
         if block_update:
-            self.on_block_updated(position, itself=blockupdateself)
+            self.on_block_updated(position, itself=block_update_self)
         if immediate:
             self.check_neighbors(position)
         self.positions_updated_since_last_save.add(position)
@@ -364,7 +353,7 @@ class Chunk:
         elif hide:
             self.show_block(position)
 
-    def exposed(self, position):
+    def exposed(self, position: typing.Tuple[int, int, int]):
         return any(self.exposed_faces(position).values())
 
     def update_visible(self, hide=True, immediate=False):

@@ -9,7 +9,10 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
+from mcpython.common.data.gen.DataGeneratorManager import (
+    IDataGenerator,
+    DataGeneratorInstance,
+)
 
 
 class EntityModelGenerator(IDataGenerator):
@@ -129,5 +132,10 @@ class EntityModelGenerator(IDataGenerator):
         return data
 
     def get_default_location(self, generator: DataGeneratorInstance, name: str):
-        return "assets/{}/models/entity/{}.json".format(*name.split(":")) if ":" in name else \
-            "assets/{}/models/entity/{}.json".format(generator.default_namespace, name)
+        return (
+            "assets/{}/models/entity/{}.json".format(*name.split(":"))
+            if ":" in name
+            else "assets/{}/models/entity/{}.json".format(
+                generator.default_namespace, name
+            )
+        )

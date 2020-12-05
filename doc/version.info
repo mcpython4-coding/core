@@ -1318,6 +1318,8 @@ R/F [uuk]: changed a lot of stuff around the data generator system
 F   [uuk]: BedrockLayer is now noise-based
 R   [uuk]: renamed layers with prefix "minecraft:"
     [uuk]: added DEPENDS_ON attribute to Layers
+R   [uuk]: split task array from WorldGenerationHandler.py
+F   [uuk]: implemented AbstractInterface.py class
 
 Roadmap:
     - refactor classes & functions [WIP]
@@ -1342,3 +1344,4 @@ Roadmap:
     - update doc generator to use tokenize
     - optimize rendering system
     - use scissor group for world view
+    - make world generator mode system class based

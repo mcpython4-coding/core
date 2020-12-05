@@ -13,7 +13,10 @@ from abc import ABC
 
 from mcpython import shared, logger
 import typing
-from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
+from mcpython.common.data.gen.DataGeneratorManager import (
+    IDataGenerator,
+    DataGeneratorInstance,
+)
 
 
 class ILootTableCondition(IDataGenerator, ABC):
@@ -322,5 +325,8 @@ class LootTableGenerator(IDataGenerator):
         return data
 
     def get_default_location(self, generator: "DataGeneratorInstance", name: str):
-        return "data/{}/loot_tables/{}.json".format(*name.split(":")) if name.count(":") == 1 else \
-            "data/{}/loot_tables/{}.json".format(generator.default_namespace, name)
+        return (
+            "data/{}/loot_tables/{}.json".format(*name.split(":"))
+            if name.count(":") == 1
+            else "data/{}/loot_tables/{}.json".format(generator.default_namespace, name)
+        )

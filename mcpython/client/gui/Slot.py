@@ -35,7 +35,12 @@ class ISlot(ABC):
     def get_itemstack(self) -> mcpython.common.container.ItemStack.ItemStack:
         raise NotImplementedError()
 
-    def set_itemstack(self, stack: mcpython.common.container.ItemStack.ItemStack, update=True, player=False):
+    def set_itemstack(
+        self,
+        stack: mcpython.common.container.ItemStack.ItemStack,
+        update=True,
+        player=False,
+    ):
         raise NotImplementedError()
 
     def call_update(self, player=False):
@@ -53,7 +58,9 @@ class ISlot(ABC):
     def draw_label(self):
         pass
 
-    def can_set_item(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
+    def can_set_item(
+        self, itemstack: mcpython.common.container.ItemStack.ItemStack
+    ) -> bool:
         raise NotImplementedError()
 
     def save(self):
@@ -156,7 +163,12 @@ class Slot(ISlot):
     def get_itemstack(self) -> mcpython.common.container.ItemStack.ItemStack:
         return self.__itemstack
 
-    def set_itemstack(self, stack: mcpython.common.container.ItemStack.ItemStack, update=True, player=False):
+    def set_itemstack(
+        self,
+        stack: mcpython.common.container.ItemStack.ItemStack,
+        update=True,
+        player=False,
+    ):
         self.__itemstack = (
             stack
             if stack is not None
@@ -214,9 +226,9 @@ class Slot(ISlot):
             )
             PYGLET_IMAGE_HOVERING.draw()
         if not self.itemstack.is_empty() and (
-                self.itemstack.item.get_default_item_image_location()
-                != self.__last_item_file
-                or self.sprite is None
+            self.itemstack.item.get_default_item_image_location()
+            != self.__last_item_file
+            or self.sprite is None
         ):
             image = mcpython.common.item.ItemHandler.items.itemindextable[
                 self.itemstack.get_item_name()
@@ -254,19 +266,20 @@ class Slot(ISlot):
             self.amount_label.y = self.sprite.y
             self.amount_label.draw()
 
-    def can_set_item(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
+    def can_set_item(
+        self, itemstack: mcpython.common.container.ItemStack.ItemStack
+    ) -> bool:
         if callable(self.check_function):
             if not self.check_function(self, itemstack):
                 return False
         flag1 = self.allowed_item_tags is not None
-        flag2 = flag1 and itemstack.item is not None and (
-            any(
-                [
-                    x in itemstack.item.TAGS
-                    for x in self.allowed_item_tags
-                ]
+        flag2 = (
+            flag1
+            and itemstack.item is not None
+            and (
+                any([x in itemstack.item.TAGS for x in self.allowed_item_tags])
+                or itemstack.get_item_name() is None
             )
-            or itemstack.get_item_name() is None
         )
         flag3 = self.allowed_item_func is not None
         flag4 = flag3 and self.allowed_item_func(itemstack)
@@ -514,7 +527,9 @@ class SlotInfiniteStackExchangeable(Slot):
 
     def set_itemstack(self, stack, update=True, player=False):
         self.__itemstack = (
-            stack if stack else mcpython.common.container.ItemStack.ItemStack.get_empty()
+            stack
+            if stack
+            else mcpython.common.container.ItemStack.ItemStack.get_empty()
         )
         if not stack.itemstack.is_empty():
             self.reference_stack = stack.copy()
@@ -534,7 +549,9 @@ class SlotInfiniteStackExchangeable(Slot):
 class SlotTrashCan(Slot):
     def set_itemstack(self, stack, update=True, player=False):
         self.__itemstack = (
-            stack if stack else mcpython.common.container.ItemStack.ItemStack.get_empty()
+            stack
+            if stack
+            else mcpython.common.container.ItemStack.ItemStack.get_empty()
         )
         flag = True
         if update:

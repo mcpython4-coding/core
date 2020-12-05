@@ -127,7 +127,9 @@ class HoveringItemBoxProvider:
         self.label_batch = pyglet.graphics.Batch()
         self.bg_rectangle = pyglet.shapes.Rectangle(0, 0, 0, 0, (0, 0, 0))
 
-    def renderFor(self, itemstack: mcpython.common.container.ItemStack.ItemStack, position):
+    def renderFor(
+        self, itemstack: mcpython.common.container.ItemStack.ItemStack, position
+    ):
         """
         will render the ItemBoxProvider for an given slot
         :param itemstack: the slot to render over

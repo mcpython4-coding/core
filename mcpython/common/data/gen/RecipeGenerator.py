@@ -13,7 +13,10 @@ from abc import ABC
 
 from mcpython.common.container.ItemStack import ItemStack
 import typing
-from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
+from mcpython.common.data.gen.DataGeneratorManager import (
+    IDataGenerator,
+    DataGeneratorInstance,
+)
 from mcpython import logger
 
 
@@ -187,8 +190,11 @@ class ShapedRecipeGenerator(IDataGenerator):
         return data
 
     def get_default_location(self, generator: "DataGeneratorInstance", name: str):
-        return "data/{}/recipes/{}.json".format(*name.split(":")) if name.count(":") == 1 else \
-            "data/{}/recipes/{}.json".format(generator.default_namespace, name)
+        return (
+            "data/{}/recipes/{}.json".format(*name.split(":"))
+            if name.count(":") == 1
+            else "data/{}/recipes/{}.json".format(generator.default_namespace, name)
+        )
 
 
 class ShapelessGenerator(IDataGenerator):
@@ -238,8 +244,11 @@ class ShapelessGenerator(IDataGenerator):
         return data
 
     def get_default_location(self, generator: "DataGeneratorInstance", name: str):
-        return "data/{}/recipes/{}.json".format(*name.split(":")) if name.count(":") == 1 else \
-            "data/{}/recipes/{}.json".format(generator.default_namespace, name)
+        return (
+            "data/{}/recipes/{}.json".format(*name.split(":"))
+            if name.count(":") == 1
+            else "data/{}/recipes/{}.json".format(generator.default_namespace, name)
+        )
 
 
 class SmeltingGenerator(IDataGenerator):
@@ -297,5 +306,8 @@ class SmeltingGenerator(IDataGenerator):
         return data
 
     def get_default_location(self, generator: "DataGeneratorInstance", name: str):
-        return "data/{}/recipes/{}.json".format(*name.split(":")) if name.count(":") == 1 else \
-            "data/{}/recipes/{}.json".format(generator.default_namespace, name)
+        return (
+            "data/{}/recipes/{}.json".format(*name.split(":"))
+            if name.count(":") == 1
+            else "data/{}/recipes/{}.json".format(generator.default_namespace, name)
+        )

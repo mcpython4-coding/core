@@ -10,7 +10,10 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import logger
-from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
+from mcpython.common.data.gen.DataGeneratorManager import (
+    IDataGenerator,
+    DataGeneratorInstance,
+)
 import PIL.Image
 import mcpython.ResourceLoader as ResourceLoader
 import mcpython.util.texture

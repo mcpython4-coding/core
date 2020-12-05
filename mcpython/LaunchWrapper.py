@@ -62,6 +62,7 @@ class LaunchWrapper:
         import mcpython.common.mod.ModLoader
         import mcpython.common.mod.ModMcpython
         import mcpython.common.mod.ConfigFile
+
         # from mcpython.common.data.gen.mcpython import (
         # )
 

@@ -35,9 +35,7 @@ class CommandSetblock(mcpython.server.command.Command.Command):
     @staticmethod
     def parse(values: list, modes: list, info):
         position = mcpython.util.math.normalize(values[0])
-        G.world.dimensions[info.dimension].get_chunk_for_position(position).add_block(
-            position, values[1], blockupdateself=False
-        )
+        G.world.dimensions[info.dimension].get_chunk_for_position(position).add_block(position, values[1])
 
     @staticmethod
     def get_help() -> list:

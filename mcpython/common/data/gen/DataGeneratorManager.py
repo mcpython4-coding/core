@@ -1,10 +1,22 @@
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
+
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
+
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import json
 import os
 from mcpython import logger
 from mcpython import shared
 
 
-class UnsupportedIndirectDumpException(Exception): pass
+class UnsupportedIndirectDumpException(Exception):
+    pass
 
 
 class IDataGenerator:
@@ -14,12 +26,17 @@ class IDataGenerator:
     def write(self, generator: "DataGeneratorInstance", name: str):
         file = self.get_default_location(generator, name)
         if file is None:
-            logger.println("[WARN] failed to dump data generator {} named {}, as no file was returned".format(
-                self, name))
+            logger.println(
+                "[WARN] failed to dump data generator {} named {}, as no file was returned".format(
+                    self, name
+                )
+            )
             return
         generator.write(json.dumps(self.dump(generator)).encode("utf-8"), file)
 
-    def get_default_location(self, generator: "DataGeneratorInstance", name: str) -> str:
+    def get_default_location(
+        self, generator: "DataGeneratorInstance", name: str
+    ) -> str:
         pass
 
 
@@ -28,7 +45,9 @@ class DataGeneratorInstance:
         self.default_namespace = None
         self.to_generate = []
         self.location = location.format(local=shared.local)
-        shared.modloader["minecraft"].eventbus.subscribe("special:datagen:generate", self.generate)
+        shared.modloader["minecraft"].eventbus.subscribe(
+            "special:datagen:generate", self.generate
+        )
 
     def write(self, data: bytes, file: str):
         file = self.get_full_path(file)
@@ -46,5 +65,8 @@ class DataGeneratorInstance:
             try:
                 generator.write(self, name)
             except UnsupportedIndirectDumpException:
-                logger.print_exception("[WARN] failed to dump data generator {} named {}".format(generator, name))
-
+                logger.print_exception(
+                    "[WARN] failed to dump data generator {} named {}".format(
+                        generator, name
+                    )
+                )

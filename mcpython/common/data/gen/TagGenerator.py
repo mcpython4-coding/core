@@ -9,7 +9,10 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
+from mcpython.common.data.gen.DataGeneratorManager import (
+    IDataGenerator,
+    DataGeneratorInstance,
+)
 
 
 class TagGenerator(IDataGenerator):
@@ -25,5 +28,9 @@ class TagGenerator(IDataGenerator):
         return {"replace": self.override, "values": list(self.affected)}
 
     def get_default_location(self, generator: "DataGeneratorInstance", name: str):
-        namespace, name = name.split(":") if name.count(":") == 1 else (generator.default_namespace, name)
+        namespace, name = (
+            name.split(":")
+            if name.count(":") == 1
+            else (generator.default_namespace, name)
+        )
         return "data/{}/tags/{}/{}.json".format(name, self.group, name)

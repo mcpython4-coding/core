@@ -26,9 +26,10 @@ import mcpython.common.world.Dimension
 import mcpython.common.world.GameRule
 import mcpython.server.worldgen.WorldGenerationHandler
 import mcpython.common.world.player
+import mcpython.common.world.AbstractInterface
 
 
-class World:
+class World(mcpython.common.world.AbstractInterface.IWorld):
     """
     class holding all data of the world
     """
@@ -41,7 +42,7 @@ class World:
             random.randint(0, 15),
         )
         self.dimensions: typing.Dict[
-            int, mcpython.world.Dimension.Dimension
+            int, mcpython.common.world.AbstractInterface.IDimension
         ] = {}  # todo: change for str-based
         G.dimensionhandler.init_dims()
         self.active_dimension: int = (
@@ -63,7 +64,7 @@ class World:
         )  # the save file instance
 
         # when in an network, stores an reference to all other players
-        self.players: typing.Dict[str, mcpython.world.player.Player] = {}
+        self.players: typing.Dict[str, mcpython.common.world.player.Player] = {}
         self.active_player: str = "unknown"  # todo: make property, make None-able & set default None when not in world
         self.world_loaded = False  # describes if the world is loaded or not
 
@@ -115,7 +116,7 @@ class World:
 
     def get_active_dimension(
         self,
-    ) -> typing.Union[mcpython.common.world.Dimension.Dimension, None]:
+    ) -> typing.Union[mcpython.common.world.AbstractInterface.IDimension, None]:
         """
         will return the dimension the player is in
         :return: the dimension or None if no dimension is set
@@ -126,7 +127,7 @@ class World:
 
     def add_dimension(
         self, dim_id: int, name: str, dim_config=None, config=None
-    ) -> mcpython.common.world.Dimension.Dimension:
+    ) -> mcpython.common.world.AbstractInterface.IDimension:
         """
         will add an new dimension into the system
         :param dim_id: the id to create under
@@ -145,11 +146,10 @@ class World:
         G.worldgenerationhandler.setup_dimension(dim, config)
         return dim
 
-    def join_dimension(self, dim_id: int, save_current=None):
+    def join_dimension(self, dim_id: int):
         """
         will change the dimension of the active player
         :param dim_id: the dimension to change to todo: make str
-        :param save_current: unused, deprecated; always set to True now
         todo: move to player
         """
         logger.println("changing dimension to '{}'...".format(dim_id))
@@ -170,7 +170,7 @@ class World:
         G.eventhandler.call("dimension:chane:post", old, dim_id)
         logger.println("finished!")
 
-    def get_dimension(self, dim_id: int) -> mcpython.common.world.Dimension.Dimension:
+    def get_dimension(self, dim_id: int) -> mcpython.common.world.AbstractInterface.IDimension:
         """
         will get an dimension with an special id
         :param dim_id: the id to use
@@ -233,45 +233,31 @@ class World:
             z += dz
         return None, None, None
 
-    @deprecation.deprecated("dev1-4", "a1.3.0")
-    def show_sector(self, sector):
-        self.show_chunk(sector)
-
     def show_chunk(
         self,
-        chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.Chunk.Chunk],
+        chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk],
     ):
         """
         Ensure all blocks in the given chunk that should be shown are
         drawn to the canvas.
         :param chunk: the chunk to show
         """
-        if not issubclass(type(chunk), mcpython.common.world.Chunk.Chunk):
+        if not issubclass(type(chunk), mcpython.common.world.AbstractInterface.IChunk):
             chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
         chunk.show()
 
-    @deprecation.deprecated("dev1-4", "a1.3.0")
-    def hide_sector(self, sector, immediate=False):
-        self.hide_chunk(sector)
-
     def hide_chunk(
         self,
-        chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.Chunk.Chunk],
+        chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk],
     ):
         """
         Ensure all blocks in the given chunk that should be hidden are
         removed from the canvas.
         :param chunk: the chunk to hide
         """
-        if not issubclass(type(chunk), mcpython.common.world.Chunk.Chunk):
+        if not issubclass(type(chunk), mcpython.common.world.AbstractInterface.IChunk):
             chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
         chunk.hide()
-
-    @deprecation.deprecated("dev1-4", "a1.3.0")
-    def change_sectors(
-        self, before, after, immediate=False, generate_chunks=True, load_immediate=False
-    ):
-        self.change_chunks(before, after, generate_chunks, load_immediate)
 
     def change_chunks(
         self,
@@ -349,12 +335,11 @@ class World:
         will clean up the world
         :param remove_dims: if dimensions should be cleared
         :param filename: the new filename if it changes
-        :param add_player: deprecated
         todo: make split up into smaller functions
         """
         self.active_dimension = 0
         for dimension in self.dimensions.values():
-            dimension: mcpython.world.Dimension.Dimension
+            dimension: mcpython.common.world.AbstractInterface.IDimension
             for chunk in dimension.chunks.values():
                 chunk.hide_all()
                 del chunk

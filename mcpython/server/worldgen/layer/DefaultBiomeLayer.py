@@ -18,6 +18,7 @@ import mcpython.common.event.EventHandler
 import mcpython.server.worldgen.biome.BiomeHandler
 from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 import mcpython.common.world.Chunk
+import mcpython.common.world.AbstractInterface
 
 
 @G.worldgenerationhandler

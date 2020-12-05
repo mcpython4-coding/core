@@ -1,9 +1,20 @@
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
+
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
+
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 from pyglet.gl import *
 import pyglet
 import mcpython.common.config
 
 
-__all__ = ["setup", "setup_fog",  "draw_line_box", "set_2d", "set_3d"]
+__all__ = ["setup", "setup_fog", "draw_line_box", "set_2d", "set_3d"]
 
 
 def setup():
@@ -94,4 +105,3 @@ def enableAlpha():
 def disableAlpha():
     glBlendFunc(GL_ONE, GL_ZERO)
     glEnable(GL_CULL_FACE)
-

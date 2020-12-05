@@ -11,7 +11,10 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 import mcpython.util.enums
-from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
+from mcpython.common.data.gen.DataGeneratorManager import (
+    IDataGenerator,
+    DataGeneratorInstance,
+)
 from mcpython import logger
 
 
@@ -49,11 +52,7 @@ class ModelRepr(IDataGenerator):
         :param uv_lock: if uv's should be not affected by rotation
         :param weight: the weight, when in an list of multiple models
         """
-        self.model = (
-            model
-            if type(model) == str
-            else model.name
-        )
+        self.model = model if type(model) == str else model.name
         self.r_x = r_x % 360
         self.r_y = r_y % 360
         self.uv_lock = uv_lock
@@ -231,8 +230,13 @@ class BlockState(IDataGenerator):
         return data
 
     def get_default_location(self, generator: DataGeneratorInstance, name: str):
-        return "assets/{}/blockstates/{}.json".format(*name.split(":")) if ":" in name else \
-            "assets/{}/blockstates/{}.json".format(generator.default_namespace, name)
+        return (
+            "assets/{}/blockstates/{}.json".format(*name.split(":"))
+            if ":" in name
+            else "assets/{}/blockstates/{}.json".format(
+                generator.default_namespace, name
+            )
+        )
 
 
 class MultiPartBlockState(IDataGenerator):
@@ -326,8 +330,13 @@ class MultiPartBlockState(IDataGenerator):
             raise NotImplementedError()
 
     def get_default_location(self, generator: DataGeneratorInstance, name: str):
-        return "assets/{}/blockstates/{}.json".format(*name.split(":")) if ":" in name else \
-            "assets/{}/blockstates/{}.json".format(generator.default_namespace, name)
+        return (
+            "assets/{}/blockstates/{}.json".format(*name.split(":"))
+            if ":" in name
+            else "assets/{}/blockstates/{}.json".format(
+                generator.default_namespace, name
+            )
+        )
 
 
 class ModelDisplay(IDataGenerator):
@@ -445,7 +454,8 @@ class BlockModel(IDataGenerator):
                     "from": f,
                     "to": t,
                     "faces": {
-                        config.face.normal_name: config.dump(generator) for config in faces
+                        config.face.normal_name: config.dump(generator)
+                        for config in faces
                     },
                 }
                 if any((rotation_center, rotation_angle, rotation_axis)):
@@ -459,5 +469,10 @@ class BlockModel(IDataGenerator):
         return data
 
     def get_default_location(self, generator: DataGeneratorInstance, name: str):
-        return "assets/{}/models/block/{}.json".format(*name.split(":")) if ":" in name else \
-            "assets/{}/models/block/{}.json".format(generator.default_namespace, name)
+        return (
+            "assets/{}/models/block/{}.json".format(*name.split(":"))
+            if ":" in name
+            else "assets/{}/models/block/{}.json".format(
+                generator.default_namespace, name
+            )
+        )

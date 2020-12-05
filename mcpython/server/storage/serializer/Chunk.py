@@ -13,6 +13,7 @@ import mcpython.server.storage.serializer.IDataSerializer
 import mcpython.server.storage.datafixers.IDataFixer
 from mcpython import shared as G, logger
 import mcpython.common.world.Chunk
+import mcpython.common.world.AbstractInterface
 import mcpython.util.enums
 import uuid
 
@@ -269,7 +270,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         except NotImplementedError:
             return
 
-        chunk_instance: mcpython.world.Chunk.Chunk = G.world.dimensions[
+        chunk_instance: mcpython.common.world.AbstractInterface.IChunk = G.world.dimensions[
             dimension
         ].get_chunk(*chunk, generate=False)
         if chunk_instance.loaded:
@@ -408,7 +409,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         if chunk not in G.world.dimensions[dimension].chunks:
             return
         region = chunk2region(*chunk)
-        chunk_instance: mcpython.world.Chunk.Chunk = G.world.dimensions[
+        chunk_instance: mcpython.common.world.AbstractInterface.IChunk = G.world.dimensions[
             dimension
         ].chunks[chunk]
         if not chunk_instance.generated:

@@ -20,10 +20,14 @@ import mcpython.util.math
 class TagTargetHolder:
     def __init__(self, name: str):
         self.name = name
-        self.classes: typing.List[typing.Type[mcpython.common.data.tags.ITagTarget.ITagTarget]] = []
+        self.classes: typing.List[
+            typing.Type[mcpython.common.data.tags.ITagTarget.ITagTarget]
+        ] = []
         TagGroup.TAG_HOLDERS.setdefault(name, []).append(self)
 
-    def register_class(self, cls: typing.Type[mcpython.common.data.tags.ITagTarget.ITagTarget]):
+    def register_class(
+        self, cls: typing.Type[mcpython.common.data.tags.ITagTarget.ITagTarget]
+    ):
         self.classes.append(cls)
         return cls
 
@@ -37,6 +41,7 @@ class TagGroup:
     """
     class for holding an group of tags. e.g. all items
     """
+
     TAG_HOLDERS: typing.Dict[str, typing.List[TagTargetHolder]] = {}
 
     def __init__(self, name: str):

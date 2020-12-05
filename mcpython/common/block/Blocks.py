@@ -673,7 +673,10 @@ def load_colored(generator: DataGeneratorInstance):
             enable=BLOCKS,
         )
         CombinedBlockFactory.generate_full_block_slab_wall(
-            generator, "minecraft:{}_wool".format(color), callback=set_wool, enable=BLOCKS
+            generator,
+            "minecraft:{}_wool".format(color),
+            callback=set_wool,
+            enable=BLOCKS,
         )
         CombinedBlockFactory.generate_full_block_slab_wall(
             generator,

@@ -509,7 +509,9 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         # todo: move to RenderingHelper
         width, height = self.get_size()
         viewport = self.get_viewport_size()
-        mcpython.client.rendering.util.set_2d((max(1, viewport[0]), max(1, viewport[1])), max(1, width), max(1, height))
+        mcpython.client.rendering.util.set_2d(
+            (max(1, viewport[0]), max(1, viewport[1])), max(1, width), max(1, height)
+        )
         pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
     def set_3d(self, position=None, rotation=None):
