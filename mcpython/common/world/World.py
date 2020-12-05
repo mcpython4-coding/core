@@ -170,7 +170,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         G.eventhandler.call("dimension:chane:post", old, dim_id)
         logger.println("finished!")
 
-    def get_dimension(self, dim_id: int) -> mcpython.common.world.AbstractInterface.IDimension:
+    def get_dimension(
+        self, dim_id: int
+    ) -> mcpython.common.world.AbstractInterface.IDimension:
         """
         will get an dimension with an special id
         :param dim_id: the id to use
@@ -235,7 +237,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
     def show_chunk(
         self,
-        chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk],
+        chunk: typing.Union[
+            typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk
+        ],
     ):
         """
         Ensure all blocks in the given chunk that should be shown are
@@ -248,7 +252,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
     def hide_chunk(
         self,
-        chunk: typing.Union[typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk],
+        chunk: typing.Union[
+            typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk
+        ],
     ):
         """
         Ensure all blocks in the given chunk that should be hidden are

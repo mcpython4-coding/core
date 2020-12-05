@@ -115,7 +115,9 @@ class CommandClone(mcpython.server.command.Command.Command):
             if block_map[(x, y, z)] is None:
                 chunk.remove_block((x, y, z))
             else:
-                block = chunk.add_block((x + dx, y + dy, z + dz), block_map[(x, y, z)].NAME)
+                block = chunk.add_block(
+                    (x + dx, y + dy, z + dz), block_map[(x, y, z)].NAME
+                )
                 block.set_model_state(block_map[(x, y, z)].get_model_state())
                 block.face_state.update()
 

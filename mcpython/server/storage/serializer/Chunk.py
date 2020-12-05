@@ -270,9 +270,9 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         except NotImplementedError:
             return
 
-        chunk_instance: mcpython.common.world.AbstractInterface.IChunk = G.world.dimensions[
-            dimension
-        ].get_chunk(*chunk, generate=False)
+        chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
+            G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
+        )
         if chunk_instance.loaded:
             return
         if data is None:
@@ -409,9 +409,9 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         if chunk not in G.world.dimensions[dimension].chunks:
             return
         region = chunk2region(*chunk)
-        chunk_instance: mcpython.common.world.AbstractInterface.IChunk = G.world.dimensions[
-            dimension
-        ].chunks[chunk]
+        chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
+            G.world.dimensions[dimension].chunks[chunk]
+        )
         if not chunk_instance.generated:
             return
         data = savefile.access_file_pickle(

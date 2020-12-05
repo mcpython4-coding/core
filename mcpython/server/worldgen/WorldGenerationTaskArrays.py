@@ -9,10 +9,8 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.world.Chunk
 import mcpython.common.world.AbstractInterface
 import time
-from mcpython import shared
 from mcpython import logger
 
 
@@ -39,14 +37,16 @@ class WorldGenerationTaskHandler:
             stats.append(count)
         return stats
 
-    def get_task_count_for_chunk(self, chunk: mcpython.common.world.AbstractInterface.IChunk) -> int:
+    def get_task_count_for_chunk(
+        self, chunk: mcpython.common.world.AbstractInterface.IChunk
+    ) -> int:
         """
         gets the total count of tasks for an given chunk as an int
         :param chunk:
         :return:
         """
-        dim = chunk.dimension.id
-        p = chunk.position
+        dim = chunk.get_dimension().get_id()
+        p = chunk.get_position()
         count = 0
         try:
             count += len(self.data_maps[0][dim][p])
@@ -63,7 +63,11 @@ class WorldGenerationTaskHandler:
         return count
 
     def schedule_invoke(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk, method, *args, **kwargs
+        self,
+        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        method,
+        *args,
+        **kwargs
     ):
         """
         schedules an callable-invoke for the future
@@ -79,13 +83,13 @@ class WorldGenerationTaskHandler:
                 "method must be callable in order to be invoked by WorldGenerationTaskHandler"
             )
         self.chunks.add(chunk)
-        self.data_maps[0].setdefault(chunk.dimension.id, {}).setdefault(
-            chunk.position, []
+        self.data_maps[0].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+            chunk.get_position(), []
         ).append((method, args, kwargs))
 
     def schedule_block_add(
         self,
-        chunk: mcpython.common.world.Chunk.Chunk,
+        chunk: mcpython.common.world.AbstractInterface.IChunk,
         position: tuple,
         name: str,
         *args,
@@ -104,14 +108,14 @@ class WorldGenerationTaskHandler:
         if "immediate" not in kwargs or kwargs["immediate"]:
             self.schedule_visual_update(chunk, position)
         kwargs["immediate"] = False
-        self.data_maps[1].setdefault(chunk.dimension.id, {}).setdefault(
-            chunk.position, {}
+        self.data_maps[1].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+            chunk.get_position(), {}
         )[position] = (name, args, kwargs, on_add)
         self.chunks.add(chunk)
 
     def schedule_block_remove(
         self,
-        chunk: mcpython.common.world.Chunk.Chunk,
+        chunk: mcpython.common.world.AbstractInterface.IChunk,
         position: tuple,
         *args,
         on_remove=None,
@@ -125,47 +129,47 @@ class WorldGenerationTaskHandler:
         :param on_remove: an callable to call when the block gets removed, with None as an parameter
         :param kwargs: the kwargs to call the remove_block-function with
         """
-        self.data_maps[1].setdefault(chunk.dimension.id, {}).setdefault(
-            chunk.position, {}
+        self.data_maps[1].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+            chunk.get_position(), {}
         )[position] = (None, args, kwargs, on_remove)
         self.chunks.add(chunk)
 
     def schedule_block_show(
-        self, chunk: mcpython.common.world.Chunk.Chunk, position: tuple
+        self, chunk: mcpython.common.world.AbstractInterface.IChunk, position: tuple
     ):
         """
         schedules an show of an block
         :param chunk: the chunk
         :param position: the position of the block
         """
-        self.data_maps[2].setdefault(chunk.dimension.id, {}).setdefault(
-            chunk.position, {}
+        self.data_maps[2].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+            chunk.get_position(), {}
         )[position] = 1
         self.chunks.add(chunk)
 
     def schedule_block_hide(
-        self, chunk: mcpython.common.world.Chunk.Chunk, position: tuple
+        self, chunk: mcpython.common.world.AbstractInterface.IChunk, position: tuple
     ):
         """
         schedules an hide of an block
         :param chunk: the chunk
         :param position: the position of the block
         """
-        self.data_maps[2].setdefault(chunk.dimension.id, {}).setdefault(
-            chunk.position, {}
+        self.data_maps[2].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+            chunk.get_position(), {}
         )[position] = 0
         self.chunks.add(chunk)
 
     def schedule_visual_update(
-        self, chunk: mcpython.common.world.Chunk.Chunk, position: tuple
+        self, chunk: mcpython.common.world.AbstractInterface.IChunk, position: tuple
     ):
         """
         schedules an visual update of an block (-> show/hide as needed)
         :param chunk: the chunk
         :param position: the position of the block
         """
-        self.data_maps[2].setdefault(chunk.dimension.id, {}).setdefault(
-            chunk.position, {}
+        self.data_maps[2].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+            chunk.get_position(), {}
         )[position] = 2
         self.chunks.add(chunk)
 
@@ -176,8 +180,6 @@ class WorldGenerationTaskHandler:
         :param log_msg: if messages for extra info should be logged
         """
         start = time.time()
-        if not shared.worldgenerationhandler.enable_generation:
-            return 0
         if chunk is None:
             if len(self.chunks) == 0:
                 return 1
@@ -227,13 +229,14 @@ class WorldGenerationTaskHandler:
                 chunk.generated = True
                 chunk.finished = True
                 chunk.loaded = True
-                shared.eventhandler.call("worldgen:chunk:finished", chunk)
 
-    def _process_0_array(self, chunk: mcpython.common.world.Chunk.Chunk) -> bool:
-        if chunk.dimension.id in self.data_maps[0]:
-            dim_map = self.data_maps[0][chunk.dimension.id]
-            if chunk.position in dim_map:
-                m: list = dim_map[chunk.position]
+    def _process_0_array(
+        self, chunk: mcpython.common.world.AbstractInterface.IChunk
+    ) -> bool:
+        if chunk.get_dimension().get_id() in self.data_maps[0]:
+            dim_map = self.data_maps[0][chunk.get_dimension().get_id()]
+            if chunk.get_position() in dim_map:
+                m: list = dim_map[chunk.get_position()]
                 if len(m) == 0:
                     return False
                 data = m.pop(0)
@@ -246,11 +249,13 @@ class WorldGenerationTaskHandler:
                 return True
         return False
 
-    def _process_1_array(self, chunk: mcpython.common.world.Chunk.Chunk) -> bool:
-        if chunk.dimension.id in self.data_maps[1]:
-            dim_map = self.data_maps[1][chunk.dimension.id]
-            if chunk.position in dim_map:
-                m: dict = dim_map[chunk.position]
+    def _process_1_array(
+        self, chunk: mcpython.common.world.AbstractInterface.IChunk
+    ) -> bool:
+        if chunk.get_dimension().get_id() in self.data_maps[1]:
+            dim_map = self.data_maps[1][chunk.get_dimension().get_id()]
+            if chunk.get_position() in dim_map:
+                m: dict = dim_map[chunk.get_position()]
                 if len(m) == 0:
                     return False
                 position, data = m.popitem()
@@ -265,11 +270,13 @@ class WorldGenerationTaskHandler:
                 return True
         return False
 
-    def _process_2_array(self, chunk: mcpython.common.world.Chunk.Chunk) -> bool:
-        if chunk.dimension.id in self.data_maps[2]:
-            dim_map = self.data_maps[2][chunk.dimension.id]
-            if chunk.position in dim_map:
-                m: dict = dim_map[chunk.position]
+    def _process_2_array(
+        self, chunk: mcpython.common.world.AbstractInterface.IChunk
+    ) -> bool:
+        if chunk.get_dimension().get_id() in self.data_maps[2]:
+            dim_map = self.data_maps[2][chunk.get_dimension().get_id()]
+            if chunk.get_position() in dim_map:
+                m: dict = dim_map[chunk.get_position()]
                 if len(m) == 0:
                     return False
                 position, data = m.popitem()
@@ -280,34 +287,34 @@ class WorldGenerationTaskHandler:
                     chunk.hide_block(position)
                 elif data == 1:
                     chunk.show_block(position)
-                else:
+                elif not isinstance(block, str):
                     block.face_state.update(redraw_complete=True)
                 return True
         return False
 
-    def get_block(self, position: tuple, chunk=None, dimension=None):
+    def get_block(
+        self, position: tuple, chunk: mcpython.common.world.AbstractInterface.IChunk
+    ):
         """
         gets an generated block from the array
         :param position: the position of the block
         :param chunk: if the chunk is known
-        :param dimension: if the dimension is known
         """
-        if chunk is None:
-            if dimension is None:
-                dimension = shared.world.get_active_dimension()
-            chunk = dimension.get_chunk_for_position(position)
+        dimension = chunk.get_dimension()
         try:
-            return self.data_maps[1][dimension.id][chunk.position][position][0]
+            return self.data_maps[1][dimension.get_id()][chunk.get_position()][
+                position
+            ][0]
         except (KeyError, AttributeError):
             pass
 
-    def clear_chunk(self, chunk: mcpython.common.world.Chunk.Chunk):
+    def clear_chunk(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
         """
         will remove all scheduled tasks from an given chunk
         :param chunk: the chunk
         """
-        dim = chunk.dimension.id
-        p = chunk.position
+        dim = chunk.get_dimension().get_id()
+        p = chunk.get_position()
         if dim in self.data_maps[0] and p in self.data_maps[0][dim]:
             del self.data_maps[0][dim][p]
         if dim in self.data_maps[1] and p in self.data_maps[1][dim]:
@@ -335,7 +342,7 @@ class WorldGenerationTaskHandlerReference:
     def __init__(
         self,
         handler: WorldGenerationTaskHandler,
-        chunk: mcpython.common.world.Chunk.Chunk,
+        chunk: mcpython.common.world.AbstractInterface.IChunk,
     ):
         self.handler = handler
         self.chunk = chunk
@@ -362,8 +369,5 @@ class WorldGenerationTaskHandlerReference:
     def schedule_visual_update(self, position):
         self.handler.schedule_visual_update(self.chunk, position)
 
-    def process_one_task(self, chunk=None, reorder=True, log_msg=True):
-        self.handler.process_one_task(chunk, reorder, log_msg)
-
-    def get_block(self, position, chunk=None, dimension=None):
-        return self.handler.get_block(position, chunk, dimension)
+    def get_block(self, position, chunk=None):
+        return self.handler.get_block(position, chunk)

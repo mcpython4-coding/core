@@ -179,7 +179,9 @@ class StateWorldGeneration(State.State):
         chunk = G.world.get_active_dimension().get_chunk((0, 0))
         x, z = random.randint(0, 15), random.randint(0, 15)
         height = chunk.get_maximum_y_coordinate_from_generation(x, z)
-        blockchest = G.world.get_active_dimension().add_block((x, height + 1, z), "minecraft:chest")
+        blockchest = G.world.get_active_dimension().add_block(
+            (x, height + 1, z), "minecraft:chest"
+        )
         blockchest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
         G.eventhandler.call("on_game_enter")
 

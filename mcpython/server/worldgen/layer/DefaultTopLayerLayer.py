@@ -57,7 +57,7 @@ class DefaultTopLayerLayer(Layer):
         decorators = biome.get_top_layer_configuration(height)
         for i in range(height):
             y = mheight - (height - i - 1)
-            block = reference.get_block((x, y, z))
+            block = reference.get_block((x, y, z), chunk)
             if block and (block if type(block) == str else block.NAME) in [
                 "minecraft:stone"
             ]:

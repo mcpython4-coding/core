@@ -66,6 +66,12 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         self.positions_updated_since_last_save = set()
         self.entities = set()
 
+    def get_dimension(self):
+        return self.dimension
+
+    def get_position(self):
+        return self.position
+
     def get_maximum_y_coordinate_from_generation(self, x: int, z: int) -> int:
         """
         Helper function for getting the y height at the given xz generation based on the generation code
@@ -155,9 +161,15 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             or G.worldgenerationhandler.task_handler.get_block(position) is not None
         )
 
-    def add_block(self, position: tuple, block_name: typing.Union[str, Block.AbstractBlock], immediate=True,
-                  block_update=True, block_update_self=True,
-                  lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None):
+    def add_block(
+        self,
+        position: tuple,
+        block_name: typing.Union[str, Block.AbstractBlock],
+        immediate=True,
+        block_update=True,
+        block_update_self=True,
+        lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None,
+    ):
         """
         adds an block to the given position
         :param position: the position to add
@@ -243,9 +255,14 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                                     "during block-updating block {}".format(b)
                                 )
 
-    def remove_block(self, position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
-                     immediate: bool = True, block_update: bool = True, block_update_self: bool = True,
-                     reason=Block.BlockRemovalReason.UNSET):
+    def remove_block(
+        self,
+        position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
+        immediate: bool = True,
+        block_update: bool = True,
+        block_update_self: bool = True,
+        reason=Block.BlockRemovalReason.UNSET,
+    ):
         """
         Remove the block at the given `position`.
         :param position: The (x, y, z) position of the block to remove.

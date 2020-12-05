@@ -1319,7 +1319,7 @@ F   [uuk]: BedrockLayer is now noise-based
 R   [uuk]: renamed layers with prefix "minecraft:"
     [uuk]: added DEPENDS_ON attribute to Layers
 R   [uuk]: split task array from WorldGenerationHandler.py
-F   [uuk]: implemented AbstractInterface.py class
+F   [uuk]: implemented AbstractInterface.py classes storing abstract classes for world, dimension and chunk
 
 Roadmap:
     - refactor classes & functions [WIP]
@@ -1328,7 +1328,7 @@ Roadmap:
     - change how data generators work
     - add client & server annotations, check code for side
     - migrate globals to global game instance
-    - add off-process system for world gen
+    - add off-process system for world gen [Preparation in Progress]
     - remove setup / prebuild system COMPLETELY
     - remove all deprecated stuff   [WIP]
     - rewrite how assets are stored

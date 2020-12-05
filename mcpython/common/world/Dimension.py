@@ -149,6 +149,9 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         # normal batch
         self.batches = [pyglet.graphics.Batch() for _ in range(2)]  # normal, alpha
 
+    def get_id(self):
+        return self.id
+
     def get_chunk(
         self,
         cx: typing.Union[int, typing.Tuple[int, int]],
@@ -207,16 +210,36 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         return chunk.get_block(position)
 
     @deprecation.deprecated()
-    def add_block(self, position: tuple, block_name: str, immediate=True, block_update=True, block_update_self=True,
-                  lazy_setup: typing.Callable = None):
+    def add_block(
+        self,
+        position: tuple,
+        block_name: str,
+        immediate=True,
+        block_update=True,
+        block_update_self=True,
+        lazy_setup: typing.Callable = None,
+    ):
         chunk = self.get_chunk_for_position(position, generate=False)
-        return chunk.add_block(position, block_name, immediate=immediate, block_update=block_update,
-                               block_update_self=block_update_self, lazy_setup=lazy_setup)
+        return chunk.add_block(
+            position,
+            block_name,
+            immediate=immediate,
+            block_update=block_update,
+            block_update_self=block_update_self,
+            lazy_setup=lazy_setup,
+        )
 
     @deprecation.deprecated()
-    def remove_block(self, position: tuple, immediate=True, block_update=True, block_update_self=True):
+    def remove_block(
+        self, position: tuple, immediate=True, block_update=True, block_update_self=True
+    ):
         chunk = self.get_chunk_for_position(position)
-        chunk.remove_block(position, immediate=immediate, block_update=block_update, block_update_self=block_update_self)
+        chunk.remove_block(
+            position,
+            immediate=immediate,
+            block_update=block_update,
+            block_update_self=block_update_self,
+        )
 
     @deprecation.deprecated()
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
@@ -242,7 +265,9 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             for dz in range(-pad, pad + 1):
                 cx, cz = x + dx, z + dz
                 chunk = self.get_chunk(cx, cz, create=False)
-                if chunk is not None and isinstance(chunk, mcpython.common.world.Chunk.Chunk):
+                if chunk is not None and isinstance(
+                    chunk, mcpython.common.world.Chunk.Chunk
+                ):
                     chunk.draw()
         G.rendering_helper.disableAlpha()
         # G.rendering_helper.apply(status)

@@ -63,7 +63,7 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
             player.active_inventory_slot = pd["active inventory slot"]
             player.position = pd["position"]
             player.rotation = pd["rotation"]
-            G.world.join_dimension(pd["dimension"], save_current=False)
+            G.world.join_dimension(pd["dimension"])
             G.world.get_active_player().flying = pd["flying"]
             for name in pd["inventory links"]:
                 savefile.read(
