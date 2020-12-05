@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import math
 import sys
 
-MC_VERSION_BASE = "1.16.1"
+MC_VERSION_BASE = "20w49a"
 VERSION_TYPE = "dev"
 # possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
 VERSION_NAME = "20w31a"

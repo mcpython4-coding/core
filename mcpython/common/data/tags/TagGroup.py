@@ -9,14 +9,35 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+import typing
+import mcpython.common.data.tags.ITagTarget
+
 import mcpython.common.data.tags.Tag
 import mcpython.util.math
+
+
+class TagTargetHolder:
+    def __init__(self, name: str):
+        self.name = name
+        self.classes: typing.List[typing.Type[mcpython.common.data.tags.ITagTarget.ITagTarget]] = []
+        TagGroup.TAG_HOLDERS.setdefault(name, []).append(self)
+
+    def register_class(self, cls: typing.Type[mcpython.common.data.tags.ITagTarget.ITagTarget]):
+        self.classes.append(cls)
+        return cls
+
+    def update(self, group: "TagGroup"):
+        # print(self.classes)
+        for cls in self.classes:
+            cls.TAGS = group.get_tags_for(cls.NAME)
 
 
 class TagGroup:
     """
     class for holding an group of tags. e.g. all items
     """
+    TAG_HOLDERS: typing.Dict[str, typing.List[TagTargetHolder]] = {}
 
     def __init__(self, name: str):
         """
@@ -56,8 +77,12 @@ class TagGroup:
         for tagname in sort:
             self.tags[tagname].build()
         self.cache.clear()
+        if self.name in TagGroup.TAG_HOLDERS:
+            for holder in TagGroup.TAG_HOLDERS[self.name]:
+                holder.update(self)
+        # print(self.name, TagGroup.TAG_HOLDERS, {name: self.tags[name].entries for name in self.tags}, sep="\n")
 
-    def get_tags_for(self, obj, cache=False) -> list:
+    def get_tags_for(self, obj: str, cache=False) -> typing.List[str]:
         """
         will return all tags for an given object
         :param obj:

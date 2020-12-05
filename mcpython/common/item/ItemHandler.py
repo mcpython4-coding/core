@@ -20,9 +20,11 @@ import mcpython.common.factory.ItemFactory
 import mcpython.common.mod.ModMcpython
 import mcpython.client.gui.HoveringItemBox
 import mcpython.client.rendering.model.ItemModel
+import mcpython.common.data.tags.TagGroup
 
 
 COLLECTED_ITEMS = []
+tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("items")
 
 ITEM_ATLAS = mcpython.common.item.ItemAtlas.ItemAtlasHandler()
 
@@ -79,14 +81,15 @@ def load_data(from_block_item_generator=False):
             json.dump(data, f)
 
 
-def register_item(registry, itemclass):
-    items.entries[itemclass.NAME.split(":")[-1]] = itemclass
-    if itemclass.NAME in items.itemindextable:
+def register_item(registry, item_class):
+    tag_holder.register_class(item_class)
+    items.entries[item_class.NAME.split(":")[-1]] = item_class
+    if item_class.NAME in items.itemindextable:
         return
-    items.itemindextable.setdefault(itemclass.NAME, {})
-    for i, file in enumerate(itemclass.get_used_texture_files()):
-        ITEM_ATLAS.add_file("{}#{}".format(itemclass.NAME, i), file)
-    COLLECTED_ITEMS.append(itemclass)
+    items.itemindextable.setdefault(item_class.NAME, {})
+    for i, file in enumerate(item_class.get_used_texture_files()):
+        ITEM_ATLAS.add_file("{}#{}".format(item_class.NAME, i), file)
+    COLLECTED_ITEMS.append(item_class)
 
 
 items = mcpython.common.event.Registry.Registry(

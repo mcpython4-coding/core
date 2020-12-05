@@ -14,10 +14,16 @@ import mcpython.common.block.AbstractBlock
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 from mcpython.common.block.AbstractBlock import AbstractBlock
+import mcpython.common.data.tags.TagGroup
+
+
+tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("blocks")
 
 
 def register_block(registry, blockclass):
     if issubclass(blockclass, mcpython.common.block.AbstractBlock.AbstractBlock):
+        tag_holder.register_class(blockclass)
+
         blockclass.on_register(block_registry)  # call event function
         name = blockclass.NAME
         block_registry.full_table[name] = blockclass
@@ -31,23 +37,6 @@ def register_block(registry, blockclass):
 
         if blockclass.CAN_MOBS_SPAWN_ON is None:
             blockclass.CAN_MOBS_SPAWN_ON = blockclass.IS_SOLID
-
-        if not blockclass.ENABLE_RANDOM_TICKS:
-
-            # check for functional identical parts
-            if (
-                instance.on_random_update.__code__
-                != AbstractBlock.on_random_update.__code__
-            ):
-                logger.println(
-                    "[WARN] block '{}' has not set ENABLE_RANDOM_TICKS, but the event function was changed "
-                    "from {} to {}!".format(
-                        blockclass.NAME,
-                        blockclass.on_random_update,
-                        AbstractBlock.on_random_update,
-                    )
-                )
-                blockclass.ENABLE_RANDOM_TICKS = True
 
 
 block_registry = mcpython.common.event.Registry.Registry(

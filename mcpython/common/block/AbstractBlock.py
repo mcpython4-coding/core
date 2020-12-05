@@ -31,7 +31,7 @@ class BlockRemovalReason(enum.Enum):
     ENTITY_PICKUP = 4
 
 
-class AbstractBlock(ABC, mcpython.common.event.Registry.IRegistryContent):
+class AbstractBlock(mcpython.common.event.Registry.IRegistryContent):
     """
     Abstract base class for all blocks
     All block classes should extend from this

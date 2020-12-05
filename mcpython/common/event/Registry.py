@@ -9,13 +9,16 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 from mcpython import shared, logger
 import mcpython.logger
 import mcpython.common.event.EventHandler
 import typing
+import mcpython.common.data.tags.ITagTarget
 
 
-class IRegistryContent:
+class IRegistryContent(mcpython.common.data.tags.ITagTarget.ITagTarget):
     NAME = "minecraft:unknown_registry_content"
     TYPE = "minecraft:unknown_registry_content_type"
 

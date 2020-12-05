@@ -258,12 +258,11 @@ class Slot(ISlot):
         if callable(self.check_function):
             if not self.check_function(self, itemstack):
                 return False
-        item_name = itemstack.get_item_name()
         flag1 = self.allowed_item_tags is not None
-        flag2 = flag1 and (
+        flag2 = flag1 and itemstack.item is not None and (
             any(
                 [
-                    G.taghandler.has_entry_tag(item_name, "items", x)
+                    x in itemstack.item.TAGS
                     for x in self.allowed_item_tags
                 ]
             )
