@@ -26,7 +26,7 @@ class DefaultTemperatureLayer(Layer):
 
     @classmethod
     def update_seed(cls):
-        seed = G.world.config["seed"]
+        seed = G.world.generator["seed"]
         cls.noise = opensimplex.OpenSimplex(seed=seed * 100 + 5)
 
     @staticmethod

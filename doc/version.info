@@ -1313,11 +1313,12 @@ R   [uuk]: moved some files around again
 F   [uuk]: added TAGS attribute for RegistryEntries filled when the registry says so with the list of tags the entry
            has
 R/D [uuk]: removed OpenGLSetupFile system and replaced by direct in-code calls
+R/F [uuk]: changed a lot of stuff around the data generator system
 
 Roadmap:
     - refactor classes & functions [WIP]
     - create doc  [WIP] & unit tests for code
-    - revisit build system [WIP]
+    - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]
     - change how data generators work
     - add client & server annotations, check code for side
     - migrate globals to global game instance
@@ -1331,7 +1332,7 @@ Roadmap:
     - remove BlockConfig system & replace by tags
     - player inventories should be stored as attributes, not in an dict
     - fix respawning in blocks
-    - fix having two separated item atlas storages?
+    - fix having two separated item atlas storages? -> one NEVER used? -> old may have been used at the slot bug?
     - fix being able to break blocks in gamemode 0 which you should not be able to (e.g. bedrock)
     - update mdk to the new systems
     - update doc generator to use tokenize

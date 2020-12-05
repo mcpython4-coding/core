@@ -28,7 +28,7 @@ class DefaultLandMassLayer(Layer):
 
     @classmethod
     def update_seed(cls):
-        seed = G.world.config["seed"]
+        seed = G.world.generator["seed"]
         cls.noise1 = opensimplex.OpenSimplex(seed=seed * 100 + 2)
         cls.noise2 = opensimplex.OpenSimplex(seed=seed * 100 + 3)
         cls.noise3 = opensimplex.OpenSimplex(seed=seed * 100 + 4)

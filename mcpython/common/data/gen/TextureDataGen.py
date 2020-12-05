@@ -10,25 +10,23 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import logger
-import mcpython.common.data.gen.Configuration
+from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
 import PIL.Image
 import mcpython.ResourceLoader as ResourceLoader
 import mcpython.util.texture
 
 
-class TextureConstructor(mcpython.common.data.gen.Configuration.IDataGenerator):
+class TextureConstructor(IDataGenerator):
     """
     generator system for generating textures
     """
 
-    def __init__(self, config, name: str, image_size: tuple):
+    def __init__(self, name: str, image_size: tuple):
         """
         will create an new TextureConstructor-instance
-        :param config: the config to use
         :param name: the name of the texture address as "{group}/{path without .png}"
         :param image_size: the size of the image to create
         """
-        super().__init__(config)
         self.name = name
         self.image_size = image_size
         self.actions = []
@@ -104,7 +102,9 @@ class TextureConstructor(mcpython.common.data.gen.Configuration.IDataGenerator):
             logger.print_exception("failed to add alpha composite layer")
         return self
 
-    def generate(self):
+    def write(self, generator: "DataGeneratorInstance", name: str):
+        file = self.get_default_location(generator, name)
+
         image = PIL.Image.new("RGBA", self.image_size, (0, 0, 0, 0))
         for action, *data in self.actions:
             if action == 0:
@@ -126,4 +126,5 @@ class TextureConstructor(mcpython.common.data.gen.Configuration.IDataGenerator):
                 )
             elif action == 2:
                 image.alpha_composite(data[0], data[1])
-        self.config.write(image, "assets", "textures", self.name + ".png")
+
+        image.save(generator.get_full_path(file))

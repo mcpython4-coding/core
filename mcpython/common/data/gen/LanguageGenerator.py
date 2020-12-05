@@ -9,14 +9,13 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.data.gen.Configuration
+from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance, IDataGenerator
 
 
-class LanguageGenerator(mcpython.datagen.Configuration.IDataGenerator):
+class LanguageGenerator(IDataGenerator):
     def __init__(
-        self, config: mcpython.datagen.Configuration.DataGeneratorConfig, lang_name: str
+        self, lang_name: str
     ):
-        super().__init__(config)
         self.lang_name = lang_name
         self.table = {}
 
@@ -24,5 +23,9 @@ class LanguageGenerator(mcpython.datagen.Configuration.IDataGenerator):
         self.table[key] = value
         return self
 
-    def generate(self):
-        self.config.write_json(self.table, "assets", "lang", self.lang_name + ".json")
+    def dump(self, generator: DataGeneratorInstance):
+        return self.table
+
+    def get_default_location(self, generator: DataGeneratorInstance, name: str):
+        return "assets/{}/lang/{}.json".format(*name.split(":")) if ":" in name else \
+            "assets/{}/lang/{}.json".format(generator.default_namespace, name)

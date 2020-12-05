@@ -14,8 +14,7 @@ from mcpython import shared as G
 from mcpython.util.enums import ToolType
 import mcpython.common.mod.ModMcpython
 from mcpython.common.factory import CombinedBlockFactory
-import mcpython.common.data.gen.Configuration
-from mcpython.common.data.gen.Configuration import DataGeneratorConfig
+from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance
 from mcpython.common.config import ENABLED_EXTRA_BLOCKS as BLOCKS
 
 
@@ -95,19 +94,18 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
 
 @G.modloader("minecraft", "stage:combined_factory:blocks")
 def combined_load():
-    config = DataGeneratorConfig("minecraft", G.local + "/resources/generated")
-    config.setDefaultNamespace("minecraft")
+    GENERATOR = DataGeneratorInstance("{local}/resources/generated")
+    GENERATOR.default_namespace = "minecraft"
+    load_misc(GENERATOR)
+    load_wood(GENERATOR)
+    load_value_ables(GENERATOR)
+    load_stones(GENERATOR)
+    load_colored(GENERATOR)
 
-    load_misc(config)
-    load_wood(config)
-    load_value_ables(config)
-    load_stones(config)
-    load_colored(config)
 
-
-def load_misc(config: DataGeneratorConfig):
+def load_misc(generator: DataGeneratorInstance):
     CombinedBlockFactory.generate_log_block(
-        config,
+        generator,
         "minecraft:bone_block",
         front_texture="minecraft:block/bone_block_top",
         side_texture="minecraft:block/bone_block_side",
@@ -116,7 +114,7 @@ def load_misc(config: DataGeneratorConfig):
         .setMinimumToolLevel(1),
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:clay",
         callback=lambda _, factory: factory.setStrenght(0.6).setBestTools(
             ToolType.SHOVEL
@@ -125,14 +123,14 @@ def load_misc(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:honeycomb_block",
         callback=lambda _, factory: factory.setStrenght(0.6),
         enable=BLOCKS,
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:magma_block",
         texture="minecraft:block/magma",
         enable=BLOCKS,
@@ -142,13 +140,13 @@ def load_misc(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:nether_wart_block",
         enable=BLOCKS,
         callback=lambda _, factory: factory.setStrenght(1).setBestTools(ToolType.HOE),
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:warped_wart_block",
         enable=BLOCKS,
         callback=lambda _, factory: factory.setStrenght(1).setBestTools(ToolType.HOE),
@@ -160,21 +158,21 @@ def load_misc(config: DataGeneratorConfig):
         )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:purpur_block", callback=set_purpur_block, enable=BLOCKS
+        generator, "minecraft:purpur_block", callback=set_purpur_block, enable=BLOCKS
     )
     CombinedBlockFactory.generate_log_block(
-        config, "minecraft:purpur_pillar", callback=set_purpur_block
+        generator, "minecraft:purpur_pillar", callback=set_purpur_block
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:shroomlight",
         callback=lambda _, factory: factory.setStrenght(1).setBestTools(ToolType.HOE),
         enable=BLOCKS,
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:snow_block",
         texture="minecraft:block/snow",
         enable=(True, False, BLOCKS),
@@ -184,7 +182,7 @@ def load_misc(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:soul_sand",
         enable=BLOCKS,
         callback=lambda _, factory: factory.setStrenght(0.5).setBestTools(
@@ -192,7 +190,7 @@ def load_misc(config: DataGeneratorConfig):
         ),
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:soul_soil",
         enable=BLOCKS,
         callback=lambda _, factory: factory.setStrenght(0.5).setBestTools(
@@ -201,18 +199,18 @@ def load_misc(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:sponge",
         callback=lambda _, factory: factory.setStrenght(0.6).setBestTools(ToolType.HOE),
     )
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:wet_sponge",
         callback=lambda _, factory: factory.setStrenght(0.6).setBestTools(ToolType.HOE),
     )
 
 
-def load_wood(config: DataGeneratorConfig):
+def load_wood(generator: DataGeneratorInstance):
     def set_wood(_, factory):
         factory.setStrenght(2).setBestTools(ToolType.AXE)
 
@@ -224,20 +222,20 @@ def load_wood(config: DataGeneratorConfig):
 
     for wood_type in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak"]:
         CombinedBlockFactory.generate_log_block(
-            config, "minecraft:{}_log".format(wood_type), callback=set_wood
+            generator, "minecraft:{}_log".format(wood_type), callback=set_wood
         )
         CombinedBlockFactory.generate_log_block(
-            config, "minecraft:stripped_{}_log".format(wood_type), callback=set_wood
+            generator, "minecraft:stripped_{}_log".format(wood_type), callback=set_wood
         )
         CombinedBlockFactory.generate_log_block(
-            config,
+            generator,
             "minecraft:{}_wood".format(wood_type),
             front_texture="minecraft:block/{}_log".format(wood_type),
             side_texture="minecraft:block/{}_log".format(wood_type),
             callback=set_wood,
         )
         CombinedBlockFactory.generate_log_block(
-            config,
+            generator,
             "minecraft:stripped_{}_wood".format(wood_type),
             front_texture="minecraft:block/stripped_{}_log".format(wood_type),
             side_texture="minecraft:block/stripped_{}_log".format(wood_type),
@@ -245,25 +243,25 @@ def load_wood(config: DataGeneratorConfig):
         )
 
         CombinedBlockFactory.generate_full_block(
-            config, "minecraft:{}_leaves".format(wood_type), callback=set_leaves
+            generator, "minecraft:{}_leaves".format(wood_type), callback=set_leaves
         )
 
     for wood_type in ["crimson", "warped"]:
         CombinedBlockFactory.generate_log_block(
-            config, "minecraft:{}_stem".format(wood_type), callback=set_stem
+            generator, "minecraft:{}_stem".format(wood_type), callback=set_stem
         )
         CombinedBlockFactory.generate_log_block(
-            config, "minecraft:stripped_{}_stem".format(wood_type), callback=set_stem
+            generator, "minecraft:stripped_{}_stem".format(wood_type), callback=set_stem
         )
         CombinedBlockFactory.generate_log_block(
-            config,
+            generator,
             "minecraft:{}_hyphae".format(wood_type),
             front_texture="minecraft:block/{}_stem".format(wood_type),
             side_texture="minecraft:block/{}_stem".format(wood_type),
             callback=set_stem,
         )
         CombinedBlockFactory.generate_log_block(
-            config,
+            generator,
             "minecraft:stripped_{}_hyphae".format(wood_type),
             front_texture="minecraft:block/stripped_{}_stem".format(wood_type),
             side_texture="minecraft:block/stripped_{}_stem".format(wood_type),
@@ -281,7 +279,7 @@ def load_wood(config: DataGeneratorConfig):
         "warped",
     ]:
         CombinedBlockFactory.generate_full_block_slab_wall(
-            config,
+            generator,
             "minecraft:{}_planks".format(wood_type),
             enable=BLOCKS,
             slab_name="minecraft:{}_slab".format(wood_type),
@@ -290,7 +288,7 @@ def load_wood(config: DataGeneratorConfig):
         )
 
 
-def load_value_ables(config: DataGeneratorConfig):
+def load_value_ables(generator: DataGeneratorInstance):
     def set_quartz(_, factory):
         factory.setStrenght(0.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1)
 
@@ -298,7 +296,7 @@ def load_value_ables(config: DataGeneratorConfig):
         factory.setStrenght(5, 6).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(3)
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:netherite_block",
         callback=lambda _, factory: factory.setStrenght(50, 1200)
         .setBestTools(ToolType.PICKAXE)
@@ -307,7 +305,7 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:nether_quartz_ore",
         callback=lambda _, factory: factory.setStrenght(3)
         .setBestTools(ToolType.PICKAXE)
@@ -315,7 +313,7 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:quartz_bricks",
         callback=set_quartz,
         enable=BLOCKS,
@@ -323,10 +321,10 @@ def load_value_ables(config: DataGeneratorConfig):
         wall_name="minecraft:quartz_brick_wall",
     )
     CombinedBlockFactory.generate_log_block(
-        config, "minecraft:quartz_pillar", callback=set_quartz
+        generator, "minecraft:quartz_pillar", callback=set_quartz
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:smooth_quartz",
         callback=set_quartz,
         texture="minecraft:block/quartz_block_bottom",
@@ -334,7 +332,7 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:coal_block",
         callback=lambda _, factory: factory.setStrenght(5, 6)
         .setBestTools(ToolType.PICKAXE)
@@ -342,7 +340,7 @@ def load_value_ables(config: DataGeneratorConfig):
         enable=BLOCKS,
     )
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:coal_ore",
         callback=lambda _, factory: factory.setStrenght(3, 3)
         .setBestTools(ToolType.PICKAXE)
@@ -350,10 +348,10 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:diamond_block", callback=set_material_block, enable=BLOCKS
+        generator, "minecraft:diamond_block", callback=set_material_block, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:diamond_ore",
         callback=lambda _, factory: factory.setStrenght(3, 3)
         .setBestTools(ToolType.PICKAXE)
@@ -361,10 +359,10 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:emerald_block", callback=set_material_block, enable=BLOCKS
+        generator, "minecraft:emerald_block", callback=set_material_block, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:emerald_ore",
         callback=lambda _, factory: factory.setStrenght(3)
         .setBestTools(ToolType.PICKAXE)
@@ -372,17 +370,17 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:glowstone",
         callback=lambda _, factory: factory.setStrenght(0.3),
         enable=BLOCKS,
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:gold_block", callback=set_material_block, enable=BLOCKS
+        generator, "minecraft:gold_block", callback=set_material_block, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:gold_ore",
         callback=lambda _, factory: factory.setStrenght(3)
         .setBestTools(ToolType.PICKAXE)
@@ -390,10 +388,10 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:iron_block", callback=set_material_block, enable=BLOCKS
+        generator, "minecraft:iron_block", callback=set_material_block, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:iron_ore",
         callback=lambda _, factory: factory.setStrenght(3)
         .setBestTools(ToolType.PICKAXE)
@@ -401,7 +399,7 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:lapis_block",
         callback=lambda _, factory: factory.setStrenght(3)
         .setBestTools(ToolType.PICKAXE)
@@ -409,7 +407,7 @@ def load_value_ables(config: DataGeneratorConfig):
         enable=BLOCKS,
     )
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:lapis_ore",
         callback=lambda _, factory: factory.setStrenght(3)
         .setBestTools(ToolType.PICKAXE)
@@ -417,7 +415,7 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:nether_gold_ore",
         callback=lambda _, factory: factory.setStrenght(3)
         .setBestTools(ToolType.PICKAXE)
@@ -425,7 +423,7 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:redstone_block",
         callback=lambda _, factory: factory.setStrenght(5, 6).setBestTools(
             ToolType.PICKAXE
@@ -433,7 +431,7 @@ def load_value_ables(config: DataGeneratorConfig):
         enable=BLOCKS,
     )
     CombinedBlockFactory.generate_full_block(
-        config,
+        generator,
         "minecraft:redstone_ore",
         callback=lambda _, factory: factory.setStrenght(3)
         .setBestTools(ToolType.PICKAXE)
@@ -441,7 +439,7 @@ def load_value_ables(config: DataGeneratorConfig):
     )
 
 
-def load_stones(config: DataGeneratorConfig):
+def load_stones(generator: DataGeneratorInstance):
     def set_stone(_, factory):
         factory.setStrenght(1.5, 6).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(
             1
@@ -460,40 +458,40 @@ def load_stones(config: DataGeneratorConfig):
 
     for name in ["andesite", "granite", "diorite"]:
         CombinedBlockFactory.generate_full_block_slab_wall(
-            config, "minecraft:{}".format(name), callback=set_stone
+            generator, "minecraft:{}".format(name), callback=set_stone
         )
         CombinedBlockFactory.generate_full_block_slab_wall(
-            config,
+            generator,
             "minecraft:polished_{}".format(name),
             callback=set_stone,
             enable=BLOCKS,
         )
 
     CombinedBlockFactory.generate_log_block(
-        config,
+        generator,
         "minecraft:basalt",
         callback=set_basalt,
         front_texture="minecraft:block/basalt_top",
         side_texture="minecraft:block/basalt_side",
     )
     CombinedBlockFactory.generate_log_block(
-        config,
+        generator,
         "minecraft:polished_basalt",
         callback=set_basalt,
         front_texture="minecraft:block/polished_basalt_top",
         side_texture="minecraft:block/polished_basalt_side",
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:blackstone", callback=set_stone
+        generator, "minecraft:blackstone", callback=set_stone
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:chiseled_polished_blackstone",
         callback=set_stone,
         enable=BLOCKS,
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:cracked_polished_blackstone_bricks",
         callback=set_stone,
         enable=BLOCKS,
@@ -501,13 +499,13 @@ def load_stones(config: DataGeneratorConfig):
         wall_name="minecraft:cracked_polished_blackstone_brick_wall",
     )
     CombinedBlockFactory.generate_full_block(
-        config, "minecraft:gilded_blackstone", callback=set_stone
+        generator, "minecraft:gilded_blackstone", callback=set_stone
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:polished_blackstone", callback=set_stone
+        generator, "minecraft:polished_blackstone", callback=set_stone
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:polished_blackstone_bricks",
         callback=set_stone,
         slab_name="minecraft:polished_blackstone_brick_slab",
@@ -515,10 +513,10 @@ def load_stones(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:bedrock", callback=set_bedrock, enable=BLOCKS
+        generator, "minecraft:bedrock", callback=set_bedrock, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:chiseled_stone_bricks",
         callback=set_stone,
         enable=BLOCKS,
@@ -527,26 +525,26 @@ def load_stones(config: DataGeneratorConfig):
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:cobblestone", callback=set_stone
+        generator, "minecraft:cobblestone", callback=set_stone
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:stone", enable=BLOCKS
+        generator, "minecraft:stone", enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:stone_bricks",
         slab_name="minecraft:stone_brick_slab",
         wall_name="minecraft:stone_brick_wall",
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:mossy_stone_bricks",
         slab_name="minecraft:mossy_stone_brick_slab",
         wall_name="minecraft:mossy_stone_brick_wall",
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:cracked_stone_bricks",
         callback=set_stone,
         enable=BLOCKS,
@@ -554,24 +552,24 @@ def load_stones(config: DataGeneratorConfig):
         wall_name="minecraft:cracked_stone_brick_wall",
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:mossy_cobblestone", callback=set_stone
+        generator, "minecraft:mossy_cobblestone", callback=set_stone
     )
 
     def set_dirt(_, factory):
         factory.setStrenght(0.5).setBestTools(ToolType.SHOVEL)
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:coarse_dirt", callback=set_dirt, enable=BLOCKS
+        generator, "minecraft:coarse_dirt", callback=set_dirt, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:dirt", callback=set_dirt, enable=BLOCKS
+        generator, "minecraft:dirt", callback=set_dirt, enable=BLOCKS
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:end_stone", callback=set_end_stone, enable=BLOCKS
+        generator, "minecraft:end_stone", callback=set_end_stone, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:end_stone_bricks",
         callback=set_end_stone,
         slab_name="minecraft:end_stone_brick_slab",
@@ -584,20 +582,20 @@ def load_stones(config: DataGeneratorConfig):
         ).setMinimumToolLevel(5)
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:obsidian", callback=set_obsidian, enable=BLOCKS
+        generator, "minecraft:obsidian", callback=set_obsidian, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:crying_obsidian", callback=set_obsidian, enable=BLOCKS
+        generator, "minecraft:crying_obsidian", callback=set_obsidian, enable=BLOCKS
     )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:dark_prismarine", callback=set_stone, enable=BLOCKS
+        generator, "minecraft:dark_prismarine", callback=set_stone, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:prismarine", callback=set_stone
+        generator, "minecraft:prismarine", callback=set_stone
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:prismarine_bricks",
         slab_name="minecraft:prismarine_brick_slab",
         wall_name="minecraft:prismarine_brick_wall",
@@ -609,17 +607,17 @@ def load_stones(config: DataGeneratorConfig):
         factory.setStrenght(0.6).setBestTools(ToolType.SHOVEL).setFallable()
 
     CombinedBlockFactory.generate_full_block(
-        config, "minecraft:gravel", callback=set_fall_able
+        generator, "minecraft:gravel", callback=set_fall_able
     )
     CombinedBlockFactory.generate_full_block(
-        config, "minecraft:sand", callback=set_fall_able
+        generator, "minecraft:sand", callback=set_fall_able
     )
     CombinedBlockFactory.generate_full_block(
-        config, "minecraft:red_sand", callback=set_fall_able
+        generator, "minecraft:red_sand", callback=set_fall_able
     )
 
 
-def load_colored(config: DataGeneratorConfig):
+def load_colored(generator: DataGeneratorInstance):
     def set_concrete(_, factory):
         factory.setStrenght(1.8).setBestTools(ToolType.PICKAXE).setMinimumToolLevel(1)
 
@@ -658,47 +656,47 @@ def load_colored(config: DataGeneratorConfig):
         "black",
     ]:
         CombinedBlockFactory.generate_full_block_slab_wall(
-            config,
+            generator,
             "minecraft:{}_concrete".format(color),
             callback=set_concrete,
             enable=BLOCKS,
         )
         CombinedBlockFactory.generate_full_block(
-            config,
+            generator,
             "minecraft:{}_concrete_powder".format(color),
             callback=set_concrete_powder,
         )
         CombinedBlockFactory.generate_full_block_slab_wall(
-            config,
+            generator,
             "minecraft:{}_terracotta".format(color),
             callback=set_terracotta,
             enable=BLOCKS,
         )
         CombinedBlockFactory.generate_full_block_slab_wall(
-            config, "minecraft:{}_wool".format(color), callback=set_wool, enable=BLOCKS
+            generator, "minecraft:{}_wool".format(color), callback=set_wool, enable=BLOCKS
         )
         CombinedBlockFactory.generate_full_block_slab_wall(
-            config,
+            generator,
             "minecraft:{}_stained_glass".format(color),
             callback=set_stained_glass,
             enable=BLOCKS,
         )
 
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:terracotta", callback=set_terracotta, enable=BLOCKS
+        generator, "minecraft:terracotta", callback=set_terracotta, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config, "minecraft:glass", callback=set_stained_glass, enable=BLOCKS
+        generator, "minecraft:glass", callback=set_stained_glass, enable=BLOCKS
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:bricks",
         callback=set_brick,
         slab_name="minecraft:brick_slab",
         wall_name="minecraft:brick_wall",
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:chiseled_nether_bricks",
         callback=set_brick,
         enable=BLOCKS,
@@ -706,7 +704,7 @@ def load_colored(config: DataGeneratorConfig):
         wall_name="minecraft:chiseled_nether_brick_wall",
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:cracked_nether_bricks",
         callback=set_brick,
         enable=BLOCKS,
@@ -714,14 +712,14 @@ def load_colored(config: DataGeneratorConfig):
         wall_name="minecraft:cracked_nether_brick_wall",
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:red_nether_bricks",
         callback=set_brick,
         slab_name="minecraft:red_nether_brick_slab",
         wall_name="minecraft:red_nether_brick_wall",
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
-        config,
+        generator,
         "minecraft:nether_bricks",
         callback=set_brick,
         slab_name="minecraft:nether_brick_slab",

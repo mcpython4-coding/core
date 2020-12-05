@@ -9,13 +9,15 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 from mcpython.common.container.ItemStack import ItemStack
 import typing
-from mcpython.common.data.gen.Configuration import IDataGenerator
+from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
 from mcpython import logger
 
 
-class ICraftingKeyEncoder:
+class ICraftingKeyEncoder(ABC):
     """
     base class for an encoder for an crafting field
     """
@@ -27,7 +29,7 @@ class ICraftingKeyEncoder:
 
     # encodes certain data
     @classmethod
-    def encode(cls, data, config):
+    def encode(cls, data, generator):
         raise NotImplementedError()
 
 
@@ -43,7 +45,7 @@ class ItemStackEncoder(ICraftingKeyEncoder):
         return type(data) == ItemStack
 
     @classmethod
-    def encode(cls, data: ItemStack, config):
+    def encode(cls, data: ItemStack, generator: DataGeneratorInstance):
         return {"item": data.get_item_name()}
 
 
@@ -57,10 +59,10 @@ class TagEncoder(ICraftingKeyEncoder):
         return type(data) == str and data.startswith("#")
 
     @classmethod
-    def encode(cls, data: str, config):
+    def encode(cls, data: str, generator):
         tag = data[1:]
-        if ":" not in tag and config.default_namespace is not None:
-            tag = config.default_namespace + ":" + tag
+        if ":" not in tag and generator.default_namespace is not None:
+            tag = generator.default_namespace + ":" + tag
         return {"tag": tag}
 
 
@@ -74,9 +76,9 @@ class StringTypedItem(ICraftingKeyEncoder):
         return type(data) == str and not data.startswith("#")
 
     @classmethod
-    def encode(cls, data, config):
-        if ":" not in data and config.default_namespace is not None:
-            data = config.default_namespace + ":" + data
+    def encode(cls, data, generator):
+        if ":" not in data and generator.default_namespace is not None:
+            data = generator.default_namespace + ":" + data
         return {"item": data}
 
 
@@ -90,23 +92,23 @@ class MixedTypeList(ICraftingKeyEncoder):
         return type(data) == list
 
     @classmethod
-    def encode(cls, data: list, config):
-        return [encode_data(e, config) for e in data]
+    def encode(cls, data: list, generator):
+        return [encode_data(e, generator) for e in data]
 
 
 CRAFTING_ENCODERS = [ItemStackEncoder, TagEncoder, MixedTypeList, StringTypedItem]
 
 
-def encode_data(data, config):
+def encode_data(data, generator: DataGeneratorInstance):
     """
     encodes data together with the configuration to use
     :param data: the data to encode
-    :param config: the config to use
+    :param generator: the config to use
     :return: encoded data for later dumping in data gen
     """
     for encoder in CRAFTING_ENCODERS:
         if encoder.valid(data):
-            return encoder.encode(data, config)
+            return encoder.encode(data, generator)
     raise ValueError("no encoder found for {}".format(data))
 
 
@@ -118,8 +120,7 @@ class ShapedRecipeGenerator(IDataGenerator):
     Generator for an shaped recipe
     """
 
-    def __init__(self, name: str, config):
-        super().__init__(config)
+    def __init__(self, name: str):
         self.grid = {}
         self.types = []
         self.output = None
@@ -155,7 +156,7 @@ class ShapedRecipeGenerator(IDataGenerator):
         self.output = stack
         return self
 
-    def generate(self):
+    def dump(self, generator: "DataGeneratorInstance"):
         assert self.output is not None, "name {} failed".format(self.name)
 
         pattern = []
@@ -172,7 +173,7 @@ class ShapedRecipeGenerator(IDataGenerator):
 
         table = {}
         for i, entry in enumerate(self.types):
-            table[INDICATOR_LIST[i]] = encode_data(entry, self.config)
+            table[INDICATOR_LIST[i]] = encode_data(entry, generator)
 
         data = {
             "type": "minecraft:crafting_shaped",
@@ -183,7 +184,11 @@ class ShapedRecipeGenerator(IDataGenerator):
         if self.group is not None:
             data["group"] = self.group
 
-        self.config.write_json(data, "data", "recipes", self.name + ".json")
+        return data
+
+    def get_default_location(self, generator: "DataGeneratorInstance", name: str):
+        return "data/{}/recipes/{}.json".format(*name.split(":")) if name.count(":") == 1 else \
+            "data/{}/recipes/{}.json".format(generator.default_namespace, name)
 
 
 class ShapelessGenerator(IDataGenerator):
@@ -218,19 +223,23 @@ class ShapelessGenerator(IDataGenerator):
         self.inputs += identifiers
         return self
 
-    def generate(self):
+    def dump(self, generator: "DataGeneratorInstance"):
         if self.output is None:
             logger.println("recipe {} is missing output!".format(self.name))
             return
         data = {
             "type": "minecraft:crafting_shapeless",
-            "ingredients": [encode_data(e, self.config) for e in self.inputs],
+            "ingredients": [encode_data(e, generator) for e in self.inputs],
             "result": {"count": self.output[0], "item": self.output[1]},
         }
         if self.group is not None:
             data["group"] = self.group
 
-        self.config.write_json(data, "data", "recipes", self.name + ".json")
+        return data
+
+    def get_default_location(self, generator: "DataGeneratorInstance", name: str):
+        return "data/{}/recipes/{}.json".format(*name.split(":")) if name.count(":") == 1 else \
+            "data/{}/recipes/{}.json".format(generator.default_namespace, name)
 
 
 class SmeltingGenerator(IDataGenerator):
@@ -271,11 +280,11 @@ class SmeltingGenerator(IDataGenerator):
         self.cooking_time = dt
         return self
 
-    def generate(self):
+    def dump(self, generator: "DataGeneratorInstance"):
         inp = (
-            encode_data(self.inputs[0], self.config)
+            encode_data(self.inputs[0], generator)
             if len(self.inputs) == 1
-            else [encode_data(e, self.config) for e in self.inputs]
+            else [encode_data(e, generator) for e in self.inputs]
         )
         data = {
             "type": self.mode,
@@ -285,4 +294,8 @@ class SmeltingGenerator(IDataGenerator):
             "cookingtime": self.cooking_time,
         }
 
-        self.config.write_json(data, "data", "recipes", self.name + ".json")
+        return data
+
+    def get_default_location(self, generator: "DataGeneratorInstance", name: str):
+        return "data/{}/recipes/{}.json".format(*name.split(":")) if name.count(":") == 1 else \
+            "data/{}/recipes/{}.json".format(generator.default_namespace, name)

@@ -9,19 +9,19 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import globals as G, logger
+from abc import ABC
+
+from mcpython import shared, logger
 import typing
-import mcpython.common.data.gen.Configuration
+from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
 
 
-class ILootTableCondition:
-    def serialize(self):
-        raise NotImplementedError()
+class ILootTableCondition(IDataGenerator, ABC):
+    pass
 
 
-class ILootTableFunction:
-    def serialize(self):
-        raise NotImplementedError()
+class ILootTableFunction(IDataGenerator, ABC):
+    pass
 
 
 class ApplyBonus(ILootTableFunction):
@@ -41,7 +41,7 @@ class ApplyBonus(ILootTableFunction):
         self.bonus_multiplier = bonus_multiplier
         self.conditions = conditions
 
-    def serialize(self):
+    def dump(self, generator: DataGeneratorInstance):
         d = {
             "function": "apply_bonus",
             "enchantment": self.enchantment,
@@ -65,7 +65,7 @@ class ApplyBonus(ILootTableFunction):
 
 
 class CopyName(ILootTableFunction):
-    def serialize(self):
+    def dump(self, generator: DataGeneratorInstance):
         return {"source": "block_entity", "function": "copy_name"}
 
 
@@ -75,7 +75,7 @@ class NBTCopyOperation:
         self.nbt_target = nbt_target if nbt_target is not None else nbt_source
         self.op = op
 
-    def serialize(self):
+    def dump(self, generator: DataGeneratorInstance):
         return {"source": self.nbt_source, "target": self.nbt_target, "op": self.op}
 
 
@@ -88,10 +88,10 @@ class CopyNBT(ILootTableFunction):
         self.operations.append(operation)
         return self
 
-    def serialize(self):
+    def dump(self, generator: DataGeneratorInstance):
         return {
             "source": self.source,
-            "ops": [operation.serialize() for operation in self.operations],
+            "ops": [operation.dump(generator) for operation in self.operations],
             "function": "copy_nbt",
         }
 
@@ -105,7 +105,7 @@ class CopyState(ILootTableFunction):
         self.copy_properties.extend(properties)
         return self
 
-    def serialize(self):
+    def dump(self, generator: DataGeneratorInstance):
         return {
             "function": "copy_state",
             "block": self.block,
@@ -121,11 +121,11 @@ class EnchantRandomly(ILootTableFunction):
         self.enchantments.extend(enchanments)
         return self
 
-    def serialize(self):
+    def dump(self, generator: DataGeneratorInstance):
         return {"function": "enchant_randomly", "enchantments": self.enchantments}
 
 
-class ILootTableEntry:
+class ILootTableEntry(IDataGenerator):
     def __init__(self, weight=1, quality=1):
         self.weight = weight
         self.quality = quality
@@ -140,11 +140,11 @@ class ILootTableEntry:
         self.functions.append(function)
         return self
 
-    def serialize(self) -> typing.Dict[str, typing.Any]:
+    def dump(self, generator: DataGeneratorInstance):
         return {
-            "conditions": [condition.serialize() for condition in self.conditions],
+            "conditions": [condition.dump(generator) for condition in self.conditions],
             "weight": self.weight,
-            "functions": [function.serialize() for function in self.functions],
+            "functions": [function.dump(generator) for function in self.functions],
             "quality": self.quality,
         }
 
@@ -158,8 +158,8 @@ class ItemLootTableEntry(ILootTableEntry):
         self.item_name = name
         return self
 
-    def serialize(self):
-        data = super().serialize()
+    def dump(self, generator: DataGeneratorInstance):
+        data = super().dump(generator)
         data["type"] = "item"
         data["name"] = self.item_name
         return self
@@ -175,8 +175,8 @@ class TagLootTableEntry(ILootTableEntry):
         self.tag_name = name
         return self
 
-    def serialize(self):
-        data = super().serialize()
+    def dump(self, generator: DataGeneratorInstance):
+        data = super().dump(generator)
         data["type"] = "tag"
         data["name"] = self.tag_name
         data["expand"] = self.expand
@@ -192,8 +192,8 @@ class LootTableLootTableEntry(ILootTableEntry):
         self.loot_table_name = name
         return self
 
-    def serialize(self):
-        data = super().serialize()
+    def dump(self, generator: DataGeneratorInstance):
+        data = super().dump(generator)
         data["type"] = "loot_table"
         data["name"] = self.loot_table_name
         return self
@@ -208,8 +208,8 @@ class GroupLootTableEntry(ILootTableEntry):
         self.children.append(child)
         return self
 
-    def serialize(self):
-        data = super().serialize()
+    def dump(self, generator: DataGeneratorInstance):
+        data = super().dump(generator)
         data["type"] = "group"
         data["children"] = [child.serialize() for child in self.children]
         return self
@@ -224,8 +224,8 @@ class AlternativesLootTableEntry(ILootTableEntry):
         self.children.append(child)
         return self
 
-    def serialize(self):
-        data = super().serialize()
+    def dump(self, generator: DataGeneratorInstance):
+        data = super().dump(generator)
         data["type"] = "alternatives"
         data["children"] = [child.serialize() for child in self.children]
         return self
@@ -240,8 +240,8 @@ class SequenceLootTableEntry(ILootTableEntry):
         self.children.append(child)
         return self
 
-    def serialize(self):
-        data = super().serialize()
+    def dump(self, generator: DataGeneratorInstance):
+        data = super().dump(generator)
         data["type"] = "sequence"
         data["children"] = [child.serialize() for child in self.children]
         return self
@@ -256,14 +256,14 @@ class DynamicLootTableEntry(ILootTableEntry):
         self.ref_name = name
         return self
 
-    def serialize(self):
-        data = super().serialize()
+    def dump(self, generator: DataGeneratorInstance):
+        data = super().dump(generator)
         data["type"] = "dynamic"
         data["name"] = self.ref_name
         return self
 
 
-class LootTablePool:
+class LootTablePool(IDataGenerator):
     def __init__(
         self,
         rolls: typing.Union[int, typing.Tuple[int, int]] = 1,
@@ -284,17 +284,17 @@ class LootTablePool:
     def addEntry(self, entry: ILootTableEntry):
         pass
 
-    def serialize(self):
+    def dump(self, generator: DataGeneratorInstance):
         return {
-            "entries": [entry.serialize() for entry in self.entries],
-            "functions": [function.serialize() for function in self.functions],
-            "conditions": [condition.serialize() for condition in self.conditions],
+            "entries": [entry.dump(generator) for entry in self.entries],
+            "functions": [function.dump(generator) for function in self.functions],
+            "conditions": [condition.dump(generator) for condition in self.conditions],
             "rolls": self.rolls,
             "bonus_rolls": self.bonus_rolls,
         }
 
 
-class LootTableGenerator(mcpython.datagen.Configuration.IDataGenerator):
+class LootTableGenerator(IDataGenerator):
     def __init__(self, config, name):
         super().__init__(config)
         self.name = name
@@ -309,7 +309,7 @@ class LootTableGenerator(mcpython.datagen.Configuration.IDataGenerator):
         self.pools.append(pool)
         return self
 
-    def generate(self):
+    def dump(self, generator: DataGeneratorInstance):
         data = {"pools": []}
         if self.type is not None:
             data["type"] = self.type
@@ -319,4 +319,8 @@ class LootTableGenerator(mcpython.datagen.Configuration.IDataGenerator):
             except:
                 logger.println("during serializing {} (number {})".format(pool, i + 1))
                 raise
-        self.config.write_json(data, "data", "loot_tables", self.name + ".json")
+        return data
+
+    def get_default_location(self, generator: "DataGeneratorInstance", name: str):
+        return "data/{}/loot_tables/{}.json".format(*name.split(":")) if name.count(":") == 1 else \
+            "data/{}/loot_tables/{}.json".format(generator.default_namespace, name)

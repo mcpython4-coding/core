@@ -9,33 +9,21 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.data.gen.Configuration
+from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
 
 
-class TagGenerator(mcpython.datagen.Configuration.IDataGenerator):
-    def __init__(self, config, group: str, name: str, override=False):
-        super().__init__(config)
+class TagGenerator(IDataGenerator):
+    def __init__(self, group: str, override=False):
         self.group = group
-        self.name = name
         self.override = override
         self.affected = set()
 
     def add_affected(self, *affected):
         self.affected.update(affected)
 
-    def generate(self):
-        if self.name.count(":") == 0:
-            self.config.write_json(
-                {"replace": self.override, "values": list(self.affected)},
-                "data",
-                "tags/" + self.group,
-                self.name + ".json",
-            )
-        else:
-            self.config.write_json(
-                {"replace": self.override, "values": list(self.affected)},
-                "data",
-                self.name.split(":")[0],
-                "tags/" + self.group,
-                self.name.split(":")[1] + ".json",
-            )
+    def dump(self, generator: "DataGeneratorInstance"):
+        return {"replace": self.override, "values": list(self.affected)}
+
+    def get_default_location(self, generator: "DataGeneratorInstance", name: str):
+        namespace, name = name.split(":") if name.count(":") == 1 else (generator.default_namespace, name)
+        return "data/{}/tags/{}/{}.json".format(name, self.group, name)

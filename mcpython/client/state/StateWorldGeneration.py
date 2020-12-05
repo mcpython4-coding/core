@@ -112,7 +112,7 @@ class StateWorldGeneration(State.State):
                 seed = int.from_bytes(seed.encode("UTF-8"), "big")
         else:
             seed = random.randint(-100000, 100000)
-        G.world.config["seed"] = seed
+        G.world.generator["seed"] = seed
         G.eventhandler.call("seed:set")
         G.eventhandler.call("on_world_generation_started")
         for cx in range(-fx, ffx):
@@ -161,10 +161,10 @@ class StateWorldGeneration(State.State):
         mcpython.common.world.player.Player.RENDERER.reload()
         G.world.active_player = playername
         G.world.get_active_player().set_to_spawn_point()
-        G.world.config["enable_auto_gen"] = (
+        G.world.generator["enable_auto_gen"] = (
             self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
         )
-        G.world.config["enable_world_barrier"] = (
+        G.world.generator["enable_world_barrier"] = (
             self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
         )
 

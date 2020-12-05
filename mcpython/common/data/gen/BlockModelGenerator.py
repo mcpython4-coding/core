@@ -11,7 +11,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 import mcpython.util.enums
-from mcpython.common.data.gen.Configuration import IDataGenerator
+from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
+from mcpython import logger
 
 
 def encode_model_key(key):
@@ -22,18 +23,22 @@ def encode_model_key(key):
     return key
 
 
-class ModelRepresentation:
+class ModelRepr(IDataGenerator):
     """
     Class for representing an model in an block-state definition generator.
     Rendering is implemented by the respective rendering backend
     """
 
+    @classmethod
+    def for_model(cls, model: "BlockModel") -> "ModelRepr":
+        return cls(model)
+
     def __init__(
         self,
-        model: typing.Union[str, "BlockModelGenerator"],
+        model: typing.Union[str, "BlockModel"],
         r_x=0,
         r_y=0,
-        uvlock=False,
+        uv_lock=False,
         weight=None,
     ):
         """
@@ -41,49 +46,51 @@ class ModelRepresentation:
         :param model: the model to use as e.g. minecraft:block/stone
         :param r_x: the rotation in x direction
         :param r_y: the rotation in y direction
-        :param uvlock: if uv's should be not affected by rotation
+        :param uv_lock: if uv's should be not affected by rotation
         :param weight: the weight, when in an list of multiple models
         """
         self.model = (
             model
             if type(model) == str
-            else "{}:block/{}".format(model.config.default_namespace, model.name)
+            else model.name
         )
         self.r_x = r_x % 360
         self.r_y = r_y % 360
-        self.uvlock = uvlock
+        self.uv_lock = uv_lock
         self.weight = weight
 
-        self.wrap_cache = (
-            None  # holding the data when calling wrap() to make later re-use possible
+        self.generated_cache = (
+            None  # holding the data when calling dump() to make later re-use possible
         )
 
-    def wrap(self, config) -> dict:
+    def dump(self, generator: DataGeneratorInstance) -> dict:
         """
-        will encode your data to an json-able dict
+        Will encode your data to an json-able dict
         """
-        if self.wrap_cache is not None:
-            return self.wrap_cache
+        if self.generated_cache is not None:
+            return self.generated_cache
+        if ":" not in self.model and generator.default_namespace is not None:
+            self.model = "{}:{}".format(generator.default_namespace, self.model)
         data = {
             "model": self.model
-            if ":" in self.model or config.default_namespace is None
-            else config.default_namespace + ":" + self.model
+            if ":" in self.model or generator.default_namespace is None
+            else generator.default_namespace + ":" + self.model
         }
         if self.r_x != 0:
             data["x"] = self.r_x
         if self.r_y != 0:
             data["y"] = self.r_y
-        if self.uvlock is True and (self.r_x or self.r_y):
-            data["uvlock"] = self.uvlock
+        if self.uv_lock is True and (self.r_x or self.r_y):
+            data["uvlock"] = self.uv_lock
         if self.weight is not None:
             data["weight"] = self.weight
-        self.wrap_cache = data
+        self.generated_cache = data
         return data
 
 
-class SingleFaceConfiguration:
+class SingleFaceConfiguration(IDataGenerator):
     """
-    class for the configuration of one face of an element in an BlockModel
+    Class for the configuration of one face of an element in an BlockModel
     """
 
     def __init__(
@@ -91,15 +98,15 @@ class SingleFaceConfiguration:
         face: typing.Union[str, mcpython.util.enums.EnumSide],
         texture: str,
         uv=(0, 0, 1, 1),
-        cullface: typing.Union[str, mcpython.util.enums.EnumSide] = None,
+        cull_face: typing.Union[str, mcpython.util.enums.EnumSide] = None,
         rotation=0,
     ):
         """
-        will create an new config
+        Will create an new config
         :param face: the face to configure, as str for face in mcpython.util.enums.EnumSide or an entry of that enum
         :param texture: the texture variable name to use, "#" in front optional (auto-added when not provided)
         :param uv: the uv indexes. when out of the 0-1 bound, behaviour is undefined
-        :param cullface: the cull face of the face. Same parsing as face
+        :param cull_face: the cull face of the face. Same parsing as face
         :param rotation: the rotation of the texture as an multiple of 90
         """
         self.face = face if type(face) != str else mcpython.util.enums.EnumSide[face]
@@ -111,12 +118,12 @@ class SingleFaceConfiguration:
                     face
                 )
             )
-        if cullface is None:
-            cullface = self.face
-        self.cullface = (
-            cullface
-            if type(cullface) != str
-            else mcpython.util.enums.EnumSide[cullface]
+        if cull_face is None:
+            cull_face = self.face
+        self.cull_face = (
+            cull_face
+            if type(cull_face) != str
+            else mcpython.util.enums.EnumSide[cull_face]
         )
         if rotation % 90 != 0:
             logger.println(
@@ -126,32 +133,30 @@ class SingleFaceConfiguration:
             )
         self.rotation = rotation % 360
 
-        self.wrap_cache = None
+        self.generated_cache = None
 
-    def wrap(self) -> dict:
+    def dump(self, generator: DataGeneratorInstance) -> dict:
         """
-        will encode the data into an dict-like object
-        :return:
+        Will encode the data into an dict-like object
         """
-        if self.wrap_cache is not None:
-            return self.wrap_cache
-        data = {"texture": self.texture, "cullface": self.cullface.normal_name}
+        if self.generated_cache is not None:
+            return self.generated_cache
+        data = {"texture": self.texture, "cullface": self.cull_face.normal_name}
         if self.uv != (0, 0, 1, 1):
             data["uv"] = self.uv
         if self.rotation != 0:
             data["rotation"] = self.rotation
 
-        self.wrap_cache = data
+        self.generated_cache = data
         return data
 
 
-class BlockStateGenerator(mcpython.common.data.gen.Configuration.IDataGenerator):
+class BlockState(IDataGenerator):
     """
     generator class for an block state
     """
 
-    def __init__(self, config, name: str, parent=None, generate_alias=2):
-        super().__init__(config)
+    def __init__(self, name: str, parent=None, generate_alias=2):
         self.name = name
         self.states = []
         self.parent = parent
@@ -159,22 +164,20 @@ class BlockStateGenerator(mcpython.common.data.gen.Configuration.IDataGenerator)
         self.generate_alias = generate_alias
 
     def add_state(
-        self, state: typing.Union[None, str, dict, list, "BlockModelGenerator"], *models
+        self, state: typing.Union[None, str, dict, list, "BlockModel"], *models
     ):
         """
         will add an new possible state into the block state file
         :param state: the state as an str, an dict or an list of states or None for default
         :param models: the models to use in this case
         """
-        modelx = list(models)
+        model_copy = list(models)
         for i, model in enumerate(models):
-            if type(model) == BlockModelGenerator:
-                modelx[i] = "{}:block/{}".format(
-                    model.config.default_namespace, model.name
-                )
+            if isinstance(model, BlockModel):
+                model_copy[i] = ModelRepr.for_model(model)
             elif type(model) == str:
-                modelx[i] = ModelRepresentation(model)
-        self.states.append((state, tuple(modelx)))
+                model_copy[i] = ModelRepr(model)
+        self.states.append((state, tuple(model_copy)))
         return self
 
     def addAliasName(self, name: str, target: str):
@@ -204,15 +207,15 @@ class BlockStateGenerator(mcpython.common.data.gen.Configuration.IDataGenerator)
                     model.model = alias_name
         return self
 
-    def generate(self):
+    def dump(self, generator: DataGeneratorInstance) -> dict:
         if self.generate_alias > 0:
             self.generateBestAlias(self.generate_alias)
         data = {"variants": {}}
         for key, model in self.states:
             m = (
-                model[0].wrap(self.config)
+                model[0].dump(generator)
                 if len(model) == 1
-                else [e.wrap(self.config) for e in model]
+                else [e.dump(generator) for e in model]
             )
             if type(key) == list:
                 for key2 in key:
@@ -225,16 +228,19 @@ class BlockStateGenerator(mcpython.common.data.gen.Configuration.IDataGenerator)
         if len(self.alias) > 0:
             data["alias"] = self.alias
 
-        self.config.write_json(data, "assets", "blockstates", self.name + ".json")
+        return data
+
+    def get_default_location(self, generator: DataGeneratorInstance, name: str):
+        return "assets/{}/blockstates/{}.json".format(*name.split(":")) if ":" in name else \
+            "assets/{}/blockstates/{}.json".format(generator.default_namespace, name)
 
 
-class MultiPartBlockStateGenerator(IDataGenerator):
+class MultiPartBlockState(IDataGenerator):
     """
     Generator class for an multipart model
     """
 
-    def __init__(self, config, name: str, parent=None, optimize=True):
-        super().__init__(config)
+    def __init__(self, name: str, parent=None, optimize=True):
         self.name = name
         self.states = []
         self.parent = parent
@@ -252,11 +258,11 @@ class MultiPartBlockStateGenerator(IDataGenerator):
         :param models: the models to apply
         :return:
         """
-        modelx = list(models)
+        model_copy = list(models)
         for i, model in enumerate(models):
             if type(model) == str:
-                modelx[i] = ModelRepresentation(model)
-        self.states.append((state, modelx))
+                model_copy[i] = ModelRepr(model)
+        self.states.append((state, model_copy))
         return self
 
     def addAliasName(self, name: str, target: str):
@@ -286,7 +292,7 @@ class MultiPartBlockStateGenerator(IDataGenerator):
                     model.model = alias_name
         return self
 
-    def generate(self):
+    def dump(self, generator: DataGeneratorInstance) -> dict:
         if self.optimize:
             self.generateBestAlias()
         data = {"multipart": []}
@@ -296,9 +302,9 @@ class MultiPartBlockStateGenerator(IDataGenerator):
             data["alias"] = self.alias
         for state, model in self.states:
             m = (
-                model[0].wrap(self.config)
+                model[0].dump(generator)
                 if len(model) == 1
-                else [e.wrap() for e in model]
+                else [e.dump(generator) for e in model]
             )
             d = {"apply": m}
             c = self._encode_condition(state)
@@ -306,7 +312,7 @@ class MultiPartBlockStateGenerator(IDataGenerator):
                 d["when"] = c
             data["multipart"].append(d)
 
-        self.config.write_json(data, "assets", "blockstates", self.name + ".json")
+        return data
 
     @classmethod
     def _encode_condition(cls, state):
@@ -319,8 +325,12 @@ class MultiPartBlockStateGenerator(IDataGenerator):
                 return {"OR": [cls._encode_condition(e) for e in state]}
             raise NotImplementedError()
 
+    def get_default_location(self, generator: DataGeneratorInstance, name: str):
+        return "assets/{}/blockstates/{}.json".format(*name.split(":")) if ":" in name else \
+            "assets/{}/blockstates/{}.json".format(generator.default_namespace, name)
 
-class ModelDisplay:
+
+class ModelDisplay(IDataGenerator):
     """
     class holding an display configuration for the block
     """
@@ -338,7 +348,7 @@ class ModelDisplay:
         self.translation = translation
         self.scale = scale
 
-    def wrap(self) -> dict:
+    def dump(self, generator: DataGeneratorInstance) -> dict:
         data = {}
         if self.rotation is not None:
             data["rotation"] = self.rotation
@@ -349,22 +359,20 @@ class ModelDisplay:
         return data
 
 
-class BlockModelGenerator(IDataGenerator):
+class BlockModel(IDataGenerator):
     """
     Generator for an block model
     """
 
     def __init__(
         self,
-        config,
         name: str,
         parent: str = "minecraft:block/block",
-        ambientocclusion=True,
+        ambient_occlusion=True,
     ):
-        super().__init__(config)
         self.name = name
         self.parent = parent
-        self.ambientocclusion = ambientocclusion
+        self.ambient_occlusion = ambient_occlusion
         self.textures = {}
         self.elements = []
         self.display = {}
@@ -405,7 +413,7 @@ class BlockModelGenerator(IDataGenerator):
     def set_display_mode(self, key: str, config: ModelDisplay):
         self.display[key] = config
 
-    def generate(self):
+    def dump(self, generator: DataGeneratorInstance) -> dict:
         if self.parent != "minecraft:block/block" and self.elements:
             logger.println(
                 "[DATA GEN][WARN] block model {} has unusual parent and elements set".format(
@@ -413,12 +421,12 @@ class BlockModelGenerator(IDataGenerator):
                 )
             )
         data = {"parent": self.parent}
-        if not self.ambientocclusion:
-            data["ambientocclusion"] = self.ambientocclusion
+        if not self.ambient_occlusion:
+            data["ambientocclusion"] = self.ambient_occlusion
         if len(self.display) > 0:
             data["display"] = {}
             for key in self.display:
-                data["display"][key] = self.display[key].wrap()
+                data["display"][key] = self.display[key].dump(generator)
         if len(self.textures) > 0:
             data["textures"] = self.textures.copy()
         if len(self.elements) > 0:
@@ -437,7 +445,7 @@ class BlockModelGenerator(IDataGenerator):
                     "from": f,
                     "to": t,
                     "faces": {
-                        config.face.normal_name: config.wrap() for config in faces
+                        config.face.normal_name: config.dump(generator) for config in faces
                     },
                 }
                 if any((rotation_center, rotation_angle, rotation_axis)):
@@ -448,4 +456,8 @@ class BlockModelGenerator(IDataGenerator):
                     d["shade"] = shade
                 data["elements"].append(d)
 
-        self.config.write_json(data, "assets", "models/block", self.name + ".json")
+        return data
+
+    def get_default_location(self, generator: DataGeneratorInstance, name: str):
+        return "assets/{}/models/block/{}.json".format(*name.split(":")) if ":" in name else \
+            "assets/{}/models/block/{}.json".format(generator.default_namespace, name)

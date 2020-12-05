@@ -340,7 +340,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                     block = chunk.get_block(tuple(op))
                     blockstate = block is not None
                     if not chunk.generated:
-                        if G.world.config["enable_world_barrier"]:
+                        if G.world.generator["enable_world_barrier"]:
                             blockstate = True
                     if not blockstate:
                         continue

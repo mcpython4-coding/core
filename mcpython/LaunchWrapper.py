@@ -62,12 +62,8 @@ class LaunchWrapper:
         import mcpython.common.mod.ModLoader
         import mcpython.common.mod.ModMcpython
         import mcpython.common.mod.ConfigFile
-        from mcpython.common.data.gen.mcpython import (
-            recipes,
-            textures,
-            entity,
-            blockmodels,
-        )
+        # from mcpython.common.data.gen.mcpython import (
+        # )
 
         @shared.modloader("minecraft", "special:exit")
         def exit():

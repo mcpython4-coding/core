@@ -74,7 +74,7 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
             ).get_save_data(G.build + "/skin.png")
         mcpython.common.world.player.Player.RENDERER.reload()
 
-        G.world.config = data["config"]
+        G.world.generator = data["config"]
         G.eventhandler.call("seed:set")
 
         if data["game version"] not in mcpython.common.config.VERSION_ORDER:
@@ -151,7 +151,7 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
         data = {
             "storage version": savefile.version,  # the storage version stored in
             "player name": G.world.get_active_player().name,  # the name of the player the world played in
-            "config": G.world.config,  # the world config
+            "config": G.world.generator,  # the world config
             "game version": mcpython.common.config.VERSION_NAME,
             "mods": {mod.name: mod.version for mod in G.modloader.mods.values()},
             "chunks_to_generate": [

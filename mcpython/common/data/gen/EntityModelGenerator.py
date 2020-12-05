@@ -9,16 +9,15 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.data.gen.Configuration
+from mcpython.common.data.gen.DataGeneratorManager import IDataGenerator, DataGeneratorInstance
 
 
-class EntityModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
+class EntityModelGenerator(IDataGenerator):
     """
     Data generator for creating an entity model file
     """
 
-    def __init__(self, config, name):
-        super().__init__(config)
+    def __init__(self, name):
         self.name = name
         self.boxes = {}
         self.states = {}
@@ -72,22 +71,6 @@ class EntityModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
         self.boxes[name] = texture, tex_size, position, rotation, size, center, uv
         return self
 
-    def addBox(
-        self,
-        name: str,
-        texture: str,
-        tex_size: tuple,
-        position: tuple,
-        size: tuple,
-        uv: tuple,
-        rotation_center=(0, 0, 0),
-        rotation=(0, 0, 0),
-    ):
-        self.add_box(
-            name, texture, tex_size, position, rotation, size, rotation_center, uv
-        )
-        return self
-
     def add_state(self, name: str, *boxes):
         """
         adds an state for rendering the entity
@@ -97,7 +80,7 @@ class EntityModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
         self.states[name] = boxes
         return self
 
-    def generate(self):
+    def dump(self, generator: DataGeneratorInstance):
         data = {"boxes": {}, "states": {}}
 
         for key in self.boxes:
@@ -143,4 +126,8 @@ class EntityModelGenerator(mcpython.datagen.Configuration.IDataGenerator):
                 boxes.append(e)
             data["states"][key] = {"boxes": boxes}
 
-        self.config.write_json(data, "assets", "config/entity", self.name + ".json")
+        return data
+
+    def get_default_location(self, generator: DataGeneratorInstance, name: str):
+        return "assets/{}/models/entity/{}.json".format(*name.split(":")) if ":" in name else \
+            "assets/{}/models/entity/{}.json".format(generator.default_namespace, name)
