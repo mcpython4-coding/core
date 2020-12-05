@@ -18,7 +18,7 @@ import pyglet
 from mcpython import shared as G
 import mcpython.common.block.AbstractBlock
 import mcpython.common.mod.ModMcpython
-import mcpython.client.rendering.OpenGLSetupFile
+import mcpython.client.rendering.util
 import mcpython.util.math
 import mcpython.common.world.Chunk
 

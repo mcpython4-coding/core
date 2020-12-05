@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.util.math
-import mcpython.client.rendering.OpenGLSetupFile
+import mcpython.client.rendering.util
 
 
 class BoundingBox:
@@ -56,9 +56,7 @@ class BoundingBox:
                 vertex_data_ur[i * 3 : i * 3 + 3], (0, 0, 0), rot
             )
             vertex_data.extend([nx + rx, ny + ry, nz + rz])
-        mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name(
-            "draw_line_box", vertex=("v3f/static", vertex_data)
-        )
+        mcpython.client.rendering.util.draw_line_box(("v3f/static", vertex_data))
 
 
 class BoundingArea:

@@ -1,9 +1,0 @@
-// Configure OpenGL to draw in 2d
-
-glDisable(glEnum GL_DEPTH_TEST)
-glViewport(glInt 0, glInt 0, glParameter viewport_0, glParameter viewport_1)
-glMatrixMode(glEnum GL_PROJECTION)
-glLoadIdentity()
-glOrtho(glInt 0, glParameter width, glInt 0, glParameter height, glInt -1, glInt 1)
-glMatrixMode(glEnum GL_MODELVIEW)
-glLoadIdentity()

@@ -96,9 +96,9 @@ class LaunchWrapper:
         todo: DO NOT USE OpenGLSetupFile
         """
 
-        import mcpython.client.rendering.OpenGLSetupFile
+        import mcpython.client.rendering.util
 
-        mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name("setup")
+        mcpython.client.rendering.util.setup()
 
     def print_header(self):
         """

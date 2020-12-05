@@ -21,7 +21,7 @@ import mcpython.ResourceLoader
 import mcpython.common.event.EventHandler
 import mcpython.common.event.TickHandler
 import mcpython.common.config
-import mcpython.client.rendering.OpenGLSetupFile
+import mcpython.client.rendering.util
 import mcpython.client.state.StateHandler
 import mcpython.client.state.StatePartGame
 import mcpython.util.math
@@ -509,14 +509,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         # todo: move to RenderingHelper
         width, height = self.get_size()
         viewport = self.get_viewport_size()
-        mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name(
-            "set_2d",
-            width=max(1, width),
-            height=max(1, height),
-            viewport_0=max(1, viewport[0]),
-            viewport_1=max(1, viewport[1]),
-        )
-        # G.rendering_helper.setup2d()
+        mcpython.client.rendering.util.set_2d((max(1, viewport[0]), max(1, viewport[1])), max(1, width), max(1, height))
         pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
     def set_3d(self, position=None, rotation=None):

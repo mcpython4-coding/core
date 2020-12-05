@@ -1310,12 +1310,14 @@ R   [uuk]: rewritten ItemAtlas system
 B   [uuk]: normal slots were drawing item stacks not correctly
 R   [uuk]: renamed some Slot specific methods
 R   [uuk]: moved some files around again
+F   [uuk]: added TAGS attribute for RegistryEntries filled when the registry says so with the list of tags the entry
+           has
+R/D [uuk]: removed OpenGLSetupFile system and replaced by direct in-code calls
 
 Roadmap:
     - refactor classes & functions [WIP]
     - create doc  [WIP] & unit tests for code
     - revisit build system [WIP]
-    - remove OpenGLSetupFile system
     - change how data generators work
     - add client & server annotations, check code for side
     - migrate globals to global game instance
@@ -1327,11 +1329,10 @@ Roadmap:
     - clean up changelog.txt, issues.txt and fixed_issues.txt
     - redesign command system
     - remove BlockConfig system & replace by tags
-    - there should be an interface called ITagAble containing an class constructor for creating an list of tags these
-        class has, for not needing an lookup in the tag system
     - player inventories should be stored as attributes, not in an dict
     - fix respawning in blocks
     - fix having two separated item atlas storages?
     - fix being able to break blocks in gamemode 0 which you should not be able to (e.g. bedrock)
     - update mdk to the new systems
     - update doc generator to use tokenize
+    - optimize rendering system

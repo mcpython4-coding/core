@@ -18,7 +18,7 @@ import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.event.TickHandler
 import mcpython.client.rendering.EntityRenderer
-import mcpython.client.rendering.OpenGLSetupFile
+import mcpython.client.rendering.util
 from mcpython.server.command.Command import ParseBridge
 
 
@@ -57,10 +57,7 @@ class CommandReload(mcpython.server.command.Command.Command):
 
         G.inventoryhandler.reload_config()  # reloads inventory configuration
         G.modelhandler.reload_models()
-        mcpython.client.rendering.OpenGLSetupFile.FILES.clear()  # remove all loaded OpenGL conifg ifles
-        mcpython.client.rendering.OpenGLSetupFile.execute_file_by_name(
-            "setup"
-        )  # re-setup opengl
+        mcpython.client.rendering.util.setup()
         # todo: regenerate block item images, regenerate item atlases
 
         # reload entity model files
