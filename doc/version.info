@@ -1314,6 +1314,10 @@ F   [uuk]: added TAGS attribute for RegistryEntries filled when the registry say
            has
 R/D [uuk]: removed OpenGLSetupFile system and replaced by direct in-code calls
 R/F [uuk]: changed a lot of stuff around the data generator system
+    [uuk]: optimized internal world generation code#
+F   [uuk]: BedrockLayer is now noise-based
+R   [uuk]: renamed layers with prefix "minecraft:"
+    [uuk]: added DEPENDS_ON attribute to Layers
 
 Roadmap:
     - refactor classes & functions [WIP]
@@ -1337,3 +1341,4 @@ Roadmap:
     - update mdk to the new systems
     - update doc generator to use tokenize
     - optimize rendering system
+    - use scissor group for world view

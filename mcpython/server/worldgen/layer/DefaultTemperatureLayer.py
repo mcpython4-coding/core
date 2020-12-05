@@ -26,7 +26,7 @@ class DefaultTemperatureLayer(Layer):
 
     @classmethod
     def update_seed(cls):
-        seed = G.world.generator["seed"]
+        seed = G.world.config["seed"]
         cls.noise = opensimplex.OpenSimplex(seed=seed * 100 + 5)
 
     @staticmethod
@@ -38,13 +38,13 @@ class DefaultTemperatureLayer(Layer):
         if not hasattr(config, "size"):
             config.size = 2
 
-    NAME = "temperaturemap"
+    NAME = "minecraft:temperature_map"
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         cx, cz = chunk.position
-        temperaturemap = chunk.get_value("temperaturemap")
+        temperature_map = chunk.get_value("minecraft:temperature_map")
         factor = 10 ** config.size
         r = [config.min, config.max]
         for x in range(cx * 16, cx * 16 + 16):
@@ -53,11 +53,11 @@ class DefaultTemperatureLayer(Layer):
                 v = v / 2.0 + 0.5
                 v *= abs(r[0] - r[1])
                 v += r[0]
-                temperaturemap[(x, z)] = v
+                temperature_map[(x, z)] = v
 
 
-authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "temperaturemap", DefaultTemperatureLayer, {}
+mcpython.common.world.Chunk.Chunk.add_default_attribute(
+    "minecraft:temperature_map", DefaultTemperatureLayer, {}
 )
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(

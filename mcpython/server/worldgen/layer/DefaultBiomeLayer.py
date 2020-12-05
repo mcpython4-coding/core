@@ -22,11 +22,13 @@ import mcpython.common.world.Chunk
 
 @G.worldgenerationhandler
 class DefaultBiomeMapLayer(Layer):
-    noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
+    DEPENDS_ON = ["minecraft:landmass_default"]
+
+    noise: opensimplex.OpenSimplex = None
 
     @classmethod
     def update_seed(cls):
-        seed = G.world.generator["seed"]
+        seed = G.world.config["seed"]
         cls.noise = opensimplex.OpenSimplex(seed=seed * 100)
 
     @staticmethod
@@ -34,15 +36,15 @@ class DefaultBiomeMapLayer(Layer):
         if not hasattr(config, "size"):
             config.size = 1.5
 
-    NAME = "biomemap_default"
+    NAME = "minecraft:biome_map_default"
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         cx, cz = chunk.position
-        biomemap = chunk.get_value("biomemap")
-        landmap = chunk.get_value("landmassmap")
-        temperaturemap = chunk.get_value("temperaturemap")
+        biomemap = chunk.get_value("biome_map")
+        landmap = chunk.get_value("landmass_map")
+        temperaturemap = chunk.get_value("minecraft:temperature_map")
         factor = 10 ** config.size
         for x in range(cx * 16, cx * 16 + 16):
             for z in range(cz * 16, cz * 16 + 16):
@@ -57,11 +59,11 @@ class DefaultBiomeMapLayer(Layer):
                 biomemap[(x, z)] = G.biomehandler.get_biome_at(
                     landmass, config.dimension, v, temperaturemap[(x, z)]
                 )
-        chunk.set_value("biomemap", biomemap)
+        chunk.set_value("biome_map", biomemap)
 
 
-authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "biomemap", DefaultBiomeMapLayer, {}
+mcpython.common.world.Chunk.Chunk.add_default_attribute(
+    "biome_map", DefaultBiomeMapLayer, {}
 )
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(

@@ -16,6 +16,8 @@ import math
 
 
 class OakTreeNormalFeature:
+    # todo: add big tree variant
+
     @staticmethod
     def place(dimension, x, y, z, heightrange=(3, 5)):
         height = random.randint(*heightrange)

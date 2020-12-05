@@ -22,6 +22,15 @@ class LayerConfig:
 
 
 class Layer(mcpython.common.event.Registry.Registry):
+    """
+    Implementation for each layer in generation code.
+    An layer is an step in the generation code
+
+    DEPENDS_ON should be an list of other layer names this layer depends on
+    """
+
+    DEPENDS_ON = []
+
     @staticmethod
     def normalize_config(config: LayerConfig):
         pass
@@ -30,4 +39,4 @@ class Layer(mcpython.common.event.Registry.Registry):
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, reference):
-        pass
+        raise NotImplementedError()

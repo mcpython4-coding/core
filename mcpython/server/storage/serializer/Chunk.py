@@ -344,7 +344,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         ):
             try:
                 chunk_instance.set_value(
-                    "landmassmap",
+                    "landmass_map",
                     {
                         pos: data["maps"]["landmass_palette"][
                             data["maps"]["landmass_map"][i]
@@ -356,7 +356,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                     pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]]
                     for i, pos in enumerate(positions)
                 }
-                chunk_instance.set_value("biomemap", biome_map)
+                chunk_instance.set_value("biome_map", biome_map)
                 chunk_instance.set_value(
                     "heightmap",
                     {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)},
@@ -518,7 +518,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
             cdata["entities"].append(edata)
 
         if override:  # we want to re-dump all data maps
-            biome_map = chunk_instance.get_value("biomemap")  # read the biome map ...
+            biome_map = chunk_instance.get_value("biome_map")  # read the biome map ...
 
             # ... and use it as an template for the following
             # todo: use something else more stable!
@@ -528,7 +528,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
             positions.sort(key=lambda x: x[1])
             positions.sort(key=lambda x: x[0])
 
-            landmass_map = chunk_instance.get_value("landmassmap")
+            landmass_map = chunk_instance.get_value("landmass_map")
             cdata["maps"]["landmass_map"] = []
             cdata["maps"]["landmass_palette"] = []
             for pos in positions:
@@ -540,7 +540,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                     index = cdata["maps"]["landmass_palette"].index(mass)
                 cdata["maps"]["landmass_map"].append(index)
 
-            # temperature_map = chunk_instance.get_value("temperaturemap")
+            # temperature_map = chunk_instance.get_value("minecraft:temperature_map")
             # cdata["maps"]["temperature"] = [temperature_map[pos] for pos in positions]
 
             biome_palette = []

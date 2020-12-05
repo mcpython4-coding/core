@@ -13,14 +13,14 @@ from mcpython import shared as G
 
 config = {
     "layers": [
-        "landmass_default",
-        "temperaturemap",
-        "biomemap_default",
-        "heightmap_default",
-        "bedrock_default",
-        "stone_default",
-        "top_layer_default",
-        "tree_default",
+        "minecraft:landmass_default",
+        "minecraft:temperature_map",
+        "minecraft:biome_map_default",
+        "minecraft:heightmap_default",
+        "minecraft:bedrock_default",
+        "minecraft:stone_default",
+        "minecraft:top_layer_default",
+        "minecraft:tree_default",
     ]
 }
 

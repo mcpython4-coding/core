@@ -28,7 +28,7 @@ class DefaultLandMassLayer(Layer):
 
     @classmethod
     def update_seed(cls):
-        seed = G.world.generator["seed"]
+        seed = G.world.config["seed"]
         cls.noise1 = opensimplex.OpenSimplex(seed=seed * 100 + 2)
         cls.noise2 = opensimplex.OpenSimplex(seed=seed * 100 + 3)
         cls.noise3 = opensimplex.OpenSimplex(seed=seed * 100 + 4)
@@ -37,17 +37,17 @@ class DefaultLandMassLayer(Layer):
     def normalize_config(config: LayerConfig):
         if not hasattr(config, "masses"):
             config.masses = ["land"]
-            # todo: add underwaterbiomes
+            # todo: add underwater biomes
         if not hasattr(config, "size"):
             config.size = 1
 
-    NAME = "landmass_default"
+    NAME = "minecraft:landmass_default"
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         cx, cz = chunk.position
-        landmap = chunk.get_value("landmassmap")
+        landmap = chunk.get_value("landmass_map")
         factor = 10 ** config.size
         for x in range(cx * 16, cx * 16 + 16):
             for z in range(cz * 16, cz * 16 + 16):
@@ -75,7 +75,7 @@ class DefaultLandMassLayer(Layer):
 
 
 authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "landmassmap", DefaultLandMassLayer, {}
+    "landmass_map", DefaultLandMassLayer, {}
 )
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(

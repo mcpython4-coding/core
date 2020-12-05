@@ -22,11 +22,13 @@ from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 @G.worldgenerationhandler
 class DefaultHeightMapLayer(Layer):
+    DEPENDS_ON = ["minecraft:biome_map_default"]
+
     noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
 
     @classmethod
     def update_seed(cls):
-        seed = G.world.generator["seed"]
+        seed = G.world.config["seed"]
         cls.noise = opensimplex.OpenSimplex(seed=seed * 100 + 1)
 
     @staticmethod
@@ -34,7 +36,7 @@ class DefaultHeightMapLayer(Layer):
         if not hasattr(config, "size"):
             config.size = 2
 
-    NAME = "heightmap_default"
+    NAME = "minecraft:heightmap_default"
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
@@ -45,13 +47,12 @@ class DefaultHeightMapLayer(Layer):
         for x in range(cx * 16, cx * 16 + 16):
             for z in range(cz * 16, cz * 16 + 16):
                 heightmap[(x, z)] = cls.get_height_at(chunk, x, z, factor)
-                # chunk.add_add_block_gen_task((x, heightmap[(x, z)][0][1], z), "minecraft:stone")
 
     @classmethod
     def get_height_at(cls, chunk, x, z, factor) -> list:
         v = DefaultHeightMapLayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
-        biomemap = chunk.get_value("biomemap")
-        biome = G.biomehandler.biomes[biomemap[(x, z)]]
+        biome_map = chunk.get_value("biome_map")
+        biome = G.biomehandler.biomes[biome_map[(x, z)]]
         r = biome.get_height_range()
         v *= r[1] - r[0]
         v += r[0]

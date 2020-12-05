@@ -16,12 +16,9 @@ from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 @G.worldgenerationhandler
 class DefaultStonePlacementLayer(Layer):
-    @staticmethod
-    def normalize_config(config: LayerConfig):
-        if not hasattr(config, "bedrockchance"):
-            config.bedrockchance = 3
+    DEPENDS_ON = ["minecraft:heightmap_default"]
 
-    NAME = "stone_default"
+    NAME = "minecraft:stone_default"
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):

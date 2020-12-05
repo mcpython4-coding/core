@@ -19,7 +19,9 @@ from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 @G.worldgenerationhandler
 class DefaultTreeLayer(Layer):
-    NAME = "tree_default"
+    DEPENDS_ON = ["minecraft:biome_map_default", "minecraft:heightmap_default"]
+
+    NAME = "minecraft:tree_default"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, reference):
@@ -40,10 +42,10 @@ class DefaultTreeLayer(Layer):
     @staticmethod
     def generate_position(x, z, reference, config):
         chunk = reference.chunk
-        treemap = chunk.get_value("treeblocked")
+        treemap = chunk.get_value("tree_blocked")
         if (x, z) in treemap:
             return  # is an tree nearby?
-        biome = G.biomehandler.biomes[chunk.get_value("biomemap")[(x, z)]]
+        biome = G.biomehandler.biomes[chunk.get_value("biome_map")[(x, z)]]
         height = chunk.get_value("heightmap")[(x, z)][0][1]
         trees = biome.get_trees()
         # todo: make noise-based
@@ -56,6 +58,6 @@ class DefaultTreeLayer(Layer):
                 return
 
 
-authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "treeblocked", DefaultTreeLayer, []
+mcpython.common.world.Chunk.Chunk.add_default_attribute(
+    "tree_blocked", DefaultTreeLayer, []
 )

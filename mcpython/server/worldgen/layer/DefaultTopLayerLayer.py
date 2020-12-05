@@ -20,6 +20,8 @@ from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 @G.worldgenerationhandler
 class DefaultTopLayerLayer(Layer):
+    DEPENDS_ON = ["minecraft:heightmap_default", "minecraft:biome_map_default"]
+
     noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
 
     @staticmethod
@@ -27,7 +29,7 @@ class DefaultTopLayerLayer(Layer):
         if not hasattr(config, "size"):
             config.size = 3
 
-    NAME = "top_layer_default"
+    NAME = "minecraft:top_layer_default"
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
@@ -44,14 +46,14 @@ class DefaultTopLayerLayer(Layer):
         chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
         mheight = heightmap[(x, z)][0][1]
-        biome = G.biomehandler.biomes[chunk.get_value("biomemap")[(x, z)]]
-        noisevalue = (
+        biome = G.biomehandler.biomes[chunk.get_value("biome_map")[(x, z)]]
+        noise_value = (
             DefaultTopLayerLayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
         )
         r = biome.get_top_layer_height_range()
-        noisevalue *= r[1] - r[0]
-        noisevalue += r[0]
-        height = round(noisevalue)
+        noise_value *= r[1] - r[0]
+        noise_value += r[0]
+        height = round(noise_value)
         decorators = biome.get_top_layer_configuration(height)
         for i in range(height):
             y = mheight - (height - i - 1)
