@@ -115,15 +115,15 @@ class TagHandler:
                 taglist.append(tag)
         return taglist
 
-    def has_entry_tag(self, identifier: str, group: str, tagname: str) -> bool:
+    def has_entry_tag(self, identifier: str, group: str, tag_name: str) -> bool:
         """
         check if an given tag has an entry in it
         :param identifier: the entry to check
         :param group: the group to check for
-        :param tagname: the tag name to check for
+        :param tag_name: the tag name to check for
         :return: if the identifier is in the given tag
         """
-        return identifier in self.get_tag_for(tagname, group).entries
+        return identifier in self.get_tag_for(tag_name, group).entries
 
 
 G.taghandler = TagHandler()
@@ -142,6 +142,7 @@ def add_from_location(loc: str):
             "data/{}/tags/naming",
             "data/{}/tags/blocks",
             "data/{}/tags/functions",
+            "data/{}/tags/rendering"
         ]
     ]
 

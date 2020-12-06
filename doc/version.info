@@ -1324,6 +1324,7 @@ F   [uuk]: implemented AbstractInterface.py classes storing abstract classes for
 F   [uuk]: implemented process-parallelized world generation
 R   [uuk]: moved some files around again
     [uuk]: added side annotations [currently not working]
+D/R [uuk]: migrated BlockConfig system to tags
 
 Roadmap:
     - refactor classes & functions [WIP]
@@ -1337,7 +1338,6 @@ Roadmap:
     - do not hardcode ANY constants, move them to an public space / config files / resource data
     - clean up changelog.txt, issues.txt and fixed_issues.txt
     - redesign command system
-    - remove BlockConfig system & replace by tags
     - player inventories should be stored as attributes, not in an dict
     - fix respawning in blocks
     - fix having two separated item atlas storages? -> one NEVER used? -> old may have been used at the slot bug?

@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 import mcpython.util.math
 import mcpython.util.enums
 import pyglet
-import mcpython.common.block.BlockConfig
 import mcpython.common.config
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
@@ -250,8 +249,7 @@ class BoxModel:
             batch = (
                 batch[0]
                 if self.model is not None
-                and self.model.name
-                not in mcpython.common.block.BlockConfig.ENTRIES["alpha"]
+                and not G.taghandler.has_entry_tag(self.model.name, "rendering", "#minecraft:alpha")
                 else batch[1]
             )
         result = []
