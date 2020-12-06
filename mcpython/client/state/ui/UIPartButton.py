@@ -15,8 +15,9 @@ from pyglet.window import mouse
 import mcpython.ResourceLoader
 from . import UIPart
 import mcpython.util.opengl
-import mcpython.client.Language
+import mcpython.common.Language
 from mcpython.util.enums import ButtonMode
+from mcpython.util.annotation import onlyInClient
 
 image = mcpython.ResourceLoader.read_pyglet_image("gui/widgets")
 disabled = image.get_region(2, 256 - 46 - 17, 196, 14)
@@ -32,6 +33,7 @@ IMAGES = {
 }
 
 
+@onlyInClient()
 def draw_button(position, size, mode):
     if mode not in IMAGES:
         mode = ButtonMode.DISABLED
@@ -67,6 +69,7 @@ def draw_button(position, size, mode):
     )
 
 
+@onlyInClient()
 class UIPartButton(UIPart.UIPart):
     def __init__(
         self,
@@ -157,7 +160,7 @@ class UIPartButton(UIPart.UIPart):
         )
         x, y = self.get_real_position()
         draw_button((x, y), self.bboxsize, mode)
-        self.lable.text = mcpython.client.Language.translate(self.text)
+        self.lable.text = mcpython.common.Language.translate(self.text)
         wx, wy = self.lable.content_width, self.lable.content_height
         self.lable.x = x + self.bboxsize[0] // 2 - wx // 2
         self.lable.y = y + self.bboxsize[1] // 2 - wy // 3
@@ -165,6 +168,7 @@ class UIPartButton(UIPart.UIPart):
         self.lable.draw()
 
 
+@onlyInClient()
 class UIPartToggleButton(UIPartButton):
     def __init__(
         self,
@@ -238,13 +242,13 @@ class UIPartToggleButton(UIPartButton):
     def _generate_text(self):
         text = self.textpages[self.index]
         if type(self.textconstructor) == str:
-            self.text = mcpython.client.Language.translate(
+            self.text = mcpython.common.Language.translate(
                 self.textconstructor.format(text)
             )
         elif callable(self.textconstructor):
-            self.text = mcpython.client.Language.translate(self.textconstructor(text))
+            self.text = mcpython.common.Language.translate(self.textconstructor(text))
         else:
-            self.text = mcpython.client.Language.translate(text)
+            self.text = mcpython.common.Language.translate(text)
 
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()

@@ -28,8 +28,10 @@ import mcpython.client.state.StateModLoading
 import psutil
 import mcpython.client.gui.HoveringItemBox
 import mcpython.client.rendering.model.ItemModel
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StateBlockItemGenerator(State.State):
     SETUP_TIME = 1
     CLEANUP_TIME = 1
@@ -299,6 +301,7 @@ class StateBlockItemGenerator(State.State):
 blockitemgenerator = None
 
 
+@onlyInClient()
 def create():
     global blockitemgenerator
     blockitemgenerator = StateBlockItemGenerator()

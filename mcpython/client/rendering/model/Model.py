@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.texture.TextureAtlas as textureatlas
+import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.client.rendering.BoxModel
 
 
@@ -42,7 +42,7 @@ class Model:
         toadd = []
         for name in self.used_textures:
             toadd.append((name, self.used_textures[name]))
-        add = textureatlas.handler.add_image_files([x[1] for x in toadd], modname)
+        add = TextureAtlas.handler.add_image_files([x[1] for x in toadd], modname)
         self.texture_atlas = None
         for i, (name, _) in enumerate(toadd):
             self.texture_addresses[name] = add[i][0]

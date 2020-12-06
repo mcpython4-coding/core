@@ -456,7 +456,7 @@ def add_resources_by_modname(modname, pathname=None):
     if pathname is None:
         pathname = modname
     from mcpython.client.rendering.model.BlockState import BlockStateDefinition
-    import mcpython.client.Language
+    import mcpython.common.Language
     import mcpython.client.gui.crafting.CraftingManager
     import mcpython.common.data.tags.TagHandler
     import mcpython.common.data.loot.LootTable
@@ -485,7 +485,7 @@ def add_resources_by_modname(modname, pathname=None):
         lambda: mcpython.common.data.tags.TagHandler.add_from_location(pathname),
         info="adding tag groups for mod {}".format(modname),
     )
-    mcpython.client.Language.from_mod_name(modname)
+    mcpython.common.Language.from_mod_name(modname)
     shared.modloader.mods[modname].eventbus.subscribe(
         "stage:loottables:load",
         lambda: mcpython.common.data.loot.LootTable.handler.for_mod_name(

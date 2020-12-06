@@ -16,8 +16,10 @@ import pyglet.gl as _gl
 
 from mcpython import shared as G
 import mcpython.client.rendering.MatrixStack
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class RenderingHelper:
     """
     class for helping storing an gl status and exchanging it, rolling back, ...

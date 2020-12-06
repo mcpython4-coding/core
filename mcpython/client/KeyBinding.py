@@ -11,8 +11,10 @@ This project is not official by mojang and does not relate to it.
 """
 from pyglet.window import key, mouse
 import typing
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class KeyMouseBinding:
     """
     class holding an key or mouse binding

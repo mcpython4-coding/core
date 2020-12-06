@@ -15,12 +15,14 @@ from mcpython import shared as G
 import pyglet
 import os
 import mcpython.common.config
+from mcpython.util.annotation import onlyInClient
 
 MISSING_TEXTURE = mcpython.ResourceLoader.read_image(
     "assets/missing_texture.png"
 ).resize((16, 16), PIL.Image.NEAREST)
 
 
+@onlyInClient()
 class TextureAtlasGenerator:
     """
     generator system for an item atlas
@@ -81,6 +83,7 @@ class TextureAtlasGenerator:
         G.eventhandler.call("textures:atlas:build:post")
 
 
+@onlyInClient()
 class TextureAtlas:
     def __init__(
         self,

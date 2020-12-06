@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared, shared as G, logger
 import mcpython.ResourceLoader
-import mcpython.client.chat.Chat
+import mcpython.client.Chat
 import mcpython.common.entity.Entity
 import mcpython.common.event.EventHandler
 import mcpython.client.gui.InventoryChest
@@ -120,7 +120,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         self.inventories[
             "main"
         ] = mcpython.client.gui.MainPlayerInventory.MainPlayerInventory(hotbar)
-        self.inventories["chat"] = mcpython.client.chat.Chat.ChatInventory()
+        self.inventories["chat"] = mcpython.client.Chat.ChatInventory()
         self.inventories[
             "enderchest"
         ] = mcpython.client.gui.InventoryChest.InventoryChest()

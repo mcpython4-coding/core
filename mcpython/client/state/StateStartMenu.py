@@ -14,8 +14,10 @@ import pyglet
 import mcpython.client.state.StateWorldSelection
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.State
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StateStartMenu(mcpython.client.state.State.State):
     NAME = "minecraft:startmenu"
     CONFIG_LOCATION = "data/minecraft/states/start_menu.json"
@@ -51,6 +53,7 @@ class StateStartMenu(mcpython.client.state.State.State):
 startmenu = None
 
 
+@onlyInClient()
 def create():
     global startmenu
     startmenu = StateStartMenu()

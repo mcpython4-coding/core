@@ -13,8 +13,10 @@ import mcpython.common.event.EventInfo
 import pyglet
 from pyglet.window import mouse
 from . import UIPart
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class UIPartImage(UIPart.UIPart):
     def __init__(
         self,

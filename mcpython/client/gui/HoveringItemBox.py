@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import pyglet
 import mcpython.common.container.ItemStack
-import mcpython.client.Language
+import mcpython.common.Language
 
 
 class IHoveringItemBoxDefinitionPlugin:
@@ -72,7 +72,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
             return []
         item_name = itemstack.get_item_name()
         raw = self.localize_builder.format(*item_name.split(":"))
-        localized_name = mcpython.client.Language.get(raw)
+        localized_name = mcpython.common.Language.get(raw)
         if raw == localized_name:
             localized_name = itemstack.item.__class__.__name__
         if localized_name == "ConstructedItem":
@@ -87,7 +87,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
             ]
             + [
                 self.default_style.format(
-                    color="gray", text=mcpython.client.Language.translate(line)
+                    color="gray", text=mcpython.common.Language.translate(line)
                 )
                 for line in itemstack.item.getAdditionalTooltipText(itemstack, self)
             ]

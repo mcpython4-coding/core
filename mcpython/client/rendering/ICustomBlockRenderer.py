@@ -9,8 +9,10 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class ICustomBatchBlockRenderer:
     def add(self, position, block, face):
         pass
@@ -19,11 +21,13 @@ class ICustomBatchBlockRenderer:
         [e.delete() for e in data]
 
 
+@onlyInClient()
 class ICustomDrawMethodRenderer:
     def draw(self, position, block):
         pass
 
 
+@onlyInClient()
 class ICustomBlockVertexManager:
     def handle(self, block, vertices, face, blockstate):
         pass

@@ -19,19 +19,21 @@ from pyglet.window import key
 
 from mcpython import shared as G, logger
 import mcpython.ResourceLoader
-import mcpython.client.chat.DataPack
+import mcpython.common.DataPack
 import mcpython.common.config
 import mcpython.common.config
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
-import mcpython.client.state.ui.UIPartLable
+import mcpython.client.state.ui.UIPartLabel
 import mcpython.util.getskin
 import mcpython.util.math
 import mcpython.util.opengl
 import mcpython.common.world.player
 from . import State
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StateWorldGeneration(State.State):
     NAME = "minecraft:world_generation"
 
@@ -43,14 +45,14 @@ class StateWorldGeneration(State.State):
     def get_parts(self) -> list:
         return [
             mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
-            mcpython.client.state.ui.UIPartLable.UIPartLable(
+            mcpython.client.state.ui.UIPartLabel.UIPartLabel(
                 "0%",
                 (0, 50),
                 anchor_lable="MM",
                 anchor_window="MD",
                 color=(255, 255, 255, 255),
             ),
-            mcpython.client.state.ui.UIPartLable.UIPartLable(
+            mcpython.client.state.ui.UIPartLabel.UIPartLabel(
                 "(0/0/0)",
                 (0, 30),
                 anchor_lable="MM",
@@ -169,8 +171,8 @@ class StateWorldGeneration(State.State):
         )
 
         # reload all the data-packs
-        mcpython.client.chat.DataPack.datapackhandler.reload()
-        mcpython.client.chat.DataPack.datapackhandler.try_call_function(
+        mcpython.common.DataPack.datapackhandler.reload()
+        mcpython.common.DataPack.datapackhandler.try_call_function(
             "#minecraft:load"
         )
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
@@ -252,6 +254,7 @@ class StateWorldGeneration(State.State):
 worldgeneration = None
 
 
+@onlyInClient()
 def create():
     global worldgeneration
     worldgeneration = StateWorldGeneration()

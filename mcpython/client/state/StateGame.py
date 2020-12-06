@@ -18,8 +18,10 @@ import pyglet
 from pyglet.window import mouse
 import mcpython.common.mod.ModMcpython
 import time
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StateGame(State.State):
     NAME = "minecraft:game"
 
@@ -92,6 +94,7 @@ class StateGame(State.State):
 game = None
 
 
+@onlyInClient()
 def create():
     global game
     game = StateGame()

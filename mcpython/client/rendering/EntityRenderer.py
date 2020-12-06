@@ -12,12 +12,14 @@ This project is not official by mojang and does not relate to it.
 import mcpython.client.rendering.BoxModel
 import mcpython.ResourceLoader
 import pyglet
+from mcpython.util.annotation import onlyInClient
 
 
 RENDERERS = []
 TEXTURES = {}
 
 
+@onlyInClient()
 class EntityRenderer:
     def __init__(self, name):
         self.name = name

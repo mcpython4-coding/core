@@ -14,8 +14,10 @@ from .ui import UIPartProgressBar
 from mcpython import shared as G
 import pyglet
 import psutil
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StateModLoading(State.State):
     NAME = "minecraft:modloading"
 

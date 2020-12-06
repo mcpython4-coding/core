@@ -12,11 +12,13 @@ This project is not official by mojang and does not relate to it.
 from pyglet.gl import *
 import pyglet
 import mcpython.common.config
+from mcpython.util.annotation import onlyInClient
 
 
 __all__ = ["setup", "setup_fog", "draw_line_box", "set_2d", "set_3d"]
 
 
+@onlyInClient()
 def setup():
     # Enable culling (not rendering) of back-facing facets -- facets that aren't visible to you
     # todo: move to world rendering code and disable when drawing with alpha
@@ -40,6 +42,7 @@ def setup():
     setup_fog()
 
 
+@onlyInClient()
 def setup_fog():
     # Enable fog. Fog "blends a fog color with each rasterized pixel fragment's
     # post-texturing color."
@@ -60,6 +63,7 @@ def setup_fog():
     glFogf(GL_FOG_END, 40.0 + mcpython.common.config.FOG_DISTANCE)
 
 
+@onlyInClient()
 def draw_line_box(vertex):
     glColor3d(0, 0, 0)
     glLineWidth(1.3)
@@ -69,6 +73,7 @@ def draw_line_box(vertex):
     glLineWidth(1)
 
 
+@onlyInClient()
 def set_2d(viewport, width, height):
     glDisable(GL_DEPTH_TEST)
     glViewport(0, 0, viewport[0], viewport[1])
@@ -79,6 +84,7 @@ def set_2d(viewport, width, height):
     glLoadIdentity()
 
 
+@onlyInClient()
 def set_3d(viewport, width, height, rotation, trans_rotation, position):
     glEnable(GL_DEPTH_TEST)
     glViewport(0, 0, viewport[0], viewport[1])
@@ -96,12 +102,14 @@ def set_3d(viewport, width, height, rotation, trans_rotation, position):
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 
 
+@onlyInClient()
 def enableAlpha():
     glDisable(GL_CULL_FACE)
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 
+@onlyInClient()
 def disableAlpha():
     glBlendFunc(GL_ONE, GL_ZERO)
     glEnable(GL_CULL_FACE)

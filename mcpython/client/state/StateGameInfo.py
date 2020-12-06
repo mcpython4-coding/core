@@ -12,11 +12,12 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared as G
 import mcpython.client.state.State
 import mcpython.client.state.StatePartGame
-from mcpython.client.state.ui import UIPartImage, UIPartLable
+from mcpython.client.state.ui import UIPartImage, UIPartLabel
 import mcpython.util.texture
 import mcpython.ResourceLoader
 from pyglet.window import key
 import mcpython.common.mod.ModMcpython
+from mcpython.util.annotation import onlyInClient
 
 
 # todo: use pyglet.image.Image.get_region(area)
@@ -25,6 +26,7 @@ sprite = mcpython.util.texture.to_pyglet_sprite(
 )
 
 
+@onlyInClient()
 class StateGameInfo(mcpython.client.state.State.State):
     NAME = "minecraft:gameinfo"
 
@@ -47,7 +49,7 @@ class StateGameInfo(mcpython.client.state.State.State):
         y = 40
         for i in range(7):
             parts.append(
-                UIPartLable.UIPartLable(
+                UIPartLabel.UIPartLabel(
                     "#*special.gameinfo.line{}*#".format(i + 1),
                     (0, y),
                     anchor_lable="MM",
@@ -75,6 +77,7 @@ class StateGameInfo(mcpython.client.state.State.State):
 gameinfo = None
 
 
+@onlyInClient()
 def create():
     global gameinfo
     gameinfo = StateGameInfo()

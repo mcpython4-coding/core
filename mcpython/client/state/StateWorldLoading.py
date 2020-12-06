@@ -10,17 +10,19 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from . import State
-import mcpython.client.state.ui.UIPartLable
+import mcpython.client.state.ui.UIPartLabel
 from mcpython import shared as G, logger
 import mcpython.util.math
 from pyglet.window import key
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
-import mcpython.client.chat.DataPack
+import mcpython.common.DataPack
 import mcpython.util.opengl
 import mcpython.common.config
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StateWorldLoading(State.State):
     NAME = "minecraft:world_loading"
 
@@ -33,14 +35,14 @@ class StateWorldLoading(State.State):
     def get_parts(self) -> list:
         return [
             mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
-            mcpython.client.state.ui.UIPartLable.UIPartLable(
+            mcpython.client.state.ui.UIPartLabel.UIPartLabel(
                 "0%",
                 (0, 50),
                 anchor_lable="MM",
                 anchor_window="MD",
                 color=(255, 255, 255, 255),
             ),
-            mcpython.client.state.ui.UIPartLable.UIPartLable(
+            mcpython.client.state.ui.UIPartLabel.UIPartLabel(
                 "(0/0/0)",
                 (0, 30),
                 anchor_lable="MM",
@@ -145,6 +147,7 @@ class StateWorldLoading(State.State):
 worldloading = None
 
 
+@onlyInClient()
 def create():
     global worldloading
     worldloading = StateWorldLoading()

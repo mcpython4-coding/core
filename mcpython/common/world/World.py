@@ -12,11 +12,10 @@ This project is not official by mojang and does not relate to it.
 import random
 import typing
 
-import deprecation
 import pyglet
 
 from mcpython import shared as G, logger
-import mcpython.client.chat.DataPack
+import mcpython.common.DataPack
 import mcpython.common.config
 import mcpython.client.state.StatePartGame
 import mcpython.server.storage.SaveFile
@@ -364,7 +363,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.players.clear()
         if filename is not None:
             self.setup_by_filename(filename)
-        mcpython.client.chat.DataPack.datapackhandler.cleanup()
+        mcpython.common.DataPack.datapackhandler.cleanup()
         G.eventhandler.call("world:clean")
 
     def setup_by_filename(self, filename: str):

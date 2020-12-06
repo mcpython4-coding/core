@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.texture.TextureAtlas
+import mcpython.client.texture.TextureAtlas
 import mcpython.ResourceLoader as ResourceLoader
 import mcpython.util.texture
 from mcpython import shared
@@ -27,7 +27,7 @@ class ItemAtlasHandler:
     def __init__(self, folder=shared.build + "/itematlases"):
         self.scheduled_item_files = {}
         self.folder = folder
-        self.atlases: typing.List[mcpython.texture.TextureAtlas.TextureAtlas] = []
+        self.atlases: typing.List[mcpython.client.texture.TextureAtlas.TextureAtlas] = []
         self.position_map = {}
         self.lookup_map = {}
         self.grids: typing.List[pyglet.image.ImageGrid] = []
@@ -45,7 +45,7 @@ class ItemAtlasHandler:
                     self.position_map[file] = (i, atlas.add_image(image))
                     break
             else:
-                atlas = mcpython.texture.TextureAtlas.TextureAtlas()
+                atlas = mcpython.client.texture.TextureAtlas.TextureAtlas()
                 self.position_map[file] = (len(self.atlases), atlas.add_image(image))
                 self.atlases.append(atlas)
 
@@ -77,7 +77,7 @@ class ItemAtlasHandler:
                     self.position_map[file] = (i, atlas.add_image(image))
                     break
             else:
-                atlas = mcpython.texture.TextureAtlas.TextureAtlas()
+                atlas = mcpython.client.texture.TextureAtlas.TextureAtlas()
                 self.position_map[file] = (len(self.atlases), atlas.add_image(image))
                 self.atlases.append(atlas)
 

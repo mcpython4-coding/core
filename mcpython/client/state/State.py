@@ -11,8 +11,10 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
 from mcpython.common.event.Registry import IRegistryContent
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class State(IRegistryContent):
     """
     base class

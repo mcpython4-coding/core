@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import gc
 
 from mcpython import shared as G
-import mcpython.client.chat.DataPack
+import mcpython.common.DataPack
 import mcpython.server.command.Command
 import mcpython.common.config
 import mcpython.common.event.EventHandler
@@ -43,7 +43,7 @@ class CommandReload(mcpython.server.command.Command.Command):
         G.window.print_profiler()  # print the profiler's
         if not G.eventhandler.call_cancelable("data:reload:cancel"):
             return
-        mcpython.client.chat.DataPack.datapackhandler.reload()  # reloads all data packs
+        mcpython.common.DataPack.datapackhandler.reload()  # reloads all data packs
         G.taghandler.reload()  # reloads all tags
         G.craftinghandler.reload_crafting_recipes()  # reloads all recipes
         G.loottablehandler.reload()

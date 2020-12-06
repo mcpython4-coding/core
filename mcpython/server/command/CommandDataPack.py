@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.client.chat.DataPack
+import mcpython.common.DataPack
 import mcpython.server.command.Command
 from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 
@@ -44,32 +44,32 @@ class CommandDatapack(mcpython.server.command.Command.Command):
     @classmethod
     def parse(cls, values: list, modes: list, info):
         if values[0] == "enable":
-            for datapack in mcpython.client.chat.DataPack.datapackhandler.data_packs:
+            for datapack in mcpython.common.DataPack.datapackhandler.data_packs:
                 if (
                     datapack.name == values[1]
-                    and mcpython.client.chat.DataPack.DataPackStatus.DEACTIVATED
+                    and mcpython.common.DataPack.DataPackStatus.DEACTIVATED
                 ):
                     datapack.set_status(
-                        mcpython.client.chat.DataPack.DataPackStatus.ACTIVATED
+                        mcpython.common.DataPack.DataPackStatus.ACTIVATED
                     )
 
         elif values[0] == "disable":
-            for datapack in mcpython.client.chat.DataPack.datapackhandler.data_packs:
+            for datapack in mcpython.common.DataPack.datapackhandler.data_packs:
                 if (
                     datapack.name == values[1]
-                    and mcpython.client.chat.DataPack.DataPackStatus.ACTIVATED
+                    and mcpython.common.DataPack.DataPackStatus.ACTIVATED
                 ):
                     datapack.set_status(
-                        mcpython.client.chat.DataPack.DataPackStatus.DEACTIVATED
+                        mcpython.common.DataPack.DataPackStatus.DEACTIVATED
                     )
 
         elif values[0] == "list":
             info.chat.print_ln(
                 "count: {}".format(
-                    len(mcpython.client.chat.DataPack.datapackhandler.data_packs)
+                    len(mcpython.common.DataPack.datapackhandler.data_packs)
                 )
             )
-            for datapack in mcpython.client.chat.DataPack.datapackhandler.data_packs:
+            for datapack in mcpython.common.DataPack.datapackhandler.data_packs:
                 info.chat.print_ln(
                     "- datapack '{}' - status: {}".format(
                         datapack.name, datapack.status.name
@@ -78,7 +78,7 @@ class CommandDatapack(mcpython.server.command.Command.Command):
 
         elif values[0] == "release":
             G.eventhandler.call("command:datapack:release", info)
-            mcpython.client.chat.DataPack.datapackhandler.cleanup()
+            mcpython.common.DataPack.datapackhandler.cleanup()
         else:
             G.chat.print_ln("failed to execute command. invalid syntax")
 

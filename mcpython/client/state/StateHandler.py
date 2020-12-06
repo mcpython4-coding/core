@@ -14,8 +14,10 @@ from . import State
 import mcpython.common.event.TickHandler
 import mcpython.client.state.StateConfigFile
 import sys
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StateHandler:
     def __init__(self):
         self.active_state: State.State or None = None
@@ -65,6 +67,7 @@ class StateHandler:
 handler = G.statehandler = StateHandler()
 
 
+@onlyInClient()
 def load():
     from . import (
         StateGame,

@@ -9,9 +9,10 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StatePart:
     NAME = "null"
 

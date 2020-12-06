@@ -10,8 +10,10 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import pyglet.gl as _gl
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class MatrixStack:
     """
     class handling an configuration of transformations for applying
@@ -118,6 +120,7 @@ class MatrixStack:
                 _gl.gluPerspective(*d[0])
 
 
+@onlyInClient()
 class LinkedMatrixStack(MatrixStack):
     """
     Matrix stack for dynamically generated values

@@ -14,8 +14,10 @@ import PIL.Image
 import mcpython.ResourceLoader
 from mcpython import shared as G
 import mcpython.util.texture
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class BackgroundHandler:
     batch = pyglet.graphics.Batch()
     objects = []
@@ -43,6 +45,7 @@ class BackgroundHandler:
                 cls.objects.append(obj)
 
 
+@onlyInClient()
 class StatePartConfigBackground(mcpython.client.state.StatePart.StatePart):
     def activate(self):
         super().activate()

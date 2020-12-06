@@ -22,8 +22,10 @@ import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler
 import mcpython.client.gui.Inventory
 import mcpython.util.opengl
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class ChatInventory(mcpython.client.gui.Inventory.Inventory):
     """
     main class for chat

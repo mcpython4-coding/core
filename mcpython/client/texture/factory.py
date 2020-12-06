@@ -15,10 +15,12 @@ import PIL.Image
 import mcpython.ResourceLoader
 import os
 import mcpython.common.event.Registry
+from mcpython.util.annotation import onlyInClient
 
 print("someone loaded mcpython.texture.factory... a bad thing !!!! (deprecated :-( )")
 
 
+@onlyInClient()
 class ITextureChange(mcpython.common.event.Registry.IRegistryContent):
     TYPE = "minecraft:texture_change"
 
@@ -29,6 +31,7 @@ class ITextureChange(mcpython.common.event.Registry.IRegistryContent):
         raise NotImplementedError()
 
 
+@onlyInClient()
 class TextureFactory:
     def __init__(self):
         self.changer = {}
@@ -92,6 +95,7 @@ texturechanges = mcpython.common.event.Registry.Registry(
 )
 
 
+@onlyInClient()
 @G.registry
 class TextureResize(ITextureChange):
     NAME = "resize"
@@ -103,6 +107,7 @@ class TextureResize(ITextureChange):
         )  # todo: implement option to choose mode
 
 
+@onlyInClient()
 @G.registry
 class TextureColorize(ITextureChange):
     NAME = "colorize"
@@ -112,6 +117,7 @@ class TextureColorize(ITextureChange):
         return mcpython.util.texture.colorize(image, color)
 
 
+@onlyInClient()
 @G.registry
 class TextureCut(ITextureChange):
     NAME = "cut"
@@ -121,6 +127,7 @@ class TextureCut(ITextureChange):
         return image.crop(area)
 
 
+@onlyInClient()
 @G.registry
 class TextureRebase(ITextureChange):
     NAME = "rebase"
@@ -134,6 +141,7 @@ class TextureRebase(ITextureChange):
         return base
 
 
+@onlyInClient()
 @G.registry
 class TextureCombine(ITextureChange):
     NAME = "combine"

@@ -17,8 +17,10 @@ import mcpython.common.event.Registry
 from mcpython import shared as G, logger
 import mcpython.client.state.State
 import mcpython.client.state.StatePart
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class IStateConfigEntry(mcpython.common.event.Registry.IRegistryContent):
     """
     base class for every entry in an config file
@@ -45,6 +47,7 @@ entry_registry = mcpython.common.event.Registry.Registry(
 )
 
 
+@onlyInClient()
 @G.registry
 class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
     NAME = "minecraft:ui_button_default"
@@ -99,6 +102,7 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
         )
 
 
+@onlyInClient()
 @G.registry
 class UILableStateConfigEntry(IStateConfigEntry):
     NAME = "minecraft:ui_lable_default"
@@ -110,7 +114,7 @@ class UILableStateConfigEntry(IStateConfigEntry):
         data: dict,
         existing: typing.Union[None, mcpython.client.state.StatePart.StatePart],
     ) -> mcpython.client.state.StatePart.StatePart:
-        import mcpython.client.state.ui.UIPartLable
+        import mcpython.client.state.ui.UIPartLabel
 
         text = data["text"]
         position = tuple(data["position"])
@@ -123,7 +127,7 @@ class UILableStateConfigEntry(IStateConfigEntry):
         text_size = data["text_size"] if "text_size" in data else 20
 
         if existing is not None and issubclass(
-            type(existing), mcpython.client.state.ui.UIPartLable.UIPartLable
+            type(existing), mcpython.client.state.ui.UIPartLabel.UIPartLabel
         ):
             existing.text = text
             existing.position = position
@@ -133,7 +137,7 @@ class UILableStateConfigEntry(IStateConfigEntry):
             existing.color = color
             existing.text_size = text_size
             return existing
-        return mcpython.client.state.ui.UIPartLable.UIPartLable(
+        return mcpython.client.state.ui.UIPartLabel.UIPartLabel(
             text,
             position,
             anchor_lable=anchor_lable,
@@ -144,6 +148,7 @@ class UILableStateConfigEntry(IStateConfigEntry):
         )
 
 
+@onlyInClient()
 @G.registry
 class UIProgressBarConfigEntry(IStateConfigEntry):
     NAME = "minecraft:ui_progressbar"
@@ -180,6 +185,7 @@ class UIProgressBarConfigEntry(IStateConfigEntry):
         )
 
 
+@onlyInClient()
 @G.registry
 class ConfigBackground(IStateConfigEntry):
     NAME = "minecraft:config_background"
@@ -206,12 +212,14 @@ class ConfigBackground(IStateConfigEntry):
 configs = {}
 
 
+@onlyInClient()
 def get_config(file: str):
     if file not in configs:
         configs[file] = StateConfigFile(file)
     return configs[file]
 
 
+@onlyInClient()
 class StateConfigFile:
     """
     Class for deserialize an config file for an state into an state

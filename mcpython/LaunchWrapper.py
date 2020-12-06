@@ -84,7 +84,7 @@ class LaunchWrapper:
 
         import mcpython.client.rendering.model.ItemModel
 
-        import mcpython.texture.factory
+        import mcpython.client.texture.factory
         import mcpython.setup
 
     def setup_opengl(self):

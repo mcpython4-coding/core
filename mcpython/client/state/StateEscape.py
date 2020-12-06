@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from . import State, StatePartGame
-from .ui import UIPartButton, UIPartLable
+from .ui import UIPartButton, UIPartLabel
 import mcpython.common.event.EventInfo
 from mcpython import shared as G
 from pyglet.window import key
@@ -19,8 +19,10 @@ import mcpython.client.state.StateGame
 import mcpython.util.callbacks
 import mcpython.common.mod.ModMcpython
 import time
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StateEscape(State.State):
     NAME = "minecraft:escape_state"
 
@@ -35,7 +37,7 @@ class StateEscape(State.State):
                 activate_focused_block=False,
                 glcolor3d=(0.8, 0.8, 0.8),
             ),
-            UIPartLable.UIPartLable(
+            UIPartLabel.UIPartLabel(
                 "#*menu.game*#",
                 (0, 200),
                 anchor_lable="MM",
@@ -110,6 +112,7 @@ class StateEscape(State.State):
 escape = None
 
 
+@onlyInClient()
 def create():
     global escape
     escape = StateEscape()

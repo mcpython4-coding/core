@@ -1322,13 +1322,13 @@ R   [uuk]: split task array from WorldGenerationHandler.py
 F   [uuk]: implemented AbstractInterface.py classes storing abstract classes for world, dimension and chunk
     [uuk]: made WorldGenerationTaskArrays.py more independent of of other files
 F   [uuk]: implemented process-parallelized world generation
+R   [uuk]: moved some files around again
+    [uuk]: added side annotations [currently not working]
 
 Roadmap:
     - refactor classes & functions [WIP]
     - create doc  [WIP] & unit tests for code
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]
-    - change how data generators work
-    - add client & server annotations, check code for side
     - migrate globals to global game instance
     - add off-process system for world gen [Preparation in Progress]
     - remove setup / prebuild system COMPLETELY

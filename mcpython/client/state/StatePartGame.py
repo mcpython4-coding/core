@@ -22,8 +22,10 @@ import mcpython.common.item.ItemFood as ItemFood
 import mcpython.common.item.ItemTool as ItemTool
 import math
 import enum
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class HotKeys(enum.Enum):
     # from https://minecraft.gamepedia.com/Debug_screen
 
@@ -70,6 +72,7 @@ ALL_KEY_COMBOS = [
 ]
 
 
+@onlyInClient()
 class StatePartGame(StatePart.StatePart):
     NAME = "minecraft:state_part_game"
 

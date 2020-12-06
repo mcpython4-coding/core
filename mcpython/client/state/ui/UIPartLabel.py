@@ -13,10 +13,12 @@ import mcpython.common.event.EventInfo
 import pyglet
 from pyglet.window import mouse
 from . import UIPart
-import mcpython.client.Language
+import mcpython.common.Language
+from mcpython.util.annotation import onlyInClient
 
 
-class UIPartLable(UIPart.UIPart):
+@onlyInClient()
+class UIPartLabel(UIPart.UIPart):
     def __init__(
         self,
         text,
@@ -81,5 +83,5 @@ class UIPartLable(UIPart.UIPart):
         self.lable.y = y + size[1] // 2 - wy // 2
         self.lable.color = self.color
         self.lable.font_size = self.text_size
-        self.lable.text = mcpython.client.Language.translate(self.text)
+        self.lable.text = mcpython.common.Language.translate(self.text)
         self.lable.draw()

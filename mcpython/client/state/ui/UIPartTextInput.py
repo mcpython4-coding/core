@@ -14,15 +14,17 @@ import pyglet.window.key
 import time
 import mcpython.util.opengl
 import pyglet
-import mcpython.client.Language
+import mcpython.common.Language
 import mcpython.client.state.StatePart
 import clipboard
+from mcpython.util.annotation import onlyInClient
 
 ALL_PATTERN = None
 INT_PATTERN = "-0123456789."
 INT_PATTERN_POSITIVE = INT_PATTERN[1:]
 
 
+@onlyInClient()
 class UIPartTextInput(UIPart.UIPart):
     def __init__(
         self,
@@ -56,7 +58,7 @@ class UIPartTextInput(UIPart.UIPart):
         self.lable.x, self.lable.y = x + 5, y + self.bboxsize[1] // 2
         if not self.selected and self.entered_text == "":
             if self.empty_overlay_text != "":
-                self.lable.text = mcpython.client.Language.translate(
+                self.lable.text = mcpython.common.Language.translate(
                     self.empty_overlay_text
                 )
                 self.lable.color = (150, 150, 150, 255)
@@ -120,6 +122,7 @@ class UIPartTextInput(UIPart.UIPart):
         self.entered_text = self.default_text
 
 
+@onlyInClient()
 class TextInputTabHandler(mcpython.client.state.StatePart.StatePart):
     def __init__(self, textinputs: list):
         super().__init__()

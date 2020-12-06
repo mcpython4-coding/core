@@ -28,6 +28,7 @@ import mcpython.util.math
 import mcpython.util.texture
 from mcpython.common.config import *  # todo: remove
 from mcpython.util.math import *  # todo: remove
+from mcpython.util.annotation import onlyInClient
 
 
 class NoWindow:
@@ -54,6 +55,7 @@ class NoWindow:
         pass
 
 
+@onlyInClient()
 class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow):
     """
     Class representing the game window.

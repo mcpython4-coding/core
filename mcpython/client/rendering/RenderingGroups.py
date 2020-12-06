@@ -11,8 +11,10 @@ This project is not official by mojang and does not relate to it.
 """
 import pyglet
 import mcpython.client.rendering.MatrixStack
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class CollectionGroup(pyglet.graphics.Group):
     """
     Group of groups
@@ -29,6 +31,7 @@ class CollectionGroup(pyglet.graphics.Group):
         [group.unset_state() for group in self.sub_groups]
 
 
+@onlyInClient()
 class MatrixStackGroup(pyglet.graphics.Group):
     """
     Group for holding an custom MatrixStack-instance

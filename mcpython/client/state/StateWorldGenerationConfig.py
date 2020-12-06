@@ -18,10 +18,12 @@ from pyglet.window import key
 import pyglet
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
-import mcpython.client.chat.DataPack
+import mcpython.common.DataPack
 import mcpython.client.state.StateWorldGeneration
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class StateWorldGenerationConfig(State.State):
     NAME = "minecraft:world_generation_config"
 
@@ -148,6 +150,7 @@ class StateWorldGenerationConfig(State.State):
 worldgenerationconfig = None
 
 
+@onlyInClient()
 def create():
     global worldgenerationconfig
     worldgenerationconfig = StateWorldGenerationConfig()

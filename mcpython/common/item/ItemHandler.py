@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared as G, logger
 import mcpython.ResourceLoader
 import mcpython.common.event.Registry
-import mcpython.texture.TextureAtlas
+import mcpython.client.texture.TextureAtlas
 import mcpython.common.item.ItemAtlas
 import json
 import os

@@ -15,6 +15,7 @@ from pyglet.window import mouse
 
 import mcpython.ResourceLoader
 import mcpython.util.texture
+from mcpython.util.annotation import onlyInClient
 
 IMAGE = mcpython.ResourceLoader.read_image(
     "assets/minecraft/textures/gui/container/creative_inventory/tabs.png"
@@ -27,6 +28,7 @@ scroll_inactive = mcpython.util.texture.to_pyglet_image(
 )
 
 
+@onlyInClient()
 class UIScrollBar(mcpython.client.state.ui.UIPart.UIPart):
     """
     class representing an scroll bar

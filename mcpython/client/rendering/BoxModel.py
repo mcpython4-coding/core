@@ -18,6 +18,7 @@ import mcpython.common.config
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
 from mcpython import shared as G
+from mcpython.util.annotation import onlyInClient
 
 UV_ORDER = [
     mcpython.util.enums.EnumSide.UP,
@@ -41,6 +42,7 @@ UV_INDICES = [(1, 0, 3, 2), (1, 0, 3, 2)] + [
 SIMILAR_VERTEX = {}
 
 
+@onlyInClient()
 class BoxModel:
     @classmethod
     def new(cls, data: dict, model=None):
@@ -353,6 +355,7 @@ class BoxModel:
         return BoxModel(self.data, new_model if new_model is not None else self.model)
 
 
+@onlyInClient()
 class BaseBoxModel:
     """
     an non-model-bound boxmodel class

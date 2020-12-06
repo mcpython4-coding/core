@@ -11,8 +11,10 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.state.StatePart
 from mcpython import shared as G
+from mcpython.util.annotation import onlyInClient
 
 
+@onlyInClient()
 class UIPart(mcpython.client.state.StatePart.StatePart):
     def __init__(self, position, bboxsize, anchor_element="WS", anchor_window="WS"):
         super().__init__()

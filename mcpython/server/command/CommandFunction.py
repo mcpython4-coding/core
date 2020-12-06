@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.client.chat.DataPack
+import mcpython.common.DataPack
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
     ParseBridge,
@@ -37,7 +37,7 @@ class CommandFunction(mcpython.server.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        mcpython.client.chat.DataPack.datapackhandler.try_call_function(values[0], info)
+        mcpython.common.DataPack.datapackhandler.try_call_function(values[0], info)
         # todo: make self-calling save [sub-function calls are possible! -> move to an "execute"-stack]
 
     @staticmethod
