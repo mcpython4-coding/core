@@ -112,6 +112,9 @@ class IChunk(ABC):
     ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
         raise NotImplementedError()
 
+    def as_shareable(self) -> "IChunk":
+        raise NotImplementedError()
+
 
 class IDimension(ABC):
     def get_id(self):

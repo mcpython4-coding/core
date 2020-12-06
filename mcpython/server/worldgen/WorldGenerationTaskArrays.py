@@ -12,6 +12,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.world.AbstractInterface
 import time
 from mcpython import logger
+import multiprocessing
 
 
 class WorldGenerationTaskHandler:
@@ -332,7 +333,30 @@ class WorldGenerationTaskHandler:
             self.clear_chunk(chunk)
 
 
-class WorldGenerationTaskHandlerReference:
+class IWorldGenerationTaskHandlerReference:
+    def schedule_invoke(self, method, *args, **kwargs):
+        raise NotImplementedError()
+
+    def schedule_block_add(self, position, name, *args, on_add=None, **kwargs):
+        raise NotImplementedError()
+
+    def schedule_block_remove(self, position, *args, on_remove=None, **kwargs):
+        raise NotImplementedError()
+
+    def schedule_block_show(self, position):
+        raise NotImplementedError()
+
+    def schedule_block_hide(self, position):
+        raise NotImplementedError()
+
+    def schedule_visual_update(self, position):
+        raise NotImplementedError()
+
+    def get_block(self, position, chunk=None):
+        raise NotImplementedError()
+
+
+class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
     """
     reference class to an WorldGenerationTaskHandler for setting the chunk globally
     all scheduling functions are the same of WorldGenerationTaskHandler exept the chunk-parameter is missing.
@@ -371,3 +395,75 @@ class WorldGenerationTaskHandlerReference:
 
     def get_block(self, position, chunk=None):
         return self.handler.get_block(position, chunk)
+
+
+class OffProcessTaskHelper:
+    class OffProcessTaskHelperShared:
+        def __init__(self):
+            self.running = True
+
+            self.task_queue = multiprocessing.Queue()
+            self.task_data_out = multiprocessing.Queue()
+
+        def run(self):
+            while self.running:
+                if not self.task_queue.empty():
+                    layer, reference, config = self.task_queue.get()
+                    layer.add_generate_functions_to_chunk(config, reference)
+                    reference.execute_tasks()
+
+    def __init__(self):
+        self.shared = OffProcessTaskHelper.OffProcessTaskHelperShared()
+        self.process = multiprocessing.Process(target=self.shared.run)
+        self.process.start()
+
+    def stop(self):
+        self.shared.running = False
+
+    def tick(self):
+        pass
+
+    def run_layer_generation(self, chunk: mcpython.common.world.AbstractInterface.IChunk, layer, config):
+        reference = ProcessSeparatedWorldGenerationTaskHandlerReference(self.shared, chunk.as_shareable())
+        self.shared.task_queue.put((layer, reference, config))
+
+
+class ProcessSeparatedWorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
+    """
+    reference class to an WorldGenerationTaskHandler for setting the chunk globally
+    all scheduling functions are the same of WorldGenerationTaskHandler exept the chunk-parameter is missing.
+    It is set on construction
+    """
+
+    def __init__(
+        self,
+        shared_helper: OffProcessTaskHelper.OffProcessTaskHelperShared,
+        chunk: mcpython.common.world.AbstractInterface.IChunk
+    ):
+        self.shared_helper = shared_helper
+        self.chunk = chunk
+        self.tasks = []
+
+    def schedule_invoke(self, method, *args, **kwargs):
+        pass
+
+    def schedule_block_add(self, position, name, *args, on_add=None, **kwargs):
+        pass
+
+    def schedule_block_remove(self, position, *args, on_remove=None, **kwargs):
+        pass
+
+    def schedule_block_show(self, position):
+        pass
+
+    def schedule_block_hide(self, position):
+        pass
+
+    def schedule_visual_update(self, position):
+        pass
+
+    def get_block(self, position, chunk=None):
+        pass
+
+    def execute_tasks(self):
+        pass

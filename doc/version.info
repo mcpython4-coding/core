@@ -1320,6 +1320,8 @@ R   [uuk]: renamed layers with prefix "minecraft:"
     [uuk]: added DEPENDS_ON attribute to Layers
 R   [uuk]: split task array from WorldGenerationHandler.py
 F   [uuk]: implemented AbstractInterface.py classes storing abstract classes for world, dimension and chunk
+    [uuk]: made WorldGenerationTaskArrays.py more independent of of other files
+F   [uuk]: implemented process-parallelized world generation
 
 Roadmap:
     - refactor classes & functions [WIP]
