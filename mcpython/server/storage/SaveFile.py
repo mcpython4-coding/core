@@ -18,7 +18,6 @@ import deprecation
 
 from mcpython import shared as G, logger
 import mcpython.common.event.Registry
-import mcpython.server.storage.datafixer.IDataFixer
 import mcpython.server.storage.datafixers.IDataFixer
 import mcpython.server.storage.serializer.IDataSerializer
 

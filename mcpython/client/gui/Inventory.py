@@ -136,10 +136,6 @@ class Inventory:
         """
         return []
 
-    @deprecation.deprecated("dev1-2", "a1.3.0")
-    def _get_position(self):
-        return self.get_position()
-
     def get_position(self):
         """
         :return: the position of the inventory

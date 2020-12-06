@@ -60,7 +60,7 @@ class LoadingStage:
         self.name = name
         self.active_event_name = None
         self.active_mod_index = 0
-        self.eventnames = list(eventnames)
+        self.event_names = list(eventnames)
         self.running_event_names = eventnames
         self.progress = 0
         self.max_progress = 0
@@ -78,14 +78,14 @@ class LoadingStage:
             )  # ... and do similar stuff :-)
             G.eventhandler.call("modloader:finished")
 
-            G.statehandler.switch_to("minecraft:blockitemgenerator")
+            G.statehandler.switch_to("minecraft:block_item_generator")
             G.modloader.finished = True
             return True
         astate.parts[0].progress += 1
         astate.parts[2].progress = 0
         new_stage = LOADING_ORDER[G.modloader.active_loading_stage]
         if (
-            new_stage.eventnames[0]
+            new_stage.event_names[0]
             in G.modloader.mods[
                 G.modloader.mod_loading_order[0]
             ].eventbus.event_subscriptions
@@ -93,7 +93,7 @@ class LoadingStage:
             astate.parts[2].progress_max = len(
                 G.modloader.mods[
                     G.modloader.mod_loading_order[0]
-                ].eventbus.event_subscriptions[new_stage.eventnames[0]]
+                ].eventbus.event_subscriptions[new_stage.event_names[0]]
             )
         else:
             astate.parts[2].progress_max = 0
@@ -105,61 +105,61 @@ class LoadingStage:
         """
         if self.active_mod_index >= len(G.modloader.mods):
             self.active_mod_index = 0
-            if len(self.eventnames) == 0:
+            if len(self.event_names) == 0:
                 return self.finish(astate)
-            self.active_event_name = self.eventnames.pop(
+            self.active_event_name = self.event_names.pop(
                 0
             )  # todo: is there an better way?
-            modinst: mcpython.common.mod.Mod.Mod = G.modloader.mods[
+            mod_instance: mcpython.common.mod.Mod.Mod = G.modloader.mods[
                 G.modloader.mod_loading_order[self.active_mod_index]
             ]
             if not G.eventhandler.call_cancelable(
                 "modloader:mod_entered_stage",
                 self.name,
                 self.active_event_name,
-                modinst,
+                mod_instance,
             ):
                 self.active_mod_index += 1
                 return
             self.max_progress = len(
-                modinst.eventbus.event_subscriptions[self.active_event_name]
+                mod_instance.eventbus.event_subscriptions[self.active_event_name]
             )
             astate.parts[2].progress_max = self.max_progress
             astate.parts[2].progress = 0
             return
         if self.active_event_name is None:
-            if len(self.eventnames) == 0:
+            if len(self.event_names) == 0:
                 return self.finish(astate)
-            self.active_event_name = self.eventnames.pop(0)
+            self.active_event_name = self.event_names.pop(0)
         modname = G.modloader.mod_loading_order[self.active_mod_index]
-        modinst: mcpython.common.mod.Mod.Mod = G.modloader.mods[modname]
+        mod_instance: mcpython.common.mod.Mod.Mod = G.modloader.mods[modname]
         try:
-            modinst.eventbus.call_as_stack(self.active_event_name)
+            mod_instance.eventbus.call_as_stack(self.active_event_name)
         except RuntimeError:
             self.active_mod_index += 1
             if self.active_mod_index >= len(G.modloader.mods):
                 self.active_mod_index = 0
-                if len(self.eventnames) == 0:
+                if len(self.event_names) == 0:
                     return self.finish(astate)
-                self.active_event_name = self.eventnames.pop(0)
-                modinst: mcpython.common.mod.Mod.Mod = G.modloader.mods[
+                self.active_event_name = self.event_names.pop(0)
+                mod_instance: mcpython.common.mod.Mod.Mod = G.modloader.mods[
                     G.modloader.mod_loading_order[self.active_mod_index]
                 ]
-                if self.active_event_name in modinst.eventbus.event_subscriptions:
+                if self.active_event_name in mod_instance.eventbus.event_subscriptions:
                     self.max_progress = len(
-                        modinst.eventbus.event_subscriptions[self.active_event_name]
+                        mod_instance.eventbus.event_subscriptions[self.active_event_name]
                     )
                 else:
                     self.max_progress = 0
                 astate.parts[2].progress_max = self.max_progress
                 astate.parts[2].progress = 0
                 return
-            modinst: mcpython.common.mod.Mod.Mod = G.modloader.mods[
+            mod_instance: mcpython.common.mod.Mod.Mod = G.modloader.mods[
                 G.modloader.mod_loading_order[self.active_mod_index]
             ]
-            if self.active_event_name in modinst.eventbus.event_subscriptions:
+            if self.active_event_name in mod_instance.eventbus.event_subscriptions:
                 self.max_progress = len(
-                    modinst.eventbus.event_subscriptions[self.active_event_name]
+                    mod_instance.eventbus.event_subscriptions[self.active_event_name]
                 )
             else:
                 self.max_progress = 0
@@ -395,20 +395,15 @@ def insertBefore(to_insert: LoadingStage, before: LoadingStage) -> bool:
 
 
 class ModLoaderAnnotation:
-    """
-    representation of an @G.modloader([...]) annotation
-    todo: make use lambdas
-    """
-
-    def __init__(self, modname: str, eventname: str, info=None):
+    def __init__(self, modname: str, event_name: str, info=None):
         """
         creates an new annotation
         :param modname: the name of the mod to annotate to
-        :param eventname: the event name to subscribe to
+        :param event_name: the event name to subscribe to
         :param info: the info send to the event bus
         """
         self.modname = modname
-        self.eventname = eventname
+        self.event_name = event_name
         self.info = info
 
     def __call__(self, function):
@@ -420,7 +415,7 @@ class ModLoaderAnnotation:
         if self.modname not in G.modloader.mods:
             self.modname = "minecraft"
         G.modloader.mods[self.modname].eventbus.subscribe(
-            self.eventname, function, info=self.info
+            self.event_name, function, info=self.info
         )
         return function
 
@@ -468,15 +463,15 @@ class ModLoader:
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
 
-    def __call__(self, modname: str, eventname: str, info=None) -> ModLoaderAnnotation:
+    def __call__(self, modname: str, event_name: str, info=None) -> ModLoaderAnnotation:
         """
         annotation to the event system
         :param modname: the mod name
-        :param eventname: the event name
+        :param event_name: the event name
         :param info: the info
         :return: an ModLoaderAnnotation-instance for annotation
         """
-        return ModLoaderAnnotation(modname, eventname, info)
+        return ModLoaderAnnotation(modname, event_name, info)
 
     def __getitem__(self, item):
         return self.mods[item]

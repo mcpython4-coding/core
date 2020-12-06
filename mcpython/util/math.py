@@ -15,12 +15,6 @@ import math
 import deprecation
 
 
-@deprecation.deprecated("dev3-2", "a1.3.0")
-def get_max_y(pos):
-    x, y, z = normalize(pos if len(pos) == 3 else (pos[0], 0, pos[1]))
-    chunk = G.world.get_active_dimension().get_chunk_for_position((x, y, z))
-    return chunk.get_maximum_y_coordinate_from_generation(*pos)
-
 
 def cube_vertices_better(
     x: float,
@@ -251,11 +245,6 @@ def normalize_ceil(position):
     except:
         logger.println(position)
         raise
-
-
-@deprecation.deprecated("dev5-1", "a1.5.0")
-def sectorize(position):
-    return positionToChunk(position)
 
 
 def positionToChunk(position):

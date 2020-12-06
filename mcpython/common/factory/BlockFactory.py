@@ -100,19 +100,19 @@ class BlockFactory:
         self.name = None
         self.modname = None
         self.breakable = True
-        self.modelstates = []
+        self.model_states = []
         self.solid_faces = None
         self.no_collision = False
 
         self.create_callback = None
         self.delete_callback = None
-        self.randomupdate_callback = None
+        self.random_update_callback = None
         self.update_callback = None
         self.interaction_callback = None
         self.hardness = 1
-        self.minmum_toollevel = 0
+        self.minimum_tool_level = 0
         self.blast_resistance = 1
-        self.besttools = []
+        self.best_tools = []
         self.speed_multiplier = None
         self.block_item_generator_state = None
         self.face_name = "facing"
@@ -121,12 +121,12 @@ class BlockFactory:
         self.can_mobs_spawn_on = True
         self.random_ticks_enabled = False
 
-        self.customsolidsidefunction = None
-        self.custommodelstatefunction = None
-        self.customitemstackmodifcationfunction = None
-        self.customblockitemmodificationfunction = None
+        self.custom_solid_side_function = None
+        self.custom_model_state_function = None
+        self.custom_itemstack_modification_function = None
+        self.custom_block_item_modification_function = None
 
-        self.islog = False
+        self.is_log = False
 
         self.baseclass = [mcpython.common.block.AbstractBlock.AbstractBlock]
 
@@ -146,7 +146,7 @@ class BlockFactory:
         if self.name is not None:
             obj.setName(self.name)
         obj.setGlobalModName(self.modname).setBreakAbleFlag(self.breakable)
-        obj.modelstates = self.modelstates.copy()
+        obj.model_states = self.model_states.copy()
         if self.solid_faces is not None:
             obj.solid_faces = self.solid_faces.copy()
 
@@ -154,16 +154,16 @@ class BlockFactory:
             self.create_callback,
             self.delete_callback,
         )
-        obj.randomupdate_callback, obj.update_callback = (
-            self.randomupdate_callback,
+        obj.random_update_callback, obj.update_callback = (
+            self.random_update_callback,
             self.update_callback,
         )
         obj.interaction_callback = self.interaction_callback
 
-        obj.hardness, obj.minmum_toollevel, obj.besttools = (
+        obj.hardness, obj.minimum_tool_level, obj.best_tools = (
             self.hardness,
-            self.minmum_toollevel,
-            self.besttools.copy(),
+            self.minimum_tool_level,
+            self.best_tools.copy(),
         )
         obj.speed_multiplier, obj.block_item_generator_state = (
             self.speed_multiplier,
@@ -171,14 +171,14 @@ class BlockFactory:
         )
         obj.face_name, obj.blast_resistance = self.face_name, self.blast_resistance
 
-        obj.customsolidsidefunction = self.customsolidsidefunction
-        obj.custommodelstatefunction = self.custommodelstatefunction
-        obj.customitemstackmodifcationfunction = self.customitemstackmodifcationfunction
-        obj.customblockitemmodificationfunction = (
-            self.customblockitemmodificationfunction
+        obj.custom_solid_side_function = self.custom_solid_side_function
+        obj.custom_model_state_function = self.custom_model_state_function
+        obj.custom_itemstack_modification_function = self.custom_itemstack_modification_function
+        obj.custom_block_item_modification_function = (
+            self.custom_block_item_modification_function
         )
 
-        obj.islog = self.islog
+        obj.is_log = self.is_log
 
         obj.baseclass = self.baseclass.copy()
         obj.template = self.template
@@ -202,7 +202,7 @@ class BlockFactory:
         if template.name is not None:
             self.setName(template.name)
         self.setGlobalModName(template.modname).setBreakAbleFlag(template.breakable)
-        self.modelstates = template.modelstates.copy()
+        self.model_states = template.model_states.copy()
         if template.solid_faces is not None:
             self.solid_faces = template.solid_faces.copy()
 
@@ -210,16 +210,16 @@ class BlockFactory:
             template.create_callback,
             template.delete_callback,
         )
-        self.randomupdate_callback, self.update_callback = (
-            template.randomupdate_callback,
+        self.random_update_callback, self.update_callback = (
+            template.random_update_callback,
             template.update_callback,
         )
         self.interaction_callback = template.interaction_callback
 
-        self.hardness, self.minmum_toollevel, self.besttools = (
+        self.hardness, self.minimum_tool_level, self.best_tools = (
             template.hardness,
-            template.minmum_toollevel,
-            template.besttools.copy(),
+            template.minimum_tool_level,
+            template.best_tools.copy(),
         )
         self.speed_multiplier, self.block_item_generator_state = (
             template.speed_multiplier,
@@ -230,18 +230,18 @@ class BlockFactory:
             template.blast_resistance,
         )
 
-        self.customsolidsidefunction = template.customsolidsidefunction
-        self.custommodelstatefunction = template.custommodelstatefunction
-        self.customitemstackmodifcationfunction = (
-            template.customitemstackmodifcationfunction
+        self.custom_solid_side_function = template.custom_solid_side_function
+        self.custom_model_state_function = template.custom_model_state_function
+        self.custom_itemstack_modification_function = (
+            template.custom_itemstack_modification_function
         )
-        self.customblockitemmodificationfunction = (
-            template.customblockitemmodificationfunction
+        self.custom_block_item_modification_function = (
+            template.custom_block_item_modification_function
         )
 
         self.random_ticks_enabled = False
 
-        self.islog = template.islog
+        self.is_log = template.is_log
 
         self.baseclass = template.baseclass.copy()
 
@@ -252,10 +252,9 @@ class BlockFactory:
         self.template = None
         return self
 
-    def finish(self, register=True, reset_to_template=True, immediate=False):
+    def finish(self, reset_to_template=True, immediate=False):
         """
         will finish up the process of configuration and register the finish_up-call for the future event
-        :param register: unused
         :param reset_to_template: if the system should be reset to the configured template (if arrival) after finishing
             up
         :param immediate: if class generation should go on immediately or not
@@ -358,7 +357,7 @@ class BlockFactory:
 
             @staticmethod
             def get_all_model_states():
-                raw_states = self.modelstates.copy()
+                raw_states = self.model_states.copy()
                 [raw_states.extend(e.get_all_model_states()) for e in self.baseclass]
 
                 while {} in raw_states:
@@ -389,8 +388,8 @@ class BlockFactory:
                     master.delete_callback(self)
 
             HARDNESS = master.hardness
-            MINIMUM_TOOL_LEVEL = master.minmum_toollevel
-            BEST_TOOLS_TO_BREAK = master.besttools
+            MINIMUM_TOOL_LEVEL = master.minimum_tool_level
+            BEST_TOOLS_TO_BREAK = master.best_tools
 
             def set_model_state(self, state):
                 for baseclass in master.baseclass:
@@ -398,8 +397,8 @@ class BlockFactory:
 
             def get_model_state(self):
                 state = (
-                    master.custommodelstatefunction(self).copy()
-                    if master.custommodelstatefunction is not None
+                    master.custom_model_state_function(self).copy()
+                    if master.custom_model_state_function is not None
                     else {}
                 )
                 for baseclass in master.baseclass:
@@ -424,11 +423,11 @@ class BlockFactory:
                         for side in mcpython.util.enums.EnumSide.iterate()
                     }
 
-        if master.randomupdate_callback:
+        if master.random_update_callback:
 
             class ConstructedBlock(ConstructedBlock):
                 def on_random_update(self):
-                    master.randomupdate_callback(self)
+                    master.random_update_callback(self)
 
         if master.update_callback:
 
@@ -448,18 +447,11 @@ class BlockFactory:
                         self, player, itemstack, button, modifiers, exact_hit
                     )
 
-        if master.customitemstackmodifcationfunction:
+        if master.custom_itemstack_modification_function:
 
             class ConstructedBlock(ConstructedBlock):
                 def on_request_item_for_block(self, itemstack):
-                    master.customitemstackmodifcationfunction(self, itemstack)
-
-        if master.customblockitemmodificationfunction:
-
-            class ConstructedBlock(ConstructedBlock):
-                @classmethod
-                def modify_block_item(cls, itemconstructor):
-                    master.customblockitemmodificationfunction(cls, itemconstructor)
+                    master.custom_itemstack_modification_function(self, itemstack)
 
         if master.face_name:
 
@@ -553,10 +545,6 @@ class BlockFactory:
         self.delete_callback = function
         return self
 
-    @deprecation.deprecated("dev1-2", "a1.3.0")
-    def setBrakeAbleFlag(self, state: bool):
-        return self.setBreakAbleFlag(state)
-
     def setBreakAbleFlag(self, state: bool):
         """
         will set the BREAKABLE-flag of the class
@@ -572,7 +560,7 @@ class BlockFactory:
         :param function: the function to invoke on random update together with the block instance
         """
         assert callable(function)
-        self.randomupdate_callback = function
+        self.random_update_callback = function
         self.random_ticks_enabled = True
         return self
 
@@ -591,7 +579,7 @@ class BlockFactory:
         :param function: the function to invoke
         """
         assert callable(function)
-        self.customsolidsidefunction = function
+        self.custom_solid_side_function = function
         if self.solid_faces is not None:
             self.solid_faces.clear()  # only one at a time is allowed
         return self
@@ -604,8 +592,8 @@ class BlockFactory:
         """
         if self.solid_faces is None:
             self.solid_faces = {}
-        if self.customsolidsidefunction:
-            self.customsolidsidefunction = None  # only one at a time is allowed
+        if self.custom_solid_side_function:
+            self.custom_solid_side_function = None  # only one at a time is allowed
         self.solid_faces[side] = state
         return self
 
@@ -615,7 +603,7 @@ class BlockFactory:
         :param function: the function to invoke when needed
         """
         assert callable(function)
-        self.custommodelstatefunction = function
+        self.custom_model_state_function = function
         return self
 
     def setDefaultModelState(self, state):
@@ -634,14 +622,14 @@ class BlockFactory:
         self.setCustomModelStateFunction(get_state)
         return self
 
-    def setAllModelStateInfo(self, modelstates: list):
+    def setAllModelStateInfo(self, model_states: list):
         """
         will set the list of all possible block states of the block
-        :param modelstates: the model states, as an list of dicts
+        :param model_states: the model states, as an list of dicts
         todo: implement stringifier support
         """
-        assert type(modelstates) == list
-        self.modelstates = modelstates
+        assert type(model_states) == list
+        self.model_states = model_states
         return self
 
     def setInteractionCallback(self, function):
@@ -654,7 +642,7 @@ class BlockFactory:
         self.interaction_callback = function
         return self
 
-    def setFallable(self):
+    def setFallAble(self):
         """
         will make the block affected by gravity
         """
@@ -675,7 +663,7 @@ class BlockFactory:
         """
         makes the block an log-like block; Will need the needed block-state variation
         """
-        self.islog = True
+        self.is_log = True
         if ILog.ILog not in self.baseclass:
             self.baseclass.append(ILog.ILog)
         return self
@@ -698,7 +686,7 @@ class BlockFactory:
         self.hardness = value
         return self
 
-    def setStrenght(self, hardness: float, blast_resistance=None):
+    def setStrength(self, hardness: float, blast_resistance=None):
         """
         will set hardness and blasz resistance at ones
         :param hardness: value for hardness
@@ -719,7 +707,7 @@ class BlockFactory:
         will set the minimum needed tool level for breaking the block
         :param value: the value representing an tool level
         """
-        self.minmum_toollevel = value
+        self.minimum_tool_level = value
         return self
 
     def setBestTools(self, tools):
@@ -727,7 +715,7 @@ class BlockFactory:
         will set the tools good in breaking the block
         :param tools: an list of tools or only one tool
         """
-        self.besttools = tools if type(tools) == list else [tools]
+        self.best_tools = tools if type(tools) == list else [tools]
         return self
 
     def setCustomItemstackModificationFunction(self, function):
@@ -736,7 +724,7 @@ class BlockFactory:
         :param function: the function to invoke
         """
         assert callable(function)
-        self.customitemstackmodifcationfunction = function
+        self.custom_itemstack_modification_function = function
         return self
 
     def setCustomBlockItemModification(self, function):
@@ -745,7 +733,7 @@ class BlockFactory:
         :param function: the function to invoke on callback
         """
         assert callable(function)
-        self.customblockitemmodificationfunction = function
+        self.custom_block_item_modification_function = function
         return self
 
     def setSpeedMultiplier(self, factor: float):

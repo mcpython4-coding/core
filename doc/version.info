@@ -1325,6 +1325,7 @@ F   [uuk]: implemented process-parallelized world generation
 R   [uuk]: moved some files around again
     [uuk]: added side annotations [currently not working]
 D/R [uuk]: migrated BlockConfig system to tags
+D   [uuk]: removed a lot of deprecated stuff
 
 Roadmap:
     - refactor classes & functions [WIP]
@@ -1347,3 +1348,4 @@ Roadmap:
     - optimize rendering system
     - use scissor group for world view
     - make world generator mode system class based
+    - split inventories into inventories (rendering) and containers

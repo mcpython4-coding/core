@@ -55,11 +55,6 @@ FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE
 )
 
-TICKS_PER_SEC = (
-    20  # how many ticks per second should be executed, todo: remove (unused)
-)
-
-# todo: remove definitions of "raw" values
 WALKING_SPEED = 5
 SPRINTING_SPEED = 8
 FLYING_SPEED = 15

@@ -36,7 +36,7 @@ class StateBlockItemGenerator(State.State):
     SETUP_TIME = 1
     CLEANUP_TIME = 1
 
-    NAME = "minecraft:blockitemgenerator"
+    NAME = "minecraft:block_item_generator"
 
     def __init__(self):
         State.State.__init__(self)
