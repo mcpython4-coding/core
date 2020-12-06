@@ -32,6 +32,7 @@ from . import State
 from .ui import UIPartButton, UIPartScrollBar
 import shutil
 from mcpython.util.annotation import onlyInClient
+import mcpython.client.rendering.RenderingGroups
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
     mcpython.ResourceLoader.read_image("assets/missing_texture.png").resize(
@@ -63,6 +64,7 @@ class StateWorldSelection(State.State):
             ]  # StateParts get an list of steps to get to them as an list
             statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
         self.bind_to_eventbus()
+        self.scissor_group = mcpython.client.rendering.RenderingGroups.ScissorGroup(0, 0, 10, 10)
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
@@ -74,6 +76,7 @@ class StateWorldSelection(State.State):
     def on_resize(self, wx, wy):
         self.parts[-1].set_size_respective((wx - 80, 105), wy - 195)
         self.recalculate_sprite_position()
+        self.scissor_group.area = (45, 100, wx - 90, wy - 160)
 
     def get_parts(self) -> list:
         wx, wy = G.window.get_size()
@@ -185,6 +188,7 @@ class StateWorldSelection(State.State):
         wx, wy = G.window.get_size()
         pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
         x, y = G.window.mouse_position
+        self.scissor_group.set_state()
         for i, (_, icon, labels, _) in enumerate(self.world_data):
             if icon.y < 105 or icon.y > wy - 110:
                 continue
@@ -204,6 +208,7 @@ class StateWorldSelection(State.State):
                         icon.position[1] + 25 - 16,
                     )
                     self.selection_sprite.draw()
+        self.scissor_group.unset_state()
         mcpython.util.opengl.draw_line_rectangle(
             (45, 100), (wx - 90, wy - 160), (1, 1, 1)
         )

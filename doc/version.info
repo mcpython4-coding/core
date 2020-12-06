@@ -1326,6 +1326,7 @@ R   [uuk]: moved some files around again
     [uuk]: added side annotations [currently not working]
 D/R [uuk]: migrated BlockConfig system to tags
 D   [uuk]: removed a lot of deprecated stuff
+F   [uuk]: added OpenGL scissor group from pyglet's examples
 
 Roadmap:
     - refactor classes & functions [WIP]
@@ -1346,6 +1347,5 @@ Roadmap:
     - update mdk to the new systems
     - update doc generator to use tokenize
     - optimize rendering system
-    - use scissor group for world view
     - make world generator mode system class based
     - split inventories into inventories (rendering) and containers
