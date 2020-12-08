@@ -158,7 +158,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         return (
             position in self.world
-            or G.worldgenerationhandler.task_handler.get_block(position, self) is not None
+            or G.worldgenerationhandler.task_handler.get_block(position, self)
+            is not None
         )
 
     def add_block(

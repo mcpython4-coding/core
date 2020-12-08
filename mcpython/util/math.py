@@ -15,7 +15,6 @@ import math
 import deprecation
 
 
-
 def cube_vertices_better(
     x: float,
     y: float,
@@ -327,3 +326,25 @@ def rotate_point(point, origin, rotation):
     y, z = ny, nz
 
     return x + ox, y + oy, z + oz
+
+
+def get_distance(a, b):
+    return math.sqrt(sum([(a[i] - b[i]) ** 2 for i in range(len(a))]))
+
+
+def is_in_bounds(start, end, to_check):
+    return all((start[i] <= to_check[i] <= end[i] for i in range(len(start))))
+
+
+def try_parse_int(v):
+    try:
+        return int(v)
+    except ValueError:
+        pass
+
+
+def try_parse_float(v):
+    try:
+        return float(v)
+    except ValueError:
+        pass

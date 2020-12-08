@@ -9,40 +9,131 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
-import mcpython.server.command.Command
-from mcpython.server.command.Command import ParseBridge, ParseType, ParseMode
+from mcpython.server.command.CommandBuilder import (
+    ICommandMatcher,
+    CommandBuilder,
+    ExecutingCommandInfo,
+    PositionMatcher,
+    TextMatcher,
+    BlockPredicateMatcher,
+    InvalidSyntaxError,
+    FailType,
+)
+import mcpython.util.math
+from mcpython import logger
 
 
-@G.registry
-class CommandClone(mcpython.server.command.Command.Command):
-    """
-    Class for the /clone command
+def execute_clone(
+    matcher: ICommandMatcher,
+    builder: CommandBuilder,
+    context: ExecutingCommandInfo,
+    tree,
+):
+    start = tree[1].position
+    end = tree[2].position
+    target = tree[3].position
 
-    events:
-        - command:clone:block_map(ParsingCommandInfo, dict): called when data is collected together with the data table
-    """
+    fx, fy, fz = tuple([int(round(e)) for e in start])
+    ex, ey, ez = tuple([int(round(e)) for e in end])
 
-    NAME = "minecraft:clone"
+    # order them into the right order
+    fx, ex = min(fx, ex), max(fx, ex)
+    fy, ey = min(fy, ey), max(fy, ey)
+    fz, ez = min(fz, ez), max(fz, ez)
 
-    @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "clone"
-        parsebridge.add_subcommand(
-            ParseType.POSITION.add_subcommand(
-                ParseType.POSITION.add_subcommand(
-                    ParseType.STRING_WITHOUT_QUOTES.set_mode(
-                        ParseMode.OPTIONAL
-                    ).add_subcommand(
-                        ParseType.STRING_WITHOUT_QUOTES.set_mode(
-                            ParseMode.OPTIONAL
-                        ).add_subcommand(
-                            ParseType.BLOCKNAME.set_mode(ParseMode.OPTIONAL)
-                        )
-                    )
-                )
+    start = (fx, fy, fz)
+    end = (ex, ey, ez)
+
+    mode = get_mode_for_name(tree[-1].text) if tree[-1] in inner_matcher else NormalCloneMode
+    if mode is None:
+        context.chat.print_ln(
+            "FATAL COMMAND ERROR: failed to parse clone mode {} ({}) as no mode handler is defined!".format(
+                tree[-1].text, tree[-1]
+            ))
+        context.fail_execution(FailType.INTERNAL_FATAL, "ParserError register content")
+        return
+    mode.validate(start, end, target, tree)
+
+
+class ICloneMode:
+    NAME = None
+
+    @classmethod
+    def validate(cls, start, end, target, tree):
+        pass
+
+
+class ForceCloneMode(ICloneMode):
+    NAME = "force"
+
+    @classmethod
+    def validate(cls, start, end, target, tree):
+        pass
+
+
+class MoveCloneMode(ICloneMode):
+    NAME = "move"
+
+    @classmethod
+    def validate(cls, start, end, target, tree):
+        pass
+
+
+class NormalCloneMode(ICloneMode):
+    NAME = "normal"
+
+    @classmethod
+    def validate(cls, start, end, target, tree):
+        # todo: add some security checks here
+        if mcpython.util.math.is_in_bounds(start, end, target):
+            raise InvalidSyntaxError("area may NOT overlap with target area")
+
+
+MODES = [ForceCloneMode, MoveCloneMode, NormalCloneMode]
+
+
+def get_mode_for_name(name: str):
+    for mode in MODES:
+        if mode.NAME == name:
+            return mode
+
+
+# Matcher for inner part (force|move|normal)
+inner_matcher = [
+    TextMatcher("force").execute_on_end(execute_clone),
+    TextMatcher("move").execute_on_end(execute_clone),
+    TextMatcher("normal").execute_on_end(execute_clone),
+]
+
+clone = CommandBuilder("clone").add_subsequent_stage(
+    PositionMatcher().add_subsequent_stage(
+        PositionMatcher().add_subsequent_stage(
+            PositionMatcher()
+            .execute_on_end(execute_clone)
+            .add_subsequent_stage(
+                TextMatcher("replace")
+                .execute_on_end(execute_clone)
+                .add_subsequent_stages(inner_matcher)
+            )
+            .add_subsequent_stage(
+                TextMatcher("masked")
+                .execute_on_end(execute_clone)
+                .add_subsequent_stages(inner_matcher)
+            )
+            .add_subsequent_stage(
+                TextMatcher("filtered")
+                .add_subsequent_stage(BlockPredicateMatcher())
+                .execute_on_end(execute_clone)
+                .add_subsequent_stages(inner_matcher)
             )
         )
+    )
+)
+
+
+"""
+@G.registry
+class CommandClone(mcpython.server.command.old.Command.Command):
 
     @staticmethod
     def parse(values: list, modes: list, info):
@@ -125,4 +216,4 @@ class CommandClone(mcpython.server.command.Command.Command):
     def get_help() -> list:
         return [
             "/clone <edge 1> <edge 2> <to> [<mask mode>] [<clone mode>] [<tile name>]: clones an area"
-        ]
+        ]"""

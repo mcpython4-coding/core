@@ -17,7 +17,7 @@ import pyglet
 from pyglet.window import key
 
 from mcpython import shared as G, logger
-import mcpython.server.command.CommandHandler
+import mcpython.server.command.CommandBuilder
 import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler
 import mcpython.client.gui.Inventory
@@ -161,7 +161,19 @@ class Chat:
                 return
             if self.text.startswith("/"):
                 # execute command
-                G.commandparser.parse(self.text)
+                import mcpython.server.command.CommandBuilder
+
+                info = mcpython.server.command.CommandBuilder.ExecutingCommandInfo()
+                info.entity = G.world.get_active_player()
+                info.position = info.entity.position
+                info.direction = info.entity.rotation  # todo: make this correct
+                info.dimension = info.entity.dimension
+                try:
+                    mcpython.server.command.CommandBuilder.CommandExecutionBuilder(
+                        self.text
+                    ).run(info)
+                except mcpython.server.command.CommandBuilder.InvalidSyntaxError as e:
+                    logger.println("[ERROR]", *e.args)
             else:
                 self.print_ln(self.text)
             self.history.insert(0, self.text)

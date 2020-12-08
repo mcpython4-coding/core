@@ -10,8 +10,8 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
+import mcpython.server.command.old.Command
+from mcpython.server.command.old.Command import (
     ParseBridge,
     ParseType,
     SubCommand,
@@ -20,7 +20,7 @@ from mcpython.server.command.Command import (
 
 
 @G.registry
-class CommandGamemode(mcpython.server.command.Command.Command):
+class CommandGamemode(mcpython.server.command.old.Command.Command):
     """
     class for /gamemode command
     """

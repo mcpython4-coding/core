@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.server.command.Command
+import mcpython.server.command.old.Command
 
 
 class ParsingCommandInfo:
@@ -51,12 +51,12 @@ class CommandParser:
     def __init__(self):
         self.commandparsing = {}  # start -> (Command, ParseBridge)
 
-    def add_command(self, command: mcpython.server.command.Command):
+    def add_command(self, command: mcpython.server.command.old.Command):
         """
         register an command
         :param command: the command to add
         """
-        parsebridge = mcpython.server.command.Command.ParseBridge(command)
+        parsebridge = mcpython.server.command.old.Command.ParseBridge(command)
         if not G.eventhandler.call_cancelable(
             "registry:commands:register", command, parsebridge
         ):
@@ -117,7 +117,8 @@ class CommandParser:
         """
         if len(command) == 1 and not all(
             [
-                subcommand.mode == mcpython.server.command.Command.ParseMode.OPTIONAL
+                subcommand.mode
+                == mcpython.server.command.old.Command.ParseMode.OPTIONAL
                 for subcommand in parsebridge.sub_commands
             ]
         ):
@@ -157,7 +158,7 @@ class CommandParser:
                 if all(
                     [
                         subcommand.mode
-                        == mcpython.server.command.Command.ParseMode.OPTIONAL
+                        == mcpython.server.command.old.Command.ParseMode.OPTIONAL
                         for subcommand in active_entry.sub_commands
                     ]
                 ):
@@ -181,7 +182,7 @@ class CommandParser:
                     return None, array
         if all(
             [
-                x.mode == mcpython.server.command.Command.ParseMode.OPTIONAL
+                x.mode == mcpython.server.command.old.Command.ParseMode.OPTIONAL
                 for x in active_entry.sub_commands
             ]
         ):

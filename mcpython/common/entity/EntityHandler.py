@@ -12,6 +12,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared as G, logger
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
+import mcpython.common.data.tags.TagGroup
 
 
 class EntityHandler:
@@ -20,8 +21,14 @@ class EntityHandler:
     """
 
     def __init__(self):
+        self.tag_manager = mcpython.common.data.tags.TagGroup.TagTargetHolder(
+            "entities"
+        )
         self.registry = mcpython.common.event.Registry.Registry(
-            "registry", ["minecraft:entity"], "stage:entities"
+            "registry",
+            ["minecraft:entity"],
+            "stage:entities",
+            injection_function=lambda _, cls: self.tag_manager.register_class(cls),
         )
         self.entity_map = {}
 

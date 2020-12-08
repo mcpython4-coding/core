@@ -10,37 +10,35 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
-    ParseBridge,
-    ParseType,
-    ParseMode,
-    SubCommand,
-)
+import mcpython.server.command.old.Command
+import mcpython.util.math
+from mcpython.server.command.old.Command import ParseBridge, ParseType, SubCommand
 
 
 @G.registry
-class CommandKill(mcpython.server.command.Command.Command):
+class CommandSetblock(mcpython.server.command.old.Command.Command):
     """
-    class for /kill command
+    class for /setblock command
     """
 
-    NAME = "minecraft:kill"
+    NAME = "minecraft:setblock"
 
     @staticmethod
     def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "kill"
+        parsebridge.main_entry = "setblock"
         parsebridge.add_subcommand(
-            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)
+            SubCommand(ParseType.POSITION).add_subcommand(
+                SubCommand(ParseType.BLOCKNAME)
+            )
         )
 
     @staticmethod
     def parse(values: list, modes: list, info):
-        if len(values) == 0:
-            values.append([G.world.get_active_player()])
-        for entity in values[0]:
-            entity.kill(test_totem=False)  # kill all entities selected
+        position = mcpython.util.math.normalize(values[0])
+        G.world.dimensions[info.dimension].get_chunk_for_position(position).add_block(
+            position, values[1]
+        )
 
     @staticmethod
     def get_help() -> list:
-        return ["/kill [<selector>: default=@s]: kills entity(s)"]
+        return ["/setblock <position> <blockname>"]

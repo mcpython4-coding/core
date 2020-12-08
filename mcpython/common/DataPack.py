@@ -14,7 +14,7 @@ import os
 
 from mcpython import shared as G, logger
 import mcpython.ResourceLoader
-import mcpython.server.command.CommandParser
+import mcpython.server.command.CommandBuilder
 import mcpython.server.command.McFunctionFile
 import mcpython.common.event.EventHandler
 
@@ -93,7 +93,11 @@ class DataPackHandler:
         self.data_packs.clear()
         G.eventhandler.call("datapack:unload:post")
 
-    def try_call_function(self, name: str, info=None):
+    def try_call_function(
+        self,
+        name: str,
+        info: mcpython.server.command.CommandBuilder.ExecutingCommandInfo = None,
+    ):
         """
         will try to invoke an function in an datapack
         :param name: the name of the function
@@ -101,7 +105,7 @@ class DataPackHandler:
         WARNING: will only invoke ONE function/tag from the datapacks, not all
         """
         if info is None:
-            info = mcpython.server.command.CommandParser.ParsingCommandInfo()
+            info = mcpython.server.command.CommandBuilder.ExecutingCommandInfo()
         if name.startswith("#"):  # an tag
             try:
                 tag = G.taghandler.get_tag_for(name, "functions")

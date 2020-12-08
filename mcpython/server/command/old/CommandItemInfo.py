@@ -10,13 +10,13 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.server.command.Command
+import mcpython.server.command.old.Command
 import mcpython.common.container.ItemStack
-from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
+from mcpython.server.command.old.Command import ParseBridge, ParseType, SubCommand
 
 
 @G.registry
-class CommandItemInfo(mcpython.server.command.Command.Command):
+class CommandItemInfo(mcpython.server.command.old.Command.Command):
     """
     class for /iteminfo command
     """

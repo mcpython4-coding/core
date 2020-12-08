@@ -149,6 +149,9 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         # normal batch
         self.batches = [pyglet.graphics.Batch() for _ in range(2)]  # normal, alpha
 
+    def get_world(self):
+        return self.world
+
     def get_id(self):
         return self.id
 

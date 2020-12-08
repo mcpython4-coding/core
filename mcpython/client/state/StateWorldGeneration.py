@@ -172,9 +172,7 @@ class StateWorldGeneration(State.State):
 
         # reload all the data-packs
         mcpython.common.DataPack.datapackhandler.reload()
-        mcpython.common.DataPack.datapackhandler.try_call_function(
-            "#minecraft:load"
-        )
+        mcpython.common.DataPack.datapackhandler.try_call_function("#minecraft:load")
         G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
 
         # set spawn-point

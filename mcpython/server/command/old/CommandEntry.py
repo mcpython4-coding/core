@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
 import mcpython.common.event.Registry
-from mcpython.server.command.Command import ParseType
+from mcpython.server.command.old.Command import ParseType
 
 
 class CommandEntry(mcpython.common.event.Registry.IRegistryContent):

@@ -27,7 +27,9 @@ class ItemAtlasHandler:
     def __init__(self, folder=shared.build + "/itematlases"):
         self.scheduled_item_files = {}
         self.folder = folder
-        self.atlases: typing.List[mcpython.client.texture.TextureAtlas.TextureAtlas] = []
+        self.atlases: typing.List[
+            mcpython.client.texture.TextureAtlas.TextureAtlas
+        ] = []
         self.position_map = {}
         self.lookup_map = {}
         self.grids: typing.List[pyglet.image.ImageGrid] = []

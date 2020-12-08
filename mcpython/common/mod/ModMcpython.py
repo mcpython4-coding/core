@@ -48,7 +48,7 @@ def parse_version(string: str) -> tuple:
 
 
 # create the mod
-mcpython = mcpython.common.mod.Mod.Mod(
+mcpython = mod = mcpython.common.mod.Mod.Mod(
     "minecraft", parse_version(mcpython.common.config.VERSION_NAME)
 )
 
@@ -56,6 +56,13 @@ mcpython = mcpython.common.mod.Mod.Mod(
 def init():
     import mcpython.common.data.loot.LootTable
     import mcpython.common.entity.EntityHandler
+    import mcpython.server.command.CommandBuilder
+
+    mod.eventbus.subscribe(
+        "stage:commands",
+        mcpython.server.command.CommandBuilder.load_commands,
+        info="loading commands",
+    )
 
 
 mcpython.eventbus.subscribe("stage:mod:init", init)

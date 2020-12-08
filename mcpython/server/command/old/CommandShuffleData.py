@@ -10,14 +10,14 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.server.command.Command
+import mcpython.server.command.old.Command
 import mcpython.common.container.ItemStack
-from mcpython.server.command.Command import ParseBridge
+from mcpython.server.command.old.Command import ParseBridge
 import mcpython.common.config
 
 
 @G.registry
-class CommandShuffleData(mcpython.server.command.Command.Command):
+class CommandShuffleData(mcpython.server.command.old.Command.Command):
     """
     class for /shuffledata command
     """

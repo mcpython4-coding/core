@@ -102,6 +102,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             else self.add_player(self.active_player)
         )
 
+    def player_iterator(self) -> typing.List:
+        return list(self.players.values())
+
     def reset_config(self):
         """
         Will reset the internal config of the system.

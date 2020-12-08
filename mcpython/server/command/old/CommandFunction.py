@@ -11,8 +11,8 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
 import mcpython.common.DataPack
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
+import mcpython.server.command.old.Command
+from mcpython.server.command.old.Command import (
     ParseBridge,
     ParseType,
     ParseMode,
@@ -21,7 +21,7 @@ from mcpython.server.command.Command import (
 
 
 @G.registry
-class CommandFunction(mcpython.server.command.Command.Command):
+class CommandFunction(mcpython.server.command.old.Command.Command):
     """
     command /function
     """

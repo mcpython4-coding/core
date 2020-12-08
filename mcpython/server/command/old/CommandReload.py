@@ -13,17 +13,17 @@ import gc
 
 from mcpython import shared as G
 import mcpython.common.DataPack
-import mcpython.server.command.Command
+import mcpython.server.command.old.Command
 import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.event.TickHandler
 import mcpython.client.rendering.EntityRenderer
 import mcpython.client.rendering.util
-from mcpython.server.command.Command import ParseBridge
+from mcpython.server.command.old.Command import ParseBridge
 
 
 @G.registry
-class CommandReload(mcpython.server.command.Command.Command):
+class CommandReload(mcpython.server.command.old.Command.Command):
     """
     class for /reload command
     """

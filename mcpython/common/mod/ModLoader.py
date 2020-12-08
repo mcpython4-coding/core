@@ -147,7 +147,9 @@ class LoadingStage:
                 ]
                 if self.active_event_name in mod_instance.eventbus.event_subscriptions:
                     self.max_progress = len(
-                        mod_instance.eventbus.event_subscriptions[self.active_event_name]
+                        mod_instance.eventbus.event_subscriptions[
+                            self.active_event_name
+                        ]
                     )
                 else:
                     self.max_progress = 0

@@ -10,12 +10,12 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.server.command.Command
-from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
+import mcpython.server.command.old.Command
+from mcpython.server.command.old.Command import ParseBridge, ParseType, SubCommand
 
 
 @G.registry
-class CommandLoot(mcpython.server.command.Command.Command):
+class CommandLoot(mcpython.server.command.old.Command.Command):
     """
     command /loot
     """

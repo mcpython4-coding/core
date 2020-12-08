@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from abc import ABC
 import typing
 import mcpython.util.enums
-import mcpython.common.block.AbstractBlock
+import mcpython.util.math
 
 
 class IChunk(ABC):
@@ -37,14 +37,12 @@ class IChunk(ABC):
         self,
         position: tuple,
         block_name: typing.Union[
-            str, mcpython.common.block.AbstractBlock.AbstractBlock
+            str,
         ],
         immediate=True,
         block_update=True,
         block_update_self=True,
-        lazy_setup: typing.Callable[
-            [mcpython.common.block.AbstractBlock.AbstractBlock], None
-        ] = None,
+        lazy_setup: typing.Callable = None,
     ):
         raise NotImplementedError()
 
@@ -55,14 +53,11 @@ class IChunk(ABC):
 
     def remove_block(
         self,
-        position: typing.Union[
-            typing.Tuple[int, int, int],
-            mcpython.common.block.AbstractBlock.AbstractBlock,
-        ],
+        position: typing.Union[typing.Tuple[int, int, int], typing.Any],
         immediate: bool = True,
         block_update: bool = True,
         block_update_self: bool = True,
-        reason=mcpython.common.block.AbstractBlock.BlockRemovalReason.UNSET,
+        reason=None,
     ):
         raise NotImplementedError()
 
@@ -71,20 +66,14 @@ class IChunk(ABC):
 
     def show_block(
         self,
-        position: typing.Union[
-            typing.Tuple[int, int, int],
-            mcpython.common.block.AbstractBlock.AbstractBlock,
-        ],
+        position: typing.Union[typing.Tuple[int, int, int], typing.Any],
         immediate: bool = True,
     ):
         raise NotImplementedError()
 
     def hide_block(
         self,
-        position: typing.Union[
-            typing.Tuple[int, int, int],
-            mcpython.common.block.AbstractBlock.AbstractBlock,
-        ],
+        position: typing.Union[typing.Tuple[int, int, int], typing.Any],
         immediate=True,
     ):
         raise NotImplementedError()
@@ -109,7 +98,7 @@ class IChunk(ABC):
 
     def get_block(
         self, position: typing.Tuple[int, int, int]
-    ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
+    ) -> typing.Union[typing.Any, str, None]:
         raise NotImplementedError()
 
     def as_shareable(self) -> "IChunk":
@@ -118,6 +107,9 @@ class IChunk(ABC):
 
 class IDimension(ABC):
     def get_id(self):
+        raise NotImplementedError()
+
+    def get_world(self) -> "IWorld":
         raise NotImplementedError()
 
     def get_chunk(
@@ -133,7 +125,7 @@ class IDimension(ABC):
         self,
         position: typing.Union[
             typing.Tuple[float, float, float],
-            mcpython.common.block.AbstractBlock.AbstractBlock,
+            typing.Any,
         ],
         **kwargs
     ) -> typing.Optional[IChunk]:
@@ -141,7 +133,7 @@ class IDimension(ABC):
 
     def get_block(
         self, position: typing.Tuple[int, int, int]
-    ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
+    ) -> typing.Union[typing.Any, str, None]:
         raise NotImplementedError()
 
     def add_block(
@@ -175,6 +167,21 @@ class IWorld(ABC):
 
     def get_active_player(self, create: bool = True) -> typing.Optional:
         raise NotImplementedError()
+
+    def player_iterator(self) -> typing.List:
+        raise NotImplementedError()
+
+    def nearest_player(self, position: tuple, dimension):
+        return min(
+            (
+                player
+                for player in self.player_iterator()
+                if player.dimension == dimension
+            ),
+            key=lambda player: mcpython.util.math.get_distance(
+                player.position, position
+            ),
+        )
 
     def reset_config(self):
         raise NotImplementedError()

@@ -231,6 +231,10 @@ class Entity(mcpython.common.event.Registry.IRegistryContent):
         """
         return list(self.inventories.values())
 
+    def clear_inventory(self):
+        for inventory in self.get_inventories():
+            inventory.clear()
+
     def on_inventory_cleared(self):
         """
         called by /clear when the inventory of the entity should be cleared

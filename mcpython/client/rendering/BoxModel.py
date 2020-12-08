@@ -249,7 +249,9 @@ class BoxModel:
             batch = (
                 batch[0]
                 if self.model is not None
-                and not G.taghandler.has_entry_tag(self.model.name, "rendering", "#minecraft:alpha")
+                and not G.taghandler.has_entry_tag(
+                    self.model.name, "rendering", "#minecraft:alpha"
+                )
                 else batch[1]
             )
         result = []
