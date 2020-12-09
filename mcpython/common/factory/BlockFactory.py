@@ -173,7 +173,9 @@ class BlockFactory:
 
         obj.custom_solid_side_function = self.custom_solid_side_function
         obj.custom_model_state_function = self.custom_model_state_function
-        obj.custom_itemstack_modification_function = self.custom_itemstack_modification_function
+        obj.custom_itemstack_modification_function = (
+            self.custom_itemstack_modification_function
+        )
         obj.custom_block_item_modification_function = (
             self.custom_block_item_modification_function
         )

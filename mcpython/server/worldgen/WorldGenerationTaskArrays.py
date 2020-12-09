@@ -423,12 +423,18 @@ class OffProcessTaskHelper:
     def tick(self):
         pass
 
-    def run_layer_generation(self, chunk: mcpython.common.world.AbstractInterface.IChunk, layer, config):
-        reference = ProcessSeparatedWorldGenerationTaskHandlerReference(self.shared, chunk.as_shareable())
+    def run_layer_generation(
+        self, chunk: mcpython.common.world.AbstractInterface.IChunk, layer, config
+    ):
+        reference = ProcessSeparatedWorldGenerationTaskHandlerReference(
+            self.shared, chunk.as_shareable()
+        )
         self.shared.task_queue.put((layer, reference, config))
 
 
-class ProcessSeparatedWorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
+class ProcessSeparatedWorldGenerationTaskHandlerReference(
+    IWorldGenerationTaskHandlerReference
+):
     """
     reference class to an WorldGenerationTaskHandler for setting the chunk globally
     all scheduling functions are the same of WorldGenerationTaskHandler exept the chunk-parameter is missing.
@@ -438,7 +444,7 @@ class ProcessSeparatedWorldGenerationTaskHandlerReference(IWorldGenerationTaskHa
     def __init__(
         self,
         shared_helper: OffProcessTaskHelper.OffProcessTaskHelperShared,
-        chunk: mcpython.common.world.AbstractInterface.IChunk
+        chunk: mcpython.common.world.AbstractInterface.IChunk,
     ):
         self.shared_helper = shared_helper
         self.chunk = chunk

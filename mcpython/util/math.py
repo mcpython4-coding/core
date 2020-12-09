@@ -15,7 +15,6 @@ import math
 import deprecation
 
 
-
 def cube_vertices_better(
     x: float,
     y: float,

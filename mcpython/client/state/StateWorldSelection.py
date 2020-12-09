@@ -64,7 +64,9 @@ class StateWorldSelection(State.State):
             ]  # StateParts get an list of steps to get to them as an list
             statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
         self.bind_to_eventbus()
-        self.scissor_group = mcpython.client.rendering.RenderingGroups.ScissorGroup(0, 0, 10, 10)
+        self.scissor_group = mcpython.client.rendering.RenderingGroups.ScissorGroup(
+            0, 0, 10, 10
+        )
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:mouse:press", self.on_mouse_press)

@@ -147,7 +147,9 @@ class LoadingStage:
                 ]
                 if self.active_event_name in mod_instance.eventbus.event_subscriptions:
                     self.max_progress = len(
-                        mod_instance.eventbus.event_subscriptions[self.active_event_name]
+                        mod_instance.eventbus.event_subscriptions[
+                            self.active_event_name
+                        ]
                     )
                 else:
                     self.max_progress = 0
@@ -638,7 +640,8 @@ class ModLoader:
         """
         writes the data for the mod table into the file
         """
-        if not os.path.isdir(G.build): os.makedirs(G.build)
+        if not os.path.isdir(G.build):
+            os.makedirs(G.build)
         with open(G.build + "/mods.json", mode="w") as f:
             m = {modinst.name: modinst.version for modinst in self.mods.values()}
             json.dump(m, f)

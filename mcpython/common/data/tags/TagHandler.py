@@ -142,7 +142,7 @@ def add_from_location(loc: str):
             "data/{}/tags/naming",
             "data/{}/tags/blocks",
             "data/{}/tags/functions",
-            "data/{}/tags/rendering"
+            "data/{}/tags/rendering",
         ]
     ]
 

@@ -1328,6 +1328,7 @@ D/R [uuk]: migrated BlockConfig system to tags
 D   [uuk]: removed a lot of deprecated stuff
 F   [uuk]: added OpenGL scissor group from pyglet's examples
 F   [uuk]: updated and improved mdk
+F   [uuk]: implemented utils for iterables
 
 Roadmap:
     - refactor classes & functions [WIP]
