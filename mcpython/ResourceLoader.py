@@ -144,6 +144,9 @@ class ResourceZipFile(IResourceLocator):
                 ):
                     yield entry
 
+    def __repr__(self):
+        return "ResourceZipFileOf({})".format(self.path)
+
 
 class ResourceDirectory(IResourceLocator):
     """
@@ -188,6 +191,9 @@ class ResourceDirectory(IResourceLocator):
             for name in dirs:
                 file = os.path.join(root, name).replace("\\", "/")
                 yield "/".join(file.split("/")[self.path.count("/") + 1 :]) + "/"
+
+    def __repr__(self):
+        return "ResourceDirectoryOf({})".format(self.path)
 
 
 RESOURCE_PACK_LOADERS = [

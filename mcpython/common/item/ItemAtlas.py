@@ -60,29 +60,41 @@ class ItemAtlasHandler:
         self.atlases.clear()
         self.lookup_map.clear()
 
-        for file in self.scheduled_item_files:
-            if not ResourceLoader.exists(file):
-                self.scheduled_item_files.setdefault(
-                    "assets/missing_texture.png", []
-                ).extend(self.scheduled_item_files[file])
-                continue
+        added = {}
 
-            if file == "assets/missing_texture.png":
-                self.position_map[file] = (0, (0, 0))
-                continue
+        while len(self.scheduled_item_files) > 0:
+            for file in self.scheduled_item_files.copy():
+                if not ResourceLoader.exists(file):
+                    if file == "assets/missing_texture.png":
+                        logger.println("[FATAL] error during atlas-work")
+                        del self.scheduled_item_files[file]
+                        break
+                    self.scheduled_item_files.setdefault(
+                        "assets/missing_texture.png", []
+                    ).extend(self.scheduled_item_files[file])
+                    del self.scheduled_item_files[file]
+                    continue
 
-            image = ResourceLoader.read_image(file).resize((32, 32), PIL.Image.NEAREST)
-            for i, atlas in enumerate(self.atlases):
-                if atlas.is_free_for([image]):
-                    self.position_map[file] = (i, atlas.add_image(image))
-                    break
-            else:
-                atlas = mcpython.client.texture.TextureAtlas.TextureAtlas()
-                self.position_map[file] = (len(self.atlases), atlas.add_image(image))
-                self.atlases.append(atlas)
+                if file == "assets/missing_texture.png":
+                    self.position_map[file] = (0, (0, 0))
+                    del self.scheduled_item_files[file]
+                    continue
 
-        for file in self.scheduled_item_files:
-            for ref in self.scheduled_item_files[file]:
+                added.setdefault(file, []).extend(self.scheduled_item_files[file])
+                del self.scheduled_item_files[file]
+
+                image = ResourceLoader.read_image(file).resize((32, 32), PIL.Image.NEAREST)
+                for i, atlas in enumerate(self.atlases):
+                    if atlas.is_free_for([image]):
+                        self.position_map[file] = (i, atlas.add_image(image))
+                        break
+                else:
+                    atlas = mcpython.client.texture.TextureAtlas.TextureAtlas()
+                    self.position_map[file] = (len(self.atlases), atlas.add_image(image))
+                    self.atlases.append(atlas)
+
+        for file in added:
+            for ref in added[file]:
                 self.lookup_map[ref] = self.position_map[file]
 
         for atlas in self.atlases:

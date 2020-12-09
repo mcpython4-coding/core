@@ -120,7 +120,7 @@ class StateWorldGeneration(State.State):
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
                 G.worldgenerationhandler.add_chunk_to_generation_list(
-                    (cx, cz), force_generate=True, generate_add=False
+                    (cx, cz), force_generate=True
                 )
                 self.status_table[(cx, cz)] = 0
 

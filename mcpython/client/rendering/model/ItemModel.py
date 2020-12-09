@@ -80,6 +80,10 @@ class ItemModel:
     @classmethod
     def from_file(cls, file: str, item: str):
         data = mcpython.ResourceLoader.read_json(file)
+        return cls.from_data(data, item)
+
+    @classmethod
+    def from_data(cls, data, item):
         model = cls(item)
         for loader in LOADERS:
             if loader.validate(data):
@@ -152,6 +156,9 @@ class ItemModelHandler:
     @G.modloader("minecraft", "stage:model:item:search")
     def load():
         handler.from_folder("assets/minecraft/models/item", "minecraft")
+
+    def from_data(self, data: dict, name: str):
+        self.models[name] = ItemModel.from_data(data, name)
 
     def from_folder(self, folder: str, modname: str):
         for file in mcpython.ResourceLoader.get_all_entries(folder):

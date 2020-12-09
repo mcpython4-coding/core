@@ -188,7 +188,7 @@ class Inventory:
         draws the inventory
         """
         self.on_draw_background()
-        x, y = self._get_position()
+        x, y = self.get_position()
         if self.bgsprite:
             self.bgsprite.position = (
                 x + self.bg_image_pos[0],

@@ -152,7 +152,7 @@ with open(local + "/config.json", mode="w") as f:
 
 print("installing libraries...")
 subprocess.call(
-    [sys.executable, d["path"] + "/installer.py"],
+    [sys.executable, d["path"] + "/tools/installer.py"],
     stdin=sys.stdin,
     stdout=sys.stdout,
     stderr=sys.stderr,
