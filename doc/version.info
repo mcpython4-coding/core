@@ -1329,6 +1329,7 @@ D   [uuk]: removed a lot of deprecated stuff
 F   [uuk]: added OpenGL scissor group from pyglet's examples
 F   [uuk]: updated and improved mdk
 F   [uuk]: implemented utils for iterables
+F   [uuk]: improved registry miss-match output
 
 Roadmap:
     - refactor classes & functions [WIP]
