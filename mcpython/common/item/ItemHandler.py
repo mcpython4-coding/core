@@ -41,11 +41,15 @@ def build():
 
 def load_data(from_block_item_generator=False):
     if not G.prebuilding and os.path.exists(G.build + "/itemblockfactory.json"):
-        collected_overflow = (
-            []
-        )  # an list of items which we don't need anymore, so we can warn the user
         with open(G.build + "/itemblockfactory.json") as f:
             data = json.load(f)
+        builder = logger.TableBuilder(
+            header=[
+                "MCPYTHON REGISTRY CHANGE - Following BlockItemTextures",
+                "are obsolete as this blocks are missing.",
+                "They are removed from the system",
+            ]
+        )
         for entry in data[:]:
             name = entry[0]
             blocktable = G.registry.get_by_name("block").entries
@@ -66,17 +70,9 @@ def load_data(from_block_item_generator=False):
                 model.addTextureLayer(0, entry[1])
                 mcpython.client.rendering.model.ItemModel.handler.models[name] = model
             else:
-                collected_overflow.append(entry)
+                builder.println("-'{}'".format(entry))
                 data.remove(entry)
-        if len(collected_overflow) > 0:
-            logger.write_into_container(
-                ["-'{}'".format(e[0]) for e in collected_overflow],
-                header=[
-                    "MCPYTHON REGISTRY CHANGE - Following BlockItemTextures",
-                    "are obsolete as this blocks are missing.",
-                    "They are removed from the system",
-                ],
-            )
+        builder.finish()
         with open(G.build + "/itemblockfactory.json", mode="w") as f:
             json.dump(data, f)
 

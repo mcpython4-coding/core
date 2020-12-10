@@ -1330,6 +1330,10 @@ F   [uuk]: added OpenGL scissor group from pyglet's examples
 F   [uuk]: updated and improved mdk
 F   [uuk]: implemented utils for iterables
 F   [uuk]: improved registry miss-match output
+F   [uuk]: added TableBuilder helper class for logger.py dynamically building an table
+    [uuk]: migrated code to the new builder
+    [uuk]: modloader prints now errors in one big table
+    [uuk]: mod loader errors are now less fatal
 
 Roadmap:
     - refactor classes & functions [WIP]

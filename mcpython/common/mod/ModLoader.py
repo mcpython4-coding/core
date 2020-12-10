@@ -450,6 +450,7 @@ class ModLoader:
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "command:reload:end", self.execute_reload_stages
         )
+        self.error_builder = logger.TableBuilder()
 
     def registerReloadAssignedLoadingStage(self, stage: str):
         """
@@ -478,8 +479,7 @@ class ModLoader:
     def __getitem__(self, item):
         return self.mods[item]
 
-    @classmethod
-    def get_locations(cls) -> list:
+    def get_locations(self) -> list:
         """
         will return an list of mod locations found for loading
         todo: split up into smaller portions
@@ -510,11 +510,7 @@ class ModLoader:
                 if file in modlocations:
                     modlocations.remove(file)
                 else:
-                    logger.println(
-                        "[WARNING] it was attempted to remove mod '{}' which was not found in file system".format(
-                            file
-                        )
-                    )
+                    self.error_builder.println("-attempted to remove mod '{}' which is not found".format(file))
                 for _ in range(2):
                     sys.argv.pop(i)
             else:
@@ -549,10 +545,8 @@ class ModLoader:
                                 with f.open("mod.toml", mode="r") as sf:
                                     self.load_mods_toml(sf.read(), file)
                             except KeyError:
-                                logger.println(
-                                    "[WARNING] can't locate mod.json file in mod at '{}'".format(
-                                        file
-                                    )
+                                self.error_builder.println(
+                                    "- could not locate mod.json file in mod at '{}'".format(file)
                                 )
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
@@ -579,11 +573,7 @@ class ModLoader:
                     with open(file + "/mods.toml") as sf:
                         self.load_mods_toml(sf.read(), file + "/mods.toml")
                 else:
-                    logger.println(
-                        "[WARNING] can't locate mod.json file for mod at '{}'".format(
-                            file
-                        )
-                    )
+                    self.error_builder.println("- could not locate mod.json file for mod at '{}'".format(file))
 
     def look_out(self):
         """
@@ -599,11 +589,7 @@ class ModLoader:
                 if name in self.mods:
                     del self.mods[name]
                 else:
-                    logger.println(
-                        "[WARNING] it was attempted to remove mod '{}' which was not registered".format(
-                            name
-                        )
-                    )
+                    self.error_builder.println("- attempted to remove mod '{}' which is not arrival".format(name))
                 for _ in range(2):
                     sys.argv.pop(i)
             else:
@@ -654,61 +640,28 @@ class ModLoader:
         """
         self.load_from_decoded_json(json.loads(data), file)
 
-    @classmethod
-    def load_from_decoded_json(cls, data: dict, file: str):
+    def load_from_decoded_json(self, data: dict, file: str):
         """
         will parse the decoded json-data to the correct system
         :param data: the data of the mod
         :param file: the file allocated (used for warning messages)
         """
         if "version" not in data:
-            logger.println(
-                "[MODLOADER][INVALID] the version entry in '{}' has an invalid version format".format(
-                    file
-                )
-            )
+            self.error_builder.println("- version entry in '{}' is invalid due to version".format(file))
         else:
-            cls.load_json(data, file)
+            self.load_json(data, file)
 
-    @classmethod
-    def load_json(cls, data: dict, file: str):
+    def load_json(self, data: dict, file: str):
         """
         load the stored json file
         :param data: the data to load
         :param file: the file to load, for debugging uses
         """
         if "version" not in data:
-            raise IOError("invalid mod.json file found without 'version'-entry")
+            self.error_builder.println("- invalid mod.json file found without 'version'-entry in file {}".format(file))
+            return
         version = data["version"]
-        if version == "1.1.0":  # 1.1.0: outdated since 04.05.2020
-            logger.println(
-                "[WARN] using outdated mod.json format 1.1.0. Latest is 1.2.0. Format may get "
-                "removed in the future"
-            )
-            loader = data["loader"] if "loader" in data else "python:default"
-            # todo: add registry for loaders
-            if loader == "python:default":
-                if "load:files" in data:
-                    files = data["load:files"]
-                    for location in files if type(files) == list else [files]:
-                        try:
-                            importlib.import_module(
-                                location.replace("/", ".").replace("\\", ".")
-                            )
-                        except ModuleNotFoundError:
-                            logger.println(
-                                "[MODLOADER][ERROR] can't load mod file {}".format(
-                                    location
-                                )
-                            )
-                            return
-            else:
-                logger.println(
-                    "[MODLOADER][ERROR] found mod.json ({}) which is not using any supported loader"
-                    " ({})".format(file, loader)
-                )
-                G.window.close()
-        elif version == "1.2.0":  # latest
+        if version == "1.2.0":  # latest
             """
             example:
             {
@@ -725,21 +678,13 @@ class ModLoader:
             """
             for entry in data["entries"]:
                 if "name" not in entry:
-                    logger.println(
-                        "[INVALID] invalid entry found in '{}': missing 'name'-entry".format(
-                            file
-                        )
-                    )
+                    self.error_builder.println("- invalid entry in '{}' (entry: {}): missing entry-tag".format(file, entry))
                     continue
                 modname = entry["name"]
                 loader = entry["loader"] if "loader" in entry else "python:default"
                 if loader == "python:default":
                     if "version" not in entry:
-                        logger.println(
-                            "[INVALID] invalid entry found in '{}': missing 'version'-entry".format(
-                                file
-                            )
-                        )
+                        self.error_builder.println("- invalid entry found in '{}': missing 'version'-entry".format(file))
                         continue
                     version = tuple([int(e) for e in entry["version"].split(".")])
                     modinstance = mcpython.common.mod.Mod.Mod(modname, version)
@@ -747,30 +692,30 @@ class ModLoader:
                         for depend in entry["depends"]:
                             t = None if "type" not in depend else depend["type"]
                             if t is None or t == "depend":
-                                modinstance.add_dependency(cls.cast_dependency(depend))
+                                modinstance.add_dependency(self.cast_dependency(depend))
                             elif t == "depend_not_load_order":
                                 modinstance.add_not_load_dependency(
-                                    cls.cast_dependency(depend)
+                                    self.cast_dependency(depend)
                                 )
                             elif t == "not_compatible":
                                 modinstance.add_not_compatible(
-                                    cls.cast_dependency(depend)
+                                    self.cast_dependency(depend)
                                 )
                             elif t == "load_before":
                                 modinstance.add_load_before_if_arrival(
-                                    cls.cast_dependency(depend)
+                                    self.cast_dependency(depend)
                                 )
                             elif t == "load_after":
                                 modinstance.add_load_after_if_arrival(
-                                    cls.cast_dependency(depend)
+                                    self.cast_dependency(depend)
                                 )
                             elif t == "only_if":
                                 modinstance.add_load_only_when_arrival(
-                                    cls.cast_dependency(depend)
+                                    self.cast_dependency(depend)
                                 )
                             elif t == "only_if_not":
                                 modinstance.add_load_only_when_not_arrival(
-                                    cls.cast_dependency(depend)
+                                    self.cast_dependency(depend)
                                 )
                     if "load_resources" in entry and entry["load_resources"]:
                         modinstance.add_load_default_resources()
@@ -780,11 +725,7 @@ class ModLoader:
                                 location.replace("/", ".").replace("\\", ".")
                             )
                         except ModuleNotFoundError:
-                            logger.println(
-                                "[MODLOADER][ERROR] can't load mod file {}".format(
-                                    location
-                                )
-                            )
+                            self.error_builder.println("- can't load mod file {}".format(location))
                             return
                 else:
                     raise IOError("invalid loader '{}'".format(loader))
@@ -814,14 +755,14 @@ class ModLoader:
         data = toml.loads(data)
         if "modLoader" in data:
             if data["modLoader"] == "javafml":
-                logger.println(
-                    "[SOURCE][FATAL] found java mod. As an mod-author, please upgrade to python as javafml"
+                self.error_builder.println(
+                    "- found java mod. As an mod-author, please upgrade to python as javafml"
                 )
-                sys.exit(-1)
+                return
         if "loaderVersion" in data:
             if data["loaderVersion"].startswith("["):
-                logger.println("[SOURCE][FATAL] found forge-version indicator")
-                sys.exit(-1)
+                self.error_builder.println("- found forge-version indicator")
+                return
             version = data["loaderVersion"]
             if version.endswith("["):
                 mc_version = mcpython.common.config.VERSION_ORDER[
@@ -830,10 +771,10 @@ class ModLoader:
             elif version.count("[") == version.count("]") == 0:
                 mc_version = version.split("|")
             else:
-                logger.println(
+                self.error_builder.println(
                     "[SOURCE][FATAL] can't decode version id '{}'".format(version)
                 )
-                sys.exit(-1)
+                return
         else:
             mc_version = None
         self.load_from_decoded_json(
@@ -868,21 +809,19 @@ class ModLoader:
         :return an tuple of errors as string and collected mod-info's as dict
         todo: add config option for strategy: fail, load newest, load oldest, load all
         """
-        errors = []
+        errors = False
         modinfo = {}
         for mod in self.located_mods:
             if mod.name in modinfo:
-                errors.append(
-                    " -Mod '{}' has more than one version in the folder. Please load only every mod ONES".format(
-                        mod.name
-                    )
-                )
-                errors.append(" found in: {}".format(mod.path))
+                self.error_builder.println(" -Mod '{}' found in {} has more than one version in the folder. Please load only every mod ONES".format(
+                        mod.name, mod.path,
+                    ))
+                errors = True
             else:
                 modinfo[mod.name] = []
         return errors, modinfo
 
-    def check_dependency_errors(self, errors: list, modinfo: dict):
+    def check_dependency_errors(self, errors: bool, modinfo: dict):
         """
         will iterate through
         :param errors: the error list
@@ -892,14 +831,14 @@ class ModLoader:
         for mod in self.located_mods:
             for depend in mod.dependinfo[0]:
                 if not depend.arrival():
-                    errors.append(
+                    self.error_builder.println(
                         "- Mod '{}' needs mod {} which is not provided".format(
                             mod.name, depend
                         )
                     )
             for depend in mod.dependinfo[2]:
                 if depend.arrival():
-                    errors.append(
+                    self.error_builder.println(
                         "- Mod '{}' is incompatible with {} which is provided".format(
                             mod.name, depend
                         )
@@ -926,7 +865,7 @@ class ModLoader:
             for depend in mod.dependinfo[3]:
                 if depend.name in modinfo and mod.name not in modinfo[depend.name]:
                     modinfo[depend.name].append(mod.name)
-        if len(errors) > 0:
+        if errors:
             logger.println("found mods: ")
             logger.println(
                 " -",
@@ -936,17 +875,15 @@ class ModLoader:
             )
             logger.println()
 
-            logger.println("errors with mods:")
-            logger.println(" ", end="")
-            logger.println(*errors, sep="\n ")
+            self.error_builder.finish()
             sys.exit(-1)
         self.mod_loading_order = list(
             mcpython.util.math.topological_sort(
                 [(key, modinfo[key]) for key in modinfo.keys()]
             )
         )
-        for name in self.mod_loading_order:
-            logger.println(" - " + self.mods[name].mod_string())
+        self.error_builder.finish()
+        logger.write_into_container([" - {}".format(self.mods[name].mod_string()) for name in self.mod_loading_order])
 
     def process(self):
         """

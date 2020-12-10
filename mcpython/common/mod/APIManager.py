@@ -79,23 +79,20 @@ class APIManager:
         return self.api_cache[name][version]
 
     def check_compatibility_and_load(self):
-        error = []
+        builder = logger.TableBuilder()
         for name in self.api_implementations:
             if name not in self.api_shipments:
                 continue
             module, version, compatible = self.api_implementations[name]
             for _, v in self.api_shipments[name]:
                 if v != version and v not in compatible:
-                    error.append((name, (version,) + tuple(compatible), v))
-        if len(error) > 0:
-            logger.write_into_container(
-                [
-                    "- {} is needed in {} but compatible is only {}".format(
-                        name, need, ver
+                    builder.println(
+                        "- {} is needed in {} but compatible is only {}".format(
+                            name, version, compatible
+                        )
                     )
-                    for name, ver, need in error
-                ]
-            )
+        builder.finish()
+        if not builder.print_nothing():
             sys.exit(-1)
         for name in self.api_shipments:
             if name not in self.api_shipments:

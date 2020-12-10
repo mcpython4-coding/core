@@ -27,15 +27,16 @@ class RegistryInfo(mcpython.server.storage.serializer.IDataSerializer.IDataSeria
         if data is None:
             return
 
+        type_change_builder = logger.TableBuilder(header="REGISTRY TYPE CHANGES")
+
         registry_miss_match = {}
-        registry_type_changes = []
 
         for registry in G.registry.registries:  # iterate over all registries
             if not registry.dump_content_in_saves:
                 continue
             registry_miss_match[registry.name] = []
             if registry.name not in data:
-                registry_type_changes.append(
+                type_change_builder.println(
                     "registry {} not dumped in save files".format(registry.name)
                 )
             else:
@@ -54,12 +55,9 @@ class RegistryInfo(mcpython.server.storage.serializer.IDataSerializer.IDataSeria
                         "missing object: {}".format(compressed)
                     )
         for name in data:
-            registry_type_changes.append("missing registry: {}".format(name))
+            type_change_builder.println("missing registry: {}".format(name))
 
-        if len(registry_type_changes) != 0:
-            logger.write_into_container(
-                registry_type_changes, header="REGISTRY TYPE CHANGES"
-            )
+        type_change_builder.finish()
         for name in registry_miss_match:
             if len(registry_miss_match[name]) != 0:
                 logger.write_into_container(

@@ -181,6 +181,45 @@ def write_into_container(
     println(horizontal_line)
 
 
+class TableBuilder:
+    def __init__(
+        self,
+        style=("+", "-", "|"),
+        header=None,
+        outer_line_distance=2,
+        empty_lines_before_separate=1,
+        print_if_empty=False,
+    ):
+        self.areas = [[]]
+        self.style = style
+        self.header = header
+        self.outer_line_distance = outer_line_distance
+        self.empty_lines_before_separate = empty_lines_before_separate
+        self.print_if_empty = print_if_empty
+
+    def next_area(self):
+        self.areas.append([])
+
+    def println(self, text):
+        self.areas[-1].append(text)
+
+    def print_nothing(self) -> bool:
+        return (
+            not self.print_if_empty and len(self.areas) == 1 and len(self.areas[0]) == 0
+        )
+
+    def finish(self):
+        if self.print_nothing():
+            return
+        write_into_container(
+            *self.areas,
+            style=self.style,
+            header=self.header,
+            outer_line_distance=self.outer_line_distance,
+            empty_lines_before_separate=self.empty_lines_before_separate,
+        )
+
+
 def print_exception(*info):
     """
     write the current exception into console and log
