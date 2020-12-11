@@ -108,7 +108,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if not self.visible:
             return
         if not self.loaded:
-            G.tickhandler.schedule_once(
+            G.tick_handler.schedule_once(
                 G.world.savefile.read,
                 "minecraft:chunk",
                 dimension=self.dimension.id,
@@ -158,7 +158,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         return (
             position in self.world
-            or G.worldgenerationhandler.task_handler.get_block(position, self)
+            or G.world_generation_handler.task_handler.get_block(position, self)
             is not None
         )
 
@@ -321,7 +321,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if immediate:
             self.world[position].face_state.update(redraw_complete=True)
         else:
-            G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
+            G.world_generation_handler.task_handler.schedule_visual_update(self, position)
 
     def hide_block(
         self,
@@ -342,7 +342,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 return
             self.world[position].face_state.hide_all()
         else:
-            G.worldgenerationhandler.task_handler.schedule_visual_update(self, position)
+            G.world_generation_handler.task_handler.schedule_visual_update(self, position)
 
     def show(self, force=False):
         """
@@ -382,7 +382,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         for position in self.world.keys():
             if immediate:
-                G.worldgenerationhandler.task_handler.schedule_visual_update(
+                G.world_generation_handler.task_handler.schedule_visual_update(
                     self, position
                 )
             else:
@@ -409,11 +409,11 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         return (
             self.world[position]
             if position in self.world
-            else G.worldgenerationhandler.task_handler.get_block(position, chunk=self)
+            else G.world_generation_handler.task_handler.get_block(position, chunk=self)
         )
 
     def __del__(self):
-        G.worldgenerationhandler.task_handler.clear_chunk(self)
+        G.world_generation_handler.task_handler.clear_chunk(self)
         for block in self.world.values():
             del block
         self.world.clear()

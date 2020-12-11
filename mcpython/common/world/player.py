@@ -79,7 +79,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         )
 
         # used for determine if we can access stuff now or must wait
-        if not shared.modloader.finished:
+        if not shared.mod_loader.finished:
             mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                 "stage:inventories",
                 self.create_inventories,
@@ -171,7 +171,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         :param itemstack: the itemstack to add
         :return: either successful or not
         """
-        if not G.eventhandler.call_cancelable(
+        if not G.event_handler.call_cancelable(
             "gameplay:player:pick_up_item", self, itemstack
         ):
             return
@@ -239,7 +239,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         damage_source: mcpython.common.entity.DamageSource.DamageSource = None,
         test_totem=True,
     ):
-        if not G.eventhandler.call_cancelable(
+        if not G.event_handler.call_cancelable(
             "gameplay:player:scheduled_die:pre",
             self,
             drop_items,
@@ -267,7 +267,7 @@ class Player(mcpython.common.entity.Entity.Entity):
                 self.hunger = 20
                 return
         super().kill()
-        if not G.eventhandler.call_cancelable(
+        if not G.event_handler.call_cancelable(
             "gameplay:player:scheduled_die:between",
             self,
             drop_items,
@@ -280,7 +280,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         shared.world.change_chunks(sector, None)
         self.reset_moving_slot()
         if not shared.world.gamerulehandler.table["keepInventory"].status.status:
-            shared.commandparser.parse("/clear")  # todo: drop items
+            shared.command_parser.parse("/clear")  # todo: drop items
         if shared.world.gamerulehandler.table["showDeathMessages"].status.status:
             logger.println(
                 "[CHAT] player {} died".format(self.name)
@@ -289,7 +289,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         self.active_inventory_slot = 0
         shared.window.dy = 0
         shared.chat.close()
-        shared.inventoryhandler.close_all_inventories()
+        shared.inventory_handler.close_all_inventories()
         # todo: drop xp
         self.xp = 0
         self.xp_level = 0
@@ -303,11 +303,11 @@ class Player(mcpython.common.entity.Entity.Entity):
         # todo: recalculate armor level!
 
         if not shared.world.gamerulehandler.table["doImmediateRespawn"].status.status:
-            shared.statehandler.switch_to(
+            shared.state_handler.switch_to(
                 "minecraft:escape_state"
             )  # todo: add special state [see above]
 
-        G.eventhandler.call("gamplay:player:die", self, damage_source)
+        G.event_handler.call("gamplay:player:die", self, damage_source)
 
     def _get_position(self):
         return self.position
@@ -339,8 +339,8 @@ class Player(mcpython.common.entity.Entity.Entity):
                 self.kill()
 
     def reset_moving_slot(self):
-        self.pick_up(shared.inventoryhandler.moving_slot.get_itemstack().copy())
-        shared.inventoryhandler.moving_slot.get_itemstack().clean()
+        self.pick_up(shared.inventory_handler.moving_slot.get_itemstack().copy())
+        shared.inventory_handler.moving_slot.get_itemstack().clean()
 
     def set_to_spawn_point(self):
         x, _, z = mcpython.util.math.normalize(self.position)

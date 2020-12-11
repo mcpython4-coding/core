@@ -84,11 +84,11 @@ class CommandHelp(mcpython.server.command.Command.Command):
 
 # generate help pages  todo: change to an loading stage
 PAGES = []
-for command, _ in G.commandparser.commandparsing.values():
+for command, _ in G.command_parser.commandparsing.values():
     h = command.get_help()
     PAGES += h if type(h) == list else [h]
 
-G.eventhandler.call("command:help:generate_pages", PAGES)
+G.event_handler.call("command:help:generate_pages", PAGES)
 
 PAGES.sort(key=lambda x: x.split(" ")[0])
 

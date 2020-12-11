@@ -91,12 +91,12 @@ class CraftingGridHelperInterface(
         size = (sx, sy)
         recipes = []
         if (
-            item_length in G.craftinghandler.crafting_recipes_shaped
-            and size in G.craftinghandler.crafting_recipes_shaped[item_length]
+            item_length in G.crafting_handler.crafting_recipes_shaped
+            and size in G.crafting_handler.crafting_recipes_shaped[item_length]
         ):
-            recipes += G.craftinghandler.crafting_recipes_shaped[item_length][size]
-        if item_length in G.craftinghandler.crafting_recipes_shapeless:
-            recipes += G.craftinghandler.crafting_recipes_shapeless[item_length]
+            recipes += G.crafting_handler.crafting_recipes_shaped[item_length][size]
+        if item_length in G.crafting_handler.crafting_recipes_shapeless:
+            recipes += G.crafting_handler.crafting_recipes_shapeless[item_length]
         for recipe in recipes:
             if (
                 issubclass(
@@ -190,7 +190,7 @@ class CraftingGridHelperInterface(
     def update_output(self):
         self.slot_output_map.get_itemstack().clean()
         if self.active_recipe:
-            recipe = G.craftinghandler.check_relink(self.active_recipe)
+            recipe = G.crafting_handler.check_relink(self.active_recipe)
             self.slot_output_map.set_itemstack(
                 mcpython.common.container.ItemStack.ItemStack(
                     recipe.output[0], amount=recipe.output[1]
@@ -219,7 +219,7 @@ class CraftingGridHelperInterface(
         if (
             self.slot_output_map.get_itemstack().is_empty() and player
         ):  # have we removed items and where they removed by the player?
-            G.eventhandler.call(
+            G.event_handler.call(
                 "gui:crafting:grid:output:remove",
                 self,
                 self.slot_output_map,
@@ -256,7 +256,7 @@ class CraftingGridHelperInterface(
             G.world.get_active_player().pick_up(itemstack.copy().set_amount(max_size))
             count -= max_size
         G.world.get_active_player().pick_up(itemstack.copy().set_amount(count))
-        G.eventhandler.call(
+        G.event_handler.call(
             "gui:crafting:grid:output:remove",
             self,
             self.slot_output_map,

@@ -13,4 +13,4 @@ from mcpython import shared as G
 
 config = {"layers": []}
 
-G.worldgenerationhandler.register_world_gen_config("default_nether", config)
+G.world_generation_handler.register_world_gen_config("default_nether", config)

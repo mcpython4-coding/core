@@ -49,7 +49,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
         if values[0] == "give":
             for entity in values[1]:
                 if values[2] == "loot":
-                    entity.pick_up(G.loottablehandler.roll(values[3], player=entity))
+                    entity.pick_up(G.loot_table_handler.roll(values[3], player=entity))
                 elif values[2] == "mine":
                     block = entity.dimension.get_block(values[3])
                     if block is None or type(block) == str:
@@ -59,7 +59,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
                             )
                         )
                         return
-                    entity.pick_up(G.loottablehandler.get_drop_for_block(block, entity))
+                    entity.pick_up(G.loot_table_handler.get_drop_for_block(block, entity))
         elif values[0] == "insert":
             block = G.world.get_active_dimension().get_block(values[1])
             if block is None or type(block) == str:
@@ -74,7 +74,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
             inventory = block.get_inventories()[0]
             if values[2] == "loot":
                 inventory.insert_items(
-                    G.loottablehandler.roll(values[3], player=entity)
+                    G.loot_table_handler.roll(values[3], player=entity)
                 )
             elif values[2] == "mine":
                 blockb = G.world.get_active_dimension().get_block(values[3])
@@ -86,7 +86,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
                     )
                     return
                 inventory.insert_items(
-                    G.loottablehandler.get_drop_for_block(block, info.entity)
+                    G.loot_table_handler.get_drop_for_block(block, info.entity)
                 )
 
     @staticmethod

@@ -32,7 +32,7 @@ def create_shulker_box(name):
             self, player, button: int, modifiers: int, hit_position: tuple
         ):
             if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-                G.inventoryhandler.show(self.inventory)
+                G.inventory_handler.show(self.inventory)
                 return True
             else:
                 return False
@@ -66,10 +66,10 @@ def create_shulker_box(name):
             itemstack.item.inventory = self.inventory.copy()
 
         def on_block_remove(self, reason):
-            G.inventoryhandler.hide(self.inventory)
+            G.inventory_handler.hide(self.inventory)
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     create_shulker_box("shulker_box")
     for color in mcpython.util.enums.COLORS:

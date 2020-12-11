@@ -48,6 +48,6 @@ class BlockGrassBlock(AbstractBlock.AbstractBlock):
                     ).add_block(self.position, "minecraft:dirt")
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BlockGrassBlock)

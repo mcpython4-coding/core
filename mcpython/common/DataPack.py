@@ -49,7 +49,7 @@ class DataPackHandler:
         """
         for path in os.listdir(G.home + "/datapacks"):
             self.data_packs.append(self._load_datapack(G.home + "/datapacks/" + path))
-        G.eventhandler.call("datapack:search")
+        G.event_handler.call("datapack:search")
 
     def _load_datapack(self, directory: str):
         """
@@ -59,7 +59,7 @@ class DataPackHandler:
         try:
             datapack = DataPack(directory)
             datapack.load()
-            G.eventhandler.call("datapack:load", datapack)
+            G.event_handler.call("datapack:load", datapack)
             return datapack
         except:
             logger.print_exception("during loading data pack from {}".format(directory))
@@ -73,7 +73,7 @@ class DataPackHandler:
         }
         self.cleanup()
         self._load()
-        G.eventhandler.call("datapack:reload")
+        G.event_handler.call("datapack:reload")
         # restore old state
         for datapack in self.data_packs:
             if datapack.name in old_status_table:
@@ -87,11 +87,11 @@ class DataPackHandler:
         """
         removes all data packs from the system
         """
-        G.eventhandler.call("datapack:unload:pre")
+        G.event_handler.call("datapack:unload:pre")
         for datapack in self.data_packs:
             datapack.unload()
         self.data_packs.clear()
-        G.eventhandler.call("datapack:unload:post")
+        G.event_handler.call("datapack:unload:post")
 
     def try_call_function(self, name: str, info=None):
         """
@@ -104,7 +104,7 @@ class DataPackHandler:
             info = mcpython.server.command.CommandParser.ParsingCommandInfo()
         if name.startswith("#"):  # an tag
             try:
-                tag = G.taghandler.get_tag_for(name, "functions")
+                tag = G.tag_handler.get_tag_for(name, "functions")
             except ValueError:
                 return
             for name in tag.entries:

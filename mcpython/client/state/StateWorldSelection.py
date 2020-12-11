@@ -57,7 +57,7 @@ class StateWorldSelection(State.State):
         self.selected_world = None
         self.selection_sprite = pyglet.sprite.Sprite(WORLD_SELECTION_SELECT)
         del self.eventbus
-        self.eventbus = G.eventhandler.create_bus(active=False, crash_on_error=False)
+        self.eventbus = G.event_handler.create_bus(active=False, crash_on_error=False)
         for statepart in self.parts:
             statepart.master = [
                 self
@@ -265,10 +265,10 @@ class StateWorldSelection(State.State):
             self.parts[-1].active = False
 
     def on_back_press(self, *_):
-        G.statehandler.switch_to("minecraft:startmenu")
+        G.state_handler.switch_to("minecraft:startmenu")
 
     def on_new_world_press(self, *_):
-        G.statehandler.switch_to("minecraft:world_generation_config")
+        G.state_handler.switch_to("minecraft:world_generation_config")
 
     def on_delete_press(self, *_):
         if self.selected_world is None:
@@ -284,7 +284,7 @@ class StateWorldSelection(State.State):
     def enter_world(self, number: int):
         G.world.cleanup()
         G.world.setup_by_filename(self.world_data[number][2][0].text)
-        G.statehandler.switch_to("minecraft:world_loading")
+        G.state_handler.switch_to("minecraft:world_loading")
 
 
 worldselection = None

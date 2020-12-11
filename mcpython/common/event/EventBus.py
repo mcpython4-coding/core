@@ -55,7 +55,7 @@ class EventBus:
         self.sub_buses = []
         self.id = G.NEXT_EVENT_BUS_ID
         G.NEXT_EVENT_BUS_ID += 1
-        if G.debugevents:
+        if G.debug_events:
             with open(
                 G.local + "/debug/eventbus_{}.txt".format(self.id), mode="w"
             ) as f:
@@ -77,7 +77,7 @@ class EventBus:
         ):
             return
         self.event_subscriptions[eventname].append((function, args, kwargs, info))
-        if G.debugevents:
+        if G.debug_events:
             with open(
                 G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
             ) as f:
@@ -102,7 +102,7 @@ class EventBus:
                 )
             return
         self.event_subscriptions[event_name].remove(function)
-        if G.debugevents:
+        if G.debug_events:
             with open(
                 G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
             ) as f:
@@ -153,7 +153,7 @@ class EventBus:
                     ),
                     "function info: '{}'".format(info) if info is not None else "",
                 )
-            if G.debugevents:
+            if G.debug_events:
                 with open(
                     G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
                 ) as f:
@@ -207,7 +207,7 @@ class EventBus:
                     **{**kwargs, **self.extra_arguments[1], **ekwargs}
                 )
                 dif = time.time() - start
-                if G.debugevents:
+                if G.debug_events:
                     with open(
                         G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
                     ) as f:
@@ -227,12 +227,12 @@ class EventBus:
                 raise
 
     def activate(self):
-        G.eventhandler.activate_bus(self)
+        G.event_handler.activate_bus(self)
         for eventbus in self.sub_buses:
             eventbus.activate()
 
     def deactivate(self):
-        G.eventhandler.deactivate_bus(self)
+        G.event_handler.deactivate_bus(self)
         for eventbus in self.sub_buses:
             eventbus.deactivate()
 
@@ -288,7 +288,7 @@ class EventBus:
                     info,
                 )
             dif = time.time() - start
-            if G.debugevents:
+            if G.debug_events:
                 with open(
                     G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
                 ) as f:

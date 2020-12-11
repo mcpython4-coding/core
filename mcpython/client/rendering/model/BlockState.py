@@ -86,10 +86,10 @@ class MultiPartDecoder(IBlockStateDecoder):
         super().__init__(data, block_state)
         for entry in data["multipart"]:
             if type(entry["apply"]) == dict:
-                G.modelhandler.used_models.append(entry["apply"]["model"])
+                G.model_handler.used_models.append(entry["apply"]["model"])
             else:
                 for d in entry["apply"]:
-                    G.modelhandler.used_models.append(d["model"])
+                    G.model_handler.used_models.append(d["model"])
         self.model_alias = {}
         self.parent = None
         if "parent" in data:
@@ -100,11 +100,11 @@ class MultiPartDecoder(IBlockStateDecoder):
 
     def bake(self):
         if self.parent is not None:
-            if self.parent not in G.modelhandler.blockstates:
+            if self.parent not in G.model_handler.blockstates:
                 raise ValueError(
                     "block state referencing '{}' is invalid!".format(self.parent)
                 )
-            parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
+            parent: BlockStateDefinition = G.model_handler.blockstates[self.parent]
             if not parent.baked:
                 return False
             if not issubclass(type(parent.loader), type(self)):
@@ -115,7 +115,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                 copy.deepcopy(self.parent.loader.data["multipart"])
             )
         for model in self.model_alias.values():
-            G.modelhandler.used_models.append(model)
+            G.model_handler.used_models.append(model)
         for entry in self.data["multipart"]:
             data = entry["apply"]
             if type(data) == dict:
@@ -135,9 +135,9 @@ class MultiPartDecoder(IBlockStateDecoder):
                 data = entry["apply"]
                 if type(data) == dict:
                     model, config, _ = BlockState.decode_entry(data)
-                    if model not in G.modelhandler.models:
+                    if model not in G.model_handler.models:
                         continue
-                    result += G.modelhandler.models[model].add_face_to_batch(
+                    result += G.model_handler.models[model].add_face_to_batch(
                         block.position, batch, config, face
                     )
                 else:
@@ -151,7 +151,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         model, config, _ = BlockState.decode_entry(
                             data[block.block_state]
                         )
-                    result += G.modelhandler.models[model].add_face_to_batch(
+                    result += G.model_handler.models[model].add_face_to_batch(
                         block.position, batch, config, face
                     )
         return result
@@ -201,7 +201,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                 data = entry["apply"]
                 if type(data) == dict:
                     model, config, _ = BlockState.decode_entry(data)
-                    model = G.modelhandler.models[model]
+                    model = G.model_handler.models[model]
                     for boxmodel in model.boxmodels:
                         bbox.bboxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
@@ -221,7 +221,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         model, config, _ = BlockState.decode_entry(
                             data[blockinstance.block_state]
                         )
-                    model = G.modelhandler.models[model]
+                    model = G.model_handler.models[model]
                     for boxmodel in model.boxmodels:
                         bbox.bboxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
@@ -239,7 +239,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                 data = entry["apply"]
                 if type(data) == dict:
                     model, config, _ = BlockState.decode_entry(data)
-                    G.modelhandler.models[model].draw_face(block.position, config, face)
+                    G.model_handler.models[model].draw_face(block.position, config, face)
                 else:
                     if block.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
@@ -251,7 +251,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         model, config, _ = BlockState.decode_entry(
                             data[block.block_state]
                         )
-                    G.modelhandler.models[model].draw_face(block.position, config, face)
+                    G.model_handler.models[model].draw_face(block.position, config, face)
 
 
 @G.registry
@@ -294,10 +294,10 @@ class DefaultDecoder(IBlockStateDecoder):
 
     def bake(self):
         if self.parent is not None:
-            if self.parent not in G.modelhandler.blockstates:
+            if self.parent not in G.model_handler.blockstates:
                 print("block state referencing '{}' is invalid!".format(self.parent))
                 return
-            parent: BlockStateDefinition = G.modelhandler.blockstates[self.parent]
+            parent: BlockStateDefinition = G.model_handler.blockstates[self.parent]
             if not parent.baked:
                 return False
             if not issubclass(type(parent.loader), type(self)):
@@ -306,7 +306,7 @@ class DefaultDecoder(IBlockStateDecoder):
             self.model_alias.update(self.parent.loader.model_alias.copy())
             self.states += [(e, state.copy()) for e, state in self.parent.loader.states]
         for model in self.model_alias.values():
-            G.modelhandler.used_models.append(model)
+            G.model_handler.used_models.append(model)
         for _, state in self.states:
             state: BlockState
             for i, (model, *d) in enumerate(state.models):
@@ -334,7 +334,7 @@ class DefaultDecoder(IBlockStateDecoder):
         for keymap, blockstate in self.states:
             if keymap == data:
                 model, config, _ = blockstate.models[blockinstance.block_state]
-                model = G.modelhandler.models[model]
+                model = G.model_handler.models[model]
                 for boxmodel in model.boxmodels:
                     rotation = config["rotation"]
                     bbox.bboxes.append(
@@ -376,7 +376,7 @@ class BlockStateDefinition:
         if immediate:
             cls._from_file(file)
         else:
-            G.modloader.mods[modname].eventbus.subscribe(
+            G.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:model:blockstate_create",
                 cls._from_file,
                 file,
@@ -428,7 +428,7 @@ class BlockStateDefinition:
             and name not in self.NEEDED
         ):
             raise BlockStateNotNeeded()
-        G.modelhandler.blockstates[name] = self
+        G.model_handler.blockstates[name] = self
         self.loader = None
         for loader in blockstate_decoder_registry.entries.values():
             if loader.is_valid(data):
@@ -438,7 +438,7 @@ class BlockStateDefinition:
             raise ValueError("can't find matching loader for model {}".format(name))
         self.baked = False
 
-        G.modloader.mods[name.split(":")[0]].eventbus.subscribe(
+        G.mod_loader.mods[name.split(":")[0]].eventbus.subscribe(
             "stage:model:blockstate_bake",
             self.bake,
             info="baking block state {}".format(name),
@@ -446,7 +446,7 @@ class BlockStateDefinition:
 
     def bake(self):
         if not self.loader.bake():
-            G.modloader.mods[self.name.split(":")[0]].eventbus.subscribe(
+            G.mod_loader.mods[self.name.split(":")[0]].eventbus.subscribe(
                 "stage:model:blockstate_bake",
                 self.bake,
                 info="loading block state {}".format(self.name),
@@ -468,11 +468,11 @@ class BlockState:
         if type(data) == dict:
             if "model" in data:
                 self.models.append(self.decode_entry(data))
-                G.modelhandler.used_models.append(data["model"])
+                G.model_handler.used_models.append(data["model"])
         elif type(data) == list:
             models = [self.decode_entry(x) for x in data]
             self.models += models
-            G.modelhandler.used_models += [x[0] for x in models]
+            G.model_handler.used_models += [x[0] for x in models]
 
     def copy(self):
         return BlockState(self.data)
@@ -480,7 +480,7 @@ class BlockState:
     @staticmethod
     def decode_entry(data: dict):
         model = data["model"]
-        G.modelhandler.used_models.append(model)
+        G.model_handler.used_models.append(model)
         rotations = (
             data["x"] if "x" in data else 0,
             data["y"] if "y" in data else 0,
@@ -503,12 +503,12 @@ class BlockState:
             )
         result = []
         model, config, _ = self.models[block.block_state]
-        if model not in G.modelhandler.models:
+        if model not in G.model_handler.models:
             logger.println(
                 "can't find model named '{}' to add at {}".format(model, block.position)
             )
             return result
-        result += G.modelhandler.models[model].add_face_to_batch(
+        result += G.model_handler.models[model].add_face_to_batch(
             block.position, batch, config, face
         )
         return result
@@ -519,13 +519,13 @@ class BlockState:
                 random.choices(self.models, [e[2] for e in self.models])[0]
             )
         model, config, _ = self.models[block.block_state]
-        if model not in G.modelhandler.models:
+        if model not in G.model_handler.models:
             raise ValueError(
                 "can't find model named '{}' to draw at {}".format(
                     model, block.position
                 )
             )
-        G.modelhandler.models[model].draw_face(block.position, config, face)
+        G.model_handler.models[model].draw_face(block.position, config, face)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

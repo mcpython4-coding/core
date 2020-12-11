@@ -337,7 +337,7 @@ def load():
         for key in ENABLED_EXTRA_BLOCKS
     ]
 
-    @G.modloader("minecraft", "stage:mod:config:work")
+    @G.mod_loader("minecraft", "stage:mod:config:work")
     def load_data():
         SPEED_DICT[0] = [speeds["walking"].read(), speeds["sprinting"].read(), 0, 0]
         SPEED_DICT[1] = [
@@ -401,7 +401,7 @@ def load():
 
                 if G.world.world_loaded:
                     logger.println("shuffling data...")
-                    G.eventhandler.call("data:shuffle:all")
+                    G.event_handler.call("data:shuffle:all")
 
             pyglet.clock.schedule_interval(on_shuffle, SHUFFLE_INTERVAL)
 

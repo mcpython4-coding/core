@@ -14,7 +14,7 @@ from mcpython import shared as G
 from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 
-@G.worldgenerationhandler
+@G.world_generation_handler
 class DefaultStonePlacementLayer(Layer):
     DEPENDS_ON = ["minecraft:heightmap_default"]
 

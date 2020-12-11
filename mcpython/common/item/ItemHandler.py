@@ -40,7 +40,7 @@ def build():
 
 
 def load_data(from_block_item_generator=False):
-    if not G.invalidate_cacheing and os.path.exists(G.build + "/itemblockfactory.json"):
+    if not G.invalidate_cache and os.path.exists(G.build + "/itemblockfactory.json"):
         with open(G.build + "/itemblockfactory.json") as f:
             data = json.load(f)
         builder = logger.TableBuilder(

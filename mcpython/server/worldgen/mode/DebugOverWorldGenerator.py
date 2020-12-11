@@ -77,7 +77,7 @@ def chunk_generate(chunk):
 
 config = {"layers": []}
 
-G.worldgenerationhandler.register_world_gen_config("debug_overworld", config)
+G.world_generation_handler.register_world_gen_config("debug_overworld", config)
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:post", Blockinfo.construct, info="constructing debug world info"

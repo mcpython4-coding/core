@@ -71,7 +71,7 @@ def create_carpet(carpet_color: str):
     return Carpet
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     for color in mcpython.util.enums.COLORS:
         create_carpet("minecraft:" + color)

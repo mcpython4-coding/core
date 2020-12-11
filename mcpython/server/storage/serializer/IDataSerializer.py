@@ -63,7 +63,7 @@ dataserializerregistry = mcpython.common.event.Registry.Registry(
 )
 
 
-@G.modloader("minecraft", "stage:serializer:parts")
+@G.mod_loader("minecraft", "stage:serializer:parts")
 def load():
     from mcpython.server.storage.serializer import (
         General,

@@ -14,16 +14,16 @@ import sys
 import os
 
 
-@shared.modloader("{NAME}", "stage:mod:init")
+@shared.mod_loader("{NAME}", "stage:mod:init")
 def init():
-    @shared.modloader("{NAME}", "stage:combined_factory:blocks")
+    @shared.mod_loader("{NAME}", "stage:combined_factory:blocks")
     def load_combined_factories():  # Do here your combined factory stuff...
         pass
 
-    @shared.modloader("{NAME}", "stage:block:factory_usage")
+    @shared.mod_loader("{NAME}", "stage:block:factory_usage")
     def load_block_factories():  # ... and do here manual block registering ...
         pass
 
-    @shared.modloader("{NAME}", "stage:item:factory_usage")
+    @shared.mod_loader("{NAME}", "stage:item:factory_usage")
     def load_item_factories():  # ... and here the items!
         pass

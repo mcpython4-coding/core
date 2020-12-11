@@ -108,6 +108,6 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             player.in_nether_portal_since = None
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(NetherPortalBlock)

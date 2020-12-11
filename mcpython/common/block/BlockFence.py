@@ -55,7 +55,7 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
         }
 
     def on_block_added(self):
-        if self.NAME in G.modelhandler.blockstates:
+        if self.NAME in G.model_handler.blockstates:
             self.on_block_update()
 
     def get_model_state(self) -> dict:
@@ -163,7 +163,7 @@ class NetherBrickFence(IFence):
     FENCE_TYPE_NAME = {"minecraft:nether_fence"}
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(OakFence)
     G.registry.register(SpruceFence)

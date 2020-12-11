@@ -51,6 +51,6 @@ class BlockDirt(AbstractBlock.AbstractBlock):
                                 return
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BlockDirt)

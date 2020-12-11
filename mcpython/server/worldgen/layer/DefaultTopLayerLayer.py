@@ -18,7 +18,7 @@ from mcpython import shared as G
 from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 
-@G.worldgenerationhandler
+@G.world_generation_handler
 class DefaultTopLayerLayer(Layer):
     DEPENDS_ON = ["minecraft:heightmap_default", "minecraft:biome_map_default"]
 
@@ -46,7 +46,7 @@ class DefaultTopLayerLayer(Layer):
         chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
         mheight = heightmap[(x, z)][0][1]
-        biome = G.biomehandler.biomes[chunk.get_value("biome_map")[(x, z)]]
+        biome = G.biome_handler.biomes[chunk.get_value("biome_map")[(x, z)]]
         noise_value = (
             DefaultTopLayerLayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
         )

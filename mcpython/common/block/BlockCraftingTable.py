@@ -27,7 +27,7 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
         self, player, button: int, modifiers: int, hit_position: tuple
     ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            G.inventoryhandler.show(
+            G.inventory_handler.show(
                 G.world.get_active_player().inventories["crafting_table"]
             )
             return True
@@ -44,7 +44,7 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
     def on_block_remove(self, reason):
-        G.inventoryhandler.hide(
+        G.inventory_handler.hide(
             G.world.get_active_player().inventories["crafting_table"]
         )
 
@@ -53,6 +53,6 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
         itemfactory.setFuelLevel(15)
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BlockCraftingTable)

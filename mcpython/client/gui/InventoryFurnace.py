@@ -85,7 +85,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         if any(
             [
                 self.slots[0].itemstack.get_item_name()
-                in shared.craftinghandler.furnace_recipes[x]
+                in shared.crafting_handler.furnace_recipes[x]
                 for x in self.types
             ]
         ):
@@ -112,9 +112,9 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
             self.old_item_name = self.slots[0].itemstack.get_item_name()
             self.smelt_start = time.time()
             for x in self.types:
-                if self.old_item_name in shared.craftinghandler.furnace_recipes[x]:
-                    recipe = shared.craftinghandler.check_relink(
-                        shared.craftinghandler.furnace_recipes[x][self.old_item_name]
+                if self.old_item_name in shared.crafting_handler.furnace_recipes[x]:
+                    recipe = shared.crafting_handler.check_relink(
+                        shared.crafting_handler.furnace_recipes[x][self.old_item_name]
                     )
                     break
             else:
@@ -248,7 +248,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            shared.inventoryhandler.hide(self)
+            shared.inventory_handler.hide(self)
 
     def on_tick(self, dt):
         if self.fuel_left > 0:

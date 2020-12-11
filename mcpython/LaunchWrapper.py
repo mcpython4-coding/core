@@ -53,7 +53,7 @@ class LaunchWrapper:
 
         self.setup_registries()
 
-        shared.eventhandler.call("game:startup")
+        shared.event_handler.call("game:startup")
 
     def setup_registries(self):
         """
@@ -66,7 +66,7 @@ class LaunchWrapper:
         # from mcpython.common.data.gen.mcpython import (
         # )
 
-        @shared.modloader("minecraft", "special:exit")
+        @shared.mod_loader("minecraft", "special:exit")
         def exit():
             sys.exit()
 
@@ -83,8 +83,6 @@ class LaunchWrapper:
         import mcpython.common.data.tags.TagHandler
 
         import mcpython.client.rendering.model.ItemModel
-
-        import mcpython.client.texture.factory
 
     def setup_opengl(self):
         """
@@ -122,7 +120,7 @@ class LaunchWrapper:
         # check if build folder exists, if not, we need to create its content
         if not os.path.exists(shared.build):
             logger.println("rebuild mode due to missing cache folder")
-            shared.invalidate_cacheing = True
+            shared.invalidate_cache = True
 
         if os.path.exists(shared.build):  # copy default skin to make it start correctly
             try:
@@ -137,9 +135,9 @@ class LaunchWrapper:
         """
         Do ModLoader inital stuff
         """
-        shared.modloader.look_out()
-        shared.modloader.sort_mods()
-        shared.modloader.write_mod_info()
+        shared.mod_loader.look_out()
+        shared.mod_loader.sort_mods()
+        shared.mod_loader.write_mod_info()
 
     def launch(self):
         """
@@ -170,7 +168,7 @@ class LaunchWrapper:
                 mcpython.ResourceLoader.read_pyglet_image("icon_16x16.png"),
                 mcpython.ResourceLoader.read_pyglet_image("icon_32x32.png"),
             )
-            shared.eventhandler.call("game:gameloop_startup")
+            shared.event_handler.call("game:gameloop_startup")
         except:
             logger.print_exception("[FATAL] failed to load window images")
             sys.exit(-1)
@@ -207,5 +205,5 @@ class LaunchWrapper:
         import mcpython.ResourceLoader
 
         mcpython.ResourceLoader.close_all_resources()
-        shared.eventhandler.call("game:close")
+        shared.event_handler.call("game:close")
         shared.tmp.cleanup()

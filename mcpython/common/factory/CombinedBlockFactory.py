@@ -179,7 +179,7 @@ class CombinedFullBlockFactory:
         self.modname = modname
         self.name = None
         self.on_create_callback = on_create_callback
-        G.modloader(modname, "stage:combined_factory:build")(self.build)
+        G.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
     def setName(self, name: str):
         self.name = name
@@ -197,8 +197,8 @@ class CombinedFullBlockFactory:
             [name in self.textures for name in self.mode.texture_names]
         ), "all needed texture names MUST be set"
         assert self.name is not None, "name must be set"
-        G.modloader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
-        G.modloader(self.modname, "stage:block:factory_usage")(
+        G.mod_loader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
+        G.mod_loader(self.modname, "stage:block:factory_usage")(
             self.__generate_factories
         )
 
@@ -256,7 +256,7 @@ class CombinedSlabFactory:
         self.name = None
         self.on_create_callback = on_create_callback
         self.full_model = full_model
-        G.modloader(modname, "stage:combined_factory:build")(self.build)
+        G.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
     def setName(self, name: str):
         self.name = name
@@ -264,8 +264,8 @@ class CombinedSlabFactory:
 
     def build(self):
         assert self.name is not None, "name must be set"
-        G.modloader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
-        G.modloader(self.modname, "stage:block:factory_usage")(
+        G.mod_loader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
+        G.mod_loader(self.modname, "stage:block:factory_usage")(
             self.__generate_factories
         )
 
@@ -336,7 +336,7 @@ class CombinedWallFactory:
         self.modname = modname
         self.name = None
         self.on_create_callback = on_create_callback
-        G.modloader(modname, "stage:combined_factory:build")(self.build)
+        G.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
     def setName(self, name: str):
         self.name = name
@@ -344,8 +344,8 @@ class CombinedWallFactory:
 
     def build(self):
         assert self.name is not None, "name must be set"
-        G.modloader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
-        G.modloader(self.modname, "stage:block:load")(self.__generate_factories)
+        G.mod_loader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
+        G.mod_loader(self.modname, "stage:block:load")(self.__generate_factories)
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
@@ -423,7 +423,7 @@ class CombinedLogFactory:
         self.modname = modname
         self.name = None
         self.on_create_callback = on_create_callback
-        G.modloader(modname, "stage:combined_factory:build")(self.build)
+        G.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
     def setName(self, name: str):
         self.name = name
@@ -431,8 +431,8 @@ class CombinedLogFactory:
 
     def build(self):
         assert self.name is not None, "name must be set"
-        G.modloader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
-        G.modloader(self.modname, "stage:block:load")(self.__generate_factories)
+        G.mod_loader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
+        G.mod_loader(self.modname, "stage:block:load")(self.__generate_factories)
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])

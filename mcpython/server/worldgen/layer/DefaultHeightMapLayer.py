@@ -20,7 +20,7 @@ import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 
-@G.worldgenerationhandler
+@G.world_generation_handler
 class DefaultHeightMapLayer(Layer):
     DEPENDS_ON = ["minecraft:biome_map_default"]
 
@@ -52,7 +52,7 @@ class DefaultHeightMapLayer(Layer):
     def get_height_at(cls, chunk, x, z, factor) -> list:
         v = DefaultHeightMapLayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
         biome_map = chunk.get_value("biome_map")
-        biome = G.biomehandler.biomes[biome_map[(x, z)]]
+        biome = G.biome_handler.biomes[biome_map[(x, z)]]
         r = biome.get_height_range()
         v *= r[1] - r[0]
         v += r[0]

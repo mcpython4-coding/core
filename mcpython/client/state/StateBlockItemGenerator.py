@@ -49,7 +49,7 @@ class StateBlockItemGenerator(State.State):
 
     def get_parts(self) -> list:
         kwargs = {}
-        if G.invalidate_cacheing:
+        if G.invalidate_cache:
             kwargs["glcolor3d"] = (1.0, 1.0, 1.0)
         return [
             StatePartGame.StatePartGame(
@@ -94,9 +94,9 @@ class StateBlockItemGenerator(State.State):
     def on_activate(self):
         try:
             G.world.cleanup()
-            G.dimensionhandler.init_dims()
+            G.dimension_handler.init_dims()
             G.world.hide_faces_to_ungenerated_chunks = False
-            G.tickhandler.enable_random_ticks = False
+            G.tick_handler.enable_random_ticks = False
         except:
             logger.print_exception(
                 "[FATAL] failed to open world for blockitemgenerator"
@@ -105,7 +105,7 @@ class StateBlockItemGenerator(State.State):
         self.tasks = list(G.registry.get_by_name("block").entries.keys())
         if not os.path.isdir(G.build + "/generated_items"):
             os.makedirs(G.build + "/generated_items")
-        if not G.invalidate_cacheing:
+        if not G.invalidate_cache:
             if os.path.exists(G.build + "/itemblockfactory.json"):
                 with open(G.build + "/itemblockfactory.json", mode="r") as f:
                     self.table = json.load(f)
@@ -160,13 +160,13 @@ class StateBlockItemGenerator(State.State):
         with open(G.build + "/info.json", mode="w") as f:
             json.dump({"finished": True}, f)
         mcpython.client.rendering.model.ItemModel.handler.bake()
-        G.tickhandler.enable_random_ticks = True
+        G.tick_handler.enable_random_ticks = True
         G.world.hide_faces_to_ungenerated_chunks = True
         G.window.set_fullscreen("--fullscreen" in sys.argv)
-        G.eventhandler.call("stage:blockitemfactory:finish")
+        G.event_handler.call("stage:blockitemfactory:finish")
 
     def close(self):
-        G.statehandler.switch_to("minecraft:startmenu")
+        G.state_handler.switch_to("minecraft:startmenu")
         G.world.get_active_player().position = (0, 10, 0)
         G.world.get_active_player().rotation = (0, 0, 0)
         G.world.get_active_dimension().remove_block((0, 0, 0))

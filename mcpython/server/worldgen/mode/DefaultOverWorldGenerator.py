@@ -24,4 +24,4 @@ config = {
     ]
 }
 
-G.worldgenerationhandler.register_world_gen_config("default_overworld", config)
+G.world_generation_handler.register_world_gen_config("default_overworld", config)

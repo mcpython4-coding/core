@@ -53,9 +53,9 @@ class ModDependency:
         raise ValueError("invalid version entry '{}' of type '{}'".format(a, type(a)))
 
     def arrival(self) -> bool:
-        if self.name not in G.modloader.mods:
+        if self.name not in G.mod_loader.mods:
             return False
-        mod = G.modloader.mods[self.name]
+        mod = G.mod_loader.mods[self.name]
         if self.version_range[0] is not None:
             if self.version_range[1] is not None:
                 return self.__testfor(mod.version, self.version_range)
@@ -86,7 +86,7 @@ class ModDependency:
         """
         gets the real version of the mod specified by this
         """
-        return G.modloader.mods[self.name].version
+        return G.mod_loader.mods[self.name].version
 
     def __str__(self):
         """
@@ -159,7 +159,7 @@ class Mod:
         self.path = None
         self.version = version  # the version of the mod, as an tuple
         self.package = None  # the package where the mod-file was found
-        G.modloader.add_to_add(self)
+        G.mod_loader.add_to_add(self)
 
     def mod_string(self):
         """

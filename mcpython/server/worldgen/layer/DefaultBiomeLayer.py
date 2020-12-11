@@ -21,7 +21,7 @@ import mcpython.common.world.Chunk
 import mcpython.common.world.AbstractInterface
 
 
-@G.worldgenerationhandler
+@G.world_generation_handler
 class DefaultBiomeMapLayer(Layer):
     DEPENDS_ON = ["minecraft:landmass_default"]
 
@@ -57,7 +57,7 @@ class DefaultBiomeMapLayer(Layer):
                     * 0.5
                     + 0.5
                 )
-                biomemap[(x, z)] = G.biomehandler.get_biome_at(
+                biomemap[(x, z)] = G.biome_handler.get_biome_at(
                     landmass, config.dimension, v, temperaturemap[(x, z)]
                 )
         chunk.set_value("biome_map", biomemap)

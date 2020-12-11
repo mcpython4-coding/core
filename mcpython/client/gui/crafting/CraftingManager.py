@@ -129,7 +129,7 @@ class CraftingManager:
             if itemname.endswith("/"):
                 continue
             if not load_direct:
-                G.modloader.mods[modname].eventbus.subscribe(
+                G.mod_loader.mods[modname].eventbus.subscribe(
                     "stage:recipe:bake",
                     self.add_recipe_from_file,
                     itemname,
@@ -139,7 +139,7 @@ class CraftingManager:
                 self.add_recipe_from_file(itemname)
 
     def reload_crafting_recipes(self):
-        if not G.eventhandler.call_cancelable("crafting_manager:reload:pre", self):
+        if not G.event_handler.call_cancelable("crafting_manager:reload:pre", self):
             return
 
         # all shapeless recipes sorted after item count
@@ -149,7 +149,7 @@ class CraftingManager:
         # all smelting outputs sorted after ingredient
         self.furnace_recipes = {}
 
-        G.eventhandler.call("crafting_manager:reload:intermediate", self)
+        G.event_handler.call("crafting_manager:reload:intermediate", self)
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
             logger.println(
@@ -161,10 +161,10 @@ class CraftingManager:
             self.load(modname, check_mod_dirs=False, load_direct=True)
         logger.println()
 
-        G.eventhandler.call("crafting_manager:reload:end", self)
+        G.event_handler.call("crafting_manager:reload:end", self)
 
 
-G.craftinghandler = CraftingManager()
+G.crafting_handler = CraftingManager()
 
 
 def load_recipe_providers():
@@ -176,7 +176,7 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:recipes",
-    G.craftinghandler.load,
+    G.crafting_handler.load,
     "minecraft",
     info="loading crafting recipes",
 )

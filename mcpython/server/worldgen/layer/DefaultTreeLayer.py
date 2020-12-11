@@ -17,7 +17,7 @@ import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 
-@G.worldgenerationhandler
+@G.world_generation_handler
 class DefaultTreeLayer(Layer):
     DEPENDS_ON = ["minecraft:biome_map_default", "minecraft:heightmap_default"]
 
@@ -45,7 +45,7 @@ class DefaultTreeLayer(Layer):
         treemap = chunk.get_value("tree_blocked")
         if (x, z) in treemap:
             return  # is an tree nearby?
-        biome = G.biomehandler.biomes[chunk.get_value("biome_map")[(x, z)]]
+        biome = G.biome_handler.biomes[chunk.get_value("biome_map")[(x, z)]]
         height = chunk.get_value("heightmap")[(x, z)][0][1]
         trees = biome.get_trees()
         # todo: make noise-based

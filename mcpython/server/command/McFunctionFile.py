@@ -33,7 +33,7 @@ class McFunctionFile:
             if not line.startswith("#"):
                 if line.count(" ") + line.count("   ") == len(line):
                     continue
-                G.commandparser.parse("/" + line, info.copy())
+                G.command_parser.parse("/" + line, info.copy())
                 count += 1
         G.chat.print_ln(
             "executed {} commands from function {}".format(count, self.name)

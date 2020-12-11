@@ -33,7 +33,7 @@ class CommandShuffleData(mcpython.server.command.Command.Command):
         if not mcpython.common.config.SHUFFLE_DATA:
             info.chat.print_ln("can't shuffle data as shuffeling is disabled")
             return
-        G.eventhandler.call("data:shuffle:all")
+        G.event_handler.call("data:shuffle:all")
 
     @staticmethod
     def get_help() -> list:

@@ -57,10 +57,10 @@ class TickHandler:
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
                     return
-        G.entityhandler.tick()
+        G.entity_handler.tick()
         if any(
             type(x) == mcpython.client.state.StatePartGame.StatePartGame
-            for x in G.statehandler.active_state.parts
+            for x in G.state_handler.active_state.parts
         ):
             mcpython.common.DataPack.datapackhandler.try_call_function(
                 "#minecraft:tick"
@@ -154,4 +154,4 @@ class TickHandler:
                                     blockinst.on_random_update()
 
 
-handler = G.tickhandler = TickHandler()
+handler = G.tick_handler = TickHandler()

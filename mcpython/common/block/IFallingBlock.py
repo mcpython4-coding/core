@@ -28,7 +28,7 @@ class IFallingBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
         x, y, z = self.position
         blockinst = G.world.get_active_dimension().get_block((x, y - 1, z))
         if not blockinst:
-            G.entityhandler.add_entity(
+            G.entity_handler.add_entity(
                 "minecraft:falling_block", self.position, representing_block=self
             )
             G.world.get_active_dimension().remove_block(self.position)

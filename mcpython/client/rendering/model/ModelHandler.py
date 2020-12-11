@@ -52,7 +52,7 @@ class ModelHandler:
                 address_fix = "/".join(s[s.index("block") + 1 :])
                 name = mod_fix + ":block/" + ".".join(address_fix.split(".")[:-1])
                 self.found_models[name] = model
-        G.eventhandler.call("modelhandler:searched")
+        G.event_handler.call("modelhandler:searched")
 
     def add_from_data(self, name: str, data: dict):
         """
@@ -70,12 +70,12 @@ class ModelHandler:
 
     def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
-        if modname not in G.modloader.mods:
+        if modname not in G.mod_loader.mods:
             modname = "minecraft"
         if immediate:
             self.special_build(model)
         else:
-            G.modloader.mods[modname].eventbus.subscribe(
+            G.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:model:model_bake_prepare",
                 self.special_build,
                 model,
@@ -130,7 +130,7 @@ class ModelHandler:
             if immediate:
                 self.load_model(x)
             else:
-                G.modloader.mods[modname].eventbus.subscribe(
+                G.mod_loader.mods[modname].eventbus.subscribe(
                     "stage:model:model_bake",
                     self.load_model,
                     x,
@@ -225,29 +225,29 @@ class ModelHandler:
             mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_directory(
                 directory, modname, immediate=True
             )
-        G.eventhandler.call("data:blockstates:custom_injection", self)
-        G.eventhandler.call("data:models:custom_injection", self)
+        G.event_handler.call("data:blockstates:custom_injection", self)
+        G.event_handler.call("data:models:custom_injection", self)
         self.build(immediate=True)
         self.process_models(immediate=True)
         logger.println("finished!")
 
 
-G.modelhandler = ModelHandler()
+G.model_handler = ModelHandler()
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:model_search",
-    G.modelhandler.add_from_mod,
+    G.model_handler.add_from_mod,
     "minecraft",
     info="searching for block models for minecraft",
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:model:model_create", G.modelhandler.search, info="loading found models"
+    "stage:model:model_create", G.model_handler.search, info="loading found models"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:model:model_bake_prepare", G.modelhandler.build, info="filtering models"
+    "stage:model:model_bake_prepare", G.model_handler.build, info="filtering models"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:model_bake:prepare",
-    G.modelhandler.process_models,
+    G.model_handler.process_models,
     info="preparing model data",
 )

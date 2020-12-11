@@ -25,9 +25,9 @@ class Model:
         if self.parent:
             if ":" not in self.parent:
                 self.parent = "minecraft:" + self.parent
-            if self.parent not in G.modelhandler.models:
-                G.modelhandler.load_model(self.parent)
-            self.parent = G.modelhandler.models[self.parent]
+            if self.parent not in G.model_handler.models:
+                G.model_handler.load_model(self.parent)
+            self.parent = G.model_handler.models[self.parent]
             self.used_textures = self.parent.used_textures.copy()
             self.texturerename = self.parent.texturerename.copy()
         self.drawable = True

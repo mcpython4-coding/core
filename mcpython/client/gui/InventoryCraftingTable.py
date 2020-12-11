@@ -94,13 +94,13 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            shared.inventoryhandler.hide(self)
+            shared.inventory_handler.hide(self)
 
     def update_shift_container(self):
-        shared.inventoryhandler.shift_container.container_A = (
+        shared.inventory_handler.shift_container.container_A = (
             shared.world.get_active_player().inventories["main"].slots[:36]
         )
-        shared.inventoryhandler.shift_container.container_B = self.slots
+        shared.inventory_handler.shift_container.container_B = self.slots
 
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", InventoryCraftingTable.update_texture)

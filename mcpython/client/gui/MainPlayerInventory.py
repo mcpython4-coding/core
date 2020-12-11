@@ -112,13 +112,13 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
 
     def on_deactivate(self):
         self.remove_items_from_crafting()
-        shared.statehandler.active_state.parts[0].activate_mouse = True
+        shared.state_handler.active_state.parts[0].activate_mouse = True
 
     def update_shift_container(self):
-        shared.inventoryhandler.shift_container.container_A = (
+        shared.inventory_handler.shift_container.container_A = (
             self.slots[:9] + self.slots[36:41]
         )
-        shared.inventoryhandler.shift_container.container_B = self.slots[9:36]
+        shared.inventory_handler.shift_container.container_B = self.slots[9:36]
 
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", MainPlayerInventory.update_texture)

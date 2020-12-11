@@ -388,12 +388,12 @@ class ConfigFile:
     """
 
     def __init__(self, file_name: str, assigned_mod: str):
-        assert assigned_mod in G.modloader.mods
+        assert assigned_mod in G.mod_loader.mods
         self.file_name = file_name
         self.assigned_mod = assigned_mod
         self.main_tag = DictDataMapper()
         self.file = G.home + "/config/{}/{}.conf".format(assigned_mod, file_name)
-        G.modloader(
+        G.mod_loader(
             self.assigned_mod,
             "stage:mod:config:load",
             "building config file {}".format(self.file),
@@ -444,7 +444,7 @@ class ConfigFile:
     def write(self):
         data = "// mcpython config file\nVERSION=1.0.0\nPROVIDING_MOD={}\nPROVIDING_MOD_VERSION={}\n\n{}".format(
             self.assigned_mod,
-            G.modloader.mods[self.assigned_mod].version,
+            G.mod_loader.mods[self.assigned_mod].version,
             self.main_tag.serialize(),
         )
         d = os.path.dirname(self.file)
@@ -454,7 +454,7 @@ class ConfigFile:
             f.write(data)
 
 
-@G.modloader("minecraft", "stage:mod:config:define")
+@G.mod_loader("minecraft", "stage:mod:config:define")
 def load():
     import mcpython.common.config
 

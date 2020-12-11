@@ -20,7 +20,7 @@ import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 
-@G.worldgenerationhandler
+@G.world_generation_handler
 class DefaultTemperatureLayer(Layer):
     noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
 

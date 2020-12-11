@@ -41,10 +41,10 @@ class StateGame(State.State):
     def on_activate(self):
         while G.world.savefile.save_in_progress:
             time.sleep(0.2)
-        G.worldgenerationhandler.enable_auto_gen = True
+        G.world_generation_handler.enable_auto_gen = True
 
     def on_deactivate(self):
-        G.worldgenerationhandler.enable_auto_gen = False
+        G.world_generation_handler.enable_auto_gen = False
         G.window.mouse_pressing = {
             mouse.LEFT: False,
             mouse.RIGHT: False,
@@ -57,23 +57,23 @@ class StateGame(State.State):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE and G.window.exclusive:
-            G.statehandler.switch_to("minecraft:escape_state")
+            G.state_handler.switch_to("minecraft:escape_state")
         elif symbol == key.R:
-            G.inventoryhandler.reload_config()
+            G.inventory_handler.reload_config()
         elif symbol == key.E:
             if (
                 not G.world.get_active_player().inventories["main"]
-                in G.inventoryhandler.opened_inventorystack
+                in G.inventory_handler.opened_inventorystack
             ):
                 if G.window.exclusive:
-                    G.eventhandler.call("on_player_inventory_open")
-                    G.inventoryhandler.show(
+                    G.event_handler.call("on_player_inventory_open")
+                    G.inventory_handler.show(
                         G.world.get_active_player().inventories["main"]
                     )
                     self.parts[0].activate_mouse = False
             else:
-                G.eventhandler.call("on_player_inventory_close")
-                G.inventoryhandler.hide(G.world.get_active_player().inventories["main"])
+                G.event_handler.call("on_player_inventory_close")
+                G.inventory_handler.hide(G.world.get_active_player().inventories["main"])
         elif symbol == key.T and G.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(self.open_chat, 2)
         elif symbol == key._7 and modifiers & key.MOD_SHIFT and G.window.exclusive:
@@ -83,7 +83,7 @@ class StateGame(State.State):
 
     @staticmethod
     def open_chat(enter=""):
-        G.inventoryhandler.show(G.world.get_active_player().inventories["chat"])
+        G.inventory_handler.show(G.world.get_active_player().inventories["chat"])
         G.chat.text = enter
 
     @staticmethod

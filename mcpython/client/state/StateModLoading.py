@@ -66,7 +66,7 @@ class StateModLoading(State.State):
         )
 
     def on_update(self, dt):
-        G.modloader.process()
+        G.mod_loader.process()
 
 
 modloading = StateModLoading()

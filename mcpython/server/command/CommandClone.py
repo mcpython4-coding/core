@@ -105,7 +105,7 @@ class CommandClone(mcpython.server.command.Command.Command):
                     if len(values) > 4 and values[4] == "move":
                         dimension.remove_block((x, y, z))
 
-        G.eventhandler.call("command:clone:block_map", info, block_map)
+        G.event_handler.call("command:clone:block_map", info, block_map)
 
         # and now iterate over the cached blocks...
         for x, y, z in block_map:

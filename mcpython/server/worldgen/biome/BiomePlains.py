@@ -37,4 +37,4 @@ class Plains(Biome.Biome):
         ]
 
 
-G.biomehandler.register(Plains, [0])
+G.biome_handler.register(Plains, [0])

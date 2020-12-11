@@ -45,7 +45,7 @@ class DataGeneratorInstance:
         self.default_namespace = None
         self.to_generate = []
         self.location = location.format(local=shared.local)
-        shared.modloader["minecraft"].eventbus.subscribe(
+        shared.mod_loader["minecraft"].eventbus.subscribe(
             "special:datagen:generate", self.generate
         )
 

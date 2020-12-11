@@ -51,7 +51,7 @@ class StateEscape(State.State):
                 anchor_window="MM",
                 anchor_button="MM",
                 on_press=mcpython.common.event.EventInfo.CallbackHelper(
-                    G.statehandler.switch_to,
+                    G.state_handler.switch_to,
                     ["minecraft:game"],
                     enable_extra_args=False,
                 ),
@@ -91,15 +91,15 @@ class StateEscape(State.State):
         )  # make sure that file size is as small as possible
         G.world.setup_by_filename("tmp")
         G.world.cleanup()
-        G.eventhandler.call("on_game_leave")
-        G.statehandler.switch_to("minecraft:startmenu", immediate=False)
+        G.event_handler.call("on_game_leave")
+        G.state_handler.switch_to("minecraft:startmenu", immediate=False)
         while G.world.savefile.save_in_progress:
             time.sleep(0.2)
 
     @staticmethod
     def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
-            G.statehandler.switch_to("minecraft:game", immediate=False)
+            G.state_handler.switch_to("minecraft:game", immediate=False)
 
     @staticmethod
     def on_draw_2d_pre():

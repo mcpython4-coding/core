@@ -20,7 +20,7 @@ import mcpython.common.mod.ModMcpython
 
 def register_command(registry, command):
     if issubclass(command, mcpython.server.command.Command.Command):  # is it an command
-        G.commandparser.add_command(command)
+        G.command_parser.add_command(command)
     elif issubclass(
         command, mcpython.server.command.CommandEntry.CommandEntry
     ):  # or an command entry

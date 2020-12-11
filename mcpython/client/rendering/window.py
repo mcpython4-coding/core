@@ -263,7 +263,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             and mcpython.common.config.ENABLE_PROFILING
         ):
             self.tick_profiler.enable()
-        G.eventhandler.call("gameloop:tick:start", dt)
+        G.event_handler.call("gameloop:tick:start", dt)
 
         self.cpu_usage_timer += dt
         if self.cpu_usage_timer > mcpython.common.config.CPU_USAGE_REFRESH_TIME:
@@ -271,7 +271,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             self.cpu_usage_timer = 0
 
         # todo: change to attribute in State-class
-        if dt > 3 and G.statehandler.active_state.NAME not in ["minecraft:modloading"]:
+        if dt > 3 and G.state_handler.active_state.NAME not in ["minecraft:modloading"]:
             logger.println(
                 "[warning] running behind normal tick, did you overload game? missing "
                 + str(dt - 0.05)
@@ -279,19 +279,19 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             )
         if any(
             type(x) == mcpython.client.state.StatePartGame.StatePartGame
-            for x in G.statehandler.active_state.parts
+            for x in G.state_handler.active_state.parts
         ):
-            G.worldgenerationhandler.task_handler.process_tasks(timer=0.02)
+            G.world_generation_handler.task_handler.process_tasks(timer=0.02)
         sector = positionToChunk(G.world.get_active_player().position)
         if sector != self.sector:
             pyglet.clock.schedule_once(
                 lambda _: G.world.change_chunks(self.sector, sector), 0.1
             )
             if self.sector is None:
-                G.worldgenerationhandler.task_handler.process_tasks()
+                G.world_generation_handler.task_handler.process_tasks()
             self.sector = sector
 
-        G.eventhandler.call("gameloop:tick:end", dt)
+        G.event_handler.call("gameloop:tick:end", dt)
         if (
             mcpython.common.config.ENABLE_PROFILER_TICK
             and mcpython.common.config.ENABLE_PROFILING
@@ -432,14 +432,14 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             [access via pyglet.window.key.MOD_[...]]
         """
         self.mouse_pressing[button] = True
-        G.eventhandler.call("user:mouse:press", x, y, button, modifiers)
+        G.event_handler.call("user:mouse:press", x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
         """
         called when an button is released with the same argument as on_mouse_press
         """
         self.mouse_pressing[button] = False
-        G.eventhandler.call("user:mouse:release", x, y, button, modifiers)
+        G.event_handler.call("user:mouse:release", x, y, button, modifiers)
 
     def on_mouse_drag(
         self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int
@@ -454,7 +454,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         :param modifiers: the modifiers pressed
         """
         self.mouse_position = (x, y)
-        G.eventhandler.call("user:mouse:drag", x, y, dx, dy, buttons, modifiers)
+        G.event_handler.call("user:mouse:drag", x, y, dx, dy, buttons, modifiers)
         if self.exclusive:
             self.on_mouse_motion(x, y, dx, dy)
 
@@ -466,7 +466,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         :param scroll_x: the delta x
         :param scroll_y: the detla y
         """
-        G.eventhandler.call("user:mouse:scroll", x, y, scroll_x, scroll_y)
+        G.event_handler.call("user:mouse:scroll", x, y, scroll_x, scroll_y)
 
     def on_mouse_motion(self, x: int, y: int, dx: float, dy: float):
         """
@@ -477,7 +477,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
 
         todo: use pyglet's MouseHandler for tracking the mouse position and buttons
         """
-        G.eventhandler.call("user:mouse:motion", x, y, dx, dy)
+        G.event_handler.call("user:mouse:motion", x, y, dx, dy)
         self.mouse_position = (x, y)
 
     def on_key_press(self, symbol: int, modifiers: int):
@@ -486,7 +486,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         :param symbol: Number representing the key that was pressed.
         :param modifiers: Number representing any modifying keys that were pressed.
         """
-        G.eventhandler.call("user:keyboard:press", symbol, modifiers)
+        G.event_handler.call("user:keyboard:press", symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
         """
@@ -494,7 +494,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         :param symbol: Number representing the key that was pressed.
         :param modifiers: Number representing any modifying keys that were pressed.
         """
-        G.eventhandler.call("user:keyboard:release", symbol, modifiers)
+        G.event_handler.call("user:keyboard:release", symbol, modifiers)
 
     def on_resize(self, width: int, height: int):
         """
@@ -505,7 +505,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         self.label2.y = height - 22
         self.label3.x = width - 10
         self.label3.y = height - 34
-        G.eventhandler.call("user:window:resize", width, height)
+        G.event_handler.call("user:window:resize", width, height)
 
     def set_2d(self):
         # todo: move to RenderingHelper
@@ -543,24 +543,24 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         ):
             self.draw_profiler.enable()
 
-        G.eventhandler.call("render:draw:pre_clear")
+        G.event_handler.call("render:draw:pre_clear")
         self.clear()  # clear the screen
-        G.eventhandler.call("render:draw:pre_setup")
+        G.event_handler.call("render:draw:pre_setup")
         self.set_2d()
-        G.eventhandler.call("render:draw:2d:background_pre")
+        G.event_handler.call("render:draw:2d:background_pre")
         self.set_3d()  # setup for 3d drawing
-        G.eventhandler.call("render:draw:3d")  # call general 3d rendering event
+        G.event_handler.call("render:draw:3d")  # call general 3d rendering event
         self.set_2d()  # setup for 2d rendering
-        G.eventhandler.call("render:draw:2d:background")  # call pre 2d
-        G.eventhandler.call("render:draw:2d")  # call normal 2d
-        G.eventhandler.call("render:draw:2d:overlay")  # call overlay 2d
+        G.event_handler.call("render:draw:2d:background")  # call pre 2d
+        G.event_handler.call("render:draw:2d")  # call normal 2d
+        G.event_handler.call("render:draw:2d:overlay")  # call overlay 2d
         if (
             mcpython.common.config.ENABLE_PROFILER_DRAW
             and mcpython.common.config.ENABLE_PROFILING
         ):
             self.draw_profiler.disable()
         G.rendering_helper.apply(state)
-        G.eventhandler.call("render:draw:post:cleanup")
+        G.event_handler.call("render:draw:post:cleanup")
         G.rendering_helper.deleteSavedStates()
 
     def draw_focused_block(self):
@@ -670,7 +670,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         called by pyglet with decoded key values when an text is entered
         :param text: the text entered
         """
-        G.eventhandler.call("user:keyboard:enter", text)
+        G.event_handler.call("user:keyboard:enter", text)
 
     def on_close(self):
         """

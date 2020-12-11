@@ -68,7 +68,7 @@ class TubeCoralBlock(ICoralBlock):
     NAME: str = "minecraft:tube_coral_block"
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BrainCoralBlock)
     G.registry.register(BubbleCoralBlock)

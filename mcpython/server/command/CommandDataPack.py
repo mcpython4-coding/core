@@ -77,7 +77,7 @@ class CommandDatapack(mcpython.server.command.Command.Command):
                 )
 
         elif values[0] == "release":
-            G.eventhandler.call("command:datapack:release", info)
+            G.event_handler.call("command:datapack:release", info)
             mcpython.common.DataPack.datapackhandler.cleanup()
         else:
             G.chat.print_ln("failed to execute command. invalid syntax")

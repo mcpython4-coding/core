@@ -110,7 +110,7 @@ class StateWorldGenerationConfig(State.State):
         )
 
     def on_back_press(self, x, y):
-        G.statehandler.switch_to("minecraft:startmenu")
+        G.state_handler.switch_to("minecraft:startmenu")
 
     def on_generate_press(self, x, y):
         filename = self.parts[9].entered_text
@@ -120,7 +120,7 @@ class StateWorldGenerationConfig(State.State):
         self.generate()
 
     def generate(self):
-        G.statehandler.switch_to("minecraft:world_generation")
+        G.state_handler.switch_to("minecraft:world_generation")
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

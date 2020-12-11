@@ -153,7 +153,7 @@ class SaveFile:
                         )
                     )
                     G.world.cleanup()
-                    G.statehandler.switch_to("minecraft:startmenu")
+                    G.state_handler.switch_to("minecraft:startmenu")
                     return
                 fixers = self.storage_version_fixers[self.version]
                 if len(fixers) > 1:
@@ -175,11 +175,11 @@ class SaveFile:
                 )
             )
             G.world.cleanup()
-            G.statehandler.switch_to("minecraft:world_selection")
+            G.state_handler.switch_to("minecraft:world_selection")
             return
         except:
             G.world.cleanup()
-            G.statehandler.switch_to("minecraft:startmenu")
+            G.state_handler.switch_to("minecraft:startmenu")
             logger.print_exception(
                 "exception during loading world. falling back to start menu..."
             )
@@ -197,7 +197,7 @@ class SaveFile:
             raise IOError("can't save world. save in process")
         try:
             self.save_in_progress = True
-            G.worldgenerationhandler.enable_generation = False
+            G.world_generation_handler.enable_generation = False
             logger.println("saving world...")
             self.dump(None, "minecraft:general")
             self.dump(None, "minecraft:player_data")
@@ -214,10 +214,10 @@ class SaveFile:
                         override=override,
                     )
             logger.println("save complete!")
-            G.worldgenerationhandler.enable_generation = True
+            G.world_generation_handler.enable_generation = True
         except:
             G.world.cleanup()
-            G.statehandler.switch_to("minecraft:startmenu")
+            G.state_handler.switch_to("minecraft:startmenu")
             logger.print_exception(
                 "exception during saving world. falling back to start menu..."
             )
@@ -244,7 +244,7 @@ class SaveFile:
             logger.print_exception(
                 "during data-fixing storage version '{}'".format(name)
             )
-            G.statehandler.switch_to("minecraft:startmenu")
+            G.state_handler.switch_to("minecraft:startmenu")
 
     def apply_group_fixer(self, name: str, *args, **kwargs):
         """
@@ -265,7 +265,7 @@ class SaveFile:
                 self.apply_part_fixer(name, *args, **kwargs)
         except:
             logger.print_exception("during data-fixing group fixer '{}'".format(name))
-            G.statehandler.switch_to("minecraft:startmenu")
+            G.state_handler.switch_to("minecraft:startmenu")
 
     def apply_part_fixer(self, name: str, *args, **kwargs):
         """
@@ -284,7 +284,7 @@ class SaveFile:
             fixer.apply(self, *args, **kwargs)
         except:
             logger.print_exception("during data-fixing part '{}'".format(name))
-            G.statehandler.switch_to("minecraft:startmenu")
+            G.state_handler.switch_to("minecraft:startmenu")
 
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
         """
@@ -295,9 +295,9 @@ class SaveFile:
         :param kwargs: kwargs to call with
         :raises DataFixerNotFoundException: if the name is invalid
         """
-        if modname not in self.mod_fixers or modname not in G.modloader.mods:
+        if modname not in self.mod_fixers or modname not in G.mod_loader.mods:
             raise DataFixerNotFoundException(modname)
-        instance = G.modloader.mods[modname]
+        instance = G.mod_loader.mods[modname]
         fixers = self.mod_fixers[modname]
         while instance.version != source_version:
             possible_fixers = set()
@@ -336,7 +336,7 @@ class SaveFile:
                         modname, fixer.FIXES_FROM, fixer.FIXES_TO
                     )
                 )
-                G.statehandler.switch_to("minecraft:startmenu")
+                G.state_handler.switch_to("minecraft:startmenu")
                 return
 
             source_version = fixer.FIXES_TO
@@ -495,7 +495,7 @@ class SaveFile:
         )
 
 
-@G.modloader("minecraft", "stage:datafixer:general")
+@G.mod_loader("minecraft", "stage:datafixer:general")
 def load_elements():
     from mcpython.server.storage.datafixers import (
         DataFixer1to2,

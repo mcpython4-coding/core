@@ -284,7 +284,7 @@ class BlockFactory:
             modname, blockname = tuple(self.name.split(":"))
         else:
             modname, blockname = self.modname, self.name
-        if modname not in G.modloader.mods:
+        if modname not in G.mod_loader.mods:
             modname = "minecraft"
         if self.template is None:
             obj = self
@@ -296,7 +296,7 @@ class BlockFactory:
         if immediate:
             obj.finish_up()
         else:
-            G.modloader.mods[modname].eventbus.subscribe(
+            G.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:block:load",
                 obj.finish_up,
                 info="loading block {}".format(blockname),

@@ -41,29 +41,29 @@ class CommandReload(mcpython.server.command.Command.Command):
     @classmethod
     def reload(cls):
         G.window.print_profiler()  # print the profiler's
-        if not G.eventhandler.call_cancelable("data:reload:cancel"):
+        if not G.event_handler.call_cancelable("data:reload:cancel"):
             return
         mcpython.common.DataPack.datapackhandler.reload()  # reloads all data packs
-        G.taghandler.reload()  # reloads all tags
-        G.craftinghandler.reload_crafting_recipes()  # reloads all recipes
-        G.loottablehandler.reload()
+        G.tag_handler.reload()  # reloads all tags
+        G.crafting_handler.reload_crafting_recipes()  # reloads all recipes
+        G.loot_table_handler.reload()
 
         # as we are reloading, this may get mixed up...
-        G.craftinghandler.recipe_relink_table.clear()
-        G.loottablehandler.relink_table.clear()
-        G.eventhandler.call("data:shuffle:clear")
+        G.crafting_handler.recipe_relink_table.clear()
+        G.loot_table_handler.relink_table.clear()
+        G.event_handler.call("data:shuffle:clear")
         if mcpython.common.config.SHUFFLE_DATA:  # .. and we need to re-do if needed
-            G.eventhandler.call("data:shuffle:all")
+            G.event_handler.call("data:shuffle:all")
 
-        G.inventoryhandler.reload_config()  # reloads inventory configuration
-        G.modelhandler.reload_models()
+        G.inventory_handler.reload_config()  # reloads inventory configuration
+        G.model_handler.reload_models()
         mcpython.client.rendering.util.setup()
         # todo: regenerate block item images, regenerate item atlases
 
         # reload entity model files
         [e.reload() for e in mcpython.client.rendering.EntityRenderer.RENDERERS]
 
-        G.eventhandler.call("data:reload:work")
+        G.event_handler.call("data:reload:work")
 
         gc.collect()  # make sure that memory was cleaned up
         G.window.print_profiler()  # and now print the profile's (if needed)

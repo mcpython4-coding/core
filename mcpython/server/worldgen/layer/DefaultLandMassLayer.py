@@ -20,7 +20,7 @@ import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
 
 
-@G.worldgenerationhandler
+@G.world_generation_handler
 class DefaultLandMassLayer(Layer):
     noise1 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
     noise2 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))

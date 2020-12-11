@@ -29,7 +29,7 @@ def transform_to_item_stack(item, table: dict) -> list:
         return [(itemname, item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
         try:
-            entries = G.taghandler.taggroups["items"].tags["#" + item["tag"]].entries
+            entries = G.tag_handler.taggroups["items"].tags["#" + item["tag"]].entries
         except (KeyError, IndexError):
             logger.println(
                 "tag loading issue for recipe transform of {} to valid item list".format(
@@ -53,7 +53,7 @@ def transform_to_item_stack(item, table: dict) -> list:
         return []
 
 
-@G.craftinghandler
+@G.crafting_handler
 class GridShaped(mcpython.client.gui.crafting.IRecipeType.IRecipe):
     @staticmethod
     def get_recipe_names() -> list:
@@ -87,12 +87,12 @@ class GridShaped(mcpython.client.gui.crafting.IRecipeType.IRecipe):
         self.bboxsize = (sx, sy)
 
     def register(self):
-        G.craftinghandler.crafting_recipes_shaped.setdefault(
+        G.crafting_handler.crafting_recipes_shaped.setdefault(
             len(self.inputs), {}
         ).setdefault(self.bboxsize, []).append(self)
 
 
-@G.craftinghandler
+@G.crafting_handler
 class GridShapeless(mcpython.client.gui.crafting.IRecipeType.IRecipe):
     @staticmethod
     def get_recipe_names() -> list:
@@ -112,6 +112,6 @@ class GridShapeless(mcpython.client.gui.crafting.IRecipeType.IRecipe):
         self.output = output
 
     def register(self):
-        G.craftinghandler.crafting_recipes_shapeless.setdefault(
+        G.crafting_handler.crafting_recipes_shapeless.setdefault(
             len(self.inputs), []
         ).append(self)

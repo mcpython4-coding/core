@@ -89,15 +89,15 @@ class ItemFactory:
         copied.resetTemplate()
 
         if copied.modname is None:
-            modname, itemname = tuple(copied.name.split(":"))
+            modname, item_name = tuple(copied.name.split(":"))
         else:
-            modname, itemname = copied.modname, copied.name
-        if not G.invalidate_cacheing and not task_list:
-            G.modloader.mods[modname].eventbus.subscribe(
+            modname, item_name = copied.modname, copied.name
+        if not G.invalidate_cache and not task_list:
+            G.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:item:load",
                 copied.finish_up,
                 register,
-                info="loading item named '{}'".format(itemname),
+                info="loading item named '{}'".format(item_name),
             )
         else:
             copied.TASKS.append((copied, register))

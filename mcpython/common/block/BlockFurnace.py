@@ -63,7 +63,7 @@ class BlockFurnace(
 
     def on_player_interaction(self, player, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            G.inventoryhandler.show(self.inventory)
+            G.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -85,7 +85,7 @@ class BlockFurnace(
         for slot in self.inventory.slots:
             G.world.get_active_player().pick_up(slot.itemstack.copy())
             slot.itemstack.clean()
-        G.inventoryhandler.hide(self.inventory)
+        G.inventory_handler.hide(self.inventory)
         del self.inventory
 
 
@@ -101,7 +101,7 @@ class Smoker(BlockFurnace):
     FURNACE_RECIPES: list = ["minecraft:smoking"]
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BlockFurnace)
     G.registry.register(BlastFurnace)

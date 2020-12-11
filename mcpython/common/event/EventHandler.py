@@ -50,7 +50,7 @@ class EventHandler:
         self.call(*args, **kwargs)
 
 
-G.eventhandler = EventHandler()
+G.event_handler = EventHandler()
 
-PUBLIC_EVENT_BUS = G.eventhandler.create_bus(crash_on_error=False)
-LOADING_EVENT_BUS = G.eventhandler.create_bus()
+PUBLIC_EVENT_BUS = G.event_handler.create_bus(crash_on_error=False)
+LOADING_EVENT_BUS = G.event_handler.create_bus()

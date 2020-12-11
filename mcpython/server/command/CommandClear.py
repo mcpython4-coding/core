@@ -38,7 +38,7 @@ class CommandClear(mcpython.server.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        if G.eventhandler.call_cancelable("command:clear", info):
+        if G.event_handler.call_cancelable("command:clear", info):
             return  # event for canceling such event
 
         # when the entity(s) is/are not provided, replace by executing one
@@ -46,7 +46,7 @@ class CommandClear(mcpython.server.command.Command.Command):
             values.append([info.entity])
 
         for entity in values[0]:  # iterate over all entities
-            if G.eventhandler.call_cancelable("command:clear:entity", info, entity):
+            if G.event_handler.call_cancelable("command:clear:entity", info, entity):
                 continue
 
             if not hasattr(entity, "inventories"):  # has it an inventory?
@@ -58,9 +58,9 @@ class CommandClear(mcpython.server.command.Command.Command):
             ) in entity.get_inventories():  # iterate over all inventories ...
                 inventory.clear()  # ... and clear them
 
-        G.inventoryhandler.moving_slot.get_itemstack().clean()  # make sure that he has nothing in his hand
+        G.inventory_handler.moving_slot.get_itemstack().clean()  # make sure that he has nothing in his hand
 
-        G.eventhandler.call(
+        G.event_handler.call(
             "command:clear:end", info
         )  # and call the event that we are done
 

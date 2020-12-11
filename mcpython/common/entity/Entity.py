@@ -123,7 +123,7 @@ class Entity(mcpython.common.event.Registry.IRegistryContent):
         :param dimension: to which dimension-id to teleport to, if None, no dimension change is used
         :param force_chunk_save_update: if the system should force to update were player data is stored
         """
-        if not G.eventhandler.call_cancelable(
+        if not G.event_handler.call_cancelable(
             "world:entity:teleport", self, dimension, force_chunk_save_update
         ):
             return
@@ -153,7 +153,7 @@ class Entity(mcpython.common.event.Registry.IRegistryContent):
                 self.chunk.entities.remove(self)
             self.chunk = dimension.get_chunk_for_position(self.position)
             self.chunk.entities.add(self)
-        G.eventhandler.call("world:entity:teleport:post", self)
+        G.event_handler.call("world:entity:teleport:post", self)
 
     # interaction functions
 
@@ -183,8 +183,8 @@ class Entity(mcpython.common.event.Registry.IRegistryContent):
         """
         if self.chunk is not None and self in self.chunk.entities:
             self.chunk.entities.remove(self)
-        if self.uuid in G.entityhandler.entity_map:
-            del G.entityhandler.entity_map[self.uuid]
+        if self.uuid in G.entity_handler.entity_map:
+            del G.entity_handler.entity_map[self.uuid]
 
     def pick_up(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
         """

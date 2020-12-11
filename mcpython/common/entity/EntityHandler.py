@@ -79,7 +79,7 @@ class EntityHandler:
             # todo: add max entities standing in one space handler
 
 
-G.entityhandler = EntityHandler()
+G.entity_handler = EntityHandler()
 
 
 def load():

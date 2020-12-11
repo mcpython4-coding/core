@@ -34,7 +34,7 @@ class StateStartMenu(mcpython.client.state.State.State):
 
     @staticmethod
     def on_new_game_press(x, y):
-        G.statehandler.switch_to("minecraft:world_selection", immediate=False)
+        G.state_handler.switch_to("minecraft:world_selection", immediate=False)
 
     @staticmethod
     def on_quit_game_press(x, y):
@@ -47,7 +47,7 @@ class StateStartMenu(mcpython.client.state.State.State):
     @staticmethod
     def on_key_press(key, modifier):
         if key == pyglet.window.key.ENTER:
-            G.statehandler.switch_to("minecraft:world_selection", immediate=False)
+            G.state_handler.switch_to("minecraft:world_selection", immediate=False)
 
 
 startmenu = None

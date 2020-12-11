@@ -60,8 +60,8 @@ class CommandGenerate(mcpython.server.command.Command.Command):
         for x in range(fx, tx + 1):
             for z in range(fz, tz + 1):
                 c = dim.get_chunk(x, z, generate=False)
-                G.worldgenerationhandler.add_chunk_to_generation_list(c)
-                G.worldgenerationhandler.task_handler.process_tasks(
+                G.world_generation_handler.add_chunk_to_generation_list(c)
+                G.world_generation_handler.task_handler.process_tasks(
                     chunks=[c]
                 )  # only generate the ones from us
 

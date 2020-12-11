@@ -107,8 +107,8 @@ class FurnaceSmelt(ILootTableFunction):
             itemname = itemstack.get_item_name()
             if itemname is None:
                 continue
-            if itemname in G.craftinghandler.furnace_recipes["minecraft:smelting"]:
-                result = G.craftinghandler.furnace_recipes["minecraft:smelting"][
+            if itemname in G.crafting_handler.furnace_recipes["minecraft:smelting"]:
+                result = G.crafting_handler.furnace_recipes["minecraft:smelting"][
                     itemname
                 ]
                 items[i] = mcpython.common.container.ItemStack.ItemStack(

@@ -50,7 +50,7 @@ class HotKeys(enum.Enum):
             self.active = False
             if time.time() - self.press_start < self.min_press:
                 return
-            G.eventhandler.call(self.event)
+            G.event_handler.call(self.event)
         if not self.active and status:
             self.active = True
             self.press_start = time.time()
@@ -246,7 +246,7 @@ class StatePartGame(StatePart.StatePart):
                         and block.IS_BREAKABLE
                     ):
                         if G.world.gamerulehandler.table["doTileDrops"].status.status:
-                            items = G.loottablehandler.get_drop_for_block(
+                            items = G.loot_table_handler.get_drop_for_block(
                                 block, player=player
                             )
                             if block:
@@ -507,7 +507,7 @@ class StatePartGame(StatePart.StatePart):
         elif (
             symbol == key.SPACE
             and G.world.get_active_player().inventories["chat"]
-            not in G.inventoryhandler.opened_inventorystack
+            not in G.inventory_handler.opened_inventorystack
         ):
             if (
                 self.double_space_cooldown

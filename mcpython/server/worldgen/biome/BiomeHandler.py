@@ -105,7 +105,7 @@ class BiomeHandler:
         return biomes[select_value]
 
 
-G.biomehandler = BiomeHandler()
+G.biome_handler = BiomeHandler()
 
 
 def load():

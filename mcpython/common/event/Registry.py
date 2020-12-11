@@ -164,7 +164,7 @@ class RegistryHandler:
         return self(*args, **kwargs)
 
     def async_register(self, mod: str, phase: str):
-        return lambda obj: shared.modloader(mod, phase)(lambda: self.register(obj))
+        return lambda obj: shared.mod_loader(mod, phase)(lambda: self.register(obj))
 
     def create_deferred(self, registry: str, mod_name: str):
         return DeferredRegistryPipe(self.get_by_name(registry), mod_name)
@@ -179,4 +179,4 @@ class DeferredRegistryPipe:
         self.modname = modname
 
     def run_later(self, lazy: typing.Callable[[], IRegistryContent]):
-        shared.modloader(self.modname, self.registry.phase)(lazy)
+        shared.mod_loader(self.modname, self.registry.phase)(lazy)

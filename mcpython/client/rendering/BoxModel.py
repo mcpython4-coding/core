@@ -129,7 +129,7 @@ class BoxModel:
         self.deactive = None
 
         if model is not None and model.drawable and self.model.texture_atlas:
-            if G.modloader.finished:
+            if G.mod_loader.finished:
                 self.build()
             else:
                 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
@@ -249,7 +249,7 @@ class BoxModel:
             batch = (
                 batch[0]
                 if self.model is not None
-                and not G.taghandler.has_entry_tag(
+                and not G.tag_handler.has_entry_tag(
                     self.model.name, "rendering", "#minecraft:alpha"
                 )
                 else batch[1]

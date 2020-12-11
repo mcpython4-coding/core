@@ -100,14 +100,14 @@ class BlockChest(AbstractBlock.AbstractBlock):
         ):
             if self.loot_table_link:
                 self.inventory.insert_items(
-                    G.loottablehandler.roll(
+                    G.loot_table_handler.roll(
                         self.loot_table_link, block=self, position=self.position
                     ),
                     random_check_order=True,
                     insert_when_same_item=False,
                 )
                 self.loot_table_link = None
-            G.inventoryhandler.show(self.inventory)
+            G.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -153,7 +153,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
             for slot in self.inventory.slots:
                 G.world.get_active_player().pick_up(slot.get_itemstack().copy())
                 slot.get_itemstack().clean()
-        G.inventoryhandler.hide(self.inventory)
+        G.inventory_handler.hide(self.inventory)
         del self.inventory
 
     @classmethod
@@ -182,6 +182,6 @@ class BlockChest(AbstractBlock.AbstractBlock):
             )
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BlockChest)

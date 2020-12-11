@@ -50,7 +50,7 @@ class APIManager:
         self.api_shipments = {}
         self.api_implementations = {}
         self.api_cache = {}
-        G.modloader("minecraft", "stage:api:check")(self.check_compatibility_and_load)
+        G.mod_loader("minecraft", "stage:api:check")(self.check_compatibility_and_load)
 
     def addAPIType(self, name: str):
         """

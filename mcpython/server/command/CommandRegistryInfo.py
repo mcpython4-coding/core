@@ -31,7 +31,7 @@ class CommandRegistryInfo(mcpython.server.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        if not G.eventhandler.call_cancelable("commands:registryinfo", values[0], info):
+        if not G.event_handler.call_cancelable("commands:registryinfo", values[0], info):
             return
         registry = G.registry.get_by_name(values[0])
         if registry is None:

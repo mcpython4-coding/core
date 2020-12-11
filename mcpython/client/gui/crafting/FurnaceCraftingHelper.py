@@ -14,7 +14,7 @@ from mcpython import shared as G
 import mcpython.client.gui.crafting.GridRecipeInstances
 
 
-@G.craftinghandler
+@G.crafting_handler
 class FurnaceRecipe(mcpython.client.gui.crafting.IRecipeType.IRecipe):
     """
     Interface for decoding an furnace-like recipe
@@ -55,7 +55,7 @@ class FurnaceRecipe(mcpython.client.gui.crafting.IRecipeType.IRecipe):
 
     def register(self):
         [
-            G.craftinghandler.furnace_recipes.setdefault(self.type, {}).setdefault(
+            G.crafting_handler.furnace_recipes.setdefault(self.type, {}).setdefault(
                 e, self
             )
             for e in self.input

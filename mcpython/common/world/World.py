@@ -43,7 +43,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.dimensions: typing.Dict[
             int, mcpython.common.world.AbstractInterface.IDimension
         ] = {}  # todo: change for str-based
-        G.dimensionhandler.init_dims()
+        G.dimension_handler.init_dims()
         self.active_dimension: int = (
             0  # todo: change to str; todo: move to player; todo: make property
         )
@@ -79,7 +79,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if not override and name in self.players:
             return self.players[name]
-        self.players[name] = G.entityhandler.add_entity(
+        self.players[name] = G.entity_handler.add_entity(
             "minecraft:player", (0, 0, 0), name
         )
         if add_inventories:
@@ -110,7 +110,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         calls event world:reset_config in the process
         """
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
-        G.eventhandler.call("world:reset_config")
+        G.event_handler.call("world:reset_config")
         self.gamerulehandler = mcpython.common.world.GameRule.GameRuleHandler(self)
 
     def get_active_dimension(
@@ -142,7 +142,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         dim = self.dimensions[dim_id] = mcpython.common.world.Dimension.Dimension(
             self, dim_id, name, genconfig=dim_config
         )
-        G.worldgenerationhandler.setup_dimension(dim, config)
+        G.world_generation_handler.setup_dimension(dim, config)
         return dim
 
     def join_dimension(self, dim_id: int):
@@ -153,7 +153,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         logger.println("changing dimension to '{}'...".format(dim_id))
         self.CANCEL_DIM_CHANGE = False
-        G.eventhandler.call("dimension:chane:pre", self.active_dimension, dim_id)
+        G.event_handler.call("dimension:chane:pre", self.active_dimension, dim_id)
         if self.CANCEL_DIM_CHANGE:
             logger.println("interrupted!")
             return
@@ -166,7 +166,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.active_dimension = dim_id
         logger.println("loading new chunks...")
         self.change_chunks(None, sector)
-        G.eventhandler.call("dimension:chane:post", old, dim_id)
+        G.event_handler.call("dimension:chane:post", old, dim_id)
         logger.println("finished!")
 
     def get_dimension(
@@ -296,7 +296,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         for chunk in hide:
             pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
             if G.world.get_active_dimension().get_chunk(*chunk, generate=False).loaded:
-                G.tickhandler.schedule_once(
+                G.tick_handler.schedule_once(
                     G.world.savefile.dump,
                     None,
                     "minecraft:chunk",
@@ -331,7 +331,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
                         dx + after[0], dz + after[1], generate=False
                     )
                     if not chunk.generated:
-                        G.worldgenerationhandler.add_chunk_to_generation_list(
+                        G.world_generation_handler.add_chunk_to_generation_list(
                             chunk, prior=True
                         )
 
@@ -351,20 +351,20 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             dimension.chunks = {}
         if remove_dims:
             self.dimensions.clear()
-            G.dimensionhandler.init_dims()
-        [inventory.on_world_cleared() for inventory in G.inventoryhandler.inventorys]
+            G.dimension_handler.init_dims()
+        [inventory.on_world_cleared() for inventory in G.inventory_handler.inventorys]
         self.reset_config()
         G.world.get_active_player().flying = False
         for inv in G.world.get_active_player().inventories.values():
             inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
-        G.worldgenerationhandler.task_handler.clear()
-        G.entityhandler.entity_map.clear()
+        G.world_generation_handler.task_handler.clear()
+        G.entity_handler.entity_map.clear()
         self.players.clear()
         if filename is not None:
             self.setup_by_filename(filename)
         mcpython.common.DataPack.datapackhandler.cleanup()
-        G.eventhandler.call("world:clean")
+        G.event_handler.call("world:clean")
 
     def setup_by_filename(self, filename: str):
         """

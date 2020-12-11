@@ -27,7 +27,7 @@ class TagHandler:
         """
         self.taggroups = {}  # name -> taggroup
         self.taglocations = []
-        G.modloader("minecraft", "stage:tag:load", "loading tag-groups")(self.load_tags)
+        G.mod_loader("minecraft", "stage:tag:load", "loading tag-groups")(self.load_tags)
 
     def from_data(self, taggroup: str, tagname: str, data: dict, replace=True):
         """
@@ -73,13 +73,13 @@ class TagHandler:
                 name = "#{}:{}".format(
                     modname, "/".join(s[s.index("tags") + 2 :]).split(".")[0]
                 )
-                G.taghandler.from_data(
+                G.tag_handler.from_data(
                     s[s.index("tags") + 1],
                     name,
                     data,
                     data["replace"] if "replace" in data else True,
                 )
-        for taggroup in G.taghandler.taggroups.values():
+        for taggroup in G.tag_handler.taggroups.values():
             if direct_call:
                 # logger.println("loading tag-group {}".format(taggroup.name))
                 taggroup.build()
@@ -126,7 +126,7 @@ class TagHandler:
         return identifier in self.get_tag_for(tag_name, group).entries
 
 
-G.taghandler = TagHandler()
+G.tag_handler = TagHandler()
 
 
 def add_from_location(loc: str):
@@ -135,7 +135,7 @@ def add_from_location(loc: str):
     :param loc: the namespace
     WARNING: when adding outside normal build period, errors may occur
     """
-    G.taghandler.taglocations += [
+    G.tag_handler.taglocations += [
         x.format(loc)
         for x in [
             "data/{}/tags/items",
@@ -147,7 +147,7 @@ def add_from_location(loc: str):
     ]
 
 
-@G.modloader("minecraft", "stage:tag:group", "adding tag group locations")
+@G.mod_loader("minecraft", "stage:tag:group", "adding tag group locations")
 def on_group_add():
     add_from_location("minecraft")
     add_from_location("forge")

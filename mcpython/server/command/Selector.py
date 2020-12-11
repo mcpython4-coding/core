@@ -103,5 +103,5 @@ def load():
         @staticmethod
         def parse(entry, config):
             if entry == "@e":
-                return list(G.entityhandler.entity_map.values())
+                return list(G.entity_handler.entity_map.values())
             raise NotImplementedError()  # todo: implement

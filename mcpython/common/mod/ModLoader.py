@@ -71,28 +71,28 @@ class LoadingStage:
         will finish up the system
         :param astate: the state to use
         """
-        G.modloader.active_loading_stage += 1
-        if G.modloader.active_loading_stage >= len(LOADING_ORDER):
+        G.mod_loader.active_loading_stage += 1
+        if G.mod_loader.active_loading_stage >= len(LOADING_ORDER):
             logger.println(
                 "[INFO] locking registries..."
             )  # ... and do similar stuff :-)
-            G.eventhandler.call("modloader:finished")
+            G.event_handler.call("modloader:finished")
 
-            G.statehandler.switch_to("minecraft:block_item_generator")
-            G.modloader.finished = True
+            G.state_handler.switch_to("minecraft:block_item_generator")
+            G.mod_loader.finished = True
             return True
         astate.parts[0].progress += 1
         astate.parts[2].progress = 0
-        new_stage = LOADING_ORDER[G.modloader.active_loading_stage]
+        new_stage = LOADING_ORDER[G.mod_loader.active_loading_stage]
         if (
             new_stage.event_names[0]
-            in G.modloader.mods[
-                G.modloader.mod_loading_order[0]
+            in G.mod_loader.mods[
+                G.mod_loader.mod_loading_order[0]
             ].eventbus.event_subscriptions
         ):
             astate.parts[2].progress_max = len(
-                G.modloader.mods[
-                    G.modloader.mod_loading_order[0]
+                G.mod_loader.mods[
+                    G.mod_loader.mod_loading_order[0]
                 ].eventbus.event_subscriptions[new_stage.event_names[0]]
             )
         else:
@@ -103,17 +103,17 @@ class LoadingStage:
         will call one event from the stack
         :param astate: the state to use
         """
-        if self.active_mod_index >= len(G.modloader.mods):
+        if self.active_mod_index >= len(G.mod_loader.mods):
             self.active_mod_index = 0
             if len(self.event_names) == 0:
                 return self.finish(astate)
             self.active_event_name = self.event_names.pop(
                 0
             )  # todo: is there an better way?
-            mod_instance: mcpython.common.mod.Mod.Mod = G.modloader.mods[
-                G.modloader.mod_loading_order[self.active_mod_index]
+            mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[
+                G.mod_loader.mod_loading_order[self.active_mod_index]
             ]
-            if not G.eventhandler.call_cancelable(
+            if not G.event_handler.call_cancelable(
                 "modloader:mod_entered_stage",
                 self.name,
                 self.active_event_name,
@@ -131,19 +131,19 @@ class LoadingStage:
             if len(self.event_names) == 0:
                 return self.finish(astate)
             self.active_event_name = self.event_names.pop(0)
-        modname = G.modloader.mod_loading_order[self.active_mod_index]
-        mod_instance: mcpython.common.mod.Mod.Mod = G.modloader.mods[modname]
+        modname = G.mod_loader.mod_loading_order[self.active_mod_index]
+        mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[modname]
         try:
             mod_instance.eventbus.call_as_stack(self.active_event_name)
         except RuntimeError:
             self.active_mod_index += 1
-            if self.active_mod_index >= len(G.modloader.mods):
+            if self.active_mod_index >= len(G.mod_loader.mods):
                 self.active_mod_index = 0
                 if len(self.event_names) == 0:
                     return self.finish(astate)
                 self.active_event_name = self.event_names.pop(0)
-                mod_instance: mcpython.common.mod.Mod.Mod = G.modloader.mods[
-                    G.modloader.mod_loading_order[self.active_mod_index]
+                mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[
+                    G.mod_loader.mod_loading_order[self.active_mod_index]
                 ]
                 if self.active_event_name in mod_instance.eventbus.event_subscriptions:
                     self.max_progress = len(
@@ -156,8 +156,8 @@ class LoadingStage:
                 astate.parts[2].progress_max = self.max_progress
                 astate.parts[2].progress = 0
                 return
-            mod_instance: mcpython.common.mod.Mod.Mod = G.modloader.mods[
-                G.modloader.mod_loading_order[self.active_mod_index]
+            mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[
+                G.mod_loader.mod_loading_order[self.active_mod_index]
             ]
             if self.active_event_name in mod_instance.eventbus.event_subscriptions:
                 self.max_progress = len(
@@ -407,9 +407,9 @@ class ModLoaderAnnotation:
         :param function: the function to use
         :return: the function annotated
         """
-        if self.modname not in G.modloader.mods:
+        if self.modname not in G.mod_loader.mods:
             self.modname = "minecraft"
-        G.modloader.mods[self.modname].eventbus.subscribe(
+        G.mod_loader.mods[self.modname].eventbus.subscribe(
             self.event_name, function, info=self.info
         )
         return function
@@ -434,7 +434,7 @@ class ModLoader:
         if os.path.exists(G.build + "/mods.json"):
             with open(G.build + "/mods.json") as f:
                 self.previous_mods = json.load(f)
-        elif not G.invalidate_cacheing:
+        elif not G.invalidate_cache:
             logger.println(
                 "[WARNING] can't locate mods.json in build-folder. This may be an error"
             )
@@ -455,7 +455,7 @@ class ModLoader:
     def execute_reload_stages(self):
         for event_name in self.reload_stages:
             for i in range(len(self.mods)):
-                instance = G.modloader.mods[G.modloader.mod_loading_order[i]]
+                instance = G.mod_loader.mods[G.mod_loader.mod_loading_order[i]]
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
 
@@ -509,7 +509,7 @@ class ModLoader:
             else:
                 i += 1
 
-        G.eventhandler.call("modloader:location_search", modlocations)
+        G.event_handler.call("modloader:location_search", modlocations)
 
         for i, location in enumerate(modlocations):
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
@@ -604,12 +604,12 @@ class ModLoader:
                         modname
                     )
                 )
-                G.invalidate_cacheing = True
+                G.invalidate_cache = True
                 G.data_gen = True
         for modname in self.mods.keys():
             if modname not in self.previous_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
-                G.invalidate_cacheing = True
+                G.invalidate_cache = True
                 G.data_gen = True
                 logger.println(
                     "rebuild mode due to mod change (addition) of {}".format(modname)
@@ -789,7 +789,7 @@ class ModLoader:
         will add an mod-instance into the inner system
         :param instance: the mod instance to add
         """
-        if not G.eventhandler.call_cancelable("modloader:mod_registered", instance):
+        if not G.event_handler.call_cancelable("modloader:mod_registered", instance):
             return
         self.mods[instance.name] = instance
         self.located_mods.append(instance)
@@ -886,7 +886,7 @@ class ModLoader:
             return
         start = time.time()
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
-            G.statehandler.active_state
+            G.state_handler.active_state
         )
         astate.parts[0].progress_max = len(LOADING_ORDER)
         astate.parts[1].progress_max = len(self.mods)
@@ -902,7 +902,7 @@ class ModLoader:
         """
         stage = LOADING_ORDER[self.active_loading_stage]
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
-            G.statehandler.active_state
+            G.state_handler.active_state
         )
         modinst: mcpython.common.mod.Mod.Mod = self.mods[
             self.mod_loading_order[stage.active_mod_index]
@@ -936,4 +936,4 @@ class ModLoader:
         )
 
 
-G.modloader = ModLoader()
+G.mod_loader = ModLoader()

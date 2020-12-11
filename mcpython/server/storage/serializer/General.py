@@ -75,7 +75,7 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
         mcpython.common.world.player.Player.RENDERER.reload()
 
         G.world.config = data["config"]
-        G.eventhandler.call("seed:set")
+        G.event_handler.call("seed:set")
 
         if data["game version"] not in mcpython.common.config.VERSION_ORDER:
             logger.println(
@@ -87,13 +87,13 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
             logger.println("it was last loaded in '{}'".format(data["game version"]))
 
         for modname in data["mods"]:
-            if modname not in G.modloader.mods:
+            if modname not in G.mod_loader.mods:
                 logger.println(
                     "[WARNING] mod '{}' is missing. This may break your world!".format(
                         modname
                     )
                 )
-            elif G.modloader.mods[modname].version != tuple(data["mods"][modname]):
+            elif G.mod_loader.mods[modname].version != tuple(data["mods"][modname]):
                 try:
                     savefile.apply_mod_fixer(modname, tuple(data["mods"][modname]))
                 except mcpython.server.storage.SaveFile.DataFixerNotFoundException:
@@ -103,12 +103,12 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
                             "which occur between the sessions (from {} to {})".format(
                                 modname,
                                 tuple(data["mods"][modname]),
-                                G.modloader.mods[modname].version,
+                                G.mod_loader.mods[modname].version,
                             )
                         )
 
         # apply data fixers for creating mod data
-        for modname in G.modloader.mods:
+        for modname in G.mod_loader.mods:
             if modname not in data["mods"]:
                 try:
                     savefile.apply_mod_fixer(modname, None)
@@ -117,7 +117,7 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
 
         # the chunks scheduled for generation
         [
-            G.worldgenerationhandler.add_chunk_to_generation_list(e[0], dimension=e[1])
+            G.world_generation_handler.add_chunk_to_generation_list(e[0], dimension=e[1])
             for e in data["chunks_to_generate"]
         ]
 
@@ -153,10 +153,10 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
             "player name": G.world.get_active_player().name,  # the name of the player the world played in
             "config": G.world.config,  # the world config
             "game version": mcpython.common.config.VERSION_NAME,
-            "mods": {mod.name: mod.version for mod in G.modloader.mods.values()},
+            "mods": {mod.name: mod.version for mod in G.mod_loader.mods.values()},
             "chunks_to_generate": [
                 (chunk.position, chunk.dimension.id)
-                for chunk in G.worldgenerationhandler.task_handler.chunks
+                for chunk in G.world_generation_handler.task_handler.chunks
             ],
             "dimensions": {
                 dimension.id: dimension.name

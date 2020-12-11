@@ -52,29 +52,29 @@ class StateWorldLoading(State.State):
         ]
 
     def on_update(self, dt):
-        G.worldgenerationhandler.task_handler.process_tasks(timer=0.8)
+        G.world_generation_handler.task_handler.process_tasks(timer=0.8)
         for chunk in self.status_table:
-            c = G.worldgenerationhandler.task_handler.get_task_count_for_chunk(
+            c = G.world_generation_handler.task_handler.get_task_count_for_chunk(
                 G.world.get_active_dimension().get_chunk(*chunk)
             )
             self.status_table[chunk] = 1 / c if c > 0 else -1
-        if len(G.worldgenerationhandler.task_handler.chunks) == 0:
-            G.eventhandler.call("data:reload:work")
-            G.statehandler.switch_to("minecraft:game")
+        if len(G.world_generation_handler.task_handler.chunks) == 0:
+            G.event_handler.call("data:reload:work")
+            G.state_handler.switch_to("minecraft:game")
             G.world.world_loaded = True
             if (
                 mcpython.common.config.SHUFFLE_DATA
                 and mcpython.common.config.SHUFFLE_INTERVAL > 0
             ):
-                G.eventhandler.call("data:shuffle:all")
+                G.event_handler.call("data:shuffle:all")
         self.parts[1].text = "{}%".format(
             round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10
         )
 
     def on_activate(self):
-        G.worldgenerationhandler.enable_generation = False
+        G.world_generation_handler.enable_generation = False
         self.status_table.clear()
-        G.dimensionhandler.init_dims()
+        G.dimension_handler.init_dims()
         try:
             G.world.savefile.load_world()
         except IOError:  # todo: add own exception class as IOError may be raised somewhere else in the script
@@ -82,12 +82,12 @@ class StateWorldLoading(State.State):
                 "failed to load world. data-fixer failed with NoDataFixerFoundException"
             )
             G.world.cleanup()
-            G.statehandler.switch_to("minecraft:startmenu")
+            G.state_handler.switch_to("minecraft:startmenu")
             return
         except:
             logger.print_exception("failed to load world")
             G.world.cleanup()
-            G.statehandler.switch_to("minecraft:startmenu")
+            G.state_handler.switch_to("minecraft:startmenu")
             return
         for cx in range(-3, 4):
             for cz in range(-3, 4):
@@ -95,7 +95,7 @@ class StateWorldLoading(State.State):
                 # todo: fix bug: something is wrong here...
                 # G.world.savefile.read("minecraft:chunk", dimension=G.world.get_active_player().dimension.id, chunk=(cx, cz),
                 #                       immediate=False)
-        G.worldgenerationhandler.enable_generation = True
+        G.world_generation_handler.enable_generation = True
 
     def on_deactivate(self):
         player = G.world.get_active_player()
@@ -109,8 +109,8 @@ class StateWorldLoading(State.State):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            G.statehandler.switch_to("minecraft:startmenu")
-            G.tickhandler.schedule_once(G.world.cleanup)
+            G.state_handler.switch_to("minecraft:startmenu")
+            G.tick_handler.schedule_once(G.world.cleanup)
             logger.println("interrupted world loading by user")
 
     def calculate_percentage_of_progress(self):
@@ -128,7 +128,7 @@ class StateWorldLoading(State.State):
                 round(self.calculate_percentage_of_progress() * 1000) / 10
             )
             self.parts[2].text = "{}/{}/{}".format(
-                *G.worldgenerationhandler.task_handler.get_total_task_stats()
+                *G.world_generation_handler.task_handler.get_total_task_stats()
             )
 
         for cx, cz in self.status_table:

@@ -118,10 +118,10 @@ class DimensionHandler:
             G.world.add_dimension(dim.id, dim.name, config=dim.config)
 
 
-G.dimensionhandler = DimensionHandler()
+G.dimension_handler = DimensionHandler()
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:dimension", G.dimensionhandler.add_default_dimensions
+    "stage:dimension", G.dimension_handler.add_default_dimensions
 )
 
 
@@ -175,7 +175,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
                 return
             self.chunks[(cx, cz)] = mcpython.common.world.Chunk.Chunk(self, (cx, cz))
             if generate:
-                G.worldgenerationhandler.add_chunk_to_generation_list(
+                G.world_generation_handler.add_chunk_to_generation_list(
                     self.chunks[(cx, cz)]
                 )
         return self.chunks[(cx, cz)]

@@ -122,20 +122,20 @@ def from_directory(directory: str, modname: str):
     :param directory: the directory name
     :param modname: the mod name
     """
-    if not modname in G.modloader.mods:
+    if not modname in G.mod_loader.mods:
         modname = "minecraft"
     files = list(mcpython.ResourceLoader.get_all_entries_special(directory))
     m = len(files)
     for i, f in enumerate(files):
         if f.endswith(".json"):  # new language format
-            G.modloader.mods[modname].eventbus.subscribe(
+            G.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:language",
                 Language.from_file,
                 f[:],
                 info="loading language file {} ({}/{})".format(f, i + 1, m),
             )
         elif f.endswith(".lang"):  # old language format
-            G.modloader.mods[modname].eventbus.subscribe(
+            G.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:language",
                 Language.from_old_data,
                 f[:],

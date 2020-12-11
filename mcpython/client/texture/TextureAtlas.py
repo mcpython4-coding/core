@@ -69,7 +69,7 @@ class TextureAtlasGenerator:
 
     def output(self):
         # todo: add per-mod, at end of every processing of models
-        G.eventhandler.call("textures:atlas:build:pre")
+        G.event_handler.call("textures:atlas:build:pre")
         os.makedirs(G.tmp.name + "/textureatlases")
         for modname in self.atlases:
             for i, atlas in enumerate(self.atlases[modname]):
@@ -80,7 +80,7 @@ class TextureAtlasGenerator:
                 atlas.group = pyglet.graphics.TextureGroup(
                     pyglet.image.load(location).get_texture()
                 )
-        G.eventhandler.call("textures:atlas:build:post")
+        G.event_handler.call("textures:atlas:build:post")
 
 
 @onlyInClient()
@@ -166,4 +166,4 @@ class TextureAtlas:
 
 handler = TextureAtlasGenerator()
 
-G.modloader("minecraft", "stage:textureatlas:bake")(handler.output)
+G.mod_loader("minecraft", "stage:textureatlas:bake")(handler.output)

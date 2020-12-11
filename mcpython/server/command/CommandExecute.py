@@ -133,7 +133,7 @@ class CommandExecute(mcpython.server.command.Command.Command):
             return
         elif command == "run":
             # execute command
-            G.commandparser.parse("/" + " ".join(values[index + 1]), info=info)
+            G.command_parser.parse("/" + " ".join(values[index + 1]), info=info)
             index += 2
 
         if len(values) > index:  # have we more commands to parse?

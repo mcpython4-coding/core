@@ -30,14 +30,14 @@ class State(IRegistryContent):
     def __init__(self):
         self.part_dict = {}
         self.parts = self.get_parts()  # todo: remove
-        self.eventbus = G.eventhandler.create_bus(active=False, crash_on_error=False)
+        self.eventbus = G.event_handler.create_bus(active=False, crash_on_error=False)
         self.bind_to_eventbus()
         for statepart in self.parts:
             statepart.master = [
                 self
             ]  # StateParts get an list of steps to get to them as an list
             statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
-        G.statehandler.add_state(self)
+        G.state_handler.add_state(self)
 
     def activate(self):
         self.eventbus.activate()

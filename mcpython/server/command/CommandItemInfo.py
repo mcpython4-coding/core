@@ -87,7 +87,7 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
             )
             logger.println("-max stack size: {}".format(itemstack.item.STACK_SIZE))
             tags = []
-            for tag in G.taghandler.taggroups["items"].tags.values():
+            for tag in G.tag_handler.taggroups["items"].tags.values():
                 if itemstack.item.NAME in tag.entries:
                     tags.append(tag.name)
             logger.println(" -tags: {}".format(tags))

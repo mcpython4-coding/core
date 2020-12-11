@@ -39,7 +39,7 @@ class Inventory:
         self.window_anchor = "MM"
         self.position = (0, 0)
         self.bg_image_pos = (0, 0)
-        G.inventoryhandler.add(self)
+        G.inventory_handler.add(self)
         self.slots = self.create_slots()
         self.config = {}
         self.reload_config()
@@ -223,8 +223,8 @@ class Inventory:
 
     def on_world_cleared(self):  # todo: remove
         [slot.get_itemstack().clean() for slot in self.slots]
-        if self in G.inventoryhandler.opened_inventorystack:
-            G.inventoryhandler.hide(self)
+        if self in G.inventory_handler.opened_inventorystack:
+            G.inventory_handler.hide(self)
 
     def get_interaction_slots(self):  # todo: make attribute
         return self.slots
@@ -304,11 +304,11 @@ class Inventory:
 
     def __del__(self):
         # we do not care about it when it is None [gc-sided deletion at the end of the program]
-        if G is None or G.inventoryhandler is None:
+        if G is None or G.inventory_handler is None:
             return
-        if self in G.inventoryhandler.alwaysopened:
-            G.inventoryhandler.alwaysopened.remove(self)
-        G.inventoryhandler.hide(self)
-        if self in G.inventoryhandler.inventorys:
-            G.inventoryhandler.inventorys.remove(self)
-        G.inventoryhandler.update_shift_container()
+        if self in G.inventory_handler.alwaysopened:
+            G.inventory_handler.alwaysopened.remove(self)
+        G.inventory_handler.hide(self)
+        if self in G.inventory_handler.inventorys:
+            G.inventory_handler.inventorys.remove(self)
+        G.inventory_handler.update_shift_container()

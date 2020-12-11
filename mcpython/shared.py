@@ -13,8 +13,8 @@ import os, sys, tempfile
 
 # todo: create MCPYTHON-class (as main game class) replacing this mess
 
-invalidate_cacheing = "--invalidate-cache" in sys.argv
-debugevents = "--debugevents" in sys.argv
+invalidate_cache = "--invalidate-cache" in sys.argv
+debug_events = "--debug-events" in sys.argv
 dev_environment = True  # dynamical set on build
 
 local = os.path.dirname(os.path.dirname(__file__)).replace("\\", "/")
@@ -31,34 +31,33 @@ build = (
 tmp = tempfile.TemporaryDirectory()
 
 data_gen = ("--data-gen" in sys.argv or "--invalidate-cache" in sys.argv) and dev_environment
-data_gen_exit = "--exit-after-data-gen" in sys.argv
+data_gen_exit = "--exit-after-data-gen" in sys.argv  # default vanilla behaviour
 
-STORAGE_VERSION = None
+STORAGE_VERSION = None  # the version of the storage format
 
-window = None
-world = None
+window = None  # the window instance, client-only
+world = None  # the world instance
 
-chat = None
+chat = None  # the chat instance todo: migrate to player
 
-eventhandler = None
-tickhandler = None
+event_handler = None  # the global event handler
+tick_handler = None  # the global tick handler
 
-registry = None
-commandparser = None
-statehandler = None
-texturefactoryhandler = None
-inventoryhandler = None
-worldgenerationhandler = None
-biomehandler = None
-craftinghandler = None
-taghandler = None
-dimensionhandler = None
-loottablehandler = None
-entityhandler = None
+registry = None  # the registry manager
+command_parser = None  # the command parser
+state_handler = None  # the state manager
+inventory_handler = None  # the inventory manager instance
+world_generation_handler = None  # the world generator manager instance
+biome_handler = None  # the biome manger instance
+crafting_handler = None  # the crafting manager instance
+tag_handler = None  # the tag handler instance
+dimension_handler = None  # the dimension handler instance
+loot_table_handler = None  # the loot table manager instance
+entity_handler = None  # the entity manager instance
 
-modelhandler = None
+model_handler = None  # the model handler instance, client-only
 
-modloader = None
+mod_loader = None  # the mod loader instance
 
 
 # todo: move to separated file

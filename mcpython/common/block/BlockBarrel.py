@@ -60,7 +60,7 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
         if (
             button == mouse.RIGHT and not modifiers & key.MOD_SHIFT
         ):  # open the inv when needed
-            G.inventoryhandler.show(self.inventory)
+            G.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -104,10 +104,10 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
         for slot in self.inventory.slots:
             G.world.get_active_player().pick_up(slot.itemstack.copy())
             slot.itemstack.clean()
-        G.inventoryhandler.hide(self.inventory)
+        G.inventory_handler.hide(self.inventory)
         del self.inventory
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(BlockBarrel)

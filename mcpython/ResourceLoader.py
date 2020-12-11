@@ -255,7 +255,7 @@ def load_resource_packs():
             ResourceDirectory(shared.local + "/resources/generated")
         )
         RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/source"))
-    shared.eventhandler.call("resources:load")
+    shared.event_handler.call("resources:load")
 
 
 def close_all_resources():
@@ -265,8 +265,8 @@ def close_all_resources():
     for item in RESOURCE_LOCATIONS:
         item.close()
     RESOURCE_LOCATIONS.clear()
-    if shared.eventhandler:
-        shared.eventhandler.call("resources:close")
+    if shared.event_handler:
+        shared.event_handler.call("resources:close")
 
 
 MC_IMAGE_LOCATIONS = [
@@ -471,32 +471,32 @@ def add_resources_by_modname(modname, pathname=None):
     import mcpython.common.data.tags.TagHandler
     import mcpython.common.data.loot.LootTable
 
-    shared.modloader.mods[modname].eventbus.subscribe(
+    shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:recipes",
-        shared.craftinghandler.load,
+        shared.crafting_handler.load,
         pathname,
         info="loading crafting recipes for mod {}".format(modname),
     )
-    shared.modloader.mods[modname].eventbus.subscribe(
+    shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:model:model_search",
-        shared.modelhandler.add_from_mod,
+        shared.model_handler.add_from_mod,
         pathname,
         info="searching for block models for mod {}".format(modname),
     )
-    shared.modloader.mods[modname].eventbus.subscribe(
+    shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:model:blockstate_search",
         BlockStateDefinition.from_directory,
         "assets/{}/blockstates".format(pathname),
         modname,
         info="searching for block states for mod {}".format(modname),
     )
-    shared.modloader.mods[modname].eventbus.subscribe(
+    shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:tag:group",
         lambda: mcpython.common.data.tags.TagHandler.add_from_location(pathname),
         info="adding tag groups for mod {}".format(modname),
     )
     mcpython.common.Language.from_mod_name(modname)
-    shared.modloader.mods[modname].eventbus.subscribe(
+    shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:loottables:load",
         lambda: mcpython.common.data.loot.LootTable.handler.for_mod_name(
             modname, pathname

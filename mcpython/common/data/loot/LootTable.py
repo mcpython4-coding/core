@@ -60,7 +60,7 @@ class LootTableHandler:
         self.loot_tables.clear()
         for modname in self.mod_names_to_load:
             self.for_mod_name(modname)
-        G.eventhandler.call("data:loot_tables:custom_inject", self)
+        G.event_handler.call("data:loot_tables:custom_inject", self)
 
     def shuffle_data(self):
         ccopy = list(self.loot_tables.keys())
@@ -111,9 +111,9 @@ class LootTableHandler:
         if directoryname is None:
             directoryname = modname
         modinstance = (
-            G.modloader.mods[modname]
-            if modname in G.modloader.mods
-            else G.modloader.mods["minecraft"]
+            G.mod_loader.mods[modname]
+            if modname in G.mod_loader.mods
+            else G.mod_loader.mods["minecraft"]
         )
         for path in mcpython.ResourceLoader.get_all_entries(
             "data/{}/loot_tables".format(directoryname)
@@ -164,7 +164,7 @@ class LootTableHandler:
         logger.println("unable to decode loot table condition '{}'".format(name))
 
 
-handler = G.loottablehandler = LootTableHandler()
+handler = G.loot_table_handler = LootTableHandler()
 
 
 class LootTablePoolEntry:
@@ -217,13 +217,13 @@ class LootTablePoolEntry:
             if self.expand:
                 items.append(
                     mcpython.common.container.ItemStack.ItemStack(
-                        random.choice(G.taghandler.get_tag_for(self.name, "items"))
+                        random.choice(G.tag_handler.get_tag_for(self.name, "items"))
                     )
                 )
             else:
                 items += [
                     mcpython.common.container.ItemStack.ItemStack(name)
-                    for name in G.taghandler.get_tag_for(self.name, "items")
+                    for name in G.tag_handler.get_tag_for(self.name, "items")
                 ]
         elif self.entry_type == LootTablePoolEntryType.LOOT_TABLE:
             items += handler.roll(self.name, *args, **kwargs)

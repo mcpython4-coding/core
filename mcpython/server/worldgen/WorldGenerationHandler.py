@@ -159,9 +159,9 @@ class WorldGenerationHandler:
             layer.add_generate_functions_to_chunk(
                 dimension.worldgenerationconfigobjects[layername], handler
             )
-            shared.worldgenerationhandler.task_handler.process_tasks()
+            shared.world_generation_handler.task_handler.process_tasks()
         logger.println("\r", end="")
-        shared.eventhandler.call("worldgen:chunk:finished", chunk)
+        shared.event_handler.call("worldgen:chunk:finished", chunk)
         chunk.generated = True
         chunk.loaded = True
 
@@ -186,7 +186,7 @@ class WorldGenerationHandler:
         return data
 
 
-shared.worldgenerationhandler = WorldGenerationHandler()
+shared.world_generation_handler = WorldGenerationHandler()
 
 
 def load_layers():

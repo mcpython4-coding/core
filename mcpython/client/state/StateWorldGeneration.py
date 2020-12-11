@@ -62,19 +62,19 @@ class StateWorldGeneration(State.State):
         ]
 
     def on_update(self, dt):
-        G.worldgenerationhandler.task_handler.process_tasks(timer=0.4)
+        G.world_generation_handler.task_handler.process_tasks(timer=0.4)
         for chunk in self.status_table:
             c = G.world.get_active_dimension().get_chunk(*chunk)
-            if c not in G.worldgenerationhandler.task_handler.chunks:
+            if c not in G.world_generation_handler.task_handler.chunks:
                 self.status_table[chunk] = -1
             else:
-                count = G.worldgenerationhandler.task_handler.get_task_count_for_chunk(
+                count = G.world_generation_handler.task_handler.get_task_count_for_chunk(
                     c
                 )
                 self.status_table[chunk] = 1 / (count if count > 0 else 1)
-        if len(G.worldgenerationhandler.task_handler.chunks) == 0:
-            G.statehandler.switch_to("minecraft:game")
-            G.eventhandler.call("data:reload:work")
+        if len(G.world_generation_handler.task_handler.chunks) == 0:
+            G.state_handler.switch_to("minecraft:game")
+            G.event_handler.call("data:reload:work")
             self.finish()
 
     def on_activate(self):
@@ -84,27 +84,27 @@ class StateWorldGeneration(State.State):
             logger.println("deleting old world...")
             shutil.rmtree(G.world.savefile.directory)
         self.status_table.clear()
-        G.dimensionhandler.init_dims()
+        G.dimension_handler.init_dims()
         sx = (
-            G.statehandler.states["minecraft:world_generation_config"]
+            G.state_handler.states["minecraft:world_generation_config"]
             .parts[7]
             .entered_text
         )
         sx = 3 if sx == "" else int(sx)
         sy = (
-            G.statehandler.states["minecraft:world_generation_config"]
+            G.state_handler.states["minecraft:world_generation_config"]
             .parts[8]
             .entered_text
         )
         sy = 3 if sy == "" else int(sy)
-        G.worldgenerationhandler.enable_generation = True
+        G.world_generation_handler.enable_generation = True
         fx = sx // 2
         fy = sy // 2
         ffx = sx - fx
         ffy = sy - fy
-        G.eventhandler.call("on_world_generation_prepared")
+        G.event_handler.call("on_world_generation_prepared")
         seed = (
-            G.statehandler.states["minecraft:world_generation_config"]
+            G.state_handler.states["minecraft:world_generation_config"]
             .parts[5]
             .entered_text
         )
@@ -116,11 +116,11 @@ class StateWorldGeneration(State.State):
         else:
             seed = random.randint(-100000, 100000)
         G.world.config["seed"] = seed
-        G.eventhandler.call("seed:set")
-        G.eventhandler.call("on_world_generation_started")
+        G.event_handler.call("seed:set")
+        G.event_handler.call("on_world_generation_started")
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
-                G.worldgenerationhandler.add_chunk_to_generation_list(
+                G.world_generation_handler.add_chunk_to_generation_list(
                     (cx, cz), force_generate=True
                 )
                 self.status_table[(cx, cz)] = 0
@@ -134,8 +134,8 @@ class StateWorldGeneration(State.State):
             chunk.is_ready = True
             chunk.visible = True
 
-        self = G.statehandler.states["minecraft:world_generation_config"]
-        G.eventhandler.call("on_game_generation_finished")
+        self = G.state_handler.states["minecraft:world_generation_config"]
+        G.event_handler.call("on_game_generation_finished")
         logger.println("[WORLDGENERATION] finished world generation")
         playername = self.parts[6].entered_text
         if playername == "":
@@ -174,7 +174,7 @@ class StateWorldGeneration(State.State):
         # reload all the data-packs
         mcpython.common.DataPack.datapackhandler.reload()
         mcpython.common.DataPack.datapackhandler.try_call_function("#minecraft:load")
-        G.statehandler.switch_to("minecraft:gameinfo", immediate=False)
+        G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
 
         # set spawn-point
         chunk = G.world.get_active_dimension().get_chunk((0, 0))
@@ -184,7 +184,7 @@ class StateWorldGeneration(State.State):
             (x, height + 1, z), "minecraft:chest"
         )
         blockchest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
-        G.eventhandler.call("on_game_enter")
+        G.event_handler.call("on_game_enter")
 
         # add surrounding chunks to load list
         G.world.change_chunks(
@@ -203,7 +203,7 @@ class StateWorldGeneration(State.State):
             mcpython.common.config.SHUFFLE_DATA
             and mcpython.common.config.SHUFFLE_INTERVAL > 0
         ):
-            G.eventhandler.call("data:shuffle:all")
+            G.event_handler.call("data:shuffle:all")
 
         if mcpython.common.config.ENABLE_PROFILER_GENERATION:
             master.profiler.disable()
@@ -218,8 +218,8 @@ class StateWorldGeneration(State.State):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            G.statehandler.switch_to("minecraft:startmenu")
-            G.tickhandler.schedule_once(G.world.cleanup)
+            G.state_handler.switch_to("minecraft:startmenu")
+            G.tick_handler.schedule_once(G.world.cleanup)
             logger.println("interrupted world generation by user")
 
     def calculate_percentage_of_progress(self):
@@ -233,7 +233,7 @@ class StateWorldGeneration(State.State):
             round(self.calculate_percentage_of_progress() * 1000) / 10
         )
         self.parts[2].text = "{}/{}/{}".format(
-            *G.worldgenerationhandler.task_handler.get_total_task_stats()
+            *G.world_generation_handler.task_handler.get_total_task_stats()
         )
 
         for cx, cz in self.status_table:

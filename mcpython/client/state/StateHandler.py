@@ -39,7 +39,7 @@ class StateHandler:
             logger.print_stack("state '{}' does not exists".format(statename))
             sys.exit(-10)
         self.CANCEL_SWITCH_STATE = False
-        G.eventhandler.call("state:switch:pre", statename)
+        G.event_handler.call("state:switch:pre", statename)
         if self.CANCEL_SWITCH_STATE:
             return
         if self.active_state:
@@ -47,7 +47,7 @@ class StateHandler:
         self.active_state: State.State = self.states[statename]
         self.active_state.activate()
         self.active_state.eventbus.call("user:window:resize", *G.window.get_size())
-        G.eventhandler.call("state:switch:post", statename)
+        G.event_handler.call("state:switch:post", statename)
         logger.println(
             "[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename),
             console=False,
@@ -64,7 +64,7 @@ class StateHandler:
         G.window.set_exclusive_mouse(self.active_state.is_mouse_exclusive())
 
 
-handler = G.statehandler = StateHandler()
+handler = G.state_handler = StateHandler()
 
 
 @onlyInClient()

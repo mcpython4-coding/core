@@ -92,7 +92,7 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
 )
 
 
-@G.modloader("minecraft", "stage:combined_factory:blocks")
+@G.mod_loader("minecraft", "stage:combined_factory:blocks")
 def combined_load():
     GENERATOR = DataGeneratorInstance("{local}/resources/generated")
     GENERATOR.default_namespace = "minecraft"

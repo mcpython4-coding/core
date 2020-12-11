@@ -58,7 +58,7 @@ class BlockFaceState:
                     self.subscribed_renderer = True
         else:
             self.face_data[face].extend(
-                G.modelhandler.add_face_to_batch(
+                G.model_handler.add_face_to_batch(
                     self.block, face, G.world.get_active_dimension().batches
                 )
             )

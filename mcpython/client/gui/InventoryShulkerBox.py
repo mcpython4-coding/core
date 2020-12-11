@@ -45,10 +45,10 @@ class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            G.inventoryhandler.hide(self)
+            G.inventory_handler.hide(self)
 
     def update_shift_container(self):
-        G.inventoryhandler.shift_container.container_A = (
+        G.inventory_handler.shift_container.container_A = (
             G.world.get_active_player().inventories["main"].slots[:36]
         )
-        G.inventoryhandler.shift_container.container_B = self.slots
+        G.inventory_handler.shift_container.container_B = self.slots

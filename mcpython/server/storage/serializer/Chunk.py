@@ -280,7 +280,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         if chunk not in data:
             return
 
-        G.worldgenerationhandler.enable_generation = False
+        G.world_generation_handler.enable_generation = False
 
         data = data[chunk]
         chunk_instance.generated = data["generated"]
@@ -328,7 +328,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
             if immediate:
                 add(chunk_instance.add_block(position, d["name"], immediate=flag))
             else:
-                G.worldgenerationhandler.task_handler.schedule_block_add(
+                G.world_generation_handler.task_handler.schedule_block_add(
                     chunk_instance, position, d["name"], on_add=add, immediate=flag
                 )
 
@@ -374,7 +374,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
             if entity["type"] == "minecraft:player":
                 continue
             try:
-                entity_instance = G.entityhandler.add_entity(
+                entity_instance = G.entity_handler.add_entity(
                     entity["type"],
                     entity["position"],
                     uuid=uuid.UUID(entity["uuid"]),
@@ -398,7 +398,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.loaded = True
         chunk_instance.is_ready = True
         chunk_instance.visible = True
-        G.worldgenerationhandler.enable_generation = True
+        G.world_generation_handler.enable_generation = True
 
         chunk_instance.show()
 
@@ -442,7 +442,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
             override = True
 
         # when doing stuff, please make sure that nothing fancy happens
-        G.worldgenerationhandler.enable_generation = False
+        G.world_generation_handler.enable_generation = False
 
         # these section is for dumping block stuff...
         palette = cdata[
@@ -566,7 +566,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
             savefile, dimension, region, data
         )  # and dump the region to the file
 
-        G.worldgenerationhandler.enable_generation = (
+        G.world_generation_handler.enable_generation = (
             True  # re-enable world gen as we are finished
         )
         # todo: make sure that this is always set back to True, also on error

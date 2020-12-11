@@ -57,7 +57,7 @@ class CommandParser:
         :param command: the command to add
         """
         parsebridge = mcpython.server.command.Command.ParseBridge(command)
-        if not G.eventhandler.call_cancelable(
+        if not G.event_handler.call_cancelable(
             "registry:commands:register", command, parsebridge
         ):
             return
@@ -79,7 +79,7 @@ class CommandParser:
         pre = split[0]
         if not info:
             info = ParsingCommandInfo()
-        if not G.eventhandler.call_cancelable("command:parser:execute", command, info):
+        if not G.event_handler.call_cancelable("command:parser:execute", command, info):
             return
         if pre[1:] in self.commandparsing:  # is it registered?
             command, parsebridge = self.commandparsing[pre[1:]]
@@ -192,4 +192,4 @@ class CommandParser:
         return None, array
 
 
-G.commandparser = CommandParser()
+G.command_parser = CommandParser()

@@ -39,7 +39,7 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         self.label = pyglet.text.HTMLLabel("", x=15, y=15)
         self.enable_blink = True
         self.timer = time.time()
-        self.eventbus = G.eventhandler.create_bus(active=False)
+        self.eventbus = G.event_handler.create_bus(active=False)
         self.eventbus.subscribe("user:keyboard:press", G.chat.on_key_press)
         self.eventbus.subscribe("user:keyboard:enter", G.chat.enter)
 
@@ -151,7 +151,7 @@ class Chat:
             self.active_index = len(self.text)
         elif symbol == key.ENTER:  # execute command
             self.CANCEL_INPUT = False
-            G.eventhandler.call("chat:text_enter", self.text)
+            G.event_handler.call("chat:text_enter", self.text)
             logger.println(
                 "[CHAT][INFO] entered text: '{}'".format(self.text), console=False
             )
@@ -161,7 +161,7 @@ class Chat:
                 return
             if self.text.startswith("/"):
                 # execute command
-                G.commandparser.parse(self.text)
+                G.command_parser.parse(self.text)
             else:
                 self.print_ln(self.text)
             self.history.insert(0, self.text)
@@ -205,7 +205,7 @@ class Chat:
         """
         closes the chat
         """
-        G.inventoryhandler.hide(G.world.get_active_player().inventories["chat"])
+        G.inventory_handler.hide(G.world.get_active_player().inventories["chat"])
         self.active_index = 0
 
     def clear(self):

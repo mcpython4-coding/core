@@ -32,7 +32,7 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
         }
 
     def on_block_added(self):
-        if self.NAME in G.modelhandler.blockstates:
+        if self.NAME in G.model_handler.blockstates:
             self.on_block_update()
 
     def get_model_state(self) -> dict:
@@ -132,7 +132,7 @@ class SandstoneWall(IWall):
     NAME = "minecraft:sandstone_wall"
 
 
-@G.modloader("minecraft", "stage:block:load")
+@G.mod_loader("minecraft", "stage:block:load")
 def load():
     G.registry.register(RedSandstoneWall)
     G.registry.register(SandstoneWall)
