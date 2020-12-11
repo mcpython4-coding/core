@@ -59,6 +59,7 @@ class StateWorldLoading(State.State):
             )
             self.status_table[chunk] = 1 / c if c > 0 else -1
         if len(G.worldgenerationhandler.task_handler.chunks) == 0:
+            G.eventhandler.call("data:reload:work")
             G.statehandler.switch_to("minecraft:game")
             G.world.world_loaded = True
             if (

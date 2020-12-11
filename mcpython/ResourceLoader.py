@@ -414,7 +414,11 @@ def read_image(file: str):
 
 
 def read_json(file):
-    return json.loads(read_raw(file).decode("utf-8"))
+    try:
+        return json.loads(read_raw(file).decode("utf-8"))
+    except:
+        print(file)
+        raise
 
 
 def read_pyglet_image(file):

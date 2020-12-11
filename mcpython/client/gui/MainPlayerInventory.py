@@ -9,19 +9,36 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
 import mcpython.client.gui.crafting.CraftingManager
 import mcpython.client.gui.crafting.CraftingGridHelperInterface
 import mcpython.common.item.ItemArmor
+import mcpython.ResourceLoader
+import PIL.Image
+import mcpython.util.texture
+import mcpython.common.event.EventHandler
 
 
 class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
     """
     inventory class for the main part of the inventory
     """
+
+    TEXTURE = None
+    TEXTURE_SIZE = None
+
+    @classmethod
+    def update_texture(cls):
+        texture = mcpython.ResourceLoader.read_image("minecraft:gui/container/inventory")
+        size = texture.size
+        texture = texture.crop((0, 0, 176 / 255 * size[0], 166 / 255 * size[1]))
+        size = texture.size
+        texture = texture.resize((size[0] * 2, size[1] * 2), PIL.Image.NEAREST)
+        cls.TEXTURE = mcpython.util.texture.to_pyglet_image(texture)
+        cls.TEXTURE_SIZE = texture.size
 
     def __init__(self, hotbar):
         self.hotbar = hotbar
@@ -33,7 +50,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
 
     @staticmethod
     def get_config_file() -> str or None:
-        return "assets/config/inventory/playerinventorymain.json"
+        return "assets/config/inventory/player_inventory_main.json"
 
     def create_slots(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
@@ -64,7 +81,23 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
                     mcpython.common.item.ItemArmor.ItemArmor,
                 ):
                     points += slot.get_itemstack().item.DEFENSE_POINTS
-        G.world.get_active_player().armor_level = points
+        shared.world.get_active_player().armor_level = points
+
+    def draw(self, hoveringslot=None):
+        """
+        draws the inventory
+        """
+        self.bg_image_size = self.TEXTURE_SIZE
+        x, y = self.get_position()
+        self.TEXTURE.blit(x, y)
+        for slot in (
+            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        ):
+            slot.draw(x, y, hovering=slot == hoveringslot)
+        for slot in (
+            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        ):
+            slot.draw_label()
 
     def remove_items_from_crafting(self):
         for slot in self.slots[40:-2]:
@@ -73,16 +106,19 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
             slot.set_itemstack(
                 mcpython.common.container.ItemStack.ItemStack.get_empty()
             )
-            if not G.world.get_active_player().pick_up(itemstack):
+            if not shared.world.get_active_player().pick_up(itemstack):
                 pass  # todo: drop item as item could not be added to inventory
         self.slots[-2].get_itemstack().clean()
 
     def on_deactivate(self):
         self.remove_items_from_crafting()
-        G.statehandler.active_state.parts[0].activate_mouse = True
+        shared.statehandler.active_state.parts[0].activate_mouse = True
 
     def update_shift_container(self):
-        G.inventoryhandler.shift_container.container_A = (
+        shared.inventoryhandler.shift_container.container_A = (
             self.slots[:9] + self.slots[36:41]
         )
-        G.inventoryhandler.shift_container.container_B = self.slots[9:36]
+        shared.inventoryhandler.shift_container.container_B = self.slots[9:36]
+
+
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", MainPlayerInventory.update_texture)

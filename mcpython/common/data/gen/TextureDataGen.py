@@ -24,7 +24,7 @@ class TextureConstructor(IDataGenerator):
     generator system for generating textures
     """
 
-    def __init__(self, name: str, image_size: tuple):
+    def __init__(self, name: str, image_size: tuple = None):
         """
         will create an new TextureConstructor-instance
         :param name: the name of the texture address as "{group}/{path without .png}"
@@ -71,12 +71,12 @@ class TextureConstructor(IDataGenerator):
         :param rescale: rescale of the image
         """
         try:
+            if type(location_or_image) != PIL.Image.Image:
+                location_or_image = ResourceLoader.read_image(location_or_image)
             self.actions.append(
                 (
                     1,
-                    location_or_image
-                    if type(location_or_image) == PIL.Image.Image
-                    else ResourceLoader.read_image(location_or_image),
+                    location_or_image,
                     color,
                     position,
                     rescale,
@@ -88,6 +88,14 @@ class TextureConstructor(IDataGenerator):
                     location_or_image, color
                 )
             )
+        return self
+
+    def scaled(self, scale: tuple):
+        self.actions.append((3, scale))
+        return self
+
+    def crop(self, region: tuple):
+        self.actions.append((4, region))
         return self
 
     def add_alpha_composite_layer(self, location_or_image, position=(0, 0)):
@@ -107,6 +115,16 @@ class TextureConstructor(IDataGenerator):
 
     def write(self, generator: "DataGeneratorInstance", name: str):
         file = self.get_default_location(generator, name)
+
+        if self.image_size is None:
+            for action, *data in self.actions:
+                if action == 0:
+                    self.image_size = data[0]
+                    break
+            else:
+                logger.println("[ERROR] failed to texture-gen as image size could not get loaded for"
+                               " generator named {} to store at {}!".format(self.name, file))
+                return
 
         image = PIL.Image.new("RGBA", self.image_size, (0, 0, 0, 0))
         for action, *data in self.actions:
@@ -129,5 +147,13 @@ class TextureConstructor(IDataGenerator):
                 )
             elif action == 2:
                 image.alpha_composite(data[0], data[1])
+            elif action == 3:
+                size = image.size
+                scale = data[0]
+                image = image.resize(tuple([scale[i] * size[i] for i in range(2)]))
+            elif action == 4:
+                size = image.size
+                region = data[0]
+                image = image.crop(tuple([region[i] * size[i%2] for i in range(4)]))
 
         image.save(generator.get_full_path(file))

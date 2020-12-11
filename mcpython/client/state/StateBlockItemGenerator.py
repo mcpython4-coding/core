@@ -49,7 +49,7 @@ class StateBlockItemGenerator(State.State):
 
     def get_parts(self) -> list:
         kwargs = {}
-        if G.prebuilding:
+        if G.invalidate_cacheing:
             kwargs["glcolor3d"] = (1.0, 1.0, 1.0)
         return [
             StatePartGame.StatePartGame(
@@ -105,7 +105,7 @@ class StateBlockItemGenerator(State.State):
         self.tasks = list(G.registry.get_by_name("block").entries.keys())
         if not os.path.isdir(G.build + "/generated_items"):
             os.makedirs(G.build + "/generated_items")
-        if not G.prebuilding:
+        if not G.invalidate_cacheing:
             if os.path.exists(G.build + "/itemblockfactory.json"):
                 with open(G.build + "/itemblockfactory.json", mode="r") as f:
                     self.table = json.load(f)

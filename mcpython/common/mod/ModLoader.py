@@ -196,12 +196,6 @@ class LoadingStages:
         "resource addition", "stage:additional_resources"
     )
 
-    # deprecated (but removal in future) system of preparing data, but storing them in an "cache"
-    # should be replaced by data gen and similar
-    PREBUILD = LoadingStage(
-        "prebuilding", "stage:prebuild:addition", "stage:prebuild:do"
-    )
-
     # first: create ConfigFile objects, second: internally, third: do something with the data
     CONFIGS = LoadingStage(
         "loading mod config",
@@ -349,7 +343,6 @@ LOADING_ORDER: list = [
     LoadingStages.API_MANAGEMENT,
     LoadingStages.ADD_LOADING_STAGES,
     LoadingStages.EXTRA_RESOURCE_LOCATIONS,
-    LoadingStages.PREBUILD,
     LoadingStages.CONFIGS,
     LoadingStages.COMBINED_FACTORIES,
     LoadingStages.BLOCKS,
@@ -441,7 +434,7 @@ class ModLoader:
         if os.path.exists(G.build + "/mods.json"):
             with open(G.build + "/mods.json") as f:
                 self.previous_mods = json.load(f)
-        elif not G.prebuilding:
+        elif not G.invalidate_cacheing:
             logger.println(
                 "[WARNING] can't locate mods.json in build-folder. This may be an error"
             )
@@ -611,12 +604,12 @@ class ModLoader:
                         modname
                     )
                 )
-                G.prebuilding = True
+                G.invalidate_cacheing = True
                 G.data_gen = True
         for modname in self.mods.keys():
             if modname not in self.previous_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
-                G.prebuilding = True
+                G.invalidate_cacheing = True
                 G.data_gen = True
                 logger.println(
                     "rebuild mode due to mod change (addition) of {}".format(modname)

@@ -1,9 +1,4 @@
 {
-  "image_location": "build/texture/gui/chest.png",
-  "image_size": [
-    352,
-    332
-  ],
   "slots": {
     "0": {"position": [16, 192], "allow_player_add_to_free_place": false},
     "1": {"position": [52, 192], "allow_player_add_to_free_place": false},

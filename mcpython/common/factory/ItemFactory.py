@@ -92,7 +92,7 @@ class ItemFactory:
             modname, itemname = tuple(copied.name.split(":"))
         else:
             modname, itemname = copied.modname, copied.name
-        if not G.prebuilding and not task_list:
+        if not G.invalidate_cacheing and not task_list:
             G.modloader.mods[modname].eventbus.subscribe(
                 "stage:item:load",
                 copied.finish_up,

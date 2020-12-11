@@ -9,7 +9,8 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared
+from mcpython import logger
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
@@ -19,28 +20,43 @@ import pyglet
 import time
 import mcpython.ResourceLoader
 import mcpython.common.event.EventHandler
+import mcpython.util.texture
+import PIL.Image
 
 
 class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
     """
     inventory class for the furnace
     """
-
-    arrow = None
-    fire = None
+    TEXTURE_BG = None
+    TEXTURE_BG_SIZE = None
+    TEXTURE_ARROW = None
+    TEXTURE_ARROW_SIZE = None
+    TEXTURE_FIRE = None
+    TEXTURE_FIRE_SIZE = None
 
     @classmethod
-    def reload(cls):
-        cls.arrow = mcpython.ResourceLoader.read_pyglet_image(
-            "build/texture/gui/furnace_arrow.png"
-        )
-        cls.fire = mcpython.ResourceLoader.read_pyglet_image(
-            "build/texture/gui/furnace_fire.png"
-        )
+    def update_texture(cls):
+        texture = mcpython.ResourceLoader.read_image("minecraft:gui/container/furnace")
+        size = texture.size
 
-    mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-        "data:reload:work", reload
-    )
+        texture_bg = texture.crop((0, 0, 176 / 255 * size[0], 166 / 255 * size[1]))
+        size = texture_bg.size
+        texture_bg = texture_bg.resize((size[0] * 2, size[1] * 2), PIL.Image.NEAREST)
+        cls.TEXTURE_BG = mcpython.util.texture.to_pyglet_image(texture_bg)
+        cls.TEXTURE_BG_SIZE = texture_bg.size
+
+        texture_arrow = texture.crop((176/255*size[0], 14/255*size[1], 200/255*size[0], 31/255*size[1]))
+        texture_arrow_size = texture_arrow.size
+        texture_arrow = texture_arrow.resize((texture_arrow_size[0]*2, texture_arrow_size[1]*2), PIL.Image.NEAREST)
+        cls.TEXTURE_FIRE = mcpython.util.texture.to_pyglet_image(texture_arrow)
+        cls.TEXTURE_FIRE_SIZE = texture_arrow.size
+
+        texture_fire = texture.crop((176/255*size[0], 0, 190/255*size[0], 14/255*size[1]))
+        texture_fire_size = texture_fire.size
+        texture_fire = texture_fire.resize((texture_fire_size[0]*2, texture_fire_size[1]*2), PIL.Image.NEAREST)
+        cls.TEXTURE_ARROW = mcpython.util.texture.to_pyglet_image(texture_fire)
+        cls.TEXTURE_ARROW_SIZE = texture_fire.size
 
     def __init__(self, block, types):
         super().__init__()
@@ -56,7 +72,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
 
     @staticmethod
     def get_config_file() -> str or None:
-        return "assets/config/inventory/blockinventoryfurnace.json"
+        return "assets/config/inventory/block_inventory_furnace.json"
 
     def reset(self):
         self.block.active = False
@@ -69,7 +85,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         if any(
             [
                 self.slots[0].itemstack.get_item_name()
-                in G.craftinghandler.furnace_recipes[x]
+                in shared.craftinghandler.furnace_recipes[x]
                 for x in self.types
             ]
         ):
@@ -96,9 +112,9 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
             self.old_item_name = self.slots[0].itemstack.get_item_name()
             self.smelt_start = time.time()
             for x in self.types:
-                if self.old_item_name in G.craftinghandler.furnace_recipes[x]:
-                    recipe = G.craftinghandler.check_relink(
-                        G.craftinghandler.furnace_recipes[x][self.old_item_name]
+                if self.old_item_name in shared.craftinghandler.furnace_recipes[x]:
+                    recipe = shared.craftinghandler.check_relink(
+                        shared.craftinghandler.furnace_recipes[x][self.old_item_name]
                     )
                     break
             else:
@@ -147,7 +163,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
     @staticmethod
     def on_shift(slot, x, y, button, mod, player):
         slot_copy = slot.itemstack.copy()
-        if G.world.get_active_player().pick_up(slot_copy):
+        if shared.world.get_active_player().pick_up(slot_copy):
             slot.itemstack.clean()  # if we successfully added the itemstack, we have to clear it
         else:
             slot.itemstack.set_amount(slot_copy.itemstack.amount)
@@ -184,7 +200,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
 
     def on_deactivate(self):
         super().on_deactivate()
-        G.world.get_active_player().reset_moving_slot()
+        shared.world.get_active_player().reset_moving_slot()
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
@@ -196,17 +212,14 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         """
         draws the inventory
         """
-        self.on_draw_background()
+        self.bg_image_size = self.TEXTURE_BG_SIZE
         x, y = self.get_position()
-        if self.bgsprite:
-            self.bgsprite.position = (x, y)
-            self.bgsprite.draw()
-        self.on_draw_over_backgroundimage()
+        self.TEXTURE_BG.blit(x, y)
 
         # draw arrow
         if self.recipe and self.progress > 0:
             try:
-                self.arrow.get_region(0, 0, round(48 * self.progress), 33).blit(
+                self.TEXTURE_ARROW.get_region(0, 0, round(self.TEXTURE_ARROW_SIZE[0] * self.progress), self.TEXTURE_ARROW_SIZE[1]).blit(
                     x + 159, y + 229
                 )
             except ZeroDivisionError:
@@ -215,29 +228,27 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         # draw fire
         if self.fuel_max > 0:
             try:
-                self.fire.get_region(
-                    0, 0, 28, round(28 * (self.fuel_left / self.fuel_max))
+                self.TEXTURE_FIRE.get_region(
+                    0, 0, self.TEXTURE_FIRE_SIZE[0], round(self.TEXTURE_FIRE_SIZE[1] * (self.fuel_left / self.fuel_max))
                 ).blit(x + 112, y + 229)
             except ZeroDivisionError:
                 pass
 
         for slot in (
-            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
         ):
             slot.draw(x, y, hovering=slot == hoveringslot)
-        self.on_draw_over_image()
         for slot in (
-            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
         ):
             slot.draw_label()
-        self.on_draw_overlay()
 
     def get_interaction_slots(self):
-        return G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        return shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            G.inventoryhandler.hide(self)
+            shared.inventoryhandler.hide(self)
 
     def on_tick(self, dt):
         if self.fuel_left > 0:
@@ -268,7 +279,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
                 self.slots[2].itemstack.add_amount(1)
         self.slots[0].itemstack.add_amount(-1)
         try:
-            G.world.get_active_player().add_xp(self.recipe.xp)
+            shared.world.get_active_player().add_xp(self.recipe.xp)
         except AttributeError:
             pass
         self.smelt_start = time.time()
@@ -289,3 +300,8 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
             "xp": self.xp_stored,
             "progress": self.progress,
         }
+
+
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "data:reload:work", InventoryFurnace.update_texture
+)

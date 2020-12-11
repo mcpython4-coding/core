@@ -9,12 +9,11 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import importlib
 import sys
 import time
 import typing
 
-import deprecation
+import traceback
 
 from mcpython import shared as G, logger
 
@@ -85,10 +84,6 @@ class EventBus:
                 f.write(
                     "\nevent subscription of '{}' to '{}'".format(function, eventname)
                 )
-
-    @deprecation.deprecated("dev4-3", "a1.3.0")
-    def subscribe_package_load(self, eventname, package):
-        self.subscribe(eventname, lambda *_: importlib.import_module(package))
 
     def unsubscribe(self, event_name: str, function):
         """

@@ -1,9 +1,4 @@
 {
-  "image_location": "build/texture/gui/main.png",
-  "image_size": [
-    352,
-    332
-  ],
   "slots": {
     "0": {
       "position": [16, 16]

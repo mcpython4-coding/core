@@ -55,7 +55,7 @@ Flags
 
 Please run the project with:
 ```shell script
-python __main__.py --rebuild
+python __main__.py --invalidate-cache
 ```
  It will take longer than normal but will invalidate the cache and rebuild.
  
@@ -104,7 +104,7 @@ where to look for resources. You can add new location using:
 python __main__.py --addresourcepath <path to your resource pack>
 ```
 
-If you modify your resource pack list, you should use the --rebuild flag from above to make
+If you modify your resource pack list, you should use the --invalidate-cache flag from above to make
 sure that your texture changes are applied to all parts
 
 

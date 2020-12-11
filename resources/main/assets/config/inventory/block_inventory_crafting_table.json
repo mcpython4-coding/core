@@ -1,9 +1,4 @@
 {
-  "image_location": "build/texture/gui/crafting_table.png",
-  "image_size": [
-    352,
-    332
-  ],
   "slots": {
     "0": {"position": [60, 266], "allow_player_add_to_free_place": false},
     "1": {"position": [96, 266], "allow_player_add_to_free_place": false},

@@ -1,9 +1,5 @@
 {
-  "image_location": "build/texture/gui/hotbar.png",
-  "image_size": [364, 44],
   "window_anchor": "MD",
-  "image_position": [0, 40],
-  "selected_delta": [8, 8],
   "slots": {
     "0": {
       "position": [6, 6], "allow_player_insert": false, "allow_player_remove": false

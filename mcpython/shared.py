@@ -13,7 +13,7 @@ import os, sys, tempfile
 
 # todo: create MCPYTHON-class (as main game class) replacing this mess
 
-prebuilding = "--rebuild" in sys.argv
+invalidate_cacheing = "--invalidate-cache" in sys.argv
 debugevents = "--debugevents" in sys.argv
 dev_environment = True  # dynamical set on build
 
@@ -30,7 +30,7 @@ build = (
 )
 tmp = tempfile.TemporaryDirectory()
 
-data_gen = ("--data-gen" in sys.argv or "--rebuild" in sys.argv) and dev_environment
+data_gen = ("--data-gen" in sys.argv or "--invalidate-cache" in sys.argv) and dev_environment
 data_gen_exit = "--exit-after-data-gen" in sys.argv
 
 STORAGE_VERSION = None

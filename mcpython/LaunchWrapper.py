@@ -85,7 +85,6 @@ class LaunchWrapper:
         import mcpython.client.rendering.model.ItemModel
 
         import mcpython.client.texture.factory
-        import mcpython.setup
 
     def setup_opengl(self):
         """
@@ -123,7 +122,7 @@ class LaunchWrapper:
         # check if build folder exists, if not, we need to create its content
         if not os.path.exists(shared.build):
             logger.println("rebuild mode due to missing cache folder")
-            shared.prebuilding = True
+            shared.invalidate_cacheing = True
 
         if os.path.exists(shared.build):  # copy default skin to make it start correctly
             try:

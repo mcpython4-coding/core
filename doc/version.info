@@ -1334,25 +1334,26 @@ F   [uuk]: added TableBuilder helper class for logger.py dynamically building an
     [uuk]: migrated code to the new builder
     [uuk]: modloader prints now errors in one big table
     [uuk]: mod loader errors are now less fatal
+D   [uuk]: removed prebuild system
+R   [uuk]: changed flag --rebuild to --invalidate-cache
+B   [uuk]: texture reload is now also triggered when entering an world
+B   [uuk]: migrated every inventory texture to an reload-based system for making reloads work with inv. textures
+           [previously, an rebuild was needed]
 
-Roadmap:
-    - refactor classes & functions [WIP]
-    - create doc  [WIP] & unit tests for code
+Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]
-    - migrate globals to global game instance
-    - add off-process system for world gen [Preparation in Progress]
-    - remove setup / prebuild system COMPLETELY
-    - remove all deprecated stuff   [WIP]
-    - rewrite how assets are stored
+X   - remove all deprecated stuff   [WIP]
+X   - rewrite how assets are stored  [WIP]
     - do not hardcode ANY constants, move them to an public space / config files / resource data
     - clean up changelog.txt, issues.txt and fixed_issues.txt
-    - redesign command system
-    - player inventories should be stored as attributes, not in an dict
-    - fix respawning in blocks
-    - fix having two separated item atlas storages? -> one NEVER used? -> old may have been used at the slot bug?
-    - fix being able to break blocks in gamemode 0 which you should not be able to (e.g. bedrock)
-    - update mdk to the new systems
-    - update doc generator to use tokenize
-    - optimize rendering system
+    - redesign command system [WIP]
+X   - player inventories should be stored as attributes, not in an dict
+X   - fix respawning in blocks
+X   - fix having two separated item atlas storages? -> one NEVER used? -> old may have been used at the slot bug?
+X   - fix being able to break blocks in gamemode 0 which you should not be able to (e.g. bedrock)
+    - optimize rendering system [WIP]
     - make world generator mode system class based
-    - split inventories into inventories (rendering) and containers
+XXX - fix all non-block-items being rendered as the same item, cannot be stacked to the same item, ...
+    - fix furnace texture
+    - fix grass texture [maybe affects all blocks?]
+    - implement dark theme for inventories (set glColor3d to something lower?) & implement API for it

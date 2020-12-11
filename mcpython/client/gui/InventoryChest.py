@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
@@ -18,6 +18,9 @@ import mcpython.client.gui.crafting.CraftingGridHelperInterface
 import mcpython.common.container.ItemStack
 import pyglet
 import mcpython.common.event.EventHandler
+import mcpython.ResourceLoader
+import PIL.Image
+import mcpython.util.texture
 
 
 class InventoryChest(mcpython.client.gui.Inventory.Inventory):
@@ -25,9 +28,22 @@ class InventoryChest(mcpython.client.gui.Inventory.Inventory):
     inventory class for chest
     """
 
+    TEXTURE = None
+    TEXTURE_SIZE = None
+
+    @classmethod
+    def update_texture(cls):
+        texture = mcpython.ResourceLoader.read_image("minecraft:gui/container/shulker_box")
+        size = texture.size
+        texture = texture.crop((0, 0, 176/255*size[0], 166/255*size[1]))
+        size = texture.size
+        texture = texture.resize((size[0]*2, size[1]*2), PIL.Image.NEAREST)
+        cls.TEXTURE = mcpython.util.texture.to_pyglet_image(texture)
+        cls.TEXTURE_SIZE = texture.size
+
     @staticmethod
     def get_config_file() -> str or None:
-        return "assets/config/inventory/blockinventorychest.json"
+        return "assets/config/inventory/block_inventory_chest.json"
 
     def on_activate(self):
         super().on_activate()
@@ -46,32 +62,30 @@ class InventoryChest(mcpython.client.gui.Inventory.Inventory):
         return [mcpython.client.gui.Slot.Slot() for _ in range(9 * 3)]
 
     def draw(self, hoveringslot=None):
-        self.on_draw_background()
+        self.bg_image_size = self.TEXTURE_SIZE
         x, y = self.get_position()
-        if self.bgsprite:
-            self.bgsprite.position = (x, y)
-            self.bgsprite.draw()
-        self.on_draw_over_backgroundimage()
+        self.TEXTURE.blit(x, y)
         for slot in (
-            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
         ):
             slot.draw(x, y, hovering=slot == hoveringslot)
-        self.on_draw_over_image()
         for slot in (
-            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
         ):
             slot.draw_label()
-        self.on_draw_overlay()
 
     def get_interaction_slots(self):
-        return G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        return shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            G.inventoryhandler.hide(self)
+            shared.inventoryhandler.hide(self)
 
     def update_shift_container(self):
-        G.inventoryhandler.shift_container.container_A = (
-            G.world.get_active_player().inventories["main"].slots[:36]
+        shared.inventoryhandler.shift_container.container_A = (
+            shared.world.get_active_player().inventories["main"].slots[:36]
         )
-        G.inventoryhandler.shift_container.container_B = self.slots
+        shared.inventoryhandler.shift_container.container_B = self.slots
+
+
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", InventoryChest.update_texture)

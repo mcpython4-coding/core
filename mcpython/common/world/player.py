@@ -116,7 +116,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         import mcpython.client.gui.InventoryCraftingTable as InvCrafting
         import mcpython.client.gui.InventoryPlayerHotbar as InvHotbar
 
-        hotbar = self.inventories["hotbar"] = InvHotbar.InventoryPlayerHotbar()
+        hotbar = self.inventories["hotbar"] = InvHotbar.InventoryPlayerHotbar(self)
         self.inventories[
             "main"
         ] = mcpython.client.gui.MainPlayerInventory.MainPlayerInventory(hotbar)
@@ -125,25 +125,6 @@ class Player(mcpython.common.entity.Entity.Entity):
             "enderchest"
         ] = mcpython.client.gui.InventoryChest.InventoryChest()
         self.inventories["crafting_table"] = InvCrafting.InventoryCraftingTable()
-
-        if mcpython.ResourceLoader.exists("build/texture/gui/icons/xp_bar_empty.png"):
-            self.load_xp_icons()
-        else:
-            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-                "stage:blockitemfactory:finish", self.load_xp_icons
-            )
-
-    def load_xp_icons(self):
-        self.iconparts = [
-            (
-                mcpython.ResourceLoader.read_pyglet_image(
-                    "build/texture/gui/icons/xp_bar_empty.png"
-                ),
-                mcpython.ResourceLoader.read_pyglet_image(
-                    "build/texture/gui/icons/xp_bar.png"
-                ),
-            )
-        ]
 
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)

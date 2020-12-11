@@ -33,10 +33,10 @@ class Inventory:
 
     def __init__(self):
         self.active = False
-        self.bgsprite: pyglet.sprite.Sprite = None
-        self.bgimagesize = None
-        self.bganchor = "MM"
-        self.windowanchor = "MM"
+        self.bg_sprite: pyglet.sprite.Sprite = None
+        self.bg_image_size = None
+        self.bg_anchor = "MM"
+        self.window_anchor = "MM"
         self.position = (0, 0)
         self.bg_image_pos = (0, 0)
         G.inventoryhandler.add(self)
@@ -50,7 +50,7 @@ class Inventory:
         reload the config file
         todo: make public
         """
-        if self.get_config_file():
+        if self.get_config_file() is not None:
             try:
                 self.config = mcpython.ResourceLoader.read_json(self.get_config_file())
             except:
@@ -95,23 +95,23 @@ class Inventory:
             if "allowed_tags" in entry:
                 self.slots[sid].allowed_item_tags = entry["allowed_tags"]
         if "image_size" in self.config:
-            self.bgimagesize = tuple(self.config["image_size"])
+            self.bg_image_size = tuple(self.config["image_size"])
         if "image_anchor" in self.config:
-            self.bganchor = self.config["image_anchor"]
+            self.bg_anchor = self.config["image_anchor"]
         if "window_anchor" in self.config:
-            self.windowanchor = self.config["window_anchor"]
+            self.window_anchor = self.config["window_anchor"]
         if "image_position" in self.config:
             self.position = self.config["image_position"]
         if "image_location" in self.config:
             try:
                 if mcpython.ResourceLoader.exists(self.config["image_location"]):
-                    self.bgsprite = pyglet.sprite.Sprite(
+                    self.bg_sprite = pyglet.sprite.Sprite(
                         mcpython.ResourceLoader.read_pyglet_image(
                             self.config["image_location"]
                         )
                     )
                 else:
-                    self.bgsprite = pyglet.sprite.Sprite(
+                    self.bg_sprite = pyglet.sprite.Sprite(
                         mcpython.ResourceLoader.read_pyglet_image(
                             "assets/missing_texture.png"
                         )
@@ -139,33 +139,28 @@ class Inventory:
     def get_position(self):
         """
         :return: the position of the inventory
+        todo: add cache
         """
         x, y = self.position
         wx, wy = G.window.get_size()
-        sx, sy = self.bgimagesize if self.bgsprite else (0, 0)
-        if self.bganchor[0] == "M":
+        sx, sy = self.bg_image_size if self.bg_image_size is not None else (0, 0)
+        if self.bg_anchor[0] == "M":
             x -= sx // 2
-        elif self.bganchor[0] == "R":
+        elif self.bg_anchor[0] == "R":
             x -= sx
-        if self.bganchor[1] == "M":
+        if self.bg_anchor[1] == "M":
             y -= sy // 2
-        elif self.bganchor[1] == "U":
+        elif self.bg_anchor[1] == "U":
             y -= sy
-        if self.windowanchor[0] == "M":
+        if self.window_anchor[0] == "M":
             x += wx // 2
-        elif self.windowanchor[0] == "R":
+        elif self.window_anchor[0] == "R":
             x = wx - abs(x)
-        if self.windowanchor[1] == "M":
+        if self.window_anchor[1] == "M":
             y += wy // 2
-        elif self.windowanchor[1] == "U":
+        elif self.window_anchor[1] == "U":
             y = wy - abs(y)
         return x, y
-
-    def activate(self):  # todo: remove
-        G.inventoryhandler.show(self)
-
-    def deactivate(self):  # todo: remove
-        G.inventoryhandler.hide(self)
 
     def on_activate(self):
         """
@@ -189,12 +184,12 @@ class Inventory:
         """
         self.on_draw_background()
         x, y = self.get_position()
-        if self.bgsprite:
-            self.bgsprite.position = (
+        if self.bg_sprite:
+            self.bg_sprite.position = (
                 x + self.bg_image_pos[0],
                 y + self.bg_image_pos[1],
             )
-            self.bgsprite.draw()
+            self.bg_sprite.draw()
         self.on_draw_over_backgroundimage()
         for slot in self.slots:
             slot.draw(x, y, hovering=slot == hoveringslot)
