@@ -1344,7 +1344,7 @@ Roadmap (for internal_changes; X means "must be done before release", more X's m
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]
 X   - remove all deprecated stuff   [WIP]
 X   - rewrite how assets are stored  [WIP]
-    - do not hardcode ANY constants, move them to an public space / config files / resource data
+    - do not hardcode constants, move them to an public space / config files / resource data
     - clean up changelog.txt, issues.txt and fixed_issues.txt
     - redesign command system [WIP]
 X   - player inventories should be stored as attributes, not in an dict
@@ -1357,3 +1357,5 @@ XXX - fix all non-block-items being rendered as the same item, cannot be stacked
     - fix furnace texture
     - fix grass texture [maybe affects all blocks?]
     - implement dark theme for inventories (set glColor3d to something lower?) & implement API for it
+    - implement file-loaded registry entries (-> dynamic registries)
+    - refactor event names

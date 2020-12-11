@@ -4,34 +4,28 @@ todo: make into an .md file
 
 planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
         before next stable release):
-    - optimize texture reload with everything (re-block-item-factories,
-        reload item texture, gui textures, ...), config reload [1]
     - add more factories for various parts [2]
     - add scoreboards with commands, execute command entry, ... [5]
     - make world gen more fail-save [2]
     - add ores [4]
     - add mcpi API support [10]
-    - an logging update [4]
     - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum [7]
     - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality] [5]
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log [6]
     - parser for the new mc dimension config format [20]
-    - mdk launcher binding [11]
     - add an mode where the window opens only when the load is complete [100]
     - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
         and when the user tries to go back to start menu, the game is closing. [change button text for that] [100]
     - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation [30]
     - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html) [110]
     - implement lighting [1000]
-    - implement more UI element parsers [5]
-    - port every state configuration to config files [6]
     - launcher system to download mc assets separately [10]
     - entity AI system [30]
     - rendering layer system [20]
     - make loot table system only load needed loot tables, etc. [10]
     - an indicator for corrupted save files (add an number to an counter and remove when action finished) [1]
-    - BlockItemGenerator should directly inject its images into the item atlas system, not store them somewhere [4]
+    - BlockItemGenerator should store images in an better way, not single-files
 
 information on development:
     - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
@@ -54,9 +48,52 @@ information on development:
 
 
 changelog of snapshot [next]
+    WARNING:  M A J O R  BREAKING VERSION!!!!
+    THIS VERSION CONTAINS HIGHLY BREAKING CHANGES. IT IS NOWHERE NEAR TO BEING COMPATIBLE
+
+    THIS ALSO ENDS SUPPORT FOR ALL OLD VERSIONS BEFORE THIS RELEASE
+
+    BREAKING CHANGES MAY CONTINUE UNTIL STABLE RELEASE
+
+    THIS SNAPSHOT FIXES A  L O T  OF ISSUES [partly by rewriting the parts, partly by code review]
+
+    this is nowhere near an complete list, see version.info for more, or the github logs
+
+    refactoring:
+        - refactored nearly everything..., multiple times...
+        majors:
+            - globals.py to mcpython/shared.py
+            - logger.py to mcpython/logger.py
+            - most stuff into client/, server/ or common/-folders
+            - NO support for non-mcpython-prefixed imports
+
+    deprecation:
+        - removed all deprecated stuff and a little bit more
+
+    API:
+        - improved, refactored, extended APIS [nearly all]
+
+    Utils:
+        - added more util code
+
+    Debug:
+        - added more debug info
+
+    Rendering:
+        - improved some bits
+        - improved texture reload
+
+    World Storage:
+        - improved overall world storage & debug information
+
     fixed issues:
-        long term issues:
-            - InventoryHandler was handling some itemstack's wrong leading into itemstack's with higher stack size
+        - InventoryHandler was handling some itemstack's wrong leading into itemstack's with higher stack size
+        - logging was not escaping in all cases correctly
+        - mods.json was not written correctly to disk
+        - normal inventory slots were not drawing correctly the item in them
+        - entering an world was not triggering texture reload
+        - inventory textures were not reloaded correctly
+        [and a lot small ones during refactoring]
 
 
 changelog of snapshot 20w31a (theme: improvements)
