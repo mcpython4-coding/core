@@ -9,24 +9,30 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.common.event.Registry
+import mcpython.common.world.AbstractInterface
 
 
 class LayerConfig:
     def __init__(self, *config, **cconfig):
         self.config = config
-        self.layer = None
+        self.layer: typing.Optional["ILayer"] = None
         for key in cconfig.keys():
             setattr(self, key, cconfig[key])
-        self.dimension = None
+        self.dimension: typing.Optional[
+            mcpython.common.world.AbstractInterface.IDimension
+        ] = None
 
 
-class Layer(mcpython.common.event.Registry.Registry):
+class ILayer(mcpython.common.event.Registry.Registry):
     """
     Implementation for each layer in generation code.
     An layer is an step in the generation code
 
-    DEPENDS_ON should be an list of other layer names this layer depends on
+    DEPENDS_ON should be an list of other layer names this layer depends on,
+    currently not used, but later for parallel world gen
     """
 
     DEPENDS_ON = []

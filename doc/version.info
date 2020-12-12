@@ -1354,6 +1354,7 @@ D   [uuk]: removed inventories attribute from entities
 R   [uuk]: player inventories are stored now ín own attributes
     [uuk]: dropped support for old world formats
     [uuk]: improved world system API, again...
+    [uuk]: improved world gen API
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]

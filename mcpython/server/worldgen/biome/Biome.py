@@ -9,8 +9,12 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.common.event.Registry
-import mcpython.server.worldgen.feature.IOre as ores
+import mcpython.server.worldgen.feature.IOre
+import mcpython.server.worldgen.feature.IFeature
+import mcpython.common.world.AbstractInterface
 
 
 class Biome(mcpython.common.event.Registry.IRegistryContent):
@@ -29,26 +33,27 @@ class Biome(mcpython.common.event.Registry.IRegistryContent):
         return 10
 
     @staticmethod
-    def get_height_range():
-        return [10, 30]
+    def get_height_range() -> typing.Tuple[int, int]:
+        return 10, 30
 
     @staticmethod
-    def get_top_layer_height_range():
-        return [3, 5]
+    def get_top_layer_height_range() -> typing.Tuple[int, int]:
+        return 3, 5
 
     @staticmethod
-    def get_top_layer_configuration(height: int):
+    def get_top_layer_configuration(
+        height: int,
+        position: typing.Tuple[int, int],
+        dimension: mcpython.common.world.AbstractInterface.IDimension,
+    ) -> typing.List[str]:
         return ["minecraft:dirt"] * (height - 1) + ["minecraft:grass_block"]
 
     @staticmethod
-    def get_trees() -> list:
-        """
-        :return: an (IFeature, chance as n)[
-        """
+    def get_trees() -> typing.List[
+        typing.Tuple[mcpython.server.worldgen.feature.IFeature.IFeature, float]
+    ]:
+        return []
 
     @staticmethod
-    def get_ores() -> list:
-        """
-        :return: an IOre[
-        """
-        return [ores.CoalOre]
+    def get_ores() -> typing.List[mcpython.server.worldgen.feature.IOre.IOre]:
+        return []

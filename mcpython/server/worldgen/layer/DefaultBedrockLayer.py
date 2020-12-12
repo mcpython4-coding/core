@@ -13,13 +13,14 @@ This project is not official by mojang and does not relate to it.
 import random
 import opensimplex
 import mcpython.common.event.EventHandler
+import mcpython.common.world.AbstractInterface
 
-from mcpython import shared as G
-from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
+from mcpython import shared
+from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
-@G.world_generation_handler
-class DefaultBedrockLayer(Layer):
+@shared.world_generation_handler
+class DefaultBedrockILayer(ILayer):
     """
     Class for generating the bedrock layer
     How does it work?
@@ -35,7 +36,7 @@ class DefaultBedrockLayer(Layer):
 
     @classmethod
     def update_seed(cls):
-        seed = G.world.config["seed"]
+        seed = shared.world.config["seed"]
         cls.noise = opensimplex.OpenSimplex(seed=seed * 100)
 
     @staticmethod
@@ -62,5 +63,5 @@ class DefaultBedrockLayer(Layer):
 
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultBedrockLayer.update_seed
+    "seed:set", DefaultBedrockILayer.update_seed
 )

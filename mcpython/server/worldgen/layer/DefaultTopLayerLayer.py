@@ -15,11 +15,11 @@ import random
 import opensimplex
 
 from mcpython import shared as G
-from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
+from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @G.world_generation_handler
-class DefaultTopLayerLayer(Layer):
+class DefaultTopLayerILayer(ILayer):
     DEPENDS_ON = ["minecraft:heightmap_default", "minecraft:biome_map_default"]
 
     noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
@@ -48,13 +48,15 @@ class DefaultTopLayerLayer(Layer):
         mheight = heightmap[(x, z)][0][1]
         biome = G.biome_handler.biomes[chunk.get_value("biome_map")[(x, z)]]
         noise_value = (
-            DefaultTopLayerLayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
+            DefaultTopLayerILayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
         )
         r = biome.get_top_layer_height_range()
         noise_value *= r[1] - r[0]
         noise_value += r[0]
         height = round(noise_value)
-        decorators = biome.get_top_layer_configuration(height)
+        decorators = biome.get_top_layer_configuration(
+            height, (x, z), chunk.get_dimension()
+        )
         for i in range(height):
             y = mheight - (height - i - 1)
             block = reference.get_block((x, y, z), chunk)

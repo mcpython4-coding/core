@@ -39,9 +39,7 @@ STORAGE_VERSION = None  # the version of the storage format
 
 window = None  # the window instance, client-only
 
-import mcpython.common.world.AbstractInterface
-
-world: mcpython.common.world.AbstractInterface.IWorld = None  # the world instance
+world = None  # the world instance
 
 chat = None  # the chat instance todo: migrate to player
 

@@ -11,11 +11,11 @@ This project is not official by mojang and does not relate to it.
 """
 
 from mcpython import shared as G
-from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
+from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @G.world_generation_handler
-class DefaultStonePlacementLayer(Layer):
+class DefaultStonePlacementILayer(ILayer):
     DEPENDS_ON = ["minecraft:heightmap_default"]
 
     NAME = "minecraft:stone_default"

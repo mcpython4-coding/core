@@ -9,6 +9,8 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared as G
 import mcpython.common.config
 import mcpython.server.worldgen.feature.OakTreeFeature
@@ -27,7 +29,7 @@ class Plains(Biome.Biome):
         return 20
 
     @staticmethod
-    def get_height_range():
+    def get_height_range() -> typing.Tuple[int, int]:
         return mcpython.common.config.BIOME_HEIGHT_RANGE_MAP["minecraft:plains"]
 
     @staticmethod

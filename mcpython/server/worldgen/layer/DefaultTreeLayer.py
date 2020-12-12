@@ -14,11 +14,11 @@ import random
 
 from mcpython import shared as G
 import mcpython.common.world.Chunk
-from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
+from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @G.world_generation_handler
-class DefaultTreeLayer(Layer):
+class DefaultTreeILayer(ILayer):
     DEPENDS_ON = ["minecraft:biome_map_default", "minecraft:heightmap_default"]
 
     NAME = "minecraft:tree_default"
@@ -32,7 +32,7 @@ class DefaultTreeLayer(Layer):
         for x in range(16):
             for z in range(16):
                 reference.schedule_invoke(
-                    DefaultTreeLayer.generate_position,
+                    DefaultTreeILayer.generate_position,
                     cx + x,
                     cz + z,
                     reference,
@@ -59,5 +59,5 @@ class DefaultTreeLayer(Layer):
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "tree_blocked", DefaultTreeLayer, []
+    "tree_blocked", DefaultTreeILayer, []
 )

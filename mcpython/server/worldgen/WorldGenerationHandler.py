@@ -17,7 +17,7 @@ import mcpython.common.mod.ModMcpython
 import mcpython.common.world.Chunk
 import mcpython.common.world.AbstractInterface
 import mcpython.common.world.Dimension
-import mcpython.server.worldgen.layer.Layer
+import mcpython.server.worldgen.layer.ILayer
 import mcpython.server.worldgen.mode
 import mcpython.server.worldgen.WorldGenerationTaskArrays
 
@@ -109,7 +109,7 @@ class WorldGenerationHandler:
         for layer_name in self.configs[config_name]["layers"]:
             layer = self.layers[layer_name]
             if config is None or layer_name not in config:
-                layer_config = mcpython.server.worldgen.layer.Layer.LayerConfig(
+                layer_config = mcpython.server.worldgen.layer.ILayer.LayerConfig(
                     **(
                         dimension.get_world_generation_config_entry(
                             layer_name, default={}
@@ -166,7 +166,7 @@ class WorldGenerationHandler:
         chunk.generated = True
         chunk.loaded = True
 
-    def register_layer(self, layer: mcpython.server.worldgen.layer.Layer.Layer):
+    def register_layer(self, layer: mcpython.server.worldgen.layer.ILayer.ILayer):
         self.layers[layer.NAME] = layer  # todo: make more fancy
 
     def register_feature(self, decorator):
@@ -175,10 +175,10 @@ class WorldGenerationHandler:
     def register_world_gen_config(self, name: str, layer_config: dict):
         self.configs[name] = layer_config
 
-    def __call__(self, data: str or mcpython.server.worldgen.layer.Layer, config=None):
+    def __call__(self, data: str or mcpython.server.worldgen.layer.ILayer, config=None):
         if type(data) == dict:
             self.register_world_gen_config(data, config)
-        elif issubclass(data, mcpython.server.worldgen.layer.Layer.Layer):
+        elif issubclass(data, mcpython.server.worldgen.layer.ILayer.ILayer):
             self.register_layer(data)
         elif issubclass(data, object):
             self.register_feature(data)

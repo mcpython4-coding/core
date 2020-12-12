@@ -16,13 +16,13 @@ import opensimplex
 from mcpython import shared as G
 import mcpython.common.event.EventHandler
 import mcpython.server.worldgen.biome.BiomeHandler
-from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
+from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 import mcpython.common.world.Chunk
 import mcpython.common.world.AbstractInterface
 
 
 @G.world_generation_handler
-class DefaultBiomeMapLayer(Layer):
+class DefaultBiomeMapILayer(ILayer):
     DEPENDS_ON = ["minecraft:landmass_default"]
 
     noise: opensimplex.OpenSimplex = None
@@ -51,7 +51,7 @@ class DefaultBiomeMapLayer(Layer):
             for z in range(cz * 16, cz * 16 + 16):
                 landmass = landmap[(x, z)]
                 v = (
-                    DefaultBiomeMapLayer.noise.noise3d(
+                    DefaultBiomeMapILayer.noise.noise3d(
                         x / factor, z / factor, x * z / factor ** 2
                     )
                     * 0.5
@@ -64,9 +64,9 @@ class DefaultBiomeMapLayer(Layer):
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "biome_map", DefaultBiomeMapLayer, {}
+    "biome_map", DefaultBiomeMapILayer, {}
 )
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultBiomeMapLayer.update_seed
+    "seed:set", DefaultBiomeMapILayer.update_seed
 )

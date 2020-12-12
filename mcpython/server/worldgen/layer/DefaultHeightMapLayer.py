@@ -17,11 +17,11 @@ import opensimplex
 from mcpython import shared as G
 import mcpython.common.event.EventHandler
 import mcpython.common.world.Chunk
-from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
+from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @G.world_generation_handler
-class DefaultHeightMapLayer(Layer):
+class DefaultHeightMapILayer(ILayer):
     DEPENDS_ON = ["minecraft:biome_map_default"]
 
     noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
@@ -50,7 +50,7 @@ class DefaultHeightMapLayer(Layer):
 
     @classmethod
     def get_height_at(cls, chunk, x, z, factor) -> list:
-        v = DefaultHeightMapLayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
+        v = DefaultHeightMapILayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
         biome_map = chunk.get_value("biome_map")
         biome = G.biome_handler.biomes[biome_map[(x, z)]]
         r = biome.get_height_range()
@@ -61,9 +61,9 @@ class DefaultHeightMapLayer(Layer):
 
 
 authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "heightmap", DefaultHeightMapLayer, {}
+    "heightmap", DefaultHeightMapILayer, {}
 )
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultHeightMapLayer.update_seed
+    "seed:set", DefaultHeightMapILayer.update_seed
 )

@@ -54,7 +54,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         ] = None  # the gamerule handler fort his world
         self.reset_config()  # will reset the config
         self.CANCEL_DIM_CHANGE: bool = False  # flag for canceling the dim change event
-        self.hide_faces_to_not_generated_chunks: bool = True  # todo: move to configs / game rules
+        self.hide_faces_to_not_generated_chunks: bool = (
+            True  # todo: move to configs / game rules
+        )
         self.filename: str = (
             "tmp" if filename is None else filename
         )  # the file-name to use, todo: make None if not needed

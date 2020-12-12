@@ -17,11 +17,11 @@ import opensimplex
 from mcpython import shared as G
 import mcpython.common.event.EventHandler
 import mcpython.common.world.Chunk
-from mcpython.server.worldgen.layer.Layer import Layer, LayerConfig
+from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @G.world_generation_handler
-class DefaultLandMassLayer(Layer):
+class DefaultLandMassILayer(ILayer):
     noise1 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
     noise2 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
     noise3 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
@@ -54,13 +54,13 @@ class DefaultLandMassLayer(Layer):
                 v = (
                     sum(
                         [
-                            DefaultLandMassLayer.noise1.noise2d(x / factor, z / factor)
+                            DefaultLandMassILayer.noise1.noise2d(x / factor, z / factor)
                             * 0.5
                             + 0.5,
-                            DefaultLandMassLayer.noise2.noise2d(x / factor, z / factor)
+                            DefaultLandMassILayer.noise2.noise2d(x / factor, z / factor)
                             * 0.5
                             + 0.5,
-                            DefaultLandMassLayer.noise3.noise2d(x / factor, z / factor)
+                            DefaultLandMassILayer.noise3.noise2d(x / factor, z / factor)
                             * 0.5
                             + 0.5,
                         ]
@@ -75,9 +75,9 @@ class DefaultLandMassLayer(Layer):
 
 
 authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "landmass_map", DefaultLandMassLayer, {}
+    "landmass_map", DefaultLandMassILayer, {}
 )
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultLandMassLayer.update_seed
+    "seed:set", DefaultLandMassILayer.update_seed
 )
