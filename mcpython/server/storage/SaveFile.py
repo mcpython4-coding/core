@@ -40,24 +40,27 @@ b) when the version is an minor between versions, remove the DataFixer and chang
 c) when the version is an major version, remove all data-fixers up to the point
 
 History of save versions:
-- 1: introduced: 07.03.2020, outdated since: 10.03.2020, not loadable since: -
+- 1: introduced: 07.03.2020, outdated since: 10.03.2020, not loadable since: 12.12.2020
     - added save system
-- 2: introduced: 10.03.2020, outdated since: 13.03.2020, not loadable since: -
+- 2: introduced: 10.03.2020, outdated since: 13.03.2020, not loadable since: 12.12.2020
     - removed temperature maps from saves
     - optimized landmass map in saves
-- 3: introduced: 13.03.2020 [part of loot table update], outdated since: 31.03.2020, not loadable since: -
+- 3: introduced: 13.03.2020 [part of loot table update], outdated since: 31.03.2020, not loadable since: 12.12.2020
     - chest container stores now also the loot table link when set
-- 4: introduced: 31.03.2020, outdated since: -, not loadable since: -
+- 4: introduced: 31.03.2020, outdated since: -, not loadable since: 12.12.2020
     - block coordinates are stored now relative to chunk; decreases chunk size
-- 5: introduced: 17.03.2020 [part of entity update], outdated since: 11.06.2020, not loadable since: -
+- 5: introduced: 17.03.2020 [part of entity update], outdated since: 11.06.2020, not loadable since: 12.12.2020
     - added entity serializer
-- 6: introduced: 11.06.2020, outdated since: -, not loadable since: -
+- 6: introduced: 11.06.2020, outdated since: 12.12.2020, not loadable since: 12.12.2020
     - re-write of data fixer system, old still fix-able
     - removed "version"-attribute out of region files and inventory files
     - data fixers are applied to the WHOLE world ON LOAD, not when needed
+- 7: introduced: 12.12.2020, outdated since: -, not loadable since: -
+    - major code refactoring breaking nearly everything
+    - player data reformat
 """
 
-G.STORAGE_VERSION = LATEST_VERSION = 6  # the latest version, used for upgrading
+G.STORAGE_VERSION = LATEST_VERSION = 7  # the latest version, used for upgrading
 
 # where the stuff should be saved
 SAVE_DIRECTORY = (
@@ -491,10 +494,5 @@ class SaveFile:
 
 @G.mod_loader("minecraft", "stage:datafixer:general")
 def load_elements():
-    from mcpython.server.storage.datafixers import (
-        DataFixer1to2,
-        DataFixer2to3,
-        DataFixer3to4,
-        DataFixer4to5,
-        DataFixer5to6,
-    )
+    # from mcpython.server.storage.datafixers import ()
+    pass

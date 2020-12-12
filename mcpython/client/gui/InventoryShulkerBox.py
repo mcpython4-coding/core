@@ -41,6 +41,6 @@ class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
 
     def update_shift_container(self):
         G.inventory_handler.shift_container.container_A = (
-            G.world.get_active_player().inventories["main"].slots[:36]
+            G.world.get_active_player().inventory_main.slots[:36]
         )
         G.inventory_handler.shift_container.container_B = self.slots

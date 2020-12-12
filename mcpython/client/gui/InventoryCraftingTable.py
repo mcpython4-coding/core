@@ -52,7 +52,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
 
     def create_slots(self) -> list:
         # 36 slots of main, 9 crafting grid, 1 crafting output
-        # base_slots = shared.world.get_active_player().inventories["main"].slots[:36]
+        # base_slots = shared.world.get_active_player().inventory_main.slots[:36]
         return [mcpython.client.gui.Slot.Slot() for _ in range(10)]
 
     def on_activate(self):
@@ -81,16 +81,16 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
         x, y = self.get_position()
         self.TEXTURE.blit(x, y)
         for slot in (
-            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
             slot.draw(x, y, hovering=slot == hoveringslot)
         for slot in (
-            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
             slot.draw_label()
 
     def get_interaction_slots(self):
-        return shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        return shared.world.get_active_player().inventory_main.slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
@@ -98,7 +98,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
 
     def update_shift_container(self):
         shared.inventory_handler.shift_container.container_A = (
-            shared.world.get_active_player().inventories["main"].slots[:36]
+            shared.world.get_active_player().inventory_main.slots[:36]
         )
         shared.inventory_handler.shift_container.container_B = self.slots
 

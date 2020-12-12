@@ -50,14 +50,7 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
             logger.println("info to item hold in hand")
             CommandItemInfo.print_info(itemstack)
         elif modes[1][1] == 1:  # inventory
-            for inventorykey in G.world.get_active_player().inventories.keys():
-                logger.println("info to inventory {} of player".format(inventorykey))
-                for i, slot in enumerate(
-                    G.world.get_active_player().inventories[inventorykey].slots
-                ):
-                    if not slot.get_itemstack().is_empty():
-                        logger.println("slot {}".format(i + 1))
-                        CommandItemInfo.print_info(slot.get_itemstack())
+            logger.println("[NOT IMPLEMENTED]")
         elif modes[1][1] == 2:  # from item name
             stack = mcpython.common.container.ItemStack.ItemStack(values[1])
             CommandItemInfo.print_info(stack)

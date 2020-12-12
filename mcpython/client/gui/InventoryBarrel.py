@@ -59,16 +59,16 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
         mcpython.client.gui.InventoryChest.InventoryChest.TEXTURE.blit(x, y)
         self.bg_image_size = mcpython.client.gui.InventoryChest.InventoryChest.TEXTURE_SIZE
         for slot in (
-            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            G.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
             slot.draw(x, y, hovering=slot == hoveringslot)
         for slot in (
-            G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            G.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
             slot.draw_label()
 
     def get_interaction_slots(self):
-        return G.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        return G.world.get_active_player().inventory_main.slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
@@ -76,6 +76,6 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
 
     def update_shift_container(self):
         G.inventory_handler.shift_container.container_A = (
-            G.world.get_active_player().inventories["main"].slots[:36]
+            G.world.get_active_player().inventory_main.slots[:36]
         )
         G.inventory_handler.shift_container.container_B = self.slots

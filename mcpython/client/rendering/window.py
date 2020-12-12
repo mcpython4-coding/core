@@ -681,7 +681,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             return
         if G.world.world_loaded:
             # have we an world which should be saved?
-            G.world.get_active_player().inventories["main"].remove_items_from_crafting()
+            G.world.get_active_player().inventory_main.remove_items_from_crafting()
             G.world.savefile.save_world(override=True)
         self.set_fullscreen(False)
         self.close()

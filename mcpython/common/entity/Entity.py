@@ -55,7 +55,6 @@ class Entity(mcpython.common.event.Registry.IRegistryContent):
         )
         self.unsafe_position = (0, 0, 0)  # todo: move to nbt
         self.rotation = (0, 0, 0)  # todo: move to nbt
-        self.inventories = {}
         self.harts = 0  # todo: move to nbt
         self.chunk = (
             None
@@ -229,7 +228,7 @@ class Entity(mcpython.common.event.Registry.IRegistryContent):
         will return an list of all currently arrival inventories for this entity
         :return:
         """
-        return list(self.inventories.values())
+        return []
 
     def on_inventory_cleared(self):
         """

@@ -352,7 +352,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         [inventory.on_world_cleared() for inventory in G.inventory_handler.inventorys]
         self.reset_config()
         G.world.get_active_player().flying = False
-        for inv in G.world.get_active_player().inventories.values():
+        for inv in G.world.get_active_player().get_inventories():
             inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         G.world_generation_handler.task_handler.clear()

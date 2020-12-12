@@ -28,7 +28,7 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
     ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             G.inventory_handler.show(
-                G.world.get_active_player().inventories["crafting_table"]
+                G.world.get_active_player().inventory_crafting_table
             )
             return True
         else:
@@ -38,14 +38,14 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
         """
         called to get an list of inventories
         """
-        return [G.world.get_active_player().inventories["crafting_table"]]
+        return [G.world.get_active_player().inventory_crafting_table]
 
     HARDNESS = 2.5
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
     def on_block_remove(self, reason):
         G.inventory_handler.hide(
-            G.world.get_active_player().inventories["crafting_table"]
+            G.world.get_active_player().inventory_crafting_table
         )
 
     @classmethod

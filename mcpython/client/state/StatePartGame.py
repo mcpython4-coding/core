@@ -341,7 +341,6 @@ class StatePartGame(StatePart.StatePart):
                     block.on_request_item_for_block(itemstack)
                 selected_slot = player.get_active_inventory_slot()
                 for inventory, reverse in player.inventory_order:
-                    inventory = player.inventories[inventory]
                     slots: list = inventory.slots
                     if reverse:
                         slots.reverse()
@@ -505,7 +504,7 @@ class StatePartGame(StatePart.StatePart):
             G.window.strafe[1] = 1
         elif (
             symbol == key.SPACE
-            and G.world.get_active_player().inventories["chat"]
+            and G.world.get_active_player().inventory_chat
             not in G.inventory_handler.opened_inventorystack
         ):
             if (

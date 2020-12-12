@@ -65,14 +65,7 @@ class Player(mcpython.common.entity.Entity.Entity):
 
         self.fallen_since_y = -1  # how far did we fall?  # todo: move into nbt
 
-        self.inventory_order: list = (
-            [  # an ([inventoryindexname: str], [reversed slots: bool}) list
-                ("hotbar", False),
-                ("main", False),
-            ]
-        )
-
-        self.iconparts = []
+        self.inventory_order: list = []
 
         self.active_inventory_slot: int = (
             0  # which slot is currently selected todo: move into nbt
@@ -95,6 +88,14 @@ class Player(mcpython.common.entity.Entity.Entity):
             "hotkey:gamemode_1-3_toggle", self.toggle_gamemode
         )
 
+        self.inventory_hotbar = None
+        self.inventory_main = None
+        self.inventory_enderchest = None
+        self.inventory_chat = None
+        self.inventory_crafting_table = None
+
+        self.inventory_order = []
+
     def hotkey_get_position(self):
         if self != shared.world.get_active_player():
             return
@@ -116,15 +117,13 @@ class Player(mcpython.common.entity.Entity.Entity):
         import mcpython.client.gui.InventoryCraftingTable as InvCrafting
         import mcpython.client.gui.InventoryPlayerHotbar as InvHotbar
 
-        hotbar = self.inventories["hotbar"] = InvHotbar.InventoryPlayerHotbar(self)
-        self.inventories[
-            "main"
-        ] = mcpython.client.gui.MainPlayerInventory.MainPlayerInventory(hotbar)
-        self.inventories["chat"] = mcpython.client.Chat.ChatInventory()
-        self.inventories[
-            "enderchest"
-        ] = mcpython.client.gui.InventoryChest.InventoryChest()
-        self.inventories["crafting_table"] = InvCrafting.InventoryCraftingTable()
+        self.inventory_hotbar = InvHotbar.InventoryPlayerHotbar(self)
+        self.inventory_main = mcpython.client.gui.MainPlayerInventory.MainPlayerInventory(self.inventory_hotbar)
+        self.inventory_chat = mcpython.client.Chat.ChatInventory()
+        self.inventory_enderchest = mcpython.client.gui.InventoryChest.InventoryChest()
+        self.inventory_crafting_table = InvCrafting.InventoryCraftingTable()
+
+        self.inventory_order = [(self.inventory_hotbar, False), (self.inventory_main, False)]
 
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
@@ -187,8 +186,7 @@ class Player(mcpython.common.entity.Entity.Entity):
 
         if not itemstack.item or itemstack.amount == 0:
             return True
-        for inventory_name, reverse in self.inventory_order:
-            inventory = self.inventories[inventory_name]
+        for inventory, reverse in self.inventory_order:
             slots = inventory.slots
             if reverse:
                 slots.reverse()
@@ -213,8 +211,7 @@ class Player(mcpython.common.entity.Entity.Entity):
                         itemstack.add_amount(-delta)
                 if itemstack.amount <= 0:
                     return True
-        for inventory_name, reverse in self.inventory_order:
-            inventory = self.inventories[inventory_name]
+        for inventory, reverse in self.inventory_order:
             slots = inventory.slots
             if reverse:
                 slots.reverse()
@@ -228,9 +225,9 @@ class Player(mcpython.common.entity.Entity.Entity):
         self.active_inventory_slot = slot
 
     def get_active_inventory_slot(self):
-        if "hotbar" not in self.inventories:
+        if self.inventory_hotbar is None:
             self.create_inventories()
-        return self.inventories["hotbar"].slots[self.active_inventory_slot]
+        return self.inventory_hotbar.slots[self.active_inventory_slot]
 
     def kill(
         self,
@@ -259,10 +256,10 @@ class Player(mcpython.common.entity.Entity.Entity):
                 self.hunger = 20
                 return
             elif (
-                self.inventories["main"].slots[45].get_itemstack().get_item_name()
+                self.inventory_main.slots[45].get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"
             ):
-                self.inventories["main"].slots[45].get_itemstack().clean()
+                self.inventory_main.slots[45].get_itemstack().clean()
                 self.hearts = 20
                 self.hunger = 20
                 return
@@ -376,7 +373,7 @@ class Player(mcpython.common.entity.Entity.Entity):
                     self, "right_arm_rotated", rotation=rotation_whole
                 )
 
-            if not self.inventories["main"].slots[-1].itemstack.is_empty():
+            if not self.inventory_main.slots[-1].itemstack.is_empty():
                 self.RENDERER.draw_box(
                     self, "left_arm_rotated", rotation=rotation_whole
                 )
@@ -406,3 +403,6 @@ class Player(mcpython.common.entity.Entity.Entity):
             self.chunk.dimension if self.chunk is not None else None
         ) != before and self == G.world.get_active_player():
             self.chunk.dimension.world.join_dimension(self.chunk.dimension.id)
+
+    def get_inventories(self) -> list:
+        return [self.inventory_main, self.inventory_hotbar, self.inventory_enderchest]

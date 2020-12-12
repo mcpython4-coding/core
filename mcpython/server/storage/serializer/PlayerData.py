@@ -65,11 +65,11 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
             player.rotation = pd["rotation"]
             G.world.join_dimension(pd["dimension"])
             G.world.get_active_player().flying = pd["flying"]
-            for name in pd["inventory links"]:
+            for i, (name, inventory) in enumerate(zip(pd["inventory_data"], player.get_inventories())):
                 savefile.read(
                     "minecraft:inventory",
-                    inventory=player.inventories[name],
-                    path="players/{}/inventory/{}".format(player.name, name),
+                    inventory=inventory,
+                    path="players/{}/inventory/{}".format(player.name, i),
                 )
             if "dimension_data" in pd:
                 if (
@@ -103,10 +103,6 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
                 "fallen since y": player.fallen_since_y,
                 "active inventory slot": player.active_inventory_slot,
                 "flying": G.world.get_active_player().flying,
-                "inventory links": {
-                    name: player.inventories[name].uuid.int
-                    for name in player.inventories
-                },
                 "dimension_data": {
                     "nether_portal": {
                         "portal_inner_time": None
@@ -115,14 +111,15 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
                         "portal_need_leave_before_change": player.should_leave_nether_portal_before_dim_change,
                     }
                 },
+                "inventory_data": [inventory.uuid.int for inventory in player.get_inventories()]
             }
             [
                 savefile.dump(
                     None,
                     "minecraft:inventory",
-                    inventory=player.inventories[name],
-                    path="players/{}/inventory/{}".format(player.name, name),
+                    inventory=inventory,
+                    path="players/{}/inventory/{}".format(player.name, i),
                 )
-                for name in player.inventories
+                for i, inventory in enumerate(player.get_inventories())
             ]
         savefile.dump_file_json("players.json", data)

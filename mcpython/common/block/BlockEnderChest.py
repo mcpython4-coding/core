@@ -30,7 +30,7 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
         """
         super().__init__(*args, **kwargs)
         self.front_side = mcpython.util.enums.EnumSide.N
-        self.inventory = G.world.get_active_player().inventories["enderchest"]
+        self.inventory = G.world.get_active_player().inventory_enderchest
         self.face_solid = {
             face: False for face in mcpython.util.enums.EnumSide.iterate()
         }

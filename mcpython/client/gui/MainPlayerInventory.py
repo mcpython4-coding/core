@@ -91,11 +91,11 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         x, y = self.get_position()
         self.TEXTURE.blit(x, y)
         for slot in (
-            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
             slot.draw(x, y, hovering=slot == hoveringslot)
         for slot in (
-            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
             slot.draw_label()
 

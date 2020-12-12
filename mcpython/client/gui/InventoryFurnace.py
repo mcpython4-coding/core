@@ -235,16 +235,16 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
                 pass
 
         for slot in (
-            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
             slot.draw(x, y, hovering=slot == hoveringslot)
         for slot in (
-            shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
             slot.draw_label()
 
     def get_interaction_slots(self):
-        return shared.world.get_active_player().inventories["main"].slots[:36] + self.slots
+        return shared.world.get_active_player().inventory_main.slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:

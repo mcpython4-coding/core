@@ -64,18 +64,18 @@ class StateGame(State.State):
             G.inventory_handler.reload_config()
         elif symbol == key.E:
             if (
-                not G.world.get_active_player().inventories["main"]
+                not G.world.get_active_player().inventory_main
                 in G.inventory_handler.opened_inventorystack
             ):
                 if G.window.exclusive:
                     G.event_handler.call("on_player_inventory_open")
                     G.inventory_handler.show(
-                        G.world.get_active_player().inventories["main"]
+                        G.world.get_active_player().inventory_main
                     )
                     self.parts[0].activate_mouse = False
             else:
                 G.event_handler.call("on_player_inventory_close")
-                G.inventory_handler.hide(G.world.get_active_player().inventories["main"])
+                G.inventory_handler.hide(G.world.get_active_player().inventory_main)
         elif symbol == key.T and G.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(self.open_chat, 2)
         elif symbol == key._7 and modifiers & key.MOD_SHIFT and G.window.exclusive:
@@ -85,7 +85,7 @@ class StateGame(State.State):
 
     @staticmethod
     def open_chat(enter=""):
-        G.inventory_handler.show(G.world.get_active_player().inventories["chat"])
+        G.inventory_handler.show(G.world.get_active_player().inventory_chat)
         G.chat.text = enter
 
     @staticmethod
