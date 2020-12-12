@@ -178,7 +178,7 @@ class AbstractBlock(mcpython.common.event.Registry.IRegistryContent):
     def inject(self, data: bytes):
         """
         loads block data
-        :param data:  the data saved by save()
+        :param data:  the data saved by dump_data()
         WARNING: if not providing DataFixers for old mod versions, these data may get very old!
         """
         self.load_data(pickle.loads(data) if type(data) == bytes else data)

@@ -25,8 +25,8 @@ from mcpython.util.annotation import onlyInClient
 class StateGame(State.State):
     NAME = "minecraft:game"
 
-    @staticmethod
-    def is_mouse_exclusive():
+    @classmethod
+    def is_mouse_exclusive(cls):
         return True
 
     def __init__(self):
@@ -38,12 +38,14 @@ class StateGame(State.State):
             mcpython.client.gui.InventoryHandler.inventory_part,
         ]
 
-    def on_activate(self):
+    def activate(self):
+        super().activate()
         while G.world.savefile.save_in_progress:
             time.sleep(0.2)
         G.world_generation_handler.enable_auto_gen = True
 
-    def on_deactivate(self):
+    def deactivate(self):
+        super().deactivate()
         G.world_generation_handler.enable_auto_gen = False
         G.window.mouse_pressing = {
             mouse.LEFT: False,

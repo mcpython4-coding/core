@@ -71,7 +71,8 @@ class StateWorldLoading(State.State):
             round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10
         )
 
-    def on_activate(self):
+    def activate(self):
+        super().activate()
         G.world_generation_handler.enable_generation = False
         self.status_table.clear()
         G.dimension_handler.init_dims()
@@ -97,7 +98,8 @@ class StateWorldLoading(State.State):
                 #                       immediate=False)
         G.world_generation_handler.enable_generation = True
 
-    def on_deactivate(self):
+    def deactivate(self):
+        super().deactivate()
         player = G.world.get_active_player()
         player.teleport(player.position, force_chunk_save_update=True)
 
@@ -145,13 +147,13 @@ class StateWorldLoading(State.State):
             )
 
 
-worldloading = None
+world_loading = None
 
 
 @onlyInClient()
 def create():
-    global worldloading
-    worldloading = StateWorldLoading()
+    global world_loading
+    world_loading = StateWorldLoading()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

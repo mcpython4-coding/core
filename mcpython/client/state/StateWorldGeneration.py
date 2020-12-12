@@ -77,7 +77,8 @@ class StateWorldGeneration(State.State):
             G.event_handler.call("data:reload:work")
             self.finish()
 
-    def on_activate(self):
+    def activate(self):
+        super().activate()
         if mcpython.common.config.ENABLE_PROFILER_GENERATION:
             self.profiler.enable()
         if os.path.exists(G.world.savefile.directory):
@@ -250,13 +251,13 @@ class StateWorldGeneration(State.State):
             )
 
 
-worldgeneration = None
+world_generation = None
 
 
 @onlyInClient()
 def create():
-    global worldgeneration
-    worldgeneration = StateWorldGeneration()
+    global world_generation
+    world_generation = StateWorldGeneration()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

@@ -83,15 +83,15 @@ class StatePartGame(StatePart.StatePart):
     void_damage_cooldown = 0
     regenerate_cooldown = 0
     hunger_heart_cooldown = 0
-    braketime = None
+    break_time = None
 
     @classmethod
-    def calculate_new_braketime(cls):
+    def calculate_new_break_time(cls):
         vector = G.window.get_sight_vector()
         blockpos = G.world.hit_test(G.world.get_active_player().position, vector)[0]
         block = G.world.get_active_dimension().get_block(blockpos) if blockpos else None
         if not block:
-            cls.braketime = None  # no braketime because no block
+            cls.break_time = None  # no break time because no block
         else:
             hardness = block.HARDNESS
             itemstack = (
@@ -107,11 +107,11 @@ class StatePartGame(StatePart.StatePart):
             if not istool or not any(
                 [x in block.BEST_TOOLS_TO_BREAK for x in itemstack.item.TOOL_TYPE]
             ):
-                cls.braketime = (
+                cls.break_time = (
                     1.5 if block.MINIMUM_TOOL_LEVEL <= toollevel else 5
                 ) * hardness
             else:
-                cls.braketime = (
+                cls.break_time = (
                     (1.5 if block.MINIMUM_TOOL_LEVEL <= toollevel else 5)
                     * hardness
                     / itemstack.item.get_speed_multiplyer(itemstack)
@@ -128,7 +128,7 @@ class StatePartGame(StatePart.StatePart):
         glcolor3d=(1.0, 1.0, 1.0),
         activate_crosshair=True,
         activate_lable=True,
-        clearcolor=(0.5, 0.69, 1.0, 1),
+        clear_color=(0.5, 0.69, 1.0, 1),
         active_hotkeys=None,
     ):
         super().__init__()
@@ -141,8 +141,8 @@ class StatePartGame(StatePart.StatePart):
         self.activate_focused_block_draw = activate_focused_block
         self.activate_crosshair = activate_crosshair
         self.active_lable = activate_lable
-        self.glcolor3d = glcolor3d
-        self.clearcolor = clearcolor
+        self.color_3d = glcolor3d
+        self.clear_color = clear_color
         self.active_hotkeys = active_hotkeys
 
     def set_mouse_active(self, active: bool):
@@ -205,8 +205,8 @@ class StatePartGame(StatePart.StatePart):
                     self.block_looking_at = blockpos
                     self.mouse_press_time = 0
 
-            if not self.braketime:
-                self.calculate_new_braketime()
+            if not self.break_time:
+                self.calculate_new_break_time()
 
     def on_physics_update(self, dt):
         if not self.activate_physics:
@@ -242,7 +242,7 @@ class StatePartGame(StatePart.StatePart):
                 elif player.gamemode == 0:
                     if (
                         type(block) != str
-                        and self.mouse_press_time >= self.braketime
+                        and self.mouse_press_time >= self.break_time
                         and block.IS_BREAKABLE
                     ):
                         if G.world.gamerulehandler.table["doTileDrops"].status.status:
@@ -273,14 +273,13 @@ class StatePartGame(StatePart.StatePart):
             ):
                 itemfood = player.get_active_inventory_slot().get_itemstack().item
                 if itemfood.on_eat():
-                    print("eating...=")
                     self.set_cooldown = time.time() - 1
                     player.get_active_inventory_slot().get_itemstack().add_amount(-1)
                     if player.get_active_inventory_slot().get_itemstack().amount == 0:
                         player.get_active_inventory_slot().get_itemstack().clean()
                     return
             vector = G.window.get_sight_vector()
-            blockpos, previous, hitpos = G.world.hit_test(player.position, vector)
+            blockpos, previous, hit_position = G.world.hit_test(player.position, vector)
             if blockpos:
                 if G.window.mouse_pressing[mouse.RIGHT] and previous:
                     slot = player.get_active_inventory_slot()
@@ -305,7 +304,7 @@ class StatePartGame(StatePart.StatePart):
                                 previous,
                                 slot.get_itemstack().item.get_block(),
                                 lazy_setup=lambda block: block.set_creation_properties(
-                                    set_to=blockpos, real_hit=hitpos, player=player
+                                    set_to=blockpos, real_hit=hit_position, player=player
                                 ),
                             )
                             chunk.on_block_updated(previous)
@@ -341,8 +340,8 @@ class StatePartGame(StatePart.StatePart):
                 if block:
                     block.on_request_item_for_block(itemstack)
                 selected_slot = player.get_active_inventory_slot()
-                for inventoryname, reverse in player.inventory_order:
-                    inventory = player.inventories[inventoryname]
+                for inventory, reverse in player.inventory_order:
+                    inventory = player.inventories[inventory]
                     slots: list = inventory.slots
                     if reverse:
                         slots.reverse()
@@ -352,10 +351,10 @@ class StatePartGame(StatePart.StatePart):
                             and slot.get_itemstack().item.HAS_BLOCK
                             and slot.get_itemstack().item == itemstack.item
                         ):
-                            if inventoryname != "hotbar":
-                                sslot = selected_slot.get_itemstack()
+                            if inventory != "hotbar":
+                                ref_itemstack = selected_slot.get_itemstack()
                                 selected_slot.set_itemstack(slot.get_itemstack())
-                                slot.set_itemstack(sslot)
+                                slot.set_itemstack(ref_itemstack)
                             else:
                                 player.set_active_inventory_slot(slots.index(slot))
                             return
@@ -364,7 +363,7 @@ class StatePartGame(StatePart.StatePart):
                     selected_slot.set_itemstack(itemstack)
                     player.pick_up(old_itemstack)
                     if G.window.mouse_pressing[mouse.LEFT]:
-                        self.calculate_new_braketime()
+                        self.calculate_new_break_time()
 
     def _update(self, dt):
         """Private implementation of the `update()` method. This is where most
@@ -475,7 +474,7 @@ class StatePartGame(StatePart.StatePart):
             self.set_cooldown = time.time()
             G.window.mouse_pressing[button] = False
         else:
-            self.calculate_new_braketime()
+            self.calculate_new_break_time()
 
     def on_mouse_motion(self, x, y, dx, dy):
         if G.window.exclusive and self.activate_mouse:
@@ -485,7 +484,7 @@ class StatePartGame(StatePart.StatePart):
             y = max(-90, min(90, y))
             G.world.get_active_player().rotation = (x, y, 0)
             if G.window.mouse_pressing[mouse.LEFT]:
-                self.calculate_new_braketime()
+                self.calculate_new_break_time()
 
     def on_key_press(self, symbol, modifiers):
         if not self.activate_keyboard:
@@ -529,7 +528,7 @@ class StatePartGame(StatePart.StatePart):
             index = symbol - G.window.num_keys[0]
             G.world.get_active_player().set_active_inventory_slot(index)
             if G.window.mouse_pressing[mouse.LEFT]:
-                self.calculate_new_braketime()
+                self.calculate_new_break_time()
 
     def on_key_release(self, symbol, modifiers):
         if not self.activate_keyboard:
@@ -552,11 +551,11 @@ class StatePartGame(StatePart.StatePart):
                 abs(G.world.get_active_player().active_inventory_slot % 9)
             )
             if G.window.mouse_pressing[mouse.LEFT]:
-                self.calculate_new_braketime()
+                self.calculate_new_break_time()
 
     def on_draw_3d(self):
-        pyglet.gl.glClearColor(*self.clearcolor)
-        pyglet.gl.glColor3d(*self.glcolor3d)
+        pyglet.gl.glClearColor(*self.clear_color)
+        pyglet.gl.glColor3d(*self.color_3d)
         if self.activate_3d_draw:
             G.world.get_active_dimension().draw()
             if (

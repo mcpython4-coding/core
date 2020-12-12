@@ -310,21 +310,8 @@ class BlockFactory:
         """
 
         assert self.name is not None
-
-        if self.hardness is None:
-            logger.println(
-                "[WARN] hardness-attribute of block '{}' not set. This will get incompatible in the future!".format(
-                    self.name
-                )
-            )
-            self.hardness = 1
-
-        if self.blast_resistance is None:
-            logger.println(
-                "[WARN] blast-resistance-attribute of block {} not set. "
-                "This will get incompatible in the future!".format(self.name)
-            )
-            self.blast_resistance = 1
+        assert self.hardness is not None
+        assert self.blast_resistance is not None
 
         class Baseclass(object):
             pass

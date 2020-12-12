@@ -488,12 +488,6 @@ class SaveFile:
         with open(file, mode="wb") as f:
             return f.write(data)
 
-    @deprecation.deprecated("dev3-1", "a1.3.0")
-    def upgrade(self, **kwargs):
-        raise mcpython.server.storage.datafixer.IDataFixer.DataFixerException(
-            "unimplemented"
-        )
-
 
 @G.mod_loader("minecraft", "stage:datafixer:general")
 def load_elements():

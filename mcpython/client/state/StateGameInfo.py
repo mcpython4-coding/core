@@ -74,13 +74,13 @@ class StateGameInfo(mcpython.client.state.State.State):
         G.state_handler.switch_to("minecraft:game", immediate=False)
 
 
-gameinfo = None
+game_info = None
 
 
 @onlyInClient()
 def create():
-    global gameinfo
-    gameinfo = StateGameInfo()
+    global game_info
+    game_info = StateGameInfo()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

@@ -13,8 +13,6 @@ import sys
 import time
 import typing
 
-import traceback
-
 from mcpython import shared as G, logger
 
 
@@ -62,27 +60,27 @@ class EventBus:
                 f.write("//debug profile")
 
     def subscribe(
-        self, eventname: str, function: typing.Callable, *args, info=None, **kwargs
+        self, event_name: str, function: typing.Callable, *args, info=None, **kwargs
     ):
         """
-        add an function to the event bus by event name. If event name does NOT exists, it will be created localy
-        :param eventname: the event to listen to on this bis
-        :param function: the function that should be called when event is sended
+        add an function to the event bus by event name. If event name does NOT exists, it will be created locally
+        :param event_name: the event to listen to on this bis
+        :param function: the function that should be called when event is send
         :param args: the args to give
         :param kwargs: the kwargs to give
         :param info: an info to give for the caller
         """
         if (function, args, kwargs, info) in self.event_subscriptions.setdefault(
-            eventname, []
+            event_name, []
         ):
             return
-        self.event_subscriptions[eventname].append((function, args, kwargs, info))
+        self.event_subscriptions[event_name].append((function, args, kwargs, info))
         if G.debug_events:
             with open(
                 G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
             ) as f:
                 f.write(
-                    "\nevent subscription of '{}' to '{}'".format(function, eventname)
+                    "\nevent subscription of '{}' to '{}'".format(function, event_name)
                 )
 
     def unsubscribe(self, event_name: str, function):

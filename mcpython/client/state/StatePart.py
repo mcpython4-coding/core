@@ -22,17 +22,17 @@ class StatePart:
         self.master = None
 
     def activate(self):
-        for statepart in self.parts:
-            statepart.activate()
+        for part in self.parts:
+            part.activate()
 
     def deactivate(self):
-        for statepart in self.parts:
-            statepart.deactivate()
+        for part in self.parts:
+            part.deactivate()
 
     def get_sub_parts(self) -> list:  # todo: remove
         return []
 
     def bind_to_eventbus(self):
-        for statepart in self.parts:
-            statepart.master = self.master + [self]
-            statepart.bind_to_eventbus()
+        for part in self.parts:
+            part.master = self.master + [self]
+            part.bind_to_eventbus()

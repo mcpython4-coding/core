@@ -24,14 +24,14 @@ class StateHandler:
         self.states = {}
         self.CANCEL_SWITCH_STATE = False
 
-    def switch_to(self, statename: str, immediate=True):
-        if statename is None:
+    def switch_to(self, state_name: str, immediate=True):
+        if state_name is None:
             return  # todo: remove
         if immediate:
-            self._switch_to(statename)
+            self._switch_to(state_name)
         else:
             mcpython.common.event.TickHandler.handler.schedule_once(
-                self._switch_to, statename
+                self._switch_to, state_name
             )
 
     def _switch_to(self, statename: str):
@@ -49,7 +49,7 @@ class StateHandler:
         self.active_state.eventbus.call("user:window:resize", *G.window.get_size())
         G.event_handler.call("state:switch:post", statename)
         logger.println(
-            "[STATEHANDLER][STATE CHANGE] state changed to '{}'".format(statename),
+            "[STATE HANDLER][STATE CHANGE] state changed to '{}'".format(statename),
             console=False,
         )
 

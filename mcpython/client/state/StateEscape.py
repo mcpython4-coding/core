@@ -105,7 +105,8 @@ class StateEscape(State.State):
     def on_draw_2d_pre():
         pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
 
-    def on_activate(self):
+    def activate(self):
+        super().activate()
         pyglet.clock.schedule_once(G.world.savefile.save_world, 0.1)
 
 

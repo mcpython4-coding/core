@@ -137,7 +137,8 @@ class StateWorldGenerationConfig(State.State):
     def on_draw_2d_pre():
         pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
 
-    def on_activate(self):
+    def activate(self):
+        super().activate()
         for part in self.parts:
             if issubclass(type(part), UIPartTextInput.UIPartTextInput):
                 part.reset()

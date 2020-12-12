@@ -29,7 +29,8 @@ class StateStartMenu(mcpython.client.state.State.State):
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
-    def on_activate(self):
+    def activate(self):
+        super().activate()
         G.world.world_loaded = False
 
     @staticmethod
@@ -50,13 +51,13 @@ class StateStartMenu(mcpython.client.state.State.State):
             G.state_handler.switch_to("minecraft:world_selection", immediate=False)
 
 
-startmenu = None
+start_menu = None
 
 
 @onlyInClient()
 def create():
-    global startmenu
-    startmenu = StateStartMenu()
+    global start_menu
+    start_menu = StateStartMenu()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

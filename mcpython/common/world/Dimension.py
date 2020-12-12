@@ -115,7 +115,7 @@ class DimensionHandler:
         will create all dimension in the active world
         """
         for dim in self.dimensions.values():
-            G.world.add_dimension(dim.id, dim.name, config=dim.config)
+            G.world.add_dimension(dim.id, dim.name, dim_config=dim.config)
 
 
 G.dimension_handler = DimensionHandler()

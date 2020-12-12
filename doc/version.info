@@ -1349,10 +1349,10 @@ B   [uuk]: visual errors
 B   [uuk]: fixed shulker boxes to shulker boxes
     [uuk]: improved validation checks in slots
 B   [uuk]: inventories have now an custom_name attribute, fixing "minecraft:copy_name"-loot-table-function
+D   [uuk]: removed all deprecated stuff
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]
-X   - remove all deprecated stuff   [WIP]
 X   - rewrite how assets are stored  [WIP]
     - do not hardcode constants, move them to an public space / config files / resource data
     - clean up changelog.txt, issues.txt and fixed_issues.txt

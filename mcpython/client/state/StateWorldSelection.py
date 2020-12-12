@@ -287,13 +287,13 @@ class StateWorldSelection(State.State):
         G.state_handler.switch_to("minecraft:world_loading")
 
 
-worldselection = None
+world_selection = None
 
 
 @onlyInClient()
 def create():
-    global worldselection
-    worldselection = StateWorldSelection()
+    global world_selection
+    world_selection = StateWorldSelection()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

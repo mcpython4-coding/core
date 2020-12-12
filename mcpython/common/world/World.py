@@ -125,24 +125,21 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         return self.get_dimension(self.active_dimension)
 
     def add_dimension(
-        self, dim_id: int, name: str, dim_config=None, config=None
+        self, dim_id: int, name: str, dim_config=None
     ) -> mcpython.common.world.AbstractInterface.IDimension:
         """
         will add an new dimension into the system
         :param dim_id: the id to create under
         :param name: the name of the dimension
-        :param config: deprecated, replaced by dim_config
         :param dim_config: the dim_config to use as gen config
         :return: the dimension instance
         """
-        if dim_config is None:
-            dim_config = config
         if dim_config is None:
             dim_config = {}
         dim = self.dimensions[dim_id] = mcpython.common.world.Dimension.Dimension(
             self, dim_id, name, genconfig=dim_config
         )
-        G.world_generation_handler.setup_dimension(dim, config)
+        G.world_generation_handler.setup_dimension(dim, dim_config)
         return dim
 
     def join_dimension(self, dim_id: int):

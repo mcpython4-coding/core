@@ -57,7 +57,7 @@ class StateBlockItemGenerator(State.State):
                 activate_mouse=False,
                 activate_keyboard=False,
                 activate_focused_block=False,
-                clearcolor=(1.0, 1.0, 1.0, 0.0),
+                clear_color=(1.0, 1.0, 1.0, 0.0),
                 activate_crosshair=False,
                 activate_lable=False,
             ),
@@ -91,7 +91,8 @@ class StateBlockItemGenerator(State.State):
     def on_resize(self, w, h):
         self.parts[1].size = (w - 20, 20)
 
-    def on_activate(self):
+    def activate(self):
+        super().activate()
         try:
             G.world.cleanup()
             G.dimension_handler.init_dims()
@@ -143,7 +144,8 @@ class StateBlockItemGenerator(State.State):
         )
         # event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME+self.CLEANUP_TIME)
 
-    def on_deactivate(self):
+    def deactivate(self):
+        super().deactivate()
         G.world.cleanup()
         with open(G.build + "/itemblockfactory.json", mode="w") as f:
             json.dump(self.table, f)
@@ -298,13 +300,13 @@ class StateBlockItemGenerator(State.State):
         self.CLEANUP_TIME = 1
 
 
-blockitemgenerator = None
+block_item_generator = None
 
 
 @onlyInClient()
 def create():
-    global blockitemgenerator
-    blockitemgenerator = StateBlockItemGenerator()
+    global block_item_generator
+    block_item_generator = StateBlockItemGenerator()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

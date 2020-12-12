@@ -183,7 +183,7 @@ class IWorld(ABC):
         raise NotImplementedError()
 
     def add_dimension(
-        self, dim_id: int, name: str, dim_config=None, config=None
+        self, dim_id: int, name: str, dim_config=None
     ) -> IDimension:
         raise NotImplementedError()
 
