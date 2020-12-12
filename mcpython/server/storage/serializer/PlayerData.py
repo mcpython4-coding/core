@@ -65,7 +65,9 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
             player.rotation = pd["rotation"]
             G.world.join_dimension(pd["dimension"])
             G.world.get_active_player().flying = pd["flying"]
-            for i, (name, inventory) in enumerate(zip(pd["inventory_data"], player.get_inventories())):
+            for i, (name, inventory) in enumerate(
+                zip(pd["inventory_data"], player.get_inventories())
+            ):
                 savefile.read(
                     "minecraft:inventory",
                     inventory=inventory,
@@ -111,7 +113,9 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
                         "portal_need_leave_before_change": player.should_leave_nether_portal_before_dim_change,
                     }
                 },
-                "inventory_data": [inventory.uuid.int for inventory in player.get_inventories()]
+                "inventory_data": [
+                    inventory.uuid.int for inventory in player.get_inventories()
+                ],
             }
             [
                 savefile.dump(

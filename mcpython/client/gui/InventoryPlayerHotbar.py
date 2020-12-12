@@ -119,21 +119,31 @@ def reload():
 
         base = mcpython.ResourceLoader.read_image("minecraft:gui/widgets")
 
-        bar = mcpython.util.texture.to_pyglet_image(base.crop((0, 0, 182, 22)).resize((364, 44), PIL.Image.NEAREST))
+        bar = mcpython.util.texture.to_pyglet_image(
+            base.crop((0, 0, 182, 22)).resize((364, 44), PIL.Image.NEAREST)
+        )
         bar_size = (364, 44)
-        selection = mcpython.util.texture.to_pyglet_image(base.crop((0, 22, 24, 46)).resize((48, 48), PIL.Image.NEAREST))
+        selection = mcpython.util.texture.to_pyglet_image(
+            base.crop((0, 22, 24, 46)).resize((48, 48), PIL.Image.NEAREST)
+        )
 
         base = mcpython.ResourceLoader.read_image("minecraft:gui/icons")
         xp_bars = [
-            mcpython.util.texture.to_pyglet_image(base.crop((0, 69, 182, 74)).resize((364, 10), PIL.Image.NEAREST)),
-            mcpython.util.texture.to_pyglet_image(base.crop((0, 64, 182, 69)).resize((364, 10), PIL.Image.NEAREST))
+            mcpython.util.texture.to_pyglet_image(
+                base.crop((0, 69, 182, 74)).resize((364, 10), PIL.Image.NEAREST)
+            ),
+            mcpython.util.texture.to_pyglet_image(
+                base.crop((0, 64, 182, 69)).resize((364, 10), PIL.Image.NEAREST)
+            ),
         ]
 
     global TEXTURES
     TEXTURES = Textures
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", reload)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "data:reload:work", reload
+)
 reload()
 
 
@@ -193,8 +203,8 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
         TEXTURES.selection.blit(x, y + 39)
 
         if (
-                self.last_index != G.world.get_active_player().active_inventory_slot
-                or selected_slot.get_itemstack().get_item_name() != self.last_item
+            self.last_index != G.world.get_active_player().active_inventory_slot
+            or selected_slot.get_itemstack().get_item_name() != self.last_item
         ):
             self.time_since_last_change = time.time()
             self.last_index = G.world.get_active_player().active_inventory_slot
@@ -211,8 +221,8 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
                 self.draw_armor(x, y)
 
         if (
-                selected_slot.get_itemstack().get_item_name()
-                and time.time() - self.time_since_last_change <= 5.0
+            selected_slot.get_itemstack().get_item_name()
+            and time.time() - self.time_since_last_change <= 5.0
         ):
             self.lable.text = str(selected_slot.get_itemstack().get_item_name())
             self.lable.x = round(

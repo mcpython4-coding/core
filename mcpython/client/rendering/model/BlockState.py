@@ -239,7 +239,9 @@ class MultiPartDecoder(IBlockStateDecoder):
                 data = entry["apply"]
                 if type(data) == dict:
                     model, config, _ = BlockState.decode_entry(data)
-                    G.model_handler.models[model].draw_face(block.position, config, face)
+                    G.model_handler.models[model].draw_face(
+                        block.position, config, face
+                    )
                 else:
                     if block.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
@@ -251,7 +253,9 @@ class MultiPartDecoder(IBlockStateDecoder):
                         model, config, _ = BlockState.decode_entry(
                             data[block.block_state]
                         )
-                    G.model_handler.models[model].draw_face(block.position, config, face)
+                    G.model_handler.models[model].draw_face(
+                        block.position, config, face
+                    )
 
 
 @G.registry

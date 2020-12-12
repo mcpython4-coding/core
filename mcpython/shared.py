@@ -30,7 +30,9 @@ build = (
 )
 tmp = tempfile.TemporaryDirectory()
 
-data_gen = ("--data-gen" in sys.argv or "--invalidate-cache" in sys.argv) and dev_environment
+data_gen = (
+    "--data-gen" in sys.argv or "--invalidate-cache" in sys.argv
+) and dev_environment
 data_gen_exit = "--exit-after-data-gen" in sys.argv  # default vanilla behaviour
 
 STORAGE_VERSION = None  # the version of the storage format

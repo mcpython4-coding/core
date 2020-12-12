@@ -1359,7 +1359,6 @@ Roadmap (for internal_changes; X means "must be done before release", more X's m
 X   - rewrite how assets are stored  [WIP]
     - do not hardcode constants, move them to an public space / config files / resource data
     - clean up changelog.txt, issues.txt and fixed_issues.txt
-X   - player inventories should be stored as attributes, not in an dict
 X   - fix respawning in blocks
 X   - fix having two separated item atlas storages? -> one NEVER used? -> old may have been used at the slot bug?
 X   - fix being able to break blocks in gamemode 0 which you should not be able to (e.g. bedrock)

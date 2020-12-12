@@ -69,9 +69,7 @@ class StateGame(State.State):
             ):
                 if G.window.exclusive:
                     G.event_handler.call("on_player_inventory_open")
-                    G.inventory_handler.show(
-                        G.world.get_active_player().inventory_main
-                    )
+                    G.inventory_handler.show(G.world.get_active_player().inventory_main)
                     self.parts[0].activate_mouse = False
             else:
                 G.event_handler.call("on_player_inventory_close")

@@ -27,7 +27,9 @@ class TagHandler:
         """
         self.taggroups = {}  # name -> taggroup
         self.taglocations = []
-        G.mod_loader("minecraft", "stage:tag:load", "loading tag-groups")(self.load_tags)
+        G.mod_loader("minecraft", "stage:tag:load", "loading tag-groups")(
+            self.load_tags
+        )
 
     def from_data(self, taggroup: str, tagname: str, data: dict, replace=True):
         """

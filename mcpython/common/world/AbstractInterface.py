@@ -182,9 +182,7 @@ class IWorld(ABC):
     def get_active_dimension(self) -> typing.Union[IDimension, None]:
         raise NotImplementedError()
 
-    def add_dimension(
-        self, dim_id: int, name: str, dim_config=None
-    ) -> IDimension:
+    def add_dimension(self, dim_id: int, name: str, dim_config=None) -> IDimension:
         raise NotImplementedError()
 
     def join_dimension(self, dim_id: int):

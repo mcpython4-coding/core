@@ -20,7 +20,7 @@ class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
     def create_slots(self) -> list:
         slots = super().create_slots()
         for slot in slots:
-            slot.disallowed_item_tags = ['#minecraft:shulkerbox_like_items']
+            slot.disallowed_item_tags = ["#minecraft:shulkerbox_like_items"]
         return slots
 
     def on_activate(self):

@@ -33,11 +33,13 @@ class InventoryChest(mcpython.client.gui.Inventory.Inventory):
 
     @classmethod
     def update_texture(cls):
-        texture = mcpython.ResourceLoader.read_image("minecraft:gui/container/shulker_box")
+        texture = mcpython.ResourceLoader.read_image(
+            "minecraft:gui/container/shulker_box"
+        )
         size = texture.size
-        texture = texture.crop((0, 0, 176/255*size[0], 166/255*size[1]))
+        texture = texture.crop((0, 0, 176 / 255 * size[0], 166 / 255 * size[1]))
         size = texture.size
-        texture = texture.resize((size[0]*2, size[1]*2), PIL.Image.NEAREST)
+        texture = texture.resize((size[0] * 2, size[1] * 2), PIL.Image.NEAREST)
         cls.TEXTURE = mcpython.util.texture.to_pyglet_image(texture)
         cls.TEXTURE_SIZE = texture.size
 
@@ -88,4 +90,6 @@ class InventoryChest(mcpython.client.gui.Inventory.Inventory):
         shared.inventory_handler.shift_container.container_B = self.slots
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", InventoryChest.update_texture)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "data:reload:work", InventoryChest.update_texture
+)

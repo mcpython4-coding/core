@@ -38,7 +38,9 @@ class Alternative(ILootTableCondition):
 
     def __init__(self, data):
         super().__init__(data)
-        self.conditions = [G.loot_table_handler.parse_condition(d) for d in data["terms"]]
+        self.conditions = [
+            G.loot_table_handler.parse_condition(d) for d in data["terms"]
+        ]
 
     def check(self, source, *args, **kwargs) -> bool:
         return any(

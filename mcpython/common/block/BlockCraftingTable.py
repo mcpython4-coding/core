@@ -44,9 +44,7 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
     def on_block_remove(self, reason):
-        G.inventory_handler.hide(
-            G.world.get_active_player().inventory_crafting_table
-        )
+        G.inventory_handler.hide(G.world.get_active_player().inventory_crafting_table)
 
     @classmethod
     def modify_block_item(cls, itemfactory):

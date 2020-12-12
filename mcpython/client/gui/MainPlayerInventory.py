@@ -32,7 +32,9 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
 
     @classmethod
     def update_texture(cls):
-        texture = mcpython.ResourceLoader.read_image("minecraft:gui/container/inventory")
+        texture = mcpython.ResourceLoader.read_image(
+            "minecraft:gui/container/inventory"
+        )
         size = texture.size
         texture = texture.crop((0, 0, 176 / 255 * size[0], 166 / 255 * size[1]))
         size = texture.size
@@ -121,4 +123,6 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         shared.inventory_handler.shift_container.container_B = self.slots[9:36]
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", MainPlayerInventory.update_texture)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "data:reload:work", MainPlayerInventory.update_texture
+)

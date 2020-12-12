@@ -117,7 +117,9 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
 
         # the chunks scheduled for generation
         [
-            G.world_generation_handler.add_chunk_to_generation_list(e[0], dimension=e[1])
+            G.world_generation_handler.add_chunk_to_generation_list(
+                e[0], dimension=e[1]
+            )
             for e in data["chunks_to_generate"]
         ]
 

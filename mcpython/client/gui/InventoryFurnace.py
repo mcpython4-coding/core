@@ -28,6 +28,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
     """
     inventory class for the furnace
     """
+
     TEXTURE_BG = None
     TEXTURE_BG_SIZE = None
     TEXTURE_ARROW = None
@@ -46,15 +47,28 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         cls.TEXTURE_BG = mcpython.util.texture.to_pyglet_image(texture_bg)
         cls.TEXTURE_BG_SIZE = texture_bg.size
 
-        texture_arrow = texture.crop((176/255*size[0], 14/255*size[1], 200/255*size[0], 31/255*size[1]))
+        texture_arrow = texture.crop(
+            (
+                176 / 255 * size[0],
+                14 / 255 * size[1],
+                200 / 255 * size[0],
+                31 / 255 * size[1],
+            )
+        )
         texture_arrow_size = texture_arrow.size
-        texture_arrow = texture_arrow.resize((texture_arrow_size[0]*2, texture_arrow_size[1]*2), PIL.Image.NEAREST)
+        texture_arrow = texture_arrow.resize(
+            (texture_arrow_size[0] * 2, texture_arrow_size[1] * 2), PIL.Image.NEAREST
+        )
         cls.TEXTURE_FIRE = mcpython.util.texture.to_pyglet_image(texture_arrow)
         cls.TEXTURE_FIRE_SIZE = texture_arrow.size
 
-        texture_fire = texture.crop((176/255*size[0], 0, 190/255*size[0], 14/255*size[1]))
+        texture_fire = texture.crop(
+            (176 / 255 * size[0], 0, 190 / 255 * size[0], 14 / 255 * size[1])
+        )
         texture_fire_size = texture_fire.size
-        texture_fire = texture_fire.resize((texture_fire_size[0]*2, texture_fire_size[1]*2), PIL.Image.NEAREST)
+        texture_fire = texture_fire.resize(
+            (texture_fire_size[0] * 2, texture_fire_size[1] * 2), PIL.Image.NEAREST
+        )
         cls.TEXTURE_ARROW = mcpython.util.texture.to_pyglet_image(texture_fire)
         cls.TEXTURE_ARROW_SIZE = texture_fire.size
 
@@ -219,9 +233,12 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         # draw arrow
         if self.recipe and self.progress > 0:
             try:
-                self.TEXTURE_ARROW.get_region(0, 0, round(self.TEXTURE_ARROW_SIZE[0] * self.progress), self.TEXTURE_ARROW_SIZE[1]).blit(
-                    x + 159, y + 229
-                )
+                self.TEXTURE_ARROW.get_region(
+                    0,
+                    0,
+                    round(self.TEXTURE_ARROW_SIZE[0] * self.progress),
+                    self.TEXTURE_ARROW_SIZE[1],
+                ).blit(x + 159, y + 229)
             except ZeroDivisionError:
                 pass
 
@@ -229,7 +246,10 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         if self.fuel_max > 0:
             try:
                 self.TEXTURE_FIRE.get_region(
-                    0, 0, self.TEXTURE_FIRE_SIZE[0], round(self.TEXTURE_FIRE_SIZE[1] * (self.fuel_left / self.fuel_max))
+                    0,
+                    0,
+                    self.TEXTURE_FIRE_SIZE[0],
+                    round(self.TEXTURE_FIRE_SIZE[1] * (self.fuel_left / self.fuel_max)),
                 ).blit(x + 112, y + 229)
             except ZeroDivisionError:
                 pass

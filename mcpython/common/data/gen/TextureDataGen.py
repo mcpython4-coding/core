@@ -122,8 +122,10 @@ class TextureConstructor(IDataGenerator):
                     self.image_size = data[0]
                     break
             else:
-                logger.println("[ERROR] failed to texture-gen as image size could not get loaded for"
-                               " generator named {} to store at {}!".format(self.name, file))
+                logger.println(
+                    "[ERROR] failed to texture-gen as image size could not get loaded for"
+                    " generator named {} to store at {}!".format(self.name, file)
+                )
                 return
 
         image = PIL.Image.new("RGBA", self.image_size, (0, 0, 0, 0))
@@ -154,6 +156,6 @@ class TextureConstructor(IDataGenerator):
             elif action == 4:
                 size = image.size
                 region = data[0]
-                image = image.crop(tuple([region[i] * size[i%2] for i in range(4)]))
+                image = image.crop(tuple([region[i] * size[i % 2] for i in range(4)]))
 
         image.save(generator.get_full_path(file))

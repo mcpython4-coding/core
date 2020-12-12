@@ -503,7 +503,9 @@ class ModLoader:
                 if file in modlocations:
                     modlocations.remove(file)
                 else:
-                    self.error_builder.println("-attempted to remove mod '{}' which is not found".format(file))
+                    self.error_builder.println(
+                        "-attempted to remove mod '{}' which is not found".format(file)
+                    )
                 for _ in range(2):
                     sys.argv.pop(i)
             else:
@@ -539,7 +541,9 @@ class ModLoader:
                                     self.load_mods_toml(sf.read(), file)
                             except KeyError:
                                 self.error_builder.println(
-                                    "- could not locate mod.json file in mod at '{}'".format(file)
+                                    "- could not locate mod.json file in mod at '{}'".format(
+                                        file
+                                    )
                                 )
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
@@ -566,7 +570,9 @@ class ModLoader:
                     with open(file + "/mods.toml") as sf:
                         self.load_mods_toml(sf.read(), file + "/mods.toml")
                 else:
-                    self.error_builder.println("- could not locate mod.json file for mod at '{}'".format(file))
+                    self.error_builder.println(
+                        "- could not locate mod.json file for mod at '{}'".format(file)
+                    )
 
     def look_out(self):
         """
@@ -582,7 +588,11 @@ class ModLoader:
                 if name in self.mods:
                     del self.mods[name]
                 else:
-                    self.error_builder.println("- attempted to remove mod '{}' which is not arrival".format(name))
+                    self.error_builder.println(
+                        "- attempted to remove mod '{}' which is not arrival".format(
+                            name
+                        )
+                    )
                 for _ in range(2):
                     sys.argv.pop(i)
             else:
@@ -640,7 +650,9 @@ class ModLoader:
         :param file: the file allocated (used for warning messages)
         """
         if "version" not in data:
-            self.error_builder.println("- version entry in '{}' is invalid due to version".format(file))
+            self.error_builder.println(
+                "- version entry in '{}' is invalid due to version".format(file)
+            )
         else:
             self.load_json(data, file)
 
@@ -651,7 +663,11 @@ class ModLoader:
         :param file: the file to load, for debugging uses
         """
         if "version" not in data:
-            self.error_builder.println("- invalid mod.json file found without 'version'-entry in file {}".format(file))
+            self.error_builder.println(
+                "- invalid mod.json file found without 'version'-entry in file {}".format(
+                    file
+                )
+            )
             return
         version = data["version"]
         if version == "1.2.0":  # latest
@@ -671,13 +687,21 @@ class ModLoader:
             """
             for entry in data["entries"]:
                 if "name" not in entry:
-                    self.error_builder.println("- invalid entry in '{}' (entry: {}): missing entry-tag".format(file, entry))
+                    self.error_builder.println(
+                        "- invalid entry in '{}' (entry: {}): missing entry-tag".format(
+                            file, entry
+                        )
+                    )
                     continue
                 modname = entry["name"]
                 loader = entry["loader"] if "loader" in entry else "python:default"
                 if loader == "python:default":
                     if "version" not in entry:
-                        self.error_builder.println("- invalid entry found in '{}': missing 'version'-entry".format(file))
+                        self.error_builder.println(
+                            "- invalid entry found in '{}': missing 'version'-entry".format(
+                                file
+                            )
+                        )
                         continue
                     version = tuple([int(e) for e in entry["version"].split(".")])
                     modinstance = mcpython.common.mod.Mod.Mod(modname, version)
@@ -718,7 +742,9 @@ class ModLoader:
                                 location.replace("/", ".").replace("\\", ".")
                             )
                         except ModuleNotFoundError:
-                            self.error_builder.println("- can't load mod file {}".format(location))
+                            self.error_builder.println(
+                                "- can't load mod file {}".format(location)
+                            )
                             return
                 else:
                     raise IOError("invalid loader '{}'".format(loader))
@@ -806,9 +832,12 @@ class ModLoader:
         modinfo = {}
         for mod in self.located_mods:
             if mod.name in modinfo:
-                self.error_builder.println(" -Mod '{}' found in {} has more than one version in the folder. Please load only every mod ONES".format(
-                        mod.name, mod.path,
-                    ))
+                self.error_builder.println(
+                    " -Mod '{}' found in {} has more than one version in the folder. Please load only every mod ONES".format(
+                        mod.name,
+                        mod.path,
+                    )
+                )
                 errors = True
             else:
                 modinfo[mod.name] = []
@@ -876,7 +905,12 @@ class ModLoader:
             )
         )
         self.error_builder.finish()
-        logger.write_into_container([" - {}".format(self.mods[name].mod_string()) for name in self.mod_loading_order])
+        logger.write_into_container(
+            [
+                " - {}".format(self.mods[name].mod_string())
+                for name in self.mod_loading_order
+            ]
+        )
 
     def process(self):
         """

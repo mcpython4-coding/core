@@ -59,7 +59,9 @@ class CommandLoot(mcpython.server.command.Command.Command):
                             )
                         )
                         return
-                    entity.pick_up(G.loot_table_handler.get_drop_for_block(block, entity))
+                    entity.pick_up(
+                        G.loot_table_handler.get_drop_for_block(block, entity)
+                    )
         elif values[0] == "insert":
             block = G.world.get_active_dimension().get_block(values[1])
             if block is None or type(block) == str:

@@ -321,7 +321,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if immediate:
             self.world[position].face_state.update(redraw_complete=True)
         else:
-            G.world_generation_handler.task_handler.schedule_visual_update(self, position)
+            G.world_generation_handler.task_handler.schedule_visual_update(
+                self, position
+            )
 
     def hide_block(
         self,
@@ -342,7 +344,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 return
             self.world[position].face_state.hide_all()
         else:
-            G.world_generation_handler.task_handler.schedule_visual_update(self, position)
+            G.world_generation_handler.task_handler.schedule_visual_update(
+                self, position
+            )
 
     def show(self, force=False):
         """

@@ -118,12 +118,19 @@ class Player(mcpython.common.entity.Entity.Entity):
         import mcpython.client.gui.InventoryPlayerHotbar as InvHotbar
 
         self.inventory_hotbar = InvHotbar.InventoryPlayerHotbar(self)
-        self.inventory_main = mcpython.client.gui.MainPlayerInventory.MainPlayerInventory(self.inventory_hotbar)
+        self.inventory_main = (
+            mcpython.client.gui.MainPlayerInventory.MainPlayerInventory(
+                self.inventory_hotbar
+            )
+        )
         self.inventory_chat = mcpython.client.Chat.ChatInventory()
         self.inventory_enderchest = mcpython.client.gui.InventoryChest.InventoryChest()
         self.inventory_crafting_table = InvCrafting.InventoryCraftingTable()
 
-        self.inventory_order = [(self.inventory_hotbar, False), (self.inventory_main, False)]
+        self.inventory_order = [
+            (self.inventory_hotbar, False),
+            (self.inventory_main, False),
+        ]
 
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)

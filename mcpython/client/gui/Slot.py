@@ -274,14 +274,21 @@ class Slot(ISlot):
         if callable(self.check_function):
             if not self.check_function(self, itemstack):
                 return False
-        flag1 = self.allowed_item_tags is not None or self.disallowed_item_tags is not None
-        flag2 = (
-            itemstack.item is not None
-            and (
-                (self.allowed_item_tags is not None and any([x in itemstack.item.TAGS for x in self.allowed_item_tags])) or
-                (self.disallowed_item_tags is not None and any([x not in itemstack.item.TAGS for x in self.disallowed_item_tags]))
-                or itemstack.get_item_name() is None
+        flag1 = (
+            self.allowed_item_tags is not None or self.disallowed_item_tags is not None
+        )
+        flag2 = itemstack.item is not None and (
+            (
+                self.allowed_item_tags is not None
+                and any([x in itemstack.item.TAGS for x in self.allowed_item_tags])
             )
+            or (
+                self.disallowed_item_tags is not None
+                and any(
+                    [x not in itemstack.item.TAGS for x in self.disallowed_item_tags]
+                )
+            )
+            or itemstack.get_item_name() is None
         )
         flag3 = self.allowed_item_func is not None
         flag4 = flag3 and self.allowed_item_func(itemstack)

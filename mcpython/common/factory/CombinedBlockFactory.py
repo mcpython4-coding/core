@@ -197,7 +197,9 @@ class CombinedFullBlockFactory:
             [name in self.textures for name in self.mode.texture_names]
         ), "all needed texture names MUST be set"
         assert self.name is not None, "name must be set"
-        G.mod_loader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
+        G.mod_loader(self.modname, "special:datagen:configure")(
+            self.__generate_data_gen
+        )
         G.mod_loader(self.modname, "stage:block:factory_usage")(
             self.__generate_factories
         )
@@ -264,7 +266,9 @@ class CombinedSlabFactory:
 
     def build(self):
         assert self.name is not None, "name must be set"
-        G.mod_loader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
+        G.mod_loader(self.modname, "special:datagen:configure")(
+            self.__generate_data_gen
+        )
         G.mod_loader(self.modname, "stage:block:factory_usage")(
             self.__generate_factories
         )
@@ -344,7 +348,9 @@ class CombinedWallFactory:
 
     def build(self):
         assert self.name is not None, "name must be set"
-        G.mod_loader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
+        G.mod_loader(self.modname, "special:datagen:configure")(
+            self.__generate_data_gen
+        )
         G.mod_loader(self.modname, "stage:block:load")(self.__generate_factories)
 
     def __generate_data_gen(self):
@@ -431,7 +437,9 @@ class CombinedLogFactory:
 
     def build(self):
         assert self.name is not None, "name must be set"
-        G.mod_loader(self.modname, "special:datagen:configure")(self.__generate_data_gen)
+        G.mod_loader(self.modname, "special:datagen:configure")(
+            self.__generate_data_gen
+        )
         G.mod_loader(self.modname, "stage:block:load")(self.__generate_factories)
 
     def __generate_data_gen(self):

@@ -26,12 +26,15 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
     """
     inventory class for the crafting table
     """
+
     TEXTURE = None
     TEXTURE_SIZE = None
 
     @classmethod
     def update_texture(cls):
-        texture = mcpython.ResourceLoader.read_image("minecraft:gui/container/crafting_table")
+        texture = mcpython.ResourceLoader.read_image(
+            "minecraft:gui/container/crafting_table"
+        )
         size = texture.size
         texture = texture.crop((0, 0, 176 / 255 * size[0], 166 / 255 * size[1]))
         size = texture.size
@@ -103,4 +106,6 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
         shared.inventory_handler.shift_container.container_B = self.slots
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("data:reload:work", InventoryCraftingTable.update_texture)
+mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "data:reload:work", InventoryCraftingTable.update_texture
+)

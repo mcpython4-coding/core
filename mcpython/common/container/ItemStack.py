@@ -20,7 +20,9 @@ class ItemStack:
     """
 
     def __init__(self, item_name_or_instance, amount=1):
-        if issubclass(type(item_name_or_instance), mcpython.common.item.AbstractItem.AbstractItem):
+        if issubclass(
+            type(item_name_or_instance), mcpython.common.item.AbstractItem.AbstractItem
+        ):
             self.item = item_name_or_instance
         elif type(item_name_or_instance) == str:
             if item_name_or_instance in G.registry.get_by_name("item").entries:
