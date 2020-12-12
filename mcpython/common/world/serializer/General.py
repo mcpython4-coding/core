@@ -12,14 +12,14 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared as G, logger
 import mcpython.ResourceLoader
 import mcpython.common.config
-import mcpython.server.storage.SaveFile
-import mcpython.server.storage.datafixers.IDataFixer
-import mcpython.server.storage.serializer.IDataSerializer
+import mcpython.common.world.SaveFile
+import mcpython.common.world.datafixers.IDataFixer
+import mcpython.common.world.serializer.IDataSerializer
 import mcpython.util.getskin
 import mcpython.common.world.player
 
 
-class WorldConfigFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+class WorldConfigFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     Class representing an fix for the config-entry
     """
@@ -27,46 +27,46 @@ class WorldConfigFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer)
     TARGET_SERIALIZER_NAME = "minecraft:general"
 
     @classmethod
-    def fix(cls, savefile, data: dict) -> dict:
+    def fix(cls, save_file, data: dict) -> dict:
         raise NotImplementedError()
 
 
 @G.registry
-class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
+class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:general"
 
     @classmethod
-    def apply_part_fixer(cls, savefile, fixer):
+    def apply_part_fixer(cls, save_file, fixer):
         # when it is another version, loading MAY fail
-        if savefile.version != mcpython.server.storage.SaveFile.LATEST_VERSION:
+        if save_file.version != mcpython.common.world.SaveFile.LATEST_VERSION:
             return
 
-        data = savefile.access_file_json("level.json")
-        data["config"] = fixer.fix(savefile, data["config"])
-        savefile.write_file_json("level.json", data)
+        data = save_file.access_file_json("level.json")
+        data["config"] = fixer.fix(save_file, data["config"])
+        save_file.write_file_json("level.json", data)
 
     @classmethod
-    def load(cls, savefile):
-        data = savefile.access_file_json("level.json")
+    def load(cls, save_file):
+        data = save_file.access_file_json("level.json")
         if data is None:
-            raise mcpython.server.storage.serializer.IDataSerializer.MissingSaveException(
+            raise mcpython.common.world.serializer.IDataSerializer.MissingSaveException(
                 "level.json not found!"
             )
 
-        savefile.version = data["storage version"]
+        save_file.version = data["storage version"]
 
         # when it is another version, loading MAY fail
-        if savefile.version != mcpython.server.storage.SaveFile.LATEST_VERSION:
+        if save_file.version != mcpython.common.world.SaveFile.LATEST_VERSION:
             return
 
-        playername = data["player name"]
+        player_name = data["player name"]
 
         try:
-            mcpython.util.getskin.download_skin(playername, G.build + "/skin.png")
+            mcpython.util.getskin.download_skin(player_name, G.build + "/skin.png")
         except ValueError:
             logger.println(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(
-                    playername
+                    player_name
                 )
             )
             mcpython.ResourceLoader.read_image(
@@ -95,8 +95,8 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
                 )
             elif G.mod_loader.mods[modname].version != tuple(data["mods"][modname]):
                 try:
-                    savefile.apply_mod_fixer(modname, tuple(data["mods"][modname]))
-                except mcpython.server.storage.SaveFile.DataFixerNotFoundException:
+                    save_file.apply_mod_fixer(modname, tuple(data["mods"][modname]))
+                except mcpython.common.world.SaveFile.DataFixerNotFoundException:
                     if modname != "minecraft":
                         logger.println(
                             "[WARN] mod {} did not provide data-fixers for mod version change "
@@ -111,8 +111,8 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
         for modname in G.mod_loader.mods:
             if modname not in data["mods"]:
                 try:
-                    savefile.apply_mod_fixer(modname, None)
-                except mcpython.server.storage.SaveFile.DataFixerNotFoundException:
+                    save_file.apply_mod_fixer(modname, None)
+                except mcpython.common.world.SaveFile.DataFixerNotFoundException:
                     pass
 
         # the chunks scheduled for generation
@@ -149,9 +149,9 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
             G.world.join_dimension(data["active_dimension"])
 
     @classmethod
-    def save(cls, data, savefile):
+    def save(cls, data, save_file):
         data = {
-            "storage version": savefile.version,  # the storage version stored in
+            "storage version": save_file.version,  # the storage version stored in
             "player name": G.world.get_active_player().name,  # the name of the player the world played in
             "config": G.world.config,  # the world config
             "game version": mcpython.common.config.VERSION_NAME,
@@ -166,4 +166,4 @@ class General(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer
             },
             "active_dimension": G.world.get_active_player().dimension.id,
         }
-        savefile.dump_file_json("level.json", data)
+        save_file.dump_file_json("level.json", data)

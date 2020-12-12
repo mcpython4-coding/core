@@ -18,7 +18,7 @@ from mcpython import shared as G, logger
 import mcpython.common.DataPack
 import mcpython.common.config
 import mcpython.client.state.StatePartGame
-import mcpython.server.storage.SaveFile
+import mcpython.common.world.SaveFile
 import mcpython.util.math
 import mcpython.common.world.Chunk
 import mcpython.common.world.Dimension
@@ -60,8 +60,8 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.filename: str = (
             "tmp" if filename is None else filename
         )  # the file-name to use, todo: make None if not needed
-        self.save_file: mcpython.server.storage.SaveFile.SaveFile = (
-            mcpython.server.storage.SaveFile.SaveFile(self.filename)
+        self.save_file: mcpython.common.world.SaveFile.SaveFile = (
+            mcpython.common.world.SaveFile.SaveFile(self.filename)
         )  # the save file instance
 
         # when in an network, stores an reference to all other players
@@ -375,4 +375,4 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         :param filename: the file name to use
         """
         self.filename = filename if filename is not None else "tmp"
-        self.save_file = mcpython.server.storage.SaveFile.SaveFile(self.filename)
+        self.save_file = mcpython.common.world.SaveFile.SaveFile(self.filename)

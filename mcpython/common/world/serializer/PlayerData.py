@@ -9,13 +9,12 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.server.storage.serializer.IDataSerializer
-import mcpython.server.storage.datafixers.IDataFixer
+import mcpython.common.world.datafixers.IDataFixer
 from mcpython import shared as G
 import time
 
 
-class PlayerDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+class PlayerDataFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     fixer for fixing player data
     """
@@ -34,23 +33,23 @@ class PlayerDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
 
 
 @G.registry
-class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
+class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:player_data"
 
     @classmethod
-    def apply_part_fixer(cls, savefile, fixer):
+    def apply_part_fixer(cls, save_file, fixer):
         if issubclass(fixer, PlayerDataFixer):
-            data = savefile.access_file_json("players.json")
+            data = save_file.access_file_json("players.json")
             for name in data:
                 pdata = data[name]
                 player = G.world.players[name] if name not in G.world.players else None
-                pdata = fixer.fix(savefile, player, pdata)
+                pdata = fixer.fix(save_file, player, pdata)
                 data[name] = pdata
-            savefile.dump_file_json("players.json", data)
+            save_file.dump_file_json("players.json", data)
 
     @classmethod
-    def load(cls, savefile):
-        data = savefile.access_file_json("players.json")
+    def load(cls, save_file):
+        data = save_file.access_file_json("players.json")
         if data is not None and G.world.get_active_player().name in data:
             player = G.world.get_active_player()
             pd = data[player.name]
@@ -68,7 +67,7 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
             for i, (name, inventory) in enumerate(
                 zip(pd["inventory_data"], player.get_inventories())
             ):
-                savefile.read(
+                save_file.read(
                     "minecraft:inventory",
                     inventory=inventory,
                     path="players/{}/inventory/{}".format(player.name, i),
@@ -87,8 +86,8 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
                 ]["nether_portal"]["portal_need_leave_before_change"]
 
     @classmethod
-    def save(cls, data, savefile):
-        data = savefile.access_file_json("players.json")
+    def save(cls, data, save_file):
+        data = save_file.access_file_json("players.json")
         if data is None:
             data = {}
         for player in G.world.players.values():
@@ -118,7 +117,7 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
                 ],
             }
             [
-                savefile.dump(
+                save_file.dump(
                     None,
                     "minecraft:inventory",
                     inventory=inventory,
@@ -126,4 +125,4 @@ class PlayerData(mcpython.server.storage.serializer.IDataSerializer.IDataSeriali
                 )
                 for i, inventory in enumerate(player.get_inventories())
             ]
-        savefile.dump_file_json("players.json", data)
+        save_file.dump_file_json("players.json", data)

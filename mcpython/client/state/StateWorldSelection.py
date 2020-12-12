@@ -24,7 +24,7 @@ import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.StateWorldGeneration
 import mcpython.client.state.StateWorldLoading
-import mcpython.server.storage.SaveFile
+import mcpython.common.world.SaveFile
 import mcpython.util.math
 import mcpython.util.opengl
 import mcpython.util.texture
@@ -221,13 +221,13 @@ class StateWorldSelection(State.State):
         self.parts[-1].set_status(1)
 
     def reload_world_icons(self):
-        if not os.path.exists(mcpython.server.storage.SaveFile.SAVE_DIRECTORY):
-            os.makedirs(mcpython.server.storage.SaveFile.SAVE_DIRECTORY)
+        if not os.path.exists(mcpython.common.world.SaveFile.SAVE_DIRECTORY):
+            os.makedirs(mcpython.common.world.SaveFile.SAVE_DIRECTORY)
         wx, wy = G.window.get_size()
         self.world_data.clear()
-        for directory in os.listdir(mcpython.server.storage.SaveFile.SAVE_DIRECTORY):
+        for directory in os.listdir(mcpython.common.world.SaveFile.SAVE_DIRECTORY):
             path = os.path.join(
-                mcpython.server.storage.SaveFile.SAVE_DIRECTORY, directory
+                mcpython.common.world.SaveFile.SAVE_DIRECTORY, directory
             ).replace("\\", "/")
             if os.path.isdir(path) and os.path.isfile(path + "/level.json"):
                 if os.path.isfile(path + "/icon.png"):

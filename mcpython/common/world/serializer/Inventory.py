@@ -9,7 +9,6 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.server.storage.serializer.IDataSerializer
 from mcpython import shared as G
 import mcpython.client.gui.Inventory
 import uuid
@@ -21,9 +20,10 @@ improvements for the future:
 
 
 @G.registry
-class Inventory(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
+class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     """
     Inventory serializer class
+    todo: add part fixers
     """
 
     PART = NAME = "minecraft:inventory"
@@ -31,19 +31,20 @@ class Inventory(mcpython.server.storage.serializer.IDataSerializer.IDataSerializ
     @classmethod
     def load(
         cls,
-        savefile,
+        save_file,
         inventory: mcpython.client.gui.Inventory.Inventory,
         path: str,
         file=None,
     ):
         """
+        :param save_file: the save file instance
         :param inventory: The inventory to save
         :param path: the path to save under
         :param file: the file to save into
         """
         if file is None:
             file = "inventories.dat"
-        data = savefile.access_file_pickle(file)
+        data = save_file.access_file_pickle(file)
 
         if data is None:
             return
@@ -65,20 +66,15 @@ class Inventory(mcpython.server.storage.serializer.IDataSerializer.IDataSerializ
     def save(
         cls,
         data,
-        savefile,
+        save_file,
         inventory: mcpython.client.gui.Inventory.Inventory,
         path: str,
         file=None,
         override=False,
     ):
-        """
-        :param inventory: The inventory to save
-        :param path: the path to save under
-        :param file: the file to save into
-        """
         if file is None:
             file = "inventories.dat"
-        data = savefile.access_file_pickle(file) if not override else None
+        data = save_file.access_file_pickle(file) if not override else None
         if data is None:
             data = {}
 
@@ -88,4 +84,4 @@ class Inventory(mcpython.server.storage.serializer.IDataSerializer.IDataSerializ
             "slots": [slot.save() for slot in inventory.slots],
         }
         data[path] = idata
-        savefile.dump_file_pickle(file, data)
+        save_file.dump_file_pickle(file, data)

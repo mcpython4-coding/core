@@ -9,12 +9,11 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.server.storage.serializer.IDataSerializer
 from mcpython import shared as G
-import mcpython.server.storage.datafixers.IDataFixer
+import mcpython.common.world.datafixers.IDataFixer
 
 
-class GameRuleFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+class GameRuleFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     Fixer targeting one or more game-rule entries
     """
@@ -24,11 +23,11 @@ class GameRuleFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
     TARGET_GAMERULE_NAME = []  # which game rules to apply to
 
     @classmethod
-    def fix(cls, savefile, data) -> dict:
+    def fix(cls, save_file, data) -> dict:
         pass
 
 
-class GameRuleRemovalFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+class GameRuleRemovalFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     Fixer targeting the removal of game-rule data from the save files
     """
@@ -39,40 +38,40 @@ class GameRuleRemovalFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFi
 
 
 @G.registry
-class GameRule(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
+class GameRule(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:gamerule"
 
     @classmethod
-    def apply_part_fixer(cls, savefile, fixer):
+    def apply_part_fixer(cls, save_file, fixer):
         if issubclass(fixer, GameRuleFixer):
-            data = savefile.access_file_json("gamerules.json")
+            data = save_file.access_file_json("gamerules.json")
             if data is None:
                 return
             for name in data:
                 if name in fixer.TARGET_GAMERULE_NAME:
-                    data[name] = fixer.fix(savefile, data[name])
-            savefile.dump_file_json("gamerules.json", data)
+                    data[name] = fixer.fix(save_file, data[name])
+            save_file.dump_file_json("gamerules.json", data)
         elif issubclass(fixer, GameRuleRemovalFixer):
-            data = savefile.access_file_json("gamerules.json")
+            data = save_file.access_file_json("gamerules.json")
             if data is None:
                 return
             for name in data:
                 if name in fixer.TARGET_GAMERULE_NAME:
                     del data[name]
-            savefile.dump_file_json("gamerules.json", data)
+            save_file.dump_file_json("gamerules.json", data)
 
     @classmethod
-    def load(cls, savefile):
-        data = savefile.access_file_json("gamerules.json")
+    def load(cls, save_file):
+        data = save_file.access_file_json("gamerules.json")
         if data is None:
             pass
         for name in data:
             G.world.gamerule_handler.table[name].status.load(data[name])
 
     @classmethod
-    def save(cls, data, savefile):
+    def save(cls, data, save_file):
         data = {
             gamerule.NAME: gamerule.status.save()
             for gamerule in G.world.gamerule_handler.table.values()
         }
-        savefile.dump_file_json("gamerules.json", data)
+        save_file.dump_file_json("gamerules.json", data)

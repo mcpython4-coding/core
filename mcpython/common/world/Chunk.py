@@ -441,3 +441,6 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
     def is_generated(self) -> bool:
         return self.generated
+
+    def get_entities(self):
+        return self.entities

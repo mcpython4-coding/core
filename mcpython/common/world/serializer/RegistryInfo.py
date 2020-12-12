@@ -9,12 +9,12 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.server.storage.serializer.IDataSerializer
+import mcpython.common.world.serializer.IDataSerializer
 from mcpython import shared as G, logger
 
 
 @G.registry
-class RegistryInfo(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
+class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     """
     Serializer storing the content of various registries
     """
@@ -22,8 +22,8 @@ class RegistryInfo(mcpython.server.storage.serializer.IDataSerializer.IDataSeria
     PART = NAME = "minecraft:registry_info_serializer"
 
     @classmethod
-    def load(cls, savefile):
-        data = savefile.access_file_pickle("registries.dat")
+    def load(cls, save_file):
+        data = save_file.access_file_pickle("registries.dat")
         if data is None:
             return
 
@@ -66,7 +66,7 @@ class RegistryInfo(mcpython.server.storage.serializer.IDataSerializer.IDataSeria
                 )
 
     @classmethod
-    def save(cls, data, savefile):
+    def save(cls, data, save_file):
         data = {}
         for registry in G.registry.registries:
             if not registry.dump_content_in_saves:
@@ -75,4 +75,4 @@ class RegistryInfo(mcpython.server.storage.serializer.IDataSerializer.IDataSeria
             for obj in registry.entries.values():
                 rdata.append(obj.compressed_info())
             data[registry.name] = rdata
-        savefile.dump_file_pickle("registries.dat", data)
+        save_file.dump_file_pickle("registries.dat", data)

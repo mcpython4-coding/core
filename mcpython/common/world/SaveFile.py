@@ -14,12 +14,10 @@ import os
 import pickle
 import sys
 
-import deprecation
-
 from mcpython import shared as G, logger
 import mcpython.common.event.Registry
-import mcpython.server.storage.datafixers.IDataFixer
-import mcpython.server.storage.serializer.IDataSerializer
+import mcpython.common.world.datafixers.IDataFixer
+import mcpython.common.world.serializer.IDataSerializer
 
 """
 How to decide when an new version is needed?
@@ -75,13 +73,13 @@ class DataFixerNotFoundException(Exception):
 
 
 def register_storage_fixer(
-    _, fixer: mcpython.server.storage.datafixers.IDataFixer.IStorageVersionFixer
+    _, fixer: mcpython.common.world.datafixers.IDataFixer.IStorageVersionFixer
 ):
     SaveFile.storage_version_fixers.setdefault(fixer.FIXES_FROM, []).append(fixer)
 
 
 def register_mod_fixer(
-    _, fixer: mcpython.server.storage.datafixers.IDataFixer.IModVersionFixer
+    _, fixer: mcpython.common.world.datafixers.IDataFixer.IModVersionFixer
 ):
     SaveFile.mod_fixers.setdefault(fixer.MOD_NAME, {}).setdefault(
         fixer.FIXES_FROM, []
@@ -171,7 +169,7 @@ class SaveFile:
             self.read("minecraft:player_data")
             self.read("minecraft:gamerule")
             self.read("minecraft:registry_info_serializer")
-        except mcpython.server.storage.serializer.IDataSerializer.MissingSaveException:
+        except mcpython.common.world.serializer.IDataSerializer.MissingSaveException:
             logger.println(
                 "[WARN] save '{}' not found, falling back to selection menu".format(
                     self.directory
@@ -236,7 +234,7 @@ class SaveFile:
         """
         if name not in self.storage_fixer_registry.entries:
             raise DataFixerNotFoundException(name)
-        fixer: mcpython.server.storage.datafixers.IDataFixer.IStorageVersionFixer = (
+        fixer: mcpython.common.world.datafixers.IDataFixer.IStorageVersionFixer = (
             self.storage_fixer_registry.entries[name]
         )
         try:
@@ -259,7 +257,7 @@ class SaveFile:
         """
         if name not in self.group_fixer_registry.entries:
             raise DataFixerNotFoundException(name)
-        fixer: mcpython.server.storage.datafixers.IDataFixer.IGroupFixer = (
+        fixer: mcpython.common.world.datafixers.IDataFixer.IGroupFixer = (
             self.group_fixer_registry.entries[name]
         )
         try:
@@ -280,7 +278,7 @@ class SaveFile:
         """
         if name not in self.part_fixer_registry.entries:
             raise DataFixerNotFoundException(name)
-        fixer: mcpython.server.storage.datafixers.IDataFixer.IPartFixer = (
+        fixer: mcpython.common.world.datafixers.IDataFixer.IPartFixer = (
             self.part_fixer_registry.entries[name]
         )
         try:
@@ -315,12 +313,15 @@ class SaveFile:
                 return
 
             if source_version is not None or len(possible_fixers) == 1:
-                fixer: mcpython.server.storage.datafixers.IDataFixer.IModVersionFixer = fixers[
-                    0
-                ]
+                fixer: mcpython.common.world.datafixers.IDataFixer.IModVersionFixer = (
+                    fixers[0]
+                )
             else:
-                fixer: mcpython.server.storage.datafixers.IDataFixer.IModVersionFixer = min(
-                    possible_fixers, key=lambda v: self._get_distance(v, source_version)
+                fixer: mcpython.common.world.datafixers.IDataFixer.IModVersionFixer = (
+                    min(
+                        possible_fixers,
+                        key=lambda v: self._get_distance(v, source_version),
+                    )
                 )
 
             try:
@@ -357,7 +358,7 @@ class SaveFile:
         for (
             serializer
         ) in (
-            mcpython.server.storage.serializer.IDataSerializer.dataserializerregistry.entries.values()
+            mcpython.common.world.serializer.IDataSerializer.data_serializer_registry.entries.values()
         ):
             if serializer.PART == part:
                 return serializer
@@ -372,7 +373,7 @@ class SaveFile:
         """
         try:
             return self.get_serializer_for(part).load(self, **kwargs)
-        except mcpython.server.storage.serializer.IDataSerializer.InvalidSaveException:
+        except mcpython.common.world.serializer.IDataSerializer.InvalidSaveException:
             logger.print_exception(
                 "during reading part '{}' from save files under '{}' with arguments {}".format(
                     part, self.directory, kwargs

@@ -16,6 +16,10 @@ import mcpython.common.block.AbstractBlock
 
 
 class IChunk(ABC):
+    def __init__(self):
+        self.world = {}  # the world
+        self.positions_updated_since_last_save = []  # "dirty" list
+
     def get_dimension(self) -> "IDimension":
         raise NotImplementedError()
 
@@ -119,6 +123,15 @@ class IChunk(ABC):
         raise NotImplementedError()
 
     def is_generated(self) -> bool:
+        raise NotImplementedError()
+
+    def set_value(self, key: str, data):
+        raise NotImplementedError()
+
+    def get_entities(self):
+        raise NotImplementedError()
+
+    def get_value(self, key: str):
         raise NotImplementedError()
 
 

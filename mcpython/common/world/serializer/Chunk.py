@@ -9,30 +9,46 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.server.storage.serializer.IDataSerializer
-import mcpython.server.storage.datafixers.IDataFixer
+import typing
+
+import mcpython.common.world.serializer.IDataSerializer
+import mcpython.common.world.datafixers.IDataFixer
 from mcpython import shared as G, logger
 import mcpython.common.world.Chunk
 import mcpython.common.world.AbstractInterface
 import mcpython.util.enums
 import uuid
+import mcpython.common.world.AbstractInterface
 
 
 def chunk2region(cx, cz):
     return cx >> 5, cz >> 5
 
 
-def access_region_data(savefile, dimension: int, region: tuple):
-    if dimension not in G.world.dimensions:
+def access_region_data(
+    save_file,
+    dimension: int,
+    region: tuple,
+):
+    if dimension.get_id() not in G.world.dimensions:
         return
-    return savefile.access_file_pickle("dim/{}/{}_{}.region".format(dimension, *region))
+    return save_file.access_file_pickle(
+        "dim/{}/{}_{}.region".format(dimension.get_id(), *region)
+    )
 
 
-def write_region_data(savefile, dimension, region, data):
-    savefile.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
+def write_region_data(
+    save_file,
+    dimension: int,
+    region,
+    data,
+):
+    save_file.dump_file_pickle(
+        "dim/{}/{}_{}.region".format(dimension.get_id(), *region), data
+    )
 
 
-class BlockPartFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+class BlockPartFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     Fixer for fixing special block data
     Applied only ONES per block-palette entry, not ones per block. Will change all blocks of the same kind
@@ -44,11 +60,18 @@ class BlockPartFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
     TARGET_BLOCK_NAME = None  # on which block(s) to apply
 
     @classmethod
-    def fix(cls, savefile, dim, region, chunk, data) -> dict:
+    def fix(
+        cls,
+        save_file,
+        dimension: int,
+        region,
+        chunk: typing.Tuple[int, int],
+        data,
+    ) -> dict:
         """
         called to apply the fix
-        :param savefile: the savefile-instance to use
-        :param dim: the dim in
+        :param save_file: the save-file-instance to use
+        :param dimension: the dim in
         :param region: the region in
         :param chunk: the chunk in
         :param data: the block data
@@ -56,19 +79,26 @@ class BlockPartFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
         """
 
 
-class ChunkDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+class ChunkDataFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
-    fixer targeting an whole chunk-data dict
+    Fixer targeting an whole chunk-data dict
     """
 
     TARGET_SERIALIZER_NAME = "minecraft:chunk"
 
     @classmethod
-    def fix(cls, savefile, dim, region, chunk, data) -> dict:
+    def fix(
+        cls,
+        save_file,
+        dimension: int,
+        region,
+        chunk: typing.Tuple[int, int],
+        data,
+    ) -> dict:
         """
         will apply the fix
-        :param savefile: the savefile to use
-        :param dim: the dimension in
+        :param save_file: the save-file to use
+        :param dimension: the dimension in
         :param region: the region in
         :param chunk: the chunk position
         :param data: the chunk data
@@ -76,26 +106,32 @@ class ChunkDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
         """
 
 
-class RegionDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+class RegionDataFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
-    fixer for fixing an whole .region file
+    Fixer for fixing an whole .region file
     """
 
     TARGET_SERIALIZER_NAME = "minecraft:chunk"
 
     @classmethod
-    def fix(cls, savefile, dim, region, data) -> dict:
+    def fix(
+        cls,
+        save_file,
+        dimension: int,
+        region,
+        data,
+    ) -> dict:
         """
         will apply the fix
-        :param savefile: the savefile to use
-        :param dim: the dimension in
+        :param save_file: the save-file to use
+        :param dimension: the dimension in
         :param region: the region in
         :param data: the region data
         :return: the transformed region data
         """
 
 
-class BlockRemovalFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+class BlockRemovalFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     Fixer for removing block-data from special blocks from the chunk system
     Will replace the block data with REPLACE (default: air-block)
@@ -110,8 +146,19 @@ class BlockRemovalFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer
         "shown": False,
     }  # the block data to replace with
 
+    @classmethod
+    def on_replace(
+        cls,
+        save_file,
+        dimension: int,
+        chunk: typing.Tuple[int, int],
+        source,
+        target,
+    ):
+        return target
 
-class EntityDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+
+class EntityDataFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     Fixer for fixing entity data from storage
     """
@@ -120,18 +167,25 @@ class EntityDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
     TARGET_ENTITY_NAME = None  # which entity to apply to
 
     @classmethod
-    def fix(cls, savefile, dim, region, chunk, data):
+    def fix(
+        cls,
+        save_file,
+        dimension: int,
+        region,
+        chunk: typing.Tuple[int, int],
+        data,
+    ):
         """
         will apply the fix
-        :param savefile: the savefile to use
-        :param dim: the dimension in
+        :param save_file: the save-file to use
+        :param dimension: the dimension in
         :param region: the region in
         :param chunk: the chunk in
         :param data: the entity data
         """
 
 
-class EntityRemovalFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+class EntityRemovalFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     Fixer for removing an entity type from saves
     """
@@ -139,8 +193,19 @@ class EntityRemovalFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixe
     TARGET_SERIALIZER_NAME = "minecraft:chunk"
     TARGET_ENTITY_NAME = None  # which entity to apply to
 
+    @classmethod
+    def on_replace(
+        cls,
+        save_file,
+        dimension: int,
+        chunk: typing.Tuple[int, int],
+        previous,
+        chunk_data,
+    ):
+        pass
 
-class ChunkMapDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer):
+
+class ChunkMapDataFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     Fixer for changing the map data of the chunk
     """
@@ -148,11 +213,18 @@ class ChunkMapDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer
     TARGET_SERIALIZER_NAME = "minecraft:chunk"
 
     @classmethod
-    def fix(cls, savefile, dim, region, chunk, data):
+    def fix(
+        cls,
+        save_file,
+        dimension: int,
+        region,
+        chunk: typing.Tuple[int, int],
+        data,
+    ):
         """
         will apply the fix
-        :param savefile: the savefile to use
-        :param dim: the dimension in
+        :param save_file: the save-file to use
+        :param dimension: the dimension in
         :param region: the region in
         :param chunk: the chunk in
         :param data: the map data
@@ -160,19 +232,23 @@ class ChunkMapDataFixer(mcpython.server.storage.datafixers.IDataFixer.IPartFixer
 
 
 @G.registry
-class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
+class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:chunk"
 
     @classmethod
-    def apply_part_fixer(cls, savefile, fixer):
+    def apply_part_fixer(
+        cls,
+        save_file,
+        fixer: typing.Type[mcpython.common.world.datafixers.IDataFixer.IPartFixer],
+    ):
         if issubclass(fixer, BlockPartFixer):
             blocks = (
                 fixer.TARGET_BLOCK_NAME
                 if type(fixer.TARGET_BLOCK_NAME) in (list, tuple, set)
                 else (fixer.TARGET_BLOCK_NAME,)
             )
-            for dim, region in savefile.region_iterator():
-                data = access_region_data(savefile, dim, region)
+            for dim, region in save_file.region_iterator():
+                data = access_region_data(save_file, dim, region)
                 if data is None:
                     continue
                 for chunk in data:
@@ -181,27 +257,29 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                     palette = data[chunk]["block_palette"]
                     for i, entry in enumerate(palette):
                         if entry["name"] in blocks:
-                            palette[i] = fixer.fix(savefile, dim, region, chunk, entry)
-                write_region_data(savefile, dim, region, data)
+                            palette[i] = fixer.fix(save_file, dim, region, chunk, entry)
+                write_region_data(save_file, dim, region, data)
 
         elif issubclass(fixer, RegionDataFixer):
-            for dim, region in savefile.region_iterator():
-                data = access_region_data(savefile, dim, region)
+            for dim, region in save_file.region_iterator():
+                data = access_region_data(save_file, dim, region)
                 if data is None:
                     continue
-                data = fixer.fix(savefile, dim, region, data)
-                write_region_data(savefile, dim, region, data)
+                data = fixer.fix(save_file, dim, region, data)
+                write_region_data(save_file, dim, region, data)
 
         elif issubclass(fixer, ChunkDataFixer):
-            for dim, region in savefile.region_iterator():
-                data = access_region_data(savefile, dim, region)
+            for dim, region in save_file.region_iterator():
+                data = access_region_data(save_file, dim, region)
                 if data is None:
                     continue
                 for chunk in data:
                     if chunk == "version":
                         continue
-                    data[chunk] = fixer.fix(savefile, dim, region, chunk, data["chunk"])
-                write_region_data(savefile, dim, region, data)
+                    data[chunk] = fixer.fix(
+                        save_file, dim, region, chunk, data["chunk"]
+                    )
+                write_region_data(save_file, dim, region, data)
 
         elif issubclass(fixer, BlockRemovalFixer):
             blocks = (
@@ -209,8 +287,8 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                 if type(fixer.TARGET_BLOCK_NAMES) in (list, tuple, set)
                 else (fixer.TARGET_BLOCK_NAMES,)
             )
-            for dim, region in savefile.region_iterator():
-                data = access_region_data(savefile, dim, region)
+            for dim, region in save_file.region_iterator():
+                data = access_region_data(save_file, dim, region)
                 if data is None:
                     continue
                 for chunk in data:
@@ -219,12 +297,14 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                     palette = data[chunk]["block_palette"]
                     for i, entry in enumerate(palette):
                         if entry["name"] in blocks:
-                            palette[i] = fixer.REPLACE
-                write_region_data(savefile, dim, region, data)
+                            palette[i] = fixer.on_replace(
+                                save_file, dim, chunk, palette[i], fixer.REPLACE
+                            )
+                write_region_data(save_file, dim, region, data)
 
         elif issubclass(fixer, EntityDataFixer):
-            for dim, region in savefile.region_iterator():
-                data = access_region_data(savefile, dim, region)
+            for dim, region in save_file.region_iterator():
+                data = access_region_data(save_file, dim, region)
                 if data is None:
                     continue
                 for chunk in data:
@@ -233,12 +313,12 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                     cdata = data[chunk]
                     for entity_data in cdata["entities"]:
                         if entity_data["type"] == fixer.TARGET_ENTITY_NAME:
-                            fixer.fix(savefile, dim, region, chunk, entity_data)
-                write_region_data(savefile, dim, region, data)
+                            fixer.fix(save_file, dim, region, chunk, entity_data)
+                write_region_data(save_file, dim, region, data)
 
         elif issubclass(fixer, EntityRemovalFixer):
-            for dim, region in savefile.region_iterator():
-                data = access_region_data(savefile, dim, region)
+            for dim, region in save_file.region_iterator():
+                data = access_region_data(save_file, dim, region)
                 if data is None:
                     continue
                 for chunk in data:
@@ -248,25 +328,28 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                     for entity_data in cdata["entities"].copy():
                         if entity_data["type"] == fixer.TARGET_ENTITY_NAME:
                             cdata["entities"].remove(entity_data)
-                write_region_data(savefile, dim, region, data)
+                            fixer.on_replace(save_file, dim, chunk, entity_data, cdata)
+                write_region_data(save_file, dim, region, data)
 
         elif issubclass(fixer, ChunkMapDataFixer):
-            for dim, region in savefile.region_iterator():
-                data = access_region_data(savefile, dim, region)
+            for dim, region in save_file.region_iterator():
+                data = access_region_data(save_file, dim, region)
                 if data is None:
                     continue
                 for chunk in data:
                     if chunk == "version":
                         continue
                     cdata = data[chunk]
-                    fixer.fix(savefile, dim, region, chunk, cdata["maps"])
-                write_region_data(savefile, dim, region, data)
+                    fixer.fix(save_file, dim, region, chunk, cdata["maps"])
+                write_region_data(save_file, dim, region, data)
 
     @classmethod
-    def load(cls, savefile, dimension: int, chunk: tuple, immediate=False):
+    def load(
+        cls, save_file, dimension: int, chunk: typing.Tuple[int, int], immediate=False
+    ):
         region = chunk2region(*chunk)
         try:
-            data = access_region_data(savefile, dimension, region)
+            data = access_region_data(save_file, dimension, region)
         except NotImplementedError:
             return
 
@@ -301,23 +384,23 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                 continue
         for rel_position in data["blocks"].keys():
             position = (
-                rel_position[0] + chunk_instance.position[0] * 16,
+                rel_position[0] + chunk_instance.get_position()[0] * 16,
                 rel_position[1],
-                rel_position[2] + chunk_instance.position[1] * 16,
+                rel_position[2] + chunk_instance.get_position()[1] * 16,
             )
             d = data["block_palette"][data["blocks"][rel_position]]
 
-            def add(blockinstance):
-                if blockinstance is None:
+            def add(instance):
+                if instance is None:
                     return
-                blockinstance.inject(d["custom"])
-                inventories = blockinstance.get_inventories()
+                instance.inject(d["custom"])
+                inventories = instance.get_inventories()
                 if "inventories" not in d:
                     return
                 for i, path in enumerate(d["inventories"]):
                     if i >= len(inventories):
                         break
-                    savefile.read(
+                    save_file.read(
                         "minecraft:inventory",
                         inventory=inventories[i],
                         path=path,
@@ -403,7 +486,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.show()
 
     @classmethod
-    def save(cls, data, savefile, dimension: int, chunk: tuple, override=False):
+    def save(cls, data, save_file, dimension: int, chunk: tuple, override=False):
         if dimension not in G.world.dimensions:
             return
         if chunk not in G.world.dimensions[dimension].chunks:
@@ -412,9 +495,9 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
         chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
             G.world.dimensions[dimension].chunks[chunk]
         )
-        if not chunk_instance.generated:
+        if not chunk_instance.is_generated():
             return
-        data = savefile.access_file_pickle(
+        data = save_file.access_file_pickle(
             "dim/{}/{}_{}.region".format(dimension, *region)
         )
         if data is None:
@@ -428,7 +511,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                 "position": chunk,
                 "blocks": {},
                 "block_palette": [],
-                "generated": chunk_instance.generated,
+                "generated": chunk_instance.is_generated(),
                 "maps": {
                     "landmass_map": [None] * 16 ** 2,
                     "landmass_palette": [],
@@ -459,9 +542,9 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
             else chunk_instance.world.keys()
         ):
             rel_position = (
-                position[0] - chunk_instance.position[0] * 16,
+                position[0] - chunk_instance.get_position()[0] * 16,
                 position[1],
-                position[2] - chunk_instance.position[1] * 16,
+                position[2] - chunk_instance.get_position()[1] * 16,
             )  # the relative position to the chunk
             if position not in chunk_instance.world and not override:
                 if rel_position in cdata["blocks"]:
@@ -482,12 +565,12 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
                     block.get_inventories()
                 ):  # iterate over all inventories
                     if not overridden:  # only if we need data, load it
-                        savefile.dump_file_pickle(inv_file, {})
+                        save_file.dump_file_pickle(inv_file, {})
                         overridden = True
                     path = "blockinv/{}_{}_{}/{}".format(
                         *rel_position, i
                     )  # were to locate in the file
-                    savefile.dump(
+                    save_file.dump(
                         None,
                         "minecraft:inventory",
                         inventory=inventory,
@@ -506,7 +589,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
 
         # this is about entity stuff...
         # todo: move completely to Entity-API
-        for entity in chunk_instance.entities:
+        for entity in chunk_instance.get_entities():
             edata = {
                 "type": entity.NAME,
                 "position": entity.position,
@@ -563,7 +646,7 @@ class Chunk(mcpython.server.storage.serializer.IDataSerializer.IDataSerializer):
 
         data[chunk] = cdata  # dump the chunk into the region
         write_region_data(
-            savefile, dimension, region, data
+            save_file, dimension, region, data
         )  # and dump the region to the file
 
         G.world_generation_handler.enable_generation = (
