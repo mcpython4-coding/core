@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.item.Item
+import mcpython.common.item.AbstractItem
 import mcpython.common.item.ItemFood
 import mcpython.common.item.ItemTool
 import mcpython.common.item.ItemArmor
@@ -43,7 +43,7 @@ class ItemFactory:
         self.hungerregen = None
         self.eat_callback = None
 
-        self.baseclass = [mcpython.common.item.Item.Item]
+        self.baseclass = [mcpython.common.item.AbstractItem.AbstractItem]
 
         self.tool_level = 0
         self.tool_type = []
@@ -261,7 +261,7 @@ class ItemFactory:
         ):
             self.baseclass.append(mcpython.common.item.ItemFood.ItemFood)
         elif baseclassname == "default":
-            self.setBaseClass(mcpython.common.item.Item.Item)
+            self.setBaseClass(mcpython.common.item.AbstractItem.AbstractItem)
         return self
 
     def setGlobalModName(self, name: str):

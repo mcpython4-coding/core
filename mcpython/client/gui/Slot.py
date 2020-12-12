@@ -90,6 +90,7 @@ class Slot(ISlot):
         on_shift_click=None,
         empty_image=None,
         allowed_item_tags=None,
+        disallowed_item_tags=None,
         allowed_item_test=None,
         on_button_press=None,
         capacity=None,
@@ -112,7 +113,7 @@ class Slot(ISlot):
         self.__itemstack = (
             itemstack
             if itemstack
-            else mcpython.common.container.ItemStack.ItemStack.get_empty()
+            else mcpython.common.container.ItemStack.ItemStack.create_empty()
         )
 
         self.position = position
@@ -148,6 +149,7 @@ class Slot(ISlot):
         self.children = []
         self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
         self.allowed_item_tags = allowed_item_tags
+        self.disallowed_item_tags = disallowed_item_tags
         self.allowed_item_func = allowed_item_test
         self.on_button_press = on_button_press
         self.__capacity = capacity
@@ -172,7 +174,7 @@ class Slot(ISlot):
         self.__itemstack = (
             stack
             if stack is not None
-            else mcpython.common.container.ItemStack.ItemStack.get_empty()
+            else mcpython.common.container.ItemStack.ItemStack.create_empty()
         )
         if update:
             self.call_update(player=player)
@@ -272,12 +274,12 @@ class Slot(ISlot):
         if callable(self.check_function):
             if not self.check_function(self, itemstack):
                 return False
-        flag1 = self.allowed_item_tags is not None
+        flag1 = self.allowed_item_tags is not None or self.disallowed_item_tags is not None
         flag2 = (
-            flag1
-            and itemstack.item is not None
+            itemstack.item is not None
             and (
-                any([x in itemstack.item.TAGS for x in self.allowed_item_tags])
+                (self.allowed_item_tags is not None and any([x in itemstack.item.TAGS for x in self.allowed_item_tags])) or
+                (self.disallowed_item_tags is not None and any([x not in itemstack.item.TAGS for x in self.disallowed_item_tags]))
                 or itemstack.get_item_name() is None
             )
         )
@@ -529,7 +531,7 @@ class SlotInfiniteStackExchangeable(Slot):
         self.__itemstack = (
             stack
             if stack
-            else mcpython.common.container.ItemStack.ItemStack.get_empty()
+            else mcpython.common.container.ItemStack.ItemStack.create_empty()
         )
         if not stack.itemstack.is_empty():
             self.reference_stack = stack.copy()
@@ -551,7 +553,7 @@ class SlotTrashCan(Slot):
         self.__itemstack = (
             stack
             if stack
-            else mcpython.common.container.ItemStack.ItemStack.get_empty()
+            else mcpython.common.container.ItemStack.ItemStack.create_empty()
         )
         flag = True
         if update:

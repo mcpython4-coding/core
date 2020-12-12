@@ -10,26 +10,18 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.gui.InventoryChest
-import mcpython.common.item.IShulkerBoxLikeItem
 import pyglet
 import mcpython.common.event.EventHandler
 from mcpython import shared as G
 
 
+# todo: add custom check code point
 class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
     def create_slots(self) -> list:
         slots = super().create_slots()
         for slot in slots:
-            slot.allowed_item_func = self.test_for_shulker
+            slot.disallowed_item_tags = ['#minecraft:shulkerbox_like_items']
         return slots
-
-    def test_for_shulker(self, itemstack):
-        if itemstack.item and issubclass(
-            type(itemstack.item),
-            mcpython.common.item.IShulkerBoxLikeItem.IShulkerBoxLikeItem,
-        ):
-            return not itemstack.item.is_blocked_in(self)
-        return True
 
     def on_activate(self):
         super().on_activate()

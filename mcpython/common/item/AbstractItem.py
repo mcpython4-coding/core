@@ -14,7 +14,7 @@ import mcpython.common.event.Registry
 import uuid
 
 
-class Item(mcpython.common.event.Registry.IRegistryContent):
+class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
     TYPE = "minecraft:item"
 
     STACK_SIZE = 64
@@ -35,9 +35,15 @@ class Item(mcpython.common.event.Registry.IRegistryContent):
         self.uuid = uuid.uuid4()
 
     def __eq__(self, other):
-        if not issubclass(type(other), Item):
+        if not issubclass(type(other), AbstractItem):
             return False
         return other.NAME == self.NAME and other.get_data() == self.get_data()
+
+    def on_clean(self, itemstack):
+        pass
+
+    def on_copy(self, old_itemstack, new_itemstack):
+        pass
 
     # default getter functions
 

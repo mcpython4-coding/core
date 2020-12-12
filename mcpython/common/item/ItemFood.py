@@ -10,10 +10,10 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.common.item.Item
+import mcpython.common.item.AbstractItem
 
 
-class ItemFood(mcpython.common.item.Item.Item):
+class ItemFood(mcpython.common.item.AbstractItem.AbstractItem):
     def on_eat(self):
         """
         called when the player eats the item

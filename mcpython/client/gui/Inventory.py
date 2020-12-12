@@ -44,6 +44,7 @@ class Inventory:
         self.config = {}
         self.reload_config()
         self.uuid = uuid.uuid4()
+        self.custom_name = None
 
     def reload_config(self):
         """

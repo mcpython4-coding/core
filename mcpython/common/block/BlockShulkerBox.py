@@ -14,7 +14,6 @@ from . import AbstractBlock
 from pyglet.window import mouse, key
 import mcpython.util.enums
 import mcpython.common.factory.ItemFactory
-import mcpython.common.item.IShulkerBoxLikeItem
 
 
 def create_shulker_box(name):
@@ -52,9 +51,6 @@ def create_shulker_box(name):
             cls, itemconstructor: mcpython.common.factory.ItemFactory.ItemFactory
         ):
             itemconstructor.setMaxStackSize(1)
-            itemconstructor.baseclass.append(
-                mcpython.common.item.IShulkerBoxLikeItem.IShulkerBoxLikeItem
-            )
             itemconstructor.setCustomFromItemFunction(cls.set_block_data)
 
         @classmethod

@@ -170,7 +170,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 )
                 slot.itemstack.set_amount(target)
                 slot.call_update(True)
-            else:
+            elif slot.can_set_item(moving_itemstack):
                 self.mode = 1
                 self.on_mouse_drag(x, y, 0, 0, button, modifiers)
         elif button == mouse.RIGHT:
@@ -183,7 +183,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 )
                 slot.itemstack.set_amount(amount // 2)
                 slot.call_update(True)
-            else:
+            elif slot.can_set_item(moving_itemstack):
                 self.mode = 2
                 self.on_mouse_drag(x, y, 0, 0, button, modifiers)
         elif button == mouse.MIDDLE:
@@ -194,7 +194,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 G.inventory_handler.moving_slot.set_itemstack(
                     slot.itemstack.copy().set_amount(slot.itemstack.item.STACK_SIZE)
                 )
-            elif G.world.get_active_player().gamemode == 1:
+            elif G.world.get_active_player().gamemode == 1 and slot.can_set_item(moving_itemstack):
                 self.mode = 3
                 self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 

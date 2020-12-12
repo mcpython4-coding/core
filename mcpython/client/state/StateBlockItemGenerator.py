@@ -16,7 +16,7 @@ from mcpython import shared as G, logger
 import pyglet
 import os
 import mcpython.ResourceLoader
-import mcpython.common.item.Item
+import mcpython.common.item.AbstractItem
 import mcpython.common.event.TickHandler
 import PIL.Image, PIL.ImageDraw
 import sys

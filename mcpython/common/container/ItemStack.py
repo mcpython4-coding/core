@@ -10,17 +10,17 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.common.item.Item
+import mcpython.common.item.AbstractItem
+import typing
 
 
 class ItemStack:
     """
     base class for item stored somewhere
-    todo: add function to copy content from one ItemStack to another
     """
 
     def __init__(self, item_name_or_instance, amount=1):
-        if issubclass(type(item_name_or_instance), mcpython.common.item.Item.Item):
+        if issubclass(type(item_name_or_instance), mcpython.common.item.AbstractItem.AbstractItem):
             self.item = item_name_or_instance
         elif type(item_name_or_instance) == str:
             if item_name_or_instance in G.registry.get_by_name("item").entries:
@@ -36,23 +36,33 @@ class ItemStack:
             self.item = None
         self.amount = amount if self.item and 0 <= amount <= self.item.STACK_SIZE else 0
 
-    def copy(self):
+    def copy(self) -> "ItemStack":
         """
         copy the itemstack
         :return: copy of itself
         """
-        # todo: copy item data
-        return ItemStack(self.item, self.amount)
+        instance = ItemStack(self.item, self.amount)
+        if not self.is_empty():
+            self.item.on_copy(self, instance)
+        return instance
+
+    def copy_from(self, other: "ItemStack"):
+        self.item = other.item
+        self.amount = other.amount
+        if not self.is_empty():
+            self.item.on_copy(other, self)
 
     def clean(self):
         """
         clean the itemstack
         """
+        if not self.is_empty():
+            self.item.on_clean(self)
         self.item = None
         self.amount = 0
 
     @staticmethod
-    def get_empty():
+    def create_empty():
         """
         get an empty itemstack
         """
@@ -66,16 +76,16 @@ class ItemStack:
     def is_empty(self):
         return self.amount == 0 or self.item is None
 
-    def get_item_name(self):
+    def get_item_name(self) -> typing.Optional[str]:
         return self.item.NAME if self.item else None
 
-    def set_amount(self, amount):
+    def set_amount(self, amount: int):
         self.amount = amount
         if self.amount <= 0:
             self.clean()
         return self
 
-    def add_amount(self, amount, check_overflow=True):
+    def add_amount(self, amount: int, check_overflow=True):
         self.set_amount(self.amount + amount)
         if self.amount <= 0:
             self.clean()
@@ -84,7 +94,6 @@ class ItemStack:
         return self
 
     def __str__(self):
-        # todo: include item data
         return "ItemStack(item='{}',amount='{}'{})".format(
             self.get_item_name(),
             self.amount,

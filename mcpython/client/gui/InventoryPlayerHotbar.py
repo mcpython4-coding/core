@@ -190,7 +190,7 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
         x += dx
         y += dy
 
-        TEXTURES.selection.blit(x, y + 38)
+        TEXTURES.selection.blit(x, y + 39)
 
         if (
                 self.last_index != G.world.get_active_player().active_inventory_slot

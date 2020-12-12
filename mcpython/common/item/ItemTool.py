@@ -9,10 +9,10 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.item.Item
+import mcpython.common.item.AbstractItem
 
 
-class ItemTool(mcpython.common.item.Item.Item):
+class ItemTool(mcpython.common.item.AbstractItem.AbstractItem):
     NAME = "minecraft:unknown_tool"
 
     HAS_BLOCK = False

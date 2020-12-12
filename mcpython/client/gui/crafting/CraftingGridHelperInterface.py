@@ -247,7 +247,7 @@ class CraftingGridHelperInterface(
         while self.active_recipe == old_recipe:
             itemstack = self.slot_output_map.get_itemstack().copy()
             self.slot_output_map.set_itemstack(
-                mcpython.common.container.ItemStack.ItemStack.get_empty()
+                mcpython.common.container.ItemStack.ItemStack.create_empty()
             )
             self.slot_output_map.call_update(player=True)
             count += itemstack.amount
