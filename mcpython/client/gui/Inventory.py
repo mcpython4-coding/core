@@ -49,7 +49,6 @@ class Inventory:
     def reload_config(self):
         """
         reload the config file
-        todo: make public
         """
         if self.get_config_file() is not None:
             try:
@@ -130,7 +129,7 @@ class Inventory:
     def on_reload(self):
         pass
 
-    def create_slots(self) -> list:  # todo: remove
+    def create_slots(self) -> list:
         """
         creates the slots
         :return: the slots the inventory uses
@@ -174,16 +173,15 @@ class Inventory:
         """
 
     def is_closable_by_escape(self) -> bool:
-        return True  # todo: make attribute
+        return True
 
     def is_always_open(self) -> bool:
-        return False  # todo: make attribute
+        return False
 
     def draw(self, hoveringslot=None):
         """
         draws the inventory
         """
-        self.on_draw_background()
         x, y = self.get_position()
         if self.bg_sprite:
             self.bg_sprite.position = (
@@ -191,35 +189,12 @@ class Inventory:
                 y + self.bg_image_pos[1],
             )
             self.bg_sprite.draw()
-        self.on_draw_over_backgroundimage()
         for slot in self.slots:
             slot.draw(x, y, hovering=slot == hoveringslot)
-        self.on_draw_over_image()
         for slot in self.slots:
             slot.draw_label()
-        self.on_draw_overlay()
 
-    def on_draw_background(self):  # todo: remove
-        """
-        draw the background
-        """
-
-    def on_draw_over_backgroundimage(self):  # todo: remove
-        """
-        draw between background and slots
-        """
-
-    def on_draw_over_image(self):  # todo: remove
-        """
-        draw between slots and counts
-        """
-
-    def on_draw_overlay(self):  # todo: remove
-        """
-        draw over anything else
-        """
-
-    def is_blocking_interactions(self) -> bool:  # todo: make attribute
+    def is_blocking_interactions(self) -> bool:
         return True
 
     def on_world_cleared(self):  # todo: remove
@@ -227,7 +202,7 @@ class Inventory:
         if self in G.inventory_handler.opened_inventorystack:
             G.inventory_handler.hide(self)
 
-    def get_interaction_slots(self):  # todo: make attribute
+    def get_interaction_slots(self):
         return self.slots
 
     def clear(self):

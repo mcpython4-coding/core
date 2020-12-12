@@ -63,7 +63,7 @@ class CraftingManager:
         if issubclass(obj, mcpython.client.gui.crafting.IRecipeType.IRecipe):
             [
                 self.recipe_info_table.setdefault(name, obj)
-                for name in obj.get_recipe_names()
+                for name in obj.RECIPE_NAMES
             ]
         else:
             raise ValueError()

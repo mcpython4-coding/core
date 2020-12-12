@@ -25,8 +25,7 @@ class StateHandler:
         self.CANCEL_SWITCH_STATE = False
 
     def switch_to(self, state_name: str, immediate=True):
-        if state_name is None:
-            return  # todo: remove
+        assert state_name is not None
         if immediate:
             self._switch_to(state_name)
         else:

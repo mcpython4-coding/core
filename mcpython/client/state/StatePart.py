@@ -18,7 +18,7 @@ class StatePart:
 
     def __init__(self):
         self.part_dict = {}
-        self.parts = self.get_sub_parts()  # todo: remove
+        self.parts = self.get_sub_parts()
         self.master = None
 
     def activate(self):
@@ -29,7 +29,7 @@ class StatePart:
         for part in self.parts:
             part.deactivate()
 
-    def get_sub_parts(self) -> list:  # todo: remove
+    def get_sub_parts(self) -> list:
         return []
 
     def bind_to_eventbus(self):

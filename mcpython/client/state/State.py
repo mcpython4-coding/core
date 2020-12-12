@@ -41,16 +41,16 @@ class State(IRegistryContent):
 
     def activate(self):
         self.eventbus.activate()
-        for statepart in self.parts:
-            statepart.activate()
+        for part in self.parts:
+            part.activate()
 
     def deactivate(self):
         self.eventbus.deactivate()
-        for statepart in self.parts:
-            statepart.deactivate()
+        for part in self.parts:
+            part.deactivate()
 
-    def bind_to_eventbus(self):  # todo: remove
+    def bind_to_eventbus(self):
         pass
 
-    def get_parts(self) -> list:  # todo: remove
+    def get_parts(self) -> list:
         return []

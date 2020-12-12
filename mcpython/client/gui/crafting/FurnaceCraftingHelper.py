@@ -24,10 +24,6 @@ class FurnaceRecipe(mcpython.client.gui.crafting.IRecipeType.IRecipe):
     RECIPE_NAMES = ["minecraft:smelting", "minecraft:blasting", "minecraft:smoking"]
 
     @classmethod
-    def get_recipe_names(cls) -> list:
-        return cls.RECIPE_NAMES
-
-    @classmethod
     def from_data(cls, data: dict) -> "FurnaceRecipe":
         """
         Loader function for an furnace crafting recipe

@@ -9,14 +9,14 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared as G
 import uuid
 
 
 class IRecipe:
-    @staticmethod
-    def get_recipe_names() -> list:  # todo: make attribute
-        raise NotImplementedError()
+    RECIPE_NAMES: typing.List[str] = []
 
     @classmethod
     def from_data(cls, data: dict):

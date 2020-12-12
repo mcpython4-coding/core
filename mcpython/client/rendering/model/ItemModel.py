@@ -36,7 +36,7 @@ class DefaultLoader(IItemModelLoader):
         if "parent" in data:
             parent = data["parent"]
             if parent == "builtin/entity":
-                pass  # todo: add missing texture OR todo: implement entity rendeirng
+                pass  # todo: add missing texture OR todo: implement entity rendering
             elif parent == "item/generated":
                 pass
             else:

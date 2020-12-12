@@ -22,7 +22,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
     """
     class for inventories as state
     todo: make A LOT OF THINGS public and static
-    todo: move inventory interaction handling to seperated class
+    todo: move inventory interaction handling to separated class
     """
 
     def __init__(self):

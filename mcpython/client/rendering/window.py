@@ -105,9 +105,6 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             key._9,
         ]
 
-        # Instance of the model that handles the world.  todo: remove attribute
-        self.world = G.world
-
         # The label that is displayed in the top left of the canvas.  todo: move to separated class
         self.label = pyglet.text.Label(
             "",
@@ -165,7 +162,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         self.keys = key.KeyStateHandler()  # key handler from pyglet
         self.push_handlers(self.keys)
 
-        # todo: move to seperated class
+        # todo: move to separated class
         self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
             mcpython.ResourceLoader.read_image("gui/icons")
             .crop((0, 0, 15, 15))

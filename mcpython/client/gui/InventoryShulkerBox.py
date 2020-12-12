@@ -15,7 +15,6 @@ import mcpython.common.event.EventHandler
 from mcpython import shared as G
 
 
-# todo: add custom check code point
 class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
     def create_slots(self) -> list:
         slots = super().create_slots()

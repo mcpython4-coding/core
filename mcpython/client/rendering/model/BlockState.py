@@ -86,10 +86,10 @@ class MultiPartDecoder(IBlockStateDecoder):
         super().__init__(data, block_state)
         for entry in data["multipart"]:
             if type(entry["apply"]) == dict:
-                G.model_handler.used_models.append(entry["apply"]["model"])
+                G.model_handler.used_models.add(entry["apply"]["model"])
             else:
                 for d in entry["apply"]:
-                    G.model_handler.used_models.append(d["model"])
+                    G.model_handler.used_models.add(d["model"])
         self.model_alias = {}
         self.parent = None
         if "parent" in data:
@@ -115,7 +115,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                 copy.deepcopy(self.parent.loader.data["multipart"])
             )
         for model in self.model_alias.values():
-            G.model_handler.used_models.append(model)
+            G.model_handler.used_models.add(model)
         for entry in self.data["multipart"]:
             data = entry["apply"]
             if type(data) == dict:
@@ -472,11 +472,11 @@ class BlockState:
         if type(data) == dict:
             if "model" in data:
                 self.models.append(self.decode_entry(data))
-                G.model_handler.used_models.append(data["model"])
+                G.model_handler.used_models.add(data["model"])
         elif type(data) == list:
             models = [self.decode_entry(x) for x in data]
             self.models += models
-            G.model_handler.used_models += [x[0] for x in models]
+            G.model_handler.used_models |= set([x[0] for x in models])
 
     def copy(self):
         return BlockState(self.data)
@@ -484,7 +484,7 @@ class BlockState:
     @staticmethod
     def decode_entry(data: dict):
         model = data["model"]
-        G.model_handler.used_models.append(model)
+        G.model_handler.used_models.add(model)
         rotations = (
             data["x"] if "x" in data else 0,
             data["y"] if "y" in data else 0,

@@ -136,7 +136,7 @@ class Slot(ISlot):
             if self.__itemstack.item
             else None
         )
-        # todo: make own attributes
+        # todo: make separated attributes
         self.interaction_mode = [
             allow_player_remove,
             allow_player_insert,

@@ -57,9 +57,7 @@ def transform_to_item_stack(item, table: dict) -> list:
 
 @G.crafting_handler
 class GridShaped(mcpython.client.gui.crafting.IRecipeType.IRecipe):
-    @staticmethod
-    def get_recipe_names() -> list:
-        return ["minecraft:crafting_shaped", "crafting_shaped"]
+    RECIPE_NAMES = ["minecraft:crafting_shaped", "crafting_shaped"]
 
     @classmethod
     def from_data(cls, data: dict):
@@ -96,9 +94,7 @@ class GridShaped(mcpython.client.gui.crafting.IRecipeType.IRecipe):
 
 @G.crafting_handler
 class GridShapeless(mcpython.client.gui.crafting.IRecipeType.IRecipe):
-    @staticmethod
-    def get_recipe_names() -> list:
-        return ["minecraft:crafting_shapeless", "crafting_shapeless"]
+    RECIPE_NAMES = ["minecraft:crafting_shapeless", "crafting_shapeless"]
 
     @classmethod
     def from_data(cls, data: dict):

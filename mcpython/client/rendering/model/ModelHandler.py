@@ -26,18 +26,18 @@ import mcpython.client.rendering.ICustomBlockRenderer
 class ModelHandler:
     def __init__(self):
         self.models = {}
-        self.used_models = []  # todo: change to set
-        self.found_models = {}  # todo: clear when not needed
+        self.used_models = set()
+        self.found_models = {}
         self.blockstates = {}
-        self.lookup_locations = []  # todo: change to set
-        self.dependence_list = []  # todo: clear when not needed
+        self.lookup_locations = set()
+        self.dependence_list = []
 
     def add_from_mod(self, modname: str):
         """
         will add locations for an given mod name
         :param modname: the mod to use
         """
-        self.lookup_locations.append("assets/{}/models/block".format(modname))
+        self.lookup_locations.add("assets/{}/models/block".format(modname))
 
     def search(self):
         """
@@ -66,7 +66,7 @@ class ModelHandler:
         [
             self.let_subscribe_to_build(model, immediate=immediate)
             for model in self.used_models
-        ]  # todo: use set intersection
+        ]
 
     def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
@@ -116,9 +116,10 @@ class ModelHandler:
     def process_models(self, immediate=False):
         try:
             sorted_models = mcpython.util.math.topological_sort(self.dependence_list)
-            sorted_models.remove(
-                "minecraft:block/block"
-            )  # This is the build-in model and we don't need it
+            if "minecraft:block/block" in sorted_models:
+                sorted_models.remove("minecraft:block/block")
+            if "block/block" in sorted_models:
+                sorted_models.remove("block/block")
         except ValueError:
             logger.println(self.found_models, "\n", self.dependence_list)
             logger.print_exception("top-sort error during sorting models")
