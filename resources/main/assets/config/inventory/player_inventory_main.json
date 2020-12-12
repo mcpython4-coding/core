@@ -1,166 +1,166 @@
 {
   "slots": {
     "0": {
-      "position": [16, 16]
+      "position": [16, 18]
     },
     "1": {
-      "position": [52, 16]
+      "position": [52, 18]
     },
     "2": {
-      "position": [88, 16]
+      "position": [88, 18]
     },
     "3": {
-      "position": [124, 16]
+      "position": [124, 18]
     },
     "4": {
-      "position": [160, 16]
+      "position": [160, 18]
     },
     "5": {
-      "position": [196, 16]
+      "position": [196, 18]
     },
     "6": {
-      "position": [232, 16]
+      "position": [232, 18]
     },
     "7": {
-      "position": [268, 16]
+      "position": [268, 18]
     },
     "8": {
-      "position": [304, 16]
+      "position": [304, 18]
     },
 
     "9": {
-      "position": [16, 60]
+      "position": [16, 62]
     },
     "10": {
-      "position": [52, 60]
+      "position": [52, 62]
     },
     "11": {
-      "position": [88, 60]
+      "position": [88, 62]
     },
     "12": {
-      "position": [124, 60]
+      "position": [124, 62]
     },
     "13": {
-      "position": [160, 60]
+      "position": [160, 62]
     },
     "14": {
-      "position": [196, 60]
+      "position": [196, 62]
     },
     "15": {
-      "position": [232, 60]
+      "position": [232, 62]
     },
     "16": {
-      "position": [268, 60]
+      "position": [268, 62]
     },
     "17": {
-      "position": [304, 60]
+      "position": [304, 62]
     },
 
     "18": {
-      "position": [16, 96]
+      "position": [16, 98]
     },
     "19": {
-      "position": [52, 96]
+      "position": [52, 98]
     },
     "20": {
-      "position": [88, 96]
+      "position": [88, 98]
     },
     "21": {
-      "position": [124, 96]
+      "position": [124, 98]
     },
     "22": {
-      "position": [160, 96]
+      "position": [160, 98]
     },
     "23": {
-      "position": [196, 96]
+      "position": [196, 98]
     },
     "24": {
-      "position": [232, 96]
+      "position": [232, 98]
     },
     "25": {
-      "position": [268, 96]
+      "position": [268, 98]
     },
     "26": {
-      "position": [304, 96]
+      "position": [304, 98]
     },
 
     "27": {
-      "position": [16, 132]
+      "position": [16, 134]
     },
     "28": {
-      "position": [52, 132]
+      "position": [52, 134]
     },
     "29": {
-      "position": [88, 132]
+      "position": [88, 134]
     },
     "30": {
-      "position": [124, 132]
+      "position": [124, 134]
     },
     "31": {
-      "position": [160, 132]
+      "position": [160, 134]
     },
     "32": {
-      "position": [196, 132]
+      "position": [196, 134]
     },
     "33": {
-      "position": [232, 132]
+      "position": [232, 134]
     },
     "34": {
-      "position": [268, 132]
+      "position": [268, 134]
     },
     "35": {
-      "position": [304, 132]
+      "position": [304, 134]
     },
 
     "36": {
-      "position": [16, 176],
+      "position": [16, 178],
       "allow_player_add_to_free_place": false,
       "empty_slot_image": "item/empty_armor_slot_boots",
       "allowed_tags": ["#minecraft:ArmorBoots"]
     },
     "37": {
-      "position": [16, 212],
+      "position": [16, 214],
       "allow_player_add_to_free_place": false,
       "empty_slot_image": "item/empty_armor_slot_leggings",
       "allowed_tags": ["#minecraft:ArmorLeggings"]
     },
     "38": {
-      "position": [16, 248],
+      "position": [16, 250],
       "allow_player_add_to_free_place": false,
       "empty_slot_image": "item/empty_armor_slot_chestplate",
       "allowed_tags": ["#minecraft:ArmorChestplate"]
     },
     "39": {
-      "position": [16, 284],
+      "position": [16, 286],
       "allow_player_add_to_free_place": false,
       "empty_slot_image": "item/empty_armor_slot_helmet",
       "allowed_tags": ["#minecraft:ArmorHelmet"]
     },
 
     "40": {
-      "position": [196, 264],
+      "position": [196, 266],
       "allow_player_add_to_free_place": false
     },
     "41": {
-      "position": [232, 264],
+      "position": [232, 266],
       "allow_player_add_to_free_place": false
     },
     "42": {
-      "position": [196, 228],
+      "position": [196, 230],
       "allow_player_add_to_free_place": false
     },
     "43": {
-      "position": [232, 228],
+      "position": [232, 230],
       "allow_player_add_to_free_place": false
     },
     "44": {
-      "position": [308, 244],
+      "position": [308, 246],
       "allow_player_add_to_free_place": false,
       "allow_player_insert": false
     },
 
     "45": {
-      "position": [154, 176],
+      "position": [154, 178],
       "allow_player_add_to_free_place": false,
       "empty_slot_image": "item/empty_armor_slot_shield"
     }

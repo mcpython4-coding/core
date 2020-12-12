@@ -1342,6 +1342,7 @@ B   [uuk]: migrated every inventory texture to an reload-based system for making
 R   [uuk]: renamed global vars in shared.py
 R   [uuk]: renamed --debugevents flag to --debug-events
 D   [uuk]: removed TextureFactory system
+B   [uuk]: visual errors
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]
@@ -1363,3 +1364,4 @@ XXX - fix all non-block-items being rendered as apples, cannot be stacked to the
     - implement dark theme for inventories (set glColor3d to something lower?) & implement API for it
     - implement file-loaded registry entries (-> dynamic registries)
     - refactor event names
+    - do not read inventory config for each inventory, load it ones & share
