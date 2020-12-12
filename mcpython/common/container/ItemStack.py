@@ -16,8 +16,15 @@ import typing
 
 class ItemStack:
     """
-    base class for item stored somewhere
+    Base class for item stored somewhere
     """
+
+    @staticmethod
+    def create_empty():
+        """
+        get an empty itemstack
+        """
+        return ItemStack(None)
 
     def __init__(self, item_name_or_instance, amount=1):
         if issubclass(
@@ -25,8 +32,8 @@ class ItemStack:
         ):
             self.item = item_name_or_instance
         elif type(item_name_or_instance) == str:
-            if item_name_or_instance in G.registry.get_by_name("item").entries:
-                self.item = G.registry.get_by_name("item").entries[
+            if item_name_or_instance in G.registry.get_by_name("minecraft:item").entries:
+                self.item = G.registry.get_by_name("minecraft:item").entries[
                     item_name_or_instance
                 ]()
             else:
@@ -40,8 +47,8 @@ class ItemStack:
 
     def copy(self) -> "ItemStack":
         """
-        copy the itemstack
-        :return: copy of itself
+        Copies the itemstack
+        :return: copy of this itemstack
         """
         instance = ItemStack(self.item, self.amount)
         if not self.is_empty():
@@ -56,38 +63,31 @@ class ItemStack:
 
     def clean(self):
         """
-        clean the itemstack
+        "Clean" the itemstack so that there is no data inside
         """
         if not self.is_empty():
             self.item.on_clean(self)
         self.item = None
         self.amount = 0
 
-    @staticmethod
-    def create_empty():
-        """
-        get an empty itemstack
-        """
-        return ItemStack(None)
-
     def __eq__(self, other):
         if not type(other) == ItemStack:
             return False
         return self.item == other.item and self.amount == other.amount
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         return self.amount == 0 or self.item is None
 
     def get_item_name(self) -> typing.Optional[str]:
         return self.item.NAME if self.item else None
 
-    def set_amount(self, amount: int):
+    def set_amount(self, amount: int) -> "ItemStack":
         self.amount = amount
         if self.amount <= 0:
             self.clean()
         return self
 
-    def add_amount(self, amount: int, check_overflow=True):
+    def add_amount(self, amount: int, check_overflow=True) -> "ItemStack":
         self.set_amount(self.amount + amount)
         if self.amount <= 0:
             self.clean()
@@ -95,7 +95,7 @@ class ItemStack:
             self.amount = self.item.STACK_SIZE
         return self
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "ItemStack(item='{}',amount='{}'{})".format(
             self.get_item_name(),
             self.amount,

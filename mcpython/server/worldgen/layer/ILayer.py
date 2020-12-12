@@ -26,7 +26,7 @@ class LayerConfig:
         ] = None
 
 
-class ILayer(mcpython.common.event.Registry.Registry):
+class ILayer(mcpython.common.event.Registry.IRegistryContent):
     """
     Implementation for each layer in generation code.
     An layer is an step in the generation code

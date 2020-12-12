@@ -58,9 +58,9 @@ class CommandHelp(mcpython.server.command.Command.Command):
             c: str = values[0]
             if c.startswith("/"):
                 c = c[1:]
-            if c not in G.registry.get_by_name("command").command_entries:
+            if c not in G.registry.get_by_name("minecraft:command").command_entries:
                 logger.println(
-                    "[CHAT][COMMANDPARSER][ERROR] unknown command for help pages {}.".format(
+                    "[CHAT][COMMAND PARSER][ERROR] unknown command for help pages {}.".format(
                         c
                     )
                 )
@@ -70,7 +70,7 @@ class CommandHelp(mcpython.server.command.Command.Command):
             logger.println("------------------" + "-" * len(c))
             logger.println(
                 "\n".join(
-                    G.registry.get_by_name("command").command_entries[c].get_help()
+                    G.registry.get_by_name("minecraft:command").command_entries[c].get_help()
                 )
             )
 

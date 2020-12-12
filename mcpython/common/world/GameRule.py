@@ -89,7 +89,7 @@ class GameRule(mcpython.common.event.Registry.IRegistryContent):
 
 
 gamerule_registry = mcpython.common.event.Registry.Registry(
-    "gamerule", ["minecraft:game_rule"], "stage:command:gamerules"
+    "minecraft:gamerule", ["minecraft:game_rule"], "stage:command:gamerules"
 )
 
 

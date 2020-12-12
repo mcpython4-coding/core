@@ -57,7 +57,7 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
 
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
-    "blockstates", ["minecraft:blockstate"], "stage:blockstate:register_loaders"
+    "minecraft:blockstates", ["minecraft:blockstate"], "stage:blockstate:register_loaders"
 )
 
 
@@ -428,7 +428,7 @@ class BlockStateDefinition:
     def __init__(self, data: dict, name: str):
         self.name = name
         if (
-            name not in G.registry.get_by_name("block").entries
+            name not in G.registry.get_by_name("minecraft:block").entries
             and name not in self.NEEDED
         ):
             raise BlockStateNotNeeded()

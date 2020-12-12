@@ -43,7 +43,7 @@ class CommandReload(mcpython.server.command.Command.Command):
         G.window.print_profiler()  # print the profiler's
         if not G.event_handler.call_cancelable("data:reload:cancel"):
             return
-        mcpython.common.DataPack.datapackhandler.reload()  # reloads all data packs
+        mcpython.common.DataPack.datapack_handler.reload()  # reloads all data packs
         G.tag_handler.reload()  # reloads all tags
         G.crafting_handler.reload_crafting_recipes()  # reloads all recipes
         G.loot_table_handler.reload()

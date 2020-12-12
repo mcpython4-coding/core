@@ -171,7 +171,7 @@ def load():
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             flag = entrylist[start] in G.registry.get_by_name(
-                "block"
+                "minecraft:block"
             ).full_table or entrylist[start] in (
                 "air",
                 "minecraft:air",
@@ -198,7 +198,7 @@ def load():
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             flag = (
-                entrylist[start] in G.registry.get_by_name("item").entries
+                entrylist[start] in G.registry.get_by_name("minecraft:item").entries
             )  # is this item arrival?
             if not flag:
                 logger.println(
@@ -218,7 +218,7 @@ def load():
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
             entry = entrylist[start]
-            for selector in G.registry.get_by_name("command").selector:
+            for selector in G.registry.get_by_name("minecraft:command").selector:
                 if selector.is_valid(
                     entry
                 ):  # is this the selector we are searching for?
@@ -229,7 +229,7 @@ def load():
             entry = entrylist[start]
             # have we any valid selector?
             return any(
-                [x.is_valid(entry) for x in G.registry.get_by_name("command").selector]
+                [x.is_valid(entry) for x in G.registry.get_by_name("minecraft:command").selector]
             )
 
     @G.registry

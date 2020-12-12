@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.event.Registry
 
 
-class IFeature(mcpython.common.event.Registry.Registry):
+class IFeature(mcpython.common.event.Registry.IRegistryContent):
     TYPE = "minecraft:generation_feature"
 
     @staticmethod

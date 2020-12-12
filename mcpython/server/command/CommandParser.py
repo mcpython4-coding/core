@@ -129,7 +129,7 @@ class CommandParser:
         active_entry = parsebridge
         values = []
         array = [parsebridge]
-        commandregistry = G.registry.get_by_name("command")
+        commandregistry = G.registry.get_by_name("minecraft:command")
         while len(active_entry.sub_commands) > 0 and index < len(
             command
         ):  # iterate over the whole command

@@ -9,6 +9,8 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.ResourceLoader
 import enum
 import mcpython.common.container.ItemStack
@@ -87,7 +89,7 @@ class LootTableHandler:
             - damage_source=<DamageSource instance>: an damage source
             - this_entity=<Entity instance>: an entity generated for
             - killer_entity=<Entity instance>:  the entity killed the this_entity
-            - position=<tuple of lenght 3>: the position executed at
+            - position=<tuple of length 3>: the position executed at
         """
         if name.count(":") == 0:
             name = "minecraft:" + name
@@ -139,9 +141,9 @@ class LootTableHandler:
         name = data["function"]
         if (
             name
-            in mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.entries
+            in mcpython.common.data.loot.LootTableFunction.loot_table_function_registry.entries
         ):
-            return mcpython.common.data.loot.LootTableFunction.loottablefunctionregistry.entries[
+            return mcpython.common.data.loot.LootTableFunction.loot_table_function_registry.entries[
                 name
             ](
                 data
@@ -154,9 +156,9 @@ class LootTableHandler:
         name = data["condition"]
         if (
             name
-            in mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.entries
+            in mcpython.common.data.loot.LootTableCondition.loot_table_condition_registry.entries
         ):
-            return mcpython.common.data.loot.LootTableCondition.loottableconditionregistry.entries[
+            return mcpython.common.data.loot.LootTableCondition.loot_table_condition_registry.entries[
                 name
             ](
                 data
@@ -199,7 +201,7 @@ class LootTablePoolEntry:
         self.entry_type = entry_type
         self.conditions = []
         self.name = None
-        self.children = [None]
+        self.children: typing.List["LootTablePoolEntry"] = [None]
         self.expand = False
         self.functions = []
         self.weight = 1
@@ -228,9 +230,10 @@ class LootTablePoolEntry:
         elif self.entry_type == LootTablePoolEntryType.LOOT_TABLE:
             items += handler.roll(self.name, *args, **kwargs)
         elif self.entry_type == LootTablePoolEntryType.GROUP:
-            [items.extend(e.roll(*args, **kwargs)) for e in self.children]
+            [items.extend(e.roll(*args, **kwargs)) for e in self.children if e is not None]
         elif self.entry_type == LootTablePoolEntryType.ALTERNATIVES:
             for entry in self.children:
+                if entry is None: continue
                 item = entry.roll(*args, **kwargs)
                 if item is None:
                     continue
@@ -238,6 +241,7 @@ class LootTablePoolEntry:
                 break
         elif self.entry_type == LootTablePoolEntryType.SEQUENCE:
             for entry in self.children:
+                if entry is None: continue
                 item = entry.roll(*args, **kwargs)
                 if item is None:
                     break

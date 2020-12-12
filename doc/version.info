@@ -1357,6 +1357,7 @@ R   [uuk]: player inventories are stored now ín own attributes
     [uuk]: improved world gen API
 R   [uuk]: moved world serialization back to common
 R   [uuk]: improved world serialization API
+    [uuk]: improved registry API
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]

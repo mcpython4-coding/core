@@ -24,7 +24,7 @@ LATEST_INFO_VERSION = 3
 
 
 class ItemAtlasHandler:
-    def __init__(self, folder=shared.build + "/itematlases"):
+    def __init__(self, folder=shared.build + "/item_atlases"):
         self.scheduled_item_files = {}
         self.folder = folder
         self.atlases: typing.List[

@@ -25,15 +25,15 @@ import deprecation
 
 class BlockFactory:
     """
-    factory for creating on an simple way block classes
-    examples:
+    Factory for creating on an simple way block classes
+    Examples:
         BlockFactory().setName("test:block").setHardness(1).setBlastResistance(1).finish()
         BlockFactory().setName("test:log").setHardness(1).setBlastResistance(1).setLog().finish()
         BlockFactory().setName("test:slab").setHardness(1).setBlastResistance(1).setSlab().finish()
         BlockFactory().setName("some:complex_block").setHardness(1).setBlastResistance(1).setDefaultModelState("your=default,model=state").setAllSideSolid(False).finish()
 
     Most functions will return the BlockFactory-object called on to allow above syntax.
-    .setHardness and .setBlastResistance should be set on ALL blocks created as they will be NOT optional in the future.
+    .setHardness and .setBlastResistance must be set on all objects
     The .finish() method will return the BlockItemFactory-instance for the block. Modifying it before the
         "stage:block:factory:finish"-phase will lead into changes in the base block. This can also lead into exceptions
         in this phase as their the data is read in and the classes are generated.

@@ -25,8 +25,8 @@ class ILootTableCondition(mcpython.common.event.Registry.IRegistryContent):
         return False
 
 
-loottableconditionregistry = mcpython.common.event.Registry.Registry(
-    "loot_table_registry",
+loot_table_condition_registry = mcpython.common.event.Registry.Registry(
+    "minecraft:loot_table_registry",
     ["minecraft:loot_table_condition"],
     "stage:loottables:conditions",
 )

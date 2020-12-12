@@ -37,7 +37,7 @@ class CommandFunction(mcpython.server.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        mcpython.common.DataPack.datapackhandler.try_call_function(values[0], info)
+        mcpython.common.DataPack.datapack_handler.try_call_function(values[0], info)
         # todo: make self-calling save [sub-function calls are possible! -> move to an "execute"-stack]
 
     @staticmethod

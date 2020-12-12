@@ -30,10 +30,10 @@ def access_region_data(
     dimension: int,
     region: tuple,
 ):
-    if dimension.get_id() not in G.world.dimensions:
+    if dimension not in G.world.dimensions:
         return
     return save_file.access_file_pickle(
-        "dim/{}/{}_{}.region".format(dimension.get_id(), *region)
+        "dim/{}/{}_{}.region".format(dimension, *region)
     )
 
 
@@ -44,7 +44,7 @@ def write_region_data(
     data,
 ):
     save_file.dump_file_pickle(
-        "dim/{}/{}_{}.region".format(dimension.get_id(), *region), data
+        "dim/{}/{}_{}.region".format(dimension, *region), data
     )
 
 
@@ -369,7 +369,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.generated = data["generated"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
         for i, d in enumerate(data["block_palette"]):
-            if d["name"] not in G.registry.get_by_name("block").entries:
+            if d["name"] not in G.registry.get_by_name("minecraft:block").entries:
                 # todo: add missing texture block -> insert here
                 logger.println(
                     "[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block".format(

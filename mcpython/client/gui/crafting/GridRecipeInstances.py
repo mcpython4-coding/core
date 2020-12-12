@@ -23,8 +23,8 @@ def transform_to_item_stack(item, table: dict) -> list:
     """
     if "item" in item:
         itemname = item["item"]
-        if itemname not in G.registry.get_by_name("item").entries:
-            if itemname not in G.registry.get_by_name("block").entries:
+        if itemname not in G.registry.get_by_name("minecraft:item").entries:
+            if itemname not in G.registry.get_by_name("minecraft:block").entries:
                 return []
         return [(itemname, item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
@@ -37,9 +37,10 @@ def transform_to_item_stack(item, table: dict) -> list:
                 )
             )
             return []
+        # todo: cache registry maps
         for item in entries[:]:
-            if item not in G.registry.get_by_name("item").entries:
-                if item not in G.registry.get_by_name("block").entries:
+            if item not in G.registry.get_by_name("minecraft:item").entries:
+                if item not in G.registry.get_by_name("minecraft:block").entries:
                     entries.remove(item)
         return entries
     elif type(item) == list:  # have we an list of items?

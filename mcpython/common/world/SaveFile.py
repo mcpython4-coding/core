@@ -96,27 +96,27 @@ class SaveFile:
     mod_fixers = {}
 
     storage_fixer_registry = mcpython.common.event.Registry.Registry(
-        "storage_fixer",
+        "minecraft:storage_fixer",
         ["minecraft:storage_version_fixer"],
         "stage:datafixer:general",
         injection_function=register_storage_fixer,
         dump_content_in_saves=False,
     )
     mod_fixer_registry = mcpython.common.event.Registry.Registry(
-        "mod_fixer",
+        "minecraft:mod_fixer",
         ["minecraft:mod_version_fixer"],
         "stage:datafixer:general",
         injection_function=register_mod_fixer,
         dump_content_in_saves=False,
     )
     group_fixer_registry = mcpython.common.event.Registry.Registry(
-        "group_fixer",
+        "minecraft:group_fixer",
         ["minecraft:group_fixer"],
         "stage:datafixer:general",
         dump_content_in_saves=False,
     )
     part_fixer_registry = mcpython.common.event.Registry.Registry(
-        "part_fixer",
+        "minecraft:part_fixer",
         ["minecraft:part_fixer"],
         "stage:datafixer:parts",
         dump_content_in_saves=False,

@@ -64,10 +64,10 @@ class StateBlockItemGenerator(State.State):
             UIPartProgressBar.UIPartProgressBar(
                 (10, 10),
                 (G.window.get_size()[0] - 20, 20),
-                progress_items=len(G.registry.get_by_name("block").entries.values()),
+                progress_items=len(G.registry.get_by_name("minecraft:block").entries.values()),
                 status=1,
                 text="0/{}: {}".format(
-                    len(G.registry.get_by_name("block").entries), None
+                    len(G.registry.get_by_name("minecraft:block").entries), None
                 ),
             ),
             mcpython.client.state.StateModLoading.modloading.parts[3],
@@ -100,19 +100,19 @@ class StateBlockItemGenerator(State.State):
             G.tick_handler.enable_random_ticks = False
         except:
             logger.print_exception(
-                "[FATAL] failed to open world for blockitemgenerator"
+                "[FATAL] failed to open world for block item generator"
             )
             sys.exit(-1)
-        self.tasks = list(G.registry.get_by_name("block").entries.keys())
+        self.tasks = list(G.registry.get_by_name("minecraft:block").entries.keys())
         if not os.path.isdir(G.build + "/generated_items"):
             os.makedirs(G.build + "/generated_items")
         if not G.invalidate_cache:
-            if os.path.exists(G.build + "/itemblockfactory.json"):
-                with open(G.build + "/itemblockfactory.json", mode="r") as f:
+            if os.path.exists(G.build + "/item_block_factory.json"):
+                with open(G.build + "/item_block_factory.json", mode="r") as f:
                     self.table = json.load(f)
             else:  # make sure it is was reset
                 self.table.clear()
-            items = G.registry.get_by_name("item").entries
+            items = G.registry.get_by_name("minecraft:item").entries
             for task in self.tasks[:]:
                 if task in items:
                     self.tasks.remove(task)
@@ -147,11 +147,11 @@ class StateBlockItemGenerator(State.State):
     def deactivate(self):
         super().deactivate()
         G.world.cleanup()
-        with open(G.build + "/itemblockfactory.json", mode="w") as f:
+        with open(G.build + "/item_block_factory.json", mode="w") as f:
             json.dump(self.table, f)
-        G.registry.get_by_name("item").unlock()
+        G.registry.get_by_name("minecraft:item").unlock()
         mcpython.common.factory.ItemFactory.ItemFactory.process()
-        G.registry.get_by_name("item").lock()
+        G.registry.get_by_name("minecraft:item").lock()
         mcpython.common.item.ItemHandler.build()
         mcpython.common.item.ItemHandler.ITEM_ATLAS.load()
         G.window.set_minimum_size(1, 1)
@@ -189,7 +189,7 @@ class StateBlockItemGenerator(State.State):
             blockinstance.face_state.update(redraw_complete=True)
         except ValueError:
             logger.print_exception(
-                "[BLOCKITEMGENERATOR][ERROR] block '{}' can't be added to world. Failed with "
+                "[BLOCK ITEM GENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                 "following exception".format(self.tasks[self.blockindex])
             )
             self.blockindex += 1
@@ -243,18 +243,18 @@ class StateBlockItemGenerator(State.State):
     def _error_counter(self, image, blockname):
         if self.tries >= 10:
             logger.println(
-                "[BLOCKITEMGENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
+                "[BLOCK ITEM GENERATOR][FATAL][ERROR] failed to generate block item for {}".format(
                     self.tasks[self.blockindex]
                 )
             )
             self.last_image = image
-            file = G.build + "/blockitemgenerator_fail_{}_of_{}.png".format(
+            file = G.build + "/block_item_generator_fail_{}_of_{}.png".format(
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__")
             )
             if image is not None:
                 image.save(file)
                 logger.println(
-                    "[BLOCKITEMGENERATOR][FATAL][ERROR] image will be saved at {}".format(
+                    "[BLOCK ITEM GENERATOR][FATAL][ERROR] image will be saved at {}".format(
                         file
                     )
                 )
@@ -276,7 +276,7 @@ class StateBlockItemGenerator(State.State):
         self.tries += 1
 
     def generate_item(self, blockname, file):
-        if blockname in G.registry.get_by_name("item").entries:
+        if blockname in G.registry.get_by_name("minecraft:item").entries:
             return
         self.table.append([blockname, file])
         obj = (

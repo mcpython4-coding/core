@@ -24,23 +24,23 @@ def register_command(registry, command):
     elif issubclass(
         command, mcpython.server.command.CommandEntry.CommandEntry
     ):  # or an command entry
-        commandregistry.command_entries[command.NAME] = command
+        command_registry.command_entries[command.NAME] = command
     elif issubclass(
         command, mcpython.server.command.Selector.Selector
     ):  # or an selector?
-        commandregistry.selector.append(command)
+        command_registry.selector.append(command)
     else:
         raise ValueError("can't register object {} to commandhandler".format(command))
 
 
-commandregistry = mcpython.common.event.Registry.Registry(
-    "command",
+command_registry = mcpython.common.event.Registry.Registry(
+    "minecraft:command",
     ["minecraft:command", "minecraft:command_entry", "minecraft:selector"],
     "stage:commands",
     injection_function=register_command,
 )
-commandregistry.command_entries = {}
-commandregistry.selector = []
+command_registry.command_entries = {}
+command_registry.selector = []
 
 
 def load_commands():

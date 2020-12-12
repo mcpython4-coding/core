@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 
 class DamageSource:
     """
-    class direct representing an mc DamageSource
+    Class direct representing an mc DamageSource
     """
 
     def __init__(self, name: str = None):

@@ -46,7 +46,7 @@ class IResourceLocator(ABC):
     """
 
     @staticmethod
-    def is_valid(path) -> bool:
+    def is_valid(path: str) -> bool:
         """
         checks if an location is valid as an source
         :param path: the path to check
@@ -54,7 +54,7 @@ class IResourceLocator(ABC):
         """
         raise NotImplementedError()
 
-    def is_in_path(self, path) -> bool:
+    def is_in_path(self, path: str) -> bool:
         """
         checks if an local file-name is in the given path
         :param path: the file path to check
@@ -62,7 +62,7 @@ class IResourceLocator(ABC):
         """
         raise NotImplementedError()
 
-    def read_raw(self, path) -> bytes:
+    def read_raw(self, path: str) -> bytes:
         """
         will read an file into the system in binary mode
         :param path: the file name to use
@@ -70,7 +70,7 @@ class IResourceLocator(ABC):
         """
         raise NotImplementedError()
 
-    def read_image(self, path) -> PIL.Image.Image:
+    def read_image(self, path: str) -> PIL.Image.Image:
         """
         will read an file into the system as an PIL.Image.Image
         :param path: the file name to use
@@ -78,7 +78,7 @@ class IResourceLocator(ABC):
         """
         raise NotImplementedError()
 
-    def read_decoding(self, path, encoding: str) -> str:
+    def read_decoding(self, path: str, encoding: str) -> str:
         """
         will read an file into the system as an string
         :param path: the file name to use
@@ -122,10 +122,10 @@ class ResourceZipFile(IResourceLocator):
     def is_in_path(self, filename: str) -> bool:
         return filename in self.namelist_cache
 
-    def read_raw(self, path) -> bytes:
+    def read_raw(self, path: str) -> bytes:
         return self.archive.read(path)
 
-    def read_image(self, path) -> PIL.Image.Image:
+    def read_image(self, path: str) -> PIL.Image.Image:
         with open(shared.tmp.name + "/resource_output.png", mode="wb") as f:
             f.write(self.archive.read(path))
         return PIL.Image.open(shared.tmp.name + "/resource_output.png")
@@ -163,14 +163,14 @@ class ResourceDirectory(IResourceLocator):
     def is_in_path(self, filename: str) -> bool:
         return os.path.isfile(os.path.join(self.path, filename))
 
-    def read_raw(self, path) -> bytes:
+    def read_raw(self, path: str) -> bytes:
         if not os.path.exists(path):
             path = self.path + ("" if path.startswith("/") else "/") + path
         with open(path, mode="rb") as f:
             data: bytes = f.read()
         return data
 
-    def read_image(self, path) -> PIL.Image.Image:
+    def read_image(self, path: str) -> PIL.Image.Image:
         return PIL.Image.open(os.path.join(self.path, path))
 
     def get_all_entries_in_directory(
@@ -431,19 +431,15 @@ def get_all_entries(directory: str) -> typing.Iterator[str]:
     :param directory: the directory to use
     :return: an list of all found files
     """
-    result = []
     loc = RESOURCE_LOCATIONS
     loc.reverse()
-    iterators = []
-    for x in loc:
-        iterators.append(x.get_all_entries_in_directory(directory))
-    return itertools.chain.from_iterable(iterators)
+    return itertools.chain.from_iterable((x.get_all_entries_in_directory(directory) for x in loc))
 
 
 def get_all_entries_special(directory: str) -> typing.Iterator[str]:
     """
     returns all entries found with their corresponding '@[path]:file'-notation
-    :param directory: the directory to searc from
+    :param directory: the directory to search from
     :return: an list of found resources
     """
     return itertools.chain.from_iterable(
@@ -462,6 +458,7 @@ def add_resources_by_modname(modname, pathname=None):
     loads the default data locations into the system for an given namespace
     :param modname: the name of the mod for the loading stages
     :param pathname: the namespace or None if the same as the mod name
+    todo: make modular
     """
     if pathname is None:
         pathname = modname

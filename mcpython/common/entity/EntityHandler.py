@@ -21,7 +21,7 @@ class EntityHandler:
 
     def __init__(self):
         self.registry = mcpython.common.event.Registry.Registry(
-            "registry", ["minecraft:entity"], "stage:entities"
+            "minecraft:entities", ["minecraft:entity"], "stage:entities"
         )
         self.entity_map = {}
 

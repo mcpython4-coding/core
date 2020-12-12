@@ -10,6 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import enum
+import json
 import os
 
 from mcpython import shared as G, logger
@@ -48,10 +49,10 @@ class DataPackHandler:
         will load all data packs
         """
         for path in os.listdir(G.home + "/datapacks"):
-            self.data_packs.append(self._load_datapack(G.home + "/datapacks/" + path))
+            self.data_packs.append(self.load_datapack_from_directory(G.home + "/datapacks/" + path))
         G.event_handler.call("datapack:search")
 
-    def _load_datapack(self, directory: str):
+    def load_datapack_from_directory(self, directory: str):
         """
         will load an given data pack
         :param directory: the directory to load from
@@ -117,7 +118,7 @@ class DataPackHandler:
         raise ValueError("can't find function '{}'".format(name))
 
 
-datapackhandler = DataPackHandler()
+datapack_handler = DataPackHandler()
 
 
 class DataPack:
@@ -152,7 +153,7 @@ class DataPack:
                 if os.path.isdir(self.directory)
                 else mcpython.ResourceLoader.ResourceZipFile(self.directory)
             )
-            info = self.access.read("pack.mcmeta", "json")["pack"]
+            info = json.loads(self.access.read_raw("pack.mcmeta").decode("utf-8"))["pack"]
             if info["pack_format"] not in (1, 2, 3):
                 self.status = DataPackStatus.ERROR
                 logger.println(
@@ -171,7 +172,7 @@ class DataPack:
                     self.function_table[
                         name
                     ] = mcpython.server.command.McFunctionFile.McFunctionFile(
-                        self.access.read(file, None).decode("UTF-8"), name
+                        self.access.read_raw(file).decode("UTF-8"), name
                     )
         except:
             self.status = DataPackStatus.SYSTEM_ERROR

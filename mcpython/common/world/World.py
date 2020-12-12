@@ -366,7 +366,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.players.clear()
         if filename is not None:
             self.setup_by_filename(filename)
-        mcpython.common.DataPack.datapackhandler.cleanup()
+        mcpython.common.DataPack.datapack_handler.cleanup()
         G.event_handler.call("world:clean")
 
     def setup_by_filename(self, filename: str):

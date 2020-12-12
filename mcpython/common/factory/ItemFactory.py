@@ -9,6 +9,8 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.common.item.AbstractItem
 import mcpython.common.item.ItemFood
 import mcpython.common.item.ItemTool
@@ -22,22 +24,22 @@ class ItemFactory:
 
     @classmethod
     def process(cls):
-        for itemfactory, flag in cls.TASKS:
-            itemfactory.finish_up(flag)
+        for factory, flag in cls.TASKS:
+            factory.finish_up(flag)
 
     def __init__(self, name=None):
         self.set_name_finises_previous = False
 
         self.name = name
         self.modname = None
-        self.itemfile = None
-        self.used_itemfiles = []
+        self.item_file = None
+        self.used_item_files = []
         self.has_block = False
         self.blockname = None
-        self.stacksize = 64
+        self.max_stack_size = 64
         self.creation_callback = None
         self.interaction_callback = None
-        self.customfromitemfunction = None
+        self.custom_from_item_function = None
 
         # food related stuff
         self.hungerregen = None
@@ -129,10 +131,10 @@ class ItemFactory:
         class BaseClass(object):
             pass
 
-        if self.itemfile is None:
-            self.itemfile = "{}:item/{}".format(*self.name.split(":"))
-            if self.itemfile not in self.used_itemfiles:
-                self.used_itemfiles.append(self.itemfile)
+        if self.item_file is None:
+            self.item_file = "{}:item/{}".format(*self.name.split(":"))
+            if self.item_file not in self.used_item_files:
+                self.used_item_files.append(self.item_file)
         if self.blockname is None and self.has_block:
             self.blockname = self.name
 
@@ -147,7 +149,7 @@ class ItemFactory:
         ):  # and now insert these class into the ConstructedItem-class
             @classmethod
             def get_used_texture_files(cls):
-                return master.used_itemfiles
+                return master.used_item_files
 
             NAME = master.name
 
@@ -160,16 +162,16 @@ class ItemFactory:
 
             @staticmethod
             def get_default_item_image_location() -> str:
-                return master.itemfile
+                return master.item_file
 
             def get_active_image_location(self):
-                return master.itemfile
+                return master.item_file
 
             def __init__(self):
                 if master.creation_callback:
                     master.creation_callback(self)
 
-            STACK_SIZE = master.stacksize
+            STACK_SIZE = master.max_stack_size
 
             def on_player_interact(self, player, block, button, modifiers) -> bool:
                 return (
@@ -179,8 +181,8 @@ class ItemFactory:
                 )
 
             def on_set_from_item(self, block):
-                if master.customfromitemfunction:
-                    master.customfromitemfunction(self, block)
+                if master.custom_from_item_function:
+                    master.custom_from_item_function(self, block)
 
         if (
             mcpython.common.item.ItemFood.ItemFood in self.baseclass
@@ -277,9 +279,9 @@ class ItemFactory:
         return self
 
     def setDefaultItemFile(self, itemfile: str):
-        self.itemfile = itemfile
-        if itemfile not in self.used_itemfiles:
-            self.used_itemfiles.append(itemfile)
+        self.item_file = itemfile
+        if itemfile not in self.used_item_files:
+            self.used_item_files.append(itemfile)
         return self
 
     def setHasBlockFlag(self, hasblock: bool):
@@ -290,14 +292,14 @@ class ItemFactory:
         self.blockname = blockname
         return self
 
-    def setUsedItemTextures(self, itemtextures: list):
-        self.used_itemfiles = itemtextures
-        if not self.itemfile:
-            self.itemfile = itemtextures[0]
+    def setUsedItemTextures(self, textures: list):
+        self.used_item_files = textures
+        if not self.item_file:
+            self.item_file = textures[0]
         return self
 
-    def setMaxStackSize(self, stacksize: int):
-        self.stacksize = stacksize
+    def setMaxStackSize(self, size: int):
+        self.max_stack_size = size
         return self
 
     def setCreationCallback(self, function):
@@ -328,8 +330,8 @@ class ItemFactory:
             self.baseclass.append(mcpython.common.item.ItemTool.ItemTool)
         return self
 
-    def setToolType(self, tooltype: list):
-        self.tool_type = tooltype
+    def setToolType(self, tool_types: typing.List[mcpython.common.item.ItemTool.ItemTool]):
+        self.tool_type = tool_types
         if mcpython.common.item.ItemTool.ItemTool not in self.baseclass:
             self.baseclass.append(mcpython.common.item.ItemTool.ItemTool)
         return self
@@ -353,7 +355,7 @@ class ItemFactory:
         return self
 
     def setCustomFromItemFunction(self, function):
-        self.customfromitemfunction = function
+        self.custom_from_item_function = function
         return self
 
     def setFuelLevel(self, level):

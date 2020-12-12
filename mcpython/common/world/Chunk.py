@@ -204,7 +204,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 lazy_setup(block)
             block.face_state.update()
         else:
-            table = G.registry.get_by_name("block").full_table
+            table = G.registry.get_by_name("minecraft:block").full_table
             if block_name not in table:
                 logger.println(
                     "[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(

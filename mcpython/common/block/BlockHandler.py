@@ -40,7 +40,7 @@ def register_block(registry, blockclass):
 
 
 block_registry = mcpython.common.event.Registry.Registry(
-    "block",
+    "minecraft:block",
     ["minecraft:block_registry"],
     "stage:block:load",
     injection_function=register_block,

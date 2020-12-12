@@ -62,7 +62,7 @@ class TickHandler:
             type(x) == mcpython.client.state.StatePartGame.StatePartGame
             for x in G.state_handler.active_state.parts
         ):
-            mcpython.common.DataPack.datapackhandler.try_call_function(
+            mcpython.common.DataPack.datapack_handler.try_call_function(
                 "#minecraft:tick"
             )
             if self.enable_random_ticks:

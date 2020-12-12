@@ -34,7 +34,7 @@ def build():
     ITEM_ATLAS.dump()
     for itemclass in COLLECTED_ITEMS:
         for file in itemclass.get_used_texture_files():
-            items.itemindextable[itemclass.NAME][
+            items.item_index_table[itemclass.NAME][
                 file
             ] = ITEM_ATLAS.get_texture_info_or_add(itemclass.NAME + "#?0", file)
 
@@ -52,7 +52,7 @@ def load_data(from_block_item_generator=False):
         )
         for entry in data[:]:
             name = entry[0]
-            blocktable = G.registry.get_by_name("block").entries
+            blocktable = G.registry.get_by_name("minecraft:block").entries
             if name in blocktable:
                 obj = (
                     mcpython.common.factory.ItemFactory.ItemFactory()
@@ -80,18 +80,18 @@ def load_data(from_block_item_generator=False):
 def register_item(registry, item_class):
     tag_holder.register_class(item_class)
     items.entries[item_class.NAME.split(":")[-1]] = item_class
-    if item_class.NAME in items.itemindextable:
+    if item_class.NAME in items.item_index_table:
         return
-    items.itemindextable.setdefault(item_class.NAME, {})
+    items.item_index_table.setdefault(item_class.NAME, {})
     for i, file in enumerate(item_class.get_used_texture_files()):
         ITEM_ATLAS.add_file("{}#{}".format(item_class.NAME, i), file)
     COLLECTED_ITEMS.append(item_class)
 
 
 items = mcpython.common.event.Registry.Registry(
-    "item", ["minecraft:item"], "stage:item:load", injection_function=register_item
+    "minecraft:item", ["minecraft:item"], "stage:item:load", injection_function=register_item
 )
-items.itemindextable = {}
+items.item_index_table = {}
 
 
 def load_items():

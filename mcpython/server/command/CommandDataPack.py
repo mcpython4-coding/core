@@ -44,7 +44,7 @@ class CommandDatapack(mcpython.server.command.Command.Command):
     @classmethod
     def parse(cls, values: list, modes: list, info):
         if values[0] == "enable":
-            for datapack in mcpython.common.DataPack.datapackhandler.data_packs:
+            for datapack in mcpython.common.DataPack.datapack_handler.data_packs:
                 if (
                     datapack.name == values[1]
                     and mcpython.common.DataPack.DataPackStatus.DEACTIVATED
@@ -54,7 +54,7 @@ class CommandDatapack(mcpython.server.command.Command.Command):
                     )
 
         elif values[0] == "disable":
-            for datapack in mcpython.common.DataPack.datapackhandler.data_packs:
+            for datapack in mcpython.common.DataPack.datapack_handler.data_packs:
                 if (
                     datapack.name == values[1]
                     and mcpython.common.DataPack.DataPackStatus.ACTIVATED
@@ -66,10 +66,10 @@ class CommandDatapack(mcpython.server.command.Command.Command):
         elif values[0] == "list":
             info.chat.print_ln(
                 "count: {}".format(
-                    len(mcpython.common.DataPack.datapackhandler.data_packs)
+                    len(mcpython.common.DataPack.datapack_handler.data_packs)
                 )
             )
-            for datapack in mcpython.common.DataPack.datapackhandler.data_packs:
+            for datapack in mcpython.common.DataPack.datapack_handler.data_packs:
                 info.chat.print_ln(
                     "- datapack '{}' - status: {}".format(
                         datapack.name, datapack.status.name
@@ -78,7 +78,7 @@ class CommandDatapack(mcpython.server.command.Command.Command):
 
         elif values[0] == "release":
             G.event_handler.call("command:datapack:release", info)
-            mcpython.common.DataPack.datapackhandler.cleanup()
+            mcpython.common.DataPack.datapack_handler.cleanup()
         else:
             G.chat.print_ln("failed to execute command. invalid syntax")
 
