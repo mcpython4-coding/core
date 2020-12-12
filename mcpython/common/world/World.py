@@ -49,16 +49,16 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         )
         # container for world-related config; contains: seed [build in] todo: move to config class
         self.config: typing.Dict[str, typing.Any] = {}
-        self.gamerulehandler: typing.Union[
+        self.gamerule_handler: typing.Union[
             mcpython.common.world.GameRule.GameRuleHandler, None
         ] = None  # the gamerule handler fort his world
         self.reset_config()  # will reset the config
         self.CANCEL_DIM_CHANGE: bool = False  # flag for canceling the dim change event
-        self.hide_faces_to_ungenerated_chunks: bool = True  # todo: move to configs
+        self.hide_faces_to_not_generated_chunks: bool = True  # todo: move to configs / game rules
         self.filename: str = (
             "tmp" if filename is None else filename
         )  # the file-name to use, todo: make None if not needed
-        self.savefile: mcpython.server.storage.SaveFile.SaveFile = (
+        self.save_file: mcpython.server.storage.SaveFile.SaveFile = (
             mcpython.server.storage.SaveFile.SaveFile(self.filename)
         )  # the save file instance
 
@@ -111,7 +111,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
         G.event_handler.call("world:reset_config")
-        self.gamerulehandler = mcpython.common.world.GameRule.GameRuleHandler(self)
+        self.gamerule_handler = mcpython.common.world.GameRule.GameRuleHandler(self)
 
     def get_active_dimension(
         self,
@@ -137,7 +137,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         if dim_config is None:
             dim_config = {}
         dim = self.dimensions[dim_id] = mcpython.common.world.Dimension.Dimension(
-            self, dim_id, name, genconfig=dim_config
+            self, dim_id, name, gen_config=dim_config
         )
         G.world_generation_handler.setup_dimension(dim, dim_config)
         return dim
@@ -177,7 +177,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         if dim_id in self.dimensions:
             return self.dimensions[dim_id]
         for dimension in self.dimensions.values():
-            if dimension.name == dim_id:
+            if dimension.get_name() == dim_id or dimension.get_id() == dim_id:
                 return dimension
 
     def hit_test(
@@ -206,7 +206,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
         todo: cache the bbox of the block
         """
-        m = G.world.gamerulehandler.table[
+        m = G.world.gamerule_handler.table[
             "hitTestSteps"
         ].status.status  # get m from the gamerule
         x, y, z = position
@@ -217,11 +217,11 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         previous = None
         for _ in range(max_distance * m):
             key = mcpython.util.math.normalize((x, y, z))
-            blocki = self.get_active_dimension().get_block(key)
+            block = self.get_active_dimension().get_block(key)
             if (
-                blocki
-                and type(blocki) != str
-                and blocki.get_view_bbox().test_point_hit((x, y, z), blocki.position)
+                block
+                and type(block) != str
+                and block.get_view_bbox().test_point_hit((x, y, z), block.position)
             ):
                 return key, previous, (x, y, z)
             if key != previous:
@@ -244,6 +244,8 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if not issubclass(type(chunk), mcpython.common.world.AbstractInterface.IChunk):
             chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
+        if chunk is None:
+            return
         chunk.show()
 
     def hide_chunk(
@@ -259,6 +261,8 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if not issubclass(type(chunk), mcpython.common.world.AbstractInterface.IChunk):
             chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
+        if chunk is None:
+            return
         chunk.hide()
 
     def change_chunks(
@@ -294,7 +298,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
             if G.world.get_active_dimension().get_chunk(*chunk, generate=False).loaded:
                 G.tick_handler.schedule_once(
-                    G.world.savefile.dump,
+                    G.world.save_file.dump,
                     None,
                     "minecraft:chunk",
                     dimension=self.active_dimension,
@@ -304,13 +308,13 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             pyglet.clock.schedule_once(lambda _: self.show_chunk(chunk), 0.1)
             if not load_immediate:
                 pyglet.clock.schedule_once(
-                    lambda _: G.world.savefile.read(
+                    lambda _: G.world.save_file.read(
                         "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
                     ),
                     0.1,
                 )
             else:
-                G.world.savefile.read(
+                G.world.save_file.read(
                     "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
                 )
 
@@ -327,7 +331,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
                     chunk = self.get_active_dimension().get_chunk(
                         dx + after[0], dz + after[1], generate=False
                     )
-                    if not chunk.generated:
+                    if not chunk.is_generated():
                         G.world_generation_handler.add_chunk_to_generation_list(
                             chunk, prior=True
                         )
@@ -369,4 +373,4 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         :param filename: the file name to use
         """
         self.filename = filename if filename is not None else "tmp"
-        self.savefile = mcpython.server.storage.SaveFile.SaveFile(self.filename)
+        self.save_file = mcpython.server.storage.SaveFile.SaveFile(self.filename)

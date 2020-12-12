@@ -374,7 +374,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
                             )
                             if (
                                 dy > 0
-                                and G.world.gamerulehandler.table[
+                                and G.world.gamerule_handler.table[
                                     "fallDamage"
                                 ].status.status
                             ):
@@ -582,7 +582,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         """
         x, y, z = G.world.get_active_player().position
         nx, ny, nz = mcpython.util.math.normalize(G.world.get_active_player().position)
-        if not G.world.gamerulehandler.table["showCoordinates"].status.status:
+        if not G.world.gamerule_handler.table["showCoordinates"].status.status:
             x = y = z = "?"
         chunk = G.world.get_active_dimension().get_chunk(
             *mcpython.util.math.positionToChunk(G.world.get_active_player().position),
@@ -611,7 +611,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             self.label2.text = "looking at '{}(position={})'".format(
                 blockname,
                 blockpos
-                if G.world.gamerulehandler.table["showCoordinates"].status.status
+                if G.world.gamerule_handler.table["showCoordinates"].status.status
                 else ("?", "?", "?"),
             )
             self.label2.draw()
@@ -677,11 +677,11 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         called when the window tries to close itself
         cleans up some stuff before closing
         """
-        if G.world.savefile.save_in_progress:
+        if G.world.save_file.save_in_progress:
             return
         if G.world.world_loaded:
             # have we an world which should be saved?
             G.world.get_active_player().inventory_main.remove_items_from_crafting()
-            G.world.savefile.save_world(override=True)
+            G.world.save_file.save_world(override=True)
         self.set_fullscreen(False)
         self.close()

@@ -67,12 +67,12 @@ class GameRule(mcpython.server.storage.serializer.IDataSerializer.IDataSerialize
         if data is None:
             pass
         for name in data:
-            G.world.gamerulehandler.table[name].status.load(data[name])
+            G.world.gamerule_handler.table[name].status.load(data[name])
 
     @classmethod
     def save(cls, data, savefile):
         data = {
             gamerule.NAME: gamerule.status.save()
-            for gamerule in G.world.gamerulehandler.table.values()
+            for gamerule in G.world.gamerule_handler.table.values()
         }
         savefile.dump_file_json("gamerules.json", data)

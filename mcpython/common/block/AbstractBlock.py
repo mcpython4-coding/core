@@ -24,7 +24,7 @@ import pickle
 
 
 class BlockRemovalReason(enum.Enum):
-    UNSET = 0
+    UNKNOWN = 0
     PLAYER_REMOVAL = 1
     PISTON_MOTION = 2
     EXPLOSION = 3

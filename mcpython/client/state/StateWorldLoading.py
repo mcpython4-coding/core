@@ -77,7 +77,7 @@ class StateWorldLoading(State.State):
         self.status_table.clear()
         G.dimension_handler.init_dims()
         try:
-            G.world.savefile.load_world()
+            G.world.save_file.load_world()
         except IOError:  # todo: add own exception class as IOError may be raised somewhere else in the script
             logger.println(
                 "failed to load world. data-fixer failed with NoDataFixerFoundException"

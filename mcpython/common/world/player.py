@@ -9,6 +9,8 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared, shared as G, logger
 import mcpython.ResourceLoader
 import mcpython.client.Chat
@@ -171,7 +173,12 @@ class Player(mcpython.common.entity.Entity.Entity):
     def add_xp_level(self, xp_levels: int):
         self.xp_level += xp_levels
 
-    def pick_up(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
+    def pick_up(
+        self,
+        itemstack: typing.Union[
+            mcpython.common.container.ItemStack.ItemStack, mcpython.client.gui.Slot.Slot
+        ],
+    ) -> bool:
         """
         adds the item onto the itemstack
         :param itemstack: the itemstack to add
@@ -180,13 +187,10 @@ class Player(mcpython.common.entity.Entity.Entity):
         if not G.event_handler.call_cancelable(
             "gameplay:player:pick_up_item", self, itemstack
         ):
-            return
+            return False
 
         # have we an slot?
-        if type(itemstack) in (
-            mcpython.client.gui.Slot.Slot,
-            mcpython.client.gui.Slot.SlotCopy,
-        ):
+        if isinstance(itemstack, mcpython.client.gui.Slot.Slot):
             itemstack = itemstack.get_itemstack()
         if type(itemstack) == list:
             return all([self.pick_up(itemstack) for itemstack in itemstack])
@@ -283,13 +287,13 @@ class Player(mcpython.common.entity.Entity.Entity):
         sector = mcpython.util.math.positionToChunk(self.position)
         shared.world.change_chunks(sector, None)
         self.reset_moving_slot()
-        if not shared.world.gamerulehandler.table["keepInventory"].status.status:
+        if not shared.world.gamerule_handler.table["keepInventory"].status.status:
             shared.command_parser.parse("/clear")  # todo: drop items
-        if shared.world.gamerulehandler.table["showDeathMessages"].status.status:
+        if shared.world.gamerule_handler.table["showDeathMessages"].status.status:
             logger.println(
                 "[CHAT] player {} died".format(self.name)
             )  # todo: add death screen
-        self.set_to_spawn_point()
+        self.move_to_spawn_point()
         self.active_inventory_slot = 0
         shared.window.dy = 0
         shared.chat.close()
@@ -306,7 +310,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         shared.world.change_chunks(None, sector)
         # todo: recalculate armor level!
 
-        if not shared.world.gamerulehandler.table["doImmediateRespawn"].status.status:
+        if not shared.world.gamerule_handler.table["doImmediateRespawn"].status.status:
             shared.state_handler.switch_to(
                 "minecraft:escape_state"
             )  # todo: add special state [see above]
@@ -321,7 +325,7 @@ class Player(mcpython.common.entity.Entity.Entity):
 
     def damage(self, hearts: int, check_gamemode=True, reason=None):
         """
-        damage the player and removes the given amount of hearts (two hearts are one full displayed hart)
+        Damage the player and removes the given amount of hearts (two hearts are one full displayed hart)
         """
         hearts = hearts * (
             1
@@ -346,7 +350,7 @@ class Player(mcpython.common.entity.Entity.Entity):
         self.pick_up(shared.inventory_handler.moving_slot.get_itemstack().copy())
         shared.inventory_handler.moving_slot.get_itemstack().clean()
 
-    def set_to_spawn_point(self):
+    def move_to_spawn_point(self):
         x, _, z = mcpython.util.math.normalize(self.position)
         self.position = (
             shared.world.spawnpoint[0],

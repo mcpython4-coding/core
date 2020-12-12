@@ -96,7 +96,7 @@ class StateBlockItemGenerator(State.State):
         try:
             G.world.cleanup()
             G.dimension_handler.init_dims()
-            G.world.hide_faces_to_ungenerated_chunks = False
+            G.world.hide_faces_to_not_generated_chunks = False
             G.tick_handler.enable_random_ticks = False
         except:
             logger.print_exception(
@@ -163,7 +163,7 @@ class StateBlockItemGenerator(State.State):
             json.dump({"finished": True}, f)
         mcpython.client.rendering.model.ItemModel.handler.bake()
         G.tick_handler.enable_random_ticks = True
-        G.world.hide_faces_to_ungenerated_chunks = True
+        G.world.hide_faces_to_not_generated_chunks = True
         G.window.set_fullscreen("--fullscreen" in sys.argv)
         G.event_handler.call("stage:blockitemfactory:finish")
 

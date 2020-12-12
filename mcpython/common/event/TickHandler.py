@@ -136,7 +136,7 @@ class TickHandler:
                     z = cz + dz
                     for dy in range(16):
                         for _ in range(
-                            G.world.gamerulehandler.table[
+                            G.world.gamerule_handler.table[
                                 "randomTickSpeed"
                             ].status.status
                         ):

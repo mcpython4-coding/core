@@ -40,7 +40,7 @@ class StateGame(State.State):
 
     def activate(self):
         super().activate()
-        while G.world.savefile.save_in_progress:
+        while G.world.save_file.save_in_progress:
             time.sleep(0.2)
         G.world_generation_handler.enable_auto_gen = True
 

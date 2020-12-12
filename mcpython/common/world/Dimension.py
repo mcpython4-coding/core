@@ -40,13 +40,13 @@ class DimensionDefinition:
         self.id = None
         self.config = config
 
-    def setStaticId(self, dimid: int):
+    def setStaticId(self, dim_id: int):
         """
         will set the id of the dimension (when static)
-        :param dimid: the id for the dimension
+        :param dim_id: the id for the dimension
         :return: self
         """
-        self.id = dimid
+        self.id = dim_id
         return self
 
 
@@ -59,7 +59,7 @@ class DimensionHandler:
 
     def __init__(self):
         self.dimensions = {}
-        self.unfinisheddims = []
+        self.unfinished_dims = []
         mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
             "stage:post", self.finish
         )
@@ -69,8 +69,8 @@ class DimensionHandler:
         called to finish up and assign ids to dynamic dimensions
         """
         i = 0
-        for dim in self.unfinisheddims:
-            while i in self.unfinisheddims:
+        for dim in self.unfinished_dims:
+            while i in self.unfinished_dims:
                 i += 1
             dim.id = i
             self.add_dimension(dim)
@@ -106,7 +106,7 @@ class DimensionHandler:
         :param dim: the dimension defintion to add
         """
         if dim.id is None:
-            self.unfinisheddims.append(dim)
+            self.unfinished_dims.append(dim)
         else:
             self.dimensions[dim.id] = dim
 
@@ -130,24 +130,26 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
     Class holding an whole dimension
     """
 
-    def __init__(self, world_in, dim_id: int, name: str, genconfig=None):
+    BATCH_COUNT = 2  # normal, alpha; mods are free to add more
+
+    def __init__(self, world_in, dim_id: int, name: str, gen_config=None):
         """
         Creates an new dimension. Must be send also to the World-instance
         :param world_in: the world instance to use
         :param dim_id: the id for it
         :param name: the name for it
-        :param genconfig: the config to use for generation
+        :param gen_config: the config to use for generation
         """
-        if genconfig is None:
-            genconfig = {}
+        if gen_config is None:
+            gen_config = {}
         self.id = dim_id
         self.world = world_in
         self.chunks = {}
         self.name = name
-        self.worldgenerationconfig = genconfig
-        self.worldgenerationconfigobjects = {}
+        self.world_generation_config = gen_config
+        self.world_generation_config_objects = {}
         # normal batch
-        self.batches = [pyglet.graphics.Batch() for _ in range(2)]  # normal, alpha
+        self.batches = [pyglet.graphics.Batch() for _ in range(self.BATCH_COUNT)]
 
     def get_id(self):
         return self.id
@@ -255,8 +257,6 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
 
     def draw(self):
         self.batches[0].draw()
-        # draw with alpha
-        # status = G.rendering_helper.save_status()
         G.rendering_helper.enableAlpha()
         self.batches[1].draw()
         x, z = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
@@ -270,10 +270,25 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
                 ):
                     chunk.draw()
         G.rendering_helper.disableAlpha()
-        # G.rendering_helper.apply(status)
 
     def __del__(self):
         self.chunks.clear()
         del self.world
-        self.worldgenerationconfigobjects.clear()
+        self.world_generation_config_objects.clear()
         self.batches.clear()
+
+    def get_world_generation_config_for_layer(self, layer_name: str):
+        return self.world_generation_config_objects[layer_name]
+
+    def set_world_generation_config_for_layer(self, layer_name, layer_config):
+        self.world_generation_config_objects[layer_name] = layer_config
+
+    def get_world_generation_config_entry(self, name: str, default=None):
+        return (
+            self.world_generation_config[name]
+            if name in self.world_generation_config
+            else default
+        )
+
+    def get_name(self) -> str:
+        return self.name

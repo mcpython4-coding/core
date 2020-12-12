@@ -52,7 +52,7 @@ class Blockinfo:
 def chunk_generate(chunk):
     cx, cz = chunk.position
     if (
-        G.world.get_active_dimension().worldgenerationconfig["configname"]
+        G.world.get_active_dimension().world_generation_config["configname"]
         != "debug_overworld"
     ):
         return

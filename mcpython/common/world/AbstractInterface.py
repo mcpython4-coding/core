@@ -62,7 +62,7 @@ class IChunk(ABC):
         immediate: bool = True,
         block_update: bool = True,
         block_update_self: bool = True,
-        reason=mcpython.common.block.AbstractBlock.BlockRemovalReason.UNSET,
+        reason=mcpython.common.block.AbstractBlock.BlockRemovalReason.UNKNOWN,
     ):
         raise NotImplementedError()
 
@@ -115,6 +115,12 @@ class IChunk(ABC):
     def as_shareable(self) -> "IChunk":
         raise NotImplementedError()
 
+    def is_loaded(self) -> bool:
+        raise NotImplementedError()
+
+    def is_generated(self) -> bool:
+        raise NotImplementedError()
+
 
 class IDimension(ABC):
     def get_id(self):
@@ -164,6 +170,18 @@ class IDimension(ABC):
         raise NotImplementedError()
 
     def hide_block(self, position, immediate=True):
+        raise NotImplementedError()
+
+    def get_world_generation_config_for_layer(self, layer_name: str):
+        raise NotImplementedError()
+
+    def get_world_generation_config_entry(self, name: str, default=None):
+        raise NotImplementedError()
+
+    def set_world_generation_config_for_layer(self, layer_name, layer_config):
+        raise NotImplementedError()
+
+    def get_name(self) -> str:
         raise NotImplementedError()
 
 

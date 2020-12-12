@@ -26,27 +26,30 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
     now = datetime.datetime.now()  # when is now?
 
-    attributes = (
-        {}
-    )  # an dict representing the default attributes of an chunk; todo: replace by class-based system
+    attributes = {}  # an dict representing the default attributes of an chunk
 
     @staticmethod
-    def add_default_attribute(name: str, reference, default):
+    def add_default_attribute(name: str, reference: typing.Any, default: typing.Any):
         """
         will add an config entry into every new chunk instance
         :param name: the name of the attribute
         :param reference: the reference to use; unused internally
         :param default: the default value
-        WARNING: content must be saved separately
+        WARNING: content must be saved by owner, not auto-saved
+        todo: make class based
         """
         Chunk.attributes[name] = (reference, default, None)
 
-    def __init__(self, dimension, position: typing.Tuple[int, int]):
+    def __init__(
+        self,
+        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        position: typing.Tuple[int, int],
+    ):
         """
         Will create an new chunk instance
         :param dimension: the world.Dimension.Dimension object used to store this chunk
         :param position: the position of the chunk
-        WARNING: use Dimension.get_chunk() where possible [saver variant]
+        WARNING: use Dimension.get_chunk() where possible [saver variant, will do some work in the background]
         """
         self.dimension = dimension
         self.position = position
@@ -76,7 +79,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         Helper function for getting the y height at the given xz generation based on the generation code
         :param x: the x coord
-        :param z: the y corrd
+        :param z: the y coord
         :return: the y value at that position
         """
         height_map = self.get_value("heightmap")
@@ -109,9 +112,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             return
         if not self.loaded:
             G.tick_handler.schedule_once(
-                G.world.savefile.read,
+                G.world.save_file.read,
                 "minecraft:chunk",
-                dimension=self.dimension.id,
+                dimension=self.dimension.get_id(),
                 chunk=self.position,
             )
         for entity in self.entities:
@@ -134,7 +137,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             dx, dy, dz = face.relative
             pos = (x + dx, y + dy, z + dz)
             chunk = self.dimension.get_chunk_for_position(pos, generate=False)
-            if not chunk.loaded and G.world.hide_faces_to_ungenerated_chunks:
+            if chunk is None:
+                continue
+            if not chunk.is_loaded() and G.world.hide_faces_to_not_generated_chunks:
                 faces[face] = False
             else:
                 block = self.dimension.get_block(pos)
@@ -193,11 +198,11 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if block_name in [None, "air", "minecraft:air"]:
             return
         if issubclass(type(block_name), Block.AbstractBlock):
-            blockobj = block_name
-            blockobj.position = position
+            block = block_name
+            block.position = position
             if lazy_setup is not None:
-                lazy_setup(blockobj)
-            blockobj.face_state.update()
+                lazy_setup(block)
+            block.face_state.update()
         else:
             table = G.registry.get_by_name("block").full_table
             if block_name not in table:
@@ -207,43 +212,43 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                     )
                 )
                 return
-            blockobj = table[block_name]()
-            blockobj.position = position
+            block = table[block_name]()
+            block.position = position
             if lazy_setup is not None:
-                lazy_setup(blockobj)
-        blockobj.on_block_added()
-        if self.now.day == 13 and self.now.month == 1 and "diorite" in blockobj.NAME:
+                lazy_setup(block)
+        block.on_block_added()
+        if self.now.day == 13 and self.now.month == 1 and "diorite" in block.NAME:
             logger.println(
                 "[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
-                    blockobj.NAME
+                    block.NAME
                 )
             )
             # for developers: easter egg! [DO NOT REMOVE, UUK'S EASTER EGG]
             return self.add_block(position, "minecraft:stone")
-        self.world[position] = blockobj
+        self.world[position] = block
         if immediate:
             if self.exposed(position):
                 self.show_block(position)
             if block_update:
-                self.on_block_updated(position, itself=block_update_self)
+                self.on_block_updated(position, include_itself=block_update_self)
             self.check_neighbors(position)
         self.positions_updated_since_last_save.add(position)
-        return blockobj
+        return block
 
     def on_block_updated(
-        self, position: typing.Tuple[float, float, float], itself=True
+        self, position: typing.Tuple[int, int, int], include_itself=True
     ):
         """
         will call to the neighbor blocks an block update
         :param position: the position in the center
-        :param itself: if the block itself should be updated
+        :param include_itself: if the block itself should be updated
         """
         x, y, z = position
         for dx in range(-1, 2):
             for dy in range(-1, 2):
                 for dz in range(-1, 2):
                     if [dx, dy, dz].count(0) >= 2 and not (
-                        not itself and dx == dy == dz == 0
+                        not include_itself and dx == dy == dz == 0
                     ):
                         b: Block.AbstractBlock = self.dimension.get_block(
                             (x + dx, y + dy, z + dz)
@@ -262,7 +267,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         immediate: bool = True,
         block_update: bool = True,
         block_update_self: bool = True,
-        reason=Block.BlockRemovalReason.UNSET,
+        reason=Block.BlockRemovalReason.UNKNOWN,
     ):
         """
         Remove the block at the given `position`.
@@ -280,7 +285,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         self.world[position].face_state.hide_all()
         del self.world[position]
         if block_update:
-            self.on_block_updated(position, itself=block_update_self)
+            self.on_block_updated(position, include_itself=block_update_self)
         if immediate:
             self.check_neighbors(position)
         self.positions_updated_since_last_save.add(position)
@@ -298,7 +303,6 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             dx, dy, dz = face.relative
             key = (x + dx, y + dy, z + dz)
             b = self.dimension.get_block(key)
-            # chunk = self.dimension.get_chunk_for_position(key, generate=False)
             if b is None or type(b) == str:
                 continue
             b.face_state.update(redraw_complete=True)
@@ -375,7 +379,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         elif hide:
             self.show_block(position)
 
-    def exposed(self, position: typing.Tuple[int, int, int]):
+    def exposed(self, position: typing.Tuple[int, int, int]) -> bool:
         return any(self.exposed_faces(position).values())
 
     def update_visible(self, hide=True, immediate=False):
@@ -429,5 +433,11 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
     def __str__(self):
         return "Chunk(dimension={},position={})".format(
-            self.dimension.id, self.position
+            self.dimension.get_id(), self.position
         )
+
+    def is_loaded(self) -> bool:
+        return self.loaded
+
+    def is_generated(self) -> bool:
+        return self.generated

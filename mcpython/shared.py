@@ -38,7 +38,10 @@ data_gen_exit = "--exit-after-data-gen" in sys.argv  # default vanilla behaviour
 STORAGE_VERSION = None  # the version of the storage format
 
 window = None  # the window instance, client-only
-world = None  # the world instance
+
+import mcpython.common.world.AbstractInterface
+
+world: mcpython.common.world.AbstractInterface.IWorld = None  # the world instance
 
 chat = None  # the chat instance todo: migrate to player
 

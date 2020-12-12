@@ -245,7 +245,7 @@ class StatePartGame(StatePart.StatePart):
                         and self.mouse_press_time >= self.break_time
                         and block.IS_BREAKABLE
                     ):
-                        if G.world.gamerulehandler.table["doTileDrops"].status.status:
+                        if G.world.gamerule_handler.table["doTileDrops"].status.status:
                             items = G.loot_table_handler.get_drop_for_block(
                                 block, player=player
                             )

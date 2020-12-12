@@ -81,9 +81,9 @@ class StateWorldGeneration(State.State):
         super().activate()
         if mcpython.common.config.ENABLE_PROFILER_GENERATION:
             self.profiler.enable()
-        if os.path.exists(G.world.savefile.directory):
+        if os.path.exists(G.world.save_file.directory):
             logger.println("deleting old world...")
-            shutil.rmtree(G.world.savefile.directory)
+            shutil.rmtree(G.world.save_file.directory)
         self.status_table.clear()
         G.dimension_handler.init_dims()
         sx = (
@@ -164,7 +164,7 @@ class StateWorldGeneration(State.State):
                 sys.exit(-1)
         mcpython.common.world.player.Player.RENDERER.reload()
         G.world.active_player = playername
-        G.world.get_active_player().set_to_spawn_point()
+        G.world.get_active_player().move_to_spawn_point()
         G.world.config["enable_auto_gen"] = (
             self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
         )
@@ -192,7 +192,7 @@ class StateWorldGeneration(State.State):
             None,
             mcpython.util.math.positionToChunk(G.world.get_active_player().position),
         )
-        G.world.savefile.save_world()
+        G.world.save_file.save_world()
 
         # set player position
         player = G.world.get_active_player()

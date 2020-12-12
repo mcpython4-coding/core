@@ -1353,6 +1353,7 @@ D   [uuk]: removed all deprecated stuff
 D   [uuk]: removed inventories attribute from entities
 R   [uuk]: player inventories are stored now ín own attributes
     [uuk]: dropped support for old world formats
+    [uuk]: improved world system API, again...
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]
@@ -1362,15 +1363,12 @@ X   - rewrite how assets are stored  [WIP]
 X   - fix respawning in blocks
 X   - fix having two separated item atlas storages? -> one NEVER used? -> old may have been used at the slot bug?
 X   - fix being able to break blocks in gamemode 0 which you should not be able to (e.g. bedrock)
-    - optimize rendering system [WIP]
-    - make world generator mode system class based
+    - make world generator mode system class or object based
 XXX - fix all non-block-items being rendered as apples, cannot be stacked to the same item, ...
         can be eaten like an apple
-    - fix furnace texture
+    - fix furnace gui texture
     - fix grass texture [maybe affects all blocks?]
     - fix shulker boxes (and similar blocks?) not storing their inventory correctly
 
-    - implement dark theme for inventories (set glColor3d to something lower?) & implement API for it
-    - implement file-loaded registry entries (-> dynamic registries)
     - refactor event names
     - do not read inventory config for each inventory, load it ones & share

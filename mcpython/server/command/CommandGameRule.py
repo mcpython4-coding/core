@@ -41,15 +41,15 @@ class CommandGamerule(mcpython.server.command.Command.Command):
     @classmethod
     def parse(cls, values: list, modes: list, info):
         rule = values[0]
-        if rule not in G.world.gamerulehandler.table:
+        if rule not in G.world.gamerule_handler.table:
             G.chat.print_ln("[SYNTAX][ERROR] gamerule '{}' not found".format(rule))
             return
         if len(values) > 1:
             value = values[1]
-            if G.world.gamerulehandler.table[rule].status.is_valid_value(value):
-                G.world.gamerulehandler.table[
+            if G.world.gamerule_handler.table[rule].status.is_valid_value(value):
+                G.world.gamerule_handler.table[
                     rule
-                ].status = G.world.gamerulehandler.table[rule].status.__class__(value)
+                ].status = G.world.gamerule_handler.table[rule].status.__class__(value)
             else:
                 G.chat.print_ln(
                     "invalid value '{}' for gamerule '{}'".format(value, rule)
@@ -57,7 +57,7 @@ class CommandGamerule(mcpython.server.command.Command.Command):
         else:
             G.chat.print_ln(
                 "value of gamerule '{}': {}".format(
-                    rule, G.world.gamerulehandler.table[rule].status.status
+                    rule, G.world.gamerule_handler.table[rule].status.status
                 )
             )
 

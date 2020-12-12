@@ -84,16 +84,16 @@ class StateEscape(State.State):
     @staticmethod
     def start_menu_press(x, y):
         G.world.world_loaded = False
-        while G.world.savefile.save_in_progress:
+        while G.world.save_file.save_in_progress:
             time.sleep(0.2)
-        G.world.savefile.save_world(
+        G.world.save_file.save_world(
             override=True
         )  # make sure that file size is as small as possible
         G.world.setup_by_filename("tmp")
         G.world.cleanup()
         G.event_handler.call("on_game_leave")
         G.state_handler.switch_to("minecraft:startmenu", immediate=False)
-        while G.world.savefile.save_in_progress:
+        while G.world.save_file.save_in_progress:
             time.sleep(0.2)
 
     @staticmethod
@@ -107,7 +107,7 @@ class StateEscape(State.State):
 
     def activate(self):
         super().activate()
-        pyglet.clock.schedule_once(G.world.savefile.save_world, 0.1)
+        pyglet.clock.schedule_once(G.world.save_file.save_world, 0.1)
 
 
 escape = None

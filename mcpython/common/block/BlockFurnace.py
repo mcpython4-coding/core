@@ -80,7 +80,7 @@ class BlockFurnace(
             return [self.inventory.slots[37]], []
 
     def on_block_remove(self, reason):
-        if not G.world.gamerulehandler.table["doTileDrops"].status.status:
+        if not G.world.gamerule_handler.table["doTileDrops"].status.status:
             return
         for slot in self.inventory.slots:
             G.world.get_active_player().pick_up(slot.itemstack.copy())

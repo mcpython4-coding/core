@@ -78,8 +78,8 @@ class WorldGenerationHandler:
         internal implementation of the chunk generation code
         :param chunk: the chunk to schedule
         """
-        dimension = chunk.dimension
-        config_name = dimension.worldgenerationconfig["configname"]
+        dimension = chunk.get_dimension()
+        config_name = dimension.get_world_generation_config_entry("configname")
 
         if config_name not in self.configs:
             return  # no config found means no generation
@@ -91,7 +91,7 @@ class WorldGenerationHandler:
         for layer_name in config["layers"]:
             reference.schedule_invoke(
                 self.layers[layer_name].add_generate_functions_to_chunk,
-                chunk.dimension.worldgenerationconfigobjects[layer_name],
+                chunk.get_dimension().get_world_generation_config_for_layer(layer_name),
                 reference,
             )
 
@@ -100,26 +100,28 @@ class WorldGenerationHandler:
             return
         self.task_handler.process_one_task(**kwargs)
 
-    def setup_dimension(self, dimension, config=None):
-        config_name = dimension.worldgenerationconfig["configname"]
+    def setup_dimension(
+        self, dimension: mcpython.common.world.AbstractInterface.IDimension, config=None
+    ):
+        config_name = dimension.get_world_generation_config_entry("configname")
         if config_name is None:
             return  # empty dimension
         for layer_name in self.configs[config_name]["layers"]:
             layer = self.layers[layer_name]
             if config is None or layer_name not in config:
-                cconfig = mcpython.server.worldgen.layer.Layer.LayerConfig(
+                layer_config = mcpython.server.worldgen.layer.Layer.LayerConfig(
                     **(
-                        dimension.worldgenerationconfig[layer_name]
-                        if layer_name in dimension.worldgenerationconfig
-                        else {}
+                        dimension.get_world_generation_config_entry(
+                            layer_name, default={}
+                        )
                     )
                 )
-                cconfig.dimension = dimension.id
+                layer_config.dimension = dimension.get_id()
             else:
-                cconfig = config[layer_name]
-            layer.normalize_config(cconfig)
-            dimension.worldgenerationconfigobjects[layer_name] = cconfig
-            cconfig.layer = layer
+                layer_config = config[layer_name]
+            layer.normalize_config(layer_config)
+            dimension.set_world_generation_config_for_layer(layer_name, layer_config)
+            layer_config.layer = layer
 
     def generate_chunk(
         self,
@@ -145,7 +147,7 @@ class WorldGenerationHandler:
         chunk.loaded = True
         logger.println("generating", chunk.position)
         dimension = chunk.dimension
-        configname = dimension.worldgenerationconfig["configname"]
+        configname = dimension.world_generation_config["configname"]
         config = self.configs[configname]
         if "on_chunk_generate_pre" in config:
             config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
@@ -153,11 +155,10 @@ class WorldGenerationHandler:
         handler = mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference(
             self.task_handler, chunk
         )
-        for i, layername in enumerate(config["layers"]):
-            # logger.println("\rgenerating layer {} ({}/{})".format(layername, i + 1, m), end="")
-            layer = self.layers[layername]
+        for i, layer_name in enumerate(config["layers"]):
+            layer = self.layers[layer_name]
             layer.add_generate_functions_to_chunk(
-                dimension.worldgenerationconfigobjects[layername], handler
+                dimension.world_generation_config_objects[layer_name], handler
             )
             shared.world_generation_handler.task_handler.process_tasks()
         logger.println("\r", end="")
@@ -171,8 +172,8 @@ class WorldGenerationHandler:
     def register_feature(self, decorator):
         pass  # todo: implement
 
-    def register_world_gen_config(self, name: str, layerconfig: dict):
-        self.configs[name] = layerconfig
+    def register_world_gen_config(self, name: str, layer_config: dict):
+        self.configs[name] = layer_config
 
     def __call__(self, data: str or mcpython.server.worldgen.layer.Layer, config=None):
         if type(data) == dict:
