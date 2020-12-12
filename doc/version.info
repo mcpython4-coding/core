@@ -1358,6 +1358,7 @@ R   [uuk]: player inventories are stored now ín own attributes
 R   [uuk]: moved world serialization back to common
 R   [uuk]: improved world serialization API
     [uuk]: improved registry API
+    [uuk]: implemented extension point for CraftingGridHelperInterface for custom recipe classes
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]

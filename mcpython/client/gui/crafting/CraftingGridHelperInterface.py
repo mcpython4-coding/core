@@ -9,6 +9,8 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared as G, logger
 import mcpython.client.gui.crafting.IRecipeInterface
 import mcpython.client.gui.crafting.IRecipeType
@@ -17,12 +19,22 @@ import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
 
 
+class IRecipeAdapter:
+    # todo: I think there must be more than this...
+
+    @classmethod
+    def convert(cls, interface: "CraftingGridHelperInterface", recipe) -> typing.Optional:
+        raise ValueError()
+
+
 class CraftingGridHelperInterface(
     mcpython.client.gui.crafting.IRecipeInterface.IRecipeInterface
 ):
     """
     Recipe interface for an crafting grid of arbitrary size using the default recipe implementation
     """
+
+    ADAPTERS: typing.List[IRecipeAdapter] = []
 
     NAME = "minecraft:crafting_interface"
 
@@ -99,29 +111,35 @@ class CraftingGridHelperInterface(
             recipes += G.crafting_handler.crafting_recipes_shapeless[item_length]
         for recipe in recipes:
             if (
-                issubclass(
-                    type(recipe),
+                isinstance(
+                    recipe,
                     mcpython.client.gui.crafting.GridRecipeInstances.GridShaped,
                 )
                 and self.shaped_enabled
             ):
                 state = self.check_shaped(recipe, item_table)
             elif (
-                issubclass(
-                    type(recipe),
+                isinstance(
+                    recipe,
                     mcpython.client.gui.crafting.GridRecipeInstances.GridShapeless,
                 )
                 and self.shapeless_enabled
             ):
                 state = self.check_shapeless(recipe, shapeless_items)
             else:
-                logger.println(
-                    "recipe '{}' could NOT be checked as it is not an subclass of an supported recipe".format(
-                        recipe
+                for adapter in self.ADAPTERS:
+                    try:
+                        state = adapter.convert(self, recipe)
+                        break
+                    except ValueError:
+                        pass
+                else:
+                    logger.println(
+                        "recipe '{}' could NOT be checked as it is not an subclass of an supported recipe".format(
+                            recipe
+                        )
                     )
-                )
-                # todo: add custom code for extension points
-                continue
+                    continue
             if state:
                 self.active_recipe = recipe
                 return
@@ -176,9 +194,9 @@ class CraftingGridHelperInterface(
         items: list,
     ) -> bool:
         items = items[:]
-        for initem in recipe.inputs:
+        for in_item in recipe.inputs:
             flag = True
-            for value in initem:
+            for value in in_item:
                 item, _ = (value, None) if type(value) == str else value
                 if flag and item in items:
                     items.remove(item)

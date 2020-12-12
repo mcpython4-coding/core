@@ -37,10 +37,11 @@ def transform_to_item_stack(item, table: dict) -> list:
                 )
             )
             return []
-        # todo: cache registry maps
+        items = G.registry.get_by_name("minecraft:item")
+        blocks = G.registry.get_by_name("minecraft:block")
         for item in entries[:]:
-            if item not in G.registry.get_by_name("minecraft:item").entries:
-                if item not in G.registry.get_by_name("minecraft:block").entries:
+            if item not in items.entries:
+                if item not in blocks.entries:
                     entries.remove(item)
         return entries
     elif type(item) == list:  # have we an list of items?
