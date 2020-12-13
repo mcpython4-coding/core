@@ -16,7 +16,7 @@ This project is not official by mojang and does not relate to it.
 # file licensed under the licence in licenses/LICENSE_mcskinview
 # modified for this project to match the overall system
 # modified for newer skin textures
-from mcpython.util.net import get_url
+from mcpython.util.url import get_url
 import json
 import os
 import shutil

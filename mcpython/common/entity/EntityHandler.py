@@ -56,9 +56,9 @@ class EntityHandler:
         entity.teleport(entity.position, force_chunk_save_update=True)
         return entity
 
-    def tick(self):
+    def tick(self, dt: float):
         for entity in list(self.entity_map.values()):
-            entity.tick()
+            entity.tick(dt)
             if (
                 entity.parent is None and entity.child is not None
             ):  # update the positions of the childs

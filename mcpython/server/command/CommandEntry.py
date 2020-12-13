@@ -229,7 +229,10 @@ def load():
             entry = entrylist[start]
             # have we any valid selector?
             return any(
-                [x.is_valid(entry) for x in G.registry.get_by_name("minecraft:command").selector]
+                [
+                    x.is_valid(entry)
+                    for x in G.registry.get_by_name("minecraft:command").selector
+                ]
             )
 
     @G.registry

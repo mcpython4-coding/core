@@ -27,7 +27,7 @@ class CancelAbleEvent:
 class EventBus:
     """
     An class for bundling event calls to instances of this to make it easy to add/remove big event notations.
-    It should be something like an sub-eventhandler
+    It should be something like an sub-event-handler
 
     todo: make thread-safe
     """

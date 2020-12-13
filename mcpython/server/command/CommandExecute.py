@@ -114,7 +114,8 @@ class CommandExecute(mcpython.server.command.Command.Command):
                 if position in G.world.world:
                     block = G.world.world[position]
                     flag = (
-                        block.NAME == G.registry.get_by_name("minecraft:block").entries[name].NAME
+                        block.NAME
+                        == G.registry.get_by_name("minecraft:block").entries[name].NAME
                     )
                 else:
                     flag = name in ["air", "minecraft:air", None, 0]

@@ -230,10 +230,15 @@ class LootTablePoolEntry:
         elif self.entry_type == LootTablePoolEntryType.LOOT_TABLE:
             items += handler.roll(self.name, *args, **kwargs)
         elif self.entry_type == LootTablePoolEntryType.GROUP:
-            [items.extend(e.roll(*args, **kwargs)) for e in self.children if e is not None]
+            [
+                items.extend(e.roll(*args, **kwargs))
+                for e in self.children
+                if e is not None
+            ]
         elif self.entry_type == LootTablePoolEntryType.ALTERNATIVES:
             for entry in self.children:
-                if entry is None: continue
+                if entry is None:
+                    continue
                 item = entry.roll(*args, **kwargs)
                 if item is None:
                     continue
@@ -241,7 +246,8 @@ class LootTablePoolEntry:
                 break
         elif self.entry_type == LootTablePoolEntryType.SEQUENCE:
             for entry in self.children:
-                if entry is None: continue
+                if entry is None:
+                    continue
                 item = entry.roll(*args, **kwargs)
                 if item is None:
                     break

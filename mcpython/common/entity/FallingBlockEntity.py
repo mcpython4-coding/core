@@ -19,6 +19,8 @@ import mcpython.util.math
 class FallingBlock(mcpython.common.entity.Entity.Entity):
     """
     Class for the falling block entity
+
+    todo: can we replicate some original block behaviour?
     """
 
     NAME = "minecraft:falling_block"
@@ -40,6 +42,7 @@ class FallingBlock(mcpython.common.entity.Entity.Entity):
 
     def tick(self):
         super().tick()
+
         x, y, z = mcpython.util.math.normalize(self.position)
         block = self.chunk.get_block((x, y - 1, z))
         if (self.position[1] - y <= 0.1) and not (block is None or type(block) == str):
@@ -50,6 +53,3 @@ class FallingBlock(mcpython.common.entity.Entity.Entity):
             else:
                 self.chunk.add_block((x, y, z), self.block)
                 self.kill()
-
-    def kill(self, *args, **kwargs):
-        super().kill(*args, **kwargs)

@@ -60,7 +60,7 @@ class Registry:
         self.dump_content_in_saves = dump_content_in_saves
 
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-            "modloader:finished", self.lock
+            "mod_loader:load_finished", self.lock
         )
 
     def is_valid(self, obj: IRegistryContent):

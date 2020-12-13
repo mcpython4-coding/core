@@ -57,7 +57,9 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
 
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
-    "minecraft:blockstates", ["minecraft:blockstate"], "stage:blockstate:register_loaders"
+    "minecraft:blockstates",
+    ["minecraft:blockstate"],
+    "stage:blockstate:register_loaders",
 )
 
 

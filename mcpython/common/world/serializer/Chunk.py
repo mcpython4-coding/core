@@ -43,9 +43,7 @@ def write_region_data(
     region,
     data,
 ):
-    save_file.dump_file_pickle(
-        "dim/{}/{}_{}.region".format(dimension, *region), data
-    )
+    save_file.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
 
 
 class BlockPartFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):

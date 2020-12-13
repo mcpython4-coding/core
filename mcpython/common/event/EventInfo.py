@@ -25,9 +25,11 @@ class KeyPressEventInfo(IEventInfo):
     info for key press
     """
 
-    def __init__(self, symbol: int, modifer=[]):
+    def __init__(self, symbol: int, modifier=None):
+        if modifier is None:
+            modifier = []
         self.symbol = symbol
-        self.modifier = modifer
+        self.modifier = modifier
 
     def equals(self, symbol, modifiers):
         return symbol == self.symbol and all([modifiers & x for x in self.modifier])
@@ -38,7 +40,9 @@ class MousePressEventInfo(IEventInfo):
     info for mouse press
     """
 
-    def __init__(self, mouse: int, modifier=[], area=None):
+    def __init__(self, mouse: int, modifier=None, area=None):
+        if modifier is None:
+            modifier = []
         self.mouse = mouse
         self.modifier = modifier
         self.area = area
@@ -62,8 +66,8 @@ class CallbackHelper:
     def __init__(
         self,
         function,
-        args=[],
-        kwargs={},
+        args=None,
+        kwargs=None,
         extra_arg_filter=None,
         enable_extra_args=True,
     ):
@@ -75,6 +79,10 @@ class CallbackHelper:
         :param extra_arg_filter: an function(args, kwargs) -> args, kwargs which filters them
         :param enable_extra_args: weither args given by __call__ should be included
         """
+        if kwargs is None:
+            kwargs = {}
+        if args is None:
+            args = []
         self.function = function
         self.args = args
         self.kwargs = kwargs

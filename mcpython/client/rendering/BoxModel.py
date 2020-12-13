@@ -155,7 +155,7 @@ class BoxModel:
                 for x in mcpython.util.enums.EnumSide.iterate()
             ]
         )
-        self.tex_data = mcpython.util.math.tex_coords_better(
+        self.tex_data = mcpython.util.math.tex_coordinates_better(
             up,
             down,
             north,
@@ -415,7 +415,7 @@ class BaseBoxModel:
                 )
             )
         self.texture_cache = sum(
-            mcpython.util.math.tex_coords_better(
+            mcpython.util.math.tex_coordinates_better(
                 *[(0, 0)] * 6, size=(1, 1), tex_region=self.__texture_region
             ),
             tuple(),

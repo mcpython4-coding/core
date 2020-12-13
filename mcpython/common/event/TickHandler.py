@@ -57,7 +57,7 @@ class TickHandler:
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
                     return
-        G.entity_handler.tick()
+        G.entity_handler.tick(dt)
         if any(
             type(x) == mcpython.client.state.StatePartGame.StatePartGame
             for x in G.state_handler.active_state.parts
@@ -90,31 +90,32 @@ class TickHandler:
         self.execute_array.append((function, args, kwargs))
 
     def bind(
-        self, function, tick, isdelta=True, ticketfunction=None, args=[], kwargs={}
+        self, function, tick, is_delta=True, ticket_function=None, args=[], kwargs={}
     ):
         """
         bind an function to an given tick
         :param function: the function to bind
         :param tick: the tick to add
-        :param isdelta: if it is delta or not
-        :param ticketfunction: function which is called when the function is called with some informations
+        :param is_delta: if it is delta or not
+        :param ticket_function: function which is called when the function is called with some informations
         :param args: the args to give
         :param kwargs: the kwargs to give
         """
         if self.instant_ticks:
             function(*args, **kwargs)
             return
-        if isdelta:
+        if is_delta:
             tick += self.active_tick
-        # logger.println(function, tick, self.active_tick)
         if tick not in self.tick_array:
             self.tick_array[tick] = []
-        if ticketfunction:
-            ticketid = self.next_ticket_id
+        if ticket_function:
+            ticket_id = self.next_ticket_id
             self.next_ticket_id += 1
         else:
-            ticketid = None
-        self.tick_array[tick].append((ticketid, function, args, kwargs, ticketfunction))
+            ticket_id = None
+        self.tick_array[tick].append(
+            (ticket_id, function, args, kwargs, ticket_function)
+        )
 
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
         self.bind(function, tick * 2, *args, **kwargs)

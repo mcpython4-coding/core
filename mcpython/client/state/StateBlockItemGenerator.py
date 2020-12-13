@@ -64,7 +64,9 @@ class StateBlockItemGenerator(State.State):
             UIPartProgressBar.UIPartProgressBar(
                 (10, 10),
                 (G.window.get_size()[0] - 20, 20),
-                progress_items=len(G.registry.get_by_name("minecraft:block").entries.values()),
+                progress_items=len(
+                    G.registry.get_by_name("minecraft:block").entries.values()
+                ),
                 status=1,
                 text="0/{}: {}".format(
                     len(G.registry.get_by_name("minecraft:block").entries), None

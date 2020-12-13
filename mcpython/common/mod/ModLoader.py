@@ -76,7 +76,7 @@ class LoadingStage:
             logger.println(
                 "[INFO] locking registries..."
             )  # ... and do similar stuff :-)
-            G.event_handler.call("modloader:finished")
+            G.event_handler.call("mod_loader:load_finished")
 
             G.state_handler.switch_to("minecraft:block_item_generator")
             G.mod_loader.finished = True

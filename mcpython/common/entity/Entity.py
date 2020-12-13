@@ -225,27 +225,26 @@ class Entity(mcpython.common.event.Registry.IRegistryContent):
 
     def get_inventories(self) -> list:
         """
-        will return an list of all currently arrival inventories for this entity
-        :return:
+        Will return an list of all currently arrival inventories for this entity
         """
         return []
 
     def on_inventory_cleared(self):
         """
-        called by /clear when the inventory of the entity should be cleared
+        Called by /clear when the inventory of the entity should be cleared
         """
 
     # system events
 
     def draw(self):
         """
-        called to draw the entity
+        Called to draw the entity
         """
 
-    def tick(self):
+    def tick(self, dt: float):
         """
-        called every tick to update the entity
-        can be used to update animations, movement, do path finding stuff, damage other entities, ...
+        Called every tick to update the entity
+        Can be used to update animations, movement, do path finding stuff, damage other entities, ...
         """
         x, y, z = self.position
         dx, dy, dz = self.nbt_data["motion"]

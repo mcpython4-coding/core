@@ -17,7 +17,7 @@ import pyglet
 
 def colorize(mask: PIL.Image.Image, color: tuple) -> PIL.Image.Image:
     """
-    colorize an imagemask with an color
+    colorize an image-mask (greyscale) with an color
     :param mask: the mask to base on
     :param color: the color to use
     :return: the colorized image
@@ -29,12 +29,12 @@ def colorize(mask: PIL.Image.Image, color: tuple) -> PIL.Image.Image:
         for y in range(mask.size[1]):
             color_alpha = mask.getpixel((x, y))
             if color_alpha:
-                colorp = (
+                pixel_color = (
                     color[0] * color_alpha // 255,
                     color[1] * color_alpha // 255,
                     color[2] * color_alpha // 255,
                 )
-                new_image.putpixel((x, y), colorp)
+                new_image.putpixel((x, y), pixel_color)
     return new_image
 
 
@@ -43,9 +43,10 @@ def to_pyglet_image(image: PIL.Image.Image) -> pyglet.image.AbstractImage:
     Will transform the image into an pyglet image
     :param image: the image to transform
     :return: the transformed one
+    todo: can we do this in-memory?
     """
-    image.save(G.tmp.name + "/imagehelper_topyglet.png")
-    return pyglet.image.load(G.tmp.name + "/imagehelper_topyglet.png")
+    image.save(G.tmp.name + "/image_helper_to_pyglet.png")
+    return pyglet.image.load(G.tmp.name + "/image_helper_to_pyglet.png")
 
 
 def to_pillow_image(image: pyglet.image.AbstractImage) -> PIL.Image.Image:
@@ -53,9 +54,10 @@ def to_pillow_image(image: pyglet.image.AbstractImage) -> PIL.Image.Image:
     Will transform the pyglet image into an pillow one
     :param image: the image to transform
     :return: the transformed one
+    todo: can we do this in-memory?
     """
-    image.save(G.tmp.name + "/imagehelper_topillow.png")
-    return PIL.Image.open(G.tmp.name + "/imagehelper_topillow.png")
+    image.save(G.tmp.name + "/image_helper_to_pillow.png")
+    return PIL.Image.open(G.tmp.name + "/image_helper_to_pillow.png")
 
 
 def to_pyglet_sprite(image: PIL.Image.Image) -> pyglet.sprite.Sprite:

@@ -333,7 +333,9 @@ class ItemFactory:
             self.baseclass.append(mcpython.common.item.ItemTool.ItemTool)
         return self
 
-    def setToolType(self, tool_types: typing.List[mcpython.common.item.ItemTool.ItemTool]):
+    def setToolType(
+        self, tool_types: typing.List[mcpython.common.item.ItemTool.ItemTool]
+    ):
         self.tool_type = tool_types
         if mcpython.common.item.ItemTool.ItemTool not in self.baseclass:
             self.baseclass.append(mcpython.common.item.ItemTool.ItemTool)

@@ -433,7 +433,9 @@ def get_all_entries(directory: str) -> typing.Iterator[str]:
     """
     loc = RESOURCE_LOCATIONS
     loc.reverse()
-    return itertools.chain.from_iterable((x.get_all_entries_in_directory(directory) for x in loc))
+    return itertools.chain.from_iterable(
+        (x.get_all_entries_in_directory(directory) for x in loc)
+    )
 
 
 def get_all_entries_special(directory: str) -> typing.Iterator[str]:

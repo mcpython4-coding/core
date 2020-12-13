@@ -32,7 +32,10 @@ class ItemStack:
         ):
             self.item = item_name_or_instance
         elif type(item_name_or_instance) == str:
-            if item_name_or_instance in G.registry.get_by_name("minecraft:item").entries:
+            if (
+                item_name_or_instance
+                in G.registry.get_by_name("minecraft:item").entries
+            ):
                 self.item = G.registry.get_by_name("minecraft:item").entries[
                     item_name_or_instance
                 ]()

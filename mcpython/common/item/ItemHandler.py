@@ -34,9 +34,9 @@ def build():
     ITEM_ATLAS.dump()
     for cls in COLLECTED_ITEMS:
         for i, file in enumerate(cls.get_used_texture_files()):
-            items.item_index_table[cls.NAME][
-                file
-            ] = ITEM_ATLAS.get_texture_info_or_add(cls.NAME + "#?"+str(i), file)
+            items.item_index_table[cls.NAME][file] = ITEM_ATLAS.get_texture_info_or_add(
+                cls.NAME + "#?" + str(i), file
+            )
 
 
 def load_data():
@@ -89,7 +89,10 @@ def register_item(registry, cls):
 
 
 items = mcpython.common.event.Registry.Registry(
-    "minecraft:item", ["minecraft:item"], "stage:item:load", injection_function=register_item
+    "minecraft:item",
+    ["minecraft:item"],
+    "stage:item:load",
+    injection_function=register_item,
 )
 items.item_index_table = {}
 

@@ -23,7 +23,9 @@ class IRecipeAdapter:
     # todo: I think there must be more than this...
 
     @classmethod
-    def convert(cls, interface: "CraftingGridHelperInterface", recipe) -> typing.Optional:
+    def convert(
+        cls, interface: "CraftingGridHelperInterface", recipe
+    ) -> typing.Optional:
         raise ValueError()
 
 

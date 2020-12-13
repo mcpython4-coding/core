@@ -49,7 +49,9 @@ class DataPackHandler:
         will load all data packs
         """
         for path in os.listdir(G.home + "/datapacks"):
-            self.data_packs.append(self.load_datapack_from_directory(G.home + "/datapacks/" + path))
+            self.data_packs.append(
+                self.load_datapack_from_directory(G.home + "/datapacks/" + path)
+            )
         G.event_handler.call("datapack:search")
 
     def load_datapack_from_directory(self, directory: str):
@@ -153,7 +155,9 @@ class DataPack:
                 if os.path.isdir(self.directory)
                 else mcpython.ResourceLoader.ResourceZipFile(self.directory)
             )
-            info = json.loads(self.access.read_raw("pack.mcmeta").decode("utf-8"))["pack"]
+            info = json.loads(self.access.read_raw("pack.mcmeta").decode("utf-8"))[
+                "pack"
+            ]
             if info["pack_format"] not in (1, 2, 3):
                 self.status = DataPackStatus.ERROR
                 logger.println(

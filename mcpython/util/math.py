@@ -146,7 +146,7 @@ def cube_vertices_better(
     return top, bottom, left, right, front, back
 
 
-def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
+def tex_coordinates(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
     """
     Return the bounding vertices of the texture square.
     :param x: the texture atlas entry to use
@@ -181,7 +181,7 @@ def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
     return sum(positions, tuple())
 
 
-def tex_coords_better(
+def tex_coordinates_better(
     *args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)
 ) -> list:
     """
@@ -196,7 +196,7 @@ def tex_coords_better(
     if tex_region is None:
         tex_region = [(0, 0, 1, 1)] * len(args)
     return [
-        tex_coord(
+        tex_coordinates(
             *(face if face is not None else (0, 0)),
             size=size,
             region=tex_region[i],
@@ -206,7 +206,7 @@ def tex_coords_better(
     ]
 
 
-def tex_coord_factor(fx, fy, tx, ty):
+def tex_coordinates_factor(fx, fy, tx, ty):
     return fx, fy, tx, fy, tx, ty, fx, ty
 
 
