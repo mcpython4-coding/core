@@ -1360,6 +1360,8 @@ R   [uuk]: improved world serialization API
     [uuk]: improved registry API
     [uuk]: implemented extension point for CraftingGridHelperInterface for custom recipe classes
     [uuk]: Entity.tick() has now an dt parameter
+    [uuk]: improved world gen API, again...
+    [uuk]: added dessert biome
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]
@@ -1373,6 +1375,7 @@ X   - fix being able to break blocks in gamemode 0 which you should not be able 
     - fix furnace gui texture
     - fix grass texture by introducing an coloring layer or temporary another texture
     - fix shulker boxes (and similar blocks?) not storing their inventory correctly
+XX  - fix post-generation code not generating correctly
 
     - refactor event names
     - do not read inventory config for each inventory, load it ones & share

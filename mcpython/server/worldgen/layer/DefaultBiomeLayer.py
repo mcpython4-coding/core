@@ -22,7 +22,7 @@ import mcpython.common.world.AbstractInterface
 
 
 @G.world_generation_handler
-class DefaultBiomeMapILayer(ILayer):
+class DefaultBiomeMapLayer(ILayer):
     DEPENDS_ON = ["minecraft:landmass_default"]
 
     noise: opensimplex.OpenSimplex = None
@@ -43,30 +43,19 @@ class DefaultBiomeMapILayer(ILayer):
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         cx, cz = chunk.position
-        biomemap = chunk.get_value("biome_map")
-        landmap = chunk.get_value("landmass_map")
-        temperaturemap = chunk.get_value("minecraft:temperature_map")
-        factor = 10 ** config.size
+        biome_map = chunk.get_value("minecraft:biome_map")
+        land_map = chunk.get_value("minecraft:landmass_map")
+        temperature_map = chunk.get_value("minecraft:temperature_map")
         for x in range(cx * 16, cx * 16 + 16):
             for z in range(cz * 16, cz * 16 + 16):
-                landmass = landmap[(x, z)]
-                v = (
-                    DefaultBiomeMapILayer.noise.noise3d(
-                        x / factor, z / factor, x * z / factor ** 2
-                    )
-                    * 0.5
-                    + 0.5
-                )
-                biomemap[(x, z)] = G.biome_handler.get_biome_at(
-                    landmass, config.dimension, v, temperaturemap[(x, z)]
-                )
-        chunk.set_value("biome_map", biomemap)
+                biome_map[(x, z)] = config.world_generator_config.BIOME_SOURCE.get_biome_at(x, z, [cls.noise], land_map[(x, z)], config, temperature_map[(x, z)])
+        chunk.set_value("minecraft:biome_map", biome_map)
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "biome_map", DefaultBiomeMapILayer, {}
+    "minecraft:biome_map", DefaultBiomeMapLayer, {}
 )
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultBiomeMapILayer.update_seed
+    "seed:set", DefaultBiomeMapLayer.update_seed
 )

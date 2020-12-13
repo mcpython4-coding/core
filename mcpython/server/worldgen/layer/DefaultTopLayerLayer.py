@@ -46,11 +46,11 @@ class DefaultTopLayerILayer(ILayer):
         chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
         mheight = heightmap[(x, z)][0][1]
-        biome = G.biome_handler.biomes[chunk.get_value("biome_map")[(x, z)]]
+        biome = G.biome_handler.biomes[chunk.get_value("minecraft:biome_map")[(x, z)]]
         noise_value = (
             DefaultTopLayerILayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
         )
-        r = biome.get_top_layer_height_range()
+        r = biome.get_top_layer_height_range((x, z), chunk.get_dimension())
         noise_value *= r[1] - r[0]
         noise_value += r[0]
         height = round(noise_value)

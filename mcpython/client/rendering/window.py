@@ -616,7 +616,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         else:
             self.label3.y = self.height - 22
         if chunk:
-            biomemap = chunk.get_value("biome_map")
+            biomemap = chunk.get_value("minecraft:biome_map")
             if (nx, nz) in biomemap:
                 self.label.text += ", biome: " + str(biomemap[(nx, nz)])
         self.label.draw()

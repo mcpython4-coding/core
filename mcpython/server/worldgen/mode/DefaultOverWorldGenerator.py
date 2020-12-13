@@ -10,9 +10,13 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
+import mcpython.server.worldgen.mode.IWorldGenConfig
 
-config = {
-    "layers": [
+
+class DefaultOverworldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig):
+    NAME = "minecraft:default_overworld"
+
+    LAYERS = [
         "minecraft:landmass_default",
         "minecraft:temperature_map",
         "minecraft:biome_map_default",
@@ -22,6 +26,17 @@ config = {
         "minecraft:top_layer_default",
         "minecraft:tree_default",
     ]
-}
 
-G.world_generation_handler.register_world_gen_config("default_overworld", config)
+    BIOMES = {
+        "land": {
+            2.0: ["minecraft:dessert"],
+            0.8: ["minecraft:plains"]
+        }
+    }
+
+    LANDMASSES = ["land"]
+
+    BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.DefaultBiomeSource
+
+
+G.world_generation_handler.register_world_gen_config(DefaultOverworldGenerator)

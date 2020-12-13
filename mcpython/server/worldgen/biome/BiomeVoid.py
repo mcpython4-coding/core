@@ -13,26 +13,35 @@ import typing
 
 from mcpython import shared as G
 import mcpython.common.config
-import mcpython.server.worldgen.feature.OakTreeFeature
 from . import Biome
+import mcpython.common.world.AbstractInterface
 
 
-class Plains(Biome.Biome):
-    NAME = "minecraft:plains"
+class Void(Biome.Biome):
+    NAME = "minecraft:void"
 
     @staticmethod
     def get_weight() -> int:
-        return 20
+        return 1
 
     @staticmethod
     def get_height_range() -> typing.Tuple[int, int]:
-        return mcpython.common.config.BIOME_HEIGHT_RANGE_MAP["minecraft:plains"]
+        return 0, 0
 
     @staticmethod
-    def get_trees() -> list:
-        return [
-            (mcpython.server.worldgen.feature.OakTreeFeature.OakTreeNormalFeature, 600)
-        ]
+    def get_top_layer_height_range(
+            position: typing.Tuple[int, int],
+            dimension: mcpython.common.world.AbstractInterface.IDimension,
+    ) -> typing.Tuple[int, int]:
+        return 0, 0
+
+    @staticmethod
+    def get_top_layer_configuration(
+        height: int,
+        position: typing.Tuple[int, int],
+        dimension: mcpython.common.world.AbstractInterface.IDimension,
+    ) -> typing.List[str]:
+        return []
 
 
-G.biome_handler.register(Plains)
+G.biome_handler.register(Void)

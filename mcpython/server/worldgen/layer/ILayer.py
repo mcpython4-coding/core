@@ -24,6 +24,7 @@ class LayerConfig:
         self.dimension: typing.Optional[
             mcpython.common.world.AbstractInterface.IDimension
         ] = None
+        self.world_generator_config = None
 
 
 class ILayer(mcpython.common.event.Registry.IRegistryContent):

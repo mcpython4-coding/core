@@ -51,7 +51,7 @@ class DefaultHeightMapILayer(ILayer):
     @classmethod
     def get_height_at(cls, chunk, x, z, factor) -> list:
         v = DefaultHeightMapILayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
-        biome_map = chunk.get_value("biome_map")
+        biome_map = chunk.get_value("minecraft:biome_map")
         biome = G.biome_handler.biomes[biome_map[(x, z)]]
         r = biome.get_height_range()
         v *= r[1] - r[0]

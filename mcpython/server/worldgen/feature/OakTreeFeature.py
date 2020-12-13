@@ -9,18 +9,17 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 from . import IFeature
 import random
-import math
 
 
-class OakTreeNormalFeature:
+class OakTreeNormalFeature(IFeature.IFeature):
     # todo: add big tree variant
 
     @staticmethod
-    def place(dimension, x, y, z, heightrange=(3, 5)):
-        height = random.randint(*heightrange)
+    def place(dimension, x, y, z, height_range=(3, 5)):
+        height = random.randint(*height_range)
         # place the logs
         for dy in range(height):
             dimension.get_chunk_for_position((x, y, z)).add_block(

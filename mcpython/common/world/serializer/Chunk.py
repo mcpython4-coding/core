@@ -418,7 +418,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             positions.extend([(x, z) for z in range(chunk[1] * 16, chunk[1] * 16 + 16)])
 
         if (
-            "landmass_map" in data["maps"]
+            "minecraft:landmass_map" in data["maps"]
             and "biome" in data["maps"]
             and "height" in data["maps"]
             and sum([len(data["maps"][key]) for key in data["maps"]])
@@ -426,10 +426,10 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         ):
             try:
                 chunk_instance.set_value(
-                    "landmass_map",
+                    "minecraft:landmass_map",
                     {
                         pos: data["maps"]["landmass_palette"][
-                            data["maps"]["landmass_map"][i]
+                            data["maps"]["minecraft:landmass_map"][i]
                         ]
                         for i, pos in enumerate(positions)
                     },
@@ -438,7 +438,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]]
                     for i, pos in enumerate(positions)
                 }
-                chunk_instance.set_value("biome_map", biome_map)
+                chunk_instance.set_value("minecraft:biome_map", biome_map)
                 chunk_instance.set_value(
                     "heightmap",
                     {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)},
@@ -511,7 +511,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 "block_palette": [],
                 "generated": chunk_instance.is_generated(),
                 "maps": {
-                    "landmass_map": [None] * 16 ** 2,
+                    "minecraft:landmass_map": [None] * 16 ** 2,
                     "landmass_palette": [],
                     # "temperature": [None] * 16 ** 2,
                     "biome": [0] * 16 ** 2,
@@ -600,7 +600,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             cdata["entities"].append(edata)
 
         if override:  # we want to re-dump all data maps
-            biome_map = chunk_instance.get_value("biome_map")  # read the biome map ...
+            biome_map = chunk_instance.get_value("minecraft:biome_map")  # read the biome map ...
 
             # ... and use it as an template for the following
             # todo: use something else more stable!
@@ -610,8 +610,8 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             positions.sort(key=lambda x: x[1])
             positions.sort(key=lambda x: x[0])
 
-            landmass_map = chunk_instance.get_value("landmass_map")
-            cdata["maps"]["landmass_map"] = []
+            landmass_map = chunk_instance.get_value("minecraft:landmass_map")
+            cdata["maps"]["minecraft:landmass_map"] = []
             cdata["maps"]["landmass_palette"] = []
             for pos in positions:
                 mass = landmass_map[pos]
@@ -620,7 +620,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     cdata["maps"]["landmass_palette"].append(mass)
                 else:
                     index = cdata["maps"]["landmass_palette"].index(mass)
-                cdata["maps"]["landmass_map"].append(index)
+                cdata["maps"]["minecraft:landmass_map"].append(index)
 
             # temperature_map = chunk_instance.get_value("minecraft:temperature_map")
             # cdata["maps"]["temperature"] = [temperature_map[pos] for pos in positions]

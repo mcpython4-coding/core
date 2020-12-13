@@ -10,7 +10,11 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
+import mcpython.server.worldgen.mode.IWorldGenConfig
 
-config = {"layers": []}
 
-G.world_generation_handler.register_world_gen_config("default_nether", config)
+class NetherWorldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig):
+    NAME = "minecraft:nether_generator"
+
+
+G.world_generation_handler.register_world_gen_config(NetherWorldGenerator)

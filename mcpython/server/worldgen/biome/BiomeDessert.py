@@ -15,10 +15,11 @@ from mcpython import shared as G
 import mcpython.common.config
 import mcpython.server.worldgen.feature.OakTreeFeature
 from . import Biome
+import mcpython.common.world.AbstractInterface
 
 
-class Plains(Biome.Biome):
-    NAME = "minecraft:plains"
+class Dessert(Biome.Biome):
+    NAME = "minecraft:dessert"
 
     @staticmethod
     def get_weight() -> int:
@@ -26,13 +27,22 @@ class Plains(Biome.Biome):
 
     @staticmethod
     def get_height_range() -> typing.Tuple[int, int]:
-        return mcpython.common.config.BIOME_HEIGHT_RANGE_MAP["minecraft:plains"]
+        return mcpython.common.config.BIOME_HEIGHT_RANGE_MAP["minecraft:dessert"]
 
     @staticmethod
-    def get_trees() -> list:
-        return [
-            (mcpython.server.worldgen.feature.OakTreeFeature.OakTreeNormalFeature, 600)
-        ]
+    def get_top_layer_height_range(
+            position: typing.Tuple[int, int],
+            dimension: mcpython.common.world.AbstractInterface.IDimension,
+    ) -> typing.Tuple[int, int]:
+        return 5, 9
+
+    @staticmethod
+    def get_top_layer_configuration(
+        height: int,
+        position: typing.Tuple[int, int],
+        dimension: mcpython.common.world.AbstractInterface.IDimension,
+    ) -> typing.List[str]:
+        return ["minecraft:sandstone"] * 3 + ["minecraft:sand"] * (height - 3)
 
 
-G.biome_handler.register(Plains)
+G.biome_handler.register(Dessert)

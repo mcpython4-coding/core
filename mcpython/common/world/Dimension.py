@@ -84,15 +84,15 @@ class DimensionHandler:
                 "overworld",
                 {
                     "configname": (
-                        "default_overworld"
+                        "minecraft:default_overworld"
                         if "--debug-world" not in sys.argv
-                        else "debug_overworld"
+                        else "minecraft:debug_world_generator"
                     )
                 },
             ).setStaticId(0)
         )
         self.add_dimension(
-            DimensionDefinition("nether", {"configname": "default_nether"}).setStaticId(
+            DimensionDefinition("nether", {"configname": "minecraft:nether_generator"}).setStaticId(
                 -1
             )
         )

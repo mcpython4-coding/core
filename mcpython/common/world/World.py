@@ -334,9 +334,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
                         dx + after[0], dz + after[1], generate=False
                     )
                     if not chunk.is_generated():
-                        G.world_generation_handler.add_chunk_to_generation_list(
-                            chunk, prior=True
-                        )
+                        G.world_generation_handler.add_chunk_to_generation_list(chunk)
 
     def cleanup(self, remove_dims=False, filename=None):
         """

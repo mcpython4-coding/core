@@ -36,8 +36,7 @@ class DefaultLandMassILayer(ILayer):
     @staticmethod
     def normalize_config(config: LayerConfig):
         if not hasattr(config, "masses"):
-            config.masses = ["land"]
-            # todo: add underwater biomes
+            config.masses = config.world_generator_config.LANDMASSES
         if not hasattr(config, "size"):
             config.size = 1
 
@@ -47,7 +46,7 @@ class DefaultLandMassILayer(ILayer):
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         cx, cz = chunk.position
-        landmap = chunk.get_value("landmass_map")
+        land_map = chunk.get_value("minecraft:landmass_map")
         factor = 10 ** config.size
         for x in range(cx * 16, cx * 16 + 16):
             for z in range(cz * 16, cz * 16 + 16):
@@ -71,11 +70,11 @@ class DefaultLandMassILayer(ILayer):
                 v = round(v)
                 if v == len(config.masses):
                     v = 0
-                landmap[(x, z)] = config.masses[v]
+                land_map[(x, z)] = config.masses[v]
 
 
 authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "landmass_map", DefaultLandMassILayer, {}
+    "minecraft:landmass_map", DefaultLandMassILayer, {}
 )
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(

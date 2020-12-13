@@ -45,7 +45,7 @@ class DefaultTreeILayer(ILayer):
         treemap = chunk.get_value("tree_blocked")
         if (x, z) in treemap:
             return  # is an tree nearby?
-        biome = G.biome_handler.biomes[chunk.get_value("biome_map")[(x, z)]]
+        biome = G.biome_handler.biomes[chunk.get_value("minecraft:biome_map")[(x, z)]]
         height = chunk.get_value("heightmap")[(x, z)][0][1]
         trees = biome.get_trees()
         # todo: make noise-based

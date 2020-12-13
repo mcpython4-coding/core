@@ -21,10 +21,6 @@ class Biome(mcpython.common.event.Registry.IRegistryContent):
     NAME = "minecraft:unknown_biome"
 
     @staticmethod
-    def get_temperature() -> float:
-        raise NotImplementedError()
-
-    @staticmethod
     def get_landmass() -> str:
         return "land"
 
@@ -37,7 +33,10 @@ class Biome(mcpython.common.event.Registry.IRegistryContent):
         return 10, 30
 
     @staticmethod
-    def get_top_layer_height_range() -> typing.Tuple[int, int]:
+    def get_top_layer_height_range(
+        position: typing.Tuple[int, int],
+        dimension: mcpython.common.world.AbstractInterface.IDimension,
+    ) -> typing.Tuple[int, int]:
         return 3, 5
 
     @staticmethod

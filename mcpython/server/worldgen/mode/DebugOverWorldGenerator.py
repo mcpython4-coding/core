@@ -16,6 +16,7 @@ import mcpython.common.event.EventHandler
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 import mcpython.util.math
+import mcpython.server.worldgen.mode.IWorldGenConfig
 
 
 class BlockInfo:
@@ -49,39 +50,39 @@ class BlockInfo:
                 rx = -hsize
 
 
-def chunk_generate(chunk):
-    cx, cz = chunk.position
-    if (
-        G.world.get_active_dimension().world_generation_config["configname"]
-        != "debug_overworld"
-    ):
-        return
+class DebugWorldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig):
+    NAME = "minecraft:debug_world_generator"
+    DISPLAY_NAME = "DEBUG GENERATOR"
 
-    if (cx, cz) in BlockInfo.TABLE:
-        height_map = chunk.get_value("heightmap")
-        block_map = BlockInfo.TABLE[(cx, cz)]
-        for x, z in block_map.keys():
-            block, state = block_map[(x, z)]
-            block = chunk.add_block((x, 10, z), block, block_update=False)
-            block.set_model_state(state)
-            block.face_state.update()
-            height_map[(x, z)] = [(0, 30)]
-        for x in range(16):
-            for z in range(16):
-                chunk.add_block((cx * 16 + x, 5, cz * 16 + z), "minecraft:barrier")
+    @classmethod
+    def on_chunk_generation_finished(cls, chunk):
+        cx, cz = chunk.position
+        if (
+            G.world.get_active_dimension().world_generation_config["configname"]
+            != "debug_overworld"
+        ):
+            return
 
-    if G.world.get_active_player().gamemode != 3:
-        G.world.get_active_player().set_gamemode(3)
-    G.world.get_active_player().flying = True
+        if (cx, cz) in BlockInfo.TABLE:
+            height_map = chunk.get_value("heightmap")
+            block_map = BlockInfo.TABLE[(cx, cz)]
+            for x, z in block_map.keys():
+                block, state = block_map[(x, z)]
+                block = chunk.add_block((x, 10, z), block, block_update=False)
+                block.set_model_state(state)
+                block.face_state.update()
+                height_map[(x, z)] = [(0, 30)]
+            for x in range(16):
+                for z in range(16):
+                    chunk.add_block((cx * 16 + x, 5, cz * 16 + z), "minecraft:barrier")
+
+        if G.world.get_active_player().gamemode != 3:
+            G.world.get_active_player().set_gamemode(3)
+        G.world.get_active_player().flying = True
 
 
-config = {"layers": []}
-
-G.world_generation_handler.register_world_gen_config("debug_overworld", config)
+G.world_generation_handler.register_world_gen_config(DebugWorldGenerator)
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:post", BlockInfo.construct, info="constructing debug world info"
-)
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "worldgen:chunk:finished", chunk_generate
 )
