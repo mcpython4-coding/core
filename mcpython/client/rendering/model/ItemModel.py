@@ -182,12 +182,12 @@ class ItemModelHandler:
         G.event_handler.call("item:bake:post", self)
 
     def add_to_batch(
-        self, itemname, *args, **kwargs
+        self, item_name, *args, **kwargs
     ) -> mcpython.client.rendering.BatchHelper.BatchReference:
-        return self.models[itemname].add_to_batch(*args, **kwargs)
+        return self.models[item_name].add_to_batch(*args, **kwargs)
 
-    def draw(self, itemname, *args, **kwargs):
-        self.models[itemname].draw(*args, **kwargs)
+    def draw(self, item_name, *args, **kwargs):
+        self.models[item_name].draw(*args, **kwargs)
 
 
 handler = ItemModelHandler()

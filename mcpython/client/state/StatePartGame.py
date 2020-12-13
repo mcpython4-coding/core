@@ -241,7 +241,7 @@ class StatePartGame(StatePart.StatePart):
                         chunk.check_neighbors(blockpos)
                 elif player.gamemode == 0:
                     if (
-                        type(block) != str
+                        not isinstance(block, str)
                         and self.mouse_press_time >= self.break_time
                         and block.IS_BREAKABLE
                     ):

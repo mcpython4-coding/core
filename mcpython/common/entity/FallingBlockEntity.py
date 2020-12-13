@@ -40,8 +40,8 @@ class FallingBlock(mcpython.common.entity.Entity.Entity):
             self.block.position = self.position
             G.model_handler.draw_block(self.block)
 
-    def tick(self):
-        super().tick()
+    def tick(self, dt):
+        super().tick(dt)
 
         x, y, z = mcpython.util.math.normalize(self.position)
         block = self.chunk.get_block((x, y - 1, z))

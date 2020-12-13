@@ -4,7 +4,10 @@ todo: make into an .md file
 
 planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
         before next stable release):
-    - add more factories for various parts [2]
+    - add data-based factory system
+    - move more game logic to tags
+    - refactor event names
+    - do not read inventory config for each inventory, load it ones & share
     - add scoreboards with commands, execute command entry, ... [5]
     - make world gen more fail-save [2]
     - add ores [4]
@@ -24,7 +27,6 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - entity AI system [30]
     - rendering layer system [20]
     - make loot table system only load needed loot tables, etc. [10]
-    - an indicator for corrupted save files (add an number to an counter and remove when action finished) [1]
     - BlockItemGenerator should store images in an better way, not single-files
 
 information on development:
@@ -78,10 +80,12 @@ changelog of snapshot [next]
 
     Debug:
         - added more debug info
+        - added an debug generator for biome distribution
 
     Rendering:
         - improved some bits
         - improved texture reload
+        - changed rendering code for a lot of stuff
 
     World Storage:
         - improved overall world storage & debug information

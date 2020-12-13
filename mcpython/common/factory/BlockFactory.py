@@ -93,6 +93,8 @@ class BlockFactory:
             replace
         """
 
+        self.entity_fall_multiplier = 1
+        self.can_mobs_spawn_in = False
         self.on_class_create = on_class_create
 
         self.set_name_finises_previous = False
@@ -330,24 +332,26 @@ class BlockFactory:
 
             BLOCK_ITEM_GENERATOR_STATE = master.block_item_generator_state
 
-            BREAKABLE = master.breakable
+            IS_BREAKABLE = master.breakable
 
             BLAST_RESISTANCE = self.blast_resistance
 
-            SOLID = self.solid
+            IS_SOLID = self.solid
 
-            CONDUCTS_REDSTONE_POWER = self.conducts_redstone
+            CAN_CONDUCT_REDSTONE_POWER = self.conducts_redstone
 
             CAN_MOBS_SPAWN_ON = self.can_mobs_spawn_on
+            CAN_MOBS_SPAWN_IN = self.can_mobs_spawn_in
 
             ENABLE_RANDOM_TICKS = self.random_ticks_enabled
 
-            NO_COLLISION = self.no_collision
+            NO_ENTITY_COLLISION = self.no_collision
+            ENTITY_FALL_MULTIPLIER = self.entity_fall_multiplier
 
             @staticmethod
             def get_all_model_states():
                 raw_states = self.model_states.copy()
-                [raw_states.extend(e.get_all_model_states()) for e in self.baseclass]
+                [raw_states.extend(e.DEBUG_WORLD_BLOCK_STATES) for e in self.baseclass]
 
                 while {} in raw_states:
                     raw_states.remove({})  # we don't need them now
@@ -393,6 +397,8 @@ class BlockFactory:
                 for baseclass in master.baseclass:
                     state = {**state, **baseclass.get_model_state(self)}
                 return state
+
+        ConstructedBlock.DEBUG_WORLD_BLOCK_STATES = ConstructedBlock.get_all_model_states()
 
         if self.solid_faces:
 

@@ -1,14 +1,6 @@
 
 [issue 1-8 are part of github-only and are mostly fixed at the moment]
 
-issue 22:
-    bug: on an tower of sand blocks if the under block is removed, it updates not the other blocks. If the block above
-         is removed, it all updates following bug 23
-    strategy: debug where block updates are called & why the block is not updated correct
-
-issue 23:
-    bug: when sand is falling, it can fall more than 1 block at a time, see issue 22 for reproducing
-    possible reason: fall is active two times in TickHandler
 
 issue 28: [caused by issue 185]
     bug: F3+A - hot-key does not reload the world correctly
@@ -34,11 +26,6 @@ issue 55:
 issue 80:
     bug: in some cases, mouse button up is still not handled
     fix: call mouse button up event before changing the active state only on the event bus for it
-
-issue 100:
-    bug: fps counter is constantly changing making it hard to read from
-    possible fix: implement some average fps system
-    possible better fix: use some smooth fps technique
 
 issue 113:
     bug: "uv-lock"-parameter is ignored in block-states

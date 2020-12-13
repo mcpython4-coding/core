@@ -1363,20 +1363,9 @@ R   [uuk]: improved world serialization API
     [uuk]: improved world gen API, again...
     [uuk]: added dessert biome
     [uuk]: implemented biome debug world generator
+    [uuk]: fixed BlockFactory
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
-    - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]
-X   - rewrite how assets are stored  [WIP]
-    - do not hardcode constants, move them to an public space / config files / resource data
-    - clean up changelog.txt, issues.txt and fixed_issues.txt
-X   - fix respawning in blocks
-X   - fix having two separated item atlas storages? -> one NEVER used? -> old may have been used at the slot bug?
-X   - fix being able to break blocks in gamemode 0 which you should not be able to (e.g. bedrock)
-    - make world generator mode system class or object based
     - fix furnace gui texture
-    - fix grass texture by introducing an coloring layer or temporary another texture
     - fix shulker boxes (and similar blocks?) not storing their inventory correctly
 XX  - fix post-generation code not generating correctly
-
-    - refactor event names
-    - do not read inventory config for each inventory, load it ones & share
