@@ -148,8 +148,8 @@ class WorldGenerationHandler:
         chunk.loaded = True
         logger.println("generating", chunk.position)
         dimension = chunk.dimension
-        configname = dimension.world_generation_config["configname"]
-        config = self.configs[configname]
+        config_name = dimension.world_generation_config["configname"]
+        config = self.configs[config_name]
         if "on_chunk_generate_pre" in config:
             config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
         # m = len(config["layers"])
@@ -164,8 +164,15 @@ class WorldGenerationHandler:
             shared.world_generation_handler.task_handler.process_tasks()
         logger.println("\r", end="")
         shared.event_handler.call("worldgen:chunk:finished", chunk)
+        config.on_chunk_generation_finished(chunk)
         chunk.generated = True
         chunk.loaded = True
+
+    def mark_finished(self, chunk):
+        config_name = chunk.get_dimension().world_generation_config["configname"]
+        config = self.configs[config_name]
+        shared.event_handler.call("worldgen:chunk:finished", chunk)
+        config.on_chunk_generation_finished(chunk)
 
     def register_layer(self, layer: mcpython.server.worldgen.layer.ILayer.ILayer):
         self.layers[layer.NAME] = layer  # todo: make more fancy
@@ -209,6 +216,7 @@ def load_modes():
         DefaultOverWorldGenerator,
         DebugOverWorldGenerator,
         DefaultNetherWorldGenerator,
+        BiomeGenDebugGenerator,
     )
 
 

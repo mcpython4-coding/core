@@ -640,7 +640,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             ] = biome_palette  # todo: move to global map of biomes
 
             height_map = chunk_instance.get_value("heightmap")
-            cdata["maps"]["height"] = [height_map[pos] for pos in positions]
+            cdata["maps"]["height"] = [height_map[pos] if pos in height_map else -1 for pos in positions]
 
         data[chunk] = cdata  # dump the chunk into the region
         write_region_data(

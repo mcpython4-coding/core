@@ -1362,6 +1362,7 @@ R   [uuk]: improved world serialization API
     [uuk]: Entity.tick() has now an dt parameter
     [uuk]: improved world gen API, again...
     [uuk]: added dessert biome
+    [uuk]: implemented biome debug world generator
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - revisit build system, maybe add obfuscated build with obfuscation mappings for MDK [WIP]

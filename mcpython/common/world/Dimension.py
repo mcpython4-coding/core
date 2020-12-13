@@ -84,7 +84,7 @@ class DimensionHandler:
                 "overworld",
                 {
                     "configname": (
-                        "minecraft:default_overworld"
+                        "minecraft:default_overworld"  # "minecraft:debug_biome_world_generator"
                         if "--debug-world" not in sys.argv
                         else "minecraft:debug_world_generator"
                     )

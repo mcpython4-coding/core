@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.world.AbstractInterface
 import time
-from mcpython import logger
+from mcpython import logger, shared
 import multiprocessing
 
 
@@ -226,6 +226,8 @@ class WorldGenerationTaskHandler:
                 if timer is not None and time.time() - start >= timer:
                     return
             if chunk in self.chunks:
+                if not chunk.generated:
+                    shared.world_generation_handler.mark_finished(chunk)
                 self.chunks.remove(chunk)
                 chunk.generated = True
                 chunk.finished = True
