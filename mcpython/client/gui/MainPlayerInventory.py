@@ -36,17 +36,19 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
             "minecraft:gui/container/inventory"
         )
         size = texture.size
-        texture = texture.crop((0, 0, 176 / 255 * size[0], 166 / 255 * size[1]))
+        texture = texture.crop((0, 0, 176 / 255 * size[0], 164 / 255 * size[1]))
         size = texture.size
         texture = texture.resize((size[0] * 2, size[1] * 2), PIL.Image.NEAREST)
-        cls.TEXTURE = mcpython.util.texture.to_pyglet_image(texture)
-        cls.TEXTURE_SIZE = texture.size
+        ground = PIL.Image.new("RGBA", (texture.size[0], texture.size[1]+4))
+        ground.paste(texture)
+        cls.TEXTURE = mcpython.util.texture.to_pyglet_image(ground)
+        cls.TEXTURE_SIZE = ground.size
 
     def __init__(self, hotbar):
         self.hotbar = hotbar
         super().__init__()
         inputs = [self.slots[40:42], self.slots[42:44]]
-        self.recipeinterface = mcpython.client.gui.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
+        self.recipe_interface = mcpython.client.gui.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
             inputs, self.slots[44]
         )
 
