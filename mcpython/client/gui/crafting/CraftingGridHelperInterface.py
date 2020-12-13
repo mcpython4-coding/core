@@ -171,8 +171,9 @@ class CraftingGridHelperInterface(
             new_map[transform[i]] = slot_map[key]
         return new_map
 
-    @staticmethod
+    @classmethod
     def check_shaped(
+        cls,
         recipe: mcpython.client.gui.crafting.GridRecipeInstances.GridShaped,
         item_table: dict,
     ) -> bool:
@@ -184,28 +185,43 @@ class CraftingGridHelperInterface(
         # check every slot if the right item is in it
         for pos in item_table.keys():
             item = item_table[pos]
-            if not any(
-                [item == (x[0] if type(x) != str else x) for x in recipe.inputs[pos]]
-            ):
+            if not cls.check_match(item, recipe.inputs[pos]):
                 return False
         return True
+
+    @classmethod
+    def check_match(cls, current, target) -> bool:
+        tags = G.registry.get_by_name("minecraft:item").entries[current].TAGS
+        for entry in target:
+            if type(entry) != str:
+                entry = entry[0]
+            if entry.startswith("#"):
+                if entry in tags:
+                    return True
+            if current == entry:
+                return True
+        return False
 
     @staticmethod
     def check_shapeless(
         recipe: mcpython.client.gui.crafting.GridRecipeInstances.GridShapeless,
         items: list,
     ) -> bool:
-        items = items[:]
-        for in_item in recipe.inputs:
-            flag = True
-            for value in in_item:
-                item, _ = (value, None) if type(value) == str else value
-                if flag and item in items:
-                    items.remove(item)
-                    flag = False
-            if flag:
+        tasked = recipe.inputs[:]
+        for item in items:
+            tags = G.registry.get_by_name("minecraft:item").entries[item].TAGS
+            for task in tasked[:]:
+                for entry in task:
+                    if type(entry) != str: entry = entry[0]
+                    if item == entry or (False if not entry.startswith("#") else entry in tags):
+                        tasked.remove(task)
+                        break
+                else:
+                    continue
+                break
+            else:
                 return False
-        return len(items) == 0
+        return len(tasked) == 0
 
     def update_output(self):
         self.slot_output_map.get_itemstack().clean()

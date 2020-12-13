@@ -1363,8 +1363,9 @@ R   [uuk]: improved world serialization API
     [uuk]: improved world gen API, again...
     [uuk]: added dessert biome
     [uuk]: implemented biome debug world generator
-    [uuk]: fixed BlockFactory
-    [uuk]: fixed main inventory rendering issue
+[B] [uuk]: fixed BlockFactory
+[B] [uuk]: fixed main inventory rendering issue
+    [uuk]: optimised recipe lookup
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - fix furnace gui texture

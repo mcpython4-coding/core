@@ -28,22 +28,7 @@ def transform_to_item_stack(item, table: dict) -> list:
                 return []
         return [(itemname, item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
-        try:
-            entries = G.tag_handler.taggroups["items"].tags["#" + item["tag"]].entries
-        except (KeyError, IndexError):
-            logger.println(
-                "tag loading issue for recipe transform of {} to valid item list".format(
-                    item
-                )
-            )
-            return []
-        items = G.registry.get_by_name("minecraft:item")
-        blocks = G.registry.get_by_name("minecraft:block")
-        for item in entries[:]:
-            if item not in items.entries:
-                if item not in blocks.entries:
-                    entries.remove(item)
-        return entries
+        return [("#"+item["tag"], item["count"] if "count" in item else 1)]
     elif type(item) == list:  # have we an list of items?
         values = [transform_to_item_stack(x, table) for x in item]
         value = []
@@ -51,7 +36,7 @@ def transform_to_item_stack(item, table: dict) -> list:
             value += v
         return value
     else:
-        logger.println("can't cast '" + str(item) + "' to valid itemlist")
+        logger.println("can't cast '" + str(item) + "' to valid item-list")
         return []
 
 
