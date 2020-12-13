@@ -78,19 +78,11 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         """
         self.eventbus.deactivate()
 
-    def on_draw_background(self):
-        """
-        called to draw the background of the inventory
-        """
+    def draw(self, hoveringslot=None):
         wx, _ = G.window.get_size()
         mcpython.util.opengl.draw_rectangle(
             (10, 10), (wx - 20, 20), color=(0.0, 0.0, 0.0, 0.8)
         )
-
-    def on_draw_overlay(self):
-        """
-        called to draw the overlay of the inventory
-        """
         text = html.escape(G.chat.text)
         if (round(time.time() - self.timer) % 2) == 1:
             self.update_text(text, G.chat.active_index)

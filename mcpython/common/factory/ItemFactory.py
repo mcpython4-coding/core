@@ -111,6 +111,9 @@ class ItemFactory:
     def copy(self):
         obj = type(self)()
         obj.__dict__ = self.__dict__.copy()
+        obj.used_item_files = obj.used_item_files.copy()
+        obj.baseclass = obj.baseclass.copy()
+        obj.tool_type = obj.tool_type.copy()
         return obj
 
     def finish_up(self, register=False):

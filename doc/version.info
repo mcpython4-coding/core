@@ -1369,8 +1369,6 @@ X   - fix respawning in blocks
 X   - fix having two separated item atlas storages? -> one NEVER used? -> old may have been used at the slot bug?
 X   - fix being able to break blocks in gamemode 0 which you should not be able to (e.g. bedrock)
     - make world generator mode system class or object based
-XXX - fix all non-block-items being rendered as apples, cannot be stacked to the same item, ...
-        can be eaten like an apple
     - fix furnace gui texture
     - fix grass texture [maybe affects all blocks?]
     - fix shulker boxes (and similar blocks?) not storing their inventory correctly

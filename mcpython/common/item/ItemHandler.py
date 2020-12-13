@@ -32,16 +32,16 @@ ITEM_ATLAS = mcpython.common.item.ItemAtlas.ItemAtlasHandler()
 def build():
     ITEM_ATLAS.build()
     ITEM_ATLAS.dump()
-    for itemclass in COLLECTED_ITEMS:
-        for file in itemclass.get_used_texture_files():
-            items.item_index_table[itemclass.NAME][
+    for cls in COLLECTED_ITEMS:
+        for i, file in enumerate(cls.get_used_texture_files()):
+            items.item_index_table[cls.NAME][
                 file
-            ] = ITEM_ATLAS.get_texture_info_or_add(itemclass.NAME + "#?0", file)
+            ] = ITEM_ATLAS.get_texture_info_or_add(cls.NAME + "#?"+str(i), file)
 
 
-def load_data(from_block_item_generator=False):
-    if not G.invalidate_cache and os.path.exists(G.build + "/itemblockfactory.json"):
-        with open(G.build + "/itemblockfactory.json") as f:
+def load_data():
+    if not G.invalidate_cache and os.path.exists(G.build + "/item_block_factory.json"):
+        with open(G.build + "/item_block_factory.json") as f:
             data = json.load(f)
         builder = logger.TableBuilder(
             header=[
@@ -52,8 +52,8 @@ def load_data(from_block_item_generator=False):
         )
         for entry in data[:]:
             name = entry[0]
-            blocktable = G.registry.get_by_name("minecraft:block").entries
-            if name in blocktable:
+            table = G.registry.get_by_name("minecraft:block").entries
+            if name in table:
                 obj = (
                     mcpython.common.factory.ItemFactory.ItemFactory()
                     .setName(name)
@@ -73,19 +73,19 @@ def load_data(from_block_item_generator=False):
                 builder.println("-'{}'".format(entry))
                 data.remove(entry)
         builder.finish()
-        with open(G.build + "/itemblockfactory.json", mode="w") as f:
+        with open(G.build + "/item_block_factory.json", mode="w") as f:
             json.dump(data, f)
 
 
-def register_item(registry, item_class):
-    tag_holder.register_class(item_class)
-    items.entries[item_class.NAME.split(":")[-1]] = item_class
-    if item_class.NAME in items.item_index_table:
+def register_item(registry, cls):
+    tag_holder.register_class(cls)
+    items.entries[cls.NAME.split(":")[-1]] = cls
+    if cls.NAME in items.item_index_table:
         return
-    items.item_index_table.setdefault(item_class.NAME, {})
-    for i, file in enumerate(item_class.get_used_texture_files()):
-        ITEM_ATLAS.add_file("{}#{}".format(item_class.NAME, i), file)
-    COLLECTED_ITEMS.append(item_class)
+    items.item_index_table.setdefault(cls.NAME, {})
+    for i, file in enumerate(cls.get_used_texture_files()):
+        ITEM_ATLAS.add_file("{}#{}".format(cls.NAME, i), file)
+    COLLECTED_ITEMS.append(cls)
 
 
 items = mcpython.common.event.Registry.Registry(

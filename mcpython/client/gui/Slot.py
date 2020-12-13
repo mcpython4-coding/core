@@ -238,7 +238,7 @@ class Slot(ISlot):
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
         elif self.itemstack.is_empty():
             self.sprite = None
-            if self.empty_image:
+            if self.empty_image is not None:
                 self.empty_image.position = (
                     self.position[0] + dx,
                     self.position[1] + dy,
