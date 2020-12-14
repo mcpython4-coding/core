@@ -15,10 +15,10 @@ import sys
 MC_VERSION_BASE = "20w49a"
 VERSION_TYPE = "dev"
 # possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
-VERSION_NAME = "20w31a"
+VERSION_NAME = "20w51a"
 
-DEVELOPING_FOR = "20w31a"
-DEVELOPMENT_COUNTER = 2
+DEVELOPING_FOR = "20w51a"
+DEVELOPMENT_COUNTER = 3
 
 # list of all versions since 19w52a to indicate order of release; used in save files todo: export to other file
 VERSION_ORDER = [
@@ -49,6 +49,7 @@ VERSION_ORDER = [
     "a1.1.0",
     "snapshot dev 6",
     "20w31a",
+    "20w51a"
 ]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(

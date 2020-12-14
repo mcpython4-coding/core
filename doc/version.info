@@ -1367,8 +1367,4 @@ R   [uuk]: improved world serialization API
 [B] [uuk]: fixed main inventory rendering issue
     [uuk]: optimised recipe lookup
 [B] [uuk]: fixed build system not working correctly
-
-Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
-    - fix furnace gui texture
-    - fix shulker boxes (and similar blocks?) not storing their inventory correctly
-XX  - fix post-generation code not generating correctly
+[github]: end of phase for internal changes, on 14.12.2020
