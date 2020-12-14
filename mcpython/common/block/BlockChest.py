@@ -19,16 +19,23 @@ from mcpython import shared as G, logger
 import mcpython.common.item.ItemTool
 import mcpython.util.enums
 from . import AbstractBlock
+import mcpython.client.rendering.blocks.ChestRenderer
 
 BBOX = mcpython.common.block.BoundingBox.BoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)
 )  # the bounding box of the chest
 
 
-class BlockChest(AbstractBlock.AbstractBlock):
+class BlockChest(AbstractBlock.AbstractBlock, mcpython.client.rendering.blocks.ChestRenderer.IChestRenderAble):
     """
     The Chest block class
     """
+
+    RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+        "assets/minecraft/textures/entity/chest/normal.png",
+        "assets/minecraft/textures/entity/chest/normal_left.png",
+        "assets/minecraft/textures/entity/chest/normal_right.png",
+    )
 
     now: datetime = datetime.now()  # now
     is_christmas: bool = (
@@ -59,6 +66,8 @@ class BlockChest(AbstractBlock.AbstractBlock):
 
         self.inventory = InventoryChest.InventoryChest()
         self.loot_table_link = None
+
+        self.face_state.custom_renderer = self.RENDERER
 
     def on_block_added(self):
         if self.real_hit:
