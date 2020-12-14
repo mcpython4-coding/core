@@ -35,7 +35,7 @@ class DefaultBiomeMapLayer(ILayer):
     @staticmethod
     def normalize_config(config: LayerConfig):
         if not hasattr(config, "size"):
-            config.size = 1.5
+            config.size = 10  # todo: make biome count dependent
 
     NAME = "minecraft:biome_map_default"
 

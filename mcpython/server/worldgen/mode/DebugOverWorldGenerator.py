@@ -59,11 +59,6 @@ class DebugWorldGenerator(
     @classmethod
     def on_chunk_generation_finished(cls, chunk):
         cx, cz = chunk.position
-        if (
-            G.world.get_active_dimension().world_generation_config["configname"]
-            != "debug_overworld"
-        ):
-            return
 
         if (cx, cz) in BlockInfo.TABLE:
             height_map = chunk.get_value("heightmap")

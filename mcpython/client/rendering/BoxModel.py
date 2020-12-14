@@ -48,18 +48,18 @@ class BoxModel:
     def new(cls, data: dict, model=None):
         return cls(data, model)
 
-    def __init__(self, data: dict, model=None):
+    def __init__(self, data: dict, model=None, flip_y=True):
         # todo: move most of the code here to the build function
         self.atlas = None
         self.model = model
         self.data = data
         self.boxposition = [x / 16 for x in data["from"]]
-        self.boxsize = (
+        self.box_size = (
             data["to"][0] - data["from"][0],
             data["to"][1] - data["from"][1],
             data["to"][2] - data["from"][2],
         )
-        self.rposition = [x // 2 / 16 for x in self.boxsize]
+        self.relative_position = [x // 2 / 16 for x in self.box_size]
         self.faces = {
             mcpython.util.enums.EnumSide.U: None,
             mcpython.util.enums.EnumSide.D: None,
@@ -86,25 +86,30 @@ class BoxModel:
             data["to"][2] / 16,
             data["to"][1] / 16,
         )
-        self.texregion = [UD, UD, NS, EW, NS, EW]
-        self.texregionrotate = [0] * 6
+        self.texture_region = [UD, UD, NS, EW, NS, EW]
+        self.texture_region_rotate = [0] * 6
         for face in mcpython.util.enums.EnumSide.iterate():
-            facename = face.normal_name
-            if facename in data["faces"]:
-                f = data["faces"][facename]
-                addr = f["texture"]
+            face_name = face.normal_name
+            if face_name in data["faces"]:
+                f = data["faces"][face_name]
+                var = f["texture"]
                 self.faces[face] = (
-                    model.get_texture_position(addr) if model is not None else None
+                    model.get_texture_position(var) if model is not None else None
                 )
                 index = SIDE_ORDER.index(face)
                 if "uv" in f:
                     uvs = tuple(f["uv"])
                     uvs = (uvs[0], 16 - uvs[1], uvs[2], 16 - uvs[3])
-                    self.texregion[index] = tuple(
-                        [uvs[i] / 16 for i in UV_INDICES[index]]
-                    )
+                    if flip_y:
+                        self.texture_region[index] = tuple(
+                            [(uvs[i] / 16) if i % 2 == 0 else (1-uvs[i] / 16) for i in UV_INDICES[index]]
+                        )
+                    else:
+                        self.texture_region[index] = tuple(
+                            [uvs[i] / 16 for i in UV_INDICES[index]]
+                        )
                 if "rotation" in f:
-                    self.texregionrotate[index] = f["rotation"]
+                    self.texture_region_rotate[index] = f["rotation"]
         self.rotation = (0, 0, 0)
         self.rotation_core = (0, 0, 0)
         if "rotation" in data:
@@ -118,7 +123,7 @@ class BoxModel:
             self.rotation,
             self.rotation_core,
             tuple(self.boxposition),
-            self.boxsize,
+            self.box_size,
         )
         if status in SIMILAR_VERTEX:
             self.rotated_vertices = SIMILAR_VERTEX[status].rotated_vertices
@@ -141,9 +146,9 @@ class BoxModel:
             0,
             0,
             0,
-            self.boxsize[0] / 32,
-            self.boxsize[1] / 32,
-            self.boxsize[2] / 32,
+            self.box_size[0] / 32,
+            self.box_size[1] / 32,
+            self.box_size[2] / 32,
             [True] * 6,
         )
 
@@ -163,9 +168,9 @@ class BoxModel:
             east,
             south,
             west,
-            tex_region=self.texregion,
+            tex_region=self.texture_region,
             size=atlas.size,
-            rotation=self.texregionrotate,
+            rotation=self.texture_region_rotate,
         )
         self.deactive = {
             face: array[i] == (0, 0) or array[i] is None
@@ -197,9 +202,9 @@ class BoxModel:
             vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in vertex_r]
         return [sum(e, tuple()) for e in vertex_r]"""
         x, y, z = position
-        x += self.boxposition[0] - 0.5 + self.rposition[0]
-        y += self.boxposition[1] - 0.5 + self.rposition[1]
-        z += self.boxposition[2] - 0.5 + self.rposition[2]
+        x += self.boxposition[0] - 0.5 + self.relative_position[0]
+        y += self.boxposition[1] - 0.5 + self.relative_position[1]
+        z += self.boxposition[2] - 0.5 + self.relative_position[2]
         if rotation in self.rotated_vertices:  # is there data prepared in this case?
             vertex_r = [
                 [(e[0] + x, e[1] + y, e[2] + z) for e in m]
@@ -210,9 +215,9 @@ class BoxModel:
                 x,
                 y,
                 z,
-                self.boxsize[0] / 32,
-                self.boxsize[1] / 32,
-                self.boxsize[2] / 32,
+                self.box_size[0] / 32,
+                self.box_size[1] / 32,
+                self.box_size[2] / 32,
                 [True] * 6,
             )
             vertex_r = []

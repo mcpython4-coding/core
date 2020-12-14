@@ -1372,3 +1372,4 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed issue 204: start chest was generating in non-default-overworld-dimensions
 [uuk]: re-implemented chest renderer
 [uuk]: BoxModel rendering code is capable to do more stuff now
+[uuk]: fixed issue 244: uv's were flipped upside down

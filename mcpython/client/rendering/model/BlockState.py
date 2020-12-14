@@ -207,8 +207,8 @@ class MultiPartDecoder(IBlockStateDecoder):
                     for boxmodel in model.boxmodels:
                         bbox.bboxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
-                                tuple([e / 16 for e in boxmodel.boxsize]),
-                                tuple([e / 16 for e in boxmodel.rposition]),
+                                tuple([e / 16 for e in boxmodel.box_size]),
+                                tuple([e / 16 for e in boxmodel.relative_position]),
                                 rotation=config["rotation"],
                             )
                         )
@@ -227,8 +227,8 @@ class MultiPartDecoder(IBlockStateDecoder):
                     for boxmodel in model.boxmodels:
                         bbox.bboxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
-                                tuple([e / 16 for e in boxmodel.boxsize]),
-                                tuple([e / 16 for e in boxmodel.rposition]),
+                                tuple([e / 16 for e in boxmodel.box_size]),
+                                tuple([e / 16 for e in boxmodel.relative_position]),
                                 rotation=config["rotation"],
                             )
                         )
@@ -345,8 +345,8 @@ class DefaultDecoder(IBlockStateDecoder):
                     rotation = config["rotation"]
                     bbox.bboxes.append(
                         mcpython.common.block.BoundingBox.BoundingBox(
-                            tuple([e / 16 for e in boxmodel.boxsize]),
-                            tuple([e / 16 for e in boxmodel.rposition]),
+                            tuple([e / 16 for e in boxmodel.box_size]),
+                            tuple([e / 16 for e in boxmodel.relative_position]),
                             rotation=rotation,
                         )
                     )
