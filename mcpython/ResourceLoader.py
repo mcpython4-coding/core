@@ -106,8 +106,7 @@ class IResourceLocator(ABC):
 
 class ResourceZipFile(IResourceLocator):
     """
-    Implementation for archives
-    todo: can we cache the namelist?
+    Implementation for zip-archives
     """
 
     @staticmethod
@@ -232,7 +231,7 @@ def load_resource_packs():
     i = 0
     while i < len(sys.argv):
         element = sys.argv[i]
-        if element == "--addresourcepath":
+        if element == "--add-resource-path":
             path = sys.argv[i + 1]
             if zipfile.is_zipfile(path):
                 RESOURCE_LOCATIONS.append(ResourceZipFile(path))

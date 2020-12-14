@@ -102,7 +102,7 @@ class Chat:
         """
         self.text: str = ""
         self.history: list = []
-        self.historyindex = -1
+        self.history_index = -1
         self.active_index = -1
         self.CANCEL_INPUT = False
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
@@ -159,17 +159,17 @@ class Chat:
             self.history.insert(0, self.text)
             self.close()
         elif (
-            symbol == key.UP and self.historyindex < len(self.history) - 1
+                symbol == key.UP and self.history_index < len(self.history) - 1
         ):  # go one item up in the history
-            self.historyindex += 1
-            self.text = self.history[self.historyindex]
+            self.history_index += 1
+            self.text = self.history[self.history_index]
             self.active_index = len(self.text)
         elif (
-            symbol == key.DOWN and self.historyindex >= 0
+                symbol == key.DOWN and self.history_index >= 0
         ):  # go one item down in the history
-            self.historyindex -= 1
-            if self.historyindex != -1:
-                self.text = self.history[self.historyindex]
+            self.history_index -= 1
+            if self.history_index != -1:
+                self.text = self.history[self.history_index]
             else:
                 self.text = ""
             self.active_index = len(self.text)

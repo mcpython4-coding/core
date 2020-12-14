@@ -58,16 +58,16 @@ class ModDependency:
         mod = G.mod_loader.mods[self.name]
         if self.version_range[0] is not None:
             if self.version_range[1] is not None:
-                return self.__testfor(mod.version, self.version_range)
-            return self.__testfor(mod.version, self.version_range[0])
+                return self.__test_for(mod.version, self.version_range)
+            return self.__test_for(mod.version, self.version_range[0])
         if self.versions is None:
             return True
         if type(self.versions) == list:
-            return any([self.__testfor(mod.version, e) for e in self.versions])
+            return any([self.__test_for(mod.version, e) for e in self.versions])
         return False
 
     @classmethod
-    def __testfor(cls, version, args: tuple) -> bool:
+    def __test_for(cls, version, args: tuple) -> bool:
         """
         will test for the arrival of the dependency
         :param version: the version found
@@ -148,12 +148,12 @@ class Mod:
                     )
                 )
         self.name = name
-        self.eventbus: mcpython.event.EventBus.EventBus = (
+        self.eventbus: mcpython.common.event.EventBus.EventBus = (
             mcpython.common.event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
                 crash_on_error=False
             )
         )
-        self.dependinfo = [
+        self.depend_info = [
             [] for _ in range(7)
         ]  # need, possible, not possible, before, after, only with, only without
         self.path = None
@@ -194,8 +194,8 @@ class Mod:
         """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
-        self.dependinfo[0].append(depend)
-        self.dependinfo[4].append(depend)
+        self.depend_info[0].append(depend)
+        self.depend_info[4].append(depend)
         return self
 
     def add_not_load_dependency(self, depend: typing.Union[str, ModDependency]):
@@ -205,7 +205,7 @@ class Mod:
         """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
-        self.dependinfo[0].append(depend)
+        self.depend_info[0].append(depend)
         return self
 
     def add_not_compatible(self, depend: typing.Union[str, ModDependency]):
@@ -215,7 +215,7 @@ class Mod:
         """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
-        self.dependinfo[2].append(depend)
+        self.depend_info[2].append(depend)
         return self
 
     def add_load_before_if_arrival(self, depend: typing.Union[str, ModDependency]):
@@ -226,8 +226,8 @@ class Mod:
         """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
-        self.dependinfo[1].append(depend)
-        self.dependinfo[3].append(depend)
+        self.depend_info[1].append(depend)
+        self.depend_info[3].append(depend)
         return self
 
     def add_load_after_if_arrival(self, depend: typing.Union[str, ModDependency]):
@@ -238,8 +238,8 @@ class Mod:
         """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
-        self.dependinfo[1].append(depend)
-        self.dependinfo[4].append(depend)
+        self.depend_info[1].append(depend)
+        self.depend_info[4].append(depend)
         return self
 
     def add_load_only_when_arrival(self, depend: typing.Union[str, ModDependency]):
@@ -249,7 +249,7 @@ class Mod:
         """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
-        self.dependinfo[5].append(depend)
+        self.depend_info[5].append(depend)
         return self
 
     def add_load_only_when_not_arrival(self, depend: typing.Union[str, ModDependency]):
@@ -260,5 +260,5 @@ class Mod:
         """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
-        self.dependinfo[6].append(depend)
+        self.depend_info[6].append(depend)
         return self

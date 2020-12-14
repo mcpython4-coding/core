@@ -422,7 +422,7 @@ class ModLoader:
 
     def __init__(self):
         """
-        creates an new modloader-instance
+        creates an new mod-loader-instance
         """
         self.located_mods = []
         self.mods = {}
@@ -477,31 +477,31 @@ class ModLoader:
         will return an list of mod locations found for loading
         todo: split up into smaller portions
         """
-        modlocations = []
-        locs = [G.home + "/mods"]
+        locations = []
+        folders = [G.home + "/mods"]
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
-            if element == "--addmoddir":
-                locs.append(sys.argv[i + 1])
+            if element == "--add-mod-dir":
+                folders.append(sys.argv[i + 1])
                 for _ in range(2):
                     sys.argv.pop(i)
-                sys.path.append(locs[-1])
-            elif element == "--addmodfile":
-                modlocations.append(sys.argv[i + 1])
+                sys.path.append(folders[-1])
+            elif element == "--add-mod-file":
+                locations.append(sys.argv[i + 1])
                 for _ in range(2):
                     sys.argv.pop(i)
             else:
                 i += 1
-        for loc in locs:
-            modlocations += [os.path.join(loc, x) for x in os.listdir(loc)]
+        for loc in folders:
+            locations += [os.path.join(loc, x) for x in os.listdir(loc)]
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
-            if element == "--removemodfile":
+            if element == "--remove-mod-file":
                 file = sys.argv[i + 1]
-                if file in modlocations:
-                    modlocations.remove(file)
+                if file in locations:
+                    locations.remove(file)
                 else:
                     self.error_builder.println(
                         "-attempted to remove mod '{}' which is not found".format(file)
@@ -511,11 +511,11 @@ class ModLoader:
             else:
                 i += 1
 
-        G.event_handler.call("modloader:location_search", modlocations)
+        G.event_handler.call("modloader:location_search", locations)
 
-        for i, location in enumerate(modlocations):
+        for i, location in enumerate(locations):
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
-        return modlocations
+        return locations
 
     def load_mod_jsons(self, locations: list):
         """
@@ -534,11 +534,11 @@ class ModLoader:
                     with zipfile.ZipFile(file) as f:
                         try:
                             with f.open("mod.json", mode="r") as sf:
-                                self.load_mods_json(sf.read(), file)
+                                self.load_mods_json(sf.read().decode("utf-8"), file)
                         except KeyError:
                             try:
                                 with f.open("mod.toml", mode="r") as sf:
-                                    self.load_mods_toml(sf.read(), file)
+                                    self.load_mods_toml(sf.read().decode("utf-8"), file)
                             except KeyError:
                                 self.error_builder.println(
                                     "- could not locate mod.json file in mod at '{}'".format(
@@ -555,8 +555,8 @@ class ModLoader:
                         data = importlib.import_module(
                             file.split("/")[-1].split("\\")[-1].split(".")[0]
                         )
-                    for modinst in self.located_mod_instances:
-                        modinst.package = data
+                    for instance in self.located_mod_instances:
+                        instance.package = data
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
                 mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
@@ -578,12 +578,12 @@ class ModLoader:
         """
         will load all mods arrival
         """
-        modlocations = self.get_locations()
-        self.load_mod_jsons(modlocations)
+        locations = self.get_locations()
+        self.load_mod_jsons(locations)
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
-            if element == "--removemod":
+            if element == "--remove-mod":
                 name = sys.argv[i + 1]
                 if name in self.mods:
                     del self.mods[name]
@@ -632,7 +632,7 @@ class ModLoader:
         if not os.path.isdir(G.build):
             os.makedirs(G.build)
         with open(G.build + "/mods.json", mode="w") as f:
-            m = {modinst.name: modinst.version for modinst in self.mods.values()}
+            m = {instance.name: instance.version for instance in self.mods.values()}
             json.dump(m, f)
 
     def load_mods_json(self, data: str, file: str):
@@ -704,38 +704,38 @@ class ModLoader:
                         )
                         continue
                     version = tuple([int(e) for e in entry["version"].split(".")])
-                    modinstance = mcpython.common.mod.Mod.Mod(modname, version)
+                    instance = mcpython.common.mod.Mod.Mod(modname, version)
                     if "depends" in entry:
                         for depend in entry["depends"]:
                             t = None if "type" not in depend else depend["type"]
                             if t is None or t == "depend":
-                                modinstance.add_dependency(self.cast_dependency(depend))
+                                instance.add_dependency(self.cast_dependency(depend))
                             elif t == "depend_not_load_order":
-                                modinstance.add_not_load_dependency(
+                                instance.add_not_load_dependency(
                                     self.cast_dependency(depend)
                                 )
                             elif t == "not_compatible":
-                                modinstance.add_not_compatible(
+                                instance.add_not_compatible(
                                     self.cast_dependency(depend)
                                 )
                             elif t == "load_before":
-                                modinstance.add_load_before_if_arrival(
+                                instance.add_load_before_if_arrival(
                                     self.cast_dependency(depend)
                                 )
                             elif t == "load_after":
-                                modinstance.add_load_after_if_arrival(
+                                instance.add_load_after_if_arrival(
                                     self.cast_dependency(depend)
                                 )
                             elif t == "only_if":
-                                modinstance.add_load_only_when_arrival(
+                                instance.add_load_only_when_arrival(
                                     self.cast_dependency(depend)
                                 )
                             elif t == "only_if_not":
-                                modinstance.add_load_only_when_not_arrival(
+                                instance.add_load_only_when_not_arrival(
                                     self.cast_dependency(depend)
                                 )
                     if "load_resources" in entry and entry["load_resources"]:
-                        modinstance.add_load_default_resources()
+                        instance.add_load_default_resources()
                     for location in entry["load_files"]:
                         try:
                             importlib.import_module(
@@ -799,15 +799,15 @@ class ModLoader:
         self.load_from_decoded_json(
             {"main files": [e["importable"] for e in data["main_files"]]}, file
         )
-        for modinstance in self.located_mod_instances:
-            modinstance.add_dependency(
+        for instance in self.located_mod_instances:
+            instance.add_dependency(
                 mcpython.common.mod.Mod.ModDependency("minecraft", mc_version)
             )
         for modname in data["dependencies"]:
             for dependency in data["dependencies"][modname]:
-                dependname = dependency["modId"]
-                if dependname != "forge":
-                    self.mods[modname].add_dependency(dependname)
+                name = dependency["modId"]
+                if name != "forge":
+                    self.mods[modname].add_dependency(name)
                     # todo: add version loader
 
     def add_to_add(self, instance: mcpython.common.mod.Mod.Mod):
@@ -829,9 +829,9 @@ class ModLoader:
         todo: add config option for strategy: fail, load newest, load oldest, load all
         """
         errors = False
-        modinfo = {}
+        mod_info = {}
         for mod in self.located_mods:
-            if mod.name in modinfo:
+            if mod.name in mod_info:
                 self.error_builder.println(
                     " -Mod '{}' found in {} has more than one version in the folder. Please load only every mod ONES".format(
                         mod.name,
@@ -840,59 +840,60 @@ class ModLoader:
                 )
                 errors = True
             else:
-                modinfo[mod.name] = []
-        return errors, modinfo
+                mod_info[mod.name] = []
+        return errors, mod_info
 
-    def check_dependency_errors(self, errors: bool, modinfo: dict):
+    def check_dependency_errors(self, errors: bool, mod_info: dict):
         """
         will iterate through
         :param errors: the error list
-        :param modinfo: the mod info dict
-        :return: errors and modinfo-tuple
+        :param mod_info: the mod info dict
+        :return: errors and mod-info-tuple
         """
         for mod in self.located_mods:
-            for depend in mod.dependinfo[0]:
+            for depend in mod.depend_info[0]:
                 if not depend.arrival():
                     self.error_builder.println(
                         "- Mod '{}' needs mod {} which is not provided".format(
                             mod.name, depend
                         )
                     )
-            for depend in mod.dependinfo[2]:
+            for depend in mod.depend_info[2]:
                 if depend.arrival():
                     self.error_builder.println(
                         "- Mod '{}' is incompatible with {} which is provided".format(
                             mod.name, depend
                         )
                     )
-            for depend in mod.dependinfo[5]:
+            for depend in mod.depend_info[5]:
                 if not depend.arrival():
-                    del modinfo[mod.name]
+                    del mod_info[mod.name]
                     del self.mods[mod.name]
-            for depend in mod.dependinfo[6]:
+            for depend in mod.depend_info[6]:
                 if depend.arrival():
-                    del modinfo[mod.name]
+                    del mod_info[mod.name]
                     del self.mods[mod.name]
-        return errors, modinfo
+        return errors, mod_info
 
     def sort_mods(self):
         """
-        will create the modorder-list by sorting after dependencies
+        will create the mod-order-list by sorting after dependencies
+        todo: use build-in library
         """
-        errors, modinfo = self.check_dependency_errors(*self.check_mod_duplicates())
+        errors, mod_info = self.check_dependency_errors(*self.check_mod_duplicates())
         for mod in self.located_mods:
-            for depend in mod.dependinfo[4]:
-                if mod.name in modinfo and depend.name not in modinfo[mod.name]:
-                    modinfo[mod.name].append(depend.name)
-            for depend in mod.dependinfo[3]:
-                if depend.name in modinfo and mod.name not in modinfo[depend.name]:
-                    modinfo[depend.name].append(mod.name)
+            for depend in mod.depend_info[4]:
+                if mod.name in mod_info and depend.name not in mod_info[mod.name]:
+                    mod_info[mod.name].append(depend.name)
+            for depend in mod.depend_info[3]:
+                if depend.name in mod_info and mod.name not in mod_info[depend.name]:
+                    mod_info[depend.name].append(mod.name)
         if errors:
             logger.println("found mods: ")
             logger.println(
                 " -",
                 "\n - ".join(
-                    [modinstance.mod_string() for modinstance in self.mods.values()]
+                    [instance.mod_string() for instance in self.mods.values()]
                 ),
             )
             logger.println()
@@ -901,7 +902,7 @@ class ModLoader:
             sys.exit(-1)
         self.mod_loading_order = list(
             mcpython.util.math.topological_sort(
-                [(key, modinfo[key]) for key in modinfo.keys()]
+                [(key, mod_info[key]) for key in mod_info.keys()]
             )
         )
         self.error_builder.finish()
@@ -938,21 +939,21 @@ class ModLoader:
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
             G.state_handler.active_state
         )
-        modinst: mcpython.common.mod.Mod.Mod = self.mods[
+        instance: mcpython.common.mod.Mod.Mod = self.mods[
             self.mod_loading_order[stage.active_mod_index]
         ]
         if (
-            stage.active_event_name in modinst.eventbus.event_subscriptions
-            and len(modinst.eventbus.event_subscriptions[stage.active_event_name]) > 0
+            stage.active_event_name in instance.eventbus.event_subscriptions
+            and len(instance.eventbus.event_subscriptions[stage.active_event_name]) > 0
         ):
-            f, _, _, text = modinst.eventbus.event_subscriptions[
+            f, _, _, text = instance.eventbus.event_subscriptions[
                 stage.active_event_name
             ][0]
         else:
             f, text = None, ""
         astate.parts[2].text = text if text is not None else "function {}".format(f)
         astate.parts[1].text = "{} ({}/{})".format(
-            modinst.name, stage.active_mod_index + 1, len(self.mods)
+            instance.name, stage.active_mod_index + 1, len(self.mods)
         )
         astate.parts[1].progress = stage.active_mod_index + 1
         index = (

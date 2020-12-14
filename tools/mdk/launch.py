@@ -25,7 +25,7 @@ subprocess.call(
     [
         sys.executable,
         data["path"] + "/__main__.py",
-        "--addmodfile",
+        "--add-mod-file",
         local + "/source",
         "--home-folder",
         data["home"],

@@ -61,50 +61,50 @@ def _copytree(
     if not os.path.isdir(dst):
         os.makedirs(dst, exist_ok=dirs_exist_ok)
     errors = []
-    use_srcentry = copy_function is shutil.copy2 or copy_function is shutil.copy
+    use_src_entry = copy_function is shutil.copy2 or copy_function is shutil.copy
 
-    for srcentry in entries:
-        if srcentry.name in ignored_names:
+    for src_entry in entries:
+        if src_entry.name in ignored_names:
             continue
-        srcname = os.path.join(src, srcentry.name)
-        dstname = os.path.join(dst, srcentry.name)
-        srcobj = srcentry if use_srcentry else srcname
+        src_name = os.path.join(src, src_entry.name)
+        dst_name = os.path.join(dst, src_entry.name)
+        src_obj = src_entry if use_src_entry else src_name
         try:
-            is_symlink = srcentry.is_symlink()
+            is_symlink = src_entry.is_symlink()
             if is_symlink and os.name == "nt":
                 # Special check for directory junctions, which appear as
                 # symlinks but we want to recurse.
-                lstat = srcentry.stat(follow_symlinks=False)
-                if lstat.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT:
+                l_stat = src_entry.stat(follow_symlinks=False)
+                if l_stat.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT:
                     is_symlink = False
             if is_symlink:
-                linkto = os.readlink(srcname)
+                link_to = os.readlink(src_name)
                 if symlinks:
                     # We can't just leave it to `copy_function` because legacy
                     # code with a custom `copy_function` may rely on copytree
                     # doing the right thing.
-                    os.symlink(linkto, dstname)
-                    shutil.copystat(srcobj, dstname, follow_symlinks=not symlinks)
+                    os.symlink(link_to, dst_name)
+                    shutil.copystat(src_obj, dst_name, follow_symlinks=not symlinks)
                 else:
                     # ignore dangling symlink if the flag is on
-                    if not os.path.exists(linkto) and ignore_dangling_symlinks:
+                    if not os.path.exists(link_to) and ignore_dangling_symlinks:
                         continue
                     # otherwise let the copy occur. copy2 will raise an error
-                    if srcentry.is_dir():
+                    if src_entry.is_dir():
                         copytree(
-                            srcobj,
-                            dstname,
+                            src_obj,
+                            dst_name,
                             symlinks,
                             ignore,
                             copy_function,
                             dirs_exist_ok=dirs_exist_ok,
                         )
                     else:
-                        copy_function(srcobj, dstname)
-            elif srcentry.is_dir():
+                        copy_function(src_obj, dst_name)
+            elif src_entry.is_dir():
                 copytree(
-                    srcobj,
-                    dstname,
+                    src_obj,
+                    dst_name,
                     symlinks,
                     ignore,
                     copy_function,
@@ -112,13 +112,13 @@ def _copytree(
                 )
             else:
                 # Will raise a SpecialFileError for unsupported f types
-                copy_function(srcobj, dstname)
+                copy_function(src_obj, dst_name)
         # catch the Error from the recursive copytree so that we can
         # continue with other files
         except shutil.Error as err:
             errors.extend(err.args[0])
         except OSError as why:
-            errors.append((srcname, dstname, str(why)))
+            errors.append((src_name, dst_name, str(why)))
     try:
         shutil.copystat(src, dst)
     except OSError as why:
@@ -179,6 +179,7 @@ if not os.path.exists(out):
 
 
 def build():
+    # todo: add some form of class-structured system here
     start = time.time()
 
     print("creating target directory {}".format(folder))

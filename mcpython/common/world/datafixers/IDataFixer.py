@@ -19,7 +19,7 @@ class IDataFixer(mcpython.common.event.Registry.IRegistryContent):
     FIXES_TO = None
 
     @classmethod
-    def apply(cls, savefile, *args):
+    def apply(cls, save_file, *args):
         pass
 
 
@@ -82,12 +82,12 @@ class IPartFixer(IDataFixer, ABC):
     TARGET_SERIALIZER_NAME = None  # the name of the fixer dedicated to these part
 
     @classmethod
-    def apply(cls, savefile, *args, **kwargs):
+    def apply(cls, save_file, *args, **kwargs):
         """
         default implementation of the IPartFixer apply() calling apply_part_fixer(cls) on the SERIALIZER specified
         by TARGET_SERIALIZER_NAME
         Mods may want to override this method when doing other special stuff
         """
-        savefile.get_serializer_for(cls.TARGET_SERIALIZER_NAME).apply_part_fixer(
-            savefile, cls, *args, **kwargs
+        save_file.get_serializer_for(cls.TARGET_SERIALIZER_NAME).apply_part_fixer(
+            save_file, cls, *args, **kwargs
         )

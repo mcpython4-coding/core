@@ -9,3 +9,4 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+from . import IDataSerializer
