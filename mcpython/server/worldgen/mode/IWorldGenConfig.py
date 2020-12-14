@@ -55,6 +55,8 @@ class IWorldGenConfig:
     LANDMASSES = []
     LAYERS = []
 
+    GENERATES_START_CHEST = False
+
     @classmethod
     def on_chunk_generation_finished(cls, chunk):
         pass

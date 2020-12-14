@@ -35,5 +35,7 @@ class DefaultOverworldGenerator(
 
     BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.DefaultBiomeSource
 
+    GENERATES_START_CHEST = True
+
 
 G.world_generation_handler.register_world_gen_config(DefaultOverworldGenerator)

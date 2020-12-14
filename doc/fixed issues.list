@@ -226,4 +226,6 @@ issue 240: Entity's tick() function was not called; fixed on 20.07.2020 by uuk
 issue 241: block command entry was not accepting minecraft:air as an block; fixed on 20.07.2020 by uuk
 issue 242: CombinedSlabFactory was not generating block state correctly; fixed on 28.07.2020 by uuk
 issue 243: InventoryHandler was miss-behaving in some cases; fixed on 30.07.2020 by uuk
-[some unlisted bug fixes during internal changes phase]
+[a lot of unlisted bug fixes during internal changes phase]
+
+issue 204: start is generated in debug world; fixed on 14.12.2020 by uuk

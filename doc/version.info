@@ -1368,3 +1368,5 @@ R   [uuk]: improved world serialization API
     [uuk]: optimised recipe lookup
 [B] [uuk]: fixed build system not working correctly
 [github]: end of phase for internal changes, on 14.12.2020
+
+[uuk]: fixed issue 204: start chest was generating in non-default-overworld-dimensions

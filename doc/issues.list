@@ -133,11 +133,6 @@ issue 201:
     fix: implement system to have an event bus for an generator mode only active when in an world with these world
         generator
 
-issue 204:  [removed with advanced world gen]
-    bug: debug world generates start chest
-    caused by: missing configuration for starter chest in world gen options
-    fix: add option to enable start chest gen
-
 issue 217:  [removed with save rework]
     bug: chest content can get lost [see warnings in log]
 

@@ -148,8 +148,7 @@ class WorldGenerationHandler:
         chunk.loaded = True
         logger.println("generating", chunk.position)
         dimension = chunk.dimension
-        config_name = dimension.world_generation_config["configname"]
-        config = self.configs[config_name]
+        config = self.get_current_config(dimension)
         if "on_chunk_generate_pre" in config:
             config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
         # m = len(config["layers"])
@@ -167,6 +166,10 @@ class WorldGenerationHandler:
         config.on_chunk_generation_finished(chunk)
         chunk.generated = True
         chunk.loaded = True
+
+    def get_current_config(self, dimension):
+        config_name = dimension.world_generation_config["configname"]
+        return self.configs[config_name]
 
     def mark_finished(self, chunk):
         config_name = chunk.get_dimension().world_generation_config["configname"]

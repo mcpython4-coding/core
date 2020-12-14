@@ -177,14 +177,14 @@ class StateWorldGeneration(State.State):
         mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
         G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
 
-        # set spawn-point
-        chunk = G.world.get_active_dimension().get_chunk((0, 0))
-        x, z = random.randint(0, 15), random.randint(0, 15)
-        height = chunk.get_maximum_y_coordinate_from_generation(x, z)
-        blockchest = G.world.get_active_dimension().add_block(
-            (x, height + 1, z), "minecraft:chest"
-        )
-        blockchest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
+        if G.world_generation_handler.get_current_config(G.world.get_dimension(0)).GENERATES_START_CHEST:
+            chunk = G.world.get_active_dimension().get_chunk((0, 0))
+            x, z = random.randint(0, 15), random.randint(0, 15)
+            height = chunk.get_maximum_y_coordinate_from_generation(x, z)
+            block_chest = G.world.get_active_dimension().add_block(
+                (x, height + 1, z), "minecraft:chest"
+            )
+            block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
         G.event_handler.call("on_game_enter")
 
         # add surrounding chunks to load list
