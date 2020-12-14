@@ -159,13 +159,13 @@ class Chat:
             self.history.insert(0, self.text)
             self.close()
         elif (
-                symbol == key.UP and self.history_index < len(self.history) - 1
+            symbol == key.UP and self.history_index < len(self.history) - 1
         ):  # go one item up in the history
             self.history_index += 1
             self.text = self.history[self.history_index]
             self.active_index = len(self.text)
         elif (
-                symbol == key.DOWN and self.history_index >= 0
+            symbol == key.DOWN and self.history_index >= 0
         ):  # go one item down in the history
             self.history_index -= 1
             if self.history_index != -1:

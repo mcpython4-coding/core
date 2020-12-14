@@ -1370,3 +1370,5 @@ R   [uuk]: improved world serialization API
 [github]: end of phase for internal changes, on 14.12.2020
 
 [uuk]: fixed issue 204: start chest was generating in non-default-overworld-dimensions
+[uuk]: re-implemented chest renderer
+[uuk]: BoxModel rendering code is capable to do more stuff now

@@ -107,6 +107,9 @@ class EnumSide(enum.Enum):
                 face = ROTATE[i][index]
         return face
 
+    def as_bit(self) -> int:
+        return 2 ** FACE_ORDER.index(self)
+
 
 FACE_ORDER = [
     EnumSide.UP,

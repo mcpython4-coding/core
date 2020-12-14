@@ -9,6 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
 
 import mcpython.util.math
 import mcpython.util.enums
@@ -358,7 +359,7 @@ class BoxModel:
 @onlyInClient()
 class BaseBoxModel:
     """
-    an non-model-bound boxmodel class
+    An non-model-bound boxmodel class
     """
 
     def __init__(
@@ -371,7 +372,7 @@ class BaseBoxModel:
         rotation_center=None,
     ):
         """
-        creates an new renderer for the box-model
+        Creates an new renderer for the box-model
         :param relative_position: where to position the box relative to draw position
         :param size: the size of the box
         :param texture: which texture to use. May be str or pyglet.graphics.TextureGroup
@@ -383,6 +384,7 @@ class BaseBoxModel:
             texture_region = [(0, 0, 1, 1)] * 6
         self.relative_position = relative_position
         self.size = size
+        self.raw_texture = texture if type(texture) == str else None
         self.texture = (
             texture
             if type(texture) == pyglet.graphics.TextureGroup
@@ -399,6 +401,23 @@ class BaseBoxModel:
             rotation_center if rotation_center is not None else relative_position
         )
         self.recalculate_cache()
+
+    def auto_value_region(
+            self, texture_start: typing.Tuple[float, float],
+            texture_dimensions: typing.Tuple[float, float, float]
+    ):
+        """
+        Helper function for calculating the texture region in the default layout
+        :param texture_start: the top left coordinates of the texture
+        :param texture_dimensions: how big the texture is
+        """
+        x, y = texture_start
+        dx, dy, dz = texture_dimensions
+        self.texture_region = [
+            (x+dx+dy, 1-(dx+y), dx+dz+dy+x, 1-y),
+            (x+dx+dy+dz, 1-(dx+y), 1-dx+dz*2+dy, 1-y)
+        ] + [(0, 0, 1, 1)] * 4
+        return self
 
     def recalculate_cache(self):
         vertices = sum(
@@ -470,6 +489,42 @@ class BaseBoxModel:
                     ("t2f/static", t),
                 )
             )
+        return result
+
+    def add_face_to_batch(
+        self, batch, position, face, rotation=(0, 0, 0), rotation_center=(0, 0, 0)
+    ):
+        vertex = []
+        x, y, z = position
+        if rotation in self.rotated_vertex_cache:
+            vertex = [
+                e + position[i % 3]
+                for i, e in enumerate(self.rotated_vertex_cache[rotation])
+            ]
+        else:
+            for dx, dy, dz in self.vertex_cache:
+                vertex.extend(
+                    mcpython.util.math.rotate_point(
+                        (x + dx, y + dy, z + dz), rotation_center, rotation
+                    )
+                )
+            self.rotated_vertex_cache[rotation] = vertex
+        result = []
+        for i in range(6):
+            if not i ** 2 & face: continue
+
+            t = self.texture_cache[i * 8 : i * 8 + 8]
+            v = vertex[i * 12 : i * 12 + 12]
+            result.append(
+                batch.add(
+                    4,
+                    pyglet.gl.GL_QUADS,
+                    self.texture,
+                    ("v3f/static", v),
+                    ("t2f/static", t),
+                )
+            )
+        return result
 
     def draw(self, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)):
         vertex = []

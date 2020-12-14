@@ -160,7 +160,7 @@ local = (
     else sys.argv[sys.argv.index("--source") + 1]
 )
 
-with open(local+"/tools/config.json") as f:
+with open(local + "/tools/config.json") as f:
     config = json.load(f)
 
 folder = (
@@ -169,7 +169,11 @@ folder = (
     else sys.argv[sys.argv.index("--target") + 1]
 )
 out = (
-    (local + "/tools/builds" if "output_folder" not in config else config["output_folder"])
+    (
+        local + "/tools/builds"
+        if "output_folder" not in config
+        else config["output_folder"]
+    )
     if "--builds" not in sys.argv
     else sys.argv[sys.argv.index("--builds") + 1]
 )
