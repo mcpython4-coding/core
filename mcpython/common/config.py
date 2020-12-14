@@ -49,7 +49,7 @@ VERSION_ORDER = [
     "a1.1.0",
     "snapshot dev 6",
     "20w31a",
-    "20w51a"
+    "20w51a",
 ]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(

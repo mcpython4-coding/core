@@ -20,7 +20,7 @@ import mcpython.ResourceLoader
 import mcpython.util.enums
 import mcpython.util.math
 import json
-import mcpython.client.rendering.ICustomBlockRenderer
+import mcpython.client.rendering.blocks.ICustomBlockRenderer
 
 
 class ModelHandler:
@@ -179,7 +179,7 @@ class ModelHandler:
             vertex = blockstate.add_face_to_batch(block, batches, face)
             if issubclass(
                 type(block.face_state.custom_renderer),
-                mcpython.client.rendering.ICustomBlockRenderer.ICustomBlockVertexManager,
+                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBlockVertexManager,
             ):
                 block.face_state.custom_renderer.handle(block, vertex)
         return vertex

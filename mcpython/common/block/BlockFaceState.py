@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.event.EventHandler
 from mcpython import shared as G
-import mcpython.client.rendering.ICustomBlockRenderer
+import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.util.enums
 
 
@@ -42,14 +42,14 @@ class BlockFaceState:
         if self.custom_renderer is not None:
             if issubclass(
                 type(self.custom_renderer),
-                mcpython.client.rendering.ICustomBlockRenderer.ICustomBatchBlockRenderer,
+                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
             ):
                 self.face_data[face] = self.custom_renderer.add(
-                    self.block.position, self.block, face
+                    self.block.position, self.block, face, G.world.get_active_dimension().batches
                 )
             elif issubclass(
                 type(self.custom_renderer),
-                mcpython.client.rendering.ICustomBlockRenderer.ICustomDrawMethodRenderer,
+                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomDrawMethodRenderer,
             ):
                 if not self.subscribed_renderer:
                     mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
@@ -74,14 +74,14 @@ class BlockFaceState:
         if self.custom_renderer is not None:
             if issubclass(
                 type(self.custom_renderer),
-                mcpython.client.rendering.ICustomBlockRenderer.ICustomBatchBlockRenderer,
+                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
             ):
                 self.custom_renderer.remove(
                     self.block.position, self.block, self.face_data[face], face
                 )
             elif issubclass(
                 type(self.custom_renderer),
-                mcpython.client.rendering.ICustomBlockRenderer.ICustomDrawMethodRenderer,
+                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomDrawMethodRenderer,
             ):
                 if self.subscribed_renderer and not any(self.faces.values()):
                     mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
@@ -133,7 +133,7 @@ class BlockFaceState:
             any(self.faces.values())
             and issubclass(
                 type(self.custom_renderer),
-                mcpython.client.rendering.ICustomBlockRenderer.ICustomDrawMethodRenderer,
+                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomDrawMethodRenderer,
             )
             and self.subscribed_renderer
         ):

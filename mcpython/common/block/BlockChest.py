@@ -37,6 +37,8 @@ class BlockChest(AbstractBlock.AbstractBlock):
 
     NAME: str = "minecraft:chest"  # the name of the chest
 
+    IS_SOLID = False
+
     HARDNESS = 2.5
     BLAST_RESISTANCE = 2.5
 

@@ -177,7 +177,9 @@ class StateWorldGeneration(State.State):
         mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
         G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
 
-        if G.world_generation_handler.get_current_config(G.world.get_dimension(0)).GENERATES_START_CHEST:
+        if G.world_generation_handler.get_current_config(
+            G.world.get_dimension(0)
+        ).GENERATES_START_CHEST:
             chunk = G.world.get_active_dimension().get_chunk((0, 0))
             x, z = random.randint(0, 15), random.randint(0, 15)
             height = chunk.get_maximum_y_coordinate_from_generation(x, z)
