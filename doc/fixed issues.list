@@ -1,0 +1,229 @@
+a list of all (bigger) fixed issues, in order of fixing
+with date of fixing (as far as noticed) and person of fix
+
+issue 15: mod loading was trying to load mods.json rather than mod.json in some special cases
+issue 11: block textures are blurry; fixed on: 31.01.2020 by uuk; occur since library update
+issue 27: TextureFactory generates blurry images; fixed on: 31.01.2020 by uuk; occur since library update
+issue 20: mod list was not proper saved; fixed on: 31.01.2020 by uuk; occur since mod list move
+issue 19: /reload command was not working; fixed on: 31.01.2020 by uuk; occur since: mod loading introduction
+issue 18: loading bar was offset; fixed on: 01.02.2020 by uuk; occur since: progress bar fixes
+issue 29: DebugWorldGenerator was not working; fixed on: 01.02.2020; occur since: event removal of generation system
+issue 30: game crashes if an value is accessed in HeightMap without set it in advance
+issue 31: event "worldgen:chunk:finished" was only called in dynamic generated chunks; fixed on: 01.02.2020 by uuk;
+          occur since: introduction of this event
+issue 32: EnderChest was not working in debug world; fixed on: 01.02.2002 by uuk; occur since: introduction of chest
+issue 37: Exception printer was crashing; fixed on: 01.02.2020 by uuk; occur since: logging introduction
+issue 38: drawing of buttons was wrong; fixed on: 01.02.2020 by uuk; occur since: upgrade of resources to 1.15.2
+issue 13: game crashes on hovering above button; fixed on: 01.02.2020 by uuk
+issue 12: chat event bus was created active and not closed until user closes the real chat leading to unwanted behaviour
+          fixed on: 01.02.2020 by uuk; occur since: EventBus introduction
+issue 14: raw crash in BlockItemFactory due to None-block-instance; fixed on: 01.02.2020 by uuk
+issue 17: html character information was displayed in chat as the character itself instead of the blank text, fixed on:
+          01.02.2020 by uuk
+issue 41: chat index pointer was not correct; fixed on: 01.02.2020 by uuk
+issue 26: when an file is opened in an directory to remove, it fails to remove it and loops infinitely,
+          fixed on: 01.02.2020 by uuk; occur since: introduction of removing these things under try-except
+issue 43: missing texture was resized incorrectly; fixed on 02.02.2020 by uuk; occur since: library update
+issue 39: leaves were handled solid in rendering; fixed on: 02.02.2020 by uuk
+issue 49: game crashed when selecting an unknown registry in /registryinfo-command
+issue 48: event calling order was creating issues when e.g. pressing an button and the event changes the state and
+          the new state is handling the interaction also; fixed on: 06.02.2020 by uuk; occur since: EventBus introduction
+issue 47: moving slot not reset when closing various inventories; fixed on: 06.02.2020 by uuk; occur since:
+          introduction of inventories & the affected inventories; fixed again on 09.02.2020 by uuk
+issue 51: game may crash when creating an second world in an game instance; fixed on: 06.02.2020 by uuk; occur since:
+          face rendering update
+issue 52: inventories were not closed when player died; fixed on: 06.02.2020 by uuk; occur since: introduction of player
+          dies & player inventory
+issue 44: block inventory interaction was not blocked when opening e.g. the player main inventory; fixed on: 06.02.2020
+          by uuk
+issue 39: BlockFactory was comparing the solid face state wrong; fixed on: 06.02.2020 by uuk
+issue 54: hit-box was in some cases not visible; fixed on: 06.02.2020 by uuk
+issue 56: RecipeLoader was trying to load directories as recipe json's which lead to an exception;
+          fixed on: 07.02.2020 by uuk
+issue 57: ModelHandler was unable to load from sub-directories due to an internal miss-cast; fixed on: 07.02.2020 by uuk
+issue 53: various colored textures were not colored due to an miss-load of the models; fixed on: 07.02.2020 by uuk;
+          occur since: texture update to 1.15.2
+issue 59: fixed TickHandler.send_random_ticks-function crashing when being called; fixed on: 08.02.2020 by uuk;
+          occur since: change in world storage
+issue 16: random ticks are never called; fixed on: 08.02.2020 by uuk; occur since: the function-call was removed
+issue 60: random tick config was not correct; fixed on: 08.02.2020 by uuk
+issue 61: dirt would convert in any case to grass, not only if no solid block is above; fixed on: 08.02.2020 by uuk;
+          occur since: introduction of dirt -> grass convert
+issue 62: crafting table, shulker box, ender chest and chest inventory stayed open when block is removed;
+          fixed on: 08.02.2020 by uuk
+issue 63: various parts were not resized correctly leading into blurry textures; fixed on: 08.02.2020 by uuk
+issue 42 & 64: crafting was in some cases not working; fixed on: 08.02.2020 by uuk; occur since: recipe cleanup
+               when items are missing was introduced
+issue 45: info label in game was not always correct arranged; fixed on: 09.02.2020 by uuk
+issue 68: game crashes in InventoryHandler, line 118; fixed on: 09.02.2020 by uuk
+issue 69: game crashes in tool braketime calculation; fixed on: 09.02.2020 by uuk
+issue 70: change_sectors was crashing when sectors were in order to show; fixed on: 09.02.2020 by uuk
+issue 58: mouse button up is not registered in some cases; fixed on: 09.02.2020 by uuk
+issue 33: mouse middle click was giving you always in any gamemode the item and checking than if it was in your
+          inventory; fixed on: 09.02.2020 by uuk
+issue 10: pyglet gives out exceptions on window close; fixed on: 09.02.2020 by uuk; occur since: python 3.8
+issue 40: when closing crafting table gui, last output may get duplicated; fixed on: 09.02.2020 by uuk
+issue 71: when removing an chest, the items in the chest got deleted; fixed on: 09.02.2020 by uuk
+issue 72: chunk's remove_block function was calling wrong block event; fixed on: 09.02.2020 by uuk
+issue 64: slab side texture was upside-down; fixed on: 09.02.2020 by uuk; occur since: UV-introduction
+issue 74: chunk's cursor remove-function is offset by one char to the right; fixed on: 09.02.2020 by uuk
+issue 50: in chat, sometimes some special chars are displayed not-html; fixed on: 09.02.2020 by uuk
+issue 76: /tp [position] crashes the game; fixed on: 10.02.2020 by uuk
+issue 77: BlockFactory doesn't use get_all_model_states of super classes; fixed on: 10.02.2020 by uuk
+issue 78: debug generator does not use all possible states; fixed on: 10.02.2020 by uuk
+issue 79: BlockFaceState.update updates only visible state, not texture of faces; fixed on: 10.02.2020 by uuk
+issue 81: you can't move items out of an slot with item-tag-limitation; fixed on: 10.02.2020 by uuk
+issue 82: in some inventories, slot label draw priority was wrong; fixed on: 10.02.2020 by uuk
+issue 83: cobblestone was never created; fixed on: 10.02.2020 by uuk
+issue 21: BlockItemFactory hangs in generating items; fixed on: 11.02.2020 by uuk
+issue 83: clay ball and clay block item generation interfere each other; fixed on: 11.02.2020 by uuk
+issue 84: ModLoader crashes when mod.json links to an not-existing python file; fixed on: 11.02.2020 by uuk
+issue 85: game crashes when using an not-modname prefix for block names; fixed on: 11.02.2020 by uuk
+issue 86: game crashes when using an not-modname prefix in an model name; fixed on: 11.02.2020 by uuk
+issue 87: furnace has sometimes double the speed than normal; fixed on: 12.02.2020 by uuk
+issue 88: slots with no player interact where not highlighted when hovering over them; fixed on: 12.02.2020 by uuk
+issue 89: furnace time was not exact to what in recipe specified; fixed on: 12.02.2020 by uuk
+issue 90: exceptions when walking into not-generated chunks; fixed on: 14.02.2020 by uuk; linked by issue #4
+issue 66: generation added blocks are not correctly overwritten when adding blocks via normal method; fixed on:
+          14.02.2020 by uuk
+issue 91: falling blocks are not updating neighbor's face visible state; fixed on: 14.02.2020 by uuk
+issue 92: SlotCopy was not using correct label configuration; fixed on: 14.02.2020 by uuk
+issue 93: Slots label was offset in some special cases; fixed on: 14.02.2020 by uuk
+issue 94: mossy stone brick slab failed to generate block-item for due to double register; fixed on: 16.02.2020 by uuk
+issue 99: various exceptions when interacting with slots; fixed on: 18.02.2020 by uuk; e.g.:
+      File "%game%\crafting\GridRecipeInterface.py", line 146, in remove_input
+        slot.get_itemstack().amount.add_amount(-count)
+      AttributeError: 'int' object has no attribute 'add_amount'
+issue 101: mossy stone bricks-Block was created twice; fixed on: 19.02.2020 by uuk
+issue 97: hotbar slots are highlighted when hovering over them; fixed on: 20.02.2020 by uuk
+issue 75: some chest textures were not used correctly; fixed on: 20.02.2020 by uuk
+issue 103: selectors can't be parsed; fixed on: 26.02.2020 by uuk
+issue 104: function add_to_free_place was crashing when trying to increase an amount in an slot;
+           fixed on: 26.02.2020 by uuk
+issue 105: sometimes, hotbar slots are NOT drawn in hotbar; fixed on: 26.02.2020 by uuk
+issue 106: in non-SlotCopy slots, amount lable is NOT (correctly) drawn; fixed on: 26.02.2020 by uuk
+issue 107: moving-slot lable was NOT drawn at right position; fixed on: 26.02.2020 by uuk
+issue 108: shift-clicking items from crafting output slot give an exceptions; fixed on: 26.02.2020 by uuk
+issue 110: ItemFactory was not creating item-file location correctly for modded items; fixed on: 27.02.2020 by uuk
+issue 24: BoundingBox was not working correct in some edge-cases; fixed on: 28.02.2020 by uuk
+issue 111: can't rebuild due to self-calling function; fixed on: 29.02.2020 by uuk
+issue 112: BLOCK_ITEM_GENERATOR_STATE-attribute of block is ignored; fixed on: 29.02.2020 by uuk
+issue 121: player can't die correctly; fixed on: 01.03.2020 by uuk; caused by: Entity-dummy-class implementation
+issue 123: /replaceitem did crash when using on an non-inventory providing slot; fixed on: 02.03.2020 by uuk
+issue 124: carpet block was giving not the item back when the block under it is removed; fixed on: 03.03.2020 by uuk
+issue 125: when generating chunks in runtime, blocks are not shown until update; fixed on: 03.03.2020 by uuk; caused
+           by: implementation of face-hiding to not generated chunks; this chunks are marked as generated when
+           generation finished
+issue 126: top textures of BoxModel when using UV's were wrong; fixed on: 03.03.2020 by uuk
+issue 127: missing texture was always rendered, also when deactivated on missing faces; fixed on: 03.03.2020 by uuk
+issue 114: "OR"-condition in block models was not working; fixed on: 05.03.2020 by uuk
+issue 115: block-state multipart was not using multiple models when provided; fixed on: 05.03.2020 by uuk
+issue 128: game crashes when running in rebuild mode and an block-item fails to generate; fixed on: 05.03.2020 by uuk
+           [committed to release due to crash]
+issue 119: missing texture face rendering couldn't be deactivated; fixed on: 05.03.2020 by uuk
+issue 120: player can't die; fixed on: 05.03.2020 by uuk
+issue 117: "rotation" was not used by model-loader; fixed on: 05.03.2020 by uuk
+issue 130: merge-error in BlockDirt.py; fixed on: 06.03.2020 by uuk
+issue 132: rendering of not-full blocks was not correct due to vertex parsing error; fixed on: 07.03.2020 by uuk
+issue 134: /generate command was not working; fixed on: 08.03.2020 by uuk
+issue 135: percentage in generation screen was in some cases wrong; fixed on: 08.03.2020 by uuk
+issue 136: all noises are not world-seed based; fixed on: 08.03.2020 by uuk
+issue 137: block entries in commands did NOT accept non-prefixed names; fixed on: 08.03.2020 by uuk
+issue 138: CTRL+C and CTRL+V were not working in UIPartTextInput fields; fixed on: 08.03.2020 by uuk
+issue 131: slabs were rendered upside-down; fixed on: 11.03.2020 by uuk
+issue 102: carved pumpkin was as block-item the same as pumpkin; fixed on: 11.03.2020 by uuk
+issue 132: can break unbreakable blocks in gamemode 0; fixed on: 11.03.2020 by uuk
+issue 143: model state multi part with OR conditions failed to render; fixed on: 12.03.2020 by uuk
+issue 144: chest and ender chest were not rendering; fixed on: 14.03.2020 by uuk
+issue 146: inventory list got reversed on every ESC-press; fixed on: 14.03.2020 by uuk
+    causing: - issue 142: inventory slots of hotbar are sometimes not drawn; fixed on: 14.03.2020 by uuk
+             - issue 98: item reinsertion in hotbar does not draw it there
+issue 145: leaves were not colored; fixed on: 14.03.2020 by uuk
+issue 147: shulker boxes were not rendering; fixed on: 14.03.2020 by uuk
+issue 109: output of crafting gets duplicated when shift-crafting; fixed on: 14.03.2020 by uuk
+issue 141: half hunger icon was drawn incorrectly; fixed on: 19.03.2020 by uuk
+issue 152: Chunk.add_block did not accept non-prefixed names like "stone"; fixed on: 19.03.2020 by uuk
+issue 9: BlockItemGenerator fails to add block-items when not rebuilding for new blocks in first run due to missing
+    ItemFactory._finish call which was assigned to an load event which has been called before blockitemfactory was
+    finished; fixed on: 19.03.2020 by uuk
+issue 153: rotation of block models was crashing; fixed on: 19.03.2020 by uuk
+issue 155: multipart-models were crashing on load when using multiple model links in one entry;
+    fixed on: 20.03.2020 by uuk
+issue 156: exceptions when in gamemode 0 due to wrong xp draw call
+issue 151: saves include full-coordinates, not chunk relative ones leading into memory problems; fixed on: 31.03.2020 by
+    uuk
+issue 158: when trying to load an world which does not exists, the game gives two exceptions to the log; fixed on:
+    31.03.2020 by uuk
+issue 160: when dragging mouse, mouse position attribute of window does not get updated; fixed on: 31.03.2020 by uuk
+issue 162: Slot-instances render item stacks with size 1 with stack size label; fixed on: 01.04.2020 by uuk
+issue 148: block-position label is inverted to the gamerule-value; fixed on: 01.04.2020 by uuk
+issue 163: Inventory serializer crashes when inventory slot count gets smaller on new load; fixed on: 02.04.2020 by uuk
+issue 154: debug world does not use correct block states; fixed on 05.05.2020 by uuk
+issue 169: BlockItemGenerator was not using block-state set correctly; fixed on 05.05.2020 by uuk
+issue 170: memory leak with block inventories; fixed on 05.05.2020 by uuk
+issue 149: offhand slots get cleared on inventory close; fixed on 05.05.2020 by uuk
+issue 171: memory leak with block instances; fixed on 05.05.2020 by uuk
+issue 172 & 167: when deleting build-folder, game crashes on every run; fixed on 05.05.2020 by uuk
+issue 173: exception (and not handling) of show-tasks in world gen task system; fixed on 06.05.2020 by uuk
+issue 174: Chunk.hide_all() was using shown-attribute of Chunk causing problems; fixed on 06.05.2020 by uuk
+issue 179: Inventory.insert_item() was failing; fixed on 07.05.2020 by uuk
+issue 180: when loading an save from an newer version, an exception is printed; fixed 11.05.2020 by uuk
+issue 182: block update was not send in some cases; fixed on 12.05.2020 by uuk
+issue 183: fence and walls were not updating texture when updating internal state; fixed on 12.05.2020 by uuk
+issue 184: exception when writing an exception with an non-str info; fixed on 12.05.2020 by uuk
+issue 186: event "worldgen:chunk:finished" was not called for runtime-like generated chunks; fixed on 13.05.2020 by uuk
+issue 187: exceptions when generating chunks without content from main menu; fixed on 13.05.2020 by uuk
+issue 188: minecraft version tuple could contain strings; fixed on 19.05.2020 by uuk
+issue 189: data packs were not unloaded on world unload; fixed on 19.05.2020 by uuk
+issue 190: config system was not parsing the data correctly; fixed on 19.05.2020 by uuk
+issue 191: slab textures were upside down; fixed on 20.05.2020 by uuk
+issue 192: AdvancedBlockFactory was failing in some cases; fixed on 20.05.2020 by uuk
+issue 195: parsed mod versions from mod.json files were not parsed into str; fixed on 29.05.2020
+issue 197: TickHandler was trying to tick the function tag for ticks when not in world; fixed on 30.05.2020
+issue 198: Chunk was sharing the default attribute with all instances leading into one big data map; fixed on 30.05.2020
+           by uuk
+issue 194: dicts in config failed to load when they were empty; fixed on 30.05.2020 by uuk
+issue 200: config files were not parsed correctly; fixed on 30.05.2020 by uuk
+issue 193: mod locations were not escaped in logs; fixed on 30.05.2020 by uuk
+issue 205: barrel block was not storing facing correctly; fixed on 06.06.2020 by uuk
+issue 206: shift-clicking the recipe output was not working; fixed on 07.06.2020 by uuk
+issue 207: when closing an crafting table, items in the grid were get deleted; fixed on 07.06.2020 by uuk
+issue 208: crafting output was added also to player inventory when closing it; fixed on 11.06.2020 by uuk
+issue 209: generator script for recipe generator from json was not parsing output correctly; fixed on 11.06.2020 by uuk
+issue 174: loading bars in mod loading where not in the middle of the screen; fixed on 11.06.2020 by uuk
+issue 202: loading and generating progress % was calculated wrong; fixed on 11.06.2020 by uuk
+issue 211: when closing the game while the main inventory is open, items could get saved in the crafting grid;
+           fixed on 12.06.2020 by uuk
+issue 212: /clone was not updating visual status of blocks; fixed by uuk
+issue 213: world selection list was wrong way round sorted; fixed on 20.06.2020 by uuk
+issue 214: world selection list was rendering wrong; fixed on 20.06.2020 by uuk
+issue 215: can't shift-click out of certain slots, caused by ShiftContainer-miss-behaviour; fixed on 22.06.2020 by uuk
+issue 216: RegistryInfo serializer was dumping registry data from registries marked not for dumping: fixed on 23.06.2020
+           by uuk
+issue 220: RenderingHelper's apply method was not working; fixed on 01.07.2020 by uuk
+issue 221: exception when save list is empty; fixed on 01.07.2020 by uuk
+issue 222: some chunk part fixer results were not stored properly; fixed on 03.07.2020 by uuk
+issue 223: world gen config screen was parsing world name wrong; fixed on 03.07.2020 by uuk
+issue 224: debug world was displaying some blocks duplicated; fixed on 06.07.2020 by uuk
+issue 203: exception when loading an world saved as debug world; fixed on 06.07.2020 by uuk
+issue 225: .setGlobalModName() on ItemFactories did not work as needed; fixed on 06.07.2020 by uuk
+issue 226: when ItemAtlas scheduled missing texture for texture, it still crashed; fixed on 06.07.2020 by uuk
+issue 227: ItemFactory's template system was broken; fixed on 06.07.2020 by uuk
+issue 228: logger was prefixing every part with time, not only the front; fixed on 06.07.2020 by uuk
+issue 229: Player.teleport() was not updating G.world's active dimension; fixed on 06.07.2020 by uuk
+issue 231: alpha rendering of blocks was broken; fixed on 09.07.2020 by uuk
+issue 232: RenderingHelper's alpha on/off functions were not working correctly; fixed on 09.07.2020 by uuk
+issue 233: BoxModel's rendering code was not rendering vertices <-> texture correctly; fixed on 11.07.0202 by uuk
+    causing issue 129: some faces of fences and walls are not rendered with texture; fixed on 11.07.2020 by uuk
+issue 234: active dimension is not reset when changing world; fixed on 11.07.2020 by uuk
+issue 236: EntityModelGenerator was not parsing states correctly; fixed on 12.07.2020 by uuk
+issue 237: Chunk deserializer was not setting is_ready to True leading into entities not rendering; fixed on 12.07.2020
+           by uuk
+issue 238: IHorizontalOrientableBlock was not working correctly; fixed on 18.07.2020 by uuk
+issue 230: ItemAtlas was not baking new images from BlockItemGenerator correctly; fixed on 18.07.2020 by uuk
+issue 239: an second player is spawned in world when entering an world; fixed on 20.07.2020 by uuk
+issue 240: Entity's tick() function was not called; fixed on 20.07.2020 by uuk
+issue 241: block command entry was not accepting minecraft:air as an block; fixed on 20.07.2020 by uuk
+issue 242: CombinedSlabFactory was not generating block state correctly; fixed on 28.07.2020 by uuk
+issue 243: InventoryHandler was miss-behaving in some cases; fixed on 30.07.2020 by uuk
+[some unlisted bug fixes during internal changes phase]

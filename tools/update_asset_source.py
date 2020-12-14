@@ -1,0 +1,43 @@
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
+
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
+
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
+import os
+import requests
+import zipfile
+import shutil
+import sys
+
+home = os.path.dirname(os.path.dirname(__file__)).replace("\\", "/")
+url = input("url to source: ") if len(sys.argv) == 1 else sys.argv[1]
+
+
+print("downloading...")
+r = requests.get(url)
+with open(home + "/tools/source.zip", "wb") as f:
+    f.write(r.content)
+
+
+print("removing old...")
+if os.path.exists(home + "/resources/source"):
+    shutil.rmtree(home + "/resources/source")
+
+print("copying new...")
+
+with zipfile.ZipFile(home + "/tools/source.zip") as f:
+    for file in f.namelist():
+        if "assets" in file or "data" in file and "net/minecraft" not in file:
+            data = f.read(file)
+            fd = home + "/resources/source/" + file
+            d = os.path.dirname(fd)
+            if not os.path.isdir(d):
+                os.makedirs(d)
+            with open(fd, mode="wb") as f2:
+                f2.write(data)

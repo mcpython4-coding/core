@@ -1,0 +1,14 @@
+{
+  "slots": {
+    "0": {"position": [60, 268], "allow_player_add_to_free_place": false},
+    "1": {"position": [96, 268], "allow_player_add_to_free_place": false},
+    "2": {"position": [132, 268], "allow_player_add_to_free_place": false},
+    "3": {"position": [60, 232], "allow_player_add_to_free_place": false},
+    "4": {"position": [96, 232], "allow_player_add_to_free_place": false},
+    "5": {"position": [132, 232], "allow_player_add_to_free_place": false},
+    "6": {"position": [60, 196], "allow_player_add_to_free_place": false},
+    "7": {"position": [96, 196], "allow_player_add_to_free_place": false},
+    "8": {"position": [132, 196], "allow_player_add_to_free_place": false},
+    "9": {"position": [248, 233], "allow_player_add_to_free_place": false, "allow_player_insert": false}
+  }
+}

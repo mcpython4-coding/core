@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import shutil
 import os
 import sys
@@ -42,19 +45,35 @@ while mod_name is None or " " in mod_name:
 
 version = input("Version of the mod: ")
 
-mod_name_camel_case = "".join([e[0].upper()+e[1:] for e in mod_name.split("_")])
+mod_name_camel_case = "".join([e[0].upper() + e[1:] for e in mod_name.split("_")])
 
 create_or_leave(local + "/source/{}".format(mod_name))
 
 print("creating mod.json...")
-with open(local + "/source/mod.json", mode="w") as target, open(local+"/tools/mod.jsont") as template:
-    target.write(template.read().format(CAMEL_NAME=mod_name_camel_case, VERSION=version, NAME=mod_name))
+with open(local + "/source/mod.json", mode="w") as target, open(
+    local + "/tools/mod.jsont"
+) as template:
+    target.write(
+        template.read().format(
+            CAMEL_NAME=mod_name_camel_case, VERSION=version, NAME=mod_name
+        )
+    )
 
 print("creating main files...")
-with open(local + "/source/{}/{}.py".format(mod_name, mod_name_camel_case), mode="w") as target, open(local+"/tools/mod.py") as template:
-    target.write(template.read().format(CAMEL_NAME=mod_name_camel_case, VERSION=version, NAME=mod_name))
+with open(
+    local + "/source/{}/{}.py".format(mod_name, mod_name_camel_case), mode="w"
+) as target, open(local + "/tools/mod.py") as template:
+    target.write(
+        template.read().format(
+            CAMEL_NAME=mod_name_camel_case, VERSION=version, NAME=mod_name
+        )
+    )
 
-v = int(input("newest dev: (1), newest release (2), launcher profile (3), dev environment (4): "))
+v = int(
+    input(
+        "newest dev: (1), newest release (2), launcher profile (3), dev environment (4): "
+    )
+)
 
 print("getting newest version...")
 url = None
@@ -70,6 +89,7 @@ elif v == 3:
     import launcher.Launcher
 
     import launcher.globalstorage as G
+
     G.local = directory  # re-direct this!
 
     launcher.Launcher.setup()
@@ -79,44 +99,78 @@ elif v == 3:
     version = launcher.Launcher.Version.user_selects()
     version.download()
 
-    d = {"url": None, "path": version.path, "home": local+"/cache/home", "build": local+"/cache/build"}
+    d = {
+        "url": None,
+        "path": version.path,
+        "home": local + "/cache/home",
+        "build": local + "/cache/build",
+    }
 elif v == 4:
     directory = input("please select the dev directory: ")
-    d = {"url": None, "path": directory, "home": local+"/cache/home", "build": local+"/cache/build"}
+    d = {
+        "url": None,
+        "path": directory,
+        "home": local + "/cache/home",
+        "build": local + "/cache/build",
+    }
 else:
-    raise ValueError("unsupported operation: "+str(v))
+    raise ValueError("unsupported operation: " + str(v))
 
 if v in (1, 2):
-    download_file(url, local+"/cache/core.zip")
+    download_file(url, local + "/cache/core.zip")
 
     print("extracting code...")
     print()
 
     i = 1
-    with zipfile.ZipFile(local+"/cache/core.zip") as f:
+    with zipfile.ZipFile(local + "/cache/core.zip") as f:
         names = f.namelist()
         total = len(names)
         for element in names:
-            if element.replace("\\", "/").endswith("/"): continue
+            if element.replace("\\", "/").endswith("/"):
+                continue
             print("\rextracting {}/{}: {}".format(i, total, element), end="")
-            r = os.path.join(local+"/cache/core", "/".join(element.replace("\\", "/").split("/")[1:]))
+            r = os.path.join(
+                local + "/cache/core",
+                "/".join(element.replace("\\", "/").split("/")[1:]),
+            )
             create_or_leave(os.path.dirname(r))
             with open(r, mode="wb") as fw:
                 fw.write(f.read(element))
             i += 1
     print("\nfinished!")
 
-    d = {"url": url, "path": local+"/cache/core", "home": local+"/cache/home", "build": local+"/cache/build"}
+    d = {
+        "url": url,
+        "path": local + "/cache/core",
+        "home": local + "/cache/home",
+        "build": local + "/cache/build",
+    }
 
 with open(local + "/config.json", mode="w") as f:
     json.dump(d, f)
 
 print("installing libraries...")
-subprocess.call([sys.executable, d["path"]+"/installer.py"], stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
+subprocess.call(
+    [sys.executable, d["path"] + "/tools/installer.py"],
+    stdin=sys.stdin,
+    stdout=sys.stdout,
+    stderr=sys.stderr,
+)
 
 if v in (1, 2):
     print("doing data-gen as it is an not-build-ed version...")
-    subprocess.call([sys.executable, d["path"]+"/__main__.py", "--data-gen", "--enable-all-blocks", "--home-folder", d["home"],
-                     "--build-folder", d["build"], "--exit-after-data-gen", "--no-window"])
-
-
+    subprocess.call(
+        [
+            sys.executable,
+            d["path"] + "/__main__.py",
+            "--data-gen",
+            "--enable-all-blocks",
+            "--home-folder",
+            d["home"],
+            "--build-folder",
+            d["build"],
+            "--exit-after-data-gen",
+            "--no-window",
+        ]
+    )

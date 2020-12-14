@@ -5,24 +5,25 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
 
-import globals as G
-import mcpython.config
+This project is not official by mojang and does not relate to it.
+"""
+
+from mcpython import shared as G, logger
 import math
-import logger
-import deprecation
 import deprecation
 
 
-@deprecation.deprecated("dev3-2", "a1.3.0")
-def get_max_y(pos):
-    x, y, z = normalize(pos if len(pos) == 3 else (pos[0], 0, pos[1]))
-    chunk = G.world.get_active_dimension().get_chunk_for_position((x, y, z))
-    return chunk.get_maximum_y_coordinate_from_generation(*pos)
-
-
-def cube_vertices_better(x: float, y: float, z: float, nx: float, ny: float, nz: float, faces=(True, True, True, True, True, True)):
+def cube_vertices_better(
+    x: float,
+    y: float,
+    z: float,
+    nx: float,
+    ny: float,
+    nz: float,
+    faces=(True, True, True, True, True, True),
+):
     """
     Similar to cube_vertices, but will return it per-face instead of an whole array of data
     :param x: the x position
@@ -34,22 +35,118 @@ def cube_vertices_better(x: float, y: float, z: float, nx: float, ny: float, nz:
     :param faces: which faces to generate
     :return: an tuple of length 6 representing each face
     """
-    top = [x - nx, y + ny, z - nz, x - nx, y + ny, z + nz, x + nx, y + ny, z + nz, x + nx, y + ny, z - nz] if faces[0] \
+    top = (
+        [
+            x - nx,
+            y + ny,
+            z - nz,
+            x - nx,
+            y + ny,
+            z + nz,
+            x + nx,
+            y + ny,
+            z + nz,
+            x + nx,
+            y + ny,
+            z - nz,
+        ]
+        if faces[0]
         else []
-    bottom = [x - nx, y - ny, z - nz, x + nx, y - ny, z - nz, x + nx, y - ny, z + nz, x - nx, y - ny, z + nz] if \
-        faces[1] else []
-    left = [x - nx, y - ny, z - nz, x - nx, y - ny, z + nz, x - nx, y + ny, z + nz, x - nx, y + ny, z - nz] if \
-        faces[2] else []
-    right = [x + nx, y - ny, z + nz, x + nx, y - ny, z - nz, x + nx, y + ny, z - nz, x + nx, y + ny, z + nz] if \
-        faces[3] else []
-    front = [x - nx, y - ny, z + nz, x + nx, y - ny, z + nz, x + nx, y + ny, z + nz, x - nx, y + ny, z + nz] if \
-        faces[4] else []
-    back = [x + nx, y - ny, z - nz, x - nx, y - ny, z - nz, x - nx, y + ny, z - nz, x + nx, y + ny, z - nz] if \
-        faces[5] else []
+    )
+    bottom = (
+        [
+            x - nx,
+            y - ny,
+            z - nz,
+            x + nx,
+            y - ny,
+            z - nz,
+            x + nx,
+            y - ny,
+            z + nz,
+            x - nx,
+            y - ny,
+            z + nz,
+        ]
+        if faces[1]
+        else []
+    )
+    left = (
+        [
+            x - nx,
+            y - ny,
+            z - nz,
+            x - nx,
+            y - ny,
+            z + nz,
+            x - nx,
+            y + ny,
+            z + nz,
+            x - nx,
+            y + ny,
+            z - nz,
+        ]
+        if faces[2]
+        else []
+    )
+    right = (
+        [
+            x + nx,
+            y - ny,
+            z + nz,
+            x + nx,
+            y - ny,
+            z - nz,
+            x + nx,
+            y + ny,
+            z - nz,
+            x + nx,
+            y + ny,
+            z + nz,
+        ]
+        if faces[3]
+        else []
+    )
+    front = (
+        [
+            x - nx,
+            y - ny,
+            z + nz,
+            x + nx,
+            y - ny,
+            z + nz,
+            x + nx,
+            y + ny,
+            z + nz,
+            x - nx,
+            y + ny,
+            z + nz,
+        ]
+        if faces[4]
+        else []
+    )
+    back = (
+        [
+            x + nx,
+            y - ny,
+            z - nz,
+            x - nx,
+            y - ny,
+            z - nz,
+            x - nx,
+            y + ny,
+            z - nz,
+            x + nx,
+            y + ny,
+            z - nz,
+        ]
+        if faces[5]
+        else []
+    )
     return top, bottom, left, right, front, back
 
 
-def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
+def tex_coordinates(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
     """
     Return the bounding vertices of the texture square.
     :param x: the texture atlas entry to use
@@ -59,12 +156,22 @@ def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
     :param rot: in steps of 90: how much to rotate the vertices
     :return: an tuple representing the texture coordinates
     """
-    mx = 1. / size[0]
-    my = 1. / size[1]
+    mx = 1.0 / size[0]
+    my = 1.0 / size[1]
     dx = x * mx
     dy = y * my
-    bx, by, ex, ey = region[0] / size[0], region[1] / size[1], (1 - region[2]) / size[0], (1 - region[3]) / size[1]
-    positions = [(dx + bx, dy + by), (dx + mx - ex, dy + by), (dx + mx - ex, dy + my - ey), (dx + bx, dy + my - ey)]
+    bx, by, ex, ey = (
+        region[0] / size[0],
+        region[1] / size[1],
+        (1 - region[2]) / size[0],
+        (1 - region[3]) / size[1],
+    )
+    positions = [
+        (dx + bx, dy + by),
+        (dx + mx - ex, dy + by),
+        (dx + mx - ex, dy + my - ey),
+        (dx + bx, dy + my - ey),
+    ]
     if rot != 0:
         reindex = rot // 90
         _positions = positions
@@ -74,7 +181,9 @@ def tex_coord(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
     return sum(positions, tuple())
 
 
-def tex_coords_better(*args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)) -> list:
+def tex_coordinates_better(
+    *args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)
+) -> list:
     """
     this is an better implementation of above tex_coords function. It will return an list of coords instead
     of an list where you have to manually find entries
@@ -84,12 +193,21 @@ def tex_coords_better(*args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 
     :param rotation: the rotation of the whole thing
     :return: an list of lists of texture coords
     """
-    if tex_region is None: tex_region = [(0, 0, 1, 1)] * len(args)
-    return [tex_coord(*(face if face is not None else (0, 0)), size=size, region=tex_region[i], rot=rotation[i])
-            for i, face in enumerate(args)]
+    if tex_region is None:
+        tex_region = [(0, 0, 1, 1)] * len(args)
+    return [
+        tex_coordinates(
+            *(face if face is not None else (0, 0)),
+            size=size,
+            region=tex_region[i],
+            rot=rotation[i]
+        )
+        for i, face in enumerate(args)
+    ]
 
 
-def tex_coord_factor(fx, fy, tx, ty): return fx, fy, tx, fy, tx, ty, fx, ty
+def tex_coordinates_factor(fx, fy, tx, ty):
+    return fx, fy, tx, fy, tx, ty, fx, ty
 
 
 def normalize(position):
@@ -126,10 +244,6 @@ def normalize_ceil(position):
     except:
         logger.println(position)
         raise
-
-
-@deprecation.deprecated("dev5-1", "a1.5.0")
-def sectorize(position): return positionToChunk(position)
 
 
 def positionToChunk(position):

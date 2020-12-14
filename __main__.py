@@ -5,39 +5,34 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
-import sys
-import logger
-import globals as G
+blocks based on 1.16.1.jar of minecraft
 
-if sys.version_info.major < 3 or sys.version_info.minor < 7:  # everything lower is not supported!
-    print("[WARN] you are using an not supported version of python. Game will not run!")
+This project is not official by mojang and does not relate to it.
+"""
+import sys
+
+# everything lower than python 3.9 is not supported!
+if sys.version_info.major < 3 or sys.version_info.minor < 9:
+    print(
+        "[WARN] you are using an not supported version of python. Game will not be able to run!"
+    )
     sys.exit(-1)
 
+# the LaunchWrapper which launches all stuff
 import mcpython.LaunchWrapper
 
-
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
+
+
 try:
-    wrapper.inject_sys_argv()
-    wrapper.setup()
-    wrapper.launch()
+    wrapper.print_header()
+    wrapper.inject_sys_argv(sys.argv)  # load sys.argv
+    wrapper.setup()  # do setup stuff
+    wrapper.launch()  # and start mainloop
 except SystemExit:
     sys.exit(-1)
 except:
-    # todo: move this part to LaunchWrapper as clean() function
-    import mcpython.ResourceLocator
-
-    mcpython.ResourceLocator.close_all_resources()
-    logger.write_exception("general loading exception")
-    try:
-        G.tmp.cleanup()
-    except NameError:
-        pass
+    wrapper.error_clean()
     sys.exit(-1)
 
-# todo: move this part to LaunchWrapper as clean() function
-import mcpython.ResourceLocator
-mcpython.ResourceLocator.close_all_resources()
-G.eventhandler.call("game:close")
-G.tmp.cleanup()
+wrapper.clean()

@@ -1,5 +1,0 @@
-implement the whole redstone stuff:
-    buttons, pressure plates, doors, trap doors, redstone lamps, redstone, repeaters, comparators, observers,
-    slime blocks, honey blocks, pistons, sticky pistons, tripwire-hook, string block, hopper, dropper, dispenser,
-    rails, minecarts, ...
-    with an API for redstone-supporting blocks [stated working on]

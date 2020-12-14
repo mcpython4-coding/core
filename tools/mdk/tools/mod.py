@@ -5,23 +5,25 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
-import globals as G
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
+from mcpython import shared
 import sys
 import os
 
 
-@G.modloader("{NAME}", "stage:mod:init")
+@shared.mod_loader("{NAME}", "stage:mod:init")
 def init():
-    @G.modloader("{NAME}", "stage:combined_factory:blocks")
+    @shared.mod_loader("{NAME}", "stage:combined_factory:blocks")
     def load_combined_factories():  # Do here your combined factory stuff...
         pass
 
-    @G.modloader("{NAME}", "stage:block:factory_usage")
+    @shared.mod_loader("{NAME}", "stage:block:factory_usage")
     def load_block_factories():  # ... and do here manual block registering ...
         pass
 
-    @G.modloader("{NAME}", "stage:item:factory_usage")
+    @shared.mod_loader("{NAME}", "stage:item:factory_usage")
     def load_item_factories():  # ... and here the items!
         pass
-

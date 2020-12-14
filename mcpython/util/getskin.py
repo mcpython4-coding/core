@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 # code for downloading skin data from the mc server API
 # todo: make class-based
 # todo: make more fail-save
@@ -13,8 +16,7 @@ blocks based on 1.16.1.jar of minecraft"""
 # file licensed under the licence in licenses/LICENSE_mcskinview
 # modified for this project to match the overall system
 # modified for newer skin textures
-from mcpython.util.net import SimulatedResponse, get_url
-import io
+from mcpython.util.url import get_url
 import json
 import os
 import shutil
@@ -23,8 +25,7 @@ from base64 import b64decode
 import PIL.Image
 import requests
 
-import globals as G
-import logger
+from mcpython import shared as G, logger
 
 DEBUG = False
 SIMULATE = False
@@ -35,8 +36,8 @@ userinfo_url = "https://sessionserver.mojang.com/session/minecraft/profile/{user
 
 def find_texture_info(properties):
     for prop in properties:
-        if prop['name'] == 'textures':
-            return json.loads(b64decode(prop['value'], validate=True).decode('utf-8'))
+        if prop["name"] == "textures":
+            return json.loads(b64decode(prop["value"], validate=True).decode("utf-8"))
     return None
 
 
@@ -61,25 +62,30 @@ def download_skin(username: str, store: str):
         r = get_url(userid_url.format(username=username))
     except requests.exceptions.ConnectionError:
         raise ValueError() from None
-    if r.status_code != 200: raise ValueError()
-    userid = r.json()['id']
+    if r.status_code != 200:
+        raise ValueError()
+    userid = r.json()["id"]
 
     r = get_url(userinfo_url.format(userid=userid))
     userinfo = r.json()
     if "error" in userinfo:
-        logger.println("[SERVER] {}: {}".format(userinfo["error"], userinfo["errorMessage"]))
+        logger.println(
+            "[SERVER] {}: {}".format(userinfo["error"], userinfo["errorMessage"])
+        )
         raise ValueError()
     try:
-        texture_info = find_texture_info(userinfo['properties'])
+        texture_info = find_texture_info(userinfo["properties"])
     except KeyError:
         logger.println("ParseError in '{}'".format(userinfo))
         raise
-    if texture_info is None: raise ValueError()
+    if texture_info is None:
+        raise ValueError()
 
     skin_url = texture_info["textures"]["SKIN"]["url"]
     r = get_url(skin_url, stream=True)
-    if r.status_code != 200: raise ValueError()
-    with open(store, 'wb') as f:
+    if r.status_code != 200:
+        raise ValueError()
+    with open(store, "wb") as f:
         f.write(r.content)
     image = PIL.Image.open(store)
     if image.size[0] != image.size[1:]:
@@ -88,5 +94,6 @@ def download_skin(username: str, store: str):
         new_image.alpha_composite(image.crop((0, 16, 15, 32)), (16, 48))
         new_image.alpha_composite(image.crop((40, 16, 55, 32)), (32, 48))
         new_image.save(store)
-    if not os.path.exists(G.build + "/skins"): os.makedirs(G.build + "/skins")
+    if not os.path.exists(G.build + "/skins"):
+        os.makedirs(G.build + "/skins")
     shutil.copy(store, G.build + "/skins/{}.png".format(username))

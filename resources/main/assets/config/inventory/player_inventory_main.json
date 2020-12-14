@@ -1,0 +1,168 @@
+{
+  "slots": {
+    "0": {
+      "position": [16, 18]
+    },
+    "1": {
+      "position": [52, 18]
+    },
+    "2": {
+      "position": [88, 18]
+    },
+    "3": {
+      "position": [124, 18]
+    },
+    "4": {
+      "position": [160, 18]
+    },
+    "5": {
+      "position": [196, 18]
+    },
+    "6": {
+      "position": [232, 18]
+    },
+    "7": {
+      "position": [268, 18]
+    },
+    "8": {
+      "position": [304, 18]
+    },
+
+    "9": {
+      "position": [16, 62]
+    },
+    "10": {
+      "position": [52, 62]
+    },
+    "11": {
+      "position": [88, 62]
+    },
+    "12": {
+      "position": [124, 62]
+    },
+    "13": {
+      "position": [160, 62]
+    },
+    "14": {
+      "position": [196, 62]
+    },
+    "15": {
+      "position": [232, 62]
+    },
+    "16": {
+      "position": [268, 62]
+    },
+    "17": {
+      "position": [304, 62]
+    },
+
+    "18": {
+      "position": [16, 98]
+    },
+    "19": {
+      "position": [52, 98]
+    },
+    "20": {
+      "position": [88, 98]
+    },
+    "21": {
+      "position": [124, 98]
+    },
+    "22": {
+      "position": [160, 98]
+    },
+    "23": {
+      "position": [196, 98]
+    },
+    "24": {
+      "position": [232, 98]
+    },
+    "25": {
+      "position": [268, 98]
+    },
+    "26": {
+      "position": [304, 98]
+    },
+
+    "27": {
+      "position": [16, 134]
+    },
+    "28": {
+      "position": [52, 134]
+    },
+    "29": {
+      "position": [88, 134]
+    },
+    "30": {
+      "position": [124, 134]
+    },
+    "31": {
+      "position": [160, 134]
+    },
+    "32": {
+      "position": [196, 134]
+    },
+    "33": {
+      "position": [232, 134]
+    },
+    "34": {
+      "position": [268, 134]
+    },
+    "35": {
+      "position": [304, 134]
+    },
+
+    "36": {
+      "position": [16, 178],
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_boots",
+      "allowed_tags": ["#minecraft:armor_boots"]
+    },
+    "37": {
+      "position": [16, 214],
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_leggings",
+      "allowed_tags": ["#minecraft:armor_leggings"]
+    },
+    "38": {
+      "position": [16, 250],
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_chestplate",
+      "allowed_tags": ["#minecraft:armor_chestplate"]
+    },
+    "39": {
+      "position": [16, 286],
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_helmet",
+      "allowed_tags": ["#minecraft:armor_helmet"]
+    },
+
+    "40": {
+      "position": [196, 266],
+      "allow_player_add_to_free_place": false
+    },
+    "41": {
+      "position": [232, 266],
+      "allow_player_add_to_free_place": false
+    },
+    "42": {
+      "position": [196, 230],
+      "allow_player_add_to_free_place": false
+    },
+    "43": {
+      "position": [232, 230],
+      "allow_player_add_to_free_place": false
+    },
+    "44": {
+      "position": [308, 246],
+      "allow_player_add_to_free_place": false,
+      "allow_player_insert": false
+    },
+
+    "45": {
+      "position": [154, 178],
+      "allow_player_add_to_free_place": false,
+      "empty_slot_image": "item/empty_armor_slot_shield"
+    }
+  }
+}

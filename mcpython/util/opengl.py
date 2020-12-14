@@ -5,7 +5,10 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 # This is an semi-stable API for drawing stuff on the screen.
 # todo: implement via pyglet's shape module & use batches
 import pyglet.gl as gl
@@ -13,7 +16,7 @@ import pyglet
 import math
 
 
-def draw_rectangle(position, size, color=(.0, .0, .0)):
+def draw_rectangle(position, size, color=(0.0, 0.0, 0.0)):
     x, y = position
     dx, dy = size
     if len(color) == 3:
@@ -21,16 +24,16 @@ def draw_rectangle(position, size, color=(.0, .0, .0)):
     else:
         gl.glColor4d(*color)
     gl.glBegin(gl.GL_TRIANGLES)
-    gl.glVertex2f(x, y+dy)
+    gl.glVertex2f(x, y + dy)
     gl.glVertex2f(x, y)
-    gl.glVertex2f(x+dx, y+dy)
-    gl.glVertex2f(x+dx, y+dy)
+    gl.glVertex2f(x + dx, y + dy)
+    gl.glVertex2f(x + dx, y + dy)
     gl.glVertex2f(x, y)
-    gl.glVertex2f(x+dx, y)
+    gl.glVertex2f(x + dx, y)
     gl.glEnd()
 
 
-def draw_line(f, t, color=(.0, .0, .0)):
+def draw_line(f, t, color=(0.0, 0.0, 0.0)):
     gl.glColor3d(*color)
     gl.glBegin(gl.GL_LINES)
     gl.glVertex2f(*f)
@@ -38,11 +41,10 @@ def draw_line(f, t, color=(.0, .0, .0)):
     gl.glEnd()
 
 
-def draw_line_rectangle(position, size, color=(0., 0., 0.)):
+def draw_line_rectangle(position, size, color=(0.0, 0.0, 0.0)):
     x, y = position
     sx, sy = size
     draw_line((x, y), (x, y + sy + 1), color=color)
     draw_line((x, y), (x + sx, y), color=color)
     draw_line((x + sx, y), (x + sx, y + sy), color=color)
     draw_line((x, y + sy), (x + sx, y + sy), color=color)
-

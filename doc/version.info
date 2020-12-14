@@ -1,0 +1,1370 @@
+sstarted these clone on 12th of July, 2019
+[github]: started day 1 as 12th of July, 2019
+[github]: created git repo, author: uuk, uuk has now all rights onto these project
+[uuk]: added tasks.list storing some todo's for the future
+[uuk]: added version.info file
+[uuk]: added tools/updatelicenceheaders [1]
+[github]: started day 2 as 13th of July, 2019
+[uuk]: added tools/updatelicenceheaders [2]
+[uuk]: added code from https://github.com/fogleman/Minecraft
+[uuk]: created __main__.py for launching
+[uuk]: fixed missing call of main.main() in __main__
+[uuk]: fixed library bug locally, if somebody gets when closing the window an exception from weakref, contact me and I
+        will give you an workaround
+[uuk]: removed compatibility to python 2
+[uuk]: when starting, mouse will NOT be locked anymore
+[uuk]: split everything into single files
+[uuk]: added warning msg when update is called to less
+[uuk]: new chunk format: (x, z) instead of (x, 0, z)
+[uuk]: added event/EventHandler
+[uuk]: added globals
+[uuk]: added events
+[uuk]: added exception handling for events
+[uuk]: added base class for blocks and block handler
+[uuk]: added missing texture to texture.png
+[uuk]: all blocks are now using the new block system
+[uuk]: added hooks for all different block uses to Block-class
+[uuk]: added dirt-block
+[uuk]: added "air"-block
+[uuk]: added cleanup & regenerate-function to model
+[uuk]: pressing "N" ends now in an new level
+[uuk]: added State-class, StateHandler, StatePart
+[uuk]: added activate/deactivate callback functions to EventHandler
+[uuk]: added State for game, StatePart of GameLoop
+[uuk]: moved all eventhandling out of window into GameStatePart and GameState
+[uuk]: added Escape-state
+[uuk]: fixed some function misspells
+[uuk]: added state/ui for buttons
+[uuk]: added event/EventInfo for getting an info storing exactly when event args are True
+[uuk]: fixed possible memory leak when changing fast chunks (chunks were shown before other were hidden)
+[uuk]: added assets-folder
+[uuk]: added some resources from mc 1.14.4-pre5
+[uuk]: added textures/helpers for image editing, for that PIL is required
+[uuk]: added local to globals
+[uuk]: added tmp-folder
+[github]: started day 3 as 14th of July, 2019
+[uuk]: finished UIPartButton
+[uuk]: some licence header improvements
+[uuk]: added UIPartLable
+[uuk]: added callbackhelper - an class for calling an function with extra args
+[uuk]: fixed that when switching statets sub-parts are recreated so we are not removing the old
+[uuk]: finished EscapeState for the moment
+[uuk]: added StateStartMenu
+[uuk]: added two new rendering events: "render:draw:2d:background" & "render:draw:2d:overlay"
+[uuk]: added text_size attribute to UIPartLable
+[github]: started day 4 as 15th of July, 2019
+[uuk]: fixed bug: world is invisable after loading
+[uuk]: added immediate-parameter to sector-functions of Model
+[uuk]: fixed bug: you can spawn in blocks
+[uuk]: added TickHandler with simple ticking
+[uuk]: added on_block_update()-method to Block
+[uuk]: removed N-key to generate an new level
+[uuk]: added ability to use add_block & remove_block with block instances
+[uuk]: sand will now fall by 2 Blocks / sec
+[uuk]: added textureatlas
+[uuk]: added helper function for transforming an pyglet image into an pillow one
+[uuk]: added resourcelocator making it possible to extract resources direct out of the .jar file,
+       an public instance is used
+[uuk]: removed textures from system
+[uuk]: removed texture group of model, we are using now texture atlas system
+[uuk]: added ModelLoader
+[uuk]: setup() was called twice in __main__.py
+[github]: started day 5 as 16th of July, 2019
+[uuk]: fixed bugs around Model system
+[uuk]: added missingtexture-image
+[uuk]: added cube_verices_2 & tex_coords_2 for definiting all dimensions (xyz)
+[uuk]: missing texture will now be loaded into every texture atlas
+[uuk]: model.hide_block & model.show_block accepts now also blocks
+[uuk]: added auto-injected misssing-texture-block
+[uuk]: ResourceLocator accepts now files without G.local before
+[uuk]: if an face is not definitied, it will be missingtexture
+[github]: started day 6 as 17th of July, 2019
+[uuk]: fixed bugs around the model system & the atlas system
+[uuk]: added some security checks in various functions
+[uuk]: added some cleanup function into some functions
+[uuk]: added assets/models/block_modified-folder for giving the game alternative models to load (used for grass at the moment)
+[uuk]: added texture/factory for classes working with images from pre-definited files
+[uuk]: added the following blocks: bedrock, cobblestone
+[uuk]: made stone breakable
+[uuk]: added some kind of info state
+[uuk]: added UIPartImage
+[github]: started day 7 as 18th of July, 2019
+[uuk]: optimized above state
+[uuk]: updated jar-archive to 1.14.4-pre6
+[uuk]: added interaction to above state
+[uuk]: added player-class
+[uuk]: added activate_crosshair-attribute to StatePartGame
+[uuk]: added Inventory, InventoryHandler, Slot, ItemStack
+[uuk]: added Items, Stone-item
+[github]: started day 8 as 19th of July, 2019
+[uuk]: added PlayerHotbar-Inventory
+[uuk]: fixed bug: stone has no texture location
+[uuk]: fixed bug: copy of slot has no itemstack-attribute
+[uuk]: fixed bugs around rendering inventorys
+[uuk]: slot position is now relative to base position of background image, making resizing now working correct
+[uuk]: added json-support to ResourceLocator
+[uuk]: added config-file-option to Inventory
+[uuk]: pressing ESC in escape-state will now return to game
+[uuk]: added factory entry: generating hotbar image
+[uuk]: added on_create-function to Inventory
+[uuk]: added resize & cut task to texture/factory
+[uuk]: added ItemImageTable and reworked old Slot-system to use it; items will now be resized internally
+[uuk]: added key.R support for reloading inventory config
+[uuk]: added add_to_free_place-function to player
+[uuk]: moved hotbar a little bit down
+[uuk]: added reload_config-function to Inventory
+[uuk]: moved a lot of stuff into inventory config
+[uuk]: added selection for active inventory slot
+[uuk]: fixed bug with amount label rendering at wrong position
+[uuk]: fixed miss-spell of Inventory's position-attribute named positon
+[uuk]: fixed bug: amount labels are overlapped by next items
+[github]: started day 9 as 20th of July, 2019
+[uuk]: added allow_player_remove & allow_player_insert-attribute to Slot, added to config system
+[uuk]: removed old block selection system
+[uuk]: added on_draw_over_image-function to Inventory
+[uuk]: fixed bug: in gamemode 1, bedrock can't be broken
+[uuk]: added mouse-middle support
+[uuk]: fixed bug: itemstack is getting the class, not an instance of it when creating with itemname
+[uuk]: added main-part of the inventory
+[uuk]: enabled sub-locations in archives for ResourceLocator
+[uuk]: when adding an empty array to texture atlas, it will be simply skipped
+[uuk]: updated .jar to 1.14.4
+[uuk]: fixed bug: when opening an inventory, you can move yourself by arrow-keys
+[uuk]: key E will close now also the inventory
+[uuk]: fixed bug: ESC can be used when an inventory is opened to get to the esc-screen
+[uuk]: fixed bug: resize with factory was some kind broken due to an wrong argument
+[uuk]: added allow_player_add_to_free_place-attribute to slot
+[uuk]: fixed bug: slotcopy has no allow_[...]-attributes
+[uuk]: added mouse interaction
+[uuk]: fixed bug: remove/insert options to Slot were wrong
+[uuk]: added Chat as an inventory
+[uuk]: added util/opengl
+[uuk]: added event "user:keyboard:enter" when user enters an text (window: on_text(text: str))
+[uuk]: added Command-system
+[uuk]: added /give-command (structure: selector, itemname, optional: int)
+[uuk]: add_to_free_place of player will now search for an used stack before using empty
+[uuk]: fixed bug: add_to_free_place when adding to an not-full stack the result will be what was added not the rest
+[uuk]: fixed bug: amount for slot was after creation always 2 due to an missed debug line
+[uuk]: fixed bug: ItemStack.copy() is not right
+[uuk]: added /gamemode-command with number and string using
+[uuk]: fixed bug: in gamemode 3, you can't move
+[uuk]: fixed bug: in gamemode 3, hitbox of blocks were drawn
+[uuk]: added SELECT_DEFINITED_STRING-type to CommandEntryType, reworked /gamemode-command to use it
+[github]: started day 10 as 21th of July, 2019
+[uuk]: added OPEN_END_UNDEFINITED_STRING-type to CommandEntryType
+[uuk]: added /execute-command
+[uuk]: added ParsingCommandInfo for storing how and where the command is parsed from
+[uuk]: position & selector types will now return an list of elements instead of an single one
+[uuk]: position will accept now ~-inputs
+[uuk]: added commands: /kill, /clear, /teleport, /tp
+[uuk]: main_entry can now be list
+[uuk]: added kill-method to player
+[uuk]: updated licence headers to fit the version of jar used in these project
+[uuk]: fixed bug: Can get 0-Slot by right-clicking an 1-Slot
+[github]: started day 11 as 22th of July, 2019
+[uuk]: fixed some bugs around /tp & /teleport
+[uuk]: added some security to math functions
+[uuk]: added /help-command
+[github]: started day 12 as 2nd of August, 2019
+[uuk]: added StateBlockItemGenerator
+[uuk]: added clearcolor-attribute to StatePartGame
+[uuk]: added get_used_models-attribute to Block
+[uuk]: speeded model loading up by loading only the used models and the models which have childs
+[uuk]: added block_update-parameter to add & remove functions of model
+[uuk]: added build-limits (y <0 and >255), changed world generation a little bit to fit in
+[uuk]: pressing during moving mouse rotates now the camera normally
+[uuk]: braking & setting blocks is now always when pressing mouse, not only on_press
+[uuk]: added brake-time-attribute to block, gamemode 1 is instant mining
+[uuk]: added events: user:mouse:release, user:mouse:drag
+[uuk]: added set_to-attribute to Block
+[github]: started day 13 as 17th of August, 2019
+[uuk]: added some interesting tasks
+[github]: started day 14 as 18th of August, 2019
+[uuk]: added the following blocks: coal ore, iron ore, gold ore, emerald ore, redstone ore, diamond ore, lapis ore
+[uuk]: fixed bug: ItemStone-class still exists outside the generation system
+[uuk]: split model into Chunk, Dimension & World, removed Model, renamed globals model to world
+[uuk]: implemented some kind of Dimension-system
+[uuk]: moved some code for adding / removing blocks around
+[uuk]: fixed bug: braking "void" raises an exception due to an missed check
+[uuk]: removed world gen for now, only one stone block is generated
+[uuk]: removed old & unused field out of chunk-class
+[uuk]: added system for generation task storage in Chunk
+[uuk]: removed initialize function from system, removed generation events
+[uuk]: new world generation system: An feature->layer->config definition system
+[uuk]: implemented layer system with LayerConfig, added normal Bedrock layer
+[uuk]: added GenerationMode-system, added default overworld generator
+[github]: started day 15 as 19th of August, 2019
+[uuk]: system will now generate properly
+[uuk]: finished bedrock layer
+[uuk]: batches will now be part of dimension instead of chunk
+[uuk]: added some code to chunk to definite parameters which should be loaded when an new chunk is created. usefull for
+       world gen tasks
+[uuk]: added reload-command, /generate [<x> <z>]-command
+[github] started day 15 as 21th of August, 2019
+[uuk]: added TemperatureMapLayer
+[uuk]: fixed bug in #1 by adding some checks and resets
+[uuk]: added feature 1 out of #1, so player will be killed under level -10
+[uuk]: added DefaultBiomeLayer
+[uuk]: fixed bug: value in LandMassLayer-map was float instead of landmass name
+[uuk]: fixed bug: BlockSand fall-system gave errors due to an overlooked look into model.world
+[uuk]: fixed bug: world is not generated during world generation call, instead during runtime -> lag!
+[github] started day 16 as 22th of August, 2019
+[uuk]: fixed bugs around world generation
+[uuk]: removed ocean from landmasses, it is not used at the moment
+[uuk]: added biome-lable (not working?)
+[uuk]: added gamemode lable
+[uuk]: added new biome: plains
+[uuk]: tweaked some world generation constants
+[uuk]: added option in StatePartGame to disable lable
+[uuk]: in StateBlockItemGenerator, caption will show where we are
+[uuk]: fixed bug: player.add_to_free_place could place items into armor, crafting & offhand slots
+[uuk]: crafting slots of player will now be automaticly cleared when closed addding stuff into inventory
+[uuk]: added sprinting, reworked speed for flying & gamemode 3
+[uuk]: added HeightMapLayer, added get_height_range-function to Biome
+[uuk]: fixed biome-lable, missed an normalize(vector)-call
+[uuk]: reworked addition of blocks in chunk by adding extra map due to better access in future systems
+[uuk]: added DefaultStonePlacementLayer for generating stone
+[uuk]: fixed bug: generating chunks during runtime causes them to never get the is_ready-flag True
+[uuk]: Chunk.update_visable is now faster by making it runtime-operating
+[uuk]: added DefaultTopLayerLayer for for example grass & dirt on top of the stone
+[uuk]: lable size is now smaller, block looking at is now part of lable
+[uuk]: added BlockFactory
+[github] started day 17 as 23th of August, 2019
+[uuk]: added block-base-system, added IFallingBlock, added system for registry in BlockHandler
+[uuk]: fixed bug: braking blocks did not update visable state
+[uuk]: added ItemFactory
+[uuk]: added items: apple, arrow, baked potato, beef, beetroot, beetroot soup, black dye, blaze powder, blaze rod,
+                    blue dye, bone, bone meal, book, bowl, bread, brick, broken elytra, brown dye, carrot,
+                    charcoal, chicken, chorus fruit, clay, coal, cod, cooked chicken, cooked cod, cooked mutton,
+                    cooked porkchop, cooked rabbit, cooked salmon, cookie, cyan dye, diamond, dried kelp, egg,
+                    emerald, ender eye, ender pearl, feather, fermented spider eye, flint, ghast tear,
+                    glistering melon slice, glowstone dust, golden apple, gold ingot, gold nugget, gray dye, green dye,
+                    gunpowder, ink sac, iron ingot, iron nugget, lapis lazuli, leather, light blue dye,
+                    light gray dye, lime dye, magenta dye, magma cream, melon slice, mutton, name tag, nether brick,
+                    nether star, nether wart, orange dye, pink dye, poisonous potato, porkchop, potato, purple dye,
+                    quartz, rabbit, redstone, red dye, rotten flesh, salmon, shulker shell, slime ball, spider eye,
+                    stick, string, sugar, wheat, white dye, yellow dye
+[uuk]: added areas to the log
+[github]: started day 18 as 24th of August, 2019
+[xkcdjerry]: fixed a bug out of #1
+[uuk]: added xkcdjerry to licence headers
+[uuk]: fixed bug in #1: when player falls out of world, he falls some way through ground after respawning
+[uuk]: after a world is generated, game is now faster
+[uuk]: BlockItemFactory is now faster (#1)
+[uuk]: player default gamemode will now be 0 (#1)
+[uuk]: fixed bug: player gamemode is not reset after generating new world
+[uuk]: changed fly key to double space (#1)
+[uuk]: changed behaviour of flying (#1?) so now pressing space / shift goes up/down
+[uuk]: added mouse-scroll system (#1) for slots
+[uuk]: fixed bug in #1: exception like World object has no attribute world
+[uuk]: fixed bug in #1: can't set blocks in gamemode 0 due to an wrong gamemode check
+[uuk]: added blocks: coal block, diamond block, emerald block, gold block, iron block, lapis block, redstone block
+[uuk]: CommandEntries are now registered to CommandHandler and are extendable
+[uuk]: made generated area smaller for faster generation time
+[uuk]: added an registry for selectors, current selectors: @s, @p, @r, @a
+[uuk]: added /setblock-command, /fill-command
+[uuk]: added dimension-attribute to command info
+[uuk]: fixed bug: position-entry does only decode ~-parameters, not valid setting it
+[uuk]: fixed some miss-spells
+[uuk]: added new enum: EnumSide
+[uuk]: added is_solid_side-function to Block
+[uuk]: util.math.get_max_y(position) accepts now also an x,z position
+[uuk]: util.math.cube_vertices & util.math.cube_vertices_2 supports now face-deactivating
+[uuk]: made it possible to hide individual block faces
+[uuk]: fixed bug: Dimension.get_block did not access blocks that should be generated in the future
+[uuk]: fixed bug: Chunk.get_block did NOT give None back if position is empty
+[github]: started day 19 as first of September, 2019
+[uuk]: cleaned up files & fixed some bugs:
+    - block directory
+[github]: started day 20 as second of September, 2019
+    - chat directory
+[uuk]: /generate accepts now an area
+[uuk]: /give-command give you now maximal the max stack size, not more
+    - event directory
+[uuk]: fixed bug: TickHandler.bind_redstone_tick was self-calling
+    - gui directory
+[uuk]: implemented crafting system
+[uuk]: slot has now an on_update, allow_half_getting & on_shift_click implementation
+[uuk]: ItemStacks & Items have now an == implementation
+[github]: started day 20 as third of September, 2019
+[uuk]: added states to customize parts of the world generation
+[uuk]: added ToggleButton
+[uuk]: tweaked some collision detection
+[uuk]: rewritten ResourceLocator, made it possible to add own resource packs
+[uuk]: rewritten model system, BlockStates are now used
+[uuk]: rewritten texture atlas system, rewritten texturefactory
+[github]: started day 21 as 5th of September, 2019
+[uuk]: worked on the rewrite (took me longer than expected due to some errors in model texture getting)
+[uuk]: implemented base log system  (#1)
+[uuk]: block states accept now rotations, the next will optimize it a bit
+[uuk]: increased texture atlas size to 64x64 images per atlas, and it is now possible to create some with custom size
+[uuk]: fixed bug: math.tex_coords has wrong texture order
+[github]: started day 22 as 6th of September, 2019
+[uuk]: fixed bug: BlockState draws all states which should be selected by random at once
+[uuk]: added spruce, birch, jungle, acacia & dark oak log; oak, spruce, birch, jungle, acacia & dark oak planks (#1)
+[uuk]: fixed bug: some faces of non-upper logs were rotated wrong due to an wrong texture rotation
+[github]: started day 23 as 7th of September, 2019
+[uuk]: speed up loading again
+[uuk]: added stripped logs, wood, stripped wood, leaves
+[uuk]: added BlockConfig for adding blocks with alpha (there is stored that they have alpha)
+[uuk]: added alpha-batch to rendering system
+[uuk]: added gravel, andesite, polished andesite, diorite, polished diorite, granite, polished granite
+[uuk]: blocklist of blockhandler is now sorted after name
+[uuk]: added trees to world generation
+[github]: started day 24 as 8th of September, 2019
+[uuk]: moved registries to one system. added registration events. Registries can be locked and will be after startup
+[uuk]: registry are now named
+[github]: started day 25 as 9th of September, 2019
+[uuk]: finished up above changes
+[uuk]: fixed bug: @a and @r were not registered correct
+[xkcdjerry]: removed old unused code in __main__->try->main
+[uuk]: added setup tasks
+[github]: started day 26 as 14th of September, 2019
+[uuk]: finished prebuild system to an runable point
+[uuk]: fixed bug: space / shift for flying works in chat
+[uuk]: fixed bug: /help-command does not work (#1)
+[uuk]: fixed bugs around command parsing which were causing /give and /give @s raising exceptions (#4)
+[uuk]: optimized crafting system & fixed bugs around it (#1)
+[uuk]: fixed bug: only-items were not loaded (this was the reason for recipes not working)
+[uuk]: fixed bug: ResourceLocator can't load right from item-directory
+[uuk]: fixed bug: block models are loaded twice -> less loading time
+[uuk]: fixed bug: shift-click on crafting output does delete all
+[uuk]: fixed bug: combining two inventory slots gets the slot you have with your mouse lost
+[uuk]: fixed bug: sometimes, an chunk more than expected was generating
+[uuk]: fixed bug: blocks can be set corners of the blocks
+[uuk]: fixed bug: can't set blocks (sorry, I have not tested the above bug fix in the list)
+[uuk]: fixed bug: falling blocks were not falling correct
+[uuk]: fixed bug: inventory is not cleared when leaving world
+[uuk]: added @-selector which works the same as the @s-selector
+[uuk]: added debug world generator
+[xkcdjerry]: added a requirements.txt for a quick-and-dirty pip download
+[uuk]: fixed bug: middle-clicking on an not-filled slot in gamemode 1 gives an exception
+[uuk]: added blocks: stone bricks, red sand, concrete, concrete powder, wool
+[uuk]: optimized blockfactory by adding some more file modes & making one file out of more than one (planks, leaves, ...)
+[uuk]: fixed bug: build-folder is not cleared when rebuilding
+[uuk]: "/" will open the chat with "/" added to it (#1)
+[uuk]: added active index to chat so you can edit where you want (not complete working!)
+[uuk]: fixed shaped crafting recipes, reworked some recipe check parts to speed up (#9)
+[uuk]: reload-command will reload now also recipes
+[uuk]: moved recipe loading point to the startup-load so errors are shown before
+[uuk]: fixed bug: slot interaction events are not called normally
+[uuk]: added tag system
+[uuk]: added tag system to crafting
+[uuk]: cleaned up 1.14.4.jar a bit so it is now smaller
+[uuk]: fixed bug: shift-click on output slot does not work
+[uuk]: added auto-gen-toggle-button & world barrier button to world config
+[uuk]: added config system to World-class
+[uuk]: fixed bug: when the player dies during moving an item in the inventory, the item is not deleted
+[uuk]: fixed bug: config in world gen config is not reseted after re-joining the screen
+[uuk]: added the code to work with the new two buttons
+[uuk]: added some new flags into world generation, added auto generation
+[uuk]: fixed bug: when looking on not-generated blocks, but one some which were added to the generation system, game
+       gives an exception
+[uuk]: when on ground and in gamemode 1, flying will stop
+[uuk]: fixed some bugs around player killing & world leaving
+[uuk]: added progress bar to ui elements
+[uuk]: fixed bug: it was possible that blocks are generated during non-game states
+[uuk]: line width of focused block is now bigger
+[uuk]: fixed some bugs around interaction with non-generated
+[uuk]: fixed bug: game crashes when in debug world and generating new chunks
+[uuk]: fixed bug: falling blocks are falling in debug world
+[uuk]: item factory optimized
+[uuk]: added new tag-type: "naming" storing at the moment color names
+[uuk]: moved the point were tags are loaded
+[uuk]: fixed bug: when deactivating world barrier, but auto gen is enabled, auto gen does NOT work
+[uuk]: items are now loaded by an function, not on import
+[uuk]: fixed bug: beetroot soup can be stacked up to 64
+[uuk]: optimize recipe lookup
+[uuk]: added crafting table
+[uuk]: added player interaction system
+[uuk]: pressing space & shift in gamemode 1 will now end in non-flying
+[uuk]: added crafting table inventory
+[uuk]: /reload-command will now reload also inventory config
+[uuk]: exception on combining two stacks
+[uuk]: rewritten SlotCopy
+[uuk]: added get_interaction_slots-method to inventory
+[uuk]: changed some code so you can direct walk into new chunks but you won't be able to see blocks under you (#7)
+[uuk]: added tools (#9)
+[uuk]: fixed bug: stone tools were not added
+[uuk]: fixed bug: texture factory was generating without rebuild mode
+[uuk]: fixed bug: in crafting table, first slot was not used for crafting (so some recipes were not working)
+[uuk]: fixed bug: world gen config is not reset correctly
+[uuk]: hitcheck will now be every 0,05 blocks an check, not every 0,125 blocks, maybe fixing #7
+[uuk]: fixed bug: when opening the crafting table with an block in hand, it was set to the block
+[uuk]: slot where mouse is on is now highlighted
+[uuk]: fixed bug: copy of hotbar slots in main inventory & slot of crafting table where offset by one pixel
+[uuk]: added empty slot image option (used for armor slots & offhand slot)
+[uuk]: added info lable for what is hold in hand over the hotbar
+[uuk]: changed caption from "Pyglet" to "mcpython 4"
+[uuk]: fixed bug: can't rebuild
+[uuk]: fixed bug: when build-folder does not exists, rebuild were not possible
+[uuk]: BlockItemFactory is now part of the prebuild system
+[uuk]: added new command: "/iteminfo [hand/inventory/item <itemname>/block inventory <position>]" which gives info about items
+[uuk]: fixed bug: when has_block flag is set for ItemFactory-file, block name is not defaulted to item name
+[uuk]: added inventory-getter to block
+[uuk]: items will now be using an TextureAtlas for holding all the item images. this will be generated only when in
+       rebuild mode
+[uuk]: made item image changeable from item's side
+[uuk]: items must provide all used images on class for ImageAtlas generation (default: default image)
+[uuk]: harts, hunger, xp & armor level is now displayed
+[uuk]: hotbar is now also displayed in escape state
+[uuk]: added new attributes to player: armor_toughness
+[uuk]: player will get now damage when under -10, not simple be killed
+[uuk]: updated pyglet to 1.4.5 and Pillow to 6.2.0
+[uuk]: added draws to xp of state
+[uuk]: fixed bug: full armor icon was cut wrong
+[uuk]: added /xp & /experience command
+[uuk]: different actions will now affect hearts and hunger
+[uuk]: added Totem of Undying with functionality
+[uuk]: reworked parts of item factory to fit with extensions
+[uuk]: added food base class, ItemFactory can now use it
+[uuk]: added item for beetroot, beetroot soup, carrot, dried kelp, golden carrot, melon slice, potato, puffer fish,
+       pumpkin pie, rabbit stew, beef, chicken, cod, mutton, porkchop, rabbit
+[uuk]: added command: /registryinfo <name> [<attribute>]
+[uuk]: fixed bug: /xp command was missing help info
+[uuk]: made food eatable
+[uuk]: fixed bug: getting damage from standing still
+[uuk]: fixed bug: not all cooldowns were global and could be reseted for some reasons
+[uuk]: rewritten block & item factory, no json files are needed now
+[uuk]: implemented new storage for block items
+[uuk]: fixed bug: cooked porkchop was not loaded correct
+[uuk]: added new items: cooked beef, tropical fish, experience bottle
+[uuk]: deleted old block injection system
+[uuk]: added new blocks: terracotta
+[uuk]: added new naming tags: treetypes, oretypes
+[uuk]: fixed bug: info lable for item is drawn behind icons for hearts & hunger
+[uuk]: moved log blocks to block factory
+[uuk]: tool system is now working as excpected, brake time is now cached
+[uuk]: added more quartz blocks, smooth stone, stone brick variants
+[uuk]: added shears
+[uuk]: added armor, excluding leather armor
+[uuk]: added tags for armor
+[uuk]: slots can be now configurated to only allow special item tags, this is now used in armor slots
+[uuk]: added tags to /iteminfo
+[uuk]: fixed bug: when resizing the window when running with --rebuild flag, block item images get wrong
+        -> fix: window is NOT resizeable in this time
+[uuk]: fixed bug: sometimes when --rebuild flag running, block item images gets everywhere (0, 0, 0, 0) as color
+[uuk]: fixed bug: slot at mouse at at first get not at mouse
+[uuk]: fixed bug: when ones left the last position in chat, it was NOT possible to reach there anymore
+[uuk]: fixed bug: can set blocks inside yourself
+[uuk]: fixed bug: armor icons where not correct
+[uuk]: fixed bug: falling blocks where not sending blockupdates to surrounding blocks
+[uuk]: fixed bug: regenerating was dealing damage instead of giving hearts back, so
+[uuk]: fixed bug: collision detection with blocks to get damage was wrong
+[uuk]: fixed bug: hunger icons where not correct
+[uuk]: fixed bug: physics were running when on down tps to slow so collision issues occurred
+[uuk]: slowed down intern clock speed to increase fps
+[uuk]: fixed bug: when eating, items were no consumed
+[uuk]: rewritten event system to support speed-assignment. Everything is now ordered in some so called EventBuses
+[uuk]: implemented custom event bus to every created state, updated states to use this
+[uuk]: added progressbar to BlockItemFactory
+[uuk]: fixed some bugs around progress bar rendering
+[uuk]: new world generation config screen
+[uuk]: created UI base class
+[uuk]: added new UI element: TextInput
+[uuk]: fixed typos in UIPartImage
+[uuk]: added new world config entries: world size, player name, world seed
+[uuk]: changed the way how buttons are drawn
+[uuk]: re-added barrier & auto gen config options
+[uuk]: fixed bug: when using the ToggleButton, game crashed
+[uuk]: added Language data, auto loading & connected to various lables, buttons & text field empty text
+[uuk]: fixed bug: UIPartLable's text was NOT updating when setting its text
+[uuk]: added special mode to ResourceLocator to get all data from all possible locations, not only the first on list
+[uuk]: added custom language file for translations which are not minecraft-sourced
+[uuk]: Escape State has now an "Go to github project" - button
+[uuk]: sometimes, game crashes when tmp-folder is opened in an file explorer
+[uuk]: fixed bug: buttons where miss-drawn
+[uuk]: added quit-game button to start screen
+[uuk]: changed crosshairs texture to mc texture
+[uuk]: fixed bug: when pressing an mouse button while looking in an generating chunk let the game crash
+[uuk]: when leaving main game state and pressing an button, button unpressing in the non-main-game-state was not handled
+       so bugs around it where occurring
+[uuk]: added tab-support to TextFields
+[uuk]: added mod-folder with load events
+[uuk]: EventBus can have now EventBuses as children, so they can be deactivated all at once
+[uuk]: EventBus accepts now an subscribeinfo
+[uuk]: added Mod-class, ModLoader-class, ModDependency-class, mods-folder
+[uuk]: fixed bug: ProgressBar was not working
+[uuk]: added ModLoading-state with progress bar
+[uuk]: everything uses now loading events rather than direct load calls from __main__.py
+[uuk]: InventoryPlayerMain requires now an InventoryPlayerHotbar-instance to create
+[uuk]: moved pre-build to post-window-create as an loading phase
+[uuk]: moved item atlas loading to resource-loading phase
+[uuk]: fixed bug: when errors occure with texture side loading, game crashes when block is set
+[uuk]: changed intern ResourceLocation-lookup to be reverse-ordered to make adding mods easier
+[uuk]: with "--addmoddir <moddir>" you can add custom mod directories
+[uuk]: with "--addmodfile <modfile>" you can add custom mods from other locations
+[uuk]: loading events are now covering now also commands and world generation elements
+[uuk]: added dimension registry
+[uuk]: fixed bug: BiomeHandler was only loaded by WorldGenBiomeLayer which can end in some strange behaviour
+[uuk]: fixed bug: mods where not loaded
+[uuk]: fixed bug: loading bar was offset
+[uuk]: reworked recipe loading to support mod-based injection from outer files (based on mod name)
+[uuk]: fixed bug: duplicate mod message was using "{}" in output rather than the real mod name
+[uuk]: fixed bug: mod sorter uses library rather than util.math
+[uuk]: fixed bug: mod errors were logged with two "-" in front
+[uuk]: reworked model & blockstate system to support modifications
+[uuk]: system will now create models outside of "minecraft"-namspace with "<namespace>:block/<blockname>"
+[uuk]: prebuild system is now based on an flag on globals
+[uuk]: if build-folder gets deleted, the system will now automatically rebuild
+[uuk]: reworked BlockItemGenerator to auto-build when blocks are missing (for example if block is added by an new mod
+       version)
+[uuk]: fixed bug: .py file-only mods could NOT be loaded
+[uuk]: fixed bug: if more than one mod had subscribed to one loading event, only the first mod get the event called due
+       to an missing reset of the LoadingStage
+[uuk]: error handling in BlockState-loading & BlockState-showing is now better
+[uuk]: fixed bug: BlockState's were loaded always into "minecraft:<blockname without namespace>"
+[uuk]: improved TestMod by various examples. The time of these part is limited until documentation is started
+[uuk]: fixed some bugs around chat, don't know since when they are in the game
+[uuk]: added two new loading bars: mod & event part
+[uuk]: fixed some bugs around loading bars
+[uuk]: progress bar will now auto-decrease values bigger than max progress
+[uuk]: changed some behind-the-screen parts of ItemFactory to create items better
+[uuk]: game will automatically rebuild when mod was changed
+[uuk]: added three new sys.argv parameters: --removemodfile <name> to remove an mod file
+                                            --removemod <name> to remove an mod by name
+                                            --addresourcepath <path> to add an new path to the resource system
+[uuk]: added security check if mod.json-file does exists
+[uuk]: added security checks for entries in mod.json file
+[uuk]: added loading order info with mod version to log
+[uuk]: enter will now generate the world
+[uuk]: added some runtime-based special events
+[uuk]: fixed bug: when generating, seed was not set yet
+[uuk]: these game has now an real version starting at snapshot 19w44a
+[uuk]: fixed bug: ModLoader was importing library 'toposort' which was never used
+[uuk]: fixed bug: ResourceLocator did NOT allow notations like testmod:block/test
+[uuk]: added security function when item atlas image index gets deleted, but the other stuff not
+[uuk]: added security function when block item factory index gets deleted, but the other stuff not
+[uuk]: fixed bug: dependency system was crashing
+[uuk]: made mod dependency errors better
+[uuk]: texturefactory accepts now also an data object besides an file-string
+[uuk]: ModelHandler & BlockState-systems accept now data-object beside file-strings
+[uuk]: added basic system: features. These file contains a class which can hold features added by mods which can be used
+       by other mods. This removes need for every mod to check registries for possible strange-named objects or cross-
+       -mod compatibility. This makes it also possible to extract information what is arrival for other mods
+[uuk]: added new function to block: get_provided_slots(side) which can be used to give information on which side
+       which slots of the inventory(s) should be arrival
+[uuk]: fixed bug: ModelHandler-datainjection failed
+[uuk]: fixed bug: world was created twice during startup which ended up into errors all around the system
+[uuk]: fixed bug: README was linking to wrong repo
+[uuk]: added wood & stone slabs
+[uuk]: fixed model system for non-full blocks
+[uuk]: texture util of math accepts now an texture region in which 0 is the one side and 1 the other
+[uuk]: hit_test returns now also the actual hit position, not only the block in which was lended
+[uuk]: added BoundingBox-system used now in hit_test
+[uuk]: slab has now an proper hitbox
+[uuk]: updated pillow to 6.2.1 to enable python 3.8 support
+[uuk]: fixed bug: in some rare cases, blocks could be replaced by player without giving item back
+[uuk]: added normalize_ceil-method
+[uuk]: added chest
+[uuk]: fixed bug: when closing crafting table inventory, also output-slot is added back to inventory
+[uuk]: added chest inventory using shulkerbox-texture because less work to do with this texture
+[uuk]: added ICustomBlockRenderer-class for creating own rendering systems for blocks
+[uuk]: fixed texture bugs around corners of blocks by using an separated OpenGL-option
+[uuk]: fixed bug: when selecting an block when digging strait down, the black outline is drawn incorrect
+[uuk]: added new texture task: "rebase", "combine"
+[uuk]: fixed bug: link to github-project was wrong
+[uuk]: caption of window now includes the version of the game
+[uuk]: added helper function to ResourceLocator to load everything possible by modname using also alternative dirs
+[uuk]: TextureAtlasSize is now on default 16x16 instead of 64x64
+[uuk]: fixed bug: can't load .py-file only-mods
+[uuk]: ENTER in start menu will now send user to world gen config
+[uuk]: added an debug-profile to EventBus activated by the flag "--debugevents" stored in an flag in globals
+[uuk]: optimized StatePartGame.on_update-method and separated logical parts them from each other
+[uuk]: improved performance in physics handling
+[uuk]: fixed some bugs around chests, including some texture bugs
+[uuk]: fixed wrong operator in util.math.tex_coord
+[uuk]: updated pyglet to 1.4.6
+[uuk]: improved rendered texture quality
+[uuk]: fixed some bugs around StateBlockItemGenerator
+[uuk]: added christmas-variant of chest
+[uuk]: added ender chest
+[uuk]: Inventory has now an clear method
+[uuk]: added on_request_item_for_block-function of Block & on_set_from_item-function of Item to manipulate data
+[uuk]: Slot has now an can_set_item-function which is used rather than direct check
+[uuk]: added shulker boxes
+[uuk]: fixed bug: crash when loading an mod-zipfile without an mod.json file due to wrong exception handling
+[uuk]: mod-file based mods are stored now as imported files in G.modloader.mods[<modname>].package
+[uuk]: fixed some bugs around loading things with ResourceLocator due to the reverse of the location list on every read
+       these fixes various bugs around uncolored textures or texture overwrites & not rendering blocks
+[uuk]: fixed crash due to two models pointing to same block
+[uuk]: updated pyglet to 1.4.7
+[uuk]: added System for configuration the BlockItem from block's side to make some changes to it
+[uuk]: blocks have now an system for modifying what's stored as BlockItem making some cool things possible
+       this will also be called in normal mode to re-add the item properties
+[uuk]: fixed bug: middle-click on an empty slot was crashing the game
+[uuk]: fixed bug: middle-click with item on mouse overwrites the item on mouse
+[uuk]: block & item factory have now an method for setting the on_request_item_for_block-function of Block &
+       on_set_from_item-function of Item
+[uuk]: when working with shulker boxes, the data in inventory gets NOT deleted and is rather send to the block / item
+       created
+[uuk]: implemented colored shulker box
+[uuk]: fixed bug: when copying an shulker box with mouse-middle-click, shulker box was like an colored ender chest
+[uuk]: added middle-click support to chest
+[uuk]: chests are now not openable when block ontop
+[uuk]: added factories for recipes & models
+[uuk]: added CTRL+V-combo to chat, for that the library clipboard is needed
+[uuk]: fixed bug: ResourceLocator's mod asset loader helper function failed to load block states
+[uuk]: fixed bug: when entering an real HTML-character sequenz to the chat, it is displayed as html rather as raw string
+[uuk]: fixed bug: chars used for "<" and ">" were only strange removeable
+[uuk]: TAB+SHIFT is now arrival to switch between text fields
+[uuk]: exception handle when block is not arrival anymore in ItemHandler's load function
+[uuk]: fixed progress bar rendering out of bounding box due to wrong size calculation
+[uuk]: Loading Stages are now combined into groups, but no events are removed
+[uuk]: LoadingStages have now an name
+[uuk]: combined some stages event more
+[uuk]: texture factory will now use ALL possible definition files instead of only the first
+[uuk]: improvements to some files during writing the documentation
+[uuk]: added deprecated.txt file
+[uuk]: included an LICENSE_Minecraft file to make clear what we are using and what not
+[uuk]: version name is stored in globals
+[uuk]: header is now using version
+[uuk]: removed local doc-folder because documentation has been moved
+[uuk]: again, improvements to some files during writing the documentation
+[uuk]: TICKS_PER_SEC=20 (minecraft tick rate) instead of 30
+[uuk]: features.py support now check for exists & will error check for name
+[uuk]: Language.get accepts now an formatting-parameter which should replace the old syntax
+[uuk]: Language.translate was renamed to Language.translate. Old is still arrival for some time
+[uuk]: Language.Language.from_file accepts now an name-parameter replacing name generation
+[uuk]: added Language.from_mod_name(<modname>)-method
+[uuk]: again, improvements to some files during writing the documentation
+[uuk]: fixed some typos in the code
+[uuk]: removed outdated block/AcaciaLog-file
+[uuk]: fixed bug: sand was not falling correct
+[uuk]: TickHandler will calculated now on call all ticks needed up to this point, not only one, may affect
+       performance
+[uuk]: fixed exists-function-bug in ResourceLocator with @<resoure path>-notation
+[uuk]: version name will now be stored in config.py rather than in globals.py
+[uuk]: added security for non-visible blocks in StateBlockItemGenerator
+[uuk]: fixed rare crash when showing an empty progress bar (max items == 0)
+[uuk]: added an option to TickHandler for disabling tick-skipping
+[uuk]: fixed bug: blockitemfactory in debug mode was not working when missing ticks
+[uuk]: enabled block tag loading
+[uuk]: added new helper functions: get_tags_for(obj), provides_object_tag(obj, tag), provides_object_any_tag(obj, tags)
+[uuk]: improved feature-system
+[uuk]: added features.get_attribute(name)-function
+[uuk]: added boolean command entry
+[uuk]: fixed bug: chat was opened by "/" when already open
+[uuk]: fixed bug: scrolling in hotbar was possible in chat
+[uuk]: fixed bug: in external files added by "--addmoddir" single-file mods let the game crash
+[uuk]: improvements to texture edge rendering
+[uuk]: ModLoader's "main files"-mod.json-attribute accepts now also an simple string
+[uuk]: Mod's add_dependency accepts now strings in format "<modname>" or "<modname>|<version>"
+[uuk]: fixed bug: couldn't load custom tags from mods due to a mod-name cast error
+[uuk]: added support for replacing & extending tags
+[uuk]: fixed bug: mod-special resourcelocations like testmod:block/test failed due to missing ".png" ending
+[uuk]: fixed bug: progress bar of blockitemfactory was maxed to block count rather than the actual block count
+[uuk]: moved crafting-recipe loading to mod-special events rather to all-mcpython
+[uuk]: fixed some crafting system related bugs
+[uuk]: added --debugrecipes-flag which provides more detailed what was wrong with recipe loading
+[uuk]: added auto-remove for unnecessary recipes due to missing items -> remove of the error message on craft when
+       output was not arrival
+[uuk]: added recipe group name alias system
+[uuk]: recipe loading system will now automatically remove items from item tags when not arrival during runtime
+[uuk]: added spawnpoint-system with random position in (0, 0) - (15, 15)
+[uuk]: fixed bug: get_max_y() was crashing with an (x, z)-vector rather than how the doc states doing its job
+[uuk]: when an block gets removed from registry, not found message is now displayed only on first run, for further loads,
+       data gets deleted
+[uuk]: BlockConfig can now read from different files -> mods can add own additions
+[uuk]: other relation-functions for mods accept now also strings like add_dependency
+[uuk]: tweaked resource loading order, fixing various bugs around order-related things
+[uuk]: implemented error-handling for BlockItemGenerator
+[uuk]: cleaned up some files
+[uuk]: removed most of the entries in deprecated.txt
+[uuk]: new snapshot: 19w52a
+[uuk]: added security-check when mods-folder does NOT exists
+[uuk]: BlockState-loading & Model-loading is now mod-specific
+[uuk]: added new internal loading events: "stage:model:model_bake_lookup" & "stage:model:model_bake:prepare"
+[uuk]: added support for mods.toml-files, for that, the library "toml" is needed
+[uuk]: updated pyglet to 1.4.8
+[uuk]: fixed bug: list of dependencies failed to work
+[uuk]: added data from minecraft forge 1.14.4
+[uuk]: ResourceLocator's directory method uses now os.walk rather than os.listdir, fixing incompatibilities between
+       source-mods & zipped-mods
+[uuk]: tag handler accepts now sub-direction-tag-storing
+[github]
+[uuk]: started cleaning up stuff
+[uuk]: moved issues out of this files into issues.list-file
+[uuk]: removed all todo's from this file
+[uuk]: removed tasks.list-file
+[uuk]: improved text of issues, making more clear what is wrong & counting now the issues
+[uuk]: game testing, more bugs found :-(
+[uuk]: upgraded libraries to latest versions
+[uuk]: improved exception handling in EventBus
+[uuk]: added updates-folder with an file for every planed update
+[uuk]: moved licences from sub-projects to licences-folder
+[uuk]: moved mods.json-file into build-folder
+[uuk]: added new file: issues.list filled with all fixed issues since this addition
+[uuk]: fixed bug 15
+[uuk]: fixed bug 11, 27, 20
+[uuk]: reworked some recipe loading parts for fixing bug 20
+[uuk]: added an changelog.txt file, storing an overview what has changed
+[uuk]: added new loading stage: "stage:block:block_config"
+[uuk]: ICustomBlockRenderer is decreased, use IStaticCustomBlockRenderer instead
+[uuk]: new variant of ICustomBlockRenderer called IObjectedCustomBlockRenderer
+[uuk]: added new events: "command:clear:start", "command:clear:end"
+[uuk]: fixed miss-spell in licence header
+[uuk]: depcreased call_until_equal, call_until_getting_value, call_until_not_equal of EventBus, use EventBus.call_until
+       instead
+[uuk]: changed signature of event "registry:{}:on_object_register" from (,) to (Registry, Object)
+[uuk]: added instant_ticks-attribute to TickHandler
+[uuk]: fixed bug 18
+[uuk]: updated textures to 1.15.2, for that, the chest textures have to be changed
+[uuk]: added --debug-world option
+[uuk]: fixed bug 29, 30, 31, 32
+[uuk]: add_block will now return block instance
+[uuk]: added logging system, which also escapes the local files for privacy
+[uuk]: G.local will contain now only "/" instead of "\\" on windows
+[uuk]: moved the following files: opengl_setup.py to rendering/setup.py, texture/model to rendering/model
+[uuk]: moved most of the enums to util/enums.py
+[uuk]: fixed issue 13, 37, 38
+[uuk]: implemented option background
+[uuk]: merged cleanups-branch onto master
+[uuk]: added new flag stored in build/info.json for indicating if prebuild system had finished or not
+[uuk]: fixed issue 12, 14, 26, 41
+[uuk]: added support for DELETE, END and BEGIN in chat
+[uuk]: when you change cursor position by arrow-keys in chat, you will now go around if you go to far
+[uuk]: fixed an small bug when build-folder does not exists
+[github] released snapshot 20w05a
+
+[uuk]: added new class: BlockFaceState
+[uuk]: removed ICustomBlockRenderer-class
+[uuk]: game is now not crashing on every exception
+[uuk]: changed the way how faces are handled
+[uuk]: fixed bug 39, 43
+[uuk]: textures for blocks will now accept only squares. If no provided, an square with side length in x-direction is
+       created
+[uuk]: added "bg_image_pos" attribute to inventory config to move background relative to the slots
+[uuk]: ResourceLocator.add_resources_by_modname's directory parameter is now optional
+[uuk]: added USE_MISSING_TEXTURES_ON_MISS_TEXTURE-attribute to config which removes the missing texture on None-faces
+[uuk]: ResourceLocator.add_resources_by_modname will now also load blocks
+[uuk]: fixed issue 39, 44, 47, 48, 51, 52, 54
+[uuk]: StateHandler.switch_state will change the state after 1 tick instead of instant resolving event order exceptions
+[uuk]: added new blocks: brick slab, stained glass, carpets
+[uuk]: fixed issue 16, 53, 56, 57, 59, 60
+[uuk]: added support of "uv"-attribute for elements of models
+[uuk]: TextureAtlas will now auto-resize images if needed
+[uuk]: added dirt <-> grass block convert
+[uuk]: fixed issue 42, 46, 61, 62, 63
+[uuk]: added an header to every log indicating some information about the os
+[uuk]: added sandstone variant-blocks
+[uuk]: changed chat character escaping to use html.escape(...)
+[uuk]: added memory usage bar; for this, the library psutil is now required
+[uuk]: fixed issue 45
+[uuk]: added in-game cpu & memory usage info
+[uuk]: implemented HotKey-system with events (hotkeys: F3+A, F3+C, F3+C for 10s, F3+D, F3+I, F3+N, F3+T)
+[uuk]: added security option for gamemode-3 not flying
+[uuk]: fixed issue 10, 33, 40, [47], 58, 64, 65, 67, 68, 69, 70, 71, 72
+[uuk]: speed up sector changing
+[uuk]: changed Item.get_data signature to only return dict-objects, not any type of object
+[uuk]: added glass-block
+[uuk]: fixed issue 50, 74
+[uuk]: util.opengl's draw_rectangle-function accepts now also alpha-colors
+[uuk]: chat has now transparency
+[github] released snapshot 20w07a
+
+[uuk] updated changelog.txt to include fully release of snapshot 20w05a
+[uuk]: changed the way how TextureAtlases for blocks are created
+[uuk]: default gamemode in debug world is now 3
+[uuk]: fixed issue 76, 77, 78, 79, 81, 82, 83
+[uuk]: changed "toplayer_default" to "top_layer_default"
+[uuk]: added furnace with inventory and crafting
+[uuk]: most inventories can now be closed by key.E
+[uuk]: added optional FUEL attribute to item, added ItemFactory method for it for setting this value
+[uuk]: added mossy cobblestone block
+[uuk]: made furnace oriented after player hit pos
+[uuk]: added barrel
+[uuk]: added ice variants
+[uuk]: added CUSTOM_WALING_SPEED_MULTIPLIER-attribute to Block used by ice
+[uuk]: added bone block, bookshelf, coral blocks (with dead variants)
+[uuk]: added option to TickHandler to enable/disable random ticks [used in BlockItemGenerator]
+[uuk]: added pumpkin, carved pumpkin, melon, clay, coarse dirt, prismarine blocks, dried kelp block, end stones,
+             glowstone, magma block, mossy stone bricks, nether bricks, nether wart block, netherrack, obsidian,
+             purpur blocks, quartz slab, red nether bricks, smooth quartz slab, soul sand [using the speed attribute]
+[uuk]: hopefully fixed 21
+[uuk]: fixed issue 83, 84, 85, 86
+[uuk]: new loading events: "stage:mod:init", "stage:block:factory:prepare", "stage:block:factory_usage",
+       "stage:item:factory:prepare", "stage:item:factory_usage"
+[uuk]: made furnace interface more general
+[uuk]: added blast furnace & smoker
+[uuk]: fixed issue 87, 88, 89
+[uuk]: added shift-click support to furnace gui slots
+[uuk]: added the other assets not included in the jar file of minecraft, making the language files arrival again
+[uuk]: added icon of window
+[uuk]: fixed issue 66, 90, 91, 92, 93
+[uuk]: added add_load_default_resources-method to mod
+[uuk]: fixed issue 94, 99
+[uuk]: changed mod.json-file format, support for old format is not completely dropped at the moment, but may be in the
+       future
+[uuk]: changed StateHandler.switch_state to have an immediate-parameter which is default True
+[uuk]: defaulted USE_MISSING_TEXTURES_ON_MISS_TEXTURE to False
+[uuk]: fixed issue 101
+[uuk]: moved name of item, block, IRecipeInterface, IPrepareAbleTask, ITextureChange, Biome, Layer & state to NAME
+       attribute at block [WARNING: this is an braking change]
+[uuk]: removed Block.on_create & Block.on_delete methodes
+[uuk]: removed EventBus.call_until_not_equal, EventBus.call_until_getting_value & EventBus.call_until_equal
+[uuk]: added BLOCK_ITEM_GENERATOR_STATE-attribute to Block used for setting an block state used in BlockItemGenerator
+[uuk]: changed registry-system to be based on IRegistryContent-objects [another braking change], every object MUST have
+       now an unique identifier stored in NAME
+[uuk]: deprecated a lot of functions
+[uuk]: added Item.set_data(data)-method to Item corresponding to Item.get_data()
+[uuk]: command /registryinfo includes now also the key the item was registered under
+[uuk]: fixed issue 75, 97
+[uuk]: changed some internals on TextureAtlas system
+[github]: released 20w09a
+[uuk]: updated library pyglet to 1.5.0 and psutil to 5.7.0
+[uuk]: added datapack support with various helper events [the datapacks are stored globally, not per-world]
+[uuk]: added /function command
+[uuk]: fixed issue 103, 104, 105, 106, 107, 108
+[uuk]: removed duplicate draws for label in Slot and SlotCopy
+[uuk]: fixed inconsistent of code in SlotCopy vs. Slot
+[uuk]: added /datapack command; special command: /datapack release for releasing IO access to data packs [will also
+       un-load all datapacks] -> WARNING: behaviour in this case is NOT tested and may be very bad
+[uuk]: DataPack content will now be added to ResourceLocator's system when active
+[uuk]: recipes and tags will be loaded also from DataPacks now
+[uuk]: added reload-system to TagHandler
+[uuk]: function-tag will now be loaded also
+[uuk]: added support to execute function tags; added call for minecraft:tick and minecraft:load tag
+[uuk]: added new commands: /clone, /tell, /msg, /w, /replaceitem
+[uuk]: added dummy entity class; used as base-class for player; made for future support for other entities
+[uuk]: added gamerule system with /gamerule command
+[uuk]: added support for custom block-state loaders, added support for "multipart"-models
+[uuk]: added new loading events: "stage:command:gamerules", "stage:blockstate:register_loaders",
+                                 "stage:block_boundingbox_get"
+[uuk]: added setDefaultModelState-function to BlockFactory
+[uuk]: fixed issue 110
+[uuk]: added exception handle when item-files are not find
+[uuk]: added transform_to_hitbox-function to BoxModel system
+[uuk]: made rotations to models also affect the vertices of the models
+[uuk]: added fences for all wood types
+[uuk]: added function to EnumSide to get the face facing after an rotation
+[uuk]: TextureAtlasGenerator will now NOT add rotated variants to texture atlases
+[uuk]: changed order of block-updates to make sure that the block is removed when block updates for neighbors are called
+[uuk]: added GameRule "hitTestSteps" storing how many steps to use in hit_test of World
+[uuk]: fixed issue 24
+[uuk]: added walls, nether brick fence
+[uuk]: improved connection system for fences making "fence groups" possible
+[uuk]: changed the look of fences in BlockItemGenerator
+[uuk]: faces showing to not generated chunks are now hidden
+[uuk]: fixed issue 125, 126
+[uuk]: changed the way how the extra assets are stored
+[uuk]: added draw()-method to BoxModel, BlockState, Model and ModelHandler
+[uuk]: fix issue 127
+[uuk]: TickHandler has now an post-tick array which will execute functions afterwards which should be assigned to the
+       next tick [which may be the active one]. The array storing the functions is an list. Every function is executed
+       on next tick no matter the time needed to execute, the next tick MAY be the active one   1
+[uuk]: State-switching uses now this method
+[uuk]: removed time stamp from logs reducing log size
+[uuk]: decreased asset file size by removing sound files
+[uuk]: added config option for fog distance
+[github]: released snapshot 20w10a
+[uuk]: changed code from using the tmp-directory located in project-home to use the tempfile-library (see #5)
+[uuk]: re-implemented API for creating custom block renderers
+[uuk]: added support for using OR-condition in block models
+[uuk]: added weight loader for model selection and added multi-model support in multipart
+[uuk]: added support for "|"-splitting in multipart-models conditions
+[uuk]: BoxModels can now be rotated
+[uuk]: moved window.position and window.rotation to player.position and player.rotation
+[uuk]: added an helper function to ModelHandler for creating an bbox for an block-state
+[uuk]: added uuid's to blocks, items, guis and recipes
+[uuk]: crafting table inventory is now stored at player, not the block class
+[uuk]: fixed issue 130
+[uuk]: added helper function subscribe_package_load to EventBus
+[uuk]: parent elements in block models are now correctly replaced instead of adding on top of the of the parent
+[uuk]: chunks are now generating in-game when close to the chunk, not when trying to enter it
+[uuk]: improved rendering performance
+[uuk]: changed strategy of world in-game generation system to generate first layers and than generate the rest
+[uuk]: new chunks added to generate have now the lowest generation priority rather than the highest
+[uuk]: added some (visual) parallelization to the in-game generation
+[uuk]: added config option for how far to generate new chunks
+[uuk]: the maximum of parallel generation chunks is now 4
+[uuk]: changed some internals on how new chunks generation tasks are stored
+[uuk]: added new state StateWorldGeneration handling the first world generation
+[uuk]: World.cleanup removes now also the world generation tasks
+[uuk]: added chunk generation visualisation
+[uuk]: fixed issue 132
+[uuk]: improved rendering performance by sharing vertex data not only between every draw, but also between similar
+       blocks
+[uuk]: improved rendering performance by caching the texture data
+[uuk]: removed log message when an chunk is finished in StateGeneration
+[uuk]: implemented rendering improvements also to direct-draw functions of BoxModel
+[uuk]: added SaveFile, IDataFixer and IDataSerializer-class [WARNING: for this phase of development, NO datafixers
+       are provided as everything is WIP]
+[uuk]: added data serializers for player data, inventory data, chunks, game rule, world config, data maps
+[uuk]: added exception when something is wrong with save files, but it can be handled, but the user should be informed
+[uuk]: save also includes the version number it was saved in, future version loader are NOT supported
+[uuk]: added StateWorldLoading
+[uuk]: added an mod-list to general-serializer
+[uuk]: improved world loading performance
+[uuk]: inventory serializer has now an file-parameter to store data not in main file, rather in another one
+[uuk]: block-inventories are now stored per-chunk rather than per-world
+[uuk]: fixed possible issue that block-inventories are not removed when block is deleted in save-files
+[uuk]: world is now saved off-thread in StateEscape, but when you try to exit the state, you have to wait for completion
+[uuk]: fixed issue 134, 135, 136
+[uuk]: furnace inter stuff is now saved also
+[uuk]: compressed chunk files into region files
+[uuk]: added registry info to saves
+[uuk]: fixed issue 137
+[uuk]: fixed furnace-data deserialization
+[uuk]: compressed biome map, landmass map, temperaure map and height map in chunk data
+[uuk]: saves are now deleted when generate new is pressed with the name is given
+[uuk]: fixed loading of maps in chunks [broken before]
+[uuk]: fixed auto-generation code not working
+[uuk]: fixed reset of the generation config buttons
+[uuk]: fixed possible miss-match of generating chunks in save
+[uuk]: flag enable_generation of WorldGenerationHandler is now used
+[uuk]: chunks that are on the list of chunks that should generate are now also saved
+[uuk]: every dimension has now an name
+[uuk]: added an dimension list to saves, gives warnings when changes content
+[uuk]: fixed issue 138
+[uuk]: added logger message when an block uses invalid state data
+[uuk]: made saving faster by only saving changed blocks
+[uuk]: added --saves-directory <directory> sys.argv flag
+[uuk]: new save version: 2 - removed temperature map from saves, optimized land mass map
+[uuk]: added better exception handling
+[uuk]: fixed issue 102, 131, 132
+[uuk]: implemented IHorizontalOrientableBlock-class
+[uuk]: added new mod-version parser using tuples and min/max versions
+[uuk]: extension to the Entity-API
+[uuk]: made Entity register-able
+[uuk]: fixed version storage in save files
+[uuk]: fixed version in last-time mod storage
+[uuk]: renamed add_to_free_slots to pick_up of Entity
+[uuk]: renamed inventorys to inventories at player
+[uuk]: moved player instances to G.world.players, access via G.world.get_active_player()
+[uuk]: interaction methods are now using also an player-instance to make it clear who interacts
+[uuk]: fixed issue 143
+[uuk]: implemented LootTable system with conditions, functions etc.
+[uuk]: player's pick_up-function now accepts also an list of items
+[uuk]: bound block dropping to block loot tables
+[uuk]: Inventory contains now the function insert_items to insert items into the inventory
+[uuk]: BlockChest can contain an link to an loot table which should be rolled when the chest gets opened
+[uuk]: added start chest to generation code
+[uuk]: fixed issue 144
+[uuk]: added /loot-command
+[uuk]: default stacksize of armor is now 1
+[uuk]: fixed issue 142, 145, 146, 147
+[uuk]: rewritten shift-click support in crafting output
+[uuk]: fixed issue 109
+[uuk]: fixed custom renderers
+[uuk]: fixed direct draw of BoxModels
+[uuk]: fixed event subscriptions possible more than 1 time
+[uuk]: implemented OpenGLSetupFile-system which makes calling opengl commands easy & exchangeable during runtime
+[uuk]: moved the big rendering parts to the new rendering system
+[uuk]: added IAllDirectionOrientableBlock-baseclass
+[uuk]: dimension -1 (nether) and 1 (end) is now reserved by default
+[uuk]: removed deprecated loading phases
+[uuk]: removed features.py
+[uuk]: when closing game window, game will now be saved automatically
+[uuk]: rewritten how icons for hearts, hunger and armor are cropped & drawn
+[uuk]: fixed issue 141
+[uuk]: improved registry warning messages
+[uuk]: fixed issue 9, 152, 153
+[uuk]: improved command syntax error message
+[uuk]: added mycelium, podzol
+[uuk]: removed pyglet_fix.py as it is not required anymore
+[uuk]: added loader for the .lang format
+[uuk]: added support for rotation in blockmodel-element
+[uuk]: BlockFactory's setDefaultModelState-function accept now also an string like in boxmodels as state
+[uuk]: added handle for palette reference errors
+[uuk]: fixed issue 155, 156
+[uuk]: added barrier block
+[uuk]: new event: "stage:blockitemfactory:finish"
+[uuk]: moved the following configs [old ones are still arrival but not in normal use]:
+       Block.is_breakable() to static Block.BREAKABLE, Block.is_solid_side(side) to Block.face_solid[side],
+       Block.get_hardness() to static Block.HARDNESS, Block.get_minimum_tool_level() to static Block.MINIMUM_TOOL_LEVEL,
+       Block.get_best_tools() to static Block.BEST_TOOLS_TO_BREAK, Item.get_max_stack_size to static Item.STACK_SIZE,
+       ItemArmor.getDefensePoints() to static ItemArmor.DEFENSE_POINTS, ItemFood.get_eat_hunger_addition to
+       static ItemFood.HUNGER_ADDITION, Item.has_block() to static Item.HAS_BLOCK, ItemTool.get_tool_level to
+       static ItemTool.TOOL_LEVEL, ItemTool.get_tool_type() to static ItemTool.TOOL_TYPE
+[uuk]: removed Inventory.on_create
+[uuk]: added SlotTrashCan, SlotInfiniteStack and SlotInfiniteStackExchangeable-classes
+[uuk]: fixed issue 151, 158
+[uuk]: improved error handling when world is saved/loaded
+[uuk]: latest save-file version is now 4
+[uuk]: SHIFT-click is now send in any case to the function
+[uuk]: added on_button_press-attribute to Slot and its child classes
+[uuk]: fixed issue 160
+[uuk]: rewritten mouse handling system in guis to work with drag-mouse-movements
+[uuk]: added ShiftContainer-class holding two lists of slots for shift-clicking
+[uuk]: fixed issue 148, 162, 163
+[uuk]: added skin download helper
+[uuk]: dimension -1 (nether) and 1 (end) is now reserved by default
+[uuk]: moved Entity-class to entity/Entity
+[uuk]: entity has now an chunk-attribute storing an Chunk-class representing the entity
+[uuk]: added entities-set to Chunk
+[uuk]: added EntityHandler
+[uuk]: added an registry for entities
+[uuk]: Entity-objects contain now an uuid
+[uuk]: player-entity has now an own name and is send to registry
+[uuk]: Entity.draw function is now called in alpha-block-rendering phase
+[uuk]: changing entity position auto-calls now teleport()
+[uuk]: SaveFile.upgrade() can get now an to-parameter to indicate to which version to upgrade to
+[uuk]: added base class for player entity for storing the render stuff
+[uuk]: added BaseBoxModel-class for drawing box-models independent from an block-model
+[uuk]: added EntityRenderer-class for handling entity rendering from files
+[uuk]: moved player entity rendering to player-class as it is simpler than expected
+[uuk]: player entity parts are rendered now with correct rotation
+[uuk]: added entities to saves
+[uuk]: added /summon command
+[uuk]: added loading stage "stage:entities"
+[uuk]: fixed summoning of new entities; fixed /summon command with it
+[uuk]: removed "@"-selector
+[uuk]: ParsingCommandInfo uses now entity for various filling operations when not all kwargs are set
+[uuk]: added various aspects to the selectors
+[uuk]: merged dev-branch; changed introduced storage version from 4 to 5
+[uuk]: skins will be applied when arrival by player name. In case of not existent, the default skin is used
+[uuk]: added support for non-full skin files [internally converted when downloading them]
+[uuk]: added SUMMON_ABLE-flag to Entity-class determine if the entity can be used in the /summon command
+[uuk]: moved skin-cache from build to build/skins folder
+[uuk]: fixed bug: player entity is removed from world when it dies and not added back
+[uuk]: rolled back dev-branch as its code was strongly broken [world gen time ~100x higher than before]
+[uuk]: when switching to an state, it will now get an on_resize-event-call as size may have updated
+[uuk]: refactored ModLoader & optimized mod-loading by updating pgb's only when task execution for tick finished
+[uuk]: new mod.json file version: 1.2.0 [old still supported]
+[uuk]: ModDependency will cast now an stringified version entry [in form of x.y.z.[...]] to the correct tuple version
+[uuk]: can now subscribe to load-event via the following structure:
+    @G.modloader(<modname>, <eventname>)
+    def <your function>(<...>)
+[uuk]: changed some internal loading stage calling
+[uuk]: added new loading events: "stage:block:factory:finish", "stage:item:factory:finish"
+[uuk]: fixed issue 154 and 169
+[uuk]: added --fullscreen flag for enabling fullscreen on startup
+[uuk]: fixed memory leak with block-inventories (issue 170)
+[uuk]: fixed offhand slot resetting on every inventory close (issue 149)
+[uuk]: fixed memory leak with block-instances (issue 171)
+[uuk]: fixed crash when deleting build-folder (issue 167 & 172)
+[uuk]: improved exception message on world save not found
+[uuk]: normal logging messages get now also escaped
+[uuk]: improved exception messages in log
+[uuk]: improved world gen (see below)
+[uuk]: fixed exception when adding show-tasks by world gen (issue 173)
+[uuk]: removed shown-attribute of chunk as it was not used anymore (this reduces memory usage as empty lists were stored
+    where blocks are in world)
+[uuk]: fixed Chunk.hide_all()-method based on unused shown-method (issue 174)
+[uuk]: rewritten how generation tasks are stored
+[uuk]: rewritten chunk gen task system
+[uuk]: world gen screen draws now green entries when finished
+[uuk]: @G.modloader() accepts now an info-parameter
+[uuk]: removed tag #minecraft:furnace_fuel, fixing issue 137
+[uuk]: changed signature of on_shift_click(x, y, button, modifiers, player) of slot to
+    (slot, x, y, button, modifiers, player)
+[uuk]: fixed Inventory.insert_item failing to insert items (issue 179)
+[uuk]: removed the following functions: Block.is_breakable(), Block.is_solid_side(), Block.get_hardness(),
+         Block.get_minimum_tool_level, Block.get_best_tools(), Item.get_name(), Item.has_block(),
+         Item.get_max_stack_size()
+[uuk]: added the following functions: Block.on_redstone_update(), Block.inject_redstone_power(side, level: int),
+         Block.CONDUCTS_REDSTONE_POWER, Block.SOLID, dynamic Block.injected_redstone_power, Block.get_redstone_output(),
+         Block.get_redstone_source_power(), Block.CAN_MOBS_SPAWN_ON,
+         Entity.movement [implemented in tick() as default impl.]
+[github]: released alpha 1.0.0
+
+[uuk]: fixed load-crash
+[uuk]: fixed issue when loading newer versions (they were not handled correctly)
+[github]: released alpha 1.0.1
+
+[uuk]: preparations for next snapshot(s)
+[uuk]: deprecated BoxModel.copy & BoxModel.data
+[uuk]: improved block rendering
+[uuk]: fixed issue 182: block updated not always called
+[uuk]: fixed issue 183: fences and walls were not updating model state when updating internal state
+[uuk]: fixed issue 184: exception when printing exception with non-str info
+[uuk]: fixed issue 186: event "worldgen:chunk:finished" was only called for direct-generation processes
+[uuk]: fixed issue 187: exceptions when generating chunks from main menu without content
+[github]: end of dev-cycle 1
+[uuk]: version-parameter of Mod.__init__ accepts now also string with '.' between the version parts and an list
+[uuk]: Mod.add_load_default_resources accepts now an path_name parameter setting the namespace when different from mod
+       name
+[uuk]: mod dependency functions return now the mod
+[uuk]: @G.modloader-annotation will now return the function
+[uuk]: dropped for old mod version format
+[uuk]: introduced basic config system
+[uuk]: fixed issue 188: version tuple may have str-entries
+[uuk]: fixed issue 189: data packs may not get unloaded correctly
+[uuk]: /clear command will now use the .clear() method of inventory
+[uuk]: added an get_inventories() method to Entity
+[uuk]: added factories for various things
+[uuk]: BlockFactory and ItemFactory have now an template-mode and can now set the mod-name beforehand
+[uuk]: re-ordered the Blocks.py list, changing order & existing entries, added some blocks; for an complete list,
+       see Blocks.py
+[uuk]: fixed issue 190, 191
+[uuk]: added BLAST_RESISTANCE-attribute to Block
+[github]: end of dev-cycle 2
+[uuk]: improved exception handling on missing blockstate annotation
+[uuk]: fixed AdvancedBlockFactory [issue 192]
+[uuk]: added StateConfigFile-system making parsing of state config files possible
+[uuk]: deprecated a lot of functions, specified the old deprecations more
+[uuk]: code improvements
+[uuk]: Dimension.get_chunk() accepts now also an tuple as position, not only two numbers
+[github]: released snapshot 20w22a
+
+[uuk]: fixed issue 194: loading of empty dicts from config file failed
+[uuk]: added profiler system with config system
+[uuk]: fixed issue 200: config was not parsed correctly in some cases
+[uuk]: added ESCAPE-dict to logger fixing issue 193
+[uuk]: refactored the code
+[uuk]: added to every package the __init__.py file [doing nothing at the moment]
+[uuk]: moved save files to home/saves
+[uuk]: moved config files to home/config
+[uuk]: added sys.argv flag "--home-folder <home>" to set where the home is [default: local+"/home"]
+[uuk]: saves, configs, data packs, logs and mods are now stored in the home-directory instead of the local directory
+[uuk]: added sys.argv flag "--build-folder <folder>" setting the folder where build stuff is stored
+       [default: home+"/build"]
+[uuk]: moved resourcepacks-folder into home-directory
+[uuk]: made inventory interaction subscriptions more fail-self
+[uuk]: fixed exception when shift-clicking crafting output [issue 206]
+[uuk]: fixed deletion of items in the crafting grid on close [issue 207]
+[uuk]: introduced an system for building the project into an stand-alone zipfile removing all dev-only files
+[uuk]: added new class: RenderingHelper helpful with gl calls
+[uuk]: refactored crafting-folder to gui/crafting
+[uuk]: introduced data generators for generating data
+[uuk]: added "--data-gen" flag to sys.argv for generating with these data generators
+[uuk]: data generators have their own loading stage (conditionally added) for doing their stuff
+[uuk]: recommend only in dev-environment as in final build it is not activate-able
+[uuk]: added "--exit-after-data-gen" flag to sys.argv for exiting after generation
+[uuk]: now using simplejson for encoding an json object
+[uuk]: added installer.py for installing all the stuff
+[uuk]: /reload will now re-generate also data generators by calling the program with "--data-gen --exit-after-data-gen"
+[uuk]: added "--no-window"-flag for opening no window [useful for data gen]
+[uuk]: deprecated old factories for models, block states and recipes
+[uuk]: implemented data generators for block models and block state files, tags and entities
+[github]: released snapshot 20w24a
+
+[uuk]: added rendering_helper attribute to globals.py which is reset after every draw cycle
+[uuk]: added state part serializer for progress bar
+[uuk]: implemented new data fixer system
+[uuk]: new storage version: 6
+[uuk]: improved generating & loading world screen, fixing bug 202
+[uuk]: added new command: /shuffledata
+[uuk]: added shuffle config entry & shuffle timer entry
+[uuk]: /shuffledata will now "shuffle" recipes and loot tables
+[uuk]: fixed issue 211: crafting slots are saved when closing the game with inventory open
+[uuk]: implemented MatrixStack-class for mass-applying the same operations over and over again
+[uuk]: Block.__init__ has now new optional parameter "player" storing the player set the block (if arrival). This value
+       is NOT cached in the block class. Must be handled in constructor
+[uuk]: implemented TextureDataGen.py for data gens handling texture stuff
+[uuk]: added async_register-function to G.registry for registering classes in another loading phase
+[uuk]: changed loading order
+[uuk]: removed naming-folder from tag system
+[uuk]: logger is now pre-fixing everything with the time printed out
+[uuk]: changed how exceptions are formatted
+[uuk]: implemented the following loot table conditions: minecraft:block_state_property,
+       minecraft:damage_source_properties
+[uuk]: added DamageSource-class
+[uuk]: improved mod data fixer invoker
+[uuk]: moved some code around
+[uuk]: all player instances of an world are now saved
+[uuk]: made it possible for registries to be NOT saved in system
+[uuk]: added scroll bar UI element
+[uuk]: changed StateWorldSelection screen look
+[uuk]: implemented some more functionality
+[github]: released snapshot 20w25a
+
+[uuk]: changed system to apply an 3d view of the world to use MatrixStack-instances
+[uuk]: fixed ordering of world selection list (issue 213)
+[uuk]: improved data fixer system
+[uuk]: added WorldConfigFixer class for fixing the "config" entry of saves (the G.world.config attribute)
+[uuk]: added KeyMouseBinding-class holding key/mouse config
+[uuk]: fixed world list rendering (issue 214)
+[uuk]: rewritten how item textures are stored
+[uuk]: added shift-drag behaviour to inventory system
+[uuk]: improved behaviour of shift-container class (issue 215)
+[uuk]: RegistryInfo was dumping unwanted stuff into files (issue 216)
+[uuk]: event system has now an call_cancelable() function to call an function with an provider for canceling it
+[uuk]: improved /clear command
+[uuk]: ParsingCommandInfo has now an chat-attribute storing an Chat-instance
+[uuk]: deprecated AdvancedBlockFactory
+[uuk]: added CombinedBlockFactory as an replacement. It handles both block models (as data gen) and the BlockFactory
+       calls by its own.
+[uuk]: added config options for some additional blocks (see config.py for the definition OR
+       %home%/config/minecraft/blocks.conf) with optional their recipes
+[uuk]: this adds ontop of minecraft with data generators new content
+[uuk]: added some blocks from 1.16
+[uuk]: added --enable-all-blocks runtime flag for enabling all optional blocks
+[uuk]: added profiler for world generation
+[uuk]: fixed a few bugs around RenderingHelper (issue 220)
+[uuk]: fixed exception when no world is found (issue 221)
+[uuk]: fixed some chunk-related DataFixerPart-fixers-results not being saved back to the game files (issue 222)
+[uuk]: fixed world name selection issue (issue 223)
+[uuk]: imrpvoed cases for data generators
+[uuk]: fixed duplicated states in debug world (issue 224)
+[uuk]: fixed loading of debug worlds (issue 203)
+[uuk]: added delete world button to world selection screen
+[uuk]: .setGlobalModName() on ItemFactory did not work correctly (issue 225)
+[uuk]: fixed ItemAtlas crashing when item file not found (issue 226)
+[uuk]: fixed ItemFactory's template system (issue 227)
+[uuk]: ItemFactory & BlockFactory have now an template-option to finish when previous data gotten on setName() before
+       doing an new item / block
+[uuk]: item name can now be based to the constructor of ItemFactory and to the () of an instance
+[uuk]: fixed logger prefixing every part with time (issue 228)
+[uuk]: added preparing for locked registries (currently only warned by the system)
+[uuk]: added /execute in sub-command
+[uuk]: /teleport will now teleport the player also into the new dimension when needed
+[uuk]: added helper functions to RenderingHelper for setting alpha on/off
+[uuk]: prebuilding will now enable data gen
+[uuk]: released snapshot 20w28a
+
+[uuk]: added ToolTips to items which are translated (if possible), can be colored, ...
+[uuk]: added corresponding extension functions to Item-class and ItemFactory-system
+[uuk]: fixed alpha rendering for blocks (issue 231)
+[uuk]: fixed alpha functions of RenderingHelper
+[uuk]: made it possible to call certain loading stages on world reload
+[uuk]: added helper functions for inserting new loading stages
+[uuk]: fixed some block model rendering issues (issue 233, 129)
+[uuk]: added NO_COLLIDE option to Block-class and an function called when the player is in the block and has NO_COLLIDE
+       on
+[uuk]: added nether portal block
+[uuk]: changed behaviour of /fill-command: block updates are called when all block are placed, not when the block is
+       added
+[uuk]: changed behaviour of /setblock-command: block update self is set to False
+[uuk]: World.get_dimension() accepts now an dimension name str
+[uuk]: added special region in player data for dimension stuff
+[uuk]: added DataFixer for player data
+[uuk]: MemoryError is handled now as an fatal error and will crash the game
+[uuk]: improved EntityModelGenerator code (issue 236)
+[uuk]: fixed rendering of chunks (issue 237)
+[uuk]: changed the events for reloading stuff
+[uuk]: models and block states are now reloaded by reload events
+[uuk]: recipe data & loot table data is now re-shuffled to prevent links to recipes not anymore loaded in the system
+[uuk]: loot tables are now also reloaded when entering /reload
+[uuk]: /reload will now NOT re-run data gens
+[uuk]: tooltip contains now full qualified registry name
+[uuk]: added api management system
+[uuk]: released a1.1.0
+
+[uuk]: mdk has now an script for changing the target version
+[uuk]: data generators can now also add new data generators
+[uuk]: mdk can now use versions from an launcher instance
+[uuk]: mdk is now able to build code
+[uuk]: Slot can now have an check function
+[uuk]: made model loading json-error save
+[uuk]: fixed BlockFactories solid function
+[uuk]: Furnace is now using IHorizontalOrientableBlock-class
+[uuk]: fixed IHorizontalOrientableBlock-class (issue 238)
+[uuk]: fixed ItemAtlas not baking in some cases (issue 230)
+[uuk]: removed all things deprecated for this next release cycle
+[uuk]: a lot of block model related things are now data-gen-ed
+[uuk]: improved crafting system
+[uuk]: added FallingBlockEntity replacing old fall code of IFallingBlock
+[uuk]: fixed Entity's tick() function not being called (issue 240)
+[uuk]: fixed block entries in commands not accepting air (issue 241)
+[uuk]: added language file data generator
+[uuk]: changed how the game is launching itself
+[uuk]: blocks are now not registered via @G.registry
+[uuk]: reworked a lot of events
+[uuk]: fixed slabs not generating correctly (issue 242)
+[uuk]: BlockStateLoaders have now an build() method
+[uuk]: BlockStates now are able to define an parent and model aliases
+[github]: released snapshot 20w31a
+
+[uuk]: added the following event functions:
+       - Block.on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple) -> bool
+       - Block.dump(self) -> bytes
+       - Block.inject(data: bytes)
+       - Block.get_collision_bbox()
+
+[uuk]: paused the project until 1.12.2020
+[uuk]: the following will be braking changes. During development, nothing may be stable!!!!!
+        the following symbols are used for indication of task type:
+            B: bug/issue
+            [B]: in-dev bug during this branch
+            R: refactor / rewrite
+            D: deletion
+            F: feature
+    [uuk]: dumped library versions
+    [uuk]: upgraded python target to 3.9.0
+R   [uuk]: moved globals.py to mcpython/globals.py, logger.py to mcpython/logger.py
+R   [uuk]: moved installer.py to tools/installer.py
+R   [uuk]: moved changelog.txt, deprecated.txt, events.list, fixed issues.list, issues.list and version.info to doc/...
+D   [uuk]: removed updates-folder, README_old.md
+F   [uuk]: added --no-log-escape option to remove escaping paths
+B   [uuk]: fixed escaping dict not working correctly in some cases
+[B] [uuk]: globals.py was pointing to wrong home
+F   [uuk]: logger has now an print_stack() function to print only the current call stack
+F   [uuk]: switching to an unknown state is now FATAL and will close the game
+R   [uuk]: renamed logger.write_exception to logger.print_exception
+[B] [uuk]: fixed refactor bugs
+R   [uuk]: major refactoring: file structure [this might have broken everything]
+F   [uuk]: loading code is now preferring info from exceptions
+    [uuk]: changed licence headers
+[B] [uuk]: fixed world loading
+B   [uuk]: mods.json was not correctly written to files
+F   [uuk]: using now black formatting
+    [uuk]: started looking over all files
+R   [uuk]: renamed globals.py to shared.py
+    [uuk]: written docs for files
+[B] [uuk]: fixed logger not escaping all strings correctly
+R   [uuk]: refactored some files... again...
+F   [uuk]: changed how the ResourceLoader is operating
+F   [uuk]: speed up resource zipfile lookup by using an name table cache for the existence check and iterators
+R   [uuk]: changed some layout in crafting system
+F   [uuk]: changed how registries do some of the work
+F   [uuk]: implemented DeferredRegistryPipe
+R   [uuk]: renamed block base class to AbstractBlock
+R   [uuk]: refactored & changed block API
+[B] [uuk]: ResourceLoader.get_all_entries_special() was doing weired stuff
+F   [uuk]: installer.py will download assets separately, they are no longer included in the main system
+F   [uuk]: updated assets to 20w49a
+R   [uuk]: rewritten ItemAtlas system
+    [uuk]: updated build system to reflect last changes
+B   [uuk]: normal slots were drawing item stacks not correctly
+R   [uuk]: renamed some Slot specific methods
+R   [uuk]: moved some files around again
+F   [uuk]: added TAGS attribute for RegistryEntries filled when the registry says so with the list of tags the entry
+           has
+R/D [uuk]: removed OpenGLSetupFile system and replaced by direct in-code calls
+R/F [uuk]: changed a lot of stuff around the data generator system
+    [uuk]: optimized internal world generation code#
+F   [uuk]: BedrockLayer is now noise-based
+R   [uuk]: renamed layers with prefix "minecraft:"
+    [uuk]: added DEPENDS_ON attribute to Layers
+R   [uuk]: split task array from WorldGenerationHandler.py
+F   [uuk]: implemented AbstractInterface.py classes storing abstract classes for world, dimension and chunk
+    [uuk]: made WorldGenerationTaskArrays.py more independent of of other files
+F   [uuk]: implemented process-parallelized world generation
+R   [uuk]: moved some files around again
+    [uuk]: added side annotations [currently not working]
+D/R [uuk]: migrated BlockConfig system to tags
+D   [uuk]: removed a lot of deprecated stuff
+F   [uuk]: added OpenGL scissor group from pyglet's examples
+F   [uuk]: updated and improved mdk
+F   [uuk]: implemented utils for iterables
+F   [uuk]: improved registry miss-match output
+F   [uuk]: added TableBuilder helper class for logger.py dynamically building an table
+    [uuk]: migrated code to the new builder
+    [uuk]: modloader prints now errors in one big table
+    [uuk]: mod loader errors are now less fatal
+D   [uuk]: removed prebuild system
+R   [uuk]: changed flag --rebuild to --invalidate-cache
+B   [uuk]: texture reload is now also triggered when entering an world
+B   [uuk]: migrated every inventory texture to an reload-based system for making reloads work with inv. textures
+           [previously, an rebuild was needed]
+R   [uuk]: renamed global vars in shared.py
+R   [uuk]: renamed --debugevents flag to --debug-events
+D   [uuk]: removed TextureFactory system
+B   [uuk]: visual errors
+    [uuk]: migrated shulker box check for shulker boxes to tags
+    [uuk]: hovering info contains now tag names
+    [uuk]: added disallowed_item_tags-attribute to Slot
+B   [uuk]: fixed shulker boxes to shulker boxes
+    [uuk]: improved validation checks in slots
+B   [uuk]: inventories have now an custom_name attribute, fixing "minecraft:copy_name"-loot-table-function
+D   [uuk]: removed all deprecated stuff
+D   [uuk]: removed inventories attribute from entities
+R   [uuk]: player inventories are stored now ín own attributes
+    [uuk]: dropped support for old world formats
+    [uuk]: improved world system API, again...
+    [uuk]: improved world gen API
+R   [uuk]: moved world serialization back to common
+R   [uuk]: improved world serialization API
+    [uuk]: improved registry API
+    [uuk]: implemented extension point for CraftingGridHelperInterface for custom recipe classes
+    [uuk]: Entity.tick() has now an dt parameter
+    [uuk]: improved world gen API, again...
+    [uuk]: added dessert biome
+    [uuk]: implemented biome debug world generator
+[B] [uuk]: fixed BlockFactory
+[B] [uuk]: fixed main inventory rendering issue
+    [uuk]: optimised recipe lookup
+[B] [uuk]: fixed build system not working correctly
+[github]: end of phase for internal changes, on 14.12.2020

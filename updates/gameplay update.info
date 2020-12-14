@@ -1,5 +1,0 @@
-
-rewrite Slot - SlotCopy connection
-add special slots: custom stack size, copy [store an copy of the item, do not allow consume]
-add an option to let items stay in crafting table when closing [global inventory vs. per-block inventory]
-

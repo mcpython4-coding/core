@@ -1,5 +1,0 @@
-// enables alpha drawing
-
-glDisable(glEnum GL_CULL_FACE)
-glEnable(glEnum GL_BLEND)
-glBlendFunc(glEnum GL_SRC_ALPHA, glEnum GL_ONE_MINUS_SRC_ALPHA)

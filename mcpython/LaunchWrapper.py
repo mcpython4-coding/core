@@ -5,125 +5,205 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft"""
+blocks based on 1.16.1.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import os
 import sys
+import typing
 
-import globals as G
-import logger
-import mcpython.config
-import mcpython.ResourceLocator
+import mcpython.ResourceLoader
+import mcpython.common.config
+from mcpython import shared, logger
 
 
 class LaunchWrapper:
-    def __init__(self):  # todo: store in globals.py
+    """
+    Class for launching the game in an certain configuration
+    Loads all needed part and executed the loading task cycle.
+    todo: move shared.py content into here & remove shared.py
+    """
+
+    def __init__(self):
         pass
 
-    def inject_sys_argv(self):  # todo: all sys.argv parsing belongs here
-        pass
+    def inject_sys_argv(self, argv: typing.List[str]):
+        """
+        Currently unused helper function for loading the sys.argv config into the game
+        todo: all sys.argv parsing belongs here
+        """
 
     def setup(self):
-        self.print_header()
+        """
+        Setup general stuff which does not take long to complete
+        Loads first modules into memory
+        """
 
-        import mcpython.event.EventHandler
+        import mcpython.ResourceLoader
+        import mcpython.common.event.EventHandler
 
-        import mcpython.ResourceLocator
-        mcpython.ResourceLocator.load_resource_packs()
+        mcpython.ResourceLoader.load_resource_packs()
 
         self.setup_files()
 
         self.setup_opengl()
 
-        import mcpython.state.StateHandler
+        import mcpython.client.state.StateHandler
 
         self.setup_registries()
 
-        G.eventhandler.call("game:startup")
+        shared.event_handler.call("game:startup")
 
     def setup_registries(self):
-        import mcpython.mod.ModLoader
+        """
+        Helper functions for loading the modules which create registries
+        """
+        import mcpython.common.mod.ModLoader
+        import mcpython.common.mod.ModMcpython
+        import mcpython.common.mod.ConfigFile
 
-        import mcpython.mod.ModMcpython
-        import mcpython.mod.ConfigFile
-        from mcpython.datagen.mcpython import recipes, textures, entity, blockmodels
+        # from mcpython.common.data.gen.mcpython import (
+        # )
 
-        @G.modloader("minecraft", "special:exit")
+        @shared.mod_loader("minecraft", "special:exit")
         def exit():
             sys.exit()
 
-        import mcpython.event.Registry
-        import mcpython.block.BlockHandler
-        import mcpython.item.ItemHandler
-        import mcpython.entity.EntityHandler
-        import mcpython.world.gen.WorldGenerationHandler
-        import mcpython.world.gen.biome.BiomeHandler
-        import mcpython.world.gen.layer
-        import mcpython.world.gen.feature
+        import mcpython.common.event.Registry
+        import mcpython.common.block.BlockHandler
+        import mcpython.common.item.ItemHandler
+        import mcpython.common.entity.EntityHandler
+        import mcpython.server.worldgen.WorldGenerationHandler
+        import mcpython.server.worldgen.biome.BiomeHandler
+        import mcpython.server.worldgen.layer
+        import mcpython.server.worldgen.feature
 
-        import mcpython.rendering.model.ModelHandler
-        import mcpython.tags.TagHandler
+        import mcpython.client.rendering.model.ModelHandler
+        import mcpython.common.data.tags.TagHandler
 
-        import mcpython.texture.factory
-        import mcpython.setup
+        import mcpython.client.rendering.model.ItemModel
 
     def setup_opengl(self):
-        import mcpython.rendering.OpenGLSetupFile
+        """
+        Helper function for OpenGL setup
+        todo: DO NOT USE OpenGLSetupFile
+        """
 
-        mcpython.rendering.OpenGLSetupFile.execute_file_by_name("setup")
+        import mcpython.client.rendering.util
+
+        mcpython.client.rendering.util.setup()
 
     def print_header(self):
-        version = mcpython.config.FULL_VERSION_NAME.upper()
+        """
+        Prints an header describing the program name and its version
+        """
+
+        version = mcpython.common.config.FULL_VERSION_NAME.upper()
         logger.println("---------------" + "-" * len(version))
         logger.println("- MCPYTHON 4 {} -".format(version))
         logger.println("---------------" + "-" * len(version))
 
     def setup_files(self):
-        if not os.path.exists(G.home + "/datapacks"): os.makedirs(G.home + "/datapacks")
+        """
+        Setup for certain files in the system.
+        """
 
-        if not os.path.isdir(G.home): os.makedirs(G.home)
+        if not os.path.exists(shared.home + "/datapacks"):
+            os.makedirs(shared.home + "/datapacks")
 
-        sys.path.append(G.local + "/mcpython")
+        if not os.path.isdir(shared.home):
+            os.makedirs(shared.home)
+
+        sys.path.append(shared.local + "/mcpython")
 
         # check if build folder exists, if not, we need to create its content
-        if not os.path.exists(G.build):
+        if not os.path.exists(shared.build):
             logger.println("rebuild mode due to missing cache folder")
-            G.prebuilding = True
+            shared.invalidate_cache = True
 
-        if os.path.exists(G.build):  # copy default skin to make it start correctly
+        if os.path.exists(shared.build):  # copy default skin to make it start correctly
             try:
-                mcpython.ResourceLocator.read("assets/minecraft/textures/entity/steve.png", "pil").save(G.build + "/skin.png")
+                mcpython.ResourceLoader.read_image(
+                    "assets/minecraft/textures/entity/steve.png"
+                ).save(shared.build + "/skin.png")
             except:
-                logger.write_exception("[FATAL] failed to load default skin")
+                logger.print_exception("[FATAL] failed to load default skin")
                 sys.exit(-1)
 
     def load_mods(self):
-        G.modloader.look_out()
-        G.modloader.sort_mods()
+        """
+        Do ModLoader inital stuff
+        """
+        shared.mod_loader.look_out()
+        shared.mod_loader.sort_mods()
+        shared.mod_loader.write_mod_info()
 
     def launch(self):
-        logger.println("tmp storage at {}".format(G.tmp.name))
+        """
+        Launches the game in the current configuration
+        Starts the main cycle of pyglet
+
+        todo: move state selection here
+        """
+
+        logger.println("tmp storage at {}".format(shared.tmp.name))
         self.load_mods()
 
         # Create the world instance
-        import mcpython.world.World
-        G.world = mcpython.world.World.World()
+        import mcpython.common.world.World
+
+        shared.world = mcpython.common.world.World.World()
 
         import pyglet
-        import mcpython.rendering.window
-        # todo: move size to config files
-        mcpython.rendering.window.Window(width=800, height=600, resizable=True).reset_caption()
+        import mcpython.client.rendering.window
+
+        # todo: move size to config files / sys.argv
+        mcpython.client.rendering.window.Window(
+            width=800, height=600, resizable=True
+        ).reset_caption()
         try:
-            G.window.set_icon(mcpython.ResourceLocator.read("icon_16x16.png", "pyglet"),
-                              mcpython.ResourceLocator.read("icon_32x32.png", "pyglet"))
-            G.eventhandler.call("game:gameloop_startup")
+            # todo: can we find an better icon?
+            shared.window.set_icon(
+                mcpython.ResourceLoader.read_pyglet_image("icon_16x16.png"),
+                mcpython.ResourceLoader.read_pyglet_image("icon_32x32.png"),
+            )
+            shared.event_handler.call("game:gameloop_startup")
         except:
-            logger.write_exception("[FATAL] failed to load window images")
+            logger.print_exception("[FATAL] failed to load window images")
             sys.exit(-1)
         try:
             pyglet.app.run()
         except SystemExit:
             raise
         except:
-            logger.write_exception("ERROR DURING RUNTIME")
+            logger.print_exception("ERROR DURING RUNTIME")
             raise
 
+    def error_clean(self):
+        """
+        Helper function for cleaning up in an half-inited environment
+        (save)
+        Will enforce cleanup when possible
+        """
+        import mcpython.ResourceLoader
+
+        mcpython.ResourceLoader.close_all_resources()
+        logger.print_exception("general uncaught exception during running the game")
+        try:
+            shared.tmp.cleanup()
+        except NameError:
+            pass
+        except:
+            logger.print_exception("cleanup exception")
+
+    def clean(self):
+        """
+        Helper function for normal cleanup
+        (not save)
+        """
+        import mcpython.ResourceLoader
+
+        mcpython.ResourceLoader.close_all_resources()
+        shared.event_handler.call("game:close")
+        shared.tmp.cleanup()
