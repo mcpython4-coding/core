@@ -17,7 +17,7 @@ import mcpython.common.block.ILog as ILog
 import mcpython.util.enums
 import mcpython.common.block.ISlab as ISlab
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
-import deprecation
+import mcpython.common.block.BlockWall as BlockWall
 
 
 # todo: implement inventory opening notations
@@ -671,6 +671,11 @@ class BlockFactory:
         """
         if ISlab.ISlab not in self.baseclass:
             self.baseclass.append(ISlab.ISlab)
+        return self
+
+    def setWall(self):
+        if BlockWall.IWall not in self.baseclass:
+            self.baseclass.append(BlockWall.IWall)
         return self
 
     def setHardness(self, value: float):
