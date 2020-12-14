@@ -92,9 +92,9 @@ class DimensionHandler:
             ).setStaticId(0)
         )
         self.add_dimension(
-            DimensionDefinition("nether", {"configname": "minecraft:nether_generator"}).setStaticId(
-                -1
-            )
+            DimensionDefinition(
+                "nether", {"configname": "minecraft:nether_generator"}
+            ).setStaticId(-1)
         )
         self.add_dimension(
             DimensionDefinition("end", {"configname": None}).setStaticId(1)

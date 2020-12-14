@@ -212,8 +212,11 @@ class CraftingGridHelperInterface(
             tags = G.registry.get_by_name("minecraft:item").entries[item].TAGS
             for task in tasked[:]:
                 for entry in task:
-                    if type(entry) != str: entry = entry[0]
-                    if item == entry or (False if not entry.startswith("#") else entry in tags):
+                    if type(entry) != str:
+                        entry = entry[0]
+                    if item == entry or (
+                        False if not entry.startswith("#") else entry in tags
+                    ):
                         tasked.remove(task)
                         break
                 else:

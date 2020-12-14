@@ -13,7 +13,9 @@ from mcpython import shared as G
 import mcpython.server.worldgen.mode.IWorldGenConfig
 
 
-class NetherWorldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig):
+class NetherWorldGenerator(
+    mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
+):
     NAME = "minecraft:nether_generator"
 
 

@@ -600,7 +600,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             cdata["entities"].append(edata)
 
         if override:  # we want to re-dump all data maps
-            biome_map = chunk_instance.get_value("minecraft:biome_map")  # read the biome map ...
+            biome_map = chunk_instance.get_value(
+                "minecraft:biome_map"
+            )  # read the biome map ...
 
             # ... and use it as an template for the following
             # todo: use something else more stable!
@@ -640,7 +642,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             ] = biome_palette  # todo: move to global map of biomes
 
             height_map = chunk_instance.get_value("heightmap")
-            cdata["maps"]["height"] = [height_map[pos] if pos in height_map else -1 for pos in positions]
+            cdata["maps"]["height"] = [
+                height_map[pos] if pos in height_map else -1 for pos in positions
+            ]
 
         data[chunk] = cdata  # dump the chunk into the region
         write_region_data(

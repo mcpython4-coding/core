@@ -48,7 +48,11 @@ class DefaultBiomeMapLayer(ILayer):
         temperature_map = chunk.get_value("minecraft:temperature_map")
         for x in range(cx * 16, cx * 16 + 16):
             for z in range(cz * 16, cz * 16 + 16):
-                biome_map[(x, z)] = config.world_generator_config.BIOME_SOURCE.get_biome_at(x, z, [cls.noise], land_map[(x, z)], config, temperature_map[(x, z)])
+                biome_map[
+                    (x, z)
+                ] = config.world_generator_config.BIOME_SOURCE.get_biome_at(
+                    x, z, [cls.noise], land_map[(x, z)], config, temperature_map[(x, z)]
+                )
         chunk.set_value("minecraft:biome_map", biome_map)
 
 

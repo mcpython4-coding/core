@@ -28,7 +28,7 @@ def transform_to_item_stack(item, table: dict) -> list:
                 return []
         return [(itemname, item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
-        return [("#"+item["tag"], item["count"] if "count" in item else 1)]
+        return [("#" + item["tag"], item["count"] if "count" in item else 1)]
     elif type(item) == list:  # have we an list of items?
         values = [transform_to_item_stack(x, table) for x in item]
         value = []

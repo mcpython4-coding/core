@@ -13,7 +13,9 @@ from mcpython import shared as G
 import mcpython.server.worldgen.mode.IWorldGenConfig
 
 
-class DefaultOverworldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig):
+class DefaultOverworldGenerator(
+    mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
+):
     NAME = "minecraft:default_overworld"
 
     LAYERS = [
@@ -27,12 +29,7 @@ class DefaultOverworldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IW
         "minecraft:tree_default",
     ]
 
-    BIOMES = {
-        "land": {
-            2.0: ["minecraft:dessert"],
-            0.8: ["minecraft:plains"]
-        }
-    }
+    BIOMES = {"land": {2.0: ["minecraft:dessert"], 0.8: ["minecraft:plains"]}}
 
     LANDMASSES = ["land"]
 

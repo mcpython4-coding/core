@@ -30,8 +30,8 @@ class Void(Biome.Biome):
 
     @staticmethod
     def get_top_layer_height_range(
-            position: typing.Tuple[int, int],
-            dimension: mcpython.common.world.AbstractInterface.IDimension,
+        position: typing.Tuple[int, int],
+        dimension: mcpython.common.world.AbstractInterface.IDimension,
     ) -> typing.Tuple[int, int]:
         return 0, 0
 

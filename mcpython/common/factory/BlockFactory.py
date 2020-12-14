@@ -398,7 +398,9 @@ class BlockFactory:
                     state = {**state, **baseclass.get_model_state(self)}
                 return state
 
-        ConstructedBlock.DEBUG_WORLD_BLOCK_STATES = ConstructedBlock.get_all_model_states()
+        ConstructedBlock.DEBUG_WORLD_BLOCK_STATES = (
+            ConstructedBlock.get_all_model_states()
+        )
 
         if self.solid_faces:
 

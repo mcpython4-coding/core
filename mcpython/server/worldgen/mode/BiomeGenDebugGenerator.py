@@ -18,7 +18,9 @@ import mcpython.common.mod.ModMcpython
 import itertools
 
 
-class DebugBiomeWorldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig):
+class DebugBiomeWorldGenerator(
+    mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
+):
     NAME = "minecraft:debug_biome_world_generator"
     DISPLAY_NAME = "BIOME DEBUG GENERATOR"
 
@@ -29,8 +31,12 @@ class DebugBiomeWorldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWo
     ]
 
     BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.DefaultBiomeSource
-    BIOMES = mcpython.server.worldgen.mode.DefaultOverWorldGenerator.DefaultOverworldGenerator.BIOMES
-    LANDMASSES = mcpython.server.worldgen.mode.DefaultOverWorldGenerator.DefaultOverworldGenerator.LANDMASSES
+    BIOMES = (
+        mcpython.server.worldgen.mode.DefaultOverWorldGenerator.DefaultOverworldGenerator.BIOMES
+    )
+    LANDMASSES = (
+        mcpython.server.worldgen.mode.DefaultOverWorldGenerator.DefaultOverworldGenerator.LANDMASSES
+    )
 
     BIOME_TO_BLOCK = {}
 
@@ -60,6 +66,7 @@ class DebugBiomeWorldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWo
 shared.world_generation_handler.register_world_gen_config(DebugBiomeWorldGenerator)
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:post", DebugBiomeWorldGenerator.generate_table, info="constructing debug world info"
+    "stage:post",
+    DebugBiomeWorldGenerator.generate_table,
+    info="constructing debug world info",
 )
-

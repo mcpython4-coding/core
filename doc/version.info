@@ -1366,6 +1366,7 @@ R   [uuk]: improved world serialization API
 [B] [uuk]: fixed BlockFactory
 [B] [uuk]: fixed main inventory rendering issue
     [uuk]: optimised recipe lookup
+[B] [uuk]: fixed build system not working correctly
 
 Roadmap (for internal_changes; X means "must be done before release", more X's mean higher priority):
     - fix furnace gui texture

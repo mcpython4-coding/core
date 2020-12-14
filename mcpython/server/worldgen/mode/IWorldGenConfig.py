@@ -21,11 +21,11 @@ class DefaultBiomeSource(IBiomeSource):
     @classmethod
     def get_biome_at(cls, x, z, noises, landmass, config, temperature) -> str:
         v = (
-                mcpython.server.worldgen.layer.DefaultBiomeLayer.DefaultBiomeMapLayer.noise.noise3d(
-                    x / config.size, z / config.size, x * z / config.size ** 2
-                )
-                * 0.5
-                + 0.5
+            mcpython.server.worldgen.layer.DefaultBiomeLayer.DefaultBiomeMapLayer.noise.noise3d(
+                x / config.size, z / config.size, x * z / config.size ** 2
+            )
+            * 0.5
+            + 0.5
         )
         return shared.biome_handler.get_biome_at(
             landmass, v, temperature, config.world_generator_config.BIOMES
@@ -47,4 +47,3 @@ class IWorldGenConfig:
     @classmethod
     def on_chunk_generation_finished(cls, chunk):
         pass
-

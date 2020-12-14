@@ -50,7 +50,9 @@ class BlockInfo:
                 rx = -hsize
 
 
-class DebugWorldGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig):
+class DebugWorldGenerator(
+    mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
+):
     NAME = "minecraft:debug_world_generator"
     DISPLAY_NAME = "DEBUG GENERATOR"
 

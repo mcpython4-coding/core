@@ -159,13 +159,17 @@ local = (
     if "--source" not in sys.argv
     else sys.argv[sys.argv.index("--source") + 1]
 )
+
+with open(local+"/tools/config.json") as f:
+    config = json.load(f)
+
 folder = (
     local + "/tools/build"
     if "--target" not in sys.argv
     else sys.argv[sys.argv.index("--target") + 1]
 )
 out = (
-    local + "/tools/builds"
+    (local + "/tools/builds" if "output_folder" not in config else config["output_folder"])
     if "--builds" not in sys.argv
     else sys.argv[sys.argv.index("--builds") + 1]
 )
@@ -183,12 +187,12 @@ def build():
     os.makedirs(folder)
 
     print("collection python files...")
-    for root, dirs, files in os.walk(local):
+    for root, dirs, files in list(os.walk(local)):
         for file in files:
             if not file.endswith(".py"):
                 continue
             f = os.path.join(root, file)
-            t = folder + "/" + f[len(local) :]
+            t = os.path.join(folder, os.path.relpath(f, local))
             d = os.path.dirname(t)
             if not os.path.exists(d):
                 os.makedirs(d)
@@ -218,7 +222,7 @@ def build():
     )  # and write console to these console
 
     print("collecting assets...")  #
-    copytree(local + "/resources/source", folder)
+    # copytree(local + "/resources/source", folder)
     copytree(local + "/resources/generated", folder)
     copytree(local + "/resources/main", folder)
 
@@ -236,7 +240,7 @@ def build():
         )
     with open(folder + "/tools/installer.py", mode="w") as f:
         f.write(d)
-    with open(folder + "/mcpython/config.py") as f:
+    with open(folder + "/mcpython/common/config.py") as f:
         d = f.read()
     local_space = {}
     exec(d, {}, local_space)
@@ -278,7 +282,6 @@ def build():
                 multi_line_change = False
                 index = None
                 in_string = 0
-                skip_entries = 0
                 for i, e in enumerate(line):
                     if e == '"' and not (i > 0 and line[i - 1] == "\\"):
                         if len(line) > i + 1 and line[i : i + 3] == '"""':
@@ -337,4 +340,4 @@ def build():
 
 
 if __name__ == "__main__":
-    build()
+    print(build())

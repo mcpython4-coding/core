@@ -39,7 +39,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         texture = texture.crop((0, 0, 176 / 255 * size[0], 164 / 255 * size[1]))
         size = texture.size
         texture = texture.resize((size[0] * 2, size[1] * 2), PIL.Image.NEAREST)
-        ground = PIL.Image.new("RGBA", (texture.size[0], texture.size[1]+4))
+        ground = PIL.Image.new("RGBA", (texture.size[0], texture.size[1] + 4))
         ground.paste(texture)
         cls.TEXTURE = mcpython.util.texture.to_pyglet_image(ground)
         cls.TEXTURE_SIZE = ground.size
