@@ -134,6 +134,9 @@ class IChunk(ABC):
     def get_value(self, key: str):
         raise NotImplementedError()
 
+    def is_visible(self) -> bool:
+        raise NotImplementedError()
+
 
 class IDimension(ABC):
     def get_id(self):

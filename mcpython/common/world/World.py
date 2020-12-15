@@ -281,24 +281,25 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         :param generate_chunks: if chunks should be generated
         :param load_immediate: if chunks should be loaded immediate if needed
         """
+        if self.get_active_dimension() is None: return
         before_set = set()
         after_set = set()
         pad = 4
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):
-                if dx ** 2 + dz ** 2 > (pad + 1) ** 2:
-                    continue
-                if before:
+                if before is not None:
                     x, z = before
-                    before_set.add((x + dx, z + dz))
-                if after:
+                    if (dx+x) ** 2 + (dz+z) ** 2 <= (pad + 1) ** 2:
+                        before_set.add((x + dx, z + dz))
+                if after is not None:
                     x, z = after
-                    after_set.add((x + dx, z + dz))
-        show = after_set - before_set
+                    if (dx + x) ** 2 + (dz + z) ** 2 <= (pad + 1) ** 2:
+                        after_set.add((x + dx, z + dz))
+        # show = after_set - before_set
         hide = before_set - after_set
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
-            # pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
+            pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
             if G.world.get_active_dimension().get_chunk(*chunk, generate=False).loaded:
                 G.tick_handler.schedule_once(
                     G.world.save_file.dump,
@@ -307,7 +308,8 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
                     dimension=self.active_dimension,
                     chunk=chunk,
                 )
-        for chunk in show:
+        for chunk in after_set:
+            if self.get_active_dimension().get_chunk(*chunk, generate=False).is_visible(): continue
             pyglet.clock.schedule_once(lambda _: self.show_chunk(chunk), 0.1)
             if not load_immediate:
                 pyglet.clock.schedule_once(

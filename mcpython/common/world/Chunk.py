@@ -303,8 +303,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             dx, dy, dz = face.relative
             key = (x + dx, y + dy, z + dz)
             b = self.dimension.get_block(key)
-            if b is None or type(b) == str:
-                continue
+            if b is None or isinstance(b, str): continue
             b.face_state.update(redraw_complete=True)
 
     def show_block(
@@ -371,8 +370,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             return
         self.visible = False
         self.hide_all()
-        if len(self.world) > 0:
-            logger.print_stack(len(self.world))
+
+    def is_visible(self) -> bool:
+        return self.visible
 
     def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
         self.positions_updated_since_last_save.add(position)
