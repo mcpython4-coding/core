@@ -1375,3 +1375,4 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed issue 244: uv's were flipped upside down
 [uuk]: added .setWall()-configurator to block factory
 [uuk]: some work on biome generation
+[uuk]: world generator configs are stored now per-dimension instead of per-world

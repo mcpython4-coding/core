@@ -17,6 +17,7 @@ class DefaultOverworldGenerator(
     mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
 ):
     NAME = "minecraft:default_overworld"
+    DIMENSION = "minecraft:overworld"
 
     LAYERS = [
         "minecraft:landmass_default",

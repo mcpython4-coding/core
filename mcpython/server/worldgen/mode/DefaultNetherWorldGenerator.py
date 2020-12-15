@@ -17,6 +17,7 @@ class NetherWorldGenerator(
     mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
 ):
     NAME = "minecraft:nether_generator"
+    DIMENSION = "minecraft:the_nether"
 
 
 G.world_generation_handler.register_world_gen_config(NetherWorldGenerator)

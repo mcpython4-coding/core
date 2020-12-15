@@ -81,7 +81,7 @@ class DimensionHandler:
         """
         self.add_dimension(
             DimensionDefinition(
-                "overworld",
+                "minecraft:overworld",
                 {
                     "configname": (
                         "minecraft:default_overworld"
@@ -94,11 +94,11 @@ class DimensionHandler:
         )
         self.add_dimension(
             DimensionDefinition(
-                "nether", {"configname": "minecraft:nether_generator"}
+                "minecraft:the_nether", {"configname": "minecraft:nether_generator"}
             ).setStaticId(-1)
         )
         self.add_dimension(
-            DimensionDefinition("end", {"configname": None}).setStaticId(1)
+            DimensionDefinition("minecraft:the_end", {"configname": None}).setStaticId(1)
         )
 
     def add_dimension(self, dim: DimensionDefinition):

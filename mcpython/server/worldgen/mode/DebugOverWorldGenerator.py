@@ -54,6 +54,7 @@ class DebugWorldGenerator(
     mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
 ):
     NAME = "minecraft:debug_world_generator"
+    DIMENSION = "minecraft:overworld"
     DISPLAY_NAME = "DEBUG GENERATOR"
 
     @classmethod

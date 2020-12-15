@@ -447,7 +447,7 @@ class CombinedLogFactory:
             mcpython.common.data.gen.BlockModelGenerator.BlockModel(
                 name, parent="minecraft:block/cube_column"
             )
-            .set_texture_variable("end", self.front_texture)
+            .set_texture_variable("minecraft:the_end", self.front_texture)
             .set_texture_variable("side", self.side_texture),
             self.name,
         )

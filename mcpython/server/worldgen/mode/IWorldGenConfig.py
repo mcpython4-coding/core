@@ -52,6 +52,7 @@ class DefaultBiomeSource(IBiomeSource):
 
 class IWorldGenConfig:
     NAME = None
+    DIMENSION = None
     DISPLAY_NAME = None
 
     BIOMES = []

@@ -23,6 +23,7 @@ class DebugBiomeWorldGenerator(
 ):
     NAME = "minecraft:debug_biome_world_generator"
     DISPLAY_NAME = "BIOME DEBUG GENERATOR"
+    DIMENSION = "minecraft:overworld"
 
     LAYERS = [
         "minecraft:landmass_default",

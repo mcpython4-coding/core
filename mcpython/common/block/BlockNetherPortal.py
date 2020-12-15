@@ -99,12 +99,12 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             # todo: search for portal on other side
             # todo: make it possible for other entities, not only players (-> API change needed!)
 
-            if player.dimension.name == "overworld":
+            if player.dimension.name == "minecraft:overworld":
                 x, y, z = player.position
-                player.teleport((math.floor(x / 8), y, math.floor(z / 8)), "nether")
-            elif player.dimension.name == "nether":
+                player.teleport((math.floor(x / 8), y, math.floor(z / 8)), "minecraft:the_nether")
+            elif player.dimension.name == "minecraft:the_nether":
                 x, y, z = player.position
-                player.teleport((x * 8, y, z * 8), "overworld")
+                player.teleport((x * 8, y, z * 8), "minecraft:overworld")
             player.in_nether_portal_since = None
 
 
