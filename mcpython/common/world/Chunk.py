@@ -371,6 +371,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             return
         self.visible = False
         self.hide_all()
+        if len(self.world) > 0:
+            logger.print_stack(len(self.world))
 
     def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
         self.positions_updated_since_last_save.add(position)

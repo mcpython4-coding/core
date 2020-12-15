@@ -297,7 +297,8 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         show = after_set - before_set
         hide = before_set - after_set
         for chunk in hide:
-            pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
+            # todo: fix this, this was previously hiding chunks randomly....
+            # pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
             if G.world.get_active_dimension().get_chunk(*chunk, generate=False).loaded:
                 G.tick_handler.schedule_once(
                     G.world.save_file.dump,
