@@ -10,6 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import random
+import typing
 
 import opensimplex
 
@@ -25,12 +26,16 @@ import mcpython.common.world.AbstractInterface
 class DefaultBiomeMapLayer(ILayer):
     DEPENDS_ON = ["minecraft:landmass_default"]
 
-    noise: opensimplex.OpenSimplex = None
+    noises: typing.List[opensimplex.OpenSimplex] = None
 
     @classmethod
     def update_seed(cls):
         seed = G.world.config["seed"]
-        cls.noise = opensimplex.OpenSimplex(seed=seed * 100)
+        cls.noises = [
+            opensimplex.OpenSimplex(seed=seed * 100),
+            opensimplex.OpenSimplex(seed=seed * 100+10),
+            opensimplex.OpenSimplex(seed=seed * 100+11)
+        ]
 
     @staticmethod
     def normalize_config(config: LayerConfig):
@@ -51,7 +56,7 @@ class DefaultBiomeMapLayer(ILayer):
                 biome_map[
                     (x, z)
                 ] = config.world_generator_config.BIOME_SOURCE.get_biome_at(
-                    x, z, [cls.noise], land_map[(x, z)], config, temperature_map[(x, z)]
+                    x, z, cls.noises, land_map[(x, z)], config, temperature_map[(x, z)]
                 )
         chunk.set_value("minecraft:biome_map", biome_map)
 

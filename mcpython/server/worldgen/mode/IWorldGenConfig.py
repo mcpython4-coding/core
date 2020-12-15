@@ -32,8 +32,15 @@ class DefaultBiomeSource(IBiomeSource):
     @classmethod
     def get_biome_at(cls, x, z, noises, landmass, config, temperature) -> str:
         v = (
-            mcpython.server.worldgen.layer.DefaultBiomeLayer.DefaultBiomeMapLayer.noise.noise3d(
-                x / config.size, z / config.size, x * z / config.size ** 2
+            noises[0].noise4d(
+                x / config.size, z / config.size, x * z / config.size ** 2,
+                noises[1].noise3d(
+                    x / (config.size * 100), z / (config.size * 100),
+                    noises[2].noise3d(
+                        x / (config.size * 100) + z / 1000000, z / (config.size * 100) + x / 1000000,
+                        len(landmass) / 100000
+                    ) / 10000
+                )
             )
             * 0.5
             + 0.5

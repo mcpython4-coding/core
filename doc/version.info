@@ -1374,3 +1374,4 @@ R   [uuk]: improved world serialization API
 [uuk]: BoxModel rendering code is capable to do more stuff now
 [uuk]: fixed issue 244: uv's were flipped upside down
 [uuk]: added .setWall()-configurator to block factory
+[uuk]: some work on biome generation
