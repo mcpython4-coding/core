@@ -171,6 +171,9 @@ class WorldGenerationHandler:
         config_name = dimension.get_world_generation_config_entry("configname")
         return self.configs[dimension.get_name()][config_name]
 
+    def set_current_config(self, dimension: mcpython.common.world.AbstractInterface.IDimension, config: str):
+        dimension.set_world_generation_config_entry("configname", config)
+
     def mark_finished(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
         config_name = chunk.get_dimension().get_world_generation_config_entry("configname")
         config = self.configs[chunk.get_dimension().get_name()][config_name]

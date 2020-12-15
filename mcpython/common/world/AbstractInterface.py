@@ -191,6 +191,9 @@ class IDimension(ABC):
     def get_world_generation_config_entry(self, name: str, default=None):
         raise NotImplementedError()
 
+    def set_world_generation_config_entry(self, name: str, value):
+        raise NotImplementedError()
+
     def set_world_generation_config_for_layer(self, layer_name, layer_config):
         raise NotImplementedError()
 

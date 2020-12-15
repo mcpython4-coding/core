@@ -1376,3 +1376,4 @@ R   [uuk]: improved world serialization API
 [uuk]: added .setWall()-configurator to block factory
 [uuk]: some work on biome generation
 [uuk]: world generator configs are stored now per-dimension instead of per-world
+[uuk]: added in-game option to switch world generator

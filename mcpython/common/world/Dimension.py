@@ -85,9 +85,6 @@ class DimensionHandler:
                 {
                     "configname": (
                         "minecraft:default_overworld"
-                        # "minecraft:debug_biome_world_generator"
-                        if "--debug-world" not in sys.argv
-                        else "minecraft:debug_world_generator"
                     )
                 },
             ).setStaticId(0)
@@ -290,6 +287,9 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             if name in self.world_generation_config
             else default
         )
+
+    def set_world_generation_config_entry(self, name: str, value):
+        self.world_generation_config[name] = value
 
     def get_name(self) -> str:
         return self.name

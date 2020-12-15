@@ -173,7 +173,7 @@ class UIPartToggleButton(UIPartButton):
     def __init__(
         self,
         size,
-        textpossibilitys,
+        text_possibilities,
         position,
         toggle=mcpython.common.event.EventInfo.MousePressEventInfo(
             pyglet.window.mouse.LEFT
@@ -194,7 +194,7 @@ class UIPartToggleButton(UIPartButton):
         """
         creates an new UIPartButton
         :param size: the size of the button
-        :param textpossibilitys: the texts of the button
+        :param text_possibilities: the texts of the button
         :param position: the position of the button
         :param toggle: the EventInfo for mouse buttons and mods, no area to define, toggle forward
         :param retoggle: the EventInfo for mouse buttons and mods, no area to define, toggle backwards
@@ -215,8 +215,8 @@ class UIPartToggleButton(UIPartButton):
             anchor_element=anchor_button,
             anchor_window=anchor_window,
         )
-        self.textpages = textpossibilitys
-        self.textconstructor = text_constructor
+        self.text_pages = text_possibilities
+        self.text_constructor = text_constructor
         self.index = start
         self.text = ""
         self.toggle: mcpython.common.event.EventInfo.MousePressEventInfo = toggle
@@ -239,14 +239,14 @@ class UIPartToggleButton(UIPartButton):
         self.lable = pyglet.text.Label(text=self.text)
         self.active = False
 
-    def _generate_text(self):
-        text = self.textpages[self.index]
-        if type(self.textconstructor) == str:
+    def update_text(self):
+        text = self.text_pages[self.index]
+        if type(self.text_constructor) == str:
             self.text = mcpython.common.Language.translate(
-                self.textconstructor.format(text)
+                self.text_constructor.format(text)
             )
-        elif callable(self.textconstructor):
-            self.text = mcpython.common.Language.translate(self.textconstructor(text))
+        elif callable(self.text_constructor):
+            self.text = mcpython.common.Language.translate(self.text_constructor(text))
         else:
             self.text = mcpython.common.Language.translate(text)
 
@@ -256,25 +256,25 @@ class UIPartToggleButton(UIPartButton):
         self.toggle.area = self.retoggle.area = ((mx, my), (mx + sx, my + sy))
         if self.toggle.equals(x, y, button, modifiers):
             self.index += 1
-            if self.index >= len(self.textpages):
+            if self.index >= len(self.text_pages):
                 self.index = 0
-            new = self.textpages[self.index]
+            new = self.text_pages[self.index]
             if self.on_toggle:
                 self.on_toggle(self.text, new, 1, (x, y))
-            self._generate_text()
+            self.update_text()
         elif self.retoggle.equals(x, y, button, modifiers):
             self.index -= 1
             if self.index < 0:
-                self.index = len(self.textpages) - 1
-            new = self.textpages[self.index]
+                self.index = len(self.text_pages) - 1
+            new = self.text_pages[self.index]
             if self.on_toggle:
                 self.on_toggle(self.text, new, -1, (x, y))
-            self._generate_text()
+            self.update_text()
         else:
             if self.on_try_press:
                 self.on_try_press(x, y)
 
     def on_draw_2d(self):
         if self.text == "":
-            self._generate_text()
+            self.update_text()
         super().on_draw_2d()
