@@ -40,7 +40,7 @@ How mods do interact with these?
 """
 
 
-class IResourceLocator(ABC):
+class IResourceLoader(ABC):
     """
     Base class for an class holding an link to an resource source, like and directory or zip-file
     """
@@ -52,6 +52,9 @@ class IResourceLocator(ABC):
         :param path: the path to check
         :return: if it is valid or not
         """
+        raise NotImplementedError()
+
+    def get_path_info(self) -> str:
         raise NotImplementedError()
 
     def is_in_path(self, path: str) -> bool:
@@ -104,7 +107,7 @@ class IResourceLocator(ABC):
         raise NotImplementedError()
 
 
-class ResourceZipFile(IResourceLocator):
+class ResourceZipFile(IResourceLoader):
     """
     Implementation for zip-archives
     """
@@ -117,6 +120,9 @@ class ResourceZipFile(IResourceLocator):
         self.archive = zipfile.ZipFile(path)
         self.path = path
         self.namelist_cache = self.archive.namelist()
+
+    def get_path_info(self) -> str:
+        return self.path
 
     def is_in_path(self, filename: str) -> bool:
         return filename in self.namelist_cache
@@ -147,7 +153,7 @@ class ResourceZipFile(IResourceLocator):
         return "ResourceZipFileOf({})".format(self.path)
 
 
-class ResourceDirectory(IResourceLocator):
+class ResourceDirectory(IResourceLoader):
     """
     Implementation for raw directories
     """
@@ -158,6 +164,9 @@ class ResourceDirectory(IResourceLocator):
 
     def __init__(self, path: str):
         self.path = path.replace("\\", "/")
+
+    def get_path_info(self) -> str:
+        return self.path
 
     def is_in_path(self, filename: str) -> bool:
         return os.path.isfile(os.path.join(self.path, filename))
@@ -353,8 +362,8 @@ def read_raw(file: str):
         if file.startswith("build/"):
             file = file.replace("build/", shared.build + "/", 1)
         for x in RESOURCE_LOCATIONS:
-            x: IResourceLocator
-            if x.path == resource:
+            x: IResourceLoader
+            if x.get_path_info() == resource:
                 try:
                     return x.read_raw(file)
                 except:
@@ -391,8 +400,8 @@ def read_image(file: str):
         if file.startswith("build/"):
             file = file.replace("build/", shared.build + "/", 1)
         for x in RESOURCE_LOCATIONS:
-            x: IResourceLocator
-            if x.path == resource:
+            x: IResourceLoader
+            if x.get_path_info() == resource:
                 try:
                     return x.read_image(file)
                 except:
