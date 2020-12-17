@@ -1377,3 +1377,5 @@ R   [uuk]: improved world serialization API
 [uuk]: some work on biome generation
 [uuk]: world generator configs are stored now per-dimension instead of per-world
 [uuk]: added in-game option to switch world generator
+[uuk]: rewritten how default-loaders for assets are declared using now an "ResourcePipe"
+[uuk]: added internal resource loader for in-memory data storage
