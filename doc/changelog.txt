@@ -49,7 +49,7 @@ information on development:
         its id.
 
 
-changelog of snapshot 20w51a
+changelog of snapshot 20w51a, released on 18.12.2020, targeting 20w51a
     WARNING:  M A J O R  BREAKING VERSION!!!!
     THIS VERSION CONTAINS HIGHLY BREAKING CHANGES. IT IS NOWHERE NEAR TO BEING COMPATIBLE
 
@@ -89,6 +89,10 @@ changelog of snapshot 20w51a
 
     World Storage:
         - improved overall world storage & debug information
+
+    World gen:
+        - a lot of changes, again...
+        - moved world generator config in-game
 
     fixed issues:
         - InventoryHandler was handling some itemstack's wrong leading into itemstack's with higher stack size

@@ -12,15 +12,16 @@ This project is not official by mojang and does not relate to it.
 import math
 import sys
 
-MC_VERSION_BASE = "20w49a"
-VERSION_TYPE = "dev"
+MC_VERSION_BASE = "20w51a"
+VERSION_TYPE = "snapshot"
 # possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
 VERSION_NAME = "20w51a"
 
 DEVELOPING_FOR = "20w51a"
-DEVELOPMENT_COUNTER = 3
+DEVELOPMENT_COUNTER = 4
 
 # list of all versions since 19w52a to indicate order of release; used in save files todo: export to other file
+# todo: auto-increment
 VERSION_ORDER = [
     "19w52a",
     "20w05a",
