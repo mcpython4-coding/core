@@ -26,11 +26,13 @@ subprocess.call(
     stderr=sys.stderr,
 )
 
+# todo: move to config the url
 subprocess.call(
     [
         sys.executable,
         home + "/tools/update_asset_source.py",
         "https://launcher.mojang.com/v1/objects/ab0d1d122bc2c99daad33befe50a16a07d3b3bf7/client.jar",
+        home,
     ],
     stdout=sys.stdout,
 )

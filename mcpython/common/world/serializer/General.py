@@ -77,14 +77,12 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         G.world.config = data["config"]
         G.event_handler.call("seed:set")
 
-        if data["game version"] not in mcpython.common.config.VERSION_ORDER:
+        if type(data["game version"]) != int:
             logger.println(
-                "Future version are NOT supported. Loading may NOT work (but we try to)"
-            )
-            logger.println(
-                "Whatever happens to you saves now, we CAN NOT give you help. For your information, "
+                "Old version name format found!"
             )
             logger.println("it was last loaded in '{}'".format(data["game version"]))
+            data["game version"] = -1
 
         for modname in data["mods"]:
             if modname not in G.mod_loader.mods:
@@ -154,7 +152,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             "storage version": save_file.version,  # the storage version stored in
             "player name": G.world.get_active_player().name,  # the name of the player the world played in
             "config": G.world.config,  # the world config
-            "game version": mcpython.common.config.VERSION_NAME,
+            "game version": mcpython.common.config.VERSION_ID,
             "mods": {mod.name: mod.version for mod in G.mod_loader.mods.values()},
             "chunks_to_generate": [
                 (chunk.position, chunk.dimension.id)

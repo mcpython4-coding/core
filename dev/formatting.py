@@ -14,6 +14,7 @@ import os
 import sys
 
 
+# todo: add config option for this
 home = os.path.dirname(os.path.dirname(__file__))
 
 subprocess.call([sys.executable, "-m", "black", home])

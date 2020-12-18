@@ -31,11 +31,13 @@ if os.path.exists(home + "/resources/source"):
 
 print("copying new...")
 
+target = sys.argv[2]+"/" if len(sys.argv) > 2 else home + "/resources/source/"
+
 with zipfile.ZipFile(home + "/tools/source.zip") as f:
     for file in f.namelist():
         if "assets" in file or "data" in file and "net/minecraft" not in file:
             data = f.read(file)
-            fd = home + "/resources/source/" + file
+            fd = target + file
             d = os.path.dirname(fd)
             if not os.path.isdir(d):
                 os.makedirs(d)
