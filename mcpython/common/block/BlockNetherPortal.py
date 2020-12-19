@@ -101,7 +101,9 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
             if player.dimension.name == "minecraft:overworld":
                 x, y, z = player.position
-                player.teleport((math.floor(x / 8), y, math.floor(z / 8)), "minecraft:the_nether")
+                player.teleport(
+                    (math.floor(x / 8), y, math.floor(z / 8)), "minecraft:the_nether"
+                )
             elif player.dimension.name == "minecraft:the_nether":
                 x, y, z = player.position
                 player.teleport((x * 8, y, z * 8), "minecraft:overworld")

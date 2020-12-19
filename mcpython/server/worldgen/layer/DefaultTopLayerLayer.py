@@ -12,44 +12,35 @@ This project is not official by mojang and does not relate to it.
 
 import random
 
-import opensimplex
+import mcpython.server.worldgen.noise.NoiseManager
 
-from mcpython import shared as G
+from mcpython import shared
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
-@G.world_generation_handler
+@shared.world_generation_handler
 class DefaultTopLayerILayer(ILayer):
+    NAME = "minecraft:top_layer_default"
     DEPENDS_ON = ["minecraft:heightmap_default", "minecraft:biome_map_default"]
 
-    noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
-
-    @staticmethod
-    def normalize_config(config: LayerConfig):
-        if not hasattr(config, "size"):
-            config.size = 3
-
-    NAME = "minecraft:top_layer_default"
+    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME, dimensions=2, scale=10**3)
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        factor = 10 ** config.size
-        for x in range(chunk.position[0] * 16, chunk.position[0] * 16 + 16):
-            for z in range(chunk.position[1] * 16, chunk.position[1] * 16 + 16):
-                reference.schedule_invoke(
-                    cls.generate_xz, reference, x, z, config, factor
-                )
+        x, z = chunk.position[0] * 16, chunk.position[1] * 16
+        noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
+        for (x, z), v in noise_map:
+            reference.schedule_invoke(
+                cls.generate_xz, reference, x, z, config, v
+            )
 
     @staticmethod
-    def generate_xz(reference, x, z, config, factor):
+    def generate_xz(reference, x, z, config, noise_value):
         chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
         mheight = heightmap[(x, z)][0][1]
-        biome = G.biome_handler.biomes[chunk.get_value("minecraft:biome_map")[(x, z)]]
-        noise_value = (
-            DefaultTopLayerILayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
-        )
+        biome = shared.biome_handler.biomes[chunk.get_value("minecraft:biome_map")[(x, z)]]
         r = biome.get_top_layer_height_range((x, z), chunk.get_dimension())
         noise_value *= r[1] - r[0]
         noise_value += r[0]

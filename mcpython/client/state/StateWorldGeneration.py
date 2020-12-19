@@ -89,10 +89,14 @@ class StateWorldGeneration(State.State):
 
         G.world_generation_handler.set_current_config(
             G.world.get_dimension(0),
-            G.state_handler.states["minecraft:world_generation_config"].get_world_config_name()
+            G.state_handler.states[
+                "minecraft:world_generation_config"
+            ].get_world_config_name(),
         )
 
-        sx, sy = G.state_handler.states["minecraft:world_generation_config"].get_world_size()
+        sx, sy = G.state_handler.states[
+            "minecraft:world_generation_config"
+        ].get_world_size()
         G.world_generation_handler.enable_generation = True
         fx = sx // 2
         fy = sy // 2
@@ -149,12 +153,8 @@ class StateWorldGeneration(State.State):
         mcpython.common.world.player.Player.RENDERER.reload()
         G.world.active_player = player_name
         G.world.get_active_player().move_to_spawn_point()
-        G.world.config["enable_auto_gen"] = (
-                self.is_auto_gen_enabled()
-        )
-        G.world.config["enable_world_barrier"] = (
-                self.is_world_gen_barrier_enabled()
-        )
+        G.world.config["enable_auto_gen"] = self.is_auto_gen_enabled()
+        G.world.config["enable_world_barrier"] = self.is_world_gen_barrier_enabled()
 
         # reload all the data-packs
         mcpython.common.DataPack.datapack_handler.reload()

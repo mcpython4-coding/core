@@ -1381,3 +1381,7 @@ R   [uuk]: improved world serialization API
 [uuk]: added internal resource loader for in-memory data storage
 [uuk]: targeting now 20w51a
 [github]: released snapshot 20w51a
+
+[uuk]: implemented NoiseManager system for generating noises
+[uuk]: added injection point for other noise backends
+[uuk]: warning: as the nature of this goes, this is breaking

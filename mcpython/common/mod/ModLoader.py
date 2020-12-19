@@ -193,7 +193,9 @@ class LoadingStages:
 
     # if your mod has other resource locations...
     EXTRA_RESOURCE_LOCATIONS = LoadingStage(
-        "resource addition", "stage:resources:pipe:add_mapper", "stage:additional_resources"
+        "resource addition",
+        "stage:resources:pipe:add_mapper",
+        "stage:additional_resources",
     )
 
     # first: create ConfigFile objects, second: internally, third: do something with the data

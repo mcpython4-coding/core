@@ -78,9 +78,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         G.event_handler.call("seed:set")
 
         if type(data["game version"]) != int:
-            logger.println(
-                "Old version name format found!"
-            )
+            logger.println("Old version name format found!")
             logger.println("it was last loaded in '{}'".format(data["game version"]))
             data["game version"] = -1
 

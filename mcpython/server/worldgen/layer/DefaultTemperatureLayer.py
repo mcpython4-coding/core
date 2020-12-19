@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 
 import random
 
-import opensimplex
+import mcpython.server.worldgen.noise.NoiseManager
 
 from mcpython import shared as G
 import mcpython.common.event.EventHandler
@@ -22,12 +22,9 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 @G.world_generation_handler
 class DefaultTemperatureILayer(ILayer):
-    noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
+    NAME = "minecraft:temperature_map"
 
-    @classmethod
-    def update_seed(cls):
-        seed = G.world.config["seed"]
-        cls.noise = opensimplex.OpenSimplex(seed=seed * 100 + 5)
+    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME, scale=10**2, dimensions=2)
 
     @staticmethod
     def normalize_config(config: LayerConfig):
@@ -35,31 +32,20 @@ class DefaultTemperatureILayer(ILayer):
             config.min = -0.5
         if not hasattr(config, "max"):
             config.max = 2.0
-        if not hasattr(config, "size"):
-            config.size = 2
-
-    NAME = "minecraft:temperature_map"
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        cx, cz = chunk.position
         temperature_map = chunk.get_value("minecraft:temperature_map")
-        factor = 10 ** config.size
         r = [config.min, config.max]
-        for x in range(cx * 16, cx * 16 + 16):
-            for z in range(cz * 16, cz * 16 + 16):
-                v = DefaultTemperatureILayer.noise.noise2d(x / factor, z / factor)
-                v = v / 2.0 + 0.5
-                v *= abs(r[0] - r[1])
-                v += r[0]
-                temperature_map[(x, z)] = v
+        x, z = chunk.position[0] * 16, chunk.position[1] * 16
+        noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
+        for (x, z), v in noise_map:
+            v *= abs(r[0] - r[1])
+            v += r[0]
+            temperature_map[(x, z)] = v
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
     "minecraft:temperature_map", DefaultTemperatureILayer, {}
-)
-
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultTemperatureILayer.update_seed
 )

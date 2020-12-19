@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 
 import random
 
-import opensimplex
+import mcpython.server.worldgen.noise.NoiseManager
 
 from mcpython import shared as G
 import mcpython.common.event.EventHandler
@@ -22,35 +22,22 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 @G.world_generation_handler
 class DefaultHeightMapILayer(ILayer):
+    NAME = "minecraft:heightmap_default"
     DEPENDS_ON = ["minecraft:biome_map_default"]
 
-    noise = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
-
-    @classmethod
-    def update_seed(cls):
-        seed = G.world.config["seed"]
-        cls.noise = opensimplex.OpenSimplex(seed=seed * 100 + 1)
-
-    @staticmethod
-    def normalize_config(config: LayerConfig):
-        if not hasattr(config, "size"):
-            config.size = 2
-
-    NAME = "minecraft:heightmap_default"
+    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME, scale=10**2, dimensions=2)
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
-        cx, cz = chunk.position
-        factor = 10 ** config.size
-        for x in range(cx * 16, cx * 16 + 16):
-            for z in range(cz * 16, cz * 16 + 16):
-                heightmap[(x, z)] = cls.get_height_at(chunk, x, z, factor)
+        x, z = chunk.position[0] * 16, chunk.position[1] * 16
+        noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
+        for (x, z), v in noise_map:
+            heightmap[(x, z)] = cls.get_height_at(chunk, x, z, v)
 
     @classmethod
-    def get_height_at(cls, chunk, x, z, factor) -> list:
-        v = DefaultHeightMapILayer.noise.noise2d(x / factor, z / factor) * 0.5 + 0.5
+    def get_height_at(cls, chunk, x, z, v) -> list:
         biome_map = chunk.get_value("minecraft:biome_map")
         biome = G.biome_handler.biomes[biome_map[(x, z)]]
         r = biome.get_height_range()
@@ -62,8 +49,4 @@ class DefaultHeightMapILayer(ILayer):
 
 authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
     "heightmap", DefaultHeightMapILayer, {}
-)
-
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultHeightMapILayer.update_seed
 )

@@ -45,7 +45,10 @@ class BlockFaceState:
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
             ):
                 self.face_data[face] = self.custom_renderer.add(
-                    self.block.position, self.block, face, G.world.get_active_dimension().batches
+                    self.block.position,
+                    self.block,
+                    face,
+                    G.world.get_active_dimension().batches,
                 )
             elif issubclass(
                 type(self.custom_renderer),

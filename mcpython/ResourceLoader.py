@@ -147,8 +147,9 @@ class ResourceZipFile(IResourceLoader):
             if entry.startswith(directory):
                 if go_sub or (
                     (  # if it is an dir, same level, else one level lower
-                        directory.count("/") == entry.count("/") if entry.endswith("/") else
-                        directory.count("/") == entry.count("/") - 1
+                        directory.count("/") == entry.count("/")
+                        if entry.endswith("/")
+                        else directory.count("/") == entry.count("/") - 1
                     )
                     and directory.count("\\") == directory.count("\\")
                 ):
@@ -257,15 +258,16 @@ class SimulatedResourceLoader(IResourceLoader):
         self.images.clear()
 
     def get_all_entries_in_directory(
-            self, directory: str, go_sub=True
+        self, directory: str, go_sub=True
     ) -> typing.Iterator[str]:
         yielded_directories = set()
         for entry in itertools.chain(list(self.raw.keys()), list(self.images.keys())):
             if entry.startswith(directory):
                 if go_sub or (
                     (  # if it is an dir, same level, else one level lower
-                        directory.count("/") == entry.count("/") if entry.endswith("/") else
-                        directory.count("/") == entry.count("/") - 1
+                        directory.count("/") == entry.count("/")
+                        if entry.endswith("/")
+                        else directory.count("/") == entry.count("/") - 1
                     )
                     and directory.count("\\") == directory.count("\\")
                 ):

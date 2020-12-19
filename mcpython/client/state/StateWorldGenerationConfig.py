@@ -63,11 +63,8 @@ class StateWorldGenerationConfig(State.State):
                 text_constructor="#*special.worldgeneration.enable_barrier*#: {}",
             ),
             UIPartButton.UIPartToggleButton(
-                (300, 20),
-                ["default"],
-                (20, 240),
-                anchor_window="MD"
-            )
+                (300, 20), ["default"], (20, 240), anchor_window="MD"
+            ),
         ]
         text = [
             UIPartTextInput.UIPartTextInput(
@@ -128,7 +125,8 @@ class StateWorldGenerationConfig(State.State):
 
     def get_seed(self) -> int:
         v = self.parts[6].entered_text
-        if v != "": return hash(v)
+        if v != "":
+            return hash(v)
         return random.randint(-1000000000000000000, 1000000000000000000)
 
     def get_player_name(self) -> str:
@@ -181,7 +179,9 @@ class StateWorldGenerationConfig(State.State):
             part.index = 0
             part.update_text()
 
-        self.parts[4].text_pages = list(G.world_generation_handler.configs["minecraft:overworld"].keys())
+        self.parts[4].text_pages = list(
+            G.world_generation_handler.configs["minecraft:overworld"].keys()
+        )
         self.parts[4].update_text()
 
 

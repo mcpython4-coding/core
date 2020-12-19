@@ -12,71 +12,40 @@ This project is not official by mojang and does not relate to it.
 
 import random
 
-import opensimplex
+import mcpython.server.worldgen.noise.NoiseManager
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.event.EventHandler
 import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
-@G.world_generation_handler
+@shared.world_generation_handler
 class DefaultLandMassILayer(ILayer):
-    noise1 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
-    noise2 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
-    noise3 = opensimplex.OpenSimplex(seed=random.randint(-10000, 10000))
+    NAME = "minecraft:landmass_default"
 
-    @classmethod
-    def update_seed(cls):
-        seed = G.world.config["seed"]
-        cls.noise1 = opensimplex.OpenSimplex(seed=seed * 100 + 2)
-        cls.noise2 = opensimplex.OpenSimplex(seed=seed * 100 + 3)
-        cls.noise3 = opensimplex.OpenSimplex(seed=seed * 100 + 4)
+    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+        NAME+"_3", scale=10**2, octaves=3, dimensions=2)
 
     @staticmethod
     def normalize_config(config: LayerConfig):
         if not hasattr(config, "masses"):
             config.masses = config.world_generator_config.LANDMASSES
-        if not hasattr(config, "size"):
-            config.size = 1
-
-    NAME = "minecraft:landmass_default"
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        cx, cz = chunk.position
         land_map = chunk.get_value("minecraft:landmass_map")
-        factor = 10 ** config.size
-        for x in range(cx * 16, cx * 16 + 16):
-            for z in range(cz * 16, cz * 16 + 16):
-                v = (
-                    sum(
-                        [
-                            DefaultLandMassILayer.noise1.noise2d(x / factor, z / factor)
-                            * 0.5
-                            + 0.5,
-                            DefaultLandMassILayer.noise2.noise2d(x / factor, z / factor)
-                            * 0.5
-                            + 0.5,
-                            DefaultLandMassILayer.noise3.noise2d(x / factor, z / factor)
-                            * 0.5
-                            + 0.5,
-                        ]
-                    )
-                    / 3
-                )
-                v *= len(config.masses)
-                v = round(v)
-                if v == len(config.masses):
-                    v = 0
-                land_map[(x, z)] = config.masses[v]
+        x, z = chunk.position[0] * 16, chunk.position[1] * 16
+        noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
+        for (x, z), v in noise_map:
+            v *= len(config.masses)
+            v = round(v)
+            if v == len(config.masses):
+                v = 0
+            land_map[(x, z)] = config.masses[v]
 
 
-authcode = mcpython.common.world.Chunk.Chunk.add_default_attribute(
+mcpython.common.world.Chunk.Chunk.add_default_attribute(
     "minecraft:landmass_map", DefaultLandMassILayer, {}
-)
-
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultLandMassILayer.update_seed
 )

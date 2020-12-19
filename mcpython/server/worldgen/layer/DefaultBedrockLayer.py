@@ -10,10 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 
-import random
-import opensimplex
-import mcpython.common.event.EventHandler
-import mcpython.common.world.AbstractInterface
+import mcpython.server.worldgen.noise.NoiseManager
 
 from mcpython import shared
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
@@ -23,45 +20,26 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 class DefaultBedrockILayer(ILayer):
     """
     Class for generating the bedrock layer
-    How does it work?
-    It firstly generates with the current random seed an new seed for later
-    Than, it random.seed()s based on an noise and the chunk position
-    Than, for each xz position, the following is done:
-        - add lowest layer
-        - for each of the next layers, random.randint() is used to determine if to generate bedrock or not
-    For cleanup, the previous generated seed is random.seed()ed for returning to an independent seed
     """
+    NAME = "minecraft:bedrock_default"
 
-    noise: opensimplex.OpenSimplex = None
-
-    @classmethod
-    def update_seed(cls):
-        seed = shared.world.config["seed"]
-        cls.noise = opensimplex.OpenSimplex(seed=seed * 100)
+    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME, dimensions=3, scale=.1)
 
     @staticmethod
     def normalize_config(config: LayerConfig):
         if not hasattr(config, "bedrock_chance"):
             config.bedrock_chance = 3
 
-    NAME = "minecraft:bedrock_default"
-
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        old_re_seed = random.random()
-        random.seed(cls.noise.noise2d(*chunk.position))
+        x, z = chunk.position[0]*16, chunk.position[1]*16
+        noise_map = cls.noise.calculate_area((x, 1, z), (x+16, 5, z+16))
+
+        for (x, y, z), v in noise_map:
+            if v * config.bedrock_chance <= 1:
+                reference.schedule_block_add((x, y, z), "minecraft:bedrock")
 
         for x in range(chunk.position[0] * 16, chunk.position[0] * 16 + 16):
             for z in range(chunk.position[1] * 16, chunk.position[1] * 16 + 16):
                 reference.schedule_block_add((x, 0, z), "minecraft:bedrock")
-                for y in range(1, 5):
-                    if random.randint(1, config.bedrock_chance) == 1:
-                        reference.schedule_block_add((x, y, z), "minecraft:bedrock")
-
-        random.seed(old_re_seed)
-
-
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultBedrockILayer.update_seed
-)

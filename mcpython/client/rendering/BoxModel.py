@@ -102,7 +102,10 @@ class BoxModel:
                     uvs = (uvs[0], 16 - uvs[1], uvs[2], 16 - uvs[3])
                     if flip_y:
                         self.texture_region[index] = tuple(
-                            [(uvs[i] / 16) if i % 2 == 0 else (1-uvs[i] / 16) for i in UV_INDICES[index]]
+                            [
+                                (uvs[i] / 16) if i % 2 == 0 else (1 - uvs[i] / 16)
+                                for i in UV_INDICES[index]
+                            ]
                         )
                     else:
                         self.texture_region[index] = tuple(
@@ -408,8 +411,9 @@ class BaseBoxModel:
         self.recalculate_cache()
 
     def auto_value_region(
-            self, texture_start: typing.Tuple[float, float],
-            texture_dimensions: typing.Tuple[float, float, float]
+        self,
+        texture_start: typing.Tuple[float, float],
+        texture_dimensions: typing.Tuple[float, float, float],
     ):
         """
         Helper function for calculating the texture region in the default layout
@@ -419,8 +423,8 @@ class BaseBoxModel:
         x, y = texture_start
         dx, dy, dz = texture_dimensions
         self.texture_region = [
-            (x+dx+dy, 1-(dx+y), dx+dz+dy+x, 1-y),
-            (x+dx+dy+dz, 1-(dx+y), 1-dx+dz*2+dy, 1-y)
+            (x + dx + dy, 1 - (dx + y), dx + dz + dy + x, 1 - y),
+            (x + dx + dy + dz, 1 - (dx + y), 1 - dx + dz * 2 + dy, 1 - y),
         ] + [(0, 0, 1, 1)] * 4
         return self
 
@@ -516,7 +520,8 @@ class BaseBoxModel:
             self.rotated_vertex_cache[rotation] = vertex
         result = []
         for i in range(6):
-            if not i ** 2 & face: continue
+            if not i ** 2 & face:
+                continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
             v = vertex[i * 12 : i * 12 + 12]

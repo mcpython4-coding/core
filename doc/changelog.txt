@@ -49,6 +49,11 @@ information on development:
         its id.
 
 
+changelog of snapshot [next], released on -, targeting -
+    World Generation:
+        - noises are now better selected
+
+
 changelog of snapshot 20w51a, released on 18.12.2020, targeting 20w51a
     WARNING:  M A J O R  BREAKING VERSION!!!!
     THIS VERSION CONTAINS HIGHLY BREAKING CHANGES. IT IS NOWHERE NEAR TO BEING COMPATIBLE

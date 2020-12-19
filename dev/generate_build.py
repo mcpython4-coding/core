@@ -158,7 +158,13 @@ class BuildManager:
     Main class for creating an build of mcpython-4
     """
 
-    def __init__(self, name: str, output_folder=None, version_id=None, external_library_paths=None):
+    def __init__(
+        self,
+        name: str,
+        output_folder=None,
+        version_id=None,
+        external_library_paths=None,
+    ):
         self.name = name
 
         self.local = (
@@ -174,7 +180,7 @@ class BuildManager:
         elif "output_folder" in self.config:
             self.output_folder = self.config["output_folder"]
         else:
-            self.output_folder = self.local+"/builds"
+            self.output_folder = self.local + "/builds"
 
         if version_id is not None:
             self.version_id = version_id
@@ -183,15 +189,19 @@ class BuildManager:
         self.config["version_id"] = self.version_id
 
         self.library_paths = [self.local]
-        self.library_paths += [] if external_library_paths is None else external_library_paths
+        self.library_paths += (
+            [] if external_library_paths is None else external_library_paths
+        )
         if "external_library_paths" in self.config:
             self.library_paths += self.config["external_library_paths"]
 
-        self.tmp_folder = tempfile.TemporaryDirectory(prefix="mcpython_build_{}_".format(self.version_id))
+        self.tmp_folder = tempfile.TemporaryDirectory(
+            prefix="mcpython_build_{}_".format(self.version_id)
+        )
 
         with open(self.local + "/dev/config.json", mode="w") as f:
             json.dump(self.config, f, indent="  ")
-        
+
     def generate(self):
         self.collect_python_files()
         self.collect_meta()
@@ -200,7 +210,7 @@ class BuildManager:
         self.create_build("dev")
         self.strip_documentation()
         self.create_build("doc_stripped")
-        
+
     def collect_python_files(self):
         for directory in self.library_paths:
             for root, dirs, files in os.walk(directory):
@@ -208,20 +218,26 @@ class BuildManager:
                     if not file.endswith(".py"):
                         continue
                     f = os.path.join(root, file)
-                    t = os.path.join(self.tmp_folder.name, os.path.relpath(f, self.local))
+                    t = os.path.join(
+                        self.tmp_folder.name, os.path.relpath(f, self.local)
+                    )
                     d = os.path.dirname(t)
                     if not os.path.exists(d):
                         os.makedirs(d)
                     shutil.copy(f, t)
-    
+
     def collect_meta(self):
         for file in self.config["meta_files"]:
-            shutil.copyfile(self.local+"/"+file, self.tmp_folder.name+"/"+file)
-        for file in os.listdir(self.local+"/licences"):
-            shutil.copyfile(self.local+"/licences/"+file, self.tmp_folder.name+"/"+file)
-        for file in os.listdir(self.local+"/doc"):
-            shutil.copyfile(self.local+"/doc/"+file, self.tmp_folder.name+"/"+file)
-            
+            shutil.copyfile(self.local + "/" + file, self.tmp_folder.name + "/" + file)
+        for file in os.listdir(self.local + "/licences"):
+            shutil.copyfile(
+                self.local + "/licences/" + file, self.tmp_folder.name + "/" + file
+            )
+        for file in os.listdir(self.local + "/doc"):
+            shutil.copyfile(
+                self.local + "/doc/" + file, self.tmp_folder.name + "/" + file
+            )
+
     def collect_assets(self):
         subprocess.call(
             [
@@ -237,20 +253,21 @@ class BuildManager:
         print("collecting assets...")
         copytree(self.local + "/resources/generated", self.tmp_folder.name)
         copytree(self.local + "/resources/main", self.tmp_folder.name)
-        
+
     def apply_code_patches(self):
         with open(self.tmp_folder.name + "/mcpython/shared.py") as f:
             d = f.read().replace("dev_environment = True", "dev_environment = False", 1)
         with open(self.tmp_folder.name + "/mcpython/shared.py", mode="w") as f:
             f.write(d)
-        
+
         with open(self.tmp_folder.name + "/tools/installer.py") as f:
             d = f.read().replace(
                 'subprocess.Popen([sys.executable, "./__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"], stdout=sys.stdout)',
-                "")
+                "",
+            )
         with open(self.tmp_folder.name + "/tools/installer.py", mode="w") as f:
             f.write(d)
-        
+
         with open(self.tmp_folder.name + "/version.json", mode="w") as f:
             json.dump(
                 {
@@ -259,11 +276,11 @@ class BuildManager:
                 },
                 f,
             )
-            
+
     def create_build(self, name: str):
         target_file = "mcpython4_build{}_{}.zip".format(self.version_id, name)
-        collect_to_zip(self.tmp_folder.name, self.output_folder+"/"+target_file)
-        
+        collect_to_zip(self.tmp_folder.name, self.output_folder + "/" + target_file)
+
     def strip_documentation(self):
         root_l = len(self.tmp_folder.name) + 1
         for root, dirs, files in os.walk(self.tmp_folder.name):
@@ -284,7 +301,7 @@ class BuildManager:
                     in_string = 0
                     for i, e in enumerate(line):
                         if e == '"' and not (i > 0 and line[i - 1] == "\\"):
-                            if len(line) > i + 1 and line[i: i + 3] == '"""':
+                            if len(line) > i + 1 and line[i : i + 3] == '"""':
                                 if in_multi_line_comment == 0:
                                     in_multi_line_comment = 1
                                     line = line[:index]
@@ -297,7 +314,7 @@ class BuildManager:
                             elif in_string == 1:
                                 in_string = 0
                         elif e == "'" and not (i > 0 and line[i - 1] == "\\"):
-                            if len(line) > i + 1 and line[i: i + 3] == "'''":
+                            if len(line) > i + 1 and line[i : i + 3] == "'''":
                                 if in_multi_line_comment == 0:
                                     in_multi_line_comment = 2
                                     line = line[:index]

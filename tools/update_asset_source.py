@@ -31,7 +31,7 @@ if os.path.exists(home + "/resources/source"):
 
 print("copying new...")
 
-target = sys.argv[2]+"/" if len(sys.argv) > 2 else home + "/resources/source/"
+target = sys.argv[2] + "/" if len(sys.argv) > 2 else home + "/resources/source/"
 
 with zipfile.ZipFile(home + "/tools/source.zip") as f:
     for file in f.namelist():

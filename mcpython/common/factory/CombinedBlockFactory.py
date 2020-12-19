@@ -394,7 +394,11 @@ class CombinedWallFactory:
         )
 
     def __generate_factories(self):
-        factory = mcpython.common.factory.BlockFactory.BlockFactory().setName(self.name).setWall()
+        factory = (
+            mcpython.common.factory.BlockFactory.BlockFactory()
+            .setName(self.name)
+            .setWall()
+        )
         if self.on_create_callback is not None:
             self.on_create_callback(self, factory)
         factory.finish()

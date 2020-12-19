@@ -119,7 +119,9 @@ class WorldGenerationHandler:
                 layer_config.dimension = dimension.get_id()
             else:
                 layer_config = config[layer_name]
-            layer_config.world_generator_config = self.configs[dimension.get_name()][config_name]
+            layer_config.world_generator_config = self.configs[dimension.get_name()][
+                config_name
+            ]
             layer.normalize_config(layer_config)
             dimension.set_world_generation_config_for_layer(layer_name, layer_config)
             layer_config.layer = layer
@@ -167,15 +169,21 @@ class WorldGenerationHandler:
         chunk.generated = True
         chunk.loaded = True
 
-    def get_current_config(self, dimension: mcpython.common.world.AbstractInterface.IDimension):
+    def get_current_config(
+        self, dimension: mcpython.common.world.AbstractInterface.IDimension
+    ):
         config_name = dimension.get_world_generation_config_entry("configname")
         return self.configs[dimension.get_name()][config_name]
 
-    def set_current_config(self, dimension: mcpython.common.world.AbstractInterface.IDimension, config: str):
+    def set_current_config(
+        self, dimension: mcpython.common.world.AbstractInterface.IDimension, config: str
+    ):
         dimension.set_world_generation_config_entry("configname", config)
 
     def mark_finished(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
-        config_name = chunk.get_dimension().get_world_generation_config_entry("configname")
+        config_name = chunk.get_dimension().get_world_generation_config_entry(
+            "configname"
+        )
         config = self.configs[chunk.get_dimension().get_name()][config_name]
         shared.event_handler.call("worldgen:chunk:finished", chunk)
         config.on_chunk_generation_finished(chunk)
@@ -189,7 +197,11 @@ class WorldGenerationHandler:
     def register_world_gen_config(self, instance):
         self.configs.setdefault(instance.DIMENSION, {})[instance.NAME] = instance
 
-    def __call__(self, data: typing.Union[str, mcpython.server.worldgen.layer.ILayer.ILayer], config=None):
+    def __call__(
+        self,
+        data: typing.Union[str, mcpython.server.worldgen.layer.ILayer.ILayer],
+        config=None,
+    ):
         if type(data) == dict:
             self.register_world_gen_config(config)
         elif issubclass(data, mcpython.server.worldgen.layer.ILayer.ILayer):

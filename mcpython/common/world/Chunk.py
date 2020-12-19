@@ -303,7 +303,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             dx, dy, dz = face.relative
             key = (x + dx, y + dy, z + dz)
             b = self.dimension.get_block(key)
-            if b is None or isinstance(b, str): continue
+            if b is None or isinstance(b, str):
+                continue
             b.face_state.update(redraw_complete=True)
 
     def show_block(

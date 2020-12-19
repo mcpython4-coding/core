@@ -26,8 +26,8 @@ DEVELOPMENT_COUNTER = 4
 
 VERSION_ID = 0
 
-if os.path.exists(shared.local+"/version.json"):
-    with open(shared.local+"/version.json") as f:
+if os.path.exists(shared.local + "/version.json"):
+    with open(shared.local + "/version.json") as f:
         data = json.load(f)
 
     VERSION_ID = data["id"]
