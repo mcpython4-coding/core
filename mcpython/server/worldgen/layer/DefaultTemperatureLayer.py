@@ -24,7 +24,9 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 class DefaultTemperatureILayer(ILayer):
     NAME = "minecraft:temperature_map"
 
-    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME, scale=10**2, dimensions=2)
+    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+        NAME, scale=10 ** 2, dimensions=2
+    )
 
     @staticmethod
     def normalize_config(config: LayerConfig):

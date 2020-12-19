@@ -25,7 +25,9 @@ class DefaultHeightMapILayer(ILayer):
     NAME = "minecraft:heightmap_default"
     DEPENDS_ON = ["minecraft:biome_map_default"]
 
-    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME, scale=10**2, dimensions=2)
+    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+        NAME, scale=10 ** 2, dimensions=2
+    )
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):

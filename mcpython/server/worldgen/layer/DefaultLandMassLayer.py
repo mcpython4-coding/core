@@ -25,7 +25,8 @@ class DefaultLandMassILayer(ILayer):
     NAME = "minecraft:landmass_default"
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME+"_3", scale=10**2, octaves=3, dimensions=2)
+        NAME + "_3", scale=10 ** 2, octaves=3, dimensions=2
+    )
 
     @staticmethod
     def normalize_config(config: LayerConfig):

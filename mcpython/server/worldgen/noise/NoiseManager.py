@@ -42,7 +42,9 @@ class OpenSimplexImplementation(INoiseImplementation):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.noises: typing.List[typing.Optional[opensimplex.OpenSimplex]] = [None] * self.octaves
+        self.noises: typing.List[typing.Optional[opensimplex.OpenSimplex]] = [
+            None
+        ] * self.octaves
 
     def set_seed(self, seed: int):
         super().set_seed(seed)

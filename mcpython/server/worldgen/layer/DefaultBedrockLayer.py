@@ -21,9 +21,12 @@ class DefaultBedrockILayer(ILayer):
     """
     Class for generating the bedrock layer
     """
+
     NAME = "minecraft:bedrock_default"
 
-    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME, dimensions=3, scale=.1)
+    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+        NAME, dimensions=3, scale=0.1
+    )
 
     @staticmethod
     def normalize_config(config: LayerConfig):
@@ -33,8 +36,8 @@ class DefaultBedrockILayer(ILayer):
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        x, z = chunk.position[0]*16, chunk.position[1]*16
-        noise_map = cls.noise.calculate_area((x, 1, z), (x+16, 5, z+16))
+        x, z = chunk.position[0] * 16, chunk.position[1] * 16
+        noise_map = cls.noise.calculate_area((x, 1, z), (x + 16, 5, z + 16))
 
         for (x, y, z), v in noise_map:
             if v * config.bedrock_chance <= 1:

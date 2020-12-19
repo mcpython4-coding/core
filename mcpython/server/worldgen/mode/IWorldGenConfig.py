@@ -32,21 +32,29 @@ class DefaultBiomeSource(IBiomeSource):
     @classmethod
     def get_biome_at(cls, x, z, noises, landmass, config, temperature) -> str:
         v = (
-            noises[0].calculate_position((
-                x, z,
-                x * z,
-                noises[1].calculate_position((
-                    x / 100,
-                    z / 100,
-                    noises[2].calculate_position((
-                        x / 100 + z / 1000000,
-                        z / 100 + x / 1000000,
-                        len(landmass) / 100000, 0,
-                    ))
-                    / 10000,
-                    0,
-                )),
-            ))
+            noises[0].calculate_position(
+                (
+                    x,
+                    z,
+                    x * z,
+                    noises[1].calculate_position(
+                        (
+                            x / 100,
+                            z / 100,
+                            noises[2].calculate_position(
+                                (
+                                    x / 100 + z / 1000000,
+                                    z / 100 + x / 1000000,
+                                    len(landmass) / 100000,
+                                    0,
+                                )
+                            )
+                            / 10000,
+                            0,
+                        )
+                    ),
+                )
+            )
             * 0.5
             + 0.5
         )

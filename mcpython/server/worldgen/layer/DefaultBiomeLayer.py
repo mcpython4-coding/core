@@ -25,10 +25,18 @@ class DefaultBiomeMapLayer(ILayer):
     NAME = "minecraft:biome_map_default"
     DEPENDS_ON = ["minecraft:landmass_default"]
 
-    noises: typing.List[mcpython.server.worldgen.noise.NoiseManager.INoiseImplementation] = [
-        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME + "_1", dimensions=4, scale=10**10),
-        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME + "_2", dimensions=4, scale=10**10),
-        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME + "_3", dimensions=4, scale=10**10),
+    noises: typing.List[
+        mcpython.server.worldgen.noise.NoiseManager.INoiseImplementation
+    ] = [
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME + "_1", dimensions=4, scale=10 ** 10
+        ),
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME + "_2", dimensions=4, scale=10 ** 10
+        ),
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME + "_3", dimensions=4, scale=10 ** 10
+        ),
     ]
 
     @classmethod

@@ -23,7 +23,9 @@ class DefaultTopLayerILayer(ILayer):
     NAME = "minecraft:top_layer_default"
     DEPENDS_ON = ["minecraft:heightmap_default", "minecraft:biome_map_default"]
 
-    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(NAME, dimensions=2, scale=10**3)
+    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+        NAME, dimensions=2, scale=10 ** 3
+    )
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
@@ -31,16 +33,16 @@ class DefaultTopLayerILayer(ILayer):
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
         for (x, z), v in noise_map:
-            reference.schedule_invoke(
-                cls.generate_xz, reference, x, z, config, v
-            )
+            reference.schedule_invoke(cls.generate_xz, reference, x, z, config, v)
 
     @staticmethod
     def generate_xz(reference, x, z, config, noise_value):
         chunk = reference.chunk
         heightmap = chunk.get_value("heightmap")
         mheight = heightmap[(x, z)][0][1]
-        biome = shared.biome_handler.biomes[chunk.get_value("minecraft:biome_map")[(x, z)]]
+        biome = shared.biome_handler.biomes[
+            chunk.get_value("minecraft:biome_map")[(x, z)]
+        ]
         r = biome.get_top_layer_height_range((x, z), chunk.get_dimension())
         noise_value *= r[1] - r[0]
         noise_value += r[0]
