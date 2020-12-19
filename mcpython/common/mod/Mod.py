@@ -130,7 +130,12 @@ class Mod:
     mod.json file.
     """
 
-    def __init__(self, name: str, version: typing.Union[tuple, str, set, list]):
+    def __init__(
+        self,
+        name: str,
+        version: typing.Union[tuple, str, set, list],
+        version_name: str = None,
+    ):
         """
         creates an new mod
         :param name: the name of the mod
@@ -158,6 +163,7 @@ class Mod:
         ]  # need, possible, not possible, before, after, only with, only without
         self.path = None
         self.version = version  # the version of the mod, as an tuple
+        self.version_name = version_name
         self.package = None  # the package where the mod-file was found
         G.mod_loader.add_to_add(self)
 
@@ -165,7 +171,9 @@ class Mod:
         """
         will transform the mod into an string
         """
-        return "{} ({})".format(self.name, ".".join([str(e) for e in self.version]))
+        return "{} ({})".format(self.name, ".".join([str(e) for e in self.version])) + (
+            "" if self.version_name is None else " as " + self.version_name
+        )
 
     def __repr__(self):
         return "Mod({},{})".format(self.name, self.version)

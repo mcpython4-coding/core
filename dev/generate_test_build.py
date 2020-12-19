@@ -18,16 +18,21 @@ import simplejson as json
 local = os.path.dirname(__file__)
 home = os.path.dirname(local)
 
-
-subprocess.call([sys.executable, local + "/update_licence_headers.py"])
-subprocess.call([sys.executable, local + "/formatting.py"])
-generate_build.BuildManager(input("build name: ")).generate()
-
 with open(home + "/version.json") as f:
     data = json.load(f)
 
-data["name"] = "test build for " + input("version after this release: ") + " 0"
-data["preview_build_counter"] = 1
+
+name = data["name"]
+counter = data["preview_build_counter"] + 1
+data["preview_build_counter"] += 1
+
 
 with open(home + "/version.json", mode="w") as f:
     json.dump(data, f, indent="  ")
+
+
+subprocess.call([sys.executable, local + "/update_licence_headers.py"])
+subprocess.call([sys.executable, local + "/formatting.py"])
+generate_build.BuildManager(
+    " ".join(name.split(" ")[:-1]) + " " + str(counter)
+).generate()

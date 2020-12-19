@@ -86,7 +86,7 @@ Or, if you want to select single files, run:
 python __main__.py --add-mod-file <f for the mod>
 ```
 
-You can also disable single mods by filename:
+You can also disable single mods by file name:
 ```shell script
 python __main__.py --remove-mod-file <f of the mod>
 ```

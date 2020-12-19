@@ -1385,3 +1385,5 @@ R   [uuk]: improved world serialization API
 [uuk]: implemented NoiseManager system for generating noises
 [uuk]: added injection point for other noise backends
 [uuk]: warning: as the nature of this goes, this is breaking
+[uuk]: changed version formatting of mcpython
+[uuk]: added test build system

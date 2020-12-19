@@ -268,6 +268,8 @@ class BuildManager:
         with open(self.tmp_folder.name + "/tools/installer.py", mode="w") as f:
             f.write(d)
 
+        with open(os.path.dirname(os.path.dirname(__file__)) + "/version.json") as f:
+            data = json.load(f)
         with open(self.tmp_folder.name + "/version.json", mode="w") as f:
             json.dump(
                 {
@@ -275,6 +277,20 @@ class BuildManager:
                     "id": self.version_id,
                 },
                 f,
+                indent="  ",
+            )
+
+        with open(
+            os.path.dirname(os.path.dirname(__file__)) + "/version.json", mode="w"
+        ) as f:
+            json.dump(
+                {
+                    "name": self.name,
+                    "id": self.version_id,
+                    "preview_build_counter": data["preview_build_counter"],
+                },
+                f,
+                indent="  ",
             )
 
     def create_build(self, name: str):
