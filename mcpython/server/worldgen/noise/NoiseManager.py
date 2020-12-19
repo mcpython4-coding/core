@@ -13,6 +13,8 @@ import itertools
 import typing
 import opensimplex
 
+from mcpython import logger
+
 
 class INoiseImplementation:
     NAME = None
@@ -38,7 +40,11 @@ class INoiseImplementation:
 
 
 class OpenSimplexImplementation(INoiseImplementation):
-    NAME = "minecraft:open_simplex"
+    """
+    Default noise implementation.
+    """
+
+    NAME = "minecraft:open_simplex_noise"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -107,6 +113,17 @@ class NoiseManager:
 
     def calculate_part_seed(self, part: str):
         return hash((hash(part), self.seed))
+
+    def serialize_seed_map(self) -> dict:
+        return {name: noise.seed for (noise, name) in self.noise_instances}
+
+    def deserialize_seed_map(self, data: dict):
+        for noise, name in self.noise_instances:
+            if name in data:
+                noise.set_seed(data[name])
+                del data[name]
+        if len(data) > 0:
+            logger.println("found to many seed entries: ", data)
 
 
 manager = NoiseManager()

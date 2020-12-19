@@ -31,6 +31,7 @@ import mcpython.util.opengl
 import mcpython.common.world.player
 from . import State
 from mcpython.util.annotation import onlyInClient
+import mcpython.server.worldgen.noise.NoiseManager
 
 
 @onlyInClient()
@@ -97,6 +98,9 @@ class StateWorldGeneration(State.State):
         sx, sy = G.state_handler.states[
             "minecraft:world_generation_config"
         ].get_world_size()
+        mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = G.state_handler.states[
+            "minecraft:world_generation_config"
+        ].get_seed_source()
         G.world_generation_handler.enable_generation = True
         fx = sx // 2
         fy = sy // 2

@@ -9,6 +9,8 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.common.world.AbstractInterface
 import time
 from mcpython import logger, shared
@@ -22,7 +24,7 @@ class WorldGenerationTaskHandler:
     """
 
     def __init__(self):
-        self.chunks = set()
+        self.chunks: typing.Set[mcpython.common.world.AbstractInterface.IChunk] = set()
         self.data_maps = [{}, {}, {}]  # invoke, world_changes, shown_updates
 
     def get_total_task_stats(self) -> list:

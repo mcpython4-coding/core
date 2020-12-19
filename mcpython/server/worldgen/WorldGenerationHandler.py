@@ -39,6 +39,16 @@ class WorldGenerationHandler:
             mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandler()
         )
 
+    def serialize_chunk_generator_info(self) -> dict:
+        data = {}
+        for dimension in shared.world.dimensions.values():
+            data[dimension.get_name()] = dimension.get_world_generation_config_entry("configname")
+        return data
+
+    def deserialize_chunk_generator_info(self, data: dict):
+        for dimension in data:
+            shared.world.dimensions[dimension].set_world_generation_config_entry("configname", data[dimension])
+
     def add_chunk_to_generation_list(
         self,
         chunk,
