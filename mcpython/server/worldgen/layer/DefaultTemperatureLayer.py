@@ -25,7 +25,10 @@ class DefaultTemperatureLayer(ILayer):
     NAME = "minecraft:temperature_map"
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME, scale=10 ** 2, dimensions=2, octaves=3,
+        NAME,
+        scale=10 ** 2,
+        dimensions=2,
+        octaves=3,
         merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
     )
 

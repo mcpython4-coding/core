@@ -1397,3 +1397,4 @@ R   [uuk]: improved world serialization API
 [uuk]: changed feature <-> biome linking
 [uuk]: added dummy classes for other features
 [uuk]: improved noise code
+[uuk]: fixed issue 246: world name was not read correctly in the gui

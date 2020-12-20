@@ -25,7 +25,10 @@ class DefaultLandMassLayer(ILayer):
     NAME = "minecraft:landmass_default"
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME + "_3", scale=10 ** 2, octaves=3, dimensions=2,
+        NAME + "_3",
+        scale=10 ** 2,
+        octaves=3,
+        dimensions=2,
         merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
     )
 
