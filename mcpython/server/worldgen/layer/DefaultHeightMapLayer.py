@@ -26,8 +26,13 @@ class DefaultHeightMapLayer(ILayer):
     DEPENDS_ON = ["minecraft:biome_map_default"]
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME, scale=10 ** 2, dimensions=2
+        NAME,
+        scale=10 ** 2,
+        dimensions=2,
+        octaves=3,
+        merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
     )
+    noise.merger_config = [3, 2, 1]
 
     @staticmethod
     def normalize_config(config: LayerConfig):

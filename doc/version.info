@@ -1392,3 +1392,4 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed save list getting out of order / not all visible [issue 245]
 [uuk]: implemented dummy implementation of end world generator
 [uuk]: implemented amplified world generator
+[uuk]: implemented injection point for different octave mergers

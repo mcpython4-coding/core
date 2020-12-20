@@ -104,10 +104,16 @@ class WorldGenerationHandler:
         )
         for layer_name in config.LAYERS:
             if type(layer_name) == str:
-                config = chunk.get_dimension().get_world_generation_config_for_layer(layer_name)
+                config = chunk.get_dimension().get_world_generation_config_for_layer(
+                    layer_name
+                )
             else:
                 layer_name, config = layer_name
-                config = chunk.get_dimension().get_world_generation_config_for_layer(layer_name).apply_config(config)
+                config = (
+                    chunk.get_dimension()
+                    .get_world_generation_config_for_layer(layer_name)
+                    .apply_config(config)
+                )
             reference.schedule_invoke(
                 self.layers[layer_name].add_generate_functions_to_chunk,
                 config,

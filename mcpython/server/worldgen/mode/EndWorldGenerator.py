@@ -13,9 +13,7 @@ from mcpython import shared as G
 import mcpython.server.worldgen.mode.IWorldGenConfig
 
 
-class EndGenerator(
-    mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
-):
+class EndGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig):
     NAME = "minecraft:default_end"
     DIMENSION = "minecraft:the_end"
 
@@ -26,7 +24,9 @@ class EndGenerator(
         "minecraft:heightmap_default",
     ]
 
-    BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.SingleBiomeSource("minecraft:void")
+    BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.SingleBiomeSource(
+        "minecraft:void"
+    )
 
 
 G.world_generation_handler.register_world_gen_config(EndGenerator)

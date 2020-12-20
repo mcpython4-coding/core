@@ -26,7 +26,9 @@ class NetherWorldGenerator(
         "minecraft:heightmap_default",
     ]
 
-    BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.SingleBiomeSource("minecraft:void")
+    BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.SingleBiomeSource(
+        "minecraft:void"
+    )
 
 
 G.world_generation_handler.register_world_gen_config(NetherWorldGenerator)

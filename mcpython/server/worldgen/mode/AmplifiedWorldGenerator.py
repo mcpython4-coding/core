@@ -31,8 +31,12 @@ class AmplifiedOverworldGenerator(
         "minecraft:tree_default",
     ]
 
-    BIOMES = mcpython.server.worldgen.mode.DefaultOverWorldGenerator.DefaultOverworldGenerator.BIOMES
-    LANDMASSES = mcpython.server.worldgen.mode.DefaultOverWorldGenerator.DefaultOverworldGenerator.LANDMASSES
+    BIOMES = (
+        mcpython.server.worldgen.mode.DefaultOverWorldGenerator.DefaultOverworldGenerator.BIOMES
+    )
+    LANDMASSES = (
+        mcpython.server.worldgen.mode.DefaultOverWorldGenerator.DefaultOverworldGenerator.LANDMASSES
+    )
     BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.DefaultBiomeSource
     GENERATES_START_CHEST = True
 
