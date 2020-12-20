@@ -230,3 +230,4 @@ issue 243: InventoryHandler was miss-behaving in some cases; fixed on 30.07.2020
 
 issue 204: start is generated in debug world; fixed on 14.12.2020 by uuk
 issue 244: uv were flipped upside down for y-direction; fixed on 14.12.2020 by uuk
+issue 245: world list was not displaying worlds correctly; fixed on 20.12.2020 by uuk

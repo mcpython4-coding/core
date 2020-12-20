@@ -147,8 +147,14 @@ class StateWorldSelection(State.State):
 
     def recalculate_sprite_position(self):
         wx, wy = G.window.get_size()
-        status = (1 - self.parts[-1].get_status()) * len(self.world_data) * 20
-        ay = wy + status - 150
+        status = (
+            (1 - self.parts[-1].get_status())
+            * (len(self.world_data) - (wy - 140) // 60)
+            * 60
+            if (wy - 140) / 60 < len(self.world_data)
+            else 0
+        )
+        ay = wy - 130 + status
         for i, (_, sprite, labels, _) in enumerate(self.world_data):
             sprite.x = 50
             sprite.y = ay
@@ -192,8 +198,6 @@ class StateWorldSelection(State.State):
         x, y = G.window.mouse_position
         self.scissor_group.set_state()
         for i, (_, icon, labels, _) in enumerate(self.world_data):
-            if icon.y < 105 or icon.y > wy - 110:
-                continue
             icon.draw()
             for label in labels:
                 label.draw()
@@ -261,8 +265,7 @@ class StateWorldSelection(State.State):
                 self.world_data.append((edit_date, sprite, labels, path))
         self.world_data.sort(key=lambda d: -d[0].timestamp())
         self.recalculate_sprite_position()
-        if (wy - 140) / 60 > len(self.world_data):
-            self.parts[-1].active = False
+        self.parts[-1].active = (wy - 140) / 60 < len(self.world_data)
 
     def on_back_press(self, *_):
         G.state_handler.switch_to("minecraft:startmenu")

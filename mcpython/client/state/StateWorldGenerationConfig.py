@@ -67,9 +67,13 @@ class StateWorldGenerationConfig(State.State):
                 (300, 20), ["default"], (20, 240), anchor_window="MD"
             ),
             UIPartButton.UIPartToggleButton(
-                (300, 20), list(mcpython.server.worldgen.noise.NoiseManager.manager.instances.keys()),
-                (-320, 240), anchor_window="MD"
-            )
+                (300, 20),
+                list(
+                    mcpython.server.worldgen.noise.NoiseManager.manager.instances.keys()
+                ),
+                (-320, 240),
+                anchor_window="MD",
+            ),
         ]
         text = [
             UIPartTextInput.UIPartTextInput(

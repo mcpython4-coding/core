@@ -108,7 +108,9 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                         modname
                     )
                 )
-            elif shared.mod_loader.mods[modname].version != tuple(data["mods"][modname]):
+            elif shared.mod_loader.mods[modname].version != tuple(
+                data["mods"][modname]
+            ):
                 try:
                     save_file.apply_mod_fixer(modname, tuple(data["mods"][modname]))
                 except mcpython.common.world.SaveFile.DataFixerNotFoundException:
@@ -164,9 +166,15 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             shared.world.join_dimension(data["active_dimension"])
 
         wd = data["world_gen_info"]
-        mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = wd["noise_implementation"]
-        shared.world_generation_handler.deserialize_chunk_generator_info(wd["chunk_generators"])
-        mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(wd["seeds"])
+        mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = wd[
+            "noise_implementation"
+        ]
+        shared.world_generation_handler.deserialize_chunk_generator_info(
+            wd["chunk_generators"]
+        )
+        mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(
+            wd["seeds"]
+        )
 
     @classmethod
     def save(cls, data, save_file):
@@ -188,7 +196,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             "world_gen_info": {
                 "noise_implementation": mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation,
                 "chunk_generators": shared.world_generation_handler.serialize_chunk_generator_info(),
-                "seeds": mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map()
+                "seeds": mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map(),
             },
         }
         save_file.dump_file_json("level.json", data)

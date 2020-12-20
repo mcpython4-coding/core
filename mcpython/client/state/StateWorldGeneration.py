@@ -98,9 +98,11 @@ class StateWorldGeneration(State.State):
         sx, sy = G.state_handler.states[
             "minecraft:world_generation_config"
         ].get_world_size()
-        mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = G.state_handler.states[
-            "minecraft:world_generation_config"
-        ].get_seed_source()
+        mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = (
+            G.state_handler.states[
+                "minecraft:world_generation_config"
+            ].get_seed_source()
+        )
         G.world_generation_handler.enable_generation = True
         fx = sx // 2
         fy = sy // 2

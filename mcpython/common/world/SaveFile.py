@@ -495,4 +495,4 @@ class SaveFile:
 
 @G.mod_loader("minecraft", "stage:datafixer:general")
 def load_elements():
-    from mcpython.common.world.datafixers import (DataFixer7to8)
+    from mcpython.common.world.datafixers import DataFixer7to8
