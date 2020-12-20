@@ -206,11 +206,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         else:
             table = G.registry.get_by_name("minecraft:block").full_table
             if block_name not in table:
-                logger.println(
-                    "[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(
-                        block_name
-                    )
-                )
+                self.remove_block(position)
                 return
             block = table[block_name]()
             block.position = position
@@ -218,13 +214,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 lazy_setup(block)
         block.on_block_added()
         if self.now.day == 13 and self.now.month == 1 and "diorite" in block.NAME:
-            logger.println(
-                "[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
-                    block.NAME
-                )
-            )
-            # for developers: easter egg! [DO NOT REMOVE, UUK'S EASTER EGG]
-            return self.add_block(position, "minecraft:stone")
+            return self.add_block(position, block.NAME.replace("diorite", "andesite"))
         self.world[position] = block
         if immediate:
             if self.exposed(position):

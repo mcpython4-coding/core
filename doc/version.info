@@ -1399,3 +1399,4 @@ R   [uuk]: improved world serialization API
 [uuk]: improved noise code
 [uuk]: fixed issue 246: world name was not read correctly in the gui
 [uuk]: fixed oak & spruce tree generator
+[uuk]: implemented some of the feature generators

@@ -12,6 +12,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.common.event.Registry
+import mcpython.server.worldgen.WorldGenerationTaskArrays
 
 
 class IFeatureSpawnPoint:
@@ -56,7 +57,14 @@ class IFeature(mcpython.common.event.Registry.IRegistryContent):
         pass
 
     @classmethod
-    def place_array(cls, array, x: int, y: int, z: int, config):
+    def place_array(
+        cls,
+        array: mcpython.server.worldgen.WorldGenerationTaskArrays.IWorldGenerationTaskHandlerReference,
+        x: int,
+        y: int,
+        z: int,
+        config,
+    ):
         pass
 
     @classmethod

@@ -10,7 +10,16 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.server.worldgen.feature.IFeature
+import random
 
 
 class CactusFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
-    pass
+    @classmethod
+    def place(cls, dimension, x: int, y: int, z: int, config):
+        for dy in range(0, random.randint(1, 3)):
+            dimension.add_block((x, y + dy, z), "minecraft:cactus")
+
+    @classmethod
+    def place_array(cls, array, x: int, y: int, z: int, config):
+        for dy in range(0, random.randint(1, 3)):
+            array.schedule_block_add((x, y + dy, z), "minecraft:cactus")

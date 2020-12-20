@@ -359,6 +359,70 @@ class IWorldGenerationTaskHandlerReference:
     def get_block(self, position, chunk=None):
         raise NotImplementedError()
 
+    def get_block_name(self, position, chunk=None):
+        block = self.get_block(position, chunk)
+        if hasattr(block, "NAME"):
+            return block.NAME
+        return block
+
+    def fill_area(
+        self,
+        start: typing.Tuple[int, int, int],
+        end: typing.Tuple[int, int, int],
+        block,
+        only_non_air=False,
+        **kwargs
+    ):
+        for y in range(start[1], end[1] + 1):
+            for x in range(start[0], end[0] + 1):
+                for z in range(start[2], end[2] + 1):
+                    if not only_non_air or self.get_block((x, y, z)) is not None:
+                        self.schedule_block_add((x, y, z), block, **kwargs)
+
+    def fill_area_inner_outer(
+        self,
+        start: typing.Tuple[int, int, int],
+        end: typing.Tuple[int, int, int],
+        inner_block,
+        outer_block,
+        only_non_air=False,
+        inner_config=None,
+        outer_config=None,
+    ):
+        for y in range(start[1], end[1] + 1):
+            for x in range(start[0], end[0] + 1):
+                for z in range(start[2], end[2] + 1):
+                    if not only_non_air or self.get_block((x, y, z)) is not None:
+                        if (
+                            y not in (start[1], end[1])
+                            and x not in (start[0], end[0])
+                            and z not in (start[2], end[2])
+                        ):
+                            if inner_config is None:
+                                self.schedule_block_add((x, y, z), inner_block)
+                            else:
+                                self.schedule_block_add(
+                                    (x, y, z), inner_block, **inner_config
+                                )
+                        else:
+                            if outer_config is None:
+                                self.schedule_block_add((x, y, z), outer_block)
+                            else:
+                                self.schedule_block_add(
+                                    (x, y, z), outer_block, **outer_config
+                                )
+
+    def replace_air_and_liquid_downwards(self, block, x, y, z, delta, liquids):
+        for dy in range(delta, 0, -1):
+            b = self.get_block((x, y - dy, z))
+            if b is None or b in liquids:
+                self.schedule_block_add((x, y - dy, z), block)
+            else:
+                return
+
+    def get_biome_at(self, x, z) -> str:
+        raise NotImplementedError()
+
 
 class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
     """
@@ -401,6 +465,9 @@ class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
         return self.handler.get_block(
             position, chunk if chunk is not None else self.chunk
         )
+
+    def get_biome_at(self, x, z) -> str:
+        return self.chunk.get_value("minecraft:biome_map")[x, z]
 
 
 class OffProcessTaskHelper:
@@ -478,4 +545,7 @@ class ProcessSeparatedWorldGenerationTaskHandlerReference(
         pass
 
     def execute_tasks(self):
+        pass
+
+    def get_biome_at(self, x, z) -> str:
         pass

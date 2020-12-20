@@ -128,6 +128,9 @@ ROTATE = (
 )
 
 
+HORIZONTAL_OFFSETS = [(1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1)]
+
+
 class LogAxis(enum.Enum):
     X = 0
     Y = 1

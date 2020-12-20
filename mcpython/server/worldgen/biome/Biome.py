@@ -47,6 +47,8 @@ class Biome(mcpython.common.event.Registry.IRegistryContent):
     FEATURES = []
     FEATURES_SORTED = None
 
+    CARVERS = []  # for the future...
+
     @staticmethod
     def get_landmass() -> str:
         return "land"
