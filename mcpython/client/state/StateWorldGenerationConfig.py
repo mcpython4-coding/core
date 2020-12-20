@@ -144,7 +144,7 @@ class StateWorldGenerationConfig(State.State):
         return x, z
 
     def get_seed_source(self):
-        return self.parts[5].entered_text
+        return self.parts[5].text
 
     def on_back_press(self, x, y):
         G.state_handler.switch_to("minecraft:startmenu")
