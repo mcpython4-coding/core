@@ -27,10 +27,16 @@ class DefaultOverworldGenerator(
         "minecraft:bedrock_default",
         "minecraft:stone_default",
         "minecraft:top_layer_default",
-        "minecraft:tree_default",
+        "minecraft:feature_default",
     ]
 
-    BIOMES = {"land": {2.0: ["minecraft:dessert"], 0.8: ["minecraft:plains"]}}
+    BIOMES = {
+        "land": {
+            2.0: ["minecraft:dessert"],
+            0.8: ["minecraft:plains"],
+            0.2: ["minecraft:mountains"],
+        }
+    }
 
     LANDMASSES = ["land"]
 

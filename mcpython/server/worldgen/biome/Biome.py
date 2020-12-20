@@ -20,6 +20,33 @@ import mcpython.common.world.AbstractInterface
 class Biome(mcpython.common.event.Registry.IRegistryContent):
     NAME = "minecraft:unknown_biome"
 
+    # name -> weight, group size
+    PASSIVE_SPAWNS: typing.Dict[
+        str, typing.Tuple[int, typing.Union[int, typing.Tuple[int, int]]]
+    ] = {}
+    HOSTILE_SPAWNS: typing.Dict[
+        str, typing.Tuple[int, typing.Union[int, typing.Tuple[int, int]]]
+    ] = {}
+    AMBIENT_SPAWNS: typing.Dict[
+        str, typing.Tuple[int, typing.Union[int, typing.Tuple[int, int]]]
+    ] = {}
+
+    GRASS_COLOR: typing.Optional[
+        typing.Union[
+            typing.Tuple[int, int, int],
+            typing.Callable[[], typing.Tuple[int, int, int]],
+        ]
+    ] = None
+    WATER_COLOR: typing.Optional[
+        typing.Union[
+            typing.Tuple[int, int, int],
+            typing.Callable[[], typing.Tuple[int, int, int]],
+        ]
+    ] = None
+
+    FEATURES = []
+    FEATURES_SORTED = None
+
     @staticmethod
     def get_landmass() -> str:
         return "land"

@@ -28,7 +28,7 @@ class AmplifiedOverworldGenerator(
         "minecraft:bedrock_default",
         "minecraft:stone_default",
         "minecraft:top_layer_default",
-        "minecraft:tree_default",
+        "minecraft:feature_default",
     ]
 
     BIOMES = (

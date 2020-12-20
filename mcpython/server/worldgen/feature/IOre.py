@@ -117,3 +117,15 @@ class CoalOre(INormalOre):
     @staticmethod
     def get_ore_block() -> str or list:
         return "minecraft:coal_ore"
+
+
+class DefaultOreFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
+    pass
+
+
+class DefaultEmeraldFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
+    pass
+
+
+class DefaultInfestedStoneFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
+    pass

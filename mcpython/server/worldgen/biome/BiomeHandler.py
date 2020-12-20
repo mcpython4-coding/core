@@ -10,20 +10,47 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import typing
+import itertools
 
 from mcpython import shared as G
 import mcpython.common.mod.ModMcpython
+import mcpython.server.worldgen.biome.Biome
+import mcpython.server.worldgen.feature.IFeature
 
 
 class BiomeHandler:
     def __init__(self):
         self.registry_list = []
         self.biomes = {}
-        self.biome_table = (
+        self.biome_table: typing.Dict[
+            int, typing.Dict[str, typing.Dict[int, typing.List[str]]]
+        ] = (
             {}
-        )  # {dim: int -> {landmass: str -> {temperature: int -> [biomename with weights]}}}}
+        )  # {dim: int -> {landmass: str -> {temperature: int -> [biome-name with weights]}}}}
 
-    def register(self, biome):
+    def register(self, biome: typing.Type[mcpython.server.worldgen.biome.Biome.Biome]):
+        if biome.FEATURES_SORTED is None:
+            biome.FEATURES_SORTED = {}
+            for feature_def in biome.FEATURES:
+                feature_def: mcpython.server.worldgen.feature.IFeature.FeatureDefinition
+                biome.FEATURES_SORTED.setdefault(
+                    feature_def.group, (feature_def.group_spawn_count, 0, [], [])
+                )[3].append(feature_def)
+                data = biome.FEATURES_SORTED[feature_def.group]
+                biome.FEATURES_SORTED[feature_def.group] = (
+                    data[0],
+                    data[1] + feature_def.weight,
+                    data[2] + [feature_def.weight],
+                    data[3],
+                )
+        for group in biome.FEATURES_SORTED:
+            data = biome.FEATURES_SORTED[group]
+            biome.FEATURES_SORTED[group] = (
+                data[0],
+                data[1],
+                list(itertools.accumulate(data[2])),
+                data[3],
+            )
         self(biome)
 
     def __call__(self, biome):
@@ -113,7 +140,7 @@ G.biome_handler = BiomeHandler()
 
 
 def load():
-    from . import BiomePlains, BiomeDessert, BiomeVoid
+    from . import BiomePlains, BiomeDessert, BiomeVoid, BiomeMountains
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

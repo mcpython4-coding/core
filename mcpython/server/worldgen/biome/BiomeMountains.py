@@ -13,18 +13,12 @@ import typing
 
 from mcpython import shared as G
 import mcpython.common.config
-from mcpython.server.worldgen.feature import (
-    OakTreeFeature,
-    PillagerOutpostDefinition,
-    PlantFeature,
-    IOre,
-)
-from mcpython.server.worldgen.feature.village import VillageFeatureDefinition
+from mcpython.server.worldgen.feature import SpruceTreeFeature, IOre
 from . import Biome
 
 
 class Plains(Biome.Biome):
-    NAME = "minecraft:plains"
+    NAME = "minecraft:mountains"
 
     PASSIVE_SPAWNS: typing.Dict[
         str, typing.Tuple[int, typing.Union[int, typing.Tuple[int, int]]]
@@ -33,8 +27,7 @@ class Plains(Biome.Biome):
         "minecraft:pigs": (10, 4),
         "minecraft:chicken": (10, 4),
         "minecraft:cow": (8, 4),
-        "minecraft:horse": (5, (2, 6)),
-        "minecraft:donkey": (1, (1, 3)),
+        "minecraft:llama": (5, (4, 6)),
     }
     HOSTILE_SPAWNS: typing.Dict[
         str, typing.Tuple[int, typing.Union[int, typing.Tuple[int, int]]]
@@ -53,22 +46,14 @@ class Plains(Biome.Biome):
     ] = {"minecraft:bat": (10, 8)}
 
     FEATURES = [
-        OakTreeFeature.OakTreeNormalFeatureWithBees.as_feature_definition(
-            1, "trees", (-3, 1)
+        SpruceTreeFeature.SpruceTreeNormalFeature.as_feature_definition(
+            10, "trees", (4, 10)
         ),
-        VillageFeatureDefinition.VillageFeatureDefinitionPlains.as_feature_definition(
-            1, "villages", (-100, 1)
-        ),
-        PillagerOutpostDefinition.PillagerOutpostDefinition.as_feature_definition(
-            1, "pillager_outposts", (-150, 1)
-        ),
-        PlantFeature.PlantFeature()
-        .add_plant("minecraft:azure_bluet", 10)
-        .add_plant("minecraft:oxeye_daisy", 10)
-        .add_plant("minecraft:cornflower", 8)
-        .add_plant("#minecraft:tulips", 1)
-        .as_feature_definition(1, "flowers", (0, 3)),
         IOre.DefaultOreFeature.as_feature_definition(10, "ores"),
+        IOre.DefaultEmeraldFeature.as_feature_definition(10, "ores"),
+        IOre.DefaultInfestedStoneFeature.as_feature_definition(
+            10, "infested_stone", (2, 5)
+        ),
     ]
 
     @staticmethod
@@ -77,7 +62,7 @@ class Plains(Biome.Biome):
 
     @staticmethod
     def get_height_range() -> typing.Tuple[int, int]:
-        return mcpython.common.config.BIOME_HEIGHT_RANGE_MAP["minecraft:plains"]
+        return mcpython.common.config.BIOME_HEIGHT_RANGE_MAP["minecraft:mountains"]
 
 
 G.biome_handler.register(Plains)

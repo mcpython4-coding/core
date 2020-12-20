@@ -49,6 +49,9 @@ class WorldGenerationHandler:
 
     def deserialize_chunk_generator_info(self, data: dict):
         for dimension in data:
+            if dimension not in shared.world.dimensions:
+                continue
+
             shared.world.dimensions[dimension].set_world_generation_config_entry(
                 "configname", data[dimension]
             )
@@ -250,7 +253,7 @@ def load_layers():
         DefaultStonePlacementLayer,
         DefaultTemperatureLayer,
         DefaultTopLayerLayer,
-        DefaultTreeLayer,
+        DefaultFeatureLayer,
     )
 
 

@@ -1393,3 +1393,6 @@ R   [uuk]: improved world serialization API
 [uuk]: implemented dummy implementation of end world generator
 [uuk]: implemented amplified world generator
 [uuk]: implemented injection point for different octave mergers
+[uuk]: added mountain biome
+[uuk]: changed feature <-> biome linking
+[uuk]: added dummy classes for other features

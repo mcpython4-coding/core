@@ -15,13 +15,14 @@ import random
 from mcpython import shared as G
 import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
+import mcpython.server.worldgen.feature.IFeature
 
 
 @G.world_generation_handler
-class DefaultTreeLayer(ILayer):
+class DefaultFeatureLayer(ILayer):
     DEPENDS_ON = ["minecraft:biome_map_default", "minecraft:heightmap_default"]
 
-    NAME = "minecraft:tree_default"
+    NAME = "minecraft:feature_default"
 
     @staticmethod
     def add_generate_functions_to_chunk(config: LayerConfig, reference):
@@ -32,7 +33,7 @@ class DefaultTreeLayer(ILayer):
         for x in range(16):
             for z in range(16):
                 reference.schedule_invoke(
-                    DefaultTreeLayer.generate_position,
+                    DefaultFeatureLayer.generate_position,
                     cx + x,
                     cz + z,
                     reference,
@@ -47,17 +48,30 @@ class DefaultTreeLayer(ILayer):
             return  # is an tree nearby?
         biome = G.biome_handler.biomes[chunk.get_value("minecraft:biome_map")[(x, z)]]
         height = chunk.get_value("heightmap")[(x, z)][0][1]
-        trees = biome.get_trees()
-        # todo: make noise-based
-        for IFeature, chance in trees:
-            if random.randint(1, chance) == 1:
-                IFeature.place(chunk.dimension, x, height + 1, z)
-                for dx in range(-2, 3):
-                    for dz in range(-2, 3):
-                        treemap.append((x + dx, z + dz))
-                return
+        for group in biome.FEATURES_SORTED:
+            count, total_weight, weights, features = biome.FEATURES_SORTED[group]
+            if type(count) == tuple:
+                count = random.randint(*count)
+            if count <= 0 or len(features) == 0:
+                continue
+            for _ in range(count):
+                if random.randint(1, 256) != 1:
+                    continue
+                feature_def: mcpython.server.worldgen.feature.IFeature.FeatureDefinition = random.choices(
+                    features, cum_weights=weights, k=1
+                )[
+                    0
+                ]
+                feature = feature_def.feature
+                feature.place_array(
+                    reference,
+                    x,
+                    feature_def.spawn_point.select(x, z, height, biome),
+                    z,
+                    feature_def.config,
+                )
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "tree_blocked", DefaultTreeLayer, []
+    "tree_blocked", DefaultFeatureLayer, []
 )
