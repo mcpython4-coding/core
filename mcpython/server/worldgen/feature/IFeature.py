@@ -27,6 +27,10 @@ class TopLayerSpawnPoint(IFeatureSpawnPoint):
 
 
 class FeatureDefinition:
+    """
+    Class holding generation rules and config for an IFeature-class.
+    """
+
     def __init__(
         self,
         feature: typing.Type["IFeature"],

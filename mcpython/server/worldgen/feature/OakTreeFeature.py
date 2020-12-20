@@ -44,15 +44,17 @@ class OakTreeNormalFeature(IFeature.IFeature):
         height = random.randint(*height_range)
         # place the logs
         for dy in range(height):
-            array.schedule_block_add((x, y+dy, z), "minecraft:oak_log")
+            array.schedule_block_add((x, y + dy, z), "minecraft:oak_log")
         # place the leaves
         for dy in range(height - 2, height + 1):
             for dx in range(-3, 4):
                 for dz in range(-3, 4):
                     if (dx ** 2 + dz ** 2 + dy ** 2 / 4) ** (
-                            1 / 2.25
+                        1 / 2.25
                     ) < 3.5 and array.get_block((x + dx, y + dy, z + dz)) is not None:
-                        array.schedule_block_add((x+dx, y + dy, z+dz), "minecraft:oak_leaves")
+                        array.schedule_block_add(
+                            (x + dx, y + dy, z + dz), "minecraft:oak_leaves"
+                        )
 
 
 class OakTreeNormalFeatureWithBees(OakTreeNormalFeature):

@@ -398,7 +398,9 @@ class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
         self.handler.schedule_visual_update(self.chunk, position)
 
     def get_block(self, position, chunk=None):
-        return self.handler.get_block(position, chunk if chunk is not None else self.chunk)
+        return self.handler.get_block(
+            position, chunk if chunk is not None else self.chunk
+        )
 
 
 class OffProcessTaskHelper:

@@ -24,7 +24,8 @@ class DefaultTopLayerLayer(ILayer):
     DEPENDS_ON = ["minecraft:heightmap_default", "minecraft:biome_map_default"]
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME, dimensions=2, scale=10 ** 3
+        NAME, dimensions=2, scale=10 ** 3, octaves=5,
+        merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
     )
 
     @classmethod

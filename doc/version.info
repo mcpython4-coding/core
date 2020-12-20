@@ -1396,3 +1396,4 @@ R   [uuk]: improved world serialization API
 [uuk]: added mountain biome
 [uuk]: changed feature <-> biome linking
 [uuk]: added dummy classes for other features
+[uuk]: improved noise code
