@@ -51,7 +51,7 @@ class SpruceTreeNormalFeature(IFeature.IFeature):
                 for dz in range(-3, 4):
                     if (dx ** 2 + dz ** 2 + dy ** 2 / 4) ** (
                         1 / 2.25
-                    ) < 3.5 and array.get_block((x + dx, y + dy, z + dz)) is not None:
+                    ) < 3.5 and array.get_block((x + dx, y + dy, z + dz)) is None:
                         array.schedule_block_add(
                             (x + dx, y + dy, z + dz), "minecraft:spruce_leaves"
                         )
