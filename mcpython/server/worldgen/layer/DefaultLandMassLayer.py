@@ -21,7 +21,7 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @shared.world_generation_handler
-class DefaultLandMassILayer(ILayer):
+class DefaultLandMassLayer(ILayer):
     NAME = "minecraft:landmass_default"
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
@@ -48,5 +48,5 @@ class DefaultLandMassILayer(ILayer):
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "minecraft:landmass_map", DefaultLandMassILayer, {}
+    "minecraft:landmass_map", DefaultLandMassLayer, {}
 )

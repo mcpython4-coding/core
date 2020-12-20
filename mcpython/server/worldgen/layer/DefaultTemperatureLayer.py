@@ -14,14 +14,14 @@ import random
 
 import mcpython.server.worldgen.noise.NoiseManager
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.event.EventHandler
 import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
-@G.world_generation_handler
-class DefaultTemperatureILayer(ILayer):
+@shared.world_generation_handler
+class DefaultTemperatureLayer(ILayer):
     NAME = "minecraft:temperature_map"
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
@@ -49,5 +49,5 @@ class DefaultTemperatureILayer(ILayer):
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "minecraft:temperature_map", DefaultTemperatureILayer, {}
+    "minecraft:temperature_map", DefaultTemperatureLayer, {}
 )

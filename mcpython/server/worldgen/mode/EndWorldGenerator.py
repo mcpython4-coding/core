@@ -13,11 +13,11 @@ from mcpython import shared as G
 import mcpython.server.worldgen.mode.IWorldGenConfig
 
 
-class NetherWorldGenerator(
+class EndGenerator(
     mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
 ):
-    NAME = "minecraft:nether_generator"
-    DIMENSION = "minecraft:the_nether"
+    NAME = "minecraft:default_end"
+    DIMENSION = "minecraft:the_end"
 
     LAYERS = [
         "minecraft:landmass_default",
@@ -29,4 +29,4 @@ class NetherWorldGenerator(
     BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.SingleBiomeSource("minecraft:void")
 
 
-G.world_generation_handler.register_world_gen_config(NetherWorldGenerator)
+G.world_generation_handler.register_world_gen_config(EndGenerator)

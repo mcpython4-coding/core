@@ -17,7 +17,7 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @shared.world_generation_handler
-class DefaultBedrockILayer(ILayer):
+class DefaultBedrockLayer(ILayer):
     """
     Class for generating the bedrock layer
     """

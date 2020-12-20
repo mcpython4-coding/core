@@ -26,6 +26,11 @@ class LayerConfig:
         ] = None
         self.world_generator_config = None
 
+    def apply_config(self, config: dict):
+        for key in config:
+            setattr(self, key, config[key])
+        return self
+
 
 class ILayer(mcpython.common.event.Registry.IRegistryContent):
     """

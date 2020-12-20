@@ -19,7 +19,7 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @shared.world_generation_handler
-class DefaultTopLayerILayer(ILayer):
+class DefaultTopLayerLayer(ILayer):
     NAME = "minecraft:top_layer_default"
     DEPENDS_ON = ["minecraft:heightmap_default", "minecraft:biome_map_default"]
 

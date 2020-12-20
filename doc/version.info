@@ -1390,3 +1390,5 @@ R   [uuk]: improved world serialization API
 [uuk]: added noise backend selector element to UI
 [uuk]: dumped json data by save-1file is now well-formatted
 [uuk]: fixed save list getting out of order / not all visible [issue 245]
+[uuk]: implemented dummy implementation of end world generator
+[uuk]: implemented amplified world generator

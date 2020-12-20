@@ -18,7 +18,7 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @G.world_generation_handler
-class DefaultTreeILayer(ILayer):
+class DefaultTreeLayer(ILayer):
     DEPENDS_ON = ["minecraft:biome_map_default", "minecraft:heightmap_default"]
 
     NAME = "minecraft:tree_default"
@@ -32,7 +32,7 @@ class DefaultTreeILayer(ILayer):
         for x in range(16):
             for z in range(16):
                 reference.schedule_invoke(
-                    DefaultTreeILayer.generate_position,
+                    DefaultTreeLayer.generate_position,
                     cx + x,
                     cz + z,
                     reference,
@@ -59,5 +59,5 @@ class DefaultTreeILayer(ILayer):
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "tree_blocked", DefaultTreeILayer, []
+    "tree_blocked", DefaultTreeLayer, []
 )
