@@ -15,7 +15,7 @@ import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
 import mcpython.client.gui.crafting.CraftingManager
 import mcpython.client.gui.crafting.CraftingGridHelperInterface
-import mcpython.common.item.ItemArmor
+import mcpython.common.item.AbstractArmorItem
 import mcpython.ResourceLoader
 import PIL.Image
 import mcpython.util.texture
@@ -82,7 +82,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
             if slot.get_itemstack().item:
                 if issubclass(
                     type(slot.get_itemstack().item),
-                    mcpython.common.item.ItemArmor.ItemArmor,
+                    mcpython.common.item.AbstractArmorItem.AbstractArmorItem,
                 ):
                     points += slot.get_itemstack().item.DEFENSE_POINTS
         shared.world.get_active_player().armor_level = points

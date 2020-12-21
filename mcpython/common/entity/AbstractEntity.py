@@ -19,9 +19,9 @@ import traceback
 import mcpython.common.entity.DamageSource
 
 
-class Entity(mcpython.common.event.Registry.IRegistryContent):
+class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
     """
-    dummy class for every entity,
+    Dummy class for every entity,
     only used by the player at the moment (as no more entities are implemented)
     feel free to use, general functions for cross-mod work
     """

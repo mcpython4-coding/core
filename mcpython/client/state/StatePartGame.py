@@ -18,8 +18,8 @@ import mcpython.common.container.ItemStack
 import mcpython.common.config
 import mcpython.util.math
 import time
-import mcpython.common.item.ItemFood as ItemFood
-import mcpython.common.item.ItemTool as ItemTool
+import mcpython.common.item.AbstractFoodItem as ItemFood
+import mcpython.common.item.AbstractToolItem as ItemTool
 import math
 import enum
 from mcpython.util.annotation import onlyInClient
@@ -100,19 +100,19 @@ class StatePartGame(StatePart.StatePart):
                 .get_itemstack()
                 .copy()
             )
-            istool = not itemstack.is_empty() and issubclass(
-                type(itemstack.item), ItemTool.ItemTool
+            is_tool = not itemstack.is_empty() and issubclass(
+                type(itemstack.item), ItemTool.AbstractToolItem
             )
-            toollevel = itemstack.item.TOOL_LEVEL if istool else 0
-            if not istool or not any(
-                [x in block.BEST_TOOLS_TO_BREAK for x in itemstack.item.TOOL_TYPE]
+            tool_level = itemstack.item.TOOL_LEVEL if is_tool else 0
+            if not is_tool or not any(
+                [x in block.ASSIGNED_TOOLS for x in itemstack.item.TOOL_TYPE]
             ):
                 cls.break_time = (
-                    1.5 if block.MINIMUM_TOOL_LEVEL <= toollevel else 5
+                    1.5 if block.MINIMUM_TOOL_LEVEL <= tool_level else 5
                 ) * hardness
             else:
                 cls.break_time = (
-                    (1.5 if block.MINIMUM_TOOL_LEVEL <= toollevel else 5)
+                    (1.5 if block.MINIMUM_TOOL_LEVEL <= tool_level else 5)
                     * hardness
                     / itemstack.item.get_speed_multiplyer(itemstack)
                 )
@@ -217,14 +217,19 @@ class StatePartGame(StatePart.StatePart):
             self._update(dt / m)
 
     def on_left_click_interaction_update(self, dt):
+        if self.break_time is None:
+            self.calculate_new_break_time()
+
         player = G.world.get_active_player()
+        selected_itemstack: mcpython.common.container.ItemStack.ItemStack = \
+            player.get_active_inventory_slot().get_itemstack()
         if (
             G.window.exclusive
             and any(G.window.mouse_pressing.values())
             and time.time() - self.set_cooldown > 1
         ):
             vector = G.window.get_sight_vector()
-            blockpos, previous, hitpos = G.world.hit_test(player.position, vector)
+            blockpos, previous, hit_position = G.world.hit_test(player.position, vector)
             if (
                 G.window.mouse_pressing[mouse.LEFT]
                 and blockpos
@@ -258,25 +263,26 @@ class StatePartGame(StatePart.StatePart):
                         chunk.remove_block(blockpos)
                         chunk.on_block_updated(blockpos)
                         chunk.check_neighbors(blockpos)
+                        if not selected_itemstack.is_empty():
+                            selected_itemstack.item.on_block_broken_with(selected_itemstack, player, block)
                 # todo: check if breakable in gamemode 2 by comparing item holders
 
     def on_right_click_interaction_update(self, dt):
         player = G.world.get_active_player()
+        active_itemstack = player.get_active_inventory_slot().get_itemstack()
         if (
             G.window.exclusive
             and any(G.window.mouse_pressing.values())
             and time.time() - self.set_cooldown > 1
         ):
-            if player.get_active_inventory_slot().get_itemstack().item and issubclass(
-                type(player.get_active_inventory_slot().get_itemstack().item),
-                ItemFood.ItemFood,
+            if active_itemstack.item and isinstance(
+                active_itemstack.item,
+                ItemFood.AbstractFoodItem,
             ):
-                itemfood = player.get_active_inventory_slot().get_itemstack().item
-                if itemfood.on_eat():
+                item_food = active_itemstack.item
+                if item_food.on_eat():
                     self.set_cooldown = time.time() - 1
-                    player.get_active_inventory_slot().get_itemstack().add_amount(-1)
-                    if player.get_active_inventory_slot().get_itemstack().amount == 0:
-                        player.get_active_inventory_slot().get_itemstack().clean()
+                    active_itemstack.add_amount(-1)
                     return
             vector = G.window.get_sight_vector()
             blockpos, previous, hit_position = G.world.hit_test(player.position, vector)

@@ -11,12 +11,10 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 
-import mcpython.common.item.AbstractItem
+import mcpython.common.item.AbstractDamageBarItem
 
 
-class ItemTool(mcpython.common.item.AbstractItem.AbstractItem, ABC):
-    NAME = "minecraft:unknown_tool"
-
+class AbstractToolItem(mcpython.common.item.AbstractDamageBarItem.DamageOnUseItem, ABC):
     HAS_BLOCK = False
     STACK_SIZE = 1
 
@@ -27,7 +25,7 @@ class ItemTool(mcpython.common.item.AbstractItem.AbstractItem, ABC):
         super().__init__()
 
     def __eq__(self, other):
-        if not issubclass(type(other), ItemTool):
+        if not issubclass(type(other), AbstractToolItem):
             return False
         return other.NAME == self.NAME
 
@@ -39,3 +37,12 @@ class ItemTool(mcpython.common.item.AbstractItem.AbstractItem, ABC):
 
     def get_speed_multiplyer(self, itemstack):
         return 1
+
+    def get_data(self):
+        return self.damage
+
+    def set_data(self, data):
+        try:
+            self.damage = int(data)
+        except ValueError:
+            pass

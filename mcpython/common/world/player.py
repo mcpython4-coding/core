@@ -14,7 +14,7 @@ import typing
 from mcpython import shared, shared as G, logger
 import mcpython.ResourceLoader
 import mcpython.client.Chat
-import mcpython.common.entity.Entity
+import mcpython.common.entity.AbstractEntity
 import mcpython.common.event.EventHandler
 import mcpython.client.gui.InventoryChest
 import mcpython.client.gui.MainPlayerInventory
@@ -27,7 +27,7 @@ import mcpython.common.entity.DamageSource
 
 
 @G.registry
-class Player(mcpython.common.entity.Entity.Entity):
+class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
     RENDERER = mcpython.client.rendering.EntityRenderer.EntityRenderer(
         "minecraft:player"
     )

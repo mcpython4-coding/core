@@ -13,7 +13,7 @@ from mcpython import shared as G
 from . import AbstractBlock
 from pyglet.window import mouse, key
 import mcpython.util.enums
-import mcpython.common.item.ItemTool
+import mcpython.common.item.AbstractToolItem
 
 
 class BlockCraftingTable(AbstractBlock.AbstractBlock):

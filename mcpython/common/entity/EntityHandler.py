@@ -83,7 +83,7 @@ G.entity_handler = EntityHandler()
 
 
 def load():
-    from mcpython.common.entity import Entity, FallingBlockEntity
+    from mcpython.common.entity import AbstractEntity, FallingBlockEntity
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:entities", load)

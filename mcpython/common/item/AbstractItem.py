@@ -69,6 +69,9 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
         """
         return False
 
+    def on_block_broken_with(self, itemstack, player, block):
+        pass
+
     def on_set_from_item(self, block):
         pass
 

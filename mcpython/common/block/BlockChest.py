@@ -16,7 +16,7 @@ from pyglet.window import mouse, key
 
 import mcpython.common.block.BoundingBox
 from mcpython import shared as G, logger
-import mcpython.common.item.ItemTool
+import mcpython.common.item.AbstractToolItem
 import mcpython.util.enums
 from . import AbstractBlock
 

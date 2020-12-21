@@ -9,11 +9,13 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 from mcpython import shared as G
 import mcpython.common.item.AbstractItem
 
 
-class ItemFood(mcpython.common.item.AbstractItem.AbstractItem):
+class AbstractFoodItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
     def on_eat(self):
         """
         called when the player eats the item
