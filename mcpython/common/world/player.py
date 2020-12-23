@@ -28,9 +28,13 @@ import mcpython.common.entity.DamageSource
 
 @G.registry
 class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
-    RENDERER = mcpython.client.rendering.entities.EntityRenderer.EntityRenderer(
-        "minecraft:player"
-    )
+    RENDERER = None
+
+    @classmethod
+    def init_renderers(cls):
+        cls.RENDERER = mcpython.client.rendering.entities.EntityRenderer.EntityRenderer(
+            "minecraft:player"
+        )
 
     NAME = "minecraft:player"
     SUMMON_ABLE = False

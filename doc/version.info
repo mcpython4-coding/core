@@ -1403,3 +1403,4 @@ R   [uuk]: improved world serialization API
 [uuk]: improved API
 [uuk]: implemented damage base classes for items
 [uuk]: some work on block rendering API
+[uuk]: some entity rendering API changes

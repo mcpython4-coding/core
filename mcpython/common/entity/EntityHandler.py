@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 
@@ -21,9 +21,13 @@ class EntityHandler:
 
     def __init__(self):
         self.registry = mcpython.common.event.Registry.Registry(
-            "minecraft:entities", ["minecraft:entity"], "stage:entities"
+            "minecraft:entities", ["minecraft:entity"], "stage:entities", injection_function=self.add_entity_cls
         )
         self.entity_map = {}
+        
+    def add_entity_cls(self, registry, entity_cls):
+        if shared.IS_CLIENT:
+            entity_cls.init_renderers()
 
     def add_entity(
         self,
@@ -36,9 +40,9 @@ class EntityHandler:
         **kwargs
     ):
         if dimension is None:
-            dimension = G.world.get_active_dimension()
+            dimension = shared.world.get_active_dimension()
         if type(dimension) in (str, int):
-            dimension = G.world.get_dimension(dimension)
+            dimension = shared.world.get_dimension(dimension)
         if name not in self.registry.entries:
             raise ValueError("unknown entity type name: '{}'".format(name))
         entity = self.registry.entries[name]
@@ -79,7 +83,7 @@ class EntityHandler:
             # todo: add max entities standing in one space handler
 
 
-G.entity_handler = EntityHandler()
+shared.entity_handler = EntityHandler()
 
 
 def load():

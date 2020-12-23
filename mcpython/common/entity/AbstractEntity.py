@@ -45,6 +45,10 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         entity.position = position
         return entity
 
+    @classmethod
+    def init_renderers(cls):
+        pass
+
     def __init__(self, dimension=None):
         """
         creates an new entity for the world
