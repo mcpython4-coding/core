@@ -210,13 +210,16 @@ class ItemFactory:
                     if shared.world.get_active_player().hunger == 20:
                         return False
                     shared.world.get_active_player().hunger = min(
-                        self.HUNGER_ADDITION + shared.world.get_active_player().hunger, 20
+                        self.HUNGER_ADDITION + shared.world.get_active_player().hunger,
+                        20,
                     )
                     return True
 
                 HUNGER_ADDITION = master.hungerregen
 
-        if mcpython.common.item.AbstractToolItem.AbstractToolItem in self.base_classes:  # is an tool
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem in self.base_classes
+        ):  # is an tool
 
             class ConstructedItem(
                 ConstructedItem
@@ -268,9 +271,12 @@ class ItemFactory:
     def setBaseClassByName(self, baseclassname: str):
         if (
             baseclassname == "food"
-            and mcpython.common.item.AbstractFoodItem.AbstractFoodItem not in self.base_classes
+            and mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            not in self.base_classes
         ):
-            self.base_classes.append(mcpython.common.item.AbstractFoodItem.AbstractFoodItem)
+            self.base_classes.append(
+                mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            )
         elif baseclassname == "default":
             self.setBaseClass(mcpython.common.item.AbstractItem.AbstractItem)
         return self
@@ -322,41 +328,72 @@ class ItemFactory:
     # food related stuff
 
     def setFoodValue(self, value: int):
-        if mcpython.common.item.AbstractFoodItem.AbstractFoodItem not in self.base_classes:
-            self.base_classes.append(mcpython.common.item.AbstractFoodItem.AbstractFoodItem)
+        if (
+            mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            )
         self.hungerregen = value
         return self
 
     def setEatCallback(self, function):
-        if mcpython.common.item.AbstractFoodItem.AbstractFoodItem not in self.base_classes:
-            self.base_classes.append(mcpython.common.item.AbstractFoodItem.AbstractFoodItem)
+        if (
+            mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            )
         self.eat_callback = function
         return self
 
     def setToolLevel(self, level: int):
         self.tool_level = level
-        if mcpython.common.item.AbstractToolItem.AbstractToolItem not in self.base_classes:
-            self.base_classes.append(mcpython.common.item.AbstractToolItem.AbstractToolItem)
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractToolItem.AbstractToolItem
+            )
         return self
 
     def setToolType(
-        self, tool_types: typing.List[mcpython.common.item.AbstractToolItem.AbstractToolItem]
+        self,
+        tool_types: typing.List[mcpython.common.item.AbstractToolItem.AbstractToolItem],
     ):
         self.tool_type = tool_types
-        if mcpython.common.item.AbstractToolItem.AbstractToolItem not in self.base_classes:
-            self.base_classes.append(mcpython.common.item.AbstractToolItem.AbstractToolItem)
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractToolItem.AbstractToolItem
+            )
         return self
 
     def setToolBrakeMulti(self, multi: float):
         self.tool_speed_multi = multi
-        if mcpython.common.item.AbstractToolItem.AbstractToolItem not in self.base_classes:
-            self.base_classes.append(mcpython.common.item.AbstractToolItem.AbstractToolItem)
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractToolItem.AbstractToolItem
+            )
         return self
 
     def setToolBrakeMultiCallback(self, function):
         self.tool_speed_callback = function
-        if mcpython.common.item.AbstractToolItem.AbstractToolItem not in self.base_classes:
-            self.base_classes.append(mcpython.common.item.AbstractToolItem.AbstractToolItem)
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractToolItem.AbstractToolItem
+            )
         return self
 
     def set_durability(self, durability: int):
@@ -365,14 +402,24 @@ class ItemFactory:
 
     def setArmorPoints(self, points: int):
         self.armor_points = points
-        if mcpython.common.item.AbstractArmorItem.AbstractArmorItem not in self.base_classes:
-            self.base_classes.append(mcpython.common.item.AbstractArmorItem.AbstractArmorItem)
+        if (
+            mcpython.common.item.AbstractArmorItem.AbstractArmorItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractArmorItem.AbstractArmorItem
+            )
         return self
 
     def set_damage_able(self, durability: int):
         self.durability = durability
-        if mcpython.common.item.AbstractDamageBarItem.DamageOnUseItem not in self.base_classes:
-            self.base_classes.append(mcpython.common.item.AbstractDamageBarItem.DamageOnUseItem)
+        if (
+            mcpython.common.item.AbstractDamageBarItem.DamageOnUseItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractDamageBarItem.DamageOnUseItem
+            )
         return self
 
     def setCustomFromItemFunction(self, function):

@@ -9,6 +9,11 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+import copy
+
+import pyglet
+
 from mcpython import shared as G, logger
 import mcpython.ResourceLoader
 import random
@@ -16,6 +21,8 @@ import mcpython.common.mod.ModMcpython
 import mcpython.common.event.Registry
 import mcpython.common.block.BoundingBox
 import copy
+import mcpython.client.rendering.model.api
+import mcpython.util.enums
 
 
 class BlockStateNotNeeded(Exception):
@@ -35,16 +42,24 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
         self.data = data
         self.block_state = block_state
 
-    def add_face_to_batch(self, block, batch, face) -> list:
+    def add_face_to_batch(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        face: mcpython.util.enums.EnumSide,
+    ) -> list:
         raise NotImplementedError()
 
     def transform_to_hitbox(
-        self, block
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
     ):  # optional: transforms the BlockState into an BoundingBox-like objects
         pass
 
     def draw_face(
-        self, block, face
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
     ):  # optional: draws the BlockState direct without an batch
         pass
 
@@ -129,8 +144,13 @@ class MultiPartDecoder(IBlockStateDecoder):
                         data[i]["model"] = self.model_alias[e["model"]]
         return True
 
-    def add_face_to_batch(self, block, batch, face):
-        state = block.get_model_state()
+    def add_face_to_batch(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        face: mcpython.util.enums.EnumSide,
+    ):
+        state = instance.get_model_state()
         result = []
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
@@ -140,21 +160,21 @@ class MultiPartDecoder(IBlockStateDecoder):
                     if model not in G.model_handler.models:
                         continue
                     result += G.model_handler.models[model].add_face_to_batch(
-                        block.position, batch, config, face
+                        instance.position, batch, config
                     )
                 else:
-                    if block.block_state is None:
+                    if instance.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
                         model, config, _ = entry = random.choices(
                             entries, weights=[e[2] for e in entries]
                         )[0]
-                        block.block_state = entries.index(entry)
+                        instance.block_state = entries.index(entry)
                     else:
                         model, config, _ = BlockState.decode_entry(
-                            data[block.block_state]
+                            data[instance.block_state]
                         )
                     result += G.model_handler.models[model].add_face_to_batch(
-                        block.position, batch, config, face
+                        instance.position, batch, config
                     )
         return result
 
@@ -195,8 +215,10 @@ class MultiPartDecoder(IBlockStateDecoder):
                     return False
         return not use_or
 
-    def transform_to_hitbox(self, blockinstance):
-        state = blockinstance.get_model_state()
+    def transform_to_hitbox(
+        self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget
+    ):
+        state = instance.get_model_state()
         bbox = mcpython.common.block.BoundingBox.BoundingArea()
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
@@ -213,15 +235,15 @@ class MultiPartDecoder(IBlockStateDecoder):
                             )
                         )
                 else:
-                    if blockinstance.block_state is None:
+                    if instance.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
                         model, config, _ = entry = random.choices(
                             entries, weights=[e[2] for e in entries]
                         )[0]
-                        mcpython.block.block_state = entries.index(entry)
+                        instance.block_state = entries.index(entry)
                     else:
                         model, config, _ = BlockState.decode_entry(
-                            data[blockinstance.block_state]
+                            data[instance.block_state]
                         )
                     model = G.model_handler.models[model]
                     for boxmodel in model.boxmodels:
@@ -234,29 +256,33 @@ class MultiPartDecoder(IBlockStateDecoder):
                         )
         return bbox
 
-    def draw_face(self, block, face):
-        state = block.get_model_state()
+    def draw_face(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
+    ):
+        state = instance.get_model_state()
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
                 if type(data) == dict:
                     model, config, _ = BlockState.decode_entry(data)
                     G.model_handler.models[model].draw_face(
-                        block.position, config, face
+                        instance.position, config, face
                     )
                 else:
-                    if block.block_state is None:
+                    if instance.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
                         model, config, _ = entry = random.choices(
                             entries, weights=[e[2] for e in entries]
                         )[0]
-                        block.block_state = entries.index(entry)
+                        instance.block_state = entries.index(entry)
                     else:
                         model, config, _ = BlockState.decode_entry(
-                            data[block.block_state]
+                            data[instance.block_state]
                         )
                     G.model_handler.models[model].draw_face(
-                        block.position, config, face
+                        instance.position, config, face
                     )
 
 
@@ -320,26 +346,33 @@ class DefaultDecoder(IBlockStateDecoder):
                     state.models[i] = (self.model_alias[model],) + tuple(d)
         return True
 
-    def add_face_to_batch(self, block, batch, face):
-        data = block.get_model_state()
+    def add_face_to_batch(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        face: mcpython.util.enums.EnumSide,
+    ):
+        data = instance.get_model_state()
         for keymap, blockstate in self.states:
             if keymap == data:
-                return blockstate.add_face_to_batch(block, batch, face)
+                return blockstate.add_face_to_batch(instance, batch, face)
         logger.println(
             "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
-                block, data, [e[0] for e in self.states]
+                instance, data, [e[0] for e in self.states]
             )
         )
         return []
 
-    def transform_to_hitbox(self, blockinstance):
-        if blockinstance.block_state is None:
-            blockinstance.block_state = 0
-        data = blockinstance.get_model_state()
+    def transform_to_hitbox(
+        self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget
+    ):
+        if instance.block_state is None:
+            instance.block_state = 0
+        data = instance.get_model_state()
         bbox = mcpython.common.block.BoundingBox.BoundingArea()
         for keymap, blockstate in self.states:
             if keymap == data:
-                model, config, _ = blockstate.models[blockinstance.block_state]
+                model, config, _ = blockstate.models[instance.block_state]
                 model = G.model_handler.models[model]
                 for boxmodel in model.boxmodels:
                     rotation = config["rotation"]
@@ -352,15 +385,19 @@ class DefaultDecoder(IBlockStateDecoder):
                     )
         return bbox
 
-    def draw_face(self, block, face):
-        data = block.get_model_state()
+    def draw_face(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
+    ):
+        data = instance.get_model_state()
         for keymap, blockstate in self.states:
             if keymap == data:
-                blockstate.draw_face(block, face)
+                blockstate.draw_face(instance, face)
                 return
         logger.println(
             "[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
-                block.NAME, block.position, data, [e[0] for e in self.states]
+                instance.NAME, instance.position, data, [e[0] for e in self.states]
             )
         )
 
@@ -379,19 +416,20 @@ class BlockStateDefinition:
 
     @classmethod
     def from_file(cls, file: str, modname: str, immediate=False):
+        # todo: check for correct process
         if immediate:
-            cls._from_file(file)
+            cls.unsafe_from_file(file)
         else:
             G.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:model:blockstate_create",
-                cls._from_file,
+                cls.unsafe_from_file,
                 file,
                 info="loading block state {}".format(file),
             )
         cls.TO_CREATE.add(file)
 
     @classmethod
-    def _from_file(cls, file: str):
+    def unsafe_from_file(cls, file: str):
         try:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
@@ -407,17 +445,21 @@ class BlockStateDefinition:
             )
 
     @classmethod
-    def from_data(cls, name, data):
-        mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-            "stage:model:blockstate_create",
-            cls._from_data,
-            name,
-            data,
-            info="loading block state {}".format(name),
-        )
+    def from_data(cls, name: str, data: typing.Dict[str, typing.Any], immediate=False):
+        # todo: check for correct process
+        if immediate:
+            cls.unsafe_from_data(name, data)
+        else:
+            mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+                "stage:model:blockstate_create",
+                cls.unsafe_from_data,
+                name,
+                data,
+                info="loading block state {}".format(name),
+            )
 
     @classmethod
-    def _from_data(cls, name, data):
+    def unsafe_from_data(cls, name: str, data: typing.Dict[str, typing.Any]):
         try:
             return BlockStateDefinition(data, name)
         except BlockStateNotNeeded:
@@ -460,31 +502,25 @@ class BlockStateDefinition:
         else:
             self.baked = True
 
-    def add_face_to_batch(self, block, batch, face):
+    def add_face_to_batch(
+        self,
+        block: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        face: mcpython.util.enums.EnumSide,
+    ):
         return self.loader.add_face_to_batch(block, batch, face)
 
-    def draw_face(self, block, face):
+    def draw_face(
+        self,
+        block: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
+    ):
         self.loader.draw_face(block, face)
 
 
 class BlockState:
-    def __init__(self, data):
-        self.data = data
-        self.models = []  # (model, config, weight)
-        if type(data) == dict:
-            if "model" in data:
-                self.models.append(self.decode_entry(data))
-                G.model_handler.used_models.add(data["model"])
-        elif type(data) == list:
-            models = [self.decode_entry(x) for x in data]
-            self.models += models
-            G.model_handler.used_models |= set([x[0] for x in models])
-
-    def copy(self):
-        return BlockState(self.data)
-
     @staticmethod
-    def decode_entry(data: dict):
+    def decode_entry(data: typing.Dict[str, typing.Any]):
         model = data["model"]
         G.model_handler.used_models.add(model)
         rotations = (
@@ -498,40 +534,66 @@ class BlockState:
             1 if "weight" not in data else data["weight"],
         )
 
-    def add_face_to_batch(self, block, batch, face):
+    def __init__(self, data: dict):
+        self.data = data
+        self.models = []  # (model, config, weight)
+        if type(data) == dict:
+            if "model" in data:
+                self.models.append(self.decode_entry(data))
+                G.model_handler.used_models.add(data["model"])
+        elif type(data) == list:
+            models = [self.decode_entry(x) for x in data]
+            self.models += models
+            G.model_handler.used_models |= set([x[0] for x in models])
+
+    def copy(self):
+        return BlockState(copy.deepcopy(self.data))
+
+    def add_face_to_batch(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        face: mcpython.util.enums.EnumSide,
+    ):
         if (
-            block.block_state is None
-            or block.block_state < 0
-            or block.block_state > len(self.models)
+            instance.block_state is None
+            or instance.block_state < 0
+            or instance.block_state > len(self.models)
         ):
-            block.block_state = self.models.index(
+            instance.block_state = self.models.index(
                 random.choices(self.models, [e[2] for e in self.models])[0]
             )
         result = []
-        model, config, _ = self.models[block.block_state]
+        model, config, _ = self.models[instance.block_state]
         if model not in G.model_handler.models:
             logger.println(
-                "can't find model named '{}' to add at {}".format(model, block.position)
+                "can't find model named '{}' to add at {}".format(
+                    model, instance.position
+                )
             )
             return result
         result += G.model_handler.models[model].add_face_to_batch(
-            block.position, batch, config, face
+            instance.position, batch, config, face
         )
         return result
 
-    def draw_face(self, block, face):
-        if block.block_state is None:
-            block.block_state = self.models.index(
+    def draw_face(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
+    ):
+        if instance.block_state is None:
+            instance.block_state = self.models.index(
                 random.choices(self.models, [e[2] for e in self.models])[0]
             )
-        model, config, _ = self.models[block.block_state]
+        model, config, _ = self.models[instance.block_state]
         if model not in G.model_handler.models:
             raise ValueError(
                 "can't find model named '{}' to draw at {}".format(
-                    model, block.position
+                    model, instance.position
                 )
             )
-        G.model_handler.models[model].draw_face(block.position, config, face)
+        G.model_handler.models[model].draw_face(instance.position, config, face)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

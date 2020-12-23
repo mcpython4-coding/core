@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.rendering.BatchHelper
-import mcpython.client.rendering.BoxModel
+import mcpython.client.rendering.model.BoxModel
 import mcpython.ResourceLoader
 import mcpython.common.item.ItemAtlas
 from mcpython import shared as G, logger

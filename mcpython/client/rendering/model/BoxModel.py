@@ -276,7 +276,7 @@ class BoxModel:
             if active_faces is None or (
                 active_faces[i]
                 if type(active_faces) == list
-                else (i not in active_faces or active_faces[i])
+                else (i in active_faces and active_faces[i])
             ):
                 if (
                     not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE

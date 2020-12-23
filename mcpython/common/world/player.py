@@ -21,14 +21,14 @@ import mcpython.client.gui.MainPlayerInventory
 import mcpython.common.container.ItemStack
 import mcpython.client.gui.Slot
 import mcpython.common.mod.ModMcpython
-import mcpython.client.rendering.EntityRenderer
+import mcpython.client.rendering.entities.EntityRenderer
 import mcpython.util.math
 import mcpython.common.entity.DamageSource
 
 
 @G.registry
 class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
-    RENDERER = mcpython.client.rendering.EntityRenderer.EntityRenderer(
+    RENDERER = mcpython.client.rendering.entities.EntityRenderer.EntityRenderer(
         "minecraft:player"
     )
 

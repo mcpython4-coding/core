@@ -21,6 +21,7 @@ import mcpython.common.container.ItemStack
 import mcpython.client.gui.Slot
 import mcpython.util.enums
 import pickle
+from mcpython import shared
 
 
 class BlockRemovalReason(enum.Enum):
@@ -31,7 +32,16 @@ class BlockRemovalReason(enum.Enum):
     ENTITY_PICKUP = 4
 
 
-class AbstractBlock(mcpython.common.event.Registry.IRegistryContent):
+if shared.IS_CLIENT:
+    import mcpython.client.rendering.model.api
+
+    class parent(mcpython.common.event.Registry.IRegistryContent, mcpython.client.rendering.model.api.IBlockStateRenderingTarget):
+        pass
+else:
+    parent = mcpython.common.event.Registry.IRegistryContent
+
+
+class AbstractBlock(parent):
     """
     Abstract base class for all blocks
     All block classes should extend from this

@@ -221,8 +221,9 @@ class StatePartGame(StatePart.StatePart):
             self.calculate_new_break_time()
 
         player = G.world.get_active_player()
-        selected_itemstack: mcpython.common.container.ItemStack.ItemStack = \
+        selected_itemstack: mcpython.common.container.ItemStack.ItemStack = (
             player.get_active_inventory_slot().get_itemstack()
+        )
         if (
             G.window.exclusive
             and any(G.window.mouse_pressing.values())
@@ -264,7 +265,9 @@ class StatePartGame(StatePart.StatePart):
                         chunk.on_block_updated(blockpos)
                         chunk.check_neighbors(blockpos)
                         if not selected_itemstack.is_empty():
-                            selected_itemstack.item.on_block_broken_with(selected_itemstack, player, block)
+                            selected_itemstack.item.on_block_broken_with(
+                                selected_itemstack, player, block
+                            )
                 # todo: check if breakable in gamemode 2 by comparing item holders
 
     def on_right_click_interaction_update(self, dt):

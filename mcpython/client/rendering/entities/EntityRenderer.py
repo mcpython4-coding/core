@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.rendering.BoxModel
+import mcpython.client.rendering.model.BoxModel
 import mcpython.ResourceLoader
 import pyglet
 from mcpython.util.annotation import onlyInClient
@@ -111,7 +111,9 @@ class EntityRenderer:
                     )
                     for e in box["uv"]
                 ]
-            self.box_models[boxname] = mcpython.client.rendering.BoxModel.BaseBoxModel(
+            self.box_models[
+                boxname
+            ] = mcpython.client.rendering.model.BoxModel.BaseBoxModel(
                 box["position"] if "position" in box else (0, 0, 0),
                 tuple([e / 16 for e in box["size"]]),
                 group,

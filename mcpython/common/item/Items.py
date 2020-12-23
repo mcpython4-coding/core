@@ -153,13 +153,17 @@ def load_item():
     ]:
         template("wooden_{}".format(tool_name)).setToolType(
             [tool_type]
-        ).setToolBrakeMulti(2).setToolLevel(1).setFuelLevel(10).set_durability(59).setMaxStackSize(1)
-        template("stone_{}".format(tool_name)).setToolType([tool_type]).setToolBrakeMulti(
-            4
-        ).setToolLevel(2).set_durability(131).setMaxStackSize(1)
-        template("iron_{}".format(tool_name)).setToolType([tool_type]).setToolBrakeMulti(
-            6
-        ).setToolLevel(3).set_durability(250).setMaxStackSize(1)
+        ).setToolBrakeMulti(2).setToolLevel(1).setFuelLevel(10).set_durability(
+            59
+        ).setMaxStackSize(
+            1
+        )
+        template("stone_{}".format(tool_name)).setToolType(
+            [tool_type]
+        ).setToolBrakeMulti(4).setToolLevel(2).set_durability(131).setMaxStackSize(1)
+        template("iron_{}".format(tool_name)).setToolType(
+            [tool_type]
+        ).setToolBrakeMulti(6).setToolLevel(3).set_durability(250).setMaxStackSize(1)
         template("golden_{}".format(tool_name)).setToolType(
             [tool_type]
         ).setToolBrakeMulti(8).setToolLevel(4).set_durability(32).setMaxStackSize(1)
@@ -176,13 +180,21 @@ def load_item():
     # armor
 
     template("golden_helmet").setArmorPoints(2).set_durability(77).setMaxStackSize(1)
-    template("golden_chestplate").setArmorPoints(5).set_durability(112).setMaxStackSize(1)
+    template("golden_chestplate").setArmorPoints(5).set_durability(112).setMaxStackSize(
+        1
+    )
     template("golden_leggings").setArmorPoints(3).set_durability(105).setMaxStackSize(1)
     template("golden_boots").setArmorPoints(1).set_durability(91).setMaxStackSize(1)
 
-    template("chainmail_helmet").setArmorPoints(2).set_durability(165).setMaxStackSize(1)
-    template("chainmail_chestplate").setArmorPoints(5).set_durability(240).setMaxStackSize(1)
-    template("chainmail_leggings").setArmorPoints(4).set_durability(225).setMaxStackSize(1)
+    template("chainmail_helmet").setArmorPoints(2).set_durability(165).setMaxStackSize(
+        1
+    )
+    template("chainmail_chestplate").setArmorPoints(5).set_durability(
+        240
+    ).setMaxStackSize(1)
+    template("chainmail_leggings").setArmorPoints(4).set_durability(
+        225
+    ).setMaxStackSize(1)
     template("chainmail_boots").setArmorPoints(1).set_durability(195).setMaxStackSize(1)
 
     template("iron_helmet").setArmorPoints(2).set_durability(165).setMaxStackSize(1)
@@ -191,14 +203,24 @@ def load_item():
     template("iron_boots").setArmorPoints(2).set_durability(195).setMaxStackSize(1)
 
     template("diamond_helmet").setArmorPoints(3).set_durability(363).setMaxStackSize(1)
-    template("diamond_chestplate").setArmorPoints(8).set_durability(528).setMaxStackSize(1)
-    template("diamond_leggings").setArmorPoints(6).set_durability(495).setMaxStackSize(1)
+    template("diamond_chestplate").setArmorPoints(8).set_durability(
+        528
+    ).setMaxStackSize(1)
+    template("diamond_leggings").setArmorPoints(6).set_durability(495).setMaxStackSize(
+        1
+    )
     template("diamond_boots").setArmorPoints(3).set_durability(429).setMaxStackSize(1)
 
     template("netherite_boots").setArmorPoints(3).set_durability(407).setMaxStackSize(1)
-    template("netherite_chestplate").setArmorPoints(8).set_durability(592).setMaxStackSize(1)
-    template("netherite_helmet").setArmorPoints(6).set_durability(555).setMaxStackSize(1)
-    template("netherite_leggings").setArmorPoints(3).set_durability(481).setMaxStackSize(1)
+    template("netherite_chestplate").setArmorPoints(8).set_durability(
+        592
+    ).setMaxStackSize(1)
+    template("netherite_helmet").setArmorPoints(6).set_durability(555).setMaxStackSize(
+        1
+    )
+    template("netherite_leggings").setArmorPoints(3).set_durability(
+        481
+    ).setMaxStackSize(1)
 
     template("arrow")
 
