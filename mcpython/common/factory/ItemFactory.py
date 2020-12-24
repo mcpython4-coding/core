@@ -18,10 +18,13 @@ import mcpython.common.item.AbstractToolItem
 import mcpython.common.item.AbstractArmorItem
 import mcpython.common.item.AbstractDamageBarItem
 from mcpython import shared
+import mcpython.common.factory.IFactoryModifier
 
 
 # todo: add ItemFactoryHandler which make it possible to add custom functions & custom class constructing
-class ItemFactory:
+class ItemFactory(mcpython.common.factory.IFactoryModifier.IFactory):
+    FACTORY_MODIFIERS = {}
+
     TASKS = []
 
     @classmethod
@@ -259,8 +262,14 @@ class ItemFactory:
                 def getAdditionalTooltipText(cls, *_) -> list:
                     return master.tooltip_extra
 
+        if self.name in self.FACTORY_MODIFIERS:
+            for modifier in self.FACTORY_MODIFIERS:
+                ConstructedItem = modifier.apply(self, ConstructedItem)
+
         if register:
             shared.registry.register(ConstructedItem)
+
+        return ConstructedItem
 
     def setBaseClass(
         self, baseclass

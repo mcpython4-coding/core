@@ -89,7 +89,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
                 self.default_style.format(
                     color="gray", text=mcpython.common.Language.translate(line)
                 )
-                for line in itemstack.item.getAdditionalTooltipText(itemstack, self)
+                for line in itemstack.item.get_additional_tooltip_text(itemstack, self)
             ]
             + (
                 [

@@ -17,12 +17,12 @@ import typing
 
 class ModDependency:
     """
-    class for an dependency-like reference to an mod
+    Class for an dependency-like reference to an mod
     """
 
     def __init__(self, name: str, version_min=None, version_max=None, versions=None):
         """
-        creates an new mod dependency instance. need to be assigned with another mod. if no version(s) is/are specified,
+        Creates an new mod dependency instance. need to be assigned with another mod. if no version(s) is/are specified,
         all are allowed
         :param name: the name of the mod
         :param version_min: the minimum version to use, including
@@ -58,16 +58,16 @@ class ModDependency:
         mod = G.mod_loader.mods[self.name]
         if self.version_range[0] is not None:
             if self.version_range[1] is not None:
-                return self.__test_for(mod.version, self.version_range)
-            return self.__test_for(mod.version, self.version_range[0])
+                return self.test_match(mod.version, self.version_range)
+            return self.test_match(mod.version, self.version_range[0])
         if self.versions is None:
             return True
         if type(self.versions) == list:
-            return any([self.__test_for(mod.version, e) for e in self.versions])
+            return any([self.test_match(mod.version, e) for e in self.versions])
         return False
 
     @classmethod
-    def __test_for(cls, version, args: tuple) -> bool:
+    def test_match(cls, version, args: tuple) -> bool:
         """
         will test for the arrival of the dependency
         :param version: the version found

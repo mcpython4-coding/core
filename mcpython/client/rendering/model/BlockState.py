@@ -160,7 +160,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                     if model not in G.model_handler.models:
                         continue
                     result += G.model_handler.models[model].add_face_to_batch(
-                        instance.position, batch, config
+                        instance.position, batch, config, face
                     )
                 else:
                     if instance.block_state is None:
@@ -174,7 +174,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                             data[instance.block_state]
                         )
                     result += G.model_handler.models[model].add_face_to_batch(
-                        instance.position, batch, config
+                        instance.position, batch, config, face
                     )
         return result
 
@@ -329,21 +329,27 @@ class DefaultDecoder(IBlockStateDecoder):
             if self.parent not in G.model_handler.blockstates:
                 print("block state referencing '{}' is invalid!".format(self.parent))
                 return
+
             parent: BlockStateDefinition = G.model_handler.blockstates[self.parent]
             if not parent.baked:
                 return False
-            if not issubclass(type(parent.loader), type(self)):
+
+            if not isinstance(parent.loader, type(self)):
                 raise ValueError("parent must be subclass of start")
+
             self.parent = parent
             self.model_alias.update(self.parent.loader.model_alias.copy())
             self.states += [(e, state.copy()) for e, state in self.parent.loader.states]
+
         for model in self.model_alias.values():
-            G.model_handler.used_models.append(model)
+            G.model_handler.used_models.add(model)
+
         for _, state in self.states:
             state: BlockState
             for i, (model, *d) in enumerate(state.models):
                 if model in self.model_alias:
                     state.models[i] = (self.model_alias[model],) + tuple(d)
+
         return True
 
     def add_face_to_batch(

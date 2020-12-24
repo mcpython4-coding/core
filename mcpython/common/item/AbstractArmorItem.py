@@ -23,7 +23,7 @@ class AbstractArmorItem(
 
     DEFENSE_POINTS = 0
 
-    def getDefensePoints(self):
+    def get_defense_points(self):
         return self.DEFENSE_POINTS
 
     STACK_SIZE = 1

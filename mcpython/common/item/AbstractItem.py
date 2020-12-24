@@ -93,5 +93,5 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
 
         return mcpython.client.gui.HoveringItemBox.DEFAULT_ITEM_TOOLTIP
 
-    def getAdditionalTooltipText(self, stack, renderer) -> list:
+    def get_additional_tooltip_text(self, stack, renderer) -> list:
         return []

@@ -18,12 +18,13 @@ import mcpython.util.enums
 import mcpython.common.block.ISlab as ISlab
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
 import mcpython.common.block.BlockWall as BlockWall
+import mcpython.common.factory.IFactoryModifier
 
 
 # todo: implement inventory opening notations
 
 
-class BlockFactory:
+class BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
     """
     Factory for creating on an simple way block classes
     Examples:
@@ -85,6 +86,8 @@ class BlockFactory:
         issue for it and we will try to implement it (and it fit the general look of the API's)
 
     """
+
+    FACTORY_MODIFIERS = {}
 
     def __init__(self, on_class_create=None):
         """
@@ -202,9 +205,11 @@ class BlockFactory:
         will reset the current object to the status right after the .setTemplate() call
         """
         assert self.template is not None
+
         template = self.template
         if template.name is not None:
             self.setName(template.name)
+
         self.setGlobalModName(template.modname).setBreakAbleFlag(template.breakable)
         self.model_states = template.model_states.copy()
         if template.solid_faces is not None:
@@ -265,7 +270,7 @@ class BlockFactory:
         :return: the BlockFactory instance. When the template exists, it will be an copy of the active without the
             template instance
         """
-        # logger.println("[INFO] finishing up '{}'".format(self.name))
+
         if self.name.count(":") == 0:
             logger.println(
                 "[BLOCK FACTORY][FATAL] 'setName' was set to an not-prefixed name '{}'".format(
@@ -281,7 +286,9 @@ class BlockFactory:
             logger.println(
                 "[BLOCK FACTORY][FATAL] (This could be an wrong template setup for the block factory)"
             )
+            logger.print_stack("call stack")
             return
+
         if self.modname is None or self.name.count(":") > 0:
             modname, blockname = tuple(self.name.split(":"))
         else:
@@ -295,6 +302,7 @@ class BlockFactory:
             obj.template = None
             if reset_to_template:
                 self.setToTemplate()
+
         if immediate:
             obj.finish_up()
         else:
@@ -459,6 +467,10 @@ class BlockFactory:
             r = self.on_class_create(ConstructedBlock)
             if r is not None:
                 ConstructedBlock = r
+
+        if self.name in self.FACTORY_MODIFIERS:
+            for modifier in self.FACTORY_MODIFIERS:
+                ConstructedBlock = modifier.apply(self, ConstructedBlock)
 
         G.registry.register(ConstructedBlock)
 

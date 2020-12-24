@@ -51,24 +51,24 @@ class LoadingStage:
     class for any loading stage for the system
     """
 
-    def __init__(self, name, *eventnames):
+    def __init__(self, name, *event_names):
         """
-        creates an new instance of LoadingStage
+        Creates an new instance of LoadingStage
         :param name: the name of the stage
-        :param eventnames: an list of events to call in this stage
+        :param event_names: an list of events to call in this stage
         """
         self.name = name
         self.active_event_name = None
         self.active_mod_index = 0
-        self.event_names = list(eventnames)
-        self.running_event_names = eventnames
+        self.event_names = list(event_names)
+        self.running_event_names = event_names
         self.progress = 0
         self.max_progress = 0
 
     @classmethod
     def finish(cls, astate):
         """
-        will finish up the system
+        Will finish up the system
         :param astate: the state to use
         """
         G.mod_loader.active_loading_stage += 1
@@ -81,6 +81,7 @@ class LoadingStage:
             G.state_handler.switch_to("minecraft:block_item_generator")
             G.mod_loader.finished = True
             return True
+
         astate.parts[0].progress += 1
         astate.parts[2].progress = 0
         new_stage = LOADING_ORDER[G.mod_loader.active_loading_stage]
@@ -127,10 +128,12 @@ class LoadingStage:
             astate.parts[2].progress_max = self.max_progress
             astate.parts[2].progress = 0
             return
+
         if self.active_event_name is None:
             if len(self.event_names) == 0:
                 return self.finish(astate)
             self.active_event_name = self.event_names.pop(0)
+
         modname = G.mod_loader.mod_loading_order[self.active_mod_index]
         mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[modname]
         try:
@@ -156,6 +159,7 @@ class LoadingStage:
                 astate.parts[2].progress_max = self.max_progress
                 astate.parts[2].progress = 0
                 return
+
             mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[
                 G.mod_loader.mod_loading_order[self.active_mod_index]
             ]
@@ -377,14 +381,14 @@ LOADING_ORDER += [
 ]
 
 
-def insertAfter(to_insert: LoadingStage, after: LoadingStage) -> bool:
+def insert_after(to_insert: LoadingStage, after: LoadingStage) -> bool:
     if after not in LOADING_ORDER:
         return False
     LOADING_ORDER.insert(LOADING_ORDER.index(after) + 1, to_insert)
     return True
 
 
-def insertBefore(to_insert: LoadingStage, before: LoadingStage) -> bool:
+def insert_before(to_insert: LoadingStage, before: LoadingStage) -> bool:
     if before not in LOADING_ORDER:
         return False
     LOADING_ORDER.insert(LOADING_ORDER.index(before), to_insert)
@@ -447,7 +451,7 @@ class ModLoader:
         )
         self.error_builder = logger.TableBuilder()
 
-    def registerReloadAssignedLoadingStage(self, stage: str):
+    def register_reload_assigned_loading_stage(self, stage: str):
         """
         Will register an loading stage as one to executed on every reload
         :param stage: the event name of the stage
