@@ -35,8 +35,13 @@ class BlockRemovalReason(enum.Enum):
 if shared.IS_CLIENT:
     import mcpython.client.rendering.model.api
 
-    class parent(mcpython.common.event.Registry.IRegistryContent, mcpython.client.rendering.model.api.IBlockStateRenderingTarget):
+    class parent(
+        mcpython.common.event.Registry.IRegistryContent,
+        mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+    ):
         pass
+
+
 else:
     parent = mcpython.common.event.Registry.IRegistryContent
 

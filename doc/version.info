@@ -1405,3 +1405,4 @@ R   [uuk]: improved world serialization API
 [uuk]: some work on block rendering API
 [uuk]: some entity rendering API changes
 [uuk]: injection point for custom factories
+[uuk]: implemented material registry system

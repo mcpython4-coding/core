@@ -21,10 +21,13 @@ class EntityHandler:
 
     def __init__(self):
         self.registry = mcpython.common.event.Registry.Registry(
-            "minecraft:entities", ["minecraft:entity"], "stage:entities", injection_function=self.add_entity_cls
+            "minecraft:entities",
+            ["minecraft:entity"],
+            "stage:entities",
+            injection_function=self.add_entity_cls,
         )
         self.entity_map = {}
-        
+
     def add_entity_cls(self, registry, entity_cls):
         if shared.IS_CLIENT:
             entity_cls.init_renderers()
