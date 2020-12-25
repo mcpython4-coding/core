@@ -121,7 +121,7 @@ class Chat:
         )
         self.active_index += len(text)
 
-    def on_key_press(self, symbol, modifiers):
+    def on_key_press(self, symbol: int, modifiers: int):
         """
         called when an key is pressed
         :param symbol: the symbol that is pressed

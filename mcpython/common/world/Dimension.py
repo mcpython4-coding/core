@@ -149,6 +149,11 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         # normal batch
         self.batches = [pyglet.graphics.Batch() for _ in range(self.BATCH_COUNT)]
 
+        self.height_range = (0, 255)
+
+    def get_dimension_range(self) -> typing.Tuple[int, int]:
+        return self.height_range
+
     def get_id(self):
         return self.id
 
@@ -170,6 +175,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         if cz is None:
             assert type(cx) == tuple
             cx, cz = cx
+
         if (cx, cz) not in self.chunks:
             if not create:
                 return
@@ -178,6 +184,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
                 G.world_generation_handler.add_chunk_to_generation_list(
                     self.chunks[(cx, cz)]
                 )
+
         return self.chunks[(cx, cz)]
 
     def get_chunk_for_position(
@@ -198,6 +205,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             type(position), mcpython.common.block.AbstractBlock.AbstractBlock
         ):
             position = position.position
+
         return self.get_chunk(*mcpython.util.math.positionToChunk(position), **kwargs)
 
     @deprecation.deprecated()
@@ -207,6 +215,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         chunk = self.get_chunk_for_position(position, generate=False, create=False)
         if chunk is None:
             return
+
         return chunk.get_block(position)
 
     @deprecation.deprecated()
@@ -218,6 +227,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         block_update=True,
         block_update_self=True,
         lazy_setup: typing.Callable = None,
+        check_build_range=True,
     ):
         chunk = self.get_chunk_for_position(position, generate=False)
         return chunk.add_block(
@@ -227,6 +237,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             block_update=block_update,
             block_update_self=block_update_self,
             lazy_setup=lazy_setup,
+            check_build_range=check_build_range,
         )
 
     @deprecation.deprecated()
@@ -255,8 +266,10 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
 
     def draw(self):
         self.batches[0].draw()
+
         G.rendering_helper.enableAlpha()
         self.batches[1].draw()
+
         x, z = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
         pad = 4
         for dx in range(-pad, pad + 1):
@@ -267,6 +280,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
                     chunk, mcpython.common.world.Chunk.Chunk
                 ):
                     chunk.draw()
+
         G.rendering_helper.disableAlpha()
 
     def __del__(self):

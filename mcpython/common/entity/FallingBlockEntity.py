@@ -38,7 +38,7 @@ class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def draw(self):
         if self.block is not None:
             self.block.position = self.position
-            G.model_handler.draw_block(self.block)
+            G.model_handler.draw_block(self.block)  # todo: use batch
 
     def tick(self, dt):
         super().tick(dt)

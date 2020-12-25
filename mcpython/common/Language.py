@@ -9,15 +9,17 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared as G, logger
 import mcpython.ResourceLoader
 
-LANGUAGES = {}  # table of data of Languages
+LANGUAGES: typing.Dict[str, "Language"] = {}  # table of data of Languages
 # change this for having another language, you have to include the needed lang files yourself :/
 ACTIVE_LANGUAGE = "en_us"  # the active language
 
 
-def get(key, formatting=None):
+def get(key: str, formatting=None):
     """
     get the translated name for an given key
     :param key: the key to get
@@ -107,7 +109,7 @@ class Language:
             LANGUAGES[name].table = data
 
     def __init__(self):
-        self.table = {}
+        self.table: typing.Dict[str, str] = {}
 
     def add_entry(self, key: str, value: str):
         self.table[key] = value
@@ -122,7 +124,7 @@ def from_directory(directory: str, modname: str):
     :param directory: the directory name
     :param modname: the mod name
     """
-    if not modname in G.mod_loader.mods:
+    if modname not in G.mod_loader.mods:
         modname = "minecraft"
     files = list(mcpython.ResourceLoader.get_all_entries_special(directory))
     m = len(files)

@@ -42,25 +42,31 @@ class EntityHandler:
         check_summon=False,
         **kwargs
     ):
-        if dimension is None:
-            dimension = shared.world.get_active_dimension()
-        if type(dimension) in (str, int):
-            dimension = shared.world.get_dimension(dimension)
         if name not in self.registry.entries:
             raise ValueError("unknown entity type name: '{}'".format(name))
-        entity = self.registry.entries[name]
-        if not entity.SUMMON_ABLE and check_summon:
+
+        if dimension is None:
+            dimension = shared.world.get_active_dimension()
+
+        if type(dimension) in (str, int):
+            dimension = shared.world.get_dimension(dimension)
+
+        entity_cls = self.registry.entries[name]
+
+        if not entity_cls.SUMMON_ABLE and check_summon:
             logger.println(
                 "[WARN] tried to summon an not-summon-able entity named '{}' at '{}'".format(
                     name, position
                 )
             )
             return
-        entity = entity.create_new(position, *args, dimension=dimension, **kwargs)
+
+        entity = entity_cls.create_new(position, *args, dimension=dimension, **kwargs)
         if uuid is not None:
             entity.uuid = uuid
         self.entity_map[entity.uuid] = entity
         entity.teleport(entity.position, force_chunk_save_update=True)
+
         return entity
 
     def tick(self, dt: float):
@@ -68,17 +74,18 @@ class EntityHandler:
             entity.tick(dt)
             if (
                 entity.parent is None and entity.child is not None
-            ):  # update the positions of the childs
+            ):  # update the positions of the children
                 x, y, z = entity.position
                 y += entity.entity_height
                 child = entity.child
+
                 while child is not None:
                     child.position = (x, y, z)
                     y += child.entity_height
                     child = child.child
 
             if (
-                not entity.nbt_data["invulnerable"] and entity.position[1] < -1000
+                not entity.nbt_data["invulnerable"] and entity.position[1] < -1000 + entity.dimension.get_dimension_range()[0]
             ):  # check if it has fallen to far down so it should be killed
                 entity.kill()
 

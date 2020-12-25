@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.container.ItemStack
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.event.Registry
 import mcpython.common.entity.EntityHandler
 import uuid
@@ -55,7 +55,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         for moder: you SHOULD implement an custom constructor which set the bellow values to an "good" value
         """
         self.dimension = (
-            G.world.get_active_dimension() if dimension is None else dimension
+            shared.world.get_active_dimension() if dimension is None else dimension
         )
         self.unsafe_position = (0, 0, 0)  # todo: move to nbt
         self.rotation = (0, 0, 0)  # todo: move to nbt
@@ -126,7 +126,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         :param dimension: to which dimension-id to teleport to, if None, no dimension change is used
         :param force_chunk_save_update: if the system should force to update were player data is stored
         """
-        if not G.event_handler.call_cancelable(
+        if not shared.event_handler.call_cancelable(
             "world:entity:teleport", self, dimension, force_chunk_save_update
         ):
             return
@@ -142,7 +142,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
             dimension_id = before_dim if before_dim is not None else 0
         else:
             dimension_id = dimension
-        dimension = G.world.get_dimension(dimension_id)
+        dimension = shared.world.get_dimension(dimension_id)
         self.unsafe_position = position
         if dimension is None:
             return
@@ -156,7 +156,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
                 self.chunk.entities.remove(self)
             self.chunk = dimension.get_chunk_for_position(self.position)
             self.chunk.entities.add(self)
-        G.event_handler.call("world:entity:teleport:post", self)
+        shared.event_handler.call("world:entity:teleport:post", self)
 
     # interaction functions
 
@@ -186,8 +186,8 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         """
         if self.chunk is not None and self in self.chunk.entities:
             self.chunk.entities.remove(self)
-        if self.uuid in G.entity_handler.entity_map:
-            del G.entity_handler.entity_map[self.uuid]
+        if self.uuid in shared.entity_handler.entity_map:
+            del shared.entity_handler.entity_map[self.uuid]
 
     def pick_up(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
         """

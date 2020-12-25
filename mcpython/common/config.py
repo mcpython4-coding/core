@@ -204,6 +204,7 @@ ENABLED_EXTRA_BLOCKS = {
 }
 
 # I'm to lazy to write these...
+# todo: migrate to material system
 for wood in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak"]:
     pass
 
