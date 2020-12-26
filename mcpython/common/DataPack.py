@@ -96,10 +96,10 @@ class DataPackHandler:
         self.data_packs.clear()
         G.event_handler.call("datapack:unload:post")
 
-    def try_call_function(self, name: str, info=None):
+    def try_call_function(self, name: str, info: mcpython.server.command.CommandParser.ParsingCommandInfo = None):
         """
-        will try to invoke an function in an datapack
-        :param name: the name of the function
+        Will try to invoke an function in an datapack
+        :param name: the name of the function, e.g. minecraft:test
         :param info: the info-object to use
         WARNING: will only invoke ONE function/tag from the datapacks, not all
         """

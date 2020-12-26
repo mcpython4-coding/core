@@ -199,7 +199,7 @@ class Inventory:
 
     def on_world_cleared(self):  # todo: remove
         [slot.get_itemstack().clean() for slot in self.slots]
-        if self in G.inventory_handler.opened_inventorystack:
+        if self in G.inventory_handler.opened_inventory_stack:
             G.inventory_handler.hide(self)
 
     def get_interaction_slots(self):
@@ -282,9 +282,9 @@ class Inventory:
         # we do not care about it when it is None [gc-sided deletion at the end of the program]
         if G is None or G.inventory_handler is None:
             return
-        if self in G.inventory_handler.alwaysopened:
-            G.inventory_handler.alwaysopened.remove(self)
+        if self in G.inventory_handler.always_opened:
+            G.inventory_handler.always_opened.remove(self)
         G.inventory_handler.hide(self)
-        if self in G.inventory_handler.inventorys:
-            G.inventory_handler.inventorys.remove(self)
+        if self in G.inventory_handler.inventories:
+            G.inventory_handler.inventories.remove(self)
         G.inventory_handler.update_shift_container()

@@ -516,7 +516,7 @@ class StatePartGame(StatePart.StatePart):
         elif (
             symbol == key.SPACE
             and G.world.get_active_player().inventory_chat
-            not in G.inventory_handler.opened_inventorystack
+            not in G.inventory_handler.opened_inventory_stack
         ):
             if (
                 self.double_space_cooldown

@@ -18,10 +18,12 @@ import mcpython.common.item.AbstractToolItem
 
 class BlockCraftingTable(AbstractBlock.AbstractBlock):
     """
-    class for the crafting table
+    Class for the crafting table
     """
 
     NAME: str = "minecraft:crafting_table"
+    HARDNESS = 2.5
+    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple
@@ -36,12 +38,9 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
 
     def get_inventories(self):
         """
-        called to get an list of inventories
+        Called to get an list of inventories
         """
         return [G.world.get_active_player().inventory_crafting_table]
-
-    HARDNESS = 2.5
-    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
     def on_block_remove(self, reason):
         G.inventory_handler.hide(G.world.get_active_player().inventory_crafting_table)

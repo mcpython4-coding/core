@@ -55,7 +55,7 @@ class BlockFaceState:
                     self.block.position,
                     self.block,
                     face,
-                    G.world.get_active_dimension().batches,
+                    G.world.get_dimension_by_name(self.block.dimension).batches,
                 )
             elif issubclass(
                 type(self.custom_renderer),
@@ -69,7 +69,7 @@ class BlockFaceState:
         else:
             self.face_data[face.normal_name].extend(
                 G.model_handler.add_face_to_batch(
-                    self.block, face, G.world.get_active_dimension().batches
+                    self.block, face, G.world.get_dimension_by_name(self.block.dimension).batches
                 )
             )
 
@@ -121,7 +121,7 @@ class BlockFaceState:
         updates the block face state
         :param redraw_complete: if all sides should be re-drawn
         """
-        chunk = G.world.get_active_dimension().get_chunk_for_position(
+        chunk = G.world.get_dimension_by_name(self.block.dimension).get_chunk_for_position(
             self.block.position
         )
         state = chunk.exposed_faces(self.block.position)

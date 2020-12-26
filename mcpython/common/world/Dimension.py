@@ -15,7 +15,7 @@ import typing
 import deprecation
 import pyglet
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.block.AbstractBlock
 import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.util
@@ -32,7 +32,7 @@ class DimensionDefinition:
     def __init__(self, name: str, config: dict):
         """
         will create an new placeholder
-        WARNING: must be send to G.dimensionhandler
+        WARNING: must be send to shared.dimension_handler
         :param name: the dimension name
         :param config: the config for it
         """
@@ -82,7 +82,7 @@ class DimensionHandler:
         self.add_dimension(
             DimensionDefinition(
                 "minecraft:overworld",
-                {"configname": ("minecraft:default_overworld")},
+                {"configname": "minecraft:default_overworld"},
             ).setStaticId(0)
         )
         self.add_dimension(
@@ -111,13 +111,13 @@ class DimensionHandler:
         will create all dimension in the active world
         """
         for dim in self.dimensions.values():
-            G.world.add_dimension(dim.id, dim.name, dim_config=dim.config)
+            shared.world.add_dimension(dim.id, dim.name, dim_config=dim.config)
 
 
-G.dimension_handler = DimensionHandler()
+shared.dimension_handler = DimensionHandler()
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:dimension", G.dimension_handler.add_default_dimensions
+    "stage:dimension", shared.dimension_handler.add_default_dimensions
 )
 
 
@@ -165,7 +165,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         create: bool = True,
     ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
         """
-        used to get an chunk instance with an given position
+        Used to get an chunk instance with an given position
         :param cx: the chunk x position or an tuple of (x, z)
         :param cz: the chunk z position or None íf cx is tuple
         :param generate: if the chunk should be scheduled for generation if it is not generated
@@ -181,7 +181,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
                 return
             self.chunks[(cx, cz)] = mcpython.common.world.Chunk.Chunk(self, (cx, cz))
             if generate:
-                G.world_generation_handler.add_chunk_to_generation_list(
+                shared.world_generation_handler.add_chunk_to_generation_list(
                     self.chunks[(cx, cz)]
                 )
 
@@ -196,7 +196,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         **kwargs
     ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
         """
-        gets an chunk for an position
+        Gets an chunk for an position
         :param position: the position to use or the block instance to use
         :param kwargs: same as get_chunk()
         :return: the chunk instance or None
@@ -263,11 +263,11 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
     def draw(self):
         self.batches[0].draw()
 
-        G.rendering_helper.enableAlpha()
+        shared.rendering_helper.enableAlpha()
         self.batches[1].draw()
 
         x, z = mcpython.util.math.position_to_chunk(
-            G.world.get_active_player().position
+            shared.world.get_active_player().position
         )
         pad = 4
         for dx in range(-pad, pad + 1):
@@ -279,7 +279,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
                 ):
                     chunk.draw()
 
-        G.rendering_helper.disableAlpha()
+        shared.rendering_helper.disableAlpha()
 
     def __del__(self):
         self.chunks.clear()

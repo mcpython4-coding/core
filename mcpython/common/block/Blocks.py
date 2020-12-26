@@ -18,16 +18,16 @@ from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance
 from mcpython.common.config import ENABLED_EXTRA_BLOCKS as BLOCKS
 
 
-def remove_if_downer_block_not_solid(blockinstance):
+def remove_if_downer_block_not_solid(instance):
     """
     Helper function for donwer implementation.
     Will remove THIS block when the block below is air or an not-generated block
-    :param blockinstance: the block-instance to check
+    :param instance: the block-instance to check
     """
-    x, y, z = blockinstance.position
+    x, y, z = instance.position
     other = G.world.get_active_dimension().get_block((x, y - 1, z))
     if other is None or type(other) == str:
-        G.world.get_active_dimension().remove_block(blockinstance.position)
+        G.world.get_active_dimension().remove_block(instance.position)
 
 
 # todo: let this generate from java source

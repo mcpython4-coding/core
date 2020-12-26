@@ -1409,3 +1409,4 @@ R   [uuk]: improved world serialization API
 [uuk]: optimized world generation system and subsequent parts
 [uuk]: implemented new noise manager method: GeoNoiseManager
 [uuk]: improved speed of debug world generators
+[uuk]: done some work to make blocks work in non-active dimensions

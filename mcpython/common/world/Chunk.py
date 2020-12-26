@@ -208,7 +208,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         block_state=None,
     ):
         """
-        adds an block to the given position
+        Adds an block to the given position
         :param position: the position to add
         :param block_name: the name of the block or an instance of it
         :param immediate: if the block should be shown if needed
@@ -238,6 +238,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if issubclass(type(block_name), Block.AbstractBlock):
             block = block_name
             block.position = position
+            block.dimension = self.dimension.get_name()
             if lazy_setup is not None:
                 lazy_setup(block)
             block.face_state.update()
@@ -248,6 +249,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 return
             block = table[block_name]()
             block.position = position
+            block.dimension = self.dimension.get_name()
             if lazy_setup is not None:
                 lazy_setup(block)
 

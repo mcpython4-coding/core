@@ -379,7 +379,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     "name": "minecraft:air",
                     "custom": {},
                 }
-                continue
+
         for rel_position in data["blocks"].keys():
             position = (
                 rel_position[0] + chunk_instance.get_position()[0] * 16,

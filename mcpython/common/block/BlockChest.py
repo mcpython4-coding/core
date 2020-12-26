@@ -55,11 +55,12 @@ class BlockChest(AbstractBlock.AbstractBlock):
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         """
         creates an new BlockChest
         """
-        super().__init__(*args, **kwargs)
+        super().__init__()
+
         self.front_side = mcpython.util.enums.EnumSide.N
         import mcpython.client.gui.InventoryChest as InventoryChest
 
@@ -90,10 +91,10 @@ class BlockChest(AbstractBlock.AbstractBlock):
         :return: if the block can be opened
         """
         x, y, z = self.position
-        blockinst = G.world.get_active_dimension().get_block((x, y + 1, z))
+        instance = G.world.get_dimension_by_name(self.dimension).get_block((x, y + 1, z))
         return (
-            blockinst is None
-            or not blockinst.face_solid[mcpython.util.enums.EnumSide.DOWN]
+            instance is None
+            or not instance.face_solid[mcpython.util.enums.EnumSide.DOWN]
         )
 
     def on_player_interaction(
@@ -142,9 +143,9 @@ class BlockChest(AbstractBlock.AbstractBlock):
         return BBOX
 
     @classmethod
-    def set_block_data(cls, iteminst, block):
-        if hasattr(iteminst, "inventory"):
-            block.inventory = iteminst.inventory.copy()
+    def set_block_data(cls, instance, block):
+        if hasattr(instance, "inventory"):
+            block.inventory = instance.inventory.copy()
 
     def on_request_item_for_block(self, itemstack):
         if (
@@ -163,8 +164,8 @@ class BlockChest(AbstractBlock.AbstractBlock):
         del self.inventory
 
     @classmethod
-    def modify_block_item(cls, itemfactory):
-        itemfactory.setFuelLevel(15)
+    def modify_block_item(cls, factory):
+        factory.setFuelLevel(15)
 
     def get_save_data(self):
         return {"model": self.get_model_state(), "loot_table": self.loot_table_link}

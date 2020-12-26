@@ -43,6 +43,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.dimensions: typing.Dict[
             int, mcpython.common.world.AbstractInterface.IDimension
         ] = {}  # todo: change for str-based
+        self.dim_to_id = {}
         G.dimension_handler.init_dims()
         self.active_dimension: int = (
             0  # todo: change to str; todo: move to player; todo: make property
@@ -126,6 +127,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         return self.get_dimension(self.active_dimension)
 
+    def get_dimension_by_name(self, name: str):
+        return self.dimensions[self.dim_to_id[name]]
+
     def add_dimension(
         self, dim_id: int, name: str, dim_config=None
     ) -> mcpython.common.world.AbstractInterface.IDimension:
@@ -141,6 +145,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         dim = self.dimensions[dim_id] = mcpython.common.world.Dimension.Dimension(
             self, dim_id, name, gen_config=dim_config
         )
+        self.dim_to_id[dim_id] = dim
         G.world_generation_handler.setup_dimension(dim, dim_config)
         return dim
 
@@ -362,7 +367,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         if remove_dims:
             self.dimensions.clear()
             G.dimension_handler.init_dims()
-        [inventory.on_world_cleared() for inventory in G.inventory_handler.inventorys]
+        [inventory.on_world_cleared() for inventory in G.inventory_handler.inventories]
         self.reset_config()
         G.world.get_active_player().flying = False
         for inv in G.world.get_active_player().get_inventories():

@@ -67,16 +67,16 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
         x, y, z = self.position
 
         block_north: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x + 1, y, z))
+            G.world.get_dimension_by_name(self.dimension).get_block((x + 1, y, z))
         )
         block_east: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x, y, z + 1))
+            G.world.get_dimension_by_name(self.dimension).get_block((x, y, z + 1))
         )
         block_south: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x - 1, y, z))
+            G.world.get_dimension_by_name(self.dimension).get_block((x - 1, y, z))
         )
         block_west: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x, y, z - 1))
+            G.world.get_dimension_by_name(self.dimension).get_block((x, y, z - 1))
         )
 
         self.connections["east"] = self.connects_to(

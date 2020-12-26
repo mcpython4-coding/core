@@ -59,7 +59,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         if any(
             [
                 inventory.is_blocking_interactions()
-                for inventory in G.inventory_handler.opened_inventorystack
+                for inventory in G.inventory_handler.opened_inventory_stack
             ]
         ):
             G.window.set_exclusive_mouse(False)
@@ -67,7 +67,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         else:
             G.state_handler.update_exclusive()
             G.state_handler.states["minecraft:game"].parts[0].activate_keyboard = True
-        for inventory in G.inventory_handler.opened_inventorystack:
+        for inventory in G.inventory_handler.opened_inventory_stack:
             G.rendering_helper.enableAlpha()  # make sure that it is enabled
             inventory.draw(hoveringslot=hoveringslot)
         if not G.inventory_handler.moving_slot.get_itemstack().is_empty():
@@ -99,7 +99,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         :return: the slot or None if none found
         todo: move to InventoryHandler
         """
-        for inventory in G.inventory_handler.opened_inventorystack:
+        for inventory in G.inventory_handler.opened_inventory_stack:
             dx, dy = inventory.get_position()
             for slot in inventory.get_interaction_slots():
                 sx, sy = slot.position
@@ -116,7 +116,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         :return: the slot and the inventory or None and None if none found
         todo: move to InventoryHandler
         """
-        for inventory in G.inventory_handler.opened_inventorystack:
+        for inventory in G.inventory_handler.opened_inventory_stack:
             dx, dy = inventory.get_position()
             for slot in inventory.get_interaction_slots():
                 sx, sy = slot.position
@@ -335,9 +335,9 @@ class InventoryHandler:
     """
 
     def __init__(self):
-        self.opened_inventorystack = []
-        self.alwaysopened = []
-        self.inventorys = []
+        self.opened_inventory_stack = []
+        self.always_opened = []
+        self.inventories = []
         self.moving_slot: mcpython.client.gui.Slot.Slot = mcpython.client.gui.Slot.Slot(
             allow_player_add_to_free_place=False,
             allow_player_insert=False,
@@ -346,7 +346,7 @@ class InventoryHandler:
         self.shift_container = mcpython.client.gui.ShiftContainer.ShiftContainer()
 
     def update_shift_container(self):
-        for inventory in self.opened_inventorystack:
+        for inventory in self.opened_inventory_stack:
             inventory.update_shift_container()
 
     def add(self, inventory):
@@ -354,24 +354,24 @@ class InventoryHandler:
         add an new inventory
         :param inventory: the inventory to add
         """
-        if inventory in self.inventorys:
+        if inventory in self.inventories:
             return
-        self.inventorys.append(inventory)
+        self.inventories.append(inventory)
         if inventory.is_always_open():
-            self.alwaysopened.append(inventory)
+            self.always_opened.append(inventory)
             self.show(inventory)
 
     def reload_config(self):
-        [inventory.reload_config() for inventory in self.inventorys]
+        [inventory.reload_config() for inventory in self.inventories]
 
     def show(self, inventory):
         """
         show an inventory
         :param inventory: the inventory to show
         """
-        if inventory in self.opened_inventorystack:
+        if inventory in self.opened_inventory_stack:
             return
-        self.opened_inventorystack.append(inventory)
+        self.opened_inventory_stack.append(inventory)
         inventory.on_activate()
         self.update_shift_container()
         G.event_handler.call("inventory:show", inventory)
@@ -384,12 +384,12 @@ class InventoryHandler:
         hide an inventory
         :param inventory: the inventory to hide
         """
-        if inventory not in self.opened_inventorystack:
+        if inventory not in self.opened_inventory_stack:
             return
-        if inventory in self.alwaysopened:
+        if inventory in self.always_opened:
             return
         inventory.on_deactivate()
-        self.opened_inventorystack.remove(inventory)
+        self.opened_inventory_stack.remove(inventory)
         self.update_shift_container()
         G.event_handler.call("inventory:hide", inventory)
         G.event_handler.call(
@@ -401,7 +401,7 @@ class InventoryHandler:
         removes one inventory from stack
         :return: the inventory removed or None if no is active
         """
-        stack = self.opened_inventorystack.copy()
+        stack = self.opened_inventory_stack.copy()
         stack.reverse()
         for inventory in stack:
             if inventory.is_closable_by_escape():
@@ -412,8 +412,8 @@ class InventoryHandler:
         """
         close all inventories
         """
-        for inventory in self.opened_inventorystack:
-            if inventory in self.alwaysopened:
+        for inventory in self.opened_inventory_stack:
+            if inventory in self.always_opened:
                 continue
             self.hide(inventory)
 
