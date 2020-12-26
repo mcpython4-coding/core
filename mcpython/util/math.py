@@ -246,15 +246,26 @@ def normalize_ceil(position):
         raise
 
 
-def positionToChunk(position):
+def position_to_chunk(position):
     """
     Returns a tuple representing the chunk for the given `position`.
 
     :param position: the position
     :return: the chunk
     """
-    x, y, z = normalize(position)
+    x, _, z = normalize(position)
     x, z = x // 16, z // 16
+    return x, z
+
+
+def position_to_chunk_unsafe(position):
+    """
+    Returns a tuple representing the chunk for the given `position`.
+
+    :param position: the position
+    :return: the chunk
+    """
+    x, z = position[0] // 16, position[-1] // 16
     return x, z
 
 

@@ -23,15 +23,9 @@ class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
     base class for every carpet
     """
 
-    def __init__(self, *args, **kwargs):
-        """
-        creates an new carpet class
-        """
-        super().__init__(*args, **kwargs)
-        self.face_solid = {
-            face: face == mcpython.util.enums.EnumSide.DOWN
-            for face in mcpython.util.enums.EnumSide.iterate()
-        }
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
 
     def on_block_update(self):
         x, y, z = self.position

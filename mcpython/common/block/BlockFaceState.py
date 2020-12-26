@@ -21,13 +21,20 @@ class BlockFaceState:
     todo: merge into AbstractBlock
     """
 
+    DEFAULT_FACE_STATE = {
+        x.normal_name: False for x in mcpython.util.enums.EnumSide.iterate()
+    }
+    DEFAULT_FACE_DATA = {
+        x.normal_name: [] for x in mcpython.util.enums.EnumSide.iterate()
+    }
+
     def __init__(self, block):
         """
         block face state
         """
         self.block = block
-        self.faces = {x: False for x in mcpython.util.enums.EnumSide.iterate()}
-        self.face_data = {x: [] for x in mcpython.util.enums.EnumSide.iterate()}
+        self.faces = self.DEFAULT_FACE_STATE.copy()
+        self.face_data = self.DEFAULT_FACE_DATA.copy()
         self.custom_renderer = None  # holds an custom block renderer
         self.subscribed_renderer: bool = False
 
@@ -36,15 +43,15 @@ class BlockFaceState:
         shows an face
         :param face: the face of the block
         """
-        if self.faces[face]:
+        if self.faces[face.normal_name]:
             return
-        self.faces[face] = True
+        self.faces[face.normal_name] = True
         if self.custom_renderer is not None:
             if issubclass(
                 type(self.custom_renderer),
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
             ):
-                self.face_data[face] = self.custom_renderer.add(
+                self.face_data[face.normal_name] = self.custom_renderer.add(
                     self.block.position,
                     self.block,
                     face,
@@ -60,7 +67,7 @@ class BlockFaceState:
                     )
                     self.subscribed_renderer = True
         else:
-            self.face_data[face].extend(
+            self.face_data[face.normal_name].extend(
                 G.model_handler.add_face_to_batch(
                     self.block, face, G.world.get_active_dimension().batches
                 )
@@ -71,16 +78,19 @@ class BlockFaceState:
         will hide an face
         :param face: the face to hide
         """
-        if not self.faces[face]:
+        if not self.faces[face.normal_name]:
             return
-        self.faces[face] = False
+        self.faces[face.normal_name] = False
         if self.custom_renderer is not None:
             if issubclass(
                 type(self.custom_renderer),
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
             ):
                 self.custom_renderer.remove(
-                    self.block.position, self.block, self.face_data[face], face
+                    self.block.position,
+                    self.block,
+                    self.face_data[face.normal_name],
+                    face,
                 )
             elif issubclass(
                 type(self.custom_renderer),
@@ -92,8 +102,8 @@ class BlockFaceState:
                     )
                     self.subscribed_renderer = False
         else:
-            [x.delete() for x in self.face_data[face]]
-        self.face_data[face].clear()
+            [x.delete() for x in self.face_data[face.normal_name]]
+        self.face_data[face.normal_name].clear()
 
     def _draw_custom_render(self):
         """
@@ -111,22 +121,25 @@ class BlockFaceState:
         updates the block face state
         :param redraw_complete: if all sides should be re-drawn
         """
-        state = (
-            G.world.get_active_dimension()
-            .get_chunk_for_position(self.block.position)
-            .exposed_faces(self.block.position)
+        chunk = G.world.get_active_dimension().get_chunk_for_position(
+            self.block.position
         )
+        state = chunk.exposed_faces(self.block.position)
         if state == self.faces and not redraw_complete:
             return
-        G.world.get_active_dimension().get_chunk_for_position(
-            self.block.position
-        ).positions_updated_since_last_save.add(self.block.position)
+        chunk.positions_updated_since_last_save.add(self.block.position)
+        chunk.mark_dirty()
         self.hide_all()
         for key in state.keys():
+            face = (
+                key
+                if not isinstance(key, str)
+                else mcpython.util.enums.EnumSide[key.upper()]
+            )
             if state[key]:
-                self.show_face(key)
+                self.show_face(face)
             else:
-                self.hide_face(key)
+                self.hide_face(face)
 
     def hide_all(self):
         """
@@ -145,9 +158,3 @@ class BlockFaceState:
             )
             self.subscribed_renderer = False
         [self.hide_face(face) for face in mcpython.util.enums.EnumSide.iterate()]
-
-    def __del__(self):
-        """
-        will delete references to various parts for gc
-        """
-        self.hide_all()

@@ -206,9 +206,8 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         ):
             position = position.position
 
-        return self.get_chunk(*mcpython.util.math.positionToChunk(position), **kwargs)
+        return self.get_chunk(*mcpython.util.math.position_to_chunk(position), **kwargs)
 
-    @deprecation.deprecated()
     def get_block(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
@@ -218,7 +217,6 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
 
         return chunk.get_block(position)
 
-    @deprecation.deprecated()
     def add_block(
         self,
         position: tuple,
@@ -240,7 +238,6 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             check_build_range=check_build_range,
         )
 
-    @deprecation.deprecated()
     def remove_block(
         self, position: tuple, immediate=True, block_update=True, block_update_self=True
     ):
@@ -252,15 +249,12 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             block_update_self=block_update_self,
         )
 
-    @deprecation.deprecated()
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         self.get_chunk_for_position(position).check_neighbors(position)
 
-    @deprecation.deprecated()
     def show_block(self, position, immediate=True):
         self.get_chunk_for_position(position).show_block(position, immediate=immediate)
 
-    @deprecation.deprecated()
     def hide_block(self, position, immediate=True):
         self.get_chunk_for_position(position).hide_block(position, immediate=immediate)
 
@@ -270,7 +264,9 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         G.rendering_helper.enableAlpha()
         self.batches[1].draw()
 
-        x, z = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
+        x, z = mcpython.util.math.position_to_chunk(
+            G.world.get_active_player().position
+        )
         pad = 4
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):

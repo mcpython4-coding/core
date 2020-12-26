@@ -238,7 +238,7 @@ class StatePartGame(StatePart.StatePart):
             ):
                 block = G.world.get_active_dimension().get_block(blockpos)
                 chunk = G.world.get_active_dimension().get_chunk(
-                    *mcpython.util.math.positionToChunk(blockpos)
+                    *mcpython.util.math.position_to_chunk(blockpos)
                 )
                 if player.gamemode == 1:
                     if self.mouse_press_time >= 0.10:
@@ -423,7 +423,7 @@ class StatePartGame(StatePart.StatePart):
             )
         # collisions
         x, y, z = player.position
-        before = mcpython.util.math.positionToChunk(player.position)
+        before = mcpython.util.math.position_to_chunk(player.position)
         if player.gamemode != 3:
             x, y, z = G.window.collide((x + dx, y + dy, z + dz), 2, player.position)
         else:
@@ -435,7 +435,7 @@ class StatePartGame(StatePart.StatePart):
             player.damage(1, check_gamemode=False)
             self.void_damage_cooldown = time.time()
 
-        after = mcpython.util.math.positionToChunk(player.position)
+        after = mcpython.util.math.position_to_chunk(player.position)
         if before != after:
             G.world.change_chunks(before, after)
 

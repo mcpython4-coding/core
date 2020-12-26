@@ -39,6 +39,10 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
                         }
                     )
 
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
     def __init__(self, *args, **kwargs):
         """
         will create the fence
@@ -49,9 +53,6 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
             "east": False,
             "south": False,
             "west": False,
-        }
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
 
     def on_block_added(self):

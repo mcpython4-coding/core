@@ -18,6 +18,10 @@ import mcpython.util.enums
 class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
     # todo: add bounding-box
 
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connections = {
@@ -26,9 +30,6 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
             "south": False,
             "west": False,
             "up": False,
-        }
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
 
     def on_block_added(self):

@@ -31,12 +31,13 @@ class ISlab(mcpython.common.block.AbstractBlock.AbstractBlock):
     base class for slabs
     """
 
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.type = SlabModes.TOP
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
-        }
 
     def on_block_added(self):
         if self.real_hit and self.real_hit[1] - self.position[1] > 0:

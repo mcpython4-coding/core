@@ -27,6 +27,10 @@ def create_shulker_box(name):
 
         NAME = "minecraft:{}".format(name)
 
+        DEFAULT_FACE_SOLID = (
+            mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+        )
+
         def on_player_interaction(
             self, player, button: int, modifiers: int, hit_position: tuple
         ):

@@ -182,7 +182,7 @@ class StateWorldGeneration(State.State):
         # add surrounding chunks to load list
         G.world.change_chunks(
             None,
-            mcpython.util.math.positionToChunk(G.world.get_active_player().position),
+            mcpython.util.math.position_to_chunk(G.world.get_active_player().position),
         )
         G.world.save_file.save_world()
 

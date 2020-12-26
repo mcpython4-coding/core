@@ -140,41 +140,47 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         for entity in self.entities:
             entity.draw()
 
+    ALL_EXPOSED = {x: True for x in mcpython.util.enums.EnumSide.iterate()}
+
     def exposed_faces(
         self, position: typing.Tuple[int, int, int]
-    ) -> typing.Dict[mcpython.util.enums.EnumSide, bool]:
+    ) -> typing.Dict[str, bool]:
         """
         returns an dict of the exposed status of every face of the given block
         :param position: the position to check
         :return: the dict for the status
         """
-        x, y, z = position
-        faces = {}
         instance = self.get_block(position)
 
         if instance is None or type(instance) == str:
-            return {x: True for x in mcpython.util.enums.EnumSide.iterate()}
+            return self.ALL_EXPOSED.copy()
 
-        for face in mcpython.util.enums.EnumSide.iterate():
-            dx, dy, dz = face.relative
-            pos = (x + dx, y + dy, z + dz)
-            chunk = self.dimension.get_chunk_for_position(pos, generate=False)
-            if chunk is None:
-                continue
-            if not chunk.is_loaded() and G.world.hide_faces_to_not_generated_chunks:
-                faces[face] = False
+        faces = {}
+
+        for face in mcpython.util.enums.FACE_ORDER:
+            pos = face.relative_offset(position)
+            chunk_position = mcpython.util.math.position_to_chunk_unsafe(pos)
+
+            if chunk_position != self.position:
+                chunk = self.dimension.get_chunk(chunk_position, generate=False)
+
+                if chunk is None:
+                    continue
             else:
-                block = self.dimension.get_block(pos)
-                if block is None:
-                    faces[face] = True
-                elif type(block) == str:
-                    faces[face] = False  # todo: add an callback when the block is ready
-                elif not block.face_solid[face.invert()]:
-                    faces[face] = True
-                elif not instance.face_solid[face]:
-                    faces[face] = True
-                else:
-                    faces[face] = False
+                chunk = self
+
+            if not chunk.is_loaded() and G.world.hide_faces_to_not_generated_chunks:
+                faces[face.normal_name] = False
+            else:
+                block = chunk.get_block(pos)
+
+                faces[face.normal_name] = block is None or (
+                    not isinstance(block, str)
+                    and (
+                        not block.face_solid[face.invert()]
+                        or not instance.face_solid[face]
+                    )
+                )
 
         return faces
 
@@ -458,11 +464,10 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
     ) -> typing.Union[Block.AbstractBlock, str, None]:
         """
         will get the block at an given position
-        :param position: the position to check for
+        :param position: the position to check for, must be normalized
         :return: None if no block, str if scheduled and Block.Block if created
         todo: split up into get_block_generated and get_block_un_generated
         """
-        position = mcpython.util.math.normalize(position)
         return (
             self.world[position]
             if position in self.world

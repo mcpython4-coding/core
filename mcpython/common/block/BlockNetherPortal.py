@@ -29,11 +29,13 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     HARDNESS = -1
 
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.axis = "x"
-        for key in self.face_solid:
-            self.face_solid[key] = False
 
     def get_model_state(self) -> dict:
         return {"axis": self.axis}

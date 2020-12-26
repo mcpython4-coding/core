@@ -156,7 +156,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         if self.CANCEL_DIM_CHANGE:
             logger.println("interrupted!")
             return
-        sector = mcpython.util.math.positionToChunk(
+        sector = mcpython.util.math.position_to_chunk(
             G.world.get_active_player().position
         )
         logger.println("unloading chunks...")

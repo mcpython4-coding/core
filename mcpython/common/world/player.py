@@ -288,7 +288,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
             test_totem,
         ):
             return
-        sector = mcpython.util.math.positionToChunk(self.position)
+        sector = mcpython.util.math.position_to_chunk(self.position)
         shared.world.change_chunks(sector, None)
         self.reset_moving_slot()
         if not shared.world.gamerule_handler.table["keepInventory"].status.status:
@@ -310,7 +310,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.flying = False if self.gamemode != 3 else True
         self.armor_level = 0
         self.armor_toughness = 0
-        sector = mcpython.util.math.positionToChunk(self.position)
+        sector = mcpython.util.math.position_to_chunk(self.position)
         shared.world.change_chunks(None, sector)
         # todo: recalculate armor level!
 

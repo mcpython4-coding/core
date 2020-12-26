@@ -180,6 +180,8 @@ class ItemFactory(mcpython.common.factory.IFactoryModifier.IFactory):
                 return master.item_file
 
             def __init__(self):
+                for base in master.base_classes:
+                    base.__init__(self)
                 if master.creation_callback:
                     master.creation_callback(self)
 

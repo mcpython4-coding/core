@@ -121,7 +121,7 @@ class TickHandler:
         self.bind(function, tick * 2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
-        cx, cz = mcpython.util.math.positionToChunk(
+        cx, cz = mcpython.util.math.position_to_chunk(
             G.world.get_active_player().position
         )
         for dx in range(

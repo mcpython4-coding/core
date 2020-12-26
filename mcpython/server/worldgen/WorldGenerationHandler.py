@@ -12,6 +12,8 @@ This project is not official by mojang and does not relate to it.
 import time
 import typing
 
+import pyinstrument
+
 from mcpython import shared, logger
 import mcpython.common.mod.ModMcpython
 import mcpython.common.world.Chunk
@@ -123,11 +125,6 @@ class WorldGenerationHandler:
                 reference,
             )
 
-    def process_one_generation_task(self, **kwargs):  # todo: remove
-        if not self.enable_generation:
-            return
-        self.task_handler.process_one_task(**kwargs)
-
     def setup_dimension(
         self, dimension: mcpython.common.world.AbstractInterface.IDimension, config=None
     ):
@@ -192,8 +189,7 @@ class WorldGenerationHandler:
             )
             shared.world_generation_handler.task_handler.process_tasks()
         logger.println("\r", end="")
-        shared.event_handler.call("worldgen:chunk:finished", chunk)
-        config.on_chunk_generation_finished(chunk)
+        self.mark_finished(chunk)
         chunk.generated = True
         chunk.loaded = True
 

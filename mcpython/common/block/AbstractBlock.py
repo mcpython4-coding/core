@@ -11,7 +11,6 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 import typing
-import uuid
 import enum
 
 import mcpython.common.block.BlockFaceState
@@ -90,6 +89,11 @@ class AbstractBlock(parent):
 
     DEBUG_WORLD_BLOCK_STATES = [{}]
 
+    DEFAULT_FACE_SOLID = {face: True for face in mcpython.util.enums.EnumSide.iterate()}
+    UNSOLID_FACE_SOLID = {
+        face: False for face in mcpython.util.enums.EnumSide.iterate()
+    }
+
     def __init__(self):
         """
         creates new Block-instance.
@@ -103,10 +107,7 @@ class AbstractBlock(parent):
         self.face_state = mcpython.common.block.BlockFaceState.BlockFaceState(self)
         self.block_state = None
         self.set_by = None
-        self.face_solid = {
-            face: True for face in mcpython.util.enums.EnumSide.iterate()
-        }
-        self.uuid = uuid.uuid4()
+        self.face_solid = self.DEFAULT_FACE_SOLID.copy()
         self.injected_redstone_power = {}
 
     def set_creation_properties(

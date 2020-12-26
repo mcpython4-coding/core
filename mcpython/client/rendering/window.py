@@ -279,7 +279,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
             for x in G.state_handler.active_state.parts
         ):
             G.world_generation_handler.task_handler.process_tasks(timer=0.02)
-        sector = positionToChunk(G.world.get_active_player().position)
+        sector = position_to_chunk(G.world.get_active_player().position)
         if sector != self.sector:
             pyglet.clock.schedule_once(
                 lambda _: G.world.change_chunks(self.sector, sector), 0.1
@@ -582,7 +582,7 @@ class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow
         if not G.world.gamerule_handler.table["showCoordinates"].status.status:
             x = y = z = "?"
         chunk = G.world.get_active_dimension().get_chunk(
-            *mcpython.util.math.positionToChunk(G.world.get_active_player().position),
+            *mcpython.util.math.position_to_chunk(G.world.get_active_player().position),
             create=False
         )
         self.label.text = (

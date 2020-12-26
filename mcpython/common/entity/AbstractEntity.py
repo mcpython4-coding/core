@@ -131,7 +131,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         ):
             return
         if self.chunk is None:
-            sector_before = mcpython.util.math.positionToChunk(self.position)
+            sector_before = mcpython.util.math.position_to_chunk(self.position)
         else:
             sector_before = self.chunk.position
         if self.chunk is None:
@@ -146,7 +146,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         self.unsafe_position = position
         if dimension is None:
             return
-        sector_after = mcpython.util.math.positionToChunk(self.position)
+        sector_after = mcpython.util.math.position_to_chunk(self.position)
         if (
             sector_before != sector_after
             or before_dim != dimension_id

@@ -52,11 +52,12 @@ information on development:
 changelog of snapshot [next], released on -, targeting -
     World Generation:
         - noises are now better selected
+        - general faster
 
     Rendering:
         - improved general API
         - refactored some stuff
-        - improved client/server seperation
+        - improved client/server separation
 
 
 changelog of snapshot 20w51a, released on 18.12.2020, targeting 20w51a

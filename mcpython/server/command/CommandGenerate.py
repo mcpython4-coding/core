@@ -48,7 +48,7 @@ class CommandGenerate(mcpython.server.command.Command.Command):
             chunkf = tuple(values[:2])
             chunkt = tuple(values[2:]) if len(values) > 2 else chunkf
         else:
-            chunkf = chunkt = mcpython.util.math.positionToChunk(
+            chunkf = chunkt = mcpython.util.math.position_to_chunk(
                 G.world.get_active_player().position
             )
         fx, fz = chunkf

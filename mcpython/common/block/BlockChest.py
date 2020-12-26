@@ -51,6 +51,10 @@ class BlockChest(AbstractBlock.AbstractBlock):
         {"side": mcpython.util.enums.EnumSide.W},
     ]
 
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
     def __init__(self, *args, **kwargs):
         """
         creates an new BlockChest
