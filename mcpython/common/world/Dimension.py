@@ -226,6 +226,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         block_update_self=True,
         lazy_setup: typing.Callable = None,
         check_build_range=True,
+        block_state=None,
     ):
         chunk = self.get_chunk_for_position(position, generate=False)
         return chunk.add_block(
@@ -236,6 +237,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             block_update_self=block_update_self,
             lazy_setup=lazy_setup,
             check_build_range=check_build_range,
+            block_state=block_state,
         )
 
     def remove_block(

@@ -1408,3 +1408,4 @@ R   [uuk]: improved world serialization API
 [uuk]: implemented material registry system
 [uuk]: optimized world generation system and subsequent parts
 [uuk]: implemented new noise manager method: GeoNoiseManager
+[uuk]: improved speed of debug world generators

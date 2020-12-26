@@ -105,6 +105,7 @@ class WorldGenerationHandler:
         reference = mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference(
             self.task_handler, chunk
         )
+        config.on_chunk_prepare_generation(chunk, reference)
         for layer_name in config.LAYERS:
             if type(layer_name) == str:
                 config = chunk.get_dimension().get_world_generation_config_for_layer(
@@ -180,6 +181,7 @@ class WorldGenerationHandler:
         handler = mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference(
             self.task_handler, chunk
         )
+        config.on_chunk_prepare_generation(chunk, handler)
         for i, layer_name in enumerate(config["layers"]):
             layer = self.layers[layer_name]
             layer.add_generate_functions_to_chunk(

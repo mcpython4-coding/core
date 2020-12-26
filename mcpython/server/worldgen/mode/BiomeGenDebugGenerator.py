@@ -15,7 +15,6 @@ from mcpython import shared
 import mcpython.server.worldgen.mode.IWorldGenConfig
 import mcpython.server.worldgen.mode.DefaultOverWorldGenerator
 import mcpython.common.mod.ModMcpython
-import itertools
 
 
 class DebugBiomeWorldGenerator(
@@ -53,7 +52,10 @@ class DebugBiomeWorldGenerator(
                     i += 1
 
     @classmethod
-    def on_chunk_generation_finished(cls, chunk):
+    def on_chunk_generation_finished(
+            cls,
+            chunk,
+    ):
         cx, cz = chunk.position
         biome_map = chunk.get_value("minecraft:biome_map")
         for dx in range(16):

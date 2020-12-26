@@ -58,6 +58,7 @@ class IChunk(ABC):
             [mcpython.common.block.AbstractBlock.AbstractBlock], None
         ] = None,
         check_build_range=True,
+        block_state=None,
     ) -> typing.Optional[mcpython.common.block.AbstractBlock.AbstractBlock]:
         """
         Adds an block to the given position
@@ -68,6 +69,7 @@ class IChunk(ABC):
         :param block_update_self: if the block should get an block-update
         :param lazy_setup: an callable for setting up the block instance
         :param check_build_range: if the build limits should be checked
+        :param block_state: the block state to create in, or None if not set
         :return: the block instance or None if it could not be created
         """
         raise NotImplementedError()
@@ -201,6 +203,7 @@ class IDimension(ABC):
         block_update_self=True,
         lazy_setup: typing.Callable = None,
         check_build_range=True,
+        block_state=None,
     ):
         raise NotImplementedError()
 

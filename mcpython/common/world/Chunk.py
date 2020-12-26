@@ -205,6 +205,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         block_update_self=True,
         lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None,
         check_build_range=True,
+        block_state=None,
     ):
         """
         adds an block to the given position
@@ -215,6 +216,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param block_update_self: if the block should get an block-update
         :param lazy_setup: an callable for setting up the block instance
         :param check_build_range: if the build limits should be checked
+        :param block_state: the block state to create in, or None if not set
         :return: the block instance or None if it could not be created
         """
         # check if it is in build range
@@ -249,12 +251,16 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             if lazy_setup is not None:
                 lazy_setup(block)
 
-        block.on_block_added()
+        self.world[position] = block
 
         if self.now.day == 13 and self.now.month == 1 and "diorite" in block.NAME:
             return self.add_block(position, block.NAME.replace("diorite", "andesite"))
 
-        self.world[position] = block
+        block.on_block_added()
+
+        if block_state is not None:
+            block.set_model_state(block_state)
+            block.face_state.update()
 
         self.mark_dirty()
         self.positions_updated_since_last_save.add(position)

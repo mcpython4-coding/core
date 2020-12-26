@@ -17,6 +17,7 @@ import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 import mcpython.util.math
 import mcpython.server.worldgen.mode.IWorldGenConfig
+import mcpython.server.worldgen.WorldGenerationTaskArrays
 
 
 class BlockInfo:
@@ -58,7 +59,11 @@ class DebugWorldGenerator(
     DISPLAY_NAME = "DEBUG GENERATOR"
 
     @classmethod
-    def on_chunk_generation_finished(cls, chunk):
+    def on_chunk_prepare_generation(
+            cls,
+            chunk,
+            array: mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference
+    ):
         cx, cz = chunk.position
 
         if (cx, cz) in BlockInfo.TABLE:
@@ -66,13 +71,15 @@ class DebugWorldGenerator(
             block_map = BlockInfo.TABLE[(cx, cz)]
             for x, z in block_map.keys():
                 block, state = block_map[(x, z)]
-                block = chunk.add_block((x, 10, z), block, block_update=False)
-                block.set_model_state(state)
-                block.face_state.update()
+                array.schedule_block_add(
+                    (x, 10, z), block, block_update=False, block_state=state
+                )
                 height_map[(x, z)] = [(0, 30)]
             for x in range(16):
                 for z in range(16):
-                    chunk.add_block((cx * 16 + x, 5, cz * 16 + z), "minecraft:barrier")
+                    array.schedule_block_add(
+                        (cx * 16 + x, 5, cz * 16 + z), "minecraft:barrier"
+                    )
 
         if G.world.get_active_player().gamemode != 3:
             G.world.get_active_player().set_gamemode(3)
