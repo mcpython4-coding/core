@@ -58,6 +58,7 @@ changelog of snapshot [next], released on -, targeting -
         - improved general API
         - refactored some stuff
         - improved client/server separation
+        - improved some rendering parts
 
 
 changelog of snapshot 20w51a, released on 18.12.2020, targeting 20w51a

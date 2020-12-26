@@ -12,8 +12,6 @@ This project is not official by mojang and does not relate to it.
 import time
 import typing
 
-import pyinstrument
-
 from mcpython import shared, logger
 import mcpython.common.mod.ModMcpython
 import mcpython.common.world.Chunk

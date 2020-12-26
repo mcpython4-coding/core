@@ -12,6 +12,7 @@ This project is not official by mojang and does not relate to it.
 import itertools
 import typing
 import opensimplex
+import mcpython.util.math
 
 from mcpython import logger
 
@@ -37,6 +38,12 @@ class EQUAL_MERGER(IOctaveMerger):
     @classmethod
     def merge(cls, implementation: "INoiseImplementation", values):
         return sum(values) / len(values)
+
+
+class GEO_EQUAL_MERGER(IOctaveMerger):
+    @classmethod
+    def merge(cls, implementation: "INoiseImplementation", values):
+        return mcpython.util.math.product(values) ** (1 / len(values))
 
 
 class INNER_MERGE(IOctaveMerger):

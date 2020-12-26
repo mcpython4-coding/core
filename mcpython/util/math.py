@@ -9,6 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
 
 from mcpython import shared as G, logger
 import math
@@ -337,3 +338,10 @@ def rotate_point(point, origin, rotation):
     y, z = ny, nz
 
     return x + ox, y + oy, z + oz
+
+
+def product(iterable: typing.List[float]):
+    v = iterable[0]
+    for x in iterable[1:]:
+        v *= x
+    return v

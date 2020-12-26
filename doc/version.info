@@ -1407,3 +1407,4 @@ R   [uuk]: improved world serialization API
 [uuk]: injection point for custom factories
 [uuk]: implemented material registry system
 [uuk]: optimized world generation system and subsequent parts
+[uuk]: implemented new noise manager method: GeoNoiseManager
