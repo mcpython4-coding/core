@@ -145,7 +145,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         dim = self.dimensions[dim_id] = mcpython.common.world.Dimension.Dimension(
             self, dim_id, name, gen_config=dim_config
         )
-        self.dim_to_id[dim_id] = dim
+        self.dim_to_id[dim.name] = dim_id
         G.world_generation_handler.setup_dimension(dim, dim_config)
         return dim
 

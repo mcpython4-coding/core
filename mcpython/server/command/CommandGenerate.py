@@ -43,7 +43,7 @@ class CommandGenerate(mcpython.server.command.Command.Command):
 
     @staticmethod
     def parse(values: list, modes: list, info):
-        dim = G.world.get_active_dimension()
+        dim = info.entity.dimension
         if len(values) > 0:  # have we definite an chunk?
             chunkf = tuple(values[:2])
             chunkt = tuple(values[2:]) if len(values) > 2 else chunkf

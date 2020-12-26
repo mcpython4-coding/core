@@ -131,12 +131,12 @@ class StateBlockItemGenerator(State.State):
         G.world.get_active_player().rotation = (-45, -45, 0)
         self.blockindex = -1
         try:
-            blockinstance = G.world.get_active_dimension().add_block(
+            instance = G.world.get_active_dimension().add_block(
                 (0, 0, 0), self.tasks[self.blockindex], block_update=False
             )
-            if blockinstance.BLOCK_ITEM_GENERATOR_STATE is not None:
-                blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
-            blockinstance.face_state.update(redraw_complete=True)
+            if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
+                instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
+            instance.face_state.update(redraw_complete=True)
         except ValueError:
             self.blockindex = 0
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)

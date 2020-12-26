@@ -121,6 +121,7 @@ class TickHandler:
         self.bind(function, tick * 2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
+        # todo: make iterate over all players
         cx, cz = mcpython.util.math.position_to_chunk(
             G.world.get_active_player().position
         )
@@ -147,12 +148,12 @@ class TickHandler:
                                 random.randint(0, 15),
                             )
                             position = (x + ddx, ddy, z + ddz)
-                            blockinst = G.world.get_active_dimension().get_block(
+                            instance = G.world.get_active_dimension().get_block(
                                 position
                             )
-                            if blockinst is not None and type(blockinst) != str:
-                                if blockinst.ENABLE_RANDOM_TICKS:
-                                    blockinst.on_random_update()
+                            if instance is not None and type(instance) != str:
+                                if instance.ENABLE_RANDOM_TICKS:
+                                    instance.on_random_update()
 
 
 handler = G.tick_handler = TickHandler()

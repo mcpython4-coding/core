@@ -20,14 +20,14 @@ from mcpython.common.config import ENABLED_EXTRA_BLOCKS as BLOCKS
 
 def remove_if_downer_block_not_solid(instance):
     """
-    Helper function for donwer implementation.
+    Helper function for downer implementation.
     Will remove THIS block when the block below is air or an not-generated block
     :param instance: the block-instance to check
     """
     x, y, z = instance.position
-    other = G.world.get_active_dimension().get_block((x, y - 1, z))
+    other = G.world.get_active_dimension_by_name(instance.dimension).get_block((x, y - 1, z))
     if other is None or type(other) == str:
-        G.world.get_active_dimension().remove_block(instance.position)
+        G.world.get_active_dimension_by_name(instance.dimension).remove_block(instance.position)
 
 
 # todo: let this generate from java source

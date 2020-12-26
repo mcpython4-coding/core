@@ -59,7 +59,7 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
     @classmethod
     def parse(cls, values: list, modes: list, info):
         if values[0] == "block":
-            block = G.world.get_active_dimension().get_block(values[1])
+            block = info.entity.dimension.get_block(values[1])
             if block is not None and type(block) != str:
                 if len(block.get_inventories()) == 0:
                     G.chat.print_ln("[ERROR] block does not have any inventory")

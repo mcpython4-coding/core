@@ -55,7 +55,7 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
             stack = mcpython.common.container.ItemStack.ItemStack(values[1])
             CommandItemInfo.print_info(stack)
         elif modes[1][1] == 3:  # block inventories
-            block = G.world.get_active_dimension().get_block(values[2])
+            block = info.entity.dimension.get_block(values[2])
             if type(block) == str:
                 return
             for i, inventory in enumerate(block.get_inventories()):
