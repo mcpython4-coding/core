@@ -71,8 +71,6 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         self.fallen_since_y = -1  # how far did we fall?  # todo: move into nbt
 
-        self.inventory_order: list = []
-
         self.active_inventory_slot: int = (
             0  # which slot is currently selected todo: move into nbt
         )
@@ -87,6 +85,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         else:
             self.create_inventories()
 
+        # todo: move to somewhere else!
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:get_player_position", self.hotkey_get_position
         )
@@ -140,6 +139,10 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
+
+        if not G.event_handler.call_cancelable("player:gamemode_change", self, self.gamemode, gamemode):
+            return
+
         # if it is a repr of the gamemode, get the int gamemode
         # else, return the int
         if gamemode == 0:
@@ -151,7 +154,10 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         elif gamemode == 3:
             self.flying = True
         else:
-            raise ValueError("can't cast {} to valid gamemode".format(gamemode))
+            logger.print_stack("can't cast '{}' to valid gamemode. You may want to listen to 'player:gamemode_change' "
+                               "to change behaviour!".format(gamemode))
+            return
+
         self.gamemode = gamemode
 
     def get_needed_xp_for_next_level(self) -> int:
@@ -164,14 +170,15 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     def add_xp(self, xp: int):
         while xp > 0:
-            if self.xp + xp < self.get_needed_xp_for_next_level():
+            needed = self.get_needed_xp_for_next_level()
+            if self.xp + xp < needed:
                 self.xp += xp
                 return
-            elif xp > self.get_needed_xp_for_next_level():
-                xp -= self.get_needed_xp_for_next_level()
+            elif xp > needed:
+                xp -= needed
                 self.xp_level += 1
             else:
-                xp = xp - (self.get_needed_xp_for_next_level() - self.xp)
+                xp = xp - (needed - self.xp)
                 self.xp_level += 1
 
     def add_xp_level(self, xp_levels: int):
@@ -250,9 +257,10 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         kill_animation=True,
         damage_source: mcpython.common.entity.DamageSource.DamageSource = None,
         test_totem=True,
+        force=False,
     ):
-        if not G.event_handler.call_cancelable(
-            "gameplay:player:scheduled_die:pre",
+        if not force and not G.event_handler.call_cancelable(
+            "player:pre_die",
             self,
             drop_items,
             kill_animation,
@@ -260,27 +268,30 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
             test_totem,
         ):
             return
-        if test_totem:
-            # todo: add effects
-            if (
+
+        if test_totem and not force:
+            # todo: add effects of totem
+            # todo: add list to player of possible slots with possibility of being callable
+            a = (
                 self.get_active_inventory_slot().get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"
-            ):
-                self.get_active_inventory_slot().get_itemstack().clean()
-                self.hearts = 20
-                self.hunger = 20
-                return
-            elif (
+            )
+            b = (
                 self.inventory_main.slots[45].get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"
-            ):
-                self.inventory_main.slots[45].get_itemstack().clean()
+            )
+            if (a or b) and not G.event_handler.call_cancelable("player:totem_used", self):
+                if a:
+                    self.get_active_inventory_slot().get_itemstack().clean()
+                else:
+                    self.inventory_main.slots[45].get_itemstack().clean()
                 self.hearts = 20
                 self.hunger = 20
                 return
+
         super().kill()
-        if not G.event_handler.call_cancelable(
-            "gameplay:player:scheduled_die:between",
+        if not force and not G.event_handler.call_cancelable(
+            "player:dead:cancel_post",
             self,
             drop_items,
             kill_animation,
@@ -293,21 +304,24 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.reset_moving_slot()
         if not shared.world.gamerule_handler.table["keepInventory"].status.status:
             shared.command_parser.parse("/clear")  # todo: drop items
+
         if shared.world.gamerule_handler.table["showDeathMessages"].status.status:
             logger.println(
                 "[CHAT] player {} died".format(self.name)
-            )  # todo: add death screen
+            )  # todo: add death screen and death type
+
         self.move_to_spawn_point()
         self.active_inventory_slot = 0
         shared.window.dy = 0
         shared.chat.close()
         shared.inventory_handler.close_all_inventories()
-        # todo: drop xp
+
+        # todo: drop parts of the xp
         self.xp = 0
         self.xp_level = 0
         self.hearts = 20
         self.hunger = 20
-        self.flying = False if self.gamemode != 3 else True
+        self.flying = False if self.gamemode != 3 else True  # todo: add event for this
         self.armor_level = 0
         self.armor_toughness = 0
         sector = mcpython.util.math.position_to_chunk(self.position)

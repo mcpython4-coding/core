@@ -29,23 +29,25 @@ class BlockDirt(AbstractBlock.AbstractBlock):
     ENABLE_RANDOM_TICKS = True
 
     def on_random_update(self):
+        dim = G.world.get_dimension_by_name(self.dimension)
         x, y, z = self.position
-        for dy in range(y + 1, 256):
-            instance = G.world.get_dimension_by_name(self.dimension).get_block((x, dy, z))
+        for dy in range(y + 1, dim.get_dimension_range()[1]+1):
+            instance = dim.get_block((x, dy, z))
             if instance is not None:
                 break
+
         else:
             for dx in range(-1, 2):
                 for dy in range(-1, 2):
                     for dz in range(-1, 2):
                         position = (x + dx, y + dy, z + dz)
-                        instance = G.world.get_dimension_by_name(self.dimension).get_block(position)
+                        instance = dim.get_block(position)
                         if instance is not None:
                             if instance == "minecraft:grass_block" or (
                                 type(instance) != str
                                 and instance.NAME == "minecraft:grass_block"
                             ):
-                                G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
+                                dim.get_chunk_for_position(
                                     self.position
                                 ).add_block(self.position, "minecraft:grass_block")
                                 return

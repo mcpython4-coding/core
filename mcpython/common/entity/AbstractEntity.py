@@ -172,6 +172,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         drop_items=True,
         kill_animation=True,
         damage_source: mcpython.common.entity.DamageSource.DamageSource = None,
+        force=False,
     ):
         """
         Called to kill the entity [remove the entity from world]
@@ -181,6 +182,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         :param drop_items: if items should be dropped
         :param kill_animation: if the kill animation should be played
         :param damage_source: the source of the damage
+        :param force: if it should be forced or not
         todo: drop items if selected
         todo: play kill animation if selected
         """

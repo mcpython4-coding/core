@@ -22,8 +22,8 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
         self.connections = {
             "north": False,
             "east": False,
@@ -46,17 +46,19 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
     def on_block_update(self):
         x, y, z = self.position
 
+        dim = G.world.get_dimension_by_name(self.dimension)
+
         block_north: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x + 1, y, z))
+            dim.get_block((x + 1, y, z))
         )
         block_east: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x, y, z + 1))
+            dim.get_block((x, y, z + 1))
         )
         block_south: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x - 1, y, z))
+            dim.get_block((x - 1, y, z))
         )
         block_west: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x, y, z - 1))
+            dim.get_block((x, y, z - 1))
         )
 
         self.connections["east"] = block_north is not None and (
@@ -85,7 +87,7 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
             or self.connections["east"] != self.connections["west"]
         )
         upper_block: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x, y + 1, z))
+            dim.get_block((x, y + 1, z))
         )
         if (
             not self.connections["up"]

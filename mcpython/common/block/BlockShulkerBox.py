@@ -19,8 +19,8 @@ import mcpython.common.factory.ItemFactory
 def create_shulker_box(name):
     @G.registry
     class BlockShulkerBox(AbstractBlock.AbstractBlock):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
+        def __init__(self):
+            super().__init__()
             import mcpython.client.gui.InventoryShulkerBox as InventoryShulkerBox
 
             self.inventory = InventoryShulkerBox.InventoryShulkerBox()

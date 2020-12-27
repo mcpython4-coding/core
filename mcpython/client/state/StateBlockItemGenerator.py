@@ -290,9 +290,9 @@ class StateBlockItemGenerator(State.State):
                 mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
             )
         )
-        # block = G.world.get_active_dimension().get_block((0, 0, 0))
-        # if type(block) != str and block is not None:
-        #     block.modify_block_item(obj)
+        block = G.world.get_active_dimension().get_block((0, 0, 0))
+        if type(block) != str and block is not None:
+            block.modify_block_item(obj)
         obj.finish(task_list=True)
         model = mcpython.client.rendering.model.ItemModel.ItemModel(blockname)
         model.addTextureLayer(0, file)

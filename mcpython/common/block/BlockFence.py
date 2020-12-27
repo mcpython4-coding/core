@@ -43,11 +43,11 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         """
         will create the fence
         """
-        super().__init__(*args, **kwargs)
+        super().__init__()
         self.connections = {
             "north": False,
             "east": False,
@@ -101,13 +101,13 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
     def connects_to(
         self,
         face: mcpython.util.enums.EnumSide,
-        blockinstance: mcpython.common.block.AbstractBlock.AbstractBlock,
+        instance: mcpython.common.block.AbstractBlock.AbstractBlock,
     ):
-        if blockinstance is None or type(blockinstance) == str:
+        if instance is None or type(instance) == str:
             return False
-        return blockinstance.face_solid[face.invert()] or (
-            issubclass(type(blockinstance), IFence)
-            and len(self.FENCE_TYPE_NAME.intersection(blockinstance.FENCE_TYPE_NAME))
+        return instance.face_solid[face.invert()] or (
+            issubclass(type(instance), IFence)
+            and len(self.FENCE_TYPE_NAME.intersection(instance.FENCE_TYPE_NAME))
             > 0
         )
 

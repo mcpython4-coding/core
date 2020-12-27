@@ -15,7 +15,7 @@ import pyglet
 from pyglet.window import mouse, key
 
 import mcpython.common.block.BoundingBox
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.item.AbstractToolItem
 import mcpython.util.enums
 from . import AbstractBlock
@@ -91,7 +91,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
         :return: if the block can be opened
         """
         x, y, z = self.position
-        instance = G.world.get_dimension_by_name(self.dimension).get_block((x, y + 1, z))
+        instance = shared.world.get_dimension_by_name(self.dimension).get_block((x, y + 1, z))
         return (
             instance is None
             or not instance.face_solid[mcpython.util.enums.EnumSide.DOWN]
@@ -107,14 +107,14 @@ class BlockChest(AbstractBlock.AbstractBlock):
         ):
             if self.loot_table_link:
                 self.inventory.insert_items(
-                    G.loot_table_handler.roll(
+                    shared.loot_table_handler.roll(
                         self.loot_table_link, block=self, position=self.position
                     ),
                     random_check_order=True,
                     insert_when_same_item=False,
                 )
                 self.loot_table_link = None
-            G.inventory_handler.show(self.inventory)
+            shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -149,18 +149,18 @@ class BlockChest(AbstractBlock.AbstractBlock):
 
     def on_request_item_for_block(self, itemstack):
         if (
-            G.window.keys[pyglet.window.key.LCTRL]
-            and G.world.get_active_player().gamemode == 1
-            and G.window.mouse_pressing[pyglet.window.mouse.MIDDLE]
+            shared.window.keys[pyglet.window.key.LCTRL]
+            and shared.world.get_active_player().gamemode == 1
+            and shared.window.mouse_pressing[pyglet.window.mouse.MIDDLE]
         ):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_block_remove(self, reason):
-        if G.world.gamerule_handler.table["doTileDrops"].status.status:
+        if shared.world.gamerule_handler.table["doTileDrops"].status.status:
             for slot in self.inventory.slots:
-                G.world.get_active_player().pick_up(slot.get_itemstack().copy())
+                shared.world.get_active_player().pick_up(slot.get_itemstack().copy())
                 slot.get_itemstack().clean()
-        G.inventory_handler.hide(self.inventory)
+        shared.inventory_handler.hide(self.inventory)
         del self.inventory
 
     @classmethod
@@ -189,6 +189,6 @@ class BlockChest(AbstractBlock.AbstractBlock):
             )
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(BlockChest)
+    shared.registry.register(BlockChest)

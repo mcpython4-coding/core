@@ -16,8 +16,8 @@ import mcpython.util.enums
 class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     MODEL_FACE_NAME = "facing"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
         self.face = mcpython.util.enums.EnumSide.NORTH
         if self.set_to:
             sx, sy, sz = self.set_to

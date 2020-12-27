@@ -53,26 +53,26 @@ class TagGroup:
         self.tags = {}
         self.cache = {}
 
-    def add_from_data(self, tagname: str, data: dict, replace=True):
+    def add_from_data(self, name: str, data: dict, replace=True):
         """
-        will insert
-        :param tagname: the tag name to set
+        Will insert more data into the tag system
+        :param name: the tag name to set
         :param data: the data to inject
         :param replace: if the existing tag should be removed
         :return:
         """
         if replace:
-            self.tags[tagname] = mcpython.common.data.tags.Tag.Tag.from_data(
-                self, tagname, data
+            self.tags[name] = mcpython.common.data.tags.Tag.Tag.from_data(
+                self, name, data
             )
         else:
             self.tags.setdefault(
-                tagname, mcpython.common.data.tags.Tag.Tag(self, tagname, [])
+                name, mcpython.common.data.tags.Tag.Tag(self, name, [])
             ).entries.extend(data["values"])
 
     def build(self):
         """
-        will "build" the tag group
+        Will "build" the tag group
         """
         # we need to sort after dependency
         depend_list = []
@@ -89,7 +89,7 @@ class TagGroup:
 
     def get_tags_for(self, obj: str, cache=False) -> typing.List[str]:
         """
-        will return all tags for an given object
+        Will return all tags for an given object
         :param obj:
         :param cache: if data should be cached
         """
@@ -103,21 +103,32 @@ class TagGroup:
             self.cache[obj] = result
         return result
 
-    def provides_object_tag(self, obj, tag_name: str) -> bool:
+    def provides_object_tag(self, obj: str, tag_name: str) -> bool:
         """
-        checks if the object has an given tag
+        Checks if the object has an given tag
         :param obj: the object to check
         :param tag_name: the tag to check for
         """
         return obj in self.tags[tag_name].entries
 
-    def provides_object_any_tag(self, obj, taglist: list) -> bool:
+    def provides_object_tags(self, obj: str, tags: typing.List[str]) -> bool:
         """
-        return if the given object is in any of the given tag names
+        Returns if the given object is in all of the given tag names
         :param obj: the object to check
-        :param taglist: the list of tag names to check
+        :param tags: the list of tag names to check
         """
-        for tag in taglist:
+        for tag in tags:
+            if not self.provides_object_tag(obj, tag):
+                return False
+        return True
+
+    def provides_object_any_tag(self, obj: str, tags: typing.List[str]) -> bool:
+        """
+        Returns if the given object is in any of the given tag names
+        :param obj: the object to check
+        :param tags: the list of tag names to check
+        """
+        for tag in tags:
             if self.provides_object_tag(obj, tag):
                 return True
         return False

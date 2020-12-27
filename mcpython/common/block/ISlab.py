@@ -35,8 +35,8 @@ class ISlab(mcpython.common.block.AbstractBlock.AbstractBlock):
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
         self.type = SlabModes.TOP
 
     def on_block_added(self):

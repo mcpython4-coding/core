@@ -32,7 +32,7 @@ class EntityHandler:
         if shared.IS_CLIENT:
             entity_cls.init_renderers()
 
-    def add_entity(
+    def spawn_entity(
         self,
         name,
         position,
@@ -70,6 +70,8 @@ class EntityHandler:
         return entity
 
     def tick(self, dt: float):
+        # todo: move to dimensions
+
         for entity in list(self.entity_map.values()):
             entity.tick(dt)
             if (

@@ -19,8 +19,8 @@ class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
     base class for logs
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
         self.axis = LogAxis.Y
         if self.set_to:
             dx, dy, dz = (

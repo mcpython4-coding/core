@@ -82,7 +82,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if not override and name in self.players:
             return self.players[name]
-        self.players[name] = G.entity_handler.add_entity(
+        self.players[name] = G.entity_handler.spawn_entity(
             "minecraft:player", (0, 0, 0), name
         )
         if add_inventories:

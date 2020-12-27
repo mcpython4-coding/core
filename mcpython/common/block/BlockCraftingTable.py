@@ -46,8 +46,8 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
         G.inventory_handler.hide(G.world.get_active_player().inventory_crafting_table)
 
     @classmethod
-    def modify_block_item(cls, itemfactory):
-        itemfactory.setFuelLevel(15)
+    def modify_block_item(cls, factory):
+        factory.setFuelLevel(15)
 
 
 @G.mod_loader("minecraft", "stage:block:load")

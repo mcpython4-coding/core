@@ -100,6 +100,10 @@ class AbstractBlock(parent):
         face: False for face in mcpython.util.enums.EnumSide.iterate()
     }
 
+    @classmethod
+    def modify_block_item(cls, instance):
+        pass
+
     def __init__(self):
         """
         creates new Block-instance.

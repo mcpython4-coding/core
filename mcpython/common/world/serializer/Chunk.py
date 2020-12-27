@@ -455,7 +455,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             if entity["type"] == "minecraft:player":
                 continue
             try:
-                entity_instance = G.entity_handler.add_entity(
+                entity_instance = G.entity_handler.spawn_entity(
                     entity["type"],
                     entity["position"],
                     uuid=uuid.UUID(entity["uuid"]),

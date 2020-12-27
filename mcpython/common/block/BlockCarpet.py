@@ -29,26 +29,27 @@ class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def on_block_update(self):
         x, y, z = self.position
+        dim = G.world.get_dimension_by_name(self.dimension)
         instance: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x, y - 1, z))
+            dim.get_block((x, y - 1, z))
         )
         if instance is None or (
             type(instance) != str
             and not instance.face_solid[mcpython.util.enums.EnumSide.UP]
         ):
-            G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
+            dim.get_chunk_for_position(
                 (x, y, z)
             ).remove_block((x, y, z), block_update=False)
             G.world.get_active_player().pick_up(
                 mcpython.common.container.ItemStack.ItemStack("minecraft:carpet")
-            )
+            )  # todo: drop in world
 
     def get_view_bbox(self):
         return carpet_bbox
 
     @classmethod
-    def modify_block_item(cls, itemfactory):
-        itemfactory.setFuelLevel(3.35)
+    def modify_block_item(cls, factory):
+        factory.setFuelLevel(3.35)
 
 
 def create_carpet(carpet_color: str):
