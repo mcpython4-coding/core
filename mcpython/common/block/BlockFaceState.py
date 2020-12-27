@@ -17,7 +17,7 @@ import mcpython.util.enums
 
 class BlockFaceState:
     """
-    class for face state of the block
+    Class for face state of the block
     todo: merge into AbstractBlock
     """
 
@@ -30,7 +30,7 @@ class BlockFaceState:
 
     def __init__(self, block):
         """
-        block face state
+        Block face state
         """
         self.block = block
         self.faces = self.DEFAULT_FACE_STATE.copy()
@@ -40,7 +40,7 @@ class BlockFaceState:
 
     def show_face(self, face: mcpython.util.enums.EnumSide):
         """
-        shows an face
+        Shows an face
         :param face: the face of the block
         """
         if self.faces[face.normal_name]:
@@ -75,7 +75,7 @@ class BlockFaceState:
 
     def hide_face(self, face: mcpython.util.enums.EnumSide):
         """
-        will hide an face
+        Will hide an face
         :param face: the face to hide
         """
         if not self.faces[face.normal_name]:
@@ -107,7 +107,7 @@ class BlockFaceState:
 
     def _draw_custom_render(self):
         """
-        will inherit the custom renderer
+        Will inherit the custom renderer
         """
         if not self.subscribed_renderer:
             mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
@@ -118,7 +118,7 @@ class BlockFaceState:
 
     def update(self, redraw_complete=True):
         """
-        updates the block face state
+        Updates the block face state
         :param redraw_complete: if all sides should be re-drawn
         """
         chunk = G.world.get_dimension_by_name(self.block.dimension).get_chunk_for_position(
@@ -143,7 +143,7 @@ class BlockFaceState:
 
     def hide_all(self):
         """
-        will hide all faces
+        Will hide all faces
         """
         if (
             any(self.faces.values())

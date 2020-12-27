@@ -391,7 +391,6 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         block from the world.
         :param position: The (x, y, z) position of the block to hide.
         :param immediate: Whether or not to immediately remove the block from the canvas.
-
         """
         if issubclass(type(position), Block.AbstractBlock):
             position = position.position

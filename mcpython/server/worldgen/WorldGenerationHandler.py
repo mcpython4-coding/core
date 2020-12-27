@@ -130,7 +130,12 @@ class WorldGenerationHandler:
         config_name = dimension.get_world_generation_config_entry("configname")
         if config_name is None:
             return  # empty dimension
-        for layer_name in self.configs[dimension.get_name()][config_name].LAYERS:
+        for d in self.configs[dimension.get_name()][config_name].LAYERS:
+            if type(d) == str:
+                layer_name = d
+                cconfig = {}
+            else:
+                layer_name, cconfig = d
             layer = self.layers[layer_name]
             if config is None or layer_name not in config:
                 layer_config = mcpython.server.worldgen.layer.ILayer.LayerConfig(
@@ -138,7 +143,8 @@ class WorldGenerationHandler:
                         dimension.get_world_generation_config_entry(
                             layer_name, default={}
                         )
-                    )
+                    ),
+                    **cconfig
                 )
                 layer_config.dimension = dimension.get_id()
             else:
