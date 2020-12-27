@@ -99,3 +99,11 @@ class IWorldGenConfig(mcpython.common.data.DataSerializerHandler.ISerializeAble)
         cls, chunk: mcpython.common.world.AbstractInterface.IChunk
     ):
         pass
+
+
+mcpython.common.data.worldgen.WorldGenerationMode.WorldGenerationModeSerializer.BIOME_SOURCES.update(
+    {
+        "minecraft:single_biome": SingleBiomeSource,
+        "minecraft:default_biome": DefaultBiomeSource,
+    }
+)
