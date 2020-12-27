@@ -107,8 +107,7 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
             return False
         return instance.face_solid[face.invert()] or (
             issubclass(type(instance), IFence)
-            and len(self.FENCE_TYPE_NAME.intersection(instance.FENCE_TYPE_NAME))
-            > 0
+            and len(self.FENCE_TYPE_NAME.intersection(instance.FENCE_TYPE_NAME)) > 0
         )
 
     BLOCK_ITEM_GENERATOR_STATE = {"east": "true", "west": "true"}

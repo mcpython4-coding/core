@@ -14,6 +14,8 @@ from mcpython import shared
 import mcpython.server.worldgen.layer.DefaultBiomeLayer
 import mcpython.common.world.AbstractInterface
 import mcpython.server.worldgen.WorldGenerationTaskArrays
+import mcpython.common.data.DataSerializerHandler
+import mcpython.common.data.worldgen.WorldGenerationMode
 
 
 class IBiomeSource:
@@ -65,7 +67,11 @@ class DefaultBiomeSource(IBiomeSource):
         )
 
 
-class IWorldGenConfig:
+class IWorldGenConfig(mcpython.common.data.DataSerializerHandler.ISerializeAble):
+    SERIALIZER = (
+        mcpython.common.data.worldgen.WorldGenerationMode.WorldGenerationModeSerializer
+    )
+
     NAME = None
     DIMENSION = None
     DISPLAY_NAME = None
@@ -82,12 +88,14 @@ class IWorldGenConfig:
 
     @classmethod
     def on_chunk_prepare_generation(
-            cls,
-            chunk: mcpython.common.world.AbstractInterface.IChunk,
-            array: mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference
+        cls,
+        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        array: mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference,
     ):
         pass
 
     @classmethod
-    def on_chunk_generation_finished(cls, chunk: mcpython.common.world.AbstractInterface.IChunk):
+    def on_chunk_generation_finished(
+        cls, chunk: mcpython.common.world.AbstractInterface.IChunk
+    ):
         pass

@@ -60,9 +60,9 @@ class DebugWorldGenerator(
 
     @classmethod
     def on_chunk_prepare_generation(
-            cls,
-            chunk,
-            array: mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference
+        cls,
+        chunk,
+        array: mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference,
     ):
         cx, cz = chunk.position
 

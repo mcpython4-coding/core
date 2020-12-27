@@ -31,7 +31,7 @@ class BlockDirt(AbstractBlock.AbstractBlock):
     def on_random_update(self):
         dim = G.world.get_dimension_by_name(self.dimension)
         x, y, z = self.position
-        for dy in range(y + 1, dim.get_dimension_range()[1]+1):
+        for dy in range(y + 1, dim.get_dimension_range()[1] + 1):
             instance = dim.get_block((x, dy, z))
             if instance is not None:
                 break
@@ -47,9 +47,9 @@ class BlockDirt(AbstractBlock.AbstractBlock):
                                 type(instance) != str
                                 and instance.NAME == "minecraft:grass_block"
                             ):
-                                dim.get_chunk_for_position(
-                                    self.position
-                                ).add_block(self.position, "minecraft:grass_block")
+                                dim.get_chunk_for_position(self.position).add_block(
+                                    self.position, "minecraft:grass_block"
+                                )
                                 return
 
 

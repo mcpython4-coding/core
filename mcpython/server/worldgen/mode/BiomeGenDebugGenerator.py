@@ -53,8 +53,8 @@ class DebugBiomeWorldGenerator(
 
     @classmethod
     def on_chunk_generation_finished(
-            cls,
-            chunk,
+        cls,
+        chunk,
     ):
         cx, cz = chunk.position
         biome_map = chunk.get_value("minecraft:biome_map")

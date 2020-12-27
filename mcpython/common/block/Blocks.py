@@ -25,9 +25,13 @@ def remove_if_downer_block_not_solid(instance):
     :param instance: the block-instance to check
     """
     x, y, z = instance.position
-    other = G.world.get_active_dimension_by_name(instance.dimension).get_block((x, y - 1, z))
+    other = G.world.get_active_dimension_by_name(instance.dimension).get_block(
+        (x, y - 1, z)
+    )
     if other is None or type(other) == str:
-        G.world.get_active_dimension_by_name(instance.dimension).remove_block(instance.position)
+        G.world.get_active_dimension_by_name(instance.dimension).remove_block(
+            instance.position
+        )
 
 
 # todo: let this generate from java source

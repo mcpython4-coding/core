@@ -40,7 +40,8 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
         self.facing: str = "up"  # the direction the block faces to
 
     def on_block_added(self):
-        if self.set_to is None: return  # check for direction from setting
+        if self.set_to is None:
+            return  # check for direction from setting
 
         dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
         if dx > 0:

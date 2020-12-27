@@ -51,7 +51,9 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def check_valid_surrounding(self):
         x, y, z = self.position
-        chunk = G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(self.position)
+        chunk = G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
+            self.position
+        )
         if self.check_valid_block((x, y + 1, z), chunk):
             return
         if self.check_valid_block((x, y - 1, z), chunk):
@@ -69,7 +71,9 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def check_valid_block(self, position: tuple, chunk=None):
         if chunk is None:
-            chunk = G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(position)
+            chunk = G.world.get_dimension_by_name(
+                self.dimension
+            ).get_chunk_for_position(position)
         block = chunk.get_block(position)
         if (
             block is None

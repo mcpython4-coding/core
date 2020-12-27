@@ -96,7 +96,11 @@ class DataPackHandler:
         self.data_packs.clear()
         G.event_handler.call("datapack:unload:post")
 
-    def try_call_function(self, name: str, info: mcpython.server.command.CommandParser.ParsingCommandInfo = None):
+    def try_call_function(
+        self,
+        name: str,
+        info: mcpython.server.command.CommandParser.ParsingCommandInfo = None,
+    ):
         """
         Will try to invoke an function in an datapack
         :param name: the name of the function, e.g. minecraft:test

@@ -44,7 +44,9 @@ if shared.IS_CLIENT:
         mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
     ):
         def __init__(self):
-            super(mcpython.client.rendering.model.api.IBlockStateRenderingTarget, self).__init__()
+            super(
+                mcpython.client.rendering.model.api.IBlockStateRenderingTarget, self
+            ).__init__()
 
 
 else:
@@ -120,7 +122,9 @@ class AbstractBlock(parent):
         self.block_state: int = None
         self.set_by = None
         self.face_solid = self.DEFAULT_FACE_SOLID.copy()
-        self.injected_redstone_power: typing.Dict[mcpython.util.enums.EnumSide, int] = {}
+        self.injected_redstone_power: typing.Dict[
+            mcpython.util.enums.EnumSide, int
+        ] = {}
 
     def set_creation_properties(
         self, set_to=None, real_hit=None, player=None, state=None

@@ -91,7 +91,9 @@ class BlockChest(AbstractBlock.AbstractBlock):
         :return: if the block can be opened
         """
         x, y, z = self.position
-        instance = shared.world.get_dimension_by_name(self.dimension).get_block((x, y + 1, z))
+        instance = shared.world.get_dimension_by_name(self.dimension).get_block(
+            (x, y + 1, z)
+        )
         return (
             instance is None
             or not instance.face_solid[mcpython.util.enums.EnumSide.DOWN]

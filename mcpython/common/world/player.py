@@ -140,7 +140,9 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def set_gamemode(self, gamemode: int or str):
         gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
 
-        if not G.event_handler.call_cancelable("player:gamemode_change", self, self.gamemode, gamemode):
+        if not G.event_handler.call_cancelable(
+            "player:gamemode_change", self, self.gamemode, gamemode
+        ):
             return
 
         # if it is a repr of the gamemode, get the int gamemode
@@ -154,8 +156,10 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         elif gamemode == 3:
             self.flying = True
         else:
-            logger.print_stack("can't cast '{}' to valid gamemode. You may want to listen to 'player:gamemode_change' "
-                               "to change behaviour!".format(gamemode))
+            logger.print_stack(
+                "can't cast '{}' to valid gamemode. You may want to listen to 'player:gamemode_change' "
+                "to change behaviour!".format(gamemode)
+            )
             return
 
         self.gamemode = gamemode
@@ -280,7 +284,9 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 self.inventory_main.slots[45].get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"
             )
-            if (a or b) and not G.event_handler.call_cancelable("player:totem_used", self):
+            if (a or b) and not G.event_handler.call_cancelable(
+                "player:totem_used", self
+            ):
                 if a:
                     self.get_active_inventory_slot().get_itemstack().clean()
                 else:

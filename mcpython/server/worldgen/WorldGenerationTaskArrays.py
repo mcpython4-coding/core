@@ -474,7 +474,9 @@ class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
 
 class OffProcessTaskHelper:
     class OffProcessTaskHelperShared:
-        def __init__(self, reference: "ProcessSeparatedWorldGenerationTaskHandlerReference"):
+        def __init__(
+            self, reference: "ProcessSeparatedWorldGenerationTaskHandlerReference"
+        ):
             self.running = True
             self.reference = reference
 
@@ -490,12 +492,18 @@ class OffProcessTaskHelper:
         self.shared = OffProcessTaskHelper.OffProcessTaskHelperShared()
         self.process = multiprocessing.Process(target=self.shared.run)
         self.process.start()
-        self.reference: typing.Optional["ProcessSeparatedWorldGenerationTaskHandlerReference"] = None
+        self.reference: typing.Optional[
+            "ProcessSeparatedWorldGenerationTaskHandlerReference"
+        ] = None
 
     def stop(self):
         self.shared.running = False
 
-    def run_main(self, manager: "RemoteTaskHandlerManager", default: WorldGenerationTaskHandlerReference):
+    def run_main(
+        self,
+        manager: "RemoteTaskHandlerManager",
+        default: WorldGenerationTaskHandlerReference,
+    ):
         while not self.shared.task_data_out.empty():
             task, *data = self.shared.task_data_out.get()
             if task == 1:
@@ -503,19 +511,23 @@ class OffProcessTaskHelper:
                 if args[2]:
                     method(default, *args[0], **args[2])
                 else:
-                    self.shared.task_queue.put((method,)+data)
+                    self.shared.task_queue.put((method,) + data)
 
             elif task == 2:
                 position, name, args, kwargs = pickle.loads(data[0])
                 on_add = None if data[1] is None else marshal.loads(data[1])
 
                 # todo: can we use an lambda to move post-execution off-process?
-                default.schedule_block_add(position, name, *args, on_add=on_add, **kwargs)
+                default.schedule_block_add(
+                    position, name, *args, on_add=on_add, **kwargs
+                )
 
             elif task == 3:
                 position, args, kwargs = pickle.loads(data[0])
                 on_remove = None if data[1] is None else marshal.loads(data[1])
-                default.schedule_block_remove(position, *args, on_remove=on_remove, **kwargs)
+                default.schedule_block_remove(
+                    position, *args, on_remove=on_remove, **kwargs
+                )
 
             else:
                 position = data[0]
@@ -527,14 +539,14 @@ class OffProcessTaskHelper:
                 elif task == 6:
                     default.schedule_visual_update(position)
 
-    def run_layer_generation(
-        self, layer, config
-    ):
-        self.shared.task_queue.put((
-            1,
-            marshal.dumps(layer.add_generate_functions_to_chunk),
-            pickle.dumps(([config, self.reference], {}))
-        ))
+    def run_layer_generation(self, layer, config):
+        self.shared.task_queue.put(
+            (
+                1,
+                marshal.dumps(layer.add_generate_functions_to_chunk),
+                pickle.dumps(([config, self.reference], {})),
+            )
+        )
 
 
 class RemoteTaskHandlerManager:
@@ -544,16 +556,20 @@ class RemoteTaskHandlerManager:
                 OffProcessTaskHelper,
                 "ProcessSeparatedWorldGenerationTaskHandlerReference",
                 WorldGenerationTaskHandlerReference,
-            ]] = []
+            ]
+        ] = []
 
     def create(
-            self,
-            chunk: mcpython.common.world.AbstractInterface.IChunk,
-            default: WorldGenerationTaskHandlerReference
-    ) -> typing.Tuple["ProcessSeparatedWorldGenerationTaskHandlerReference", OffProcessTaskHelper]:
+        self,
+        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        default: WorldGenerationTaskHandlerReference,
+    ) -> typing.Tuple[
+        "ProcessSeparatedWorldGenerationTaskHandlerReference", OffProcessTaskHelper
+    ]:
         helper_instance = OffProcessTaskHelper(chunk)
-        array_instance = ProcessSeparatedWorldGenerationTaskHandlerReference(helper_instance.shared,
-                                                                             chunk.as_shareable())
+        array_instance = ProcessSeparatedWorldGenerationTaskHandlerReference(
+            helper_instance.shared, chunk.as_shareable()
+        )
         helper_instance.reference = array_instance
         self.references.append((helper_instance, array_instance, default))
         return array_instance, helper_instance
@@ -585,15 +601,27 @@ class ProcessSeparatedWorldGenerationTaskHandlerReference(
         self.tasks = []
 
     def schedule_invoke(self, method, *args, force_main=False, **kwargs):
-        self.shared_helper.task_data_out.put((1, marshal.dumps(method), pickle.dumps((args, kwargs)), force_main))
+        self.shared_helper.task_data_out.put(
+            (1, marshal.dumps(method), pickle.dumps((args, kwargs)), force_main)
+        )
 
     def schedule_block_add(self, position, name, *args, on_add=None, **kwargs):
-        self.shared_helper.task_data_out.put((2, pickle.dumps((position, name, args, kwargs)),
-                                              None if on_add is None else marshal.dumps(on_add)))
+        self.shared_helper.task_data_out.put(
+            (
+                2,
+                pickle.dumps((position, name, args, kwargs)),
+                None if on_add is None else marshal.dumps(on_add),
+            )
+        )
 
     def schedule_block_remove(self, position, *args, on_remove=None, **kwargs):
-        self.shared_helper.task_data_out.put((3, pickle.dumps((position, args, kwargs)),
-                                              None if on_remove is None else marshal.dumps(on_remove)))
+        self.shared_helper.task_data_out.put(
+            (
+                3,
+                pickle.dumps((position, args, kwargs)),
+                None if on_remove is None else marshal.dumps(on_remove),
+            )
+        )
 
     def schedule_block_show(self, position):
         self.shared_helper.task_data_out.put((4, position))
@@ -618,8 +646,11 @@ class ProcessSeparatedWorldGenerationTaskHandlerReference(
                     method(self, *args[0], **args[1])
             else:
                 # todo: implement shared logger
-                print("[WARN] failed to run task {}: {} from off-process handler!".format(
-                    task, data))
+                print(
+                    "[WARN] failed to run task {}: {} from off-process handler!".format(
+                        task, data
+                    )
+                )
 
     def get_biome_at(self, x, z) -> str:
         pass  # todo: implement!

@@ -48,17 +48,17 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
 
         dim = G.world.get_dimension_by_name(self.dimension)
 
-        block_north: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            dim.get_block((x + 1, y, z))
+        block_north: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x + 1, y, z)
         )
-        block_east: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            dim.get_block((x, y, z + 1))
+        block_east: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x, y, z + 1)
         )
-        block_south: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            dim.get_block((x - 1, y, z))
+        block_south: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x - 1, y, z)
         )
-        block_west: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            dim.get_block((x, y, z - 1))
+        block_west: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x, y, z - 1)
         )
 
         self.connections["east"] = block_north is not None and (
@@ -86,8 +86,8 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
             self.connections["north"] != self.connections["south"]
             or self.connections["east"] != self.connections["west"]
         )
-        upper_block: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            dim.get_block((x, y + 1, z))
+        upper_block: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x, y + 1, z)
         )
         if (
             not self.connections["up"]

@@ -34,7 +34,7 @@ class BlockGrassBlock(AbstractBlock.AbstractBlock):
         x, y, z = self.position
         dim = G.world.get_dimension_by_name(self.dimension)
 
-        for dy in range(y + 1, dim.get_dimension_range()[1]+1):
+        for dy in range(y + 1, dim.get_dimension_range()[1] + 1):
             instance = dim.get_block((x, dy, z))
             if instance is not None:
                 break
@@ -46,9 +46,9 @@ class BlockGrassBlock(AbstractBlock.AbstractBlock):
                     instance.face_solid[mcpython.util.enums.EnumSide.UP]
                     or instance.face_solid[mcpython.util.enums.EnumSide.DOWN]
                 ):
-                    dim.get_chunk_for_position(
-                        self.position
-                    ).add_block(self.position, "minecraft:dirt")
+                    dim.get_chunk_for_position(self.position).add_block(
+                        self.position, "minecraft:dirt"
+                    )
 
 
 @G.mod_loader("minecraft", "stage:block:load")
