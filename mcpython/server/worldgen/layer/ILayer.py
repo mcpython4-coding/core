@@ -16,19 +16,19 @@ import mcpython.common.world.AbstractInterface
 
 
 class LayerConfig:
-    def __init__(self, *config, **cconfig):
+    def __init__(self, *config, **attr_config):
         self.config = config
         self.layer: typing.Optional["ILayer"] = None
-        for key in cconfig.keys():
-            setattr(self, key, cconfig[key])
+        for key in attr_config.keys():
+            setattr(self, key, attr_config[key])
         self.dimension: typing.Optional[
             mcpython.common.world.AbstractInterface.IDimension
         ] = None
         self.world_generator_config = None
 
-    def apply_config(self, config: dict):
-        for key in config:
-            setattr(self, key, config[key])
+    def apply_config(self, attr_config: dict):
+        for key in attr_config:
+            setattr(self, key, attr_config[key])
         return self
 
 
