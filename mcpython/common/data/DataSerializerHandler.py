@@ -45,19 +45,27 @@ class ISerializer:
 
 class DatapackSerializationHelper:
     def __init__(
-        self, name: str, path_group: str, data_formatter=None, data_un_formatter=None
+        self,
+        name: str,
+        path_group: str,
+        data_formatter=None,
+        data_un_formatter=None,
+        re_run_on_reload=False,
     ):
         self.name = name
         self.path_group = path_group
-        mcpython.common.mod.ResourcePipe.handler.register_mapper(self.map_pack)
         self.serializer: typing.List[typing.Type[ISerializer]] = []
         self.on_deserialize = None
         self.on_clear = None
         self.data_formatter = data_formatter
         self.data_un_formatter = data_un_formatter
+        self.re_run_on_reload = re_run_on_reload
+
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "data:reload:work", self.clear
         )
+
+        mcpython.common.mod.ResourcePipe.handler.register_mapper(self.map_pack)
 
     def register_serializer(self, serializer: typing.Type[ISerializer]):
         self.serializer.append(serializer)
@@ -93,3 +101,6 @@ class DatapackSerializationHelper:
     def clear(self):
         if callable(self.on_clear):
             self.on_clear()
+        if self.re_run_on_reload:
+            for modname, pathname in mcpython.common.mod.ResourcePipe.handler.mods:
+                self.map_pack(modname, pathname)

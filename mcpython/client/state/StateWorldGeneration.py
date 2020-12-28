@@ -162,11 +162,6 @@ class StateWorldGeneration(State.State):
         G.world.config["enable_auto_gen"] = self.is_auto_gen_enabled()
         G.world.config["enable_world_barrier"] = self.is_world_gen_barrier_enabled()
 
-        # reload all the data-packs
-        mcpython.common.DataPack.datapack_handler.reload()
-        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
-        G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
-
         if G.world_generation_handler.get_current_config(
             G.world.get_dimension(0)
         ).GENERATES_START_CHEST:
@@ -177,6 +172,7 @@ class StateWorldGeneration(State.State):
                 (x, height + 1, z), "minecraft:chest"
             )
             block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
+
         G.event_handler.call("on_game_enter")
 
         # add surrounding chunks to load list
@@ -202,6 +198,11 @@ class StateWorldGeneration(State.State):
             master.profiler.disable()
             master.profiler.print_stats(1)
             master.profiler.clear()
+
+        # reload all the data-packs
+        mcpython.common.DataPack.datapack_handler.reload()
+        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
+        G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

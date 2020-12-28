@@ -91,6 +91,7 @@ class ResourcePipeHandler:
         To use in "stage:resources:pipe:add_mapper"
         """
         self.mappers.append(mapper)
+
         for name, pathname in self.mods:
             mapper(name, pathname)
 
@@ -101,3 +102,7 @@ handler.register_mapper(model_mapper)
 handler.register_mapper(tag_mapper)
 handler.register_mapper(language_mapper)
 handler.register_mapper(loot_table_mapper)
+
+
+def load():
+    import mcpython.common.data.worldgen.WorldGenerationMode

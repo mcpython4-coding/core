@@ -14,7 +14,9 @@
       ]
     }
   },
-  "biome_source": "minecraft:default_biome",
+  "biome_source": {
+    "type": "minecraft:default_biome"
+  },
   "landmasses": [
     "land"
   ],
