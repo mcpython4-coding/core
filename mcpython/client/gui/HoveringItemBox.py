@@ -33,6 +33,7 @@ class IHoveringItemBoxDefinition:
     """
     Base class for an ToolTip text provider. Should generate out of an ItemStack an html-string-list
     """
+    PLUGINS = []
 
     @classmethod
     def setup(cls):
@@ -76,7 +77,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
         if raw == localized_name:
             localized_name = itemstack.item.__class__.__name__
         if localized_name == "ConstructedItem":
-            localized_name = "!MissingName!{{{};{}x}}".format(
+            localized_name = "<MissingName:{{{};{}x}}>".format(
                 item_name, itemstack.amount
             )
         stuff = (

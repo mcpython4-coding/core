@@ -164,12 +164,12 @@ class Inventory:
 
     def on_activate(self):
         """
-        called when the inventory is shown
+        Called when the inventory is shown
         """
 
     def on_deactivate(self):
         """
-        called when the inventory is hidden
+        Called when the inventory is hidden
         """
 
     def is_closable_by_escape(self) -> bool:
@@ -180,7 +180,8 @@ class Inventory:
 
     def draw(self, hovering_slot=None):
         """
-        draws the inventory
+        Draws the inventory
+        Feel free to copy code into your own inventory and write your rendering around it!
         """
         x, y = self.get_position()
         if self.bg_sprite:
@@ -238,40 +239,45 @@ class Inventory:
 
     def insert_items(
         self, items: list, random_check_order=False, insert_when_same_item=True
-    ):
+    ) -> list:
+        skipped = []
         while len(items) > 0:
-            self.insert_item(
-                items.pop(0),
+            stack = items.pop(0)
+            if not self.insert_item(
+                stack,
                 random_check_order=random_check_order,
                 insert_when_same_item=insert_when_same_item,
-            )
+            ):
+                skipped.append(stack)
+        return skipped
 
     def insert_item(
         self, itemstack, random_check_order=False, insert_when_same_item=True
-    ):
+    ) -> bool:
         if itemstack.is_empty():
-            return
+            return True
         slots = self.slots.copy()
         if random_check_order:
             random.shuffle(slots)
         for slot in slots:
             if slot.itemstack.is_empty():
                 slot.set_itemstack(itemstack)
-                return
+                return True
             elif slot.itemstack.get_item_name() == itemstack.get_item_name():
                 if (
                     slot.itemstack.amount + itemstack.amount
                     <= itemstack.item.STACK_SIZE
                 ):
                     slot.itemstack.add_amount(itemstack.amount)
-                    return
+                    return True
                 elif insert_when_same_item:
                     overflow = itemstack.amount - (
                         itemstack.item.STACK_SIZE - slot.itemstack.amount
                     )
                     slot.itemstack.amount = itemstack.item.STACK_SIZE
                     itemstack.set_amount(overflow)
-        logger.println("itemstack overflow: ".format(itemstack))
+        # logger.println("itemstack overflow: ".format(itemstack))
+        return False
 
     def update_shift_container(self):
         """
