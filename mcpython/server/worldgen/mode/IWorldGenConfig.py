@@ -19,8 +19,10 @@ import mcpython.common.data.worldgen.WorldGenerationMode
 
 
 class IBiomeSource:
-    @classmethod
-    def get_biome_at(cls, x, z, noises, landmass, config, temperature) -> str:
+    def get_biome_at(self, x, z, noises, landmass, config, temperature) -> str:
+        raise NotImplementedError()
+
+    def get_creation_args(self) -> typing.List:
         raise NotImplementedError()
 
 
@@ -30,6 +32,9 @@ class SingleBiomeSource(IBiomeSource):
 
     def get_biome_at(self, x, z, noises, landmass, config, temperature) -> str:
         return self.biome_name
+
+    def get_creation_args(self) -> typing.Tuple:
+        return self.biome_name,
 
 
 class DefaultBiomeSource(IBiomeSource):
@@ -66,6 +71,10 @@ class DefaultBiomeSource(IBiomeSource):
             landmass, v, temperature, config.world_generator_config.BIOMES
         )
 
+    @classmethod
+    def get_creation_args(cls) -> typing.Tuple:
+        return tuple()
+
 
 class IWorldGenConfig(mcpython.common.data.DataSerializerHandler.ISerializeAble):
     SERIALIZER = (
@@ -78,8 +87,6 @@ class IWorldGenConfig(mcpython.common.data.DataSerializerHandler.ISerializeAble)
 
     BIOMES = []
     BIOME_SOURCE: typing.Type[IBiomeSource] = SingleBiomeSource("minecraft:void")
-
-    GENERATION_LAYERS = []
 
     LANDMASSES = []
     LAYERS = []

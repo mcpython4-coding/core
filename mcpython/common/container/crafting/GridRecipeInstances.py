@@ -9,7 +9,7 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.gui.crafting.IRecipeType
+import mcpython.common.container.crafting.IRecipeType
 from mcpython import shared as G, logger
 import mcpython.common.container.ItemStack
 
@@ -41,7 +41,7 @@ def transform_to_item_stack(item, table: dict) -> list:
 
 
 @G.crafting_handler
-class GridShaped(mcpython.client.gui.crafting.IRecipeType.IRecipe):
+class GridShaped(mcpython.common.container.crafting.IRecipeType.IRecipe):
     RECIPE_NAMES = ["minecraft:crafting_shaped", "crafting_shaped"]
 
     @classmethod
@@ -78,7 +78,7 @@ class GridShaped(mcpython.client.gui.crafting.IRecipeType.IRecipe):
 
 
 @G.crafting_handler
-class GridShapeless(mcpython.client.gui.crafting.IRecipeType.IRecipe):
+class GridShapeless(mcpython.common.container.crafting.IRecipeType.IRecipe):
     RECIPE_NAMES = ["minecraft:crafting_shapeless", "crafting_shapeless"]
 
     @classmethod

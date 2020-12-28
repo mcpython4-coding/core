@@ -22,6 +22,7 @@ mcpython = mcpython.common.mod.Mod.Mod(
     (mcpython.common.config.VERSION_ID,),
     version_name=mcpython.common.config.VERSION_NAME,
 )
+mcpython.add_load_default_resources()
 
 
 def init():

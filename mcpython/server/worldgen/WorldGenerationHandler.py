@@ -227,6 +227,9 @@ class WorldGenerationHandler:
     def register_world_gen_config(self, instance):
         self.configs.setdefault(instance.DIMENSION, {})[instance.NAME] = instance
 
+    def unregister_world_gen_config(self, instance):
+        del self.configs[instance.DIMENSION][instance.NAME]
+
     def __call__(
         self,
         data: typing.Union[str, mcpython.server.worldgen.layer.ILayer.ILayer],

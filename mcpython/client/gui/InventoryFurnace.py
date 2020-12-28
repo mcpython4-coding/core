@@ -14,7 +14,7 @@ from mcpython import logger
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
-import mcpython.client.gui.crafting.FurnaceCraftingHelper
+import mcpython.common.container.crafting.FurnaceCraftingHelper
 import mcpython.common.event.EventHandler
 import pyglet
 import time
@@ -145,7 +145,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
                 #           self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
                 self.reset()
                 return
-            self.recipe: mcpython.client.gui.crafting.FurnaceCraftingHelper.FurnaceRecipe = (
+            self.recipe: mcpython.common.container.crafting.FurnaceCraftingHelper.FurnaceRecipe = (
                 recipe
             )
             self.block.active = True

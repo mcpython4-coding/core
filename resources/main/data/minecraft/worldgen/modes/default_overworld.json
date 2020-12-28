@@ -1,0 +1,32 @@
+{
+  "name": "minecraft:test_overworld",
+  "dimension": "minecraft:overworld",
+  "biomes": {
+    "land": {
+      "2.0": [
+        "minecraft:dessert"
+      ],
+      "0.8": [
+        "minecraft:plains"
+      ],
+      "0.2": [
+        "minecraft:mountains"
+      ]
+    }
+  },
+  "biome_source": "minecraft:default_biome",
+  "landmasses": [
+    "land"
+  ],
+  "layers": [
+    "minecraft:landmass_default",
+    "minecraft:temperature_map",
+    "minecraft:biome_map_default",
+    "minecraft:heightmap_default",
+    "minecraft:bedrock_default",
+    "minecraft:stone_default",
+    "minecraft:top_layer_default",
+    "minecraft:feature_default"
+  ],
+  "generates_start_chest": true
+}

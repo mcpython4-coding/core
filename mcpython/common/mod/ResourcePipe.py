@@ -14,7 +14,7 @@ from mcpython import shared
 
 
 def recipe_mapper(modname, pathname):
-    import mcpython.client.gui.crafting.CraftingManager
+    import mcpython.common.container.crafting.CraftingManager
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:recipes",

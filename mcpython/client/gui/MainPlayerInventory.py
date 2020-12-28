@@ -13,8 +13,8 @@ from mcpython import shared
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
-import mcpython.client.gui.crafting.CraftingManager
-import mcpython.client.gui.crafting.CraftingGridHelperInterface
+import mcpython.common.container.crafting.CraftingManager
+import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.item.AbstractArmorItem
 import mcpython.ResourceLoader
 import PIL.Image
@@ -48,7 +48,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         self.hotbar = hotbar
         super().__init__()
         inputs = [self.slots[40:42], self.slots[42:44]]
-        self.recipe_interface = mcpython.client.gui.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
+        self.recipe_interface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
             inputs, self.slots[44]
         )
 

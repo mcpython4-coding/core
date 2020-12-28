@@ -12,9 +12,9 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 from mcpython import shared as G, logger
-import mcpython.client.gui.crafting.IRecipeInterface
-import mcpython.client.gui.crafting.IRecipeType
-import mcpython.client.gui.crafting.GridRecipeInstances
+import mcpython.common.container.crafting.IRecipeInterface
+import mcpython.common.container.crafting.IRecipeType
+import mcpython.common.container.crafting.GridRecipeInstances
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
 
@@ -30,7 +30,7 @@ class IRecipeAdapter:
 
 
 class CraftingGridHelperInterface(
-    mcpython.client.gui.crafting.IRecipeInterface.IRecipeInterface
+    mcpython.common.container.crafting.IRecipeInterface.IRecipeInterface
 ):
     """
     Recipe interface for an crafting grid of arbitrary size using the default recipe implementation
@@ -72,7 +72,7 @@ class CraftingGridHelperInterface(
         slot_output_map.on_update.append(self.on_output_update)
         slot_output_map.allow_half_getting = False
         slot_output_map.on_shift_click = self.on_output_shift_click
-        self.active_recipe: mcpython.client.gui.crafting.IRecipeType.IRecipe = None
+        self.active_recipe: mcpython.common.container.crafting.IRecipeType.IRecipe = None
         self.shaped_enabled = enable_shaped_recipes and enabled
         self.shapeless_enabled = enable_shapeless_recipes and enabled
 
@@ -115,7 +115,7 @@ class CraftingGridHelperInterface(
             if (
                 isinstance(
                     recipe,
-                    mcpython.client.gui.crafting.GridRecipeInstances.GridShaped,
+                    mcpython.common.container.crafting.GridRecipeInstances.GridShaped,
                 )
                 and self.shaped_enabled
             ):
@@ -123,7 +123,7 @@ class CraftingGridHelperInterface(
             elif (
                 isinstance(
                     recipe,
-                    mcpython.client.gui.crafting.GridRecipeInstances.GridShapeless,
+                    mcpython.common.container.crafting.GridRecipeInstances.GridShapeless,
                 )
                 and self.shapeless_enabled
             ):
@@ -174,7 +174,7 @@ class CraftingGridHelperInterface(
     @classmethod
     def check_shaped(
         cls,
-        recipe: mcpython.client.gui.crafting.GridRecipeInstances.GridShaped,
+        recipe: mcpython.common.container.crafting.GridRecipeInstances.GridShaped,
         item_table: dict,
     ) -> bool:
         # check if all necessary slots are used
@@ -204,7 +204,7 @@ class CraftingGridHelperInterface(
 
     @staticmethod
     def check_shapeless(
-        recipe: mcpython.client.gui.crafting.GridRecipeInstances.GridShapeless,
+        recipe: mcpython.common.container.crafting.GridRecipeInstances.GridShapeless,
         items: list,
     ) -> bool:
         tasked = recipe.inputs[:]

@@ -9,13 +9,13 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.gui.crafting.IRecipeType
+import mcpython.common.container.crafting.IRecipeType
 from mcpython import shared as G
-import mcpython.client.gui.crafting.GridRecipeInstances
+import mcpython.common.container.crafting.GridRecipeInstances
 
 
 @G.crafting_handler
-class FurnaceRecipe(mcpython.client.gui.crafting.IRecipeType.IRecipe):
+class FurnaceRecipe(mcpython.common.container.crafting.IRecipeType.IRecipe):
     """
     Interface for decoding an furnace-like recipe
     """
@@ -32,7 +32,7 @@ class FurnaceRecipe(mcpython.client.gui.crafting.IRecipeType.IRecipe):
         """
         inputs = [
             x[0]
-            for x in mcpython.client.gui.crafting.GridRecipeInstances.transform_to_item_stack(
+            for x in mcpython.common.container.crafting.GridRecipeInstances.transform_to_item_stack(
                 data["ingredient"], {}
             )
         ]

@@ -10,7 +10,7 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G, logger
-import mcpython.client.gui.crafting.IRecipeType
+import mcpython.common.container.crafting.IRecipeType
 import mcpython.ResourceLoader
 import mcpython.common.item.ItemHandler
 import mcpython.common.mod.ModMcpython
@@ -60,14 +60,14 @@ class CraftingManager:
         return recipe
 
     def __call__(self, obj):
-        if issubclass(obj, mcpython.client.gui.crafting.IRecipeType.IRecipe):
+        if issubclass(obj, mcpython.common.container.crafting.IRecipeType.IRecipe):
             [self.recipe_info_table.setdefault(name, obj) for name in obj.RECIPE_NAMES]
         else:
             raise ValueError()
         return obj
 
     def add_recipe(
-        self, recipe: mcpython.client.gui.crafting.IRecipeType.IRecipe, name
+        self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe, name
     ):
         recipe.name = name
         recipe.register()
@@ -170,10 +170,4 @@ def load_recipe_providers():
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:recipe:groups", load_recipe_providers, info="loading crafting recipe groups"
-)
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:recipes",
-    G.crafting_handler.load,
-    "minecraft",
-    info="loading crafting recipes",
 )
