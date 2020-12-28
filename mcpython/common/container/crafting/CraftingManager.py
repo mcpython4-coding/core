@@ -74,9 +74,9 @@ class CraftingManager:
         self.recipe_table[name] = recipe
 
     def add_recipe_from_data(self, data: dict, name: str):
-        rname = data["type"]
-        if rname in self.recipe_info_table:
-            recipe = self.recipe_info_table[rname].from_data(data)
+        recipe_type = data["type"]
+        if recipe_type in self.recipe_info_table:
+            recipe = self.recipe_info_table[recipe_type].from_data(data)
             if recipe is None:
                 return 0
             self.add_recipe(recipe, name)
@@ -106,7 +106,7 @@ class CraftingManager:
         result = self.add_recipe_from_data(data, name)
         if result is None and "--debugrecipes" in sys.argv:
             logger.println(
-                "error in decoding recipe from file {}: type '{}' not found".format(
+                "error in decoding recipe from file '{}': type '{}' not found".format(
                     file, data["type"]
                 )
             )
@@ -120,20 +120,20 @@ class CraftingManager:
             )
             return  # make sure to load only ones!
         self.loaded_mod_dirs.add(modname)
-        for itemname in mcpython.ResourceLoader.get_all_entries(
+        for file in mcpython.ResourceLoader.get_all_entries(
             "data/{}/recipes".format(modname)
         ):
-            if itemname.endswith("/"):
+            if file.endswith("/"):
                 continue
             if not load_direct:
                 G.mod_loader.mods[modname].eventbus.subscribe(
                     "stage:recipe:bake",
                     self.add_recipe_from_file,
-                    itemname,
-                    info="loading crafting recipe from {}".format(itemname),
+                    file,
+                    info="loading crafting recipe from {}".format(file),
                 )
             else:
-                self.add_recipe_from_file(itemname)
+                self.add_recipe_from_file(file)
 
     def reload_crafting_recipes(self):
         if not G.event_handler.call_cancelable("crafting_manager:reload:pre", self):
@@ -150,7 +150,7 @@ class CraftingManager:
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
             logger.println(
-                "\r[MODLOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
+                "\r[MOD LOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
                     modname, i + 1, len(self.loaded_mod_dirs)
                 ),
                 end="",

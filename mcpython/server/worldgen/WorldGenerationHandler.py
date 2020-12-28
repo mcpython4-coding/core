@@ -230,7 +230,7 @@ class WorldGenerationHandler:
     def unregister_world_gen_config(self, instance):
         del self.configs[instance.DIMENSION][instance.NAME]
 
-    def get_config(self, dimension: str, name: str):
+    def get_world_gen_config(self, dimension: str, name: str):
         return self.configs[dimension][name]
 
     def __call__(

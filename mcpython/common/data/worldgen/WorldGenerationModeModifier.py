@@ -33,7 +33,7 @@ class WorldGenerationModeModifier(
 
     @classmethod
     def register(cls, data: dict):
-        mode = shared.world_generation_handler.get_config(data["dimension"], data["name"])
+        mode = shared.world_generation_handler.get_world_gen_config(data["dimension"], data["name"])
         if "biomes" in data:
             for mass in data["biomes"]:
                 for temp in data["biomes"][mass]:
