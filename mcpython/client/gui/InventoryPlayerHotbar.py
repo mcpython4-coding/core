@@ -178,7 +178,7 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
     def on_deactivate(self):
         pass
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         self.bg_image_size = TEXTURES.bar_size
         x, y = self.get_position()
         y += 40

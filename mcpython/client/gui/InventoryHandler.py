@@ -53,7 +53,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             slot.on_button_press(x, y, symbol, modifiers)
 
     def on_draw_2d(self):
-        hoveringslot, hoveringinvenory = self._get_slot_inventory_for(
+        hovering_slot, hovering_inventory = self._get_slot_inventory_for(
             *G.window.mouse_position
         )
         if any(
@@ -69,7 +69,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             G.state_handler.states["minecraft:game"].parts[0].activate_keyboard = True
         for inventory in G.inventory_handler.opened_inventory_stack:
             G.rendering_helper.enableAlpha()  # make sure that it is enabled
-            inventory.draw(hoveringslot=hoveringslot)
+            inventory.draw(hovering_slot=hovering_slot)
         if not G.inventory_handler.moving_slot.get_itemstack().is_empty():
             G.inventory_handler.moving_slot.position = G.window.mouse_position
             G.inventory_handler.moving_slot.draw(0, 0)
@@ -84,11 +84,11 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             self.tool_tip_renderer.renderFor(
                 G.inventory_handler.moving_slot.get_itemstack(), (x + 32, y + 32)
             )
-        elif hoveringslot is not None and not hoveringslot.get_itemstack().is_empty():
-            x, y = hoveringslot.position
-            ix, iy = hoveringinvenory.get_position()
+        elif hovering_slot is not None and not hovering_slot.get_itemstack().is_empty():
+            x, y = hovering_slot.position
+            ix, iy = hovering_inventory.get_position()
             self.tool_tip_renderer.renderFor(
-                hoveringslot.get_itemstack(), (x + ix + 32, y + iy + 32)
+                hovering_slot.get_itemstack(), (x + ix + 32, y + iy + 32)
             )
 
     def _get_slot_for(self, x, y) -> mcpython.client.gui.Slot.Slot:

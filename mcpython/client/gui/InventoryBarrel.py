@@ -54,14 +54,14 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
         # 3 rows of 9 slots of storage
         return [mcpython.client.gui.Slot.Slot() for _ in range(9 * 3)]
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         x, y = self.get_position()
         mcpython.client.gui.InventoryChest.InventoryChest.TEXTURE.blit(x, y)
         self.bg_image_size = (
             mcpython.client.gui.InventoryChest.InventoryChest.TEXTURE_SIZE
         )
         for slot in G.world.get_active_player().inventory_main.slots[:36] + self.slots:
-            slot.draw(x, y, hovering=slot == hoveringslot)
+            slot.draw(x, y, hovering=slot == hovering_slot)
         for slot in G.world.get_active_player().inventory_main.slots[:36] + self.slots:
             slot.draw_label()
 

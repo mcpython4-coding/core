@@ -76,7 +76,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
             "user:keyboard:press", self.on_key_press
         )
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         """
         draws the inventory
         """
@@ -86,7 +86,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
-            slot.draw(x, y, hovering=slot == hoveringslot)
+            slot.draw(x, y, hovering=slot == hovering_slot)
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):

@@ -178,7 +178,7 @@ class Inventory:
     def is_always_open(self) -> bool:
         return False
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         """
         draws the inventory
         """
@@ -190,7 +190,7 @@ class Inventory:
             )
             self.bg_sprite.draw()
         for slot in self.slots:
-            slot.draw(x, y, hovering=slot == hoveringslot)
+            slot.draw(x, y, hovering=slot == hovering_slot)
         for slot in self.slots:
             slot.draw_label()
 
