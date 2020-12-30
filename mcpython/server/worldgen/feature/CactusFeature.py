@@ -12,8 +12,13 @@ This project is not official by mojang and does not relate to it.
 import mcpython.server.worldgen.feature.IFeature
 import random
 
+from mcpython import shared
 
+
+@shared.registry
 class CactusFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
+    NAME = "minecraft:cactus_feature"
+
     @classmethod
     def place(cls, dimension, x: int, y: int, z: int, config):
         for dy in range(0, random.randint(1, 3)):

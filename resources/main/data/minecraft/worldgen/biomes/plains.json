@@ -1,0 +1,62 @@
+{
+  "name": "minecraft:plains",
+  "passive_spawns": {
+        "minecraft:sheep": [12, 4],
+        "minecraft:pigs": [10, 4],
+        "minecraft:chicken": [10, 4],
+        "minecraft:cow": [8, 4],
+        "minecraft:horse": [5, [2, 6]],
+        "minecraft:donkey": [1, [1, 3]]
+    },
+  "hostile_spawns": {
+        "minecraft:spider": [100, 4],
+        "minecraft:zombie": [95, 4],
+        "minecraft:zombie_villager": [5, 1],
+        "minecraft:skeleton": [100, 4],
+        "minecraft:creeper": [100, 4],
+        "minecraft:slime": [100, 4],
+        "minecraft:enderman": [10, [1, 4]],
+        "minecraft:witch": [5, 1]
+    },
+  "ambient_spawns": {"minecraft:bat": [10, 8]},
+  "weight": 20,
+  "height_range": [10, 30],
+  "features": [
+    {
+      "type": "minecraft:oak_tree_feature_bees",
+      "weight": 1,
+      "group": "trees",
+      "group_spawn_count": [-3, 1]
+    },
+    {
+      "type": "minecraft:plains_village_feature" ,
+      "weight": 1,
+      "group": "villages",
+      "group_spawn_count": [-100, 1]
+    },
+    {
+      "type": "minecraft:pillager_outpost_feature",
+      "weight": 1,
+      "group": "pillager_outposts",
+      "group_spawn_count": [-150, 1]
+    },
+    {
+      "type": "minecraft:plant_feature",
+      "weight": 1,
+      "group": "flowers",
+      "group_spawn_count": [0, 3],
+      "custom_config": {
+        "minecraft:azure_bluet": 10,
+        "minecraft:oxeye_daisy": 10,
+        "minecraft:cornflower": 8,
+        "#minecraft:tulips": 1
+      }
+    },
+    {
+      "type": "minecraft:default_ore_feature",
+      "weight": 10,
+      "group": "ores",
+      "group_spawn_count": [1, 10]
+    }
+  ]
+}

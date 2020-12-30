@@ -16,6 +16,7 @@ from abc import ABC
 import mcpython.common.world.Dimension
 import mcpython.common.world.AbstractInterface
 import mcpython.server.worldgen.feature.IFeature
+from mcpython import shared
 
 
 def place_default(
@@ -119,13 +120,16 @@ class CoalOre(INormalOre):
         return "minecraft:coal_ore"
 
 
+@shared.registry
 class DefaultOreFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
-    pass
+    NAME = "minecraft:default_ore_feature"
 
 
+@shared.registry
 class DefaultEmeraldFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
-    pass
+    NAME = "minecraft:default_emerald_ore_feature"
 
 
+@shared.registry
 class DefaultInfestedStoneFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
-    pass
+    NAME = "minecraft:default_infested_stone_feature"

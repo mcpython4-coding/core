@@ -95,7 +95,6 @@ FOG_DISTANCE = (
 
 BIOME_HEIGHT_RANGE_MAP = (
     {  # an dict of biome name: height range storing the internal height range
-        "minecraft:plains": (10, 30),
         "minecraft:dessert": (10, 30),
         "minecraft:mountains": (10, 50),
     }

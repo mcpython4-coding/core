@@ -49,39 +49,31 @@ class Biome(mcpython.common.event.Registry.IRegistryContent):
 
     CARVERS = []  # for the future...
 
-    @staticmethod
-    def get_landmass() -> str:
+    @classmethod
+    def get_landmass(cls) -> str:
         return "land"
 
-    @staticmethod
-    def get_weight() -> int:
+    @classmethod
+    def get_weight(cls) -> int:
         return 10
 
-    @staticmethod
-    def get_height_range() -> typing.Tuple[int, int]:
+    @classmethod
+    def get_height_range(cls) -> typing.Tuple[int, int]:
         return 10, 30
 
-    @staticmethod
+    @classmethod
     def get_top_layer_height_range(
+        cls,
         position: typing.Tuple[int, int],
         dimension: mcpython.common.world.AbstractInterface.IDimension,
     ) -> typing.Tuple[int, int]:
         return 3, 5
 
-    @staticmethod
+    @classmethod
     def get_top_layer_configuration(
+        cls,
         height: int,
         position: typing.Tuple[int, int],
         dimension: mcpython.common.world.AbstractInterface.IDimension,
     ) -> typing.List[str]:
         return ["minecraft:dirt"] * (height - 1) + ["minecraft:grass_block"]
-
-    @staticmethod
-    def get_trees() -> typing.List[
-        typing.Tuple[mcpython.server.worldgen.feature.IFeature.IFeature, float]
-    ]:
-        return []
-
-    @staticmethod
-    def get_ores() -> typing.List[mcpython.server.worldgen.feature.IOre.IOre]:
-        return []

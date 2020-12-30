@@ -33,6 +33,7 @@ class IHoveringItemBoxDefinition:
     """
     Base class for an ToolTip text provider. Should generate out of an ItemStack an html-string-list
     """
+
     PLUGINS = []
 
     @classmethod

@@ -10,11 +10,14 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.server.worldgen.feature.IFeature
+from mcpython import shared
 
 
+@shared.registry
 class FossileFeatureOverworld(mcpython.server.worldgen.feature.IFeature.IFeature):
-    pass
+    NAME = "minecraft:overworld_fossile_feature"
 
 
+@shared.registry
 class FossileFeatureNether(mcpython.server.worldgen.feature.IFeature.IFeature):
-    pass
+    NAME = "minecraft:nether_fossile_feature"

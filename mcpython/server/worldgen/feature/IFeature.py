@@ -77,3 +77,15 @@ class IFeature(mcpython.common.event.Registry.IRegistryContent):
         config=None,
     ) -> FeatureDefinition:
         return FeatureDefinition(cls, weight, group, group_spawn_count, point, config)
+
+    @classmethod
+    def as_feature_definition_with_custom_config(
+        cls,
+        weight: int,
+        group: str,
+        custom_config: dict,
+        group_spawn_count: typing.Union[int, typing.Tuple[int, int]] = 1,
+        point: typing.Type[IFeatureSpawnPoint] = TopLayerSpawnPoint,
+        config=None,
+    ) -> FeatureDefinition:
+        pass

@@ -14,7 +14,9 @@ from . import IFeature
 import random
 
 
+@shared.registry
 class OakTreeNormalFeature(IFeature.IFeature):
+    NAME = "minecraft:oak_tree_feature"
     # todo: add big tree variant
 
     @classmethod
@@ -61,5 +63,6 @@ class OakTreeNormalFeature(IFeature.IFeature):
                         )
 
 
+@shared.registry
 class OakTreeNormalFeatureWithBees(OakTreeNormalFeature):
-    pass
+    NAME = "minecraft:oak_tree_feature_bees"

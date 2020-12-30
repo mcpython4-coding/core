@@ -106,5 +106,7 @@ handler.register_mapper(loot_table_mapper)
 
 def load():
     from mcpython.common.data.worldgen import (
-        WorldGenerationMode, WorldGenerationModeModifier
+        WorldGenerationMode,
+        WorldGenerationModeModifier,
+        Biome,
     )

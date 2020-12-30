@@ -34,7 +34,7 @@ class SingleBiomeSource(IBiomeSource):
         return self.biome_name
 
     def get_creation_args(self) -> typing.Tuple:
-        return self.biome_name,
+        return (self.biome_name,)
 
 
 class DefaultBiomeSource(IBiomeSource):

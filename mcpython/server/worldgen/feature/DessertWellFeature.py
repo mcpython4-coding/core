@@ -12,9 +12,13 @@ This project is not official by mojang and does not relate to it.
 import mcpython.server.worldgen.feature.IFeature
 import mcpython.server.worldgen.WorldGenerationTaskArrays
 import mcpython.util.enums
+from mcpython import shared
 
 
+@shared.registry
 class DessertWellFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
+    NAME = "minecraft:dessert_well_feature"
+
     SAND_LIKE = [
         "minecraft:sand",
         "minecraft:red_sand",

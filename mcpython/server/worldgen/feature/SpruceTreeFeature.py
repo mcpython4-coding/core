@@ -14,7 +14,10 @@ from . import IFeature
 import random
 
 
+@shared.registry
 class SpruceTreeNormalFeature(IFeature.IFeature):
+    NAME = "minecraft:spruce_tree_feature"
+
     # todo: implement real
 
     @classmethod

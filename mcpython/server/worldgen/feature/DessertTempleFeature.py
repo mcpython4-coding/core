@@ -10,7 +10,9 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.server.worldgen.feature.IFeature
+from mcpython import shared
 
 
+@shared.registry
 class DessertTempleFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
-    pass
+    NAME = "minecraft:dessert_temple_feature"

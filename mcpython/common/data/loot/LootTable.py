@@ -222,7 +222,9 @@ class LootTablePoolEntry:
             if self.expand:
                 items.append(
                     mcpython.common.container.ItemStack.ItemStack(
-                        random.choice(shared.tag_handler.get_tag_for(self.name, "items"))
+                        random.choice(
+                            shared.tag_handler.get_tag_for(self.name, "items")
+                        )
                     )
                 )
             else:
@@ -368,4 +370,3 @@ class LootTable:
         for pool in self.pools:
             data += pool.roll(*args, **kwargs)
         return data
-

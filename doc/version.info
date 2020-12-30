@@ -1412,3 +1412,5 @@ R   [uuk]: improved world serialization API
 [uuk]: done some work to make blocks work in non-active dimensions
 [uuk]: improved overall API
 [uuk]: made world generation modes serialize-able to data files
+[uuk]: features are now registered properly to the registry
+[uuk]: biomes can now be serialized

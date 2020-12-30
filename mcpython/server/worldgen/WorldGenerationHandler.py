@@ -20,6 +20,7 @@ import mcpython.common.world.Dimension
 import mcpython.server.worldgen.layer.ILayer
 import mcpython.server.worldgen.mode
 import mcpython.server.worldgen.WorldGenerationTaskArrays
+import mcpython.common.event.Registry
 
 
 class WorldGenerationHandler:
@@ -37,6 +38,11 @@ class WorldGenerationHandler:
         )
         self.task_handler = (
             mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandler()
+        )
+        self.feature_registry = mcpython.common.event.Registry.Registry(
+            "minecraft:world_gen_features",
+            ["minecraft:generation_feature"],
+            "stage:worldgen:feature",
         )
 
     def serialize_chunk_generator_info(self) -> dict:

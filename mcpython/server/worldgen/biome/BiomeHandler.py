@@ -53,40 +53,17 @@ class BiomeHandler:
             )
         self(biome)
 
+    def unregister(
+        self, biome: typing.Type[mcpython.server.worldgen.biome.Biome.Biome]
+    ):
+        del self.biomes[biome.NAME]
+        self.registry_list.remove(biome)
+
     def __call__(self, biome):
         if biome in self.biomes.values():
             raise ValueError("can't add biome. biome is in biome registry")
         self.biomes[biome.NAME] = biome
         self.registry_list.append(biome)
-
-    def add_biome_to_dim(self, dim: int, biomename: str):
-        biome = self.biomes[biomename]
-        if dim not in self.biome_table:
-            self.biome_table[dim] = {}
-        if biome.get_landmass() not in self.biome_table[dim]:
-            self.biome_table[dim][biome.get_landmass()] = {}
-        if biome.get_temperature() not in self.biome_table[dim][biome.get_landmass()]:
-            self.biome_table[dim][biome.get_landmass()][biome.get_temperature()] = []
-        self.biome_table[dim][biome.get_landmass()][biome.get_temperature()] += [
-            biomename
-        ] * biome.get_weight()
-
-    def remove_biome_from_dim(self, dim: int, biomename: str):
-        biome = self.biomes[biomename]
-        while biomename in self.biome_table[dim][biome.get_landmass()]:
-            self.biome_table[dim][biome.get_landmass()][biome.get_temperature()].remove(
-                biomename
-            )
-
-    def is_biome_in_dim(self, dim: int, biomename: str):
-        return any(
-            [
-                biomename in x
-                for x in self.biome_table[dim][
-                    self.biomes[biomename].get_landmass()
-                ].values()
-            ]
-        )
 
     def get_biomes_for_dimension(
         self, biomes: typing.Dict[int, str], weighted=False, temperature=None

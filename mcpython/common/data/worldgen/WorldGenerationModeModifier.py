@@ -33,7 +33,9 @@ class WorldGenerationModeModifier(
 
     @classmethod
     def register(cls, data: dict):
-        mode = shared.world_generation_handler.get_world_gen_config(data["dimension"], data["name"])
+        mode = shared.world_generation_handler.get_world_gen_config(
+            data["dimension"], data["name"]
+        )
         if "biomes" in data:
             for mass in data["biomes"]:
                 for temp in data["biomes"][mass]:
@@ -45,8 +47,11 @@ class WorldGenerationModeModifier(
                             if entry in biome_list:
                                 biome_list.remove(entry)
                             else:
-                                logger.println("could not find biome {} for modifier {}, skipping...".format(
-                                    entry, data))
+                                logger.println(
+                                    "could not find biome {} for modifier {}, skipping...".format(
+                                        entry, data
+                                    )
+                                )
                         elif entry not in biome_list:
                             biome_list.append(entry)
 

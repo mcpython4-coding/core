@@ -80,4 +80,4 @@ class Plains(Biome.Biome):
         return mcpython.common.config.BIOME_HEIGHT_RANGE_MAP["minecraft:plains"]
 
 
-G.biome_handler.register(Plains)
+# G.biome_handler.register(Plains)
