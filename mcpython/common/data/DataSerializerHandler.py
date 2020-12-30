@@ -16,6 +16,7 @@ import mcpython.common.mod.ResourcePipe
 import mcpython.ResourceLoader
 from mcpython import logger
 import mcpython.common.event.EventHandler
+from mcpython import shared
 
 
 class ISerializeAble(ABC):
@@ -51,6 +52,7 @@ class DatapackSerializationHelper:
         data_formatter=None,
         data_un_formatter=None,
         re_run_on_reload=False,
+        load_on_stage: str = None,
     ):
         self.name = name
         self.path_group = path_group
@@ -60,6 +62,7 @@ class DatapackSerializationHelper:
         self.data_formatter = data_formatter
         self.data_un_formatter = data_un_formatter
         self.re_run_on_reload = re_run_on_reload
+        self.load_on_stage = load_on_stage
 
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "data:reload:work", self.clear
@@ -77,26 +80,34 @@ class DatapackSerializationHelper:
             if file.endswith("/"):
                 continue
 
-            try:
-                data = mcpython.ResourceLoader.read_raw(file)
+            if self.load_on_stage is None:
+                self.load_file(file)
+            else:
+                shared.mod_loader(modname, self.load_on_stage)(
+                    lambda: self.load_file(file)
+                )
 
-                if callable(self.data_formatter):
-                    data = self.data_formatter(data)
+    def load_file(self, file: str):
+        try:
+            data = mcpython.ResourceLoader.read_raw(file)
 
-                for serializer in self.serializer:
-                    if serializer.check(data):
-                        obj = serializer.deserialize(data)
-                        if callable(self.on_deserialize):
-                            self.on_deserialize(obj)
-                        break
-                else:
-                    logger.println(
-                        "[RESOURCE LOOKUP][{}][WARN] could not read file '{}' as no valid decoder was found!".format(
-                            self.name, file
-                        )
+            if callable(self.data_formatter):
+                data = self.data_formatter(data)
+
+            for serializer in self.serializer:
+                if serializer.check(data):
+                    obj = serializer.deserialize(data)
+                    if callable(self.on_deserialize):
+                        self.on_deserialize(obj)
+                    break
+            else:
+                logger.println(
+                    "[RESOURCE LOOKUP][{}][WARN] could not read file '{}' as no valid decoder was found!".format(
+                        self.name, file
                     )
-            except:
-                logger.print_exception("during deserializing '{}'".format(file))
+                )
+        except:
+            logger.print_exception("during deserializing '{}'".format(file))
 
     def clear(self):
         if callable(self.on_clear):

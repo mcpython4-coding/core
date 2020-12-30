@@ -120,6 +120,7 @@ instance = mcpython.common.data.DataSerializerHandler.DatapackSerializationHelpe
     data_formatter=mcpython.util.data.bytes_to_json,
     data_un_formatter=mcpython.util.data.json_to_bytes,
     re_run_on_reload=True,
+    load_on_stage="stage:worldgen:serializer:mode:load",
 ).register_serializer(WorldGenerationModeSerializer)
 instance.on_deserialize = WorldGenerationModeSerializer.register
 instance.on_clear = WorldGenerationModeSerializer.clear

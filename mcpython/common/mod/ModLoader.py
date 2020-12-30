@@ -315,11 +315,14 @@ class LoadingStages:
     # now, the world gen, depends on results of registry system and data deserialization
     WORLDGEN = LoadingStage(
         "world generation loading phase",
+        "stage:worldgen:serializer:prepare",
         "stage:worldgen:biomes",
+        "stage:worldgen:serializer:biomes:load",
         "stage:worldgen:feature",
         "stage:worldgen:layer",
         "stage:worldgen:mode",
-        "stage:dimension",
+        "stage:worldgen:serializer:mode:load",
+        "stage:worldgen:serializer:mode:modify" "stage:dimension",
     )
 
     # How about storing stuff?

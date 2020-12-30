@@ -76,9 +76,9 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
     ) -> typing.List[str]:
         data = [self.default_block] * height
         if self.top_extension[0] is not None:
-            data[-self.top_extension[1]:] = self.top_extension
+            data[-self.top_extension[1] :] = self.top_extension
         if self.bottom_extension[0] is not None:
-            data[:self.bottom_extension[1]] = self.bottom_extension
+            data[: self.bottom_extension[1]] = self.bottom_extension
         return data
 
 
@@ -96,9 +96,9 @@ class BiomeSerializer(mcpython.common.data.DataSerializerHandler.ISerializer):
         import mcpython.server.worldgen.biome.Biome
 
         data.setdefault("top_layer", {"type": "minecraft:default_top_layer_config"})
-        layer_config: ITopLayerConfigurator = cls.TOP_LAYER_CONFIGURATORS[data["top_layer"][
-            "type"
-        ]](data["top_layer"])
+        layer_config: ITopLayerConfigurator = cls.TOP_LAYER_CONFIGURATORS[
+            data["top_layer"]["type"]
+        ](data["top_layer"])
 
         class Biome(mcpython.server.worldgen.biome.Biome.Biome):
             NAME = data["name"]

@@ -1414,3 +1414,4 @@ R   [uuk]: improved world serialization API
 [uuk]: made world generation modes serialize-able to data files
 [uuk]: features are now registered properly to the registry
 [uuk]: biomes can now be serialized
+[uuk]: data serialization helper takes now optional a loading stage to work in
