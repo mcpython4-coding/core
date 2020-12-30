@@ -117,7 +117,7 @@ G.biome_handler = BiomeHandler()
 
 
 def load():
-    from . import BiomePlains, BiomeDessert, BiomeVoid, BiomeMountains
+    from . import BiomeDessert, BiomeVoid, BiomeMountains
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

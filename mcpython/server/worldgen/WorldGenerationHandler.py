@@ -282,9 +282,26 @@ def load_modes():
     )
 
 
+def load_features():
+    from .feature import (
+        CactusFeature,
+        DessertTempleFeature,
+        DessertWellFeature,
+        FossileFeature,
+        OakTreeFeature,
+        PillagerOutpostDefinition,
+        PlantFeature,
+        SpruceTreeFeature,
+    )
+    from .feature.village import VillageFeatureDefinition
+
+
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:worldgen:layer", load_layers, info="loading generation layers"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:worldgen:mode", load_modes, info="loading generation modes"
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:worldgen:feature", load_features, info="loading world gen features"
 )

@@ -316,9 +316,9 @@ class LoadingStages:
     WORLDGEN = LoadingStage(
         "world generation loading phase",
         "stage:worldgen:serializer:prepare",
+        "stage:worldgen:feature",
         "stage:worldgen:biomes",
         "stage:worldgen:serializer:biomes:load",
-        "stage:worldgen:feature",
         "stage:worldgen:layer",
         "stage:worldgen:mode",
         "stage:worldgen:serializer:mode:load",
