@@ -59,7 +59,7 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
             self.bottom_extension = tuple(
                 config["blocks"].setdefault("bottom_extension", (None, 0))
             )
-        self.height_range = tuple(config.setdefault("height_range", (10, 30)))
+        self.height_range = tuple(config.setdefault("height_range", (3, 5)))
 
     def get_top_layer_height_range(
         self,

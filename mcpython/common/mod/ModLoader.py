@@ -400,7 +400,7 @@ def insert_before(to_insert: LoadingStage, before: LoadingStage) -> bool:
 
 
 class ModLoaderAnnotation:
-    def __init__(self, modname: str, event_name: str, info=None):
+    def __init__(self, modname: str, event_name: str, args, kwargs, info=None):
         """
         creates an new annotation
         :param modname: the name of the mod to annotate to
@@ -410,6 +410,8 @@ class ModLoaderAnnotation:
         self.modname = modname
         self.event_name = event_name
         self.info = info
+        self.args = args
+        self.kwargs = kwargs
 
     def __call__(self, function):
         """
@@ -420,7 +422,7 @@ class ModLoaderAnnotation:
         if self.modname not in G.mod_loader.mods:
             self.modname = "minecraft"
         G.mod_loader.mods[self.modname].eventbus.subscribe(
-            self.event_name, function, info=self.info
+            self.event_name, function, *self.args, info=self.info, **self.kwargs
         )
         return function
 
@@ -469,7 +471,7 @@ class ModLoader:
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
 
-    def __call__(self, modname: str, event_name: str, info=None) -> ModLoaderAnnotation:
+    def __call__(self, modname: str, event_name: str, *args, info=None, **kwargs) -> ModLoaderAnnotation:
         """
         annotation to the event system
         :param modname: the mod name
@@ -477,7 +479,7 @@ class ModLoader:
         :param info: the info
         :return: an ModLoaderAnnotation-instance for annotation
         """
-        return ModLoaderAnnotation(modname, event_name, info)
+        return ModLoaderAnnotation(modname, event_name, args, kwargs, info=info)
 
     def __getitem__(self, item):
         return self.mods[item]

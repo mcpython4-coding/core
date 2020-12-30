@@ -56,8 +56,9 @@ class BiomeHandler:
     def unregister(
         self, biome: typing.Type[mcpython.server.worldgen.biome.Biome.Biome]
     ):
-        del self.biomes[biome.NAME]
-        self.registry_list.remove(biome)
+        if biome.NAME in self.biomes:
+            del self.biomes[biome.NAME]
+            self.registry_list.remove(biome)
 
     def __call__(self, biome):
         if biome in self.biomes.values():
@@ -117,7 +118,7 @@ G.biome_handler = BiomeHandler()
 
 
 def load():
-    from . import BiomeDessert, BiomeVoid, BiomeMountains
+    from . import BiomeVoid, BiomeMountains
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

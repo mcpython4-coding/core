@@ -83,8 +83,8 @@ class DatapackSerializationHelper:
             if self.load_on_stage is None:
                 self.load_file(file)
             else:
-                shared.mod_loader(modname, self.load_on_stage)(
-                    lambda: self.load_file(file)
+                shared.mod_loader(modname, self.load_on_stage, file)(
+                    self.load_file
                 )
 
     def load_file(self, file: str):
