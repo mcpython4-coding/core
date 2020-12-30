@@ -183,9 +183,11 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if dim_id in self.dimensions:
             return self.dimensions[dim_id]
-        for dimension in self.dimensions.values():
-            if dimension.get_name() == dim_id or dimension.get_id() == dim_id:
-                return dimension
+
+        if dim_id in self.dim_to_id:
+            return self.dimensions[self.dim_to_id[dim_id]]
+
+        # logger.print_stack("[ERROR] failed to access dim '{}', below call stack".format(dim_id))
 
     def hit_test(
         self,

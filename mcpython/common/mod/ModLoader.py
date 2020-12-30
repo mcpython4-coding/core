@@ -322,7 +322,8 @@ class LoadingStages:
         "stage:worldgen:layer",
         "stage:worldgen:mode",
         "stage:worldgen:serializer:mode:load",
-        "stage:worldgen:serializer:mode:modify" "stage:dimension",
+        "stage:worldgen:serializer:mode:modify",
+        "stage:dimension",
     )
 
     # How about storing stuff?

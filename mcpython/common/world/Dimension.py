@@ -77,7 +77,7 @@ class DimensionHandler:
 
     def add_default_dimensions(self):
         """
-        implementation for mcpython: will add the dimensions used by the core into the system
+        Implementation for mcpython: will add the dimensions used by the core into the system
         """
         self.add_dimension(
             DimensionDefinition(
@@ -98,8 +98,8 @@ class DimensionHandler:
 
     def add_dimension(self, dim: DimensionDefinition):
         """
-        will add an new dimension definition into the system
-        :param dim: the dimension defintion to add
+        Will add an new dimension definition into the system
+        :param dim: the dimension definition to add
         """
         if dim.id is None:
             self.unfinished_dims.append(dim)
@@ -108,7 +108,7 @@ class DimensionHandler:
 
     def init_dims(self):
         """
-        will create all dimension in the active world
+        Will create all dimension in the active world
         """
         for dim in self.dimensions.values():
             shared.world.add_dimension(dim.id, dim.name, dim_config=dim.config)
