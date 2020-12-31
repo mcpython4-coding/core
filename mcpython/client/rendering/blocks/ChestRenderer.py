@@ -14,7 +14,7 @@ import enum
 
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.ResourceLoader
-import mcpython.client.rendering.BoxModel
+import mcpython.client.rendering.model.BoxModel
 
 
 class ChestTypes(enum.Enum):
@@ -24,6 +24,9 @@ class ChestTypes(enum.Enum):
 
 
 class IChestRenderAble:
+    def __init__(self):
+        self.position = None
+
     def get_type(self) -> ChestTypes:
         return ChestTypes.SINGLE
 
@@ -38,10 +41,10 @@ class ChestRenderer(
     def __init__(
         self, single_texture: str, left_double: str = None, right_double: str = None
     ):
-        self.single_box_top = mcpython.client.rendering.BoxModel.BaseBoxModel(
+        self.single_box_top = mcpython.client.rendering.model.BoxModel.BaseBoxModel(
             (1 / 16, 10 / 16, 1 / 16), (14 / 16, 5 / 16, 14 / 16), single_texture,
         ).auto_value_region((0, 0), (14 / 64, 5 / 64, 14 / 64))
-        self.single_box_bottom = mcpython.client.rendering.BoxModel.BaseBoxModel(
+        self.single_box_bottom = mcpython.client.rendering.model.BoxModel.BaseBoxModel(
             (1 / 16, 1 / 16, 1 / 16), (14 / 16, 10 / 16, 14 / 16), single_texture,
         ).auto_value_region((0, 19/64), (14 / 64, 10 / 64, 14 / 64))
 
