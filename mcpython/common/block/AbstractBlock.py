@@ -11,7 +11,6 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 import typing
-import uuid
 import enum
 
 import mcpython.common.block.BlockFaceState
@@ -21,17 +20,40 @@ import mcpython.common.container.ItemStack
 import mcpython.client.gui.Slot
 import mcpython.util.enums
 import pickle
+from mcpython import shared
 
 
 class BlockRemovalReason(enum.Enum):
-    UNKNOWN = 0
-    PLAYER_REMOVAL = 1
-    PISTON_MOTION = 2
-    EXPLOSION = 3
-    ENTITY_PICKUP = 4
+    """
+    Helper enum storing reasons for an block removed from world
+    """
+
+    UNKNOWN = 0  # default
+    PLAYER_REMOVAL = 1  # the player removed it
+    PISTON_MOTION = 2  # caused by an piston (move or destroy)
+    EXPLOSION = 3  # destroyed during an explosion
+    ENTITY_PICKUP = 4  # An entity was removing it
+    COMMANDS = 5  # command based
 
 
-class AbstractBlock(mcpython.common.event.Registry.IRegistryContent):
+if shared.IS_CLIENT:
+    import mcpython.client.rendering.model.api
+
+    class parent(
+        mcpython.common.event.Registry.IRegistryContent,
+        mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+    ):
+        def __init__(self):
+            super(
+                mcpython.client.rendering.model.api.IBlockStateRenderingTarget, self
+            ).__init__()
+
+
+else:
+    parent = mcpython.common.event.Registry.IRegistryContent
+
+
+class AbstractBlock(parent):
     """
     Abstract base class for all blocks
     All block classes should extend from this
@@ -75,24 +97,34 @@ class AbstractBlock(mcpython.common.event.Registry.IRegistryContent):
 
     DEBUG_WORLD_BLOCK_STATES = [{}]
 
+    DEFAULT_FACE_SOLID = {face: True for face in mcpython.util.enums.EnumSide.iterate()}
+    UNSOLID_FACE_SOLID = {
+        face: False for face in mcpython.util.enums.EnumSide.iterate()
+    }
+
+    @classmethod
+    def modify_block_item(cls, instance):
+        pass
+
     def __init__(self):
         """
         creates new Block-instance.
         sets up basic stuff and creates the attributes
         Sub-classes may want to override the constructor and super().__init__(...) this
         """
+        super().__init__()
+
         self.position = None
         self.dimension = None
         self.set_to = None
         self.real_hit = None
         self.face_state = mcpython.common.block.BlockFaceState.BlockFaceState(self)
-        self.block_state = None
+        self.block_state: int = None
         self.set_by = None
-        self.face_solid = {
-            face: True for face in mcpython.util.enums.EnumSide.iterate()
-        }
-        self.uuid = uuid.uuid4()
-        self.injected_redstone_power = {}
+        self.face_solid = self.DEFAULT_FACE_SOLID.copy()
+        self.injected_redstone_power: typing.Dict[
+            mcpython.util.enums.EnumSide, int
+        ] = {}
 
     def set_creation_properties(
         self, set_to=None, real_hit=None, player=None, state=None
@@ -162,7 +194,7 @@ class AbstractBlock(mcpython.common.event.Registry.IRegistryContent):
     def dump_data(self) -> bytes:
         """
         :return: bytes representing the whole block, not including inventories
-        todo: add an saver way of doing this!
+        todo: add an saver way of doing this! (pickle is an unsafe interface)
         """
         return pickle.dumps(self.get_save_data())
 

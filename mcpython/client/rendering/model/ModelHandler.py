@@ -14,7 +14,7 @@ import sys
 
 from mcpython import shared as G, logger
 import mcpython.common.mod.ModMcpython
-import mcpython.client.rendering.model.Model
+import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState
 import mcpython.ResourceLoader
 import mcpython.util.enums
@@ -147,13 +147,13 @@ class ModelHandler:
         try:
             if type(location) == str:
                 modeldata = mcpython.ResourceLoader.read_json(location)
-                self.models[name] = mcpython.client.rendering.model.Model.Model(
+                self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
                     modeldata.copy(),
                     "block/" + location.split("/")[-1].split(".")[0],
                     name.split(":")[0] if name.count(":") == 1 else "minecraft",
                 )
             else:
-                self.models[name] = mcpython.client.rendering.model.Model.Model(
+                self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
                     location.copy(),
                     name,
                     name.split(":")[0] if name.count(":") == 1 else "minecraft",

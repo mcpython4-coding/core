@@ -16,7 +16,7 @@ import mcpython.util.enums
 
 class BlockDirt(AbstractBlock.AbstractBlock):
     """
-    base class for dirt
+    Base class for dirt
     todo: implement real -> grass convert
     """
 
@@ -29,25 +29,27 @@ class BlockDirt(AbstractBlock.AbstractBlock):
     ENABLE_RANDOM_TICKS = True
 
     def on_random_update(self):
+        dim = G.world.get_dimension_by_name(self.dimension)
         x, y, z = self.position
-        for dy in range(y + 1, 256):
-            blockinst = G.world.get_active_dimension().get_block((x, dy, z))
-            if blockinst is not None:
+        for dy in range(y + 1, dim.get_dimension_range()[1] + 1):
+            instance = dim.get_block((x, dy, z))
+            if instance is not None:
                 break
+
         else:
             for dx in range(-1, 2):
                 for dy in range(-1, 2):
                     for dz in range(-1, 2):
                         position = (x + dx, y + dy, z + dz)
-                        blockinst = G.world.get_active_dimension().get_block(position)
-                        if blockinst is not None:
-                            if blockinst == "minecraft:grass_block" or (
-                                type(blockinst) != str
-                                and blockinst.NAME == "minecraft:grass_block"
+                        instance = dim.get_block(position)
+                        if instance is not None:
+                            if instance == "minecraft:grass_block" or (
+                                type(instance) != str
+                                and instance.NAME == "minecraft:grass_block"
                             ):
-                                G.world.get_active_dimension().get_chunk_for_position(
-                                    self.position
-                                ).add_block(self.position, "minecraft:grass_block")
+                                dim.get_chunk_for_position(self.position).add_block(
+                                    self.position, "minecraft:grass_block"
+                                )
                                 return
 
 

@@ -31,6 +31,7 @@ import mcpython.util.opengl
 import mcpython.common.world.player
 from . import State
 from mcpython.util.annotation import onlyInClient
+import mcpython.server.worldgen.noise.NoiseManager
 
 
 @onlyInClient()
@@ -86,36 +87,29 @@ class StateWorldGeneration(State.State):
             shutil.rmtree(G.world.save_file.directory)
         self.status_table.clear()
         G.dimension_handler.init_dims()
-        sx = (
-            G.state_handler.states["minecraft:world_generation_config"]
-            .parts[7]
-            .entered_text
+
+        G.world_generation_handler.set_current_config(
+            G.world.get_dimension(0),
+            G.state_handler.states[
+                "minecraft:world_generation_config"
+            ].get_world_config_name(),
         )
-        sx = 3 if sx == "" else int(sx)
-        sy = (
-            G.state_handler.states["minecraft:world_generation_config"]
-            .parts[8]
-            .entered_text
+
+        sx, sy = G.state_handler.states[
+            "minecraft:world_generation_config"
+        ].get_world_size()
+        mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = (
+            G.state_handler.states[
+                "minecraft:world_generation_config"
+            ].get_seed_source()
         )
-        sy = 3 if sy == "" else int(sy)
         G.world_generation_handler.enable_generation = True
         fx = sx // 2
         fy = sy // 2
         ffx = sx - fx
         ffy = sy - fy
         G.event_handler.call("on_world_generation_prepared")
-        seed = (
-            G.state_handler.states["minecraft:world_generation_config"]
-            .parts[5]
-            .entered_text
-        )
-        if seed != "":
-            try:
-                seed = int(seed)
-            except ValueError:
-                seed = int.from_bytes(seed.encode("UTF-8"), "big")
-        else:
-            seed = random.randint(-100000, 100000)
+        seed = G.state_handler.states["minecraft:world_generation_config"].get_seed()
         G.world.config["seed"] = seed
         G.event_handler.call("seed:set")
         G.event_handler.call("on_world_generation_started")
@@ -137,20 +131,20 @@ class StateWorldGeneration(State.State):
 
         self = G.state_handler.states["minecraft:world_generation_config"]
         G.event_handler.call("on_game_generation_finished")
-        logger.println("[WORLDGENERATION] finished world generation")
-        playername = self.parts[6].entered_text
-        if playername == "":
-            playername = "unknown"
-        if playername not in G.world.players:
-            G.world.add_player(playername)
+        logger.println("[WORLD GENERATION] finished world generation")
+        player_name = self.get_player_name()
+        if player_name == "":
+            player_name = "unknown"
+        if player_name not in G.world.players:
+            G.world.add_player(player_name)
 
         # setup skin
         try:
-            mcpython.util.getskin.download_skin(playername, G.build + "/skin.png")
+            mcpython.util.getskin.download_skin(player_name, G.build + "/skin.png")
         except ValueError:
             logger.print_exception(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(
-                    playername
+                    player_name
                 )
             )
             try:
@@ -163,19 +157,10 @@ class StateWorldGeneration(State.State):
                 )
                 sys.exit(-1)
         mcpython.common.world.player.Player.RENDERER.reload()
-        G.world.active_player = playername
+        G.world.active_player = player_name
         G.world.get_active_player().move_to_spawn_point()
-        G.world.config["enable_auto_gen"] = (
-            self.parts[2].textpages[self.parts[2].index] == "#*special.value.true*#"
-        )
-        G.world.config["enable_world_barrier"] = (
-            self.parts[3].textpages[self.parts[3].index] == "#*special.value.true*#"
-        )
-
-        # reload all the data-packs
-        mcpython.common.DataPack.datapack_handler.reload()
-        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
-        G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
+        G.world.config["enable_auto_gen"] = self.is_auto_gen_enabled()
+        G.world.config["enable_world_barrier"] = self.is_world_gen_barrier_enabled()
 
         if G.world_generation_handler.get_current_config(
             G.world.get_dimension(0)
@@ -187,12 +172,13 @@ class StateWorldGeneration(State.State):
                 (x, height + 1, z), "minecraft:chest"
             )
             block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
+
         G.event_handler.call("on_game_enter")
 
         # add surrounding chunks to load list
         G.world.change_chunks(
             None,
-            mcpython.util.math.positionToChunk(G.world.get_active_player().position),
+            mcpython.util.math.position_to_chunk(G.world.get_active_player().position),
         )
         G.world.save_file.save_world()
 
@@ -212,6 +198,11 @@ class StateWorldGeneration(State.State):
             master.profiler.disable()
             master.profiler.print_stats(1)
             master.profiler.clear()
+
+        # reload all the data-packs
+        mcpython.common.DataPack.datapack_handler.reload()
+        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
+        G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

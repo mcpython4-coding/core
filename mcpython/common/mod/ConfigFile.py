@@ -396,7 +396,7 @@ class ConfigFile:
         G.mod_loader(
             self.assigned_mod,
             "stage:mod:config:load",
-            "building config file {}".format(self.file),
+            info="building config file {}".format(self.file),
         )(self.build)
 
     def add_entry(self, key: str, default_mapper=None, description=None):

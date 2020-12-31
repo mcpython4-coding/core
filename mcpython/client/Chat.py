@@ -78,7 +78,7 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         """
         self.eventbus.deactivate()
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         wx, _ = G.window.get_size()
         mcpython.util.opengl.draw_rectangle(
             (10, 10), (wx - 20, 20), color=(0.0, 0.0, 0.0, 0.8)
@@ -121,7 +121,7 @@ class Chat:
         )
         self.active_index += len(text)
 
-    def on_key_press(self, symbol, modifiers):
+    def on_key_press(self, symbol: int, modifiers: int):
         """
         called when an key is pressed
         :param symbol: the symbol that is pressed

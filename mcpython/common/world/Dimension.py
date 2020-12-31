@@ -15,7 +15,7 @@ import typing
 import deprecation
 import pyglet
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.block.AbstractBlock
 import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.util
@@ -32,7 +32,7 @@ class DimensionDefinition:
     def __init__(self, name: str, config: dict):
         """
         will create an new placeholder
-        WARNING: must be send to G.dimensionhandler
+        WARNING: must be send to shared.dimension_handler
         :param name: the dimension name
         :param config: the config for it
         """
@@ -77,33 +77,29 @@ class DimensionHandler:
 
     def add_default_dimensions(self):
         """
-        implementation for mcpython: will add the dimensions used by the core into the system
+        Implementation for mcpython: will add the dimensions used by the core into the system
         """
         self.add_dimension(
             DimensionDefinition(
-                "overworld",
-                {
-                    "configname": (
-                        "minecraft:default_overworld"  # "minecraft:debug_biome_world_generator"
-                        if "--debug-world" not in sys.argv
-                        else "minecraft:debug_world_generator"
-                    )
-                },
+                "minecraft:overworld",
+                {"configname": "minecraft:default_overworld"},
             ).setStaticId(0)
         )
         self.add_dimension(
             DimensionDefinition(
-                "nether", {"configname": "minecraft:nether_generator"}
+                "minecraft:the_nether", {"configname": "minecraft:nether_generator"}
             ).setStaticId(-1)
         )
         self.add_dimension(
-            DimensionDefinition("end", {"configname": None}).setStaticId(1)
+            DimensionDefinition("minecraft:the_end", {"configname": None}).setStaticId(
+                1
+            )
         )
 
     def add_dimension(self, dim: DimensionDefinition):
         """
-        will add an new dimension definition into the system
-        :param dim: the dimension defintion to add
+        Will add an new dimension definition into the system
+        :param dim: the dimension definition to add
         """
         if dim.id is None:
             self.unfinished_dims.append(dim)
@@ -112,16 +108,16 @@ class DimensionHandler:
 
     def init_dims(self):
         """
-        will create all dimension in the active world
+        Will create all dimension in the active world
         """
         for dim in self.dimensions.values():
-            G.world.add_dimension(dim.id, dim.name, dim_config=dim.config)
+            shared.world.add_dimension(dim.id, dim.name, dim_config=dim.config)
 
 
-G.dimension_handler = DimensionHandler()
+shared.dimension_handler = DimensionHandler()
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:dimension", G.dimension_handler.add_default_dimensions
+    "stage:dimension", shared.dimension_handler.add_default_dimensions
 )
 
 
@@ -144,12 +140,19 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             gen_config = {}
         self.id = dim_id
         self.world = world_in
-        self.chunks = {}
+        self.chunks: typing.Dict[
+            typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk
+        ] = {}
         self.name = name
         self.world_generation_config = gen_config
         self.world_generation_config_objects = {}
         # normal batch
         self.batches = [pyglet.graphics.Batch() for _ in range(self.BATCH_COUNT)]
+
+        self.height_range = (0, 255)
+
+    def get_dimension_range(self) -> typing.Tuple[int, int]:
+        return self.height_range
 
     def get_id(self):
         return self.id
@@ -162,7 +165,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         create: bool = True,
     ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
         """
-        used to get an chunk instance with an given position
+        Used to get an chunk instance with an given position
         :param cx: the chunk x position or an tuple of (x, z)
         :param cz: the chunk z position or None íf cx is tuple
         :param generate: if the chunk should be scheduled for generation if it is not generated
@@ -172,14 +175,16 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         if cz is None:
             assert type(cx) == tuple
             cx, cz = cx
+
         if (cx, cz) not in self.chunks:
             if not create:
                 return
             self.chunks[(cx, cz)] = mcpython.common.world.Chunk.Chunk(self, (cx, cz))
             if generate:
-                G.world_generation_handler.add_chunk_to_generation_list(
+                shared.world_generation_handler.add_chunk_to_generation_list(
                     self.chunks[(cx, cz)]
                 )
+
         return self.chunks[(cx, cz)]
 
     def get_chunk_for_position(
@@ -191,7 +196,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         **kwargs
     ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
         """
-        gets an chunk for an position
+        Gets an chunk for an position
         :param position: the position to use or the block instance to use
         :param kwargs: same as get_chunk()
         :return: the chunk instance or None
@@ -200,18 +205,18 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             type(position), mcpython.common.block.AbstractBlock.AbstractBlock
         ):
             position = position.position
-        return self.get_chunk(*mcpython.util.math.positionToChunk(position), **kwargs)
 
-    @deprecation.deprecated()
+        return self.get_chunk(*mcpython.util.math.position_to_chunk(position), **kwargs)
+
     def get_block(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
         chunk = self.get_chunk_for_position(position, generate=False, create=False)
         if chunk is None:
             return
+
         return chunk.get_block(position)
 
-    @deprecation.deprecated()
     def add_block(
         self,
         position: tuple,
@@ -220,6 +225,8 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         block_update=True,
         block_update_self=True,
         lazy_setup: typing.Callable = None,
+        check_build_range=True,
+        block_state=None,
     ):
         chunk = self.get_chunk_for_position(position, generate=False)
         return chunk.add_block(
@@ -229,9 +236,10 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             block_update=block_update,
             block_update_self=block_update_self,
             lazy_setup=lazy_setup,
+            check_build_range=check_build_range,
+            block_state=block_state,
         )
 
-    @deprecation.deprecated()
     def remove_block(
         self, position: tuple, immediate=True, block_update=True, block_update_self=True
     ):
@@ -243,23 +251,24 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             block_update_self=block_update_self,
         )
 
-    @deprecation.deprecated()
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         self.get_chunk_for_position(position).check_neighbors(position)
 
-    @deprecation.deprecated()
     def show_block(self, position, immediate=True):
         self.get_chunk_for_position(position).show_block(position, immediate=immediate)
 
-    @deprecation.deprecated()
     def hide_block(self, position, immediate=True):
         self.get_chunk_for_position(position).hide_block(position, immediate=immediate)
 
     def draw(self):
         self.batches[0].draw()
-        G.rendering_helper.enableAlpha()
+
+        shared.rendering_helper.enableAlpha()
         self.batches[1].draw()
-        x, z = mcpython.util.math.positionToChunk(G.world.get_active_player().position)
+
+        x, z = mcpython.util.math.position_to_chunk(
+            shared.world.get_active_player().position
+        )
         pad = 4
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):
@@ -269,7 +278,8 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
                     chunk, mcpython.common.world.Chunk.Chunk
                 ):
                     chunk.draw()
-        G.rendering_helper.disableAlpha()
+
+        shared.rendering_helper.disableAlpha()
 
     def __del__(self):
         self.chunks.clear()
@@ -289,6 +299,9 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             if name in self.world_generation_config
             else default
         )
+
+    def set_world_generation_config_entry(self, name: str, value):
+        self.world_generation_config[name] = value
 
     def get_name(self) -> str:
         return self.name

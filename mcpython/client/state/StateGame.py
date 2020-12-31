@@ -65,7 +65,7 @@ class StateGame(State.State):
         elif symbol == key.E:
             if (
                 not G.world.get_active_player().inventory_main
-                in G.inventory_handler.opened_inventorystack
+                in G.inventory_handler.opened_inventory_stack
             ):
                 if G.window.exclusive:
                     G.event_handler.call("on_player_inventory_open")

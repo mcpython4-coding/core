@@ -9,35 +9,35 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import random
+import typing
 
-import opensimplex
+import mcpython.server.worldgen.noise.NoiseManager
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.event.EventHandler
-import mcpython.server.worldgen.biome.BiomeHandler
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 import mcpython.common.world.Chunk
 import mcpython.common.world.AbstractInterface
 
 
-@G.world_generation_handler
+@shared.world_generation_handler
 class DefaultBiomeMapLayer(ILayer):
+    NAME = "minecraft:biome_map_default"
     DEPENDS_ON = ["minecraft:landmass_default"]
 
-    noise: opensimplex.OpenSimplex = None
-
-    @classmethod
-    def update_seed(cls):
-        seed = G.world.config["seed"]
-        cls.noise = opensimplex.OpenSimplex(seed=seed * 100)
-
-    @staticmethod
-    def normalize_config(config: LayerConfig):
-        if not hasattr(config, "size"):
-            config.size = 1.5
-
-    NAME = "minecraft:biome_map_default"
+    noises: typing.List[
+        mcpython.server.worldgen.noise.NoiseManager.INoiseImplementation
+    ] = [
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME + "_1", dimensions=4, scale=10 ** 10
+        ),
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME + "_2", dimensions=4, scale=10 ** 10
+        ),
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME + "_3", dimensions=4, scale=10 ** 10
+        ),
+    ]
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
@@ -51,15 +51,11 @@ class DefaultBiomeMapLayer(ILayer):
                 biome_map[
                     (x, z)
                 ] = config.world_generator_config.BIOME_SOURCE.get_biome_at(
-                    x, z, [cls.noise], land_map[(x, z)], config, temperature_map[(x, z)]
+                    x, z, cls.noises, land_map[(x, z)], config, temperature_map[(x, z)]
                 )
         chunk.set_value("minecraft:biome_map", biome_map)
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
     "minecraft:biome_map", DefaultBiomeMapLayer, {}
-)
-
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "seed:set", DefaultBiomeMapLayer.update_seed
 )

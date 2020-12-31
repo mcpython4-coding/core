@@ -17,6 +17,7 @@ import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 import mcpython.util.math
 import mcpython.server.worldgen.mode.IWorldGenConfig
+import mcpython.server.worldgen.WorldGenerationTaskArrays
 
 
 class BlockInfo:
@@ -42,7 +43,7 @@ class BlockInfo:
 
         for block, state in blocklist:
             x, y = rx * 4, ry * 4
-            chunk = mcpython.util.math.positionToChunk((x, 0, y))
+            chunk = mcpython.util.math.position_to_chunk((x, 0, y))
             cls.TABLE.setdefault(chunk, {})[(x, y)] = (block.NAME, state)
             rx += 1
             if x >= hsize:
@@ -54,29 +55,31 @@ class DebugWorldGenerator(
     mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
 ):
     NAME = "minecraft:debug_world_generator"
+    DIMENSION = "minecraft:overworld"
     DISPLAY_NAME = "DEBUG GENERATOR"
 
     @classmethod
-    def on_chunk_generation_finished(cls, chunk):
+    def on_chunk_prepare_generation(
+        cls,
+        chunk,
+        array: mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference,
+    ):
         cx, cz = chunk.position
-        if (
-            G.world.get_active_dimension().world_generation_config["configname"]
-            != "debug_overworld"
-        ):
-            return
 
         if (cx, cz) in BlockInfo.TABLE:
             height_map = chunk.get_value("heightmap")
             block_map = BlockInfo.TABLE[(cx, cz)]
             for x, z in block_map.keys():
                 block, state = block_map[(x, z)]
-                block = chunk.add_block((x, 10, z), block, block_update=False)
-                block.set_model_state(state)
-                block.face_state.update()
+                array.schedule_block_add(
+                    (x, 10, z), block, block_update=False, block_state=state
+                )
                 height_map[(x, z)] = [(0, 30)]
             for x in range(16):
                 for z in range(16):
-                    chunk.add_block((cx * 16 + x, 5, cz * 16 + z), "minecraft:barrier")
+                    array.schedule_block_add(
+                        (cx * 16 + x, 5, cz * 16 + z), "minecraft:barrier"
+                    )
 
         if G.world.get_active_player().gamemode != 3:
             G.world.get_active_player().set_gamemode(3)

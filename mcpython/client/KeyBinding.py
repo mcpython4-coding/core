@@ -32,7 +32,7 @@ class KeyMouseBinding:
         self.key_or_button = default
         self.mod = default_mod
 
-    def applies(self, key_or_button, mod) -> bool:
+    def applies(self, key_or_button: int, mod: int) -> bool:
         if type(self.key_or_button) in (list, set, tuple):
             if not all([key_or_button & b for b in self.key_or_button]):
                 return False

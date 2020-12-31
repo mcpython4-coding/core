@@ -69,6 +69,9 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
         """
         return False
 
+    def on_block_broken_with(self, itemstack, player, block):
+        pass
+
     def on_set_from_item(self, block):
         pass
 
@@ -90,5 +93,5 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
 
         return mcpython.client.gui.HoveringItemBox.DEFAULT_ITEM_TOOLTIP
 
-    def getAdditionalTooltipText(self, stack, renderer) -> list:
+    def get_additional_tooltip_text(self, stack, renderer) -> list:
         return []

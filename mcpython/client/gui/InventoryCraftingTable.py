@@ -13,8 +13,8 @@ from mcpython import shared
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
-import mcpython.client.gui.crafting.CraftingManager
-import mcpython.client.gui.crafting.CraftingGridHelperInterface
+import mcpython.common.container.crafting.CraftingManager
+import mcpython.common.container.crafting.CraftingGridHelperInterface
 import pyglet
 import mcpython.common.event.EventHandler
 import mcpython.ResourceLoader
@@ -49,7 +49,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         inputs = [self.slots[:3], self.slots[3:6], self.slots[6:9]]
-        self.recipeinterface = mcpython.client.gui.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
+        self.recipeinterface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
             inputs, self.slots[9]
         )
 
@@ -76,7 +76,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
             "user:keyboard:press", self.on_key_press
         )
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         """
         draws the inventory
         """
@@ -86,7 +86,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
-            slot.draw(x, y, hovering=slot == hoveringslot)
+            slot.draw(x, y, hovering=slot == hovering_slot)
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):

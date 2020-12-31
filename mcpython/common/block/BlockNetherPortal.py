@@ -29,11 +29,13 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     HARDNESS = -1
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
+    def __init__(self):
+        super().__init__()
         self.axis = "x"
-        for key in self.face_solid:
-            self.face_solid[key] = False
 
     def get_model_state(self) -> dict:
         return {"axis": self.axis}
@@ -49,7 +51,9 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def check_valid_surrounding(self):
         x, y, z = self.position
-        chunk = G.world.get_active_dimension().get_chunk_for_position(self.position)
+        chunk = G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
+            self.position
+        )
         if self.check_valid_block((x, y + 1, z), chunk):
             return
         if self.check_valid_block((x, y - 1, z), chunk):
@@ -67,7 +71,9 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def check_valid_block(self, position: tuple, chunk=None):
         if chunk is None:
-            chunk = G.world.get_active_dimension().get_chunk_for_position(position)
+            chunk = G.world.get_dimension_by_name(
+                self.dimension
+            ).get_chunk_for_position(position)
         block = chunk.get_block(position)
         if (
             block is None
@@ -99,12 +105,14 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             # todo: search for portal on other side
             # todo: make it possible for other entities, not only players (-> API change needed!)
 
-            if player.dimension.name == "overworld":
+            if player.dimension.name == "minecraft:overworld":
                 x, y, z = player.position
-                player.teleport((math.floor(x / 8), y, math.floor(z / 8)), "nether")
-            elif player.dimension.name == "nether":
+                player.teleport(
+                    (math.floor(x / 8), y, math.floor(z / 8)), "minecraft:the_nether"
+                )
+            elif player.dimension.name == "minecraft:the_nether":
                 x, y, z = player.position
-                player.teleport((x * 8, y, z * 8), "overworld")
+                player.teleport((x * 8, y, z * 8), "minecraft:overworld")
             player.in_nether_portal_since = None
 
 

@@ -131,12 +131,12 @@ class StateBlockItemGenerator(State.State):
         G.world.get_active_player().rotation = (-45, -45, 0)
         self.blockindex = -1
         try:
-            blockinstance = G.world.get_active_dimension().add_block(
+            instance = G.world.get_active_dimension().add_block(
                 (0, 0, 0), self.tasks[self.blockindex], block_update=False
             )
-            if blockinstance.BLOCK_ITEM_GENERATOR_STATE is not None:
-                blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
-            blockinstance.face_state.update(redraw_complete=True)
+            if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
+                instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
+            instance.face_state.update(redraw_complete=True)
         except ValueError:
             self.blockindex = 0
         # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
@@ -290,9 +290,9 @@ class StateBlockItemGenerator(State.State):
                 mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
             )
         )
-        # block = G.world.get_active_dimension().get_block((0, 0, 0))
-        # if type(block) != str and block is not None:
-        #     block.modify_block_item(obj)
+        block = G.world.get_active_dimension().get_block((0, 0, 0))
+        if type(block) != str and block is not None:
+            block.modify_block_item(obj)
         obj.finish(task_list=True)
         model = mcpython.client.rendering.model.ItemModel.ItemModel(blockname)
         model.addTextureLayer(0, file)

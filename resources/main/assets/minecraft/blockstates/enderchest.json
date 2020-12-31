@@ -1,8 +1,0 @@
-{
-    "variants": {
-        "side=NORTH": { "model": "minecraft:block/chest_ender" },
-        "side=SOUTH": { "model": "minecraft:block/chest_ender", "y": 180 },
-        "side=WEST":  { "model": "minecraft:block/chest_ender", "y": 270 },
-        "side=EAST":  { "model": "minecraft:block/chest_ender", "y": 90 }
-    }
-}

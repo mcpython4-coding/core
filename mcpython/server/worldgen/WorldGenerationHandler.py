@@ -20,6 +20,7 @@ import mcpython.common.world.Dimension
 import mcpython.server.worldgen.layer.ILayer
 import mcpython.server.worldgen.mode
 import mcpython.server.worldgen.WorldGenerationTaskArrays
+import mcpython.common.event.Registry
 
 
 class WorldGenerationHandler:
@@ -38,6 +39,28 @@ class WorldGenerationHandler:
         self.task_handler = (
             mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandler()
         )
+        self.feature_registry = mcpython.common.event.Registry.Registry(
+            "minecraft:world_gen_features",
+            ["minecraft:generation_feature"],
+            "stage:worldgen:feature",
+        )
+
+    def serialize_chunk_generator_info(self) -> dict:
+        data = {}
+        for dimension in shared.world.dimensions.values():
+            data[dimension.get_name()] = dimension.get_world_generation_config_entry(
+                "configname"
+            )
+        return data
+
+    def deserialize_chunk_generator_info(self, data: dict):
+        for dimension in data:
+            if dimension not in shared.world.dimensions:
+                continue
+
+            shared.world.dimensions[dimension].set_world_generation_config_entry(
+                "configname", data[dimension]
+            )
 
     def add_chunk_to_generation_list(
         self,
@@ -81,24 +104,31 @@ class WorldGenerationHandler:
         dimension = chunk.get_dimension()
         config_name = dimension.get_world_generation_config_entry("configname")
 
-        if config_name not in self.configs:
+        if config_name not in self.configs[chunk.get_dimension().get_name()]:
             return  # no config found means no generation
 
-        config = self.configs[config_name]
+        config = self.configs[chunk.get_dimension().get_name()][config_name]
         reference = mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference(
             self.task_handler, chunk
         )
+        config.on_chunk_prepare_generation(chunk, reference)
         for layer_name in config.LAYERS:
+            if type(layer_name) == str:
+                config = chunk.get_dimension().get_world_generation_config_for_layer(
+                    layer_name
+                )
+            else:
+                layer_name, config = layer_name
+                config = (
+                    chunk.get_dimension()
+                    .get_world_generation_config_for_layer(layer_name)
+                    .apply_config(config)
+                )
             reference.schedule_invoke(
                 self.layers[layer_name].add_generate_functions_to_chunk,
-                chunk.get_dimension().get_world_generation_config_for_layer(layer_name),
+                config,
                 reference,
             )
-
-    def process_one_generation_task(self, **kwargs):  # todo: remove
-        if not self.enable_generation:
-            return
-        self.task_handler.process_one_task(**kwargs)
 
     def setup_dimension(
         self, dimension: mcpython.common.world.AbstractInterface.IDimension, config=None
@@ -106,7 +136,12 @@ class WorldGenerationHandler:
         config_name = dimension.get_world_generation_config_entry("configname")
         if config_name is None:
             return  # empty dimension
-        for layer_name in self.configs[config_name].LAYERS:
+        for d in self.configs[dimension.get_name()][config_name].LAYERS:
+            if type(d) == str:
+                layer_name = d
+                cconfig = {}
+            else:
+                layer_name, cconfig = d
             layer = self.layers[layer_name]
             if config is None or layer_name not in config:
                 layer_config = mcpython.server.worldgen.layer.ILayer.LayerConfig(
@@ -114,12 +149,15 @@ class WorldGenerationHandler:
                         dimension.get_world_generation_config_entry(
                             layer_name, default={}
                         )
-                    )
+                    ),
+                    **cconfig
                 )
                 layer_config.dimension = dimension.get_id()
             else:
                 layer_config = config[layer_name]
-            layer_config.world_generator_config = self.configs[config_name]
+            layer_config.world_generator_config = self.configs[dimension.get_name()][
+                config_name
+            ]
             layer.normalize_config(layer_config)
             dimension.set_world_generation_config_for_layer(layer_name, layer_config)
             layer_config.layer = layer
@@ -155,6 +193,7 @@ class WorldGenerationHandler:
         handler = mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference(
             self.task_handler, chunk
         )
+        config.on_chunk_prepare_generation(chunk, handler)
         for i, layer_name in enumerate(config["layers"]):
             layer = self.layers[layer_name]
             layer.add_generate_functions_to_chunk(
@@ -162,18 +201,26 @@ class WorldGenerationHandler:
             )
             shared.world_generation_handler.task_handler.process_tasks()
         logger.println("\r", end="")
-        shared.event_handler.call("worldgen:chunk:finished", chunk)
-        config.on_chunk_generation_finished(chunk)
+        self.mark_finished(chunk)
         chunk.generated = True
         chunk.loaded = True
 
-    def get_current_config(self, dimension):
-        config_name = dimension.world_generation_config["configname"]
-        return self.configs[config_name]
+    def get_current_config(
+        self, dimension: mcpython.common.world.AbstractInterface.IDimension
+    ):
+        config_name = dimension.get_world_generation_config_entry("configname")
+        return self.configs[dimension.get_name()][config_name]
 
-    def mark_finished(self, chunk):
-        config_name = chunk.get_dimension().world_generation_config["configname"]
-        config = self.configs[config_name]
+    def set_current_config(
+        self, dimension: mcpython.common.world.AbstractInterface.IDimension, config: str
+    ):
+        dimension.set_world_generation_config_entry("configname", config)
+
+    def mark_finished(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
+        config_name = chunk.get_dimension().get_world_generation_config_entry(
+            "configname"
+        )
+        config = self.configs[chunk.get_dimension().get_name()][config_name]
         shared.event_handler.call("worldgen:chunk:finished", chunk)
         config.on_chunk_generation_finished(chunk)
 
@@ -184,11 +231,21 @@ class WorldGenerationHandler:
         pass  # todo: implement
 
     def register_world_gen_config(self, instance):
-        self.configs[instance.NAME] = instance
+        self.configs.setdefault(instance.DIMENSION, {})[instance.NAME] = instance
 
-    def __call__(self, data: str or mcpython.server.worldgen.layer.ILayer, config=None):
+    def unregister_world_gen_config(self, instance):
+        del self.configs[instance.DIMENSION][instance.NAME]
+
+    def get_world_gen_config(self, dimension: str, name: str):
+        return self.configs[dimension][name]
+
+    def __call__(
+        self,
+        data: typing.Union[str, mcpython.server.worldgen.layer.ILayer.ILayer],
+        config=None,
+    ):
         if type(data) == dict:
-            self.register_world_gen_config(data, config)
+            self.register_world_gen_config(config)
         elif issubclass(data, mcpython.server.worldgen.layer.ILayer.ILayer):
             self.register_layer(data)
         elif issubclass(data, object):
@@ -210,7 +267,7 @@ def load_layers():
         DefaultStonePlacementLayer,
         DefaultTemperatureLayer,
         DefaultTopLayerLayer,
-        DefaultTreeLayer,
+        DefaultFeatureLayer,
     )
 
 
@@ -220,7 +277,23 @@ def load_modes():
         DebugOverWorldGenerator,
         DefaultNetherWorldGenerator,
         BiomeGenDebugGenerator,
+        AmplifiedWorldGenerator,
+        EndWorldGenerator,
     )
+
+
+def load_features():
+    from .feature import (
+        CactusFeature,
+        DessertTempleFeature,
+        DessertWellFeature,
+        FossileFeature,
+        OakTreeFeature,
+        PillagerOutpostDefinition,
+        PlantFeature,
+        SpruceTreeFeature,
+    )
+    from .feature.village import VillageFeatureDefinition
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
@@ -228,4 +301,7 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:worldgen:mode", load_modes, info="loading generation modes"
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:worldgen:feature", load_features, info="loading world gen features"
 )

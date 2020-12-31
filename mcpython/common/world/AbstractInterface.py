@@ -13,12 +13,20 @@ from abc import ABC
 import typing
 import mcpython.util.enums
 import mcpython.common.block.AbstractBlock
+import mcpython.common.entity.AbstractEntity
 
 
 class IChunk(ABC):
     def __init__(self):
-        self.world = {}  # the world
-        self.positions_updated_since_last_save = []  # "dirty" list
+        self.world: typing.Dict[
+            typing.Tuple[int, int, int], typing.Any
+        ] = {}  # the world
+        self.positions_updated_since_last_save: typing.Set[
+            typing.Tuple[int, int, int]
+        ] = set()
+        self.entities: typing.Set[
+            mcpython.common.entity.AbstractEntity.AbstractEntity
+        ] = set()
 
     def get_dimension(self) -> "IDimension":
         raise NotImplementedError()
@@ -49,7 +57,21 @@ class IChunk(ABC):
         lazy_setup: typing.Callable[
             [mcpython.common.block.AbstractBlock.AbstractBlock], None
         ] = None,
-    ):
+        check_build_range=True,
+        block_state=None,
+    ) -> typing.Optional[mcpython.common.block.AbstractBlock.AbstractBlock]:
+        """
+        Adds an block to the given position
+        :param position: the position to add at
+        :param block_name: the name of the block or an instance of it (mcpython.common.block.AbstractBlock.AbstractBlock)
+        :param immediate: if the block should be shown if needed or not
+        :param block_update: if an block-update should be send to neighbors blocks
+        :param block_update_self: if the block should get an block-update
+        :param lazy_setup: an callable for setting up the block instance
+        :param check_build_range: if the build limits should be checked
+        :param block_state: the block state to create in, or None if not set
+        :return: the block instance or None if it could not be created
+        """
         raise NotImplementedError()
 
     def on_block_updated(
@@ -134,8 +156,17 @@ class IChunk(ABC):
     def get_value(self, key: str):
         raise NotImplementedError()
 
+    def is_visible(self) -> bool:
+        raise NotImplementedError()
+
+    def mark_dirty(self):
+        raise NotImplementedError()
+
 
 class IDimension(ABC):
+    def get_dimension_range(self) -> typing.Tuple[int, int]:
+        raise NotImplementedError()
+
     def get_id(self):
         raise NotImplementedError()
 
@@ -171,6 +202,8 @@ class IDimension(ABC):
         block_update=True,
         block_update_self=True,
         lazy_setup: typing.Callable = None,
+        check_build_range=True,
+        block_state=None,
     ):
         raise NotImplementedError()
 
@@ -189,6 +222,9 @@ class IDimension(ABC):
         raise NotImplementedError()
 
     def get_world_generation_config_entry(self, name: str, default=None):
+        raise NotImplementedError()
+
+    def set_world_generation_config_entry(self, name: str, value):
         raise NotImplementedError()
 
     def set_world_generation_config_for_layer(self, layer_name, layer_config):

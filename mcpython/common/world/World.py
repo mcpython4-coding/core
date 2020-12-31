@@ -43,6 +43,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.dimensions: typing.Dict[
             int, mcpython.common.world.AbstractInterface.IDimension
         ] = {}  # todo: change for str-based
+        self.dim_to_id = {}
         G.dimension_handler.init_dims()
         self.active_dimension: int = (
             0  # todo: change to str; todo: move to player; todo: make property
@@ -81,7 +82,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if not override and name in self.players:
             return self.players[name]
-        self.players[name] = G.entity_handler.add_entity(
+        self.players[name] = G.entity_handler.spawn_entity(
             "minecraft:player", (0, 0, 0), name
         )
         if add_inventories:
@@ -126,6 +127,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         return self.get_dimension(self.active_dimension)
 
+    def get_dimension_by_name(self, name: str):
+        return self.dimensions[self.dim_to_id[name]]
+
     def add_dimension(
         self, dim_id: int, name: str, dim_config=None
     ) -> mcpython.common.world.AbstractInterface.IDimension:
@@ -141,6 +145,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         dim = self.dimensions[dim_id] = mcpython.common.world.Dimension.Dimension(
             self, dim_id, name, gen_config=dim_config
         )
+        self.dim_to_id[dim.name] = dim_id
         G.world_generation_handler.setup_dimension(dim, dim_config)
         return dim
 
@@ -156,7 +161,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         if self.CANCEL_DIM_CHANGE:
             logger.println("interrupted!")
             return
-        sector = mcpython.util.math.positionToChunk(
+        sector = mcpython.util.math.position_to_chunk(
             G.world.get_active_player().position
         )
         logger.println("unloading chunks...")
@@ -178,9 +183,11 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if dim_id in self.dimensions:
             return self.dimensions[dim_id]
-        for dimension in self.dimensions.values():
-            if dimension.get_name() == dim_id or dimension.get_id() == dim_id:
-                return dimension
+
+        if dim_id in self.dim_to_id:
+            return self.dimensions[self.dim_to_id[dim_id]]
+
+        # logger.print_stack("[ERROR] failed to access dim '{}', below call stack".format(dim_id))
 
     def hit_test(
         self,
@@ -281,22 +288,25 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         :param generate_chunks: if chunks should be generated
         :param load_immediate: if chunks should be loaded immediate if needed
         """
+        if self.get_active_dimension() is None:
+            return
         before_set = set()
         after_set = set()
         pad = 4
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):
-                if dx ** 2 + dz ** 2 > (pad + 1) ** 2:
-                    continue
-                if before:
+                if before is not None:
                     x, z = before
-                    before_set.add((x + dx, z + dz))
-                if after:
+                    if (dx + x) ** 2 + (dz + z) ** 2 <= (pad + 1) ** 2:
+                        before_set.add((x + dx, z + dz))
+                if after is not None:
                     x, z = after
-                    after_set.add((x + dx, z + dz))
-        show = after_set - before_set
+                    if (dx + x) ** 2 + (dz + z) ** 2 <= (pad + 1) ** 2:
+                        after_set.add((x + dx, z + dz))
+        # show = after_set - before_set
         hide = before_set - after_set
         for chunk in hide:
+            # todo: fix this, this was previously hiding chunks randomly....
             pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
             if G.world.get_active_dimension().get_chunk(*chunk, generate=False).loaded:
                 G.tick_handler.schedule_once(
@@ -306,7 +316,13 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
                     dimension=self.active_dimension,
                     chunk=chunk,
                 )
-        for chunk in show:
+        for chunk in after_set:
+            if (
+                self.get_active_dimension()
+                .get_chunk(*chunk, generate=False)
+                .is_visible()
+            ):
+                continue
             pyglet.clock.schedule_once(lambda _: self.show_chunk(chunk), 0.1)
             if not load_immediate:
                 pyglet.clock.schedule_once(
@@ -353,7 +369,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         if remove_dims:
             self.dimensions.clear()
             G.dimension_handler.init_dims()
-        [inventory.on_world_cleared() for inventory in G.inventory_handler.inventorys]
+        [inventory.on_world_cleared() for inventory in G.inventory_handler.inventories]
         self.reset_config()
         G.world.get_active_player().flying = False
         for inv in G.world.get_active_player().get_inventories():

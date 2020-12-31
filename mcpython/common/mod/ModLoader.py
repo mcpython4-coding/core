@@ -51,24 +51,24 @@ class LoadingStage:
     class for any loading stage for the system
     """
 
-    def __init__(self, name, *eventnames):
+    def __init__(self, name, *event_names):
         """
-        creates an new instance of LoadingStage
+        Creates an new instance of LoadingStage
         :param name: the name of the stage
-        :param eventnames: an list of events to call in this stage
+        :param event_names: an list of events to call in this stage
         """
         self.name = name
         self.active_event_name = None
         self.active_mod_index = 0
-        self.event_names = list(eventnames)
-        self.running_event_names = eventnames
+        self.event_names = list(event_names)
+        self.running_event_names = event_names
         self.progress = 0
         self.max_progress = 0
 
     @classmethod
     def finish(cls, astate):
         """
-        will finish up the system
+        Will finish up the system
         :param astate: the state to use
         """
         G.mod_loader.active_loading_stage += 1
@@ -81,6 +81,7 @@ class LoadingStage:
             G.state_handler.switch_to("minecraft:block_item_generator")
             G.mod_loader.finished = True
             return True
+
         astate.parts[0].progress += 1
         astate.parts[2].progress = 0
         new_stage = LOADING_ORDER[G.mod_loader.active_loading_stage]
@@ -127,10 +128,12 @@ class LoadingStage:
             astate.parts[2].progress_max = self.max_progress
             astate.parts[2].progress = 0
             return
+
         if self.active_event_name is None:
             if len(self.event_names) == 0:
                 return self.finish(astate)
             self.active_event_name = self.event_names.pop(0)
+
         modname = G.mod_loader.mod_loading_order[self.active_mod_index]
         mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[modname]
         try:
@@ -156,6 +159,7 @@ class LoadingStage:
                 astate.parts[2].progress_max = self.max_progress
                 astate.parts[2].progress = 0
                 return
+
             mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[
                 G.mod_loader.mod_loading_order[self.active_mod_index]
             ]
@@ -193,7 +197,9 @@ class LoadingStages:
 
     # if your mod has other resource locations...
     EXTRA_RESOURCE_LOCATIONS = LoadingStage(
-        "resource addition", "stage:additional_resources"
+        "resource addition",
+        "stage:resources:pipe:add_mapper",
+        "stage:additional_resources",
     )
 
     # first: create ConfigFile objects, second: internally, third: do something with the data
@@ -309,10 +315,14 @@ class LoadingStages:
     # now, the world gen, depends on results of registry system and data deserialization
     WORLDGEN = LoadingStage(
         "world generation loading phase",
-        "stage:worldgen:biomes",
+        "stage:worldgen:serializer:prepare",
         "stage:worldgen:feature",
+        "stage:worldgen:biomes",
+        "stage:worldgen:serializer:biomes:load",
         "stage:worldgen:layer",
         "stage:worldgen:mode",
+        "stage:worldgen:serializer:mode:load",
+        "stage:worldgen:serializer:mode:modify",
         "stage:dimension",
     )
 
@@ -375,14 +385,14 @@ LOADING_ORDER += [
 ]
 
 
-def insertAfter(to_insert: LoadingStage, after: LoadingStage) -> bool:
+def insert_after(to_insert: LoadingStage, after: LoadingStage) -> bool:
     if after not in LOADING_ORDER:
         return False
     LOADING_ORDER.insert(LOADING_ORDER.index(after) + 1, to_insert)
     return True
 
 
-def insertBefore(to_insert: LoadingStage, before: LoadingStage) -> bool:
+def insert_before(to_insert: LoadingStage, before: LoadingStage) -> bool:
     if before not in LOADING_ORDER:
         return False
     LOADING_ORDER.insert(LOADING_ORDER.index(before), to_insert)
@@ -390,7 +400,7 @@ def insertBefore(to_insert: LoadingStage, before: LoadingStage) -> bool:
 
 
 class ModLoaderAnnotation:
-    def __init__(self, modname: str, event_name: str, info=None):
+    def __init__(self, modname: str, event_name: str, args, kwargs, info=None):
         """
         creates an new annotation
         :param modname: the name of the mod to annotate to
@@ -400,6 +410,8 @@ class ModLoaderAnnotation:
         self.modname = modname
         self.event_name = event_name
         self.info = info
+        self.args = args
+        self.kwargs = kwargs
 
     def __call__(self, function):
         """
@@ -410,7 +422,7 @@ class ModLoaderAnnotation:
         if self.modname not in G.mod_loader.mods:
             self.modname = "minecraft"
         G.mod_loader.mods[self.modname].eventbus.subscribe(
-            self.event_name, function, info=self.info
+            self.event_name, function, *self.args, info=self.info, **self.kwargs
         )
         return function
 
@@ -445,7 +457,7 @@ class ModLoader:
         )
         self.error_builder = logger.TableBuilder()
 
-    def registerReloadAssignedLoadingStage(self, stage: str):
+    def register_reload_assigned_loading_stage(self, stage: str):
         """
         Will register an loading stage as one to executed on every reload
         :param stage: the event name of the stage
@@ -459,7 +471,7 @@ class ModLoader:
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
 
-    def __call__(self, modname: str, event_name: str, info=None) -> ModLoaderAnnotation:
+    def __call__(self, modname: str, event_name: str, *args, info=None, **kwargs) -> ModLoaderAnnotation:
         """
         annotation to the event system
         :param modname: the mod name
@@ -467,7 +479,7 @@ class ModLoader:
         :param info: the info
         :return: an ModLoaderAnnotation-instance for annotation
         """
-        return ModLoaderAnnotation(modname, event_name, info)
+        return ModLoaderAnnotation(modname, event_name, args, kwargs, info=info)
 
     def __getitem__(self, item):
         return self.mods[item]

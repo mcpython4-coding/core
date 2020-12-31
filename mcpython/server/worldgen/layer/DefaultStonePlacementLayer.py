@@ -10,12 +10,16 @@ blocks based on 1.16.1.jar of minecraft
 This project is not official by mojang and does not relate to it.
 """
 
-from mcpython import shared as G
+from mcpython import shared
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
-@G.world_generation_handler
-class DefaultStonePlacementILayer(ILayer):
+@shared.world_generation_handler
+class DefaultStonePlacementLayer(ILayer):
+    """
+    Layer code for placing the ground stone layer
+    """
+
     DEPENDS_ON = ["minecraft:heightmap_default"]
 
     NAME = "minecraft:stone_default"

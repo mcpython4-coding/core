@@ -17,6 +17,18 @@ class NetherWorldGenerator(
     mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
 ):
     NAME = "minecraft:nether_generator"
+    DIMENSION = "minecraft:the_nether"
+
+    LAYERS = [
+        "minecraft:landmass_default",
+        "minecraft:temperature_map",
+        "minecraft:biome_map_default",
+        "minecraft:heightmap_default",
+    ]
+
+    BIOME_SOURCE = mcpython.server.worldgen.mode.IWorldGenConfig.SingleBiomeSource(
+        "minecraft:void"
+    )
 
 
 G.world_generation_handler.register_world_gen_config(NetherWorldGenerator)

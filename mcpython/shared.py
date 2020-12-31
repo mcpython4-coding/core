@@ -35,6 +35,8 @@ data_gen = (
 ) and dev_environment
 data_gen_exit = "--exit-after-data-gen" in sys.argv  # default vanilla behaviour
 
+IS_CLIENT = True
+
 STORAGE_VERSION = None  # the version of the storage format
 
 window = None  # the window instance, client-only

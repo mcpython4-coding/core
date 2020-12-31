@@ -13,8 +13,8 @@ from mcpython import shared
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
-import mcpython.client.gui.crafting.CraftingManager
-import mcpython.client.gui.crafting.CraftingGridHelperInterface
+import mcpython.common.container.crafting.CraftingManager
+import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.container.ItemStack
 import pyglet
 import mcpython.common.event.EventHandler
@@ -63,14 +63,14 @@ class InventoryChest(mcpython.client.gui.Inventory.Inventory):
         # 3 rows of 9 slots of storage
         return [mcpython.client.gui.Slot.Slot() for _ in range(9 * 3)]
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         self.bg_image_size = self.TEXTURE_SIZE
         x, y = self.get_position()
         self.TEXTURE.blit(x, y)
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
-            slot.draw(x, y, hovering=slot == hoveringslot)
+            slot.draw(x, y, hovering=slot == hovering_slot)
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):

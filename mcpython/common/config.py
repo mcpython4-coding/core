@@ -9,48 +9,22 @@ blocks based on 1.16.1.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import json
 import math
+import os
 import sys
 
-MC_VERSION_BASE = "20w49a"
-VERSION_TYPE = "dev"
-# possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
-VERSION_NAME = "20w51a"
+from mcpython import shared
 
-DEVELOPING_FOR = "20w51a"
-DEVELOPMENT_COUNTER = 3
+MC_VERSION_BASE = "20w51a"
+VERSION_TYPE = "snapshot"
 
-# list of all versions since 19w52a to indicate order of release; used in save files todo: export to other file
-VERSION_ORDER = [
-    "19w52a",
-    "20w05a",
-    "20w07a",
-    "20w09a",
-    "20w10a",
-    "20w11a",
-    "20w12a",
-    "20w12b",
-    "20w14a",
-    "a1.0.0",
-    "a1.0.1",
-    "snapshot dev 1 cycle 1",
-    "snapshot dev 1 cycle 2",
-    "snapshot dev 1 cycle 3",
-    "snapshot dev 1 cycle 4",
-    "20w22a",
-    "snapshot dev 1",
-    "snapshot dev 2",
-    "20w24a",
-    "snapshot dev 3",
-    "20w25a",
-    "snapshot dev 4",
-    "20w28a",
-    "snapshot dev 5",
-    "a1.1.0",
-    "snapshot dev 6",
-    "20w31a",
-    "20w51a",
-]
+
+with open(shared.local + "/version.json") as f:
+    data = json.load(f)
+
+VERSION_ID = data["id"]
+VERSION_NAME = data["name"]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE
@@ -121,8 +95,8 @@ FOG_DISTANCE = (
 
 BIOME_HEIGHT_RANGE_MAP = (
     {  # an dict of biome name: height range storing the internal height range
-        "minecraft:plains": (10, 30),
         "minecraft:dessert": (10, 30),
+        "minecraft:mountains": (10, 50),
     }
 )
 
@@ -229,6 +203,7 @@ ENABLED_EXTRA_BLOCKS = {
 }
 
 # I'm to lazy to write these...
+# todo: migrate to material system
 for wood in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak"]:
     pass
 

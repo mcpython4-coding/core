@@ -17,7 +17,7 @@ import mcpython.server.command.Command
 import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.event.TickHandler
-import mcpython.client.rendering.EntityRenderer
+import mcpython.client.rendering.entities.EntityRenderer
 import mcpython.client.rendering.util
 from mcpython.server.command.Command import ParseBridge
 
@@ -61,7 +61,10 @@ class CommandReload(mcpython.server.command.Command.Command):
         # todo: regenerate block item images, regenerate item atlases
 
         # reload entity model files
-        [e.reload() for e in mcpython.client.rendering.EntityRenderer.RENDERERS]
+        [
+            e.reload()
+            for e in mcpython.client.rendering.entities.EntityRenderer.RENDERERS
+        ]
 
         G.event_handler.call("data:reload:work")
 
