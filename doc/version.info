@@ -1417,3 +1417,4 @@ R   [uuk]: improved world serialization API
 [uuk]: data serialization helper takes now optional a loading stage to work in
 [uuk]: dumped pyglet version
 [uuk]: improved reloading code
+[uuk]: improved block item generator code

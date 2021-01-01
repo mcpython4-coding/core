@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 from . import State, StatePartGame
 from .ui import UIPartProgressBar
 import mcpython.common.event.EventInfo
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import pyglet
 import os
 import mcpython.ResourceLoader
@@ -49,7 +49,7 @@ class StateBlockItemGenerator(State.State):
 
     def get_parts(self) -> list:
         kwargs = {}
-        if G.invalidate_cache:
+        if shared.invalidate_cache:
             kwargs["glcolor3d"] = (1.0, 1.0, 1.0)
         return [
             StatePartGame.StatePartGame(
@@ -63,20 +63,20 @@ class StateBlockItemGenerator(State.State):
             ),
             UIPartProgressBar.UIPartProgressBar(
                 (10, 10),
-                (G.window.get_size()[0] - 20, 20),
+                (shared.window.get_size()[0] - 20, 20),
                 progress_items=len(
-                    G.registry.get_by_name("minecraft:block").entries.values()
+                    shared.registry.get_by_name("minecraft:block").entries.values()
                 ),
                 status=1,
                 text="0/{}: {}".format(
-                    len(G.registry.get_by_name("minecraft:block").entries), None
+                    len(shared.registry.get_by_name("minecraft:block").entries), None
                 ),
             ),
             mcpython.client.state.StateModLoading.modloading.parts[3],
         ]
 
     def on_draw_2d_pre(self):
-        self.parts[2].position = (10, G.window.get_size()[1] - 40)
+        self.parts[2].position = (10, shared.window.get_size()[1] - 40)
         process = psutil.Process()
         with process.oneshot():
             self.parts[2].progress = process.memory_info().rss
@@ -96,42 +96,52 @@ class StateBlockItemGenerator(State.State):
     def activate(self):
         super().activate()
         try:
-            G.world.cleanup()
-            G.dimension_handler.init_dims()
-            G.world.hide_faces_to_not_generated_chunks = False
-            G.tick_handler.enable_random_ticks = False
+            shared.world.cleanup()
+            shared.dimension_handler.init_dims()
+            shared.world.hide_faces_to_not_generated_chunks = False
+            shared.tick_handler.enable_random_ticks = False
         except:
             logger.print_exception(
-                "[FATAL] failed to open world for block item generator"
+                "failed to open world for block item generator",
+                "this is fatal"
             )
             sys.exit(-1)
-        self.tasks = list(G.registry.get_by_name("minecraft:block").entries.keys())
-        if not os.path.isdir(G.build + "/generated_items"):
-            os.makedirs(G.build + "/generated_items")
-        if not G.invalidate_cache:
-            if os.path.exists(G.build + "/item_block_factory.json"):
-                with open(G.build + "/item_block_factory.json", mode="r") as f:
+        
+        self.tasks = list(shared.registry.get_by_name("minecraft:block").entries.keys())
+        if not os.path.isdir(shared.build + "/generated_items"):
+            os.makedirs(shared.build + "/generated_items")
+        
+        if not shared.invalidate_cache:
+            if os.path.exists(shared.build + "/item_block_factory.json"):
+                with open(shared.build + "/item_block_factory.json", mode="r") as f:
                     self.table = json.load(f)
             else:  # make sure it is was reset
                 self.table.clear()
-            items = G.registry.get_by_name("minecraft:item").entries
+            items = shared.registry.get_by_name("minecraft:item").entries
             for task in self.tasks[:]:
                 if task in items:
                     self.tasks.remove(task)
+        
         if len(self.tasks) == 0:  # we have nothing to do
             self.close()
             return
+        
         self.parts[1].progress_max = len(self.tasks)
         self.parts[1].progress = 1
-        G.window.set_size(800, 600)
-        G.window.set_minimum_size(800, 600)
-        G.window.set_maximum_size(800, 600)
-        G.window.set_size(800, 600)
-        G.world.get_active_player().position = (1.5, 2, 1.5)
-        G.world.get_active_player().rotation = (-45, -45, 0)
+
+        shared.window.set_fullscreen(False)
+        shared.window.set_size(800, 600)
+        shared.window.set_minimum_size(800, 600)
+        shared.window.set_maximum_size(800, 600)
+        shared.window.set_size(800, 600)
+        
+        shared.world.get_active_player().position = (1.5, 2, 1.5)
+        shared.world.get_active_player().rotation = (-45, -45, 0)
+        
         self.blockindex = -1
+        
         try:
-            instance = G.world.get_active_dimension().add_block(
+            instance = shared.world.get_active_dimension().add_block(
                 (0, 0, 0), self.tasks[self.blockindex], block_update=False
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
@@ -139,41 +149,47 @@ class StateBlockItemGenerator(State.State):
             instance.face_state.update(redraw_complete=True)
         except ValueError:
             self.blockindex = 0
-        # event.TickHandler.handler.bind(self.take_image, SETUP_TIME)
+        
         mcpython.common.event.TickHandler.handler.enable_tick_skipping = False
         pyglet.clock.schedule_once(
             self.add_new_screen, (self.SETUP_TIME + self.CLEANUP_TIME) / 20
         )
-        # event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME+self.CLEANUP_TIME)
 
     def deactivate(self):
         super().deactivate()
-        G.world.cleanup()
-        with open(G.build + "/item_block_factory.json", mode="w") as f:
+        shared.world.cleanup()
+        
+        with open(shared.build + "/item_block_factory.json", mode="w") as f:
             json.dump(self.table, f)
-        G.registry.get_by_name("minecraft:item").unlock()
+        
+        shared.registry.get_by_name("minecraft:item").unlock()
         mcpython.common.factory.ItemFactory.ItemFactory.process()
-        G.registry.get_by_name("minecraft:item").lock()
+        shared.registry.get_by_name("minecraft:item").lock()
+        
         mcpython.common.item.ItemHandler.build()
         mcpython.common.item.ItemHandler.ITEM_ATLAS.load()
-        G.window.set_minimum_size(1, 1)
-        G.window.set_maximum_size(
+        mcpython.client.rendering.model.ItemModel.handler.bake()
+        
+        shared.window.set_minimum_size(1, 1)
+        shared.window.set_maximum_size(
             100000, 100000
         )  # only here for making resizing possible again
-        mcpython.common.event.TickHandler.handler.enable_tick_skipping = True
-        with open(G.build + "/info.json", mode="w") as f:
+        
+        with open(shared.build + "/info.json", mode="w") as f:
             json.dump({"finished": True}, f)
-        mcpython.client.rendering.model.ItemModel.handler.bake()
-        G.tick_handler.enable_random_ticks = True
-        G.world.hide_faces_to_not_generated_chunks = True
-        G.window.set_fullscreen("--fullscreen" in sys.argv)
-        G.event_handler.call("stage:blockitemfactory:finish")
+        
+        shared.window.set_fullscreen("--fullscreen" in sys.argv)
+        shared.event_handler.call("stage:blockitemfactory:finish")
+        
+        mcpython.common.event.TickHandler.handler.enable_tick_skipping = True
+        shared.tick_handler.enable_random_ticks = True
+        shared.world.hide_faces_to_not_generated_chunks = True
 
     def close(self):
-        G.state_handler.switch_to("minecraft:startmenu")
-        G.world.get_active_player().position = (0, 10, 0)
-        G.world.get_active_player().rotation = (0, 0, 0)
-        G.world.get_active_dimension().remove_block((0, 0, 0))
+        shared.state_handler.switch_to("minecraft:startmenu")
+        shared.world.get_active_player().position = (0, 10, 0)
+        shared.world.get_active_player().rotation = (0, 0, 0)
+        shared.world.get_active_dimension().remove_block((0, 0, 0))
         self.last_image = None
 
     def add_new_screen(self, *args):
@@ -181,14 +197,16 @@ class StateBlockItemGenerator(State.State):
         if self.blockindex >= len(self.tasks):
             self.close()
             return
-        G.world.get_active_dimension().hide_block((0, 0, 0))
+
+        shared.world.get_active_dimension().hide_block((0, 0, 0))
+
         try:
-            blockinstance = G.world.get_active_dimension().add_block(
+            instance = shared.world.get_active_dimension().add_block(
                 (0, 0, 0), self.tasks[self.blockindex], block_update=False
             )
-            if blockinstance.BLOCK_ITEM_GENERATOR_STATE is not None:
-                blockinstance.set_model_state(blockinstance.BLOCK_ITEM_GENERATOR_STATE)
-            blockinstance.face_state.update(redraw_complete=True)
+            if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
+                instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
+            instance.face_state.update(redraw_complete=True)
         except ValueError:
             logger.print_exception(
                 "[BLOCK ITEM GENERATOR][ERROR] block '{}' can't be added to world. Failed with "
@@ -201,46 +219,50 @@ class StateBlockItemGenerator(State.State):
         except:
             logger.println(self.tasks[self.blockindex])
             raise
+
         self.parts[1].progress = self.blockindex + 1
         self.parts[1].text = "{}/{}: {}".format(
             self.blockindex + 1, len(self.tasks), self.tasks[self.blockindex]
         )
-        # todo: add states
+
         pyglet.clock.schedule_once(self.take_image, self.SETUP_TIME / 20)
-        # event.TickHandler.handler.bind(self.take_image, self.SETUP_TIME)
-        G.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
+        shared.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
         if self.blockindex >= len(self.tasks):
             return
+
         blockname = self.tasks[self.blockindex]
         file = "generated_items/{}.png".format("__".join(blockname.split(":")))
         try:
             pyglet.image.get_buffer_manager().get_color_buffer().save(
-                G.build + "/" + file
+                shared.build + "/" + file
             )
         except PermissionError:
             logger.print_exception("FATAL DURING SAVING IMAGE FOR {}".format(blockname))
             pyglet.clock.schedule_once(self.take_image, 0.05)
             self._error_counter(None, blockname)
             return
+
         image: PIL.Image.Image = mcpython.ResourceLoader.read_image(file)
         if image.getbbox() is None or len(image.histogram()) <= 1:
             pyglet.clock.schedule_once(self.take_image, 0.05)
             # event.TickHandler.handler.bind(self.take_image, 1)
             self._error_counter(image, blockname)
             return
+
         image = image.crop(
             (240, 129, 558, 447)
         )  # todo: make dynamic based on window size
-        image.save(G.build + "/" + file)
+        image.save(shared.build + "/" + file)
+
         if image == self.last_image:
             self._error_counter(image, blockname)
             return
+
         self.last_image = image
         self.generate_item(blockname, file)
         pyglet.clock.schedule_once(self.add_new_screen, self.CLEANUP_TIME / 20)
-        # event.TickHandler.handler.bind(self.add_new_screen, self.CLEANUP_TIME)
 
     def _error_counter(self, image, blockname):
         if self.tries >= 10:
@@ -250,7 +272,7 @@ class StateBlockItemGenerator(State.State):
                 )
             )
             self.last_image = image
-            file = G.build + "/block_item_generator_fail_{}_of_{}.png".format(
+            file = shared.build + "/block_item_generator_fail_{}_of_{}.png".format(
                 self.failed_counter, self.tasks[self.blockindex].replace(":", "__")
             )
             if image is not None:
@@ -263,7 +285,7 @@ class StateBlockItemGenerator(State.State):
             file = "assets/missing_texture.png"  # use missing texture instead
             self.generate_item(blockname, file)
             mcpython.common.event.TickHandler.handler.bind(
-                G.world.get_active_dimension().remove_block, 4, args=[(0, 0, 0)]
+                shared.world.get_active_dimension().remove_block, 4, args=[(0, 0, 0)]
             )
             pyglet.clock.schedule_once(self.add_new_screen, 0.5)
             # event.TickHandler.handler.bind(self.add_new_screen, 10)
@@ -273,12 +295,13 @@ class StateBlockItemGenerator(State.State):
                 self.SETUP_TIME += 1
                 self.CLEANUP_TIME += 1
             return
+
         pyglet.clock.schedule_once(self.take_image, 0.05)
         # event.TickHandler.handler.bind(self.take_image, 1)
         self.tries += 1
 
     def generate_item(self, blockname, file):
-        if blockname in G.registry.get_by_name("minecraft:item").entries:
+        if blockname in shared.registry.get_by_name("minecraft:item").entries:
             return
         self.table.append([blockname, file])
         obj = (
@@ -290,7 +313,7 @@ class StateBlockItemGenerator(State.State):
                 mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
             )
         )
-        block = G.world.get_active_dimension().get_block((0, 0, 0))
+        block = shared.world.get_active_dimension().get_block((0, 0, 0))
         if type(block) != str and block is not None:
             block.modify_block_item(obj)
         obj.finish(task_list=True)
