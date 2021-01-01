@@ -1416,3 +1416,4 @@ R   [uuk]: improved world serialization API
 [uuk]: biomes can now be serialized
 [uuk]: data serialization helper takes now optional a loading stage to work in
 [uuk]: dumped pyglet version
+[uuk]: improved reloading code

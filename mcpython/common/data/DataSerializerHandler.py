@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.common.mod.ResourcePipe
+import mcpython.common.data.ResourcePipe
 import mcpython.ResourceLoader
 from mcpython import logger
 import mcpython.common.event.EventHandler
@@ -53,6 +53,7 @@ class DatapackSerializationHelper:
         data_un_formatter=None,
         re_run_on_reload=False,
         load_on_stage: str = None,
+        on_bake=None,
     ):
         self.name = name
         self.path_group = path_group
@@ -63,12 +64,11 @@ class DatapackSerializationHelper:
         self.data_un_formatter = data_un_formatter
         self.re_run_on_reload = re_run_on_reload
         self.load_on_stage = load_on_stage
+        self.on_bake = on_bake
 
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-            "data:reload:work", self.clear
-        )
-
-        mcpython.common.mod.ResourcePipe.handler.register_mapper(self.map_pack)
+        mcpython.common.data.ResourcePipe.handler.register_mapper(self.map_pack)
+        mcpython.common.data.ResourcePipe.handler.register_reload_listener(self.clear)
+        mcpython.common.data.ResourcePipe.handler.register_bake_listener(self.bake)
 
     def register_serializer(self, serializer: typing.Type[ISerializer]):
         self.serializer.append(serializer)
@@ -113,5 +113,8 @@ class DatapackSerializationHelper:
         if callable(self.on_clear):
             self.on_clear()
         if self.re_run_on_reload:
-            for modname, pathname in mcpython.common.mod.ResourcePipe.handler.mods:
+            for modname, pathname in mcpython.common.data.ResourcePipe.handler.namespaces:
                 self.map_pack(modname, pathname)
+
+    def bake(self):
+        pass

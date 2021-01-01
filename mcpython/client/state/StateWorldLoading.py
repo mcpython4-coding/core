@@ -102,6 +102,8 @@ class StateWorldLoading(State.State):
         super().deactivate()
         player = G.world.get_active_player()
         player.teleport(player.position, force_chunk_save_update=True)
+        import mcpython.common.data.ResourcePipe
+        mcpython.common.data.ResourcePipe.handler.reload_content()
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

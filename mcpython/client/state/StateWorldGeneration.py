@@ -75,7 +75,8 @@ class StateWorldGeneration(State.State):
                 self.status_table[chunk] = 1 / (count if count > 0 else 1)
         if len(G.world_generation_handler.task_handler.chunks) == 0:
             G.state_handler.switch_to("minecraft:game")
-            G.event_handler.call("data:reload:work")
+            import mcpython.common.data.ResourcePipe
+            mcpython.common.data.ResourcePipe.handler.reload_content()
             self.finish()
 
     def activate(self):

@@ -84,9 +84,9 @@ class LaunchWrapper:
 
         import mcpython.client.rendering.model.ItemModel
 
-        import mcpython.common.mod.ResourcePipe
+        import mcpython.common.data.ResourcePipe
 
-        mcpython.common.mod.ResourcePipe.load()
+        mcpython.common.data.ResourcePipe.load()
 
     def setup_opengl(self):
         """
