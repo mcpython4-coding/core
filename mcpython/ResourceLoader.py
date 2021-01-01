@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -532,7 +532,7 @@ def read_pyglet_image(file):
 
 def get_all_entries(directory: str) -> typing.Iterator[str]:
     """
-    will get all files & directories [ending with an "/"] of an given directory across all resource locations
+    Will get all files & directories [ending with an "/"] of an given directory across all resource locations
     :param directory: the directory to use
     :return: an list of all found files
     """
@@ -545,16 +545,13 @@ def get_all_entries(directory: str) -> typing.Iterator[str]:
 
 def get_all_entries_special(directory: str) -> typing.Iterator[str]:
     """
-    returns all entries found with their corresponding '@[path]:file'-notation
+    Returns all entries found with their corresponding '@<path>:<file>'-notation
     :param directory: the directory to search from
     :return: an list of found resources
     """
     return itertools.chain.from_iterable(
-        (
-            (
-                "@{}|{}".format(x.path, s)
-                for s in x.get_all_entries_in_directory(directory)
-            )
-            for x in RESOURCE_LOCATIONS
+        map(
+            lambda x: map(lambda s: "@{}|{}".format(x.path, s), x.get_all_entries_in_directory(directory)),
+            RESOURCE_LOCATIONS
         )
     )
