@@ -596,6 +596,7 @@ class ModLoader:
         locations = self.get_locations()
         self.load_mod_jsons(locations)
         import mcpython.common.mod.ModMcpython
+
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
@@ -939,7 +940,9 @@ class ModLoader:
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
             G.state_handler.active_state
         )
-        astate.parts[0].progress_max = len(mcpython.common.mod.ModLoadingPipe.manager.stages)
+        astate.parts[0].progress_max = len(
+            mcpython.common.mod.ModLoadingPipe.manager.stages
+        )
         astate.parts[1].progress_max = len(self.mods)
         while time.time() - start < 0.2:
             stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
@@ -954,7 +957,8 @@ class ModLoader:
         will update the text of the pgb's in mod loading
         """
         stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
-        if stage is None: return
+        if stage is None:
+            return
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
             G.state_handler.active_state
         )
@@ -965,9 +969,7 @@ class ModLoader:
             stage.active_event in instance.eventbus.event_subscriptions
             and len(instance.eventbus.event_subscriptions[stage.active_event]) > 0
         ):
-            f, _, _, text = instance.eventbus.event_subscriptions[
-                stage.active_event
-            ][0]
+            f, _, _, text = instance.eventbus.event_subscriptions[stage.active_event][0]
         else:
             f, text = None, ""
         astate.parts[2].text = text if text is not None else "function {}".format(f)

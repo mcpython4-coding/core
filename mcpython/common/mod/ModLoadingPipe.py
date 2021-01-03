@@ -38,7 +38,9 @@ class LoadingStageManager:
             self.current_stage = self.get_new_ready()
 
         while self.current_stage not in self.stages and self.current_stage is not None:
-            logger.println("[MOD LOADING PIPE][INFO] skipping stage {}".format(self.current_stage))
+            logger.println(
+                "[MOD LOADING PIPE][INFO] skipping stage {}".format(self.current_stage)
+            )
             self.next_stage()
 
         return self.stages[self.current_stage]
@@ -81,7 +83,9 @@ class LoadingStage:
         if self.active_event is not None:
             self.order.done(self.active_event)
         self.event_scheduled.extend(self.order.get_ready())
-        self.active_event = self.event_scheduled.pop(0) if len(self.event_scheduled) > 0 else None
+        self.active_event = (
+            self.event_scheduled.pop(0) if len(self.event_scheduled) > 0 else None
+        )
         self.current_progress += 1
         self.active_mod_index = 0
         # print(self.active_event, self.events, self.event_scheduled, self.order.is_active())
@@ -165,9 +169,11 @@ class LoadingStage:
             mod_instance = shared.mod_loader.mods[
                 shared.mod_loader.mod_loading_order[self.active_mod_index]
             ]
-            self.max_progress = len(
-                mod_instance.eventbus.event_subscriptions[self.active_event]
-            ) if self.active_event in mod_instance.eventbus.event_subscriptions else 0
+            self.max_progress = (
+                len(mod_instance.eventbus.event_subscriptions[self.active_event])
+                if self.active_event in mod_instance.eventbus.event_subscriptions
+                else 0
+            )
             astate.parts[2].progress_max = self.max_progress
             astate.parts[2].progress = 0
             return
@@ -290,9 +296,7 @@ manager.add_stage(
     .add_event_stage("stage:block:factory:prepare")
     .add_event_stage("stage:block:factory_usage", "stage:block:factory:prepare")
     .add_event_stage("stage:block:factory:finish", "stage:block:factory_usage")
-    .add_event_stage(
-        "stage:block:load", "stage:block:factory:finish"
-    )
+    .add_event_stage("stage:block:load", "stage:block:factory:finish")
     .add_event_stage(
         "stage:block:overwrite", "stage:block:load", "stage:block:factory:finish"
     )
@@ -418,7 +422,10 @@ manager.add_stage(
 )
 manager.add_stage(
     LoadingStage(
-        "minecraft:block_states", "loading block states", "minecraft:factory_models", "minecraft:blocks"
+        "minecraft:block_states",
+        "loading block states",
+        "minecraft:factory_models",
+        "minecraft:blocks",
     )
     .add_event_stage("stage:blockstate:register_loaders")
     .add_event_stage("stage:model:blockstate_search")
@@ -436,7 +443,7 @@ manager.add_stage(
         "loading models",
         "minecraft:factory_models",
         "minecraft:blocks",
-        "minecraft:items"
+        "minecraft:items",
     )
     .add_event_stage("stage:model:model_search")
     .add_event_stage("stage:model:model_search:intern", "stage:model:model_search")
@@ -506,9 +513,7 @@ manager.add_stage(
 )
 manager.add_stage(
     LoadingStage(
-        "minecraft:post_load",
-        "post-loading stuff",
-        *list(manager.stages.keys())
+        "minecraft:post_load", "post-loading stuff", *list(manager.stages.keys())
     )
     .add_event_stage("stage:post")
     .add_event_stage("stage:final", "stage:post")

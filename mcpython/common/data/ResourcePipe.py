@@ -65,13 +65,15 @@ def language_mapper(modname, pathname):
 
 
 def loot_table_mapper(modname, pathname):
-    from mcpython.common.data.loot import LootTable, LootTableFunction, LootTableCondition
+    from mcpython.common.data.loot import (
+        LootTable,
+        LootTableFunction,
+        LootTableCondition,
+    )
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:loottables:load",
-        lambda: LootTable.handler.for_mod_name(
-            modname, pathname
-        ),
+        lambda: LootTable.handler.for_mod_name(modname, pathname),
         info="adding loot tables for mod {}".format(modname),
     )
 
@@ -121,6 +123,7 @@ class ResourcePipeHandler:
         shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
 
         import mcpython.common.data.loot.LootTable as LootTable
+
         LootTable.handler.reload()
 
         # as we are reloading, this may get mixed up...
