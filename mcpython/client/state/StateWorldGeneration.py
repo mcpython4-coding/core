@@ -76,6 +76,7 @@ class StateWorldGeneration(State.State):
         if len(G.world_generation_handler.task_handler.chunks) == 0:
             G.state_handler.switch_to("minecraft:game")
             import mcpython.common.data.ResourcePipe
+
             mcpython.common.data.ResourcePipe.handler.reload_content()
             self.finish()
 

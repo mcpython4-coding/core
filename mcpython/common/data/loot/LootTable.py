@@ -62,7 +62,7 @@ class LootTableHandler:
     def reload(self):
         self.loot_tables.clear()
         for modname in self.mod_names_to_load:
-            self.for_mod_name(modname)
+            self.for_mod_name(modname, immediate=True)
         shared.event_handler.call("data:loot_tables:custom_inject", self)
 
     def shuffle_data(self):
@@ -110,7 +110,7 @@ class LootTableHandler:
         # todo: add option to print an warning here
         return [mcpython.common.container.ItemStack.ItemStack(block.NAME)]
 
-    def for_mod_name(self, modname: str, path_name: str = None):
+    def for_mod_name(self, modname: str, path_name: str = None, immediate=False):
         if path_name is None:
             path_name = modname
         mod = (
@@ -123,18 +123,21 @@ class LootTableHandler:
         ):
             if path.endswith("/"):
                 continue
-            self._add_load(mod, path)
+            self._add_load(mod, path, immediate=immediate)
         self.mod_names_to_load.add(modname)
 
-    def _add_load(self, mod, path: str):
-        mod.eventbus.subscribe(
-            "stage:loottables:load",
-            lambda: self.from_file(path),
-            info="loading loot table '{}'".format(path),
-        )
+    def _add_load(self, mod, path: str, immediate=False):
+        if not immediate:
+            mod.eventbus.subscribe(
+                "stage:loottables:load",
+                lambda: self.from_file(path),
+                info="loading loot table '{}'".format(path),
+            )
+        else:
+            self.from_file(path)
 
     def from_file(self, file: str):
-        LootTable.from_file(file)
+        return LootTable.from_file(file)
 
     @classmethod
     def parse_function(
@@ -329,7 +332,7 @@ class LootTable:
                 s[s.index("data") + 3],
                 "/".join(s[s.index("data") + 4 :]).split(".")[0],
             )
-        cls.from_data(mcpython.ResourceLoader.read_json(file), name)
+        return cls.from_data(mcpython.ResourceLoader.read_json(file), name)
 
     @classmethod
     def from_data(cls, data: dict, name: str):

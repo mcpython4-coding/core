@@ -551,7 +551,10 @@ def get_all_entries_special(directory: str) -> typing.Iterator[str]:
     """
     return itertools.chain.from_iterable(
         map(
-            lambda x: map(lambda s: "@{}|{}".format(x.path, s), x.get_all_entries_in_directory(directory)),
-            RESOURCE_LOCATIONS
+            lambda x: map(
+                lambda s: "@{}|{}".format(x.path, s),
+                x.get_all_entries_in_directory(directory),
+            ),
+            RESOURCE_LOCATIONS,
         )
     )

@@ -192,7 +192,7 @@ class Mod:
             lambda: mcpython.common.data.ResourcePipe.handler.register_for_mod(
                 self.name, path_name
             ),
-            info="adding resources",
+            info="adding resource load subscriptions",
         )
 
     def add_dependency(self, depend: typing.Union[str, ModDependency]):

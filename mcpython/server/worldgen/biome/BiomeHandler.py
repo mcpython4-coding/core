@@ -53,18 +53,18 @@ class BiomeHandler:
             )
         self(biome)
 
+    def __call__(self, biome):
+        if biome in self.biomes.values():
+            raise ValueError("can't add biome. biome is in biome registry")
+        self.biomes[biome.NAME] = biome
+        self.registry_list.append(biome)
+
     def unregister(
         self, biome: typing.Type[mcpython.server.worldgen.biome.Biome.Biome]
     ):
         if biome.NAME in self.biomes:
             del self.biomes[biome.NAME]
             self.registry_list.remove(biome)
-
-    def __call__(self, biome):
-        if biome in self.biomes.values():
-            raise ValueError("can't add biome. biome is in biome registry")
-        self.biomes[biome.NAME] = biome
-        self.registry_list.append(biome)
 
     def get_biomes_for_dimension(
         self, biomes: typing.Dict[int, str], weighted=False, temperature=None

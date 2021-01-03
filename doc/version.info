@@ -1418,3 +1418,4 @@ R   [uuk]: improved world serialization API
 [uuk]: dumped pyglet version
 [uuk]: improved reloading code
 [uuk]: improved block item generator code
+[uuk]: rewritten how loading stages work, using now a complex system with new python 3.9 features

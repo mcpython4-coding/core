@@ -102,15 +102,14 @@ class StateBlockItemGenerator(State.State):
             shared.tick_handler.enable_random_ticks = False
         except:
             logger.print_exception(
-                "failed to open world for block item generator",
-                "this is fatal"
+                "failed to open world for block item generator", "this is fatal"
             )
             sys.exit(-1)
-        
+
         self.tasks = list(shared.registry.get_by_name("minecraft:block").entries.keys())
         if not os.path.isdir(shared.build + "/generated_items"):
             os.makedirs(shared.build + "/generated_items")
-        
+
         if not shared.invalidate_cache:
             if os.path.exists(shared.build + "/item_block_factory.json"):
                 with open(shared.build + "/item_block_factory.json", mode="r") as f:
@@ -121,11 +120,11 @@ class StateBlockItemGenerator(State.State):
             for task in self.tasks[:]:
                 if task in items:
                     self.tasks.remove(task)
-        
+
         if len(self.tasks) == 0:  # we have nothing to do
             self.close()
             return
-        
+
         self.parts[1].progress_max = len(self.tasks)
         self.parts[1].progress = 1
 
@@ -134,12 +133,12 @@ class StateBlockItemGenerator(State.State):
         shared.window.set_minimum_size(800, 600)
         shared.window.set_maximum_size(800, 600)
         shared.window.set_size(800, 600)
-        
+
         shared.world.get_active_player().position = (1.5, 2, 1.5)
         shared.world.get_active_player().rotation = (-45, -45, 0)
-        
+
         self.blockindex = -1
-        
+
         try:
             instance = shared.world.get_active_dimension().add_block(
                 (0, 0, 0), self.tasks[self.blockindex], block_update=False
@@ -149,7 +148,7 @@ class StateBlockItemGenerator(State.State):
             instance.face_state.update(redraw_complete=True)
         except ValueError:
             self.blockindex = 0
-        
+
         mcpython.common.event.TickHandler.handler.enable_tick_skipping = False
         pyglet.clock.schedule_once(
             self.add_new_screen, (self.SETUP_TIME + self.CLEANUP_TIME) / 20
@@ -158,29 +157,29 @@ class StateBlockItemGenerator(State.State):
     def deactivate(self):
         super().deactivate()
         shared.world.cleanup()
-        
+
         with open(shared.build + "/item_block_factory.json", mode="w") as f:
             json.dump(self.table, f)
-        
+
         shared.registry.get_by_name("minecraft:item").unlock()
         mcpython.common.factory.ItemFactory.ItemFactory.process()
         shared.registry.get_by_name("minecraft:item").lock()
-        
+
         mcpython.common.item.ItemHandler.build()
         mcpython.common.item.ItemHandler.ITEM_ATLAS.load()
         mcpython.client.rendering.model.ItemModel.handler.bake()
-        
+
         shared.window.set_minimum_size(1, 1)
         shared.window.set_maximum_size(
             100000, 100000
         )  # only here for making resizing possible again
-        
+
         with open(shared.build + "/info.json", mode="w") as f:
             json.dump({"finished": True}, f)
-        
+
         shared.window.set_fullscreen("--fullscreen" in sys.argv)
         shared.event_handler.call("stage:blockitemfactory:finish")
-        
+
         mcpython.common.event.TickHandler.handler.enable_tick_skipping = True
         shared.tick_handler.enable_random_ticks = True
         shared.world.hide_faces_to_not_generated_chunks = True
@@ -226,7 +225,9 @@ class StateBlockItemGenerator(State.State):
         )
 
         pyglet.clock.schedule_once(self.take_image, self.SETUP_TIME / 20)
-        shared.world.get_active_dimension().get_chunk(0, 0, generate=False).is_ready = True
+        shared.world.get_active_dimension().get_chunk(
+            0, 0, generate=False
+        ).is_ready = True
 
     def take_image(self, *args):
         if self.blockindex >= len(self.tasks):

@@ -24,6 +24,7 @@ import mcpython.common.mod.Mod
 import toml
 import mcpython.common.config
 import deprecation
+import mcpython.common.mod.ModLoadingPipe
 
 # information for modders: this file contains every event called on the system
 # you may NOT do any job beside registration to events outside of the loading events
@@ -471,7 +472,9 @@ class ModLoader:
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
 
-    def __call__(self, modname: str, event_name: str, *args, info=None, **kwargs) -> ModLoaderAnnotation:
+    def __call__(
+        self, modname: str, event_name: str, *args, info=None, **kwargs
+    ) -> ModLoaderAnnotation:
         """
         annotation to the event system
         :param modname: the mod name
@@ -592,6 +595,7 @@ class ModLoader:
         """
         locations = self.get_locations()
         self.load_mod_jsons(locations)
+        import mcpython.common.mod.ModMcpython
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
@@ -929,16 +933,18 @@ class ModLoader:
         """
         will process some loading tasks
         """
-        if self.active_loading_stage >= len(LOADING_ORDER):
+        if not mcpython.common.mod.ModLoadingPipe.manager.order.is_active():
             return
         start = time.time()
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
             G.state_handler.active_state
         )
-        astate.parts[0].progress_max = len(LOADING_ORDER)
+        astate.parts[0].progress_max = len(mcpython.common.mod.ModLoadingPipe.manager.stages)
         astate.parts[1].progress_max = len(self.mods)
         while time.time() - start < 0.2:
-            stage = LOADING_ORDER[self.active_loading_stage]
+            stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
+            if stage is None:
+                break
             if stage.call_one(astate):
                 return
         self.update_pgb_text()
@@ -947,7 +953,8 @@ class ModLoader:
         """
         will update the text of the pgb's in mod loading
         """
-        stage = LOADING_ORDER[self.active_loading_stage]
+        stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
+        if stage is None: return
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
             G.state_handler.active_state
         )
@@ -955,11 +962,11 @@ class ModLoader:
             self.mod_loading_order[stage.active_mod_index]
         ]
         if (
-            stage.active_event_name in instance.eventbus.event_subscriptions
-            and len(instance.eventbus.event_subscriptions[stage.active_event_name]) > 0
+            stage.active_event in instance.eventbus.event_subscriptions
+            and len(instance.eventbus.event_subscriptions[stage.active_event]) > 0
         ):
             f, _, _, text = instance.eventbus.event_subscriptions[
-                stage.active_event_name
+                stage.active_event
             ][0]
         else:
             f, text = None, ""
@@ -968,18 +975,13 @@ class ModLoader:
             instance.name, stage.active_mod_index + 1, len(self.mods)
         )
         astate.parts[1].progress = stage.active_mod_index + 1
-        index = (
-            stage.running_event_names.index(stage.active_event_name) + 1
-            if stage.active_event_name in stage.running_event_names
-            else 0
-        )
         astate.parts[0].text = "{} ({}/{}) in {} ({}/{})".format(
-            stage.active_event_name,
-            index,
-            len(stage.running_event_names),
+            stage.active_event,
+            stage.current_progress + 1,
+            len(stage.events),
             stage.name,
             self.active_loading_stage + 1,
-            len(LOADING_ORDER),
+            len(mcpython.common.mod.ModLoadingPipe.manager.stages),
         )
 
 

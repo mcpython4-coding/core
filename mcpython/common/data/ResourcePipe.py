@@ -65,11 +65,11 @@ def language_mapper(modname, pathname):
 
 
 def loot_table_mapper(modname, pathname):
-    import mcpython.common.data.loot.LootTable
+    from mcpython.common.data.loot import LootTable, LootTableFunction, LootTableCondition
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:loottables:load",
-        lambda: mcpython.common.data.loot.LootTable.handler.for_mod_name(
+        lambda: LootTable.handler.for_mod_name(
             modname, pathname
         ),
         info="adding loot tables for mod {}".format(modname),
@@ -111,7 +111,7 @@ class ResourcePipeHandler:
     def register_bake_listener(self, listener):
         self.bake_handlers.append(listener)
         return self
-            
+
     def reload_content(self):
         shared.window.print_profiler()  # print the profilers
         if not shared.event_handler.call_cancelable("data:reload:cancel"):
@@ -119,7 +119,9 @@ class ResourcePipeHandler:
         mcpython.common.DataPack.datapack_handler.reload()  # reloads all data packs
         shared.tag_handler.reload()  # reloads all tags
         shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
-        shared.loot_table_handler.reload()
+
+        import mcpython.common.data.loot.LootTable as LootTable
+        LootTable.handler.reload()
 
         # as we are reloading, this may get mixed up...
         shared.crafting_handler.recipe_relink_table.clear()

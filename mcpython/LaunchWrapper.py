@@ -155,6 +155,7 @@ class LaunchWrapper:
 
         # Create the world instance
         import mcpython.common.world.World
+
         shared.world = mcpython.common.world.World.World()
 
         import pyglet

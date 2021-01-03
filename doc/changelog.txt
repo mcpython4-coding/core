@@ -50,10 +50,17 @@ information on development:
 
 
 changelog of snapshot [next], released on -, targeting -
+    Happy new year, 2021!
+    This time, breaks again some big parts
+    Affected are world generation and mod loading stage modifications, and loading-order-dependent stuff, beside
+        following some general structure [block models after blocks, etc.]
+
     World Generation:
-        - noises are now better selected
-        - general faster
-        - modes can now be serialized to files
+        - noises are now better selected per world-seed, making them more compatible for mods
+        - general faster [see rendering stuff below]
+        - modes and biomes can now be serialized to files
+        - modes can now simply be modified via files
+        - features are now part of the registry system [previously, they weren't]
 
     Rendering:
         - improved general API
@@ -63,6 +70,15 @@ changelog of snapshot [next], released on -, targeting -
 
     Resources:
         - implemented helper code for resource groups
+        - fixed some errors around loading mod resources
+
+    Loading:
+        - rewritten how loading stages are selected
+        - order may change now where no dependency is
+        - you can add dependencies if needed special order
+        - custom loading stages are currently hard to create [internal cache must be re-calculated],
+            events for existing stages are simpler
+        - there might be various errors around this, it is highly experimental
 
 
 changelog of snapshot 20w51a, released on 18.12.2020, targeting 20w51a

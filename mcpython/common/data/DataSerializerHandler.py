@@ -83,9 +83,7 @@ class DatapackSerializationHelper:
             if self.load_on_stage is None:
                 self.load_file(file)
             else:
-                shared.mod_loader(modname, self.load_on_stage, file)(
-                    self.load_file
-                )
+                shared.mod_loader(modname, self.load_on_stage, file)(self.load_file)
 
     def load_file(self, file: str):
         try:
@@ -113,7 +111,10 @@ class DatapackSerializationHelper:
         if callable(self.on_clear):
             self.on_clear()
         if self.re_run_on_reload:
-            for modname, pathname in mcpython.common.data.ResourcePipe.handler.namespaces:
+            for (
+                modname,
+                pathname,
+            ) in mcpython.common.data.ResourcePipe.handler.namespaces:
                 self.map_pack(modname, pathname)
 
     def bake(self):

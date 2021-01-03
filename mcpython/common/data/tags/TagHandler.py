@@ -151,4 +151,5 @@ def add_from_location(loc: str):
 
 @G.mod_loader("minecraft", "stage:tag:group", info="adding tag group locations")
 def on_group_add():
+    add_from_location("minecraft")
     add_from_location("forge")

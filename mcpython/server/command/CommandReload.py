@@ -41,6 +41,7 @@ class CommandReload(mcpython.server.command.Command.Command):
     @classmethod
     def reload(cls):
         import mcpython.common.data.ResourcePipe
+
         mcpython.common.data.ResourcePipe.handler.reload_content()
 
     @staticmethod

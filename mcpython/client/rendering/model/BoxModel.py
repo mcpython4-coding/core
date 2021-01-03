@@ -141,6 +141,7 @@ class BoxModel:
             if G.mod_loader.finished:
                 self.build()
             else:
+                # todo: can we extract data if needed?
                 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                     "stage:boxmodel:bake", self.build
                 )
@@ -158,12 +159,14 @@ class BoxModel:
     def build(self, atlas=None):
         if atlas is None:
             atlas = self.model.texture_atlas
+
         up, down, north, east, south, west = array = tuple(
             [
                 self.faces[x] if self.faces[x] is not None else (0, 0)
                 for x in mcpython.util.enums.EnumSide.iterate()
             ]
         )
+
         self.tex_data = mcpython.util.math.tex_coordinates_better(
             up,
             down,
@@ -175,6 +178,7 @@ class BoxModel:
             size=atlas.size,
             rotation=self.texture_region_rotate,
         )
+
         self.deactive = {
             face: array[i] == (0, 0) or array[i] is None
             for i, face in enumerate(mcpython.util.enums.EnumSide.iterate())

@@ -149,14 +149,14 @@ class CraftingManager:
         G.event_handler.call("crafting_manager:reload:intermediate", self)
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
-            logger.println(
+            print(
                 "\r[MOD LOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
                     modname, i + 1, len(self.loaded_mod_dirs)
                 ),
                 end="",
             )
             self.load(modname, check_mod_dirs=False, load_direct=True)
-        logger.println()
+        print()
 
         G.event_handler.call("crafting_manager:reload:end", self)
 
