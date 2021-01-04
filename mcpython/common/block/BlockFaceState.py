@@ -9,6 +9,8 @@ blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.common.event.EventHandler
 from mcpython import shared as G
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
@@ -33,9 +35,9 @@ class BlockFaceState:
         Block face state
         """
         self.block = block
-        self.faces = self.DEFAULT_FACE_STATE.copy()
-        self.face_data = self.DEFAULT_FACE_DATA.copy()
-        self.custom_renderer = None  # holds an custom block renderer
+        self.faces: typing.Optional[mcpython.util.enums.EnumSide, bool] = self.DEFAULT_FACE_STATE.copy()
+        self.face_data: typing.Optional[mcpython.util.enums.EnumSide, list] = None  # self.DEFAULT_FACE_DATA.copy()
+        self.custom_renderer = None  # holds a custom block renderer
         self.subscribed_renderer: bool = False
 
     def show_face(self, face: mcpython.util.enums.EnumSide):
@@ -45,6 +47,10 @@ class BlockFaceState:
         """
         if self.faces[face.normal_name]:
             return
+
+        if self.face_data is None:
+            self.face_data = self.DEFAULT_FACE_DATA.copy()
+
         self.faces[face.normal_name] = True
         if self.custom_renderer is not None:
             if issubclass(
@@ -82,6 +88,7 @@ class BlockFaceState:
         """
         if not self.faces[face.normal_name]:
             return
+
         self.faces[face.normal_name] = False
         if self.custom_renderer is not None:
             if issubclass(
@@ -106,6 +113,8 @@ class BlockFaceState:
         else:
             [x.delete() for x in self.face_data[face.normal_name]]
         self.face_data[face.normal_name].clear()
+        if all(len(value) == 0 for value in self.face_data.values()):
+            self.face_data = None
 
     def _draw_custom_render(self):
         """

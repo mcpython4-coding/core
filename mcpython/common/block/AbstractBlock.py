@@ -9,17 +9,17 @@ blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from abc import ABC
-import typing
 import enum
+import pickle
+import typing
+from abc import ABC
 
+import mcpython.client.gui.Slot
 import mcpython.common.block.BlockFaceState
 import mcpython.common.block.BoundingBox
-import mcpython.common.event.Registry
 import mcpython.common.container.ItemStack
-import mcpython.client.gui.Slot
+import mcpython.common.event.Registry
 import mcpython.util.enums
-import pickle
 from mcpython import shared
 
 
@@ -314,7 +314,8 @@ class AbstractBlock(parent):
         used when an item is requested exactly for this block. Useful for setting custom data to the itemstack
         :param itemstack: the itemstack generated for the block
         """
-        itemstack.item.stored_block_state = self.get_item_saved_state()
+        if not itemstack.is_empty():
+            itemstack.item.stored_block_state = self.get_item_saved_state()
 
     # Redstone API
 

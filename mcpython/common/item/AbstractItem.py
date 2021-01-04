@@ -32,14 +32,14 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
 
     def __init__(self):
         self.stored_block_state = None
-        self.can_destroy = []
-        self.can_be_set_on = []
+        self.can_destroy = None
+        self.can_be_set_on = None
 
     def check_can_be_set_on(self, block, player):
-        return player.gamemode != 2 or block.NAME in self.can_be_set_on
+        return player.gamemode != 2 or (self.can_be_set_on is not None and block.NAME in self.can_be_set_on)
 
     def check_can_destroy(self, block, player):
-        return player.gamemode != 2 or block.NAME in self.can_destroy
+        return player.gamemode != 2 or (self.can_destroy is not None and block.NAME in self.can_destroy)
 
     def __eq__(self, other):
         if not issubclass(type(other), AbstractItem):
