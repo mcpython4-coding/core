@@ -9,70 +9,28 @@ blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.event.EventHandler
-from mcpython import shared as G, logger
-import os
-import mcpython.ResourceLoader
-import zipfile
-import sys
-import json
 import importlib
+import json
+import os
+import sys
 import time
-import mcpython.client.state.StateModLoading
-import mcpython.util.math
-import mcpython.common.mod.Mod
+import typing
+import zipfile
+
 import toml
+
+import mcpython.client.state.StateModLoading
 import mcpython.common.config
-import deprecation
+import mcpython.common.event.EventHandler
+import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingPipe
+import mcpython.ResourceLoader
+import mcpython.util.math
+from mcpython import logger
+from mcpython import shared
 
-# information for modders: this file contains every event called on the system
-# you may NOT do any job beside registration to events outside of the loading events
-# WARNING: violating this may cause problems
-# WARNING: when your stage crashes, game may not
-# WARNING: split up where possible to make showing progress bars easier
-# WARNING: the order in which is loaded may change from version to version and from mod list to mod list
-
-# For people who want to add their own loading stages: make sure to add them to LOADING_ORDER-list
-# For people who want to tweak the order of loading: make sure to check if another mod has modified the same array
-# For people who want to remove loading stages: make sure they really exists
-
-# For people who are trying to resolve issues: make sure that you have a) subscribed to the event over the eventbus
-#   of your mod [<modname>.eventbus] and have spelled the event correctly
-
-# For people which bring their own assets with them: please, if you are not familiar with the whole asset loading
-#   system, use the ResourceLocator.add_resources_by_modname-function to notate your loading to the right events
-
-if not os.path.exists(G.home + "/mods"):
-    os.makedirs(G.home + "/mods")
-
-
-class ModLoaderAnnotation:
-    def __init__(self, modname: str, event_name: str, args, kwargs, info=None):
-        """
-        creates an new annotation
-        :param modname: the name of the mod to annotate to
-        :param event_name: the event name to subscribe to
-        :param info: the info send to the event bus
-        """
-        self.modname = modname
-        self.event_name = event_name
-        self.info = info
-        self.args = args
-        self.kwargs = kwargs
-
-    def __call__(self, function):
-        """
-        subscribes an function to the event
-        :param function: the function to use
-        :return: the function annotated
-        """
-        if self.modname not in G.mod_loader.mods:
-            self.modname = "minecraft"
-        G.mod_loader.mods[self.modname].eventbus.subscribe(
-            self.event_name, function, *self.args, info=self.info, **self.kwargs
-        )
-        return function
+if not os.path.exists(shared.home + "/mods"):
+    os.makedirs(shared.home + "/mods")
 
 
 class ModLoader:
@@ -91,10 +49,10 @@ class ModLoader:
         self.active_loading_stage = 0
         self.previous_mods = {}
         self.located_mod_instances = []
-        if os.path.exists(G.build + "/mods.json"):
-            with open(G.build + "/mods.json") as f:
+        if os.path.exists(shared.build + "/mods.json"):
+            with open(shared.build + "/mods.json") as f:
                 self.previous_mods = json.load(f)
-        elif not G.invalidate_cache:
+        elif not shared.invalidate_cache:
             logger.println(
                 "[WARNING] can't locate mods.json in build-folder. This may be an error"
             )
@@ -115,13 +73,13 @@ class ModLoader:
     def execute_reload_stages(self):
         for event_name in self.reload_stages:
             for i in range(len(self.mods)):
-                instance = G.mod_loader.mods[G.mod_loader.mod_loading_order[i]]
+                instance = shared.mod_loader.mods[shared.mod_loader.mod_loading_order[i]]
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
 
     def __call__(
-        self, modname: str, event_name: str, *args, info=None, **kwargs
-    ) -> ModLoaderAnnotation:
+        self, modname: str, event_name: str, *args, **kwargs
+    ) -> typing.Callable[[typing.Callable], typing.Callable]:
         """
         annotation to the event system
         :param modname: the mod name
@@ -129,7 +87,7 @@ class ModLoader:
         :param info: the info
         :return: an ModLoaderAnnotation-instance for annotation
         """
-        return ModLoaderAnnotation(modname, event_name, args, kwargs, info=info)
+        return lambda function: self.mods[modname].eventbus.subscribe(event_name, function, *args, **kwargs)
 
     def __getitem__(self, item):
         return self.mods[item]
@@ -140,7 +98,7 @@ class ModLoader:
         todo: split up into smaller portions
         """
         locations = []
-        folders = [G.home + "/mods"]
+        folders = [shared.home + "/mods"]
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
@@ -173,7 +131,7 @@ class ModLoader:
             else:
                 i += 1
 
-        G.event_handler.call("modloader:location_search", locations)
+        shared.event_handler.call("modloader:location_search", locations)
 
         for i, location in enumerate(locations):
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
@@ -278,13 +236,13 @@ class ModLoader:
                         modname
                     )
                 )
-                G.invalidate_cache = True
-                G.data_gen = True
+                shared.invalidate_cache = True
+                shared.data_gen = True
         for modname in self.mods.keys():
             if modname not in self.previous_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
-                G.invalidate_cache = True
-                G.data_gen = True
+                shared.invalidate_cache = True
+                shared.data_gen = True
                 logger.println(
                     "rebuild mode due to mod change (addition) of {}".format(modname)
                 )
@@ -293,9 +251,9 @@ class ModLoader:
         """
         writes the data for the mod table into the file
         """
-        if not os.path.isdir(G.build):
-            os.makedirs(G.build)
-        with open(G.build + "/mods.json", mode="w") as f:
+        if not os.path.isdir(shared.build):
+            os.makedirs(shared.build)
+        with open(shared.build + "/mods.json", mode="w") as f:
             m = {instance.name: instance.version for instance in self.mods.values()}
             json.dump(m, f)
 
@@ -479,7 +437,7 @@ class ModLoader:
         will add an mod-instance into the inner system
         :param instance: the mod instance to add
         """
-        if not G.event_handler.call_cancelable("modloader:mod_registered", instance):
+        if not shared.event_handler.call_cancelable("modloader:mod_registered", instance):
             return
         self.mods[instance.name] = instance
         self.located_mods.append(instance)
@@ -585,7 +543,7 @@ class ModLoader:
             return
         start = time.time()
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
-            G.state_handler.active_state
+            shared.state_handler.active_state
         )
         astate.parts[0].progress_max = len(
             mcpython.common.mod.ModLoadingPipe.manager.stages
@@ -607,7 +565,7 @@ class ModLoader:
         if stage is None:
             return
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
-            G.state_handler.active_state
+            shared.state_handler.active_state
         )
         instance: mcpython.common.mod.Mod.Mod = self.mods[
             self.mod_loading_order[stage.active_mod_index]
@@ -634,4 +592,4 @@ class ModLoader:
         )
 
 
-G.mod_loader = ModLoader()
+shared.mod_loader = ModLoader()
