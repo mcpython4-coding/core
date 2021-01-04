@@ -9,6 +9,8 @@ blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from . import State, StatePartGame
 from .ui import UIPartProgressBar
 import mcpython.common.event.EventInfo
@@ -41,7 +43,7 @@ class StateBlockItemGenerator(State.State):
     def __init__(self):
         State.State.__init__(self)
         self.blockindex = 0
-        self.tasks = []
+        self.tasks: typing.List[str] = []
         self.table = []
         self.last_image = None
         self.tries = 0
@@ -72,7 +74,7 @@ class StateBlockItemGenerator(State.State):
                     len(shared.registry.get_by_name("minecraft:block").entries), None
                 ),
             ),
-            mcpython.client.state.StateModLoading.modloading.parts[3],
+            mcpython.client.state.StateModLoading.modloading.parts[3],  # the memory usage bar
         ]
 
     def on_draw_2d_pre(self):
@@ -95,14 +97,16 @@ class StateBlockItemGenerator(State.State):
 
     def activate(self):
         super().activate()
+        world = shared.world
+
         try:
-            shared.world.cleanup()
+            world.cleanup()
             shared.dimension_handler.init_dims()
-            shared.world.hide_faces_to_not_generated_chunks = False
+            world.hide_faces_to_not_generated_chunks = False
             shared.tick_handler.enable_random_ticks = False
         except:
             logger.print_exception(
-                "failed to open world for block item generator", "this is fatal"
+                "failed to open world for block item generator; this is fatal; as such, the game closes now"
             )
             sys.exit(-1)
 
@@ -121,33 +125,39 @@ class StateBlockItemGenerator(State.State):
                 if task in items:
                     self.tasks.remove(task)
 
-        if len(self.tasks) == 0:  # we have nothing to do
+        # we have nothing to do
+        if len(self.tasks) == 0:
             self.close()
             return
 
         self.parts[1].progress_max = len(self.tasks)
         self.parts[1].progress = 1
 
-        shared.window.set_fullscreen(False)
-        shared.window.set_size(800, 600)
-        shared.window.set_minimum_size(800, 600)
-        shared.window.set_maximum_size(800, 600)
-        shared.window.set_size(800, 600)
+        # setup the window
+        window = shared.window
+        window.set_fullscreen(False)
+        window.set_size(800, 600)
+        window.set_minimum_size(800, 600)
+        window.set_maximum_size(800, 600)
+        window.set_size(800, 600)
 
-        shared.world.get_active_player().position = (1.5, 2, 1.5)
-        shared.world.get_active_player().rotation = (-45, -45, 0)
+        # setup the player view, todo: make configurable by block
+        player = world.get_active_player()
+        player.position = (1.5, 2, 1.5)
+        player.rotation = (-45, -45, 0)
 
         self.blockindex = -1
 
         try:
-            instance = shared.world.get_active_dimension().add_block(
+            instance = world.get_active_dimension().add_block(
                 (0, 0, 0), self.tasks[self.blockindex], block_update=False
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
             instance.face_state.update(redraw_complete=True)
-        except ValueError:
+        except ValueError:  # if the block is not working, use the next
             self.blockindex = 0
+            logger.print_exception("during adding first block to BlockItemGenerator")
 
         mcpython.common.event.TickHandler.handler.enable_tick_skipping = False
         pyglet.clock.schedule_once(
@@ -161,46 +171,56 @@ class StateBlockItemGenerator(State.State):
         with open(shared.build + "/item_block_factory.json", mode="w") as f:
             json.dump(self.table, f)
 
-        shared.registry.get_by_name("minecraft:item").unlock()
+        # create block-item instances...
+        logger.println("baking block-items...")
+        item_registry = shared.registry.get_by_name("minecraft:item")
+        item_registry.unlock()
         mcpython.common.factory.ItemFactory.ItemFactory.process()
-        shared.registry.get_by_name("minecraft:item").lock()
+        item_registry.lock()
 
+        # ... and bake the models needed
         mcpython.common.item.ItemHandler.build()
         mcpython.common.item.ItemHandler.ITEM_ATLAS.load()
         mcpython.client.rendering.model.ItemModel.handler.bake()
 
-        shared.window.set_minimum_size(1, 1)
-        shared.window.set_maximum_size(
-            100000, 100000
-        )  # only here for making resizing possible again
+        print("finished!")
+
+        # only here for making resizing possible again
+        window = shared.window
+        window.set_minimum_size(1, 1)
+        window.set_maximum_size(100000, 100000)
 
         with open(shared.build + "/info.json", mode="w") as f:
             json.dump({"finished": True}, f)
 
-        shared.window.set_fullscreen("--fullscreen" in sys.argv)
+        window.set_fullscreen("--fullscreen" in sys.argv)
         shared.event_handler.call("stage:blockitemfactory:finish")
 
         mcpython.common.event.TickHandler.handler.enable_tick_skipping = True
-        shared.tick_handler.enable_random_ticks = True
         shared.world.hide_faces_to_not_generated_chunks = True
 
     def close(self):
-        shared.state_handler.switch_to("minecraft:startmenu")
-        shared.world.get_active_player().position = (0, 10, 0)
-        shared.world.get_active_player().rotation = (0, 0, 0)
-        shared.world.get_active_dimension().remove_block((0, 0, 0))
+        player = shared.world.get_active_player()
+        player.position = (0, 10, 0)
+        player.rotation = (0, 0, 0)
+        player.dimension.remove_block((0, 0, 0))
         self.last_image = None
+
+        shared.state_handler.switch_to("minecraft:startmenu")
 
     def add_new_screen(self, *args):
         self.blockindex += 1
+
+        dimension = shared.world.get_active_dimension()
+
         if self.blockindex >= len(self.tasks):
             self.close()
             return
 
-        shared.world.get_active_dimension().hide_block((0, 0, 0))
+        dimension.hide_block((0, 0, 0))
 
         try:
-            instance = shared.world.get_active_dimension().add_block(
+            instance = dimension.add_block(
                 (0, 0, 0), self.tasks[self.blockindex], block_update=False
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
@@ -213,7 +233,6 @@ class StateBlockItemGenerator(State.State):
             )
             self.blockindex += 1
             pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)
-            # event.TickHandler.handler.bind(self.add_new_screen, self.SETUP_TIME)
             return
         except:
             logger.println(self.tasks[self.blockindex])
@@ -225,7 +244,7 @@ class StateBlockItemGenerator(State.State):
         )
 
         pyglet.clock.schedule_once(self.take_image, self.SETUP_TIME / 20)
-        shared.world.get_active_dimension().get_chunk(
+        dimension.get_chunk(
             0, 0, generate=False
         ).is_ready = True
 
