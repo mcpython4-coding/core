@@ -26,12 +26,32 @@ class LaunchWrapper:
     """
 
     def __init__(self):
-        pass
+        self.is_client = True
+        self.__side_prepared = False
+
+    def prepare_client(self):
+        assert not self.__side_prepared
+
+        # init OpenGL
+        import pyglet
+
+        self.__side_prepared = True
+        shared.IS_CLIENT = self.is_client = True
+        shared.NO_WINDOW = "--no-window" in sys.argv
+        logger.println("client side")
+
+    def prepare_server(self):
+        assert not self.__side_prepared
+
+        self.__side_prepared = True
+        shared.IS_CLIENT = self.is_client = False
+        shared.NO_WINDOW = True
+        logger.println("server side")
 
     def inject_sys_argv(self, argv: typing.List[str]):
         """
         Currently unused helper function for loading the sys.argv config into the game
-        todo: all sys.argv parsing belongs here, with an general parser
+        todo: all sys.argv parsing belongs here, with a general parser for options not specified
         """
 
     def setup(self):
@@ -39,6 +59,9 @@ class LaunchWrapper:
         Setup general stuff which does not take long to complete
         Loads first modules into memory and launches registry setup
         """
+
+        if not self.__side_prepared:
+            self.prepare_client()
 
         import mcpython.ResourceLoader
         import mcpython.common.event.EventHandler

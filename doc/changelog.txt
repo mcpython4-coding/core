@@ -87,6 +87,9 @@ changelog of snapshot [next], released on -, targeting -
         - improved memory usage for loading event annotations
         - improved memory usage in BlockFaceState for hidden blocks
 
+    Server:
+        - added foundation for a server launcher
+
 
 changelog of snapshot 20w51a, released on 18.12.2020, targeting 20w51a
     WARNING:  M A J O R  BREAKING VERSION!!!!

@@ -1420,3 +1420,4 @@ R   [uuk]: improved world serialization API
 [uuk]: improved block item generator code
 [uuk]: rewritten how loading stages work, using now a complex system with new python 3.9 features
 [uuk]: improved item break / add system, introducing custom item-saved properties and a gamemode-2 break API
+[uuk]: LaunchWrapper has now a stump interface for launching a server, but it defaults to client

@@ -22,7 +22,7 @@ if sys.version_info.major < 3 or sys.version_info.minor < 9:
 import mcpython.LaunchWrapper
 
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
-wrapper.prepare_client()
+wrapper.prepare_server()
 
 
 try:

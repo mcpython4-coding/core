@@ -68,7 +68,7 @@ class NoWindow:
 
 
 @onlyInClient()
-class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow):
+class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
     """
     Class representing the game window.
     Interacts with the pyglet backend.
