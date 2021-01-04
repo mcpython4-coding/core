@@ -183,7 +183,7 @@ class StateBlockItemGenerator(State.State):
         mcpython.common.item.ItemHandler.ITEM_ATLAS.load()
         mcpython.client.rendering.model.ItemModel.handler.bake()
 
-        print("finished!")
+        logger.println("finished!")
 
         # only here for making resizing possible again
         window = shared.window
