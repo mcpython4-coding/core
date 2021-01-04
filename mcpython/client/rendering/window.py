@@ -54,6 +54,18 @@ class NoWindow:
     def set_icon(self, *args):
         pass
 
+    def set_fullscreen(self, state: bool):
+        pass
+
+    def set_size(self, width, height):
+        pass
+
+    def set_minimum_size(self, width, height):
+        pass
+
+    def set_maximum_size(self, width, height):
+        pass
+
 
 @onlyInClient()
 class Window(pyglet.window.Window if "--no-window" not in sys.argv else NoWindow):

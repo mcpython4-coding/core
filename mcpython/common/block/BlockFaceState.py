@@ -35,8 +35,12 @@ class BlockFaceState:
         Block face state
         """
         self.block = block
-        self.faces: typing.Optional[mcpython.util.enums.EnumSide, bool] = self.DEFAULT_FACE_STATE.copy()
-        self.face_data: typing.Optional[mcpython.util.enums.EnumSide, list] = None  # self.DEFAULT_FACE_DATA.copy()
+        self.faces: typing.Optional[
+            mcpython.util.enums.EnumSide, bool
+        ] = self.DEFAULT_FACE_STATE.copy()
+        self.face_data: typing.Optional[
+            mcpython.util.enums.EnumSide, list
+        ] = None  # self.DEFAULT_FACE_DATA.copy()
         self.custom_renderer = None  # holds a custom block renderer
         self.subscribed_renderer: bool = False
 
@@ -91,7 +95,8 @@ class BlockFaceState:
 
         self.faces[face.normal_name] = False
 
-        if self.face_data is None: return
+        if self.face_data is None:
+            return
 
         if self.custom_renderer is not None:
             if issubclass(

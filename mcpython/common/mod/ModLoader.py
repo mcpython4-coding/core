@@ -73,7 +73,9 @@ class ModLoader:
     def execute_reload_stages(self):
         for event_name in self.reload_stages:
             for i in range(len(self.mods)):
-                instance = shared.mod_loader.mods[shared.mod_loader.mod_loading_order[i]]
+                instance = shared.mod_loader.mods[
+                    shared.mod_loader.mod_loading_order[i]
+                ]
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
 
@@ -87,7 +89,9 @@ class ModLoader:
         :param info: the info
         :return: an ModLoaderAnnotation-instance for annotation
         """
-        return lambda function: self.mods[modname].eventbus.subscribe(event_name, function, *args, **kwargs)
+        return lambda function: self.mods[modname].eventbus.subscribe(
+            event_name, function, *args, **kwargs
+        )
 
     def __getitem__(self, item):
         return self.mods[item]
@@ -437,7 +441,9 @@ class ModLoader:
         will add an mod-instance into the inner system
         :param instance: the mod instance to add
         """
-        if not shared.event_handler.call_cancelable("modloader:mod_registered", instance):
+        if not shared.event_handler.call_cancelable(
+            "modloader:mod_registered", instance
+        ):
             return
         self.mods[instance.name] = instance
         self.located_mods.append(instance)

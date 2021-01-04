@@ -74,7 +74,9 @@ class StateBlockItemGenerator(State.State):
                     len(shared.registry.get_by_name("minecraft:block").entries), None
                 ),
             ),
-            mcpython.client.state.StateModLoading.modloading.parts[3],  # the memory usage bar
+            mcpython.client.state.StateModLoading.modloading.parts[
+                3
+            ],  # the memory usage bar
         ]
 
     def on_draw_2d_pre(self):
@@ -244,9 +246,7 @@ class StateBlockItemGenerator(State.State):
         )
 
         pyglet.clock.schedule_once(self.take_image, self.SETUP_TIME / 20)
-        dimension.get_chunk(
-            0, 0, generate=False
-        ).is_ready = True
+        dimension.get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
         if self.blockindex >= len(self.tasks):

@@ -338,7 +338,7 @@ manager.add_stage(
 )
 
 if shared.data_gen:
-    manager.add_stage(
+    stage = (
         LoadingStage(
             "minecraft:data_generator",
             "running data generators",
@@ -349,19 +349,10 @@ if shared.data_gen:
         )
         .add_event_stage("special:datagen:configure")
         .add_event_stage("special:datagen:generate", "special:datagen:configure")
-        .update_order()
     )
-
     if shared.data_gen_exit:
-        manager.add_stage(
-            LoadingStage(
-                "minecraft:data_generation_exit",
-                "stopping launch",
-                "minecraft:data_generator",
-            )
-            .add_event_stage("special:exit")
-            .update_order()
-        )
+        stage.add_event_stage("special:exit", "special:datagen:generate")
+    manager.add_stage(stage.update_order())
 
 manager.add_stage(
     LoadingStage(

@@ -231,12 +231,10 @@ class StatePartGame(StatePart.StatePart):
         ):
             vector = G.window.get_sight_vector()
             blockpos, previous, hit_position = G.world.hit_test(player.position, vector)
-            if (
-                G.window.mouse_pressing[mouse.LEFT]
-                and blockpos
-            ):
+            if G.window.mouse_pressing[mouse.LEFT] and blockpos:
                 block = G.world.get_active_dimension().get_block(blockpos)
-                if block is None: return
+                if block is None:
+                    return
 
                 chunk = G.world.get_active_dimension().get_chunk(
                     *mcpython.util.math.position_to_chunk(blockpos)
@@ -253,9 +251,10 @@ class StatePartGame(StatePart.StatePart):
                         and self.mouse_press_time >= self.break_time
                         and block.IS_BREAKABLE
                     ):
-                        if (not selected_itemstack.is_empty() and selected_itemstack.item.check_can_destroy(
-                            block, player
-                        )) or (selected_itemstack.is_empty() and player.gamemode == 2):
+                        if (
+                            not selected_itemstack.is_empty()
+                            and selected_itemstack.item.check_can_destroy(block, player)
+                        ) or (selected_itemstack.is_empty() and player.gamemode == 2):
                             return
                         if G.world.gamerule_handler.table["doTileDrops"].status.status:
                             items = G.loot_table_handler.get_drop_for_block(
@@ -316,7 +315,9 @@ class StatePartGame(StatePart.StatePart):
                                 )
                             )
 
-                            if not slot.get_itemstack().item.check_can_be_set_on(chunk.get_block(blockpos), player):
+                            if not slot.get_itemstack().item.check_can_be_set_on(
+                                chunk.get_block(blockpos), player
+                            ):
                                 self.mouse_press_time = 0
                                 return
 
