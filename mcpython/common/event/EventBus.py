@@ -151,7 +151,7 @@ class EventBus:
                     ),
                     "function info: '{}'".format(info) if info is not None else "",
                     "during event:",
-                    event_name
+                    event_name,
                 )
             if G.debug_events:
                 with open(
@@ -232,7 +232,7 @@ class EventBus:
                     ),
                     "function info: '{}'".format(info) if info is not None else "",
                     "during event:",
-                    event_name
+                    event_name,
                 )
                 raise
 
@@ -297,7 +297,7 @@ class EventBus:
                     "function info:",
                     info,
                     "during event:",
-                    event_name
+                    event_name,
                 )
             dif = time.time() - start
             if G.debug_events:
