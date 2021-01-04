@@ -90,6 +90,9 @@ class BlockFaceState:
             return
 
         self.faces[face.normal_name] = False
+
+        if self.face_data is None: return
+
         if self.custom_renderer is not None:
             if issubclass(
                 type(self.custom_renderer),

@@ -584,10 +584,10 @@ class ModLoader:
         astate.parts[1].progress = stage.active_mod_index + 1
         astate.parts[0].text = "{} ({}/{}) in {} ({}/{})".format(
             stage.active_event,
-            stage.current_progress + 1,
+            stage.current_progress,
             len(stage.events),
             stage.name,
-            self.active_loading_stage + 1,
+            self.active_loading_stage,
             len(mcpython.common.mod.ModLoadingPipe.manager.stages),
         )
 

@@ -60,9 +60,12 @@ class DefaultTopLayerLayer(ILayer):
             if block and (block if type(block) == str else block.NAME) in [
                 "minecraft:stone"
             ]:
-                if i == height - 1:
-                    reference.schedule_block_add((x, y, z), decorators[i])
-                else:
-                    reference.schedule_block_add(
-                        (x, y, z), decorators[i], immediate=i >= height - 1
-                    )
+                try:
+                    if i == height - 1:
+                        reference.schedule_block_add((x, y, z), decorators[i])
+                    else:
+                        reference.schedule_block_add(
+                            (x, y, z), decorators[i], immediate=i >= height - 1
+                        )
+                except IndexError:
+                    pass

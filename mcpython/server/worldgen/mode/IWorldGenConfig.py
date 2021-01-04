@@ -93,6 +93,12 @@ class IWorldGenConfig(mcpython.common.data.DataSerializerHandler.ISerializeAble)
 
     GENERATES_START_CHEST = False
 
+    # A lazy mcpython.client.state.worldgen.AbstractWorldGeneration.AbstractState for usage for configuration
+    # todo: use this API and display it correctly
+    # todo: add serialization config
+    # todo: store configured object for later usage
+    CONFIGURATION_STATE_INSTANCE = None
+
     @classmethod
     def on_chunk_prepare_generation(
         cls,
