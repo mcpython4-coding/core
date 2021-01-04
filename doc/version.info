@@ -1419,3 +1419,4 @@ R   [uuk]: improved world serialization API
 [uuk]: improved reloading code
 [uuk]: improved block item generator code
 [uuk]: rewritten how loading stages work, using now a complex system with new python 3.9 features
+[uuk]: improved item break / add system, introducing custom item-saved properties and a gamemode-2 break API

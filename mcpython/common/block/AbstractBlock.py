@@ -231,6 +231,18 @@ class AbstractBlock(parent):
         """
         self.load_data(pickle.loads(data) if type(data) == bytes else data)
 
+    def get_item_saved_state(self):
+        """
+        Used by item system to get the state of the block for storing in the item
+        Normally, parts of the block state
+        """
+
+    def set_item_saved_state(self, state):
+        """
+        Previous saved state of another block instance
+        Only called when the state is not None
+        """
+
     # block status functions
 
     def get_inventories(self):
@@ -302,6 +314,7 @@ class AbstractBlock(parent):
         used when an item is requested exactly for this block. Useful for setting custom data to the itemstack
         :param itemstack: the itemstack generated for the block
         """
+        itemstack.item.stored_block_state = self.get_item_saved_state()
 
     # Redstone API
 

@@ -11,7 +11,6 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import logger
 import mcpython.common.event.Registry
-import uuid
 
 
 class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
@@ -32,7 +31,15 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
         raise NotImplementedError()
 
     def __init__(self):
-        self.uuid = uuid.uuid4()
+        self.stored_block_state = None
+        self.can_destroy = []
+        self.can_be_set_on = []
+
+    def check_can_be_set_on(self, block, player):
+        return player.gamemode != 2 or block.NAME in self.can_be_set_on
+
+    def check_can_destroy(self, block, player):
+        return player.gamemode != 2 or block.NAME in self.can_destroy
 
     def __eq__(self, other):
         if not issubclass(type(other), AbstractItem):
@@ -73,7 +80,8 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
         pass
 
     def on_set_from_item(self, block):
-        pass
+        if self.stored_block_state is not None and self.NAME == block.NAME:
+            block.set_item_saved_state(self.stored_block_state)
 
     # functions used by data serializers
 
