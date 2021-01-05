@@ -62,7 +62,8 @@ changelog of snapshot [next], released on -, targeting -
         - ... and CombinedFactories will also be rewritten in the near future
         - even data-driven block and items may get a thing :-/
         - the new factory system is highly extendable, but may consume some more memory on the fly :-(
-        - I tried to make it as fast as before, but I cannot gurantee anything at this point
+        - I tried to make it as fast as before, but I cannot guarantee anything at this point
+        - the API is "similar" to the old, with refactors and no direct-attribute accesses anymore :-/
 
     World Generation:
         - noises are now better selected per world-seed, making them more compatible for mods

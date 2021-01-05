@@ -21,6 +21,9 @@ import mcpython.common.block.ISlab as ISlab
 import mcpython.common.block.BlockWall as BlockWall
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
 
+import pickle
+import mcpython.common.block.BoundingBox
+
 block_factory_builder = FactoryBuilder(
     "minecraft:block", mcpython.common.block.AbstractBlock.AbstractBlock
 )
@@ -171,10 +174,207 @@ def build_class(cls, instance: FactoryBuilder.IFactory):
 def build_class_default_state(cls, instance: FactoryBuilder.IFactory):
     if "default_model_state" not in instance.config_table: return cls
 
+    is_super_base = any([base == cls for base in instance.master.base_classes])
+    bases = instance.master.base_classes
+
     class ModifiedClass(cls):
         def __init__(self):
-            super().__init__()
-            self.set_model_state(instance.config_table["default_model_state"])
+            if not is_super_base:
+                super().__init__()
+
+            for base in bases:
+                super(base, self).__init__()
+
+        def set_creation_properties(self, *args, **kwargs):
+            if not is_super_base:
+                super().set_creation_properties(*args, **kwargs)
+
+            for base in bases:
+                super(base, self).set_creation_properties(*args, **kwargs)
+
+        def on_block_added(self, *args, **kwargs):
+            if not is_super_base:
+                super().on_block_added(*args, **kwargs)
+
+            for base in bases:
+                super(base, self).on_block_added(*args, **kwargs)
+
+        def on_block_remove(self, *args, **kwargs):
+            if not is_super_base:
+                super().on_block_remove(*args, **kwargs)
+
+            for base in bases:
+                super(base, self).on_block_remove(*args, **kwargs)
+
+        def on_random_update(self, *args, **kwargs):
+            if not is_super_base:
+                super().on_random_update(*args, **kwargs)
+
+            for base in bases:
+                super(base, self).on_random_update(*args, **kwargs)
+
+        def on_block_update(self, *args, **kwargs):
+            if not is_super_base:
+                super().on_block_update(*args, **kwargs)
+
+            for base in bases:
+                super(base, self).on_block_update(*args, **kwargs)
+            self.on_redstone_update()
+
+        def on_redstone_update(self, *args, **kwargs):
+            if not is_super_base:
+                super().on_redstone_update(*args, **kwargs)
+
+            for base in bases:
+                super(base, self).on_redstone_update(*args, **kwargs)
+
+        def on_player_interaction(
+                self, *args, **kwargs
+        ):
+            if not is_super_base:
+                if super().on_player_interaction(*args, **kwargs):
+                    return True
+
+            for base in bases:
+                if super(base, self).on_player_interaction(*args, **kwargs):
+                    return True
+
+            return False
+
+        def on_no_collision_collide(self, *args, **kwargs):
+            if not is_super_base:
+                super().on_no_collision_collide(*args, **kwargs)
+
+            for base in bases:
+                super(base, self).on_no_collision_collide(*args, **kwargs)
+
+        def get_save_data(self):
+            if not is_super_base:
+                return super().get_save_data()
+            if len(bases) > 0:
+                return super(self, bases[-1]).get_save_data()
+            return self.get_model_state()
+
+        def dump_data(self):
+            if not is_super_base:
+                return super().dump_data()
+            if len(bases) > 0:
+                return super(self, bases[-1]).dump_data()
+            return pickle.dumps(self.get_save_data())
+
+        def load_data(self, data):
+            if not is_super_base:
+                return super().load_data(data)
+            if len(bases) > 0:
+                return super(self, bases[-1]).load_data(data)
+            self.set_model_state(data)
+
+        def inject(self, data: bytes):
+            if not is_super_base:
+                return super().inject(data)
+            if len(bases) > 0:
+                return super(self, bases[-1]).inject(data)
+            self.load_data(pickle.loads(data) if type(data) == bytes else data)
+
+        def get_item_saved_state(self):
+            if not is_super_base:
+                return super().get_item_saved_state()
+            if len(bases) > 0:
+                return super(self, bases[-1]).get_item_saved_state()
+
+        def set_item_saved_state(self, state):
+            if not is_super_base:
+                return super().set_item_saved_state(state)
+            if len(bases) > 0:
+                return super(self, bases[-1]).set_item_saved_state(state)
+
+        def get_inventories(self):
+            inventories = []
+            if not is_super_base:
+                inventories += super().get_inventories()
+            if len(bases) > 0:
+                inventories += super(self, bases[-1]).get_inventories()
+            return inventories
+
+        def get_provided_slot_lists(self, side: mcpython.util.enums.EnumSide):
+            a, b = [], []
+            if not is_super_base:
+                x, y = super().get_provided_slot_lists(side)
+                a += x
+                b += y
+            if len(bases) > 0:
+                x, y = super(self, bases[-1]).get_provided_slot_lists(side)
+                a += x
+                b += y
+            return a, b
+
+        def get_model_state(self) -> dict:
+            state = {}
+            if not is_super_base:
+                state.update(super().get_model_state())
+            if len(bases) > 0:
+                state.update(super(self, bases[-1]).get_model_state())
+
+            state.update(instance.config_table["default_model_state"])
+            return state
+
+        def set_model_state(self, state: dict):
+            if not is_super_base:
+                super().set_model_state(state)
+
+            for base in bases:
+                super(base, self).set_model_state(state)
+
+        def get_view_bbox(self):
+            if not is_super_base:
+                return super().get_view_bbox()
+            if len(bases) > 0:
+                return super(self, bases[-1]).get_view_bbox()
+
+            return mcpython.common.block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
+
+        def get_collision_bbox(self):
+            if not is_super_base:
+                return super().get_collision_bbox()
+            if len(bases) > 0:
+                return super(self, bases[-1]).get_collision_bbox()
+
+            return self.get_view_bbox()
+
+        def on_request_item_for_block(self, itemstack: mcpython.common.container.ItemStack.ItemStack):
+            if not is_super_base:
+                super().on_request_item_for_block(itemstack)
+
+            for base in bases:
+                super(base, self).on_request_item_for_block(itemstack)
+
+        def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int):
+            self.injected_redstone_power[side] = level
+
+            if not is_super_base:
+                super().inject_redstone_power(side, level)
+
+            for base in bases:
+                super(base, self).inject_redstone_power(side, level)
+
+        def get_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
+            if not is_super_base:
+                return super().get_redstone_output()
+            if len(bases) > 0:
+                return super(self, bases[-1]).get_redstone_output()
+
+            return max(
+                self.get_redstone_source_power(side), *self.injected_redstone_power.values()
+            )
+
+        def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide):
+            # todo: maybe use highest power?
+            if not is_super_base:
+                return super().get_redstone_source_power(side)
+            if len(bases) > 0:
+                return super(self, bases[-1]).get_redstone_source_power(side)
+
+            return 0
 
     return ModifiedClass
 
@@ -204,11 +404,13 @@ import mcpython.util.enums
 import mcpython.common.factory.IFactoryModifier
 
 
-# todo: implement inventory opening notations
+# todo: implement inventory opening helper with interaction and save of inventory
 
 
 class OldBlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
     """
+    Old implementation of the BlockFactory system
+
     Factory for creating on an simple way block classes
     Examples:
         BlockFactory().setName("test:block").setHardness(1).setBlastResistance(1).finish()
