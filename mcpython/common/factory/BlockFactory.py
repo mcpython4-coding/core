@@ -29,20 +29,12 @@ block_factory_builder = FactoryBuilder(
 )
 
 
-@block_factory_builder.register_configurator(
-    FactoryBuilder.AnnotationFactoryConfigurator("set_name")
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_name", "name", str)
 )
-def set_name(instance: FactoryBuilder.IFactory, name: str):
-    instance.config_table["name"] = name
-    return instance
-
-
-@block_factory_builder.register_configurator(
-    FactoryBuilder.AnnotationFactoryConfigurator("set_global_mod_name")
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_global_mod_name", "global_name", str)
 )
-def set_global_mod_name(instance: FactoryBuilder.IFactory, global_name: str):
-    instance.config_table["global_name"] = global_name
-    return instance
 
 
 @block_factory_builder.register_configurator(
@@ -88,7 +80,9 @@ def set_horizontal_orientable(instance: FactoryBuilder.IFactory):
 @block_factory_builder.register_configurator(
     FactoryBuilder.AnnotationFactoryConfigurator("set_strength")
 )
-def set_strength(instance: FactoryBuilder.IFactory, hardness: float, blast_resistance: float = None):
+def set_strength(
+    instance: FactoryBuilder.IFactory, hardness: float, blast_resistance: float = None
+):
     instance.config_table["hardness"] = hardness
     instance.config_table["blast_resistance"] = blast_resistance
     return instance
@@ -108,28 +102,13 @@ def set_assigned_tools(instance: FactoryBuilder.IFactory, *tools):
 
 
 @block_factory_builder.register_configurator(
-    FactoryBuilder.AnnotationFactoryConfigurator("set_minimum_tool_level")
-)
-def set_minimum_tool_level(instance: FactoryBuilder.IFactory, level: int):
-    instance.config_table["minimum_tool_level"] = level
-    return instance
-
-
-@block_factory_builder.register_configurator(
-    FactoryBuilder.AnnotationFactoryConfigurator("set_break_able_flag")
-)
-def set_break_able_flag(instance: FactoryBuilder.IFactory, state: bool = True):
-    instance.config_table["break_able_flag"] = state
-    return instance
-
-
-@block_factory_builder.register_configurator(
     FactoryBuilder.AnnotationFactoryConfigurator("set_all_side_solid")
 )
 def set_all_side_solid(instance: FactoryBuilder.IFactory, solid: bool):
     instance.config_table["solid_face_table"] = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.DEFAULT_FACE_SOLID if solid else
-        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+        mcpython.common.block.AbstractBlock.AbstractBlock.DEFAULT_FACE_SOLID
+        if solid
+        else mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
     return instance
 
@@ -137,9 +116,13 @@ def set_all_side_solid(instance: FactoryBuilder.IFactory, solid: bool):
 @block_factory_builder.register_configurator(
     FactoryBuilder.AnnotationFactoryConfigurator("set_default_model_state")
 )
-def set_default_model_state(instance: FactoryBuilder.IFactory, state: typing.Union[dict, str]):
+def set_default_model_state(
+    instance: FactoryBuilder.IFactory, state: typing.Union[dict, str]
+):
     if type(state) == str:
-        state = {e.split("=")[0].strip(): e.split("=")[1].strip() for e in state.split(",")}
+        state = {
+            e.split("=")[0].strip(): e.split("=")[1].strip() for e in state.split(",")
+        }
     instance.config_table["default_model_state"] = state
     return instance
 
@@ -147,23 +130,71 @@ def set_default_model_state(instance: FactoryBuilder.IFactory, state: typing.Uni
 @block_factory_builder.register_class_builder(
     FactoryBuilder.AnnotationFactoryClassBuilder()
 )
-def build_class(cls, instance: FactoryBuilder.IFactory):
+def build_class(
+    cls: typing.Type[mcpython.common.block.AbstractBlock.AbstractBlock],
+    instance: FactoryBuilder.IFactory,
+):
     name = instance.config_table["name"]
     if ":" not in name and "global_name" in instance.config_table:
         name = instance.config_table["global_name"] + ":" + name
 
     class ModifiedClass(cls):
         NAME = name
-        HARDNESS = instance.config_table.setdefault("hardness", 1)
-        BLAST_RESISTANCE = instance.config_table.setdefault("blast_resistance", 1)
+        HARDNESS = instance.config_table.setdefault("hardness", cls.HARDNESS)
+        BLAST_RESISTANCE = instance.config_table.setdefault(
+            "blast_resistance", cls.BLAST_RESISTANCE
+        )
 
-        MINIMUM_TOOL_LEVEL = instance.config_table.setdefault("minimum_tool_level", 0)
-        ASSIGNED_TOOLS = instance.config_table.setdefault("assigned_tools", tuple())
+        MINIMUM_TOOL_LEVEL = instance.config_table.setdefault(
+            "minimum_tool_level", cls.MINIMUM_TOOL_LEVEL
+        )
+        ASSIGNED_TOOLS = instance.config_table.setdefault(
+            "assigned_tools", cls.ASSIGNED_TOOLS
+        )
 
-        IS_BREAKABLE = instance.config_table.setdefault("break_able_flag", True)
+        IS_BREAKABLE = instance.config_table.setdefault(
+            "break_able_flag", cls.IS_BREAKABLE
+        )
 
         DEFAULT_FACE_SOLID = instance.config_table.setdefault(
-            "solid_face_table", mcpython.common.block.AbstractBlock.AbstractBlock.DEFAULT_FACE_SOLID)
+            "solid_face_table", cls.DEFAULT_FACE_SOLID
+        )
+
+        CUSTOM_WALING_SPEED_MULTIPLIER = instance.config_table.setdefault(
+            "speed_multiplier", cls.CUSTOM_WALING_SPEED_MULTIPLIER
+        )
+
+        BLOCK_ITEM_GENERATOR_STATE = instance.config_table.setdefault(
+            "block_item_generator_state", cls.BLOCK_ITEM_GENERATOR_STATE
+        )
+
+        IS_SOLID = instance.config_table.setdefault("solid", cls.IS_SOLID)
+
+        CAN_CONDUCT_REDSTONE_POWER = instance.config_table.setdefault(
+            "can_conduct_redstone_power", cls.CAN_CONDUCT_REDSTONE_POWER
+        )
+
+        CAN_MOBS_SPAWN_ON = instance.config_table.setdefault(
+            "can_mobs_spawn_on", cls.CAN_MOBS_SPAWN_ON
+        )
+        CAN_MOBS_SPAWN_IN = instance.config_table.setdefault(
+            "can_mobs_spawn_in", cls.CAN_MOBS_SPAWN_IN
+        )
+
+        ENABLE_RANDOM_TICKS = instance.config_table.setdefault(
+            "enable_random_ticks", cls.ENABLE_RANDOM_TICKS
+        )
+
+        NO_ENTITY_COLLISION = instance.config_table.setdefault(
+            "no_entity_collision", cls.NO_ENTITY_COLLISION
+        )
+        ENTITY_FALL_MULTIPLIER = instance.config_table.setdefault(
+            "entity_fall_multiplier", cls.ENTITY_FALL_MULTIPLIER
+        )
+
+        DEBUG_WORLD_BLOCK_STATES = instance.config_table.setdefault(
+            "debug_world_states", cls.DEBUG_WORLD_BLOCK_STATES
+        )
 
     return ModifiedClass
 
@@ -171,8 +202,12 @@ def build_class(cls, instance: FactoryBuilder.IFactory):
 @block_factory_builder.register_class_builder(
     FactoryBuilder.AnnotationFactoryClassBuilder()
 )
-def build_class_default_state(cls, instance: FactoryBuilder.IFactory):
-    if "default_model_state" not in instance.config_table: return cls
+def build_class_default_state(
+    cls: typing.Type[mcpython.common.block.AbstractBlock.AbstractBlock],
+    instance: FactoryBuilder.IFactory,
+):
+    if "default_model_state" not in instance.config_table:
+        return cls
 
     is_super_base = any([base == cls for base in instance.master.base_classes])
     bases = instance.master.base_classes
@@ -228,9 +263,7 @@ def build_class_default_state(cls, instance: FactoryBuilder.IFactory):
             for base in bases:
                 super(base, self).on_redstone_update(*args, **kwargs)
 
-        def on_player_interaction(
-                self, *args, **kwargs
-        ):
+        def on_player_interaction(self, *args, **kwargs):
             if not is_super_base:
                 if super().on_player_interaction(*args, **kwargs):
                     return True
@@ -341,7 +374,9 @@ def build_class_default_state(cls, instance: FactoryBuilder.IFactory):
 
             return self.get_view_bbox()
 
-        def on_request_item_for_block(self, itemstack: mcpython.common.container.ItemStack.ItemStack):
+        def on_request_item_for_block(
+            self, itemstack: mcpython.common.container.ItemStack.ItemStack
+        ):
             if not is_super_base:
                 super().on_request_item_for_block(itemstack)
 
@@ -364,7 +399,8 @@ def build_class_default_state(cls, instance: FactoryBuilder.IFactory):
                 return super(self, bases[-1]).get_redstone_output()
 
             return max(
-                self.get_redstone_source_power(side), *self.injected_redstone_power.values()
+                self.get_redstone_source_power(side),
+                *self.injected_redstone_power.values()
             )
 
         def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide):
@@ -387,12 +423,83 @@ block_factory_builder.register_direct_copy_attributes(
     "minimum_tool_level",
     "assigned_tools",
     "break_able_flag",
-    "default_model_state"
+    "default_model_state",
+    "speed_multiplier",
+    "block_item_generator_state",
+    "solid",
+    "can_conduct_redstone_power",
+    "can_mobs_spawn_on",
+    "can_mobs_spawn_in",
+    "enable_random_ticks",
+    "no_entity_collision",
+    "entity_fall_multiplier",
 )
 
 block_factory_builder.register_direct_copy_attributes(
-    "solid_face_table",
-    operation=lambda x: x
+    "solid_face_table", operation=lambda x: x
+)
+block_factory_builder.register_direct_copy_attributes(
+    "debug_world_states", operation=lambda e: e.copy()
+)
+
+
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_minimum_tool_level", "minimum_tool_level", int
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_break_able_flag", "break_able_flag", bool
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_walking_speed_multiplier", "speed_multiplier", float
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_block_item_generator_state", "block_item_generator_state", dict
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_solid", "solid", bool)
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_can_conduct_redstone_power", "can_conduct_redstone_power", bool
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_can_mobs_spawn_on", "can_mobs_spawn_on", bool
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_can_mobs_spawn_in", "can_mobs_spawn_in", bool
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_enable_random_ticks", "enable_random_ticks", bool
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_no_entity_collision", "no_entity_collision", bool
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_entity_fall_multiplier", "entity_fall_multiplier", float
+    )
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_debug_world_states", "debug_world_states", list
+    )
 )
 
 

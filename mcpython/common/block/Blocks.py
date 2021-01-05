@@ -42,14 +42,18 @@ def load_blocks():
         .set_template()
     )
     log_template = full_template.copy().reset_template().set_log().set_template()
-    falling_template = full_template.copy().reset_template().set_fall_able().set_template()
+    falling_template = (
+        full_template.copy().reset_template().set_fall_able().set_template()
+    )
     slab_template = full_template.copy().reset_template().set_slab().set_template()
 
     full_template.set_name("ancient_debris").finish()
-    full_template.set_name("barrier").set_break_able_flag(False).set_all_side_solid(False).finish()
-    full_template.set_name("chiseled_quartz_block").set_strength(0.8).set_assigned_tools(
-        ToolType.PICKAXE
-    ).set_minimum_tool_level(1).finish()
+    full_template.set_name("barrier").set_break_able_flag(False).set_all_side_solid(
+        False
+    ).finish()
+    full_template.set_name("chiseled_quartz_block").set_strength(
+        0.8
+    ).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(1).finish()
     full_template.set_name("quartz_block").set_strength(0.8).set_assigned_tools(
         ToolType.PICKAXE
     ).set_minimum_tool_level(1).finish()
@@ -82,8 +86,12 @@ def load_blocks():
     full_template.set_name("jack_o_lantern").set_horizontal_orientable().finish()
     full_template.set_name("melon").finish()
 
-    full_template.set_name("mycelium").set_default_model_state({"snowy": "false"}).finish()
-    full_template.set_name("podzol").set_default_model_state({"snowy": "false"}).finish()
+    full_template.set_name("mycelium").set_default_model_state(
+        {"snowy": "false"}
+    ).finish()
+    full_template.set_name("podzol").set_default_model_state(
+        {"snowy": "false"}
+    ).finish()
 
     full_template.set_name("netherrack").finish()
 
@@ -147,19 +155,23 @@ def load_misc(generator: DataGeneratorInstance):
         generator,
         "minecraft:nether_wart_block",
         enable=BLOCKS,
-        callback=lambda _, factory: factory.set_strength(1).set_assigned_tools(ToolType.HOE),
+        callback=lambda _, factory: factory.set_strength(1).set_assigned_tools(
+            ToolType.HOE
+        ),
     )
     CombinedBlockFactory.generate_full_block_slab_wall(
         generator,
         "minecraft:warped_wart_block",
         enable=BLOCKS,
-        callback=lambda _, factory: factory.set_strength(1).set_assigned_tools(ToolType.HOE),
+        callback=lambda _, factory: factory.set_strength(1).set_assigned_tools(
+            ToolType.HOE
+        ),
     )
 
     def set_purpur_block(_, factory):
-        factory.set_strength(6, 1.5).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(
-            1
-        )
+        factory.set_strength(6, 1.5).set_assigned_tools(
+            ToolType.PICKAXE
+        ).set_minimum_tool_level(1)
 
     CombinedBlockFactory.generate_full_block_slab_wall(
         generator, "minecraft:purpur_block", callback=set_purpur_block, enable=BLOCKS
@@ -171,7 +183,9 @@ def load_misc(generator: DataGeneratorInstance):
     CombinedBlockFactory.generate_full_block_slab_wall(
         generator,
         "minecraft:shroomlight",
-        callback=lambda _, factory: factory.set_strength(1).set_assigned_tools(ToolType.HOE),
+        callback=lambda _, factory: factory.set_strength(1).set_assigned_tools(
+            ToolType.HOE
+        ),
         enable=BLOCKS,
     )
 
@@ -205,12 +219,16 @@ def load_misc(generator: DataGeneratorInstance):
     CombinedBlockFactory.generate_full_block(
         generator,
         "minecraft:sponge",
-        callback=lambda _, factory: factory.set_strength(0.6).set_assigned_tools(ToolType.HOE),
+        callback=lambda _, factory: factory.set_strength(0.6).set_assigned_tools(
+            ToolType.HOE
+        ),
     )
     CombinedBlockFactory.generate_full_block(
         generator,
         "minecraft:wet_sponge",
-        callback=lambda _, factory: factory.set_strength(0.6).set_assigned_tools(ToolType.HOE),
+        callback=lambda _, factory: factory.set_strength(0.6).set_assigned_tools(
+            ToolType.HOE
+        ),
     )
 
 
@@ -222,7 +240,9 @@ def load_wood(generator: DataGeneratorInstance):
         factory.set_strength(1, 2).set_assigned_tools(ToolType.AXE)
 
     def set_leaves(_, factory):
-        factory.set_strength(0.2).set_assigned_tools(ToolType.SHEAR).set_all_side_solid(False)
+        factory.set_strength(0.2).set_assigned_tools(ToolType.SHEAR).set_all_side_solid(
+            False
+        )
 
     for wood_type in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak"]:
         CombinedBlockFactory.generate_log_block(
@@ -294,10 +314,14 @@ def load_wood(generator: DataGeneratorInstance):
 
 def load_value_ables(generator: DataGeneratorInstance):
     def set_quartz(_, factory):
-        factory.set_strength(0.8).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(1)
+        factory.set_strength(0.8).set_assigned_tools(
+            ToolType.PICKAXE
+        ).set_minimum_tool_level(1)
 
     def set_material_block(_, factory):
-        factory.set_strength(5, 6).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(3)
+        factory.set_strength(5, 6).set_assigned_tools(
+            ToolType.PICKAXE
+        ).set_minimum_tool_level(3)
 
     CombinedBlockFactory.generate_full_block_slab_wall(
         generator,
@@ -445,9 +469,9 @@ def load_value_ables(generator: DataGeneratorInstance):
 
 def load_stones(generator: DataGeneratorInstance):
     def set_stone(_, factory):
-        factory.set_strength(1.5, 6).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(
-            1
-        )
+        factory.set_strength(1.5, 6).set_assigned_tools(
+            ToolType.PICKAXE
+        ).set_minimum_tool_level(1)
 
     def set_basalt(_, factory):
         factory.set_strength(1.25, 4.2).set_assigned_tools(
@@ -458,7 +482,9 @@ def load_stones(generator: DataGeneratorInstance):
         factory.set_strength(-1, 3600000).set_break_able_flag(False)
 
     def set_end_stone(_, factory):
-        factory.set_strength(3, 9).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(1)
+        factory.set_strength(3, 9).set_assigned_tools(
+            ToolType.PICKAXE
+        ).set_minimum_tool_level(1)
 
     for name in ["andesite", "granite", "diorite"]:
         CombinedBlockFactory.generate_full_block_slab_wall(
@@ -623,7 +649,9 @@ def load_stones(generator: DataGeneratorInstance):
 
 def load_colored(generator: DataGeneratorInstance):
     def set_concrete(_, factory):
-        factory.set_strength(1.8).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(1)
+        factory.set_strength(1.8).set_assigned_tools(
+            ToolType.PICKAXE
+        ).set_minimum_tool_level(1)
 
     def set_concrete_powder(_, factory):
         factory.set_strength(0.5).set_assigned_tools(ToolType.SHOVEL).set_fall_able()
@@ -640,7 +668,9 @@ def load_colored(generator: DataGeneratorInstance):
         factory.set_strength(0.3).set_all_side_solid(False)
 
     def set_brick(_, factory):
-        factory.set_strength(2, 6).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(1)
+        factory.set_strength(2, 6).set_assigned_tools(
+            ToolType.PICKAXE
+        ).set_minimum_tool_level(1)
 
     for color in [
         "white",

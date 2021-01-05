@@ -62,39 +62,39 @@ class AbstractBlock(parent):
     TYPE: str = "minecraft:block_registry"  # internal registry type
 
     # used when the player walks in an different speed on this block
-    CUSTOM_WALING_SPEED_MULTIPLIER: typing.Union[float, None] = None
+    CUSTOM_WALING_SPEED_MULTIPLIER: typing.Optional[float] = None
 
     # used internally to set the state the BlockItemGenerator uses
-    BLOCK_ITEM_GENERATOR_STATE: typing.Union[dict, None] = None
+    BLOCK_ITEM_GENERATOR_STATE: typing.Optional[dict] = None
 
     # If this block can be broken in gamemode 0 and 2
     IS_BREAKABLE: bool = True
 
     HARDNESS: float = 1  # the hardness of the block
     BLAST_RESISTANCE: float = 0  # how good it is in resisting explosions
-    MINIMUM_TOOL_LEVEL: float = 0  # the minimum tool level
+    MINIMUM_TOOL_LEVEL: int = 0  # the minimum tool level
     ASSIGNED_TOOLS: typing.List[
         mcpython.util.enums.ToolType
     ] = []  # the tools best to break
 
     # if the block is solid; None is unset and set by system by checking face_solid on an block instance
-    IS_SOLID: typing.Union[bool, None] = None
+    IS_SOLID: typing.Optional[bool] = None
 
     # if the block can conduct redstone power; None is unset and set by system to SOLID
-    CAN_CONDUCT_REDSTONE_POWER: typing.Union[bool, None] = None
+    CAN_CONDUCT_REDSTONE_POWER: typing.Optional[bool] = None
 
     # if mobs can spawn on the block; None is unset and set by system to SOLID
-    CAN_MOBS_SPAWN_ON: typing.Union[bool, None] = None
-    CAN_MOBS_SPAWN_IN = False
+    CAN_MOBS_SPAWN_ON: typing.Optional[bool] = None
+    CAN_MOBS_SPAWN_IN: bool = False
 
-    ENABLE_RANDOM_TICKS = (
-        False  # if the random tick function should be called if needed or not
-    )
+    # if the random tick function should be called if needed or not
+    ENABLE_RANDOM_TICKS: bool = False
 
-    NO_ENTITY_COLLISION = False
-    ENTITY_FALL_MULTIPLIER = 1
+    NO_ENTITY_COLLISION: bool = False
+    ENTITY_FALL_MULTIPLIER: float = 1
 
-    DEBUG_WORLD_BLOCK_STATES = [{}]
+    # todo: add a factory for it
+    DEBUG_WORLD_BLOCK_STATES: typing.List[dict] = [{}]
 
     DEFAULT_FACE_SOLID = {face: True for face in mcpython.util.enums.EnumSide.iterate()}
     UNSOLID_FACE_SOLID = {
@@ -347,4 +347,5 @@ class AbstractBlock(parent):
 
     def __repr__(self):
         return "MinecraftBlock(internal={},position={},dimension={})".format(
-            super().__repr__(), self.position, self.dimension)
+            super().__repr__(), self.position, self.dimension
+        )
