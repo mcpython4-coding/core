@@ -1,3 +1,14 @@
+"""mcpython - a minecraft clone written in pure python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
+
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
+
+blocks based on 20w51a.jar of minecraft
+
+This project is not official by mojang and does not relate to it.
+"""
 import typing
 import copy
 from abc import ABC
@@ -50,8 +61,12 @@ class FactoryBuilder:
             return self.configure
 
         def configure(self, *args, **kwargs):
-            for function in self.pool:
-                function(*args, *kwargs)
+            if len(self.pool) > 0:
+                for function in self.pool:
+                    function(*args, *kwargs)
+                return args[0]
+            else:
+                return self.pool[0](*args, **kwargs)
 
     class IFactoryClassBuilder(ABC):
         def prepare(self, instance: "FactoryBuilder.IFactory"):
@@ -64,8 +79,27 @@ class FactoryBuilder:
         ) -> typing.Type["FactoryBuilder.IFactory.IBuildFactoryContent"]:
             raise NotImplementedError()
 
+    class AnnotationFactoryClassBuilder(IFactoryClassBuilder):
+        def __init__(self):
+            self.pool = []
+
+        def __call__(self, function):
+            self.pool.append(function)
+            return function
+
+        def apply(
+            self,
+            cls: typing.Type["FactoryBuilder.IFactory.IBuildFactoryContent"],
+            instance: "FactoryBuilder.IFactory",
+        ) -> typing.Type["FactoryBuilder.IFactory.IBuildFactoryContent"]:
+            for function in self.pool:
+                cls = function(cls, instance)
+            return cls
+
     class IFactoryCopyOperation(ABC):
-        def operate(self, old: "FactoryBuilder.IFactory", new: "FactoryBuilder.IFactory"):
+        def operate(
+            self, old: "FactoryBuilder.IFactory", new: "FactoryBuilder.IFactory"
+        ):
             raise NotImplementedError()
 
     class DefaultFactoryCopyOperation(IFactoryCopyOperation):
@@ -73,7 +107,9 @@ class FactoryBuilder:
             self.key = key
             self.operation = operation
 
-        def operate(self, old: "FactoryBuilder.IFactory", new: "FactoryBuilder.IFactory"):
+        def operate(
+            self, old: "FactoryBuilder.IFactory", new: "FactoryBuilder.IFactory"
+        ):
             new.config_table[self.key] = self.operation(old.config_table[self.key])
 
     class IFactory(ABC):
@@ -91,7 +127,8 @@ class FactoryBuilder:
                     "master": master,
                     "creation_arguments": (args, kwargs),
                     "template": [],
-                    "base_classes": master.base_classes.copy()
+                    "base_classes": master.base_classes.copy(),
+                    "config_table": {},
                 }
             )
 
@@ -99,31 +136,46 @@ class FactoryBuilder:
                 configurator.prepare(self)
 
         def __getattr__(self, item):
-            if "master" in self.__dict__ and item in self.__dict__["master"].config_access_table:
-                return lambda *args, **kwargs: self.__dict__["master"].config_access_table[item](self, *args, **kwargs)
+            if (
+                "master" in self.__dict__
+                and item in self.__dict__["master"].config_access_table
+            ):
+                return lambda *args, **kwargs: self.__dict__[
+                    "master"
+                ].config_access_table[item](self, *args, **kwargs)
 
-            return self.__dict__[item]
+            if item in self.__dict__:
+                return self.__dict__[item]
+
+            raise AttributeError("{} has no attribute '{}'".format(self, item))
 
         def __setattr__(self, key, value):
-            if "master" in self.__dict__ and key in self.__dict__["master"].config_access_table:
+            if (
+                "master" in self.__dict__
+                and key in self.__dict__["master"].config_access_table
+            ):
                 self.__dict__["master"].config_access_table[key](self, value)
             else:
                 super().__setattr__(key, value)
 
         def set_template(self):
             self.template.append(self.copy())
+            return self
 
         def reset_template(self, all_templates=False):
             if all_templates:
                 self.template.clear()
             else:
                 self.template.pop(-1)
+            return self
 
         def set_to_template(self):
             self.copy_from(self.template.pop(-1))
+            return self
 
         def copy(self) -> "FactoryBuilder.IFactory":
             new = self.master()
+            new.template = [template.copy() for template in self.template]
 
             for operation in self.master.copy_operation_handlers:
                 operation.operate(self, new)
@@ -133,6 +185,7 @@ class FactoryBuilder:
         def copy_from(self, other: "FactoryBuilder.IFactory"):
             for operation in self.master.copy_operation_handlers:
                 operation.operate(other, self)
+            return self
 
         def finish(self):
             for builder in self.master.class_builders:
@@ -142,6 +195,7 @@ class FactoryBuilder:
                 pass
 
             for base in self.base_classes:
+
                 class BuildTarget(BuildTarget, base):
                     pass
 
@@ -162,10 +216,14 @@ class FactoryBuilder:
         self.do_with_results = do_with_results
         self.factory_class: typing.Optional[FactoryBuilder.IFactory] = None
 
-        self.factory_class_modifiers: typing.List[typing.Type[FactoryBuilder.IFactoryClassModifier]] = []
+        self.factory_class_modifiers: typing.List[
+            typing.Type[FactoryBuilder.IFactoryClassModifier]
+        ] = []
         self.configurators: typing.List[FactoryBuilder.IFactoryConfigurator] = []
         self.class_builders: typing.List[FactoryBuilder.IFactoryClassBuilder] = []
-        self.copy_operation_handlers: typing.List[FactoryBuilder.IFactoryCopyOperation] = []
+        self.copy_operation_handlers: typing.List[
+            FactoryBuilder.IFactoryCopyOperation
+        ] = []
 
         self.config_access_table: typing.Dict[str, typing.Callable] = {}
 
@@ -214,4 +272,6 @@ class FactoryBuilder:
         self.config_access_table.clear()
 
         for configurator in self.configurators:
-            self.config_access_table[configurator.config_name] = configurator.get_configurable_target()
+            self.config_access_table[
+                configurator.config_name
+            ] = configurator.get_configurable_target()

@@ -9,13 +9,78 @@ blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
-import mcpython.common.container.ItemStack
+from mcpython import shared, logger
+import mcpython.common.factory.FactoryBuilder
+from mcpython.common.factory.FactoryBuilder import FactoryBuilder
 import mcpython.common.block.AbstractBlock
-import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.ILog as ILog
-import mcpython.util.enums
+import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.ISlab as ISlab
+
+block_factory_builder = FactoryBuilder(
+    "minecraft:block", mcpython.common.block.AbstractBlock.AbstractBlock
+)
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_name")
+)
+def set_name(instance: FactoryBuilder.IFactory, name: str):
+    instance.config_table["name"] = name
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_global_mod_name")
+)
+def set_global_mod_name(instance: FactoryBuilder.IFactory, global_name: str):
+    instance.config_table["global_name"] = global_name
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_log")
+)
+def set_log(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(ILog.ILog)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_fall_able")
+)
+def set_fall_able(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(FallingBlock.IFallingBlock)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_slab")
+)
+def set_slab(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(ISlab.ISlab)
+    return instance
+
+
+@block_factory_builder.register_class_builder(
+    FactoryBuilder.AnnotationFactoryClassBuilder()
+)
+def build_class(cls, instance: FactoryBuilder.IFactory):
+    name = instance.config_table["name"]
+    if ":" not in name and "global_name" in instance.config_table:
+        name = instance.config_table["global_name"] + ":" + name
+
+    class ModifiedClass(cls):
+        NAME = name
+
+    return ModifiedClass
+
+
+BlockFactory = block_factory_builder.create_class()
+
+
+import mcpython.common.container.ItemStack
+import mcpython.util.enums
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
 import mcpython.common.block.BlockWall as BlockWall
 import mcpython.common.factory.IFactoryModifier
@@ -24,12 +89,12 @@ import mcpython.common.factory.IFactoryModifier
 # todo: implement inventory opening notations
 
 
-class BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
+class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
     """
     Factory for creating on an simple way block classes
     Examples:
         BlockFactory().setName("test:block").setHardness(1).setBlastResistance(1).finish()
-        BlockFactory().setName("test:log").setHardness(1).setBlastResistance(1).setLog().finish()
+        BlockFactory().setName("test:log").setHardness(1).setBlastResistance(1).set_log().finish()
         BlockFactory().setName("test:slab").setHardness(1).setBlastResistance(1).setSlab().finish()
         BlockFactory().setName("some:complex_block").setHardness(1).setBlastResistance(1).setDefaultModelState("your=default,model=state").setAllSideSolid(False).finish()
 
@@ -293,7 +358,7 @@ class BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
             modname, blockname = tuple(self.name.split(":"))
         else:
             modname, blockname = self.modname, self.name
-        if modname not in G.mod_loader.mods:
+        if modname not in shared.mod_loader.mods:
             modname = "minecraft"
         if self.template is None:
             obj = self
@@ -306,7 +371,7 @@ class BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
         if immediate:
             obj.finish_up()
         else:
-            G.mod_loader.mods[modname].eventbus.subscribe(
+            shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:block:load",
                 obj.finish_up,
                 info="loading block {}".format(blockname),
@@ -472,7 +537,7 @@ class BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
             for modifier in self.FACTORY_MODIFIERS:
                 ConstructedBlock = modifier.apply(self, ConstructedBlock)
 
-        G.registry.register(ConstructedBlock)
+        shared.registry.register(ConstructedBlock)
 
         return ConstructedBlock
 
@@ -668,7 +733,7 @@ class BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
             self.setSolidSideTableEntry(face, state)
         return self
 
-    def setLog(self):
+    def set_log(self):
         """
         makes the block an log-like block; Will need the needed block-state variation
         """

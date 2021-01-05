@@ -222,7 +222,9 @@ class CombinedFullBlockFactory:
         )
 
     def __generate_factories(self):
-        factory = mcpython.common.factory.BlockFactory.BlockFactory().setName(self.name)
+        factory = mcpython.common.factory.BlockFactory.BlockFactory().set_name(
+            self.name
+        )
         if self.on_create_callback is not None:
             self.on_create_callback(self, factory)
         factory.finish()
