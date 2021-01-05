@@ -77,7 +77,7 @@ def generate_full_block(generator, name: str, texture: str = None, callback=None
     if texture is None:
         texture = "{}:block/{}".format(*name.split(":"))
     modname, raw_name = name.split(":")
-    CombinedFullBlockFactory(modname, generator, on_create_callback=callback).setName(
+    CombinedFullBlockFactory(modname, generator, on_create_callback=callback).set_name(
         name
     ).setTextureVariable("all", texture)
 
@@ -99,7 +99,7 @@ def generate_slab_block(
         full = "{}:block/{}".format(modname, raw_name.replace("_slab", ""))
     CombinedSlabFactory(
         texture, modname, generator, full_model=full, on_create_callback=callback
-    ).setName(name)
+    ).set_name(name)
     if generate_recipe:
         mcpython.common.data.gen.RecipeGenerator.ShapedRecipeGenerator(name).setEntries(
             SLAB_TEMPLATE, name.split("_slab")[0]
@@ -114,7 +114,7 @@ def generate_wall_block(
     modname, raw_name = name.split(":")
     CombinedWallFactory(
         texture, modname, generator, on_create_callback=callback
-    ).setName(name)
+    ).set_name(name)
     if generate_recipe:
         mcpython.common.data.gen.RecipeGenerator.ShapedRecipeGenerator(name).setEntries(
             WALL_TEMPLATE, name.split("_wall")[0]
@@ -135,7 +135,7 @@ def generate_log_block(
     modname, raw_name = name.split(":")
     CombinedLogFactory(
         front_texture, side_texture, modname, generator, on_create_callback=callback
-    ).setName(name)
+    ).set_name(name)
 
 
 class CombinedFullBlockFactoryMode(enum.Enum):
@@ -181,7 +181,7 @@ class CombinedFullBlockFactory:
         self.on_create_callback = on_create_callback
         G.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
-    def setName(self, name: str):
+    def set_name(self, name: str):
         self.name = name
         return self
 
@@ -262,7 +262,7 @@ class CombinedSlabFactory:
         self.full_model = full_model
         G.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
-    def setName(self, name: str):
+    def set_name(self, name: str):
         self.name = name
         return self
 
@@ -308,8 +308,8 @@ class CombinedSlabFactory:
     def __generate_factories(self):
         factory = (
             mcpython.common.factory.BlockFactory.BlockFactory()
-            .setName(self.name)
-            .setSlab()
+            .set_name(self.name)
+            .set_slab()
         )
         if self.on_create_callback is not None:
             self.on_create_callback(self, factory)
@@ -344,7 +344,7 @@ class CombinedWallFactory:
         self.on_create_callback = on_create_callback
         G.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
-    def setName(self, name: str):
+    def set_name(self, name: str):
         self.name = name
         return self
 
@@ -398,8 +398,8 @@ class CombinedWallFactory:
     def __generate_factories(self):
         factory = (
             mcpython.common.factory.BlockFactory.BlockFactory()
-            .setName(self.name)
-            .setWall()
+            .set_name(self.name)
+            .set_wall()
         )
         if self.on_create_callback is not None:
             self.on_create_callback(self, factory)
@@ -436,7 +436,7 @@ class CombinedLogFactory:
         self.on_create_callback = on_create_callback
         G.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
-    def setName(self, name: str):
+    def set_name(self, name: str):
         self.name = name
         return self
 
@@ -479,8 +479,8 @@ class CombinedLogFactory:
     def __generate_factories(self):
         factory = (
             mcpython.common.factory.BlockFactory.BlockFactory()
-            .setName(self.name)
-            .setLog()
+            .set_name(self.name)
+            .set_log()
         )
         if self.on_create_callback is not None:
             self.on_create_callback(self, factory)

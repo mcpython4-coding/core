@@ -55,6 +55,15 @@ changelog of snapshot [next], released on -, targeting -
     Affected are world generation and mod loading stage modifications, and loading-order-dependent stuff, beside
         following some general structure [block models after blocks, etc.]
 
+    API:
+        If you see this, you know that something broke again...
+        - Broke BlockFactory system. Nothing will work!
+        - Planning on breaking ItemFactory also...
+        - ... and CombinedFactories will also be rewritten in the near future
+        - even data-driven block and items may get a thing :-/
+        - the new factory system is highly extendable, but may consume some more memory on the fly :-(
+        - I tried to make it as fast as before, but I cannot gurantee anything at this point
+
     World Generation:
         - noises are now better selected per world-seed, making them more compatible for mods
         - general faster [see rendering stuff below]

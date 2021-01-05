@@ -9,6 +9,8 @@ blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared, logger
 import mcpython.common.factory.FactoryBuilder
 from mcpython.common.factory.FactoryBuilder import FactoryBuilder
@@ -16,6 +18,8 @@ import mcpython.common.block.AbstractBlock
 import mcpython.common.block.ILog as ILog
 import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.ISlab as ISlab
+import mcpython.common.block.BlockWall as BlockWall
+import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
 
 block_factory_builder = FactoryBuilder(
     "minecraft:block", mcpython.common.block.AbstractBlock.AbstractBlock
@@ -62,6 +66,81 @@ def set_slab(instance: FactoryBuilder.IFactory):
     return instance
 
 
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_wall")
+)
+def set_wall(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(BlockWall.IWall)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_horizontal_orientable")
+)
+def set_horizontal_orientable(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(IHorizontalOrientableBlock.IHorizontalOrientableBlock)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_strength")
+)
+def set_strength(instance: FactoryBuilder.IFactory, hardness: float, blast_resistance: float = None):
+    instance.config_table["hardness"] = hardness
+    instance.config_table["blast_resistance"] = blast_resistance
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_assigned_tools")
+)
+def set_assigned_tools(instance: FactoryBuilder.IFactory, *tools):
+    if len(tools) == 0:
+        if type(tools[0]) in (list, tuple):
+            tools = tools[0]
+        else:
+            tools = (tools,)
+    instance.config_table["assigned_tools"] = tools
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_minimum_tool_level")
+)
+def set_minimum_tool_level(instance: FactoryBuilder.IFactory, level: int):
+    instance.config_table["minimum_tool_level"] = level
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_break_able_flag")
+)
+def set_break_able_flag(instance: FactoryBuilder.IFactory, state: bool = True):
+    instance.config_table["break_able_flag"] = state
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_all_side_solid")
+)
+def set_all_side_solid(instance: FactoryBuilder.IFactory, solid: bool):
+    instance.config_table["solid_face_table"] = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.DEFAULT_FACE_SOLID if solid else
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_default_model_state")
+)
+def set_default_model_state(instance: FactoryBuilder.IFactory, state: typing.Union[dict, str]):
+    if type(state) == str:
+        state = {e.split("=")[0].strip(): e.split("=")[1].strip() for e in state.split(",")}
+    instance.config_table["default_model_state"] = state
+    return instance
+
+
 @block_factory_builder.register_class_builder(
     FactoryBuilder.AnnotationFactoryClassBuilder()
 )
@@ -72,8 +151,49 @@ def build_class(cls, instance: FactoryBuilder.IFactory):
 
     class ModifiedClass(cls):
         NAME = name
+        HARDNESS = instance.config_table.setdefault("hardness", 1)
+        BLAST_RESISTANCE = instance.config_table.setdefault("blast_resistance", 1)
+
+        MINIMUM_TOOL_LEVEL = instance.config_table.setdefault("minimum_tool_level", 0)
+        ASSIGNED_TOOLS = instance.config_table.setdefault("assigned_tools", tuple())
+
+        IS_BREAKABLE = instance.config_table.setdefault("break_able_flag", True)
+
+        DEFAULT_FACE_SOLID = instance.config_table.setdefault(
+            "solid_face_table", mcpython.common.block.AbstractBlock.AbstractBlock.DEFAULT_FACE_SOLID)
 
     return ModifiedClass
+
+
+@block_factory_builder.register_class_builder(
+    FactoryBuilder.AnnotationFactoryClassBuilder()
+)
+def build_class_default_state(cls, instance: FactoryBuilder.IFactory):
+    if "default_model_state" not in instance.config_table: return cls
+
+    class ModifiedClass(cls):
+        def __init__(self):
+            super().__init__()
+            self.set_model_state(instance.config_table["default_model_state"])
+
+    return ModifiedClass
+
+
+block_factory_builder.register_direct_copy_attributes(
+    "name",
+    "global_name",
+    "hardness",
+    "blast_resistance",
+    "minimum_tool_level",
+    "assigned_tools",
+    "break_able_flag",
+    "default_model_state"
+)
+
+block_factory_builder.register_direct_copy_attributes(
+    "solid_face_table",
+    operation=lambda x: x
+)
 
 
 BlockFactory = block_factory_builder.create_class()
@@ -81,22 +201,20 @@ BlockFactory = block_factory_builder.create_class()
 
 import mcpython.common.container.ItemStack
 import mcpython.util.enums
-import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
-import mcpython.common.block.BlockWall as BlockWall
 import mcpython.common.factory.IFactoryModifier
 
 
 # todo: implement inventory opening notations
 
 
-class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
+class OldBlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
     """
     Factory for creating on an simple way block classes
     Examples:
         BlockFactory().setName("test:block").setHardness(1).setBlastResistance(1).finish()
         BlockFactory().setName("test:log").setHardness(1).setBlastResistance(1).set_log().finish()
-        BlockFactory().setName("test:slab").setHardness(1).setBlastResistance(1).setSlab().finish()
-        BlockFactory().setName("some:complex_block").setHardness(1).setBlastResistance(1).setDefaultModelState("your=default,model=state").setAllSideSolid(False).finish()
+        BlockFactory().setName("test:slab").setHardness(1).setBlastResistance(1).set_slab().finish()
+        BlockFactory().setName("some:complex_block").setHardness(1).setBlastResistance(1).set_default_model_state("your=default,model=state").set_all_side_solid(False).finish()
 
     Most functions will return the BlockFactory-object called on to allow above syntax.
     .setHardness and .setBlastResistance must be set on all objects
@@ -137,7 +255,7 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
     Example:
         your_template = BlockFactory().[some calls].setTemplate()
         your_template.setName("test:block").finish()  # will create an block called "test:block" with pre-configured parameters
-        your_template.setName("test:slab").setSlab().finish()  # will create an slab
+        your_template.setName("test:slab").set_slab().finish()  # will create an slab
         your_template.setName("test:block2").finish()   # This is now NOT an slab beside it be based on the same base
 
     ---------------------
@@ -215,7 +333,7 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
         obj = BlockFactory()
         if self.name is not None:
             obj.setName(self.name)
-        obj.setGlobalModName(self.modname).setBreakAbleFlag(self.breakable)
+        obj.setGlobalModName(self.modname).set_break_able_flag(self.breakable)
         obj.model_states = self.model_states.copy()
         if self.solid_faces is not None:
             obj.solid_faces = self.solid_faces.copy()
@@ -275,7 +393,7 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
         if template.name is not None:
             self.setName(template.name)
 
-        self.setGlobalModName(template.modname).setBreakAbleFlag(template.breakable)
+        self.setGlobalModName(template.modname).set_break_able_flag(template.breakable)
         self.model_states = template.model_states.copy()
         if template.solid_faces is not None:
             self.solid_faces = template.solid_faces.copy()
@@ -619,7 +737,7 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
         self.delete_callback = function
         return self
 
-    def setBreakAbleFlag(self, state: bool):
+    def set_break_able_flag(self, state: bool):
         """
         will set the BREAKABLE-flag of the class
         :param state: the state to use
@@ -680,7 +798,7 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
         self.custom_model_state_function = function
         return self
 
-    def setDefaultModelState(self, state):
+    def set_default_model_state(self, state):
         """
         Will set the default model state of the block
         :param state: the state as an dict or an string-representation like in the block-state files
@@ -716,14 +834,14 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
         self.interaction_callback = function
         return self
 
-    def setFallAble(self):
+    def set_fall_able(self):
         """
         will make the block affected by gravity
         """
         self.baseclass.append(FallingBlock.IFallingBlock)
         return self
 
-    def setAllSideSolid(self, state: bool):
+    def set_all_side_solid(self, state: bool):
         """
         sets all side status of solid
         :param state: the status
@@ -742,7 +860,7 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
             self.baseclass.append(ILog.ILog)
         return self
 
-    def setSlab(self):
+    def set_slab(self):
         """
         makes the block an slab-like block; Will need the needed block-state variation
         """
@@ -761,7 +879,7 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
         :param value: the value of the hardness
         """
         if value == -1:
-            self.setBreakAbleFlag(False)
+            self.set_break_able_flag(False)
         self.hardness = value
         return self
 
@@ -781,7 +899,7 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
         self.random_ticks_enabled = True
         return self
 
-    def setMinimumToolLevel(self, value: int):
+    def set_minimum_tool_level(self, value: int):
         """
         will set the minimum needed tool level for breaking the block
         :param value: the value representing an tool level
@@ -832,7 +950,7 @@ class _BlockFactory(mcpython.common.factory.IFactoryModifier.IFactory):
         self.block_item_generator_state = state
         return self
 
-    def setHorizontalOrientable(self, face_name="facing"):
+    def set_horizontal_orientable(self, face_name="facing"):
         """
         will set the block to horizontal orientable mode
         :param face_name: the name for the internal block-state reference for the orientation

@@ -110,7 +110,8 @@ class FactoryBuilder:
         def operate(
             self, old: "FactoryBuilder.IFactory", new: "FactoryBuilder.IFactory"
         ):
-            new.config_table[self.key] = self.operation(old.config_table[self.key])
+            if self.key in old.config_table:
+                new.config_table[self.key] = self.operation(old.config_table[self.key])
 
     class IFactory(ABC):
         """
@@ -175,7 +176,9 @@ class FactoryBuilder:
 
         def copy(self) -> "FactoryBuilder.IFactory":
             new = self.master()
-            new.template = [template.copy() for template in self.template]
+            new.creation_arguments = copy.deepcopy(self.creation_arguments)
+            new.template = self.template.copy()
+            new.base_classes = self.base_classes.copy()
 
             for operation in self.master.copy_operation_handlers:
                 operation.operate(self, new)
@@ -275,3 +278,9 @@ class FactoryBuilder:
             self.config_access_table[
                 configurator.config_name
             ] = configurator.get_configurable_target()
+
+    def register_direct_copy_attributes(self, *attributes, operation=copy.deepcopy):
+        for attribute in attributes:
+            self.register_copy_operation_handler(FactoryBuilder.DefaultFactoryCopyOperation(
+                attribute, operation=operation
+            ))

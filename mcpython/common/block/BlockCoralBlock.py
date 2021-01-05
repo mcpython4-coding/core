@@ -75,20 +75,20 @@ def load():
     G.registry.register(FireCoralBlock)
     G.registry.register(HornCoralBlock)
     G.registry.register(TubeCoralBlock)
-    # the dead variants
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    # the dead variants, todo: add attributes like hardness
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_brain_coral_block"
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_bubble_coral_block"
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_fire_coral_block"
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_horn_coral_block"
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_tube_coral_block"
     ).finish()
 

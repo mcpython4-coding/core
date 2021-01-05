@@ -344,3 +344,7 @@ class AbstractBlock(parent):
         :return: an value between 0 and 15 representing the redstone value
         """
         return 0
+
+    def __repr__(self):
+        return "MinecraftBlock(internal={},position={},dimension={})".format(
+            super().__repr__(), self.position, self.dimension)
