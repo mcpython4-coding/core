@@ -82,6 +82,37 @@ class FactoryBuilder:
             instance.config_table[self.attr_name] = value
             return instance
 
+    class FunctionAnnotator(IFactoryConfigurator):
+        def __init__(self, config_name: str, attr_name: str):
+            super().__init__(config_name)
+            self.attr_name = attr_name
+
+        def get_configurable_target(self) -> typing.Any:
+            return self.configure
+
+        def configure(self, instance, value=None):
+            if value is None:
+                return lambda function: self.configure(instance, function)
+            instance.config_table[self.attr_name] = value
+            return instance
+
+    class FunctionStackedAnnotator(IFactoryConfigurator):
+        def __init__(self, config_name: str, attr_name: str):
+            super().__init__(config_name)
+            self.attr_name = attr_name
+
+        def prepare(self, instance: "FactoryBuilder.IFactory"):
+            instance.config_table[self.attr_name] = []
+
+        def get_configurable_target(self) -> typing.Any:
+            return self.configure
+
+        def configure(self, instance, value=None):
+            if value is None:
+                return lambda function: self.configure(instance, function)
+            instance.config_table[self.attr_name].append(value)
+            return instance
+
     class IFactoryClassBuilder(ABC):
         def prepare(self, instance: "FactoryBuilder.IFactory"):
             pass

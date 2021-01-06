@@ -183,7 +183,7 @@ def build_class(
 
         ENABLE_RANDOM_TICKS = instance.config_table.setdefault(
             "enable_random_ticks", cls.ENABLE_RANDOM_TICKS
-        )
+        ) or len(instance.config_table["on_random_update"])
 
         NO_ENTITY_COLLISION = instance.config_table.setdefault(
             "no_entity_collision", cls.NO_ENTITY_COLLISION
@@ -211,6 +211,7 @@ def build_class_default_state(
 
     is_super_base = any([base == cls for base in instance.master.base_classes])
     bases = instance.master.base_classes
+    configs = instance.config_table
 
     class ModifiedClass(cls):
         def __init__(self):
@@ -218,42 +219,61 @@ def build_class_default_state(
                 super().__init__()
 
             for base in bases:
-                super(base, self).__init__()
+                base.__init__(self)
+
+            for function in configs["on_instance_creation"]:
+                function(self)
 
         def set_creation_properties(self, *args, **kwargs):
             if not is_super_base:
                 super().set_creation_properties(*args, **kwargs)
 
             for base in bases:
-                super(base, self).set_creation_properties(*args, **kwargs)
+                base.set_creation_properties(self, *args, **kwargs)
+
+            for function in configs["on_properties_set"]:
+                function(self)
 
         def on_block_added(self, *args, **kwargs):
             if not is_super_base:
                 super().on_block_added(*args, **kwargs)
 
             for base in bases:
-                super(base, self).on_block_added(*args, **kwargs)
+                base.on_block_added(self, *args, **kwargs)
+
+            for function in configs["on_block_added"]:
+                function(self)
 
         def on_block_remove(self, *args, **kwargs):
             if not is_super_base:
                 super().on_block_remove(*args, **kwargs)
 
             for base in bases:
-                super(base, self).on_block_remove(*args, **kwargs)
+                base.on_block_remove(self, *args, **kwargs)
+
+            for function in configs["on_block_remove"]:
+                function(self, *args, **kwargs)
 
         def on_random_update(self, *args, **kwargs):
             if not is_super_base:
                 super().on_random_update(*args, **kwargs)
 
             for base in bases:
-                super(base, self).on_random_update(*args, **kwargs)
+                base.on_random_update(self, *args, **kwargs)
+
+            for function in configs["on_random_update"]:
+                function(self)
 
         def on_block_update(self, *args, **kwargs):
             if not is_super_base:
                 super().on_block_update(*args, **kwargs)
 
             for base in bases:
-                super(base, self).on_block_update(*args, **kwargs)
+                base.on_block_update(self, *args, **kwargs)
+
+            for function in configs["on_block_update"]:
+                function(self)
+
             self.on_redstone_update()
 
         def on_redstone_update(self, *args, **kwargs):
@@ -261,15 +281,22 @@ def build_class_default_state(
                 super().on_redstone_update(*args, **kwargs)
 
             for base in bases:
-                super(base, self).on_redstone_update(*args, **kwargs)
+                base.on_redstone_update(self, *args, **kwargs)
+
+            for function in configs["on_redstone_update"]:
+                function(self)
 
         def on_player_interaction(self, *args, **kwargs):
+            for function in configs["on_player_interaction"]:
+                if not function(self, *args, **kwargs):
+                    return True
+
             if not is_super_base:
                 if super().on_player_interaction(*args, **kwargs):
                     return True
 
             for base in bases:
-                if super(base, self).on_player_interaction(*args, **kwargs):
+                if base.on_player_interaction(self, *args, **kwargs):
                     return True
 
             return False
@@ -279,54 +306,79 @@ def build_class_default_state(
                 super().on_no_collision_collide(*args, **kwargs)
 
             for base in bases:
-                super(base, self).on_no_collision_collide(*args, **kwargs)
+                base.on_no_collision_collide(self, *args, **kwargs)
+
+            for function in configs["on_no_collision_collide"]:
+                function(self, *args, **kwargs)
 
         def get_save_data(self):
+            if len(configs["get_save_data"]) > 0:
+                return configs["get_save_data"][-1](self)
+
             if not is_super_base:
                 return super().get_save_data()
             if len(bases) > 0:
-                return super(self, bases[-1]).get_save_data()
+                return bases[-1].get_save_data(self)
             return self.get_model_state()
 
         def dump_data(self):
+            if len(configs["dump_data"]) > 0:
+                return configs["dump_data"][-1](self)
+
             if not is_super_base:
                 return super().dump_data()
             if len(bases) > 0:
-                return super(self, bases[-1]).dump_data()
+                return bases[-1].dump_data(self)
             return pickle.dumps(self.get_save_data())
 
         def load_data(self, data):
+            if len(configs["load_data"]) > 0:
+                return configs["load_data"][-1](self, data)
+
             if not is_super_base:
                 return super().load_data(data)
             if len(bases) > 0:
-                return super(self, bases[-1]).load_data(data)
+                return bases[-1].load_data(self, data)
+
             self.set_model_state(data)
 
         def inject(self, data: bytes):
+            if len(configs["on_data_inject"]) > 0:
+                return configs["on_data_inject"][-1](self, data)
+
             if not is_super_base:
                 return super().inject(data)
             if len(bases) > 0:
-                return super(self, bases[-1]).inject(data)
+                return bases[-1].inject(self, data)
+
             self.load_data(pickle.loads(data) if type(data) == bytes else data)
 
         def get_item_saved_state(self):
+            if len(configs["get_item_save_data"]) > 0:
+                return configs["get_item_save_data"][-1](self)
+
             if not is_super_base:
                 return super().get_item_saved_state()
             if len(bases) > 0:
-                return super(self, bases[-1]).get_item_saved_state()
+                return bases[-1].get_item_saved_state(self)
 
         def set_item_saved_state(self, state):
+            if len(configs["set_item_saved_data"]) > 0:
+                return configs["set_item_saved_data"][-1](self, state)
+
             if not is_super_base:
                 return super().set_item_saved_state(state)
             if len(bases) > 0:
-                return super(self, bases[-1]).set_item_saved_state(state)
+                return bases[-1].set_item_saved_state(self, state)
 
         def get_inventories(self):
             inventories = []
             if not is_super_base:
                 inventories += super().get_inventories()
-            if len(bases) > 0:
-                inventories += super(self, bases[-1]).get_inventories()
+            for base in bases:
+                inventories += base.get_inventories(self)
+            for function in configs["get_inventories"]:
+                inventories += function(self)
             return inventories
 
         def get_provided_slot_lists(self, side: mcpython.util.enums.EnumSide):
@@ -335,8 +387,12 @@ def build_class_default_state(
                 x, y = super().get_provided_slot_lists(side)
                 a += x
                 b += y
-            if len(bases) > 0:
-                x, y = super(self, bases[-1]).get_provided_slot_lists(side)
+            for base in bases:
+                x, y = base.get_provided_slot_lists(side)
+                a += x
+                b += y
+            for function in configs["get_provided_slot_lists"]:
+                x, y = function(self, side)
                 a += x
                 b += y
             return a, b
@@ -345,10 +401,10 @@ def build_class_default_state(
             state = {}
             if not is_super_base:
                 state.update(super().get_model_state())
-            if len(bases) > 0:
-                state.update(super(self, bases[-1]).get_model_state())
+            for base in bases:
+                state.update(base.get_model_state(self))
 
-            state.update(instance.config_table["default_model_state"])
+            state.update(configs["default_model_state"])
             return state
 
         def set_model_state(self, state: dict):
@@ -356,21 +412,30 @@ def build_class_default_state(
                 super().set_model_state(state)
 
             for base in bases:
-                super(base, self).set_model_state(state)
+                base.set_model_state(self, state)
+
+            for function in configs["set_model_state"]:
+                function(self, state)
 
         def get_view_bbox(self):
+            if len(configs["get_view_bbox"]) > 0:
+                return configs["get_view_bbox"][-1](self)
+
             if not is_super_base:
                 return super().get_view_bbox()
             if len(bases) > 0:
-                return super(self, bases[-1]).get_view_bbox()
+                return bases[-1].get_view_bbox(self)
 
             return mcpython.common.block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
 
         def get_collision_bbox(self):
+            if len(configs["get_collision_bbox"]) > 0:
+                return configs["get_collision_bbox"][-1](self)
+
             if not is_super_base:
                 return super().get_collision_bbox()
             if len(bases) > 0:
-                return super(self, bases[-1]).get_collision_bbox()
+                return bases[-1].get_collision_bbox(self)
 
             return self.get_view_bbox()
 
@@ -381,7 +446,10 @@ def build_class_default_state(
                 super().on_request_item_for_block(itemstack)
 
             for base in bases:
-                super(base, self).on_request_item_for_block(itemstack)
+                base.on_request_item_for_block(self, itemstack)
+
+            for function in configs["on_request_item_for_block"]:
+                function(self, itemstack)
 
         def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int):
             self.injected_redstone_power[side] = level
@@ -390,13 +458,19 @@ def build_class_default_state(
                 super().inject_redstone_power(side, level)
 
             for base in bases:
-                super(base, self).inject_redstone_power(side, level)
+                base.inject_redstone_power(self, side, level)
+
+            for function in configs["inject_redstone_power"]:
+                function(self, side, level)
 
         def get_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
+            if len(configs["get_redstone_output"]) > 0:
+                return configs["get_redstone_output"][-1](self, side)
+
             if not is_super_base:
-                return super().get_redstone_output()
+                return super().get_redstone_output(side)
             if len(bases) > 0:
-                return super(self, bases[-1]).get_redstone_output()
+                return bases[-1].get_redstone_output(self, side)
 
             return max(
                 self.get_redstone_source_power(side),
@@ -405,10 +479,14 @@ def build_class_default_state(
 
         def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide):
             # todo: maybe use highest power?
+
+            if len(configs["get_redstone_source_power"]) > 0:
+                return configs["get_redstone_source_power"][-1](self, side)
+
             if not is_super_base:
                 return super().get_redstone_source_power(side)
             if len(bases) > 0:
-                return super(self, bases[-1]).get_redstone_source_power(side)
+                return bases[-1].get_redstone_source_power(self, side)
 
             return 0
 
@@ -439,7 +517,30 @@ block_factory_builder.register_direct_copy_attributes(
     "solid_face_table", operation=lambda x: x
 )
 block_factory_builder.register_direct_copy_attributes(
-    "debug_world_states", operation=lambda e: e.copy()
+    "debug_world_states",
+    "on_instance_creation",
+"on_properties_set",
+"on_block_added",
+"on_random_update",
+"on_redstone_update",
+"on_player_interaction",
+"on_no_collision_collide",
+"get_save_data",
+"dump_data",
+"load_data",
+"on_data_inject",
+"get_item_save_data",
+"set_item_save_data",
+"get_inventories",
+"get_provided_slot_lists",
+"set_model_state",
+"get_view_bbox",
+"get_collision_bbox",
+"on_request_item_for_block",
+"inject_redstone_power",
+"get_redstone_output",
+"get_redstone_source_power",
+    operation=lambda e: e.copy()
 )
 
 
@@ -500,6 +601,79 @@ block_factory_builder.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator(
         "set_debug_world_states", "debug_world_states", list
     )
+)
+
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_instance_creation", "on_instance_creation")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_properties_set", "on_properties_set")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_block_added", "on_block_added")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_block_remove", "on_block_remove")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_random_update", "on_random_update")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_random_update", "on_random_update")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_redstone_update", "on_redstone_update")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_player_interaction", "on_player_interaction")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_no_collision_collide", "on_no_collision_collide")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("get_save_data", "get_save_data")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("dump_data", "dump_data")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("load_data", "load_data")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_data_inject", "on_data_inject")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("get_item_save_data", "get_item_save_data")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("set_item_save_data", "set_item_save_data")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("get_inventories", "get_inventories")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("get_provided_slot_lists", "get_provided_slot_lists")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("set_model_state", "set_model_state")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("get_view_bbox", "get_view_bbox")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("get_collision_bbox", "get_collision_bbox")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("on_request_item_for_block", "on_request_item_for_block")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("inject_redstone_power", "inject_redstone_power")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("get_redstone_output", "get_redstone_output")
+)
+block_factory_builder.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("get_redstone_source_power", "get_redstone_source_power")
 )
 
 
