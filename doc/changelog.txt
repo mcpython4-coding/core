@@ -49,11 +49,13 @@ information on development:
         its id.
 
 
-changelog of snapshot [next], released on -, targeting -
+changelog of snapshot 20w01a, released on 06.01.2021, targeting 20w51a
     Happy new year, 2021!
     This time, breaks again some big parts
     Affected are world generation and mod loading stage modifications, and loading-order-dependent stuff, beside
         following some general structure [block models after blocks, etc.]
+
+    WARNING: this version has a major visual glitch which could not be fixed until today
 
     API:
         If you see this, you know that something broke again...
