@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -178,7 +178,7 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
     def on_deactivate(self):
         pass
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         self.bg_image_size = TEXTURES.bar_size
         x, y = self.get_position()
         y += 40

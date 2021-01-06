@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -31,6 +31,7 @@ import mcpython.util.opengl
 import mcpython.common.world.player
 from . import State
 from mcpython.util.annotation import onlyInClient
+import mcpython.server.worldgen.noise.NoiseManager
 
 
 @onlyInClient()
@@ -74,7 +75,9 @@ class StateWorldGeneration(State.State):
                 self.status_table[chunk] = 1 / (count if count > 0 else 1)
         if len(G.world_generation_handler.task_handler.chunks) == 0:
             G.state_handler.switch_to("minecraft:game")
-            G.event_handler.call("data:reload:work")
+            import mcpython.common.data.ResourcePipe
+
+            mcpython.common.data.ResourcePipe.handler.reload_content()
             self.finish()
 
     def activate(self):
@@ -97,6 +100,11 @@ class StateWorldGeneration(State.State):
         sx, sy = G.state_handler.states[
             "minecraft:world_generation_config"
         ].get_world_size()
+        mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = (
+            G.state_handler.states[
+                "minecraft:world_generation_config"
+            ].get_seed_source()
+        )
         G.world_generation_handler.enable_generation = True
         fx = sx // 2
         fy = sy // 2
@@ -156,11 +164,6 @@ class StateWorldGeneration(State.State):
         G.world.config["enable_auto_gen"] = self.is_auto_gen_enabled()
         G.world.config["enable_world_barrier"] = self.is_world_gen_barrier_enabled()
 
-        # reload all the data-packs
-        mcpython.common.DataPack.datapack_handler.reload()
-        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
-        G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
-
         if G.world_generation_handler.get_current_config(
             G.world.get_dimension(0)
         ).GENERATES_START_CHEST:
@@ -171,12 +174,13 @@ class StateWorldGeneration(State.State):
                 (x, height + 1, z), "minecraft:chest"
             )
             block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
+
         G.event_handler.call("on_game_enter")
 
         # add surrounding chunks to load list
         G.world.change_chunks(
             None,
-            mcpython.util.math.positionToChunk(G.world.get_active_player().position),
+            mcpython.util.math.position_to_chunk(G.world.get_active_player().position),
         )
         G.world.save_file.save_world()
 
@@ -196,6 +200,11 @@ class StateWorldGeneration(State.State):
             master.profiler.disable()
             master.profiler.print_stats(1)
             master.profiler.clear()
+
+        # reload all the data-packs
+        mcpython.common.DataPack.datapack_handler.reload()
+        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
+        G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

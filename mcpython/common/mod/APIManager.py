@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -52,7 +52,7 @@ class APIManager:
         self.api_cache = {}
         G.mod_loader("minecraft", "stage:api:check")(self.check_compatibility_and_load)
 
-    def addAPIType(self, name: str):
+    def add_api_type(self, name: str):
         """
         Will add an new API name into the system
         :param name: the name of the api
@@ -61,19 +61,19 @@ class APIManager:
         self.api_shipments[name] = []
         return self
 
-    def isAPIProvided(self, name):
+    def is_api_provided(self, name):
         return name in self.apis
 
-    def registerAPIShipment(self, name: str, module: str, version: tuple):
+    def register_api_shipment(self, name: str, module: str, version: tuple):
         self.api_shipments[name].append((module, version))
 
-    def registerAPIImplementation(
+    def register_api_implementation(
         self, name: str, module: str, version: tuple, *compatible_versions
     ):
         self.api_implementations[name] = (module, version, compatible_versions)
         return self
 
-    def getAPI(self, name: str, version: tuple):
+    def get_api(self, name: str, version: tuple):
         if type(self.api_cache[name]) != dict:
             return self.api_cache[name]
         return self.api_cache[name][version]

@@ -5,10 +5,11 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
 
 from mcpython import shared as G, logger
 import math
@@ -246,15 +247,26 @@ def normalize_ceil(position):
         raise
 
 
-def positionToChunk(position):
+def position_to_chunk(position):
     """
     Returns a tuple representing the chunk for the given `position`.
 
     :param position: the position
     :return: the chunk
     """
-    x, y, z = normalize(position)
+    x, _, z = normalize(position)
     x, z = x // 16, z // 16
+    return x, z
+
+
+def position_to_chunk_unsafe(position):
+    """
+    Returns a tuple representing the chunk for the given `position`.
+
+    :param position: the position
+    :return: the chunk
+    """
+    x, z = position[0] // 16, position[-1] // 16
     return x, z
 
 
@@ -326,3 +338,10 @@ def rotate_point(point, origin, rotation):
     y, z = ny, nz
 
     return x + ox, y + oy, z + oz
+
+
+def product(iterable: typing.List[float]):
+    v = iterable[0]
+    for x in iterable[1:]:
+        v *= x
+    return v

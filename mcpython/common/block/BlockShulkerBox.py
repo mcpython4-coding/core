@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -19,13 +19,17 @@ import mcpython.common.factory.ItemFactory
 def create_shulker_box(name):
     @G.registry
     class BlockShulkerBox(AbstractBlock.AbstractBlock):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
+        def __init__(self):
+            super().__init__()
             import mcpython.client.gui.InventoryShulkerBox as InventoryShulkerBox
 
             self.inventory = InventoryShulkerBox.InventoryShulkerBox()
 
         NAME = "minecraft:{}".format(name)
+
+        DEFAULT_FACE_SOLID = (
+            mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+        )
 
         def on_player_interaction(
             self, player, button: int, modifiers: int, hit_position: tuple

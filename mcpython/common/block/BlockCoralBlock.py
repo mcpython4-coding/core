@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -23,9 +23,9 @@ class ICoralBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def on_random_update(self):
         # todo: add water check; not arrival as it is not implemented
-        G.world.get_active_dimension().get_chunk_for_position(self.position).add_block(
-            self.position, "{}:dead_{}".format(*self.NAME.split(":"))
-        )
+        G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
+            self.position
+        ).add_block(self.position, "{}:dead_{}".format(*self.NAME.split(":")))
 
 
 class BrainCoralBlock(ICoralBlock):
@@ -75,20 +75,20 @@ def load():
     G.registry.register(FireCoralBlock)
     G.registry.register(HornCoralBlock)
     G.registry.register(TubeCoralBlock)
-    # the dead variants
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    # the dead variants, todo: add attributes like hardness
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_brain_coral_block"
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_bubble_coral_block"
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_fire_coral_block"
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_horn_coral_block"
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().setName(
+    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_tube_coral_block"
     ).finish()
 

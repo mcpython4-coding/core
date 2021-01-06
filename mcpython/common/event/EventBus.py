@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -150,6 +150,8 @@ class EventBus:
                         sep="\n",
                     ),
                     "function info: '{}'".format(info) if info is not None else "",
+                    "during event:",
+                    event_name,
                 )
             if G.debug_events:
                 with open(
@@ -197,7 +199,7 @@ class EventBus:
         """
         if event_name not in self.event_subscriptions:
             return None
-        for function, eargs, ekwargs in self.event_subscriptions[event_name]:
+        for function, eargs, ekwargs, info in self.event_subscriptions[event_name]:
             start = time.time()
             try:
                 result = function(
@@ -221,7 +223,17 @@ class EventBus:
             except SystemExit:
                 raise
             except:
-                logger.print_exception()
+                logger.print_exception(
+                    "during calling function: {} with arguments: {}, {}".format(
+                        function,
+                        list(args) + list(self.extra_arguments[0]) + list(eargs),
+                        {**kwargs, **self.extra_arguments[1], **ekwargs},
+                        sep="\n",
+                    ),
+                    "function info: '{}'".format(info) if info is not None else "",
+                    "during event:",
+                    event_name,
+                )
                 raise
 
     def activate(self):
@@ -241,24 +253,24 @@ class EventBus:
         self.sub_buses.append(bus)
         return bus
 
-    def call_as_stack(self, eventname, *args, amount=1, **kwargs):
+    def call_as_stack(self, event_name, *args, amount=1, **kwargs):
         result = []
-        if eventname not in self.event_subscriptions:
+        if event_name not in self.event_subscriptions:
             raise RuntimeError(
-                "event bus has no notation for the '{}' event".format(eventname)
+                "event bus has no notation for the '{}' event".format(event_name)
             )
-        if len(self.event_subscriptions[eventname]) < amount:
+        if len(self.event_subscriptions[event_name]) < amount:
             raise RuntimeError(
                 "can't run event. EventBus is for the event '{}' empty".format(
-                    eventname
+                    event_name
                 )
             )
         exception_occ = False
         for _ in range(amount):
             function, eargs, ekwargs, info = d = self.event_subscriptions[
-                eventname
+                event_name
             ].pop(0)
-            self.popped_event_subscriptions.setdefault(eventname, []).append(d)
+            self.popped_event_subscriptions.setdefault(event_name, []).append(d)
             start = time.time()
             try:
                 result.append(
@@ -284,6 +296,8 @@ class EventBus:
                     {**kwargs, **self.extra_arguments[1], **ekwargs},
                     "function info:",
                     info,
+                    "during event:",
+                    event_name,
                 )
             dif = time.time() - start
             if G.debug_events:
@@ -300,12 +314,12 @@ class EventBus:
             sys.exit(-1)
         return result
 
-    def resetEventStack(self, eventname: str):
+    def resetEventStack(self, event_name: str):
         """
         Will reset all event subscriptions which where popped from the normal list
-        :param eventname: the name of the event to restore
+        :param event_name: the name of the event to restore
         """
-        self.event_subscriptions.setdefault(eventname, []).extend(
-            self.popped_event_subscriptions.setdefault(eventname, [])
+        self.event_subscriptions.setdefault(event_name, []).extend(
+            self.popped_event_subscriptions.setdefault(event_name, [])
         )
-        del self.popped_event_subscriptions[eventname]
+        del self.popped_event_subscriptions[event_name]

@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -379,7 +379,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     "name": "minecraft:air",
                     "custom": {},
                 }
-                continue
+
         for rel_position in data["blocks"].keys():
             position = (
                 rel_position[0] + chunk_instance.get_position()[0] * 16,
@@ -455,7 +455,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             if entity["type"] == "minecraft:player":
                 continue
             try:
-                entity_instance = G.entity_handler.add_entity(
+                entity_instance = G.entity_handler.spawn_entity(
                     entity["type"],
                     entity["position"],
                     uuid=uuid.UUID(entity["uuid"]),

@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -39,19 +39,20 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
                         }
                     )
 
-    def __init__(self, *args, **kwargs):
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
+    def __init__(self):
         """
         will create the fence
         """
-        super().__init__(*args, **kwargs)
+        super().__init__()
         self.connections = {
             "north": False,
             "east": False,
             "south": False,
             "west": False,
-        }
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
 
     def on_block_added(self):
@@ -66,16 +67,16 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
         x, y, z = self.position
 
         block_north: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x + 1, y, z))
+            G.world.get_dimension_by_name(self.dimension).get_block((x + 1, y, z))
         )
         block_east: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x, y, z + 1))
+            G.world.get_dimension_by_name(self.dimension).get_block((x, y, z + 1))
         )
         block_south: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x - 1, y, z))
+            G.world.get_dimension_by_name(self.dimension).get_block((x - 1, y, z))
         )
         block_west: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x, y, z - 1))
+            G.world.get_dimension_by_name(self.dimension).get_block((x, y, z - 1))
         )
 
         self.connections["east"] = self.connects_to(
@@ -100,14 +101,13 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
     def connects_to(
         self,
         face: mcpython.util.enums.EnumSide,
-        blockinstance: mcpython.common.block.AbstractBlock.AbstractBlock,
+        instance: mcpython.common.block.AbstractBlock.AbstractBlock,
     ):
-        if blockinstance is None or type(blockinstance) == str:
+        if instance is None or type(instance) == str:
             return False
-        return blockinstance.face_solid[face.invert()] or (
-            issubclass(type(blockinstance), IFence)
-            and len(self.FENCE_TYPE_NAME.intersection(blockinstance.FENCE_TYPE_NAME))
-            > 0
+        return instance.face_solid[face.invert()] or (
+            issubclass(type(instance), IFence)
+            and len(self.FENCE_TYPE_NAME.intersection(instance.FENCE_TYPE_NAME)) > 0
         )
 
     BLOCK_ITEM_GENERATOR_STATE = {"east": "true", "west": "true"}

@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -29,11 +29,13 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     HARDNESS = -1
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
+    def __init__(self):
+        super().__init__()
         self.axis = "x"
-        for key in self.face_solid:
-            self.face_solid[key] = False
 
     def get_model_state(self) -> dict:
         return {"axis": self.axis}
@@ -49,7 +51,9 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def check_valid_surrounding(self):
         x, y, z = self.position
-        chunk = G.world.get_active_dimension().get_chunk_for_position(self.position)
+        chunk = G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
+            self.position
+        )
         if self.check_valid_block((x, y + 1, z), chunk):
             return
         if self.check_valid_block((x, y - 1, z), chunk):
@@ -67,7 +71,9 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def check_valid_block(self, position: tuple, chunk=None):
         if chunk is None:
-            chunk = G.world.get_active_dimension().get_chunk_for_position(position)
+            chunk = G.world.get_dimension_by_name(
+                self.dimension
+            ).get_chunk_for_position(position)
         block = chunk.get_block(position)
         if (
             block is None

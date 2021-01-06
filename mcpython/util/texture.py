@@ -5,11 +5,13 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
 # util functions from manipulating image data and converting between different formats
+import typing
+
 import PIL.Image
 from mcpython import shared as G
 import pyglet
@@ -67,3 +69,7 @@ def to_pyglet_sprite(image: PIL.Image.Image) -> pyglet.sprite.Sprite:
     :return: the sprite
     """
     return pyglet.sprite.Sprite(to_pyglet_image(image))
+
+
+def hex_to_color(color: str) -> typing.Tuple[int, int, int]:
+    return int(color[:2], base=16), int(color[2:4], base=16), int(color[4:6], base=16)

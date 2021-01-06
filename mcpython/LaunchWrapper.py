@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -26,19 +26,42 @@ class LaunchWrapper:
     """
 
     def __init__(self):
-        pass
+        self.is_client = True
+        self.__side_prepared = False
+
+    def prepare_client(self):
+        assert not self.__side_prepared
+
+        # init OpenGL
+        import pyglet
+
+        self.__side_prepared = True
+        shared.IS_CLIENT = self.is_client = True
+        shared.NO_WINDOW = "--no-window" in sys.argv
+        logger.println("client side")
+
+    def prepare_server(self):
+        assert not self.__side_prepared
+
+        self.__side_prepared = True
+        shared.IS_CLIENT = self.is_client = False
+        shared.NO_WINDOW = True
+        logger.println("server side")
 
     def inject_sys_argv(self, argv: typing.List[str]):
         """
         Currently unused helper function for loading the sys.argv config into the game
-        todo: all sys.argv parsing belongs here
+        todo: all sys.argv parsing belongs here, with a general parser for options not specified
         """
 
     def setup(self):
         """
         Setup general stuff which does not take long to complete
-        Loads first modules into memory
+        Loads first modules into memory and launches registry setup
         """
+
+        if not self.__side_prepared:
+            self.prepare_client()
 
         import mcpython.ResourceLoader
         import mcpython.common.event.EventHandler
@@ -57,7 +80,7 @@ class LaunchWrapper:
 
     def setup_registries(self):
         """
-        Helper functions for loading the modules which create registries
+        Helper functions for loading the modules which create registries and do similar stuff
         """
         import mcpython.common.mod.ModLoader
         import mcpython.common.mod.ModMcpython
@@ -84,10 +107,14 @@ class LaunchWrapper:
 
         import mcpython.client.rendering.model.ItemModel
 
+        import mcpython.common.data.ResourcePipe
+
+        mcpython.common.data.ResourcePipe.load()
+
     def setup_opengl(self):
         """
         Helper function for OpenGL setup
-        todo: DO NOT USE OpenGLSetupFile
+        Loads also the needed API
         """
 
         import mcpython.client.rendering.util
@@ -133,7 +160,7 @@ class LaunchWrapper:
 
     def load_mods(self):
         """
-        Do ModLoader inital stuff
+        Do ModLoader initial stuff
         """
         shared.mod_loader.look_out()
         shared.mod_loader.sort_mods()
@@ -142,12 +169,11 @@ class LaunchWrapper:
     def launch(self):
         """
         Launches the game in the current configuration
-        Starts the main cycle of pyglet
+        Starts the main cycle with pyglet
+        Loads the mods (finally!)
 
         todo: move state selection here
         """
-
-        logger.println("tmp storage at {}".format(shared.tmp.name))
         self.load_mods()
 
         # Create the world instance
@@ -163,7 +189,7 @@ class LaunchWrapper:
             width=800, height=600, resizable=True
         ).reset_caption()
         try:
-            # todo: can we find an better icon?
+            # todo: sometimes, this does not work correctly
             shared.window.set_icon(
                 mcpython.ResourceLoader.read_pyglet_image("icon_16x16.png"),
                 mcpython.ResourceLoader.read_pyglet_image("icon_32x32.png"),
@@ -188,19 +214,23 @@ class LaunchWrapper:
         """
         import mcpython.ResourceLoader
 
-        mcpython.ResourceLoader.close_all_resources()
-        logger.print_exception("general uncaught exception during running the game")
+        try:
+            mcpython.ResourceLoader.close_all_resources()
+            logger.print_exception("general uncaught exception during running the game")
+        except:
+            logger.print_exception("failed to close resources")
         try:
             shared.tmp.cleanup()
         except NameError:
             pass
         except:
-            logger.print_exception("cleanup exception")
+            logger.print_exception("file cleanup exception [NON-FATAL]")
 
     def clean(self):
         """
         Helper function for normal cleanup
         (not save)
+        MAY crash on non-fully stable systems
         """
         import mcpython.ResourceLoader
 

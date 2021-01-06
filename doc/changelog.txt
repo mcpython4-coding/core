@@ -49,9 +49,58 @@ information on development:
         its id.
 
 
-changelog of snapshot [next], released on -, targeting -
+changelog of snapshot 20w01a, released on 06.01.2021, targeting 20w51a
+    Happy new year, 2021!
+    This time, breaks again some big parts
+    Affected are world generation and mod loading stage modifications, and loading-order-dependent stuff, beside
+        following some general structure [block models after blocks, etc.]
+
+    WARNING: this version has a major visual glitch which could not be fixed until today
+
+    API:
+        If you see this, you know that something broke again...
+        - Broke BlockFactory system. Nothing will work!
+        - Planning on breaking ItemFactory also...
+        - ... and CombinedFactories will also be rewritten in the near future
+        - even data-driven block and items may get a thing :-/
+        - the new factory system is highly extendable, but may consume some more memory on the fly :-(
+        - I tried to make it as fast as before, but I cannot guarantee anything at this point
+        - the API is "similar" to the old, with refactors and no direct-attribute accesses anymore :-/
+
     World Generation:
-        - noises are now better selected
+        - noises are now better selected per world-seed, making them more compatible for mods
+        - general faster [see rendering stuff below]
+        - modes and biomes can now be serialized to files
+        - modes can now simply be modified via files
+        - features are now part of the registry system [previously, they weren't]
+
+    Rendering:
+        - improved general API
+        - refactored some stuff
+        - improved client/server separation
+        - improved some rendering parts
+
+    Resources:
+        - implemented helper code for resource groups
+        - fixed some errors around loading mod resources
+
+    Loading:
+        - rewritten how loading stages are selected
+        - order may change now where no dependency is
+        - you can add dependencies if needed special order
+        - custom loading stages are currently hard to create [internal cache must be re-calculated],
+            events for existing stages are simpler
+        - there might be various errors around this, it is highly experimental
+
+    Gameplay:
+        - items can now set which blocks they can break in gamemode 2
+
+    Behind-the-scenes:
+        - improved memory usage for loading event annotations
+        - improved memory usage in BlockFaceState for hidden blocks
+
+    Server:
+        - added foundation for a server launcher
 
 
 changelog of snapshot 20w51a, released on 18.12.2020, targeting 20w51a

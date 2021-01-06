@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -14,7 +14,7 @@ import sys
 
 from mcpython import shared as G, logger
 import mcpython.common.mod.ModMcpython
-import mcpython.client.rendering.model.Model
+import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState
 import mcpython.ResourceLoader
 import mcpython.util.enums
@@ -147,13 +147,13 @@ class ModelHandler:
         try:
             if type(location) == str:
                 modeldata = mcpython.ResourceLoader.read_json(location)
-                self.models[name] = mcpython.client.rendering.model.Model.Model(
+                self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
                     modeldata.copy(),
                     "block/" + location.split("/")[-1].split(".")[0],
                     name.split(":")[0] if name.count(":") == 1 else "minecraft",
                 )
             else:
-                self.models[name] = mcpython.client.rendering.model.Model.Model(
+                self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
                     location.copy(),
                     name,
                     name.split(":")[0] if name.count(":") == 1 else "minecraft",

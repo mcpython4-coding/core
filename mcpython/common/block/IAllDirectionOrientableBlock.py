@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -16,8 +16,8 @@ import mcpython.util.enums
 class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     MODEL_FACE_NAME = "facing"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
         self.face = mcpython.util.enums.EnumSide.NORTH
 
     def on_block_added(self):
@@ -48,5 +48,6 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
     @classmethod
     def get_all_model_states(cls) -> list:
         return [
-            {cls.MODEL_FACE_NAME: face.name} for face in util.enums.EnumSide.iterate()
+            {cls.MODEL_FACE_NAME: face.name}
+            for face in mcpython.util.enums.EnumSide.iterate()
         ]

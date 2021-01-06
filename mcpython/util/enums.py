@@ -5,11 +5,12 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
 import enum
+import typing
 
 COLORS = [
     "white",
@@ -67,19 +68,11 @@ class EnumSide(enum.Enum):
         Will invert the face to its opposite
         :return: the opposite face
         """
-        if self == EnumSide.U:
-            return EnumSide.D
-        if self == EnumSide.D:
-            return EnumSide.U
-        if self == EnumSide.N:
-            return EnumSide.S
-        if self == EnumSide.S:
-            return EnumSide.S
-        if self == EnumSide.E:
-            return EnumSide.W
-        if self == EnumSide.W:
-            return EnumSide.E
-        raise ValueError("can't convert '{}' to inverted variant".format(self))
+        return INVERTED_DICT[self.normal_name]
+
+    def relative_offset(self, position):
+        relative = self.relative
+        return tuple([position[i] + relative[i] for i in range(3)])
 
     def __eq__(self, other):
         return type(self) == type(other) and self.relative == other.relative
@@ -111,7 +104,7 @@ class EnumSide(enum.Enum):
         return 2 ** FACE_ORDER.index(self)
 
 
-FACE_ORDER = [
+FACE_ORDER: typing.List[EnumSide] = [
     EnumSide.UP,
     EnumSide.DOWN,
     EnumSide.NORTH,
@@ -121,11 +114,23 @@ FACE_ORDER = [
 ]
 
 # How to rotate the different faces?
-ROTATE = (
+ROTATE: typing.Iterable[typing.List[EnumSide]] = (
     [EnumSide.WEST, EnumSide.DOWN, EnumSide.EAST, EnumSide.UP],
     [EnumSide.NORTH, EnumSide.EAST, EnumSide.SOUTH, EnumSide.WEST],
     [EnumSide.NORTH, EnumSide.UP, EnumSide.SOUTH, EnumSide.DOWN],
 )
+
+INVERTED_DICT: typing.Dict[str, EnumSide] = {
+    EnumSide.U.normal_name: EnumSide.D,
+    EnumSide.D.normal_name: EnumSide.U,
+    EnumSide.N.normal_name: EnumSide.S,
+    EnumSide.S.normal_name: EnumSide.N,
+    EnumSide.E.normal_name: EnumSide.W,
+    EnumSide.W.normal_name: EnumSide.E,
+}
+
+
+HORIZONTAL_OFFSETS = [(1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1)]
 
 
 class LogAxis(enum.Enum):

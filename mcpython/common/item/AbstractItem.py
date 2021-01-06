@@ -5,13 +5,12 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import logger
 import mcpython.common.event.Registry
-import uuid
 
 
 class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
@@ -32,7 +31,19 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
         raise NotImplementedError()
 
     def __init__(self):
-        self.uuid = uuid.uuid4()
+        self.stored_block_state = None
+        self.can_destroy = None
+        self.can_be_set_on = None
+
+    def check_can_be_set_on(self, block, player):
+        return player.gamemode != 2 or (
+            self.can_be_set_on is not None and block.NAME in self.can_be_set_on
+        )
+
+    def check_can_destroy(self, block, player):
+        return player.gamemode != 2 or (
+            self.can_destroy is not None and block.NAME in self.can_destroy
+        )
 
     def __eq__(self, other):
         if not issubclass(type(other), AbstractItem):
@@ -69,8 +80,12 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
         """
         return False
 
-    def on_set_from_item(self, block):
+    def on_block_broken_with(self, itemstack, player, block):
         pass
+
+    def on_set_from_item(self, block):
+        if self.stored_block_state is not None and self.NAME == block.NAME:
+            block.set_item_saved_state(self.stored_block_state)
 
     # functions used by data serializers
 
@@ -90,5 +105,5 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
 
         return mcpython.client.gui.HoveringItemBox.DEFAULT_ITEM_TOOLTIP
 
-    def getAdditionalTooltipText(self, stack, renderer) -> list:
+    def get_additional_tooltip_text(self, stack, renderer) -> list:
         return []

@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -55,7 +55,7 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
             stack = mcpython.common.container.ItemStack.ItemStack(values[1])
             CommandItemInfo.print_info(stack)
         elif modes[1][1] == 3:  # block inventories
-            block = G.world.get_active_dimension().get_block(values[2])
+            block = info.entity.dimension.get_block(values[2])
             if type(block) == str:
                 return
             for i, inventory in enumerate(block.get_inventories()):

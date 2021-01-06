@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -34,6 +34,11 @@ data_gen = (
     "--data-gen" in sys.argv or "--invalidate-cache" in sys.argv
 ) and dev_environment
 data_gen_exit = "--exit-after-data-gen" in sys.argv  # default vanilla behaviour
+if data_gen_exit and not data_gen:
+    raise RuntimeError("could not --exit-after-data-gen and not --data-gen!")
+NO_WINDOW = False
+
+IS_CLIENT = True
 
 STORAGE_VERSION = None  # the version of the storage format
 

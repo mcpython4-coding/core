@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -32,20 +32,23 @@ class BlockGrassBlock(AbstractBlock.AbstractBlock):
 
     def on_random_update(self):
         x, y, z = self.position
-        for dy in range(y + 1, 256):
-            blockinst = G.world.get_active_dimension().get_block((x, dy, z))
-            if blockinst is not None:
+        dim = G.world.get_dimension_by_name(self.dimension)
+
+        for dy in range(y + 1, dim.get_dimension_range()[1] + 1):
+            instance = dim.get_block((x, dy, z))
+            if instance is not None:
                 break
+
         else:
-            blockinst = G.world.get_active_dimension().get_block((x, y + 1, z))
-            if blockinst is not None and type(blockinst) != str:
+            instance = dim.get_block((x, y + 1, z))
+            if instance is not None and type(instance) != str:
                 if (
-                    blockinst.face_solid[mcpython.util.enums.EnumSide.UP]
-                    or blockinst.face_solid[mcpython.util.enums.EnumSide.DOWN]
+                    instance.face_solid[mcpython.util.enums.EnumSide.UP]
+                    or instance.face_solid[mcpython.util.enums.EnumSide.DOWN]
                 ):
-                    G.world.get_active_dimension().get_chunk_for_position(
-                        self.position
-                    ).add_block(self.position, "minecraft:dirt")
+                    dim.get_chunk_for_position(self.position).add_block(
+                        self.position, "minecraft:dirt"
+                    )
 
 
 @G.mod_loader("minecraft", "stage:block:load")

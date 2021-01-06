@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -21,11 +21,15 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @shared.world_generation_handler
-class DefaultLandMassILayer(ILayer):
+class DefaultLandMassLayer(ILayer):
     NAME = "minecraft:landmass_default"
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME + "_3", scale=10 ** 2, octaves=3, dimensions=2
+        NAME + "_3",
+        scale=10 ** 2,
+        octaves=3,
+        dimensions=2,
+        merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
     )
 
     @staticmethod
@@ -48,5 +52,5 @@ class DefaultLandMassILayer(ILayer):
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "minecraft:landmass_map", DefaultLandMassILayer, {}
+    "minecraft:landmass_map", DefaultLandMassLayer, {}
 )

@@ -5,13 +5,13 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
 import sys
 
-# everything lower than python 3.9 is not supported!
+# everything lower than python 3.9 is not supported, we are using python 3.9 features!
 if sys.version_info.major < 3 or sys.version_info.minor < 9:
     print(
         "[WARN] you are using an not supported version of python. Game will not be able to run!"
@@ -22,6 +22,7 @@ if sys.version_info.major < 3 or sys.version_info.minor < 9:
 import mcpython.LaunchWrapper
 
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
+wrapper.prepare_client()
 
 
 try:

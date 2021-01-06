@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -14,18 +14,22 @@ import random
 
 import mcpython.server.worldgen.noise.NoiseManager
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.event.EventHandler
 import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
-@G.world_generation_handler
-class DefaultTemperatureILayer(ILayer):
+@shared.world_generation_handler
+class DefaultTemperatureLayer(ILayer):
     NAME = "minecraft:temperature_map"
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME, scale=10 ** 2, dimensions=2
+        NAME,
+        scale=10 ** 2,
+        dimensions=2,
+        octaves=3,
+        merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
     )
 
     @staticmethod
@@ -49,5 +53,5 @@ class DefaultTemperatureILayer(ILayer):
 
 
 mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "minecraft:temperature_map", DefaultTemperatureILayer, {}
+    "minecraft:temperature_map", DefaultTemperatureLayer, {}
 )

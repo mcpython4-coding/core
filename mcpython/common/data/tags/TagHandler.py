@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -27,7 +27,7 @@ class TagHandler:
         """
         self.taggroups = {}  # name -> taggroup
         self.taglocations = []
-        G.mod_loader("minecraft", "stage:tag:load", "loading tag-groups")(
+        G.mod_loader("minecraft", "stage:tag:load", info="loading tag-groups")(
             self.load_tags
         )
 
@@ -149,7 +149,7 @@ def add_from_location(loc: str):
     ]
 
 
-@G.mod_loader("minecraft", "stage:tag:group", "adding tag group locations")
+@G.mod_loader("minecraft", "stage:tag:group", info="adding tag group locations")
 def on_group_add():
     add_from_location("minecraft")
     add_from_location("forge")

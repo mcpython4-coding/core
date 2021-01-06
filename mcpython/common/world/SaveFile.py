@@ -5,11 +5,11 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import json
+import simplejson as json
 import os
 import pickle
 import sys
@@ -58,7 +58,7 @@ History of save versions:
     - player data reformat
 """
 
-G.STORAGE_VERSION = LATEST_VERSION = 7  # the latest version, used for upgrading
+G.STORAGE_VERSION = LATEST_VERSION = 8  # the latest version, used for upgrading
 
 # where the stuff should be saved
 SAVE_DIRECTORY = (
@@ -456,7 +456,7 @@ class SaveFile:
         if not os.path.isdir(d):
             os.makedirs(d)
         try:
-            data = json.dumps(data)
+            data = json.dumps(data, indent="  ")
             with open(file, mode="w") as f:
                 f.write(data)
         except:
@@ -495,5 +495,4 @@ class SaveFile:
 
 @G.mod_loader("minecraft", "stage:datafixer:general")
 def load_elements():
-    # from mcpython.server.storage.datafixers import ()
-    pass
+    from mcpython.common.world.datafixers import DataFixer7to8

@@ -5,416 +5,32 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.event.EventHandler
-from mcpython import shared as G, logger
-import os
-import mcpython.ResourceLoader
-import zipfile
-import sys
-import json
 import importlib
+import json
+import os
+import sys
 import time
-import mcpython.client.state.StateModLoading
-import mcpython.util.math
-import mcpython.common.mod.Mod
+import typing
+import zipfile
+
 import toml
+
+import mcpython.client.state.StateModLoading
 import mcpython.common.config
-import deprecation
+import mcpython.common.event.EventHandler
+import mcpython.common.mod.Mod
+import mcpython.common.mod.ModLoadingPipe
+import mcpython.ResourceLoader
+import mcpython.util.math
+from mcpython import logger
+from mcpython import shared
 
-# information for modders: this file contains every event called on the system
-# you may NOT do any job beside registration to events outside of the loading events
-# WARNING: violating this may cause problems
-# WARNING: when your stage crashes, game may not
-# WARNING: split up where possible to make showing progress bars easier
-# WARNING: the order in which is loaded may change from version to version and from mod list to mod list
-
-# For people who want to add their own loading stages: make sure to add them to LOADING_ORDER-list
-# For people who want to tweak the order of loading: make sure to check if another mod has modified the same array
-# For people who want to remove loading stages: make sure they really exists
-
-# For people who are trying to resolve issues: make sure that you have a) subscribed to the event over the eventbus
-#   of your mod [<modname>.eventbus] and have spelled the event correctly
-
-# For people which bring their own assets with them: please, if you are not familiar with the whole asset loading
-#   system, use the ResourceLocator.add_resources_by_modname-function to notate your loading to the right events
-
-if not os.path.exists(G.home + "/mods"):
-    os.makedirs(G.home + "/mods")
-
-
-class LoadingStage:
-    """
-    class for any loading stage for the system
-    """
-
-    def __init__(self, name, *eventnames):
-        """
-        creates an new instance of LoadingStage
-        :param name: the name of the stage
-        :param eventnames: an list of events to call in this stage
-        """
-        self.name = name
-        self.active_event_name = None
-        self.active_mod_index = 0
-        self.event_names = list(eventnames)
-        self.running_event_names = eventnames
-        self.progress = 0
-        self.max_progress = 0
-
-    @classmethod
-    def finish(cls, astate):
-        """
-        will finish up the system
-        :param astate: the state to use
-        """
-        G.mod_loader.active_loading_stage += 1
-        if G.mod_loader.active_loading_stage >= len(LOADING_ORDER):
-            logger.println(
-                "[INFO] locking registries..."
-            )  # ... and do similar stuff :-)
-            G.event_handler.call("mod_loader:load_finished")
-
-            G.state_handler.switch_to("minecraft:block_item_generator")
-            G.mod_loader.finished = True
-            return True
-        astate.parts[0].progress += 1
-        astate.parts[2].progress = 0
-        new_stage = LOADING_ORDER[G.mod_loader.active_loading_stage]
-        if (
-            new_stage.event_names[0]
-            in G.mod_loader.mods[
-                G.mod_loader.mod_loading_order[0]
-            ].eventbus.event_subscriptions
-        ):
-            astate.parts[2].progress_max = len(
-                G.mod_loader.mods[
-                    G.mod_loader.mod_loading_order[0]
-                ].eventbus.event_subscriptions[new_stage.event_names[0]]
-            )
-        else:
-            astate.parts[2].progress_max = 0
-
-    def call_one(self, astate):
-        """
-        will call one event from the stack
-        :param astate: the state to use
-        """
-        if self.active_mod_index >= len(G.mod_loader.mods):
-            self.active_mod_index = 0
-            if len(self.event_names) == 0:
-                return self.finish(astate)
-            self.active_event_name = self.event_names.pop(
-                0
-            )  # todo: is there an better way?
-            mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[
-                G.mod_loader.mod_loading_order[self.active_mod_index]
-            ]
-            if not G.event_handler.call_cancelable(
-                "modloader:mod_entered_stage",
-                self.name,
-                self.active_event_name,
-                mod_instance,
-            ):
-                self.active_mod_index += 1
-                return
-            self.max_progress = len(
-                mod_instance.eventbus.event_subscriptions[self.active_event_name]
-            )
-            astate.parts[2].progress_max = self.max_progress
-            astate.parts[2].progress = 0
-            return
-        if self.active_event_name is None:
-            if len(self.event_names) == 0:
-                return self.finish(astate)
-            self.active_event_name = self.event_names.pop(0)
-        modname = G.mod_loader.mod_loading_order[self.active_mod_index]
-        mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[modname]
-        try:
-            mod_instance.eventbus.call_as_stack(self.active_event_name)
-        except RuntimeError:
-            self.active_mod_index += 1
-            if self.active_mod_index >= len(G.mod_loader.mods):
-                self.active_mod_index = 0
-                if len(self.event_names) == 0:
-                    return self.finish(astate)
-                self.active_event_name = self.event_names.pop(0)
-                mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[
-                    G.mod_loader.mod_loading_order[self.active_mod_index]
-                ]
-                if self.active_event_name in mod_instance.eventbus.event_subscriptions:
-                    self.max_progress = len(
-                        mod_instance.eventbus.event_subscriptions[
-                            self.active_event_name
-                        ]
-                    )
-                else:
-                    self.max_progress = 0
-                astate.parts[2].progress_max = self.max_progress
-                astate.parts[2].progress = 0
-                return
-            mod_instance: mcpython.common.mod.Mod.Mod = G.mod_loader.mods[
-                G.mod_loader.mod_loading_order[self.active_mod_index]
-            ]
-            if self.active_event_name in mod_instance.eventbus.event_subscriptions:
-                self.max_progress = len(
-                    mod_instance.eventbus.event_subscriptions[self.active_event_name]
-                )
-            else:
-                self.max_progress = 0
-            astate.parts[2].progress_max = self.max_progress
-            astate.parts[2].progress = 0
-            return
-        astate.parts[2].progress += 1  # todo: this is not good, can we optimize it?
-
-
-class LoadingStages:
-    """
-    collection of all stages with their events
-    """
-
-    # used to do the magic stuff to set up your system
-    PREPARE = LoadingStage("preparation phase", "stage:pre", "stage:mod:init")
-
-    API_MANAGEMENT = LoadingStage(
-        "working on api system",
-        "stage:api:define",
-        "stage:api:check",
-        "stage:api:retrieve",
-    )
-
-    # this special phase is for adding new loading phases, if you want to
-    ADD_LOADING_STAGES = LoadingStage(
-        "loading stage register phase", "stage:addition_of_stages"
-    )
-
-    # if your mod has other resource locations...
-    EXTRA_RESOURCE_LOCATIONS = LoadingStage(
-        "resource addition",
-        "stage:resources:pipe:add_mapper",
-        "stage:additional_resources",
-    )
-
-    # first: create ConfigFile objects, second: internally, third: do something with the data
-    CONFIGS = LoadingStage(
-        "loading mod config",
-        "stage:mod:config:entry_loaders",
-        "stage:mod:config:define",
-        "stage:mod:config:load",
-        "stage:mod:config:work",
-    )
-
-    # Stage collection for combined factories, last for building them
-    COMBINED_FACTORIES = LoadingStage(
-        "working on combined factories",
-        "stage:combined_factory:blocks",
-        "stage:combined_factory:build",
-    )
-
-    # blocks, items, inventories, ... all stuff to register
-    BLOCKS = LoadingStage(
-        "block loading phase",
-        "stage:block:factory:prepare",
-        "stage:block:factory_usage",
-        "stage:block:factory:finish",
-        "stage:block:load",
-        "stage:block:overwrite",
-        "stage:block:block_config",
-    )
-    ITEMS = LoadingStage(
-        "item loading phase",
-        "stage:item:factory:prepare",
-        "stage:item:factory_usage",
-        "stage:item:factory:finish",
-        "stage:item:load",
-        "stage:item:overwrite",
-    )
-    INVENTORIES = LoadingStage(
-        "inventory loading phase",
-        "stage:inventories:pre",
-        "stage:inventories",
-        "stage:inventories:post",
-    )
-    COMMANDS = LoadingStage(
-        "command loading phase",
-        "stage:command:entries",
-        "stage:commands",
-        "stage:command:selectors",
-        "stage:command:gamerules",
-    )
-    ENTITIES = LoadingStage("entities", "stage:entities")
-
-    # Optional stage for running the data generators. Only active in --data-gen mode
-    DATA_GENERATION = LoadingStage(
-        "generating special data",
-        "special:datagen:configure",
-        "special:datagen:generate",
-    )
-
-    # all the deserialization stuff, must be after data gen as data gen may want to inject some stuff
-    LANGUAGE = LoadingStage("language file loading", "stage:language")
-    TAGS = LoadingStage("tag loading phase", "stage:tag:group", "stage:tag:load")
-    RECIPE = LoadingStage(
-        "recipe loading phase",
-        "stage:recipes",
-        "stage:recipe:groups",
-        "stage:recipe:bake",
-    )
-    LOOT_TABLES = LoadingStage(
-        "loot tables",
-        "stage:loottables:locate",
-        "stage:loottables:functions",
-        "stage:loottables:conditions",
-        "stage:loottables:load",
-    )
-
-    # so, all stuff around block models & states
-    MODEL_FACTORY = LoadingStage(
-        "applying model factories",
-        "stage:modelfactory:prepare",
-        "stage:modefactory:use",
-        "stage:modelfactory:bake",
-        "stage:blockstatefactory:prepare",
-        "stage:blockstatefactory:use",
-        "stage:blockstatefactory:bake",
-    )
-    BLOCKSTATE = LoadingStage(
-        "blockstate loading phase",
-        "stage:blockstate:register_loaders",
-        "stage:model:blockstate_search",
-        "stage:model:blockstate_create",
-        "stage:model:blockstate_bake",
-    )
-    BLOCK_MODEL = LoadingStage(
-        "block loading phase",
-        "stage:model:model_search",
-        "stage:model:model_search:intern",
-        "stage:model:model_create",
-    )
-    ITEM_MODEL = LoadingStage(
-        "loading item models", "stage:model:item:search", "stage:model:item:bake"
-    )
-    BAKE = LoadingStage(
-        "texture baking",
-        "stage:model:model_bake_prepare",
-        "stage:model:model_bake_lookup",
-        "stage:model:model_bake:prepare",
-        "stage:model:model_bake",
-        "stage:textureatlas:bake",
-        "stage:boxmodel:bake",
-        "stage:block_boundingbox_get",
-    )
-
-    # now, the world gen, depends on results of registry system and data deserialization
-    WORLDGEN = LoadingStage(
-        "world generation loading phase",
-        "stage:worldgen:biomes",
-        "stage:worldgen:feature",
-        "stage:worldgen:layer",
-        "stage:worldgen:mode",
-        "stage:dimension",
-    )
-
-    # How about storing stuff?
-    FILE_INTERFACE = LoadingStage(
-        "registration of data interfaces",
-        "stage:serializer:parts",
-        "stage:datafixer:general",
-        "stage:datafixer:parts",
-    )
-
-    # Display-ables. Depends on most of above, nothing depends on
-    STATES = LoadingStage(
-        "state loading phase",
-        "stage:stateparts",
-        "stage:states",
-        "stage:state_config:parser",
-        "stage:state_config:generate",
-        "stage:states:post",
-    )
-
-    POST = LoadingStage("finishing up", "stage:post", "stage:final")
-
-
-# the order of stages todo: make serialized from config file
-LOADING_ORDER: list = [
-    LoadingStages.PREPARE,
-    LoadingStages.API_MANAGEMENT,
-    LoadingStages.ADD_LOADING_STAGES,
-    LoadingStages.EXTRA_RESOURCE_LOCATIONS,
-    LoadingStages.CONFIGS,
-    LoadingStages.COMBINED_FACTORIES,
-    LoadingStages.BLOCKS,
-    LoadingStages.ITEMS,
-    LoadingStages.INVENTORIES,
-    LoadingStages.COMMANDS,
-    LoadingStages.ENTITIES,
-]
-
-if G.data_gen:  # only do it in dev-environment
-    LOADING_ORDER.append(LoadingStages.DATA_GENERATION)
-
-    if G.data_gen_exit:
-        LOADING_ORDER.append(LoadingStage("exit", "special:exit"))
-
-LOADING_ORDER += [
-    LoadingStages.LANGUAGE,
-    LoadingStages.TAGS,
-    LoadingStages.RECIPE,
-    LoadingStages.LOOT_TABLES,
-    LoadingStages.MODEL_FACTORY,
-    LoadingStages.BLOCKSTATE,
-    LoadingStages.ITEM_MODEL,
-    LoadingStages.BLOCK_MODEL,
-    LoadingStages.BAKE,
-    LoadingStages.WORLDGEN,
-    LoadingStages.FILE_INTERFACE,
-    LoadingStages.STATES,
-    LoadingStages.POST,
-]
-
-
-def insertAfter(to_insert: LoadingStage, after: LoadingStage) -> bool:
-    if after not in LOADING_ORDER:
-        return False
-    LOADING_ORDER.insert(LOADING_ORDER.index(after) + 1, to_insert)
-    return True
-
-
-def insertBefore(to_insert: LoadingStage, before: LoadingStage) -> bool:
-    if before not in LOADING_ORDER:
-        return False
-    LOADING_ORDER.insert(LOADING_ORDER.index(before), to_insert)
-    return True
-
-
-class ModLoaderAnnotation:
-    def __init__(self, modname: str, event_name: str, info=None):
-        """
-        creates an new annotation
-        :param modname: the name of the mod to annotate to
-        :param event_name: the event name to subscribe to
-        :param info: the info send to the event bus
-        """
-        self.modname = modname
-        self.event_name = event_name
-        self.info = info
-
-    def __call__(self, function):
-        """
-        subscribes an function to the event
-        :param function: the function to use
-        :return: the function annotated
-        """
-        if self.modname not in G.mod_loader.mods:
-            self.modname = "minecraft"
-        G.mod_loader.mods[self.modname].eventbus.subscribe(
-            self.event_name, function, info=self.info
-        )
-        return function
+if not os.path.exists(shared.home + "/mods"):
+    os.makedirs(shared.home + "/mods")
 
 
 class ModLoader:
@@ -433,10 +49,10 @@ class ModLoader:
         self.active_loading_stage = 0
         self.previous_mods = {}
         self.located_mod_instances = []
-        if os.path.exists(G.build + "/mods.json"):
-            with open(G.build + "/mods.json") as f:
+        if os.path.exists(shared.build + "/mods.json"):
+            with open(shared.build + "/mods.json") as f:
                 self.previous_mods = json.load(f)
-        elif not G.invalidate_cache:
+        elif not shared.invalidate_cache:
             logger.println(
                 "[WARNING] can't locate mods.json in build-folder. This may be an error"
             )
@@ -447,7 +63,7 @@ class ModLoader:
         )
         self.error_builder = logger.TableBuilder()
 
-    def registerReloadAssignedLoadingStage(self, stage: str):
+    def register_reload_assigned_loading_stage(self, stage: str):
         """
         Will register an loading stage as one to executed on every reload
         :param stage: the event name of the stage
@@ -457,11 +73,15 @@ class ModLoader:
     def execute_reload_stages(self):
         for event_name in self.reload_stages:
             for i in range(len(self.mods)):
-                instance = G.mod_loader.mods[G.mod_loader.mod_loading_order[i]]
+                instance = shared.mod_loader.mods[
+                    shared.mod_loader.mod_loading_order[i]
+                ]
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
 
-    def __call__(self, modname: str, event_name: str, info=None) -> ModLoaderAnnotation:
+    def __call__(
+        self, modname: str, event_name: str, *args, **kwargs
+    ) -> typing.Callable[[typing.Callable], typing.Callable]:
         """
         annotation to the event system
         :param modname: the mod name
@@ -469,7 +89,9 @@ class ModLoader:
         :param info: the info
         :return: an ModLoaderAnnotation-instance for annotation
         """
-        return ModLoaderAnnotation(modname, event_name, info)
+        return lambda function: self.mods[modname].eventbus.subscribe(
+            event_name, function, *args, **kwargs
+        )
 
     def __getitem__(self, item):
         return self.mods[item]
@@ -480,7 +102,7 @@ class ModLoader:
         todo: split up into smaller portions
         """
         locations = []
-        folders = [G.home + "/mods"]
+        folders = [shared.home + "/mods"]
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
@@ -513,7 +135,7 @@ class ModLoader:
             else:
                 i += 1
 
-        G.event_handler.call("modloader:location_search", locations)
+        shared.event_handler.call("modloader:location_search", locations)
 
         for i, location in enumerate(locations):
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
@@ -582,6 +204,8 @@ class ModLoader:
         """
         locations = self.get_locations()
         self.load_mod_jsons(locations)
+        import mcpython.common.mod.ModMcpython
+
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
@@ -616,13 +240,13 @@ class ModLoader:
                         modname
                     )
                 )
-                G.invalidate_cache = True
-                G.data_gen = True
+                shared.invalidate_cache = True
+                shared.data_gen = True
         for modname in self.mods.keys():
             if modname not in self.previous_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
-                G.invalidate_cache = True
-                G.data_gen = True
+                shared.invalidate_cache = True
+                shared.data_gen = True
                 logger.println(
                     "rebuild mode due to mod change (addition) of {}".format(modname)
                 )
@@ -631,9 +255,9 @@ class ModLoader:
         """
         writes the data for the mod table into the file
         """
-        if not os.path.isdir(G.build):
-            os.makedirs(G.build)
-        with open(G.build + "/mods.json", mode="w") as f:
+        if not os.path.isdir(shared.build):
+            os.makedirs(shared.build)
+        with open(shared.build + "/mods.json", mode="w") as f:
             m = {instance.name: instance.version for instance in self.mods.values()}
             json.dump(m, f)
 
@@ -817,7 +441,9 @@ class ModLoader:
         will add an mod-instance into the inner system
         :param instance: the mod instance to add
         """
-        if not G.event_handler.call_cancelable("modloader:mod_registered", instance):
+        if not shared.event_handler.call_cancelable(
+            "modloader:mod_registered", instance
+        ):
             return
         self.mods[instance.name] = instance
         self.located_mods.append(instance)
@@ -919,16 +545,20 @@ class ModLoader:
         """
         will process some loading tasks
         """
-        if self.active_loading_stage >= len(LOADING_ORDER):
+        if not mcpython.common.mod.ModLoadingPipe.manager.order.is_active():
             return
         start = time.time()
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
-            G.state_handler.active_state
+            shared.state_handler.active_state
         )
-        astate.parts[0].progress_max = len(LOADING_ORDER)
+        astate.parts[0].progress_max = len(
+            mcpython.common.mod.ModLoadingPipe.manager.stages
+        )
         astate.parts[1].progress_max = len(self.mods)
         while time.time() - start < 0.2:
-            stage = LOADING_ORDER[self.active_loading_stage]
+            stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
+            if stage is None:
+                break
             if stage.call_one(astate):
                 return
         self.update_pgb_text()
@@ -937,20 +567,20 @@ class ModLoader:
         """
         will update the text of the pgb's in mod loading
         """
-        stage = LOADING_ORDER[self.active_loading_stage]
+        stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
+        if stage is None:
+            return
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
-            G.state_handler.active_state
+            shared.state_handler.active_state
         )
         instance: mcpython.common.mod.Mod.Mod = self.mods[
             self.mod_loading_order[stage.active_mod_index]
         ]
         if (
-            stage.active_event_name in instance.eventbus.event_subscriptions
-            and len(instance.eventbus.event_subscriptions[stage.active_event_name]) > 0
+            stage.active_event in instance.eventbus.event_subscriptions
+            and len(instance.eventbus.event_subscriptions[stage.active_event]) > 0
         ):
-            f, _, _, text = instance.eventbus.event_subscriptions[
-                stage.active_event_name
-            ][0]
+            f, _, _, text = instance.eventbus.event_subscriptions[stage.active_event][0]
         else:
             f, text = None, ""
         astate.parts[2].text = text if text is not None else "function {}".format(f)
@@ -958,19 +588,14 @@ class ModLoader:
             instance.name, stage.active_mod_index + 1, len(self.mods)
         )
         astate.parts[1].progress = stage.active_mod_index + 1
-        index = (
-            stage.running_event_names.index(stage.active_event_name) + 1
-            if stage.active_event_name in stage.running_event_names
-            else 0
-        )
         astate.parts[0].text = "{} ({}/{}) in {} ({}/{})".format(
-            stage.active_event_name,
-            index,
-            len(stage.running_event_names),
+            stage.active_event,
+            stage.current_progress,
+            len(stage.events),
             stage.name,
-            self.active_loading_stage + 1,
-            len(LOADING_ORDER),
+            self.active_loading_stage,
+            len(mcpython.common.mod.ModLoadingPipe.manager.stages),
         )
 
 
-G.mod_loader = ModLoader()
+shared.mod_loader = ModLoader()

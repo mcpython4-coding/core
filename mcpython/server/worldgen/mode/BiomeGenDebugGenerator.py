@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -15,7 +15,6 @@ from mcpython import shared
 import mcpython.server.worldgen.mode.IWorldGenConfig
 import mcpython.server.worldgen.mode.DefaultOverWorldGenerator
 import mcpython.common.mod.ModMcpython
-import itertools
 
 
 class DebugBiomeWorldGenerator(
@@ -53,7 +52,10 @@ class DebugBiomeWorldGenerator(
                     i += 1
 
     @classmethod
-    def on_chunk_generation_finished(cls, chunk):
+    def on_chunk_generation_finished(
+        cls,
+        chunk,
+    ):
         cx, cz = chunk.position
         biome_map = chunk.get_value("minecraft:biome_map")
         for dx in range(16):

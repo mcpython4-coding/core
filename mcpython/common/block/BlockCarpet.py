@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -23,38 +23,33 @@ class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
     base class for every carpet
     """
 
-    def __init__(self, *args, **kwargs):
-        """
-        creates an new carpet class
-        """
-        super().__init__(*args, **kwargs)
-        self.face_solid = {
-            face: face == mcpython.util.enums.EnumSide.DOWN
-            for face in mcpython.util.enums.EnumSide.iterate()
-        }
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
 
     def on_block_update(self):
         x, y, z = self.position
-        blockinst: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x, y - 1, z))
+        dim = G.world.get_dimension_by_name(self.dimension)
+        instance: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x, y - 1, z)
         )
-        if blockinst is None or (
-            type(blockinst) != str
-            and not blockinst.face_solid[mcpython.util.enums.EnumSide.UP]
+        if instance is None or (
+            type(instance) != str
+            and not instance.face_solid[mcpython.util.enums.EnumSide.UP]
         ):
-            G.world.get_active_dimension().get_chunk_for_position(
-                (x, y, z)
-            ).remove_block((x, y, z), block_update=False)
+            dim.get_chunk_for_position((x, y, z)).remove_block(
+                (x, y, z), block_update=False
+            )
             G.world.get_active_player().pick_up(
                 mcpython.common.container.ItemStack.ItemStack("minecraft:carpet")
-            )
+            )  # todo: drop in world
 
     def get_view_bbox(self):
         return carpet_bbox
 
     @classmethod
-    def modify_block_item(cls, itemfactory):
-        itemfactory.setFuelLevel(3.35)
+    def modify_block_item(cls, factory):
+        factory.setFuelLevel(3.35)
 
 
 def create_carpet(carpet_color: str):

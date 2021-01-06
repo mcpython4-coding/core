@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -13,9 +13,9 @@ from mcpython import shared
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
-import mcpython.client.gui.crafting.CraftingManager
-import mcpython.client.gui.crafting.CraftingGridHelperInterface
-import mcpython.common.item.ItemArmor
+import mcpython.common.container.crafting.CraftingManager
+import mcpython.common.container.crafting.CraftingGridHelperInterface
+import mcpython.common.item.AbstractArmorItem
 import mcpython.ResourceLoader
 import PIL.Image
 import mcpython.util.texture
@@ -48,7 +48,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         self.hotbar = hotbar
         super().__init__()
         inputs = [self.slots[40:42], self.slots[42:44]]
-        self.recipe_interface = mcpython.client.gui.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
+        self.recipe_interface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
             inputs, self.slots[44]
         )
 
@@ -82,12 +82,12 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
             if slot.get_itemstack().item:
                 if issubclass(
                     type(slot.get_itemstack().item),
-                    mcpython.common.item.ItemArmor.ItemArmor,
+                    mcpython.common.item.AbstractArmorItem.AbstractArmorItem,
                 ):
                     points += slot.get_itemstack().item.DEFENSE_POINTS
         shared.world.get_active_player().armor_level = points
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         """
         draws the inventory
         """
@@ -97,7 +97,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
-            slot.draw(x, y, hovering=slot == hoveringslot)
+            slot.draw(x, y, hovering=slot == hovering_slot)
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):

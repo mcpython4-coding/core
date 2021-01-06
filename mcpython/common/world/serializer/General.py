@@ -5,11 +5,11 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.ResourceLoader
 import mcpython.common.config
 import mcpython.common.world.SaveFile
@@ -17,9 +17,22 @@ import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
 import mcpython.util.getskin
 import mcpython.common.world.player
+import mcpython.server.worldgen.noise.NoiseManager
 
 
 class WorldConfigFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
+    """
+    Class representing an fix for the config-entry
+    """
+
+    TARGET_SERIALIZER_NAME = "minecraft:general_config"
+
+    @classmethod
+    def fix(cls, save_file, data: dict) -> dict:
+        raise NotImplementedError()
+
+
+class WorldGeneralFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
     """
     Class representing an fix for the config-entry
     """
@@ -31,7 +44,7 @@ class WorldConfigFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
         raise NotImplementedError()
 
 
-@G.registry
+@shared.registry
 class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:general"
 
@@ -41,9 +54,15 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         if save_file.version != mcpython.common.world.SaveFile.LATEST_VERSION:
             return
 
-        data = save_file.access_file_json("level.json")
-        data["config"] = fixer.fix(save_file, data["config"])
-        save_file.write_file_json("level.json", data)
+        if issubclass(fixer, WorldConfigFixer):
+            data = save_file.access_file_json("level.json")
+            data["config"] = fixer.fix(save_file, data["config"])
+            save_file.write_file_json("level.json", data)
+
+        elif issubclass(fixer, WorldGeneralFixer):
+            data = save_file.access_file_json("level.json")
+            data = fixer.fix(save_file, data)
+            save_file.write_file_json("level.json", data)
 
     @classmethod
     def load(cls, save_file):
@@ -62,7 +81,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         player_name = data["player name"]
 
         try:
-            mcpython.util.getskin.download_skin(player_name, G.build + "/skin.png")
+            mcpython.util.getskin.download_skin(player_name, shared.build + "/skin.png")
         except ValueError:
             logger.println(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(
@@ -71,11 +90,11 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             )
             mcpython.ResourceLoader.read_image(
                 "assets/minecraft/textures/entity/steve.png"
-            ).get_save_data(G.build + "/skin.png")
+            ).get_save_data(shared.build + "/skin.png")
         mcpython.common.world.player.Player.RENDERER.reload()
 
-        G.world.config = data["config"]
-        G.event_handler.call("seed:set")
+        shared.world.config = data["config"]
+        shared.event_handler.call("seed:set")
 
         if type(data["game version"]) != int:
             logger.println("Old version name format found!")
@@ -83,13 +102,15 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             data["game version"] = -1
 
         for modname in data["mods"]:
-            if modname not in G.mod_loader.mods:
+            if modname not in shared.mod_loader.mods:
                 logger.println(
                     "[WARNING] mod '{}' is missing. This may break your world!".format(
                         modname
                     )
                 )
-            elif G.mod_loader.mods[modname].version != tuple(data["mods"][modname]):
+            elif shared.mod_loader.mods[modname].version != tuple(
+                data["mods"][modname]
+            ):
                 try:
                     save_file.apply_mod_fixer(modname, tuple(data["mods"][modname]))
                 except mcpython.common.world.SaveFile.DataFixerNotFoundException:
@@ -99,12 +120,12 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                             "which occur between the sessions (from {} to {})".format(
                                 modname,
                                 tuple(data["mods"][modname]),
-                                G.mod_loader.mods[modname].version,
+                                shared.mod_loader.mods[modname].version,
                             )
                         )
 
         # apply data fixers for creating mod data
-        for modname in G.mod_loader.mods:
+        for modname in shared.mod_loader.mods:
             if modname not in data["mods"]:
                 try:
                     save_file.apply_mod_fixer(modname, None)
@@ -113,13 +134,13 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
         # the chunks scheduled for generation
         [
-            G.world_generation_handler.add_chunk_to_generation_list(
+            shared.world_generation_handler.add_chunk_to_generation_list(
                 e[0], dimension=e[1]
             )
             for e in data["chunks_to_generate"]
         ]
 
-        for dimension in G.world.dimensions.values():
+        for dimension in shared.world.dimensions.values():
             if str(dimension.id) in data["dimensions"]:
                 if data["dimensions"][str(dimension.id)] != dimension.name:
                     logger.println(
@@ -142,24 +163,40 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             )
 
         if "active_dimension" in data:
-            G.world.join_dimension(data["active_dimension"])
+            shared.world.join_dimension(data["active_dimension"])
+
+        wd = data["world_gen_info"]
+        mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = wd[
+            "noise_implementation"
+        ]
+        shared.world_generation_handler.deserialize_chunk_generator_info(
+            wd["chunk_generators"]
+        )
+        mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(
+            wd["seeds"]
+        )
 
     @classmethod
     def save(cls, data, save_file):
         data = {
             "storage version": save_file.version,  # the storage version stored in
-            "player name": G.world.get_active_player().name,  # the name of the player the world played in
-            "config": G.world.config,  # the world config
+            "player name": shared.world.get_active_player().name,  # the name of the player the world played in
+            "config": shared.world.config,  # the world config
             "game version": mcpython.common.config.VERSION_ID,
-            "mods": {mod.name: mod.version for mod in G.mod_loader.mods.values()},
+            "mods": {mod.name: mod.version for mod in shared.mod_loader.mods.values()},
             "chunks_to_generate": [
-                (chunk.position, chunk.dimension.id)
-                for chunk in G.world_generation_handler.task_handler.chunks
+                (chunk.get_position(), chunk.get_dimension().get_id())
+                for chunk in shared.world_generation_handler.task_handler.chunks
             ],
             "dimensions": {
-                dimension.id: dimension.name
-                for dimension in G.world.dimensions.values()
+                dimension.get_id(): dimension.get_name()
+                for dimension in shared.world.dimensions.values()
             },
-            "active_dimension": G.world.get_active_player().dimension.id,
+            "active_dimension": shared.world.get_active_player().dimension.get_id(),
+            "world_gen_info": {
+                "noise_implementation": mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation,
+                "chunk_generators": shared.world_generation_handler.serialize_chunk_generator_info(),
+                "seeds": mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map(),
+            },
         }
         save_file.dump_file_json("level.json", data)

@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -20,23 +20,23 @@ import mcpython.common.data.tags.TagGroup
 tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("blocks")
 
 
-def register_block(registry, blockclass):
-    if issubclass(blockclass, mcpython.common.block.AbstractBlock.AbstractBlock):
-        tag_holder.register_class(blockclass)
+def register_block(registry, cls):
+    if issubclass(cls, mcpython.common.block.AbstractBlock.AbstractBlock):
+        tag_holder.register_class(cls)
 
-        blockclass.on_register(block_registry)  # call event function
-        name = blockclass.NAME
-        block_registry.full_table[name] = blockclass
-        block_registry.full_table[name.split(":")[-1]] = blockclass
-        instance = blockclass()
-        if blockclass.IS_SOLID is None:
-            blockclass.IS_SOLID = all(instance.face_solid.values())
+        cls.on_register(block_registry)  # call event function
+        name = cls.NAME
+        block_registry.full_table[name] = cls
+        block_registry.full_table[name.split(":")[-1]] = cls
+        instance = cls()
+        if cls.IS_SOLID is None:
+            cls.IS_SOLID = all(instance.face_solid.values())
 
-        if blockclass.CAN_CONDUCT_REDSTONE_POWER is None:
-            blockclass.CAN_CONDUCT_REDSTONE_POWER = blockclass.IS_SOLID
+        if cls.CAN_CONDUCT_REDSTONE_POWER is None:
+            cls.CAN_CONDUCT_REDSTONE_POWER = cls.IS_SOLID
 
-        if blockclass.CAN_MOBS_SPAWN_ON is None:
-            blockclass.CAN_MOBS_SPAWN_ON = blockclass.IS_SOLID
+        if cls.CAN_MOBS_SPAWN_ON is None:
+            cls.CAN_MOBS_SPAWN_ON = cls.IS_SOLID
 
 
 block_registry = mcpython.common.event.Registry.Registry(

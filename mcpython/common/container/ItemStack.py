@@ -5,11 +5,11 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.item.AbstractItem
 import typing
 
@@ -34,9 +34,9 @@ class ItemStack:
         elif type(item_name_or_instance) == str:
             if (
                 item_name_or_instance
-                in G.registry.get_by_name("minecraft:item").entries
+                in shared.registry.get_by_name("minecraft:item").entries
             ):
-                self.item = G.registry.get_by_name("minecraft:item").entries[
+                self.item = shared.registry.get_by_name("minecraft:item").entries[
                     item_name_or_instance
                 ]()
             else:

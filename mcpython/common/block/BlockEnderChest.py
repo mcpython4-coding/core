@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -23,17 +23,21 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
     """
 
     NAME = "minecraft:enderchest"
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+    HARDNESS = 2.5
+    MINIMUM_TOOL_LEVEL = 0
+    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         """
         creates the ender chest block
         """
-        super().__init__(*args, **kwargs)
+        super().__init__()
+
         self.front_side = mcpython.util.enums.EnumSide.N
         self.inventory = G.world.get_active_player().inventory_enderchest
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
-        }
 
     def on_block_added(self):
         if self.real_hit:
@@ -61,10 +65,6 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
 
     def get_inventories(self):
         return [self.inventory]
-
-    HARDNESS = 2.5
-    MINIMUM_TOOL_LEVEL = 0
-    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
 
     def get_provided_slots(self, side):
         return self.inventory.slots

@@ -5,21 +5,26 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
 import typing
+import copy
 
 import mcpython.common.item.AbstractItem
-import mcpython.common.item.ItemFood
-import mcpython.common.item.ItemTool
-import mcpython.common.item.ItemArmor
-from mcpython import shared as G
+import mcpython.common.item.AbstractFoodItem
+import mcpython.common.item.AbstractToolItem
+import mcpython.common.item.AbstractArmorItem
+import mcpython.common.item.AbstractDamageBarItem
+from mcpython import shared
+import mcpython.common.factory.IFactoryModifier
 
 
 # todo: add ItemFactoryHandler which make it possible to add custom functions & custom class constructing
-class ItemFactory:
+class ItemFactory(mcpython.common.factory.IFactoryModifier.IFactory):
+    FACTORY_MODIFIERS = {}
+
     TASKS = []
 
     @classmethod
@@ -45,12 +50,14 @@ class ItemFactory:
         self.hungerregen = None
         self.eat_callback = None
 
-        self.baseclass = [mcpython.common.item.AbstractItem.AbstractItem]
+        self.base_classes = [mcpython.common.item.AbstractItem.AbstractItem]
 
         self.tool_level = 0
         self.tool_type = []
         self.tool_speed_multi = 1
         self.tool_speed_callback = None
+
+        self.durability = None
 
         self.armor_points = 0
 
@@ -78,7 +85,7 @@ class ItemFactory:
 
     def setToTemplate(self):
         if self.template is not None:
-            self.__dict__ = self.template.__dict__.copy()
+            self.__dict__ = copy.deepcopy(self.template.__dict__)
 
     def resetTemplate(self):
         self.template = None
@@ -94,8 +101,8 @@ class ItemFactory:
             modname, item_name = tuple(copied.name.split(":"))
         else:
             modname, item_name = copied.modname, copied.name
-        if not G.invalidate_cache and not task_list:
-            G.mod_loader.mods[modname].eventbus.subscribe(
+        if not shared.invalidate_cache and not task_list:
+            shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:item:load",
                 copied.finish_up,
                 register,
@@ -106,13 +113,13 @@ class ItemFactory:
 
         self.setToTemplate()
 
-        return copied
+        return self
 
     def copy(self):
         obj = type(self)()
         obj.__dict__ = self.__dict__.copy()
         obj.used_item_files = obj.used_item_files.copy()
-        obj.baseclass = obj.baseclass.copy()
+        obj.base_classes = obj.base_classes.copy()
         obj.tool_type = obj.tool_type.copy()
         return obj
 
@@ -142,7 +149,7 @@ class ItemFactory:
             self.blockname = self.name
 
         # go over the whole list and create every time an new sub-class based on old and item of list
-        for cls in self.baseclass:
+        for cls in self.base_classes:
 
             class BaseClass(BaseClass, cls):
                 pass
@@ -160,6 +167,8 @@ class ItemFactory:
 
             ITEM_NAME_COLOR = master.tooltip_color
 
+            DURABILITY = master.durability
+
             def get_block(self) -> str:
                 return master.blockname
 
@@ -171,6 +180,8 @@ class ItemFactory:
                 return master.item_file
 
             def __init__(self):
+                for base in master.base_classes:
+                    base.__init__(self)
                 if master.creation_callback:
                     master.creation_callback(self)
 
@@ -188,7 +199,7 @@ class ItemFactory:
                     master.custom_from_item_function(self, block)
 
         if (
-            mcpython.common.item.ItemFood.ItemFood in self.baseclass
+            mcpython.common.item.AbstractFoodItem.AbstractFoodItem in self.base_classes
         ):  # is food stuff active?
 
             class ConstructedItem(
@@ -201,16 +212,19 @@ class ItemFactory:
                     """
                     if master.eat_callback and master.eat_callback():
                         return True
-                    if G.world.get_active_player().hunger == 20:
+                    if shared.world.get_active_player().hunger == 20:
                         return False
-                    G.world.get_active_player().hunger = min(
-                        self.HUNGER_ADDITION + G.world.get_active_player().hunger, 20
+                    shared.world.get_active_player().hunger = min(
+                        self.HUNGER_ADDITION + shared.world.get_active_player().hunger,
+                        20,
                     )
                     return True
 
                 HUNGER_ADDITION = master.hungerregen
 
-        if mcpython.common.item.ItemTool.ItemTool in self.baseclass:  # is an tool
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem in self.base_classes
+        ):  # is an tool
 
             class ConstructedItem(
                 ConstructedItem
@@ -250,21 +264,30 @@ class ItemFactory:
                 def getAdditionalTooltipText(cls, *_) -> list:
                     return master.tooltip_extra
 
+        if self.name in self.FACTORY_MODIFIERS:
+            for modifier in self.FACTORY_MODIFIERS:
+                ConstructedItem = modifier.apply(self, ConstructedItem)
+
         if register:
-            G.registry.register(ConstructedItem)
+            shared.registry.register(ConstructedItem)
+
+        return ConstructedItem
 
     def setBaseClass(
         self, baseclass
     ):  # overwrites all previous base classes and replace them with the new(s)
-        self.baseclass = baseclass if type(baseclass) == list else [baseclass]
+        self.base_classes = baseclass if type(baseclass) == list else [baseclass]
         return self
 
     def setBaseClassByName(self, baseclassname: str):
         if (
             baseclassname == "food"
-            and mcpython.common.item.ItemFood.ItemFood not in self.baseclass
+            and mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            not in self.base_classes
         ):
-            self.baseclass.append(mcpython.common.item.ItemFood.ItemFood)
+            self.base_classes.append(
+                mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            )
         elif baseclassname == "default":
             self.setBaseClass(mcpython.common.item.AbstractItem.AbstractItem)
         return self
@@ -316,47 +339,98 @@ class ItemFactory:
     # food related stuff
 
     def setFoodValue(self, value: int):
-        if mcpython.common.item.ItemFood.ItemFood not in self.baseclass:
-            self.baseclass.append(mcpython.common.item.ItemFood.ItemFood)
+        if (
+            mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            )
         self.hungerregen = value
         return self
 
     def setEatCallback(self, function):
-        if mcpython.common.item.ItemFood.ItemFood not in self.baseclass:
-            self.baseclass.append(mcpython.common.item.ItemFood.ItemFood)
+        if (
+            mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractFoodItem.AbstractFoodItem
+            )
         self.eat_callback = function
         return self
 
     def setToolLevel(self, level: int):
         self.tool_level = level
-        if mcpython.common.item.ItemTool.ItemTool not in self.baseclass:
-            self.baseclass.append(mcpython.common.item.ItemTool.ItemTool)
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractToolItem.AbstractToolItem
+            )
         return self
 
     def setToolType(
-        self, tool_types: typing.List[mcpython.common.item.ItemTool.ItemTool]
+        self,
+        tool_types: typing.List[mcpython.common.item.AbstractToolItem.AbstractToolItem],
     ):
         self.tool_type = tool_types
-        if mcpython.common.item.ItemTool.ItemTool not in self.baseclass:
-            self.baseclass.append(mcpython.common.item.ItemTool.ItemTool)
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractToolItem.AbstractToolItem
+            )
         return self
 
-    def setToolBrakeMutli(self, multi: float):
+    def setToolBrakeMulti(self, multi: float):
         self.tool_speed_multi = multi
-        if mcpython.common.item.ItemTool.ItemTool not in self.baseclass:
-            self.baseclass.append(mcpython.common.item.ItemTool.ItemTool)
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractToolItem.AbstractToolItem
+            )
         return self
 
     def setToolBrakeMultiCallback(self, function):
         self.tool_speed_callback = function
-        if mcpython.common.item.ItemTool.ItemTool not in self.baseclass:
-            self.baseclass.append(mcpython.common.item.ItemTool.ItemTool)
+        if (
+            mcpython.common.item.AbstractToolItem.AbstractToolItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractToolItem.AbstractToolItem
+            )
+        return self
+
+    def set_durability(self, durability: int):
+        self.durability = durability
         return self
 
     def setArmorPoints(self, points: int):
         self.armor_points = points
-        if mcpython.common.item.ItemArmor.ItemArmor not in self.baseclass:
-            self.baseclass.append(mcpython.common.item.ItemArmor.ItemArmor)
+        if (
+            mcpython.common.item.AbstractArmorItem.AbstractArmorItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractArmorItem.AbstractArmorItem
+            )
+        return self
+
+    def set_damage_able(self, durability: int):
+        self.durability = durability
+        if (
+            mcpython.common.item.AbstractDamageBarItem.DamageOnUseItem
+            not in self.base_classes
+        ):
+            self.base_classes.append(
+                mcpython.common.item.AbstractDamageBarItem.DamageOnUseItem
+            )
         return self
 
     def setCustomFromItemFunction(self, function):

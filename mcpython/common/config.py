@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -18,20 +18,13 @@ from mcpython import shared
 
 MC_VERSION_BASE = "20w51a"
 VERSION_TYPE = "snapshot"
-# possible: [<pre>]<version>, <normal mc snapshot format>, snapshot dev <number of snapshot> cycle <cycle number>
-VERSION_NAME = "20w51a"
 
-DEVELOPING_FOR = "20w51a"
-DEVELOPMENT_COUNTER = 4
 
-VERSION_ID = 0
+with open(shared.local + "/version.json") as f:
+    data = json.load(f)
 
-if os.path.exists(shared.local + "/version.json"):
-    with open(shared.local + "/version.json") as f:
-        data = json.load(f)
-
-    VERSION_ID = data["id"]
-    VERSION_NAME = data["name"]
+VERSION_ID = data["id"]
+VERSION_NAME = data["name"]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE
@@ -102,8 +95,8 @@ FOG_DISTANCE = (
 
 BIOME_HEIGHT_RANGE_MAP = (
     {  # an dict of biome name: height range storing the internal height range
-        "minecraft:plains": (10, 30),
         "minecraft:dessert": (10, 30),
+        "minecraft:mountains": (10, 50),
     }
 )
 
@@ -210,6 +203,7 @@ ENABLED_EXTRA_BLOCKS = {
 }
 
 # I'm to lazy to write these...
+# todo: migrate to material system
 for wood in ["oak", "spruce", "birch", "jungle", "acacia", "dark_oak"]:
     pass
 

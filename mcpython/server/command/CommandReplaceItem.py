@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -59,7 +59,7 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
     @classmethod
     def parse(cls, values: list, modes: list, info):
         if values[0] == "block":
-            block = G.world.get_active_dimension().get_block(values[1])
+            block = info.entity.dimension.get_block(values[1])
             if block is not None and type(block) != str:
                 if len(block.get_inventories()) == 0:
                     G.chat.print_ln("[ERROR] block does not have any inventory")

@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -23,6 +23,7 @@ import mcpython.client.state.StatePartConfigBackground
 import mcpython.common.DataPack
 import mcpython.client.state.StateWorldGeneration
 from mcpython.util.annotation import onlyInClient
+import mcpython.server.worldgen.noise.NoiseManager
 
 
 @onlyInClient()
@@ -64,6 +65,14 @@ class StateWorldGenerationConfig(State.State):
             ),
             UIPartButton.UIPartToggleButton(
                 (300, 20), ["default"], (20, 240), anchor_window="MD"
+            ),
+            UIPartButton.UIPartToggleButton(
+                (300, 20),
+                list(
+                    mcpython.server.worldgen.noise.NoiseManager.manager.instances.keys()
+                ),
+                (-320, 240),
+                anchor_window="MD",
             ),
         ]
         text = [
@@ -124,25 +133,28 @@ class StateWorldGenerationConfig(State.State):
         return self.parts[4].text
 
     def get_seed(self) -> int:
-        v = self.parts[6].entered_text
+        v = self.parts[7].entered_text
         if v != "":
             return hash(v)
         return random.randint(-1000000000000000000, 1000000000000000000)
 
     def get_player_name(self) -> str:
-        v = self.parts[7].entered_text
+        v = self.parts[8].entered_text
         return "unknown" if v == "" else v
 
     def get_world_size(self):
-        x = int(self.parts[8].entered_text) if self.parts[8].entered_text != "" else 3
-        z = int(self.parts[9].entered_text) if self.parts[9].entered_text != "" else 3
+        x = int(self.parts[9].entered_text) if self.parts[9].entered_text != "" else 3
+        z = int(self.parts[10].entered_text) if self.parts[10].entered_text != "" else 3
         return x, z
+
+    def get_seed_source(self):
+        return self.parts[5].text
 
     def on_back_press(self, x, y):
         G.state_handler.switch_to("minecraft:startmenu")
 
     def on_generate_press(self, x, y):
-        filename = self.parts[9].entered_text
+        filename = self.parts[11].entered_text
         if filename == "":
             filename = "New World"
         G.world.cleanup(remove_dims=True, filename=filename)

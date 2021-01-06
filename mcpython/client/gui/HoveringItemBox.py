@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -33,6 +33,8 @@ class IHoveringItemBoxDefinition:
     """
     Base class for an ToolTip text provider. Should generate out of an ItemStack an html-string-list
     """
+
+    PLUGINS = []
 
     @classmethod
     def setup(cls):
@@ -76,7 +78,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
         if raw == localized_name:
             localized_name = itemstack.item.__class__.__name__
         if localized_name == "ConstructedItem":
-            localized_name = "!MissingName!{{{};{}x}}".format(
+            localized_name = "<MissingName:{{{};{}x}}>".format(
                 item_name, itemstack.amount
             )
         stuff = (
@@ -89,7 +91,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
                 self.default_style.format(
                     color="gray", text=mcpython.common.Language.translate(line)
                 )
-                for line in itemstack.item.getAdditionalTooltipText(itemstack, self)
+                for line in itemstack.item.get_additional_tooltip_text(itemstack, self)
             ]
             + (
                 [

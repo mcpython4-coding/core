@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -19,12 +19,16 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @shared.world_generation_handler
-class DefaultTopLayerILayer(ILayer):
+class DefaultTopLayerLayer(ILayer):
     NAME = "minecraft:top_layer_default"
     DEPENDS_ON = ["minecraft:heightmap_default", "minecraft:biome_map_default"]
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME, dimensions=2, scale=10 ** 3
+        NAME,
+        dimensions=2,
+        scale=10 ** 3,
+        octaves=5,
+        merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
     )
 
     @classmethod
@@ -56,9 +60,12 @@ class DefaultTopLayerILayer(ILayer):
             if block and (block if type(block) == str else block.NAME) in [
                 "minecraft:stone"
             ]:
-                if i == height - 1:
-                    reference.schedule_block_add((x, y, z), decorators[i])
-                else:
-                    reference.schedule_block_add(
-                        (x, y, z), decorators[i], immediate=i >= height - 1
-                    )
+                try:
+                    if i == height - 1:
+                        reference.schedule_block_add((x, y, z), decorators[i])
+                    else:
+                        reference.schedule_block_add(
+                            (x, y, z), decorators[i], immediate=i >= height - 1
+                        )
+                except IndexError:
+                    pass

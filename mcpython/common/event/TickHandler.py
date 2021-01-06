@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -121,7 +121,8 @@ class TickHandler:
         self.bind(function, tick * 2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
-        cx, cz = mcpython.util.math.positionToChunk(
+        # todo: make iterate over all players
+        cx, cz = mcpython.util.math.position_to_chunk(
             G.world.get_active_player().position
         )
         for dx in range(
@@ -147,12 +148,12 @@ class TickHandler:
                                 random.randint(0, 15),
                             )
                             position = (x + ddx, ddy, z + ddz)
-                            blockinst = G.world.get_active_dimension().get_block(
+                            instance = G.world.get_active_dimension().get_block(
                                 position
                             )
-                            if blockinst is not None and type(blockinst) != str:
-                                if blockinst.ENABLE_RANDOM_TICKS:
-                                    blockinst.on_random_update()
+                            if instance is not None and type(instance) != str:
+                                if instance.ENABLE_RANDOM_TICKS:
+                                    instance.on_random_update()
 
 
 handler = G.tick_handler = TickHandler()

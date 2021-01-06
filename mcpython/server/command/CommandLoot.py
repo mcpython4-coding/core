@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -63,7 +63,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
                         G.loot_table_handler.get_drop_for_block(block, entity)
                     )
         elif values[0] == "insert":
-            block = G.world.get_active_dimension().get_block(values[1])
+            block = info.entity.dimension.get_block(values[1])
             if block is None or type(block) == str:
                 logger.println(
                     "[CHAT][ERROR] position {} contains NO block".format(values[1])
@@ -76,10 +76,10 @@ class CommandLoot(mcpython.server.command.Command.Command):
             inventory = block.get_inventories()[0]
             if values[2] == "loot":
                 inventory.insert_items(
-                    G.loot_table_handler.roll(values[3], player=entity)
+                    G.loot_table_handler.roll(values[3], player=info.entity)
                 )
             elif values[2] == "mine":
-                blockb = G.world.get_active_dimension().get_block(values[3])
+                blockb = info.entity.dimension.get_block(values[3])
                 if blockb is None or type(blockb) == str:
                     logger.println(
                         "[CHAT][ERROR] position {} does NOT contain any block".format(

@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -18,17 +18,18 @@ import mcpython.util.enums
 class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
     # todo: add bounding-box
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
+    def __init__(self):
+        super().__init__()
         self.connections = {
             "north": False,
             "east": False,
             "south": False,
             "west": False,
             "up": False,
-        }
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
 
     def on_block_added(self):
@@ -45,17 +46,19 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
     def on_block_update(self):
         x, y, z = self.position
 
-        block_north: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x + 1, y, z))
+        dim = G.world.get_dimension_by_name(self.dimension)
+
+        block_north: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x + 1, y, z)
         )
-        block_east: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x, y, z + 1))
+        block_east: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x, y, z + 1)
         )
-        block_south: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x - 1, y, z))
+        block_south: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x - 1, y, z)
         )
-        block_west: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x, y, z - 1))
+        block_west: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x, y, z - 1)
         )
 
         self.connections["east"] = block_north is not None and (
@@ -83,8 +86,8 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
             self.connections["north"] != self.connections["south"]
             or self.connections["east"] != self.connections["west"]
         )
-        upper_block: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_active_dimension().get_block((x, y + 1, z))
+        upper_block: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
+            (x, y + 1, z)
         )
         if (
             not self.connections["up"]

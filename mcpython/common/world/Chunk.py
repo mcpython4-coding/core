@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -51,23 +51,38 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param position: the position of the chunk
         WARNING: use Dimension.get_chunk() where possible [saver variant, will do some work in the background]
         """
+        super().__init__()
         self.dimension = dimension
         self.position = position
-        self.world = {}
-        self.is_ready = (
-            False  # used when the chunks gets invalid or is loaded at the moment
-        )
-        self.visible = False  # used when the chunk should be visible
-        self.loaded = False  # used if load success
-        self.generated = False  # used if generation success
-        self.attr = {}  # todo: rewrite!
+
+        # used when the chunks gets invalid or is loaded at the moment
+        self.is_ready = False
+
+        # used when the chunk should be visible
+        self.visible = False
+
+        # used if load success
+        self.loaded = False
+
+        # used if generation success
+        self.generated = False
+
+        # if the chunk was modified since last save
+        self.dirty = False
+
+        self.attr: typing.Dict[str, typing.Any] = {}  # todo: rewrite!
         for attr in self.attributes.keys():
             v = self.attributes[attr][1]
             if hasattr(v, "copy") and callable(v.copy):
                 v = v.copy()
             self.attr[attr] = v
-        self.positions_updated_since_last_save = set()
-        self.entities = set()
+
+    def as_shareable(self) -> mcpython.common.world.AbstractInterface.IChunk:
+        return self
+
+    def mark_dirty(self):
+        self.dirty = True
+        return self
 
     def get_dimension(self):
         return self.dimension
@@ -93,6 +108,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param value: the value to use
         """
         self.attr[name] = value
+        self.mark_dirty()
 
     def get_value(self, name: str):
         """
@@ -106,10 +122,12 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         Will draw the chunk with the content for it
         """
-        if not self.is_ready:
+        if not self.is_ready or not self.visible:
             return
-        if not self.visible:
-            return
+
+        # todo: add an list of blocks which want an draw() call
+
+        # load if needed
         if not self.loaded:
             G.tick_handler.schedule_once(
                 G.world.save_file.read,
@@ -117,42 +135,53 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 dimension=self.dimension.get_id(),
                 chunk=self.position,
             )
+
+        # todo: can we also use batches & manipulate vertex data?
         for entity in self.entities:
             entity.draw()
 
+    ALL_EXPOSED = {x: True for x in mcpython.util.enums.EnumSide.iterate()}
+
     def exposed_faces(
         self, position: typing.Tuple[int, int, int]
-    ) -> typing.Dict[mcpython.util.enums.EnumSide, bool]:
+    ) -> typing.Dict[str, bool]:
         """
         returns an dict of the exposed status of every face of the given block
         :param position: the position to check
         :return: the dict for the status
         """
-        x, y, z = position
+        instance = self.get_block(position)
+
+        if instance is None or type(instance) == str:
+            return self.ALL_EXPOSED.copy()
+
         faces = {}
-        blockinst = self.get_block(position)
-        if blockinst is None or type(blockinst) == str:
-            return {x: True for x in mcpython.util.enums.EnumSide.iterate()}
-        for face in mcpython.util.enums.EnumSide.iterate():
-            dx, dy, dz = face.relative
-            pos = (x + dx, y + dy, z + dz)
-            chunk = self.dimension.get_chunk_for_position(pos, generate=False)
-            if chunk is None:
-                continue
-            if not chunk.is_loaded() and G.world.hide_faces_to_not_generated_chunks:
-                faces[face] = False
+
+        for face in mcpython.util.enums.FACE_ORDER:
+            pos = face.relative_offset(position)
+            chunk_position = mcpython.util.math.position_to_chunk_unsafe(pos)
+
+            if chunk_position != self.position:
+                chunk = self.dimension.get_chunk(chunk_position, generate=False)
+
+                if chunk is None:
+                    continue
             else:
-                block = self.dimension.get_block(pos)
-                if block is None:
-                    faces[face] = True
-                elif type(block) == str:
-                    faces[face] = False  # todo: add an callback when the block is ready
-                elif not block.face_solid[face.invert()]:
-                    faces[face] = True
-                elif not blockinst.face_solid[face]:
-                    faces[face] = True
-                else:
-                    faces[face] = False
+                chunk = self
+
+            if not chunk.is_loaded() and G.world.hide_faces_to_not_generated_chunks:
+                faces[face.normal_name] = False
+            else:
+                block = chunk.get_block(pos)
+
+                faces[face.normal_name] = block is None or (
+                    not isinstance(block, str)
+                    and (
+                        not block.face_solid[face.invert()]
+                        or not instance.face_solid[face]
+                    )
+                )
+
         return faces
 
     def is_position_blocked(self, position: typing.Tuple[float, float, float]) -> bool:
@@ -175,64 +204,76 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         block_update=True,
         block_update_self=True,
         lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None,
+        check_build_range=True,
+        block_state=None,
     ):
         """
-        adds an block to the given position
+        Adds an block to the given position
         :param position: the position to add
         :param block_name: the name of the block or an instance of it
         :param immediate: if the block should be shown if needed
         :param block_update: if an block-update should be send to neighbors blocks
         :param block_update_self: if the block should get an block-update
         :param lazy_setup: an callable for setting up the block instance
+        :param check_build_range: if the build limits should be checked
+        :param block_state: the block state to create in, or None if not set
         :return: the block instance or None if it could not be created
         """
-        if position[1] < 0 or position[1] > 255:
+        # check if it is in build range
+        r = self.dimension.get_dimension_range()
+        if check_build_range and (position[1] < r[0] or position[1] > r[1]):
             return
+
         if position != mcpython.util.math.normalize(position):
             raise ValueError(
                 "position '{}' is no valid block position".format(position)
             )
-        # logger.println("adding", block_name, "at", position)
+
         if position in self.world:
             self.remove_block(position, immediate=immediate, block_update=block_update)
+
         if block_name in [None, "air", "minecraft:air"]:
             return
+
         if issubclass(type(block_name), Block.AbstractBlock):
             block = block_name
             block.position = position
+            block.dimension = self.dimension.get_name()
             if lazy_setup is not None:
                 lazy_setup(block)
             block.face_state.update()
         else:
             table = G.registry.get_by_name("minecraft:block").full_table
             if block_name not in table:
-                logger.println(
-                    "[CHUNK][ERROR] can't add block named '{}'. Block class not found!".format(
-                        block_name
-                    )
-                )
+                self.remove_block(position)
                 return
             block = table[block_name]()
             block.position = position
+            block.dimension = self.dimension.get_name()
             if lazy_setup is not None:
                 lazy_setup(block)
-        block.on_block_added()
-        if self.now.day == 13 and self.now.month == 1 and "diorite" in block.NAME:
-            logger.println(
-                "[WARNING][CLEANUP] you are not allowed to set block '{}' as it contains diorite!".format(
-                    block.NAME
-                )
-            )
-            # for developers: easter egg! [DO NOT REMOVE, UUK'S EASTER EGG]
-            return self.add_block(position, "minecraft:stone")
+
         self.world[position] = block
+
+        if self.now.day == 13 and self.now.month == 1 and "diorite" in block.NAME:
+            return self.add_block(position, block.NAME.replace("diorite", "andesite"))
+
+        block.on_block_added()
+
+        if block_state is not None:
+            block.set_model_state(block_state)
+            block.face_state.update()
+
+        self.mark_dirty()
+        self.positions_updated_since_last_save.add(position)
+
         if immediate:
             if self.exposed(position):
                 self.show_block(position)
             if block_update:
                 self.on_block_updated(position, include_itself=block_update_self)
             self.check_neighbors(position)
-        self.positions_updated_since_last_save.add(position)
+
         return block
 
     def on_block_updated(
@@ -279,16 +320,23 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         if position not in self.world:
             return
+
         if issubclass(type(position), Block.AbstractBlock):
             position = position.position
+
         self.world[position].on_block_remove(reason)
         self.world[position].face_state.hide_all()
+
         del self.world[position]
+
         if block_update:
             self.on_block_updated(position, include_itself=block_update_self)
+
         if immediate:
             self.check_neighbors(position)
+
         self.positions_updated_since_last_save.add(position)
+        self.mark_dirty()
 
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         """
@@ -320,14 +368,18 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         if issubclass(type(position), Block.AbstractBlock):
             position = position.position
+
         if position not in self.world:
             return
+
         if immediate:
             self.world[position].face_state.update(redraw_complete=True)
         else:
             G.world_generation_handler.task_handler.schedule_visual_update(
                 self, position
             )
+
+        self.mark_dirty()
 
     def hide_block(
         self,
@@ -339,10 +391,10 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         block from the world.
         :param position: The (x, y, z) position of the block to hide.
         :param immediate: Whether or not to immediately remove the block from the canvas.
-
         """
         if issubclass(type(position), Block.AbstractBlock):
             position = position.position
+
         if immediate:
             if position not in self.world:
                 return
@@ -352,6 +404,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 self, position
             )
 
+        self.mark_dirty()
+
     def show(self, force=False):
         """
         will show the chunk
@@ -359,8 +413,10 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         if self.visible and not force:
             return
+
         self.visible = True
         self.update_visible()
+        self.mark_dirty()
 
     def hide(self, force=False):
         """
@@ -369,14 +425,17 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         if not self.visible and not force:
             return
+
         self.visible = False
         self.hide_all()
+        self.mark_dirty()
 
     def is_visible(self) -> bool:
         return self.visible
 
     def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
         self.positions_updated_since_last_save.add(position)
+
         if not self.exposed(position):
             self.hide_block(position)
         elif hide:
@@ -412,11 +471,10 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
     ) -> typing.Union[Block.AbstractBlock, str, None]:
         """
         will get the block at an given position
-        :param position: the position to check for
+        :param position: the position to check for, must be normalized
         :return: None if no block, str if scheduled and Block.Block if created
         todo: split up into get_block_generated and get_block_un_generated
         """
-        position = mcpython.util.math.normalize(position)
         return (
             self.world[position]
             if position in self.world
@@ -427,10 +485,13 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         G.world_generation_handler.task_handler.clear_chunk(self)
         for block in self.world.values():
             del block
+
         self.world.clear()
         self.attr.clear()
+
         for entity in self.entities:
             del entity
+
         self.entities.clear()
         del self.dimension
 

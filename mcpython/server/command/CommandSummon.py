@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -41,7 +41,7 @@ class CommandSummon(mcpython.server.command.Command.Command):
         position = values[1] if len(values) > 1 else info.entity.position
         # todo: add check if entity is summon-able by command
         try:
-            G.entity_handler.add_entity(values[0], position, check_summon=True)
+            G.entity_handler.spawn_entity(values[0], position, check_summon=True)
         except ValueError:
             logger.println(
                 "[COMMAND][SUMMON] entity type '{}' not found!".format(values[0])

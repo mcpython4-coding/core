@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -43,6 +43,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.dimensions: typing.Dict[
             int, mcpython.common.world.AbstractInterface.IDimension
         ] = {}  # todo: change for str-based
+        self.dim_to_id = {}
         G.dimension_handler.init_dims()
         self.active_dimension: int = (
             0  # todo: change to str; todo: move to player; todo: make property
@@ -81,7 +82,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if not override and name in self.players:
             return self.players[name]
-        self.players[name] = G.entity_handler.add_entity(
+        self.players[name] = G.entity_handler.spawn_entity(
             "minecraft:player", (0, 0, 0), name
         )
         if add_inventories:
@@ -126,6 +127,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         return self.get_dimension(self.active_dimension)
 
+    def get_dimension_by_name(self, name: str):
+        return self.dimensions[self.dim_to_id[name]]
+
     def add_dimension(
         self, dim_id: int, name: str, dim_config=None
     ) -> mcpython.common.world.AbstractInterface.IDimension:
@@ -141,6 +145,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         dim = self.dimensions[dim_id] = mcpython.common.world.Dimension.Dimension(
             self, dim_id, name, gen_config=dim_config
         )
+        self.dim_to_id[dim.name] = dim_id
         G.world_generation_handler.setup_dimension(dim, dim_config)
         return dim
 
@@ -156,7 +161,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         if self.CANCEL_DIM_CHANGE:
             logger.println("interrupted!")
             return
-        sector = mcpython.util.math.positionToChunk(
+        sector = mcpython.util.math.position_to_chunk(
             G.world.get_active_player().position
         )
         logger.println("unloading chunks...")
@@ -178,9 +183,11 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if dim_id in self.dimensions:
             return self.dimensions[dim_id]
-        for dimension in self.dimensions.values():
-            if dimension.get_name() == dim_id or dimension.get_id() == dim_id:
-                return dimension
+
+        if dim_id in self.dim_to_id:
+            return self.dimensions[self.dim_to_id[dim_id]]
+
+        # logger.print_stack("[ERROR] failed to access dim '{}', below call stack".format(dim_id))
 
     def hit_test(
         self,
@@ -362,7 +369,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         if remove_dims:
             self.dimensions.clear()
             G.dimension_handler.init_dims()
-        [inventory.on_world_cleared() for inventory in G.inventory_handler.inventorys]
+        [inventory.on_world_cleared() for inventory in G.inventory_handler.inventories]
         self.reset_config()
         G.world.get_active_player().flying = False
         for inv in G.world.get_active_player().get_inventories():

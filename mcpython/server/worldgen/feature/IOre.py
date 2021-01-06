@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -16,6 +16,7 @@ from abc import ABC
 import mcpython.common.world.Dimension
 import mcpython.common.world.AbstractInterface
 import mcpython.server.worldgen.feature.IFeature
+from mcpython import shared
 
 
 def place_default(
@@ -117,3 +118,18 @@ class CoalOre(INormalOre):
     @staticmethod
     def get_ore_block() -> str or list:
         return "minecraft:coal_ore"
+
+
+@shared.registry
+class DefaultOreFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
+    NAME = "minecraft:default_ore_feature"
+
+
+@shared.registry
+class DefaultEmeraldFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
+    NAME = "minecraft:default_emerald_ore_feature"
+
+
+@shared.registry
+class DefaultInfestedStoneFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
+    NAME = "minecraft:default_infested_stone_feature"

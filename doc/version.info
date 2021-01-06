@@ -1385,3 +1385,43 @@ R   [uuk]: improved world serialization API
 [uuk]: implemented NoiseManager system for generating noises
 [uuk]: added injection point for other noise backends
 [uuk]: warning: as the nature of this goes, this is breaking
+[uuk]: changed version formatting of mcpython
+([uuk]: added test build system)
+[uuk]: added noise backend selector element to UI
+[uuk]: dumped json data by save-1file is now well-formatted
+[uuk]: fixed save list getting out of order / not all visible [issue 245]
+[uuk]: implemented dummy implementation of end world generator
+[uuk]: implemented amplified world generator
+[uuk]: implemented injection point for different octave mergers
+[uuk]: added mountain biome
+[uuk]: changed feature <-> biome linking
+[uuk]: added dummy classes for other features
+[uuk]: improved noise code
+[uuk]: fixed issue 246: world name was not read correctly in the gui
+[uuk]: fixed oak & spruce tree generator
+[uuk]: implemented some of the feature generators
+[uuk]: improved API
+[uuk]: implemented damage base classes for items
+[uuk]: some work on block rendering API
+[uuk]: some entity rendering API changes
+[uuk]: injection point for custom factories
+[uuk]: implemented material registry system
+[uuk]: optimized world generation system and subsequent parts
+[uuk]: implemented new noise manager method: GeoNoiseManager for geometric median
+[uuk]: improved speed of debug world generators
+[uuk]: done some work to make blocks work in non-active dimensions
+[uuk]: improved overall API
+[uuk]: made world generation modes serialize-able to data files
+[uuk]: features are now registered properly to the registry
+[uuk]: biomes can now be serialized
+[uuk]: data serialization helper takes now optional a loading stage to work in
+[uuk]: dumped pyglet version
+[uuk]: improved reloading code
+[uuk]: improved block item generator code
+[uuk]: rewritten how loading stages work, using now a complex system with new python 3.9 features
+[uuk]: improved item break / add system, introducing custom item-saved properties and a gamemode-2 break API
+[uuk]: LaunchWrapper has now a stump interface for launching a server, but it defaults to client
+[uuk]: rewritten factory system, starting with BlockFactory. It will break any existing code using its API's
+[uuk]: this is by far the most breaking thing for this snapshot
+[uuk]: nothing may work!
+[github]: released snapshot 21w01a

@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -20,16 +20,18 @@ class DamageSource:
         self.attributes = {}
         self.__attributes = set()
         self.type = name
-        self.bypasses_armor = None
-        self.bypasses_invulnerability = None
-        self.bypasses_magic = None
+
+        self.bypasses_armor = False
+        self.bypasses_invulnerability = False
+        self.bypasses_magic = False
+        self.is_explosion = False
+        self.is_fire = False
+        self.is_magic = False
+        self.is_projectile = False
+        self.is_lighting = False
+
         self.target_entity = None
         self.source_entity = None
-        self.is_explosion = None
-        self.is_fire = None
-        self.is_magic = None
-        self.is_projectile = None
-        self.is_lighting = None
 
     def setAttribute(self, key, value):
         self.__attributes.add(key)

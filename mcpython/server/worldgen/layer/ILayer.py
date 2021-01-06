@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -16,15 +16,20 @@ import mcpython.common.world.AbstractInterface
 
 
 class LayerConfig:
-    def __init__(self, *config, **cconfig):
+    def __init__(self, *config, **attr_config):
         self.config = config
         self.layer: typing.Optional["ILayer"] = None
-        for key in cconfig.keys():
-            setattr(self, key, cconfig[key])
+        for key in attr_config.keys():
+            setattr(self, key, attr_config[key])
         self.dimension: typing.Optional[
             mcpython.common.world.AbstractInterface.IDimension
         ] = None
         self.world_generator_config = None
+
+    def apply_config(self, attr_config: dict):
+        for key in attr_config:
+            setattr(self, key, attr_config[key])
+        return self
 
 
 class ILayer(mcpython.common.event.Registry.IRegistryContent):

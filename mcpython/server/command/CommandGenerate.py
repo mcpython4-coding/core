@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -43,12 +43,12 @@ class CommandGenerate(mcpython.server.command.Command.Command):
 
     @staticmethod
     def parse(values: list, modes: list, info):
-        dim = G.world.get_active_dimension()
+        dim = info.entity.dimension
         if len(values) > 0:  # have we definite an chunk?
             chunkf = tuple(values[:2])
             chunkt = tuple(values[2:]) if len(values) > 2 else chunkf
         else:
-            chunkf = chunkt = mcpython.util.math.positionToChunk(
+            chunkf = chunkt = mcpython.util.math.position_to_chunk(
                 G.world.get_active_player().position
             )
         fx, fz = chunkf

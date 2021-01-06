@@ -5,22 +5,22 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared as G
-import mcpython.common.entity.Entity
+import mcpython.common.entity.AbstractEntity
 import mcpython.common.block.AbstractBlock
 import mcpython.util.math
 
 
 @G.registry
-class FallingBlock(mcpython.common.entity.Entity.Entity):
+class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     """
     Class for the falling block entity
 
-    todo: can we replicate some original block behaviour?
+    todo: can we replicate some original block behaviour, like inventories, interaction, ...?
     """
 
     NAME = "minecraft:falling_block"
@@ -38,17 +38,19 @@ class FallingBlock(mcpython.common.entity.Entity.Entity):
     def draw(self):
         if self.block is not None:
             self.block.position = self.position
-            G.model_handler.draw_block(self.block)
+            G.model_handler.draw_block(self.block)  # todo: use batch
 
     def tick(self, dt):
         super().tick(dt)
 
+        if self.block is None:
+            self.kill()
+            return
+
         x, y, z = mcpython.util.math.normalize(self.position)
         block = self.chunk.get_block((x, y - 1, z))
         if (self.position[1] - y <= 0.1) and not (block is None or type(block) == str):
-            if self.block is None:
-                self.kill()
-            elif not block.IS_SOLID:
+            if not block.IS_SOLID:
                 self.kill()  # todo: drop item in world
             else:
                 self.chunk.add_block((x, y, z), self.block)

@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -13,14 +13,14 @@ import typing
 
 import mcpython.server.worldgen.noise.NoiseManager
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.event.EventHandler
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 import mcpython.common.world.Chunk
 import mcpython.common.world.AbstractInterface
 
 
-@G.world_generation_handler
+@shared.world_generation_handler
 class DefaultBiomeMapLayer(ILayer):
     NAME = "minecraft:biome_map_default"
     DEPENDS_ON = ["minecraft:landmass_default"]

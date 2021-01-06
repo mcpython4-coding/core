@@ -145,4 +145,7 @@ issue 219:
 issue 235:
     bug: tools are CONSUMED when using them
 
-[244]
+issue 247:
+    bug: blocks get hidden when updated [whole world] leading into big lag
+    properly caused by a face-miss-calculation in the new rendering parts
+    since: development of 21w01a

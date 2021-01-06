@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -31,12 +31,13 @@ class ISlab(mcpython.common.block.AbstractBlock.AbstractBlock):
     base class for slabs
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
+    def __init__(self):
+        super().__init__()
         self.type = SlabModes.TOP
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
-        }
 
     def on_block_added(self):
         if self.real_hit and self.real_hit[1] - self.position[1] > 0:

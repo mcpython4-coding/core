@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -14,7 +14,7 @@ from mcpython import logger
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
-import mcpython.client.gui.crafting.FurnaceCraftingHelper
+import mcpython.common.container.crafting.FurnaceCraftingHelper
 import mcpython.common.event.EventHandler
 import pyglet
 import time
@@ -145,7 +145,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
                 #           self.slots[2].itemstack.amount, self.slots[2].itemstack.item.STACK_SIZE)
                 self.reset()
                 return
-            self.recipe: mcpython.client.gui.crafting.FurnaceCraftingHelper.FurnaceRecipe = (
+            self.recipe: mcpython.common.container.crafting.FurnaceCraftingHelper.FurnaceRecipe = (
                 recipe
             )
             self.block.active = True
@@ -222,7 +222,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
             "gameloop:tick:end", self.on_tick
         )
 
-    def draw(self, hoveringslot=None):
+    def draw(self, hovering_slot=None):
         """
         draws the inventory
         """
@@ -257,7 +257,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):
-            slot.draw(x, y, hovering=slot == hoveringslot)
+            slot.draw(x, y, hovering=slot == hovering_slot)
         for slot in (
             shared.world.get_active_player().inventory_main.slots[:36] + self.slots
         ):

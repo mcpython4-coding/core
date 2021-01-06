@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -17,12 +17,12 @@ import typing
 
 class ModDependency:
     """
-    class for an dependency-like reference to an mod
+    Class for an dependency-like reference to an mod
     """
 
     def __init__(self, name: str, version_min=None, version_max=None, versions=None):
         """
-        creates an new mod dependency instance. need to be assigned with another mod. if no version(s) is/are specified,
+        Creates an new mod dependency instance. need to be assigned with another mod. if no version(s) is/are specified,
         all are allowed
         :param name: the name of the mod
         :param version_min: the minimum version to use, including
@@ -58,16 +58,16 @@ class ModDependency:
         mod = G.mod_loader.mods[self.name]
         if self.version_range[0] is not None:
             if self.version_range[1] is not None:
-                return self.__test_for(mod.version, self.version_range)
-            return self.__test_for(mod.version, self.version_range[0])
+                return self.test_match(mod.version, self.version_range)
+            return self.test_match(mod.version, self.version_range[0])
         if self.versions is None:
             return True
         if type(self.versions) == list:
-            return any([self.__test_for(mod.version, e) for e in self.versions])
+            return any([self.test_match(mod.version, e) for e in self.versions])
         return False
 
     @classmethod
-    def __test_for(cls, version, args: tuple) -> bool:
+    def test_match(cls, version, args: tuple) -> bool:
         """
         will test for the arrival of the dependency
         :param version: the version found
@@ -130,7 +130,12 @@ class Mod:
     mod.json file.
     """
 
-    def __init__(self, name: str, version: typing.Union[tuple, str, set, list]):
+    def __init__(
+        self,
+        name: str,
+        version: typing.Union[tuple, str, set, list],
+        version_name: str = None,
+    ):
         """
         creates an new mod
         :param name: the name of the mod
@@ -158,6 +163,7 @@ class Mod:
         ]  # need, possible, not possible, before, after, only with, only without
         self.path = None
         self.version = version  # the version of the mod, as an tuple
+        self.version_name = version_name
         self.package = None  # the package where the mod-file was found
         G.mod_loader.add_to_add(self)
 
@@ -165,7 +171,9 @@ class Mod:
         """
         will transform the mod into an string
         """
-        return "{} ({})".format(self.name, ".".join([str(e) for e in self.version]))
+        return "{} ({})".format(self.name, ".".join([str(e) for e in self.version])) + (
+            "" if self.version_name is None else " as " + self.version_name
+        )
 
     def __repr__(self):
         return "Mod({},{})".format(self.name, self.version)
@@ -177,14 +185,14 @@ class Mod:
         """
         if path_name is None:
             path_name = self.name
-        import mcpython.common.mod.ResourcePipe
+        import mcpython.common.data.ResourcePipe
 
         self.eventbus.subscribe(
             "stage:mod:init",
-            lambda: mcpython.common.mod.ResourcePipe.handler.register_for_mod(
+            lambda: mcpython.common.data.ResourcePipe.handler.register_for_mod(
                 self.name, path_name
             ),
-            info="adding resources",
+            info="adding resource load subscriptions",
         )
 
     def add_dependency(self, depend: typing.Union[str, ModDependency]):

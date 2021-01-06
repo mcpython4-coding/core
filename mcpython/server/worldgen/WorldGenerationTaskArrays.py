@@ -5,14 +5,18 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.common.world.AbstractInterface
 import time
 from mcpython import logger, shared
 import multiprocessing
+import marshal
+import pickle
 
 
 class WorldGenerationTaskHandler:
@@ -22,7 +26,7 @@ class WorldGenerationTaskHandler:
     """
 
     def __init__(self):
-        self.chunks = set()
+        self.chunks: typing.Set[mcpython.common.world.AbstractInterface.IChunk] = set()
         self.data_maps = [{}, {}, {}]  # invoke, world_changes, shown_updates
 
     def get_total_task_stats(self) -> list:
@@ -357,6 +361,70 @@ class IWorldGenerationTaskHandlerReference:
     def get_block(self, position, chunk=None):
         raise NotImplementedError()
 
+    def get_block_name(self, position, chunk=None):
+        block = self.get_block(position, chunk)
+        if hasattr(block, "NAME"):
+            return block.NAME
+        return block
+
+    def fill_area(
+        self,
+        start: typing.Tuple[int, int, int],
+        end: typing.Tuple[int, int, int],
+        block,
+        only_non_air=False,
+        **kwargs
+    ):
+        for y in range(start[1], end[1] + 1):
+            for x in range(start[0], end[0] + 1):
+                for z in range(start[2], end[2] + 1):
+                    if not only_non_air or self.get_block((x, y, z)) is not None:
+                        self.schedule_block_add((x, y, z), block, **kwargs)
+
+    def fill_area_inner_outer(
+        self,
+        start: typing.Tuple[int, int, int],
+        end: typing.Tuple[int, int, int],
+        inner_block,
+        outer_block,
+        only_non_air=False,
+        inner_config=None,
+        outer_config=None,
+    ):
+        for y in range(start[1], end[1] + 1):
+            for x in range(start[0], end[0] + 1):
+                for z in range(start[2], end[2] + 1):
+                    if not only_non_air or self.get_block((x, y, z)) is not None:
+                        if (
+                            y not in (start[1], end[1])
+                            and x not in (start[0], end[0])
+                            and z not in (start[2], end[2])
+                        ):
+                            if inner_config is None:
+                                self.schedule_block_add((x, y, z), inner_block)
+                            else:
+                                self.schedule_block_add(
+                                    (x, y, z), inner_block, **inner_config
+                                )
+                        else:
+                            if outer_config is None:
+                                self.schedule_block_add((x, y, z), outer_block)
+                            else:
+                                self.schedule_block_add(
+                                    (x, y, z), outer_block, **outer_config
+                                )
+
+    def replace_air_and_liquid_downwards(self, block, x, y, z, delta, liquids):
+        for dy in range(delta, 0, -1):
+            b = self.get_block((x, y - dy, z))
+            if b is None or b in liquids:
+                self.schedule_block_add((x, y - dy, z), block)
+            else:
+                return
+
+    def get_biome_at(self, x, z) -> str:
+        raise NotImplementedError()
+
 
 class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
     """
@@ -396,51 +464,131 @@ class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
         self.handler.schedule_visual_update(self.chunk, position)
 
     def get_block(self, position, chunk=None):
-        return self.handler.get_block(position, chunk)
+        return self.handler.get_block(
+            position, chunk if chunk is not None else self.chunk
+        )
+
+    def get_biome_at(self, x, z) -> str:
+        return self.chunk.get_value("minecraft:biome_map")[x, z]
 
 
 class OffProcessTaskHelper:
     class OffProcessTaskHelperShared:
-        def __init__(self):
+        def __init__(
+            self, reference: "ProcessSeparatedWorldGenerationTaskHandlerReference"
+        ):
             self.running = True
+            self.reference = reference
 
             self.task_queue = multiprocessing.Queue()
             self.task_data_out = multiprocessing.Queue()
 
         def run(self):
             while self.running:
-                if not self.task_queue.empty():
-                    layer, reference, config = self.task_queue.get()
-                    layer.add_generate_functions_to_chunk(config, reference)
-                    reference.execute_tasks()
+                self.reference.execute_tasks()
 
-    def __init__(self):
+    def __init__(self, chunk):
+        self.chunk = chunk
         self.shared = OffProcessTaskHelper.OffProcessTaskHelperShared()
         self.process = multiprocessing.Process(target=self.shared.run)
         self.process.start()
+        self.reference: typing.Optional[
+            "ProcessSeparatedWorldGenerationTaskHandlerReference"
+        ] = None
 
     def stop(self):
         self.shared.running = False
 
-    def tick(self):
-        pass
-
-    def run_layer_generation(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk, layer, config
+    def run_main(
+        self,
+        manager: "RemoteTaskHandlerManager",
+        default: WorldGenerationTaskHandlerReference,
     ):
-        reference = ProcessSeparatedWorldGenerationTaskHandlerReference(
-            self.shared, chunk.as_shareable()
+        while not self.shared.task_data_out.empty():
+            task, *data = self.shared.task_data_out.get()
+            if task == 1:
+                method, *args = marshal.loads(data[0]), pickle.loads(data[1])
+                if args[2]:
+                    method(default, *args[0], **args[2])
+                else:
+                    self.shared.task_queue.put((method,) + data)
+
+            elif task == 2:
+                position, name, args, kwargs = pickle.loads(data[0])
+                on_add = None if data[1] is None else marshal.loads(data[1])
+
+                # todo: can we use an lambda to move post-execution off-process?
+                default.schedule_block_add(
+                    position, name, *args, on_add=on_add, **kwargs
+                )
+
+            elif task == 3:
+                position, args, kwargs = pickle.loads(data[0])
+                on_remove = None if data[1] is None else marshal.loads(data[1])
+                default.schedule_block_remove(
+                    position, *args, on_remove=on_remove, **kwargs
+                )
+
+            else:
+                position = data[0]
+
+                if task == 4:
+                    default.schedule_block_show(position)
+                elif task == 5:
+                    default.schedule_block_hide(position)
+                elif task == 6:
+                    default.schedule_visual_update(position)
+
+    def run_layer_generation(self, layer, config):
+        self.shared.task_queue.put(
+            (
+                1,
+                marshal.dumps(layer.add_generate_functions_to_chunk),
+                pickle.dumps(([config, self.reference], {})),
+            )
         )
-        self.shared.task_queue.put((layer, reference, config))
+
+
+class RemoteTaskHandlerManager:
+    def __init__(self):
+        self.references: typing.List[
+            typing.Tuple[
+                OffProcessTaskHelper,
+                "ProcessSeparatedWorldGenerationTaskHandlerReference",
+                WorldGenerationTaskHandlerReference,
+            ]
+        ] = []
+
+    def create(
+        self,
+        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        default: WorldGenerationTaskHandlerReference,
+    ) -> typing.Tuple[
+        "ProcessSeparatedWorldGenerationTaskHandlerReference", OffProcessTaskHelper
+    ]:
+        helper_instance = OffProcessTaskHelper(chunk)
+        array_instance = ProcessSeparatedWorldGenerationTaskHandlerReference(
+            helper_instance.shared, chunk.as_shareable()
+        )
+        helper_instance.reference = array_instance
+        self.references.append((helper_instance, array_instance, default))
+        return array_instance, helper_instance
+
+    def tick(self):
+        for helper, array, default in self.references:
+            helper.run_main(self, default)
 
 
 class ProcessSeparatedWorldGenerationTaskHandlerReference(
     IWorldGenerationTaskHandlerReference
 ):
     """
-    reference class to an WorldGenerationTaskHandler for setting the chunk globally
-    all scheduling functions are the same of WorldGenerationTaskHandler exept the chunk-parameter is missing.
+    Reference class to an WorldGenerationTaskHandler for setting the chunk globally
+    all scheduling functions are the same of WorldGenerationTaskHandler except the chunk-parameter is missing.
     It is set on construction
+    WARNING: does need an assigned group of RemoteTaskHandlerReference and OffProcessTaskHelper to work correctly.
+    Use RemoteTaskHandlerManager.create(<chunk>, <reference>) returning this object and an assigned OffProcessTaskHelper instance
+    ready to go
     """
 
     def __init__(
@@ -452,26 +600,57 @@ class ProcessSeparatedWorldGenerationTaskHandlerReference(
         self.chunk = chunk
         self.tasks = []
 
-    def schedule_invoke(self, method, *args, **kwargs):
-        pass
+    def schedule_invoke(self, method, *args, force_main=False, **kwargs):
+        self.shared_helper.task_data_out.put(
+            (1, marshal.dumps(method), pickle.dumps((args, kwargs)), force_main)
+        )
 
     def schedule_block_add(self, position, name, *args, on_add=None, **kwargs):
-        pass
+        self.shared_helper.task_data_out.put(
+            (
+                2,
+                pickle.dumps((position, name, args, kwargs)),
+                None if on_add is None else marshal.dumps(on_add),
+            )
+        )
 
     def schedule_block_remove(self, position, *args, on_remove=None, **kwargs):
-        pass
+        self.shared_helper.task_data_out.put(
+            (
+                3,
+                pickle.dumps((position, args, kwargs)),
+                None if on_remove is None else marshal.dumps(on_remove),
+            )
+        )
 
     def schedule_block_show(self, position):
-        pass
+        self.shared_helper.task_data_out.put((4, position))
 
     def schedule_block_hide(self, position):
-        pass
+        self.shared_helper.task_data_out.put((5, position))
 
     def schedule_visual_update(self, position):
-        pass
+        self.shared_helper.task_data_out.put((6, position))
 
-    def get_block(self, position, chunk=None):
-        pass
+    def get_block(self, position: tuple, chunk=None):
+        pass  # todo: implement!
 
     def execute_tasks(self):
-        pass
+        while not self.shared_helper.task_queue.empty():
+            task, *data = self.shared_helper.task_queue.get()
+            if task == 1:
+                method, *args = marshal.loads(data[0]), pickle.loads(data[1])
+                if args[2]:
+                    self.schedule_invoke(method, *args[1], force_main=True, **args[2])
+                else:
+                    method(self, *args[0], **args[1])
+            else:
+                # todo: implement shared logger
+                print(
+                    "[WARN] failed to run task {}: {} from off-process handler!".format(
+                        task, data
+                    )
+                )
+
+    def get_biome_at(self, x, z) -> str:
+        pass  # todo: implement!

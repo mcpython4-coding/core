@@ -5,21 +5,22 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
+import enum
+import random
 import typing
 
-import mcpython.ResourceLoader
-import enum
 import mcpython.common.container.ItemStack
-from mcpython import shared as G, logger
-import mcpython.common.mod.ModMcpython
 import mcpython.common.data.loot.LootTableCondition
 import mcpython.common.data.loot.LootTableFunction
 import mcpython.common.event.EventHandler
-import random
+import mcpython.common.mod.ModMcpython
+import mcpython.ResourceLoader
+from mcpython import logger
+from mcpython import shared
 
 
 class LootTableTypes(enum.Enum):
@@ -61,8 +62,8 @@ class LootTableHandler:
     def reload(self):
         self.loot_tables.clear()
         for modname in self.mod_names_to_load:
-            self.for_mod_name(modname)
-        G.event_handler.call("data:loot_tables:custom_inject", self)
+            self.for_mod_name(modname, immediate=True)
+        shared.event_handler.call("data:loot_tables:custom_inject", self)
 
     def shuffle_data(self):
         ccopy = list(self.loot_tables.keys())
@@ -109,34 +110,38 @@ class LootTableHandler:
         # todo: add option to print an warning here
         return [mcpython.common.container.ItemStack.ItemStack(block.NAME)]
 
-    def for_mod_name(self, modname, directoryname=None):
-        if directoryname is None:
-            directoryname = modname
-        modinstance = (
-            G.mod_loader.mods[modname]
-            if modname in G.mod_loader.mods
-            else G.mod_loader.mods["minecraft"]
+    def for_mod_name(self, modname: str, path_name: str = None, immediate=False):
+        if path_name is None:
+            path_name = modname
+        mod = (
+            shared.mod_loader.mods[modname]
+            if modname in shared.mod_loader.mods
+            else shared.mod_loader.mods["minecraft"]
         )
         for path in mcpython.ResourceLoader.get_all_entries(
-            "data/{}/loot_tables".format(directoryname)
+            "data/{}/loot_tables".format(path_name)
         ):
             if path.endswith("/"):
                 continue
-            self._add_load(modinstance, path)
+            self._add_load(mod, path, immediate=immediate)
         self.mod_names_to_load.add(modname)
 
-    def _add_load(self, modinstance, path):
-        modinstance.eventbus.subscribe(
-            "stage:loottables:load",
-            lambda: self.from_file(path),
-            info="loading loot table '{}'".format(path),
-        )
+    def _add_load(self, mod, path: str, immediate=False):
+        if not immediate:
+            mod.eventbus.subscribe(
+                "stage:loottables:load",
+                lambda: self.from_file(path),
+                info="loading loot table '{}'".format(path),
+            )
+        else:
+            self.from_file(path)
 
     def from_file(self, file: str):
-        LootTable.from_file(file)
+        return LootTable.from_file(file)
 
+    @classmethod
     def parse_function(
-        self, data: dict
+        cls, data: dict
     ) -> mcpython.common.data.loot.LootTableFunction.ILootTableFunction:
         name = data["function"]
         if (
@@ -150,8 +155,9 @@ class LootTableHandler:
             )
         logger.println("unable to decode loot table function '{}'".format(name))
 
+    @classmethod
     def parse_condition(
-        self, data: dict
+        cls, data: dict
     ) -> mcpython.common.data.loot.LootTableCondition.ILootTableCondition:
         name = data["condition"]
         if (
@@ -166,7 +172,7 @@ class LootTableHandler:
         logger.println("unable to decode loot table condition '{}'".format(name))
 
 
-handler = G.loot_table_handler = LootTableHandler()
+handler = shared.loot_table_handler = LootTableHandler()
 
 
 class LootTablePoolEntry:
@@ -219,13 +225,15 @@ class LootTablePoolEntry:
             if self.expand:
                 items.append(
                     mcpython.common.container.ItemStack.ItemStack(
-                        random.choice(G.tag_handler.get_tag_for(self.name, "items"))
+                        random.choice(
+                            shared.tag_handler.get_tag_for(self.name, "items")
+                        )
                     )
                 )
             else:
                 items += [
                     mcpython.common.container.ItemStack.ItemStack(name)
-                    for name in G.tag_handler.get_tag_for(self.name, "items")
+                    for name in shared.tag_handler.get_tag_for(self.name, "items")
                 ]
         elif self.entry_type == LootTablePoolEntryType.LOOT_TABLE:
             items += handler.roll(self.name, *args, **kwargs)
@@ -324,7 +332,7 @@ class LootTable:
                 s[s.index("data") + 3],
                 "/".join(s[s.index("data") + 4 :]).split(".")[0],
             )
-        cls.from_data(mcpython.ResourceLoader.read_json(file), name)
+        return cls.from_data(mcpython.ResourceLoader.read_json(file), name)
 
     @classmethod
     def from_data(cls, data: dict, name: str):
@@ -365,12 +373,3 @@ class LootTable:
         for pool in self.pools:
             data += pool.roll(*args, **kwargs)
         return data
-
-
-def init():
-    handler.for_mod_name("minecraft")
-
-
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:loottables:locate", init
-)

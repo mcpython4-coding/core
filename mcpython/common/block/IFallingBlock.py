@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -20,25 +20,27 @@ class IFallingBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     base injection class for falling block
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
         self.fall_cooldown = mcpython.common.event.TickHandler.handler.active_tick - 10
 
     def on_block_update(self):
         x, y, z = self.position
-        blockinst = G.world.get_active_dimension().get_block((x, y - 1, z))
-        if not blockinst:
-            G.entity_handler.add_entity(
+        dim = G.world.get_dimension_by_name(self.dimension)
+        instance = dim.get_block((x, y - 1, z))
+        if not instance:
+            G.entity_handler.spawn_entity(
                 "minecraft:falling_block", self.position, representing_block=self
             )
-            G.world.get_active_dimension().remove_block(self.position)
+            dim.remove_block(self.position)
 
     def fall(self, check=True):
         x, y, z = self.position
-        if not check or not G.world.get_active_dimension().get_block((x, y - 1, z)):
-            G.world.get_active_dimension().remove_block(self.position)
-            G.world.get_active_dimension().check_neighbors(self.position)
-            chunk = G.world.get_active_dimension().get_chunk_for_position(self.position)
+        dim = G.world.get_dimension_by_name(self.dimension)
+        if not check or not dim.get_block((x, y - 1, z)):
+            dim.remove_block(self.position)
+            dim.check_neighbors(self.position)
+            chunk = dim.get_chunk_for_position(self.position)
             chunk.on_block_updated(self.position)
             if y == 0:
                 return

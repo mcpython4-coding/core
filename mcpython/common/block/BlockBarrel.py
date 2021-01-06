@@ -5,7 +5,7 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
@@ -29,30 +29,33 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
         DEBUG_WORLD_BLOCK_STATES.append({"open": "false", "facing": face})
         DEBUG_WORLD_BLOCK_STATES.append({"open": "true", "facing": face})
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         """
         Creates an new BlockBarrel-class
         """
-        super().__init__(*args, **kwargs)
+        super().__init__()
+
         self.opened: bool = False  # if the barrel is open
         self.inventory = mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
         self.facing: str = "up"  # the direction the block faces to
 
     def on_block_added(self):
-        if self.set_to is not None:  # check for direction from setting
-            dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
-            if dx > 0:
-                self.facing = "west"
-            elif dz > 0:
-                self.facing = "north"
-            elif dx < 0:
-                self.facing = "east"
-            elif dz < 0:
-                self.facing = "south"
-            elif dy > 0:
-                self.facing = "down"
-            elif dy < 0:
-                self.facing = "up"
+        if self.set_to is None:
+            return  # check for direction from setting
+
+        dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
+        if dx > 0:
+            self.facing = "west"
+        elif dz > 0:
+            self.facing = "north"
+        elif dx < 0:
+            self.facing = "east"
+        elif dz < 0:
+            self.facing = "south"
+        elif dy > 0:
+            self.facing = "down"
+        elif dy < 0:
+            self.facing = "up"
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple
@@ -86,9 +89,9 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
         return {"facing": self.facing, "open": str(self.opened).lower()}
 
     @classmethod
-    def set_block_data(cls, iteminst, block):
-        if hasattr(iteminst, "inventory"):
-            block.inventory = iteminst.inventory.copy()
+    def set_block_data(cls, item, block):
+        if hasattr(item, "inventory"):
+            block.inventory = item.inventory.copy()
 
     def on_request_item_for_block(self, itemstack):
         if (
@@ -101,9 +104,11 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
     def on_block_remove(self, reason):
         if not G.world.gamerule_handler.table["doTileDrops"].status.status:
             return
+
         for slot in self.inventory.slots:
             G.world.get_active_player().pick_up(slot.itemstack.copy())
             slot.itemstack.clean()
+
         G.inventory_handler.hide(self.inventory)
         del self.inventory
 

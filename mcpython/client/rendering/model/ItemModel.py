@@ -5,12 +5,12 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 1.16.1.jar of minecraft
+blocks based on 20w51a.jar of minecraft
 
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.rendering.BatchHelper
-import mcpython.client.rendering.BoxModel
+import mcpython.client.rendering.model.BoxModel
 import mcpython.ResourceLoader
 import mcpython.common.item.ItemAtlas
 from mcpython import shared as G, logger
