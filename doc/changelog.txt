@@ -49,6 +49,9 @@ information on development:
         its id.
 
 
+changelog of snapshot <next> released on -, targeting -
+
+
 changelog of snapshot 20w01a, released on 06.01.2021, targeting 20w51a
     Happy new year, 2021!
     This time, breaks again some big parts
