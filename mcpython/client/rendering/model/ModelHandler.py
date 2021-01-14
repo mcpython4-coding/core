@@ -12,7 +12,7 @@ This project is not official by mojang and does not relate to it.
 import gc
 import sys
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState
@@ -52,7 +52,7 @@ class ModelHandler:
                 address_fix = "/".join(s[s.index("block") + 1 :])
                 name = mod_fix + ":block/" + ".".join(address_fix.split(".")[:-1])
                 self.found_models[name] = model
-        G.event_handler.call("modelhandler:searched")
+        shared.event_handler.call("modelhandler:searched")
 
     def add_from_data(self, name: str, data: dict):
         """
@@ -70,12 +70,12 @@ class ModelHandler:
 
     def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
-        if modname not in G.mod_loader.mods:
+        if modname not in shared.mod_loader.mods:
             modname = "minecraft"
         if immediate:
             self.special_build(model)
         else:
-            G.mod_loader.mods[modname].eventbus.subscribe(
+            shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:model:model_bake_prepare",
                 self.special_build,
                 model,
@@ -131,7 +131,7 @@ class ModelHandler:
             if immediate:
                 self.load_model(x)
             else:
-                G.mod_loader.mods[modname].eventbus.subscribe(
+                shared.mod_loader.mods[modname].eventbus.subscribe(
                     "stage:model:model_bake",
                     self.load_model,
                     x,
@@ -226,29 +226,31 @@ class ModelHandler:
             mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_directory(
                 directory, modname, immediate=True
             )
-        G.event_handler.call("data:blockstates:custom_injection", self)
-        G.event_handler.call("data:models:custom_injection", self)
+        shared.event_handler.call("data:blockstates:custom_injection", self)
+        shared.event_handler.call("data:models:custom_injection", self)
         self.build(immediate=True)
         self.process_models(immediate=True)
         logger.println("finished!")
 
 
-G.model_handler = ModelHandler()
+shared.model_handler = ModelHandler()
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:model_search",
-    G.model_handler.add_from_mod,
+    shared.model_handler.add_from_mod,
     "minecraft",
     info="searching for block models for minecraft",
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:model:model_create", G.model_handler.search, info="loading found models"
+    "stage:model:model_create", shared.model_handler.search, info="loading found models"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:model:model_bake_prepare", G.model_handler.build, info="filtering models"
+    "stage:model:model_bake_prepare",
+    shared.model_handler.build,
+    info="filtering models",
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:model_bake:prepare",
-    G.model_handler.process_models,
+    shared.model_handler.process_models,
     info="preparing model data",
 )

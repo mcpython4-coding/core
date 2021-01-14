@@ -17,7 +17,7 @@ import pyglet
 import mcpython.common.config
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
-from mcpython import shared as G
+from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
 UV_ORDER = [
@@ -144,7 +144,7 @@ class BoxModel:
         self.un_active = None
 
         if model is not None and model.drawable and self.model.texture_atlas:
-            if G.mod_loader.finished:
+            if shared.mod_loader.finished:
                 self.build()
             else:
                 # todo: can we extract data if needed?
@@ -244,29 +244,37 @@ class BoxModel:
 
         return [sum(e, tuple()) for e in vertex_r]
 
-    def get_prepared_box_data(self, position, rotation, active_faces=None, uv_lock=False):
+    def get_prepared_box_data(
+        self, position, rotation, active_faces=None, uv_lock=False
+    ):
         vertex = self.get_vertex_variant(rotation, position)
         collected_data = [], []
-        for (
-                face
-        ) in (
-                mcpython.util.enums.EnumSide.iterate()
-        ):
+        for face in mcpython.util.enums.EnumSide.iterate():
             if uv_lock:
                 face = face.rotate(rotation)
             i = UV_ORDER.index(face)
             i2 = SIDE_ORDER.index(face)
 
-            if active_faces is None or (
-                    active_faces == face.rotate(rotation) if hasattr(face, "rotate") else False
-            ) or ((
-                    active_faces[i]
-                    if type(active_faces) == list
-                    else (i in active_faces and active_faces[i])
-            ) if type(face) in (list, dict, set, tuple) else False):
+            if (
+                active_faces is None
+                or (
+                    active_faces == face.rotate(rotation)
+                    if hasattr(face, "rotate")
+                    else False
+                )
+                or (
+                    (
+                        active_faces[i]
+                        if type(active_faces) == list
+                        else (i in active_faces and active_faces[i])
+                    )
+                    if type(face) in (list, dict, set, tuple)
+                    else False
+                )
+            ):
                 if (
-                        not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
-                        and self.un_active[face.rotate(rotation)]
+                    not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
+                    and self.un_active[face.rotate(rotation)]
                 ):
                     continue
 
@@ -283,7 +291,7 @@ class BoxModel:
             batch = (
                 batch[0]
                 if self.model is not None
-                and not G.tag_handler.has_entry_tag(
+                and not shared.tag_handler.has_entry_tag(
                     self.model.name, "rendering", "#minecraft:alpha"
                 )
                 else batch[1]
@@ -310,7 +318,9 @@ class BoxModel:
         :return: an vertex-list-list
         todo: make active_faces an dict of faces -> state, not an order-defined list
         """
-        collected_data = self.get_prepared_box_data(position, rotation, active_faces=active_faces, uv_lock=uv_lock)
+        collected_data = self.get_prepared_box_data(
+            position, rotation, active_faces=active_faces, uv_lock=uv_lock
+        )
         return self.add_prepared_data_to_batch(collected_data, batch)
 
     def draw_prepared_data(self, collected_data):
@@ -333,7 +343,9 @@ class BoxModel:
         :param uv_lock: if the uv's should be locked in place or not
         :param active_faces: which faces to draw
         """
-        collected_data = self.get_prepared_box_data(position, rotation, active_faces=active_faces, uv_lock=uv_lock)
+        collected_data = self.get_prepared_box_data(
+            position, rotation, active_faces=active_faces, uv_lock=uv_lock
+        )
         self.draw_prepared_data(collected_data)
 
     def add_face_to_batch(self, position, batch, rotation, face, uv_lock=False):

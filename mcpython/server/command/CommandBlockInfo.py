@@ -37,9 +37,7 @@ class CommandBlockInfo(mcpython.server.command.Command.Command):
         #     create=False
         # )
         vector = G.window.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(
-            info.entity.position, vector
-        )
+        blockpos, previous, hitpos = G.world.hit_test(info.entity.position, vector)
         if blockpos:
             block = G.world.get_dimension(info.dimension).get_block(blockpos)
             if type(block) == str:
@@ -51,6 +49,4 @@ class CommandBlockInfo(mcpython.server.command.Command.Command):
 
     @staticmethod
     def get_help() -> list:
-        return [
-            "/blockinfo: prints info about the block looking at"
-        ]
+        return ["/blockinfo: prints info about the block looking at"]

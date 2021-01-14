@@ -13,7 +13,7 @@ import mcpython.client.rendering.BatchHelper
 import mcpython.client.rendering.model.BoxModel
 import mcpython.ResourceLoader
 import mcpython.common.item.ItemAtlas
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 
 
 class IItemModelLoader:
@@ -148,12 +148,12 @@ class ItemModelHandler:
     def __init__(self):
         self.models = {}
         self.atlas = mcpython.common.item.ItemAtlas.ItemAtlasHandler(
-            folder=G.build + "/tmp_items"
+            folder=shared.build + "/tmp_items"
         )
-        G.mod_loader("minecraft", "stage:model:item:bake")(self.bake)
+        shared.mod_loader("minecraft", "stage:model:item:bake")(self.bake)
 
     @staticmethod
-    @G.mod_loader("minecraft", "stage:model:item:search")
+    @shared.mod_loader("minecraft", "stage:model:item:search")
     def load():
         handler.from_folder("assets/minecraft/models/item", "minecraft")
 
@@ -168,7 +168,7 @@ class ItemModelHandler:
             self.models[item] = ItemModel.from_file(file, item)
 
     def bake(self):
-        G.event_handler.call("item:bake:pre", self)
+        shared.event_handler.call("item:bake:pre", self)
         self.atlas.load()
         for model in self.models.values():
             try:
@@ -179,7 +179,7 @@ class ItemModelHandler:
                 )
         self.atlas.build()
         self.atlas.dump()
-        G.event_handler.call("item:bake:post", self)
+        shared.event_handler.call("item:bake:post", self)
 
     def add_to_batch(
         self, item_name, *args, **kwargs

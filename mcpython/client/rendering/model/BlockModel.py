@@ -96,9 +96,13 @@ class Model:
         collected_data = [], []
         boxmodel = None
         for boxmodel in self.boxmodels:
-            a, b = boxmodel.get_prepared_box_data(position, rotation,
-                                                  face.rotate((0, -90, 0)) if rotation[1] % 180 != 90 else face.rotate(
-                                                      (0, 90, 0)))
+            a, b = boxmodel.get_prepared_box_data(
+                position,
+                rotation,
+                face.rotate((0, -90, 0))
+                if rotation[1] % 180 != 90
+                else face.rotate((0, 90, 0)),
+            )
             collected_data[0].extend(a)
             collected_data[1].extend(b)
         return collected_data, boxmodel
@@ -111,7 +115,8 @@ class Model:
         face: mcpython.util.enums.EnumSide,
     ):
         collected_data, boxmodel = self.get_prepared_data_for(position, config, face)
-        if boxmodel is None: return tuple()
+        if boxmodel is None:
+            return tuple()
         return boxmodel.add_prepared_data_to_batch(collected_data, batch)
 
     def draw_face(
@@ -121,7 +126,8 @@ class Model:
         face: mcpython.util.enums.EnumSide,
     ):
         collected_data, boxmodel = self.get_prepared_data_for(position, config, face)
-        if boxmodel is None: return
+        if boxmodel is None:
+            return
         boxmodel.draw_prepared_data(collected_data)
 
     def get_texture_position(
