@@ -42,6 +42,8 @@ IS_CLIENT = True
 
 STORAGE_VERSION = None  # the version of the storage format
 
+NO_LOG_ESCAPE = "--no-log-escape" in sys.argv
+
 window = None  # the window instance, client-only
 
 world = None  # the world instance

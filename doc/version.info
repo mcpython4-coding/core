@@ -1426,4 +1426,5 @@ R   [uuk]: improved world serialization API
 [uuk]: nothing may work!
 [github]: released snapshot 21w01a
 
+[uuk]: fixed issue 248: log escape derp
 

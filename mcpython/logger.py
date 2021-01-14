@@ -78,7 +78,7 @@ ESCAPE = {
     shared.home: "%HOME%",
     shared.build: "%BUILD%",
 }
-if "--no-log-escape" in sys.argv:  # should be escape these files?
+if shared.NO_LOG_ESCAPE:  # should be escape these files?
     ESCAPE.clear()
 
 
@@ -88,6 +88,7 @@ def escape(string: str) -> str:
     :param string: the string to escape
     :return: the escaped string
     """
+    if shared.NO_LOG_ESCAPE: return string
     for key in ESCAPE:
         if key in string:
             string = string.replace(key, ESCAPE[key])

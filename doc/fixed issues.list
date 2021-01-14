@@ -232,3 +232,4 @@ issue 204: start is generated in debug world; fixed on 14.12.2020 by uuk
 issue 244: uv were flipped upside down for y-direction; fixed on 14.12.2020 by uuk
 issue 245: world list was not displaying worlds correctly; fixed on 20.12.2020 by uuk
 issue 246: world gen config screen was not using name; fixed on 20.12.2020 by uuk
+issue 248: logger was escaping mod paths when no log escape is set; fixed on 14.01.2021 by uuk

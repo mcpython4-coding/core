@@ -50,6 +50,8 @@ information on development:
 
 
 changelog of snapshot <next> released on -, targeting -
+    Fixed issues:
+        - escaping in logs did not work in some edge cases correctly
 
 
 changelog of snapshot 20w01a, released on 06.01.2021, targeting 20w51a
