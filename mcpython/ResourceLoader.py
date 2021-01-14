@@ -514,8 +514,7 @@ def read_image(file: str):
             try:
                 return x.read_image(file)
             except:
-                logger.println("exception during loading file '{}'".format(file))
-                raise
+                logger.print_exception("exception during loading file '{}'".format(file))
 
     raise ValueError("can't find resource '{}' in any path".format(file))
 

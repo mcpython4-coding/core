@@ -166,6 +166,8 @@ class ModelHandler:
             )
 
     def add_face_to_batch(self, block, face, batches) -> list:
+        if not shared.IS_CLIENT: return tuple()
+
         if block.NAME not in self.blockstates:
             logger.println(
                 "[FATAL] block state for block '{}' not found!".format(block.NAME)
@@ -187,6 +189,8 @@ class ModelHandler:
         return vertex
 
     def draw_face(self, block, face):
+        if not shared.IS_CLIENT: return
+
         if block.NAME not in self.blockstates:
             # todo: add option to disable these prints
             logger.println(

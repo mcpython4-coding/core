@@ -136,7 +136,14 @@ class LoadingStage:
             )  # ... and do similar stuff :-)
             shared.event_handler.call("mod_loader:load_finished")
 
-            shared.state_handler.switch_to("minecraft:block_item_generator")
+            if shared.IS_CLIENT:
+                shared.state_handler.switch_to("minecraft:block_item_generator")
+            else:
+                player = shared.world.get_active_player()
+                player.position = (0, 10, 0)
+                player.rotation = (0, 0, 0)
+                shared.state_handler.states["minecraft:world_loading"].load_or_generate("server_world")
+
             shared.mod_loader.finished = True
             return True
 
@@ -315,6 +322,7 @@ manager.add_stage(
     )
     .update_order()
 )
+# todo: split container & rendering part
 manager.add_stage(
     LoadingStage("minecraft:inventories", "loading inventories", "minecraft:items")
     .add_event_stage("stage:inventories:pre")
@@ -399,63 +407,64 @@ manager.add_stage(
     )
     .update_order()
 )
-manager.add_stage(
-    LoadingStage(
-        "minecraft:factory_models",
-        "factoring models",
-        "minecraft:data_generator",
+if shared.IS_CLIENT:
+    manager.add_stage(
+        LoadingStage(
+            "minecraft:factory_models",
+            "factoring models",
+            "minecraft:data_generator",
+        )
+        .add_event_stage("stage:modelfactory:prepare")
+        .add_event_stage("stage:modelfactory:use", "stage:modelfactory:prepare")
+        .add_event_stage("stage:modelfactory:bake", "stage:modelfactory:use")
+        .add_event_stage("stage:blockstatefactory:prepare")
+        .add_event_stage("stage:blockstatefactory:use", "stage:blockstatefactory:prepare")
+        .add_event_stage("stage:blockstatefactory:bake", "stage:blockstatefactory:use")
+        .update_order()
     )
-    .add_event_stage("stage:modelfactory:prepare")
-    .add_event_stage("stage:modelfactory:use", "stage:modelfactory:prepare")
-    .add_event_stage("stage:modelfactory:bake", "stage:modelfactory:use")
-    .add_event_stage("stage:blockstatefactory:prepare")
-    .add_event_stage("stage:blockstatefactory:use", "stage:blockstatefactory:prepare")
-    .add_event_stage("stage:blockstatefactory:bake", "stage:blockstatefactory:use")
-    .update_order()
-)
-manager.add_stage(
-    LoadingStage(
-        "minecraft:block_states",
-        "loading block states",
-        "minecraft:factory_models",
-        "minecraft:blocks",
+    manager.add_stage(
+        LoadingStage(
+            "minecraft:block_states",
+            "loading block states",
+            "minecraft:factory_models",
+            "minecraft:blocks",
+        )
+        .add_event_stage("stage:blockstate:register_loaders")
+        .add_event_stage("stage:model:blockstate_search")
+        .add_event_stage(
+            "stage:model:blockstate_create",
+            "stage:blockstate:register_loaders",
+            "stage:model:blockstate_search",
+        )
+        .add_event_stage("stage:model:blockstate_bake", "stage:model:blockstate_create")
+        .update_order()
     )
-    .add_event_stage("stage:blockstate:register_loaders")
-    .add_event_stage("stage:model:blockstate_search")
-    .add_event_stage(
-        "stage:model:blockstate_create",
-        "stage:blockstate:register_loaders",
-        "stage:model:blockstate_search",
+    manager.add_stage(
+        LoadingStage(
+            "minecraft:models",
+            "loading models",
+            "minecraft:factory_models",
+            "minecraft:blocks",
+            "minecraft:items",
+        )
+        .add_event_stage("stage:model:model_search")
+        .add_event_stage("stage:model:model_search:intern", "stage:model:model_search")
+        .add_event_stage("stage:model:model_create", "stage:model:model_search:intern")
+        .add_event_stage("stage:model:model_bake_prepare", "stage:model:model_create")
+        .add_event_stage("stage:model:model_bake_lookup", "stage:model:model_bake_prepare")
+        .add_event_stage("stage:model:model_bake:prepare", "stage:model:model_bake_lookup")
+        .add_event_stage("stage:model:model_bake", "stage:model:model_bake:prepare")
+        .add_event_stage("stage:model:item:search")
+        .add_event_stage("stage:model:item:bake", "stage:model:item:search")
+        .update_order()
     )
-    .add_event_stage("stage:model:blockstate_bake", "stage:model:blockstate_create")
-    .update_order()
-)
-manager.add_stage(
-    LoadingStage(
-        "minecraft:models",
-        "loading models",
-        "minecraft:factory_models",
-        "minecraft:blocks",
-        "minecraft:items",
+    manager.add_stage(
+        LoadingStage("minecraft:textures", "preparing texture atlases", "minecraft:models")
+        .add_event_stage("stage:textureatlas:bake")
+        .add_event_stage("stage:boxmodel:bake", "stage:textureatlas:bake")
+        .add_event_stage("stage:block_boundingbox_get", "stage:boxmodel:bake")
+        .update_order()
     )
-    .add_event_stage("stage:model:model_search")
-    .add_event_stage("stage:model:model_search:intern", "stage:model:model_search")
-    .add_event_stage("stage:model:model_create", "stage:model:model_search:intern")
-    .add_event_stage("stage:model:model_bake_prepare", "stage:model:model_create")
-    .add_event_stage("stage:model:model_bake_lookup", "stage:model:model_bake_prepare")
-    .add_event_stage("stage:model:model_bake:prepare", "stage:model:model_bake_lookup")
-    .add_event_stage("stage:model:model_bake", "stage:model:model_bake:prepare")
-    .add_event_stage("stage:model:item:search")
-    .add_event_stage("stage:model:item:bake", "stage:model:item:search")
-    .update_order()
-)
-manager.add_stage(
-    LoadingStage("minecraft:textures", "preparing texture atlases", "minecraft:models")
-    .add_event_stage("stage:textureatlas:bake")
-    .add_event_stage("stage:boxmodel:bake", "stage:textureatlas:bake")
-    .add_event_stage("stage:block_boundingbox_get", "stage:boxmodel:bake")
-    .update_order()
-)
 manager.add_stage(
     LoadingStage(
         "minecraft:world_generation",
@@ -491,6 +500,7 @@ manager.add_stage(
     .add_event_stage("stage:datafixer:parts")
     .update_order()
 )
+# todo: separate client & server states
 manager.add_stage(
     LoadingStage(
         "minecraft:states",

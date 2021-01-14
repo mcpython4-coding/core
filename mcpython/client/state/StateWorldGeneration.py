@@ -16,10 +16,11 @@ import os
 import random
 import shutil
 import sys
+import typing
 
 from pyglet.window import key
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.ResourceLoader
 import mcpython.common.DataPack
 import mcpython.common.config
@@ -36,6 +37,16 @@ from mcpython.util.annotation import onlyInClient
 import mcpython.server.worldgen.noise.NoiseManager
 
 
+DEFAULT_GENERATION_CONFIG: typing.Dict[str, typing.Any] = {
+    "world_config_name": "minecraft:default_overworld",
+    "world_size": (5, 5),
+    "seed_source": "minecraft:open_simplex_noise",
+    "player_name": "unknown",
+    "auto_gen_enabled": False,
+    "world_barrier_enabled": False
+}
+
+
 @onlyInClient()
 class StateWorldGeneration(State.State):
     NAME = "minecraft:world_generation"
@@ -44,6 +55,28 @@ class StateWorldGeneration(State.State):
         State.State.__init__(self)
         self.status_table = {}
         self.profiler = cProfile.Profile()
+        self.world_gen_config = {}
+        
+    def generate_world(self, config=None):
+        if config is None:
+            config = DEFAULT_GENERATION_CONFIG
+            config["seed"] = random.randint(-1000000, 10000000)
+        self.world_gen_config.update(config)
+        shared.state_handler.switch_to(self.NAME)
+
+    def generate_from_user_input(self, state=None):
+        if state is None: state = shared.state_handler.states["minecraft:world_generation_config"]
+        self.generate_world(
+            {
+                "world_config_name": state.get_world_config_name(),
+                "world_size": state.get_world_size(),
+                "seed_source": state.get_seed_source(),
+                "seed": state.get_seed(),
+                "player_name": state.get_player_name(),
+                "auto_gen_enabled": state.is_auto_gen_enabled(),
+                "world_barrier_enabled": state.is_world_gen_barrier_enabled()
+            }
+        )
 
     def get_parts(self) -> list:
         return [
@@ -65,18 +98,18 @@ class StateWorldGeneration(State.State):
         ]
 
     def on_update(self, dt):
-        G.world_generation_handler.task_handler.process_tasks(timer=0.4)
+        shared.world_generation_handler.task_handler.process_tasks(timer=0.4)
         for chunk in self.status_table:
-            c = G.world.get_active_dimension().get_chunk(*chunk)
-            if c not in G.world_generation_handler.task_handler.chunks:
+            c = shared.world.get_active_dimension().get_chunk(*chunk)
+            if c not in shared.world_generation_handler.task_handler.chunks:
                 self.status_table[chunk] = -1
             else:
                 count = (
-                    G.world_generation_handler.task_handler.get_task_count_for_chunk(c)
+                    shared.world_generation_handler.task_handler.get_task_count_for_chunk(c)
                 )
                 self.status_table[chunk] = 1 / (count if count > 0 else 1)
-        if len(G.world_generation_handler.task_handler.chunks) == 0:
-            G.state_handler.switch_to("minecraft:game")
+        if len(shared.world_generation_handler.task_handler.chunks) == 0:
+            shared.state_handler.switch_to("minecraft:game")
             import mcpython.common.data.ResourcePipe
 
             mcpython.common.data.ResourcePipe.handler.reload_content()
@@ -86,65 +119,57 @@ class StateWorldGeneration(State.State):
         super().activate()
         if mcpython.common.config.ENABLE_PROFILER_GENERATION:
             self.profiler.enable()
-        if os.path.exists(G.world.save_file.directory):
+        if os.path.exists(shared.world.save_file.directory):
             logger.println("deleting old world...")
-            shutil.rmtree(G.world.save_file.directory)
+            shutil.rmtree(shared.world.save_file.directory)
         self.status_table.clear()
-        G.dimension_handler.init_dims()
+        shared.dimension_handler.init_dims()
 
-        G.world_generation_handler.set_current_config(
-            G.world.get_dimension(0),
-            G.state_handler.states[
-                "minecraft:world_generation_config"
-            ].get_world_config_name(),
+        shared.world_generation_handler.set_current_config(
+            shared.world.get_dimension(0),
+            self.world_gen_config["world_config_name"],
         )
 
-        sx, sy = G.state_handler.states[
-            "minecraft:world_generation_config"
-        ].get_world_size()
+        sx, sy = self.world_gen_config["world_size"]
         mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = (
-            G.state_handler.states[
-                "minecraft:world_generation_config"
-            ].get_seed_source()
+            self.world_gen_config["seed_source"]
         )
-        G.world_generation_handler.enable_generation = True
+        shared.world_generation_handler.enable_generation = True
         fx = sx // 2
         fy = sy // 2
         ffx = sx - fx
         ffy = sy - fy
-        G.event_handler.call("on_world_generation_prepared")
-        seed = G.state_handler.states["minecraft:world_generation_config"].get_seed()
-        G.world.config["seed"] = seed
-        G.event_handler.call("seed:set")
-        G.event_handler.call("on_world_generation_started")
+        shared.event_handler.call("on_world_generation_prepared")
+        seed = self.world_gen_config["seed"]
+        shared.world.config["seed"] = seed
+        shared.event_handler.call("seed:set")
+        shared.event_handler.call("on_world_generation_started")
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
-                G.world_generation_handler.add_chunk_to_generation_list(
+                shared.world_generation_handler.add_chunk_to_generation_list(
                     (cx, cz), force_generate=True
                 )
                 self.status_table[(cx, cz)] = 0
 
     def finish(self):
-        master = self
         # read in the config
 
         for pos in self.status_table:
-            chunk = G.world.get_active_dimension().get_chunk(*pos)
+            chunk = shared.world.get_active_dimension().get_chunk(*pos)
             chunk.is_ready = True
             chunk.visible = True
 
-        self = G.state_handler.states["minecraft:world_generation_config"]
-        G.event_handler.call("on_game_generation_finished")
+        shared.event_handler.call("on_game_generation_finished")
         logger.println("[WORLD GENERATION] finished world generation")
-        player_name = self.get_player_name()
+        player_name = self.world_gen_config["player_name"]
         if player_name == "":
             player_name = "unknown"
-        if player_name not in G.world.players:
-            G.world.add_player(player_name)
+        if player_name not in shared.world.players:
+            shared.world.add_player(player_name)
 
         # setup skin
         try:
-            mcpython.util.getskin.download_skin(player_name, G.build + "/skin.png")
+            mcpython.util.getskin.download_skin(player_name, shared.build + "/skin.png")
         except ValueError:
             logger.print_exception(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(
@@ -154,59 +179,63 @@ class StateWorldGeneration(State.State):
             try:
                 mcpython.ResourceLoader.read_image(
                     "assets/minecraft/textures/entity/steve.png"
-                ).save(G.build + "/skin.png")
+                ).save(shared.build + "/skin.png")
             except:
                 logger.print_exception(
                     "[FATAL] failed to load fallback skin. This is an serious issue!"
                 )
                 sys.exit(-1)
-        mcpython.common.world.player.Player.RENDERER.reload()
-        G.world.active_player = player_name
-        G.world.get_active_player().move_to_spawn_point()
-        G.world.config["enable_auto_gen"] = self.is_auto_gen_enabled()
-        G.world.config["enable_world_barrier"] = self.is_world_gen_barrier_enabled()
 
-        if G.world_generation_handler.get_current_config(
-            G.world.get_dimension(0)
+        if shared.IS_CLIENT:
+            mcpython.common.world.player.Player.RENDERER.reload()
+
+        # todo: this is also only client code
+        shared.world.active_player = player_name
+        shared.world.get_active_player().move_to_spawn_point()
+        shared.world.config["enable_auto_gen"] = self.world_gen_config["auto_gen_enabled"]
+        shared.world.config["enable_world_barrier"] = self.world_gen_config["world_barrier_enabled"]
+
+        if shared.world_generation_handler.get_current_config(
+            shared.world.get_dimension(0)
         ).GENERATES_START_CHEST:
-            chunk = G.world.get_active_dimension().get_chunk((0, 0))
+            chunk = shared.world.get_active_dimension().get_chunk((0, 0))
             x, z = random.randint(0, 15), random.randint(0, 15)
             height = chunk.get_maximum_y_coordinate_from_generation(x, z)
-            block_chest = G.world.get_active_dimension().add_block(
+            block_chest = shared.world.get_active_dimension().add_block(
                 (x, height + 1, z), "minecraft:chest"
             )
             block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
 
-        G.event_handler.call("on_game_enter")
+        shared.event_handler.call("on_game_enter")
 
         # add surrounding chunks to load list
-        G.world.change_chunks(
+        shared.world.change_chunks(
             None,
-            mcpython.util.math.position_to_chunk(G.world.get_active_player().position),
+            mcpython.util.math.position_to_chunk(shared.world.get_active_player().position),
         )
-        G.world.save_file.save_world()
+        shared.world.save_file.save_world()
 
         # set player position
-        player = G.world.get_active_player()
+        player = shared.world.get_active_player()
         player.teleport(player.position, force_chunk_save_update=True)
 
-        G.world.world_loaded = True
+        shared.world.world_loaded = True
 
         if (
             mcpython.common.config.SHUFFLE_DATA
             and mcpython.common.config.SHUFFLE_INTERVAL > 0
         ):
-            G.event_handler.call("data:shuffle:all")
+            shared.event_handler.call("data:shuffle:all")
 
         if mcpython.common.config.ENABLE_PROFILER_GENERATION:
-            master.profiler.disable()
-            master.profiler.print_stats(1)
-            master.profiler.clear()
+            self.profiler.disable()
+            self.profiler.print_stats(1)
+            self.profiler.clear()
 
         # reload all the data-packs
         mcpython.common.DataPack.datapack_handler.reload()
         mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
-        G.state_handler.switch_to("minecraft:gameinfo", immediate=False)
+        shared.state_handler.switch_to("minecraft:gameinfo", immediate=False)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
@@ -216,8 +245,8 @@ class StateWorldGeneration(State.State):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            G.state_handler.switch_to("minecraft:startmenu")
-            G.tick_handler.schedule_once(G.world.cleanup)
+            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.tick_handler.schedule_once(shared.world.cleanup)
             logger.println("interrupted world generation by user")
 
     def calculate_percentage_of_progress(self):
@@ -225,13 +254,13 @@ class StateWorldGeneration(State.State):
         return k.count(-1) / len(k)
 
     def on_draw_2d_post(self):
-        wx, wy = G.window.get_size()
+        wx, wy = shared.window.get_size()
         mx, my = wx // 2, wy // 2
         self.parts[1].text = "{}%".format(
             round(self.calculate_percentage_of_progress() * 1000) / 10
         )
         self.parts[2].text = "{}/{}/{}".format(
-            *G.world_generation_handler.task_handler.get_total_task_stats()
+            *shared.world_generation_handler.task_handler.get_total_task_stats()
         )
 
         for cx, cz in self.status_table:

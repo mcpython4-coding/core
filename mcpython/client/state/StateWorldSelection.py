@@ -19,7 +19,7 @@ import PIL.Image
 import pyglet
 from pyglet.window import key, mouse
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.ResourceLoader
 import mcpython.common.DataPack
 import mcpython.common.mod.ModMcpython
@@ -59,7 +59,7 @@ class StateWorldSelection(State.State):
         self.selected_world = None
         self.selection_sprite = pyglet.sprite.Sprite(WORLD_SELECTION_SELECT)
         del self.eventbus
-        self.eventbus = G.event_handler.create_bus(active=False, crash_on_error=False)
+        self.eventbus = shared.event_handler.create_bus(active=False, crash_on_error=False)
         for statepart in self.parts:
             statepart.master = [
                 self
@@ -83,7 +83,7 @@ class StateWorldSelection(State.State):
         self.scissor_group.area = (45, 100, wx - 90, wy - 160)
 
     def get_parts(self) -> list:
-        wx, wy = G.window.get_size()
+        wx, wy = shared.window.get_size()
         return [
             mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
             UIPartButton.UIPartButton(
@@ -126,7 +126,7 @@ class StateWorldSelection(State.State):
     def on_mouse_press(self, x, y, button, modifiers):
         if not button == mouse.LEFT:
             return
-        wx, _ = G.window.get_size()
+        wx, _ = shared.window.get_size()
         wx -= 120
         for i, (_, icon, _, _) in enumerate(self.world_data):
             px, py = icon.position
@@ -148,7 +148,7 @@ class StateWorldSelection(State.State):
         self.parts[-1].move(dy * 4)
 
     def recalculate_sprite_position(self):
-        wx, wy = G.window.get_size()
+        wx, wy = shared.window.get_size()
         status = (
             (1 - self.parts[-1].get_status())
             * (len(self.world_data) - (wy - 140) // 60)
@@ -195,9 +195,9 @@ class StateWorldSelection(State.State):
             self.parts[-1].move(-60)
 
     def on_draw_2d_post(self):
-        wx, wy = G.window.get_size()
+        wx, wy = shared.window.get_size()
         pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
-        x, y = G.window.mouse_position
+        x, y = shared.window.mouse_position
         self.scissor_group.set_state()
         for i, (_, icon, labels, _) in enumerate(self.world_data):
             icon.draw()
@@ -229,7 +229,7 @@ class StateWorldSelection(State.State):
     def reload_world_icons(self):
         if not os.path.exists(mcpython.common.world.SaveFile.SAVE_DIRECTORY):
             os.makedirs(mcpython.common.world.SaveFile.SAVE_DIRECTORY)
-        wx, wy = G.window.get_size()
+        wx, wy = shared.window.get_size()
         self.world_data.clear()
         for directory in os.listdir(mcpython.common.world.SaveFile.SAVE_DIRECTORY):
             path = os.path.join(
@@ -270,10 +270,10 @@ class StateWorldSelection(State.State):
         self.parts[-1].active = (wy - 140) / 60 < len(self.world_data)
 
     def on_back_press(self, *_):
-        G.state_handler.switch_to("minecraft:startmenu")
+        shared.state_handler.switch_to("minecraft:startmenu")
 
     def on_new_world_press(self, *_):
-        G.state_handler.switch_to("minecraft:world_generation_config")
+        shared.state_handler.switch_to("minecraft:world_generation_config")
 
     def on_delete_press(self, *_):
         if self.selected_world is None:
@@ -287,9 +287,7 @@ class StateWorldSelection(State.State):
         self.enter_world(self.selected_world)
 
     def enter_world(self, number: int):
-        G.world.cleanup()
-        G.world.setup_by_filename(self.world_data[number][2][0].text)
-        G.state_handler.switch_to("minecraft:world_loading")
+        shared.state_handler.states["minecraft:world_loading"].load_world_from(self.world_data[number][2][0].text)
 
 
 world_selection = None
