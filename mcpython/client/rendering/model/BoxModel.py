@@ -258,10 +258,12 @@ class BoxModel:
             i2 = SIDE_ORDER.index(face)
 
             if active_faces is None or (
+                    active_faces == face.rotate(rotation) if hasattr(face, "rotate") else False
+            ) or ((
                     active_faces[i]
                     if type(active_faces) == list
                     else (i in active_faces and active_faces[i])
-            ):
+            ) if type(face) in (list, dict, set, tuple) else False):
                 if (
                         not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
                         and self.un_active[face.rotate(rotation)]
@@ -270,7 +272,32 @@ class BoxModel:
 
                 collected_data[0].extend(vertex[i])
                 collected_data[1].extend(self.tex_data[i2])
+
         return collected_data
+
+    def add_prepared_data_to_batch(self, collected_data, batch):
+        if len(collected_data[0]) == 0:
+            return tuple()
+
+        if type(batch) == list:
+            batch = (
+                batch[0]
+                if self.model is not None
+                and not G.tag_handler.has_entry_tag(
+                    self.model.name, "rendering", "#minecraft:alpha"
+                )
+                else batch[1]
+            )
+
+        return (
+            batch.add(
+                len(collected_data[0]) // 3,
+                pyglet.gl.GL_QUADS,
+                self.atlas.group,
+                ("v3f/static", collected_data[0]),
+                ("t2f/static", collected_data[1]),
+            ),
+        )
 
     def add_to_batch(self, position, batch, rotation, active_faces=None, uv_lock=False):
         """
@@ -283,30 +310,19 @@ class BoxModel:
         :return: an vertex-list-list
         todo: make active_faces an dict of faces -> state, not an order-defined list
         """
-        if type(batch) == list:
-            batch = (
-                batch[0]
-                if self.model is not None
-                and not G.tag_handler.has_entry_tag(
-                    self.model.name, "rendering", "#minecraft:alpha"
-                )
-                else batch[1]
-            )
+        collected_data = self.get_prepared_box_data(position, rotation, active_faces=active_faces, uv_lock=uv_lock)
+        return self.add_prepared_data_to_batch(collected_data, batch)
 
-        collected_data = self.get_prepared_box_data(position, active_faces=active_faces, uv_lock=uv_lock)
-
-        if len(collected_data[0]) == 0:
-            return tuple()
-
-        return (
-            batch.add(
+    def draw_prepared_data(self, collected_data):
+        if len(collected_data[0]) != 0:
+            self.atlas.group.set_state()
+            pyglet.graphics.draw(
                 len(collected_data[0]) // 3,
                 pyglet.gl.GL_QUADS,
-                self.atlas.group,
                 ("v3f/static", collected_data[0]),
                 ("t2f/static", collected_data[1]),
-            ),
-        )
+            )
+            self.model.texture_atlas.group.unset_state()
 
     def draw(self, position, rotation, active_faces=None, uv_lock=False):
         """
@@ -318,16 +334,7 @@ class BoxModel:
         :param active_faces: which faces to draw
         """
         collected_data = self.get_prepared_box_data(position, rotation, active_faces=active_faces, uv_lock=uv_lock)
-
-        if len(collected_data[0]) != 0:
-            self.atlas.group.set_state()
-            pyglet.graphics.draw(
-                len(collected_data[0]) // 3,
-                pyglet.gl.GL_QUADS,
-                ("v3f/static", collected_data[0]),
-                ("t2f/static", collected_data[1]),
-            )
-            self.model.texture_atlas.group.unset_state()
+        self.draw_prepared_data(collected_data)
 
     def add_face_to_batch(self, position, batch, rotation, face, uv_lock=False):
         if rotation == (90, 90, 0):
@@ -337,10 +344,7 @@ class BoxModel:
             position,
             batch,
             rotation,
-            active_faces={
-                i: x == face
-                for i, x in enumerate(mcpython.util.enums.EnumSide.iterate())
-            },
+            active_faces=face,
             uv_lock=uv_lock,
         )
 
@@ -351,10 +355,7 @@ class BoxModel:
         return self.draw(
             position,
             rotation,
-            active_faces={
-                i: x == face
-                for i, x in enumerate(mcpython.util.enums.EnumSide.iterate())
-            },
+            active_faces=face,
             uv_lock=uv_lock,
         )
 

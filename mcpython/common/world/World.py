@@ -214,6 +214,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         :param max_distance: How many blocks away to search for a hit
 
         todo: cache the bbox of the block
+        todo: move to dimension
         """
         m = G.world.gamerule_handler.table[
             "hitTestSteps"

@@ -81,6 +81,28 @@ class Model:
                     mcpython.client.rendering.model.BoxModel.BoxModel(element, self)
                 )
 
+    def get_prepared_data_for(self, position, config, face):
+        if not self.drawable:
+            raise NotImplementedError(
+                "can't draw an model '{}' which has not defined textures".format(
+                    self.name
+                )
+            )
+
+        rotation = config["rotation"]
+        if rotation == (90, 90, 0):
+            rotation = (0, 0, 90)
+
+        collected_data = [], []
+        boxmodel = None
+        for boxmodel in self.boxmodels:
+            a, b = boxmodel.get_prepared_box_data(position, rotation,
+                                                  face.rotate((0, -90, 0)) if rotation[1] % 180 != 90 else face.rotate(
+                                                      (0, 90, 0)))
+            collected_data[0].extend(a)
+            collected_data[1].extend(b)
+        return collected_data, boxmodel
+
     def add_face_to_batch(
         self,
         position: typing.Tuple[float, float, float],
@@ -88,18 +110,9 @@ class Model:
         config: dict,
         face: mcpython.util.enums.EnumSide,
     ):
-        if not self.drawable:
-            raise NotImplementedError(
-                "can't draw an model '{}' which has not defined textures".format(
-                    self.name
-                )
-            )
-        data = []
-        for boxmodel in self.boxmodels:
-            data += boxmodel.add_face_to_batch(
-                position, batch, config["rotation"], face
-            )
-        return data
+        collected_data, boxmodel = self.get_prepared_data_for(position, config, face)
+        if boxmodel is None: return tuple()
+        return boxmodel.add_prepared_data_to_batch(collected_data, batch)
 
     def draw_face(
         self,
@@ -107,19 +120,9 @@ class Model:
         config: dict,
         face: mcpython.util.enums.EnumSide,
     ):
-        if not self.drawable:
-            raise NotImplementedError(
-                "can't draw an model '{}' which has not defined textures".format(
-                    self.name
-                )
-            )
-        for boxmodel in self.boxmodels:
-            boxmodel.draw_face(
-                position,
-                config["rotation"],
-                face,
-                uv_lock=config.setdefault("uvlock", False),
-            )
+        collected_data, boxmodel = self.get_prepared_data_for(position, config, face)
+        if boxmodel is None: return
+        boxmodel.draw_prepared_data(collected_data)
 
     def get_texture_position(
         self, name: str

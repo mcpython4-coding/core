@@ -346,6 +346,6 @@ class AbstractBlock(parent):
         return 0
 
     def __repr__(self):
-        return "MinecraftBlock(internal={},position={},dimension={},name={})".format(
-            super().__repr__(), self.position, self.dimension, self.NAME
+        return "MinecraftBlock::{}(internal={},position={},dimension={},,block_state_entry={})".format(
+            self.NAME, super().__repr__(), self.position, self.dimension, self.block_state
         )

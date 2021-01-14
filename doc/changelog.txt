@@ -50,6 +50,12 @@ information on development:
 
 
 changelog of snapshot <next> released on -, targeting -
+    Commands:
+        - added /blockinfo command giving information about the block currently looking at
+
+    Rendering:
+        - improved block rendering
+
     Fixed issues:
         - escaping in logs did not work in some edge cases correctly
 

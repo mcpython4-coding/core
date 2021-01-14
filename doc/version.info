@@ -1428,4 +1428,6 @@ R   [uuk]: improved world serialization API
 
 [uuk]: fixed issue 248: log escape derp
 [uuk]: BoxModel is using now only one entry instead of the amount of visible sides
+[uuk]: added /blockinfo command for getting information about a block
+[uuk]: improved block rendering system
 

@@ -67,6 +67,7 @@ def load_commands():
         CommandTell,
         CommandXp,
         CommandShuffleData,
+        CommandBlockInfo,
     )
 
     # register this at the end

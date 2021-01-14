@@ -75,7 +75,7 @@ class EnumSide(enum.Enum):
         return tuple([position[i] + relative[i] for i in range(3)])
 
     def __eq__(self, other):
-        return type(self) == type(other) and self.relative == other.relative
+        return type(self) == type(other) and self.normal_name == other.normal_name
 
     def __hash__(self):
         return hash(self.relative)
@@ -114,11 +114,11 @@ FACE_ORDER: typing.List[EnumSide] = [
 ]
 
 # How to rotate the different faces?
-ROTATE: typing.Iterable[typing.List[EnumSide]] = (
+ROTATE: typing.List[typing.List[EnumSide]] = [
     [EnumSide.WEST, EnumSide.DOWN, EnumSide.EAST, EnumSide.UP],
     [EnumSide.NORTH, EnumSide.EAST, EnumSide.SOUTH, EnumSide.WEST],
     [EnumSide.NORTH, EnumSide.UP, EnumSide.SOUTH, EnumSide.DOWN],
-)
+]
 
 INVERTED_DICT: typing.Dict[str, EnumSide] = {
     EnumSide.U.normal_name: EnumSide.D,
