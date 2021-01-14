@@ -88,7 +88,8 @@ def escape(string: str) -> str:
     :param string: the string to escape
     :return: the escaped string
     """
-    if shared.NO_LOG_ESCAPE: return string
+    if shared.NO_LOG_ESCAPE:
+        return string
     for key in ESCAPE:
         if key in string:
             string = string.replace(key, ESCAPE[key])

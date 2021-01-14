@@ -1427,4 +1427,5 @@ R   [uuk]: improved world serialization API
 [github]: released snapshot 21w01a
 
 [uuk]: fixed issue 248: log escape derp
+[uuk]: BoxModel is using now only one entry instead of the amount of visible sides
 

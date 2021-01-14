@@ -33,7 +33,8 @@ from mcpython.util.annotation import onlyInClient
 
 class NoWindow:
     """
-    class simulating an window for the no-window mode
+    Class simulating an window for the no-window mode
+    todo: add some more functions here
     """
 
     def __init__(self, *args, **kwargs):

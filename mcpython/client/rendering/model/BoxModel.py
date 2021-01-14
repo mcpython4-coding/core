@@ -53,12 +53,14 @@ class BoxModel:
         self.atlas = None
         self.model = model
         self.data = data
+
         self.boxposition = [x / 16 for x in data["from"]]
         self.box_size = (
             data["to"][0] - data["from"][0],
             data["to"][1] - data["from"][1],
             data["to"][2] - data["from"][2],
         )
+
         self.relative_position = [x // 2 / 16 for x in self.box_size]
         self.faces = {
             mcpython.util.enums.EnumSide.U: None,
@@ -68,6 +70,7 @@ class BoxModel:
             mcpython.util.enums.EnumSide.S: None,
             mcpython.util.enums.EnumSide.W: None,
         }
+
         UD = (
             data["from"][0] / 16,
             data["from"][2] / 16,
@@ -88,6 +91,7 @@ class BoxModel:
         )
         self.texture_region = [UD, UD, NS, EW, NS, EW]
         self.texture_region_rotate = [0] * 6
+
         for face in mcpython.util.enums.EnumSide.iterate():
             face_name = face.normal_name
             if face_name in data["faces"]:
@@ -113,8 +117,10 @@ class BoxModel:
                         )
                 if "rotation" in f:
                     self.texture_region_rotate[index] = f["rotation"]
+
         self.rotation = (0, 0, 0)
         self.rotation_core = (0, 0, 0)
+
         if "rotation" in data:
             if "origin" in data["rotation"]:
                 self.rotation_core = tuple(data["rotation"]["origin"])
@@ -135,7 +141,7 @@ class BoxModel:
             SIMILAR_VERTEX[status] = self
 
         self.tex_data = None
-        self.deactive = None
+        self.un_active = None
 
         if model is not None and model.drawable and self.model.texture_atlas:
             if G.mod_loader.finished:
@@ -179,7 +185,7 @@ class BoxModel:
             rotation=self.texture_region_rotate,
         )
 
-        self.deactive = {
+        self.un_active = {
             face: array[i] == (0, 0) or array[i] is None
             for i, face in enumerate(mcpython.util.enums.EnumSide.iterate())
         }
@@ -193,31 +199,20 @@ class BoxModel:
         :param rotation: the rotation to use
         :param position: the position of the vertex cube
         """
-        """
-        x, y, z = position
-        x += self.boxposition[0] - 0.5 + self.rposition[0]
-        y += self.boxposition[1] - 0.5 + self.rposition[1]
-        z += self.boxposition[2] - 0.5 + self.rposition[2]
-        rotation = (rotation[0] % 360, rotation[1] % 360, rotation[2] % 360)
-        if rotation in self.rotated_vertices:  # is there data prepared in this case?
-            vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in self.rotated_vertices[rotation]]
-        else:  # otherwise, create it and store it todo: can we pre-calculate it?
-            vertex_r = [[util.math.rotate_point(l[i * 3:i * 3 + 3], (0, 0, 0), rotation) for i in
-                         range(len(l)//3)] for l in self.raw_vertices]
-            vertex_r = [[util.math.rotate_point(e, self.rotation_core, self.rotation) for e in l] for l in vertex_r]
-            self.rotated_vertices[rotation] = vertex_r
-            vertex_r = [[(e[0] + x, e[1] + y, e[2] + z) for e in l] for l in vertex_r]
-        return [sum(e, tuple()) for e in vertex_r]"""
         x, y, z = position
         x += self.boxposition[0] - 0.5 + self.relative_position[0]
         y += self.boxposition[1] - 0.5 + self.relative_position[1]
         z += self.boxposition[2] - 0.5 + self.relative_position[2]
-        if rotation in self.rotated_vertices:  # is there data prepared in this case?
+
+        # is there data prepared in this case?
+        if rotation in self.rotated_vertices:
             vertex_r = [
                 [(e[0] + x, e[1] + y, e[2] + z) for e in m]
                 for m in self.rotated_vertices[rotation]
             ]
-        else:  # otherwise, create it and store it
+
+        # otherwise, create it and store it
+        else:
             vertex = mcpython.util.math.cube_vertices_better(
                 x,
                 y,
@@ -227,6 +222,7 @@ class BoxModel:
                 self.box_size[2] / 32,
                 [True] * 6,
             )
+
             vertex_r = []
             for face in vertex:
                 face_r = []
@@ -241,9 +237,11 @@ class BoxModel:
                     )
                     face_r.append(v)
                 vertex_r.append(face_r)
+
             self.rotated_vertices[rotation] = [
                 [(e[0] - x, e[1] - y, e[2] - z) for e in m] for m in vertex_r
             ]
+
         return [sum(e, tuple()) for e in vertex_r]
 
     def add_to_batch(self, position, batch, rotation, active_faces=None, uv_lock=False):
@@ -267,16 +265,18 @@ class BoxModel:
                 )
                 else batch[1]
             )
-        result = []
+
+        collected_data = [], []
         for (
             face
         ) in (
             mcpython.util.enums.EnumSide.iterate()
-        ):  # todo: can we add everything at ones?
+        ):
             if uv_lock:
                 face = face.rotate(rotation)
             i = UV_ORDER.index(face)
             i2 = SIDE_ORDER.index(face)
+
             if active_faces is None or (
                 active_faces[i]
                 if type(active_faces) == list
@@ -284,19 +284,25 @@ class BoxModel:
             ):
                 if (
                     not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
-                    and self.deactive[face.rotate(rotation)]
+                    and self.un_active[face.rotate(rotation)]
                 ):
                     continue
-                result.append(
-                    batch.add(
-                        4,
-                        pyglet.gl.GL_QUADS,
-                        self.atlas.group,
-                        ("v3f/static", vertex[i]),
-                        ("t2f/static", self.tex_data[i2]),
-                    )
-                )
-        return result
+
+                collected_data[0].extend(vertex[i])
+                collected_data[1].extend(self.tex_data[i2])
+
+        if len(collected_data[0]) == 0:
+            return tuple()
+
+        return (
+            batch.add(
+                len(collected_data[0]) // 3,
+                pyglet.gl.GL_QUADS,
+                self.atlas.group,
+                ("v3f/static", collected_data[0]),
+                ("t2f/static", collected_data[1]),
+            ),
+        )
 
     def draw(self, position, rotation, active_faces=None, uv_lock=False):
         """
@@ -308,32 +314,40 @@ class BoxModel:
         :param active_faces: which faces to draw
         """
         vertex = self.get_vertex_variant(rotation, position)
+        collected_data = [], []
         for (
-            face
+                face
         ) in (
-            mcpython.util.enums.EnumSide.iterate()
-        ):  # todo: can we add everything at ones?
+                mcpython.util.enums.EnumSide.iterate()
+        ):
             if uv_lock:
                 face = face.rotate(rotation)
             i = UV_ORDER.index(face)
+            i2 = SIDE_ORDER.index(face)
+
             if active_faces is None or (
-                active_faces[i]
-                if type(active_faces) == list
-                else (i not in active_faces or active_faces[i])
+                    active_faces[i]
+                    if type(active_faces) == list
+                    else (i in active_faces and active_faces[i])
             ):
                 if (
-                    not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
-                    and self.deactive[face.rotate(rotation)]
+                        not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
+                        and self.un_active[face.rotate(rotation)]
                 ):
                     continue
-                self.atlas.group.set_state()
-                pyglet.graphics.draw(
-                    4,
-                    pyglet.gl.GL_QUADS,
-                    ("v3f/static", vertex[i]),
-                    ("t2f/static", self.tex_data[i]),
-                )
-                self.model.texture_atlas.group.unset_state()
+
+                collected_data[0].extend(vertex[i])
+                collected_data[1].extend(self.tex_data[i2])
+
+        if len(collected_data[0]) != 0:
+            self.atlas.group.set_state()
+            pyglet.graphics.draw(
+                len(collected_data[0]) // 3,
+                pyglet.gl.GL_QUADS,
+                ("v3f/static", collected_data[0]),
+                ("t2f/static", collected_data[1]),
+            )
+            self.model.texture_atlas.group.unset_state()
 
     def add_face_to_batch(self, position, batch, rotation, face, uv_lock=False):
         if rotation == (90, 90, 0):
