@@ -244,75 +244,7 @@ class BoxModel:
 
         return [sum(e, tuple()) for e in vertex_r]
 
-    def add_to_batch(self, position, batch, rotation, active_faces=None, uv_lock=False):
-        """
-        adds the box model to the batch
-        :param position: the position based on
-        :param batch: the batches to select from
-        :param rotation: the rotation to use
-        :param active_faces: which faces to show
-        :param uv_lock: if the uv's should be locked in place or not
-        :return: an vertex-list-list
-        todo: make active_faces an dict of faces -> state, not an order-defined list
-        """
-        vertex = self.get_vertex_variant(rotation, position)
-        if type(batch) == list:
-            batch = (
-                batch[0]
-                if self.model is not None
-                and not G.tag_handler.has_entry_tag(
-                    self.model.name, "rendering", "#minecraft:alpha"
-                )
-                else batch[1]
-            )
-
-        collected_data = [], []
-        for (
-            face
-        ) in (
-            mcpython.util.enums.EnumSide.iterate()
-        ):
-            if uv_lock:
-                face = face.rotate(rotation)
-            i = UV_ORDER.index(face)
-            i2 = SIDE_ORDER.index(face)
-
-            if active_faces is None or (
-                active_faces[i]
-                if type(active_faces) == list
-                else (i in active_faces and active_faces[i])
-            ):
-                if (
-                    not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
-                    and self.un_active[face.rotate(rotation)]
-                ):
-                    continue
-
-                collected_data[0].extend(vertex[i])
-                collected_data[1].extend(self.tex_data[i2])
-
-        if len(collected_data[0]) == 0:
-            return tuple()
-
-        return (
-            batch.add(
-                len(collected_data[0]) // 3,
-                pyglet.gl.GL_QUADS,
-                self.atlas.group,
-                ("v3f/static", collected_data[0]),
-                ("t2f/static", collected_data[1]),
-            ),
-        )
-
-    def draw(self, position, rotation, active_faces=None, uv_lock=False):
-        """
-        draws the BoxModel direct into the world
-        WARNING: use batches for better performance
-        :param position: the position to draw on
-        :param rotation: the rotation to draw with
-        :param uv_lock: if the uv's should be locked in place or not
-        :param active_faces: which faces to draw
-        """
+    def get_prepared_box_data(self, position, rotation, active_faces=None, uv_lock=False):
         vertex = self.get_vertex_variant(rotation, position)
         collected_data = [], []
         for (
@@ -338,6 +270,54 @@ class BoxModel:
 
                 collected_data[0].extend(vertex[i])
                 collected_data[1].extend(self.tex_data[i2])
+        return collected_data
+
+    def add_to_batch(self, position, batch, rotation, active_faces=None, uv_lock=False):
+        """
+        adds the box model to the batch
+        :param position: the position based on
+        :param batch: the batches to select from
+        :param rotation: the rotation to use
+        :param active_faces: which faces to show
+        :param uv_lock: if the uv's should be locked in place or not
+        :return: an vertex-list-list
+        todo: make active_faces an dict of faces -> state, not an order-defined list
+        """
+        if type(batch) == list:
+            batch = (
+                batch[0]
+                if self.model is not None
+                and not G.tag_handler.has_entry_tag(
+                    self.model.name, "rendering", "#minecraft:alpha"
+                )
+                else batch[1]
+            )
+
+        collected_data = self.get_prepared_box_data(position, active_faces=active_faces, uv_lock=uv_lock)
+
+        if len(collected_data[0]) == 0:
+            return tuple()
+
+        return (
+            batch.add(
+                len(collected_data[0]) // 3,
+                pyglet.gl.GL_QUADS,
+                self.atlas.group,
+                ("v3f/static", collected_data[0]),
+                ("t2f/static", collected_data[1]),
+            ),
+        )
+
+    def draw(self, position, rotation, active_faces=None, uv_lock=False):
+        """
+        draws the BoxModel direct into the world
+        WARNING: use batches for better performance
+        :param position: the position to draw on
+        :param rotation: the rotation to draw with
+        :param uv_lock: if the uv's should be locked in place or not
+        :param active_faces: which faces to draw
+        """
+        collected_data = self.get_prepared_box_data(position, rotation, active_faces=active_faces, uv_lock=uv_lock)
 
         if len(collected_data[0]) != 0:
             self.atlas.group.set_state()
