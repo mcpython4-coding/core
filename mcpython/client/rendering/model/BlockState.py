@@ -151,7 +151,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         face: mcpython.util.enums.EnumSide,
     ):
         state = instance.get_model_state()
-        result = []
+        prepared_vertex, prepared_texture, boxmodel = [], [], None
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
@@ -159,9 +159,10 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model, config, _ = BlockState.decode_entry(data)
                     if model not in G.model_handler.models:
                         continue
-                    result += G.model_handler.models[model].add_face_to_batch(
-                        instance.position, batch, config, face
-                    )
+                    (a, b), boxmodel = G.model_handler.models[model].get_prepared_data_for(
+                        instance.position, config, face)
+                    prepared_vertex.extend(a)
+                    prepared_texture.extend(b)
                 else:
                     if instance.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
@@ -173,10 +174,11 @@ class MultiPartDecoder(IBlockStateDecoder):
                         model, config, _ = BlockState.decode_entry(
                             data[instance.block_state]
                         )
-                    result += G.model_handler.models[model].add_face_to_batch(
-                        instance.position, batch, config, face
-                    )
-        return result
+                    (a, b), boxmodel = G.model_handler.models[model].get_prepared_data_for(
+                        instance.position, config, face)
+                    prepared_vertex.extend(a)
+                    prepared_texture.extend(b)
+        return tuple() if boxmodel is None else boxmodel.add_prepared_data_to_batch((prepared_vertex, prepared_texture), batch)
 
     @classmethod
     def _test_for(cls, state, part, use_or=False):
@@ -262,14 +264,18 @@ class MultiPartDecoder(IBlockStateDecoder):
         face: mcpython.util.enums.EnumSide,
     ):
         state = instance.get_model_state()
+        prepared_vertex, prepared_texture, boxmodel = [], [], None
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
                 if type(data) == dict:
                     model, config, _ = BlockState.decode_entry(data)
-                    G.model_handler.models[model].draw_face(
-                        instance.position, config, face
-                    )
+                    if model not in G.model_handler.models:
+                        continue
+                    (a, b), boxmodel = G.model_handler.models[model].get_prepared_data_for(
+                        instance.position, config, face)
+                    prepared_vertex.extend(a)
+                    prepared_texture.extend(b)
                 else:
                     if instance.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
@@ -281,9 +287,12 @@ class MultiPartDecoder(IBlockStateDecoder):
                         model, config, _ = BlockState.decode_entry(
                             data[instance.block_state]
                         )
-                    G.model_handler.models[model].draw_face(
-                        instance.position, config, face
-                    )
+                    (a, b), boxmodel = G.model_handler.models[model].get_prepared_data_for(
+                        instance.position, config, face)
+                    prepared_vertex.extend(a)
+                    prepared_texture.extend(b)
+        if boxmodel is not None:
+            boxmodel.draw_prepared_data((prepared_vertex, prepared_texture))
 
 
 @G.registry
