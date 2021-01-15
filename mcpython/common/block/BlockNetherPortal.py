@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.block.AbstractBlock
 import time
 import math
@@ -53,9 +53,9 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def check_valid_surrounding(self):
         x, y, z = self.position
-        chunk = G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
-            self.position
-        )
+        chunk = shared.world.get_dimension_by_name(
+            self.dimension
+        ).get_chunk_for_position(self.position)
         if self.check_valid_block((x, y + 1, z), chunk):
             return
         if self.check_valid_block((x, y - 1, z), chunk):
@@ -73,7 +73,7 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def check_valid_block(self, position: tuple, chunk=None):
         if chunk is None:
-            chunk = G.world.get_dimension_by_name(
+            chunk = shared.world.get_dimension_by_name(
                 self.dimension
             ).get_chunk_for_position(position)
         block = chunk.get_block(position)
@@ -118,6 +118,6 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             player.in_nether_portal_since = None
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(NetherPortalBlock)
+    shared.registry.register(NetherPortalBlock)

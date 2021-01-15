@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.container.crafting.IRecipeType
 import mcpython.ResourceLoader
 import mcpython.common.item.ItemHandler
@@ -128,7 +128,7 @@ class CraftingManager:
             if file.endswith("/"):
                 continue
             if not load_direct:
-                G.mod_loader.mods[modname].eventbus.subscribe(
+                shared.mod_loader.mods[modname].eventbus.subscribe(
                     "stage:recipe:bake",
                     self.add_recipe_from_file,
                     file,
@@ -138,7 +138,9 @@ class CraftingManager:
                 self.add_recipe_from_file(file)
 
     def reload_crafting_recipes(self):
-        if not G.event_handler.call_cancelable("crafting_manager:reload:pre", self):
+        if not shared.event_handler.call_cancelable(
+            "crafting_manager:reload:pre", self
+        ):
             return
 
         # all shapeless recipes sorted after item count
@@ -148,7 +150,7 @@ class CraftingManager:
         # all smelting outputs sorted after ingredient
         self.furnace_recipes = {}
 
-        G.event_handler.call("crafting_manager:reload:intermediate", self)
+        shared.event_handler.call("crafting_manager:reload:intermediate", self)
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
             print(
@@ -160,10 +162,10 @@ class CraftingManager:
             self.load(modname, check_mod_dirs=False, load_direct=True)
         print()
 
-        G.event_handler.call("crafting_manager:reload:end", self)
+        shared.event_handler.call("crafting_manager:reload:end", self)
 
 
-G.crafting_handler = CraftingManager()
+shared.crafting_handler = CraftingManager()
 
 
 def load_recipe_providers():

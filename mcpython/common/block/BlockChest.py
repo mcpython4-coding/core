@@ -162,7 +162,9 @@ class BlockChest(AbstractBlock.AbstractBlock):
     def on_block_remove(self, reason):
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
             for slot in self.inventory.slots:
-                shared.world.get_active_player().pick_up(slot.get_itemstack().copy())
+                shared.world.get_active_player().pick_up_item(
+                    slot.get_itemstack().copy()
+                )
                 slot.get_itemstack().clean()
         shared.inventory_handler.hide(self.inventory)
         del self.inventory

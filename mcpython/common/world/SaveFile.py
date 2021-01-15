@@ -16,7 +16,7 @@ import os
 import pickle
 import sys
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.event.Registry
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
@@ -60,11 +60,11 @@ History of save versions:
     - player data reformat
 """
 
-G.STORAGE_VERSION = LATEST_VERSION = 8  # the latest version, used for upgrading
+shared.STORAGE_VERSION = LATEST_VERSION = 8  # the latest version, used for upgrading
 
 # where the stuff should be saved
 SAVE_DIRECTORY = (
-    G.home + "/saves"
+    shared.home + "/saves"
     if "--saves-directory" not in sys.argv
     else sys.argv[sys.argv.index("--saves-directory") + 1]
 )
@@ -145,7 +145,7 @@ class SaveFile:
         """
         loads all setup-data into the world
         """
-        G.world.cleanup()  # make sure everything is removed before we start
+        shared.world.cleanup()  # make sure everything is removed before we start
         try:
             self.read("minecraft:general")
             while self.version != LATEST_VERSION:
@@ -155,8 +155,8 @@ class SaveFile:
                             self.version
                         )
                     )
-                    G.world.cleanup()
-                    G.state_handler.switch_to("minecraft:startmenu")
+                    shared.world.cleanup()
+                    shared.state_handler.switch_to("minecraft:startmenu")
                     return
                 fixers = self.storage_version_fixers[self.version]
                 if len(fixers) > 1:
@@ -177,18 +177,18 @@ class SaveFile:
                     self.directory
                 )
             )
-            G.world.cleanup()
-            G.state_handler.switch_to("minecraft:world_selection")
+            shared.world.cleanup()
+            shared.state_handler.switch_to("minecraft:world_selection")
             return
         except:
-            G.world.cleanup()
-            G.state_handler.switch_to("minecraft:startmenu")
+            shared.world.cleanup()
+            shared.state_handler.switch_to("minecraft:startmenu")
             logger.print_exception(
                 "exception during loading world. falling back to start menu..."
             )
             return
         # todo: load data packs for save files and than enable the below
-        # G.commandparser.parse("/reload")
+        # shared.commandparser.parse("/reload")
 
     def save_world(self, *_, override=False):
         """
@@ -200,27 +200,27 @@ class SaveFile:
             raise IOError("can't save world. save in process")
         try:
             self.save_in_progress = True
-            G.world_generation_handler.enable_generation = False
+            shared.world_generation_handler.enable_generation = False
             logger.println("saving world...")
             self.dump(None, "minecraft:general")
             self.dump(None, "minecraft:player_data")
             self.dump(None, "minecraft:gamerule")
             self.dump(None, "minecraft:registry_info_serializer")
-            for chunk in G.world.get_active_dimension().chunks:
+            for chunk in shared.world.get_active_dimension().chunks:
                 # todo: save all loaded dimension, not only the active one
-                if G.world.get_active_dimension().get_chunk(*chunk).loaded:
+                if shared.world.get_active_dimension().get_chunk(*chunk).loaded:
                     self.dump(
                         None,
                         "minecraft:chunk",
-                        dimension=G.world.get_active_player().dimension.id,
+                        dimension=shared.world.get_active_player().dimension.id,
                         chunk=chunk,
                         override=override,
                     )
             logger.println("save complete!")
-            G.world_generation_handler.enable_generation = True
+            shared.world_generation_handler.enable_generation = True
         except:
-            G.world.cleanup()
-            G.state_handler.switch_to("minecraft:startmenu")
+            shared.world.cleanup()
+            shared.state_handler.switch_to("minecraft:startmenu")
             logger.print_exception(
                 "exception during saving world. falling back to start menu..."
             )
@@ -247,7 +247,7 @@ class SaveFile:
             logger.print_exception(
                 "during data-fixing storage version '{}'".format(name)
             )
-            G.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.switch_to("minecraft:startmenu")
 
     def apply_group_fixer(self, name: str, *args, **kwargs):
         """
@@ -268,7 +268,7 @@ class SaveFile:
                 self.apply_part_fixer(name, *args, **kwargs)
         except:
             logger.print_exception("during data-fixing group fixer '{}'".format(name))
-            G.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.switch_to("minecraft:startmenu")
 
     def apply_part_fixer(self, name: str, *args, **kwargs):
         """
@@ -287,7 +287,7 @@ class SaveFile:
             fixer.apply(self, *args, **kwargs)
         except:
             logger.print_exception("during data-fixing part '{}'".format(name))
-            G.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.switch_to("minecraft:startmenu")
 
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
         """
@@ -298,9 +298,9 @@ class SaveFile:
         :param kwargs: kwargs to call with
         :raises DataFixerNotFoundException: if the name is invalid
         """
-        if modname not in self.mod_fixers or modname not in G.mod_loader.mods:
+        if modname not in self.mod_fixers or modname not in shared.mod_loader.mods:
             raise DataFixerNotFoundException(modname)
-        instance = G.mod_loader.mods[modname]
+        instance = shared.mod_loader.mods[modname]
         fixers = self.mod_fixers[modname]
         while instance.version != source_version:
             possible_fixers = set()
@@ -342,7 +342,7 @@ class SaveFile:
                         modname, fixer.FIXES_FROM, fixer.FIXES_TO
                     )
                 )
-                G.state_handler.switch_to("minecraft:startmenu")
+                shared.state_handler.switch_to("minecraft:startmenu")
                 return
 
             source_version = fixer.FIXES_TO
@@ -495,6 +495,6 @@ class SaveFile:
             return f.write(data)
 
 
-@G.mod_loader("minecraft", "stage:datafixer:general")
+@shared.mod_loader("minecraft", "stage:datafixer:general")
 def load_elements():
     from mcpython.common.world.datafixers import DataFixer7to8

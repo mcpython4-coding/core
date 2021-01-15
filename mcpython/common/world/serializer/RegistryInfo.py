@@ -12,10 +12,10 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.world.serializer.IDataSerializer
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 
 
-@G.registry
+@shared.registry
 class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     """
     Serializer storing the content of various registries
@@ -33,7 +33,7 @@ class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSeriali
 
         registry_miss_match = {}
 
-        for registry in G.registry.registries:  # iterate over all registries
+        for registry in shared.registry.registries:  # iterate over all registries
             if not registry.dump_content_in_saves:
                 continue
             registry_miss_match[registry.name] = []
@@ -70,7 +70,7 @@ class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSeriali
     @classmethod
     def save(cls, data, save_file):
         data = {}
-        for registry in G.registry.registries:
+        for registry in shared.registry.registries:
             if not registry.dump_content_in_saves:
                 continue
             rdata = []

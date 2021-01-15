@@ -1433,4 +1433,6 @@ R   [uuk]: improved world serialization API
 [uuk]: removed some loading stages only needed on client
 [uuk]: added some more networking API
 [uuk]: added chunk load ticket system API, default is currently spawn chunks, so no unloads
+[uuk]: languages beside en_us are no longer loaded on server
+[uuk]: ResourcePipe entries can now specify if to load on dedicated servers
 

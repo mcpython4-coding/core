@@ -125,8 +125,11 @@ class WorldGenerationHandler:
 
         # no config found means no generation
         if config_name not in self.configs[chunk.get_dimension().get_name()]:
-            logger.println("[WARN] skipping generation of chunk {}-{} in dimension {}".format(
-                *chunk.get_position(), dimension.get_name()))
+            logger.println(
+                "[WARN] skipping generation of chunk {}-{} in dimension {}".format(
+                    *chunk.get_position(), dimension.get_name()
+                )
+            )
             return
 
         config = self.configs[chunk.get_dimension().get_name()][config_name]
@@ -201,7 +204,9 @@ class WorldGenerationHandler:
     def generate_chunk(
         self,
         chunk: typing.Union[mcpython.common.world.AbstractInterface.IChunk, tuple],
-        dimension: typing.Union[mcpython.common.world.AbstractInterface.IDimension, int, str, None] = None,
+        dimension: typing.Union[
+            mcpython.common.world.AbstractInterface.IDimension, int, str, None
+        ] = None,
         check_chunk=True,
     ):
         """
@@ -287,7 +292,9 @@ class WorldGenerationHandler:
         shared.event_handler.call("worldgen:chunk:finished", chunk)
         config.on_chunk_generation_finished(chunk)
 
-    def register_layer(self, layer: typing.Type[mcpython.server.worldgen.layer.ILayer.ILayer]):
+    def register_layer(
+        self, layer: typing.Type[mcpython.server.worldgen.layer.ILayer.ILayer]
+    ):
         """
         Registers a new layer object into the system
         :param layer: the layer instance

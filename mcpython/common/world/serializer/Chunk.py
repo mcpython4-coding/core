@@ -15,7 +15,7 @@ import typing
 
 import mcpython.common.world.serializer.IDataSerializer
 import mcpython.common.world.datafixers.IDataFixer
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.world.Chunk
 import mcpython.common.world.AbstractInterface
 import mcpython.util.enums
@@ -32,7 +32,7 @@ def access_region_data(
     dimension: int,
     region: tuple,
 ):
-    if dimension not in G.world.dimensions:
+    if dimension not in shared.world.dimensions:
         return
     return save_file.access_file_pickle(
         "dim/{}/{}_{}.region".format(dimension, *region)
@@ -231,7 +231,7 @@ class ChunkMapDataFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
         """
 
 
-@G.registry
+@shared.registry
 class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:chunk"
 
@@ -354,7 +354,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             return
 
         chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
-            G.world.dimensions[dimension].get_chunk(*chunk, generate=False)
+            shared.world.dimensions[dimension].get_chunk(*chunk, generate=False)
         )
         if chunk_instance.loaded:
             return
@@ -363,13 +363,13 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         if chunk not in data:
             return
 
-        G.world_generation_handler.enable_generation = False
+        shared.world_generation_handler.enable_generation = False
 
         data = data[chunk]
         chunk_instance.generated = data["generated"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
         for i, d in enumerate(data["block_palette"]):
-            if d["name"] not in G.registry.get_by_name("minecraft:block").entries:
+            if d["name"] not in shared.registry.get_by_name("minecraft:block").entries:
                 # todo: add missing texture block -> insert here
                 logger.println(
                     "[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block".format(
@@ -411,7 +411,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             if immediate:
                 add(chunk_instance.add_block(position, d["name"], immediate=flag))
             else:
-                G.world_generation_handler.task_handler.schedule_block_add(
+                shared.world_generation_handler.task_handler.schedule_block_add(
                     chunk_instance, position, d["name"], on_add=add, immediate=flag
                 )
 
@@ -457,11 +457,11 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             if entity["type"] == "minecraft:player":
                 continue
             try:
-                entity_instance = G.entity_handler.spawn_entity(
+                entity_instance = shared.entity_handler.spawn_entity(
                     entity["type"],
                     entity["position"],
                     uuid=uuid.UUID(entity["uuid"]),
-                    dimension=G.world.dimensions[dimension],
+                    dimension=shared.world.dimensions[dimension],
                 )
             except ValueError:
                 continue
@@ -481,19 +481,19 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.loaded = True
         chunk_instance.is_ready = True
         chunk_instance.visible = True
-        G.world_generation_handler.enable_generation = True
+        shared.world_generation_handler.enable_generation = True
 
         chunk_instance.show()
 
     @classmethod
     def save(cls, data, save_file, dimension: int, chunk: tuple, override=False):
-        if dimension not in G.world.dimensions:
+        if dimension not in shared.world.dimensions:
             return
-        if chunk not in G.world.dimensions[dimension].chunks:
+        if chunk not in shared.world.dimensions[dimension].chunks:
             return
         region = chunk2region(*chunk)
         chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
-            G.world.dimensions[dimension].chunks[chunk]
+            shared.world.dimensions[dimension].chunks[chunk]
         )
         if not chunk_instance.is_generated():
             return
@@ -525,7 +525,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             override = True
 
         # when doing stuff, please make sure that nothing fancy happens
-        G.world_generation_handler.enable_generation = False
+        shared.world_generation_handler.enable_generation = False
 
         # these section is for dumping block stuff...
         palette = cdata[
@@ -653,7 +653,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             save_file, dimension, region, data
         )  # and dump the region to the file
 
-        G.world_generation_handler.enable_generation = (
+        shared.world_generation_handler.enable_generation = (
             True  # re-enable world gen as we are finished
         )
         # todo: make sure that this is always set back to True, also on error

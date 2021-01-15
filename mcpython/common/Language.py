@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.ResourceLoader
 
 LANGUAGES: typing.Dict[str, "Language"] = {}  # table of data of Languages
@@ -79,6 +79,10 @@ class Language:
         :param name: the name to load under, or None if to read from the file name
         """
         name = file.split("/")[-1].split(".")[0] if name is None else name
+
+        if not shared.IS_CLIENT and name != "en_us":
+            return
+
         if name not in LANGUAGES:
             LANGUAGES[name] = cls()
         language = LANGUAGES[name]
@@ -104,6 +108,9 @@ class Language:
         :param name: the name to load under
         :param data: the data to load
         """
+        if not shared.IS_CLIENT and name != "en_us":
+            return
+
         if name in LANGUAGES:
             LANGUAGES[name].table = {**LANGUAGES[name].table, **data}
         else:
@@ -126,20 +133,20 @@ def from_directory(directory: str, modname: str):
     :param directory: the directory name
     :param modname: the mod name
     """
-    if modname not in G.mod_loader.mods:
+    if modname not in shared.mod_loader.mods:
         modname = "minecraft"
     files = list(mcpython.ResourceLoader.get_all_entries_special(directory))
     m = len(files)
     for i, f in enumerate(files):
         if f.endswith(".json"):  # new language format
-            G.mod_loader.mods[modname].eventbus.subscribe(
+            shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:language",
                 Language.from_file,
                 f[:],
                 info="loading language file {} ({}/{})".format(f, i + 1, m),
             )
         elif f.endswith(".lang"):  # old language format
-            G.mod_loader.mods[modname].eventbus.subscribe(
+            shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:language",
                 Language.from_old_data,
                 f[:],

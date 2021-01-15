@@ -72,7 +72,8 @@ class LaunchWrapper:
 
         self.setup_files()
 
-        self.setup_opengl()
+        if shared.IS_CLIENT:
+            self.setup_opengl()
 
         import mcpython.client.state.StateHandler
 
@@ -118,6 +119,7 @@ class LaunchWrapper:
         Helper function for OpenGL setup
         Loads also the needed API
         """
+        assert shared.IS_CLIENT, "can only setup on client7"
 
         import mcpython.client.rendering.util
 
@@ -190,16 +192,19 @@ class LaunchWrapper:
         mcpython.client.rendering.window.Window(
             width=800, height=600, resizable=True
         ).reset_caption()
-        try:
-            # todo: sometimes, this does not work correctly
-            shared.window.set_icon(
-                mcpython.ResourceLoader.read_pyglet_image("icon_16x16.png"),
-                mcpython.ResourceLoader.read_pyglet_image("icon_32x32.png"),
-            )
-            shared.event_handler.call("game:gameloop_startup")
-        except:
-            logger.print_exception("[FATAL] failed to load window images")
-            sys.exit(-1)
+
+        if shared.IS_CLIENT:
+            try:
+                # todo: sometimes, this does not work correctly
+                shared.window.set_icon(
+                    mcpython.ResourceLoader.read_pyglet_image("icon_16x16.png"),
+                    mcpython.ResourceLoader.read_pyglet_image("icon_32x32.png"),
+                )
+                shared.event_handler.call("game:gameloop_startup")
+            except:
+                logger.print_exception("[FATAL] failed to load window images")
+                sys.exit(-1)
+
         try:
             pyglet.app.run()
         except SystemExit:

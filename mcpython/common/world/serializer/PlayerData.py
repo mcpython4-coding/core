@@ -12,7 +12,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.world.datafixers.IDataFixer
-from mcpython import shared as G
+from mcpython import shared
 import time
 
 
@@ -34,7 +34,7 @@ class PlayerDataFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
         """
 
 
-@G.registry
+@shared.registry
 class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:player_data"
 
@@ -44,7 +44,11 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
             data = save_file.access_file_json("players.json")
             for name in data:
                 pdata = data[name]
-                player = G.world.players[name] if name not in G.world.players else None
+                player = (
+                    shared.world.players[name]
+                    if name not in shared.world.players
+                    else None
+                )
                 pdata = fixer.fix(save_file, player, pdata)
                 data[name] = pdata
             save_file.dump_file_json("players.json", data)
@@ -52,8 +56,8 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
     @classmethod
     def load(cls, save_file):
         data = save_file.access_file_json("players.json")
-        if data is not None and G.world.get_active_player().name in data:
-            player = G.world.get_active_player()
+        if data is not None and shared.world.get_active_player().name in data:
+            player = shared.world.get_active_player()
             pd = data[player.name]
             player.set_gamemode(pd["gamemode"])
             player.hearts = pd["hearts"]
@@ -64,8 +68,8 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
             player.active_inventory_slot = pd["active inventory slot"]
             player.position = pd["position"]
             player.rotation = pd["rotation"]
-            G.world.join_dimension(pd["dimension"])
-            G.world.get_active_player().flying = pd["flying"]
+            shared.world.join_dimension(pd["dimension"])
+            shared.world.get_active_player().flying = pd["flying"]
             for i, (name, inventory) in enumerate(
                 zip(pd["inventory_data"], player.get_inventories())
             ):
@@ -92,12 +96,12 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
         data = save_file.access_file_json("players.json")
         if data is None:
             data = {}
-        for player in G.world.players.values():
+        for player in shared.world.players.values():
             # todo: move to player custom save data
             data[player.name] = {
                 "position": player.position,
                 "rotation": player.rotation,
-                "dimension": G.world.get_active_player().dimension.id,
+                "dimension": shared.world.get_active_player().dimension.id,
                 "gamemode": player.gamemode,
                 "hearts": player.hearts,
                 "hunger": player.hunger,
@@ -105,7 +109,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                 "xp level": player.xp_level,
                 "fallen since y": player.fallen_since_y,
                 "active inventory slot": player.active_inventory_slot,
-                "flying": G.world.get_active_player().flying,
+                "flying": shared.world.get_active_player().flying,
                 "dimension_data": {
                     "nether_portal": {
                         "portal_inner_time": None

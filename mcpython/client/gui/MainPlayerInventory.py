@@ -112,7 +112,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
             slot.set_itemstack(
                 mcpython.common.container.ItemStack.ItemStack.create_empty()
             )
-            if not shared.world.get_active_player().pick_up(itemstack):
+            if not shared.world.get_active_player().pick_up_item(itemstack):
                 pass  # todo: drop item as item could not be added to inventory
         self.slots[-2].get_itemstack().clean()
 

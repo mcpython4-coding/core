@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 from . import AbstractBlock
 from pyglet.window import mouse, key
 import mcpython.util.enums
@@ -31,8 +31,8 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
         self, player, button: int, modifiers: int, hit_position: tuple
     ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            G.inventory_handler.show(
-                G.world.get_active_player().inventory_crafting_table
+            shared.inventory_handler.show(
+                shared.world.get_active_player().inventory_crafting_table
             )
             return True
         else:
@@ -42,16 +42,18 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
         """
         Called to get an list of inventories
         """
-        return [G.world.get_active_player().inventory_crafting_table]
+        return [shared.world.get_active_player().inventory_crafting_table]
 
     def on_block_remove(self, reason):
-        G.inventory_handler.hide(G.world.get_active_player().inventory_crafting_table)
+        shared.inventory_handler.hide(
+            shared.world.get_active_player().inventory_crafting_table
+        )
 
     @classmethod
     def modify_block_item(cls, factory):
         factory.setFuelLevel(15)
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(BlockCraftingTable)
+    shared.registry.register(BlockCraftingTable)

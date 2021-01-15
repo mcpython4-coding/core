@@ -60,13 +60,16 @@ class IChunk(ABC):
         flag = False
         for i, layer in enumerate(self.chunk_loaded_list):
             for ticket, *data in layer[:]:
-                if ticket.value in (0, 1): continue
-                if ticket == ChunkLoadTicketType.PLAYER_LOADED:  # check if player in range, if not, remove ticket
+                if ticket.value in (0, 1):
+                    continue
+                if (
+                    ticket == ChunkLoadTicketType.PLAYER_LOADED
+                ):  # check if player in range, if not, remove ticket
                     pass
                 else:
                     layer.remove(ticket)
                     if i != 15:
-                        self.chunk_loaded_list[i+1].append(ticket)
+                        self.chunk_loaded_list[i + 1].append(ticket)
             flag = flag or len(layer)
         if not flag:
             self.get_dimension().unload_chunk(self)
@@ -215,7 +218,7 @@ class IChunk(ABC):
 class IDimension(ABC):
     def __init__(self):
         self.loaded = True
-    
+
     def get_dimension_range(self) -> typing.Tuple[int, int]:
         raise NotImplementedError()
 

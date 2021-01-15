@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 from . import AbstractBlock
 from pyglet.window import mouse, key
 import mcpython.util.enums
@@ -65,7 +65,7 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
         if (
             button == mouse.RIGHT and not modifiers & key.MOD_SHIFT
         ):  # open the inv when needed
-            G.inventory_handler.show(self.inventory)
+            shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -97,24 +97,24 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
 
     def on_request_item_for_block(self, itemstack):
         if (
-            G.window.keys[pyglet.window.key.LCTRL]
-            and G.world.get_active_player().gamemode == 1
-            and G.window.mouse_pressing[pyglet.window.mouse.MIDDLE]
+            shared.window.keys[pyglet.window.key.LCTRL]
+            and shared.world.get_active_player().gamemode == 1
+            and shared.window.mouse_pressing[pyglet.window.mouse.MIDDLE]
         ):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_block_remove(self, reason):
-        if not G.world.gamerule_handler.table["doTileDrops"].status.status:
+        if not shared.world.gamerule_handler.table["doTileDrops"].status.status:
             return
 
         for slot in self.inventory.slots:
-            G.world.get_active_player().pick_up(slot.itemstack.copy())
+            shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
             slot.itemstack.clean()
 
-        G.inventory_handler.hide(self.inventory)
+        shared.inventory_handler.hide(self.inventory)
         del self.inventory
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(BlockBarrel)
+    shared.registry.register(BlockBarrel)

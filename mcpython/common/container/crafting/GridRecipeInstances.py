@@ -12,7 +12,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.container.crafting.IRecipeType
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.container.ItemStack
 
 
@@ -25,8 +25,8 @@ def transform_to_item_stack(item, table: dict) -> list:
     """
     if "item" in item:
         itemname = item["item"]
-        if itemname not in G.registry.get_by_name("minecraft:item").entries:
-            if itemname not in G.registry.get_by_name("minecraft:block").entries:
+        if itemname not in shared.registry.get_by_name("minecraft:item").entries:
+            if itemname not in shared.registry.get_by_name("minecraft:block").entries:
                 return []
         return [(itemname, item["count"] if "count" in item else 1)]
     elif "tag" in item:  # have we an tag?
@@ -42,7 +42,7 @@ def transform_to_item_stack(item, table: dict) -> list:
         return []
 
 
-@G.crafting_handler
+@shared.crafting_handler
 class GridShaped(mcpython.common.container.crafting.IRecipeType.IRecipe):
     RECIPE_NAMES = ["minecraft:crafting_shaped", "crafting_shaped"]
 
@@ -74,12 +74,12 @@ class GridShaped(mcpython.common.container.crafting.IRecipeType.IRecipe):
         self.bboxsize = (sx, sy)
 
     def register(self):
-        G.crafting_handler.crafting_recipes_shaped.setdefault(
+        shared.crafting_handler.crafting_recipes_shaped.setdefault(
             len(self.inputs), {}
         ).setdefault(self.bboxsize, []).append(self)
 
 
-@G.crafting_handler
+@shared.crafting_handler
 class GridShapeless(mcpython.common.container.crafting.IRecipeType.IRecipe):
     RECIPE_NAMES = ["minecraft:crafting_shapeless", "crafting_shapeless"]
 
@@ -97,6 +97,6 @@ class GridShapeless(mcpython.common.container.crafting.IRecipeType.IRecipe):
         self.output = output
 
     def register(self):
-        G.crafting_handler.crafting_recipes_shapeless.setdefault(
+        shared.crafting_handler.crafting_recipes_shapeless.setdefault(
             len(self.inputs), []
         ).append(self)

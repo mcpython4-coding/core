@@ -12,7 +12,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.factory.BlockFactory
-from mcpython import shared as G
+from mcpython import shared
 from mcpython.util.enums import ToolType
 import mcpython.common.mod.ModMcpython
 from mcpython.common.factory import CombinedBlockFactory
@@ -27,11 +27,11 @@ def remove_if_downer_block_not_solid(instance):
     :param instance: the block-instance to check
     """
     x, y, z = instance.position
-    other = G.world.get_active_dimension_by_name(instance.dimension).get_block(
+    other = shared.world.get_active_dimension_by_name(instance.dimension).get_block(
         (x, y - 1, z)
     )
     if other is None or type(other) == str:
-        G.world.get_active_dimension_by_name(instance.dimension).remove_block(
+        shared.world.get_active_dimension_by_name(instance.dimension).remove_block(
             instance.position
         )
 
@@ -106,7 +106,7 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
 )
 
 
-@G.mod_loader("minecraft", "stage:combined_factory:blocks")
+@shared.mod_loader("minecraft", "stage:combined_factory:blocks")
 def combined_load():
     GENERATOR = DataGeneratorInstance("{local}/resources/generated")
     GENERATOR.default_namespace = "minecraft"

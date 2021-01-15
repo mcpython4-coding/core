@@ -12,7 +12,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.event.Registry
-from mcpython import shared as G
+from mcpython import shared
 
 
 class InvalidSaveException(Exception):
@@ -65,7 +65,7 @@ data_serializer_registry = mcpython.common.event.Registry.Registry(
 )
 
 
-@G.mod_loader("minecraft", "stage:serializer:parts")
+@shared.mod_loader("minecraft", "stage:serializer:parts")
 def load():
     from mcpython.common.world.serializer import (
         General,

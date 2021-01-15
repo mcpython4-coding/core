@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared, shared as G, logger
+from mcpython import shared, logger
 import mcpython.ResourceLoader
 import mcpython.client.Chat
 import mcpython.common.entity.AbstractEntity
@@ -28,7 +28,7 @@ import mcpython.util.math
 import mcpython.common.entity.DamageSource
 
 
-@G.registry
+@shared.registry
 class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
     RENDERER = None
 
@@ -55,27 +55,26 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def __init__(self, name="unknown", dimension=None):
         super().__init__(dimension=dimension)
 
-        self.name: str = name  # the name of the player  todo: move into nbt
-        self.gamemode: int = -1  # the current gamemode todo: move into nbt
+        self.name: str = name  # the name of the player
+        self.gamemode: int = -1  # the current gamemode
         self.set_gamemode(1)  # and set it
 
-        self.hearts: int = 20  # todo: move into nbt
-        self.hunger: int = 20  # todo: move into nbt
-        self.xp: int = 0  # todo: move into nbt
-        self.xp_level: int = 0  # todo: move into nbt
-        self.armor_level = 0  # todo: move into nbt
-        self.armor_toughness = 0  # todo: move into nbt
+        self.hearts: int = 20
+        self.hunger: int = 20
+        self.xp: int = 0
+        self.xp_level: int = 0
+        self.armor_level = 0
+        self.armor_toughness = 0
 
-        self.in_nether_portal_since = None  # todo: move into nbt
-        self.should_leave_nether_portal_before_dim_change = False  # todo: move into nbt
+        self.in_nether_portal_since = None
+        self.should_leave_nether_portal_before_dim_change = False
 
-        self.flying = False  # are we currently flying?  # todo: move into nbt
+        self.flying = False  # are we currently flying?
 
-        self.fallen_since_y = -1  # how far did we fall?  # todo: move into nbt
+        self.fallen_since_y = -1  # how far did we fall?
 
-        self.active_inventory_slot: int = (
-            0  # which slot is currently selected todo: move into nbt
-        )
+        # which slot is currently selected
+        self.active_inventory_slot: int = 0
 
         # used for determine if we can access stuff now or must wait
         if not shared.mod_loader.finished:
@@ -112,6 +111,9 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         clipboard.copy("/tp @p {} {} {}".format(*self.position))
 
     def toggle_gamemode(self):
+        """
+        Toggles between gamemode 1 and 3, used internally for the hotkey F3+N
+        """
         if self != shared.world.get_active_player():
             return
 
@@ -121,6 +123,10 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
             self.set_gamemode(1)
 
     def create_inventories(self):
+        """
+        Helper method for setting up the player inventory
+        todo: can we re-use inventories from previous players?
+        """
         import mcpython.client.gui.InventoryCraftingTable as InvCrafting
         import mcpython.client.gui.InventoryPlayerHotbar as InvHotbar
 
@@ -139,32 +145,30 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
             (self.inventory_main, False),
         ]
 
-    def set_gamemode(self, gamemode: int or str):
-        gamemode = self.GAMEMODE_DICT.get(gamemode, gamemode)
+    def set_gamemode(self, gamemode: typing.Union[int, str]):
+        """
+        Sets the player gamemodes and the assigned properties
+        """
+        if str(gamemode) in self.GAMEMODE_DICT:
+            gamemode = self.GAMEMODE_DICT[str(gamemode)]
 
-        if not G.event_handler.call_cancelable(
-            "player:gamemode_change", self, self.gamemode, gamemode
-        ):
-            return
+            if not shared.event_handler.call_cancelable(
+                "player:gamemode_change", self, self.gamemode, gamemode
+            ):
+                return
 
-        # if it is a repr of the gamemode, get the int gamemode
-        # else, return the int
-        if gamemode == 0:
-            self.flying = False
-        elif gamemode == 1:
-            pass
-        elif gamemode == 2:
-            self.flying = False
-        elif gamemode == 3:
-            self.flying = True
+            if gamemode == 0:
+                self.flying = False
+            elif gamemode == 1:
+                pass
+            elif gamemode == 2:
+                self.flying = False
+            elif gamemode == 3:
+                self.flying = True
+
+            self.gamemode = gamemode
         else:
-            logger.print_stack(
-                "can't cast '{}' to valid gamemode. You may want to listen to 'player:gamemode_change' "
-                "to change behaviour!".format(gamemode)
-            )
-            return
-
-        self.gamemode = gamemode
+            logger.println("[ERROR] invalid gamemode:", gamemode)
 
     def get_needed_xp_for_next_level(self) -> int:
         if self.xp_level < 16:
@@ -190,18 +194,18 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def add_xp_level(self, xp_levels: int):
         self.xp_level += xp_levels
 
-    def pick_up(
+    def pick_up_item(
         self,
         itemstack: typing.Union[
             mcpython.common.container.ItemStack.ItemStack, mcpython.client.gui.Slot.Slot
         ],
     ) -> bool:
         """
-        adds the item onto the itemstack
+        Adds the item onto the itemstack
         :param itemstack: the itemstack to add
         :return: either successful or not
         """
-        if not G.event_handler.call_cancelable(
+        if not shared.event_handler.call_cancelable(
             "gameplay:player:pick_up_item", self, itemstack
         ):
             return False
@@ -210,7 +214,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if isinstance(itemstack, mcpython.client.gui.Slot.Slot):
             itemstack = itemstack.get_itemstack()
         if type(itemstack) == list:
-            return all([self.pick_up(itemstack) for itemstack in itemstack])
+            return all([self.pick_up_item(itemstack) for itemstack in itemstack])
 
         if not itemstack.item or itemstack.amount == 0:
             return True
@@ -250,9 +254,15 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         return False
 
     def set_active_inventory_slot(self, slot: int):
+        """
+        Sets the active inventory slot by ID (0-8)
+        """
         self.active_inventory_slot = slot
 
     def get_active_inventory_slot(self):
+        """
+        Gets the slot of the selected slot
+        """
         if self.inventory_hotbar is None:
             self.create_inventories()
         return self.inventory_hotbar.slots[self.active_inventory_slot]
@@ -265,7 +275,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         test_totem=True,
         force=False,
     ):
-        if not force and not G.event_handler.call_cancelable(
+        if not force and not shared.event_handler.call_cancelable(
             "player:pre_die",
             self,
             drop_items,
@@ -286,7 +296,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 self.inventory_main.slots[45].get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"
             )
-            if (a or b) and not G.event_handler.call_cancelable(
+            if (a or b) and not shared.event_handler.call_cancelable(
                 "player:totem_used", self
             ):
                 if a:
@@ -298,7 +308,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 return
 
         super().kill()
-        if not force and not G.event_handler.call_cancelable(
+        if not force and not shared.event_handler.call_cancelable(
             "player:dead:cancel_post",
             self,
             drop_items,
@@ -341,7 +351,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 "minecraft:escape_state"
             )  # todo: add special state [see above]
 
-        G.event_handler.call("gamplay:player:die", self, damage_source)
+        shared.event_handler.call("gamplay:player:die", self, damage_source)
 
     def _get_position(self):
         return self.position
@@ -373,7 +383,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 self.kill()
 
     def reset_moving_slot(self):
-        self.pick_up(shared.inventory_handler.moving_slot.get_itemstack().copy())
+        self.pick_up_item(shared.inventory_handler.moving_slot.get_itemstack().copy())
         shared.inventory_handler.moving_slot.get_itemstack().clean()
 
     def move_to_spawn_point(self):
@@ -416,10 +426,6 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 )
         self.set_position_unsafe(old_position)
 
-    def __del__(self):
-        for inventory in self.inventories.values():
-            del inventory
-
     def __str__(self):
         return 'Player(dim={},pos={},rot={},name="{}",chunk={})'.format(
             self.dimension.id,
@@ -438,7 +444,7 @@ class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
         super().teleport(position, dimension, force_chunk_save_update)
         if (
             self.chunk.dimension if self.chunk is not None else None
-        ) != before and self == G.world.get_active_player():
+        ) != before and self == shared.world.get_active_player():
             self.chunk.dimension.world.join_dimension(self.chunk.dimension.id)
 
     def get_inventories(self) -> list:

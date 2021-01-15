@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.container.crafting.IRecipeInterface
 import mcpython.common.container.crafting.IRecipeType
 import mcpython.common.container.crafting.GridRecipeInstances
@@ -109,12 +109,14 @@ class CraftingGridHelperInterface(
         size = (sx, sy)
         recipes = []
         if (
-            item_length in G.crafting_handler.crafting_recipes_shaped
-            and size in G.crafting_handler.crafting_recipes_shaped[item_length]
+            item_length in shared.crafting_handler.crafting_recipes_shaped
+            and size in shared.crafting_handler.crafting_recipes_shaped[item_length]
         ):
-            recipes += G.crafting_handler.crafting_recipes_shaped[item_length][size]
-        if item_length in G.crafting_handler.crafting_recipes_shapeless:
-            recipes += G.crafting_handler.crafting_recipes_shapeless[item_length]
+            recipes += shared.crafting_handler.crafting_recipes_shaped[item_length][
+                size
+            ]
+        if item_length in shared.crafting_handler.crafting_recipes_shapeless:
+            recipes += shared.crafting_handler.crafting_recipes_shapeless[item_length]
         for recipe in recipes:
             if (
                 isinstance(
@@ -195,7 +197,7 @@ class CraftingGridHelperInterface(
 
     @classmethod
     def check_match(cls, current, target) -> bool:
-        tags = G.registry.get_by_name("minecraft:item").entries[current].TAGS
+        tags = shared.registry.get_by_name("minecraft:item").entries[current].TAGS
         for entry in target:
             if type(entry) != str:
                 entry = entry[0]
@@ -213,7 +215,7 @@ class CraftingGridHelperInterface(
     ) -> bool:
         tasked = recipe.inputs[:]
         for item in items:
-            tags = G.registry.get_by_name("minecraft:item").entries[item].TAGS
+            tags = shared.registry.get_by_name("minecraft:item").entries[item].TAGS
             for task in tasked[:]:
                 for entry in task:
                     if type(entry) != str:
@@ -233,7 +235,7 @@ class CraftingGridHelperInterface(
     def update_output(self):
         self.slot_output_map.get_itemstack().clean()
         if self.active_recipe:
-            recipe = G.crafting_handler.check_relink(self.active_recipe)
+            recipe = shared.crafting_handler.check_relink(self.active_recipe)
             self.slot_output_map.set_itemstack(
                 mcpython.common.container.ItemStack.ItemStack(
                     recipe.output[0], amount=recipe.output[1]
@@ -262,7 +264,7 @@ class CraftingGridHelperInterface(
         if (
             self.slot_output_map.get_itemstack().is_empty() and player
         ):  # have we removed items and where they removed by the player?
-            G.event_handler.call(
+            shared.event_handler.call(
                 "gui:crafting:grid:output:remove",
                 self,
                 self.slot_output_map,
@@ -296,10 +298,14 @@ class CraftingGridHelperInterface(
             count += itemstack.amount
         max_size = itemstack.item.STACK_SIZE
         for _ in range(count // max_size):
-            G.world.get_active_player().pick_up(itemstack.copy().set_amount(max_size))
+            shared.world.get_active_player().pick_up_item(
+                itemstack.copy().set_amount(max_size)
+            )
             count -= max_size
-        G.world.get_active_player().pick_up(itemstack.copy().set_amount(count))
-        G.event_handler.call(
+        shared.world.get_active_player().pick_up_item(
+            itemstack.copy().set_amount(count)
+        )
+        shared.event_handler.call(
             "gui:crafting:grid:output:remove",
             self,
             self.slot_output_map,

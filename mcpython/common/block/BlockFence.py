@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.util.enums
 
 
@@ -58,7 +58,7 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
         }
 
     def on_block_added(self):
-        if self.NAME in G.model_handler.blockstates:
+        if self.NAME in shared.model_handler.blockstates:
             self.on_block_update()
 
     def get_model_state(self) -> dict:
@@ -69,16 +69,16 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
         x, y, z = self.position
 
         block_north: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x + 1, y, z))
+            shared.world.get_dimension_by_name(self.dimension).get_block((x + 1, y, z))
         )
         block_east: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x, y, z + 1))
+            shared.world.get_dimension_by_name(self.dimension).get_block((x, y, z + 1))
         )
         block_south: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x - 1, y, z))
+            shared.world.get_dimension_by_name(self.dimension).get_block((x - 1, y, z))
         )
         block_west: mcpython.common.block.AbstractBlock.AbstractBlock = (
-            G.world.get_dimension_by_name(self.dimension).get_block((x, y, z - 1))
+            shared.world.get_dimension_by_name(self.dimension).get_block((x, y, z - 1))
         )
 
         self.connections["east"] = self.connects_to(
@@ -165,14 +165,14 @@ class NetherBrickFence(IFence):
     FENCE_TYPE_NAME = {"minecraft:nether_fence"}
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(OakFence)
-    G.registry.register(SpruceFence)
-    G.registry.register(DarkOakFence)
-    G.registry.register(JungleFence)
-    G.registry.register(BirchFence)
-    G.registry.register(AcaciaFence)
-    G.registry.register(WarpedFence)
-    G.registry.register(CrimsonFence)
-    G.registry.register(NetherBrickFence)
+    shared.registry.register(OakFence)
+    shared.registry.register(SpruceFence)
+    shared.registry.register(DarkOakFence)
+    shared.registry.register(JungleFence)
+    shared.registry.register(BirchFence)
+    shared.registry.register(AcaciaFence)
+    shared.registry.register(WarpedFence)
+    shared.registry.register(CrimsonFence)
+    shared.registry.register(NetherBrickFence)

@@ -266,7 +266,7 @@ class StatePartGame(StatePart.StatePart):
                                 block.on_request_item_for_block(itemstack)
                                 for itemstack in items
                             ]
-                            player.pick_up(items)
+                            player.pick_up_item(items)
 
                         chunk.remove_block(blockpos)
                         chunk.on_block_updated(blockpos)
@@ -385,7 +385,7 @@ class StatePartGame(StatePart.StatePart):
                 if player.gamemode == 1:
                     old_itemstack = selected_slot.get_itemstack()
                     selected_slot.set_itemstack(itemstack)
-                    player.pick_up(old_itemstack)
+                    player.pick_up_item(old_itemstack)
                     if G.window.mouse_pressing[mouse.LEFT]:
                         self.calculate_new_break_time()
 

@@ -11,7 +11,6 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
 
 
 class IRecipeInterface:

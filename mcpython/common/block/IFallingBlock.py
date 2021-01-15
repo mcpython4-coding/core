@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.block.AbstractBlock
 import mcpython.common.event.TickHandler
 import mcpython.common.event.TickHandler
@@ -28,17 +28,17 @@ class IFallingBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def on_block_update(self):
         x, y, z = self.position
-        dim = G.world.get_dimension_by_name(self.dimension)
+        dim = shared.world.get_dimension_by_name(self.dimension)
         instance = dim.get_block((x, y - 1, z))
         if not instance:
-            G.entity_handler.spawn_entity(
+            shared.entity_handler.spawn_entity(
                 "minecraft:falling_block", self.position, representing_block=self
             )
             dim.remove_block(self.position)
 
     def fall(self, check=True):
         x, y, z = self.position
-        dim = G.world.get_dimension_by_name(self.dimension)
+        dim = shared.world.get_dimension_by_name(self.dimension)
         if not check or not dim.get_block((x, y - 1, z)):
             dim.remove_block(self.position)
             dim.check_neighbors(self.position)

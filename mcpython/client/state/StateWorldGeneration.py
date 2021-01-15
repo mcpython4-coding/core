@@ -31,7 +31,7 @@ import mcpython.client.state.ui.UIPartLabel
 import mcpython.util.getskin
 import mcpython.util.math
 import mcpython.util.opengl
-import mcpython.common.world.player
+import mcpython.common.entity.PlayerEntity
 from . import State
 from mcpython.util.annotation import onlyInClient
 import mcpython.server.worldgen.noise.NoiseManager
@@ -188,7 +188,7 @@ class StateWorldGeneration(State.State):
                 sys.exit(-1)
 
         if shared.IS_CLIENT:
-            mcpython.common.world.player.Player.RENDERER.reload()
+            mcpython.common.entity.PlayerEntity.Player.RENDERER.reload()
 
         # todo: this is also only client code
         shared.world.active_player = player_name

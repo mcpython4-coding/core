@@ -12,11 +12,11 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.container.crafting.IRecipeType
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.container.crafting.GridRecipeInstances
 
 
-@G.crafting_handler
+@shared.crafting_handler
 class FurnaceRecipe(mcpython.common.container.crafting.IRecipeType.IRecipe):
     """
     Interface for decoding an furnace-like recipe
@@ -53,8 +53,8 @@ class FurnaceRecipe(mcpython.common.container.crafting.IRecipeType.IRecipe):
 
     def register(self):
         [
-            G.crafting_handler.furnace_recipes.setdefault(self.type, {}).setdefault(
-                e, self
-            )
+            shared.crafting_handler.furnace_recipes.setdefault(
+                self.type, {}
+            ).setdefault(e, self)
             for e in self.input
         ]

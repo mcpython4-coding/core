@@ -56,6 +56,7 @@ class DatapackSerializationHelper:
         re_run_on_reload=False,
         load_on_stage: str = None,
         on_bake=None,
+        on_dedicated_server=True,
     ):
         self.name = name
         self.path_group = path_group
@@ -67,10 +68,12 @@ class DatapackSerializationHelper:
         self.re_run_on_reload = re_run_on_reload
         self.load_on_stage = load_on_stage
         self.on_bake = on_bake
-
-        mcpython.common.data.ResourcePipe.handler.register_mapper(self.map_pack)
-        mcpython.common.data.ResourcePipe.handler.register_reload_listener(self.clear)
-        mcpython.common.data.ResourcePipe.handler.register_bake_listener(self.bake)
+        if on_dedicated_server or shared.IS_CLIENT:
+            mcpython.common.data.ResourcePipe.handler.register_mapper(self.map_pack)
+            mcpython.common.data.ResourcePipe.handler.register_reload_listener(
+                self.clear
+            )
+            mcpython.common.data.ResourcePipe.handler.register_bake_listener(self.bake)
 
     def register_serializer(self, serializer: typing.Type[ISerializer]):
         self.serializer.append(serializer)

@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 from . import AbstractBlock
 from pyglet.window import mouse, key
 import mcpython.util.enums
@@ -19,7 +19,7 @@ import mcpython.common.factory.ItemFactory
 
 
 def create_shulker_box(name):
-    @G.registry
+    @shared.registry
     class BlockShulkerBox(AbstractBlock.AbstractBlock):
         def __init__(self):
             super().__init__()
@@ -37,7 +37,7 @@ def create_shulker_box(name):
             self, player, button: int, modifiers: int, hit_position: tuple
         ):
             if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-                G.inventory_handler.show(self.inventory)
+                shared.inventory_handler.show(self.inventory)
                 return True
             else:
                 return False
@@ -68,10 +68,10 @@ def create_shulker_box(name):
             itemstack.item.inventory = self.inventory.copy()
 
         def on_block_remove(self, reason):
-            G.inventory_handler.hide(self.inventory)
+            shared.inventory_handler.hide(self.inventory)
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
     create_shulker_box("shulker_box")
     for color in mcpython.util.enums.COLORS:

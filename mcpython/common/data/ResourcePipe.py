@@ -97,10 +97,15 @@ class ResourcePipeHandler:
         for mapper in self.mappers:
             mapper(providing_mod, namespace)
 
-    def register_mapper(self, mapper: typing.Callable[[str, str], None]):
+    def register_mapper(
+        self, mapper: typing.Callable[[str, str], None], on_dedicated_server=True
+    ):
         """
         To use in "stage:resources:pipe:add_mapper"
         """
+        if not on_dedicated_server and not shared.IS_CLIENT:
+            return
+
         self.mappers.append(mapper)
 
         for name, pathname in self.namespaces:
@@ -161,7 +166,7 @@ class ResourcePipeHandler:
 
 handler = ResourcePipeHandler()
 handler.register_mapper(recipe_mapper)
-handler.register_mapper(model_mapper)
+handler.register_mapper(model_mapper, on_dedicated_server=False)
 handler.register_mapper(tag_mapper)
 handler.register_mapper(language_mapper)
 handler.register_mapper(loot_table_mapper)

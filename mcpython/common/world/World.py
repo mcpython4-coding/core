@@ -26,7 +26,7 @@ import mcpython.common.world.Chunk
 import mcpython.common.world.Dimension
 import mcpython.common.world.GameRule
 import mcpython.server.worldgen.WorldGenerationHandler
-import mcpython.common.world.player
+import mcpython.common.entity.PlayerEntity
 import mcpython.common.world.AbstractInterface
 
 
@@ -68,7 +68,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         )  # the save file instance
 
         # when in an network, stores an reference to all other players
-        self.players: typing.Dict[str, mcpython.common.world.player.Player] = {}
+        self.players: typing.Dict[str, mcpython.common.entity.PlayerEntity.Player] = {}
         self.active_player: str = "unknown"  # todo: make property, make None-able & set default None when not in world
         self.world_loaded = False  # describes if the world is loaded or not
 
@@ -98,7 +98,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
     def get_active_player(
         self, create: bool = True
-    ) -> typing.Union[mcpython.common.world.player.Player, None]:
+    ) -> typing.Union[mcpython.common.entity.PlayerEntity.Player, None]:
         """
         returns the player instance for this client
         :param create: if the player should be created or not
@@ -299,7 +299,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if self.get_active_dimension() is None:
             return
-        
+
         before_set = set()
         after_set = set()
         pad = 4
@@ -318,7 +318,11 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
             pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
-            if shared.world.get_active_dimension().get_chunk(*chunk, generate=False).loaded:
+            if (
+                shared.world.get_active_dimension()
+                .get_chunk(*chunk, generate=False)
+                .loaded
+            ):
                 shared.tick_handler.schedule_once(
                     shared.world.save_file.dump,
                     None,
@@ -360,7 +364,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
                         dx + after[0], dz + after[1], generate=False
                     )
                     if not chunk.is_generated():
-                        shared.world_generation_handler.add_chunk_to_generation_list(chunk)
+                        shared.world_generation_handler.add_chunk_to_generation_list(
+                            chunk
+                        )
 
     def cleanup(self, remove_dims=False, filename=None):
         """
@@ -379,7 +385,10 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         if remove_dims:
             self.dimensions.clear()
             shared.dimension_handler.init_dims()
-        [inventory.on_world_cleared() for inventory in shared.inventory_handler.inventories]
+        [
+            inventory.on_world_cleared()
+            for inventory in shared.inventory_handler.inventories
+        ]
         self.reset_config()
         shared.world.get_active_player().flying = False
         for inv in shared.world.get_active_player().get_inventories():

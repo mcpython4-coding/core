@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.util.enums
 
 
@@ -35,7 +35,7 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
         }
 
     def on_block_added(self):
-        if self.NAME in G.model_handler.blockstates:
+        if self.NAME in shared.model_handler.blockstates:
             self.on_block_update()
 
     def get_model_state(self) -> dict:
@@ -48,7 +48,7 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
     def on_block_update(self):
         x, y, z = self.position
 
-        dim = G.world.get_dimension_by_name(self.dimension)
+        dim = shared.world.get_dimension_by_name(self.dimension)
 
         block_north: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
             (x + 1, y, z)
@@ -137,7 +137,7 @@ class SandstoneWall(IWall):
     NAME = "minecraft:sandstone_wall"
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(RedSandstoneWall)
-    G.registry.register(SandstoneWall)
+    shared.registry.register(RedSandstoneWall)
+    shared.registry.register(SandstoneWall)

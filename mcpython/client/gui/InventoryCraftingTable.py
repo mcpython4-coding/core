@@ -69,7 +69,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
     def on_deactivate(self):
         super().on_deactivate()
         for slot in self.slots[:-1]:
-            shared.world.get_active_player().pick_up(slot.get_itemstack().copy())
+            shared.world.get_active_player().pick_up_item(slot.get_itemstack().copy())
             slot.get_itemstack().clean()
         self.slots[-1].itemstack.clean()
         self.slots[-1].get_itemstack().clean()

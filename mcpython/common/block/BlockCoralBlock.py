@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.block.AbstractBlock
 import mcpython.common.factory.BlockFactory
 
@@ -25,7 +25,7 @@ class ICoralBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def on_random_update(self):
         # todo: add water check; not arrival as it is not implemented
-        G.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
+        shared.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
             self.position
         ).add_block(self.position, "{}:dead_{}".format(*self.NAME.split(":")))
 
@@ -70,13 +70,13 @@ class TubeCoralBlock(ICoralBlock):
     NAME: str = "minecraft:tube_coral_block"
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(BrainCoralBlock)
-    G.registry.register(BubbleCoralBlock)
-    G.registry.register(FireCoralBlock)
-    G.registry.register(HornCoralBlock)
-    G.registry.register(TubeCoralBlock)
+    shared.registry.register(BrainCoralBlock)
+    shared.registry.register(BubbleCoralBlock)
+    shared.registry.register(FireCoralBlock)
+    shared.registry.register(HornCoralBlock)
+    shared.registry.register(TubeCoralBlock)
     # the dead variants, todo: add attributes like hardness
     mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_brain_coral_block"

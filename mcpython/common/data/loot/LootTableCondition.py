@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.event.Registry
 import mcpython.common.entity.DamageSource
-from mcpython import shared as G
+from mcpython import shared
 import random
 
 
@@ -34,14 +34,14 @@ loot_table_condition_registry = mcpython.common.event.Registry.Registry(
 )
 
 
-@G.registry
+@shared.registry
 class Alternative(ILootTableCondition):
     NAME = "minecraft:alternative"
 
     def __init__(self, data):
         super().__init__(data)
         self.conditions = [
-            G.loot_table_handler.parse_condition(d) for d in data["terms"]
+            shared.loot_table_handler.parse_condition(d) for d in data["terms"]
         ]
 
     def check(self, source, *args, **kwargs) -> bool:
@@ -50,7 +50,7 @@ class Alternative(ILootTableCondition):
         )
 
 
-@G.registry
+@shared.registry
 class BlockStateProperty(ILootTableCondition):
     NAME = "minecraft:block_state_property"
 
@@ -73,7 +73,7 @@ class BlockStateProperty(ILootTableCondition):
         return True
 
 
-@G.registry
+@shared.registry
 class DamageSourceProperties(ILootTableCondition):
     NAME = "minecraft:damage_source_properties"
 
@@ -105,49 +105,49 @@ class DamageSourceProperties(ILootTableCondition):
         return self.source == damage_source
 
 
-@G.registry
+@shared.registry
 class EntityProperties(ILootTableCondition):
     NAME = "minecraft:entity_properties"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class EntityScores(ILootTableCondition):
     NAME = "minecraft:entity_scores"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class Inverted(ILootTableCondition):
     NAME = "minecraft:inverted"
 
     def __init__(self, data):
         super().__init__(data)
-        self.term = G.loot_table_handler.parse_condition(data["term"])
+        self.term = shared.loot_table_handler.parse_condition(data["term"])
 
     def check(self, source, *args, **kwargs) -> bool:
         return not self.term.check(source, *args, **kwargs)
 
 
-@G.registry
+@shared.registry
 class KilledByPlayer(ILootTableCondition):
     NAME = "minecraft:killed_by_player"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class LocationCheck(ILootTableCondition):
     NAME = "minecraft:location_check"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class MatchTool(ILootTableCondition):
     NAME = "minecraft:match_tool"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class RandomChance(ILootTableCondition):
     NAME = "minecraft:random_chance"
 
@@ -155,19 +155,19 @@ class RandomChance(ILootTableCondition):
         return random.randint(1, round(1 / self.data["chance"])) == 1
 
 
-@G.registry
+@shared.registry
 class RandomChanceWithLooting(RandomChance):
     NAME = "minecraft:random_chance_with_looting"
     # todo: implement looting
 
 
-@G.registry
+@shared.registry
 class Reference(ILootTableCondition):
     NAME = "minecraft:reference"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class SurvivesExplosion(ILootTableCondition):
     NAME = "minecraft:survives_explosion"
     # todo: implement
@@ -176,25 +176,25 @@ class SurvivesExplosion(ILootTableCondition):
         return True
 
 
-@G.registry
+@shared.registry
 class TableBonus(ILootTableCondition):
     NAME = "minecraft:table_bonus"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class TimeCheck(ILootTableCondition):
     NAME = "minecraft:time_check"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class ToolEnchantment(ILootTableCondition):
     NAME = "minecraft:tool_enchantment"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class WeatherCheck(ILootTableCondition):
     NAME = "minecraft:weather_check"
     # todo: implement

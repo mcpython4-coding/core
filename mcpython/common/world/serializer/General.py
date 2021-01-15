@@ -18,7 +18,7 @@ import mcpython.common.world.SaveFile
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
 import mcpython.util.getskin
-import mcpython.common.world.player
+import mcpython.common.entity.PlayerEntity
 import mcpython.server.worldgen.noise.NoiseManager
 
 
@@ -93,7 +93,11 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             mcpython.ResourceLoader.read_image(
                 "assets/minecraft/textures/entity/steve.png"
             ).get_save_data(shared.build + "/skin.png")
-        mcpython.common.world.player.Player.RENDERER.reload()
+
+        try:
+            mcpython.common.entity.PlayerEntity.Player.RENDERER.reload()
+        except AttributeError:
+            pass
 
         shared.world.config = data["config"]
         shared.event_handler.call("seed:set")

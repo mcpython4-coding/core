@@ -80,11 +80,13 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 v = v.copy()
             self.attr[attr] = v
 
-        self.add_chunk_load_ticket(mcpython.common.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS)
+        self.add_chunk_load_ticket(
+            mcpython.common.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS
+        )
 
     def tick(self):
         self.check_for_unload()
-        
+
     def save(self):
         shared.world.save_file.read(
             "minecraft:chunk", dimension=self.get_dimension(), chunk=self.position
@@ -182,7 +184,10 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             else:
                 chunk = self
 
-            if not chunk.is_loaded() and shared.world.hide_faces_to_not_generated_chunks:
+            if (
+                not chunk.is_loaded()
+                and shared.world.hide_faces_to_not_generated_chunks
+            ):
                 faces[face.normal_name] = False
             else:
                 block = chunk.get_block(pos)
@@ -515,7 +520,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         return (
             self.world[position]
             if position in self.world
-            else shared.world_generation_handler.task_handler.get_block(position, chunk=self)
+            else shared.world_generation_handler.task_handler.get_block(
+                position, chunk=self
+            )
         )
 
     def __del__(self):

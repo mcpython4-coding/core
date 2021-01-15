@@ -121,7 +121,7 @@ SHUFFLE_DATA = False
 SHUFFLE_INTERVAL = -1
 
 """
-an list of additional blocks to enable/disable when needed
+A list of additional blocks to enable/disable when needed
 WARNING: this content is generated ONTOP of minecraft's content an uses their textures to generate. Please note
          that any of these objects look like original ones, but they are not (currently)
 WARNING: All additional blocks have currently no own loot table for drops. These might change in the future,

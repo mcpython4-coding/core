@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from pyglet.window import mouse, key
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.util.enums
 from mcpython.common.block.BlockChest import BBOX
 from . import AbstractBlock
@@ -39,7 +39,7 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
         super().__init__()
 
         self.front_side = mcpython.util.enums.EnumSide.N
-        self.inventory = G.world.get_active_player().inventory_enderchest
+        self.inventory = shared.world.get_active_player().inventory_enderchest
 
     def on_block_added(self):
         if self.real_hit:
@@ -60,7 +60,7 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
         self, player, button: int, modifiers: int, hit_position: tuple
     ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            G.inventory_handler.show(self.inventory)
+            shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -93,9 +93,9 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
         return BBOX
 
     def on_block_remove(self, reason):
-        G.inventory_handler.hide(self.inventory)
+        shared.inventory_handler.hide(self.inventory)
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(BlockEnderChest)
+    shared.registry.register(BlockEnderChest)

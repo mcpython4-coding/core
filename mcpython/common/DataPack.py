@@ -15,7 +15,7 @@ import enum
 import json
 import os
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.ResourceLoader
 import mcpython.server.command.CommandParser
 import mcpython.server.command.McFunctionFile
@@ -50,11 +50,11 @@ class DataPackHandler:
         """
         will load all data packs
         """
-        for path in os.listdir(G.home + "/datapacks"):
+        for path in os.listdir(shared.home + "/datapacks"):
             self.data_packs.append(
-                self.load_datapack_from_directory(G.home + "/datapacks/" + path)
+                self.load_datapack_from_directory(shared.home + "/datapacks/" + path)
             )
-        G.event_handler.call("datapack:search")
+        shared.event_handler.call("datapack:search")
 
     def load_datapack_from_directory(self, directory: str):
         """
@@ -64,7 +64,7 @@ class DataPackHandler:
         try:
             datapack = DataPack(directory)
             datapack.load()
-            G.event_handler.call("datapack:load", datapack)
+            shared.event_handler.call("datapack:load", datapack)
             return datapack
         except:
             logger.print_exception("during loading data pack from {}".format(directory))
@@ -78,7 +78,7 @@ class DataPackHandler:
         }
         self.cleanup()
         self._load()
-        G.event_handler.call("datapack:reload")
+        shared.event_handler.call("datapack:reload")
         # restore old state
         for datapack in self.data_packs:
             if datapack.name in old_status_table:
@@ -92,11 +92,11 @@ class DataPackHandler:
         """
         removes all data packs from the system
         """
-        G.event_handler.call("datapack:unload:pre")
+        shared.event_handler.call("datapack:unload:pre")
         for datapack in self.data_packs:
             datapack.unload()
         self.data_packs.clear()
-        G.event_handler.call("datapack:unload:post")
+        shared.event_handler.call("datapack:unload:post")
 
     def try_call_function(
         self,
@@ -113,7 +113,7 @@ class DataPackHandler:
             info = mcpython.server.command.CommandParser.ParsingCommandInfo()
         if name.startswith("#"):  # an tag
             try:
-                tag = G.tag_handler.get_tag_for(name, "functions")
+                tag = shared.tag_handler.get_tag_for(name, "functions")
             except ValueError:
                 return
             for name in tag.entries:

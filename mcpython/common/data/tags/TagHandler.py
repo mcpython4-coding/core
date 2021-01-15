@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.ResourceLoader
 import mcpython.common.mod.ModMcpython
 import mcpython.common.data.tags.Tag
@@ -29,7 +29,7 @@ class TagHandler:
         """
         self.taggroups = {}  # name -> taggroup
         self.taglocations = []
-        G.mod_loader("minecraft", "stage:tag:load", info="loading tag-groups")(
+        shared.mod_loader("minecraft", "stage:tag:load", info="loading tag-groups")(
             self.load_tags
         )
 
@@ -77,13 +77,13 @@ class TagHandler:
                 name = "#{}:{}".format(
                     modname, "/".join(s[s.index("tags") + 2 :]).split(".")[0]
                 )
-                G.tag_handler.from_data(
+                shared.tag_handler.from_data(
                     s[s.index("tags") + 1],
                     name,
                     data,
                     data["replace"] if "replace" in data else True,
                 )
-        for taggroup in G.tag_handler.taggroups.values():
+        for taggroup in shared.tag_handler.taggroups.values():
             if direct_call:
                 # logger.println("loading tag-group {}".format(taggroup.name))
                 taggroup.build()
@@ -130,7 +130,7 @@ class TagHandler:
         return identifier in self.get_tag_for(tag_name, group).entries
 
 
-G.tag_handler = TagHandler()
+shared.tag_handler = TagHandler()
 
 
 def add_from_location(loc: str):
@@ -139,7 +139,7 @@ def add_from_location(loc: str):
     :param loc: the namespace
     WARNING: when adding outside normal build period, errors may occur
     """
-    G.tag_handler.taglocations += [
+    shared.tag_handler.taglocations += [
         x.format(loc)
         for x in [
             "data/{}/tags/items",
@@ -151,7 +151,7 @@ def add_from_location(loc: str):
     ]
 
 
-@G.mod_loader("minecraft", "stage:tag:group", info="adding tag group locations")
+@shared.mod_loader("minecraft", "stage:tag:group", info="adding tag group locations")
 def on_group_add():
     add_from_location("minecraft")
     add_from_location("forge")

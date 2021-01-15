@@ -11,6 +11,8 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
+
+
 class Channel:
     def __init__(self, name: str, static_id=None):
         self.name = name

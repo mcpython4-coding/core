@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.container.ItemStack
 import mcpython.util.enums
 
@@ -31,7 +31,7 @@ class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def on_block_update(self):
         x, y, z = self.position
-        dim = G.world.get_dimension_by_name(self.dimension)
+        dim = shared.world.get_dimension_by_name(self.dimension)
         instance: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
             (x, y - 1, z)
         )
@@ -42,7 +42,7 @@ class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
             dim.get_chunk_for_position((x, y, z)).remove_block(
                 (x, y, z), block_update=False
             )
-            G.world.get_active_player().pick_up(
+            shared.world.get_active_player().pick_up_item(
                 mcpython.common.container.ItemStack.ItemStack("minecraft:carpet")
             )  # todo: drop in world
 
@@ -61,14 +61,14 @@ def create_carpet(carpet_color: str):
     :return: the generated class
     """
 
-    @G.registry
+    @shared.registry
     class Carpet(ICarpet):
         NAME: str = "{}_carpet".format(carpet_color)  # the name of the block
 
     return Carpet
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
     for color in mcpython.util.enums.COLORS:
         create_carpet("minecraft:" + color)

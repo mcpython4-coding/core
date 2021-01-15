@@ -193,7 +193,9 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         if self.uuid in shared.entity_handler.entity_map:
             del shared.entity_handler.entity_map[self.uuid]
 
-    def pick_up(self, itemstack: mcpython.common.container.ItemStack.ItemStack) -> bool:
+    def pick_up_item(
+        self, itemstack: mcpython.common.container.ItemStack.ItemStack
+    ) -> bool:
         """
         Let the entity pick up an item and insert it into its inventory
         :param itemstack: the itemstack to use

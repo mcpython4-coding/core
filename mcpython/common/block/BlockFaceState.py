@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.common.event.EventHandler
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.util.enums
 
@@ -67,7 +67,7 @@ class BlockFaceState:
                     self.block.position,
                     self.block,
                     face,
-                    G.world.get_dimension_by_name(self.block.dimension).batches,
+                    shared.world.get_dimension_by_name(self.block.dimension).batches,
                 )
             elif issubclass(
                 type(self.custom_renderer),
@@ -80,10 +80,10 @@ class BlockFaceState:
                     self.subscribed_renderer = True
         else:
             self.face_data[face.normal_name].extend(
-                G.model_handler.add_face_to_batch(
+                shared.model_handler.add_face_to_batch(
                     self.block,
                     face,
-                    G.world.get_dimension_by_name(self.block.dimension).batches,
+                    shared.world.get_dimension_by_name(self.block.dimension).batches,
                 )
             )
 
@@ -142,7 +142,7 @@ class BlockFaceState:
         Updates the block face state
         :param redraw_complete: if all sides should be re-drawn
         """
-        chunk = G.world.get_dimension_by_name(
+        chunk = shared.world.get_dimension_by_name(
             self.block.dimension
         ).get_chunk_for_position(self.block.position)
         state = chunk.exposed_faces(self.block.position)

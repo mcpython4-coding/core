@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.world.datafixers.IDataFixer
 
 
@@ -39,7 +39,7 @@ class GameRuleRemovalFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixe
     TARGET_GAMERULE_NAME = []  # which game rules to apply to
 
 
-@G.registry
+@shared.registry
 class GameRule(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:gamerule"
 
@@ -68,12 +68,12 @@ class GameRule(mcpython.common.world.serializer.IDataSerializer.IDataSerializer)
         if data is None:
             pass
         for name in data:
-            G.world.gamerule_handler.table[name].status.load(data[name])
+            shared.world.gamerule_handler.table[name].status.load(data[name])
 
     @classmethod
     def save(cls, data, save_file):
         data = {
             gamerule.NAME: gamerule.status.save()
-            for gamerule in G.world.gamerule_handler.table.values()
+            for gamerule in shared.world.gamerule_handler.table.values()
         }
         save_file.dump_file_json("gamerules.json", data)

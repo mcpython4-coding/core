@@ -12,7 +12,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.event.Registry
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.container.ItemStack
 import random
 
@@ -34,7 +34,7 @@ loot_table_function_registry = mcpython.common.event.Registry.Registry(
 )
 
 
-@G.registry
+@shared.registry
 class ApplyBonus(ILootTableFunction):
     NAME = "minecraft:apply_bonus"
 
@@ -48,7 +48,7 @@ class ApplyBonus(ILootTableFunction):
         pass
 
 
-@G.registry
+@shared.registry
 class CopyName(ILootTableFunction):
     NAME = "minecraft:copy_name"
 
@@ -64,43 +64,43 @@ class CopyName(ILootTableFunction):
                     item.display_name = block.get_inventories()[0].custom_name
 
 
-@G.registry
+@shared.registry
 class CopyNBT(ILootTableFunction):
     NAME = "minecraft:copy_nbt"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class CopyState(ILootTableFunction):
     NAME = "minecraft:copy_state"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class EnchantRandomly(ILootTableFunction):
     NAME = "minecraft:enchant_randomly"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class EnchantWithLevels(ILootTableFunction):
     NAME = "minecraft:enchant_with_levels"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class ExplorationMap(ILootTableFunction):
     NAME = "minecraft:exploration_map"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class ExplosionDecay(ILootTableFunction):
     NAME = "minecraft:explosion_decay"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class FurnaceSmelt(ILootTableFunction):
     NAME = "minecraft:furnace_smelt"
 
@@ -109,8 +109,11 @@ class FurnaceSmelt(ILootTableFunction):
             itemname = itemstack.get_item_name()
             if itemname is None:
                 continue
-            if itemname in G.crafting_handler.furnace_recipes["minecraft:smelting"]:
-                result = G.crafting_handler.furnace_recipes["minecraft:smelting"][
+            if (
+                itemname
+                in shared.crafting_handler.furnace_recipes["minecraft:smelting"]
+            ):
+                result = shared.crafting_handler.furnace_recipes["minecraft:smelting"][
                     itemname
                 ]
                 items[i] = mcpython.common.container.ItemStack.ItemStack(
@@ -118,37 +121,37 @@ class FurnaceSmelt(ILootTableFunction):
                 )
 
 
-@G.registry
+@shared.registry
 class FillPlayerHead(ILootTableFunction):
     NAME = "minecraft:fill_player_head"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class LimitCount(ILootTableFunction):
     NAME = "minecraft:limit_count"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class LootingEnchant(ILootTableFunction):
     NAME = "minecraft:looting_enchant"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class SetAttributes(ILootTableFunction):
     NAME = "minecraft:set_attributes"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class SetContents(ILootTableFunction):
     NAME = "minecraft:set_contents"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class SetCount(ILootTableFunction):
     NAME = "minecraft:set_count"
 
@@ -177,31 +180,31 @@ class SetCount(ILootTableFunction):
                     itemstack.set_amount(count)
 
 
-@G.registry
+@shared.registry
 class SetDamage(ILootTableFunction):
     NAME = "minecraft:set_damage"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class SetLore(ILootTableFunction):
     NAME = "minecraft:set_lore"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class SetName(ILootTableFunction):
     NAME = "minecraft:set_name"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class SetNBT(ILootTableFunction):
     NAME = "minecraft:set_nbt"
     # todo: implement
 
 
-@G.registry
+@shared.registry
 class SetStewEffect(ILootTableFunction):
     NAME = "minecraft:set_stew_effect"
     # todo: implement

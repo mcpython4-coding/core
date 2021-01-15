@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 from . import AbstractBlock
 import mcpython.util.enums
 
@@ -31,7 +31,7 @@ class BlockDirt(AbstractBlock.AbstractBlock):
     ENABLE_RANDOM_TICKS = True
 
     def on_random_update(self):
-        dim = G.world.get_dimension_by_name(self.dimension)
+        dim = shared.world.get_dimension_by_name(self.dimension)
         x, y, z = self.position
         for dy in range(y + 1, dim.get_dimension_range()[1] + 1):
             instance = dim.get_block((x, dy, z))
@@ -55,6 +55,6 @@ class BlockDirt(AbstractBlock.AbstractBlock):
                                 return
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(BlockDirt)
+    shared.registry.register(BlockDirt)

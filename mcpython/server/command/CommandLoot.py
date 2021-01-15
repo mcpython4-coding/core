@@ -51,7 +51,9 @@ class CommandLoot(mcpython.server.command.Command.Command):
         if values[0] == "give":
             for entity in values[1]:
                 if values[2] == "loot":
-                    entity.pick_up(G.loot_table_handler.roll(values[3], player=entity))
+                    entity.pick_up_item(
+                        G.loot_table_handler.roll(values[3], player=entity)
+                    )
                 elif values[2] == "mine":
                     block = entity.dimension.get_block(values[3])
                     if block is None or type(block) == str:
@@ -61,7 +63,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
                             )
                         )
                         return
-                    entity.pick_up(
+                    entity.pick_up_item(
                         G.loot_table_handler.get_drop_for_block(block, entity)
                     )
         elif values[0] == "insert":

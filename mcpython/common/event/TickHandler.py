@@ -61,15 +61,9 @@ class TickHandler:
                     return
         shared.entity_handler.tick(dt)
         shared.world.tick()
-        if any(
-            type(x) == mcpython.client.state.StatePartGame.StatePartGame
-            for x in shared.state_handler.active_state.parts
-        ):
-            mcpython.common.DataPack.datapack_handler.try_call_function(
-                "#minecraft:tick"
-            )
-            if self.enable_random_ticks:
-                pyglet.clock.schedule_once(self.send_random_ticks, 0)
+        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:tick")
+        if self.enable_random_ticks:
+            pyglet.clock.schedule_once(self.send_random_ticks, 0)
         while len(self.execute_array) > 0:
             func, args, kwargs = tuple(self.execute_array.pop(0))
             try:
@@ -124,39 +118,39 @@ class TickHandler:
         self.bind(function, tick * 2, *args, **kwargs)
 
     def send_random_ticks(self, *args, **kwargs):
+        dimension = shared.world.get_active_dimension()
+        if dimension is None:
+            return
+
+        random_tick_speed = shared.world.gamerule_handler.table[
+            "randomTickSpeed"
+        ].status.status
+        r = mcpython.common.config.RANDOM_TICK_RANGE
+
         # todo: make iterate over all players
         cx, cz = mcpython.util.math.position_to_chunk(
             shared.world.get_active_player().position
         )
-        for dx in range(
-            -mcpython.common.config.RANDOM_TICK_RANGE,
-            mcpython.common.config.RANDOM_TICK_RANGE + 1,
-        ):
-            for dz in range(
-                -mcpython.common.config.RANDOM_TICK_RANGE,
-                mcpython.common.config.RANDOM_TICK_RANGE + 1,
-            ):
-                if dx ** 2 + dz ** 2 <= mcpython.common.config.RANDOM_TICK_RANGE ** 2:
+        for dx in range(-r, r + 1):
+            for dz in range(-r, r + 1):
+                if dx ** 2 + dz ** 2 <= r ** 2:
                     x = cx + dx
                     z = cz + dz
                     for dy in range(16):
-                        for _ in range(
-                            shared.world.gamerule_handler.table[
-                                "randomTickSpeed"
-                            ].status.status
-                        ):
+                        for _ in range(random_tick_speed):
                             ddx, ddy, ddz = (
                                 random.randint(0, 15),
-                                random.randint(0, 255),
+                                random.randint(0, 15),
                                 random.randint(0, 15),
                             )
-                            position = (x + ddx, ddy, z + ddz)
-                            instance = shared.world.get_active_dimension().get_block(
-                                position
-                            )
-                            if instance is not None and type(instance) != str:
-                                if instance.ENABLE_RANDOM_TICKS:
-                                    instance.on_random_update()
+                            position = (x + ddx, dy * 16 + ddy, z + ddz)
+                            instance = dimension.get_block(position)
+                            if (
+                                instance is not None
+                                and type(instance) != str
+                                and instance.ENABLE_RANDOM_TICKS
+                            ):
+                                instance.on_random_update()
 
 
 handler = shared.tick_handler = TickHandler()

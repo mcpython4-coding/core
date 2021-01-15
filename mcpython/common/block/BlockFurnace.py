@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.block.IHorizontalOrientableBlock
 from pyglet.window import key, mouse
 import mcpython.client.gui.InventoryFurnace
@@ -65,7 +65,7 @@ class BlockFurnace(
 
     def on_player_interaction(self, player, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            G.inventory_handler.show(self.inventory)
+            shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -82,12 +82,12 @@ class BlockFurnace(
             return [self.inventory.slots[37]], []
 
     def on_block_remove(self, reason):
-        if not G.world.gamerule_handler.table["doTileDrops"].status.status:
+        if not shared.world.gamerule_handler.table["doTileDrops"].status.status:
             return
         for slot in self.inventory.slots:
-            G.world.get_active_player().pick_up(slot.itemstack.copy())
+            shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
             slot.itemstack.clean()
-        G.inventory_handler.hide(self.inventory)
+        shared.inventory_handler.hide(self.inventory)
         del self.inventory
 
 
@@ -103,8 +103,8 @@ class Smoker(BlockFurnace):
     FURNACE_RECIPES: list = ["minecraft:smoking"]
 
 
-@G.mod_loader("minecraft", "stage:block:load")
+@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    G.registry.register(BlockFurnace)
-    G.registry.register(BlastFurnace)
-    G.registry.register(Smoker)
+    shared.registry.register(BlockFurnace)
+    shared.registry.register(BlastFurnace)
+    shared.registry.register(Smoker)

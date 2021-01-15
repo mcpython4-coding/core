@@ -54,7 +54,7 @@ class CommandGive(mcpython.server.command.Command.Command):
         if stack.amount > stack.item.STACK_SIZE:
             stack.amount = stack.item.STACK_SIZE
         for player in values[0]:  # iterate over all players to give
-            player.pick_up(stack)
+            player.pick_up_item(stack)
 
     @staticmethod
     def get_help() -> list:

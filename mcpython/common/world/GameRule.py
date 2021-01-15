@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.event.Registry
 
 
@@ -95,7 +95,7 @@ gamerule_registry = mcpython.common.event.Registry.Registry(
 )
 
 
-@G.registry
+@shared.registry
 class GameRuleDoImmediateRespawn(GameRule):
     NAME = "doImmediateRespawn"
     VALUE_TYPE = GameRuleTypeBoolean
@@ -104,63 +104,63 @@ class GameRuleDoImmediateRespawn(GameRule):
     )  # todo: change to false when correct DeathScreen is implemented
 
 
-@G.registry
+@shared.registry
 class GameRuleDoTileDrops(GameRule):
     NAME = "doTileDrops"
     VALUE_TYPE = GameRuleTypeBoolean
     DEFAULT_VALUE = GameRuleTypeBoolean("true")
 
 
-@G.registry
+@shared.registry
 class GameRuleFallDamage(GameRule):
     NAME = "fallDamage"
     VALUE_TYPE = GameRuleTypeBoolean
     DEFAULT_VALUE = GameRuleTypeBoolean("true")
 
 
-@G.registry
+@shared.registry
 class GameRuleKeepInventory(GameRule):
     NAME = "keepInventory"
     VALUE_TYPE = GameRuleTypeBoolean
     DEFAULT_VALUE = GameRuleTypeBoolean("false")
 
 
-@G.registry
+@shared.registry
 class GameRuleNaturalRegeneration(GameRule):  # todo: implement
     NAME = "naturalRegeneration"
     VALUE_TYPE = GameRuleTypeBoolean
     DEFAULT_VALUE = GameRuleTypeBoolean("true")
 
 
-@G.registry
+@shared.registry
 class GameRuleRandomTickSpeed(GameRule):
     NAME = "randomTickSpeed"
     VALUE_TYPE = GameRuleTypeInt
     DEFAULT_VALUE = GameRuleTypeInt("3")
 
 
-@G.registry
+@shared.registry
 class GameRuleShowCoordinates(GameRule):
     NAME = "showCoordinates"
     VALUE_TYPE = GameRuleTypeBoolean
     DEFAULT_VALUE = GameRuleTypeBoolean("true")
 
 
-@G.registry
+@shared.registry
 class GameRuleShowDeathMessages(GameRule):
     NAME = "showDeathMessages"
     VALUE_TYPE = GameRuleTypeBoolean
     DEFAULT_VALUE = GameRuleTypeBoolean("true")
 
 
-@G.registry
+@shared.registry
 class GameRuleSpawnRadius(GameRule):  # todo: implement
     NAME = "spawnRadius"
     VALUE_TYPE = GameRuleTypeInt
     DEFAULT_VALUE = GameRuleTypeInt("10")
 
 
-@G.registry
+@shared.registry
 class GameRuleSpectatorsGenerateChunks(GameRule):  # todo: implement
     NAME = "spectatorsGenerateChunks"
     VALUE_TYPE = GameRuleTypeBoolean
@@ -168,7 +168,7 @@ class GameRuleSpectatorsGenerateChunks(GameRule):  # todo: implement
 
 
 # added by uuk; improvement to mc; used for calculating if an block was hit or not
-@G.registry
+@shared.registry
 class GameRuleHitTestSteps(GameRule):
     NAME = "hitTestSteps"
     VALUE_TYPE = GameRuleTypeInt

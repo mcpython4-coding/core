@@ -24,7 +24,9 @@ class ParsingCommandInfo:
         self.entity = entity if entity else G.world.get_active_player()
         self.position = position if position else self.entity.position
         self.dimension = (
-            dimension if dimension is not None else self.entity.dimension.id
+            (dimension if dimension is not None else self.entity.dimension.id)
+            if self.entity.dimension is not None
+            else 0
         )
         self.chat = chat if chat is not None else G.chat
 
