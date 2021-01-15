@@ -11,6 +11,9 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
+# Special LaunchWrapper configuration for dedicated servers
+# launches up only the server stuff
+
 import sys
 
 # everything lower than python 3.9 is not supported, we are using python 3.9 features!
@@ -25,6 +28,12 @@ import mcpython.LaunchWrapper
 
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
 wrapper.prepare_server()
+
+print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+import mcpython.logger
+mcpython.logger.println("[EXPERIMENTAL][WARN] launching experimental dedicated mcpython server")
+mcpython.logger.println("[EXPERIMENTAL][WARN] see version.info and git diffs for recent changes")
+print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
 try:

@@ -31,9 +31,6 @@ import mcpython.util.math
 from mcpython import logger
 from mcpython import shared
 
-if not os.path.exists(shared.home + "/mods"):
-    os.makedirs(shared.home + "/mods")
-
 
 class ModLoader:
     """
@@ -42,24 +39,25 @@ class ModLoader:
 
     def __init__(self):
         """
-        creates an new mod-loader-instance
+        Creates an new mod-loader-instance
+        WARNING: only ONE instance should be present.
+        When creating a second instance, you should know what you are doing!
         """
-        self.located_mods = []
-        self.mods = {}
-        self.mod_loading_order = []
-        self.active_directory = None
-        self.active_loading_stage = 0
+        self.located_mods: typing.List[mcpython.common.mod.Mod.Mod] = []
+        self.mods: typing.Dict[str, mcpython.common.mod.Mod.Mod] = {}
+        self.mod_loading_order: typing.List[str] = []
+        self.active_directory: typing.Optional[str] = None
+        self.active_loading_stage: int = 0
         self.previous_mods = {}
         self.located_mod_instances = []
+
         if os.path.exists(shared.build + "/mods.json"):
             with open(shared.build + "/mods.json") as f:
                 self.previous_mods = json.load(f)
-        elif not shared.invalidate_cache:
-            logger.println(
-                "[WARNING] can't locate mods.json in build-folder. This may be an error"
-            )
+
         self.finished = False
-        self.reload_stages = []
+        self.reload_stages: typing.List[str] = []
+
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "command:reload:end", self.execute_reload_stages
         )
@@ -69,10 +67,12 @@ class ModLoader:
         """
         Will register an loading stage as one to executed on every reload
         :param stage: the event name of the stage
+        todo: remove -> resource pipe
         """
         self.reload_stages.append(stage)
 
     def execute_reload_stages(self):
+        # todo: remove -> resource pipe
         for event_name in self.reload_stages:
             for i in range(len(self.mods)):
                 instance = shared.mod_loader.mods[
@@ -85,7 +85,7 @@ class ModLoader:
         self, modname: str, event_name: str, *args, **kwargs
     ) -> typing.Callable[[typing.Callable], typing.Callable]:
         """
-        annotation to the event system
+        Annotation to the event system
         :param modname: the mod name
         :param event_name: the event name
         :param info: the info
@@ -95,17 +95,20 @@ class ModLoader:
             event_name, function, *args, **kwargs
         )
 
-    def __getitem__(self, item):
-        return self.mods[item]
+    def __getitem__(self, item: str):
+        if item in self.mods:
+            return self.mods[item]
+        raise IndexError(item)
 
     def get_locations(self) -> list:
         """
-        will return an list of mod locations found for loading
+        Will return an list of mod locations found for loading
         todo: split up into smaller portions
         """
         locations = []
         folders = [shared.home + "/mods"]
         i = 0
+
         while i < len(sys.argv):
             element = sys.argv[i]
             if element == "--add-mod-dir":
@@ -119,8 +122,10 @@ class ModLoader:
                     sys.argv.pop(i)
             else:
                 i += 1
+
         for loc in folders:
             locations += [os.path.join(loc, x) for x in os.listdir(loc)]
+
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
@@ -141,15 +146,17 @@ class ModLoader:
 
         for i, location in enumerate(locations):
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
+
         return locations
 
-    def load_mod_jsons(self, locations: list):
+    def load_mod_json_from_locations(self, locations: typing.List[str]):
         """
-        will load the mod description files for the given locations and parse their content
+        Will load the mod description files for the given locations and parse their content
         :param locations: the locations found
         """
         for file in locations:
             self.located_mod_instances.clear()
+
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
@@ -171,6 +178,7 @@ class ModLoader:
                                         file
                                     )
                                 )
+
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
                     try:
@@ -183,6 +191,7 @@ class ModLoader:
                         )
                     for instance in self.located_mod_instances:
                         instance.package = data
+
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
                 mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
@@ -202,17 +211,21 @@ class ModLoader:
 
     def look_out(self):
         """
-        will load all mods arrival
+        Will load all mods arrival
         """
         locations = self.get_locations()
-        self.load_mod_jsons(locations)
+        self.load_mod_json_from_locations(locations)
+
+        # this is special, as it is not loaded from files...
         import mcpython.common.mod.ModMcpython
 
         i = 0
         while i < len(sys.argv):
             element = sys.argv[i]
+
             if element == "--remove-mod":
                 name = sys.argv[i + 1]
+
                 if name in self.mods:
                     del self.mods[name]
                 else:
@@ -221,17 +234,21 @@ class ModLoader:
                             name
                         )
                     )
+
                 for _ in range(2):
                     sys.argv.pop(i)
+
             else:
                 i += 1
+
         self.check_for_update()
 
     def check_for_update(self):
         """
-        will check for changes between versions
+        Will check for changes between versions
         """
-        logger.println("found mod(s): {}".format(len(self.located_mods)))
+        logger.println("found mod: {}".format("s" if len(self.located_mods) > 1 else "", len(self.located_mods)))
+
         for modname in self.previous_mods.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(
                 self.previous_mods[modname]
@@ -244,6 +261,7 @@ class ModLoader:
                 )
                 shared.invalidate_cache = True
                 shared.data_gen = True
+
         for modname in self.mods.keys():
             if modname not in self.previous_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
@@ -255,7 +273,7 @@ class ModLoader:
 
     def write_mod_info(self):
         """
-        writes the data for the mod table into the file
+        Writes the data for the mod table into the file
         """
         if not os.path.isdir(shared.build):
             os.makedirs(shared.build)
@@ -265,7 +283,7 @@ class ModLoader:
 
     def load_mods_json(self, data: str, file: str):
         """
-        will parse the data to the correct system
+        Will parse the data to the correct system
         :param data: the data to load
         :param file: the file located under
         """
@@ -273,30 +291,10 @@ class ModLoader:
 
     def load_from_decoded_json(self, data: dict, file: str):
         """
-        will parse the decoded json-data to the correct system
+        Will parse the decoded json-data to the correct system
         :param data: the data of the mod
         :param file: the file allocated (used for warning messages)
         """
-        if "version" not in data:
-            self.error_builder.println(
-                "- version entry in '{}' is invalid due to version".format(file)
-            )
-        else:
-            self.load_json(data, file)
-
-    def load_json(self, data: dict, file: str):
-        """
-        load the stored json file
-        :param data: the data to load
-        :param file: the file to load, for debugging uses
-        """
-        if "version" not in data:
-            self.error_builder.println(
-                "- invalid mod.json file found without 'version'-entry in file {}".format(
-                    file
-                )
-            )
-            return
         version = data["version"]
         if version == "1.2.0":  # latest
             """
@@ -321,6 +319,7 @@ class ModLoader:
                         )
                     )
                     continue
+
                 modname = entry["name"]
                 loader = entry["loader"] if "loader" in entry else "python:default"
                 if loader == "python:default":
@@ -331,8 +330,10 @@ class ModLoader:
                             )
                         )
                         continue
+
                     version = tuple([int(e) for e in entry["version"].split(".")])
                     instance = mcpython.common.mod.Mod.Mod(modname, version)
+
                     if "depends" in entry:
                         for depend in entry["depends"]:
                             t = None if "type" not in depend else depend["type"]
@@ -362,8 +363,10 @@ class ModLoader:
                                 instance.add_load_only_when_not_arrival(
                                     self.cast_dependency(depend)
                                 )
+
                     if "load_resources" in entry and entry["load_resources"]:
                         instance.add_load_default_resources()
+
                     for location in entry["load_files"]:
                         try:
                             importlib.import_module(
@@ -391,9 +394,10 @@ class ModLoader:
             c["version_max"] = depend["upper_version"]
         if "versions" in depend:
             c["versions"] = depend["versions"]
+
         return mcpython.common.mod.Mod.ModDependency(depend["name"], **c)
 
-    def load_mods_toml(self, data: str, file):
+    def load_mods_toml(self, data: str, file: str):
         """
         will load an toml-data-object
         :param data: the toml-representation
@@ -403,18 +407,17 @@ class ModLoader:
         if "modLoader" in data:
             if data["modLoader"] == "javafml":
                 self.error_builder.println(
-                    "- found java mod. As an mod-author, please upgrade to python as javafml"
+                    "- found java mod in file {}. As an mod-author, please upgrade to python as javafml or wait for us to write an JVM in python [WIP]".format(file)
                 )
                 return
+
         if "loaderVersion" in data:
             if data["loaderVersion"].startswith("["):
                 self.error_builder.println("- found forge-version indicator")
                 return
             version = data["loaderVersion"]
             if version.endswith("["):
-                mc_version = mcpython.common.config.VERSION_ORDER[
-                    mcpython.common.config.VERSION_ORDER.index(version[:-1]) :
-                ]
+                mc_version = 0  # todo: implement
             elif version.count("[") == version.count("]") == 0:
                 mc_version = version.split("|")
             else:
@@ -424,13 +427,16 @@ class ModLoader:
                 return
         else:
             mc_version = None
+
         self.load_from_decoded_json(
             {"main files": [e["importable"] for e in data["main_files"]]}, file
         )
+
         for instance in self.located_mod_instances:
             instance.add_dependency(
                 mcpython.common.mod.Mod.ModDependency("minecraft", mc_version)
             )
+
         for modname in data["dependencies"]:
             for dependency in data["dependencies"][modname]:
                 name = dependency["modId"]
@@ -440,13 +446,14 @@ class ModLoader:
 
     def add_to_add(self, instance: mcpython.common.mod.Mod.Mod):
         """
-        will add an mod-instance into the inner system
+        Will add an mod-instance into the inner system
         :param instance: the mod instance to add
         """
         if not shared.event_handler.call_cancelable(
             "modloader:mod_registered", instance
         ):
             return
+
         self.mods[instance.name] = instance
         self.located_mods.append(instance)
         instance.path = self.active_directory
@@ -454,12 +461,13 @@ class ModLoader:
 
     def check_mod_duplicates(self):
         """
-        will check for mod duplicates
+        Will check for mod duplicates
         :return an tuple of errors as string and collected mod-info's as dict
         todo: add config option for strategy: fail, load newest, load oldest, load all
         """
         errors = False
         mod_info = {}
+
         for mod in self.located_mods:
             if mod.name in mod_info:
                 self.error_builder.println(
@@ -471,11 +479,12 @@ class ModLoader:
                 errors = True
             else:
                 mod_info[mod.name] = []
+
         return errors, mod_info
 
     def check_dependency_errors(self, errors: bool, mod_info: dict):
         """
-        will iterate through
+        Will iterate through
         :param errors: the error list
         :param mod_info: the mod info dict
         :return: errors and mod-info-tuple
@@ -488,6 +497,7 @@ class ModLoader:
                             mod.name, depend
                         )
                     )
+
             for depend in mod.depend_info[2]:
                 if depend.arrival():
                     self.error_builder.println(
@@ -495,19 +505,22 @@ class ModLoader:
                             mod.name, depend
                         )
                     )
+
             for depend in mod.depend_info[5]:
                 if not depend.arrival():
                     del mod_info[mod.name]
                     del self.mods[mod.name]
+
             for depend in mod.depend_info[6]:
                 if depend.arrival():
                     del mod_info[mod.name]
                     del self.mods[mod.name]
+
         return errors, mod_info
 
     def sort_mods(self):
         """
-        will create the mod-order-list by sorting after dependencies
+        Will create the mod-order-list by sorting after dependencies
         todo: use build-in library
         """
         errors, mod_info = self.check_dependency_errors(*self.check_mod_duplicates())
@@ -518,6 +531,7 @@ class ModLoader:
             for depend in mod.depend_info[3]:
                 if depend.name in mod_info and mod.name not in mod_info[depend.name]:
                     mod_info[depend.name].append(mod.name)
+
         if errors:
             logger.println("found mods: ")
             logger.println(
@@ -530,11 +544,13 @@ class ModLoader:
 
             self.error_builder.finish()
             sys.exit(-1)
+
         self.mod_loading_order = list(
             mcpython.util.math.topological_sort(
                 [(key, mod_info[key]) for key in mod_info.keys()]
             )
         )
+
         self.error_builder.finish()
         logger.write_into_container(
             [
@@ -545,10 +561,11 @@ class ModLoader:
 
     def process(self):
         """
-        will process some loading tasks
+        Will process some loading tasks scheduled
         """
         if not mcpython.common.mod.ModLoadingPipe.manager.order.is_active():
             return
+
         start = time.time()
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
             shared.state_handler.active_state
@@ -557,27 +574,31 @@ class ModLoader:
             mcpython.common.mod.ModLoadingPipe.manager.stages
         )
         astate.parts[1].progress_max = len(self.mods)
+
         while time.time() - start < 0.2:
             stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
             if stage is None:
                 break
             if stage.call_one(astate):
                 return
+
         self.update_pgb_text()
 
     def update_pgb_text(self):
         """
-        will update the text of the pgb's in mod loading
+        Will update the text of the pgb's in mod loading
         """
         stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
         if stage is None:
             return
+
         astate: mcpython.client.state.StateModLoading.StateModLoading = (
             shared.state_handler.active_state
         )
         instance: mcpython.common.mod.Mod.Mod = self.mods[
             self.mod_loading_order[stage.active_mod_index]
         ]
+
         if (
             stage.active_event in instance.eventbus.event_subscriptions
             and len(instance.eventbus.event_subscriptions[stage.active_event]) > 0
@@ -585,6 +606,7 @@ class ModLoader:
             f, _, _, text = instance.eventbus.event_subscriptions[stage.active_event][0]
         else:
             f, text = None, ""
+
         astate.parts[2].text = text if text is not None else "function {}".format(f)
         astate.parts[1].text = "{} ({}/{})".format(
             instance.name, stage.active_mod_index + 1, len(self.mods)

@@ -25,9 +25,9 @@ class LoadingStageManager:
 
     def __init__(self):
         self.stages = {}
-        self.order: graphlib.TopologicalSorter = None
-        self.current_stage: str = None
-        self.ready = []
+        self.order: typing.Optional[graphlib.TopologicalSorter] = None
+        self.current_stage: typing.Optional[str] = None
+        self.ready: typing.List[str] = []  # todo: can we use queue?
 
     def get_new_ready(self):
         self.ready.extend(self.order.get_ready())
@@ -65,21 +65,23 @@ class LoadingStageManager:
 
 class LoadingStage:
     def __init__(self, name: str, user_facing_name: str, *dependencies: str):
+        # todo: add option for client-only here
+
         self.name = name
         self.user_facing_name = user_facing_name
         self.events = {}
         self.dependencies = set(dependencies)
 
-        if name != "minecraft:loading_preparation":
+        if name != "minecraft:loading_preparation":  # todo: add extra exclude optional parameter
             self.dependencies.add("minecraft:loading_preparation")
 
-        self.order: graphlib.TopologicalSorter = None
+        self.order: typing.Optional[graphlib.TopologicalSorter] = None
         self.dirty = False
         self.active_mod_index = 0
         self.max_progress = 0
         self.current_progress = 0
         self.active_event = None
-        self.event_scheduled = []
+        self.event_scheduled: typing.List[str] = []
 
     def next_event(self):
         if self.active_event is not None:
@@ -90,7 +92,6 @@ class LoadingStage:
         )
         self.current_progress += 1
         self.active_mod_index = 0
-        # print(self.active_event, self.events, self.event_scheduled, self.order.is_active())
 
     def finished(self):
         return not (self.order.is_active() or len(self.event_scheduled))
@@ -130,7 +131,7 @@ class LoadingStage:
         manager.next_stage()
         new_stage: LoadingStage = manager.get_stage()
 
-        if not manager.order.is_active():  # or new_stage is None:
+        if not manager.order.is_active():
             logger.println(
                 "[INFO] locking registries..."
             )  # ... and do similar stuff :-)
@@ -165,7 +166,7 @@ class LoadingStage:
 
     def call_one(self, astate):
         """
-        will call one event from the stack
+        Will call one event from the stack
         :param astate: the state to use
         """
         if self.active_event is None:
@@ -196,17 +197,12 @@ class LoadingStage:
         modname = shared.mod_loader.mod_loading_order[self.active_mod_index]
         mod_instance = shared.mod_loader.mods[modname]
 
-        # print(
-        #     self.active_event, mod_instance.name,
-        #     mod_instance.eventbus.event_subscriptions[self.active_event][:1]
-        #     if self.active_event in mod_instance.eventbus.event_subscriptions else None
-        # )
-        # print(self.active_event)
-
         try:
             mod_instance.eventbus.call_as_stack(self.active_event)
-        except RuntimeError:
+
+        except RuntimeError:  # when we are empty
             self.active_mod_index += 1
+
             if self.active_mod_index >= len(shared.mod_loader.mods):
                 if self.finished():
                     return self.finish(astate)
@@ -236,9 +232,11 @@ class LoadingStage:
                 )
             else:
                 self.max_progress = 0
+
             astate.parts[2].progress_max = self.max_progress
             astate.parts[2].progress = 0
             return
+
         astate.parts[2].progress += 1  # todo: this is not good, can we optimize it?
 
 

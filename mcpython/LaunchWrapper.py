@@ -146,6 +146,9 @@ class LaunchWrapper:
         if not os.path.isdir(shared.home):
             os.makedirs(shared.home)
 
+        if not os.path.exists(shared.home + "/mods"):
+            os.makedirs(shared.home + "/mods")
+
         sys.path.append(shared.local + "/mcpython")
 
         # check if build folder exists, if not, we need to create its content
