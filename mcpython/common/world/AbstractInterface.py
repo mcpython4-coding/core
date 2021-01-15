@@ -13,9 +13,23 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 import typing
+import enum
 import mcpython.util.enums
 import mcpython.common.block.AbstractBlock
 import mcpython.common.entity.AbstractEntity
+
+
+class ChunkLoadTicketType(enum.Enum):
+    SPAWN_CHUNKS = 0
+    FORCE_LOADED = 1
+    PLAYER_LOADED = 2  # needs player instance
+    WORLD_GENERATION_LOADED = 3
+    BLOCK_LOOKUP_LOADED = 4
+    ENTITY_CHUNK_CHANGE_LOADED = 5
+    ENTITY_AI_PROCESSING_LOADED = 6  # needs entity instance
+
+    def __iter__(self):
+        yield self
 
 
 class IChunk(ABC):
@@ -29,6 +43,33 @@ class IChunk(ABC):
         self.entities: typing.Set[
             mcpython.common.entity.AbstractEntity.AbstractEntity
         ] = set()
+        self.chunk_loaded_list = tuple([[] for _ in range(16)])
+
+    def add_chunk_load_ticket(self, ticket_type: ChunkLoadTicketType, data=None):
+        if ticket_type.value in (0, 1):
+            assert data is None
+            self.chunk_loaded_list[-1].append(ticket_type)
+        elif ticket_type.value in (3, 4, 5, 6):
+            assert data is None
+            self.chunk_loaded_list[0].append(ticket_type)
+        else:
+            assert data is not None
+            self.chunk_loaded_list[0].append((ticket_type, data))
+
+    def check_for_unload(self):
+        flag = False
+        for i, layer in enumerate(self.chunk_loaded_list):
+            for ticket, *data in layer[:]:
+                if ticket.value in (0, 1): continue
+                if ticket == ChunkLoadTicketType.PLAYER_LOADED:  # check if player in range, if not, remove ticket
+                    pass
+                else:
+                    layer.remove(ticket)
+                    if i != 15:
+                        self.chunk_loaded_list[i+1].append(ticket)
+            flag = flag or len(layer)
+        if not flag:
+            self.get_dimension().unload_chunk(self)
 
     def get_dimension(self) -> "IDimension":
         raise NotImplementedError()
@@ -164,8 +205,17 @@ class IChunk(ABC):
     def mark_dirty(self):
         raise NotImplementedError()
 
+    def tick(self):
+        pass
+
+    def save(self):
+        pass
+
 
 class IDimension(ABC):
+    def __init__(self):
+        self.loaded = True
+    
     def get_dimension_range(self) -> typing.Tuple[int, int]:
         raise NotImplementedError()
 
@@ -234,6 +284,12 @@ class IDimension(ABC):
 
     def get_name(self) -> str:
         raise NotImplementedError()
+
+    def unload_chunk(self, chunk: IChunk):
+        raise NotImplementedError()
+
+    def tick(self):
+        pass
 
 
 class IWorld(ABC):

@@ -80,6 +80,16 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 v = v.copy()
             self.attr[attr] = v
 
+        self.add_chunk_load_ticket(mcpython.common.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS)
+
+    def tick(self):
+        self.check_for_unload()
+        
+    def save(self):
+        shared.world.save_file.read(
+            "minecraft:chunk", dimension=self.get_dimension(), chunk=self.position
+        )
+
     def as_shareable(self) -> mcpython.common.world.AbstractInterface.IChunk:
         return self
 
@@ -132,8 +142,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
         # load if needed
         if not self.loaded:
-            G.tick_handler.schedule_once(
-                G.world.save_file.read,
+            shared.tick_handler.schedule_once(
+                shared.world.save_file.read,
                 "minecraft:chunk",
                 dimension=self.dimension.get_id(),
                 chunk=self.position,
@@ -172,7 +182,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             else:
                 chunk = self
 
-            if not chunk.is_loaded() and G.world.hide_faces_to_not_generated_chunks:
+            if not chunk.is_loaded() and shared.world.hide_faces_to_not_generated_chunks:
                 faces[face.normal_name] = False
             else:
                 block = chunk.get_block(pos)
@@ -195,7 +205,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         return (
             position in self.world
-            or G.world_generation_handler.task_handler.get_block(position, self)
+            or shared.world_generation_handler.task_handler.get_block(position, self)
             is not None
         )
 
@@ -247,7 +257,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             if shared.IS_CLIENT:
                 block.face_state.update()
         else:
-            table = G.registry.get_by_name("minecraft:block").full_table
+            table = shared.registry.get_by_name("minecraft:block").full_table
             if block_name not in table:
                 self.remove_block(position)
                 return
@@ -384,7 +394,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if immediate:
             self.world[position].face_state.update(redraw_complete=True)
         else:
-            G.world_generation_handler.task_handler.schedule_visual_update(
+            shared.world_generation_handler.task_handler.schedule_visual_update(
                 self, position
             )
 
@@ -412,7 +422,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 return
             self.world[position].face_state.hide_all()
         else:
-            G.world_generation_handler.task_handler.schedule_visual_update(
+            shared.world_generation_handler.task_handler.schedule_visual_update(
                 self, position
             )
 
@@ -476,7 +486,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
         for position in self.world.keys():
             if immediate:
-                G.world_generation_handler.task_handler.schedule_visual_update(
+                shared.world_generation_handler.task_handler.schedule_visual_update(
                     self, position
                 )
             else:
@@ -505,11 +515,11 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         return (
             self.world[position]
             if position in self.world
-            else G.world_generation_handler.task_handler.get_block(position, chunk=self)
+            else shared.world_generation_handler.task_handler.get_block(position, chunk=self)
         )
 
     def __del__(self):
-        G.world_generation_handler.task_handler.clear_chunk(self)
+        shared.world_generation_handler.task_handler.clear_chunk(self)
         for block in self.world.values():
             del block
 

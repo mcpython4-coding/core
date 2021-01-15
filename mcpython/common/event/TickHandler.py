@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import pyglet
 import mcpython.util.math
 import random
@@ -59,10 +59,11 @@ class TickHandler:
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
                     return
-        G.entity_handler.tick(dt)
+        shared.entity_handler.tick(dt)
+        shared.world.tick()
         if any(
             type(x) == mcpython.client.state.StatePartGame.StatePartGame
-            for x in G.state_handler.active_state.parts
+            for x in shared.state_handler.active_state.parts
         ):
             mcpython.common.DataPack.datapack_handler.try_call_function(
                 "#minecraft:tick"
@@ -125,7 +126,7 @@ class TickHandler:
     def send_random_ticks(self, *args, **kwargs):
         # todo: make iterate over all players
         cx, cz = mcpython.util.math.position_to_chunk(
-            G.world.get_active_player().position
+            shared.world.get_active_player().position
         )
         for dx in range(
             -mcpython.common.config.RANDOM_TICK_RANGE,
@@ -140,7 +141,7 @@ class TickHandler:
                     z = cz + dz
                     for dy in range(16):
                         for _ in range(
-                            G.world.gamerule_handler.table[
+                            shared.world.gamerule_handler.table[
                                 "randomTickSpeed"
                             ].status.status
                         ):
@@ -150,7 +151,7 @@ class TickHandler:
                                 random.randint(0, 15),
                             )
                             position = (x + ddx, ddy, z + ddz)
-                            instance = G.world.get_active_dimension().get_block(
+                            instance = shared.world.get_active_dimension().get_block(
                                 position
                             )
                             if instance is not None and type(instance) != str:
@@ -158,4 +159,4 @@ class TickHandler:
                                     instance.on_random_update()
 
 
-handler = G.tick_handler = TickHandler()
+handler = shared.tick_handler = TickHandler()

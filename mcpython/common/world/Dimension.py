@@ -138,6 +138,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         :param name: the name for it
         :param gen_config: the config to use for generation
         """
+        super().__init__()
         if gen_config is None:
             gen_config = {}
         self.id = dim_id
@@ -152,6 +153,16 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         self.batches = [pyglet.graphics.Batch() for _ in range(self.BATCH_COUNT)]
 
         self.height_range = (0, 255)
+
+    def tick(self):
+        for chunk in self.chunks.values():
+            if chunk.is_loaded():
+                chunk.tick()
+
+    def unload_chunk(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
+        chunk.save()
+        chunk.hide_all(True)
+        del self.chunks[chunk.get_position()]
 
     def get_dimension_range(self) -> typing.Tuple[int, int]:
         return self.height_range
