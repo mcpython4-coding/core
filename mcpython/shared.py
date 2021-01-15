@@ -78,3 +78,6 @@ import mcpython.client.rendering.RenderingHelper
 rendering_helper = mcpython.client.rendering.RenderingHelper.RenderingHelper()
 
 NEXT_EVENT_BUS_ID = 0
+
+CLIENT_NETWORK_HANDLER = None
+SERVER_NETWORK_HANDLER = None

@@ -43,7 +43,7 @@ class StateWorldLoading(State.State):
             shared.state_handler.states["minecraft:world_generation"].generate_world()
         else:
             shared.state_handler.switch_to("minecraft:world_loading")
-        
+
     def load_world_from(self, name: str):
         shared.world.cleanup()
         shared.world.setup_by_filename(name)

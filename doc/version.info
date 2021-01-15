@@ -1431,4 +1431,5 @@ R   [uuk]: improved world serialization API
 [uuk]: added /blockinfo command for getting information about a block
 [uuk]: improved block rendering system
 [uuk]: removed some loading stages only needed on client
+[uuk]: added some more networking API
 

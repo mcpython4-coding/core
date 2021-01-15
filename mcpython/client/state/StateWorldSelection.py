@@ -59,7 +59,9 @@ class StateWorldSelection(State.State):
         self.selected_world = None
         self.selection_sprite = pyglet.sprite.Sprite(WORLD_SELECTION_SELECT)
         del self.eventbus
-        self.eventbus = shared.event_handler.create_bus(active=False, crash_on_error=False)
+        self.eventbus = shared.event_handler.create_bus(
+            active=False, crash_on_error=False
+        )
         for statepart in self.parts:
             statepart.master = [
                 self
@@ -287,7 +289,9 @@ class StateWorldSelection(State.State):
         self.enter_world(self.selected_world)
 
     def enter_world(self, number: int):
-        shared.state_handler.states["minecraft:world_loading"].load_world_from(self.world_data[number][2][0].text)
+        shared.state_handler.states["minecraft:world_loading"].load_world_from(
+            self.world_data[number][2][0].text
+        )
 
 
 world_selection = None

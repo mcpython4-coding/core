@@ -56,6 +56,9 @@ changelog of snapshot <next> released on -, targeting -
     Rendering:
         - improved block rendering
 
+    Server:
+        - improved server separation from client
+
     Fixed issues:
         - escaping in logs did not work in some edge cases correctly
 

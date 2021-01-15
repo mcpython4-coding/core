@@ -43,7 +43,7 @@ DEFAULT_GENERATION_CONFIG: typing.Dict[str, typing.Any] = {
     "seed_source": "minecraft:open_simplex_noise",
     "player_name": "unknown",
     "auto_gen_enabled": False,
-    "world_barrier_enabled": False
+    "world_barrier_enabled": False,
 }
 
 
@@ -56,7 +56,7 @@ class StateWorldGeneration(State.State):
         self.status_table = {}
         self.profiler = cProfile.Profile()
         self.world_gen_config = {}
-        
+
     def generate_world(self, config=None):
         if config is None:
             config = DEFAULT_GENERATION_CONFIG
@@ -65,7 +65,8 @@ class StateWorldGeneration(State.State):
         shared.state_handler.switch_to(self.NAME)
 
     def generate_from_user_input(self, state=None):
-        if state is None: state = shared.state_handler.states["minecraft:world_generation_config"]
+        if state is None:
+            state = shared.state_handler.states["minecraft:world_generation_config"]
         self.generate_world(
             {
                 "world_config_name": state.get_world_config_name(),
@@ -74,7 +75,7 @@ class StateWorldGeneration(State.State):
                 "seed": state.get_seed(),
                 "player_name": state.get_player_name(),
                 "auto_gen_enabled": state.is_auto_gen_enabled(),
-                "world_barrier_enabled": state.is_world_gen_barrier_enabled()
+                "world_barrier_enabled": state.is_world_gen_barrier_enabled(),
             }
         )
 
@@ -104,8 +105,8 @@ class StateWorldGeneration(State.State):
             if c not in shared.world_generation_handler.task_handler.chunks:
                 self.status_table[chunk] = -1
             else:
-                count = (
-                    shared.world_generation_handler.task_handler.get_task_count_for_chunk(c)
+                count = shared.world_generation_handler.task_handler.get_task_count_for_chunk(
+                    c
                 )
                 self.status_table[chunk] = 1 / (count if count > 0 else 1)
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
@@ -192,8 +193,12 @@ class StateWorldGeneration(State.State):
         # todo: this is also only client code
         shared.world.active_player = player_name
         shared.world.get_active_player().move_to_spawn_point()
-        shared.world.config["enable_auto_gen"] = self.world_gen_config["auto_gen_enabled"]
-        shared.world.config["enable_world_barrier"] = self.world_gen_config["world_barrier_enabled"]
+        shared.world.config["enable_auto_gen"] = self.world_gen_config[
+            "auto_gen_enabled"
+        ]
+        shared.world.config["enable_world_barrier"] = self.world_gen_config[
+            "world_barrier_enabled"
+        ]
 
         if shared.world_generation_handler.get_current_config(
             shared.world.get_dimension(0)
@@ -211,7 +216,9 @@ class StateWorldGeneration(State.State):
         # add surrounding chunks to load list
         shared.world.change_chunks(
             None,
-            mcpython.util.math.position_to_chunk(shared.world.get_active_player().position),
+            mcpython.util.math.position_to_chunk(
+                shared.world.get_active_player().position
+            ),
         )
         shared.world.save_file.save_world()
 

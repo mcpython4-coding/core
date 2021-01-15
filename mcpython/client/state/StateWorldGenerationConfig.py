@@ -163,7 +163,9 @@ class StateWorldGenerationConfig(State.State):
         self.generate()
 
     def generate(self):
-        G.state_handler.states["minecraft:world_generation"].generate_from_user_input(self)
+        G.state_handler.states["minecraft:world_generation"].generate_from_user_input(
+            self
+        )
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

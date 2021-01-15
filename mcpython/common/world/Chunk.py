@@ -372,7 +372,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param position: The (x, y, z) position of the block to show.
         :param immediate: Whether or not to show the block immediately.
         """
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         if issubclass(type(position), Block.AbstractBlock):
             position = position.position
@@ -400,7 +401,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param position: The (x, y, z) position of the block to hide.
         :param immediate: Whether or not to immediately remove the block from the canvas.
         """
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         if issubclass(type(position), Block.AbstractBlock):
             position = position.position
@@ -421,7 +423,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         will show the chunk
         :param force: if the chunk show should be forced or not
         """
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         if self.visible and not force:
             return
@@ -435,7 +438,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         will hide the chunk
         :param force: if the chunk hide should be forced or not
         """
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         if not self.visible and not force:
             return
@@ -448,7 +452,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         return self.visible and shared.IS_CLIENT
 
     def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         self.positions_updated_since_last_save.add(position)
 
@@ -466,7 +471,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param hide: if blocks should be hidden if needed
         :param immediate: if immediate call or not
         """
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         for position in self.world.keys():
             if immediate:
@@ -481,7 +487,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         will hide all blocks in the chunk
         :param immediate: if immediate or not
         """
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         for position in self.world:
             self.hide_block(position, immediate=immediate)
