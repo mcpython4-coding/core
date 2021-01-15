@@ -4,20 +4,21 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added tasks.list storing some todo's for the future
 [uuk]: added version.info file
 [uuk]: added tools/updatelicenceheaders [1]
+
 [github]: started day 2 as 13th of July, 2019
 [uuk]: added tools/updatelicenceheaders [2]
 [uuk]: added code from https://github.com/fogleman/Minecraft
 [uuk]: created __main__.py for launching
 [uuk]: fixed missing call of main.main() in __main__
 [uuk]: fixed library bug locally, if somebody gets when closing the window an exception from weakref, contact me and I
-        will give you an workaround
+        will give you an workaround [seems fixed]
 [uuk]: removed compatibility to python 2
 [uuk]: when starting, mouse will NOT be locked anymore
 [uuk]: split everything into single files
-[uuk]: added warning msg when update is called to less
+[uuk]: added warning msg when update() is called not often enough
 [uuk]: new chunk format: (x, z) instead of (x, 0, z)
-[uuk]: added event/EventHandler
-[uuk]: added globals
+[uuk]: added event/EventHandler.py
+[uuk]: added globals.py
 [uuk]: added events
 [uuk]: added exception handling for events
 [uuk]: added base class for blocks and block handler
@@ -31,29 +32,31 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added State-class, StateHandler, StatePart
 [uuk]: added activate/deactivate callback functions to EventHandler
 [uuk]: added State for game, StatePart of GameLoop
-[uuk]: moved all eventhandling out of window into GameStatePart and GameState
+[uuk]: moved all event-handling out of window into GameStatePart and GameState
 [uuk]: added Escape-state
 [uuk]: fixed some function misspells
-[uuk]: added state/ui for buttons
-[uuk]: added event/EventInfo for getting an info storing exactly when event args are True
+[uuk]: added state/ui for ui elements
+[uuk]: added event/EventInfo.py for getting an info storing exactly when event args are True
 [uuk]: fixed possible memory leak when changing fast chunks (chunks were shown before other were hidden)
 [uuk]: added assets-folder
 [uuk]: added some resources from mc 1.14.4-pre5
 [uuk]: added textures/helpers for image editing, for that PIL is required
-[uuk]: added local to globals
-[uuk]: added tmp-folder
+[uuk]: added local home to globals
+[uuk]: added tmp-folder system
+
 [github]: started day 3 as 14th of July, 2019
 [uuk]: finished UIPartButton
 [uuk]: some licence header improvements
 [uuk]: added UIPartLable
-[uuk]: added callbackhelper - an class for calling an function with extra args
-[uuk]: fixed that when switching statets sub-parts are recreated so we are not removing the old
+[uuk]: added CallbackHelper - an class for calling an function with extra args
+[uuk]: fixed that when switching states sub-parts are recreated so we are not removing the old
 [uuk]: finished EscapeState for the moment
 [uuk]: added StateStartMenu
 [uuk]: added two new rendering events: "render:draw:2d:background" & "render:draw:2d:overlay"
 [uuk]: added text_size attribute to UIPartLable
+
 [github]: started day 4 as 15th of July, 2019
-[uuk]: fixed bug: world is invisable after loading
+[uuk]: fixed bug: world is invisible after loading
 [uuk]: added immediate-parameter to sector-functions of Model
 [uuk]: fixed bug: you can spawn in blocks
 [uuk]: added TickHandler with simple ticking
@@ -61,33 +64,36 @@ sstarted these clone on 12th of July, 2019
 [uuk]: removed N-key to generate an new level
 [uuk]: added ability to use add_block & remove_block with block instances
 [uuk]: sand will now fall by 2 Blocks / sec
-[uuk]: added textureatlas
+[uuk]: added texture atlas system
 [uuk]: added helper function for transforming an pyglet image into an pillow one
-[uuk]: added resourcelocator making it possible to extract resources direct out of the .jar file,
+[uuk]: added ResourceLocator making it possible to extract resources direct out of the .jar file,
        an public instance is used
 [uuk]: removed textures from system
 [uuk]: removed texture group of model, we are using now texture atlas system
 [uuk]: added ModelLoader
 [uuk]: setup() was called twice in __main__.py
+
 [github]: started day 5 as 16th of July, 2019
 [uuk]: fixed bugs around Model system
-[uuk]: added missingtexture-image
-[uuk]: added cube_verices_2 & tex_coords_2 for definiting all dimensions (xyz)
+[uuk]: added missing_texture-image
+[uuk]: added cube_vertices_2 & tex_coords_2 for defining all dimensions (xyz)
 [uuk]: missing texture will now be loaded into every texture atlas
 [uuk]: model.hide_block & model.show_block accepts now also blocks
-[uuk]: added auto-injected misssing-texture-block
+[uuk]: added auto-injected missing-texture-block
 [uuk]: ResourceLocator accepts now files without G.local before
-[uuk]: if an face is not definitied, it will be missingtexture
+[uuk]: if an face is not definite, it will be missing texture
+
 [github]: started day 6 as 17th of July, 2019
 [uuk]: fixed bugs around the model system & the atlas system
 [uuk]: added some security checks in various functions
 [uuk]: added some cleanup function into some functions
 [uuk]: added assets/models/block_modified-folder for giving the game alternative models to load (used for grass at the moment)
-[uuk]: added texture/factory for classes working with images from pre-definited files
+[uuk]: added texture/factory for classes working with images from pre-definite files
 [uuk]: added the following blocks: bedrock, cobblestone
 [uuk]: made stone breakable
 [uuk]: added some kind of info state
 [uuk]: added UIPartImage
+
 [github]: started day 7 as 18th of July, 2019
 [uuk]: optimized above state
 [uuk]: updated jar-archive to 1.14.4-pre6
@@ -96,11 +102,12 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added activate_crosshair-attribute to StatePartGame
 [uuk]: added Inventory, InventoryHandler, Slot, ItemStack
 [uuk]: added Items, Stone-item
+
 [github]: started day 8 as 19th of July, 2019
 [uuk]: added PlayerHotbar-Inventory
 [uuk]: fixed bug: stone has no texture location
 [uuk]: fixed bug: copy of slot has no itemstack-attribute
-[uuk]: fixed bugs around rendering inventorys
+[uuk]: fixed bugs around rendering inventories
 [uuk]: slot position is now relative to base position of background image, making resizing now working correct
 [uuk]: added json-support to ResourceLocator
 [uuk]: added config-file-option to Inventory
@@ -116,15 +123,16 @@ sstarted these clone on 12th of July, 2019
 [uuk]: moved a lot of stuff into inventory config
 [uuk]: added selection for active inventory slot
 [uuk]: fixed bug with amount label rendering at wrong position
-[uuk]: fixed miss-spell of Inventory's position-attribute named positon
+[uuk]: fixed miss-spell of Inventory's position-attribute named position
 [uuk]: fixed bug: amount labels are overlapped by next items
+
 [github]: started day 9 as 20th of July, 2019
 [uuk]: added allow_player_remove & allow_player_insert-attribute to Slot, added to config system
 [uuk]: removed old block selection system
 [uuk]: added on_draw_over_image-function to Inventory
 [uuk]: fixed bug: in gamemode 1, bedrock can't be broken
 [uuk]: added mouse-middle support
-[uuk]: fixed bug: itemstack is getting the class, not an instance of it when creating with itemname
+[uuk]: fixed bug: itemstack is getting the class, not an instance of it when creating with item name
 [uuk]: added main-part of the inventory
 [uuk]: enabled sub-locations in archives for ResourceLocator
 [uuk]: when adding an empty array to texture atlas, it will be simply skipped
@@ -134,14 +142,14 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed bug: ESC can be used when an inventory is opened to get to the esc-screen
 [uuk]: fixed bug: resize with factory was some kind broken due to an wrong argument
 [uuk]: added allow_player_add_to_free_place-attribute to slot
-[uuk]: fixed bug: slotcopy has no allow_[...]-attributes
+[uuk]: fixed bug: SlotCopy has no allow_[...]-attributes
 [uuk]: added mouse interaction
 [uuk]: fixed bug: remove/insert options to Slot were wrong
 [uuk]: added Chat as an inventory
 [uuk]: added util/opengl
 [uuk]: added event "user:keyboard:enter" when user enters an text (window: on_text(text: str))
 [uuk]: added Command-system
-[uuk]: added /give-command (structure: selector, itemname, optional: int)
+[uuk]: added /give-command (structure: selector, item name, optional: int)
 [uuk]: add_to_free_place of player will now search for an used stack before using empty
 [uuk]: fixed bug: add_to_free_place when adding to an not-full stack the result will be what was added not the rest
 [uuk]: fixed bug: amount for slot was after creation always 2 due to an missed debug line
@@ -150,6 +158,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed bug: in gamemode 3, you can't move
 [uuk]: fixed bug: in gamemode 3, hitbox of blocks were drawn
 [uuk]: added SELECT_DEFINITED_STRING-type to CommandEntryType, reworked /gamemode-command to use it
+
 [github]: started day 10 as 21th of July, 2019
 [uuk]: added OPEN_END_UNDEFINITED_STRING-type to CommandEntryType
 [uuk]: added /execute-command
@@ -161,15 +170,17 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added kill-method to player
 [uuk]: updated licence headers to fit the version of jar used in these project
 [uuk]: fixed bug: Can get 0-Slot by right-clicking an 1-Slot
+
 [github]: started day 11 as 22th of July, 2019
 [uuk]: fixed some bugs around /tp & /teleport
 [uuk]: added some security to math functions
 [uuk]: added /help-command
+
 [github]: started day 12 as 2nd of August, 2019
 [uuk]: added StateBlockItemGenerator
 [uuk]: added clearcolor-attribute to StatePartGame
 [uuk]: added get_used_models-attribute to Block
-[uuk]: speeded model loading up by loading only the used models and the models which have childs
+[uuk]: speed model loading up by loading only the used models and the models which have children
 [uuk]: added block_update-parameter to add & remove functions of model
 [uuk]: added build-limits (y <0 and >255), changed world generation a little bit to fit in
 [uuk]: pressing during moving mouse rotates now the camera normally
@@ -177,8 +188,10 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added brake-time-attribute to block, gamemode 1 is instant mining
 [uuk]: added events: user:mouse:release, user:mouse:drag
 [uuk]: added set_to-attribute to Block
+
 [github]: started day 13 as 17th of August, 2019
 [uuk]: added some interesting tasks
+
 [github]: started day 14 as 18th of August, 2019
 [uuk]: added the following blocks: coal ore, iron ore, gold ore, emerald ore, redstone ore, diamond ore, lapis ore
 [uuk]: fixed bug: ItemStone-class still exists outside the generation system
@@ -197,9 +210,10 @@ sstarted these clone on 12th of July, 2019
 [uuk]: system will now generate properly
 [uuk]: finished bedrock layer
 [uuk]: batches will now be part of dimension instead of chunk
-[uuk]: added some code to chunk to definite parameters which should be loaded when an new chunk is created. usefull for
+[uuk]: added some code to chunk to definite parameters which should be loaded when an new chunk is created. useful for
        world gen tasks
 [uuk]: added reload-command, /generate [<x> <z>]-command
+
 [github] started day 15 as 21th of August, 2019
 [uuk]: added TemperatureMapLayer
 [uuk]: fixed bug in #1 by adding some checks and resets
@@ -208,6 +222,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed bug: value in LandMassLayer-map was float instead of landmass name
 [uuk]: fixed bug: BlockSand fall-system gave errors due to an overlooked look into model.world
 [uuk]: fixed bug: world is not generated during world generation call, instead during runtime -> lag!
+
 [github] started day 16 as 22th of August, 2019
 [uuk]: fixed bugs around world generation
 [uuk]: removed ocean from landmasses, it is not used at the moment
@@ -218,7 +233,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added option in StatePartGame to disable lable
 [uuk]: in StateBlockItemGenerator, caption will show where we are
 [uuk]: fixed bug: player.add_to_free_place could place items into armor, crafting & offhand slots
-[uuk]: crafting slots of player will now be automaticly cleared when closed addding stuff into inventory
+[uuk]: crafting slots of player will now be automatically cleared when closed adding stuff into inventory
 [uuk]: added sprinting, reworked speed for flying & gamemode 3
 [uuk]: added HeightMapLayer, added get_height_range-function to Biome
 [uuk]: fixed biome-lable, missed an normalize(vector)-call
@@ -229,9 +244,10 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added DefaultTopLayerLayer for for example grass & dirt on top of the stone
 [uuk]: lable size is now smaller, block looking at is now part of lable
 [uuk]: added BlockFactory
+
 [github] started day 17 as 23th of August, 2019
 [uuk]: added block-base-system, added IFallingBlock, added system for registry in BlockHandler
-[uuk]: fixed bug: braking blocks did not update visable state
+[uuk]: fixed bug: braking blocks did not update visible state
 [uuk]: added ItemFactory
 [uuk]: added items: apple, arrow, baked potato, beef, beetroot, beetroot soup, black dye, blaze powder, blaze rod,
                     blue dye, bone, bone meal, book, bowl, bread, brick, broken elytra, brown dye, carrot,
@@ -244,7 +260,8 @@ sstarted these clone on 12th of July, 2019
                     nether star, nether wart, orange dye, pink dye, poisonous potato, porkchop, potato, purple dye,
                     quartz, rabbit, redstone, red dye, rotten flesh, salmon, shulker shell, slime ball, spider eye,
                     stick, string, sugar, wheat, white dye, yellow dye
-[uuk]: added areas to the log
+[uuk]: added "areas" to the log
+
 [github]: started day 18 as 24th of August, 2019
 [xkcdjerry]: fixed a bug out of #1
 [uuk]: added xkcdjerry to licence headers
@@ -273,6 +290,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: made it possible to hide individual block faces
 [uuk]: fixed bug: Dimension.get_block did not access blocks that should be generated in the future
 [uuk]: fixed bug: Chunk.get_block did NOT give None back if position is empty
+
 [github]: started day 19 as first of September, 2019
 [uuk]: cleaned up files & fixed some bugs:
     - block directory
@@ -286,41 +304,49 @@ sstarted these clone on 12th of July, 2019
 [uuk]: implemented crafting system
 [uuk]: slot has now an on_update, allow_half_getting & on_shift_click implementation
 [uuk]: ItemStacks & Items have now an == implementation
+
 [github]: started day 20 as third of September, 2019
 [uuk]: added states to customize parts of the world generation
 [uuk]: added ToggleButton
 [uuk]: tweaked some collision detection
 [uuk]: rewritten ResourceLocator, made it possible to add own resource packs
 [uuk]: rewritten model system, BlockStates are now used
-[uuk]: rewritten texture atlas system, rewritten texturefactory
+[uuk]: rewritten texture atlas system, rewritten texture factory
+
 [github]: started day 21 as 5th of September, 2019
 [uuk]: worked on the rewrite (took me longer than expected due to some errors in model texture getting)
 [uuk]: implemented base log system  (#1)
 [uuk]: block states accept now rotations, the next will optimize it a bit
 [uuk]: increased texture atlas size to 64x64 images per atlas, and it is now possible to create some with custom size
 [uuk]: fixed bug: math.tex_coords has wrong texture order
+
 [github]: started day 22 as 6th of September, 2019
 [uuk]: fixed bug: BlockState draws all states which should be selected by random at once
 [uuk]: added spruce, birch, jungle, acacia & dark oak log; oak, spruce, birch, jungle, acacia & dark oak planks (#1)
 [uuk]: fixed bug: some faces of non-upper logs were rotated wrong due to an wrong texture rotation
+
 [github]: started day 23 as 7th of September, 2019
 [uuk]: speed up loading again
 [uuk]: added stripped logs, wood, stripped wood, leaves
 [uuk]: added BlockConfig for adding blocks with alpha (there is stored that they have alpha)
 [uuk]: added alpha-batch to rendering system
 [uuk]: added gravel, andesite, polished andesite, diorite, polished diorite, granite, polished granite
-[uuk]: blocklist of blockhandler is now sorted after name
+[uuk]: blocklist of block handler is now sorted after name
 [uuk]: added trees to world generation
+
 [github]: started day 24 as 8th of September, 2019
 [uuk]: moved registries to one system. added registration events. Registries can be locked and will be after startup
 [uuk]: registry are now named
+
 [github]: started day 25 as 9th of September, 2019
 [uuk]: finished up above changes
 [uuk]: fixed bug: @a and @r were not registered correct
 [xkcdjerry]: removed old unused code in __main__->try->main
 [uuk]: added setup tasks
-[github]: started day 26 as 14th of September, 2019
-[uuk]: finished prebuild system to an runable point
+
+[github]: started day 26 as 14th of September, 2019; last date in this file;
+          means not everything was done on the same day :-)
+[uuk]: finished prebuild system to an runnable point
 [uuk]: fixed bug: space / shift for flying works in chat
 [uuk]: fixed bug: /help-command does not work (#1)
 [uuk]: fixed bugs around command parsing which were causing /give and /give @s raising exceptions (#4)
@@ -467,8 +493,8 @@ sstarted these clone on 12th of July, 2019
 [uuk]: changed the way how buttons are drawn
 [uuk]: re-added barrier & auto gen config options
 [uuk]: fixed bug: when using the ToggleButton, game crashed
-[uuk]: added Language data, auto loading & connected to various lables, buttons & text field empty text
-[uuk]: fixed bug: UIPartLable's text was NOT updating when setting its text
+[uuk]: added Language data, auto loading & connected to various labels, buttons & text field empty text
+[uuk]: fixed bug: UIPartLabel's text was NOT updating when setting its text
 [uuk]: added special mode to ResourceLocator to get all data from all possible locations, not only the first on list
 [uuk]: added custom language file for translations which are not minecraft-sourced
 [uuk]: Escape State has now an "Go to github project" - button
@@ -477,12 +503,12 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added quit-game button to start screen
 [uuk]: changed crosshairs texture to mc texture
 [uuk]: fixed bug: when pressing an mouse button while looking in an generating chunk let the game crash
-[uuk]: when leaving main game state and pressing an button, button unpressing in the non-main-game-state was not handled
+[uuk]: when leaving main game state and pressing an button, button un-pressing in the non-main-game-state was not handled
        so bugs around it where occurring
 [uuk]: added tab-support to TextFields
 [uuk]: added mod-folder with load events
 [uuk]: EventBus can have now EventBuses as children, so they can be deactivated all at once
-[uuk]: EventBus accepts now an subscribeinfo
+[uuk]: EventBus accepts now an SubscribeInfo
 [uuk]: added Mod-class, ModLoader-class, ModDependency-class, mods-folder
 [uuk]: fixed bug: ProgressBar was not working
 [uuk]: added ModLoading-state with progress bar
@@ -490,7 +516,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: InventoryPlayerMain requires now an InventoryPlayerHotbar-instance to create
 [uuk]: moved pre-build to post-window-create as an loading phase
 [uuk]: moved item atlas loading to resource-loading phase
-[uuk]: fixed bug: when errors occure with texture side loading, game crashes when block is set
+[uuk]: fixed bug: when errors occur with texture side loading, game crashes when block is set
 [uuk]: changed intern ResourceLocation-lookup to be reverse-ordered to make adding mods easier
 [uuk]: with "--addmoddir <moddir>" you can add custom mod directories
 [uuk]: with "--addmodfile <modfile>" you can add custom mods from other locations
@@ -504,7 +530,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed bug: mod sorter uses library rather than util.math
 [uuk]: fixed bug: mod errors were logged with two "-" in front
 [uuk]: reworked model & blockstate system to support modifications
-[uuk]: system will now create models outside of "minecraft"-namspace with "<namespace>:block/<blockname>"
+[uuk]: system will now create models outside of "minecraft"-namespace with "<namespace>:block/<blockname>"
 [uuk]: prebuild system is now based on an flag on globals
 [uuk]: if build-folder gets deleted, the system will now automatically rebuild
 [uuk]: reworked BlockItemGenerator to auto-build when blocks are missing (for example if block is added by an new mod
@@ -537,20 +563,20 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added security function when block item factory index gets deleted, but the other stuff not
 [uuk]: fixed bug: dependency system was crashing
 [uuk]: made mod dependency errors better
-[uuk]: texturefactory accepts now also an data object besides an file-string
+[uuk]: TextureFactory accepts now also an data object besides an file-string
 [uuk]: ModelHandler & BlockState-systems accept now data-object beside file-strings
 [uuk]: added basic system: features. These file contains a class which can hold features added by mods which can be used
        by other mods. This removes need for every mod to check registries for possible strange-named objects or cross-
        -mod compatibility. This makes it also possible to extract information what is arrival for other mods
 [uuk]: added new function to block: get_provided_slots(side) which can be used to give information on which side
        which slots of the inventory(s) should be arrival
-[uuk]: fixed bug: ModelHandler-datainjection failed
+[uuk]: fixed bug: ModelHandler-data-injection failed
 [uuk]: fixed bug: world was created twice during startup which ended up into errors all around the system
 [uuk]: fixed bug: README was linking to wrong repo
 [uuk]: added wood & stone slabs
 [uuk]: fixed model system for non-full blocks
 [uuk]: texture util of math accepts now an texture region in which 0 is the one side and 1 the other
-[uuk]: hit_test returns now also the actual hit position, not only the block in which was lended
+[uuk]: hit_test returns now also the actual hit position, not only the block in which was hit
 [uuk]: added BoundingBox-system used now in hit_test
 [uuk]: slab has now an proper hitbox
 [uuk]: updated pillow to 6.2.1 to enable python 3.8 support
@@ -601,12 +627,12 @@ sstarted these clone on 12th of July, 2019
 [uuk]: implemented colored shulker box
 [uuk]: fixed bug: when copying an shulker box with mouse-middle-click, shulker box was like an colored ender chest
 [uuk]: added middle-click support to chest
-[uuk]: chests are now not openable when block ontop
+[uuk]: chests are now not open-able when block ontop is solid
 [uuk]: added factories for recipes & models
 [uuk]: added CTRL+V-combo to chat, for that the library clipboard is needed
 [uuk]: fixed bug: ResourceLocator's mod asset loader helper function failed to load block states
 [uuk]: fixed bug: when entering an real HTML-character sequenz to the chat, it is displayed as html rather as raw string
-[uuk]: fixed bug: chars used for "<" and ">" were only strange removeable
+[uuk]: fixed bug: chars used for "<" and ">" were only strange remove-able
 [uuk]: TAB+SHIFT is now arrival to switch between text fields
 [uuk]: exception handle when block is not arrival anymore in ItemHandler's load function
 [uuk]: fixed progress bar rendering out of bounding box due to wrong size calculation
@@ -638,7 +664,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: added security for non-visible blocks in StateBlockItemGenerator
 [uuk]: fixed rare crash when showing an empty progress bar (max items == 0)
 [uuk]: added an option to TickHandler for disabling tick-skipping
-[uuk]: fixed bug: blockitemfactory in debug mode was not working when missing ticks
+[uuk]: fixed bug: BlockItemFactory in debug mode was not working when missing ticks
 [uuk]: enabled block tag loading
 [uuk]: added new helper functions: get_tags_for(obj), provides_object_tag(obj, tag), provides_object_any_tag(obj, tags)
 [uuk]: improved feature-system
@@ -652,8 +678,8 @@ sstarted these clone on 12th of July, 2019
 [uuk]: Mod's add_dependency accepts now strings in format "<modname>" or "<modname>|<version>"
 [uuk]: fixed bug: couldn't load custom tags from mods due to a mod-name cast error
 [uuk]: added support for replacing & extending tags
-[uuk]: fixed bug: mod-special resourcelocations like testmod:block/test failed due to missing ".png" ending
-[uuk]: fixed bug: progress bar of blockitemfactory was maxed to block count rather than the actual block count
+[uuk]: fixed bug: mod-special resource locations like testmod:block/test failed due to missing ".png" ending
+[uuk]: fixed bug: progress bar of BlockItemFactory was maxed to block count rather than the actual block count
 [uuk]: moved crafting-recipe loading to mod-special events rather to all-mcpython
 [uuk]: fixed some crafting system related bugs
 [uuk]: added --debugrecipes-flag which provides more detailed what was wrong with recipe loading
@@ -704,7 +730,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: new variant of ICustomBlockRenderer called IObjectedCustomBlockRenderer
 [uuk]: added new events: "command:clear:start", "command:clear:end"
 [uuk]: fixed miss-spell in licence header
-[uuk]: depcreased call_until_equal, call_until_getting_value, call_until_not_equal of EventBus, use EventBus.call_until
+[uuk]: decreased call_until_equal, call_until_getting_value, call_until_not_equal of EventBus, use EventBus.call_until
        instead
 [uuk]: changed signature of event "registry:{}:on_object_register" from (,) to (Registry, Object)
 [uuk]: added instant_ticks-attribute to TickHandler
@@ -801,7 +827,7 @@ sstarted these clone on 12th of July, 2019
 [uuk]: fixed issue 101
 [uuk]: moved name of item, block, IRecipeInterface, IPrepareAbleTask, ITextureChange, Biome, Layer & state to NAME
        attribute at block [WARNING: this is an braking change]
-[uuk]: removed Block.on_create & Block.on_delete methodes
+[uuk]: removed Block.on_create & Block.on_delete methods
 [uuk]: removed EventBus.call_until_not_equal, EventBus.call_until_getting_value & EventBus.call_until_equal
 [uuk]: added BLOCK_ITEM_GENERATOR_STATE-attribute to Block used for setting an block state used in BlockItemGenerator
 [uuk]: changed registry-system to be based on IRegistryContent-objects [another braking change], every object MUST have

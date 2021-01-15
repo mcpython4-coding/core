@@ -30,23 +30,20 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - BlockItemGenerator should store images in an better way, not single-files
 
 information on development:
-    - the development is split up into 3 phases: the dev-branch with changes to the code, snapshots pushed to release,
-        but not published as releases on github, and the final releases pushed to release-branch and published as#
-        an release
+    - the development is split up into 2 phases: the dev-branch with changes to the code and the final releases pushed
+        to release-branch and published as a release on github
     - developing happens also on feature branches were bigger features can be tested. It is not guaranteed that any
         if this features will make its way into the final release.
-    - PR's should target master or in some cases the feature branches, only for critical bug fixes the release-branch
+    - PR's should target dev or in some cases the feature branches, only for critical bug fixes the release-branch
     - this file will keep track on every development leading into an snapshot or release. The dev-branch will be used
         for creating the entries. Every new snapshot changelog starts with "changelog of <type> <name>" with optional
-        following the theme of the snapshot, the release date and additional information. The changelog than can
-        be in two formats:
-        a) when not released yet:
-            - an list of changes in the order of introduction
-        b) in the final release:
-            - an grouped list of changes after topic in an logical order with all not noticeable changes removed
-        both can be followed by an table of issues starting with "fixed issues:" followed by an list of grouped after
-        first obscures of the bug the list of issues with an short description and when based on an github bug report
-        its id.
+        following the theme of the snapshot, the release date and additional information. The changelog should be
+        an grouped list of changes after topic in an logical order with all not noticeable changes removed
+        followed optional by an table of issues starting with "Fixed issues:" followed by an list of grouped after
+        first occurrence of the bug the list of issues with an short description and when based on an github bug report
+        its github id.
+    - developers may want to create test builds for themselves. run dev/generate_test_build.py for it.
+        When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID of it
 
 
 changelog of snapshot <next> released on -, targeting -
