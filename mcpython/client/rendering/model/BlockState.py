@@ -52,6 +52,15 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
     ) -> list:
         raise NotImplementedError()
 
+    def add_raw_face_to_batch(
+            self,
+            position,
+            state,
+            batches,
+            faces
+    ):
+        return tuple()
+
     def transform_to_hitbox(
         self,
         instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
@@ -390,6 +399,24 @@ class DefaultDecoder(IBlockStateDecoder):
         )
         return []
 
+    def add_raw_face_to_batch(
+            self,
+            position,
+            state,
+            batches,
+            face
+    ):
+        state = state
+        for keymap, blockstate in self.states:
+            if keymap == state:
+                return blockstate.add_raw_face_to_batch(position, batches, face)
+        logger.println(
+            "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
+                position, state, [e[0] for e in self.states]
+            )
+        )
+        return []
+
     def transform_to_hitbox(
         self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget
     ):
@@ -501,7 +528,7 @@ class BlockStateDefinition:
         if (
             name not in shared.registry.get_by_name("minecraft:block").entries
             and name not in self.NEEDED
-        ):
+        ) and name != "minecraft:missing_texture":
             raise BlockStateNotNeeded()
         shared.model_handler.blockstates[name] = self
         self.loader = None
@@ -536,6 +563,15 @@ class BlockStateDefinition:
         face: mcpython.util.enums.EnumSide,
     ):
         return self.loader.add_face_to_batch(block, batch, face)
+
+    def add_raw_face_to_batch(
+            self,
+            position: tuple,
+            state,
+            batches,
+            face
+    ):
+        return self.loader.add_raw_face_to_batch(position, state, batches, face)
 
     def draw_face(
         self,
@@ -590,7 +626,6 @@ class BlockState:
             instance.block_state = self.models.index(
                 random.choices(self.models, [e[2] for e in self.models])[0]
             )
-        result = []
         model, config, _ = self.models[instance.block_state]
         if model not in shared.model_handler.models:
             logger.println(
@@ -598,9 +633,26 @@ class BlockState:
                     model, instance.position
                 )
             )
-            return result
-        result += shared.model_handler.models[model].add_face_to_batch(
+            return tuple()
+        result = shared.model_handler.models[model].add_face_to_batch(
             instance.position, batch, config, face
+        )
+        return result
+
+    def add_raw_face_to_batch(self, position, batches, face):
+        block_state = self.models.index(
+            random.choices(self.models, [e[2] for e in self.models])[0]
+        )
+        model, config, _ = self.models[block_state]
+        if model not in shared.model_handler.models:
+            logger.println(
+                "can't find model named '{}' to add at {}".format(
+                    model, position
+                )
+            )
+            return tuple()
+        result = shared.model_handler.models[model].add_face_to_batch(
+            position, batches, config, face
         )
         return result
 

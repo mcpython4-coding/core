@@ -79,6 +79,8 @@ class BlockFaceState:
                     )
                     self.subscribed_renderer = True
         else:
+            if self.face_data[face.normal_name] is None:
+                self.face_data[face.normal_name] = []
             self.face_data[face.normal_name].extend(
                 shared.model_handler.add_face_to_batch(
                     self.block,
@@ -121,9 +123,13 @@ class BlockFaceState:
                     )
                     self.subscribed_renderer = False
         else:
-            [x.delete() for x in self.face_data[face.normal_name]]
-        self.face_data[face.normal_name].clear()
-        if all(len(value) == 0 for value in self.face_data.values()):
+            try:
+                [x.delete() for x in self.face_data[face.normal_name]]
+            except AssertionError:
+                pass
+
+        self.face_data[face.normal_name] = None
+        if all(value is None or len(value) == 0 for value in self.face_data.values()):
             self.face_data = None
 
     def _draw_custom_render(self):

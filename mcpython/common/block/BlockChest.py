@@ -21,6 +21,7 @@ from mcpython import shared, logger
 import mcpython.common.item.AbstractToolItem
 import mcpython.util.enums
 from . import AbstractBlock
+import mcpython.client.rendering.blocks.TemporaryChestRenderer
 
 BBOX = mcpython.common.block.BoundingBox.BoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)
@@ -59,7 +60,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
 
     def __init__(self):
         """
-        creates an new BlockChest
+        Creates an new BlockChest
         """
         super().__init__()
 
@@ -86,10 +87,12 @@ class BlockChest(AbstractBlock.AbstractBlock):
         self.face_solid = {
             face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
+        self.face_state.custom_renderer = mcpython.client.rendering.blocks.TemporaryChestRenderer.TemporaryChestRenderer()
+        self.face_state.update(True)
 
     def can_open_inventory(self) -> bool:
         """
-        checks if the inventory can be opened
+        Checks if the inventory can be opened
         :return: if the block can be opened
         """
         x, y, z = self.position
