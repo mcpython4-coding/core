@@ -52,7 +52,9 @@ class APIManager:
         self.api_shipments = {}
         self.api_implementations = {}
         self.api_cache = {}
-        shared.mod_loader("minecraft", "stage:api:check")(self.check_compatibility_and_load)
+        shared.mod_loader("minecraft", "stage:api:check")(
+            self.check_compatibility_and_load
+        )
 
     def add_api_type(self, name: str):
         """

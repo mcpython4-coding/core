@@ -75,8 +75,11 @@ class TextureAtlasGenerator:
         os.makedirs(shared.tmp.name + "/textureatlases")
         for modname in self.atlases:
             for i, atlas in enumerate(self.atlases[modname]):
-                location = shared.tmp.name + "/textureatlases/atlas_{}_{}_{}x{}.png".format(
-                    modname, i, *atlas.image_size
+                location = (
+                    shared.tmp.name
+                    + "/textureatlases/atlas_{}_{}_{}x{}.png".format(
+                        modname, i, *atlas.image_size
+                    )
                 )
                 atlas.texture.save(location)
                 atlas.group = pyglet.graphics.TextureGroup(

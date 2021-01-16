@@ -59,45 +59,62 @@ class AbstractBlock(parent):
     """
     Abstract base class for all blocks
     All block classes should extend from this
+
+    Defines interaction thingies for blocks with the environment
+
+    WARNING:
+        - During registration, one block instance is created but NEVER assigned to a world (so on_block_added is never
+            called). This is used for getting runtime-specific properties.
+
+    todo: add custom properties to set_creation_properties() -> injected by add_block() call
     """
 
-    TYPE: str = "minecraft:block_registry"  # internal registry type
+    # Internal registry type name; DO NOT CHANGE
+    TYPE: str = "minecraft:block_registry"
 
-    # used when the player walks in an different speed on this block
+    # Used when the player walks in a different speed when on this block
     CUSTOM_WALING_SPEED_MULTIPLIER: typing.Optional[float] = None
 
-    # used internally to set the state the BlockItemGenerator uses
+    # Used internally to set the state in BlockItemGenerator
+    # todo: allow str
+    # todo: remove together with BlockItemGenerator when block rendering in inventory is ready
     BLOCK_ITEM_GENERATOR_STATE: typing.Optional[dict] = None
 
-    # If this block can be broken in gamemode 0 and 2
+    # If this block can be broken in gamemode 0 and 2; can be manually implemented by player interaction events
     IS_BREAKABLE: bool = True
 
-    HARDNESS: float = 1  # the hardness of the block
-    BLAST_RESISTANCE: float = 0  # how good it is in resisting explosions
-    MINIMUM_TOOL_LEVEL: int = 0  # the minimum tool level
+    HARDNESS: float = 1  # The hardness of the block
+    BLAST_RESISTANCE: float = 0  # How good it is in resisting explosions
+    MINIMUM_TOOL_LEVEL: int = (
+        0  # The minimum tool level; todo: make str & add lookup table at global space
+    )
     ASSIGNED_TOOLS: typing.List[
         mcpython.util.enums.ToolType
     ] = []  # the tools best to break
 
-    # if the block is solid; None is unset and set by system by checking face_solid on an block instance
+    # If the block is solid; None is unset and set by system by checking face_solid on a default block instance
     IS_SOLID: typing.Optional[bool] = None
 
-    # if the block can conduct redstone power; None is unset and set by system to SOLID
+    # If the block can conduct redstone power; None is unset and set by system to SOLID
     CAN_CONDUCT_REDSTONE_POWER: typing.Optional[bool] = None
 
-    # if mobs can spawn on the block; None is unset and set by system to SOLID
+    # If mobs can spawn on/in the block; None is unset and set by system to SOLID
     CAN_MOBS_SPAWN_ON: typing.Optional[bool] = None
     CAN_MOBS_SPAWN_IN: bool = False
 
     # if the random tick function should be called if needed or not
     ENABLE_RANDOM_TICKS: bool = False
 
-    NO_ENTITY_COLLISION: bool = False
-    ENTITY_FALL_MULTIPLIER: float = 1
+    NO_ENTITY_COLLISION: bool = False  # if entities should not collide with this block todo: make method with entity
+    ENTITY_FALL_MULTIPLIER: float = (
+        1  # entity gravity multiplier while in the block todo: merge with above
+    )
 
-    # todo: add a factory for it
+    # a list of block states used in debug world
+    # todo: add a manager for it like mc
     DEBUG_WORLD_BLOCK_STATES: typing.List[dict] = [{}]
 
+    # internal helper properties; DO NOT CHANGE ON BASE CLASS!
     DEFAULT_FACE_SOLID = {face: True for face in mcpython.util.enums.EnumSide.iterate()}
     UNSOLID_FACE_SOLID = {
         face: False for face in mcpython.util.enums.EnumSide.iterate()
@@ -114,6 +131,10 @@ class AbstractBlock(parent):
         Creates new Block-instance.
         Sets up basic stuff and creates the attributes
         Sub-classes may want to override the constructor and super().__init__(...) this
+
+        For modders:
+            - setup attributes here
+            - fill them with data in on_block_added
         """
         super().__init__()
 
@@ -161,6 +182,7 @@ class AbstractBlock(parent):
         After this, the block might stay for some time in memory, but may also get deleted.
         :param reason: the reason of the removal, defaults to BlockRemovalReason.UNKNOWN
         todo: use reasons were possible
+        todo: add cancel-able variant
         """
 
     def on_random_update(self):
@@ -173,6 +195,8 @@ class AbstractBlock(parent):
         """
         Called when an near-by block-position is updated by setting/removing an block
         Invokes a redstone update by default. Call if needed.
+        todo: add optional source of update
+        todo: add at source a method to cancel update calling
         """
         self.on_redstone_update()
 
@@ -202,6 +226,7 @@ class AbstractBlock(parent):
         :param previous: if the player was in the block before
         """
 
+    # todo: rewrite below storage functions
     def get_save_data(self):
         """
         Helper function for saving pickle-able data on block save
@@ -233,16 +258,17 @@ class AbstractBlock(parent):
         """
         self.load_data(pickle.loads(data) if type(data) == bytes else data)
 
-    def get_item_saved_state(self):
+    def get_item_saved_state(self) -> typing.Any:
         """
         Used by item system to get the state of the block for storing in the item
-        Normally, parts of the block state
+        Normally, parts of the block state if needed
+        Defaults to no data (None)
         """
 
     def set_item_saved_state(self, state):
         """
         Previous saved state of another block instance
-        Only called when the state is not None
+        Only called when the state is not None [so you need to override get_item_saved_state() to get this called]
         """
 
     # block status functions
@@ -270,17 +296,18 @@ class AbstractBlock(parent):
 
     def get_model_state(self) -> dict:
         """
-        the active model state
-        :return: the model state as an dict
+        The active model state
+        Maybe want to cache it somewhere :-/
         """
         return {}
 
     def set_model_state(self, state: dict):
         """
-        sets the model state for the block
-        :param state: the state to set as an dict
+        Sets the model state for the block
+        :param state: the state to set, as an dict
 
         WARNING: do NOT raise an error if more data is provided, as sub-classes may want to add own data
+        WARNING: data may not contain all data saved for some reason :-/
         """
 
     def get_view_bbox(
@@ -290,7 +317,7 @@ class AbstractBlock(parent):
         mcpython.common.block.BoundingBox.BoundingArea,
     ]:
         """
-        used to get the bbox of the block for ray collision
+        Used to get the bbox of the block for ray collision
         :return: the bbox instance
         """
         return (
@@ -304,7 +331,7 @@ class AbstractBlock(parent):
         mcpython.common.block.BoundingBox.BoundingArea,
     ]:
         """
-        used to get the bbox of the block for phyical body collision
+        Used to get the bbox of the block for physical body collision
         :return: the bbox instance
         """
         return self.get_view_bbox()
@@ -313,7 +340,8 @@ class AbstractBlock(parent):
         self, itemstack: mcpython.common.container.ItemStack.ItemStack
     ):
         """
-        used when an item is requested exactly for this block. Useful for setting custom data to the itemstack
+        Used when an item is requested exactly for this block. Useful for setting custom data to the itemstack
+        Only modify the itemstack, not return it!
         :param itemstack: the itemstack generated for the block
         """
         if not itemstack.is_empty():
@@ -323,7 +351,7 @@ class AbstractBlock(parent):
 
     def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int):
         """
-        used to inject an redstone value into the system
+        Used to inject an redstone value into the system
         :param side: the side from which the redstone value comes
         :param level: the level of redstone, between 0 and 15
         """
@@ -331,7 +359,7 @@ class AbstractBlock(parent):
 
     def get_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
         """
-        gets the redstone value on an given side
+        Gets the redstone value on an given side
         :param side: the side to use
         :return: the value, as an integer between 0 and 15
         """
@@ -341,11 +369,13 @@ class AbstractBlock(parent):
 
     def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide):
         """
-        gets source power of an given side
+        Gets source power of an given side
         :param side: the side to use
         :return: an value between 0 and 15 representing the redstone value
         """
         return 0
+
+    # Debug methods
 
     def __repr__(self):
         return "MinecraftBlock::{}(internal={},position={},dimension={},block_state_entry={})".format(

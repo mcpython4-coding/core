@@ -283,7 +283,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             self.cpu_usage_timer = 0
 
         # todo: change to attribute in State-class
-        if dt > 3 and shared.state_handler.active_state.NAME not in ["minecraft:modloading"]:
+        if dt > 3 and shared.state_handler.active_state.NAME not in [
+            "minecraft:modloading"
+        ]:
             logger.println(
                 "[warning] running behind normal tick, did you overload game? missing "
                 + str(dt - 0.05)
@@ -377,7 +379,8 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                         shared.world.get_active_player().flying = False
                         if (
                             shared.world.get_active_player().gamemode in (0, 2)
-                            and shared.world.get_active_player().fallen_since_y is not None
+                            and shared.world.get_active_player().fallen_since_y
+                            is not None
                         ):
                             dy = (
                                 shared.world.get_active_player().fallen_since_y
@@ -581,7 +584,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         todo: move to special helper class
         """
         vector = self.get_sight_vector()
-        block = shared.world.hit_test(shared.world.get_active_player().position, vector)[0]
+        block = shared.world.hit_test(
+            shared.world.get_active_player().position, vector
+        )[0]
         if block:
             block = shared.world.get_active_dimension().get_block(block)
             if block:
@@ -593,11 +598,15 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         todo: move to special helper class
         """
         x, y, z = shared.world.get_active_player().position
-        nx, ny, nz = mcpython.util.math.normalize(shared.world.get_active_player().position)
+        nx, ny, nz = mcpython.util.math.normalize(
+            shared.world.get_active_player().position
+        )
         if not shared.world.gamerule_handler.table["showCoordinates"].status.status:
             x = y = z = "?"
         chunk = shared.world.get_active_dimension().get_chunk(
-            *mcpython.util.math.position_to_chunk(shared.world.get_active_player().position),
+            *mcpython.util.math.position_to_chunk(
+                shared.world.get_active_player().position
+            ),
             create=False
         )
         self.label.text = (

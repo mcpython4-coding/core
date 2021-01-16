@@ -71,11 +71,15 @@ class StateGame(State.State):
             ):
                 if shared.window.exclusive:
                     shared.event_handler.call("on_player_inventory_open")
-                    shared.inventory_handler.show(shared.world.get_active_player().inventory_main)
+                    shared.inventory_handler.show(
+                        shared.world.get_active_player().inventory_main
+                    )
                     self.parts[0].activate_mouse = False
             else:
                 shared.event_handler.call("on_player_inventory_close")
-                shared.inventory_handler.hide(shared.world.get_active_player().inventory_main)
+                shared.inventory_handler.hide(
+                    shared.world.get_active_player().inventory_main
+                )
         elif symbol == key.T and shared.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(self.open_chat, 2)
         elif symbol == key._7 and modifiers & key.MOD_SHIFT and shared.window.exclusive:

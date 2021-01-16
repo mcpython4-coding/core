@@ -117,7 +117,9 @@ class CommandExecute(mcpython.server.command.Command.Command):
                     block = shared.world.world[position]
                     flag = (
                         block.NAME
-                        == shared.registry.get_by_name("minecraft:block").entries[name].NAME
+                        == shared.registry.get_by_name("minecraft:block")
+                        .entries[name]
+                        .NAME
                     )
                 else:
                     flag = name in ["air", "minecraft:air", None, 0]

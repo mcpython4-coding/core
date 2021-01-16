@@ -42,7 +42,9 @@ def build():
 
 
 def load_data():
-    if not shared.invalidate_cache and os.path.exists(shared.build + "/item_block_factory.json"):
+    if not shared.invalidate_cache and os.path.exists(
+        shared.build + "/item_block_factory.json"
+    ):
         with open(shared.build + "/item_block_factory.json") as f:
             data = json.load(f)
         builder = logger.TableBuilder(

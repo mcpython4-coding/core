@@ -68,7 +68,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         )  # the save file instance
 
         # when in an network, stores an reference to all other players
-        self.players: typing.Dict[str, mcpython.common.entity.PlayerEntity.PlayerEntity] = {}
+        self.players: typing.Dict[
+            str, mcpython.common.entity.PlayerEntity.PlayerEntity
+        ] = {}
         self.active_player: str = "unknown"  # todo: make property, make None-able & set default None when not in world
         self.world_loaded = False  # describes if the world is loaded or not
 

@@ -92,15 +92,12 @@ class AbstractItem(mcpython.common.event.Registry.IRegistryContent):
     # functions used by data serializers
 
     def get_data(self):
-        return "no:data"
+        return self.stored_block_state, self.can_destroy, self.can_be_set_on
 
     def set_data(self, data):
-        if data != "no:data":
-            logger.println(
-                "[WARNING] data-deserialization did NOT expect data, but data '{}' was got".format(
-                    data
-                )
-            )
+        if data == "no:data":
+            return
+        self.stored_block_state, self.can_destroy, self.can_be_set_on = data
 
     def get_tooltip_provider(self):
         import mcpython.client.gui.HoveringItemBox

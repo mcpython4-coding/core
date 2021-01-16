@@ -90,8 +90,14 @@ class StatePartGame(StatePart.StatePart):
     @classmethod
     def calculate_new_break_time(cls):
         vector = shared.window.get_sight_vector()
-        blockpos = shared.world.hit_test(shared.world.get_active_player().position, vector)[0]
-        block = shared.world.get_active_dimension().get_block(blockpos) if blockpos else None
+        blockpos = shared.world.hit_test(
+            shared.world.get_active_player().position, vector
+        )[0]
+        block = (
+            shared.world.get_active_dimension().get_block(blockpos)
+            if blockpos
+            else None
+        )
         if not block:
             cls.break_time = None  # no break time because no block
         else:
@@ -232,7 +238,9 @@ class StatePartGame(StatePart.StatePart):
             and time.time() - self.set_cooldown > 1
         ):
             vector = shared.window.get_sight_vector()
-            blockpos, previous, hit_position = shared.world.hit_test(player.position, vector)
+            blockpos, previous, hit_position = shared.world.hit_test(
+                player.position, vector
+            )
             if shared.window.mouse_pressing[mouse.LEFT] and blockpos:
                 block = shared.world.get_active_dimension().get_block(blockpos)
                 if block is None:
@@ -258,7 +266,9 @@ class StatePartGame(StatePart.StatePart):
                             and selected_itemstack.item.check_can_destroy(block, player)
                         ) or (selected_itemstack.is_empty() and player.gamemode == 2):
                             return
-                        if shared.world.gamerule_handler.table["doTileDrops"].status.status:
+                        if shared.world.gamerule_handler.table[
+                            "doTileDrops"
+                        ].status.status:
                             items = shared.loot_table_handler.get_drop_for_block(
                                 block, player=player
                             )
@@ -295,7 +305,9 @@ class StatePartGame(StatePart.StatePart):
                     active_itemstack.add_amount(-1)
                     return
             vector = shared.window.get_sight_vector()
-            blockpos, previous, hit_position = shared.world.hit_test(player.position, vector)
+            blockpos, previous, hit_position = shared.world.hit_test(
+                player.position, vector
+            )
             if blockpos:
                 if shared.window.mouse_pressing[mouse.RIGHT] and previous:
                     slot = player.get_active_inventory_slot()
@@ -310,11 +322,11 @@ class StatePartGame(StatePart.StatePart):
                         py = math.ceil(player.position[1])
                         if not (
                             x == px and z == pz and py - 1 <= y <= py
-                        ) and not shared.world.get_active_dimension().get_block(previous):
-                            chunk = (
-                                shared.world.get_active_dimension().get_chunk_for_position(
-                                    previous
-                                )
+                        ) and not shared.world.get_active_dimension().get_block(
+                            previous
+                        ):
+                            chunk = shared.world.get_active_dimension().get_chunk_for_position(
+                                previous
                             )
 
                             if not slot.get_itemstack().item.check_can_be_set_on(
@@ -353,7 +365,9 @@ class StatePartGame(StatePart.StatePart):
                 and blockpos
                 and self.mouse_press_time > 0.1
             ):
-                chunk = shared.world.get_active_dimension().get_chunk_for_position(blockpos)
+                chunk = shared.world.get_active_dimension().get_chunk_for_position(
+                    blockpos
+                )
                 self.mouse_press_time = 0
                 block = shared.world.get_active_dimension().get_block(blockpos)
                 itemstack = mcpython.common.container.ItemStack.ItemStack(
@@ -444,7 +458,9 @@ class StatePartGame(StatePart.StatePart):
         x, y, z = player.position
         before = mcpython.util.math.position_to_chunk(player.position)
         if player.gamemode != 3:
-            x, y, z = shared.window.collide((x + dx, y + dy, z + dz), 2, player.position)
+            x, y, z = shared.window.collide(
+                (x + dx, y + dy, z + dz), 2, player.position
+            )
         else:
             x, y, z = x + dx, y + dy, z + dz
         if shared.window.dy < 0 and player.fallen_since_y is None:
@@ -487,7 +503,11 @@ class StatePartGame(StatePart.StatePart):
         slot = player.get_active_inventory_slot()
         vector = shared.window.get_sight_vector()
         blockpos, previous, hitpos = shared.world.hit_test(player.position, vector)
-        block = shared.world.get_active_dimension().get_block(blockpos) if blockpos else None
+        block = (
+            shared.world.get_active_dimension().get_block(blockpos)
+            if blockpos
+            else None
+        )
         cancel = False
         if not slot.get_itemstack().is_empty():
             if slot.get_itemstack().item.on_player_interact(

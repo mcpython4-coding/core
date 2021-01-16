@@ -48,7 +48,9 @@ class CommandClear(mcpython.server.command.Command.Command):
             values.append([info.entity])
 
         for entity in values[0]:  # iterate over all entities
-            if shared.event_handler.call_cancelable("command:clear:entity", info, entity):
+            if shared.event_handler.call_cancelable(
+                "command:clear:entity", info, entity
+            ):
                 continue
 
             if not hasattr(entity, "inventories"):  # has it an inventory?

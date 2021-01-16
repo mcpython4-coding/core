@@ -247,7 +247,11 @@ class ModLoader:
         """
         Will check for changes between versions
         """
-        logger.println("found mod: {}".format("s" if len(self.located_mods) > 1 else "", len(self.located_mods)))
+        logger.println(
+            "found mod: {}".format(
+                "s" if len(self.located_mods) > 1 else "", len(self.located_mods)
+            )
+        )
 
         for modname in self.previous_mods.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(
@@ -407,7 +411,9 @@ class ModLoader:
         if "modLoader" in data:
             if data["modLoader"] == "javafml":
                 self.error_builder.println(
-                    "- found java mod in file {}. As an mod-author, please upgrade to python as javafml or wait for us to write an JVM in python [WIP]".format(file)
+                    "- found java mod in file {}. As an mod-author, please upgrade to python as javafml or wait for us to write an JVM in python [WIP]".format(
+                        file
+                    )
                 )
                 return
 

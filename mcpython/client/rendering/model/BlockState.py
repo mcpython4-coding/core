@@ -52,13 +52,7 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
     ) -> list:
         raise NotImplementedError()
 
-    def add_raw_face_to_batch(
-            self,
-            position,
-            state,
-            batches,
-            faces
-    ):
+    def add_raw_face_to_batch(self, position, state, batches, faces):
         return tuple()
 
     def transform_to_hitbox(
@@ -399,13 +393,7 @@ class DefaultDecoder(IBlockStateDecoder):
         )
         return []
 
-    def add_raw_face_to_batch(
-            self,
-            position,
-            state,
-            batches,
-            face
-    ):
+    def add_raw_face_to_batch(self, position, state, batches, face):
         state = state
         for keymap, blockstate in self.states:
             if keymap == state:
@@ -564,13 +552,7 @@ class BlockStateDefinition:
     ):
         return self.loader.add_face_to_batch(block, batch, face)
 
-    def add_raw_face_to_batch(
-            self,
-            position: tuple,
-            state,
-            batches,
-            face
-    ):
+    def add_raw_face_to_batch(self, position: tuple, state, batches, face):
         return self.loader.add_raw_face_to_batch(position, state, batches, face)
 
     def draw_face(
@@ -646,9 +628,7 @@ class BlockState:
         model, config, _ = self.models[block_state]
         if model not in shared.model_handler.models:
             logger.println(
-                "can't find model named '{}' to add at {}".format(
-                    model, position
-                )
+                "can't find model named '{}' to add at {}".format(model, position)
             )
             return tuple()
         result = shared.model_handler.models[model].add_face_to_batch(

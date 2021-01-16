@@ -200,7 +200,8 @@ def load():
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             flag = (
-                entrylist[start] in shared.registry.get_by_name("minecraft:item").entries
+                entrylist[start]
+                in shared.registry.get_by_name("minecraft:item").entries
             )  # is this item arrival?
             if not flag:
                 logger.println(

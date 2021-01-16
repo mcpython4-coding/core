@@ -211,7 +211,8 @@ class EventBus:
                 dif = time.time() - start
                 if shared.debug_events:
                     with open(
-                        shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
+                        shared.local + "/debug/eventbus_{}.txt".format(self.id),
+                        mode="a",
                     ) as f:
                         f.write(
                             "\nevent call of {} takes {}s until finish".format(

@@ -60,7 +60,10 @@ class CommandHelp(mcpython.server.command.Command.Command):
             c: str = values[0]
             if c.startswith("/"):
                 c = c[1:]
-            if c not in shared.registry.get_by_name("minecraft:command").command_entries:
+            if (
+                c
+                not in shared.registry.get_by_name("minecraft:command").command_entries
+            ):
                 logger.println(
                     "[CHAT][COMMAND PARSER][ERROR] unknown command for help pages {}.".format(
                         c

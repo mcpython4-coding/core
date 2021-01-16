@@ -47,7 +47,9 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
     def parse(values: list, modes: list, info):
         if modes[1][1] == 0:  # hand
             itemstack = (
-                shared.world.get_active_player().get_active_inventory_slot().get_itemstack()
+                shared.world.get_active_player()
+                .get_active_inventory_slot()
+                .get_itemstack()
             )
             logger.println("info to item hold in hand")
             CommandItemInfo.print_info(itemstack)

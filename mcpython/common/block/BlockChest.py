@@ -87,7 +87,9 @@ class BlockChest(AbstractBlock.AbstractBlock):
         self.face_solid = {
             face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
-        self.face_state.custom_renderer = mcpython.client.rendering.blocks.TemporaryChestRenderer.TemporaryChestRenderer()
+        self.face_state.custom_renderer = (
+            mcpython.client.rendering.blocks.TemporaryChestRenderer.TemporaryChestRenderer()
+        )
         self.face_state.update(True)
 
     def can_open_inventory(self) -> bool:

@@ -48,7 +48,9 @@ class DefaultFeatureLayer(ILayer):
         treemap = chunk.get_value("tree_blocked")
         if (x, z) in treemap:
             return  # is an tree nearby?
-        biome = shared.biome_handler.biomes[chunk.get_value("minecraft:biome_map")[(x, z)]]
+        biome = shared.biome_handler.biomes[
+            chunk.get_value("minecraft:biome_map")[(x, z)]
+        ]
         height = chunk.get_value("heightmap")[(x, z)][0][1]
         for group in biome.FEATURES_SORTED:
             count, total_weight, weights, features = biome.FEATURES_SORTED[group]

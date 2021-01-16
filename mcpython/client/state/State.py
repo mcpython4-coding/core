@@ -32,7 +32,9 @@ class State(IRegistryContent):
     def __init__(self):
         self.part_dict = {}
         self.parts = self.get_parts()  # todo: remove
-        self.eventbus = shared.event_handler.create_bus(active=False, crash_on_error=False)
+        self.eventbus = shared.event_handler.create_bus(
+            active=False, crash_on_error=False
+        )
         self.bind_to_eventbus()
         for statepart in self.parts:
             statepart.master = [

@@ -85,7 +85,9 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
                     )
                 )
             else:
-                shared.chat.print_ln("[ERROR] at position {} is no block".format(values[1]))
+                shared.chat.print_ln(
+                    "[ERROR] at position {} is no block".format(values[1])
+                )
         elif values[0] == "entity":
             for entity in values[1]:
                 slot_id = values[2]

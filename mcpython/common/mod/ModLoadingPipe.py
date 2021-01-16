@@ -72,7 +72,9 @@ class LoadingStage:
         self.events = {}
         self.dependencies = set(dependencies)
 
-        if name != "minecraft:loading_preparation":  # todo: add extra exclude optional parameter
+        if (
+            name != "minecraft:loading_preparation"
+        ):  # todo: add extra exclude optional parameter
             self.dependencies.add("minecraft:loading_preparation")
 
         self.order: typing.Optional[graphlib.TopologicalSorter] = None

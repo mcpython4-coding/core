@@ -65,10 +65,14 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             ]
         ):
             shared.window.set_exclusive_mouse(False)
-            shared.state_handler.states["minecraft:game"].parts[0].activate_keyboard = False
+            shared.state_handler.states["minecraft:game"].parts[
+                0
+            ].activate_keyboard = False
         else:
             shared.state_handler.update_exclusive()
-            shared.state_handler.states["minecraft:game"].parts[0].activate_keyboard = True
+            shared.state_handler.states["minecraft:game"].parts[
+                0
+            ].activate_keyboard = True
         for inventory in shared.inventory_handler.opened_inventory_stack:
             shared.rendering_helper.enableAlpha()  # make sure that it is enabled
             inventory.draw(hovering_slot=hovering_slot)
@@ -159,7 +163,9 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             if self.moving_itemstack.is_empty():
                 if not slot.interaction_mode[0]:
                     return
-                shared.inventory_handler.moving_slot.set_itemstack(slot.itemstack.copy())
+                shared.inventory_handler.moving_slot.set_itemstack(
+                    slot.itemstack.copy()
+                )
                 slot.itemstack.clean()
                 slot.call_update(True)
             elif slot.interaction_mode[1] and slot.itemstack == moving_itemstack:

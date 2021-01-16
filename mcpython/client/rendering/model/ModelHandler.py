@@ -192,11 +192,13 @@ class ModelHandler:
                 block.face_state.custom_renderer.handle(block, vertex)
         return vertex
 
-    def add_raw_face_to_batch(self, position, state, block_state_name: str, batches, face):
+    def add_raw_face_to_batch(
+        self, position, state, block_state_name: str, batches, face
+    ):
         if block_state_name is None or block_state_name not in self.blockstates:
-            vertex = self.blockstates["minecraft:missing_texture"].add_raw_face_to_batch(
-                position, state, batches, face
-            )
+            vertex = self.blockstates[
+                "minecraft:missing_texture"
+            ].add_raw_face_to_batch(position, state, batches, face)
         else:
             blockstate = self.blockstates[block_state_name]
             vertex = blockstate.add_raw_to_batch(position, state, batches, face)

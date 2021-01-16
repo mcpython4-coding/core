@@ -161,11 +161,18 @@ class RenderingHelper:
         base.addMatrixMode(_gl.GL_PROJECTION)
         base.addLoadIdentity()
         base.addGluPerspective(
-            lambda: (65.0, shared.window.get_size()[0] / shared.window.get_size()[1], 0.1, 60.0)
+            lambda: (
+                65.0,
+                shared.window.get_size()[0] / shared.window.get_size()[1],
+                0.1,
+                60.0,
+            )
         )
         base.addMatrixMode(_gl.GL_MODELVIEW)
         base.addLoadIdentity()
-        base.addRotate3d(lambda: (shared.world.get_active_player().rotation[0], 0, 1, 0))
+        base.addRotate3d(
+            lambda: (shared.world.get_active_player().rotation[0], 0, 1, 0)
+        )
         base.addRotate3d(
             lambda: (
                 -shared.world.get_active_player().rotation[1],
@@ -174,7 +181,9 @@ class RenderingHelper:
                 math.sin(math.radians(shared.world.get_active_player().rotation[0])),
             )
         )
-        base.addTranslate3d(lambda: [-e for e in shared.world.get_active_player().position])
+        base.addTranslate3d(
+            lambda: [-e for e in shared.world.get_active_player().position]
+        )
         return base
 
     def setup2d(self, anchor=(0, 0), z_buffer=0):

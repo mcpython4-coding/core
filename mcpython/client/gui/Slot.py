@@ -536,7 +536,12 @@ class SlotInfiniteStackExchangeable(Slot):
         )
         self.reference_stack = self.itemstack.copy()
 
-    def set_itemstack(self, stack: mcpython.common.container.ItemStack.ItemStack, update=True, player=False):
+    def set_itemstack(
+        self,
+        stack: mcpython.common.container.ItemStack.ItemStack,
+        update=True,
+        player=False,
+    ):
         self.__itemstack = (
             stack
             if stack is not None

@@ -83,7 +83,9 @@ class CommandParser:
         pre = split[0]
         if not info:
             info = ParsingCommandInfo()
-        if not shared.event_handler.call_cancelable("command:parser:execute", command, info):
+        if not shared.event_handler.call_cancelable(
+            "command:parser:execute", command, info
+        ):
             return
         if pre[1:] in self.commandparsing:  # is it registered?
             command, parsebridge = self.commandparsing[pre[1:]]

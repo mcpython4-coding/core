@@ -51,7 +51,9 @@ class CommandGamerule(mcpython.server.command.Command.Command):
             if shared.world.gamerule_handler.table[rule].status.is_valid_value(value):
                 shared.world.gamerule_handler.table[
                     rule
-                ].status = shared.world.gamerule_handler.table[rule].status.__class__(value)
+                ].status = shared.world.gamerule_handler.table[rule].status.__class__(
+                    value
+                )
             else:
                 shared.chat.print_ln(
                     "invalid value '{}' for gamerule '{}'".format(value, rule)

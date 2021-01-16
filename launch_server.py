@@ -29,11 +29,20 @@ import mcpython.LaunchWrapper
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
 wrapper.prepare_server()
 
-print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+print(
+    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+)
 import mcpython.logger
-mcpython.logger.println("[EXPERIMENTAL][WARN] launching experimental dedicated mcpython server")
-mcpython.logger.println("[EXPERIMENTAL][WARN] see version.info and git diffs for recent changes")
-print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+mcpython.logger.println(
+    "[EXPERIMENTAL][WARN] launching experimental dedicated mcpython server"
+)
+mcpython.logger.println(
+    "[EXPERIMENTAL][WARN] see version.info and git diffs for recent changes"
+)
+print(
+    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+)
 
 
 try:
