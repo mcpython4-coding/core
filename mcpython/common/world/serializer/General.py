@@ -95,7 +95,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             ).get_save_data(shared.build + "/skin.png")
 
         try:
-            mcpython.common.entity.PlayerEntity.Player.RENDERER.reload()
+            mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()
         except AttributeError:
             pass
 

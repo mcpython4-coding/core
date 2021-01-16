@@ -29,7 +29,7 @@ import mcpython.common.entity.DamageSource
 
 
 @shared.registry
-class Player(mcpython.common.entity.AbstractEntity.AbstractEntity):
+class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     RENDERER = None
 
     @classmethod

@@ -188,7 +188,7 @@ class StateWorldGeneration(State.State):
                 sys.exit(-1)
 
         if shared.IS_CLIENT:
-            mcpython.common.entity.PlayerEntity.Player.RENDERER.reload()
+            mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()
 
         # todo: this is also only client code
         shared.world.active_player = player_name
