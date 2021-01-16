@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import math
 import random
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.event.Registry
 
 
@@ -35,7 +35,7 @@ class Selector(mcpython.common.event.Registry.IRegistryContent):
 
 
 def load():
-    @G.registry
+    @shared.registry
     class SelfSelector(Selector):
         NAME = "minecraft:@s"
 
@@ -47,7 +47,7 @@ def load():
         def parse(entry, config):
             return [config.entity]
 
-    @G.registry
+    @shared.registry
     class PlayerSelector(Selector):
         NAME = "minecraft:@p"
 
@@ -57,7 +57,7 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            players = list(G.world.players.values())
+            players = list(shared.world.players.values())
             if len(players) == 0:
                 return []
             x, y, z = config.position
@@ -70,7 +70,7 @@ def load():
             )
             return [players[0]]
 
-    @G.registry
+    @shared.registry
     class RandomPlayerSelector(Selector):
         NAME = "minecraft:@r"
 
@@ -80,9 +80,9 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            return [random.choice(list(G.world.players.values()))]
+            return [random.choice(list(shared.world.players.values()))]
 
-    @G.registry
+    @shared.registry
     class AllPlayerSelector(Selector):
         NAME = "minecraft:@a"
 
@@ -92,9 +92,9 @@ def load():
 
         @staticmethod
         def parse(entry, config):
-            return list(G.world.players.values())
+            return list(shared.world.players.values())
 
-    @G.registry
+    @shared.registry
     class EntitySelector(Selector):
         NAME = "minecraft:@e"
 
@@ -105,5 +105,5 @@ def load():
         @staticmethod
         def parse(entry, config):
             if entry == "@e":
-                return list(G.entity_handler.entity_map.values())
+                return list(shared.entity_handler.entity_map.values())
             raise NotImplementedError()  # todo: implement

@@ -15,10 +15,10 @@ import os
 import sys
 from abc import ABC
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 
-if not os.path.isdir(G.home + "/config"):
-    os.makedirs(G.home + "/config")
+if not os.path.isdir(shared.home + "/config"):
+    os.makedirs(shared.home + "/config")
 
 
 class InvalidMapperData(Exception):
@@ -390,12 +390,12 @@ class ConfigFile:
     """
 
     def __init__(self, file_name: str, assigned_mod: str):
-        assert assigned_mod in G.mod_loader.mods
+        assert assigned_mod in shared.mod_loader.mods
         self.file_name = file_name
         self.assigned_mod = assigned_mod
         self.main_tag = DictDataMapper()
-        self.file = G.home + "/config/{}/{}.conf".format(assigned_mod, file_name)
-        G.mod_loader(
+        self.file = shared.home + "/config/{}/{}.conf".format(assigned_mod, file_name)
+        shared.mod_loader(
             self.assigned_mod,
             "stage:mod:config:load",
             info="building config file {}".format(self.file),
@@ -446,7 +446,7 @@ class ConfigFile:
     def write(self):
         data = "// mcpython config file\nVERSION=1.0.0\nPROVIDING_MOD={}\nPROVIDING_MOD_VERSION={}\n\n{}".format(
             self.assigned_mod,
-            G.mod_loader.mods[self.assigned_mod].version,
+            shared.mod_loader.mods[self.assigned_mod].version,
             self.main_tag.serialize(),
         )
         d = os.path.dirname(self.file)
@@ -456,7 +456,7 @@ class ConfigFile:
             f.write(data)
 
 
-@G.mod_loader("minecraft", "stage:mod:config:define")
+@shared.mod_loader("minecraft", "stage:mod:config:define")
 def load():
     import mcpython.common.config
 

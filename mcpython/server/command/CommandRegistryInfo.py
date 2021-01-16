@@ -11,12 +11,12 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.server.command.Command
 from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 
 
-@G.registry
+@shared.registry
 class CommandRegistryInfo(mcpython.server.command.Command.Command):
     """
     command /registryinfo
@@ -33,11 +33,11 @@ class CommandRegistryInfo(mcpython.server.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        if not G.event_handler.call_cancelable(
+        if not shared.event_handler.call_cancelable(
             "commands:registryinfo", values[0], info
         ):
             return
-        registry = G.registry.get_by_name(values[0])
+        registry = shared.registry.get_by_name(values[0])
         if registry is None:
             logger.println(
                 "[CHAT][ERROR] selected unknown registry: '{}'".format(values[0])

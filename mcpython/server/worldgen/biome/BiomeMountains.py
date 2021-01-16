@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.config
 from mcpython.server.worldgen.feature import SpruceTreeFeature, IOre
 from . import Biome
@@ -67,4 +67,4 @@ class Plains(Biome.Biome):
         return mcpython.common.config.BIOME_HEIGHT_RANGE_MAP["minecraft:mountains"]
 
 
-G.biome_handler.register(Plains)
+shared.biome_handler.register(Plains)

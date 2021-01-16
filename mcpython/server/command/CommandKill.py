@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
     ParseBridge,
@@ -21,7 +21,7 @@ from mcpython.server.command.Command import (
 )
 
 
-@G.registry
+@shared.registry
 class CommandKill(mcpython.server.command.Command.Command):
     """
     class for /kill command
@@ -39,7 +39,7 @@ class CommandKill(mcpython.server.command.Command.Command):
     @staticmethod
     def parse(values: list, modes: list, info):
         if len(values) == 0:
-            values.append([G.world.get_active_player()])
+            values.append([shared.world.get_active_player()])
         for entity in values[0]:
             entity.kill(test_totem=False)  # kill all entities selected
 

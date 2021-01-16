@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 from mcpython.common.event.EventBus import EventBus
 
 
@@ -52,7 +52,7 @@ class EventHandler:
         self.call(*args, **kwargs)
 
 
-G.event_handler = EventHandler()
+shared.event_handler = EventHandler()
 
-PUBLIC_EVENT_BUS = G.event_handler.create_bus(crash_on_error=False)
-LOADING_EVENT_BUS = G.event_handler.create_bus()
+PUBLIC_EVENT_BUS = shared.event_handler.create_bus(crash_on_error=False)
+LOADING_EVENT_BUS = shared.event_handler.create_bus()

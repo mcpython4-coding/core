@@ -16,7 +16,7 @@ import typing
 import mcpython.ResourceLoader
 import mcpython.common.event.EventHandler
 import mcpython.common.event.Registry
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.client.state.State
 import mcpython.client.state.StatePart
 from mcpython.util.annotation import onlyInClient
@@ -50,7 +50,7 @@ entry_registry = mcpython.common.event.Registry.Registry(
 
 
 @onlyInClient()
-@G.registry
+@shared.registry
 class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
     NAME = "minecraft:ui_button_default"
 
@@ -105,7 +105,7 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
 
 
 @onlyInClient()
-@G.registry
+@shared.registry
 class UILableStateConfigEntry(IStateConfigEntry):
     NAME = "minecraft:ui_lable_default"
 
@@ -151,7 +151,7 @@ class UILableStateConfigEntry(IStateConfigEntry):
 
 
 @onlyInClient()
-@G.registry
+@shared.registry
 class UIProgressBarConfigEntry(IStateConfigEntry):
     NAME = "minecraft:ui_progressbar"
 
@@ -188,7 +188,7 @@ class UIProgressBarConfigEntry(IStateConfigEntry):
 
 
 @onlyInClient()
-@G.registry
+@shared.registry
 class ConfigBackground(IStateConfigEntry):
     NAME = "minecraft:config_background"
 

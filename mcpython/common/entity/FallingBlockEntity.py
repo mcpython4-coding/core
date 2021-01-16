@@ -11,13 +11,13 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.entity.AbstractEntity
 import mcpython.common.block.AbstractBlock
 import mcpython.util.math
 
 
-@G.registry
+@shared.registry
 class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     """
     Class for the falling block entity
@@ -40,7 +40,7 @@ class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def draw(self):
         if self.block is not None:
             self.block.position = self.position
-            G.model_handler.draw_block(self.block)  # todo: use batch
+            shared.model_handler.draw_block(self.block)  # todo: use batch
 
     def tick(self, dt):
         super().tick(dt)

@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
     ParseBridge,
@@ -21,7 +21,7 @@ from mcpython.server.command.Command import (
 )
 
 
-@G.registry
+@shared.registry
 class CommandGamemode(mcpython.server.command.Command.Command):
     """
     class for /gamemode command
@@ -50,7 +50,7 @@ class CommandGamemode(mcpython.server.command.Command.Command):
     def parse(values: list, modes: list, info):
         mode = values[0]
         if len(values) == 1:  # have we an selector?
-            G.world.get_active_player().set_gamemode(mode)
+            shared.world.get_active_player().set_gamemode(mode)
         else:
             for player in values[1]:  # iterate through all players
                 player.set_gamemode(mode)

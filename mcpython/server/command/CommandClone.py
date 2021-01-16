@@ -11,12 +11,12 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import ParseBridge, ParseType, ParseMode
 
 
-@G.registry
+@shared.registry
 class CommandClone(mcpython.server.command.Command.Command):
     """
     Class for the /clone command
@@ -107,7 +107,7 @@ class CommandClone(mcpython.server.command.Command.Command):
                     if len(values) > 4 and values[4] == "move":
                         dimension.remove_block((x, y, z))
 
-        G.event_handler.call("command:clone:block_map", info, block_map)
+        shared.event_handler.call("command:clone:block_map", info, block_map)
 
         # and now iterate over the cached blocks...
         for x, y, z in block_map:

@@ -11,13 +11,13 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.DataPack
 import mcpython.server.command.Command
 from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 
 
-@G.registry
+@shared.registry
 class CommandDatapack(mcpython.server.command.Command.Command):
     """
     Class holding the /datapack command
@@ -79,10 +79,10 @@ class CommandDatapack(mcpython.server.command.Command.Command):
                 )
 
         elif values[0] == "release":
-            G.event_handler.call("command:datapack:release", info)
+            shared.event_handler.call("command:datapack:release", info)
             mcpython.common.DataPack.datapack_handler.cleanup()
         else:
-            G.chat.print_ln("failed to execute command. invalid syntax")
+            shared.chat.print_ln("failed to execute command. invalid syntax")
 
     @staticmethod
     def get_help() -> list:

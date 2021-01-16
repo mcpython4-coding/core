@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import pyglet
 import mcpython.ResourceLoader
 import mcpython.util.texture
@@ -41,7 +41,7 @@ class Inventory:
         self.window_anchor = "MM"
         self.position = (0, 0)
         self.bg_image_pos = (0, 0)
-        G.inventory_handler.add(self)
+        shared.inventory_handler.add(self)
         self.slots = self.create_slots()
         self.config = {}
         self.reload_config()
@@ -144,7 +144,7 @@ class Inventory:
         todo: add cache
         """
         x, y = self.position
-        wx, wy = G.window.get_size()
+        wx, wy = shared.window.get_size()
         sx, sy = self.bg_image_size if self.bg_image_size is not None else (0, 0)
         if self.bg_anchor[0] == "M":
             x -= sx // 2
@@ -202,8 +202,8 @@ class Inventory:
 
     def on_world_cleared(self):  # todo: remove
         [slot.get_itemstack().clean() for slot in self.slots]
-        if self in G.inventory_handler.opened_inventory_stack:
-            G.inventory_handler.hide(self)
+        if self in shared.inventory_handler.opened_inventory_stack:
+            shared.inventory_handler.hide(self)
 
     def get_interaction_slots(self):
         return self.slots
@@ -288,11 +288,11 @@ class Inventory:
 
     def __del__(self):
         # we do not care about it when it is None [gc-sided deletion at the end of the program]
-        if G is None or G.inventory_handler is None:
+        if shared is None or shared.inventory_handler is None:
             return
-        if self in G.inventory_handler.always_opened:
-            G.inventory_handler.always_opened.remove(self)
-        G.inventory_handler.hide(self)
-        if self in G.inventory_handler.inventories:
-            G.inventory_handler.inventories.remove(self)
-        G.inventory_handler.update_shift_container()
+        if self in shared.inventory_handler.always_opened:
+            shared.inventory_handler.always_opened.remove(self)
+        shared.inventory_handler.hide(self)
+        if self in shared.inventory_handler.inventories:
+            shared.inventory_handler.inventories.remove(self)
+        shared.inventory_handler.update_shift_container()

@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.common.event.Registry
 from mcpython.server.command.Command import ParseType
 
@@ -50,7 +50,7 @@ class CommandEntry(mcpython.common.event.Registry.IRegistryContent):
 
 
 def load():
-    @G.registry
+    @shared.registry
     class DefiniteString(CommandEntry):
         """
         Entry for definite string
@@ -66,7 +66,7 @@ def load():
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             return entrylist[start] == arguments[0]
 
-    @G.registry
+    @shared.registry
     class IntEntry(CommandEntry):
         """
         entry for int
@@ -86,7 +86,7 @@ def load():
             except:
                 return False
 
-    @G.registry
+    @shared.registry
     class StringEntry(CommandEntry):
         """
         string entry
@@ -122,7 +122,7 @@ def load():
                 return True  # it does close
             return False  # it does NOT start
 
-    @G.registry
+    @shared.registry
     class StringWithoutQuotesEntry(CommandEntry):
         """
         string entry
@@ -138,7 +138,7 @@ def load():
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             return True
 
-    @G.registry
+    @shared.registry
     class FloatEntry(CommandEntry):
         """
         float entry
@@ -158,7 +158,7 @@ def load():
             except:
                 return False
 
-    @G.registry
+    @shared.registry
     class BlockNameEntry(CommandEntry):
         """
         blockname entry
@@ -172,7 +172,7 @@ def load():
 
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
-            flag = entrylist[start] in G.registry.get_by_name(
+            flag = entrylist[start] in shared.registry.get_by_name(
                 "minecraft:block"
             ).full_table or entrylist[start] in (
                 "air",
@@ -185,7 +185,7 @@ def load():
                 )
             return flag
 
-    @G.registry
+    @shared.registry
     class ItemNameEntry(CommandEntry):
         """
         itemname entry
@@ -200,7 +200,7 @@ def load():
         @staticmethod
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             flag = (
-                entrylist[start] in G.registry.get_by_name("minecraft:item").entries
+                entrylist[start] in shared.registry.get_by_name("minecraft:item").entries
             )  # is this item arrival?
             if not flag:
                 logger.println(
@@ -209,7 +209,7 @@ def load():
                 )
             return flag
 
-    @G.registry
+    @shared.registry
     class SelectorEntry(CommandEntry):
         """
         Selector entry
@@ -220,7 +220,7 @@ def load():
         @staticmethod
         def parse(entrylist: list, start: int, info, arguments, kwargs) -> tuple:
             entry = entrylist[start]
-            for selector in G.registry.get_by_name("minecraft:command").selector:
+            for selector in shared.registry.get_by_name("minecraft:command").selector:
                 if selector.is_valid(
                     entry
                 ):  # is this the selector we are searching for?
@@ -233,11 +233,11 @@ def load():
             return any(
                 [
                     x.is_valid(entry)
-                    for x in G.registry.get_by_name("minecraft:command").selector
+                    for x in shared.registry.get_by_name("minecraft:command").selector
                 ]
             )
 
-    @G.registry
+    @shared.registry
     class PositionEntry(CommandEntry):
         """
         position entry
@@ -289,7 +289,7 @@ def load():
             except ValueError:
                 return False
 
-    @G.registry
+    @shared.registry
     class SelectDefinitedStringEntry(CommandEntry):
         """
         select definite string entry
@@ -305,7 +305,7 @@ def load():
         def is_valid(entrylist: list, start: int, arguments, kwargs) -> bool:
             return entrylist[start] in arguments  # check if should be used
 
-    @G.registry
+    @shared.registry
     class OpenEndUndefinedStringEntry(CommandEntry):
         """
         open end undefined string entry
@@ -326,7 +326,7 @@ def load():
                 entrylist
             ) - start + 1  # if length is in range
 
-    @G.registry
+    @shared.registry
     class BooleanEntry(CommandEntry):
         TABLE = [("true", "True"), ("false", "False")]
 

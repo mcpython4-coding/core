@@ -11,12 +11,12 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 
 
-@G.registry
+@shared.registry
 class CommandTell(mcpython.server.command.Command.Command):
     """
     command /tell, /msg and /w

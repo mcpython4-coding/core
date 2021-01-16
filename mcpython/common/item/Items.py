@@ -12,7 +12,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.factory.ItemFactory
-from mcpython import shared as G
+from mcpython import shared
 import random
 from mcpython.util.enums import ToolType
 import mcpython.common.mod.ModMcpython
@@ -68,7 +68,7 @@ def load_item():
     template("ender_eye").setMaxStackSize(16)
 
     def lambda_add_random_xp():
-        G.world.get_active_player().add_xp(random.randint(3, 11))
+        shared.world.get_active_player().add_xp(random.randint(3, 11))
         return True
 
     template("experience_bottle").setEatCallback(lambda_add_random_xp).setFoodValue(0)

@@ -14,13 +14,13 @@ This project is not official by mojang and does not relate to it.
 
 import random
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 import mcpython.server.worldgen.feature.IFeature
 
 
-@G.world_generation_handler
+@shared.world_generation_handler
 class DefaultFeatureLayer(ILayer):
     DEPENDS_ON = ["minecraft:biome_map_default", "minecraft:heightmap_default"]
 
@@ -48,7 +48,7 @@ class DefaultFeatureLayer(ILayer):
         treemap = chunk.get_value("tree_blocked")
         if (x, z) in treemap:
             return  # is an tree nearby?
-        biome = G.biome_handler.biomes[chunk.get_value("minecraft:biome_map")[(x, z)]]
+        biome = shared.biome_handler.biomes[chunk.get_value("minecraft:biome_map")[(x, z)]]
         height = chunk.get_value("heightmap")[(x, z)][0][1]
         for group in biome.FEATURES_SORTED:
             count, total_weight, weights, features = biome.FEATURES_SORTED[group]

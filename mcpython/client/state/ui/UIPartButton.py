@@ -25,7 +25,7 @@ image = mcpython.ResourceLoader.read_pyglet_image("gui/widgets")
 disabled = image.get_region(2, 256 - 46 - 17, 196, 14)
 enabled = image.get_region(2, 256 - 66 - 17, 196, 14)
 hovering = image.get_region(2, 256 - 86 - 17, 196, 14)
-# enabled.save(G.local+"/tmp/minecraft.png")  # only for debugging reasons
+# enabled.save(shared.local+"/tmp/minecraft.png")  # only for debugging reasons
 
 
 IMAGES = {

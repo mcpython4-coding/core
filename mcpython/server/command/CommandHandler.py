@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.server.command.CommandEntry
 import mcpython.server.command.CommandParser
@@ -22,7 +22,7 @@ import mcpython.common.mod.ModMcpython
 
 def register_command(registry, command):
     if issubclass(command, mcpython.server.command.Command.Command):  # is it an command
-        G.command_parser.add_command(command)
+        shared.command_parser.add_command(command)
     elif issubclass(
         command, mcpython.server.command.CommandEntry.CommandEntry
     ):  # or an command entry

@@ -12,7 +12,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.state.StatePart
-from mcpython import shared as G
+from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
 
@@ -27,7 +27,7 @@ class UIPart(mcpython.client.state.StatePart.StatePart):
 
     def get_real_position(self):
         x, y = self.position
-        wx, wy = G.window.get_size()
+        wx, wy = shared.window.get_size()
         bx, by = self.bboxsize
         if self.anchor_element[0] == "M":
             x -= bx // 2

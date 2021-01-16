@@ -11,12 +11,12 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import ParseBridge, ParseType, ParseMode
 
 
-@G.registry
+@shared.registry
 class CommandClear(mcpython.server.command.Command.Command):
     """
     Class for the /clear command
@@ -40,7 +40,7 @@ class CommandClear(mcpython.server.command.Command.Command):
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        if G.event_handler.call_cancelable("command:clear", info):
+        if shared.event_handler.call_cancelable("command:clear", info):
             return  # event for canceling such event
 
         # when the entity(s) is/are not provided, replace by executing one
@@ -48,7 +48,7 @@ class CommandClear(mcpython.server.command.Command.Command):
             values.append([info.entity])
 
         for entity in values[0]:  # iterate over all entities
-            if G.event_handler.call_cancelable("command:clear:entity", info, entity):
+            if shared.event_handler.call_cancelable("command:clear:entity", info, entity):
                 continue
 
             if not hasattr(entity, "inventories"):  # has it an inventory?
@@ -60,9 +60,9 @@ class CommandClear(mcpython.server.command.Command.Command):
             ) in entity.get_inventories():  # iterate over all inventories ...
                 inventory.clear()  # ... and clear them
 
-        G.inventory_handler.moving_slot.get_itemstack().clean()  # make sure that he has nothing in his hand
+        shared.inventory_handler.moving_slot.get_itemstack().clean()  # make sure that he has nothing in his hand
 
-        G.event_handler.call(
+        shared.event_handler.call(
             "command:clear:end", info
         )  # and call the event that we are done
 

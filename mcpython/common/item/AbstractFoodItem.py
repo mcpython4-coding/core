@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.item.AbstractItem
 
 
@@ -23,10 +23,10 @@ class AbstractFoodItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
         called when the player eats the item
         :return: if the item was eaten or not
         """
-        if G.world.get_active_player().hunger == 20:
+        if shared.world.get_active_player().hunger == 20:
             return False
-        G.world.get_active_player().hunger = min(
-            self.HUNGER_ADDITION + G.world.get_active_player().hunger, 20
+        shared.world.get_active_player().hunger = min(
+            self.HUNGER_ADDITION + shared.world.get_active_player().hunger, 20
         )
         return True
 

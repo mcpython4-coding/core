@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from . import State, StatePartGame
 import mcpython.client.gui.InventoryHandler
-from mcpython import shared as G
+from mcpython import shared
 from pyglet.window import key
 import mcpython.common.event.TickHandler
 import pyglet
@@ -42,14 +42,14 @@ class StateGame(State.State):
 
     def activate(self):
         super().activate()
-        while G.world.save_file.save_in_progress:
+        while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
-        G.world_generation_handler.enable_auto_gen = True
+        shared.world_generation_handler.enable_auto_gen = True
 
     def deactivate(self):
         super().deactivate()
-        G.world_generation_handler.enable_auto_gen = False
-        G.window.mouse_pressing = {
+        shared.world_generation_handler.enable_auto_gen = False
+        shared.window.mouse_pressing = {
             mouse.LEFT: False,
             mouse.RIGHT: False,
             mouse.MIDDLE: False,
@@ -60,33 +60,33 @@ class StateGame(State.State):
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == key.ESCAPE and G.window.exclusive:
-            G.state_handler.switch_to("minecraft:escape_state")
+        if symbol == key.ESCAPE and shared.window.exclusive:
+            shared.state_handler.switch_to("minecraft:escape_state")
         elif symbol == key.R:
-            G.inventory_handler.reload_config()
+            shared.inventory_handler.reload_config()
         elif symbol == key.E:
             if (
-                not G.world.get_active_player().inventory_main
-                in G.inventory_handler.opened_inventory_stack
+                not shared.world.get_active_player().inventory_main
+                in shared.inventory_handler.opened_inventory_stack
             ):
-                if G.window.exclusive:
-                    G.event_handler.call("on_player_inventory_open")
-                    G.inventory_handler.show(G.world.get_active_player().inventory_main)
+                if shared.window.exclusive:
+                    shared.event_handler.call("on_player_inventory_open")
+                    shared.inventory_handler.show(shared.world.get_active_player().inventory_main)
                     self.parts[0].activate_mouse = False
             else:
-                G.event_handler.call("on_player_inventory_close")
-                G.inventory_handler.hide(G.world.get_active_player().inventory_main)
-        elif symbol == key.T and G.window.exclusive:
+                shared.event_handler.call("on_player_inventory_close")
+                shared.inventory_handler.hide(shared.world.get_active_player().inventory_main)
+        elif symbol == key.T and shared.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(self.open_chat, 2)
-        elif symbol == key._7 and modifiers & key.MOD_SHIFT and G.window.exclusive:
+        elif symbol == key._7 and modifiers & key.MOD_SHIFT and shared.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(
                 self.open_chat, 2, args=["/"]
             )
 
     @staticmethod
     def open_chat(enter=""):
-        G.inventory_handler.show(G.world.get_active_player().inventory_chat)
-        G.chat.text = enter
+        shared.inventory_handler.show(shared.world.get_active_player().inventory_chat)
+        shared.chat.text = enter
 
     @staticmethod
     def on_draw_2d_pre():

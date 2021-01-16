@@ -15,7 +15,7 @@ import sys
 import time
 import typing
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 
 
 class CancelAbleEvent:
@@ -53,11 +53,11 @@ class EventBus:
         self.extra_arguments = (args, kwargs)
         self.crash_on_error = crash_on_error
         self.sub_buses = []
-        self.id = G.NEXT_EVENT_BUS_ID
-        G.NEXT_EVENT_BUS_ID += 1
-        if G.debug_events:
+        self.id = shared.NEXT_EVENT_BUS_ID
+        shared.NEXT_EVENT_BUS_ID += 1
+        if shared.debug_events:
             with open(
-                G.local + "/debug/eventbus_{}.txt".format(self.id), mode="w"
+                shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="w"
             ) as f:
                 f.write("//debug profile")
 
@@ -77,9 +77,9 @@ class EventBus:
         ):
             return
         self.event_subscriptions[event_name].append((function, args, kwargs, info))
-        if G.debug_events:
+        if shared.debug_events:
             with open(
-                G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
+                shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
             ) as f:
                 f.write(
                     "\nevent subscription of '{}' to '{}'".format(function, event_name)
@@ -102,9 +102,9 @@ class EventBus:
                 )
             return
         self.event_subscriptions[event_name].remove(function)
-        if G.debug_events:
+        if shared.debug_events:
             with open(
-                G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
+                shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
             ) as f:
                 f.write(
                     "\nevent unsubscribe of '{}' to event '{}'".format(
@@ -155,9 +155,9 @@ class EventBus:
                     "during event:",
                     event_name,
                 )
-            if G.debug_events:
+            if shared.debug_events:
                 with open(
-                    G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
+                    shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
                 ) as f:
                     f.write(
                         "\nevent call of '{}' takes {}s until finish".format(
@@ -209,9 +209,9 @@ class EventBus:
                     **{**kwargs, **self.extra_arguments[1], **ekwargs}
                 )
                 dif = time.time() - start
-                if G.debug_events:
+                if shared.debug_events:
                     with open(
-                        G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
+                        shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
                     ) as f:
                         f.write(
                             "\nevent call of {} takes {}s until finish".format(
@@ -239,12 +239,12 @@ class EventBus:
                 raise
 
     def activate(self):
-        G.event_handler.activate_bus(self)
+        shared.event_handler.activate_bus(self)
         for eventbus in self.sub_buses:
             eventbus.activate()
 
     def deactivate(self):
-        G.event_handler.deactivate_bus(self)
+        shared.event_handler.deactivate_bus(self)
         for eventbus in self.sub_buses:
             eventbus.deactivate()
 
@@ -302,9 +302,9 @@ class EventBus:
                     event_name,
                 )
             dif = time.time() - start
-            if G.debug_events:
+            if shared.debug_events:
                 with open(
-                    G.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
+                    shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
                 ) as f:
                     f.write(
                         "\nevent call of {} takes {}s until finish".format(

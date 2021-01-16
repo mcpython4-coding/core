@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.client.gui.Inventory
 import mcpython.client.state.StatePart
 from pyglet.window import key, mouse
@@ -48,43 +48,43 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            G.inventory_handler.remove_one_from_stack()
-        x, y = G.window.mouse_position
+            shared.inventory_handler.remove_one_from_stack()
+        x, y = shared.window.mouse_position
         slot = self._get_slot_for(x, y)
         if slot is not None and slot.on_button_press is not None:
             slot.on_button_press(x, y, symbol, modifiers)
 
     def on_draw_2d(self):
         hovering_slot, hovering_inventory = self._get_slot_inventory_for(
-            *G.window.mouse_position
+            *shared.window.mouse_position
         )
         if any(
             [
                 inventory.is_blocking_interactions()
-                for inventory in G.inventory_handler.opened_inventory_stack
+                for inventory in shared.inventory_handler.opened_inventory_stack
             ]
         ):
-            G.window.set_exclusive_mouse(False)
-            G.state_handler.states["minecraft:game"].parts[0].activate_keyboard = False
+            shared.window.set_exclusive_mouse(False)
+            shared.state_handler.states["minecraft:game"].parts[0].activate_keyboard = False
         else:
-            G.state_handler.update_exclusive()
-            G.state_handler.states["minecraft:game"].parts[0].activate_keyboard = True
-        for inventory in G.inventory_handler.opened_inventory_stack:
-            G.rendering_helper.enableAlpha()  # make sure that it is enabled
+            shared.state_handler.update_exclusive()
+            shared.state_handler.states["minecraft:game"].parts[0].activate_keyboard = True
+        for inventory in shared.inventory_handler.opened_inventory_stack:
+            shared.rendering_helper.enableAlpha()  # make sure that it is enabled
             inventory.draw(hovering_slot=hovering_slot)
-        if not G.inventory_handler.moving_slot.get_itemstack().is_empty():
-            G.inventory_handler.moving_slot.position = G.window.mouse_position
-            G.inventory_handler.moving_slot.draw(0, 0)
-            G.inventory_handler.moving_slot.draw_label()
+        if not shared.inventory_handler.moving_slot.get_itemstack().is_empty():
+            shared.inventory_handler.moving_slot.position = shared.window.mouse_position
+            shared.inventory_handler.moving_slot.draw(0, 0)
+            shared.inventory_handler.moving_slot.draw_label()
 
         # First, render tooltip for item attached to the mouse, and than for the over the mouse is
         if (
             self.moving_itemstack is not None
-            and not G.inventory_handler.moving_slot.get_itemstack().is_empty()
+            and not shared.inventory_handler.moving_slot.get_itemstack().is_empty()
         ):
-            x, y = G.window.mouse_position
+            x, y = shared.window.mouse_position
             self.tool_tip_renderer.renderFor(
-                G.inventory_handler.moving_slot.get_itemstack(), (x + 32, y + 32)
+                shared.inventory_handler.moving_slot.get_itemstack(), (x + 32, y + 32)
             )
         elif hovering_slot is not None and not hovering_slot.get_itemstack().is_empty():
             x, y = hovering_slot.position
@@ -101,7 +101,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         :return: the slot or None if none found
         todo: move to InventoryHandler
         """
-        for inventory in G.inventory_handler.opened_inventory_stack:
+        for inventory in shared.inventory_handler.opened_inventory_stack:
             dx, dy = inventory.get_position()
             for slot in inventory.get_interaction_slots():
                 sx, sy = slot.position
@@ -118,7 +118,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         :return: the slot and the inventory or None and None if none found
         todo: move to InventoryHandler
         """
-        for inventory in G.inventory_handler.opened_inventory_stack:
+        for inventory in shared.inventory_handler.opened_inventory_stack:
             dx, dy = inventory.get_position()
             for slot in inventory.get_interaction_slots():
                 sx, sy = slot.position
@@ -129,18 +129,18 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         return None, None
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if G.window.exclusive:
+        if shared.window.exclusive:
             return  # when no mouse interaction is active, do nothing
         slot: mcpython.client.gui.Slot.Slot = self._get_slot_for(x, y)
         if slot is None:
             return
-        self.moving_itemstack = G.inventory_handler.moving_slot.itemstack.copy()
-        moving_itemstack = G.inventory_handler.moving_slot.itemstack
+        self.moving_itemstack = shared.inventory_handler.moving_slot.itemstack.copy()
+        moving_itemstack = shared.inventory_handler.moving_slot.itemstack
         if modifiers & key.MOD_SHIFT:
             if slot.on_shift_click:
                 try:
                     flag = slot.on_shift_click(
-                        slot, x, y, button, modifiers, G.world.get_active_player()
+                        slot, x, y, button, modifiers, shared.world.get_active_player()
                     )
                     if flag is not True:
                         return  # no default logic should go on
@@ -151,15 +151,15 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                         )
                     )
             if (
-                G.inventory_handler.shift_container is not None
-                and G.inventory_handler.shift_container.move_to_opposite(slot)
+                shared.inventory_handler.shift_container is not None
+                and shared.inventory_handler.shift_container.move_to_opposite(slot)
             ):
                 return
         if button == mouse.LEFT:
             if self.moving_itemstack.is_empty():
                 if not slot.interaction_mode[0]:
                     return
-                G.inventory_handler.moving_slot.set_itemstack(slot.itemstack.copy())
+                shared.inventory_handler.moving_slot.set_itemstack(slot.itemstack.copy())
                 slot.itemstack.clean()
                 slot.call_update(True)
             elif slot.interaction_mode[1] and slot.itemstack == moving_itemstack:
@@ -180,7 +180,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 if not slot.interaction_mode[0]:
                     return
                 amount = slot.itemstack.amount
-                G.inventory_handler.moving_slot.set_itemstack(
+                shared.inventory_handler.moving_slot.set_itemstack(
                     slot.itemstack.copy().set_amount(amount - amount // 2)
                 )
                 slot.itemstack.set_amount(amount // 2)
@@ -191,12 +191,12 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         elif button == mouse.MIDDLE:
             if (
                 moving_itemstack.is_empty()
-                and G.world.get_active_player().gamemode == 1
+                and shared.world.get_active_player().gamemode == 1
             ):
-                G.inventory_handler.moving_slot.set_itemstack(
+                shared.inventory_handler.moving_slot.set_itemstack(
                     slot.itemstack.copy().set_amount(slot.itemstack.item.STACK_SIZE)
                 )
-            elif G.world.get_active_player().gamemode == 1 and slot.can_set_item(
+            elif shared.world.get_active_player().gamemode == 1 and slot.can_set_item(
                 moving_itemstack
             ):
                 self.mode = 3
@@ -204,7 +204,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
 
     def on_mouse_release(self, x, y, button, modifiers):
         if (
-            G.window.exclusive
+            shared.window.exclusive
         ):  # when no mouse interaction is active, do nothing beside clearing the status
             self.slot_list.clear()
             self.original_amount.clear()
@@ -231,7 +231,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             self.original_amount.clear()
             self.moving_itemstack = None
             self.mode = 0
-            G.inventory_handler.moving_slot.itemstack.clean()
+            shared.inventory_handler.moving_slot.itemstack.clean()
 
     def deactivate(self):
         for statepart in self.parts:
@@ -239,7 +239,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
         self.on_mouse_release(0, 0, 0, 0)
 
     def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
-        if G.window.exclusive:
+        if shared.window.exclusive:
             return  # when no mouse interaction is active, do nothing
         slot = self._get_slot_for(x, y)
         if slot is None:
@@ -261,7 +261,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             if slot.on_shift_click:
                 try:
                     flag = slot.on_shift_click(
-                        slot, x, y, button, modifiers, G.world.get_active_player()
+                        slot, x, y, button, modifiers, shared.world.get_active_player()
                     )
                     if flag is not True:
                         return  # no default logic should go on
@@ -272,8 +272,8 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                         )
                     )
             if (
-                G.inventory_handler.shift_container is not None
-                and G.inventory_handler.shift_container.move_to_opposite(slot)
+                shared.inventory_handler.shift_container is not None
+                and shared.inventory_handler.shift_container.move_to_opposite(slot)
             ):
                 return
 
@@ -292,7 +292,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                     slot.set_itemstack(self.moving_itemstack.copy())
                 slot.itemstack.set_amount(self.original_amount[i] + per_element + x)
                 slot.call_update(True)
-            G.inventory_handler.moving_slot.itemstack.clean()
+            shared.inventory_handler.moving_slot.itemstack.clean()
         elif self.mode == 2:
             overhead = self.moving_itemstack.amount
             for i, slot in enumerate(self.slot_list):
@@ -302,7 +302,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                     slot.itemstack.set_amount(self.original_amount[i] + 1)
                     overhead -= 1
                     slot.call_update(True)
-            G.inventory_handler.moving_slot.itemstack.set_amount(overhead)
+            shared.inventory_handler.moving_slot.itemstack.set_amount(overhead)
         elif self.mode == 3:
             for i, slot in enumerate(self.slot_list):
                 if slot.itemstack.item != self.moving_itemstack.item:
@@ -311,18 +311,18 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 slot.call_update(True)
 
     def on_mouse_scroll(self, x, y, dx, dy):
-        if G.window.exclusive:
+        if shared.window.exclusive:
             return  # when no mouse interaction is active, do nothing
         slot = self._get_slot_for(x, y)
         if slot is None:
             return
         if self.mode != 0:
             return
-        if G.inventory_handler.shift_container is not None:
-            if G.window.keys[key.LSHIFT]:
-                G.inventory_handler.shift_container.move_to_opposite(slot)
+        if shared.inventory_handler.shift_container is not None:
+            if shared.window.keys[key.LSHIFT]:
+                shared.inventory_handler.shift_container.move_to_opposite(slot)
             else:
-                G.inventory_handler.shift_container.move_to_opposite(slot, count=1)
+                shared.inventory_handler.shift_container.move_to_opposite(slot, count=1)
 
 
 inventory_part = OpenedInventoryStatePart()
@@ -376,8 +376,8 @@ class InventoryHandler:
         self.opened_inventory_stack.append(inventory)
         inventory.on_activate()
         self.update_shift_container()
-        G.event_handler.call("inventory:show", inventory)
-        G.event_handler.call(
+        shared.event_handler.call("inventory:show", inventory)
+        shared.event_handler.call(
             "inventory:show:{}".format(inventory.__class__.__name__), inventory
         )
 
@@ -393,8 +393,8 @@ class InventoryHandler:
         inventory.on_deactivate()
         self.opened_inventory_stack.remove(inventory)
         self.update_shift_container()
-        G.event_handler.call("inventory:hide", inventory)
-        G.event_handler.call(
+        shared.event_handler.call("inventory:hide", inventory)
+        shared.event_handler.call(
             "inventory:hide:{}".format(inventory.__class__.__name__), inventory
         )
 
@@ -420,4 +420,4 @@ class InventoryHandler:
             self.hide(inventory)
 
 
-G.inventory_handler = InventoryHandler()
+shared.inventory_handler = InventoryHandler()

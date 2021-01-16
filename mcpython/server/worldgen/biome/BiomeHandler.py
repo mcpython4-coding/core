@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 import itertools
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.mod.ModMcpython
 import mcpython.server.worldgen.biome.Biome
 import mcpython.server.worldgen.feature.IFeature
@@ -116,7 +116,7 @@ class BiomeHandler:
         return biomes[select_value]
 
 
-G.biome_handler = BiomeHandler()
+shared.biome_handler = BiomeHandler()
 
 
 def load():

@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.ResourceLoader
 import mcpython.common.event.Registry
 import mcpython.client.texture.TextureAtlas
@@ -42,8 +42,8 @@ def build():
 
 
 def load_data():
-    if not G.invalidate_cache and os.path.exists(G.build + "/item_block_factory.json"):
-        with open(G.build + "/item_block_factory.json") as f:
+    if not shared.invalidate_cache and os.path.exists(shared.build + "/item_block_factory.json"):
+        with open(shared.build + "/item_block_factory.json") as f:
             data = json.load(f)
         builder = logger.TableBuilder(
             header=[
@@ -54,7 +54,7 @@ def load_data():
         )
         for entry in data[:]:
             name = entry[0]
-            table = G.registry.get_by_name("minecraft:block").entries
+            table = shared.registry.get_by_name("minecraft:block").entries
             if name in table:
                 obj = (
                     mcpython.common.factory.ItemFactory.ItemFactory()
@@ -75,7 +75,7 @@ def load_data():
                 builder.println("-'{}'".format(entry))
                 data.remove(entry)
         builder.finish()
-        with open(G.build + "/item_block_factory.json", mode="w") as f:
+        with open(shared.build + "/item_block_factory.json", mode="w") as f:
             json.dump(data, f)
 
 

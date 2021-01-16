@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import PIL.Image
 import mcpython.ResourceLoader
-from mcpython import shared as G
+from mcpython import shared
 import pyglet
 import os
 import mcpython.common.config
@@ -71,18 +71,18 @@ class TextureAtlasGenerator:
 
     def output(self):
         # todo: add per-mod, at end of every processing of models
-        G.event_handler.call("textures:atlas:build:pre")
-        os.makedirs(G.tmp.name + "/textureatlases")
+        shared.event_handler.call("textures:atlas:build:pre")
+        os.makedirs(shared.tmp.name + "/textureatlases")
         for modname in self.atlases:
             for i, atlas in enumerate(self.atlases[modname]):
-                location = G.tmp.name + "/textureatlases/atlas_{}_{}_{}x{}.png".format(
+                location = shared.tmp.name + "/textureatlases/atlas_{}_{}_{}x{}.png".format(
                     modname, i, *atlas.image_size
                 )
                 atlas.texture.save(location)
                 atlas.group = pyglet.graphics.TextureGroup(
                     pyglet.image.load(location).get_texture()
                 )
-        G.event_handler.call("textures:atlas:build:post")
+        shared.event_handler.call("textures:atlas:build:post")
 
 
 @onlyInClient()
@@ -168,4 +168,4 @@ class TextureAtlas:
 
 handler = TextureAtlasGenerator()
 
-G.mod_loader("minecraft", "stage:textureatlas:bake")(handler.output)
+shared.mod_loader("minecraft", "stage:textureatlas:bake")(handler.output)

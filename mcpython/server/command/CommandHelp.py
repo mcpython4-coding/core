@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
     SubCommand,
@@ -21,7 +21,7 @@ from mcpython.server.command.Command import (
 )
 
 
-@G.registry
+@shared.registry
 class CommandHelp(mcpython.server.command.Command.Command):
     """
     class for /help command
@@ -60,7 +60,7 @@ class CommandHelp(mcpython.server.command.Command.Command):
             c: str = values[0]
             if c.startswith("/"):
                 c = c[1:]
-            if c not in G.registry.get_by_name("minecraft:command").command_entries:
+            if c not in shared.registry.get_by_name("minecraft:command").command_entries:
                 logger.println(
                     "[CHAT][COMMAND PARSER][ERROR] unknown command for help pages {}.".format(
                         c
@@ -72,7 +72,7 @@ class CommandHelp(mcpython.server.command.Command.Command):
             logger.println("------------------" + "-" * len(c))
             logger.println(
                 "\n".join(
-                    G.registry.get_by_name("minecraft:command")
+                    shared.registry.get_by_name("minecraft:command")
                     .command_entries[c]
                     .get_help()
                 )
@@ -88,11 +88,11 @@ class CommandHelp(mcpython.server.command.Command.Command):
 
 # generate help pages  todo: change to an loading stage
 PAGES = []
-for command, _ in G.command_parser.commandparsing.values():
+for command, _ in shared.command_parser.commandparsing.values():
     h = command.get_help()
     PAGES += h if type(h) == list else [h]
 
-G.event_handler.call("command:help:generate_pages", PAGES)
+shared.event_handler.call("command:help:generate_pages", PAGES)
 
 PAGES.sort(key=lambda x: x.split(" ")[0])
 

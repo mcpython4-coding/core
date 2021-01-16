@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.ResourceLoader
 
 
@@ -35,8 +35,8 @@ class McFunctionFile:
             if not line.startswith("#"):
                 if line.count(" ") + line.count("   ") == len(line):
                     continue
-                G.command_parser.parse("/" + line, info.copy())
+                shared.command_parser.parse("/" + line, info.copy())
                 count += 1
-        G.chat.print_ln(
+        shared.chat.print_ln(
             "executed {} commands from function {}".format(count, self.name)
         )

@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import pyglet
 import mcpython.client.state.StateWorldSelection
 import mcpython.common.mod.ModMcpython
@@ -33,15 +33,15 @@ class StateStartMenu(mcpython.client.state.State.State):
 
     def activate(self):
         super().activate()
-        G.world.world_loaded = False
+        shared.world.world_loaded = False
 
     @staticmethod
     def on_new_game_press(x, y):
-        G.state_handler.switch_to("minecraft:world_selection", immediate=False)
+        shared.state_handler.switch_to("minecraft:world_selection", immediate=False)
 
     @staticmethod
     def on_quit_game_press(x, y):
-        G.window.close()
+        shared.window.close()
 
     @staticmethod
     def on_draw_2d_pre():
@@ -50,7 +50,7 @@ class StateStartMenu(mcpython.client.state.State.State):
     @staticmethod
     def on_key_press(key, modifier):
         if key == pyglet.window.key.ENTER:
-            G.state_handler.switch_to("minecraft:world_selection", immediate=False)
+            shared.state_handler.switch_to("minecraft:world_selection", immediate=False)
 
 
 start_menu = None

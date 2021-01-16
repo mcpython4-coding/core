@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.server.command.Command
 
 
@@ -21,14 +21,14 @@ class ParsingCommandInfo:
     """
 
     def __init__(self, entity=None, position=None, dimension=None, chat=None):
-        self.entity = entity if entity else G.world.get_active_player()
+        self.entity = entity if entity else shared.world.get_active_player()
         self.position = position if position else self.entity.position
         self.dimension = (
             (dimension if dimension is not None else self.entity.dimension.id)
             if self.entity.dimension is not None
             else 0
         )
-        self.chat = chat if chat is not None else G.chat
+        self.chat = chat if chat is not None else shared.chat
 
     def copy(self):
         """
@@ -61,7 +61,7 @@ class CommandParser:
         :param command: the command to add
         """
         parsebridge = mcpython.server.command.Command.ParseBridge(command)
-        if not G.event_handler.call_cancelable(
+        if not shared.event_handler.call_cancelable(
             "registry:commands:register", command, parsebridge
         ):
             return
@@ -83,7 +83,7 @@ class CommandParser:
         pre = split[0]
         if not info:
             info = ParsingCommandInfo()
-        if not G.event_handler.call_cancelable("command:parser:execute", command, info):
+        if not shared.event_handler.call_cancelable("command:parser:execute", command, info):
             return
         if pre[1:] in self.commandparsing:  # is it registered?
             command, parsebridge = self.commandparsing[pre[1:]]
@@ -133,7 +133,7 @@ class CommandParser:
         active_entry = parsebridge
         values = []
         array = [parsebridge]
-        commandregistry = G.registry.get_by_name("minecraft:command")
+        commandregistry = shared.registry.get_by_name("minecraft:command")
         while len(active_entry.sub_commands) > 0 and index < len(
             command
         ):  # iterate over the whole command
@@ -196,4 +196,4 @@ class CommandParser:
         return None, array
 
 
-G.command_parser = CommandParser()
+shared.command_parser = CommandParser()

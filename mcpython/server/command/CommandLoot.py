@@ -11,12 +11,12 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.server.command.Command
 from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 
 
-@G.registry
+@shared.registry
 class CommandLoot(mcpython.server.command.Command.Command):
     """
     command /loot
@@ -52,7 +52,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
             for entity in values[1]:
                 if values[2] == "loot":
                     entity.pick_up_item(
-                        G.loot_table_handler.roll(values[3], player=entity)
+                        shared.loot_table_handler.roll(values[3], player=entity)
                     )
                 elif values[2] == "mine":
                     block = entity.dimension.get_block(values[3])
@@ -64,7 +64,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
                         )
                         return
                     entity.pick_up_item(
-                        G.loot_table_handler.get_drop_for_block(block, entity)
+                        shared.loot_table_handler.get_drop_for_block(block, entity)
                     )
         elif values[0] == "insert":
             block = info.entity.dimension.get_block(values[1])
@@ -80,7 +80,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
             inventory = block.get_inventories()[0]
             if values[2] == "loot":
                 inventory.insert_items(
-                    G.loot_table_handler.roll(values[3], player=info.entity)
+                    shared.loot_table_handler.roll(values[3], player=info.entity)
                 )
             elif values[2] == "mine":
                 blockb = info.entity.dimension.get_block(values[3])
@@ -92,7 +92,7 @@ class CommandLoot(mcpython.server.command.Command.Command):
                     )
                     return
                 inventory.insert_items(
-                    G.loot_table_handler.get_drop_for_block(block, info.entity)
+                    shared.loot_table_handler.get_drop_for_block(block, info.entity)
                 )
 
     @staticmethod

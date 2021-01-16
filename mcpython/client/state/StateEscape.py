@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 from . import State, StatePartGame
 from .ui import UIPartButton, UIPartLabel
 import mcpython.common.event.EventInfo
-from mcpython import shared as G
+from mcpython import shared
 from pyglet.window import key
 import pyglet
 import mcpython.client.state.StateGame
@@ -53,7 +53,7 @@ class StateEscape(State.State):
                 anchor_window="MM",
                 anchor_button="MM",
                 on_press=mcpython.common.event.EventInfo.CallbackHelper(
-                    G.state_handler.switch_to,
+                    shared.state_handler.switch_to,
                     ["minecraft:game"],
                     enable_extra_args=False,
                 ),
@@ -85,23 +85,23 @@ class StateEscape(State.State):
 
     @staticmethod
     def start_menu_press(x, y):
-        G.world.world_loaded = False
-        while G.world.save_file.save_in_progress:
+        shared.world.world_loaded = False
+        while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
-        G.world.save_file.save_world(
+        shared.world.save_file.save_world(
             override=True
         )  # make sure that file size is as small as possible
-        G.world.setup_by_filename("tmp")
-        G.world.cleanup()
-        G.event_handler.call("on_game_leave")
-        G.state_handler.switch_to("minecraft:startmenu", immediate=False)
-        while G.world.save_file.save_in_progress:
+        shared.world.setup_by_filename("tmp")
+        shared.world.cleanup()
+        shared.event_handler.call("on_game_leave")
+        shared.state_handler.switch_to("minecraft:startmenu", immediate=False)
+        while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
 
     @staticmethod
     def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
-            G.state_handler.switch_to("minecraft:game", immediate=False)
+            shared.state_handler.switch_to("minecraft:game", immediate=False)
 
     @staticmethod
     def on_draw_2d_pre():
@@ -109,7 +109,7 @@ class StateEscape(State.State):
 
     def activate(self):
         super().activate()
-        pyglet.clock.schedule_once(G.world.save_file.save_world, 0.1)
+        pyglet.clock.schedule_once(shared.world.save_file.save_world, 0.1)
 
 
 escape = None

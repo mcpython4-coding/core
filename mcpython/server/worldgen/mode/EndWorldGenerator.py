@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.worldgen.mode.IWorldGenConfig
 
 
@@ -31,4 +31,4 @@ class EndGenerator(mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
     )
 
 
-G.world_generation_handler.register_world_gen_config(EndGenerator)
+shared.world_generation_handler.register_world_gen_config(EndGenerator)

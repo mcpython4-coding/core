@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.common.container.ItemStack
 from mcpython.server.command.Command import (
@@ -22,7 +22,7 @@ from mcpython.server.command.Command import (
 )
 
 
-@G.registry
+@shared.registry
 class CommandReplaceItem(mcpython.server.command.Command.Command):
     """
     class for /replaceitem command
@@ -64,15 +64,15 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
             block = info.entity.dimension.get_block(values[1])
             if block is not None and type(block) != str:
                 if len(block.get_inventories()) == 0:
-                    G.chat.print_ln("[ERROR] block does not have any inventory")
+                    shared.chat.print_ln("[ERROR] block does not have any inventory")
                     return
                 inventory = block.get_inventories()[0]
                 slot_id = values[2]
                 if slot_id < 0:
-                    G.chat.print_ln("[ERROR] slot id must be greater than 0")
+                    shared.chat.print_ln("[ERROR] slot id must be greater than 0")
                     return
                 if slot_id >= len(inventory.slots):
-                    G.chat.print_ln(
+                    shared.chat.print_ln(
                         "[ERROR] slot id {} is bigger than slot count {}".format(
                             slot_id, len(inventory.slots)
                         )
@@ -85,15 +85,15 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
                     )
                 )
             else:
-                G.chat.print_ln("[ERROR] at position {} is no block".format(values[1]))
+                shared.chat.print_ln("[ERROR] at position {} is no block".format(values[1]))
         elif values[0] == "entity":
             for entity in values[1]:
                 slot_id = values[2]
                 if slot_id < 0:
-                    G.chat.print_ln("[ERROR] slot id must be greater than 0")
+                    shared.chat.print_ln("[ERROR] slot id must be greater than 0")
                     return
                 if slot_id >= len(entity.inventory_slots):
-                    G.chat.print_ln(
+                    shared.chat.print_ln(
                         "[ERROR] slot id {} is bigger than slot count {}".format(
                             slot_id, len(entity.inventory_slots)
                         )

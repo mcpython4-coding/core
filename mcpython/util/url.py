@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import json
 import io
 import requests
-from mcpython import shared as G
+from mcpython import shared
 
 
 class SimulatedResponse:
@@ -49,17 +49,17 @@ def get_url(url, **kwargs):
         # These files are not provided in the git repo because I consider them
         # kind of sensitive.  Feel free to provide your own in their place.
         if url.startswith("https://api.mojang.com/users/profiles/minecraft/"):
-            with open(G.build + "/simulated_userid_response.json", "r") as f:
+            with open(shared.build + "/simulated_userid_response.json", "r") as f:
                 content = f.read()
             is_json = True
         elif url.startswith(
             "https://sessionserver.mojang.com/session/minecraft/profile/"
         ):
-            with open(G.build + "/simulated_userinfo_response.json", "r") as f:
+            with open(shared.build + "/simulated_userinfo_response.json", "r") as f:
                 content = f.read()
             is_json = True
         else:
-            with open(G.build + "/simulated_skin_response.png", "rb") as f:
+            with open(shared.build + "/simulated_skin_response.png", "rb") as f:
                 content = f.read()
             is_json = False
             raw = io.BytesIO(content)

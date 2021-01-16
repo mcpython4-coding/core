@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.client.gui.InventoryChest
 import pyglet
 import mcpython.common.event.EventHandler
-from mcpython import shared as G
+from mcpython import shared
 
 
 class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
@@ -38,10 +38,10 @@ class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            G.inventory_handler.hide(self)
+            shared.inventory_handler.hide(self)
 
     def update_shift_container(self):
-        G.inventory_handler.shift_container.container_A = (
-            G.world.get_active_player().inventory_main.slots[:36]
+        shared.inventory_handler.shift_container.container_A = (
+            shared.world.get_active_player().inventory_main.slots[:36]
         )
-        G.inventory_handler.shift_container.container_B = self.slots
+        shared.inventory_handler.shift_container.container_B = self.slots

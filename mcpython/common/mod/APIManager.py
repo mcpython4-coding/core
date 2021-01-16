@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import importlib
 import sys
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import typing
 
 
@@ -52,7 +52,7 @@ class APIManager:
         self.api_shipments = {}
         self.api_implementations = {}
         self.api_cache = {}
-        G.mod_loader("minecraft", "stage:api:check")(self.check_compatibility_and_load)
+        shared.mod_loader("minecraft", "stage:api:check")(self.check_compatibility_and_load)
 
     def add_api_type(self, name: str):
         """

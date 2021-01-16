@@ -16,7 +16,7 @@ import random
 from . import State
 from .ui import UIPartButton, UIPartTextInput
 from .ui.UIPartTextInput import INT_PATTERN
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.util.math
 from pyglet.window import key
 import pyglet
@@ -153,17 +153,17 @@ class StateWorldGenerationConfig(State.State):
         return self.parts[5].text
 
     def on_back_press(self, x, y):
-        G.state_handler.switch_to("minecraft:startmenu")
+        shared.state_handler.switch_to("minecraft:startmenu")
 
     def on_generate_press(self, x, y):
         filename = self.parts[11].entered_text
         if filename == "":
             filename = "New World"
-        G.world.cleanup(remove_dims=True, filename=filename)
+        shared.world.cleanup(remove_dims=True, filename=filename)
         self.generate()
 
     def generate(self):
-        G.state_handler.states["minecraft:world_generation"].generate_from_user_input(
+        shared.state_handler.states["minecraft:world_generation"].generate_from_user_input(
             self
         )
 
@@ -196,7 +196,7 @@ class StateWorldGenerationConfig(State.State):
             part.update_text()
 
         self.parts[4].text_pages = list(
-            G.world_generation_handler.configs["minecraft:overworld"].keys()
+            shared.world_generation_handler.configs["minecraft:overworld"].keys()
         )
         self.parts[4].update_text()
 

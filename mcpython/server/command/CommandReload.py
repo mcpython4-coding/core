@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import gc
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.DataPack
 import mcpython.server.command.Command
 import mcpython.common.config
@@ -24,7 +24,7 @@ import mcpython.client.rendering.util
 from mcpython.server.command.Command import ParseBridge
 
 
-@G.registry
+@shared.registry
 class CommandReload(mcpython.server.command.Command.Command):
     """
     class for /reload command
@@ -52,15 +52,15 @@ class CommandReload(mcpython.server.command.Command.Command):
 
 
 def reload_chunks():
-    dim = G.world.get_active_dimension()
+    dim = shared.world.get_active_dimension()
     for i, chunk in enumerate(
         list(dim.chunks.values())
     ):  # iterate over all active chunks
-        G.window.set_caption(
+        shared.window.set_caption(
             "preparing chunk {}/{} at {}".format(i + 1, len(dim.chunks), chunk.position)
         )
         chunk.update_visible(immediate=True)
-    G.window.set_caption("finished!")
+    shared.window.set_caption("finished!")
 
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(

@@ -11,13 +11,13 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.server.command.Command
 import mcpython.common.container.ItemStack
 from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 
 
-@G.registry
+@shared.registry
 class CommandItemInfo(mcpython.server.command.Command.Command):
     """
     class for /iteminfo command
@@ -47,7 +47,7 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
     def parse(values: list, modes: list, info):
         if modes[1][1] == 0:  # hand
             itemstack = (
-                G.world.get_active_player().get_active_inventory_slot().get_itemstack()
+                shared.world.get_active_player().get_active_inventory_slot().get_itemstack()
             )
             logger.println("info to item hold in hand")
             CommandItemInfo.print_info(itemstack)
@@ -82,7 +82,7 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
             )
             logger.println("-max stack size: {}".format(itemstack.item.STACK_SIZE))
             tags = []
-            for tag in G.tag_handler.taggroups["items"].tags.values():
+            for tag in shared.tag_handler.taggroups["items"].tags.values():
                 if itemstack.item.NAME in tag.entries:
                     tags.append(tag.name)
             logger.println(" -tags: {}".format(tags))

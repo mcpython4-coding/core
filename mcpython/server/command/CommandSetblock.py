@@ -11,13 +11,13 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.util.math
 from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 
 
-@G.registry
+@shared.registry
 class CommandSetblock(mcpython.server.command.Command.Command):
     """
     class for /setblock command
@@ -37,7 +37,7 @@ class CommandSetblock(mcpython.server.command.Command.Command):
     @staticmethod
     def parse(values: list, modes: list, info):
         position = mcpython.util.math.normalize(values[0])
-        G.world.dimensions[info.dimension].get_chunk_for_position(position).add_block(
+        shared.world.dimensions[info.dimension].get_chunk_for_position(position).add_block(
             position, values[1]
         )
 

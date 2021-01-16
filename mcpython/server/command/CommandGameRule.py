@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
     ParseType,
@@ -21,7 +21,7 @@ from mcpython.server.command.Command import (
 )
 
 
-@G.registry
+@shared.registry
 class CommandGamerule(mcpython.server.command.Command.Command):
     """
     class for /gamerule command
@@ -43,23 +43,23 @@ class CommandGamerule(mcpython.server.command.Command.Command):
     @classmethod
     def parse(cls, values: list, modes: list, info):
         rule = values[0]
-        if rule not in G.world.gamerule_handler.table:
-            G.chat.print_ln("[SYNTAX][ERROR] gamerule '{}' not found".format(rule))
+        if rule not in shared.world.gamerule_handler.table:
+            shared.chat.print_ln("[SYNTAX][ERROR] gamerule '{}' not found".format(rule))
             return
         if len(values) > 1:
             value = values[1]
-            if G.world.gamerule_handler.table[rule].status.is_valid_value(value):
-                G.world.gamerule_handler.table[
+            if shared.world.gamerule_handler.table[rule].status.is_valid_value(value):
+                shared.world.gamerule_handler.table[
                     rule
-                ].status = G.world.gamerule_handler.table[rule].status.__class__(value)
+                ].status = shared.world.gamerule_handler.table[rule].status.__class__(value)
             else:
-                G.chat.print_ln(
+                shared.chat.print_ln(
                     "invalid value '{}' for gamerule '{}'".format(value, rule)
                 )
         else:
-            G.chat.print_ln(
+            shared.chat.print_ln(
                 "value of gamerule '{}': {}".format(
-                    rule, G.world.gamerule_handler.table[rule].status.status
+                    rule, shared.world.gamerule_handler.table[rule].status.status
                 )
             )
 

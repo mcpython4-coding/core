@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.data.gen.BlockModelGenerator
 from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance
 import mcpython.common.data.gen.RecipeGenerator
@@ -181,7 +181,7 @@ class CombinedFullBlockFactory:
         self.modname = modname
         self.name = None
         self.on_create_callback = on_create_callback
-        G.mod_loader(modname, "stage:combined_factory:build")(self.build)
+        shared.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
     def set_name(self, name: str):
         self.name = name
@@ -199,10 +199,10 @@ class CombinedFullBlockFactory:
             [name in self.textures for name in self.mode.texture_names]
         ), "all needed texture names MUST be set"
         assert self.name is not None, "name must be set"
-        G.mod_loader(self.modname, "special:datagen:configure")(
+        shared.mod_loader(self.modname, "special:datagen:configure")(
             self.__generate_data_gen
         )
-        G.mod_loader(self.modname, "stage:block:factory_usage")(
+        shared.mod_loader(self.modname, "stage:block:factory_usage")(
             self.__generate_factories
         )
 
@@ -262,7 +262,7 @@ class CombinedSlabFactory:
         self.name = None
         self.on_create_callback = on_create_callback
         self.full_model = full_model
-        G.mod_loader(modname, "stage:combined_factory:build")(self.build)
+        shared.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
     def set_name(self, name: str):
         self.name = name
@@ -270,10 +270,10 @@ class CombinedSlabFactory:
 
     def build(self):
         assert self.name is not None, "name must be set"
-        G.mod_loader(self.modname, "special:datagen:configure")(
+        shared.mod_loader(self.modname, "special:datagen:configure")(
             self.__generate_data_gen
         )
-        G.mod_loader(self.modname, "stage:block:factory_usage")(
+        shared.mod_loader(self.modname, "stage:block:factory_usage")(
             self.__generate_factories
         )
 
@@ -344,7 +344,7 @@ class CombinedWallFactory:
         self.modname = modname
         self.name = None
         self.on_create_callback = on_create_callback
-        G.mod_loader(modname, "stage:combined_factory:build")(self.build)
+        shared.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
     def set_name(self, name: str):
         self.name = name
@@ -352,10 +352,10 @@ class CombinedWallFactory:
 
     def build(self):
         assert self.name is not None, "name must be set"
-        G.mod_loader(self.modname, "special:datagen:configure")(
+        shared.mod_loader(self.modname, "special:datagen:configure")(
             self.__generate_data_gen
         )
-        G.mod_loader(self.modname, "stage:block:load")(self.__generate_factories)
+        shared.mod_loader(self.modname, "stage:block:load")(self.__generate_factories)
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])
@@ -436,7 +436,7 @@ class CombinedLogFactory:
         self.modname = modname
         self.name = None
         self.on_create_callback = on_create_callback
-        G.mod_loader(modname, "stage:combined_factory:build")(self.build)
+        shared.mod_loader(modname, "stage:combined_factory:build")(self.build)
 
     def set_name(self, name: str):
         self.name = name
@@ -444,10 +444,10 @@ class CombinedLogFactory:
 
     def build(self):
         assert self.name is not None, "name must be set"
-        G.mod_loader(self.modname, "special:datagen:configure")(
+        shared.mod_loader(self.modname, "special:datagen:configure")(
             self.__generate_data_gen
         )
-        G.mod_loader(self.modname, "stage:block:load")(self.__generate_factories)
+        shared.mod_loader(self.modname, "stage:block:load")(self.__generate_factories)
 
     def __generate_data_gen(self):
         name = ":".join(self.name.split(":")[1:])

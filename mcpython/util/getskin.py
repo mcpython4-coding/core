@@ -27,7 +27,7 @@ from base64 import b64decode
 import PIL.Image
 import requests
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 
 DEBUG = False
 SIMULATE = False
@@ -52,9 +52,9 @@ def download_skin(username: str, store: str):
 
     Will also store data in an cache for later usage
     """
-    if os.path.isfile(G.build + "/skins/{}.png".format(username)):
+    if os.path.isfile(shared.build + "/skins/{}.png".format(username)):
         logger.println("loading skin from cache...")
-        shutil.copy(G.build + "/skins/{}.png".format(username), store)
+        shutil.copy(shared.build + "/skins/{}.png".format(username), store)
         return
     logger.println("downloading skin for '{}'".format(username))
     if os.path.exists(store):
@@ -96,6 +96,6 @@ def download_skin(username: str, store: str):
         new_image.alpha_composite(image.crop((0, 16, 15, 32)), (16, 48))
         new_image.alpha_composite(image.crop((40, 16, 55, 32)), (32, 48))
         new_image.save(store)
-    if not os.path.exists(G.build + "/skins"):
-        os.makedirs(G.build + "/skins")
-    shutil.copy(store, G.build + "/skins/{}.png".format(username))
+    if not os.path.exists(shared.build + "/skins"):
+        os.makedirs(shared.build + "/skins")
+    shutil.copy(store, shared.build + "/skins/{}.png".format(username))

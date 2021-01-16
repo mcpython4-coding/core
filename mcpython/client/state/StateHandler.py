@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 from . import State
 import mcpython.common.event.TickHandler
 import mcpython.client.state.StateConfigFile
@@ -40,15 +40,15 @@ class StateHandler:
             logger.print_stack("state '{}' does not exists".format(statename))
             sys.exit(-10)
         self.CANCEL_SWITCH_STATE = False
-        G.event_handler.call("state:switch:pre", statename)
+        shared.event_handler.call("state:switch:pre", statename)
         if self.CANCEL_SWITCH_STATE:
             return
         if self.active_state:
             self.active_state.deactivate()
         self.active_state: State.State = self.states[statename]
         self.active_state.activate()
-        self.active_state.eventbus.call("user:window:resize", *G.window.get_size())
-        G.event_handler.call("state:switch:post", statename)
+        self.active_state.eventbus.call("user:window:resize", *shared.window.get_size())
+        shared.event_handler.call("state:switch:post", statename)
         logger.println(
             "[STATE HANDLER][STATE CHANGE] state changed to '{}'".format(statename),
             console=False,
@@ -62,10 +62,10 @@ class StateHandler:
             ).inject(state_instance)
 
     def update_exclusive(self):
-        G.window.set_exclusive_mouse(self.active_state.is_mouse_exclusive())
+        shared.window.set_exclusive_mouse(self.active_state.is_mouse_exclusive())
 
 
-handler = G.state_handler = StateHandler()
+handler = shared.state_handler = StateHandler()
 
 
 @onlyInClient()

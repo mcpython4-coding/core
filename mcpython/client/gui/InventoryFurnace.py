@@ -230,7 +230,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         """
         self.bg_image_size = self.TEXTURE_BG_SIZE
         x, y = self.get_position()
-        self.TEXTURE_BG.blit(x, y)
+        self.TEXTURE_Bshared.blit(x, y)
 
         # draw arrow
         if self.recipe and self.progress > 0:

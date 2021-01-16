@@ -15,7 +15,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import PIL.Image
-from mcpython import shared as G
+from mcpython import shared
 import pyglet
 
 
@@ -49,8 +49,8 @@ def to_pyglet_image(image: PIL.Image.Image) -> pyglet.image.AbstractImage:
     :return: the transformed one
     todo: can we do this in-memory?
     """
-    image.save(G.tmp.name + "/image_helper_to_pyglet.png")
-    return pyglet.image.load(G.tmp.name + "/image_helper_to_pyglet.png")
+    image.save(shared.tmp.name + "/image_helper_to_pyglet.png")
+    return pyglet.image.load(shared.tmp.name + "/image_helper_to_pyglet.png")
 
 
 def to_pillow_image(image: pyglet.image.AbstractImage) -> PIL.Image.Image:
@@ -60,8 +60,8 @@ def to_pillow_image(image: pyglet.image.AbstractImage) -> PIL.Image.Image:
     :return: the transformed one
     todo: can we do this in-memory?
     """
-    image.save(G.tmp.name + "/image_helper_to_pillow.png")
-    return PIL.Image.open(G.tmp.name + "/image_helper_to_pillow.png")
+    image.save(shared.tmp.name + "/image_helper_to_pillow.png")
+    return PIL.Image.open(shared.tmp.name + "/image_helper_to_pillow.png")
 
 
 def to_pyglet_sprite(image: PIL.Image.Image) -> pyglet.sprite.Sprite:

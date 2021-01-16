@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.util.math
 from mcpython.server.command.Command import (
@@ -22,7 +22,7 @@ from mcpython.server.command.Command import (
 )
 
 
-@G.registry
+@shared.registry
 class CommandGenerate(mcpython.server.command.Command.Command):
     """
     class for /generate command
@@ -51,7 +51,7 @@ class CommandGenerate(mcpython.server.command.Command.Command):
             chunkt = tuple(values[2:]) if len(values) > 2 else chunkf
         else:
             chunkf = chunkt = mcpython.util.math.position_to_chunk(
-                G.world.get_active_player().position
+                shared.world.get_active_player().position
             )
         fx, fz = chunkf
         tx, tz = chunkt
@@ -62,8 +62,8 @@ class CommandGenerate(mcpython.server.command.Command.Command):
         for x in range(fx, tx + 1):
             for z in range(fz, tz + 1):
                 c = dim.get_chunk(x, z, generate=False)
-                G.world_generation_handler.add_chunk_to_generation_list(c)
-                G.world_generation_handler.task_handler.process_tasks(
+                shared.world_generation_handler.add_chunk_to_generation_list(c)
+                shared.world_generation_handler.task_handler.process_tasks(
                     chunks=[c]
                 )  # only generate the ones from us
 

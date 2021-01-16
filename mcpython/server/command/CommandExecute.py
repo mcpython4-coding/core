@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
     SubCommand,
@@ -21,7 +21,7 @@ from mcpython.server.command.Command import (
 )
 
 
-@G.registry
+@shared.registry
 class CommandExecute(mcpython.server.command.Command.Command):
     """
     class for /execute command
@@ -113,11 +113,11 @@ class CommandExecute(mcpython.server.command.Command.Command):
             if subcommand == "block":
                 position, name = values[index], values[index + 1]
                 index += 2
-                if position in G.world.world:
-                    block = G.world.world[position]
+                if position in shared.world.world:
+                    block = shared.world.world[position]
                     flag = (
                         block.NAME
-                        == G.registry.get_by_name("minecraft:block").entries[name].NAME
+                        == shared.registry.get_by_name("minecraft:block").entries[name].NAME
                     )
                 else:
                     flag = name in ["air", "minecraft:air", None, 0]
@@ -136,7 +136,7 @@ class CommandExecute(mcpython.server.command.Command.Command):
             return
         elif command == "run":
             # execute command
-            G.command_parser.parse("/" + " ".join(values[index + 1]), info=info)
+            shared.command_parser.parse("/" + " ".join(values[index + 1]), info=info)
             index += 2
 
         if len(values) > index:  # have we more commands to parse?

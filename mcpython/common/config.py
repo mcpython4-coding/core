@@ -256,7 +256,7 @@ for stone in ["andesite", "granite", "diorite"]:
 
 def load():
     import mcpython.common.mod.ConfigFile
-    from mcpython import shared as G
+    from mcpython import shared
 
     config = mcpython.common.mod.ConfigFile.ConfigFile("main", "minecraft")
     speeds = (
@@ -316,7 +316,7 @@ def load():
         for key in ENABLED_EXTRA_BLOCKS
     ]
 
-    @G.mod_loader("minecraft", "stage:mod:config:work")
+    @shared.mod_loader("minecraft", "stage:mod:config:work")
     def load_data():
         SPEED_DICT[0] = [speeds["walking"].read(), speeds["sprinting"].read(), 0, 0]
         SPEED_DICT[1] = [
@@ -378,9 +378,9 @@ def load():
             def on_shuffle(dt):
                 from mcpython import logger
 
-                if G.world.world_loaded:
+                if shared.world.world_loaded:
                     logger.println("shuffling data...")
-                    G.event_handler.call("data:shuffle:all")
+                    shared.event_handler.call("data:shuffle:all")
 
             pyglet.clock.schedule_interval(on_shuffle, SHUFFLE_INTERVAL)
 

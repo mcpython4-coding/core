@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
@@ -62,20 +62,20 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
         self.bg_image_size = (
             mcpython.client.gui.InventoryChest.InventoryChest.TEXTURE_SIZE
         )
-        for slot in G.world.get_active_player().inventory_main.slots[:36] + self.slots:
+        for slot in shared.world.get_active_player().inventory_main.slots[:36] + self.slots:
             slot.draw(x, y, hovering=slot == hovering_slot)
-        for slot in G.world.get_active_player().inventory_main.slots[:36] + self.slots:
+        for slot in shared.world.get_active_player().inventory_main.slots[:36] + self.slots:
             slot.draw_label()
 
     def get_interaction_slots(self):
-        return G.world.get_active_player().inventory_main.slots[:36] + self.slots
+        return shared.world.get_active_player().inventory_main.slots[:36] + self.slots
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            G.inventory_handler.hide(self)
+            shared.inventory_handler.hide(self)
 
     def update_shift_container(self):
-        G.inventory_handler.shift_container.container_A = (
-            G.world.get_active_player().inventory_main.slots[:36]
+        shared.inventory_handler.shift_container.container_A = (
+            shared.world.get_active_player().inventory_main.slots[:36]
         )
-        G.inventory_handler.shift_container.container_B = self.slots
+        shared.inventory_handler.shift_container.container_B = self.slots

@@ -18,7 +18,7 @@ import clipboard
 import pyglet
 from pyglet.window import key
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.server.command.CommandHandler
 import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler
@@ -41,9 +41,9 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         self.label = pyglet.text.HTMLLabel("", x=15, y=15)
         self.enable_blink = True
         self.timer = time.time()
-        self.eventbus = G.event_handler.create_bus(active=False)
-        self.eventbus.subscribe("user:keyboard:press", G.chat.on_key_press)
-        self.eventbus.subscribe("user:keyboard:enter", G.chat.enter)
+        self.eventbus = shared.event_handler.create_bus(active=False)
+        self.eventbus.subscribe("user:keyboard:press", shared.chat.on_key_press)
+        self.eventbus.subscribe("user:keyboard:enter", shared.chat.enter)
 
     def update_text(self, text: str, underline_index: int):
         """
@@ -69,9 +69,9 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         """
         called by the system on activation of the inventory
         """
-        G.chat.text = ""
-        G.chat.active_index = 0
-        G.chat.has_entered_t = False
+        shared.chat.text = ""
+        shared.chat.active_index = 0
+        shared.chat.has_entered_t = False
         self.eventbus.activate()
 
     def on_deactivate(self):
@@ -81,13 +81,13 @@ class ChatInventory(mcpython.client.gui.Inventory.Inventory):
         self.eventbus.deactivate()
 
     def draw(self, hovering_slot=None):
-        wx, _ = G.window.get_size()
+        wx, _ = shared.window.get_size()
         mcpython.util.opengl.draw_rectangle(
             (10, 10), (wx - 20, 20), color=(0.0, 0.0, 0.0, 0.8)
         )
-        text = html.escape(G.chat.text)
+        text = html.escape(shared.chat.text)
         if (round(time.time() - self.timer) % 2) == 1:
-            self.update_text(text, G.chat.active_index)
+            self.update_text(text, shared.chat.active_index)
         else:
             self.label.text = "<font color='white'>" + text + "</font>"
         self.label.draw()
@@ -145,7 +145,7 @@ class Chat:
             self.active_index = len(self.text)
         elif symbol == key.ENTER:  # execute command
             self.CANCEL_INPUT = False
-            G.event_handler.call("chat:text_enter", self.text)
+            shared.event_handler.call("chat:text_enter", self.text)
             logger.println(
                 "[CHAT][INFO] entered text: '{}'".format(self.text), console=False
             )
@@ -155,7 +155,7 @@ class Chat:
                 return
             if self.text.startswith("/"):
                 # execute command
-                G.command_parser.parse(self.text)
+                shared.command_parser.parse(self.text)
             else:
                 self.print_ln(self.text)
             self.history.insert(0, self.text)
@@ -199,7 +199,7 @@ class Chat:
         """
         closes the chat
         """
-        G.inventory_handler.hide(G.world.get_active_player().inventory_chat)
+        shared.inventory_handler.hide(shared.world.get_active_player().inventory_chat)
         self.active_index = 0
 
     def clear(self):
@@ -209,4 +209,4 @@ class Chat:
         self.history.clear()
 
 
-G.chat = Chat()
+shared.chat = Chat()

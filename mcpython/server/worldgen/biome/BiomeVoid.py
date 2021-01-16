@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.config
 from . import Biome
 import mcpython.common.world.AbstractInterface
@@ -46,4 +46,4 @@ class Void(Biome.Biome):
         return []
 
 
-G.biome_handler.register(Void)
+shared.biome_handler.register(Void)

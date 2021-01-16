@@ -11,14 +11,14 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.common.container.ItemStack
 from mcpython.server.command.Command import ParseBridge
 import mcpython.common.config
 
 
-@G.registry
+@shared.registry
 class CommandShuffleData(mcpython.server.command.Command.Command):
     """
     class for /shuffledata command
@@ -35,7 +35,7 @@ class CommandShuffleData(mcpython.server.command.Command.Command):
         if not mcpython.common.config.SHUFFLE_DATA:
             info.chat.print_ln("can't shuffle data as shuffeling is disabled")
             return
-        G.event_handler.call("data:shuffle:all")
+        shared.event_handler.call("data:shuffle:all")
 
     @staticmethod
     def get_help() -> list:

@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.client.state.State
 import mcpython.client.state.StatePartGame
 from mcpython.client.state.ui import UIPartImage, UIPartLabel
@@ -69,11 +69,11 @@ class StateGameInfo(mcpython.client.state.State.State):
     @staticmethod
     def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE or symbol == key.E:
-            G.state_handler.switch_to("minecraft:game", immediate=False)
+            shared.state_handler.switch_to("minecraft:game", immediate=False)
 
     @staticmethod
     def on_mouse_press(x, y, button, modifiers):
-        G.state_handler.switch_to("minecraft:game", immediate=False)
+        shared.state_handler.switch_to("minecraft:game", immediate=False)
 
 
 game_info = None

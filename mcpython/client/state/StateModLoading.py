@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from . import State
 from .ui import UIPartProgressBar
-from mcpython import shared as G
+from mcpython import shared
 import pyglet
 import psutil
 from mcpython.util.annotation import onlyInClient
@@ -53,8 +53,8 @@ class StateModLoading(State.State):
 
     def on_resize(self, w, h):
         for part in self.parts:
-            part.bboxsize = (G.window.get_size()[0] - 40, 20)
-        self.parts[3].position = (20, G.window.get_size()[1] - 40)
+            part.bboxsize = (shared.window.get_size()[0] - 40, 20)
+        self.parts[3].position = (20, shared.window.get_size()[1] - 40)
 
     def on_draw_2d_pre(self):
         pyglet.gl.glClearColor(255, 255, 255, 255)
@@ -68,7 +68,7 @@ class StateModLoading(State.State):
         )
 
     def on_update(self, dt):
-        G.mod_loader.process()
+        shared.mod_loader.process()
 
 
 modloading = StateModLoading()

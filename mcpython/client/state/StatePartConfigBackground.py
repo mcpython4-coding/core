@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import pyglet
 import PIL.Image
 import mcpython.ResourceLoader
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.util.texture
 from mcpython.util.annotation import onlyInClient
 
@@ -51,7 +51,7 @@ class BackgroundHandler:
 class StatePartConfigBackground(mcpython.client.state.StatePart.StatePart):
     def activate(self):
         super().activate()
-        BackgroundHandler.recreate(*G.window.get_size())
+        BackgroundHandler.recreate(*shared.window.get_size())
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

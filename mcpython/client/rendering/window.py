@@ -88,7 +88,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         super(Window, self).__init__(*args, **kwargs)
 
-        G.window = self  # write window instance to globals.py for sharing
+        shared.window = self  # write window instance to globals.py for sharing
 
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
@@ -230,7 +230,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         the player is looking.
         todo: move to player
         """
-        x, y, _ = G.world.get_active_player().rotation
+        x, y, _ = shared.world.get_active_player().rotation
         # y ranges from -90 to 90, or -pi/2 to pi/2, so m ranges from 0 to 1 and
         # is 1 when looking ahead parallel to the ground and 0 when looking
         # straight up or down.
@@ -250,7 +250,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         todo: integrate into player movement
         """
         if any(self.strafe):
-            x, y, _ = G.world.get_active_player().rotation
+            x, y, _ = shared.world.get_active_player().rotation
             strafe = math.degrees(math.atan2(*self.strafe))
             y_angle = math.radians(y)
             x_angle = math.radians(x + strafe)
@@ -275,7 +275,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             and mcpython.common.config.ENABLE_PROFILING
         ):
             self.tick_profiler.enable()
-        G.event_handler.call("gameloop:tick:start", dt)
+        shared.event_handler.call("gameloop:tick:start", dt)
 
         self.cpu_usage_timer += dt
         if self.cpu_usage_timer > mcpython.common.config.CPU_USAGE_REFRESH_TIME:
@@ -283,7 +283,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             self.cpu_usage_timer = 0
 
         # todo: change to attribute in State-class
-        if dt > 3 and G.state_handler.active_state.NAME not in ["minecraft:modloading"]:
+        if dt > 3 and shared.state_handler.active_state.NAME not in ["minecraft:modloading"]:
             logger.println(
                 "[warning] running behind normal tick, did you overload game? missing "
                 + str(dt - 0.05)
@@ -291,19 +291,19 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             )
         if any(
             type(x) == mcpython.client.state.StatePartGame.StatePartGame
-            for x in G.state_handler.active_state.parts
+            for x in shared.state_handler.active_state.parts
         ):
-            G.world_generation_handler.task_handler.process_tasks(timer=0.02)
-        sector = position_to_chunk(G.world.get_active_player().position)
+            shared.world_generation_handler.task_handler.process_tasks(timer=0.02)
+        sector = position_to_chunk(shared.world.get_active_player().position)
         if sector != self.sector:
             pyglet.clock.schedule_once(
-                lambda _: G.world.change_chunks(self.sector, sector), 0.1
+                lambda _: shared.world.change_chunks(self.sector, sector), 0.1
             )
             if self.sector is None:
-                G.world_generation_handler.task_handler.process_tasks()
+                shared.world_generation_handler.task_handler.process_tasks()
             self.sector = sector
 
-        G.event_handler.call("gameloop:tick:end", dt)
+        shared.event_handler.call("gameloop:tick:end", dt)
         if (
             mcpython.common.config.ENABLE_PROFILER_TICK
             and mcpython.common.config.ENABLE_PROFILING
@@ -348,13 +348,13 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                     op = list(np)
                     op[1] -= dy
                     op[i] += face[i]
-                    chunk = G.world.get_active_dimension().get_chunk_for_position(
+                    chunk = shared.world.get_active_dimension().get_chunk_for_position(
                         tuple(op), generate=False
                     )
                     block = chunk.get_block(tuple(op))
                     blockstate = block is not None
                     if not chunk.generated:
-                        if G.world.config["enable_world_barrier"]:
+                        if shared.world.config["enable_world_barrier"]:
                             blockstate = True
                     if not blockstate:
                         continue
@@ -364,7 +364,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                         and block.NO_ENTITY_COLLISION
                     ):
                         block.on_no_collision_collide(
-                            G.world.get_active_player(),
+                            shared.world.get_active_player(),
                             block.position in previous_positions,
                         )
                         continue
@@ -374,24 +374,24 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                         # falling / rising.
                         self.dy = 0
                     if face == (0, -1, 0):
-                        G.world.get_active_player().flying = False
+                        shared.world.get_active_player().flying = False
                         if (
-                            G.world.get_active_player().gamemode in (0, 2)
-                            and G.world.get_active_player().fallen_since_y is not None
+                            shared.world.get_active_player().gamemode in (0, 2)
+                            and shared.world.get_active_player().fallen_since_y is not None
                         ):
                             dy = (
-                                G.world.get_active_player().fallen_since_y
-                                - G.world.get_active_player().position[1]
+                                shared.world.get_active_player().fallen_since_y
+                                - shared.world.get_active_player().position[1]
                                 - 3
                             )
                             if (
                                 dy > 0
-                                and G.world.gamerule_handler.table[
+                                and shared.world.gamerule_handler.table[
                                     "fallDamage"
                                 ].status.status
                             ):
-                                G.world.get_active_player().damage(dy)
-                            G.world.get_active_player().fallen_since_y = None
+                                shared.world.get_active_player().damage(dy)
+                            shared.world.get_active_player().fallen_since_y = None
                     break
         return tuple(p)
 
@@ -419,7 +419,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                     op = list(np)
                     op[1] -= dy
                     op[i] += face[i]
-                    chunk = G.world.get_active_dimension().get_chunk_for_position(
+                    chunk = shared.world.get_active_dimension().get_chunk_for_position(
                         tuple(op), generate=False
                     )
                     block = chunk.get_block(tuple(op))
@@ -444,14 +444,14 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             [access via pyglet.window.key.MOD_[...]]
         """
         self.mouse_pressing[button] = True
-        G.event_handler.call("user:mouse:press", x, y, button, modifiers)
+        shared.event_handler.call("user:mouse:press", x, y, button, modifiers)
 
     def on_mouse_release(self, x, y, button, modifiers):
         """
         called when an button is released with the same argument as on_mouse_press
         """
         self.mouse_pressing[button] = False
-        G.event_handler.call("user:mouse:release", x, y, button, modifiers)
+        shared.event_handler.call("user:mouse:release", x, y, button, modifiers)
 
     def on_mouse_drag(
         self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int
@@ -466,7 +466,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         :param modifiers: the modifiers pressed
         """
         self.mouse_position = (x, y)
-        G.event_handler.call("user:mouse:drag", x, y, dx, dy, buttons, modifiers)
+        shared.event_handler.call("user:mouse:drag", x, y, dx, dy, buttons, modifiers)
         if self.exclusive:
             self.on_mouse_motion(x, y, dx, dy)
 
@@ -478,7 +478,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         :param scroll_x: the delta x
         :param scroll_y: the detla y
         """
-        G.event_handler.call("user:mouse:scroll", x, y, scroll_x, scroll_y)
+        shared.event_handler.call("user:mouse:scroll", x, y, scroll_x, scroll_y)
 
     def on_mouse_motion(self, x: int, y: int, dx: float, dy: float):
         """
@@ -489,7 +489,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         todo: use pyglet's MouseHandler for tracking the mouse position and buttons
         """
-        G.event_handler.call("user:mouse:motion", x, y, dx, dy)
+        shared.event_handler.call("user:mouse:motion", x, y, dx, dy)
         self.mouse_position = (x, y)
 
     def on_key_press(self, symbol: int, modifiers: int):
@@ -498,7 +498,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         :param symbol: Number representing the key that was pressed.
         :param modifiers: Number representing any modifying keys that were pressed.
         """
-        G.event_handler.call("user:keyboard:press", symbol, modifiers)
+        shared.event_handler.call("user:keyboard:press", symbol, modifiers)
 
     def on_key_release(self, symbol, modifiers):
         """
@@ -506,7 +506,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         :param symbol: Number representing the key that was pressed.
         :param modifiers: Number representing any modifying keys that were pressed.
         """
-        G.event_handler.call("user:keyboard:release", symbol, modifiers)
+        shared.event_handler.call("user:keyboard:release", symbol, modifiers)
 
     def on_resize(self, width: int, height: int):
         """
@@ -517,7 +517,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         self.label2.y = height - 22
         self.label3.x = width - 10
         self.label3.y = height - 34
-        G.event_handler.call("user:window:resize", width, height)
+        shared.event_handler.call("user:window:resize", width, height)
 
     def set_2d(self):
         # todo: move to RenderingHelper
@@ -530,13 +530,13 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
     def set_3d(self, position=None, rotation=None):
         # todo: move to RenderingHelper
-        if G.world.get_active_player() is None:
+        if shared.world.get_active_player() is None:
             return
-        if G.rendering_helper.default_3d_stack is None:
-            G.rendering_helper.default_3d_stack = (
-                G.rendering_helper.get_dynamic_3d_matrix_stack()
+        if shared.rendering_helper.default_3d_stack is None:
+            shared.rendering_helper.default_3d_stack = (
+                shared.rendering_helper.get_dynamic_3d_matrix_stack()
             )
-        G.rendering_helper.default_3d_stack.apply()
+        shared.rendering_helper.default_3d_stack.apply()
         pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
 
     def on_draw(self):
@@ -544,9 +544,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         Called by pyglet to draw the canvas.
         todo: move to separated configurable rendering pipeline
         """
-        G.rendering_helper.deleteSavedStates()  # make sure that everything is cleared
+        shared.rendering_helper.deleteSavedStates()  # make sure that everything is cleared
         # make sure that the state of the rendering helper is saved for later usage
-        state = G.rendering_helper.save_status(False)
+        state = shared.rendering_helper.save_status(False)
 
         # check for profiling
         if (
@@ -555,25 +555,25 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         ):
             self.draw_profiler.enable()
 
-        G.event_handler.call("render:draw:pre_clear")
+        shared.event_handler.call("render:draw:pre_clear")
         self.clear()  # clear the screen
-        G.event_handler.call("render:draw:pre_setup")
+        shared.event_handler.call("render:draw:pre_setup")
         self.set_2d()
-        G.event_handler.call("render:draw:2d:background_pre")
+        shared.event_handler.call("render:draw:2d:background_pre")
         self.set_3d()  # setup for 3d drawing
-        G.event_handler.call("render:draw:3d")  # call general 3d rendering event
+        shared.event_handler.call("render:draw:3d")  # call general 3d rendering event
         self.set_2d()  # setup for 2d rendering
-        G.event_handler.call("render:draw:2d:background")  # call pre 2d
-        G.event_handler.call("render:draw:2d")  # call normal 2d
-        G.event_handler.call("render:draw:2d:overlay")  # call overlay 2d
+        shared.event_handler.call("render:draw:2d:background")  # call pre 2d
+        shared.event_handler.call("render:draw:2d")  # call normal 2d
+        shared.event_handler.call("render:draw:2d:overlay")  # call overlay 2d
         if (
             mcpython.common.config.ENABLE_PROFILER_DRAW
             and mcpython.common.config.ENABLE_PROFILING
         ):
             self.draw_profiler.disable()
-        G.rendering_helper.apply(state)
-        G.event_handler.call("render:draw:post:cleanup")
-        G.rendering_helper.deleteSavedStates()
+        shared.rendering_helper.apply(state)
+        shared.event_handler.call("render:draw:post:cleanup")
+        shared.rendering_helper.deleteSavedStates()
 
     def draw_focused_block(self):
         """
@@ -581,9 +581,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         todo: move to special helper class
         """
         vector = self.get_sight_vector()
-        block = G.world.hit_test(G.world.get_active_player().position, vector)[0]
+        block = shared.world.hit_test(shared.world.get_active_player().position, vector)[0]
         if block:
-            block = G.world.get_active_dimension().get_block(block)
+            block = shared.world.get_active_dimension().get_block(block)
             if block:
                 block.get_view_bbox().draw_outline(block.position)
 
@@ -592,12 +592,12 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         Draw the label in the top left of the screen.
         todo: move to special helper class
         """
-        x, y, z = G.world.get_active_player().position
-        nx, ny, nz = mcpython.util.math.normalize(G.world.get_active_player().position)
-        if not G.world.gamerule_handler.table["showCoordinates"].status.status:
+        x, y, z = shared.world.get_active_player().position
+        nx, ny, nz = mcpython.util.math.normalize(shared.world.get_active_player().position)
+        if not shared.world.gamerule_handler.table["showCoordinates"].status.status:
             x = y = z = "?"
-        chunk = G.world.get_active_dimension().get_chunk(
-            *mcpython.util.math.position_to_chunk(G.world.get_active_player().position),
+        chunk = shared.world.get_active_dimension().get_chunk(
+            *mcpython.util.math.position_to_chunk(shared.world.get_active_player().position),
             create=False
         )
         self.label.text = (
@@ -609,21 +609,21 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 z,
                 0,
                 0,
-                G.world.get_active_player().gamemode,
+                shared.world.get_active_player().gamemode,
             )
         )
-        vector = G.window.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(
-            G.world.get_active_player().position, vector
+        vector = shared.window.get_sight_vector()
+        blockpos, previous, hitpos = shared.world.hit_test(
+            shared.world.get_active_player().position, vector
         )
         if blockpos:
-            blockname = G.world.get_active_dimension().get_block(blockpos)
+            blockname = shared.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str:
                 blockname = blockname.NAME
             self.label2.text = "looking at '{}(position={})'".format(
                 blockname,
                 blockpos
-                if G.world.gamerule_handler.table["showCoordinates"].status.status
+                if shared.world.gamerule_handler.table["showCoordinates"].status.status
                 else ("?", "?", "?"),
             )
             self.label2.draw()
@@ -656,11 +656,11 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         import clipboard
 
         vector = self.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(
-            G.world.get_active_player().position, vector
+        blockpos, previous, hitpos = shared.world.hit_test(
+            shared.world.get_active_player().position, vector
         )
         if blockpos:
-            blockname = G.world.get_active_dimension().get_block(blockpos)
+            blockname = shared.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str:
                 blockname = blockname.NAME
             clipboard.copy(blockname)
@@ -682,18 +682,18 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         called by pyglet with decoded key values when an text is entered
         :param text: the text entered
         """
-        G.event_handler.call("user:keyboard:enter", text)
+        shared.event_handler.call("user:keyboard:enter", text)
 
     def on_close(self):
         """
         called when the window tries to close itself
         cleans up some stuff before closing
         """
-        if G.world.save_file.save_in_progress:
+        if shared.world.save_file.save_in_progress:
             return
-        if G.world.world_loaded:
+        if shared.world.world_loaded:
             # have we an world which should be saved?
-            G.world.get_active_player().inventory_main.remove_items_from_crafting()
-            G.world.save_file.save_world(override=True)
+            shared.world.get_active_player().inventory_main.remove_items_from_crafting()
+            shared.world.save_file.save_world(override=True)
         self.set_fullscreen(False)
         self.close()

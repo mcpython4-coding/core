@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
     ParseBridge,
@@ -21,7 +21,7 @@ from mcpython.server.command.Command import (
 )
 
 
-@G.registry
+@shared.registry
 class CommandFill(mcpython.server.command.Command.Command):
     """
     class for /fill command
@@ -47,7 +47,7 @@ class CommandFill(mcpython.server.command.Command.Command):
     @staticmethod
     def parse(values: list, modes: list, info):
         replace = None if len(values) == 3 else values[4]
-        dimension = G.world.dimensions[info.dimension]
+        dimension = shared.world.dimensions[info.dimension]
         # sort positions so that pos1 < pos2
         (fx, fy, fz), (tx, ty, tz) = tuple(values[:2])
         if fx > tx:

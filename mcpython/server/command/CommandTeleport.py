@@ -11,12 +11,12 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 
 
-@G.registry
+@shared.registry
 class CommandTeleport(mcpython.server.command.Command.Command):
     """
     class for /teleport command
@@ -53,11 +53,11 @@ class CommandTeleport(mcpython.server.command.Command.Command):
                         else entity.chunk.dimension.id,
                     )
         else:  # tp [position]
-            G.world.get_active_player().teleport(
+            shared.world.get_active_player().teleport(
                 tuple(values[0]),
                 info.dimension
                 if info.dimension is not None
-                else G.world.get_active_player().chunk.dimension.id,
+                else shared.world.get_active_player().chunk.dimension.id,
             )
 
     @staticmethod

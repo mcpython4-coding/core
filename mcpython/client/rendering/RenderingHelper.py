@@ -16,7 +16,7 @@ import math
 
 import pyglet.gl as _gl
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.client.rendering.MatrixStack
 from mcpython.util.annotation import onlyInClient
 
@@ -123,19 +123,19 @@ class RenderingHelper:
         """
         if base is None:
             base = mcpython.client.rendering.MatrixStack.MatrixStack()
-        width, height = G.window.get_size()
+        width, height = shared.window.get_size()
         self.glEnable(_gl.GL_DEPTH_TEST)
-        viewport = G.window.get_viewport_size()
+        viewport = shared.window.get_viewport_size()
         base.addViewport(0, 0, max(1, viewport[0]), max(1, viewport[1]))
         base.addMatrixMode(_gl.GL_PROJECTION)
         base.addLoadIdentity()
         base.addGluPerspective(65.0, width / height, 0.1, 60.0)
         base.addMatrixMode(_gl.GL_MODELVIEW)
         base.addLoadIdentity()
-        x, y, _ = G.world.get_active_player().rotation
+        x, y, _ = shared.world.get_active_player().rotation
         base.addRotate3d(x, 0, 1, 0)
         base.addRotate3d(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
-        x, y, z = G.world.get_active_player().position
+        x, y, z = shared.world.get_active_player().position
         base.addTranslate3d(-x, -y, -z)
         return base
 
@@ -154,27 +154,27 @@ class RenderingHelper:
             lambda: (
                 0,
                 0,
-                max(1, G.window.get_viewport_size()[0]),
-                max(1, G.window.get_viewport_size()[1]),
+                max(1, shared.window.get_viewport_size()[0]),
+                max(1, shared.window.get_viewport_size()[1]),
             )
         )
         base.addMatrixMode(_gl.GL_PROJECTION)
         base.addLoadIdentity()
         base.addGluPerspective(
-            lambda: (65.0, G.window.get_size()[0] / G.window.get_size()[1], 0.1, 60.0)
+            lambda: (65.0, shared.window.get_size()[0] / shared.window.get_size()[1], 0.1, 60.0)
         )
         base.addMatrixMode(_gl.GL_MODELVIEW)
         base.addLoadIdentity()
-        base.addRotate3d(lambda: (G.world.get_active_player().rotation[0], 0, 1, 0))
+        base.addRotate3d(lambda: (shared.world.get_active_player().rotation[0], 0, 1, 0))
         base.addRotate3d(
             lambda: (
-                -G.world.get_active_player().rotation[1],
-                math.cos(math.radians(G.world.get_active_player().rotation[0])),
+                -shared.world.get_active_player().rotation[1],
+                math.cos(math.radians(shared.world.get_active_player().rotation[0])),
                 0,
-                math.sin(math.radians(G.world.get_active_player().rotation[0])),
+                math.sin(math.radians(shared.world.get_active_player().rotation[0])),
             )
         )
-        base.addTranslate3d(lambda: [-e for e in G.world.get_active_player().position])
+        base.addTranslate3d(lambda: [-e for e in shared.world.get_active_player().position])
         return base
 
     def setup2d(self, anchor=(0, 0), z_buffer=0):
@@ -184,10 +184,10 @@ class RenderingHelper:
         :param z_buffer: the layer in which to render
         """
         self.glDisable(_gl.GL_DEPTH_TEST)
-        _gl.glViewport(0, 0, *[max(1, e) for e in G.window.get_viewport_size()])
+        _gl.glViewport(0, 0, *[max(1, e) for e in shared.window.get_viewport_size()])
         _gl.glMatrixMode(_gl.GL_PROJECTION)
         _gl.glLoadIdentity()
-        width, height = s = G.window.get_size()
+        width, height = s = shared.window.get_size()
         _gl.glOrtho(0, max(1, width), 0, max(1, height), -1, 1)
         _gl.glMatrixMode(_gl.GL_MODELVIEW)
         _gl.glLoadIdentity()

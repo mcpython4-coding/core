@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import math
 
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.event.EventHandler
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
@@ -27,7 +27,7 @@ class BlockInfo:
 
     @classmethod
     def construct(cls):
-        BLOCKS: mcpython.common.event.Registry.Registry = G.registry.get_by_name(
+        BLOCKS: mcpython.common.event.Registry.Registry = shared.registry.get_by_name(
             "minecraft:block"
         )
 
@@ -83,12 +83,12 @@ class DebugWorldGenerator(
                         (cx * 16 + x, 5, cz * 16 + z), "minecraft:barrier"
                     )
 
-        if G.world.get_active_player().gamemode != 3:
-            G.world.get_active_player().set_gamemode(3)
-        G.world.get_active_player().flying = True
+        if shared.world.get_active_player().gamemode != 3:
+            shared.world.get_active_player().set_gamemode(3)
+        shared.world.get_active_player().flying = True
 
 
-G.world_generation_handler.register_world_gen_config(DebugWorldGenerator)
+shared.world_generation_handler.register_world_gen_config(DebugWorldGenerator)
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:post", BlockInfo.construct, info="constructing debug world info"

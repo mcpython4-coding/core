@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler
 import typing
@@ -55,9 +55,9 @@ class ModDependency:
         raise ValueError("invalid version entry '{}' of type '{}'".format(a, type(a)))
 
     def arrival(self) -> bool:
-        if self.name not in G.mod_loader.mods:
+        if self.name not in shared.mod_loader.mods:
             return False
-        mod = G.mod_loader.mods[self.name]
+        mod = shared.mod_loader.mods[self.name]
         if self.version_range[0] is not None:
             if self.version_range[1] is not None:
                 return self.test_match(mod.version, self.version_range)
@@ -88,7 +88,7 @@ class ModDependency:
         """
         gets the real version of the mod specified by this
         """
-        return G.mod_loader.mods[self.name].version
+        return shared.mod_loader.mods[self.name].version
 
     def __str__(self):
         """
@@ -167,7 +167,7 @@ class Mod:
         self.version = version  # the version of the mod, as an tuple
         self.version_name = version_name
         self.package = None  # the package where the mod-file was found
-        G.mod_loader.add_to_add(self)
+        shared.mod_loader.add_to_add(self)
 
     def mod_string(self):
         """

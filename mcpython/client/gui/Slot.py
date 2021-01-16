@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import pyglet
 import mcpython.common.container.ItemStack
 import mcpython.common.item.ItemHandler
@@ -536,13 +536,13 @@ class SlotInfiniteStackExchangeable(Slot):
         )
         self.reference_stack = self.itemstack.copy()
 
-    def set_itemstack(self, stack, update=True, player=False):
+    def set_itemstack(self, stack: mcpython.common.container.ItemStack.ItemStack, update=True, player=False):
         self.__itemstack = (
             stack
-            if stack
+            if stack is not None
             else mcpython.common.container.ItemStack.ItemStack.create_empty()
         )
-        if not stack.itemstack.is_empty():
+        if not stack.is_empty():
             self.reference_stack = stack.copy()
         if update:
             self.call_update(player=player)

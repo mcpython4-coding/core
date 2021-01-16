@@ -11,7 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared as G, logger
+from mcpython import shared, logger
 import mcpython.client.gui.Inventory
 import mcpython.client.gui.InventoryHandler
 import mcpython.client.gui.Slot
@@ -189,7 +189,7 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
             slot.draw(
                 x, y
             )  # change to default implementation: do NOT render hovering entry
-        selected_slot = G.world.get_active_player().get_active_inventory_slot()
+        selected_slot = shared.world.get_active_player().get_active_inventory_slot()
         x, y = selected_slot.position
         dx, dy = (
             tuple(self.config["selected_delta"])
@@ -205,21 +205,21 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
         TEXTURES.selection.blit(x, y + 39)
 
         if (
-            self.last_index != G.world.get_active_player().active_inventory_slot
+            self.last_index != shared.world.get_active_player().active_inventory_slot
             or selected_slot.get_itemstack().get_item_name() != self.last_item
         ):
             self.time_since_last_change = time.time()
-            self.last_index = G.world.get_active_player().active_inventory_slot
+            self.last_index = shared.world.get_active_player().active_inventory_slot
             self.last_item = selected_slot.get_itemstack().get_item_name()
 
         pyglet.gl.glColor3d(1.0, 1.0, 1.0)
-        if G.world.get_active_player().gamemode in (0, 2):
+        if shared.world.get_active_player().gamemode in (0, 2):
             x, y = self.get_position()
             y += 40
             self.draw_hearts(x, y)
             self.draw_hunger(x, y)
             self.draw_xp_level(x, y)
-            if G.world.get_active_player().armor_level > 0:
+            if shared.world.get_active_player().armor_level > 0:
                 self.draw_armor(x, y)
 
         if (
@@ -228,7 +228,7 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
         ):
             self.lable.text = str(selected_slot.get_itemstack().get_item_name())
             self.lable.x = round(
-                G.window.get_size()[0] // 2 - self.lable.content_width // 2
+                shared.window.get_size()[0] // 2 - self.lable.content_width // 2
             )
             self.lable.y = 90
             self.lable.draw()
@@ -236,10 +236,10 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
             slot.draw_label()
 
     def draw_hearts(self, hx, hy):
-        wx, _ = G.window.get_size()
+        wx, _ = shared.window.get_size()
         x = wx // 2 - 10 * 16 - 22
         y = hy + 75
-        hearts = round(G.world.get_active_player().hearts)
+        hearts = round(shared.world.get_active_player().hearts)
         for _ in range(10):
             TEXTURES.hearts[0][0].blit(x, y, width=18, height=18)
             if hearts > 0:
@@ -248,10 +248,10 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
             x += 16
 
     def draw_hunger(self, hx, hy):
-        wx, _ = G.window.get_size()
+        wx, _ = shared.window.get_size()
         x = wx // 2 + 22 + 10 * 16
         y = hy + 75
-        hunger = round(G.world.get_active_player().hunger)
+        hunger = round(shared.world.get_active_player().hunger)
         for _ in range(10):
             TEXTURES.hunger[0][0].blit(x, y, width=18, height=18)
             if hunger > 0:
@@ -260,28 +260,28 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
             x -= 16
 
     def draw_xp_level(self, hx, hy):
-        wx, _ = G.window.get_size()
+        wx, _ = shared.window.get_size()
         x = wx // 2 - 182
         y = hy + 55
         TEXTURES.xp_bars[1].blit(x, y)
         active_progress = (
-            G.world.get_active_player().xp
-            / G.world.get_active_player().get_needed_xp_for_next_level()
+            shared.world.get_active_player().xp
+            / shared.world.get_active_player().get_needed_xp_for_next_level()
         )
         TEXTURES.xp_bars[1].get_region(
             x=0, y=0, height=10, width=round(362 * active_progress) + 1
         ).blit(x, y)
-        if G.world.get_active_player().xp_level != 0:
+        if shared.world.get_active_player().xp_level != 0:
             self.lable.x = wx // 2
             self.lable.y = hy + 65
-            self.lable.text = str(G.world.get_active_player().xp_level)
+            self.lable.text = str(shared.world.get_active_player().xp_level)
             self.lable.draw()
 
     def draw_armor(self, hx, hy):
-        wx, _ = G.window.get_size()
+        wx, _ = shared.window.get_size()
         x = wx // 2 - 10 * 16 - 22
         y = hy + 95
-        armor = round(G.world.get_active_player().armor_level)
+        armor = round(shared.world.get_active_player().armor_level)
         for _ in range(10):
             TEXTURES.armor[0].blit(x, y, width=18, height=18)
             if armor > 0:

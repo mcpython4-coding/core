@@ -12,13 +12,13 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import logger
-from mcpython import shared as G
+from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import ParseBridge
 import mcpython.util.math
 
 
-@G.registry
+@shared.registry
 class CommandBlockInfo(mcpython.server.command.Command.Command):
     """
     Class for the /blockinfo command
@@ -38,10 +38,10 @@ class CommandBlockInfo(mcpython.server.command.Command.Command):
         #     *mcpython.util.math.position_to_chunk(info.entity.position),
         #     create=False
         # )
-        vector = G.window.get_sight_vector()
-        blockpos, previous, hitpos = G.world.hit_test(info.entity.position, vector)
+        vector = shared.window.get_sight_vector()
+        blockpos, previous, hitpos = shared.world.hit_test(info.entity.position, vector)
         if blockpos:
-            block = G.world.get_dimension(info.dimension).get_block(blockpos)
+            block = shared.world.get_dimension(info.dimension).get_block(blockpos)
             if type(block) == str:
                 logger.println("invalid target")
             else:
