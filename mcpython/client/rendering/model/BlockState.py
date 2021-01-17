@@ -242,7 +242,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model, config, _ = BlockState.decode_entry(data)
                     model = shared.model_handler.models[model]
                     for boxmodel in model.boxmodels:
-                        bbox.bboxes.append(
+                        bbox.bounding_boxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
                                 tuple([e / 16 for e in boxmodel.box_size]),
                                 tuple([e / 16 for e in boxmodel.relative_position]),
@@ -262,7 +262,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         )
                     model = shared.model_handler.models[model]
                     for boxmodel in model.boxmodels:
-                        bbox.bboxes.append(
+                        bbox.bounding_boxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
                                 tuple([e / 16 for e in boxmodel.box_size]),
                                 tuple([e / 16 for e in boxmodel.relative_position]),
@@ -418,7 +418,7 @@ class DefaultDecoder(IBlockStateDecoder):
                 model = shared.model_handler.models[model]
                 for boxmodel in model.boxmodels:
                     rotation = config["rotation"]
-                    bbox.bboxes.append(
+                    bbox.bounding_boxes.append(
                         mcpython.common.block.BoundingBox.BoundingBox(
                             tuple([e / 16 for e in boxmodel.box_size]),
                             tuple([e / 16 for e in boxmodel.relative_position]),
