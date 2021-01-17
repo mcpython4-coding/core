@@ -123,10 +123,11 @@ class BlockFaceState:
                     )
                     self.subscribed_renderer = False
         else:
-            try:
-                [x.delete() for x in self.face_data[face.normal_name]]
-            except AssertionError:
-                pass
+            for x in self.face_data[face.normal_name]:
+                try:
+                    x.delete()
+                except AssertionError:
+                    pass
 
         self.face_data[face.normal_name] = None
         if all(value is None or len(value) == 0 for value in self.face_data.values()):
@@ -148,15 +149,18 @@ class BlockFaceState:
         Updates the block face state
         :param redraw_complete: if all sides should be re-drawn
         """
-        chunk = shared.world.get_dimension_by_name(
-            self.block.dimension
-        ).get_chunk_for_position(self.block.position)
+        dimension = shared.world.get_dimension_by_name(self.block.dimension)
+        chunk = dimension.get_chunk_for_position(self.block.position)
         state = chunk.exposed_faces(self.block.position)
+
         if state == self.faces and not redraw_complete:
             return
+
         chunk.positions_updated_since_last_save.add(self.block.position)
         chunk.mark_dirty()
+
         self.hide_all()
+
         for key in state.keys():
             face = (
                 key
@@ -165,8 +169,6 @@ class BlockFaceState:
             )
             if state[key]:
                 self.show_face(face)
-            else:
-                self.hide_face(face)
 
     def hide_all(self):
         """
