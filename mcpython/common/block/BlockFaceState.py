@@ -17,6 +17,7 @@ import mcpython.common.event.EventHandler
 from mcpython import shared
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.util.enums
+import copy
 
 
 class BlockFaceState:
@@ -55,9 +56,10 @@ class BlockFaceState:
             return
 
         if self.face_data is None:
-            self.face_data = self.DEFAULT_FACE_DATA.copy()
+            self.face_data = copy.deepcopy(self.DEFAULT_FACE_DATA)
 
         self.faces[face.normal_name] = True
+
         if self.custom_renderer is not None:
             if issubclass(
                 type(self.custom_renderer),
@@ -78,9 +80,11 @@ class BlockFaceState:
                         "render:draw:3d", self._draw_custom_render
                     )
                     self.subscribed_renderer = True
+
         else:
             if self.face_data[face.normal_name] is None:
                 self.face_data[face.normal_name] = []
+
             self.face_data[face.normal_name].extend(
                 shared.model_handler.add_face_to_batch(
                     self.block,
@@ -149,6 +153,7 @@ class BlockFaceState:
         Updates the block face state
         :param redraw_complete: if all sides should be re-drawn
         """
+
         dimension = shared.world.get_dimension_by_name(self.block.dimension)
         chunk = dimension.get_chunk_for_position(self.block.position)
         state = chunk.exposed_faces(self.block.position)
@@ -186,4 +191,33 @@ class BlockFaceState:
                 "render:draw:3d", self._draw_custom_render
             )
             self.subscribed_renderer = False
-        [self.hide_face(face) for face in mcpython.util.enums.EnumSide.iterate()]
+
+        if self.custom_renderer is not None:
+            if issubclass(
+                    type(self.custom_renderer),
+                    mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
+            ):
+                for face in mcpython.util.enums.EnumSide.iterate():
+                    self.custom_renderer.remove(
+                        self.block.position,
+                        self.block,
+                        self.face_data[face.normal_name],
+                        face,
+                    )
+
+            elif issubclass(
+                    type(self.custom_renderer),
+                    mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomDrawMethodRenderer,
+            ) and self.subscribed_renderer:
+                mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+                    "render:draw:3d", self._draw_custom_render
+                )
+            self.subscribed_renderer = False
+
+        if self.face_data is not None:
+            for face in self.face_data:
+                if self.face_data[face] is not None:
+                    [e.delete() for e in self.face_data[face]]
+        self.face_data = None
+
+        # [self.hide_face(face) for face in mcpython.util.enums.EnumSide.iterate()]

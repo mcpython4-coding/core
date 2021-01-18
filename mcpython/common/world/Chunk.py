@@ -155,20 +155,20 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         for entity in self.entities:
             entity.draw()
 
-    ALL_EXPOSED = {x: True for x in mcpython.util.enums.EnumSide.iterate()}
+    ALL_FACES_EXPOSED = {x: True for x in mcpython.util.enums.EnumSide.iterate()}
 
     def exposed_faces(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Dict[str, bool]:
         """
-        returns an dict of the exposed status of every face of the given block
+        Returns an dict of the exposed status of every face of the given block
         :param position: the position to check
         :return: the dict for the status
         """
         instance = self.get_block(position)
 
         if instance is None or type(instance) == str:
-            return self.ALL_EXPOSED.copy()
+            return self.ALL_FACES_EXPOSED.copy()
 
         faces = {}
 
@@ -248,7 +248,12 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             )
 
         if position in self.world:
-            self.remove_block(position, immediate=immediate, block_update=block_update)
+            self.remove_block(
+                position,
+                immediate=immediate,
+                block_update=block_update,
+                block_update_self=block_update_self
+            )
 
         if block_name in [None, "air", "minecraft:air"]:
             return
@@ -261,36 +266,43 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 lazy_setup(block)
             if shared.IS_CLIENT:
                 block.face_state.update()
+
         else:
             table = shared.registry.get_by_name("minecraft:block").full_table
             if block_name not in table:
-                self.remove_block(position)
                 return
+
             block = table[block_name]()
             block.position = position
             block.dimension = self.dimension.get_name()
             if lazy_setup is not None:
                 lazy_setup(block)
 
-        self.world[position] = block
-
         if self.now.day == 13 and self.now.month == 1 and "diorite" in block.NAME:
-            return self.add_block(position, block.NAME.replace("diorite", "andesite"))
+            return self.add_block(
+                position,
+                block.NAME.replace("diorite", "andesite"),
+                immediate=immediate,
+                block_update=block_update,
+                block_update_self=block_update_self
+            )
+
+        self.world[position] = block
 
         block.on_block_added()
 
         if block_state is not None:
             block.set_model_state(block_state)
-            block.face_state.update()
 
         self.mark_dirty()
         self.positions_updated_since_last_save.add(position)
 
         if immediate and shared.IS_CLIENT:
-            if self.exposed(position):
-                self.show_block(position)
+            block.face_state.update()
+
             if block_update:
                 self.on_block_updated(position, include_itself=block_update_self)
+
             self.check_neighbors(position)
 
         return block
@@ -367,14 +379,11 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         is added or removed.
         :param position: the position as the center
         """
-        x, y, z = position
         for face in mcpython.util.enums.EnumSide.iterate():
-            dx, dy, dz = face.relative
-            key = (x + dx, y + dy, z + dz)
-            b = self.dimension.get_block(key)
-            if b is None or isinstance(b, str):
+            block = self.dimension.get_block(face.relative_offset(position))
+            if block is None or isinstance(block, str):
                 continue
-            b.face_state.update(redraw_complete=True)
+            block.face_state.update(True)
 
     def show_block(
         self,

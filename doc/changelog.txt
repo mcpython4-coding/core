@@ -58,6 +58,7 @@ changelog of snapshot <20w04a> released on -, targeting <20w03a>
 
     Fixed issues:
         - escaping in logs did not work in some edge cases correctly
+        - major rendering issue when updating blocks
 
 
 changelog of snapshot 20w01a, released on 06.01.2021, targeting 20w51a
