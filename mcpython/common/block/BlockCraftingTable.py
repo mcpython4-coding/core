@@ -39,9 +39,6 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
             return False
 
     def get_inventories(self):
-        """
-        Called to get an list of inventories
-        """
         return [shared.world.get_active_player().inventory_crafting_table]
 
     def on_block_remove(self, reason):

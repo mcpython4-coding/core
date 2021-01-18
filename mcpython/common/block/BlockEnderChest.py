@@ -33,9 +33,6 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
 
     def __init__(self):
-        """
-        creates the ender chest block
-        """
         super().__init__()
 
         self.front_side = mcpython.util.enums.EnumSide.N

@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import pyglet
 import mcpython.common.container.ItemStack
 import mcpython.common.Language
+from mcpython import shared
 
 
 class IHoveringItemBoxDefinitionPlugin:
@@ -74,6 +75,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
     ) -> list:
         if itemstack.is_empty():
             return []
+
         item_name = itemstack.get_item_name()
         raw = self.localize_builder.format(*item_name.split(":"))
         localized_name = mcpython.common.Language.get(raw)
@@ -83,6 +85,12 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
             localized_name = "<MissingName:{{{};{}x}}>".format(
                 item_name, itemstack.amount
             )
+
+        tags = itemstack.item.TAGS
+        if item_name in shared.registry.get_by_name("minecraft:block"):
+            block_cls = shared.registry.get_by_name("minecraft:block")[item_name]
+            tags = tags + [tag for tag in block_cls.TAGS if tag not in tags]
+
         stuff = (
             [
                 self.default_style.format(
@@ -98,7 +106,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
             + (
                 [
                     self.default_style.format(color="gray", text=tag)
-                    for tag in itemstack.item.TAGS
+                    for tag in tags
                 ]
                 if not itemstack.is_empty()
                 else []
@@ -110,6 +118,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
                 ),
             ]
         )
+
         return stuff
 
 

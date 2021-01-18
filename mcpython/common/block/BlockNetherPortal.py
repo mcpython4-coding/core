@@ -19,10 +19,8 @@ import math
 
 class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
-    class for an nether portal
+    Class for the nether portal block
     """
-
-    PORTAL_HOLDING_BLOCKS = ["minecraft:obsidian", "minecraft:nether_portal"]
 
     NAME = "minecraft:nether_portal"
 
@@ -78,9 +76,7 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             ).get_chunk_for_position(position)
         block = chunk.get_block(position)
         if (
-            block is None
-            or (block.NAME if type(block) != str else block)
-            not in self.PORTAL_HOLDING_BLOCKS
+            block is None or isinstance(block, str) or "#minecraft:supports_nether_portal" not in block.TAGS
         ):
             # print("removing portal as {} does not contain an valid block ({})".format(position, block))
             chunk.remove_block(self.position)

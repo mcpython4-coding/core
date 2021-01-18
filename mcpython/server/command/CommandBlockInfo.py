@@ -46,6 +46,7 @@ class CommandBlockInfo(mcpython.server.command.Command.Command):
                 logger.println("invalid target")
             else:
                 logger.println(repr(block))
+                logger.println(block.TAGS)
         else:
             logger.println("invalid target")
 

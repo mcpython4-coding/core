@@ -65,6 +65,12 @@ class Registry:
             "mod_loader:load_finished", self.lock
         )
 
+    def __contains__(self, item):
+        return item in self.full_entries
+
+    def __getitem__(self, item):
+        return self.full_entries[item]
+
     def is_valid(self, obj: IRegistryContent):
         return not self.locked and obj.TYPE in self.registry_type_names
 

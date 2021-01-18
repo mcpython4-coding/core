@@ -1463,4 +1463,6 @@ R   [uuk]: improved world serialization API
 [uuk]: ResourcePipe entries can now specify if to load on dedicated servers
 [uuk]: improved random tick system (a lot faster now!)
 [uuk]: the three build-in item properties are now stored in save files
+[uuk]: nether portal will now use a tag to decide for supporting blocks
+[uuk]: item tooltips will render block tags if block tag exists [duplicated tags are removed]
 

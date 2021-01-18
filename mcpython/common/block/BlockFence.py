@@ -17,6 +17,7 @@ from mcpython import shared
 import mcpython.util.enums
 
 
+# todo: add factory method for this
 class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
     Base class for every fence-like block. Expects
@@ -46,9 +47,6 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
     )
 
     def __init__(self):
-        """
-        will create the fence
-        """
         super().__init__()
         self.connections = {
             "north": False,

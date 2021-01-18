@@ -18,7 +18,7 @@ import mcpython.util.enums
 
 class BlockGrassBlock(AbstractBlock.AbstractBlock):
     """
-    base class for grass
+    Class for the grass block
     """
 
     NAME = "minecraft:grass_block"
