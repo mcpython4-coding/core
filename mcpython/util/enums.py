@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import enum
 import typing
+import itertools
 
 COLORS = [
     "white",
@@ -170,3 +171,45 @@ class ButtonMode(enum.Enum):
     DISABLED = 0
     ENABLED = 1
     HOVERING = 2
+
+
+class NormalWoodTypes(enum.Enum):
+    ACACIA = "acacia"
+    BIRCH = "birch"
+    SPRUCE = "spruce"
+    JUNGLE = "jungle"
+    OAK = "oak"
+    DARK_OAK = "dark_oak"
+
+    def __init__(self, name: str):
+        self.data_name = name
+
+    def __hash__(self):
+        return hash(self.data_name)
+
+    def __eq__(self, other):
+        return self.data_name == other.data_name
+
+    def __repr__(self):
+        return self.data_name
+
+
+class NetherWoodTypes(enum.Enum):
+    CRIMSON = "crimson"
+    WARPED = "warped"
+
+    def __init__(self, name: str):
+        self.data_name = name
+
+    def __hash__(self):
+        return hash(self.data_name)
+
+    def __eq__(self, other):
+        return self.data_name == other.data_name
+
+    def __repr__(self):
+        return self.data_name
+
+
+def all_woods():
+    return itertools.chain(NormalWoodTypes.__iter__(), NetherWoodTypes.__iter__())

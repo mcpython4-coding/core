@@ -46,7 +46,7 @@ information on development:
         When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID of it
 
 
-changelog of snapshot <next> released on -, targeting -
+changelog of snapshot <20w04a> released on -, targeting <20w03a>
     Commands:
         - added /blockinfo command giving information about the block currently looking at
 

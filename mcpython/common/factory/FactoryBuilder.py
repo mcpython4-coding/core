@@ -50,6 +50,21 @@ class FactoryBuilder:
         def get_configurable_target(self) -> typing.Any:
             raise NotImplementedError()
 
+    class InnerDefaultAttributeHelper(IFactoryConfigurator):
+        def __init__(self, name: str, attr_name: str, value: typing.Callable):
+            super().__init__(name)
+            self.attr_name = attr_name
+            self.value = value
+
+        def prepare(self, instance: "FactoryBuilder.IFactory"):
+            instance.config_table[self.attr_name] = self.value()
+
+        def get_configurable_target(self) -> typing.Any:
+            return self.configure
+
+        def configure(self):
+            raise NotImplementedError()
+
     class AnnotationFactoryConfigurator(IFactoryConfigurator):
         def __init__(self, config_name: str):
             super().__init__(config_name)
@@ -71,16 +86,21 @@ class FactoryBuilder:
                 return self.pool[0](*args, **kwargs)
 
     class SetterFactoryConfigurator(IFactoryConfigurator):
-        def __init__(self, func_name: str, attr_name: str, assert_type=object):
+        def __init__(self, func_name: str, attr_name: str, assert_type=object, default_value=None):
             super().__init__(func_name)
             self.attr_name = attr_name
-            self.asset_type = assert_type
+            self.assert_type = assert_type
+            self.default_value = default_value
 
         def get_configurable_target(self) -> typing.Any:
             return self.configure
 
-        def configure(self, instance, value):
-            assert isinstance(value, self.asset_type), "type must be valid"
+        def configure(self, instance, *args):
+            if len(args) == 0:
+                value = self.default_value
+            else:
+                value, = args
+            assert isinstance(value, self.assert_type), "type must be valid"
             instance.config_table[self.attr_name] = value
             return instance
 
@@ -150,7 +170,7 @@ class FactoryBuilder:
             raise NotImplementedError()
 
     class DefaultFactoryCopyOperation(IFactoryCopyOperation):
-        def __init__(self, key: str, operation=lambda e: e):
+        def __init__(self, key: str, operation=lambda e: copy.deepcopy(e)):
             self.key = key
             self.operation = operation
 
@@ -214,11 +234,13 @@ class FactoryBuilder:
             if all_templates:
                 self.template.clear()
             else:
+                assert len(self.template) > 0, "there must be a template to delete!"
                 self.template.pop(-1)
             return self
 
-        def set_to_template(self):
-            self.copy_from(self.template.pop(-1))
+        def set_to_template(self, pop=False):
+            assert len(self.template) > 0, "there must be a template to reset to!"
+            self.copy_from(self.template.pop(-1) if pop else self.template[-1])
             return self
 
         def copy(self) -> "FactoryBuilder.IFactory":
@@ -232,12 +254,23 @@ class FactoryBuilder:
 
             return new
 
+        def __copy__(self):
+            return self.copy()
+
         def copy_from(self, other: "FactoryBuilder.IFactory"):
+            assert self.master == other.master, "cannot copy from an invalid source!"
+
             for operation in self.master.copy_operation_handlers:
                 operation.operate(other, self)
+
             return self
 
         def finish(self):
+            if len(self.template) > 0:
+                build = self.copy().reset_template(True).finish()
+                self.set_to_template(False)
+                return build
+
             for builder in self.master.class_builders:
                 builder.prepare(self)
 
@@ -253,6 +286,7 @@ class FactoryBuilder:
                 BuildTarget = builder.apply(BuildTarget, self)
 
             self.master.do_with_results(BuildTarget)
+
             return BuildTarget
 
     def __init__(
@@ -328,6 +362,13 @@ class FactoryBuilder:
 
     def register_direct_copy_attributes(self, *attributes, operation=copy.deepcopy):
         for attribute in attributes:
+            if type(attribute) == tuple:
+                attribute, *default = attribute
+                self.register_configurator(
+                    FactoryBuilder.InnerDefaultAttributeHelper(
+                        attribute, attribute, lambda: operation(default[0])
+                    )
+                )
             self.register_copy_operation_handler(
                 FactoryBuilder.DefaultFactoryCopyOperation(
                     attribute, operation=operation

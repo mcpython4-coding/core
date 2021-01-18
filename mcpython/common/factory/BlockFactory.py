@@ -94,13 +94,15 @@ def set_strength(
 @block_factory_builder.register_configurator(
     FactoryBuilder.AnnotationFactoryConfigurator("set_assigned_tools")
 )
-def set_assigned_tools(instance: FactoryBuilder.IFactory, *tools):
-    if len(tools) == 0:
+def set_assigned_tools(instance: FactoryBuilder.IFactory, *tools, tool_level=None):
+    if len(tools) == 1:
         if type(tools[0]) in (list, tuple):
             tools = tools[0]
         else:
             tools = (tools,)
     instance.config_table["assigned_tools"] = tools
+    if tool_level is not None:
+        instance.set_minimum_tool_level(tool_level)
     return instance
 
 
@@ -126,6 +128,7 @@ def set_default_model_state(
         state = {
             e.split("=")[0].strip(): e.split("=")[1].strip() for e in state.split(",")
         }
+
     instance.config_table["default_model_state"] = state
     return instance
 
@@ -499,14 +502,12 @@ def build_class_default_state(
 block_factory_builder.register_direct_copy_attributes(
     "name",
     "global_name",
-    "hardness",
-    "blast_resistance",
-    "minimum_tool_level",
-    "assigned_tools",
-    "break_able_flag",
-    "default_model_state",
-    "speed_multiplier",
-    "block_item_generator_state",
+    ("hardness", 0),
+    ("blast_resistance", 0),
+    ("minimum_tool_level", 0),
+    ("assigned_tools", tuple()),
+    ("break_able_flag", True),
+    ("speed_multiplier", 0),
     "solid",
     "can_conduct_redstone_power",
     "can_mobs_spawn_on",
@@ -543,6 +544,8 @@ block_factory_builder.register_direct_copy_attributes(
     "inject_redstone_power",
     "get_redstone_output",
     "get_redstone_source_power",
+    ("default_model_state", {}),
+    ("block_item_generator_state", {}),
     operation=lambda e: e.copy(),
 )
 
@@ -568,31 +571,31 @@ block_factory_builder.register_configurator(
     )
 )
 block_factory_builder.register_configurator(
-    FactoryBuilder.SetterFactoryConfigurator("set_solid", "solid", bool)
+    FactoryBuilder.SetterFactoryConfigurator("set_solid", "solid", bool, default_value=True)
 )
 block_factory_builder.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator(
-        "set_can_conduct_redstone_power", "can_conduct_redstone_power", bool
+        "set_can_conduct_redstone_power", "can_conduct_redstone_power", bool, default_value=True
     )
 )
 block_factory_builder.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator(
-        "set_can_mobs_spawn_on", "can_mobs_spawn_on", bool
+        "set_can_mobs_spawn_on", "can_mobs_spawn_on", bool, default_value=True
     )
 )
 block_factory_builder.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator(
-        "set_can_mobs_spawn_in", "can_mobs_spawn_in", bool
+        "set_can_mobs_spawn_in", "can_mobs_spawn_in", bool, default_value=True
     )
 )
 block_factory_builder.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator(
-        "set_enable_random_ticks", "enable_random_ticks", bool
+        "set_enable_random_ticks", "enable_random_ticks", bool, default_value=True
     )
 )
 block_factory_builder.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator(
-        "set_no_entity_collision", "no_entity_collision", bool
+        "set_no_entity_collision", "no_entity_collision", bool, default_value=True
     )
 )
 block_factory_builder.register_configurator(
@@ -624,7 +627,7 @@ block_factory_builder.register_configurator(
     FactoryBuilder.FunctionStackedAnnotator("on_random_update", "on_random_update")
 )
 block_factory_builder.register_configurator(
-    FactoryBuilder.FunctionStackedAnnotator("on_random_update", "on_random_update")
+    FactoryBuilder.FunctionStackedAnnotator("on_block_update", "on_block_update")
 )
 block_factory_builder.register_configurator(
     FactoryBuilder.FunctionStackedAnnotator("on_redstone_update", "on_redstone_update")
