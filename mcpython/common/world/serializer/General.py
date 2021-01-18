@@ -92,7 +92,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             )
             mcpython.ResourceLoader.read_image(
                 "assets/minecraft/textures/entity/steve.png"
-            ).get_save_data(shared.build + "/skin.png")
+            ).save(shared.build + "/skin.png")
 
         try:
             mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()

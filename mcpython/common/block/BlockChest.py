@@ -111,7 +111,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
     ):
         if (
             button == mouse.RIGHT
-            and not modifiers & key.MOD_SHIFT
+            and not modifiers & (key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL)
             and self.can_open_inventory()
         ):
             if self.loot_table_link:
@@ -171,6 +171,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
                     slot.get_itemstack().copy()
                 )
                 slot.get_itemstack().clean()
+
         shared.inventory_handler.hide(self.inventory)
         del self.inventory
 
@@ -186,16 +187,17 @@ class BlockChest(AbstractBlock.AbstractBlock):
             self.set_model_state(data["model"])
         else:
             logger.println(
-                "[SERIALIZER][WARN] BlockChest at {} is missing model state in save files".format(
-                    self.position
+                "[SERIALIZER][WARN] {} is missing model state in save files".format(
+                    self
                 )
             )
+
         if "loot_table" in data:
             self.loot_table_link = data["loot_table"]
         else:
             logger.println(
-                "[SERIALIZER][WARN] BlockChest at {} is missing loot table in save files".format(
-                    self.position
+                "[SERIALIZER][WARN] {} is missing loot table in save files".format(
+                    self
                 )
             )
 

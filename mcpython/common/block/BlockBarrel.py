@@ -31,6 +31,9 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
         DEBUG_WORLD_BLOCK_STATES.append({"open": "false", "facing": face})
         DEBUG_WORLD_BLOCK_STATES.append({"open": "true", "facing": face})
 
+    HARDNESS = 2.5
+    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
+
     def __init__(self):
         """
         Creates an new BlockBarrel-class
@@ -42,28 +45,28 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
         self.facing: str = "up"  # the direction the block faces to
 
     def on_block_added(self):
-        if self.set_to is None:
-            return  # check for direction from setting
-
-        dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
-        if dx > 0:
-            self.facing = "west"
-        elif dz > 0:
-            self.facing = "north"
-        elif dx < 0:
-            self.facing = "east"
-        elif dz < 0:
-            self.facing = "south"
-        elif dy > 0:
-            self.facing = "down"
-        elif dy < 0:
-            self.facing = "up"
+        # only if this is set, decode it
+        if self.set_to is not None:
+            dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
+            if dx > 0:
+                self.facing = "west"
+            elif dz > 0:
+                self.facing = "north"
+            elif dx < 0:
+                self.facing = "east"
+            elif dz < 0:
+                self.facing = "south"
+            elif dy > 0:
+                self.facing = "down"
+            elif dy < 0:
+                self.facing = "up"
+            self.face_state.update()
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple
     ):
         if (
-            button == mouse.RIGHT and not modifiers & key.MOD_SHIFT
+            button == mouse.RIGHT and not modifiers & (key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL)
         ):  # open the inv when needed
             shared.inventory_handler.show(self.inventory)
             return True
@@ -72,9 +75,6 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
 
     def get_inventories(self):
         return [self.inventory]
-
-    HARDNESS = 2.5
-    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
     def get_provided_slot_lists(self, side):
         return self.inventory.slots, self.inventory.slots
@@ -104,12 +104,10 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_block_remove(self, reason):
-        if not shared.world.gamerule_handler.table["doTileDrops"].status.status:
-            return
-
-        for slot in self.inventory.slots:
-            shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
-            slot.itemstack.clean()
+        if shared.world.gamerule_handler.table["doTileDrops"].status.status:
+            for slot in self.inventory.slots:
+                shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
+                slot.itemstack.clean()
 
         shared.inventory_handler.hide(self.inventory)
         del self.inventory
