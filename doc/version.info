@@ -1466,4 +1466,5 @@ R   [uuk]: improved world serialization API
 [uuk]: nether portal will now use a tag to decide for supporting blocks
 [uuk]: item tooltips will render block tags if block tag exists [duplicated tags are removed]
 [uuk]: fixed issue 250: rendering of blocks was broken
+[uuk]: in BlockItemGenerator, model handler will not print out errors anymore
 

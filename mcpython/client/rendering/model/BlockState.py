@@ -351,7 +351,9 @@ class DefaultDecoder(IBlockStateDecoder):
     def bake(self):
         if self.parent is not None:
             if self.parent not in shared.model_handler.blockstates:
-                print("block state referencing '{}' is invalid!".format(self.parent))
+                logger.println(
+                    "block state referencing '{}' is invalid!".format(self.parent)
+                )
                 return
 
             parent: BlockStateDefinition = shared.model_handler.blockstates[self.parent]
@@ -386,24 +388,28 @@ class DefaultDecoder(IBlockStateDecoder):
         for keymap, blockstate in self.states:
             if keymap == data:
                 return blockstate.add_face_to_batch(instance, batch, face)
-        logger.println(
-            "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
-                instance, data, [e[0] for e in self.states]
+
+        if not shared.model_handler.hide_blockstate_errors:
+            logger.println(
+                "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
+                    instance, data, [e[0] for e in self.states]
+                )
             )
-        )
-        return []
+        return tuple()
 
     def add_raw_face_to_batch(self, position, state, batches, face):
         state = state
         for keymap, blockstate in self.states:
             if keymap == state:
                 return blockstate.add_raw_face_to_batch(position, batches, face)
-        logger.println(
-            "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
-                position, state, [e[0] for e in self.states]
+
+        if not shared.model_handler.hide_blockstate_errors:
+            logger.println(
+                "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
+                    position, state, [e[0] for e in self.states]
+                )
             )
-        )
-        return []
+        return tuple()
 
     def transform_to_hitbox(
         self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget
@@ -437,11 +443,13 @@ class DefaultDecoder(IBlockStateDecoder):
             if keymap == data:
                 blockstate.draw_face(instance, face)
                 return
-        logger.println(
-            "[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
-                instance.NAME, instance.position, data, [e[0] for e in self.states]
+
+        if not shared.model_handler.hide_blockstate_errors:
+            logger.println(
+                "[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
+                    instance.NAME, instance.position, data, [e[0] for e in self.states]
+                )
             )
-        )
 
 
 class BlockStateDefinition:
@@ -610,11 +618,12 @@ class BlockState:
             )
         model, config, _ = self.models[instance.block_state]
         if model not in shared.model_handler.models:
-            logger.println(
-                "can't find model named '{}' to add at {}".format(
-                    model, instance.position
+            if not shared.model_handler.hide_blockstate_errors:
+                logger.println(
+                    "can't find model named '{}' to add at {}".format(
+                        model, instance.position
+                    )
                 )
-            )
             return tuple()
         result = shared.model_handler.models[model].add_face_to_batch(
             instance.position, batch, config, face
@@ -627,9 +636,10 @@ class BlockState:
         )
         model, config, _ = self.models[block_state]
         if model not in shared.model_handler.models:
-            logger.println(
-                "can't find model named '{}' to add at {}".format(model, position)
-            )
+            if not shared.model_handler.hide_blockstate_errors:
+                logger.println(
+                    "can't find model named '{}' to add at {}".format(model, position)
+                )
             return tuple()
         result = shared.model_handler.models[model].add_face_to_batch(
             position, batches, config, face
@@ -647,11 +657,13 @@ class BlockState:
             )
         model, config, _ = self.models[instance.block_state]
         if model not in shared.model_handler.models:
-            raise ValueError(
-                "can't find model named '{}' to draw at {}".format(
-                    model, instance.position
+            if not shared.model_handler.hide_blockstate_errors:
+                logger.println(
+                    "can't find model named '{}' to add at {}".format(
+                        model, instance.position
+                    )
                 )
-            )
+            return
         shared.model_handler.models[model].draw_face(instance.position, config, face)
 
 

@@ -33,6 +33,7 @@ class ModelHandler:
         self.blockstates = {}
         self.lookup_locations = set()
         self.dependence_list = []
+        self.hide_blockstate_errors = False
 
     def add_from_mod(self, modname: str):
         """
@@ -170,9 +171,10 @@ class ModelHandler:
             return tuple()
 
         if block.NAME not in self.blockstates:
-            logger.println(
-                "[FATAL] block state for block '{}' not found!".format(block.NAME)
-            )
+            if not self.hide_blockstate_errors:
+                logger.println(
+                    "[FATAL] block state for block '{}' not found!".format(block.NAME)
+                )
             return self.blockstates["minecraft:missing_texture"].add_face_to_batch(
                 block, batches, face
             )
@@ -209,11 +211,11 @@ class ModelHandler:
             return
 
         if block.NAME not in self.blockstates:
-            # todo: add option to disable these prints
-            logger.println(
-                "[FATAL] block state for block '{}' not found!".format(block.NAME)
-            )
-            return []
+            if not self.hide_blockstate_errors:
+                logger.println(
+                    "[FATAL] block state for block '{}' not found!".format(block.NAME)
+                )
+            return
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
         if blockstate is None:

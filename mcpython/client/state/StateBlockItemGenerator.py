@@ -134,6 +134,8 @@ class StateBlockItemGenerator(State.State):
             self.close()
             return
 
+        shared.model_handler.hide_blockstate_errors = True
+
         self.parts[1].progress_max = len(self.tasks)
         self.parts[1].progress = 1
 
@@ -170,6 +172,8 @@ class StateBlockItemGenerator(State.State):
 
     def deactivate(self):
         super().deactivate()
+        shared.model_handler.hide_blockstate_errors = False
+
         shared.world.cleanup()
 
         with open(shared.build + "/item_block_factory.json", mode="w") as f:

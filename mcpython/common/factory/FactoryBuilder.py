@@ -86,7 +86,9 @@ class FactoryBuilder:
                 return self.pool[0](*args, **kwargs)
 
     class SetterFactoryConfigurator(IFactoryConfigurator):
-        def __init__(self, func_name: str, attr_name: str, assert_type=object, default_value=None):
+        def __init__(
+            self, func_name: str, attr_name: str, assert_type=object, default_value=None
+        ):
             super().__init__(func_name)
             self.attr_name = attr_name
             self.assert_type = assert_type
@@ -99,7 +101,7 @@ class FactoryBuilder:
             if len(args) == 0:
                 value = self.default_value
             else:
-                value, = args
+                (value,) = args
             assert isinstance(value, self.assert_type), "type must be valid"
             instance.config_table[self.attr_name] = value
             return instance

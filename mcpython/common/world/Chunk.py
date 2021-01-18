@@ -252,7 +252,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 position,
                 immediate=immediate,
                 block_update=block_update,
-                block_update_self=block_update_self
+                block_update_self=block_update_self,
             )
 
         if block_name in [None, "air", "minecraft:air"]:
@@ -284,7 +284,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 block.NAME.replace("diorite", "andesite"),
                 immediate=immediate,
                 block_update=block_update,
-                block_update_self=block_update_self
+                block_update_self=block_update_self,
             )
 
         self.world[position] = block

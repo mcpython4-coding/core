@@ -104,10 +104,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
                 for line in itemstack.item.get_additional_tooltip_text(itemstack, self)
             ]
             + (
-                [
-                    self.default_style.format(color="gray", text=tag)
-                    for tag in tags
-                ]
+                [self.default_style.format(color="gray", text=tag) for tag in tags]
                 if not itemstack.is_empty()
                 else []
             )

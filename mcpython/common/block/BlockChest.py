@@ -196,9 +196,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
             self.loot_table_link = data["loot_table"]
         else:
             logger.println(
-                "[SERIALIZER][WARN] {} is missing loot table in save files".format(
-                    self
-                )
+                "[SERIALIZER][WARN] {} is missing loot table in save files".format(self)
             )
 
 

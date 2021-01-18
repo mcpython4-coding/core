@@ -65,8 +65,8 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple
     ):
-        if (
-            button == mouse.RIGHT and not modifiers & (key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL)
+        if button == mouse.RIGHT and not modifiers & (
+            key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL
         ):  # open the inv when needed
             shared.inventory_handler.show(self.inventory)
             return True

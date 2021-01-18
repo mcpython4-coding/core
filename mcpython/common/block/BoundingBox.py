@@ -24,9 +24,9 @@ class AbstractBoundingBox(ABC):
     """
 
     def test_point_hit(
-            self,
-            point: typing.Tuple[float, float, float],
-            boxposition: typing.Tuple[float, float, float],
+        self,
+        point: typing.Tuple[float, float, float],
+        boxposition: typing.Tuple[float, float, float],
     ):
         """
         Tests for a collision with a single point

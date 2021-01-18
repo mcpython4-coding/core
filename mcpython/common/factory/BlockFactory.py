@@ -571,11 +571,16 @@ block_factory_builder.register_configurator(
     )
 )
 block_factory_builder.register_configurator(
-    FactoryBuilder.SetterFactoryConfigurator("set_solid", "solid", bool, default_value=True)
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_solid", "solid", bool, default_value=True
+    )
 )
 block_factory_builder.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator(
-        "set_can_conduct_redstone_power", "can_conduct_redstone_power", bool, default_value=True
+        "set_can_conduct_redstone_power",
+        "can_conduct_redstone_power",
+        bool,
+        default_value=True,
     )
 )
 block_factory_builder.register_configurator(

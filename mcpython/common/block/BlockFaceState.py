@@ -178,6 +178,7 @@ class BlockFaceState:
     def hide_all(self):
         """
         Will hide all faces
+        todo: can we optimize it
         """
         if (
             any(self.faces.values())
