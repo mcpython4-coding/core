@@ -74,7 +74,7 @@ class CraftingGridHelperInterface(
         slot_output_map.on_update.append(self.on_output_update)
         slot_output_map.allow_half_getting = False
         slot_output_map.on_shift_click = self.on_output_shift_click
-        self.active_recipe: mcpython.common.container.crafting.IRecipeType.IRecipe = (
+        self.active_recipe: typing.Optional[mcpython.common.container.crafting.IRecipeType.IRecipe] = (
             None
         )
         self.shaped_enabled = enable_shaped_recipes and enabled

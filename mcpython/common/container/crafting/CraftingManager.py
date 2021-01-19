@@ -55,7 +55,7 @@ class CraftingManager:
                 self.recipe_relink_table[recipe.name] = recipe_2.name
                 recipe_group_copy[group].remove(recipe_2)
 
-    def check_relink(self, recipe):
+    def check_relink(self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe):
         name = recipe.name
         if name in self.recipe_relink_table:
             return self.recipe_table[self.recipe_relink_table[name]]
@@ -69,7 +69,7 @@ class CraftingManager:
         return obj
 
     def add_recipe(
-        self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe, name
+        self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe, name: str
     ):
         recipe.name = name
         recipe.register()
@@ -117,7 +117,7 @@ class CraftingManager:
                 )
             )
 
-    def load(self, modname, check_mod_dirs=True, load_direct=False):
+    def load(self, modname: str, check_mod_dirs=True, load_direct=False):
         if modname in self.loaded_mod_dirs and check_mod_dirs:
             logger.println(
                 "ERROR: mod '{}' has tried to load crafting recipes twice or more".format(

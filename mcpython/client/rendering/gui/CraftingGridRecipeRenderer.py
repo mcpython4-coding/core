@@ -47,8 +47,8 @@ class CraftingTableLikeRecipeViewRenderer(
         ]
 
         i = 0
-        for y in range(3):
-            for x in range(3):
+        for x in range(3):
+            for y in range(3):
                 self.slots[i].position = (x * 36 + 58, y * 36 + 18)
                 i += 1
         self.slots[-1].position = (246, 54)
@@ -71,11 +71,11 @@ class CraftingTableLikeRecipeViewRenderer(
 
             self.grid, output = recipe.as_grid_for_view((3, 3))
             i = 0
-            for x, row in enumerate(self.grid):
-                for y, entries in enumerate(row):
-                    if entries is not None:
-                        self.slots[i].set_itemstack(entries[0])
-                        self.mutation_iterator.append(itertools.cycle(range(len(entries))))
+            for row in self.grid:
+                for entry in row:
+                    if entry is not None:
+                        self.slots[i].set_itemstack(entry[0])
+                        self.mutation_iterator.append(itertools.cycle(range(len(entry))))
                     else:
                         self.mutation_iterator.append(tuple())
                     i += 1

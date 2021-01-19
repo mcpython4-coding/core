@@ -74,11 +74,11 @@ class Tag:
                         old_entries.remove(entry)
                         continue
                     self.entries = old_entries
-                    mcpython.mod.ModMcpython.mcpython.eventbus.subscribe(
+                    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                         "stage:tag:load", self.build
                     )
                     self.load_tries += 1
                     return
                 self.entries += self.master.tags[entry].entries
-            else:
+            elif entry not in self.entries:
                 self.entries.append(entry)

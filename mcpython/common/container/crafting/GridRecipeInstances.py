@@ -103,10 +103,10 @@ class GridShaped(AbstractCraftingGridRecipe):
 
     def as_grid(self):
         grid: typing.List[typing.List[typing.Optional[typing.List[typing.Tuple[str, int]]]]] = [
-            [None for _ in range(self.bboxsize[0])] for _ in range(self.bboxsize[1])
+            [None for _ in range(self.bboxsize[1])] for _ in range(self.bboxsize[0])
         ]
         for x, y in self.inputs:
-            grid[y][x] = self.inputs[x, y]
+            grid[x][y] = self.inputs[x, y]
 
         return grid
 
