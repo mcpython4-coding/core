@@ -353,6 +353,10 @@ class InventoryHandler:
         )
         self.shift_container = mcpython.client.gui.ShiftContainer.ShiftContainer()
 
+    def tick(self, dt: float):
+        for inventory in self.opened_inventory_stack:
+            inventory.tick(dt)
+
     def update_shift_container(self):
         for inventory in self.opened_inventory_stack:
             inventory.update_shift_container()

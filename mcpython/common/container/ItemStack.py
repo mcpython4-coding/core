@@ -106,3 +106,6 @@ class ItemStack:
             self.amount,
             "" if self.is_empty() else ",data={}".format(self.item.get_data()),
         )
+
+    def __repr__(self):
+        return str(self)

@@ -1468,4 +1468,5 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed issue 250: rendering of blocks was broken
 [uuk]: in BlockItemGenerator, model handler will not print out errors anymore
 [uuk]: implemented recipe view system; this changes some existing stuff
+[uuk]: inventories have now a tick(dt: float) method called during ticking
 

@@ -47,3 +47,6 @@ class InventorySingleRecipeView(mcpython.client.gui.Inventory.Inventory):
 
     def get_interaction_slots(self):
         return self.renderer.get_slots()
+
+    def tick(self, dt: float):
+        self.renderer.tick(dt)

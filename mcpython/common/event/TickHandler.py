@@ -60,6 +60,7 @@ class TickHandler:
                     self.lost_time = 0
                     return
         shared.entity_handler.tick(dt)
+        shared.inventory_handler.tick(dt)
         shared.world.tick()
         mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:tick")
         if self.enable_random_ticks:

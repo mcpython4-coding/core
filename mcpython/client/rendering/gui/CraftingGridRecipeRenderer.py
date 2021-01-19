@@ -12,6 +12,7 @@ import mcpython.common.event.EventHandler
 import mcpython.ResourceLoader
 import mcpython.util.texture
 from . import RecipeViewRenderer
+import itertools
 
 
 class CraftingTableLikeRecipeViewRenderer(
@@ -44,29 +45,46 @@ class CraftingTableLikeRecipeViewRenderer(
             )
             for _ in range(10)
         ]
+
+        i = 0
+        for y in range(3):
+            for x in range(3):
+                self.slots[i].position = (x * 36 + 58, y * 36 + 18)
+                i += 1
+        self.slots[-1].position = (246, 54)
+
+        self.mutation_iterator = []
+        self.grid = None
         self.enable_shapeless_symbol = False
+
+        self.remaining_state_time = 0
 
     def prepare_for_recipe(
         self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe
     ):
         self.recipe = recipe
+        print(recipe)
+        self.clear()
 
         if isinstance(recipe, GridRecipe.AbstractCraftingGridRecipe):
-            grid, output = recipe.as_grid_for_view((3, 3))
+            self.mutation_iterator.clear()
+
+            self.grid, output = recipe.as_grid_for_view((3, 3))
             i = 0
-            for x, row in enumerate(grid):
+            for x, row in enumerate(self.grid):
                 for y, entries in enumerate(row):
-                    if entries is None:
-                        self.slots[i].itemstack.clean()
-                    else:
+                    if entries is not None:
                         self.slots[i].set_itemstack(entries[0])
+                        self.mutation_iterator.append(itertools.cycle(range(len(entries))))
+                    else:
+                        self.mutation_iterator.append(tuple())
                     i += 1
             self.slots[-1].set_itemstack(output)
         else:
             logger.println(
-                "[ERROR] fatal recipe view exception: recipe is no grid recipe"
+                "[ERROR] fatal recipe view exception: recipe is not a grid recipe. Implement "
+                "AbstractCraftingGridRecipe for making this view work!"
             )
-            self.clear()
             return self
 
         return self
@@ -90,6 +108,17 @@ class CraftingTableLikeRecipeViewRenderer(
 
     def get_slots(self):
         return self.slots
+
+    def tick(self, dt: float):
+        self.remaining_state_time -= dt
+        if self.remaining_state_time <= 0:
+            self.remaining_state_time += 1
+            i = 0
+            for x, row in enumerate(self.grid):
+                for y, entries in enumerate(row):
+                    if entries is not None:
+                        self.slots[i].set_itemstack(entries[next(self.mutation_iterator[i])])
+                    i += 1
 
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(

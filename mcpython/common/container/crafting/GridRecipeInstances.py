@@ -49,18 +49,21 @@ def transform_to_item_stack(item, table: dict) -> list:
 class AbstractCraftingGridRecipe(
     mcpython.common.container.crafting.IRecipeType.IRecipe, ABC
 ):
+    RECIPE_VIEW_PROVIDER = (
+        mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
+    )
+
     def as_grid_for_view(
         self, max_size=(3, 3)
     ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         raise NotImplementedError()
 
+    def __repr__(self):
+        return "{}({})".format(self.__class__.__name__, self.as_grid_for_view())
+
 
 @shared.crafting_handler
 class GridShaped(AbstractCraftingGridRecipe):
-    RECIPE_VIEW_PROVIDER = (
-        mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
-    )
-
     RECIPE_NAMES = ["minecraft:crafting_shaped", "crafting_shaped"]
 
     @classmethod
@@ -72,17 +75,20 @@ class GridShaped(AbstractCraftingGridRecipe):
             if len(item_list) == 0:
                 return
             table[item] = item_list
+
         grid = {}
         for y, row in enumerate(pattern):
             for x, key in enumerate(row):
                 if key != " ":
                     grid[(x, y)] = table[key]
+
         out = transform_to_item_stack(data["result"], table)
         if len(out) == 0:
             return
+
         return cls(grid, out[0])
 
-    def __init__(self, inputs, output):
+    def __init__(self, inputs: typing.Dict[typing.Tuple[int, int], typing.Tuple[str, int]], output: typing.Tuple[str, int]):
         super().__init__()
         self.inputs = inputs
         self.output = output
@@ -96,7 +102,7 @@ class GridShaped(AbstractCraftingGridRecipe):
         ).setdefault(self.bboxsize, []).append(self)
 
     def as_grid(self):
-        grid = [
+        grid: typing.List[typing.List[typing.Optional[typing.List[typing.Tuple[str, int]]]]] = [
             [None for _ in range(self.bboxsize[0])] for _ in range(self.bboxsize[1])
         ]
         for x, y in self.inputs:
@@ -128,16 +134,11 @@ class GridShaped(AbstractCraftingGridRecipe):
 
     @classmethod
     def tag_to_stacks(cls, name: str, count: int = None):
-        tag = shared.tag_handler.get_tag_for(name, "blocks")
-        return [ItemStack(e) for e in tag.entries]
+        return [ItemStack(e) for e in shared.tag_handler.get_entries_for(name, "blocks")]
 
 
 @shared.crafting_handler
 class GridShapeless(AbstractCraftingGridRecipe):
-    RECIPE_VIEW_PROVIDER = (
-        mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
-    )
-
     RECIPE_NAMES = ["minecraft:crafting_shapeless", "crafting_shapeless"]
 
     @classmethod
@@ -148,7 +149,7 @@ class GridShapeless(AbstractCraftingGridRecipe):
             return
         return cls(inputs, out[0])
 
-    def __init__(self, inputs, output):
+    def __init__(self, inputs: typing.List[typing.List[typing.Tuple[str, int]]], output: typing.Tuple[str, int]):
         super().__init__()
         self.inputs = inputs
         self.output = output

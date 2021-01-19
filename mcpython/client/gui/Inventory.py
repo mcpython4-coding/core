@@ -134,6 +134,9 @@ class Inventory(ABC):
     def on_reload(self):
         pass
 
+    def tick(self, dt: float):
+        pass
+
     def create_slots(self) -> list:
         """
         creates the slots

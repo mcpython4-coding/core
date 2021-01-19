@@ -45,3 +45,6 @@ class AbstractRecipeViewRenderer(ABC):
 
     def get_slots(self):
         return tuple()
+
+    def tick(self, dt: float):
+        pass

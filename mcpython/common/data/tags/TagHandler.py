@@ -11,6 +11,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython import logger
 from mcpython import shared
 import mcpython.ResourceLoader
 import mcpython.common.mod.ModMcpython
@@ -105,6 +106,19 @@ class TagHandler:
         if group not in self.taggroups or name not in self.taggroups[group].tags:
             raise ValueError("unknown tag '{}' in group '{}'".format(name, group))
         return self.taggroups[group].tags[name]
+
+    def get_entries_for(self, name: str, group: str) -> list:
+        """
+        will return the tag by name and group
+        :param name: the name to use
+        :param group: the group to use
+        :return: the tag instance
+        :raises ValueError: when the tag is not found
+        """
+        if group not in self.taggroups or name not in self.taggroups[group].tags:
+            logger.println("unknown tag '{}' in group '{}'".format(name, group))
+            return []
+        return self.taggroups[group].tags[name].entries
 
     def get_tags_for_entry(self, identifier: str, group: str) -> list:
         """
