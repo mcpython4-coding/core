@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.container.crafting.IRecipeType
 from mcpython import shared, logger
-import mcpython.common.container.ItemStack
+import mcpython.client.rendering.gui.CraftingGridRecipeRenderer
 
 
 def transform_to_item_stack(item, table: dict) -> list:
@@ -44,6 +44,10 @@ def transform_to_item_stack(item, table: dict) -> list:
 
 @shared.crafting_handler
 class GridShaped(mcpython.common.container.crafting.IRecipeType.IRecipe):
+    RECIPE_VIEW_PROVIDER = (
+        mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
+    )
+
     RECIPE_NAMES = ["minecraft:crafting_shaped", "crafting_shaped"]
 
     @classmethod
@@ -81,6 +85,10 @@ class GridShaped(mcpython.common.container.crafting.IRecipeType.IRecipe):
 
 @shared.crafting_handler
 class GridShapeless(mcpython.common.container.crafting.IRecipeType.IRecipe):
+    RECIPE_VIEW_PROVIDER = (
+        mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
+    )
+
     RECIPE_NAMES = ["minecraft:crafting_shapeless", "crafting_shapeless"]
 
     @classmethod

@@ -70,6 +70,7 @@ def load_commands():
         CommandXp,
         CommandShuffleData,
         CommandBlockInfo,
+        CommandRecipeView,
     )
 
     # register this at the end

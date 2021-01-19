@@ -11,21 +11,3 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
-import uuid
-
-
-class IRecipe:
-    RECIPE_NAMES: typing.List[str] = []
-    RECIPE_VIEW_PROVIDER = None
-
-    @classmethod
-    def from_data(cls, data: dict):
-        return cls()
-
-    def __init__(self):
-        self.uuid = uuid.uuid4()
-        self.name = None
-
-    def register(self):
-        pass

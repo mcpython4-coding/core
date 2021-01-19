@@ -11,6 +11,9 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+from abc import ABC
+
 from mcpython import shared, logger
 import pyglet
 import mcpython.ResourceLoader
@@ -21,21 +24,21 @@ import random
 import deprecation
 
 
-class Inventory:
+class Inventory(ABC):
     """
     base inventory class
     todo: split up into the storage part and the rendering part
     """
 
     @staticmethod
-    def get_config_file() -> str:
+    def get_config_file() -> typing.Optional[str]:
         """
         :return: the location of the inventory config file (if provided)
         """
 
     def __init__(self):
         self.active = False
-        self.bg_sprite: pyglet.sprite.Sprite = None
+        self.bg_sprite: typing.Optional[pyglet.sprite.Sprite] = None
         self.bg_image_size = None
         self.bg_anchor = "MM"
         self.window_anchor = "MM"

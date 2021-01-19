@@ -1467,4 +1467,5 @@ R   [uuk]: improved world serialization API
 [uuk]: item tooltips will render block tags if block tag exists [duplicated tags are removed]
 [uuk]: fixed issue 250: rendering of blocks was broken
 [uuk]: in BlockItemGenerator, model handler will not print out errors anymore
+[uuk]: implemented recipe view system; this changes some existing stuff
 

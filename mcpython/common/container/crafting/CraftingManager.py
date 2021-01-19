@@ -92,8 +92,10 @@ class CraftingManager:
         except:
             logger.print_exception("during loading recipe file '{}'".format(file))
             return
+
         if len(data.strip()) == 0:
             return
+
         try:
             data = json.loads(data)
         except:
@@ -101,11 +103,13 @@ class CraftingManager:
                 "during decoding recipe from file '{}'".format(file), "'" + data + "'"
             )
             return
+
         s = file.split("/")
         name = "{}:{}".format(
             s[s.index("data") + 1], "/".join(s[s.index("recipes") + 1 :])
-        )
+        ).removesuffix(".json")
         result = self.add_recipe_from_data(data, name)
+
         if result is None and "--debugrecipes" in sys.argv:
             logger.println(
                 "error in decoding recipe from file '{}': type '{}' not found".format(
