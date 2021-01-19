@@ -11,9 +11,13 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 import mcpython.common.container.crafting.IRecipeType
 from mcpython import shared, logger
 import mcpython.client.rendering.gui.CraftingGridRecipeRenderer
+from mcpython.common.container.ItemStack import ItemStack
+import typing
 
 
 def transform_to_item_stack(item, table: dict) -> list:
@@ -42,8 +46,17 @@ def transform_to_item_stack(item, table: dict) -> list:
         return []
 
 
+class AbstractCraftingGridRecipe(
+    mcpython.common.container.crafting.IRecipeType.IRecipe, ABC
+):
+    def as_grid_for_view(
+        self, max_size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        raise NotImplementedError()
+
+
 @shared.crafting_handler
-class GridShaped(mcpython.common.container.crafting.IRecipeType.IRecipe):
+class GridShaped(AbstractCraftingGridRecipe):
     RECIPE_VIEW_PROVIDER = (
         mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
     )
@@ -73,8 +86,8 @@ class GridShaped(mcpython.common.container.crafting.IRecipeType.IRecipe):
         super().__init__()
         self.inputs = inputs
         self.output = output
-        sx = max(self.inputs, key=lambda x: x[0])[0]
-        sy = max(self.inputs, key=lambda x: x[1])[1]
+        sx = max(self.inputs, key=lambda x: x[0])[0] + 1
+        sy = max(self.inputs, key=lambda x: x[1])[1] + 1
         self.bboxsize = (sx, sy)
 
     def register(self):
@@ -82,9 +95,45 @@ class GridShaped(mcpython.common.container.crafting.IRecipeType.IRecipe):
             len(self.inputs), {}
         ).setdefault(self.bboxsize, []).append(self)
 
+    def as_grid(self):
+        grid = [
+            [None for _ in range(self.bboxsize[0])] for _ in range(self.bboxsize[1])
+        ]
+        for x, y in self.inputs:
+            grid[y][x] = self.inputs[x, y]
+
+        return grid
+
+    def as_grid_for_view(
+        self, max_size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        grid = [
+            [
+                sum(
+                    [
+                        [ItemStack(*e)]
+                        if not e[0].startswith("#")
+                        else self.tag_to_stacks(*e)
+                        for e in entry
+                    ],
+                    [],
+                )
+                if entry is not None
+                else None
+                for entry in row
+            ]
+            for row in self.as_grid()
+        ]
+        return grid, ItemStack(*self.output)
+
+    @classmethod
+    def tag_to_stacks(cls, name: str, count: int = None):
+        tag = shared.tag_handler.get_tag_for(name, "blocks")
+        return [ItemStack(e) for e in tag.entries]
+
 
 @shared.crafting_handler
-class GridShapeless(mcpython.common.container.crafting.IRecipeType.IRecipe):
+class GridShapeless(AbstractCraftingGridRecipe):
     RECIPE_VIEW_PROVIDER = (
         mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
     )
@@ -108,3 +157,26 @@ class GridShapeless(mcpython.common.container.crafting.IRecipeType.IRecipe):
         shared.crafting_handler.crafting_recipes_shapeless.setdefault(
             len(self.inputs), []
         ).append(self)
+
+    def as_grid_for_view(
+        self, max_size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        stacks = self.inputs[:]
+        grid = [
+            [
+                sum(
+                    [
+                        [ItemStack(*e)]
+                        if not e[0].startswith("#")
+                        else GridShaped.tag_to_stacks(*e)
+                        for e in stacks.pop()
+                    ],
+                    [],
+                )
+                if len(stacks) > 0
+                else None
+                for _ in range(max_size[1])
+            ]
+            for _ in range(max_size[0])
+        ]
+        return grid, ItemStack(*self.output)

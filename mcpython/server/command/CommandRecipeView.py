@@ -36,18 +36,25 @@ class CommandRecipeView(mcpython.server.command.Command.Command):
     @classmethod
     def parse(cls, values: list, modes: list, info):
         name = values[0]
-        
+
         if name not in shared.crafting_handler.recipe_table:
             info.chat.print_ln("[ERROR] recipe '{}' is not found!".format(name))
             return
 
         recipe = shared.crafting_handler.recipe_table[name]
         if recipe.RECIPE_VIEW_PROVIDER is None:
-            info.chat.print_ln("[ERROR] recipe '{}' of type '{}' has no view assigned!".format(
-                name, type(recipe)))
+            info.chat.print_ln(
+                "[ERROR] recipe '{}' of type '{}' has no view assigned!".format(
+                    name, type(recipe)
+                )
+            )
             return
 
-        shared.inventory_handler.show(cls.INVENTORY.set_renderer(recipe.RECIPE_VIEW_PROVIDER.prepare_for_recipe(recipe)))
+        shared.inventory_handler.show(
+            cls.INVENTORY.set_renderer(
+                recipe.RECIPE_VIEW_PROVIDER.prepare_for_recipe(recipe)
+            )
+        )
 
     @staticmethod
     def get_help() -> list:

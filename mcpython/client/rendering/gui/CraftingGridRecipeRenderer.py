@@ -6,6 +6,7 @@ import pyglet
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.GridRecipeInstances as GridRecipe
 import mcpython.common.container.crafting.IRecipeType
+from mcpython import logger
 from mcpython.common.container.ItemStack import ItemStack
 import mcpython.common.event.EventHandler
 import mcpython.ResourceLoader
@@ -13,15 +14,19 @@ import mcpython.util.texture
 from . import RecipeViewRenderer
 
 
-class CraftingTableLikeRecipeViewRenderer(RecipeViewRenderer.AbstractRecipeViewRenderer):
+class CraftingTableLikeRecipeViewRenderer(
+    RecipeViewRenderer.AbstractRecipeViewRenderer
+):
     TEXTURE: typing.Optional[pyglet.image.AbstractImage] = None
     TEXTURE_SIZE: typing.Optional[typing.Tuple[int, int]] = None
 
     @classmethod
     def update_texture(cls):
+        # the custom view background
         texture = mcpython.ResourceLoader.read_image(
             "minecraft:gui/container/crafting_table_view"
         )
+
         size = texture.size
         texture = texture.crop((0, 0, 176 / 255 * size[0], 71 / 255 * size[1]))
         size = texture.size
@@ -31,30 +36,43 @@ class CraftingTableLikeRecipeViewRenderer(RecipeViewRenderer.AbstractRecipeViewR
 
     def __init__(self):
         self.recipe = None
-        self.slots = [mcpython.client.gui.Slot.Slot() for _ in range(10)]
+        self.slots = [
+            mcpython.client.gui.Slot.Slot(
+                allow_player_insert=False,
+                allow_player_remove=False,
+                allow_player_add_to_free_place=False,
+            )
+            for _ in range(10)
+        ]
         self.enable_shapeless_symbol = False
 
     def prepare_for_recipe(
         self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe
     ):
         self.recipe = recipe
-        if isinstance(recipe, GridRecipe.GridShaped):
-            self.enable_shapeless_symbol = False
+
+        if isinstance(recipe, GridRecipe.AbstractCraftingGridRecipe):
+            grid, output = recipe.as_grid_for_view((3, 3))
             i = 0
-            for x in range(recipe.bboxsize[0]):
-                for y in range(recipe.bboxsize[1]):
-                    # todo: use all possibilities via an itertools.mutations() and tick system
-                    item = recipe.inputs[x][y][0]
-                    print(item)
-                    self.slots[i].set_itemstack(ItemStack(*item))
+            for x, row in enumerate(grid):
+                for y, entries in enumerate(row):
+                    if entries is None:
+                        self.slots[i].itemstack.clean()
+                    else:
+                        self.slots[i].set_itemstack(entries[0])
                     i += 1
-
-            self.slots[-1].set_itemstack(ItemStack(*recipe.output))
-
-        elif isinstance(recipe, GridRecipe.GridShapeless):
-            self.enable_shapeless_symbol = True
+            self.slots[-1].set_itemstack(output)
+        else:
+            logger.println(
+                "[ERROR] fatal recipe view exception: recipe is no grid recipe"
+            )
+            self.clear()
+            return self
 
         return self
+
+    def clear(self):
+        [slot.itemstack.clean() for slot in self.slots]
 
     def draw(self, position: typing.Tuple[int, int], hovering_slot=None):
         self.TEXTURE.blit(*position)
