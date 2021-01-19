@@ -1,3 +1,16 @@
+"""
+mcpython - a minecraft clone written in python licenced under MIT-licence
+authors: uuk, xkcdjerry (inactive)
+
+based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced under MIT-licence
+original game "minecraft" by Mojang Studios (www.minecraft.net)
+mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
+
+blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
+(https://www.minecraft.net/en-us/article/minecraft-snapshot-20w51a)
+
+This project is not official by mojang and does not relate to it.
+"""
 import typing
 
 import PIL.Image
@@ -75,7 +88,9 @@ class CraftingTableLikeRecipeViewRenderer(
                 for entry in row:
                     if entry is not None:
                         self.slots[i].set_itemstack(entry[0])
-                        self.mutation_iterator.append(itertools.cycle(range(len(entry))))
+                        self.mutation_iterator.append(
+                            itertools.cycle(range(len(entry)))
+                        )
                     else:
                         self.mutation_iterator.append(tuple())
                     i += 1
@@ -117,7 +132,9 @@ class CraftingTableLikeRecipeViewRenderer(
             for x, row in enumerate(self.grid):
                 for y, entries in enumerate(row):
                     if entries is not None:
-                        self.slots[i].set_itemstack(entries[next(self.mutation_iterator[i])])
+                        self.slots[i].set_itemstack(
+                            entries[next(self.mutation_iterator[i])]
+                        )
                     i += 1
 
 

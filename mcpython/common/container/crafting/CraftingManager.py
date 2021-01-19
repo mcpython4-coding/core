@@ -55,7 +55,9 @@ class CraftingManager:
                 self.recipe_relink_table[recipe.name] = recipe_2.name
                 recipe_group_copy[group].remove(recipe_2)
 
-    def check_relink(self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe):
+    def check_relink(
+        self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe
+    ):
         name = recipe.name
         if name in self.recipe_relink_table:
             return self.recipe_table[self.recipe_relink_table[name]]

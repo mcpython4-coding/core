@@ -88,7 +88,11 @@ class GridShaped(AbstractCraftingGridRecipe):
 
         return cls(grid, out[0])
 
-    def __init__(self, inputs: typing.Dict[typing.Tuple[int, int], typing.Tuple[str, int]], output: typing.Tuple[str, int]):
+    def __init__(
+        self,
+        inputs: typing.Dict[typing.Tuple[int, int], typing.Tuple[str, int]],
+        output: typing.Tuple[str, int],
+    ):
         super().__init__()
         self.inputs = inputs
         self.output = output
@@ -102,9 +106,9 @@ class GridShaped(AbstractCraftingGridRecipe):
         ).setdefault(self.bboxsize, []).append(self)
 
     def as_grid(self):
-        grid: typing.List[typing.List[typing.Optional[typing.List[typing.Tuple[str, int]]]]] = [
-            [None for _ in range(self.bboxsize[1])] for _ in range(self.bboxsize[0])
-        ]
+        grid: typing.List[
+            typing.List[typing.Optional[typing.List[typing.Tuple[str, int]]]]
+        ] = [[None for _ in range(self.bboxsize[1])] for _ in range(self.bboxsize[0])]
         for x, y in self.inputs:
             grid[x][y] = self.inputs[x, y]
 
@@ -134,7 +138,9 @@ class GridShaped(AbstractCraftingGridRecipe):
 
     @classmethod
     def tag_to_stacks(cls, name: str, count: int = None):
-        return [ItemStack(e) for e in shared.tag_handler.get_entries_for(name, "blocks")]
+        return [
+            ItemStack(e) for e in shared.tag_handler.get_entries_for(name, "blocks")
+        ]
 
 
 @shared.crafting_handler
@@ -149,7 +155,11 @@ class GridShapeless(AbstractCraftingGridRecipe):
             return
         return cls(inputs, out[0])
 
-    def __init__(self, inputs: typing.List[typing.List[typing.Tuple[str, int]]], output: typing.Tuple[str, int]):
+    def __init__(
+        self,
+        inputs: typing.List[typing.List[typing.Tuple[str, int]]],
+        output: typing.Tuple[str, int],
+    ):
         super().__init__()
         self.inputs = inputs
         self.output = output
