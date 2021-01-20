@@ -1471,4 +1471,5 @@ R   [uuk]: improved world serialization API
 [uuk]: inventories have now a tick(dt: float) method called during ticking
 [uuk]: updated docs, doc formatter
 [uul]: Chunk supports now [position] like dicts, iter over (position, block), and == at data level
+[uuk]: added abstract base class for containers
 

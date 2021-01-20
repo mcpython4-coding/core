@@ -28,6 +28,7 @@ class Inventory(ABC):
     """
     base inventory class
     todo: split up into the storage part and the rendering part
+        [WIP, see common/container/AbstractContainer.py]
     """
 
     @staticmethod
@@ -206,7 +207,7 @@ class Inventory(ABC):
     def is_blocking_interactions(self) -> bool:
         return True
 
-    def on_world_cleared(self):  # todo: remove
+    def on_world_cleared(self):
         [slot.get_itemstack().clean() for slot in self.slots]
         if self in shared.inventory_handler.opened_inventory_stack:
             shared.inventory_handler.hide(self)
@@ -291,14 +292,3 @@ class Inventory(ABC):
         """
         called when the inventory should update the content of the ShiftContainer of the inventory-handler
         """
-
-    def __del__(self):
-        # we do not care about it when it is None [gc-sided deletion at the end of the program]
-        if shared is None or shared.inventory_handler is None:
-            return
-        if self in shared.inventory_handler.always_opened:
-            shared.inventory_handler.always_opened.remove(self)
-        shared.inventory_handler.hide(self)
-        if self in shared.inventory_handler.inventories:
-            shared.inventory_handler.inventories.remove(self)
-        shared.inventory_handler.update_shift_container()
