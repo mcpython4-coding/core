@@ -37,6 +37,9 @@ class CraftingGridHelperInterface(
 ):
     """
     Recipe interface for an crafting grid of arbitrary size using the default recipe implementation
+    todo: implement insert helper
+    todo: add dynamic replacement table for items (e.g. stone may be replaced by diamond blocks),
+        this MAY be data-driven
     """
 
     ADAPTERS: typing.List[IRecipeAdapter] = []
@@ -83,7 +86,8 @@ class CraftingGridHelperInterface(
 
     def check_recipe_state(self):
         """
-        Helper function for re-checking the items in the grid. Auto-called if an slot-itemstack is updated
+        Helper function for re-checking the items in the grid. Auto-called if a slot-itemstack
+        assigned to this helper is updated
         """
         # get info about the items which are in the interface
         item_length = 0
@@ -93,21 +97,27 @@ class CraftingGridHelperInterface(
             for x, slot in enumerate(row):
                 if not slot.get_itemstack().is_empty():
                     item_length += 1
-                    item_table[(x, y)] = slot.get_itemstack().get_item_name()
-                    shapeless_items.append(slot.get_itemstack().get_item_name())
+                    item_table[x, y] = slot.get_itemstack().item
+                    shapeless_items.append(slot.get_itemstack().item)
 
         # Reset the active stuff
         self.active_recipe = None
         self.slot_output_map.get_itemstack().clean()
 
+        # have we any item in the grid?
         if len(shapeless_items) == 0:
-            return  # have we any item in the grid?
+            return
 
-        shapeless_items.sort()
+        # prepare collected data for lookup
+        shapeless_items.sort(key=lambda item: item.NAME)
         item_table = self.minimize_slot_map(item_table)
-        sx = max(item_table, key=lambda v: v[0])[0]
-        sy = max(item_table, key=lambda v: v[1])[1]
+        sx = max(item_table, key=lambda v: v[0])[0] + 1
+        sy = max(item_table, key=lambda v: v[1])[1] + 1
         size = (sx, sy)
+
+        # print(size, shapeless_items, item_table)
+
+        # decide which recipes may work
         recipes = []
         if (
             item_length in shared.crafting_handler.crafting_recipes_shaped
@@ -127,6 +137,7 @@ class CraftingGridHelperInterface(
                 and self.shaped_enabled
             ):
                 state = self.check_shaped(recipe, item_table)
+
             elif (
                 isinstance(
                     recipe,
@@ -135,6 +146,7 @@ class CraftingGridHelperInterface(
                 and self.shapeless_enabled
             ):
                 state = self.check_shapeless(recipe, shapeless_items)
+
             else:
                 for adapter in self.ADAPTERS:
                     try:
@@ -144,7 +156,7 @@ class CraftingGridHelperInterface(
                         pass
                 else:
                     logger.println(
-                        "recipe '{}' could NOT be checked as it is not an subclass of an supported recipe".format(
+                        "recipe '{}' could NOT be checked as it is not an subclass of any supported recipe".format(
                             recipe
                         )
                     )
@@ -198,14 +210,14 @@ class CraftingGridHelperInterface(
 
     @classmethod
     def check_match(cls, current, target) -> bool:
-        tags = shared.registry.get_by_name("minecraft:item").entries[current].TAGS
+        tags = current.TAGS
         for entry in target:
             if type(entry) != str:
                 entry = entry[0]
             if entry.startswith("#"):
                 if entry in tags:
                     return True
-            if current == entry:
+            if current.NAME == entry:
                 return True
         return False
 
@@ -216,14 +228,12 @@ class CraftingGridHelperInterface(
     ) -> bool:
         tasked = recipe.inputs[:]
         for item in items:
-            tags = shared.registry.get_by_name("minecraft:item").entries[item].TAGS
+            tags = item.TAGS
             for task in tasked[:]:
                 for entry in task:
                     if type(entry) != str:
                         entry = entry[0]
-                    if item == entry or (
-                        False if not entry.startswith("#") else entry in tags
-                    ):
+                    if item.NAME == entry or entry in tags:
                         tasked.remove(task)
                         break
                 else:

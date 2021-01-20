@@ -1474,4 +1474,5 @@ R   [uuk]: improved world serialization API
 [uuk]: added abstract base class for containers
 [uuk]: inventories can draw now their custom name
 [uuk]: changed recipe API
+[uuk]: fixed recipes
 

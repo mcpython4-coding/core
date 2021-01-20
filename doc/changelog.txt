@@ -56,8 +56,9 @@ changelog of snapshot <20w04a> released on -, targeting <20w03a>
     Server:
         - improved server separation from client
 
-    GUI:
+    Crafting:
         - added a screen system for displaying recipes
+        - rewritten base recipe API
 
     Documentation:
         - fixed documentation generation; updated doc
@@ -65,6 +66,7 @@ changelog of snapshot <20w04a> released on -, targeting <20w03a>
     Fixed issues:
         - escaping in logs did not work in some edge cases correctly
         - major rendering issue when updating blocks
+        - recipes were not working [MAYBE]
 
 
 changelog of snapshot 20w01a, released on 06.01.2021, targeting 20w51a
