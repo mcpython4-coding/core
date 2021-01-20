@@ -37,50 +37,49 @@ class DataPackStatus(enum.Enum):
 
 class DataPackHandler:
     """
-    handler for datapacks
+    Handler for datapacks
     """
 
     def __init__(self):
-        self.data_packs = []
+        self.loaded_data_packs = []
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "game:close", self.cleanup
         )
 
     def _load(self):
         """
-        will load all data packs
+        Will load all data packs
         """
         for path in os.listdir(shared.home + "/datapacks"):
-            self.data_packs.append(
-                self.load_datapack_from_directory(shared.home + "/datapacks/" + path)
-            )
+            self.load_datapack_from_directory(shared.home + "/datapacks/" + path)
         shared.event_handler.call("datapack:search")
 
     def load_datapack_from_directory(self, directory: str):
         """
-        will load an given data pack
+        Will load an given data pack
         :param directory: the directory to load from
         """
         try:
             datapack = DataPack(directory)
             datapack.load()
             shared.event_handler.call("datapack:load", datapack)
-            return datapack
+            self.loaded_data_packs.append(datapack)
         except:
             logger.print_exception("during loading data pack from {}".format(directory))
 
     def reload(self):
         """
-        reloads all data packs
+        Reloads all data packs
         """
         old_status_table = {
-            datapack.name: datapack.status for datapack in self.data_packs
+            datapack.name: datapack.status for datapack in self.loaded_data_packs
         }
         self.cleanup()
         self._load()
         shared.event_handler.call("datapack:reload")
+
         # restore old state
-        for datapack in self.data_packs:
+        for datapack in self.loaded_data_packs:
             if datapack.name in old_status_table:
                 if old_status_table[datapack.name] in (
                     DataPackStatus.ACTIVATED,
@@ -90,12 +89,12 @@ class DataPackHandler:
 
     def cleanup(self):
         """
-        removes all data packs from the system
+        Removes all data packs from the system
         """
         shared.event_handler.call("datapack:unload:pre")
-        for datapack in self.data_packs:
+        for datapack in self.loaded_data_packs:
             datapack.unload()
-        self.data_packs.clear()
+        self.loaded_data_packs.clear()
         shared.event_handler.call("datapack:unload:post")
 
     def try_call_function(
@@ -104,9 +103,9 @@ class DataPackHandler:
         info: mcpython.server.command.CommandParser.ParsingCommandInfo = None,
     ):
         """
-        Will try to invoke an function in an datapack
-        :param name: the name of the function, e.g. minecraft:test
-        :param info: the info-object to use
+        Will try to invoke a function in a datapack
+        :param name: the name of the function, e.g. "minecraft:test"
+        :param info: the info-object to use; when None, one is constructed for this
         WARNING: will only invoke ONE function/tag from the datapacks, not all
         """
         if info is None:
@@ -119,7 +118,7 @@ class DataPackHandler:
             for name in tag.entries:
                 self.try_call_function(name, info.copy())
             return
-        for datapack in self.data_packs:
+        for datapack in self.loaded_data_packs:
             if datapack.status == DataPackStatus.ACTIVATED:
                 if name in datapack.function_table:
                     return datapack.function_table[name].execute(info)

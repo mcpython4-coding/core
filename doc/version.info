@@ -1469,4 +1469,6 @@ R   [uuk]: improved world serialization API
 [uuk]: in BlockItemGenerator, model handler will not print out errors anymore
 [uuk]: implemented recipe view system; this changes some existing stuff
 [uuk]: inventories have now a tick(dt: float) method called during ticking
+[uuk]: updated docs, doc formatter
+[uul]: Chunk supports now [position] like dicts, iter over (position, block), and == at data level
 

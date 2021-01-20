@@ -225,7 +225,9 @@ class StateBlockItemGenerator(State.State):
             self.close()
             return
 
-        dimension.hide_block((0, 0, 0))
+        block = dimension.get_block((0, 0, 0))
+        if block is not None:
+            block.face_state.hide_all()
 
         try:
             instance = dimension.add_block(

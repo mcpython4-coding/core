@@ -33,19 +33,62 @@ class ChunkLoadTicketType(enum.Enum):
 
 
 class IChunk(ABC):
+    """
+    Abstract class for chunks
+    Belows follows an API description
+    This API is STABLE, its implementation should NOT change dramatically if not needed
+
+    The following stuff MAY change in the near future:
+        - structure / existence of world-attribute
+        - structure / existence of positions_updated_since_last_save-attribute
+        - existence of entities attribute
+        - WIP of chunk_loaded_list attribute, together with add_chunk_load_ticket(...) and check_for_unload()
+    """
+
     def __init__(self):
+        # the world, as a dict position -> block instance
+        # todo: use relative position
+        # todo: maybe use sectors?
         self.world: typing.Dict[
             typing.Tuple[int, int, int], typing.Any
-        ] = {}  # the world
+        ] = {}
+
+        # set holding positions updated since last save
+        # todo: use relative positions
+        # todo: maybe replace by dirty sectors?
         self.positions_updated_since_last_save: typing.Set[
             typing.Tuple[int, int, int]
         ] = set()
+
+        # a set of entities in this chunk
+        # todo: maybe use per-sector?
         self.entities: typing.Set[
             mcpython.common.entity.AbstractEntity.AbstractEntity
         ] = set()
+
+        # inner API list for ChunkLoadTickets [WIP]
+        # todo: use something better...
         self.chunk_loaded_list = tuple([[] for _ in range(16)])
 
+    def is_loaded(self) -> bool:
+        raise NotImplementedError()
+
+    def is_generated(self) -> bool:
+        raise NotImplementedError()
+
+    def is_visible(self) -> bool:
+        raise NotImplementedError()
+
     def add_chunk_load_ticket(self, ticket_type: ChunkLoadTicketType, data=None):
+        """
+        Chunk load ticket API
+        Adds a new ticket to the inner system for letting this chunk be loaded
+        WIP
+        todo: add timestamp
+        todo: 16 lists are not good...
+        todo: add way to remove ticket
+        todo: save this to the save files
+        """
         if ticket_type.value in (0, 1):
             assert data is None
             self.chunk_loaded_list[-1].append(ticket_type)
@@ -57,6 +100,12 @@ class IChunk(ABC):
             self.chunk_loaded_list[0].append((ticket_type, data))
 
     def check_for_unload(self):
+        """
+        Helper function for checking if this chunk should get unloaded or not
+        todo: this is not optimal
+        todo: do we really need to do this every tick?
+        todo: 16 lists are bad!
+        """
         flag = False
         for i, layer in enumerate(self.chunk_loaded_list):
             for ticket, *data in layer[:]:
@@ -74,21 +123,34 @@ class IChunk(ABC):
         if not flag:
             self.get_dimension().unload_chunk(self)
 
+    # simple getter for the dimension
     def get_dimension(self) -> "IDimension":
         raise NotImplementedError()
 
+    # simple getter for the chunk position
     def get_position(self) -> typing.Tuple[int, int]:
         raise NotImplementedError()
 
     def get_maximum_y_coordinate_from_generation(self, x: int, z: int) -> int:
+        """
+        Helper for finding the highest position in the chunk from generation
+        todo: migrate to special system for world generation attributes
+        """
         raise NotImplementedError()
 
     def exposed_faces(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Dict[mcpython.util.enums.EnumSide, bool]:
+        """
+        Helper for getting exposed faces of a block
+        todo: add iterating variant
+        """
         raise NotImplementedError()
 
     def is_position_blocked(self, position: typing.Tuple[float, float, float]) -> bool:
+        """
+        Checks if the given position is not air
+        """
         raise NotImplementedError()
 
     def add_block(
@@ -116,13 +178,17 @@ class IChunk(ABC):
         :param lazy_setup: an callable for setting up the block instance
         :param check_build_range: if the build limits should be checked
         :param block_state: the block state to create in, or None if not set
-        :return: the block instance or None if it could not be created
+        :return: the block instance or None if it could not be created for some reason
+        todo: add method which raises an exception on fail
         """
         raise NotImplementedError()
 
     def on_block_updated(
         self, position: typing.Tuple[float, float, float], itself=True
     ):
+        """
+        Updates the block at the given position
+        """
         raise NotImplementedError()
 
     def remove_block(
@@ -136,9 +202,24 @@ class IChunk(ABC):
         block_update_self: bool = True,
         reason=mcpython.common.block.AbstractBlock.BlockRemovalReason.UNKNOWN,
     ):
+        """
+        Removes a block from a given position
+        :param position: the position to remove at
+        :param immediate: immediate hide?
+        :param block_update: block update to the blocks around?
+        :param block_update_self: block update to the current block?
+        :param reason: why it is removed, see mcpython.common.block.AbstractBlock.BlockRemovalReason for possible
+            values
+        todo: add "unsafe" variant skipping various sanity checks
+        todo: add option to not call on_remove on target block
+        """
         raise NotImplementedError()
 
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
+        """
+        Checks the visual state of adjusting blocks to the given position
+        todo: rename to something fitting!
+        """
         raise NotImplementedError()
 
     def show_block(
@@ -149,6 +230,12 @@ class IChunk(ABC):
         ],
         immediate: bool = True,
     ):
+        """
+        Client-only visual show function
+        Unused internally
+        todo: remove
+        use block.face_state.update(True) instead
+        """
         raise NotImplementedError()
 
     def hide_block(
@@ -159,53 +246,83 @@ class IChunk(ABC):
         ],
         immediate=True,
     ):
+        """
+        Client-only visual hide function
+        Unused internally
+        todo: remove
+        use block.face_state.hide_all() instead
+        """
         raise NotImplementedError()
 
     def show(self, force=False):
+        """
+        Shows the entire chunk
+        :param force: unused; todo: remove
+        """
         raise NotImplementedError()
 
     def hide(self, force=False):
+        """
+        Hides an entire chunk
+        :param force: if to force-hide; todo: remove
+        """
         raise NotImplementedError()
 
     def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
+        """
+        Calls Block.face_state.update()
+        :param position: the position to update at
+        :param hide: not for usage; todo: remove
+        """
         raise NotImplementedError()
 
     def exposed(self, position: typing.Tuple[int, int, int]):
+        """
+        Checks if the given position is exposed so it should be shown
+        :param position: the position to check
+        """
         raise NotImplementedError()
 
     def update_visible(self, hide=True, immediate=False):
+        """
+        Updates the visible state of ALL blocks in the chunk
+        todo: merge with show()
+        :param hide: unused; todo: remove
+        :param immediate: immediate execute tasks or scheduling for later?
+        """
         raise NotImplementedError()
 
     def hide_all(self, immediate=True):
+        """
+        Hides all chunks in the chunk
+        todo: merge with hide()
+        :param immediate: immediate execute tasks or scheduling for later?
+        """
         raise NotImplementedError()
 
     def get_block(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
+        """
+        Getter function for a block
+        :param position: the position
+        :return: the block instance, a str representing a block (e.g. for scheduled during generation) or None
+            if there is no block
+        """
         raise NotImplementedError()
 
     def as_shareable(self) -> "IChunk":
-        raise NotImplementedError()
-
-    def is_loaded(self) -> bool:
-        raise NotImplementedError()
-
-    def is_generated(self) -> bool:
-        raise NotImplementedError()
-
-    def set_value(self, key: str, data):
-        raise NotImplementedError()
-
-    def get_entities(self):
-        raise NotImplementedError()
-
-    def get_value(self, key: str):
-        raise NotImplementedError()
-
-    def is_visible(self) -> bool:
+        """
+        Creates a reference to this chunk which can be linked across threads / processes
+        :return: this chunk instance
+        INFO: currently not in use
+        """
         raise NotImplementedError()
 
     def mark_dirty(self):
+        raise NotImplementedError()
+
+    def get_entities(self):
         raise NotImplementedError()
 
     def tick(self):
@@ -213,6 +330,30 @@ class IChunk(ABC):
 
     def save(self):
         pass
+
+    def set_value(self, key: str, data):
+        raise NotImplementedError()
+
+    def get_value(self, key: str):
+        raise NotImplementedError()
+
+    def __getitem__(self, item):
+        return self.get_block(item)
+
+    def __setitem__(self, key, value):
+        self.add_block(key, value)
+
+    def __delitem__(self, key):
+        self.remove_block(key)
+
+    def __contains__(self, item):
+        return self.get_block(item) is not None
+
+    def __iter__(self):
+        return self.world.items()
+
+    def __eq__(self, other: "IChunk"):
+        return self.get_dimension() == other.get_dimension() and self.get_position() == other.get_position()
 
 
 class IDimension(ABC):

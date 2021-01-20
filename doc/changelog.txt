@@ -56,6 +56,12 @@ changelog of snapshot <20w04a> released on -, targeting <20w03a>
     Server:
         - improved server separation from client
 
+    GUI:
+        - added a screen system for displaying recipes
+
+    Documentation:
+        - fixed documentation generation; updated doc
+
     Fixed issues:
         - escaping in logs did not work in some edge cases correctly
         - major rendering issue when updating blocks

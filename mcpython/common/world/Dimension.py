@@ -57,6 +57,7 @@ class DimensionHandler:
     Handler for the dimensions
     Works together with the World-class in handling the system
     This class holds general data about the status of the game dimensions, not for an world instance
+    todo: make it fully data-driven
     """
 
     def __init__(self):
@@ -68,7 +69,7 @@ class DimensionHandler:
 
     def finish(self):
         """
-        called to finish up and assign ids to dynamic dimensions
+        Called to finish up and assign ids to dynamic dimensions
         """
         i = 0
         for dim in self.unfinished_dims:
@@ -125,14 +126,17 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
 
 class Dimension(mcpython.common.world.AbstractInterface.IDimension):
     """
-    Class holding an whole dimension
+    Class holding a whole dimension
+    Default cross-side implementation
     """
 
-    BATCH_COUNT = 2  # normal, alpha; mods are free to add more
+    # normal, alpha; mods are free to add more; todo: add better API
+    BATCH_COUNT = 2
 
     def __init__(self, world_in, dim_id: int, name: str, gen_config=None):
         """
-        Creates an new dimension. Must be send also to the World-instance
+        Creates a new dimension. Should be registered to the world instance.
+        Can be automated by using the appropriate function at dimension
         :param world_in: the world instance to use
         :param dim_id: the id for it
         :param name: the name for it
@@ -149,7 +153,8 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         self.name = name
         self.world_generation_config = gen_config
         self.world_generation_config_objects = {}
-        # normal batch
+
+        # batches, see above for usages
         self.batches = [pyglet.graphics.Batch() for _ in range(self.BATCH_COUNT)]
 
         self.height_range = (0, 255)

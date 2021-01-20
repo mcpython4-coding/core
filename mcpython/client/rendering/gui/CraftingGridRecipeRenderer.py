@@ -76,7 +76,6 @@ class CraftingTableLikeRecipeViewRenderer(
         self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe
     ):
         self.recipe = recipe
-        print(recipe)
         self.clear()
 
         if isinstance(recipe, GridRecipe.AbstractCraftingGridRecipe):
@@ -86,7 +85,7 @@ class CraftingTableLikeRecipeViewRenderer(
             i = 0
             for row in self.grid:
                 for entry in row:
-                    if entry is not None:
+                    if entry is not None and len(entry) > 0:
                         self.slots[i].set_itemstack(entry[0])
                         self.mutation_iterator.append(
                             itertools.cycle(range(len(entry)))
@@ -131,7 +130,7 @@ class CraftingTableLikeRecipeViewRenderer(
             i = 0
             for x, row in enumerate(self.grid):
                 for y, entries in enumerate(row):
-                    if entries is not None:
+                    if entries is not None and len(entries) > 0:
                         self.slots[i].set_itemstack(
                             entries[next(self.mutation_iterator[i])]
                         )
