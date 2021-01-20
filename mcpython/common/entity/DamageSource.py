@@ -15,7 +15,8 @@ This project is not official by mojang and does not relate to it.
 
 class DamageSource:
     """
-    Class direct representing an mc DamageSource
+    Class direct representing a mc DamageSource
+    Used theoretically everywhere; in mcpython, only in API definitions
     """
 
     def __init__(self, name: str = None):

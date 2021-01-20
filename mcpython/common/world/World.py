@@ -397,7 +397,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         shared.world_generation_handler.task_handler.clear()
-        shared.entity_handler.entity_map.clear()
+        shared.entity_handler.clear()
         self.players.clear()
         if filename is not None:
             self.setup_by_filename(filename)

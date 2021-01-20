@@ -1479,4 +1479,5 @@ R   [uuk]: improved world serialization API
 [uuk]: noise implementation change is now properly working & saved
 [uuk]: added optional "noise"-library noise implementation
 [uuk]: fixed some face_state.update() calls on server
+[uuk]: entity handler is now the target for un-loading entities, no method in World
 

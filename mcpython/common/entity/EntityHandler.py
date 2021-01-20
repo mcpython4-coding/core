@@ -98,6 +98,15 @@ class EntityHandler:
             # todo: add collision & falling system
             # todo: add max entities standing in one space handler
 
+    def clear(self):
+        for entity in self.entity_map.values():
+            try:
+                entity.kill(internal=True, force=True)
+            except:
+                logger.print_exception("during unloading entity {} with uuid {}".format(entity, entity.uuid))
+
+        self.entity_map.clear()
+
 
 shared.entity_handler = EntityHandler()
 
