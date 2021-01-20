@@ -110,8 +110,11 @@ class DatapackSerializationHelper:
                     )
                 )
         except:
-            logger.print_exception("during deserializing '{}' with handler {}; skipping...".format(
-                file, self.name))
+            logger.print_exception(
+                "during deserializing '{}' with handler {}; skipping...".format(
+                    file, self.name
+                )
+            )
 
     def clear(self):
         if callable(self.on_clear):

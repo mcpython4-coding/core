@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 from mcpython import shared, logger
-import mcpython.common.container.crafting.IRecipeInterface
-import mcpython.common.container.crafting.IRecipeType
+import mcpython.common.container.crafting.IRecipeUser
+import mcpython.common.container.crafting.IRecipe
 import mcpython.common.container.crafting.GridRecipeInstances
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
@@ -32,7 +32,7 @@ class IRecipeAdapter:
 
 
 class CraftingGridHelperInterface(
-    mcpython.common.container.crafting.IRecipeInterface.IRecipeInterface
+    mcpython.common.container.crafting.IRecipeUser.IRecipeUser
 ):
     """
     Recipe interface for an crafting grid of arbitrary size using the default recipe implementation
@@ -75,7 +75,7 @@ class CraftingGridHelperInterface(
         slot_output_map.allow_half_getting = False
         slot_output_map.on_shift_click = self.on_output_shift_click
         self.active_recipe: typing.Optional[
-            mcpython.common.container.crafting.IRecipeType.IRecipe
+            mcpython.common.container.crafting.IRecipe.IRecipe
         ] = None
         self.shaped_enabled = enable_shaped_recipes and enabled
         self.shapeless_enabled = enable_shapeless_recipes and enabled

@@ -11,13 +11,13 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.container.crafting.IRecipeType
+import mcpython.common.container.crafting.IRecipe
 from mcpython import shared
 import mcpython.common.container.crafting.GridRecipeInstances
 
 
 @shared.crafting_handler
-class FurnaceRecipe(mcpython.common.container.crafting.IRecipeType.IRecipe):
+class FurnaceRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
     """
     Interface for decoding an furnace-like recipe
     """
@@ -26,16 +26,17 @@ class FurnaceRecipe(mcpython.common.container.crafting.IRecipeType.IRecipe):
     RECIPE_NAMES = ["minecraft:smelting", "minecraft:blasting", "minecraft:smoking"]
 
     @classmethod
-    def from_data(cls, data: dict) -> "FurnaceRecipe":
+    def from_data(cls, data: dict, file: str) -> "FurnaceRecipe":
         """
         Loader function for an furnace crafting recipe
         :param data: the data to load
+        :param file: the file loaded from
         :return: the recipe instance created
         """
         inputs = [
             x[0]
             for x in mcpython.common.container.crafting.GridRecipeInstances.transform_to_item_stack(
-                data["ingredient"], {}
+                data["ingredient"], file
             )
         ]
         result = data["result"]

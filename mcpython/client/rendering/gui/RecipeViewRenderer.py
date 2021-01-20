@@ -15,7 +15,7 @@ import typing
 from abc import ABC
 
 import pyglet
-import mcpython.common.container.crafting.IRecipeType
+import mcpython.common.container.crafting.IRecipe
 import mcpython.client.gui.Slot
 
 
@@ -25,7 +25,7 @@ class NotEnoughItemsException(Exception):
 
 class AbstractRecipeViewRenderer(ABC):
     def prepare_for_recipe(
-        self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe
+        self, recipe: mcpython.common.container.crafting.IRecipe.IRecipe
     ):
         raise NotImplementedError
 

@@ -33,4 +33,3 @@ class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
         for slot in slots:
             slot.disallowed_item_tags = ["#minecraft:shulkerbox_like_items"]
         return slots
-

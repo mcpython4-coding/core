@@ -42,7 +42,7 @@ class CommandRecipeView(mcpython.server.command.Command.Command):
             return
 
         recipe = shared.crafting_handler.recipe_table[name]
-        if recipe.RECIPE_VIEW_PROVIDER is None:
+        if recipe.RECIPE_VIEW is None:
             info.chat.print_ln(
                 "[ERROR] recipe '{}' of type '{}' has no view assigned!".format(
                     name, type(recipe)
@@ -51,9 +51,7 @@ class CommandRecipeView(mcpython.server.command.Command.Command):
             return
 
         shared.inventory_handler.show(
-            cls.INVENTORY.set_renderer(
-                recipe.RECIPE_VIEW_PROVIDER.prepare_for_recipe(recipe)
-            )
+            cls.INVENTORY.set_renderer(recipe.RECIPE_VIEW.prepare_for_recipe(recipe))
         )
 
     @staticmethod

@@ -12,7 +12,7 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared, logger
-import mcpython.common.container.crafting.IRecipeType
+import mcpython.common.container.crafting.IRecipe
 import mcpython.ResourceLoader
 import mcpython.common.item.ItemHandler
 import mcpython.common.mod.ModMcpython
@@ -55,32 +55,33 @@ class CraftingManager:
                 self.recipe_relink_table[recipe.name] = recipe_2.name
                 recipe_group_copy[group].remove(recipe_2)
 
-    def check_relink(
-        self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe
-    ):
+    def check_relink(self, recipe: mcpython.common.container.crafting.IRecipe.IRecipe):
         name = recipe.name
         if name in self.recipe_relink_table:
             return self.recipe_table[self.recipe_relink_table[name]]
         return recipe
 
     def __call__(self, obj):
-        if issubclass(obj, mcpython.common.container.crafting.IRecipeType.IRecipe):
-            [self.recipe_info_table.setdefault(name, obj) for name in obj.RECIPE_NAMES]
+        if issubclass(obj, mcpython.common.container.crafting.IRecipe.IRecipe):
+            [
+                self.recipe_info_table.setdefault(name, obj)
+                for name in obj.RECIPE_TYPE_NAMES
+            ]
         else:
-            raise ValueError()
+            raise ValueError(obj)
         return obj
 
     def add_recipe(
-        self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe, name: str
+        self, recipe: mcpython.common.container.crafting.IRecipe.IRecipe, name: str
     ):
         recipe.name = name
         recipe.register()
         self.recipe_table[name] = recipe
 
-    def add_recipe_from_data(self, data: dict, name: str):
+    def add_recipe_from_data(self, data: dict, name: str, file=None):
         recipe_type = data["type"]
         if recipe_type in self.recipe_info_table:
-            recipe = self.recipe_info_table[recipe_type].from_data(data)
+            recipe = self.recipe_info_table[recipe_type].from_data(data, file)
             if recipe is None:
                 return 0
             self.add_recipe(recipe, name)
@@ -110,7 +111,8 @@ class CraftingManager:
         name = "{}:{}".format(
             s[s.index("data") + 1], "/".join(s[s.index("recipes") + 1 :])
         ).removesuffix(".json")
-        result = self.add_recipe_from_data(data, name)
+        # todo: add option to run later
+        result = self.add_recipe_from_data(data, name, file)
 
         if result is None and "--debugrecipes" in sys.argv:
             logger.println(

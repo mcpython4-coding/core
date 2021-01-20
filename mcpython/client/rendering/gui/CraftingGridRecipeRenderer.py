@@ -18,7 +18,7 @@ import pyglet
 
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.GridRecipeInstances as GridRecipe
-import mcpython.common.container.crafting.IRecipeType
+import mcpython.common.container.crafting.IRecipe
 from mcpython import logger
 from mcpython.common.container.ItemStack import ItemStack
 import mcpython.common.event.EventHandler
@@ -73,7 +73,7 @@ class CraftingTableLikeRecipeViewRenderer(
         self.remaining_state_time = 0
 
     def prepare_for_recipe(
-        self, recipe: mcpython.common.container.crafting.IRecipeType.IRecipe
+        self, recipe: mcpython.common.container.crafting.IRecipe.IRecipe
     ):
         self.recipe = recipe
         self.clear()
