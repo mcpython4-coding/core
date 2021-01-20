@@ -16,6 +16,7 @@ import copy
 from abc import ABC
 
 import mcpython.common.event.Registry
+from mcpython import logger
 from mcpython import shared
 
 
@@ -102,7 +103,8 @@ class FactoryBuilder:
                 value = self.default_value
             else:
                 (value,) = args
-            assert isinstance(value, self.assert_type), "type must be valid"
+            assert isinstance(value, self.assert_type), "type must be valid ({}, exptected {})".format(
+                type(value), self.assert_type)
             instance.config_table[self.attr_name] = value
             return instance
 
@@ -192,6 +194,10 @@ class FactoryBuilder:
             pass
 
         def __init__(self, master: "FactoryBuilder", *args, **kwargs):
+            if len(args) or len(kwargs):
+                import traceback
+                print(master, args, kwargs)
+                traceback.print_stack()
             self.__dict__.update(
                 {
                     "master": master,
@@ -247,14 +253,21 @@ class FactoryBuilder:
 
         def copy(self) -> "FactoryBuilder.IFactory":
             new = self.master()
-            new.creation_arguments = copy.deepcopy(self.creation_arguments)
-            new.template = self.template.copy()
-            new.base_classes = self.base_classes.copy()
+            try:
+                new.creation_arguments = copy.deepcopy(self.creation_arguments)
+                new.template = self.template.copy()
+                new.base_classes = self.base_classes.copy()
 
-            for operation in self.master.copy_operation_handlers:
-                operation.operate(self, new)
+                for operation in self.master.copy_operation_handlers:
+                    operation.operate(self, new)
+            except:
+                logger.print_exception("during copying {} from {}".format(self.config_table.setdefault("name", self), self.master.name))
 
             return new
+
+        def add_base_class(self, cls):
+            if cls not in self.base_classes:
+                self.base_classes.append(cls)
 
         def __copy__(self):
             return self.copy()
@@ -340,7 +353,7 @@ class FactoryBuilder:
             self.factory_class = self.create_class()
             self.dirty = False
 
-        return self.factory_class(self, *args, **kwargs)
+        return self.factory_class(*args, **kwargs)
 
     def create_class(self) -> typing.Type[IFactory]:
         self.build_configuration_table()

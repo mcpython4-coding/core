@@ -44,9 +44,17 @@ information on development:
         its github id.
     - developers may want to create test builds for themselves. run dev/generate_test_build.py for it.
         When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID of it
+    - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
 changelog of snapshot <20w04a> released on -, targeting <20w03a>
+    This snapshot broke backwards compatibility, again...
+    Namely:
+    - items are now constructed differently
+    - crafting recipes are slightly other loaded
+    - behaviour changes of BlockFaceState
+    - refactors of various small parts
+
     Commands:
         - added /blockinfo command giving information about the block currently looking at
 
@@ -62,6 +70,10 @@ changelog of snapshot <20w04a> released on -, targeting <20w03a>
 
     Documentation:
         - fixed documentation generation; updated doc
+
+    API:
+        - ItemFactory is now also created by FactoryBuilder
+        - this is breaking existing code, again...
 
     Fixed issues:
         - escaping in logs did not work in some edge cases correctly

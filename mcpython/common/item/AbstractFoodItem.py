@@ -18,6 +18,8 @@ import mcpython.common.item.AbstractItem
 
 
 class AbstractFoodItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
+    HUNGER_ADDITION = None
+
     def on_eat(self):
         """
         called when the player eats the item
@@ -29,8 +31,6 @@ class AbstractFoodItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
             self.HUNGER_ADDITION + shared.world.get_active_player().hunger, 20
         )
         return True
-
-    HUNGER_ADDITION = None
 
     def get_eat_hunger_addition(self) -> int:
         return self.HUNGER_ADDITION

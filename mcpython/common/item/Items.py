@@ -22,130 +22,130 @@ import mcpython.client.gui.HoveringItemBox
 def load_item():
     template = (
         mcpython.common.factory.ItemFactory.ItemFactory()
-        .setGlobalModName("minecraft")
-        .setTemplate()
+        .set_global_mod_name("minecraft")
+        .set_template()
     )
 
-    template("apple").setFoodValue(4).finish()
-    template("baked_potato").setFoodValue(5).finish()
-    template("beef").setFoodValue(3).finish()
-    template("beetroot").setFoodValue(1).finish()
-    template("beetroot_soup").setFoodValue(6).setMaxStackSize(1).finish()
-    template("blaze_powder").finish()
-    template("blaze_rod").setFuelLevel(120).finish()
-    template("bone").finish()
-    template("bone_meal").finish()
-    template("book").finish()
-    template("bow").finish()
-    template("bowl").setFuelLevel(5).setMaxStackSize(8).finish()
-    template("bread").setFoodValue(5).finish()
-    template("brick").finish()
-    template("broken_elytra").setMaxStackSize(1).finish()
-    template("bucket").setMaxStackSize(16).finish()
-    template("carrot").setFoodValue(3).finish()
-    template("charcoal").setFuelLevel(80).finish()
-    template("chicken").setFoodValue(2).finish()
-    template("chorus_fruit").finish()
-    template("clay_ball").finish()
-    template("coal").setFuelLevel(80).finish()
-    template("cod").setFoodValue(2).finish()
-    template("cod_bucket").setMaxStackSize(1).finish()
-    template("cooked_beef").setFoodValue(8).finish()
-    template("cooked_chicken").setFoodValue(6).finish()
-    template("cooked_cod").setFoodValue(5).finish()
-    template("cooked_mutton").setFoodValue(6).finish()
-    template("cooked_porkchop").setFoodValue(8).finish()
-    template("cooked_rabbit").setFoodValue(5).finish()
-    template("cooked_salmon").setFoodValue(6).finish()
-    template("cookie").setFoodValue(2).finish()
-    template("diamond").finish()
-    template("dried_kelp").setFoodValue(1).finish()
-    template("dragon_breath").setMaxStackSize(1).finish()
-    template("egg").setMaxStackSize(16).finish()
-    template("elytra").setMaxStackSize(1).finish()
-    template("emerald").finish()
-    template("ender_pearl").setMaxStackSize(16).finish()
-    template("ender_eye").setMaxStackSize(16).finish()
+    template.set_name("apple").set_food_value(4).finish()
+    template.set_name("baked_potato").set_food_value(5).finish()
+    template.set_name("beef").set_food_value(3).finish()
+    template.set_name("beetroot").set_food_value(1).finish()
+    template.set_name("beetroot_soup").set_food_value(6).set_max_stack_size(1).finish()
+    template.set_name("blaze_powder").finish()
+    template.set_name("blaze_rod").set_fuel_level(120).finish()
+    template.set_name("bone").finish()
+    template.set_name("bone_meal").finish()
+    template.set_name("book").finish()
+    template.set_name("bow").finish()
+    template.set_name("bowl").set_fuel_level(5).set_max_stack_size(8).finish()
+    template.set_name("bread").set_food_value(5).finish()
+    template.set_name("brick").finish()
+    template.set_name("broken_elytra").set_max_stack_size(1).finish()
+    template.set_name("bucket").set_max_stack_size(16).finish()
+    template.set_name("carrot").set_food_value(3).finish()
+    template.set_name("charcoal").set_fuel_level(80).finish()
+    template.set_name("chicken").set_food_value(2).finish()
+    template.set_name("chorus_fruit").finish()
+    template.set_name("clay_ball").finish()
+    template.set_name("coal").set_fuel_level(80).finish()
+    template.set_name("cod").set_food_value(2).finish()
+    template.set_name("cod_bucket").set_max_stack_size(1).finish()
+    template.set_name("cooked_beef").set_food_value(8).finish()
+    template.set_name("cooked_chicken").set_food_value(6).finish()
+    template.set_name("cooked_cod").set_food_value(5).finish()
+    template.set_name("cooked_mutton").set_food_value(6).finish()
+    template.set_name("cooked_porkchop").set_food_value(8).finish()
+    template.set_name("cooked_rabbit").set_food_value(5).finish()
+    template.set_name("cooked_salmon").set_food_value(6).finish()
+    template.set_name("cookie").set_food_value(2).finish()
+    template.set_name("diamond").finish()
+    template.set_name("dried_kelp").set_food_value(1).finish()
+    template.set_name("dragon_breath").set_max_stack_size(1).finish()
+    template.set_name("egg").set_max_stack_size(16).finish()
+    template.set_name("elytra").set_max_stack_size(1).finish()
+    template.set_name("emerald").finish()
+    template.set_name("ender_pearl").set_max_stack_size(16).finish()
+    template.set_name("ender_eye").set_max_stack_size(16).finish()
 
     def lambda_add_random_xp():
         shared.world.get_active_player().add_xp(random.randint(3, 11))
         return True
 
-    template("experience_bottle").setEatCallback(lambda_add_random_xp).setFoodValue(0).finish()
-    template("feather").finish()
-    template("fermented_spider_eye").finish()
-    template("filled_map").setMaxStackSize(1).finish()
-    template("fire_charge").finish()
-    template("firework_rocket").finish()
-    template("firework_star").finish()
-    template("flint").finish()
-    template("flint_and_steel").setMaxStackSize(1).set_durability(64).finish()
-    template("ghast_tear").finish()
-    template("glass_bottle").setMaxStackSize(16).finish()
-    template("glistering_melon_slice").finish()
-    template("glowstone_dust").finish()
-    template("gold_ingot").finish()
-    template("gold_nugget").finish()
-    template("golden_apple").setFoodValue(4).finish()
-    template("golden_carrot").setFoodValue(6).finish()
-    template("gunpowder").finish()
-    template("honey_bottle").setMaxStackSize(16).finish()
-    template("honeycomb").finish()
-    template("ink_sac").finish()
-    template("iron_ingot").finish()
-    template("iron_nugget").finish()
-    template("lapis_lazuli").finish()
-    template("lead").finish()
-    template("leather").finish()
-    template("lingering_potion").finish()
-    template("magma_cream").finish()
-    template("map").finish()
-    template("melon_slice").setFoodValue(2).finish()
-    template("milk_bucket").setMaxStackSize(1).finish()
-    template("mushroom_stew").setFoodValue(6).setMaxStackSize(1).finish()
-    template("mutton").setFoodValue(2).finish()
-    template("name_tag").finish()
-    template("nautilus_shell").finish()
-    template("nether_brick").finish()
-    template("nether_star").finish()
-    template("nether_wart").finish()
-    template("netherite_ingot").finish()
-    template("netherite_scrap").finish()
-    template("painting").finish()
-    template("paper").finish()
-    template("phantom_membrane").finish()
-    template("poisonous_potato").setFoodValue(2).finish()
-    template("porkchop").setFoodValue(3).finish()
-    template("potato").setFoodValue(1).finish()
-    template("prismarine_shard").finish()
-    template("pufferfish").setFoodValue(1).finish()
-    template("pufferfish_bucket").finish()
-    template("pumpkin_pie").setFoodValue(8).finish()
-    template("quartz").finish()
-    template("rabbit").setFoodValue(3).finish()
-    template("rabbit_foot").finish()
-    template("rabbit_hide").finish()
-    template("rabbit_stew").setFoodValue(10).setMaxStackSize(1).finish()
-    template("redstone").finish()  # todo: binding to block
-    template("rotten_flesh").setFoodValue(4).finish()
-    template("saddle").setMaxStackSize(1).finish()
-    template("salmon").finish()
-    template("salmon_bucket").setMaxStackSize(1).finish()
-    template("scute").finish()
-    template("shulker_shell").finish()
-    template("slime_ball").finish()
-    template("stick").setFuelLevel(5).finish()
-    template("string").finish()
-    template("sugar").finish()
-    template("spider_eye").setFoodValue(2).finish()
-    template("totem_of_undying").setMaxStackSize(1).finish()
-    template("tropical_fish").setFoodValue(1).finish()
-    template("water_bucket").setMaxStackSize(1).finish()
-    template("wheat").finish()
+    template.set_name("experience_bottle").set_eat_callback(lambda_add_random_xp).set_food_value(0).finish()
+    template.set_name("feather").finish()
+    template.set_name("fermented_spider_eye").finish()
+    template.set_name("filled_map").set_max_stack_size(1).finish()
+    template.set_name("fire_charge").finish()
+    template.set_name("firework_rocket").finish()
+    template.set_name("firework_star").finish()
+    template.set_name("flint").finish()
+    template.set_name("flint_and_steel").set_max_stack_size(1).set_durability(64).finish()
+    template.set_name("ghast_tear").finish()
+    template.set_name("glass_bottle").set_max_stack_size(16).finish()
+    template.set_name("glistering_melon_slice").finish()
+    template.set_name("glowstone_dust").finish()
+    template.set_name("gold_ingot").finish()
+    template.set_name("gold_nugget").finish()
+    template.set_name("golden_apple").set_food_value(4).finish()
+    template.set_name("golden_carrot").set_food_value(6).finish()
+    template.set_name("gunpowder").finish()
+    template.set_name("honey_bottle").set_max_stack_size(16).finish()
+    template.set_name("honeycomb").finish()
+    template.set_name("ink_sac").finish()
+    template.set_name("iron_ingot").finish()
+    template.set_name("iron_nugget").finish()
+    template.set_name("lapis_lazuli").finish()
+    template.set_name("lead").finish()
+    template.set_name("leather").finish()
+    template.set_name("lingering_potion").finish()
+    template.set_name("magma_cream").finish()
+    template.set_name("map").finish()
+    template.set_name("melon_slice").set_food_value(2).finish()
+    template.set_name("milk_bucket").set_max_stack_size(1).finish()
+    template.set_name("mushroom_stew").set_food_value(6).set_max_stack_size(1).finish()
+    template.set_name("mutton").set_food_value(2).finish()
+    template.set_name("name_tag").finish()
+    template.set_name("nautilus_shell").finish()
+    template.set_name("nether_brick").finish()
+    template.set_name("nether_star").finish()
+    template.set_name("nether_wart").finish()
+    template.set_name("netherite_ingot").finish()
+    template.set_name("netherite_scrap").finish()
+    template.set_name("painting").finish()
+    template.set_name("paper").finish()
+    template.set_name("phantom_membrane").finish()
+    template.set_name("poisonous_potato").set_food_value(2).finish()
+    template.set_name("porkchop").set_food_value(3).finish()
+    template.set_name("potato").set_food_value(1).finish()
+    template.set_name("prismarine_shard").finish()
+    template.set_name("pufferfish").set_food_value(1).finish()
+    template.set_name("pufferfish_bucket").finish()
+    template.set_name("pumpkin_pie").set_food_value(8).finish()
+    template.set_name("quartz").finish()
+    template.set_name("rabbit").set_food_value(3).finish()
+    template.set_name("rabbit_foot").finish()
+    template.set_name("rabbit_hide").finish()
+    template.set_name("rabbit_stew").set_food_value(10).set_max_stack_size(1).finish()
+    template.set_name("redstone").finish()  # todo: binding to block
+    template.set_name("rotten_flesh").set_food_value(4).finish()
+    template.set_name("saddle").set_max_stack_size(1).finish()
+    template.set_name("salmon").finish()
+    template.set_name("salmon_bucket").set_max_stack_size(1).finish()
+    template.set_name("scute").finish()
+    template.set_name("shulker_shell").finish()
+    template.set_name("slime_ball").finish()
+    template.set_name("stick").set_fuel_level(5).finish()
+    template.set_name("string").finish()
+    template.set_name("sugar").finish()
+    template.set_name("spider_eye").set_food_value(2).finish()
+    template.set_name("totem_of_undying").set_max_stack_size(1).finish()
+    template.set_name("tropical_fish").set_food_value(1).finish()
+    template.set_name("water_bucket").set_max_stack_size(1).finish()
+    template.set_name("wheat").finish()
 
     # tools
 
-    template("shears").setToolType([ToolType.SHEAR]).setToolBrakeMulti(5)
+    template.set_name("shears").set_tool_type([ToolType.SHEAR]).set_tool_break_multi(5)
     for tool_type, tool_name in [
         (ToolType.PICKAXE, "pickaxe"),
         (ToolType.AXE, "axe"),
@@ -153,80 +153,80 @@ def load_item():
         (ToolType.HOE, "hoe"),
         (ToolType.SHOVEL, "shovel"),
     ]:
-        template("wooden_{}".format(tool_name)).setToolType(
+        template.set_name("wooden_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).setToolBrakeMulti(2).setToolLevel(1).setFuelLevel(10).set_durability(
+        ).set_tool_break_multi(2).set_tool_level(1).set_fuel_level(10).set_durability(
             59
-        ).setMaxStackSize(
+        ).set_max_stack_size(
             1
         ).finish()
-        template("stone_{}".format(tool_name)).setToolType(
+        template.set_name("stone_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).setToolBrakeMulti(4).setToolLevel(2).set_durability(131).setMaxStackSize(1).finish()
-        template("iron_{}".format(tool_name)).setToolType(
+        ).set_tool_break_multi(4).set_tool_level(2).set_durability(131).set_max_stack_size(1).finish()
+        template.set_name("iron_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).setToolBrakeMulti(6).setToolLevel(3).set_durability(250).setMaxStackSize(1).finish()
-        template("golden_{}".format(tool_name)).setToolType(
+        ).set_tool_break_multi(6).set_tool_level(3).set_durability(250).set_max_stack_size(1).finish()
+        template.set_name("golden_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).setToolBrakeMulti(8).setToolLevel(4).set_durability(32).setMaxStackSize(1).finish()
-        template("diamond_{}".format(tool_name)).setToolType(
+        ).set_tool_break_multi(8).set_tool_level(4).set_durability(32).set_max_stack_size(1).finish()
+        template.set_name("diamond_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).setToolBrakeMulti(12).setToolLevel(5).set_durability(1561).setMaxStackSize(1).finish()
-        template("netherite_{}".format(tool_name)).setToolType(
+        ).set_tool_break_multi(12).set_tool_level(5).set_durability(1561).set_max_stack_size(1).finish()
+        template.set_name("netherite_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).setToolBrakeMulti(14).setToolLevel(6).set_durability(2031).setMaxStackSize(1).finish()
+        ).set_tool_break_multi(14).set_tool_level(6).set_durability(2031).set_max_stack_size(1).finish()
 
     for color in mcpython.util.enums.COLORS:
-        template("{}_dye".format(color)).finish()
+        template.set_name("{}_dye".format(color)).finish()
 
     # armor
 
-    template("golden_helmet").setArmorPoints(2).set_durability(77).setMaxStackSize(1).finish()
-    template("golden_chestplate").setArmorPoints(5).set_durability(112).setMaxStackSize(
+    template.set_name("golden_helmet").set_armor_points(2).set_durability(77).set_max_stack_size(1).finish()
+    template.set_name("golden_chestplate").set_armor_points(5).set_durability(112).set_max_stack_size(
         1
     ).finish()
-    template("golden_leggings").setArmorPoints(3).set_durability(105).setMaxStackSize(1).finish()
-    template("golden_boots").setArmorPoints(1).set_durability(91).setMaxStackSize(1).finish()
+    template.set_name("golden_leggings").set_armor_points(3).set_durability(105).set_max_stack_size(1).finish()
+    template.set_name("golden_boots").set_armor_points(1).set_durability(91).set_max_stack_size(1).finish()
 
-    template("chainmail_helmet").setArmorPoints(2).set_durability(165).setMaxStackSize(
+    template.set_name("chainmail_helmet").set_armor_points(2).set_durability(165).set_max_stack_size(
         1
     ).finish()
-    template("chainmail_chestplate").setArmorPoints(5).set_durability(
+    template.set_name("chainmail_chestplate").set_armor_points(5).set_durability(
         240
-    ).setMaxStackSize(1).finish()
-    template("chainmail_leggings").setArmorPoints(4).set_durability(
+    ).set_max_stack_size(1).finish()
+    template.set_name("chainmail_leggings").set_armor_points(4).set_durability(
         225
-    ).setMaxStackSize(1).finish()
-    template("chainmail_boots").setArmorPoints(1).set_durability(195).setMaxStackSize(1).finish()
+    ).set_max_stack_size(1).finish()
+    template.set_name("chainmail_boots").set_armor_points(1).set_durability(195).set_max_stack_size(1).finish()
 
-    template("iron_helmet").setArmorPoints(2).set_durability(165).setMaxStackSize(1).finish()
-    template("iron_chestplate").setArmorPoints(6).set_durability(240).setMaxStackSize(1).finish()
-    template("iron_leggings").setArmorPoints(5).set_durability(225).setMaxStackSize(1).finish()
-    template("iron_boots").setArmorPoints(2).set_durability(195).setMaxStackSize(1).finish()
+    template.set_name("iron_helmet").set_armor_points(2).set_durability(165).set_max_stack_size(1).finish()
+    template.set_name("iron_chestplate").set_armor_points(6).set_durability(240).set_max_stack_size(1).finish()
+    template.set_name("iron_leggings").set_armor_points(5).set_durability(225).set_max_stack_size(1).finish()
+    template.set_name("iron_boots").set_armor_points(2).set_durability(195).set_max_stack_size(1).finish()
 
-    template("diamond_helmet").setArmorPoints(3).set_durability(363).setMaxStackSize(1).finish()
-    template("diamond_chestplate").setArmorPoints(8).set_durability(
+    template.set_name("diamond_helmet").set_armor_points(3).set_durability(363).set_max_stack_size(1).finish()
+    template.set_name("diamond_chestplate").set_armor_points(8).set_durability(
         528
-    ).setMaxStackSize(1).finish()
-    template("diamond_leggings").setArmorPoints(6).set_durability(495).setMaxStackSize(
+    ).set_max_stack_size(1).finish()
+    template.set_name("diamond_leggings").set_armor_points(6).set_durability(495).set_max_stack_size(
         1
     ).finish()
-    template("diamond_boots").setArmorPoints(3).set_durability(429).setMaxStackSize(1).finish()
+    template.set_name("diamond_boots").set_armor_points(3).set_durability(429).set_max_stack_size(1).finish()
 
-    template("netherite_boots").setArmorPoints(3).set_durability(407).setMaxStackSize(1).finish()
-    template("netherite_chestplate").setArmorPoints(8).set_durability(
+    template.set_name("netherite_boots").set_armor_points(3).set_durability(407).set_max_stack_size(1).finish()
+    template.set_name("netherite_chestplate").set_armor_points(8).set_durability(
         592
-    ).setMaxStackSize(1).finish()
-    template("netherite_helmet").setArmorPoints(6).set_durability(555).setMaxStackSize(
+    ).set_max_stack_size(1).finish()
+    template.set_name("netherite_helmet").set_armor_points(6).set_durability(555).set_max_stack_size(
         1
     ).finish()
-    template("netherite_leggings").setArmorPoints(3).set_durability(
+    template.set_name("netherite_leggings").set_armor_points(3).set_durability(
         481
-    ).setMaxStackSize(1).finish()
+    ).set_max_stack_size(1).finish()
 
-    template("arrow").finish()
+    template.set_name("arrow").finish()
 
-    template("barrier").setHasBlockFlag(True).setToolTipRenderer(
+    template.set_name("barrier").set_has_block_flag(True).set_tool_tip_renderer(
         mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
     ).finish()
 

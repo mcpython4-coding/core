@@ -23,8 +23,181 @@ from mcpython import shared
 import mcpython.common.factory.IFactoryModifier
 
 
-# todo: add ItemFactoryHandler which make it possible to add custom functions & custom class constructing
-class ItemFactory(mcpython.common.factory.IFactoryModifier.IFactory):
+from mcpython.common.factory.FactoryBuilder import FactoryBuilder
+
+
+ItemFactoryInstance = FactoryBuilder("minecraft:item", mcpython.common.item.AbstractItem.AbstractItem)
+
+ItemFactoryInstance.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_name", "name", str)
+)
+ItemFactoryInstance.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_global_mod_name", "global_name", str)
+)
+ItemFactoryInstance.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_max_stack_size", "max_stack_size", int)
+)
+ItemFactoryInstance.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_fuel_level", "fuel_level", (float, int))
+)
+ItemFactoryInstance.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_has_block_flag", "has_block")
+)
+ItemFactoryInstance.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_tool_tip_renderer", "tool_tip_renderer")
+)
+ItemFactoryInstance.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_tool_break_multi", "tool_break_multi", (int, float))
+)
+ItemFactoryInstance.register_configurator(
+    FactoryBuilder.SetterFactoryConfigurator("set_tool_level", "tool_level", (int, float))
+)
+
+
+@ItemFactoryInstance.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_food_value")
+)
+def set_food_value(factory, value: int):
+    factory.config_table["food_value"] = value
+    factory.add_base_class(mcpython.common.item.AbstractFoodItem.AbstractFoodItem)
+
+
+@ItemFactoryInstance.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_default_item_file")
+)
+def set_default_item_file(factory, file):
+    factory.config_table["default_item_file"] = file
+    factory.config_table.setdefault("used_item_files", []).append(file)
+
+
+@ItemFactoryInstance.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_eat_callback")
+)
+def set_eat_callback(instance, callback):
+    instance.config_table["eat_callback"] = callback
+
+
+@ItemFactoryInstance.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_durability")
+)
+def set_durability(instance, value):
+    instance.config_table["durability"] = value
+    instance.add_base_class(mcpython.common.item.AbstractDamageBarItem.DamageOnUseItem)
+
+
+@ItemFactoryInstance.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_tool_type")
+)
+def set_tool_type(instance, *value):
+    if len(value) == 0:
+        if type(value[0]) in (list, set, tuple):
+            value = value[0]
+        else:
+            value = (value,)
+    instance.config_table.setdefault("tool_type", []).extend(value)
+    instance.add_base_class(mcpython.common.item.AbstractToolItem.AbstractToolItem)
+
+
+@ItemFactoryInstance.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_armor_points")
+)
+def set_armor_points(instance, points: int):
+    instance.config_table["armor_points"] = points
+    instance.add_base_class(mcpython.common.item.AbstractArmorItem.AbstractArmorItem)
+
+
+@ItemFactoryInstance.register_class_builder(
+    FactoryBuilder.AnnotationFactoryClassBuilder()
+)
+def build_class(
+    cls: typing.Type[mcpython.common.item.AbstractItem.AbstractItem],
+    instance: FactoryBuilder.IFactory,
+):
+    configs: dict = instance.config_table
+    import mcpython.client.gui.HoveringItemBox
+    configs.setdefault("tool_tip_renderer", mcpython.client.gui.HoveringItemBox.DEFAULT_ITEM_TOOLTIP)
+    name = configs["name"]
+    if ":" not in name and "global_name" in configs:
+        name = configs["global_name"] + ":" + name
+
+    if "default_item_file" not in configs:
+        configs["default_item_file"] = "assets/{}/textures/item/{}.png".format(*name.split(":"))
+        configs.setdefault("used_item_files", []).append(configs["default_item_file"])
+
+    class ModifiedClass(cls):
+        NAME = name
+        STACK_SIZE = configs.setdefault("max_stack_size", 64)
+        HUNGER_ADDITION = configs.setdefault("food_value", 0)
+        HAS_BLOCK = configs.setdefault("has_block", False)
+
+        if "fuel_level" in configs:
+            FUEL = configs["fuel_level"]
+
+        @classmethod
+        def get_used_texture_files(
+                cls,
+        ):
+            return configs["used_item_files"]
+
+        @staticmethod
+        def get_default_item_image_location() -> str:
+            return configs["default_item_file"]
+
+        def get_active_image_location(self):
+            return configs["default_item_file"]
+
+        def get_tooltip_provider(self):
+            return configs["tool_tip_renderer"]
+
+        if "eat_callback" in configs:
+            def on_eat(self):
+                configs["eat_callback"](self)
+
+        if "durability" in configs:
+            DURABILITY = configs["durability"]
+
+        if "tool_type" in configs:
+            TOOL_TYPE = configs["tool_type"]
+            TOOL_LEVEL = configs["tool_level"]
+
+            def get_speed_multiplyer(self, itemstack):
+                return configs.setdefault("tool_break_multi", 1)
+
+        if "armor_points" in configs:
+            DEFENSE_POINTS = configs["armor_points"]
+
+    return ModifiedClass
+
+
+ItemFactoryInstance.register_direct_copy_attributes(
+    "used_item_files",
+)
+ItemFactoryInstance.register_direct_copy_attributes(
+    "tool_type",
+    operation=lambda e: e.copy()
+)
+ItemFactoryInstance.register_direct_copy_attributes(
+    "tool_tip_renderer",
+    "name",
+    "global_name",
+    "max_stack_size",
+    "food_value",
+    "fuel_level",
+    "has_block",
+    "default_item_file",
+    "eat_callback",
+    "durability",
+    "tool_break_multi",
+    "tool_level",
+    "armor_points",
+    operation=lambda e: e
+)
+
+
+ItemFactory = ItemFactoryInstance.create_class()
+
+
+class ItemFactoryOld(mcpython.common.factory.IFactoryModifier.IFactory):
     FACTORY_MODIFIERS = {}
 
     TASKS = []

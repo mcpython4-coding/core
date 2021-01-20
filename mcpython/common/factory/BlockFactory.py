@@ -140,65 +140,67 @@ def build_class(
     cls: typing.Type[mcpython.common.block.AbstractBlock.AbstractBlock],
     instance: FactoryBuilder.IFactory,
 ):
-    name = instance.config_table["name"]
-    if ":" not in name and "global_name" in instance.config_table:
-        name = instance.config_table["global_name"] + ":" + name
+    configs = instance.config_table
+
+    name = configs["name"]
+    if ":" not in name and "global_name" in configs:
+        name = configs["global_name"] + ":" + name
 
     class ModifiedClass(cls):
         NAME = name
-        HARDNESS = instance.config_table.setdefault("hardness", cls.HARDNESS)
-        BLAST_RESISTANCE = instance.config_table.setdefault(
+        HARDNESS = configs.setdefault("hardness", cls.HARDNESS)
+        BLAST_RESISTANCE = configs.setdefault(
             "blast_resistance", cls.BLAST_RESISTANCE
         )
 
-        MINIMUM_TOOL_LEVEL = instance.config_table.setdefault(
+        MINIMUM_TOOL_LEVEL = configs.setdefault(
             "minimum_tool_level", cls.MINIMUM_TOOL_LEVEL
         )
-        ASSIGNED_TOOLS = instance.config_table.setdefault(
+        ASSIGNED_TOOLS = configs.setdefault(
             "assigned_tools", cls.ASSIGNED_TOOLS
         )
 
-        IS_BREAKABLE = instance.config_table.setdefault(
+        IS_BREAKABLE = configs.setdefault(
             "break_able_flag", cls.IS_BREAKABLE
         )
 
-        DEFAULT_FACE_SOLID = instance.config_table.setdefault(
+        DEFAULT_FACE_SOLID = configs.setdefault(
             "solid_face_table", cls.DEFAULT_FACE_SOLID
         )
 
-        CUSTOM_WALING_SPEED_MULTIPLIER = instance.config_table.setdefault(
+        CUSTOM_WALING_SPEED_MULTIPLIER = configs.setdefault(
             "speed_multiplier", cls.CUSTOM_WALING_SPEED_MULTIPLIER
         )
 
-        BLOCK_ITEM_GENERATOR_STATE = instance.config_table.setdefault(
+        BLOCK_ITEM_GENERATOR_STATE = configs.setdefault(
             "block_item_generator_state", cls.BLOCK_ITEM_GENERATOR_STATE
         )
 
-        IS_SOLID = instance.config_table.setdefault("solid", cls.IS_SOLID)
+        IS_SOLID = configs.setdefault("solid", cls.IS_SOLID)
 
-        CAN_CONDUCT_REDSTONE_POWER = instance.config_table.setdefault(
+        CAN_CONDUCT_REDSTONE_POWER = configs.setdefault(
             "can_conduct_redstone_power", cls.CAN_CONDUCT_REDSTONE_POWER
         )
 
-        CAN_MOBS_SPAWN_ON = instance.config_table.setdefault(
+        CAN_MOBS_SPAWN_ON = configs.setdefault(
             "can_mobs_spawn_on", cls.CAN_MOBS_SPAWN_ON
         )
-        CAN_MOBS_SPAWN_IN = instance.config_table.setdefault(
+        CAN_MOBS_SPAWN_IN = configs.setdefault(
             "can_mobs_spawn_in", cls.CAN_MOBS_SPAWN_IN
         )
 
-        ENABLE_RANDOM_TICKS = instance.config_table.setdefault(
+        ENABLE_RANDOM_TICKS = configs.setdefault(
             "enable_random_ticks", cls.ENABLE_RANDOM_TICKS
-        ) or len(instance.config_table["on_random_update"])
+        ) or len(configs["on_random_update"])
 
-        NO_ENTITY_COLLISION = instance.config_table.setdefault(
+        NO_ENTITY_COLLISION = configs.setdefault(
             "no_entity_collision", cls.NO_ENTITY_COLLISION
         )
-        ENTITY_FALL_MULTIPLIER = instance.config_table.setdefault(
+        ENTITY_FALL_MULTIPLIER = configs.setdefault(
             "entity_fall_multiplier", cls.ENTITY_FALL_MULTIPLIER
         )
 
-        DEBUG_WORLD_BLOCK_STATES = instance.config_table.setdefault(
+        DEBUG_WORLD_BLOCK_STATES = configs.setdefault(
             "debug_world_states", cls.DEBUG_WORLD_BLOCK_STATES
         )
 

@@ -179,14 +179,7 @@ class StateBlockItemGenerator(State.State):
         with open(shared.build + "/item_block_factory.json", mode="w") as f:
             json.dump(self.table, f)
 
-        # create block-item instances...
-        logger.println("baking block-items...")
-        item_registry = shared.registry.get_by_name("minecraft:item")
-        item_registry.unlock()
-        mcpython.common.factory.ItemFactory.ItemFactory.process()
-        item_registry.lock()
-
-        # ... and bake the models needed
+        # baking the item models needed
         mcpython.common.item.ItemHandler.build()
         mcpython.common.item.ItemHandler.ITEM_ATLAS.load()
         mcpython.client.rendering.model.ItemModel.handler.bake()
@@ -334,10 +327,10 @@ class StateBlockItemGenerator(State.State):
         self.table.append([blockname, file])
         obj = (
             mcpython.common.factory.ItemFactory.ItemFactory()
-            .setDefaultItemFile(file)
-            .setName(blockname)
-            .setHasBlockFlag(True)
-            .setToolTipRenderer(
+            .set_default_item_file(file)
+            .set_name(blockname)
+            .set_has_block_flag(True)
+            .set_tool_tip_renderer(
                 mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
             )
         )

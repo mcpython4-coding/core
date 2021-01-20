@@ -1475,4 +1475,5 @@ R   [uuk]: improved world serialization API
 [uuk]: inventories can draw now their custom name
 [uuk]: changed recipe API
 [uuk]: fixed recipes
+[uuk]: migrated item factory system to new factory system
 

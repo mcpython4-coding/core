@@ -60,10 +60,10 @@ def load_data():
             if name in table:
                 obj = (
                     mcpython.common.factory.ItemFactory.ItemFactory()
-                    .setName(name)
-                    .setHasBlockFlag(True)
-                    .setDefaultItemFile(entry[1])
-                    .setToolTipRenderer(
+                    .set_name(name)
+                    .set_has_block_flag(True)
+                    .set_default_item_file(entry[1])
+                    .set_tool_tip_renderer(
                         mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
                     )
                 )
