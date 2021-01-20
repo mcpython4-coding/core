@@ -92,7 +92,8 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
             mcpython.util.enums.EnumSide.WEST, block_west
         )
 
-        self.face_state.update(redraw_complete=True)
+        if shared.IS_CLIENT:
+            self.face_state.update(redraw_complete=True)
 
     def set_model_state(self, state: dict):
         for key in state:

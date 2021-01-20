@@ -1478,4 +1478,5 @@ R   [uuk]: improved world serialization API
 [uuk]: migrated item factory system to new factory system
 [uuk]: noise implementation change is now properly working & saved
 [uuk]: added optional "noise"-library noise implementation
+[uuk]: fixed some face_state.update() calls on server
 

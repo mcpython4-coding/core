@@ -94,10 +94,11 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
 
     def reset(self):
         self.block.active = False
-        self.block.face_state.update()
         self.smelt_start = None
         self.recipe = None
         self.old_item_name = None
+        if shared.IS_CLIENT:
+            self.block.face_state.update(True)
 
     def update_status(self):
         if any(
@@ -153,7 +154,8 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
                 recipe
             )
             self.block.active = True
-            self.block.face_state.update()
+            if shared.IS_CLIENT:
+                self.block.face_state.update()
         else:
             self.reset()
 

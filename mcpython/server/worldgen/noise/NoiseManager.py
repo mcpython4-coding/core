@@ -109,6 +109,10 @@ class NoiseManager:
         return {name: noise.seed for (noise, name) in self.noise_instances}
 
     def deserialize_seed_map(self, data: dict):
+        if data is None:
+            logger.println("[WARN] seed map is empty!")
+            return
+
         for noise, name in self.noise_instances:
             if name in data:
                 noise.set_seed(data[name])

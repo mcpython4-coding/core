@@ -60,7 +60,8 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
                 self.facing = "down"
             elif dy < 0:
                 self.facing = "up"
-            self.face_state.update()
+            if shared.IS_CLIENT:
+                self.face_state.update()
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple

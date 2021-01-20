@@ -44,7 +44,8 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
             "user:keyboard:press", self.on_key_press
         )
         self.block.opened = True
-        self.block.face_state.update()
+        if shared.IS_CLIENT:
+            self.block.face_state.update(True)
 
     def on_deactivate(self):
         super().on_deactivate()
@@ -52,7 +53,8 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
             "user:keyboard:press", self.on_key_press
         )
         self.block.opened = False
-        self.block.face_state.update()
+        if shared.IS_CLIENT:
+            self.block.face_state.update(True)
 
     def create_slots(self) -> list:
         # 3 rows of 9 slots of storage

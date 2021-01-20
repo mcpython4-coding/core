@@ -296,7 +296,7 @@ class WorldGenerationTaskHandler:
                     chunk.hide_block(position)
                 elif data == 1:
                     chunk.show_block(position)
-                elif not isinstance(block, str):
+                elif not isinstance(block, str) and shared.IS_CLIENT:
                     block.face_state.update(redraw_complete=True)
                 return True
         return False

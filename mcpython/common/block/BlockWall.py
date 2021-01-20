@@ -100,7 +100,8 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
         ):
             self.connections["up"] = True
 
-        self.face_state.update(redraw_complete=True)
+        if shared.IS_CLIENT:
+            self.face_state.update(redraw_complete=True)
 
     def set_model_state(self, state: dict):
         for key in state:

@@ -90,7 +90,8 @@ class BlockChest(AbstractBlock.AbstractBlock):
         self.face_state.custom_renderer = (
             mcpython.client.rendering.blocks.TemporaryChestRenderer.TemporaryChestRenderer()
         )
-        self.face_state.update(True)
+        if shared.IS_CLIENT:
+            self.face_state.update(True)
 
     def can_open_inventory(self) -> bool:
         """

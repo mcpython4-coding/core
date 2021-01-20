@@ -121,7 +121,8 @@ class CommandClone(mcpython.server.command.Command.Command):
                     (x + dx, y + dy, z + dz), block_map[(x, y, z)].NAME
                 )
                 block.set_model_state(block_map[(x, y, z)].get_model_state())
-                block.face_state.update()
+                if shared.IS_CLIENT:
+                    block.face_state.update()
 
     @staticmethod
     def get_help() -> list:

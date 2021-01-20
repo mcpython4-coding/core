@@ -379,6 +379,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         is added or removed.
         :param position: the position as the center
         """
+        if not shared.IS_CLIENT:
+            return
         for face in mcpython.util.enums.EnumSide.iterate():
             block = self.dimension.get_block(face.relative_offset(position))
             if block is None or isinstance(block, str):
