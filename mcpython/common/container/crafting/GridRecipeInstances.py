@@ -67,7 +67,7 @@ class AbstractCraftingGridRecipe(
         raise NotImplementedError()
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, self.as_grid_for_view())
+        return "{}(name={},{})".format(self.__class__.__name__, self.name, self.as_grid_for_view())
 
 
 @shared.crafting_handler
@@ -108,7 +108,7 @@ class GridShaped(AbstractCraftingGridRecipe):
         sy = max(self.inputs, key=lambda x: x[1])[1] + 1
         self.bboxsize = (sx, sy)
 
-    def register(self):
+    def prepare(self):
         shared.crafting_handler.crafting_recipes_shaped.setdefault(
             len(self.inputs), {}
         ).setdefault(self.bboxsize, []).append(self)
@@ -131,7 +131,7 @@ class GridShaped(AbstractCraftingGridRecipe):
                     [
                         [ItemStack(*e)]
                         if not e[0].startswith("#")
-                        else self.tag_to_stacks(*e)
+                        else self.tag_to_stacks(*e, recipe_name=self.name)
                         for e in entry
                     ],
                     [],
@@ -145,10 +145,13 @@ class GridShaped(AbstractCraftingGridRecipe):
         return grid, ItemStack(*self.output)
 
     @classmethod
-    def tag_to_stacks(cls, name: str, count: int = None):
-        return [
-            ItemStack(e) for e in shared.tag_handler.get_entries_for(name, "blocks")
-        ]
+    def tag_to_stacks(cls, name: str, count: int = None, recipe_name=None):
+        try:
+            tags = shared.tag_handler.get_tag_for(name, "items")
+        except ValueError:
+            logger.println("[ERROR] could not load tag '{}' for recipe '{}'".format(name, recipe_name))
+            return []
+        return list(map(ItemStack, tags.entries))
 
 
 @shared.crafting_handler
@@ -172,7 +175,7 @@ class GridShapeless(AbstractCraftingGridRecipe):
         self.inputs = inputs
         self.output = output
 
-    def register(self):
+    def prepare(self):
         shared.crafting_handler.crafting_recipes_shapeless.setdefault(
             len(self.inputs), []
         ).append(self)
@@ -187,7 +190,7 @@ class GridShapeless(AbstractCraftingGridRecipe):
                     [
                         [ItemStack(*e)]
                         if not e[0].startswith("#")
-                        else GridShaped.tag_to_stacks(*e)
+                        else GridShaped.tag_to_stacks(*e, recipe_name=self.name)
                         for e in stacks.pop()
                     ],
                     [],

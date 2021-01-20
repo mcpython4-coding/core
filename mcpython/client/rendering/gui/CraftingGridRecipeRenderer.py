@@ -20,7 +20,6 @@ import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.GridRecipeInstances as GridRecipe
 import mcpython.common.container.crafting.IRecipe
 from mcpython import logger
-from mcpython.common.container.ItemStack import ItemStack
 import mcpython.common.event.EventHandler
 import mcpython.ResourceLoader
 import mcpython.util.texture
@@ -62,7 +61,7 @@ class CraftingTableLikeRecipeViewRenderer(
         i = 0
         for x in range(3):
             for y in range(3):
-                self.slots[i].position = (x * 36 + 58, y * 36 + 18)
+                self.slots[i].position = (x * 36 + 58, (2 - y) * 36 + 18)
                 i += 1
         self.slots[-1].position = (246, 54)
 

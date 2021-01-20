@@ -113,7 +113,6 @@ class TagHandler:
         :param name: the name to use
         :param group: the group to use
         :return: the tag instance
-        :raises ValueError: when the tag is not found
         """
         if group not in self.taggroups or name not in self.taggroups[group].tags:
             logger.println("unknown tag '{}' in group '{}'".format(name, group))

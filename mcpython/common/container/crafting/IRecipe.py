@@ -19,17 +19,12 @@ import json
 from mcpython.common.container.ItemStack import ItemStack
 
 
-class AwaitingDependencyException(Exception):
-    pass
-
-
 class IRecipe(mcpython.common.event.Registry.IRegistryContent, ABC):
     """
     Base class for recipes
 
     Data is matched by TYPE, than decoded by from_data() ['file' is for error messages]
-    Later run the loading pipe, bake() is called which can raise AwaitingDependencyException
-    when a dependency for this recipe is not ready [only waiting for bake() to be called].
+    Later run the loading pipe, bake() is called
     After all that, prepare() is called. This should create the needed lookups for the crafting systems
     [e.g. maps from input -> output, ...]
     """

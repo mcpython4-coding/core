@@ -43,5 +43,6 @@ with zipfile.ZipFile(home + "/tools/source.zip") as f:
             d = os.path.dirname(fd)
             if not os.path.isdir(d):
                 os.makedirs(d)
+
             with open(fd, mode="wb") as f2:
                 f2.write(data)

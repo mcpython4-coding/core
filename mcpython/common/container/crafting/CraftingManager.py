@@ -75,10 +75,11 @@ class CraftingManager:
         self, recipe: mcpython.common.container.crafting.IRecipe.IRecipe, name: str
     ):
         recipe.name = name
-        recipe.register()
+        recipe.bake()
+        recipe.prepare()
         self.recipe_table[name] = recipe
 
-    def add_recipe_from_data(self, data: dict, name: str, file=None):
+    def add_recipe_from_data(self, data: dict, name: str, file: str = None):
         recipe_type = data["type"]
         if recipe_type in self.recipe_info_table:
             recipe = self.recipe_info_table[recipe_type].from_data(data, file)

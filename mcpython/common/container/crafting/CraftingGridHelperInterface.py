@@ -13,12 +13,13 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared, logger
-import mcpython.common.container.crafting.IRecipeUser
-import mcpython.common.container.crafting.IRecipe
-import mcpython.common.container.crafting.GridRecipeInstances
 import mcpython.client.gui.Slot
+import mcpython.common.container.crafting.GridRecipeInstances
+import mcpython.common.container.crafting.IRecipe
+import mcpython.common.container.crafting.IRecipeUser
 import mcpython.common.container.ItemStack
+from mcpython import logger
+from mcpython import shared
 
 
 class IRecipeAdapter:
