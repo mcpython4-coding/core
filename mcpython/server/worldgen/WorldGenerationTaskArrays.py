@@ -330,7 +330,7 @@ class WorldGenerationTaskHandler:
             del self.data_maps[1][dim][p]
         if dim in self.data_maps[2] and p in self.data_maps[2][dim]:
             del self.data_maps[2][dim][p]
-        if chunk in self.chunks:
+        if chunk.get_position() in self.chunks:
             self.chunks.remove(chunk)
 
     def clear(self):

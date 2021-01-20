@@ -54,6 +54,8 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
         self.recipeinterface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
             inputs, self.slots[9]
         )
+        if self.custom_name is None:
+            self.custom_name = "Crafting Table"
 
     def create_slots(self) -> list:
         # 36 slots of main, 9 crafting grid, 1 crafting output
@@ -85,14 +87,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
         self.bg_image_size = self.TEXTURE_SIZE
         x, y = self.get_position()
         self.TEXTURE.blit(x, y)
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw(x, y, hovering=slot == hovering_slot)
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw_label()
+        super().draw(hovering_slot)
 
     def get_interaction_slots(self):
         return shared.world.get_active_player().inventory_main.slots[:36] + self.slots

@@ -27,7 +27,8 @@ import mcpython.util.texture
 
 class InventoryChest(mcpython.client.gui.Inventory.Inventory):
     """
-    inventory class for chest
+    Inventory class for chest
+    Defines the default chest layout
     """
 
     TEXTURE = None
@@ -49,6 +50,11 @@ class InventoryChest(mcpython.client.gui.Inventory.Inventory):
     def get_config_file() -> str or None:
         return "assets/config/inventory/block_inventory_chest.json"
 
+    def __init__(self):
+        super().__init__()
+        if self.custom_name is None:
+            self.custom_name = "Chest"
+
     def on_activate(self):
         super().on_activate()
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
@@ -69,14 +75,8 @@ class InventoryChest(mcpython.client.gui.Inventory.Inventory):
         self.bg_image_size = self.TEXTURE_SIZE
         x, y = self.get_position()
         self.TEXTURE.blit(x, y)
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw(x, y, hovering=slot == hovering_slot)
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw_label()
+
+        super().draw(hovering_slot)
 
     def get_interaction_slots(self):
         return shared.world.get_active_player().inventory_main.slots[:36] + self.slots

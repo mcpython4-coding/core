@@ -28,7 +28,7 @@ import PIL.Image
 
 class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
     """
-    inventory class for the furnace
+    Inventory class for the furnace
     """
 
     TEXTURE_BG = None
@@ -85,6 +85,8 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
         self.recipe = None
         self.progress = 0
         self.types = types
+        if self.custom_name is None:
+            self.custom_name = "Furnace"
 
     @staticmethod
     def get_config_file() -> str or None:
@@ -226,11 +228,11 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
 
     def draw(self, hovering_slot=None):
         """
-        draws the inventory
+        Draws the inventory
         """
         self.bg_image_size = self.TEXTURE_BG_SIZE
         x, y = self.get_position()
-        self.TEXTURE_Bshared.blit(x, y)
+        self.TEXTURE_BG.blit(x, y)
 
         # draw arrow
         if self.recipe and self.progress > 0:
@@ -256,14 +258,7 @@ class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
             except ZeroDivisionError:
                 pass
 
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw(x, y, hovering=slot == hovering_slot)
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw_label()
+        super().draw(hovering_slot)
 
     def get_interaction_slots(self):
         return shared.world.get_active_player().inventory_main.slots[:36] + self.slots

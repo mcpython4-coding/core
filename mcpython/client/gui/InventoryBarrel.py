@@ -31,6 +31,8 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
     def __init__(self, block):
         super().__init__()
         self.block = block
+        if self.custom_name is None:
+            self.custom_name = "Barrel"
 
     @staticmethod
     def get_config_file() -> str or None:
@@ -62,14 +64,7 @@ class InventoryBarrel(mcpython.client.gui.Inventory.Inventory):
         self.bg_image_size = (
             mcpython.client.gui.InventoryChest.InventoryChest.TEXTURE_SIZE
         )
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw(x, y, hovering=slot == hovering_slot)
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw_label()
+        super().draw(hovering_slot)
 
     def get_interaction_slots(self):
         return shared.world.get_active_player().inventory_main.slots[:36] + self.slots

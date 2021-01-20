@@ -1472,4 +1472,5 @@ R   [uuk]: improved world serialization API
 [uuk]: updated docs, doc formatter
 [uul]: Chunk supports now [position] like dicts, iter over (position, block), and == at data level
 [uuk]: added abstract base class for containers
+[uuk]: inventories can draw now their custom name
 

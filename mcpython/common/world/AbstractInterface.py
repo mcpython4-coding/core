@@ -355,6 +355,9 @@ class IChunk(ABC):
     def __eq__(self, other: "IChunk"):
         return self.get_dimension() == other.get_dimension() and self.get_position() == other.get_position()
 
+    def __hash__(self):
+        return hash((self.get_dimension().get_name(), self.get_position()))
+
 
 class IDimension(ABC):
     def __init__(self):

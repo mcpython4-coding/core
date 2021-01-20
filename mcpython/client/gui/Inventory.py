@@ -51,6 +51,9 @@ class Inventory(ABC):
         self.reload_config()
         self.uuid = uuid.uuid4()
         self.custom_name = None
+        self.custom_name_label = pyglet.text.Label()
+        self.custom_name_label.anchor_y = "top"
+        self.custom_name_label.color = (0, 0, 0, 255)
 
     def reload_config(self):
         """
@@ -187,22 +190,35 @@ class Inventory(ABC):
     def is_always_open(self) -> bool:
         return False
 
+    def get_draw_slots(self):
+        return self.get_interaction_slots()
+
     def draw(self, hovering_slot=None):
         """
         Draws the inventory
         Feel free to copy code into your own inventory and write your rendering around it!
         """
         x, y = self.get_position()
-        if self.bg_sprite:
+        if self.bg_sprite is not None:
             self.bg_sprite.position = (
                 x + self.bg_image_pos[0],
                 y + self.bg_image_pos[1],
             )
             self.bg_sprite.draw()
-        for slot in self.slots:
+
+        for slot in self.get_draw_slots():
             slot.draw(x, y, hovering=slot == hovering_slot)
-        for slot in self.slots:
+
+        for slot in self.get_draw_slots():
             slot.draw_label()
+
+        if self.custom_name is not None:
+            if self.custom_name_label.text != self.custom_name:
+                self.custom_name_label.text = self.custom_name
+
+            self.custom_name_label.x = x + 15
+            self.custom_name_label.y = y + self.bg_image_size[1] - 10
+            self.custom_name_label.draw()
 
     def is_blocking_interactions(self) -> bool:
         return True

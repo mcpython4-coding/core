@@ -18,30 +18,19 @@ from mcpython import shared
 
 
 class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
+    """
+    Class for the shulker box inventory
+    Simply disables shulkerbox like items in the slots of the inventory
+    """
+
+    def __init__(self):
+        super().__init__()
+        if self.custom_name is None:
+            self.custom_name = "Shulker Box"
+
     def create_slots(self) -> list:
         slots = super().create_slots()
         for slot in slots:
             slot.disallowed_item_tags = ["#minecraft:shulkerbox_like_items"]
         return slots
 
-    def on_activate(self):
-        super().on_activate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-            "user:keyboard:press", self.on_key_press
-        )
-
-    def on_deactivate(self):
-        super().on_deactivate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-            "user:keyboard:press", self.on_key_press
-        )
-
-    def on_key_press(self, symbol, modifiers):
-        if symbol == pyglet.window.key.E:
-            shared.inventory_handler.hide(self)
-
-    def update_shift_container(self):
-        shared.inventory_handler.shift_container.container_A = (
-            shared.world.get_active_player().inventory_main.slots[:36]
-        )
-        shared.inventory_handler.shift_container.container_B = self.slots

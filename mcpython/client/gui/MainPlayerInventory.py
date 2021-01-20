@@ -46,6 +46,10 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         cls.TEXTURE = mcpython.util.texture.to_pyglet_image(ground)
         cls.TEXTURE_SIZE = ground.size
 
+    @staticmethod
+    def get_config_file() -> str or None:
+        return "assets/config/inventory/player_inventory_main.json"
+
     def __init__(self, hotbar):
         self.hotbar = hotbar
         super().__init__()
@@ -53,10 +57,8 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         self.recipe_interface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
             inputs, self.slots[44]
         )
-
-    @staticmethod
-    def get_config_file() -> str or None:
-        return "assets/config/inventory/player_inventory_main.json"
+        if self.custom_name is None:
+            self.custom_name = "Inventory"
 
     def create_slots(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
@@ -90,20 +92,10 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         shared.world.get_active_player().armor_level = points
 
     def draw(self, hovering_slot=None):
-        """
-        draws the inventory
-        """
         self.bg_image_size = self.TEXTURE_SIZE
         x, y = self.get_position()
         self.TEXTURE.blit(x, y)
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw(x, y, hovering=slot == hovering_slot)
-        for slot in (
-            shared.world.get_active_player().inventory_main.slots[:36] + self.slots
-        ):
-            slot.draw_label()
+        super().draw(hovering_slot)
 
     def remove_items_from_crafting(self):
         for slot in self.slots[40:-2]:
