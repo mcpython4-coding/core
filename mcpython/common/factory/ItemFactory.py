@@ -26,7 +26,9 @@ import mcpython.common.factory.IFactoryModifier
 from mcpython.common.factory.FactoryBuilder import FactoryBuilder
 
 
-ItemFactoryInstance = FactoryBuilder("minecraft:item", mcpython.common.item.AbstractItem.AbstractItem)
+ItemFactoryInstance = FactoryBuilder(
+    "minecraft:item", mcpython.common.item.AbstractItem.AbstractItem
+)
 
 ItemFactoryInstance.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator("set_name", "name", str)
@@ -35,22 +37,32 @@ ItemFactoryInstance.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator("set_global_mod_name", "global_name", str)
 )
 ItemFactoryInstance.register_configurator(
-    FactoryBuilder.SetterFactoryConfigurator("set_max_stack_size", "max_stack_size", int)
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_max_stack_size", "max_stack_size", int
+    )
 )
 ItemFactoryInstance.register_configurator(
-    FactoryBuilder.SetterFactoryConfigurator("set_fuel_level", "fuel_level", (float, int))
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_fuel_level", "fuel_level", (float, int)
+    )
 )
 ItemFactoryInstance.register_configurator(
     FactoryBuilder.SetterFactoryConfigurator("set_has_block_flag", "has_block")
 )
 ItemFactoryInstance.register_configurator(
-    FactoryBuilder.SetterFactoryConfigurator("set_tool_tip_renderer", "tool_tip_renderer")
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_tool_tip_renderer", "tool_tip_renderer"
+    )
 )
 ItemFactoryInstance.register_configurator(
-    FactoryBuilder.SetterFactoryConfigurator("set_tool_break_multi", "tool_break_multi", (int, float))
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_tool_break_multi", "tool_break_multi", (int, float)
+    )
 )
 ItemFactoryInstance.register_configurator(
-    FactoryBuilder.SetterFactoryConfigurator("set_tool_level", "tool_level", (int, float))
+    FactoryBuilder.SetterFactoryConfigurator(
+        "set_tool_level", "tool_level", (int, float)
+    )
 )
 
 
@@ -115,13 +127,18 @@ def build_class(
 ):
     configs: dict = instance.config_table
     import mcpython.client.gui.HoveringItemBox
-    configs.setdefault("tool_tip_renderer", mcpython.client.gui.HoveringItemBox.DEFAULT_ITEM_TOOLTIP)
+
+    configs.setdefault(
+        "tool_tip_renderer", mcpython.client.gui.HoveringItemBox.DEFAULT_ITEM_TOOLTIP
+    )
     name = configs["name"]
     if ":" not in name and "global_name" in configs:
         name = configs["global_name"] + ":" + name
 
     if "default_item_file" not in configs:
-        configs["default_item_file"] = "assets/{}/textures/item/{}.png".format(*name.split(":"))
+        configs["default_item_file"] = "assets/{}/textures/item/{}.png".format(
+            *name.split(":")
+        )
         configs.setdefault("used_item_files", []).append(configs["default_item_file"])
 
     class ModifiedClass(cls):
@@ -135,7 +152,7 @@ def build_class(
 
         @classmethod
         def get_used_texture_files(
-                cls,
+            cls,
         ):
             return configs["used_item_files"]
 
@@ -150,6 +167,7 @@ def build_class(
             return configs["tool_tip_renderer"]
 
         if "eat_callback" in configs:
+
             def on_eat(self):
                 configs["eat_callback"](self)
 
@@ -173,8 +191,7 @@ ItemFactoryInstance.register_direct_copy_attributes(
     "used_item_files",
 )
 ItemFactoryInstance.register_direct_copy_attributes(
-    "tool_type",
-    operation=lambda e: e.copy()
+    "tool_type", operation=lambda e: e.copy()
 )
 ItemFactoryInstance.register_direct_copy_attributes(
     "tool_tip_renderer",
@@ -190,7 +207,7 @@ ItemFactoryInstance.register_direct_copy_attributes(
     "tool_break_multi",
     "tool_level",
     "armor_points",
-    operation=lambda e: e
+    operation=lambda e: e,
 )
 
 

@@ -1476,4 +1476,6 @@ R   [uuk]: improved world serialization API
 [uuk]: changed recipe API
 [uuk]: fixed recipes
 [uuk]: migrated item factory system to new factory system
+[uuk]: noise implementation change is now properly working & saved
+[uuk]: added optional "noise"-library noise implementation
 

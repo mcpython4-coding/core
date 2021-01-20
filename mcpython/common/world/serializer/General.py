@@ -181,6 +181,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(
             wd["seeds"]
         )
+        mcpython.server.worldgen.noise.NoiseManager.manager.set_noise_implementation()
 
     @classmethod
     def save(cls, data, save_file):
@@ -202,7 +203,11 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             "world_gen_info": {
                 "noise_implementation": mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation,
                 "chunk_generators": shared.world_generation_handler.serialize_chunk_generator_info(),
-                "seeds": mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map(),
+                "seeds": mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map().update(
+                    {
+                        "minecraft:noise_implementation": mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation
+                    }
+                ),
             },
         }
         save_file.dump_file_json("level.json", data)

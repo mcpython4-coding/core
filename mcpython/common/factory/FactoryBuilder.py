@@ -103,8 +103,11 @@ class FactoryBuilder:
                 value = self.default_value
             else:
                 (value,) = args
-            assert isinstance(value, self.assert_type), "type must be valid ({}, exptected {})".format(
-                type(value), self.assert_type)
+            assert isinstance(
+                value, self.assert_type
+            ), "type must be valid ({}, exptected {})".format(
+                type(value), self.assert_type
+            )
             instance.config_table[self.attr_name] = value
             return instance
 
@@ -196,6 +199,7 @@ class FactoryBuilder:
         def __init__(self, master: "FactoryBuilder", *args, **kwargs):
             if len(args) or len(kwargs):
                 import traceback
+
                 print(master, args, kwargs)
                 traceback.print_stack()
             self.__dict__.update(
@@ -261,7 +265,11 @@ class FactoryBuilder:
                 for operation in self.master.copy_operation_handlers:
                     operation.operate(self, new)
             except:
-                logger.print_exception("during copying {} from {}".format(self.config_table.setdefault("name", self), self.master.name))
+                logger.print_exception(
+                    "during copying {} from {}".format(
+                        self.config_table.setdefault("name", self), self.master.name
+                    )
+                )
 
             return new
 

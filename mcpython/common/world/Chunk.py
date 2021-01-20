@@ -535,7 +535,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         )
 
     def __del__(self):
-        shared.world_generation_handler.task_handler.clear_chunk(self)
+        if shared is not None:
+            shared.world_generation_handler.task_handler.clear_chunk(self)
+
         for block in self.world.values():
             del block
 

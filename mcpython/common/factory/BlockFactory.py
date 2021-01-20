@@ -149,20 +149,14 @@ def build_class(
     class ModifiedClass(cls):
         NAME = name
         HARDNESS = configs.setdefault("hardness", cls.HARDNESS)
-        BLAST_RESISTANCE = configs.setdefault(
-            "blast_resistance", cls.BLAST_RESISTANCE
-        )
+        BLAST_RESISTANCE = configs.setdefault("blast_resistance", cls.BLAST_RESISTANCE)
 
         MINIMUM_TOOL_LEVEL = configs.setdefault(
             "minimum_tool_level", cls.MINIMUM_TOOL_LEVEL
         )
-        ASSIGNED_TOOLS = configs.setdefault(
-            "assigned_tools", cls.ASSIGNED_TOOLS
-        )
+        ASSIGNED_TOOLS = configs.setdefault("assigned_tools", cls.ASSIGNED_TOOLS)
 
-        IS_BREAKABLE = configs.setdefault(
-            "break_able_flag", cls.IS_BREAKABLE
-        )
+        IS_BREAKABLE = configs.setdefault("break_able_flag", cls.IS_BREAKABLE)
 
         DEFAULT_FACE_SOLID = configs.setdefault(
             "solid_face_table", cls.DEFAULT_FACE_SOLID

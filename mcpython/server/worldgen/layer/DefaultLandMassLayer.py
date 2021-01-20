@@ -20,6 +20,7 @@ from mcpython import shared
 import mcpython.common.event.EventHandler
 import mcpython.common.world.Chunk
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
+import mcpython.server.worldgen.noise.INoiseImplementation
 
 
 @shared.world_generation_handler
@@ -31,7 +32,7 @@ class DefaultLandMassLayer(ILayer):
         scale=10 ** 2,
         octaves=3,
         dimensions=2,
-        merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
+        merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
     )
 
     @staticmethod

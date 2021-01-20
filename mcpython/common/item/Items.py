@@ -71,7 +71,9 @@ def load_item():
         shared.world.get_active_player().add_xp(random.randint(3, 11))
         return True
 
-    template.set_name("experience_bottle").set_eat_callback(lambda_add_random_xp).set_food_value(0).finish()
+    template.set_name("experience_bottle").set_eat_callback(
+        lambda_add_random_xp
+    ).set_food_value(0).finish()
     template.set_name("feather").finish()
     template.set_name("fermented_spider_eye").finish()
     template.set_name("filled_map").set_max_stack_size(1).finish()
@@ -79,7 +81,9 @@ def load_item():
     template.set_name("firework_rocket").finish()
     template.set_name("firework_star").finish()
     template.set_name("flint").finish()
-    template.set_name("flint_and_steel").set_max_stack_size(1).set_durability(64).finish()
+    template.set_name("flint_and_steel").set_max_stack_size(1).set_durability(
+        64
+    ).finish()
     template.set_name("ghast_tear").finish()
     template.set_name("glass_bottle").set_max_stack_size(16).finish()
     template.set_name("glistering_melon_slice").finish()
@@ -162,64 +166,106 @@ def load_item():
         ).finish()
         template.set_name("stone_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).set_tool_break_multi(4).set_tool_level(2).set_durability(131).set_max_stack_size(1).finish()
+        ).set_tool_break_multi(4).set_tool_level(2).set_durability(
+            131
+        ).set_max_stack_size(
+            1
+        ).finish()
         template.set_name("iron_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).set_tool_break_multi(6).set_tool_level(3).set_durability(250).set_max_stack_size(1).finish()
+        ).set_tool_break_multi(6).set_tool_level(3).set_durability(
+            250
+        ).set_max_stack_size(
+            1
+        ).finish()
         template.set_name("golden_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).set_tool_break_multi(8).set_tool_level(4).set_durability(32).set_max_stack_size(1).finish()
+        ).set_tool_break_multi(8).set_tool_level(4).set_durability(
+            32
+        ).set_max_stack_size(
+            1
+        ).finish()
         template.set_name("diamond_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).set_tool_break_multi(12).set_tool_level(5).set_durability(1561).set_max_stack_size(1).finish()
+        ).set_tool_break_multi(12).set_tool_level(5).set_durability(
+            1561
+        ).set_max_stack_size(
+            1
+        ).finish()
         template.set_name("netherite_{}".format(tool_name)).set_tool_type(
             [tool_type]
-        ).set_tool_break_multi(14).set_tool_level(6).set_durability(2031).set_max_stack_size(1).finish()
+        ).set_tool_break_multi(14).set_tool_level(6).set_durability(
+            2031
+        ).set_max_stack_size(
+            1
+        ).finish()
 
     for color in mcpython.util.enums.COLORS:
         template.set_name("{}_dye".format(color)).finish()
 
     # armor
 
-    template.set_name("golden_helmet").set_armor_points(2).set_durability(77).set_max_stack_size(1).finish()
-    template.set_name("golden_chestplate").set_armor_points(5).set_durability(112).set_max_stack_size(
-        1
-    ).finish()
-    template.set_name("golden_leggings").set_armor_points(3).set_durability(105).set_max_stack_size(1).finish()
-    template.set_name("golden_boots").set_armor_points(1).set_durability(91).set_max_stack_size(1).finish()
+    template.set_name("golden_helmet").set_armor_points(2).set_durability(
+        77
+    ).set_max_stack_size(1).finish()
+    template.set_name("golden_chestplate").set_armor_points(5).set_durability(
+        112
+    ).set_max_stack_size(1).finish()
+    template.set_name("golden_leggings").set_armor_points(3).set_durability(
+        105
+    ).set_max_stack_size(1).finish()
+    template.set_name("golden_boots").set_armor_points(1).set_durability(
+        91
+    ).set_max_stack_size(1).finish()
 
-    template.set_name("chainmail_helmet").set_armor_points(2).set_durability(165).set_max_stack_size(
-        1
-    ).finish()
+    template.set_name("chainmail_helmet").set_armor_points(2).set_durability(
+        165
+    ).set_max_stack_size(1).finish()
     template.set_name("chainmail_chestplate").set_armor_points(5).set_durability(
         240
     ).set_max_stack_size(1).finish()
     template.set_name("chainmail_leggings").set_armor_points(4).set_durability(
         225
     ).set_max_stack_size(1).finish()
-    template.set_name("chainmail_boots").set_armor_points(1).set_durability(195).set_max_stack_size(1).finish()
+    template.set_name("chainmail_boots").set_armor_points(1).set_durability(
+        195
+    ).set_max_stack_size(1).finish()
 
-    template.set_name("iron_helmet").set_armor_points(2).set_durability(165).set_max_stack_size(1).finish()
-    template.set_name("iron_chestplate").set_armor_points(6).set_durability(240).set_max_stack_size(1).finish()
-    template.set_name("iron_leggings").set_armor_points(5).set_durability(225).set_max_stack_size(1).finish()
-    template.set_name("iron_boots").set_armor_points(2).set_durability(195).set_max_stack_size(1).finish()
+    template.set_name("iron_helmet").set_armor_points(2).set_durability(
+        165
+    ).set_max_stack_size(1).finish()
+    template.set_name("iron_chestplate").set_armor_points(6).set_durability(
+        240
+    ).set_max_stack_size(1).finish()
+    template.set_name("iron_leggings").set_armor_points(5).set_durability(
+        225
+    ).set_max_stack_size(1).finish()
+    template.set_name("iron_boots").set_armor_points(2).set_durability(
+        195
+    ).set_max_stack_size(1).finish()
 
-    template.set_name("diamond_helmet").set_armor_points(3).set_durability(363).set_max_stack_size(1).finish()
+    template.set_name("diamond_helmet").set_armor_points(3).set_durability(
+        363
+    ).set_max_stack_size(1).finish()
     template.set_name("diamond_chestplate").set_armor_points(8).set_durability(
         528
     ).set_max_stack_size(1).finish()
-    template.set_name("diamond_leggings").set_armor_points(6).set_durability(495).set_max_stack_size(
-        1
-    ).finish()
-    template.set_name("diamond_boots").set_armor_points(3).set_durability(429).set_max_stack_size(1).finish()
+    template.set_name("diamond_leggings").set_armor_points(6).set_durability(
+        495
+    ).set_max_stack_size(1).finish()
+    template.set_name("diamond_boots").set_armor_points(3).set_durability(
+        429
+    ).set_max_stack_size(1).finish()
 
-    template.set_name("netherite_boots").set_armor_points(3).set_durability(407).set_max_stack_size(1).finish()
+    template.set_name("netherite_boots").set_armor_points(3).set_durability(
+        407
+    ).set_max_stack_size(1).finish()
     template.set_name("netherite_chestplate").set_armor_points(8).set_durability(
         592
     ).set_max_stack_size(1).finish()
-    template.set_name("netherite_helmet").set_armor_points(6).set_durability(555).set_max_stack_size(
-        1
-    ).finish()
+    template.set_name("netherite_helmet").set_armor_points(6).set_durability(
+        555
+    ).set_max_stack_size(1).finish()
     template.set_name("netherite_leggings").set_armor_points(3).set_durability(
         481
     ).set_max_stack_size(1).finish()

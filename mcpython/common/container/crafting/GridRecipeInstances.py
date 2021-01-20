@@ -67,7 +67,9 @@ class AbstractCraftingGridRecipe(
         raise NotImplementedError()
 
     def __repr__(self):
-        return "{}(name={},{})".format(self.__class__.__name__, self.name, self.as_grid_for_view())
+        return "{}(name={},{})".format(
+            self.__class__.__name__, self.name, self.as_grid_for_view()
+        )
 
 
 @shared.crafting_handler
@@ -149,7 +151,11 @@ class GridShaped(AbstractCraftingGridRecipe):
         try:
             tags = shared.tag_handler.get_tag_for(name, "items")
         except ValueError:
-            logger.println("[ERROR] could not load tag '{}' for recipe '{}'".format(name, recipe_name))
+            logger.println(
+                "[ERROR] could not load tag '{}' for recipe '{}'".format(
+                    name, recipe_name
+                )
+            )
             return []
         return list(map(ItemStack, tags.entries))
 

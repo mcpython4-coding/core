@@ -18,6 +18,7 @@ import mcpython.server.worldgen.noise.NoiseManager
 
 from mcpython import shared
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
+import mcpython.server.worldgen.noise.INoiseImplementation
 
 
 @shared.world_generation_handler
@@ -30,7 +31,7 @@ class DefaultTopLayerLayer(ILayer):
         dimensions=2,
         scale=10 ** 3,
         octaves=5,
-        merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
+        merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
     )
 
     @classmethod

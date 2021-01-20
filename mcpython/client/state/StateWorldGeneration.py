@@ -135,6 +135,7 @@ class StateWorldGeneration(State.State):
         mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = (
             self.world_gen_config["seed_source"]
         )
+        mcpython.server.worldgen.noise.NoiseManager.manager.set_noise_implementation()
         shared.world_generation_handler.enable_generation = True
         fx = sx // 2
         fy = sy // 2

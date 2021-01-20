@@ -11,66 +11,18 @@ blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
 
 This project is not official by mojang and does not relate to it.
 """
-import itertools
 import typing
-import opensimplex
-import mcpython.util.math
+import importlib
 
 from mcpython import logger
+from mcpython.server.worldgen.noise.INoiseImplementation import (
+    INoiseImplementation,
+    IOctaveMerger,
+    EQUAL_MERGER,
+)
 
 
-class IOctaveMerger:
-    @classmethod
-    def pre_merge(
-        cls,
-        implementation: "INoiseImplementation",
-        position,
-        *generators: typing.Callable
-    ) -> float:
-        return cls.merge(
-            implementation, [generator(position) for generator in generators]
-        )
-
-    @classmethod
-    def merge(cls, implementation: "INoiseImplementation", values) -> float:
-        return 0
-
-
-class EQUAL_MERGER(IOctaveMerger):
-    @classmethod
-    def merge(cls, implementation: "INoiseImplementation", values):
-        return sum(values) / len(values)
-
-
-class GEO_EQUAL_MERGER(IOctaveMerger):
-    @classmethod
-    def merge(cls, implementation: "INoiseImplementation", values):
-        return mcpython.util.math.product(values) ** (1 / len(values))
-
-
-class INNER_MERGE(IOctaveMerger):
-    @classmethod
-    def pre_merge(
-        cls,
-        implementation: "INoiseImplementation",
-        position,
-        *generators: typing.Callable
-    ):
-        if implementation.merger_config is None:
-            implementation.merger_config = [1] * len(generators)
-        if len(implementation.merger_config) < len(generators):
-            implementation.merger_config += [1] * (
-                len(generators) - len(implementation.merger_config)
-            )
-        value = generators[0](position) * implementation.merger_config[0]
-        for i, generator in enumerate(generators[1:]):
-            value = generator(position + (value,)) * implementation.merger_config[i + 1]
-        return value
-
-
-class INoiseImplementation:
-    NAME = None
-
+class NoiseImplementationWrapper(INoiseImplementation):
     def __init__(
         self,
         dimensions: int,
@@ -78,63 +30,35 @@ class INoiseImplementation:
         scale: float,
         merger: IOctaveMerger = EQUAL_MERGER,
     ):
-        self.seed = 0
-        self.dimensions = dimensions
-        self.octaves = octaves
-        self.scale = scale
-        self.merger = merger
-        self.merger_config = None
+        super().__init__(dimensions, octaves, scale, merger)
+        self.instance: typing.Optional[INoiseImplementation] = None
+
+    def create_instance(self, cls: typing.Type[INoiseImplementation]):
+        self.instance = cls(self.dimensions, self.octaves, self.scale, self.merger)
+        self.instance.set_seed(self.seed)
 
     def set_seed(self, seed: int):
-        self.seed = seed
+        super().set_seed(seed)
+        if self.instance is not None:
+            self.instance.set_seed(seed)
 
     def calculate_position(self, position) -> float:
         assert len(position) == self.dimensions, "dimensions must match"
-        return 0
+        return self.instance.calculate_position(position)
 
     def calculate_area(
         self, start: typing.Tuple, end: typing.Tuple
     ) -> typing.Iterator[typing.Tuple[typing.Tuple, float]]:
-        for position in itertools.product(*(range(a, b) for a, b in zip(start, end))):
-            yield position, self.calculate_position(position)
-
-
-class OpenSimplexImplementation(INoiseImplementation):
-    """
-    Default noise implementation.
-    """
-
-    NAME = "minecraft:open_simplex_noise"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.noises: typing.List[typing.Optional[opensimplex.OpenSimplex]] = [
-            None
-        ] * self.octaves
-
-    def set_seed(self, seed: int):
-        super().set_seed(seed)
-        for i in range(self.octaves):
-            self.noises[i] = opensimplex.OpenSimplex(hash((seed, i)))
-
-    def calculate_position(self, position) -> float:
-        assert len(position) == self.dimensions, "dimensions must match"
-        position = tuple([e / self.scale for e in position])
-        return self.merger.pre_merge(
-            self,
-            position,
-            *[
-                lambda p: noise.noise4d(*p, *(0,) * (4 - len(p))) * 0.5 + 0.5
-                for noise in self.noises
-            ]
-        )
+        return self.instance.calculate_area(start, end)
 
 
 class NoiseManager:
     def __init__(self):
         self.instances: typing.Dict[str, typing.Type[INoiseImplementation]] = {}
         self.default_implementation: typing.Optional[str] = None
-        self.noise_instances: typing.List[typing.Tuple[INoiseImplementation, str]] = []
+        self.noise_instances: typing.List[
+            typing.Tuple[NoiseImplementationWrapper, str]
+        ] = []
         self.seed = 0
 
     def register_implementation(
@@ -144,20 +68,32 @@ class NoiseManager:
             self.default_implementation = implementation.NAME
         self.instances[implementation.NAME] = implementation
 
+    def set_noise_implementation(self, name: str = None):
+        implementation = self.instances[
+            name if name is not None else self.default_implementation
+        ]
+        for instance, _ in self.noise_instances:
+            instance.create_instance(implementation)
+
+    def register_optional_implementation(self, package: str, cls_name: str):
+        try:
+            self.register_implementation(
+                getattr(importlib.import_module(package), cls_name)
+            )
+        except ImportError:
+            logger.println(
+                "[INFO] skipping noise implementation in {}".format(cls_name)
+            )
+
     def create_noise_instance(
         self,
         ref_name: str,
         dimensions: int,
         octaves: int = 1,
-        implementation=None,
         scale=1,
         merger: IOctaveMerger = EQUAL_MERGER,
     ) -> INoiseImplementation:
-        if implementation is None:
-            implementation = self.default_implementation
-        instance = self.instances[implementation](
-            dimensions, octaves, scale, merger=merger
-        )
+        instance = NoiseImplementationWrapper(dimensions, octaves, scale, merger=merger)
         instance.set_seed(self.calculate_part_seed(ref_name))
         self.noise_instances.append((instance, ref_name))
         return instance
@@ -177,9 +113,18 @@ class NoiseManager:
             if name in data:
                 noise.set_seed(data[name])
                 del data[name]
+
+        if "minecraft:noise_implementation" in data:
+            self.set_noise_implementation(data["minecraft:noise_implementation"])
+
         if len(data) > 0:
             logger.println("found to many seed entries: ", data)
 
 
 manager = NoiseManager()
+from .OpenSimplexImplementation import OpenSimplexImplementation
+
 manager.register_implementation(OpenSimplexImplementation)
+manager.register_optional_implementation(
+    "mcpython.server.worldgen.noise.PackageNoiseImplementation", "NoiseImplementation"
+)

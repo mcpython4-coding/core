@@ -15,6 +15,7 @@ This project is not official by mojang and does not relate to it.
 import random
 
 import mcpython.server.worldgen.noise.NoiseManager
+import mcpython.server.worldgen.noise.INoiseImplementation
 
 from mcpython import shared
 import mcpython.common.event.EventHandler
@@ -32,7 +33,7 @@ class DefaultHeightMapLayer(ILayer):
         scale=10 ** 2,
         dimensions=2,
         octaves=5,
-        merger=mcpython.server.worldgen.noise.NoiseManager.INNER_MERGE,
+        merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
     )
     noise.merger_config = [3, 2, 1]
 
