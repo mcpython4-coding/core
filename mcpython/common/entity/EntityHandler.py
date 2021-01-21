@@ -99,7 +99,7 @@ class EntityHandler:
             # todo: add max entities standing in one space handler
 
     def clear(self):
-        for entity in self.entity_map.values():
+        for entity in list(self.entity_map.values()):
             try:
                 entity.kill(internal=True, force=True)
             except:

@@ -121,15 +121,15 @@ class CommandParser:
         :param info: the info to use
         :param index: the index to start on
         """
-        if len(command) == 1 and not all(
+        if len(command) == 1 and not any(
             [
                 subcommand.mode == mcpython.server.command.Command.ParseMode.OPTIONAL
                 for subcommand in parsebridge.sub_commands
             ]
         ):
             logger.println(
-                "unable to parse command. please use /help <command name> command to get exact command "
-                "syntax"
+                "unable to parse command {}. please use /help <command name> command to get exact command "
+                "syntax".format(command)
             )
             return None, None
         active_entry = parsebridge

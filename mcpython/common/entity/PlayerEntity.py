@@ -274,6 +274,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         damage_source: mcpython.common.entity.DamageSource.DamageSource = None,
         test_totem=True,
         force=False,
+        internal=False,
     ):
         if not force and not shared.event_handler.call_cancelable(
             "player:pre_die",
@@ -308,7 +309,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 return
 
         super().kill()
-        if not force and not shared.event_handler.call_cancelable(
+        if not internal and not force and not shared.event_handler.call_cancelable(
             "player:dead:cancel_post",
             self,
             drop_items,
@@ -317,18 +318,24 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             test_totem,
         ):
             return
+
         sector = mcpython.util.math.position_to_chunk(self.position)
         shared.world.change_chunks(sector, None)
         self.reset_moving_slot()
-        if not shared.world.gamerule_handler.table["keepInventory"].status.status:
-            shared.command_parser.parse("/clear")  # todo: drop items
+        if not shared.world.gamerule_handler.table["keepInventory"].status.status or internal:
+            for (
+                inventory
+            ) in self.get_inventories():  # iterate over all inventories ...
+                inventory.clear()  # ... and clear them
 
-        if shared.world.gamerule_handler.table["showDeathMessages"].status.status:
+        if shared.world.gamerule_handler.table["showDeathMessages"].status.status and not internal:
             logger.println(
                 "[CHAT] player {} died".format(self.name)
             )  # todo: add death screen and death type
 
-        self.move_to_spawn_point()
+        if not internal:
+            self.move_to_spawn_point()
+
         self.active_inventory_slot = 0
         shared.window.dy = 0
         shared.chat.close()
@@ -346,12 +353,13 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         shared.world.change_chunks(None, sector)
         # todo: recalculate armor level!
 
-        if not shared.world.gamerule_handler.table["doImmediateRespawn"].status.status:
+        if not shared.world.gamerule_handler.table["doImmediateRespawn"].status.status and not internal:
             shared.state_handler.switch_to(
                 "minecraft:escape_state"
             )  # todo: add special state [see above]
 
-        shared.event_handler.call("gamplay:player:die", self, damage_source)
+        if not internal:
+            shared.event_handler.call("gamplay:player:die", self, damage_source)
 
     def _get_position(self):
         return self.position
