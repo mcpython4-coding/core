@@ -11,12 +11,16 @@ This project is not official by mojang and does not relate to it.
 import enum
 import json
 import os
+import typing
 
 from mcpython import shared, logger
 import mcpython.ResourceLoader
 import mcpython.server.command.CommandParser
 import mcpython.server.command.McFunctionFile
 import mcpython.common.event.EventHandler
+
+
+class DatapackLoadException(Exception): pass
 
 
 class DataPackStatus(enum.Enum):
@@ -43,36 +47,43 @@ class DataPackHandler:
             "game:close", self.cleanup
         )
 
-    def _load(self):
+    def schedule_datapack_load(self):
         """
-        Will load all data packs
+        Will load all data packs in the default locations and call an event for
+        subsequent systems to register them (datapack:search)
+        WARNING: this function is called also on each reload
         """
         for path in os.listdir(shared.home + "/datapacks"):
             self.load_datapack_from_directory(shared.home + "/datapacks/" + path)
         shared.event_handler.call("datapack:search")
 
-    def load_datapack_from_directory(self, directory: str):
+    def load_datapack_from_directory(self, directory: str, raise_on_error=False) -> typing.Optional["DataPack"]:
         """
-        Will load an given data pack
-        :param directory: the directory to load from
+        Will try to load the data pack in the given directory/file
+        :param directory: the directory or file to load from
+        :param raise_on_error: if a DatapackLoadException should be raised on error
         """
         try:
             datapack = DataPack(directory)
             datapack.load()
             shared.event_handler.call("datapack:load", datapack)
             self.loaded_data_packs.append(datapack)
+            return datapack
         except:
-            logger.print_exception("during loading data pack from {}".format(directory))
+            logger.print_exception("during loading data pack from '{}'".format(directory))
+            if raise_on_error:
+                raise DatapackLoadException(directory)
 
     def reload(self):
         """
-        Reloads all data packs
+        Reloads all loaded data packs
+        todo: look out for new ones at special locations
         """
         old_status_table = {
             datapack.name: datapack.status for datapack in self.loaded_data_packs
         }
         self.cleanup()
-        self._load()
+        self.schedule_datapack_load()
         shared.event_handler.call("datapack:reload")
 
         # restore old state
@@ -87,6 +98,7 @@ class DataPackHandler:
     def cleanup(self):
         """
         Removes all data packs from the system
+        Used during reload for cleaning the list of datapacks
         """
         shared.event_handler.call("datapack:unload:pre")
         for datapack in self.loaded_data_packs:
@@ -127,12 +139,12 @@ datapack_handler = DataPackHandler()
 
 class DataPack:
     """
-    class for an single data pack
+    Class for a single data pack
     """
 
     def __init__(self, directory: str):
         """
-        will create an new DataPack-object
+        Will create a new DataPack-object
         :param directory: where the datapack is located
         """
         self.directory = directory
@@ -144,7 +156,7 @@ class DataPack:
 
     def load(self):
         """
-        will load the data pack
+        Will load the data pack
         """
         if self.status == DataPackStatus.SYSTEM_ERROR:
             return
@@ -190,7 +202,7 @@ class DataPack:
 
     def unload(self):
         """
-        will unload the datapack
+        Will unload the datapack
         """
         if self.status == DataPackStatus.SYSTEM_ERROR:
             return
@@ -217,7 +229,7 @@ class DataPack:
 
     def set_status(self, status: DataPackStatus):
         """
-        sets the status of the data pack
+        Sets the status of the data pack
         :param status: the status to set
         """
         if status == self.status:
