@@ -6,9 +6,6 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang Studios (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
-(https://www.minecraft.net/en-us/article/minecraft-snapshot-20w51a)
-
 This project is not official by mojang and does not relate to it.
 """
 import subprocess
@@ -33,7 +30,7 @@ subprocess.call(
     [
         sys.executable,
         home + "/tools/update_asset_source.py",
-        "https://launcher.mojang.com/v1/objects/ab0d1d122bc2c99daad33befe50a16a07d3b3bf7/client.jar",
+        "https://launcher.mojang.com/v1/objects/30d492744e5c282331958d2096cc8b39d8ec3145/client.jar",
         home,
     ],
     stdout=sys.stdout,

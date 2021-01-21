@@ -6,9 +6,6 @@ based on the game of fogleman (https://github.com/fogleman/Minecraft) licenced u
 original game "minecraft" by Mojang Studios (www.minecraft.net)
 mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/MinecraftForge)
 
-blocks based on 20w51a.jar of minecraft, representing snapshot 20w51a
-(https://www.minecraft.net/en-us/article/minecraft-snapshot-20w51a)
-
 This project is not official by mojang and does not relate to it.
 """
 import typing
@@ -436,11 +433,11 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     def __str__(self):
         return 'Player(dim={},pos={},rot={},name="{}",chunk={})'.format(
-            self.dimension.id,
+            self.dimension.id if self.dimension is not None else "N/A",
             self.position,
             self.rotation,
             self.name,
-            self.chunk.position,
+            self.chunk.position if self.chunk is not None else "N/A",
         )
 
     def on_inventory_cleared(self):

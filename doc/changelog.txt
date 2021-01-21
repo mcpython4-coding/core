@@ -47,7 +47,7 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <20w04a> released on -, targeting <20w03a>
+changelog of snapshot <21w04a> released on -, targeting <20w03a>
     This snapshot broke backwards compatibility, again...
     Namely:
     - items are now constructed differently
@@ -81,7 +81,7 @@ changelog of snapshot <20w04a> released on -, targeting <20w03a>
         - recipes were not working [MAYBE]
 
 
-changelog of snapshot 20w01a, released on 06.01.2021, targeting 20w51a
+changelog of snapshot 21w01a, released on 06.01.2021, targeting 20w51a
     Happy new year, 2021!
     This time, breaks again some big parts
     Affected are world generation and mod loading stage modifications, and loading-order-dependent stuff, beside
