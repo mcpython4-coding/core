@@ -97,6 +97,7 @@ class StateWorldGeneration(State.State):
 
     def on_update(self, dt):
         shared.world_generation_handler.task_handler.process_tasks(timer=0.4)
+
         for chunk in self.status_table:
             c = shared.world.get_active_dimension().get_chunk(*chunk)
             if c not in shared.world_generation_handler.task_handler.chunks:
@@ -106,6 +107,7 @@ class StateWorldGeneration(State.State):
                     c
                 )
                 self.status_table[chunk] = 1 / (count if count > 0 else 1)
+
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
             shared.state_handler.switch_to("minecraft:game")
             import mcpython.common.data.ResourcePipe
@@ -117,10 +119,13 @@ class StateWorldGeneration(State.State):
         super().activate()
         if mcpython.common.config.ENABLE_PROFILER_GENERATION:
             self.profiler.enable()
+        self.status_table.clear()
+
         if os.path.exists(shared.world.save_file.directory):
+            # todo: simply rename world!
             logger.println("deleting old world...")
             shutil.rmtree(shared.world.save_file.directory)
-        self.status_table.clear()
+
         shared.dimension_handler.init_dims()
 
         shared.world_generation_handler.set_current_config(
@@ -132,17 +137,23 @@ class StateWorldGeneration(State.State):
         mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = (
             self.world_gen_config["seed_source"]
         )
-        mcpython.server.worldgen.noise.NoiseManager.manager.set_noise_implementation()
+
         shared.world_generation_handler.enable_generation = True
+        mcpython.server.worldgen.noise.NoiseManager.manager.set_noise_implementation()
+
         fx = sx // 2
         fy = sy // 2
         ffx = sx - fx
         ffy = sy - fy
+
         shared.event_handler.call("on_world_generation_prepared")
+
         seed = self.world_gen_config["seed"]
         shared.world.config["seed"] = seed
         shared.event_handler.call("seed:set")
+
         shared.event_handler.call("on_world_generation_started")
+
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
                 shared.world_generation_handler.add_chunk_to_generation_list(

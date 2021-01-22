@@ -20,8 +20,9 @@ import pickle
 
 class WorldGenerationTaskHandler:
     """
-    handler for generating tasks off-call
-    todo: make task work more efficient!!!
+    Handler for generating tasks in preparation for off-thread [like MC] & off-process generation
+    [even more efficient when correctly implemented]
+    todo: make task work more efficient, even without
     """
 
     def __init__(self):
@@ -30,7 +31,7 @@ class WorldGenerationTaskHandler:
 
     def get_total_task_stats(self) -> list:
         """
-        will return the sum of all tasks of the whole system, in invoke, world_changes and shown_updates separated
+        Will return the sum of all tasks of the whole system, in invoke, world_changes and shown_updates separated
         """
         stats = []
         for d in self.data_maps:
@@ -45,7 +46,7 @@ class WorldGenerationTaskHandler:
         self, chunk: mcpython.common.world.AbstractInterface.IChunk
     ) -> int:
         """
-        gets the total count of tasks for an given chunk as an int
+        Gets the total count of tasks for an given chunk as an int
         :param chunk:
         :return:
         """
@@ -74,7 +75,7 @@ class WorldGenerationTaskHandler:
         **kwargs
     ):
         """
-        schedules an callable-invoke for the future
+        Schedules an callable-invoke for the future
         :param chunk: the chunk to link to
         :param method: the method to call
         :param args: the args to call with
@@ -82,10 +83,12 @@ class WorldGenerationTaskHandler:
         """
         if not issubclass(type(chunk), mcpython.common.world.AbstractInterface.IChunk):
             raise ValueError("chunk must be sub-class of Chunk, not {}".format(chunk))
+
         if not callable(method):
             raise ValueError(
                 "method must be callable in order to be invoked by WorldGenerationTaskHandler"
             )
+
         self.chunks.add(chunk)
         self.data_maps[0].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
             chunk.get_position(), []
@@ -101,7 +104,7 @@ class WorldGenerationTaskHandler:
         **kwargs
     ):
         """
-        schedules an addition of an block
+        Schedules an addition of an block
         :param chunk: the chunk the block is linked to
         :param position: the position of the block
         :param name: the name of the block
@@ -111,6 +114,7 @@ class WorldGenerationTaskHandler:
         """
         if "immediate" not in kwargs or kwargs["immediate"]:
             self.schedule_visual_update(chunk, position)
+
         kwargs["immediate"] = False
         self.data_maps[1].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
             chunk.get_position(), {}
@@ -126,7 +130,7 @@ class WorldGenerationTaskHandler:
         **kwargs
     ):
         """
-        schedules an removal of an block
+        Schedules an removal of an block
         :param chunk: the chunk the block is linked to
         :param position: the position of the block
         :param args: the args to call the remove_block-function with
@@ -210,13 +214,17 @@ class WorldGenerationTaskHandler:
 
     def process_tasks(self, chunks=None, timer=None):
         """
-        process tasks
+        Process tasks in chunks [default to all scheduled chunks] until more time than timer is left behind
+            [Defaults to no limit]
         :param chunks: if given, an iterable of chunks to generate
         :param timer: if given, an float in seconds to determine how far to generate
+        todo: add some better sorting function!
         """
         start = time.time()
         if chunks is None:
+            # todo: optimize this!
             chunks = list(self.chunks)
+
         chunks.sort(key=lambda c: abs(c.position[0] * c.position[1]))
         for chunk in chunks:
             flag = True
@@ -228,9 +236,11 @@ class WorldGenerationTaskHandler:
                 )
                 if timer is not None and time.time() - start >= timer:
                     return
+
             if chunk in self.chunks:
                 if not chunk.generated:
                     shared.world_generation_handler.mark_finished(chunk)
+
                 self.chunks.remove(chunk)
                 chunk.generated = True
                 chunk.finished = True
@@ -239,12 +249,14 @@ class WorldGenerationTaskHandler:
     def _process_0_array(
         self, chunk: mcpython.common.world.AbstractInterface.IChunk
     ) -> bool:
+        # todo: can we optimize this?
         if chunk.get_dimension().get_id() in self.data_maps[0]:
             dim_map = self.data_maps[0][chunk.get_dimension().get_id()]
             if chunk.get_position() in dim_map:
                 m: list = dim_map[chunk.get_position()]
                 if len(m) == 0:
                     return False
+
                 data = m.pop(0)
                 try:
                     data[0](*data[1], **data[2])
@@ -253,17 +265,20 @@ class WorldGenerationTaskHandler:
                         "during invoking '{}' with *{} and **{}".format(*data)
                     )
                 return True
+
         return False
 
     def _process_1_array(
         self, chunk: mcpython.common.world.AbstractInterface.IChunk
     ) -> bool:
+        # todo: can we optimize this?
         if chunk.get_dimension().get_id() in self.data_maps[1]:
             dim_map = self.data_maps[1][chunk.get_dimension().get_id()]
             if chunk.get_position() in dim_map:
                 m: dict = dim_map[chunk.get_position()]
                 if len(m) == 0:
                     return False
+
                 position, data = m.popitem()
                 if data[0] is None:
                     chunk.remove_block(position, **data[2])
@@ -274,11 +289,13 @@ class WorldGenerationTaskHandler:
                     if data[3] is not None:
                         data[3](block)
                 return True
+
         return False
 
     def _process_2_array(
         self, chunk: mcpython.common.world.AbstractInterface.IChunk
     ) -> bool:
+        # todo: can we optimize this?
         if chunk.get_dimension().get_id() in self.data_maps[2]:
             dim_map = self.data_maps[2][chunk.get_dimension().get_id()]
             if chunk.get_position() in dim_map:
@@ -296,15 +313,17 @@ class WorldGenerationTaskHandler:
                 elif not isinstance(block, str) and shared.IS_CLIENT:
                     block.face_state.update(redraw_complete=True)
                 return True
+
         return False
 
     def get_block(
         self, position: tuple, chunk: mcpython.common.world.AbstractInterface.IChunk
     ):
         """
-        gets an generated block from the array
+        Gets an generated block from the array
         :param position: the position of the block
         :param chunk: if the chunk is known
+        todo: make thread-safe
         """
         dimension = chunk.get_dimension()
         try:
@@ -316,7 +335,7 @@ class WorldGenerationTaskHandler:
 
     def clear_chunk(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
         """
-        will remove all scheduled tasks from an given chunk
+        Will remove all scheduled tasks from an given chunk
         :param chunk: the chunk
         """
         dim = chunk.get_dimension().get_id()
@@ -332,7 +351,7 @@ class WorldGenerationTaskHandler:
 
     def clear(self):
         """
-        will remove all scheduled tasks [chunk-wise]
+        Will remove all scheduled tasks [chunk-wise]
         """
         for chunk in self.chunks.copy():
             self.clear_chunk(chunk)

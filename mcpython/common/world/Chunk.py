@@ -533,22 +533,6 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             )
         )
 
-    def __del__(self):
-        if shared is not None:
-            shared.world_generation_handler.task_handler.clear_chunk(self)
-
-        for block in self.world.values():
-            del block
-
-        self.world.clear()
-        self.attr.clear()
-
-        for entity in self.entities:
-            del entity
-
-        self.entities.clear()
-        del self.dimension
-
     def __str__(self):
         return "Chunk(dimension={},position={})".format(
             self.dimension.get_id(), self.position
