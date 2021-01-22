@@ -20,7 +20,8 @@ import mcpython.server.command.McFunctionFile
 import mcpython.common.event.EventHandler
 
 
-class DatapackLoadException(Exception): pass
+class DatapackLoadException(Exception):
+    pass
 
 
 class DataPackStatus(enum.Enum):
@@ -57,7 +58,9 @@ class DataPackHandler:
             self.load_datapack_from_directory(shared.home + "/datapacks/" + path)
         shared.event_handler.call("datapack:search")
 
-    def load_datapack_from_directory(self, directory: str, raise_on_error=False) -> typing.Optional["DataPack"]:
+    def load_datapack_from_directory(
+        self, directory: str, raise_on_error=False
+    ) -> typing.Optional["DataPack"]:
         """
         Will try to load the data pack in the given directory/file
         :param directory: the directory or file to load from
@@ -70,7 +73,9 @@ class DataPackHandler:
             self.loaded_data_packs.append(datapack)
             return datapack
         except:
-            logger.print_exception("during loading data pack from '{}'".format(directory))
+            logger.print_exception(
+                "during loading data pack from '{}'".format(directory)
+            )
             if raise_on_error:
                 raise DatapackLoadException(directory)
 

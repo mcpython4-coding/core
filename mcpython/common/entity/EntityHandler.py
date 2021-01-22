@@ -100,7 +100,11 @@ class EntityHandler:
             try:
                 entity.kill(internal=True, force=True)
             except:
-                logger.print_exception("during unloading entity {} with uuid {}".format(entity, entity.uuid))
+                logger.print_exception(
+                    "during unloading entity {} with uuid {}".format(
+                        entity, entity.uuid
+                    )
+                )
 
         self.entity_map.clear()
 

@@ -116,7 +116,9 @@ def set_armor_points(instance, points: int):
 
 
 ItemFactoryInstance.register_configurator(
-    FactoryBuilder.FunctionStackedAnnotator("set_custom_from_item_function", "custom_from_item_funcs")
+    FactoryBuilder.FunctionStackedAnnotator(
+        "set_custom_from_item_function", "custom_from_item_funcs"
+    )
 )
 
 
@@ -198,9 +200,7 @@ ItemFactoryInstance.register_direct_copy_attributes(
     "used_item_files",
 )
 ItemFactoryInstance.register_direct_copy_attributes(
-    "tool_type",
-    "custom_from_item_funcs",
-    operation=lambda e: e.copy()
+    "tool_type", "custom_from_item_funcs", operation=lambda e: e.copy()
 )
 ItemFactoryInstance.register_direct_copy_attributes(
     "tool_tip_renderer",

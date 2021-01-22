@@ -306,26 +306,34 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 return
 
         super().kill()
-        if not internal and not force and not shared.event_handler.call_cancelable(
-            "player:dead:cancel_post",
-            self,
-            drop_items,
-            kill_animation,
-            damage_source,
-            test_totem,
+        if (
+            not internal
+            and not force
+            and not shared.event_handler.call_cancelable(
+                "player:dead:cancel_post",
+                self,
+                drop_items,
+                kill_animation,
+                damage_source,
+                test_totem,
+            )
         ):
             return
 
         sector = mcpython.util.math.position_to_chunk(self.position)
         shared.world.change_chunks(sector, None)
         self.reset_moving_slot()
-        if not shared.world.gamerule_handler.table["keepInventory"].status.status or internal:
-            for (
-                inventory
-            ) in self.get_inventories():  # iterate over all inventories ...
+        if (
+            not shared.world.gamerule_handler.table["keepInventory"].status.status
+            or internal
+        ):
+            for inventory in self.get_inventories():  # iterate over all inventories ...
                 inventory.clear()  # ... and clear them
 
-        if shared.world.gamerule_handler.table["showDeathMessages"].status.status and not internal:
+        if (
+            shared.world.gamerule_handler.table["showDeathMessages"].status.status
+            and not internal
+        ):
             logger.println(
                 "[CHAT] player {} died".format(self.name)
             )  # todo: add death screen and death type
@@ -350,7 +358,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         shared.world.change_chunks(None, sector)
         # todo: recalculate armor level!
 
-        if not shared.world.gamerule_handler.table["doImmediateRespawn"].status.status and not internal:
+        if (
+            not shared.world.gamerule_handler.table["doImmediateRespawn"].status.status
+            and not internal
+        ):
             shared.state_handler.switch_to(
                 "minecraft:escape_state"
             )  # todo: add special state [see above]
