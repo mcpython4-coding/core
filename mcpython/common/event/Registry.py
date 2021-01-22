@@ -164,7 +164,7 @@ class RegistryHandler:
                     registry.register(args[0])
                     return args[0]
             raise ValueError(
-                "could not register entry {} as no registry was found".format(args[0])
+                "could not register entry {} as no registry for type '{}' was found".format(args[0], args[0].TYPE)
             )
 
     def get_by_name(self, name: str) -> typing.Optional[Registry]:

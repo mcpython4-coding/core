@@ -1477,7 +1477,7 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed recipes
 [uuk]: migrated item factory system to new factory system
 [uuk]: noise implementation change is now properly working & saved
-[uuk]: added optional "noise"-library noise implementation
+[uuk]: added optional "noise"-library noise implementation [only registered when the library is arrival]
 [uuk]: fixed some face_state.update() calls on server
 [uuk]: entity handler is now the target for un-loading entities, no method in World
 

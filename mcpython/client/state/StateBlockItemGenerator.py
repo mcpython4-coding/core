@@ -100,6 +100,9 @@ class StateBlockItemGenerator(State.State):
         super().activate()
         world = shared.world
 
+        item_registry = shared.registry.get_by_name("minecraft:item")
+        item_registry.unlock()
+
         try:
             world.cleanup()
             shared.dimension_handler.init_dims()
@@ -196,6 +199,9 @@ class StateBlockItemGenerator(State.State):
 
         mcpython.common.event.TickHandler.handler.enable_tick_skipping = True
         shared.world.hide_faces_to_not_generated_chunks = True
+
+        item_registry = shared.registry.get_by_name("minecraft:item")
+        item_registry.lock()
 
     def close(self):
         player = shared.world.get_active_player()
@@ -334,7 +340,8 @@ class StateBlockItemGenerator(State.State):
         block = shared.world.get_active_dimension().get_block((0, 0, 0))
         if type(block) != str and block is not None:
             block.modify_block_item(obj)
-        obj.finish(task_list=True)
+
+        obj.finish()
         model = mcpython.client.rendering.model.ItemModel.ItemModel(blockname)
         model.addTextureLayer(0, file)
         mcpython.client.rendering.model.ItemModel.handler.models[blockname] = model
