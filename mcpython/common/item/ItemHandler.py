@@ -64,8 +64,8 @@ def load_data():
                         mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
                     )
                 )
-                # block = blocktable[name]
-                # block.modify_block_item(obj)
+                block = shared.registry.get_by_name("minecraft:block")[name]
+                block.modify_block_item(obj)
                 obj.finish()
                 model = mcpython.client.rendering.model.ItemModel.ItemModel(name)
                 model.addTextureLayer(0, entry[1])

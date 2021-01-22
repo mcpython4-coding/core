@@ -53,8 +53,8 @@ def create_shulker_box(name):
         def modify_block_item(
             cls, item_constructor: mcpython.common.factory.ItemFactory.ItemFactory
         ):
-            item_constructor.setMaxStackSize(1)
-            item_constructor.setCustomFromItemFunction(cls.set_block_data)
+            item_constructor.set_max_stack_size(1)
+            item_constructor.set_custom_from_item_function(cls.set_block_data)
 
         @classmethod
         def set_block_data(cls, item_instance, block):

@@ -39,6 +39,7 @@ class ItemAtlasHandler:
     def add_file_dynamic(self, internal_name: str, file: str):
         arrival = file in self.scheduled_item_files
         self.add_file(internal_name, file)
+
         if not arrival:
             image = ResourceLoader.read_image(file).resize((32, 32), PIL.Image.NEAREST)
             for i, atlas in enumerate(self.atlases):
@@ -52,6 +53,7 @@ class ItemAtlasHandler:
 
                 image = mcpython.util.texture.to_pyglet_image(atlas.texture)
                 self.grids.append(pyglet.image.ImageGrid(image, *atlas.size))
+
         self.lookup_map[internal_name] = self.position_map[file]
 
     def load(self):

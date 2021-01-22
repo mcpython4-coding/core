@@ -175,7 +175,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
 
     @classmethod
     def modify_block_item(cls, factory):
-        factory.setFuelLevel(15)
+        factory.set_fuel_level(15)
 
     def get_save_data(self):
         return {"model": self.get_model_state(), "loot_table": self.loot_table_link}

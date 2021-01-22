@@ -26,7 +26,7 @@ class AbstractToolItem(mcpython.common.item.AbstractDamageBarItem.DamageOnUseIte
     def __eq__(self, other):
         if not issubclass(type(other), AbstractToolItem):
             return False
-        return other.NAME == self.NAME
+        return other.NAME == self.NAME and self.damage == other.damage
 
     def get_tool_level(self):  # todo: remove
         return self.TOOL_LEVEL

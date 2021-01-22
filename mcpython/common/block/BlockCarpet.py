@@ -48,7 +48,7 @@ class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     @classmethod
     def modify_block_item(cls, factory):
-        factory.setFuelLevel(3.35)
+        factory.set_fuel_level(3.35)
 
 
 def create_carpet(carpet_color: str):

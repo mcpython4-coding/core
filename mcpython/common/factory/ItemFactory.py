@@ -115,6 +115,11 @@ def set_armor_points(instance, points: int):
     instance.add_base_class(mcpython.common.item.AbstractArmorItem.AbstractArmorItem)
 
 
+ItemFactoryInstance.register_configurator(
+    FactoryBuilder.FunctionStackedAnnotator("set_custom_from_item_function", "custom_from_item_funcs")
+)
+
+
 @ItemFactoryInstance.register_class_builder(
     FactoryBuilder.AnnotationFactoryClassBuilder()
 )
@@ -181,6 +186,11 @@ def build_class(
         if "armor_points" in configs:
             DEFENSE_POINTS = configs["armor_points"]
 
+        def on_set_from_item(self, block):
+            for func in configs["custom_from_item_funcs"]:
+                func(self, block)
+            super().on_set_from_item(block)
+
     return ModifiedClass
 
 
@@ -188,7 +198,9 @@ ItemFactoryInstance.register_direct_copy_attributes(
     "used_item_files",
 )
 ItemFactoryInstance.register_direct_copy_attributes(
-    "tool_type", operation=lambda e: e.copy()
+    "tool_type",
+    "custom_from_item_funcs",
+    operation=lambda e: e.copy()
 )
 ItemFactoryInstance.register_direct_copy_attributes(
     "tool_tip_renderer",

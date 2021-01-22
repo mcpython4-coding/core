@@ -45,7 +45,7 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
 
     @classmethod
     def modify_block_item(cls, factory):
-        factory.setFuelLevel(15)
+        factory.set_fuel_level(15)
 
 
 @shared.mod_loader("minecraft", "stage:block:load")

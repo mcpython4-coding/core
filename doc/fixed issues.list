@@ -236,3 +236,4 @@ issue 248: logger was escaping mod paths when no log escape is set; fixed on 14.
 issue 249: small errors all over the place
 issue 250: fixed major rendering issues: shared vertex list lead into vertex de-allocation errors, and
            unwanted vertex deletions in BlockFaceState due to a wrong copy command; fixed on 18.01.2021 by uuk
+issue 251: block item generator loading generated data from files was not working correctly
