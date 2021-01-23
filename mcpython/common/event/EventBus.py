@@ -62,7 +62,7 @@ class EventBus:
         self, event_name: str, function: typing.Callable, *args, info=None, **kwargs
     ):
         """
-        add an function to the event bus by event name. If event name does NOT exists, it will be created locally
+        Add an function to the event bus by event name. If event name does NOT exists, it will be created locally
         :param event_name: the event to listen to on this bis
         :param function: the function that should be called when event is send
         :param args: the args to give

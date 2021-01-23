@@ -1480,4 +1480,6 @@ R   [uuk]: improved world serialization API
 [uuk]: added optional "noise"-library noise implementation [only registered when the library is arrival]
 [uuk]: fixed some face_state.update() calls on server
 [uuk]: entity handler is now the target for un-loading entities, no method in World
+[uuk]: implemented better combined factory system
+[uuk]: fixed some issues with block rendering, and similar
 

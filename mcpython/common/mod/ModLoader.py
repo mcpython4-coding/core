@@ -97,6 +97,12 @@ class ModLoader:
             return self.mods[item]
         raise IndexError(item)
 
+    def __contains__(self, item):
+        return item in self.mods
+
+    def __iter__(self):
+        return self.mods.values()
+
     def get_locations(self) -> list:
         """
         Will return an list of mod locations found for loading
@@ -245,7 +251,7 @@ class ModLoader:
         Will check for changes between versions
         """
         logger.println(
-            "found mod: {}".format(
+            "found mod{}: {}".format(
                 "s" if len(self.located_mods) > 1 else "", len(self.located_mods)
             )
         )

@@ -409,25 +409,8 @@ manager.add_stage(
 if shared.IS_CLIENT:
     manager.add_stage(
         LoadingStage(
-            "minecraft:factory_models",
-            "factoring models",
-            "minecraft:data_generator",
-        )
-        .add_event_stage("stage:modelfactory:prepare")
-        .add_event_stage("stage:modelfactory:use", "stage:modelfactory:prepare")
-        .add_event_stage("stage:modelfactory:bake", "stage:modelfactory:use")
-        .add_event_stage("stage:blockstatefactory:prepare")
-        .add_event_stage(
-            "stage:blockstatefactory:use", "stage:blockstatefactory:prepare"
-        )
-        .add_event_stage("stage:blockstatefactory:bake", "stage:blockstatefactory:use")
-        .update_order()
-    )
-    manager.add_stage(
-        LoadingStage(
             "minecraft:block_states",
             "loading block states",
-            "minecraft:factory_models",
             "minecraft:blocks",
         )
         .add_event_stage("stage:blockstate:register_loaders")
@@ -444,7 +427,6 @@ if shared.IS_CLIENT:
         LoadingStage(
             "minecraft:models",
             "loading models",
-            "minecraft:factory_models",
             "minecraft:blocks",
             "minecraft:items",
         )

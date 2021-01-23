@@ -452,6 +452,7 @@ class DefaultDecoder(IBlockStateDecoder):
 class BlockStateDefinition:
     TO_CREATE = set()
     LOOKUP_DIRECTORIES = set()
+    RAW_DATA = []
     NEEDED = set()  # for parent <-> child connection
 
     @classmethod
@@ -471,7 +472,7 @@ class BlockStateDefinition:
                 "stage:model:blockstate_create",
                 cls.unsafe_from_file,
                 file,
-                info="loading block state {}".format(file),
+                info="loading block state file '{}'".format(file),
             )
         cls.TO_CREATE.add(file)
 
@@ -492,8 +493,12 @@ class BlockStateDefinition:
             )
 
     @classmethod
-    def from_data(cls, name: str, data: typing.Dict[str, typing.Any], immediate=False):
+    def from_data(
+        cls, name: str, data: typing.Dict[str, typing.Any], immediate=False, store=True
+    ):
         # todo: check for correct process
+        if store:
+            cls.RAW_DATA.append((data, name))
         if immediate:
             cls.unsafe_from_data(name, data)
         else:
@@ -502,13 +507,16 @@ class BlockStateDefinition:
                 cls.unsafe_from_data,
                 name,
                 data,
-                info="loading block state {}".format(name),
+                info="loading block state '{}' from raw data".format(name),
             )
 
     @classmethod
-    def unsafe_from_data(cls, name: str, data: typing.Dict[str, typing.Any]):
+    def unsafe_from_data(
+        cls, name: str, data: typing.Dict[str, typing.Any], immediate=False
+    ):
         try:
-            return BlockStateDefinition(data, name)
+            instance = BlockStateDefinition(data, name, immediate=immediate)
+            return instance
         except BlockStateNotNeeded:
             pass  # do we need this model?
         except:
@@ -516,7 +524,7 @@ class BlockStateDefinition:
                 "error during loading model for '{}' from data {}".format(name, data)
             )
 
-    def __init__(self, data: dict, name: str):
+    def __init__(self, data: dict, name: str, immediate=False):
         self.name = name
         if (
             name not in shared.registry.get_by_name("minecraft:block").entries
@@ -533,11 +541,14 @@ class BlockStateDefinition:
             raise ValueError("can't find matching loader for model {}".format(name))
         self.baked = False
 
-        shared.mod_loader.mods[name.split(":")[0]].eventbus.subscribe(
-            "stage:model:blockstate_bake",
-            self.bake,
-            info="baking block state {}".format(name),
-        )
+        if not immediate:
+            shared.mod_loader.mods[name.split(":")[0]].eventbus.subscribe(
+                "stage:model:blockstate_bake",
+                self.bake,
+                info="baking block state {}".format(name),
+            )
+        else:
+            self.bake()
 
     def bake(self):
         if not self.loader.bake():
@@ -613,6 +624,7 @@ class BlockState:
             instance.block_state = self.models.index(
                 random.choices(self.models, [e[2] for e in self.models])[0]
             )
+
         model, config, _ = self.models[instance.block_state]
         if model not in shared.model_handler.models:
             if not shared.model_handler.hide_blockstate_errors:

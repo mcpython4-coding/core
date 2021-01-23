@@ -31,6 +31,7 @@ class ModelHandler:
         self.lookup_locations = set()
         self.dependence_list = []
         self.hide_blockstate_errors = False
+        self.raw_models = []
 
     def add_from_mod(self, modname: str):
         """
@@ -41,7 +42,7 @@ class ModelHandler:
 
     def search(self):
         """
-        will search all locations for new stuff
+        Will search all locations for new stuff
         todo: add datapack locations
         """
         for location in self.lookup_locations:
@@ -52,15 +53,23 @@ class ModelHandler:
                 address_fix = "/".join(s[s.index("block") + 1 :])
                 name = mod_fix + ":block/" + ".".join(address_fix.split(".")[:-1])
                 self.found_models[name] = model
+
+        for data, name in self.raw_models:
+            if name not in self.models:
+                self.found_models[name] = data
+
         shared.event_handler.call("modelhandler:searched")
 
-    def add_from_data(self, name: str, data: dict):
+    def add_from_data(self, name: str, data: dict, store=True):
         """
         will inject data as an block-model file
         :param name: the name to use
         :param data: the data to inject
+        :param store: if it should be stored and re-loaded on reload event
         """
         self.found_models[name] = data
+        if store:
+            self.raw_models.append((data, name))
 
     def build(self, immediate=False):
         [
@@ -247,6 +256,13 @@ class ModelHandler:
         ):
             mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_directory(
                 directory, modname, immediate=True
+            )
+        for (
+            data,
+            name,
+        ) in mcpython.client.rendering.model.BlockState.BlockStateDefinition.RAW_DATA:
+            mcpython.client.rendering.model.BlockState.BlockStateDefinition.unsafe_from_data(
+                name, data, immediate=True
             )
         shared.event_handler.call("data:blockstates:custom_injection", self)
         shared.event_handler.call("data:models:custom_injection", self)
