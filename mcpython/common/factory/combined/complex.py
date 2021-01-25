@@ -11,7 +11,15 @@ This project is not official by mojang and does not relate to it.
 from .simple import CombinedFactoryInstance
 
 
-def create_full_slab_wall_set(name: str, texture: str):
-    CombinedFactoryInstance(name, texture).create_full_block().create_slab_block(
-        suffix=lambda n: n.removesuffix("s") + "_slab"
-    ).create_wall(suffix=lambda n: n.removesuffix("s") + "_wall")
+def create_full_slab_wall_set(
+    name: str, texture: str, and_button=False
+) -> CombinedFactoryInstance:
+    instance = (
+        CombinedFactoryInstance(name, texture)
+        .create_full_block()
+        .create_slab_block(suffix=lambda n: n.removesuffix("s") + "_slab")
+        .create_wall(suffix=lambda n: n.removesuffix("s") + "_wall")
+    )
+    if and_button:
+        instance.create_button_block(suffix=lambda n: n.removesuffix("s") + "_button")
+    return instance

@@ -74,7 +74,9 @@ class CombinedFactoryInstance:
         if isinstance(texture, str):
             texture = mcpython.ResourceLoader.read_image(texture)
 
-        file = shared.build + "/colorized_images/{}.png".format(CombinedFactoryInstance.FILE_COUNTER)
+        file = shared.build + "/colorized_images/{}.png".format(
+            CombinedFactoryInstance.FILE_COUNTER
+        )
         CombinedFactoryInstance.FILE_COUNTER += 1
         if color is None:
             color = self.color
@@ -106,7 +108,7 @@ class CombinedFactoryInstance:
             name,
             textures={"all": self.create_colored_texture(texture, color=color)},
             block_parent="minecraft:block/cube_all",
-            **consumers
+            **consumers,
         )
         return self
 
@@ -187,6 +189,113 @@ class CombinedFactoryInstance:
 
         return self
 
+    def generate_log_like(
+        self,
+        suffix=None,
+        front_texture=None,
+        side_texture=None,
+        color=None,
+        **consumers,
+    ):
+        """
+        Creates a set for a log like block
+        :param suffix: the name suffix
+        :param front_texture: the front texture
+        :param side_texture: the side texture
+        :param color: the color for the texture
+        :param consumers: consumers for the data
+        """
+        if front_texture is None:
+            front_texture = self.default_texture
+        if side_texture is None:
+            side_texture = self.default_texture
+        name = (
+            self.target_base_name
+            if suffix is None
+            else self.target_base_name + "_" + suffix
+            if not callable(suffix)
+            else suffix(self.target_base_name)
+        )
+        front_texture = self.create_colored_texture(front_texture, color=color)
+        side_texture = self.create_colored_texture(side_texture, color=color)
+        textures = {"end": front_texture, "side": side_texture}
+        self.create_multi_variant_block(
+            name,
+            {
+                "state": "axis=x",
+                "parent": "minecraft:block/cube_column_horizontal",
+                "model_name_suffix": "horizontal",
+                "textures": textures,
+                "model_info": {"x": 90, "y": 90},
+            },
+            {
+                "state": "axis=y",
+                "parent": "minecraft:block/cube_column",
+                "model_name_suffix": "standing",
+                "textures": textures,
+            },
+            {"state": "axis=z", "reuse": True, "model_info": {"x": 90}},
+            block_factory_consumer=lambda _, instance: instance.set_log()
+            == (
+                0
+                if "block_factory_consumer" not in consumers
+                else consumers["block_factory_consumer"](_, instance)
+            ),
+            **consumers,
+        )
+        return self
+
+    def create_button_block(self, suffix=None, texture=None, color=None, **consumers):
+        if texture is None:
+            texture = self.default_texture
+        name = (
+            self.target_base_name
+            if suffix is None
+            else self.target_base_name + "_" + suffix
+            if not callable(suffix)
+            else suffix(self.target_base_name)
+        )
+        normal_model = "{}:block/{}_normal".format(*name.split(":"))
+        pressed_model = "{}:block/{}_pressed".format(*name.split(":"))
+        self.create_multi_variant_block(
+            name,
+            block_state_parent="minecraft:button_template",
+            block_state_alias={"normal": normal_model, "pressed": pressed_model},
+            block_factory_consumer=lambda _, instance: instance.set_default_model_state(
+                "face=ceiling,facing=east,powered=false"
+            )
+            == (
+                0
+                if "block_factory_consumer" not in consumers
+                else consumers["block_factory_consumer"](_, instance)
+            ),
+            **consumers,
+        )
+
+        if shared.IS_CLIENT:
+            mod_name = name.split(":")[0]
+            if mod_name not in shared.mod_loader:
+                mod_name = "minecraft"
+
+            @shared.mod_loader(mod_name, "stage:model:model_search")
+            def generate_models():
+                self.inner_generate_model(
+                    {
+                        "parent": "minecraft:block/button",
+                        "textures": {"texture": texture},
+                    },
+                    normal_model,
+                )
+                self.inner_generate_model(
+                    {
+                        "parent": "minecraft:block/button_pressed",
+                        "textures": {"texture": texture},
+                    },
+                    pressed_model,
+                )
+
+        return self
+
     def create_slab_block(self, suffix=None, texture=None, color=None, **consumers):
         if texture is None:
             texture = self.default_texture
@@ -219,8 +328,13 @@ class CombinedFactoryInstance:
                 "model_name_suffix": "double",
                 "textures": {"all": texture},
             },
-            block_factory_consumer=lambda _, instance: instance.set_slab(),
-            **consumers
+            block_factory_consumer=lambda _, instance: instance.set_slab()
+            == (
+                0
+                if "block_factory_consumer" not in consumers
+                else consumers["block_factory_consumer"](_, instance)
+            ),
+            **consumers,
         )
         return self
 
@@ -233,7 +347,9 @@ class CombinedFactoryInstance:
         ] = None,
         block_state_consumer: typing.Callable[
             ["CombinedFactoryInstance", dict], dict
-        ] = None
+        ] = None,
+        block_state_parent=None,
+        block_state_alias=None,
     ):
         mod_name = name.split(":")[0]
         if mod_name not in shared.mod_loader:
@@ -256,22 +372,7 @@ class CombinedFactoryInstance:
             @shared.mod_loader(mod_name, "stage:model:model_search")
             def block_model():
                 for variant in states:
-                    if "reuse" in variant and variant["reuse"]:
-                        continue
-
-                    data = {
-                        "parent": variant.setdefault("parent", "minecraft:block/block"),
-                        "textures": variant.setdefault("textures", {}),
-                    }
-                    if "model_consumer" in variant:
-                        data = variant["model_consumer"](self, data)
-
-                    shared.model_handler.add_from_data(
-                        model_name
-                        + "_"
-                        + variant.setdefault("model_name_suffix", "default"),
-                        data,
-                    )
+                    self.inner_generate_model(variant, model_name)
 
             @shared.mod_loader(mod_name, "stage:model:blockstate_search")
             def block_state():
@@ -286,6 +387,13 @@ class CombinedFactoryInstance:
                         for variant in states
                     }
                 }
+
+                if block_state_parent is not None:
+                    data["parent"] = block_state_parent
+
+                if block_state_alias is not None:
+                    data["alias"] = block_state_alias
+
                 if callable(block_state_consumer):
                     data = block_state_consumer(self, data)
 
@@ -376,8 +484,13 @@ class CombinedFactoryInstance:
                 "model_info": {"uvlock": True, "y": 270},
                 "textures": wall_textures,
             },
-            block_factory_consumer=lambda _, instance: instance.set_wall(),
-            **consumers
+            block_factory_consumer=lambda _, instance: instance.set_wall()
+            == (
+                0
+                if "block_factory_consumer" not in consumers
+                else consumers["block_factory_consumer"](_, instance)
+            ),
+            **consumers,
         )
         return self
 
@@ -390,7 +503,7 @@ class CombinedFactoryInstance:
         ] = None,
         block_state_consumer: typing.Callable[
             ["CombinedFactoryInstance", dict], dict
-        ] = None
+        ] = None,
     ):
         mod_name = name.split(":")[0]
         if mod_name not in shared.mod_loader:
@@ -413,22 +526,7 @@ class CombinedFactoryInstance:
             @shared.mod_loader(mod_name, "stage:model:model_search")
             def block_model():
                 for part in parts:
-                    if "reuse" in part and part["reuse"]:
-                        continue
-
-                    data = {
-                        "parent": part.setdefault("parent", "minecraft:block/block"),
-                        "textures": part.setdefault("textures", {}),
-                    }
-                    if "model_consumer" in part:
-                        data = part["model_consumer"](self, data)
-
-                    shared.model_handler.add_from_data(
-                        model_name
-                        + "_"
-                        + part.setdefault("model_name_suffix", "default"),
-                        data,
-                    )
+                    self.inner_generate_model(part, model_name)
 
             @shared.mod_loader(mod_name, "stage:model:blockstate_search")
             def block_state():
@@ -458,3 +556,19 @@ class CombinedFactoryInstance:
             # todo: implement item models here
 
         return self
+
+    def inner_generate_model(self, variant, model_name: str):
+        if "reuse" in variant and variant["reuse"]:
+            return
+
+        data = {
+            "parent": variant.setdefault("parent", "minecraft:block/block"),
+            "textures": variant.setdefault("textures", {}),
+        }
+        if "model_consumer" in variant:
+            data = variant["model_consumer"](self, data)
+
+        shared.model_handler.add_from_data(
+            model_name + "_" + variant.setdefault("model_name_suffix", "default"),
+            data,
+        )

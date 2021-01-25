@@ -29,17 +29,44 @@ class BlockStateNotNeeded(Exception):
 
 
 class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
+    """
+    Abstract base class for block state decoders
+
+    Identification of files to decode:
+        bool(is_valid(data)) == True, where data is the loaded json data
+        for developers of mods: add an entry called "mod_marker" storing the mod name the loader is implemented in and
+            check for it here
+
+    Loading:
+        __init__(data, BlockStateDefinition) -> Instance
+
+    Baking:
+        bake() is called to bake references and do similar stuff, returning success or not
+
+    Drawing:
+        add_face_to_batch() should add the given face to the batches given
+        add_raw_face_to_batch() should add a face to the batch without the block instance, but instead the position
+        draw() should draw the block in-place
+
+    todo: add draw variant for raw
+    todo: add data getter functions for better performance
+    todo: cache non-offset data from models per state for faster drawing
+    todo: can we do something rendering wise which will make it efficient to draw multiple same blocks
+    todo: block batches should be selected before, based on a property on block class
+    """
+
     TYPE = "minecraft:blockstate"
 
-    # for developers of mods: add an entry called "mod_marker" storing the mod name the loader is implemented in and
-    # check for it here
     @classmethod
     def is_valid(cls, data: dict) -> bool:
         raise NotImplementedError()
 
-    def __init__(self, data: dict, block_state):
+    def __init__(self, data: dict, block_state: "BlockStateDefinition"):
         self.data = data
         self.block_state = block_state
+
+    def bake(self) -> bool:
+        return True
 
     def add_face_to_batch(
         self,
@@ -52,12 +79,6 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
     def add_raw_face_to_batch(self, position, state, batches, faces):
         return tuple()
 
-    def transform_to_hitbox(
-        self,
-        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
-    ):  # optional: transforms the BlockState into an BoundingBox-like objects
-        pass
-
     def draw_face(
         self,
         instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
@@ -65,12 +86,11 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
     ):  # optional: draws the BlockState direct without an batch
         pass
 
-    def bake(self) -> bool:
-        """
-        Called when it is time to bake it
-        :return: if it was successful or not
-        """
-        return True
+    def transform_to_hitbox(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+    ):  # optional: transforms the BlockState into an BoundingBox-like objects
+        pass
 
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
@@ -89,6 +109,7 @@ class MultiPartDecoder(IBlockStateDecoder):
     entry alias: An dict of original -> aliased model to transform any model name of this kind in the system with the given model. Alias names MUST start with alias:
 
     todo: can we optimize it by pre-doing some stuff?
+    todo: fix alias system
     """
 
     NAME = "minecraft:multipart_blockstate_loader"
@@ -109,32 +130,40 @@ class MultiPartDecoder(IBlockStateDecoder):
             else:
                 for d in entry["apply"]:
                     shared.model_handler.used_models.add(d["model"])
+
         self.model_alias = {}
-        self.parent = None
+        self.parent: typing.Union[str, "BlockStateDefinition", None] = None
+
         if "parent" in data:
             self.parent = data["parent"]
             BlockStateDefinition.NEEDED.add(self.parent)
+
         if "alias" in data:
             self.model_alias = data["alias"]
 
     def bake(self):
-        if self.parent is not None:
-            if self.parent not in shared.model_handler.blockstates:
-                raise ValueError(
-                    "block state referencing '{}' is invalid!".format(self.parent)
-                )
-            parent: BlockStateDefinition = shared.model_handler.blockstates[self.parent]
+        if self.parent is not None and isinstance(self.parent, str):
+            parent: BlockStateDefinition = BlockStateDefinition.get_or_load(self.parent)
+
             if not parent.baked:
                 return False
+
             if not issubclass(type(parent.loader), type(self)):
-                raise ValueError("parent must be subclass of start")
+                raise ValueError(
+                    "parent must be subclass of the current loader ({} is not a subclass of {})".format(
+                        type(self), type(parent.loader)
+                    )
+                )
+
             self.parent = parent
             self.model_alias.update(self.parent.loader.model_alias.copy())
             self.data["multipart"].extend(
                 copy.deepcopy(self.parent.loader.data["multipart"])
             )
+
         for model in self.model_alias.values():
             shared.model_handler.used_models.add(model)
+
         for entry in self.data["multipart"]:
             data = entry["apply"]
             if type(data) == dict:
@@ -144,6 +173,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                 for i, e in enumerate(data):
                     if e["model"] in self.model_alias:
                         data[i]["model"] = self.model_alias[e["model"]]
+
         return True
 
     def add_face_to_batch(
@@ -329,6 +359,7 @@ class DefaultDecoder(IBlockStateDecoder):
     def __init__(self, data: dict, block_state):
         super().__init__(data, block_state)
         self.states = []
+
         for element in data["variants"].keys():
             if element.count("=") > 0:
                 keymap = {}
@@ -336,24 +367,22 @@ class DefaultDecoder(IBlockStateDecoder):
                     keymap[e.split("=")[0]] = e.split("=")[1]
             else:
                 keymap = {}
+
             self.states.append((keymap, BlockState(data["variants"][element])))
+
         self.model_alias = {}
         self.parent = None
+
         if "parent" in data:
             self.parent = data["parent"]
             BlockStateDefinition.NEEDED.add(self.parent)
+
         if "alias" in data:
             self.model_alias = data["alias"]
 
     def bake(self):
-        if self.parent is not None:
-            if self.parent not in shared.model_handler.blockstates:
-                logger.println(
-                    "block state referencing '{}' is invalid!".format(self.parent)
-                )
-                return
-
-            parent: BlockStateDefinition = shared.model_handler.blockstates[self.parent]
+        if self.parent is not None and isinstance(self.parent, str):
+            parent: BlockStateDefinition = BlockStateDefinition.get_or_load(self.parent)
             if not parent.baked:
                 return False
 
@@ -361,6 +390,8 @@ class DefaultDecoder(IBlockStateDecoder):
                 raise ValueError("parent must be subclass of start")
 
             self.parent = parent
+
+            # todo: merge the other way round! (both parts)
             self.model_alias.update(self.parent.loader.model_alias.copy())
             self.states += [(e, state.copy()) for e, state in self.parent.loader.states]
 
@@ -370,8 +401,17 @@ class DefaultDecoder(IBlockStateDecoder):
         for _, state in self.states:
             state: BlockState
             for i, (model, *d) in enumerate(state.models):
-                if model in self.model_alias:
+
+                # resolve the whole alias tree
+                # todo: check for cyclic resolve trees
+                while model in self.model_alias:
                     state.models[i] = (self.model_alias[model],) + tuple(d)
+
+                    # check if the same model is used
+                    if state.models[i][0] == model:
+                        break
+
+                    model = state.models[i][0]
 
         return True
 
@@ -388,10 +428,11 @@ class DefaultDecoder(IBlockStateDecoder):
 
         if not shared.model_handler.hide_blockstate_errors:
             logger.println(
-                "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
+                "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {})".format(
                     instance, data, [e[0] for e in self.states]
                 )
             )
+
         return tuple()
 
     def add_raw_face_to_batch(self, position, state, batches, face):
@@ -406,6 +447,7 @@ class DefaultDecoder(IBlockStateDecoder):
                     position, state, [e[0] for e in self.states]
                 )
             )
+
         return tuple()
 
     def transform_to_hitbox(
@@ -415,6 +457,7 @@ class DefaultDecoder(IBlockStateDecoder):
             instance.block_state = 0
         data = instance.get_model_state()
         bbox = mcpython.common.block.BoundingBox.BoundingArea()
+
         for keymap, blockstate in self.states:
             if keymap == data:
                 model, config, _ = blockstate.models[instance.block_state]
@@ -428,6 +471,7 @@ class DefaultDecoder(IBlockStateDecoder):
                             rotation=rotation,
                         )
                     )
+
         return bbox
 
     def draw_face(
@@ -494,13 +538,18 @@ class BlockStateDefinition:
 
     @classmethod
     def from_data(
-        cls, name: str, data: typing.Dict[str, typing.Any], immediate=False, store=True
+        cls,
+        name: str,
+        data: typing.Dict[str, typing.Any],
+        immediate=False,
+        store=True,
+        force=False,
     ):
         # todo: check for correct process
         if store:
-            cls.RAW_DATA.append((data, name))
+            cls.RAW_DATA.append((data, name, force))
         if immediate:
-            cls.unsafe_from_data(name, data)
+            cls.unsafe_from_data(name, data, force=force)
         else:
             mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                 "stage:model:blockstate_create",
@@ -508,14 +557,17 @@ class BlockStateDefinition:
                 name,
                 data,
                 info="loading block state '{}' from raw data".format(name),
+                force=force,
             )
 
     @classmethod
     def unsafe_from_data(
-        cls, name: str, data: typing.Dict[str, typing.Any], immediate=False
+        cls, name: str, data: typing.Dict[str, typing.Any], immediate=False, force=False
     ):
         try:
-            instance = BlockStateDefinition(data, name, immediate=immediate)
+            instance = BlockStateDefinition(
+                data, name, immediate=immediate, force=force
+            )
             return instance
         except BlockStateNotNeeded:
             pass  # do we need this model?
@@ -524,13 +576,30 @@ class BlockStateDefinition:
                 "error during loading model for '{}' from data {}".format(name, data)
             )
 
-    def __init__(self, data: dict, name: str, immediate=False):
+    @classmethod
+    def get_or_load(cls, name: str) -> "BlockStateDefinition":
+        if name in shared.model_handler.blockstates:
+            return shared.model_handler.blockstates[name]
+
+        file = "assets/{}/blockstates/{}.json".format(*name.split(":"))
+        if not mcpython.ResourceLoader.exists(file):
+            raise FileNotFoundError("for blockstate '{}'".format(name))
+
+        data = mcpython.ResourceLoader.read_json(file)
+        return cls.unsafe_from_data(name, data, immediate=True, force=True)
+
+    def __init__(self, data: dict, name: str, immediate=False, force=False):
         self.name = name
         if (
-            name not in shared.registry.get_by_name("minecraft:block").entries
-            and name not in self.NEEDED
-        ) and name != "minecraft:missing_texture":
+            (
+                name not in shared.registry.get_by_name("minecraft:block").entries
+                and name not in self.NEEDED
+            )
+            and name != "minecraft:missing_texture"
+            and not force
+        ):
             raise BlockStateNotNeeded()
+
         shared.model_handler.blockstates[name] = self
         self.loader = None
         for loader in blockstate_decoder_registry.entries.values():

@@ -47,7 +47,7 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <21w04a> released on -, targeting <20w03a>
+changelog of snapshot <21w04a> released on <27.01.2021>, targeting <20w03a>
     This snapshot broke backwards compatibility, again...
     Namely:
     - items are now constructed differently
@@ -65,20 +65,25 @@ changelog of snapshot <21w04a> released on -, targeting <20w03a>
         - improved server separation from client
 
     Crafting:
-        - added a screen system for displaying recipes
+        - added a screen system for displaying recipes, with extension point for mods, with plans for features
+            like in JEI
         - rewritten base recipe API
 
     Documentation:
-        - fixed documentation generation; updated doc
+        - fixed documentation generation
+        - updated & improved docs
 
     API:
         - ItemFactory is now also created by FactoryBuilder
         - this is breaking existing code, again...
+        - added a new combined factory system using in-memory calculations
 
     Fixed issues:
         - escaping in logs did not work in some edge cases correctly
         - major rendering issue when updating blocks
         - recipes were not working [MAYBE]
+        - some work on block state alias system [still broken :-(]
+        - fixed reload issues and general issues with in-memory data propitiation not over the default interface
 
 
 changelog of snapshot 21w01a, released on 06.01.2021, targeting 20w51a

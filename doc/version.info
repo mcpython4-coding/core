@@ -1482,4 +1482,6 @@ R   [uuk]: improved world serialization API
 [uuk]: entity handler is now the target for un-loading entities, no method in World
 [uuk]: implemented better combined factory system
 [uuk]: fixed some issues with block rendering, and similar
+[uuk]: fixed some issues about reloading, model baking, block state aliases, ...
+[github]: end of feature phase for snapshot 21w04a, starting on 25.01.2021, 2 days before planned release
 

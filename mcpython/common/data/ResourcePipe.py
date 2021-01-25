@@ -47,6 +47,10 @@ def model_mapper(modname, pathname):
     )
 
 
+def model_bake():
+    shared.model_handler.build(immediate=True)
+
+
 def tag_mapper(modname, pathname):
     import mcpython.common.data.tags.TagHandler
 
@@ -120,8 +124,10 @@ class ResourcePipeHandler:
 
     def reload_content(self):
         shared.window.print_profiler()  # print the profilers
+
         if not shared.event_handler.call_cancelable("data:reload:cancel"):
             return
+
         mcpython.common.DataPack.datapack_handler.reload()  # reloads all data packs
         shared.tag_handler.reload()  # reloads all tags
         shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
@@ -167,6 +173,9 @@ handler.register_mapper(model_mapper, on_dedicated_server=False)
 handler.register_mapper(tag_mapper)
 handler.register_mapper(language_mapper)
 handler.register_mapper(loot_table_mapper)
+
+if shared.IS_CLIENT:
+    handler.bake_handlers += [model_bake]
 
 
 def load():

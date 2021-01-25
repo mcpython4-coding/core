@@ -260,9 +260,10 @@ class ModelHandler:
         for (
             data,
             name,
+            force,
         ) in mcpython.client.rendering.model.BlockState.BlockStateDefinition.RAW_DATA:
             mcpython.client.rendering.model.BlockState.BlockStateDefinition.unsafe_from_data(
-                name, data, immediate=True
+                name, data, immediate=True, force=force
             )
         shared.event_handler.call("data:blockstates:custom_injection", self)
         shared.event_handler.call("data:models:custom_injection", self)
