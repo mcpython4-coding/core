@@ -30,24 +30,24 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
     CANCEL_GIVE = False
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "replaceitem"
-        parsebridge.add_subcommand(
-            SubCommand(ParseType.DEFINIED_STRING, "block").add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "replaceitem"
+        parse_bridge.add_subcommand(
+            SubCommand(ParseType.DEFINED_STRING, "block").add_subcommand(
                 SubCommand(ParseType.POSITION).add_subcommand(
                     SubCommand(ParseType.INT).add_subcommand(
-                        SubCommand(ParseType.ITEMNAME).add_subcommand(
+                        SubCommand(ParseType.ITEM_NAME).add_subcommand(
                             SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
                         )
                     )
                 )
             )
         )
-        parsebridge.add_subcommand(
-            SubCommand(ParseType.DEFINIED_STRING, "entity").add_subcommand(
+        parse_bridge.add_subcommand(
+            SubCommand(ParseType.DEFINED_STRING, "entity").add_subcommand(
                 SubCommand(ParseType.SELECTOR).add_subcommand(
                     SubCommand(ParseType.INT).add_subcommand(
-                        SubCommand(ParseType.ITEMNAME).add_subcommand(
+                        SubCommand(ParseType.ITEM_NAME).add_subcommand(
                             SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
                         )
                     )
@@ -61,43 +61,51 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
             block = info.entity.dimension.get_block(values[1])
             if block is not None and type(block) != str:
                 if len(block.get_inventories()) == 0:
-                    shared.chat.print_ln("[ERROR] block does not have any inventory")
+                    info.chat.print_ln("[ERROR] block does not have any inventory")
                     return
+
                 inventory = block.get_inventories()[0]
                 slot_id = values[2]
+
                 if slot_id < 0:
-                    shared.chat.print_ln("[ERROR] slot id must be greater than 0")
+                    info.chat.print_ln("[ERROR] slot id must be greater than 0")
                     return
+
                 if slot_id >= len(inventory.slots):
-                    shared.chat.print_ln(
+                    info.chat.print_ln(
                         "[ERROR] slot id {} is bigger than slot count {}".format(
                             slot_id, len(inventory.slots)
                         )
                     )
                     return
+
                 slot = inventory.slots[slot_id]
                 slot.set_itemstack(
                     mcpython.common.container.ItemStack.ItemStack(
                         values[3], 1 if len(values) == 4 else values[4]
                     )
                 )
+
             else:
-                shared.chat.print_ln(
+                info.chat.print_ln(
                     "[ERROR] at position {} is no block".format(values[1])
                 )
+
         elif values[0] == "entity":
             for entity in values[1]:
                 slot_id = values[2]
                 if slot_id < 0:
-                    shared.chat.print_ln("[ERROR] slot id must be greater than 0")
+                    info.chat.print_ln("[ERROR] slot id must be greater than 0")
                     return
+
                 if slot_id >= len(entity.inventory_slots):
-                    shared.chat.print_ln(
+                    info.chat.print_ln(
                         "[ERROR] slot id {} is bigger than slot count {}".format(
                             slot_id, len(entity.inventory_slots)
                         )
                     )
                     return
+
                 slot = entity.inventory_slots[slot_id]
                 slot.set_itemstack(
                     mcpython.common.container.ItemStack.ItemStack(

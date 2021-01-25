@@ -23,22 +23,23 @@ class CommandDatapack(mcpython.server.command.Command.Command):
     NAME = "minecraft:datapack"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "datapack"
-        parsebridge.add_subcommand(
-            SubCommand(ParseType.DEFINIED_STRING, "enable").add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "datapack"
+        parse_bridge.add_subcommand(
+            SubCommand(ParseType.DEFINED_STRING, "enable").add_subcommand(
                 SubCommand(ParseType.STRING_WITHOUT_QUOTES)
             )
         )
-        parsebridge.add_subcommand(
-            SubCommand(ParseType.DEFINIED_STRING, "disable").add_subcommand(
+        parse_bridge.add_subcommand(
+            SubCommand(ParseType.DEFINED_STRING, "disable").add_subcommand(
                 SubCommand(ParseType.STRING_WITHOUT_QUOTES)
             )
         )
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "list"))
+        parse_bridge.add_subcommand(SubCommand(ParseType.DEFINED_STRING, "list"))
 
         # own implementation, will force-delete the assets access of all data-packs, very unstable
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "release"))
+        # todo: remove
+        parse_bridge.add_subcommand(SubCommand(ParseType.DEFINED_STRING, "release"))
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -78,8 +79,9 @@ class CommandDatapack(mcpython.server.command.Command.Command):
         elif values[0] == "release":
             shared.event_handler.call("command:datapack:release", info)
             mcpython.common.DataPack.datapack_handler.cleanup()
+
         else:
-            shared.chat.print_ln("failed to execute command. invalid syntax")
+            info.chat.print_ln("failed to execute command. invalid syntax")
 
     @staticmethod
     def get_help() -> list:

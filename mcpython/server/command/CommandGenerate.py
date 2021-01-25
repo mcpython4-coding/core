@@ -28,9 +28,9 @@ class CommandGenerate(mcpython.server.command.Command.Command):
     NAME = "minecraft:generate"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "generate"
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "generate"
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL).add_subcommand(
                 SubCommand(ParseType.INT).add_subcommand(
                     SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL).add_subcommand(
@@ -44,14 +44,14 @@ class CommandGenerate(mcpython.server.command.Command.Command):
     def parse(values: list, modes: list, info):
         dim = info.entity.dimension
         if len(values) > 0:  # have we definite an chunk?
-            chunkf = tuple(values[:2])
-            chunkt = tuple(values[2:]) if len(values) > 2 else chunkf
+            chunk_start = tuple(values[:2])
+            chunk_end = tuple(values[2:]) if len(values) > 2 else chunk_start
         else:
-            chunkf = chunkt = mcpython.util.math.position_to_chunk(
+            chunk_start = chunk_end = mcpython.util.math.position_to_chunk(
                 shared.world.get_active_player().position
             )
-        fx, fz = chunkf
-        tx, tz = chunkt
+        fx, fz = chunk_start
+        tx, tz = chunk_end
         if fx > tx:
             fx, tx = tx, fx
         if fz > tz:
@@ -60,9 +60,10 @@ class CommandGenerate(mcpython.server.command.Command.Command):
             for z in range(fz, tz + 1):
                 c = dim.get_chunk(x, z, generate=False)
                 shared.world_generation_handler.add_chunk_to_generation_list(c)
+                # only generate the ones from us todo: add option to runtime-generate
                 shared.world_generation_handler.task_handler.process_tasks(
                     chunks=[c]
-                )  # only generate the ones from us
+                )
 
     @staticmethod
     def get_help() -> list:

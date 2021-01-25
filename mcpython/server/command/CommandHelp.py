@@ -27,9 +27,9 @@ class CommandHelp(mcpython.server.command.Command.Command):
     NAME = "minecraft:help"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = ["help", "?"]
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = ["help", "?"]
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
         ).add_subcommand(SubCommand(ParseType.STRING, mode=ParseMode.OPTIONAL))
 
@@ -43,7 +43,7 @@ class CommandHelp(mcpython.server.command.Command.Command):
             end = start + LINES_PER_PAGE - 1
             if start < 0:
                 logger.println(
-                    "[CHAT][COMMANDPARSER][ERROR] value must be greater than 0"
+                    "[CHAT][COMMAND PARSER][ERROR] value must be greater than 0"
                 )
                 return
             if end >= len(PAGES):
@@ -88,7 +88,7 @@ class CommandHelp(mcpython.server.command.Command.Command):
 
 # generate help pages  todo: change to an loading stage
 PAGES = []
-for command, _ in shared.command_parser.commandparsing.values():
+for command, _ in shared.command_parser.command_parsing.values():
     h = command.get_help()
     PAGES += h if type(h) == list else [h]
 

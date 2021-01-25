@@ -26,22 +26,22 @@ class CommandRecipeView(mcpython.server.command.Command.Command):
     INVENTORY = mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView()
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "recipeview"
-        parsebridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES))
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "recipeview"
+        parse_bridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES))
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
         name = values[0]
 
         if name not in shared.crafting_handler.recipe_table:
-            info.chat.print_ln("[ERROR] recipe '{}' is not found!".format(name))
+            info.chat.print_ln("[RECIPE VIEW][ERROR] recipe '{}' is not found!".format(name))
             return
 
         recipe = shared.crafting_handler.recipe_table[name]
         if recipe.RECIPE_VIEW is None:
             info.chat.print_ln(
-                "[ERROR] recipe '{}' of type '{}' has no view assigned!".format(
+                "[RECIPE VIEW][ERROR] recipe '{}' of type '{}' has no view assigned!".format(
                     name, type(recipe)
                 )
             )

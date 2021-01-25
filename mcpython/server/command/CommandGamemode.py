@@ -27,10 +27,11 @@ class CommandGamemode(mcpython.server.command.Command.Command):
     NAME = "minecraft:gamemode"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.add_subcommand(
+            # todo: add config for values somewhere
             SubCommand(
-                ParseType.SELECT_DEFINITED_STRING,
+                ParseType.SELECT_DEFINED_STRING,
                 "0",
                 "1",
                 "2",
@@ -41,7 +42,7 @@ class CommandGamemode(mcpython.server.command.Command.Command):
                 "spectator",
             ).add_subcommand(SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL))
         )
-        parsebridge.main_entry = "gamemode"
+        parse_bridge.main_entry = "gamemode"
 
     @staticmethod
     def parse(values: list, modes: list, info):

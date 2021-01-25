@@ -9,33 +9,58 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import enum
+import typing
 
 import mcpython.common.event.Registry
 
 
 class ParseType(enum.Enum):
     """
-    An enum for command entrys
+    An enum for command entries
     """
 
-    DEFINIED_STRING = 0  # a definied string like "as"
-    INT = 1  # an int. may be negative
-    STRING = 2  # an string in "" or ''. not mixed. may have spaces in it
-    FLOAT = 3  # an float number, can be negative
-    BLOCKNAME = 4  # an name for an block. can start with or without mod prefix
-    ITEMNAME = 5  # an name for an item. can start with or without mod prefix
-    SELECTOR = 6  # an entity selector
-    POSITION = 7  # an position. may be selector
-    SELECT_DEFINITED_STRING = 8  # an selection of diffrent strings out of an list
-    OPEN_END_UNDEFINITED_STRING = 9  # an variable list of strings
-    STRING_WITHOUT_QUOTES = 10  # an varialbe string without the ""
-    BOOLEAN = 11  # an boolean value
+    # A defined string like the string "as", without "
+    DEFINED_STRING = 0
+
+    # An int. May be negative; cannot be NaN or inf
+    INT = 1
+
+    # A string in "" or '', not mixed. May have spaces in it
+    STRING = 2
+
+    # A float number, can be negative; must be parse-able by float(), cannot contain spaces
+    # Represents a java double
+    FLOAT = 3
+
+    # A name for a block. Can start with or without mod namespace; must be lookup-able in the block registry
+    BLOCK_NAME = 4
+
+    # A name for an item. Can start with or without mod namespace; must be lookup-able in the item registry
+    ITEM_NAME = 5
+
+    # A entity selector; defined by its own registry
+    SELECTOR = 6
+
+    # A position. May be selector for position; Selector must be unique
+    POSITION = 7
+
+    # A selection of different strings out of an list
+    SELECT_DEFINED_STRING = 8
+
+    # A variable list of strings
+    OPEN_END_UNDEFINED_STRING = 9
+
+    # A variable string without the ""
+    STRING_WITHOUT_QUOTES = 10
+
+    # A boolean value
+    BOOLEAN = 11
 
     def add_subcommand(self, subcommand):
         return SubCommand(self).add_subcommand(subcommand)
 
-    def set_mode(self, parsemode):
-        return SubCommand(self, parsemode)
+    def set_mode(self, parse_mode: "ParseMode"):
+        return SubCommand(self, parse_mode)
 
 
 class ParseMode(enum.Enum):
@@ -50,36 +75,43 @@ class ParseMode(enum.Enum):
 
 class SubCommand:
     """
-    class for an part of an command. contains one parse-able entry, one ParseMode and an list of sub-commands
+    Class for an part of an command. contains one parse-able entry, one ParseMode and an list of sub-commands
     """
 
-    def __init__(self, type, *args, mode=ParseMode.USER_NEED_ENTER, **kwargs):
+    def __init__(self, entry_type: ParseType, *args, mode=ParseMode.USER_NEED_ENTER, **kwargs):
         """
-        creates an new subcommand
-        :param type: the type to use
+        Creates an new subcommand
+        :param entry_type: the type to use
         :param args: arguments to use for check & parsing
         :param mode: the mode to use
         :param kwargs: optional arguments for check & parsing
         """
-        self.type = type
+        self.type = entry_type
         self.mode = mode
-        self.sub_commands = []
+        self.sub_commands: typing.List["SubCommand"] = []
         self.args = args
         self.kwargs = kwargs
 
-    def add_subcommand(self, subcommand):
+    def add_subcommand(self, subcommand: typing.Union["SubCommand", ParseType]):
         """
-        add an new SubCommand to this SubCommand
+        Add an new SubCommand to this SubCommand
         :param subcommand: the SubCommand to add
         :return: itself
         """
+        if isinstance(subcommand, ParseType):
+            subcommand = SubCommand(subcommand)
+
         self.sub_commands.append(subcommand)
         return self
 
 
 class ParseBridge:
     """
-    An build system for commands
+    A build system for commands
+    Inspired by minecraft's brigadier (https://github.com/Mojang/brigadier)
+
+    todo: every SubCommand should have an onParsingEndHere method executing the command instead of
+        a single function giving the tree
     """
 
     def __init__(self, command):
@@ -91,13 +123,13 @@ class ParseBridge:
         self.sub_commands = []
         command.insert_parse_bridge(self)
 
-    def add_subcommand(self, subcommand):
+    def add_subcommand(self, subcommand: typing.Union[SubCommand, ParseType]):
         """
         add an new subcommand to this
         :param subcommand: the subcommand to add or an ParseType
         :return: the object invoked on (the self)
         """
-        if type(subcommand) == ParseType:
+        if isinstance(subcommand, ParseType):
             subcommand = SubCommand(subcommand)
         self.sub_commands.append(subcommand)
         return self
@@ -105,32 +137,32 @@ class ParseBridge:
 
 class Command(mcpython.common.event.Registry.IRegistryContent):
     """
-    base class for every command
+    Base class for every command
     """
 
-    TYPE = "minecraft:command"  # the type defintion for the registry
+    TYPE = "minecraft:command"  # the type definition for the registry
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
+    def insert_parse_bridge(parse_bridge: ParseBridge):
         """
-        takes an ParseBridge and fills it with life
-        :param parsebridge: the parsebridge to use
+        Takes an ParseBridge and fills it with life
+        :param parse_bridge: the parse bridge to use
         """
         raise NotImplementedError()
 
     @staticmethod
     def parse(values: list, modes: list, info):
         """
-        parse the command
-        :param values: the values parsed over parsebridge
-        :param modes: the modes used (an list of decicions)
-        :param info: an ParsingCommandInfo for parsing this command
+        Parses the command
+        :param values: the values parsed over parse bridge
+        :param modes: the modes used (a list of decisions)
+        :param info: a ParsingCommandInfo for parsing this command
         """
 
     @staticmethod
     def get_help() -> list:
         """
         :return: help pages for this command. a "<command build>: <description>"-list
-        todo: make translated
+        todo: make translate-able
         """
         return []

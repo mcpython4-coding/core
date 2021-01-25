@@ -221,6 +221,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
         todo: cache the bbox of the block
         todo: move to dimension
+        todo: add variant only taking the player
+        todo: cache when possible
+        todo: add variant for entities
         """
         m = shared.world.gamerule_handler.table[
             "hitTestSteps"

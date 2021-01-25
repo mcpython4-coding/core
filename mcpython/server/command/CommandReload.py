@@ -30,8 +30,8 @@ class CommandReload(mcpython.server.command.Command.Command):
     NAME = "minecraft:reload"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "reload"
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "reload"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):

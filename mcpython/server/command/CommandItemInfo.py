@@ -17,24 +17,25 @@ from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
 @shared.registry
 class CommandItemInfo(mcpython.server.command.Command.Command):
     """
-    class for /iteminfo command
+    Class for /iteminfo command
+    todo: maybe merge with /blockinfo, and add entity variant
     """
 
     NAME = "minecraft:iteminfo"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "iteminfo"
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "hand"))
-        parsebridge.add_subcommand(SubCommand(ParseType.DEFINIED_STRING, "inventory"))
-        parsebridge.add_subcommand(
-            SubCommand(ParseType.DEFINIED_STRING, "item").add_subcommand(
-                SubCommand(ParseType.ITEMNAME)
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "iteminfo"
+        parse_bridge.add_subcommand(SubCommand(ParseType.DEFINED_STRING, "hand"))
+        parse_bridge.add_subcommand(SubCommand(ParseType.DEFINED_STRING, "inventory"))
+        parse_bridge.add_subcommand(
+            SubCommand(ParseType.DEFINED_STRING, "item").add_subcommand(
+                SubCommand(ParseType.ITEM_NAME)
             )
         )
-        parsebridge.add_subcommand(
-            SubCommand(ParseType.DEFINIED_STRING, "block").add_subcommand(
-                SubCommand(ParseType.DEFINIED_STRING, "inventory").add_subcommand(
+        parse_bridge.add_subcommand(
+            SubCommand(ParseType.DEFINED_STRING, "block").add_subcommand(
+                SubCommand(ParseType.DEFINED_STRING, "inventory").add_subcommand(
                     SubCommand(ParseType.POSITION)
                 )
             )
@@ -49,12 +50,15 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
                 .get_itemstack()
             )
             logger.println("info to item hold in hand")
-            CommandItemInfo.print_info(itemstack)
+            CommandItemInfo.print_info(itemstack, info.chat.print_ln)
+
         elif modes[1][1] == 1:  # inventory
             logger.println("[NOT IMPLEMENTED]")
+
         elif modes[1][1] == 2:  # from item name
             stack = mcpython.common.container.ItemStack.ItemStack(values[1])
-            CommandItemInfo.print_info(stack)
+            CommandItemInfo.print_info(stack, info.chat.print_ln)
+
         elif modes[1][1] == 3:  # block inventories
             block = info.entity.dimension.get_block(values[2])
             if type(block) == str:
@@ -64,33 +68,33 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
                 for si, slot in enumerate(inventory.slots):
                     if not slot.get_itemstack().is_empty():
                         logger.println("slot {}".format(si + 1))
-                        CommandItemInfo.print_info(slot.get_itemstack())
+                        CommandItemInfo.print_info(slot.get_itemstack(), info.chat.print_ln)
 
     @staticmethod
-    def print_info(itemstack):
-        logger.println("-amount: {}".format(itemstack.amount))
-        logger.println("-itemname: '{}'".format(itemstack.get_item_name()))
+    def print_info(itemstack, method=logger.println):
+        method("- amount: {}".format(itemstack.amount))
+        method("- item name: '{}'".format(itemstack.get_item_name()))
         if itemstack.item:
-            logger.println("-has block: {}".format(itemstack.item.HAS_BLOCK))
+            method("- has block: {}".format(itemstack.item.HAS_BLOCK))
             if itemstack.item.HAS_BLOCK:
-                logger.println("-blockname: {}".format(itemstack.item.get_block()))
-            logger.println(
-                "-itemfile: '{}'".format(
+                method("- blockname: {}".format(itemstack.item.get_block()))
+            method(
+                "- item file: '{}'".format(
                     itemstack.item.get_default_item_image_location()
                 )
             )
-            logger.println("-max stack size: {}".format(itemstack.item.STACK_SIZE))
+            method("- max stack size: {}".format(itemstack.item.STACK_SIZE))
             tags = []
             for tag in shared.tag_handler.taggroups["items"].tags.values():
                 if itemstack.item.NAME in tag.entries:
                     tags.append(tag.name)
-            logger.println(" -tags: {}".format(tags))
+            method("- tags: {}".format(tags))
 
     @staticmethod
     def get_help() -> list:
         return [
             "/iteminfo hand: gets info about the item in hand",
             "/iteminfo inventory: gets info about every item in inventory",
-            "/iteminfo item <itemname>: gets info to an special item",
+            "/iteminfo item <item name>: gets info to an special item",
             "/iteminfo block inventory <position>: gets info about items in an block inventory",
         ]

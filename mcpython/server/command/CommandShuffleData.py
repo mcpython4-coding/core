@@ -24,13 +24,13 @@ class CommandShuffleData(mcpython.server.command.Command.Command):
     NAME = "minecraft:shuffle_data_command"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "shuffledata"
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "shuffledata"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
         if not mcpython.common.config.SHUFFLE_DATA:
-            info.chat.print_ln("can't shuffle data as shuffeling is disabled")
+            info.chat.print_ln("can't shuffle data as shuffling is disabled")
             return
         shared.event_handler.call("data:shuffle:all")
 

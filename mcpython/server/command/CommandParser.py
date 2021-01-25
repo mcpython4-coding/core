@@ -27,6 +27,23 @@ class ParsingCommandInfo:
         )
         self.chat = chat if chat is not None else shared.chat
 
+        # for the future... todo: implement this
+        # this will hold local variables
+        # /execute store target-able and /execute set <name> <value> able
+        # /execute if var <name> defined
+        # /execute if var <name> >/</>=/<=/==
+        # /variable <name> store result <expression>
+        # /variable <name> store position x/y/z [<selector>/<position>]
+        # /operation target <expression name> <... args>
+        # /return <value or variable>
+        # /variable <name> delete
+        # /variable <name> copy [to/from (default)] <var>
+        # access-able via something like <var name> in commands (-> custom entry parser!)
+        self.local_variable_stack = {}
+        # todo: add some way for invoking function & getting returned result
+        # todo: add way to invoke function with parameters
+        # todo: classes? (-> dynamic registries -> block & item creation?)
+
     def copy(self):
         """
         :return: a copy of itself
@@ -46,32 +63,33 @@ class ParsingCommandInfo:
 
 class CommandParser:
     """
-    main class for parsing an command
+    Main class for parsing an command
+    todo: can we pre-parse data into python text and eval it? (If we do, we must make it very secure!)
     """
 
     def __init__(self):
-        self.commandparsing = {}  # start -> (Command, ParseBridge)
+        self.command_parsing = {}  # start -> (Command, ParseBridge)
 
     def add_command(self, command: mcpython.server.command.Command):
         """
         register an command
         :param command: the command to add
         """
-        parsebridge = mcpython.server.command.Command.ParseBridge(command)
+        parse_bridge = mcpython.server.command.Command.ParseBridge(command)
         if not shared.event_handler.call_cancelable(
-            "registry:commands:register", command, parsebridge
+            "registry:commands:register", command, parse_bridge
         ):
             return
         for entry in (
-            [parsebridge.main_entry]
-            if type(parsebridge.main_entry) == str
-            else parsebridge.main_entry
+            [parse_bridge.main_entry]
+            if type(parse_bridge.main_entry) == str
+            else parse_bridge.main_entry
         ):
-            self.commandparsing[entry] = (command, parsebridge)
+            self.command_parsing[entry] = (command, parse_bridge)
 
     def parse(self, command: str, info=None):
         """
-        pase an command
+        Parse an command
         :param command: the command to parse
         :param info: the info to use. can be None if one should be generated
         todo: check permission
@@ -84,44 +102,47 @@ class CommandParser:
             "command:parser:execute", command, info
         ):
             return
-        if pre[1:] in self.commandparsing:  # is it registered?
-            command, parsebridge = self.commandparsing[pre[1:]]
+        if pre[1:] in self.command_parsing:  # is it registered?
+            command, parsebridge = self.command_parsing[pre[1:]]
             try:
                 values, trace = self._convert_to_values(split, parsebridge, info)
             except:
                 logger.print_exception(
-                    "[CHAT][EXCEPTION] during parsing values for command '{}'".format(
+                    "[CHAT][COMMAND PARSER][EXCEPTION] during parsing values for command '{}'".format(
                         command.NAME
                     )
                 )
                 return
+
             if values is None:
                 return
+
             try:
                 command.parse(values, trace, info)
             except:
                 logger.print_exception(
-                    "[CHAT][EXCEPTION] during executing command '{}' with {}".format(
+                    "[CHAT][COMMAND PARSER][EXCEPTION] during executing command '{}' with {}".format(
                         command.NAME, info
                     )
                 )
+
         else:
             logger.println(
-                "[CHAT][COMMANDPARSER][ERROR] unknown command '{}'".format(pre)
+                "[CHAT][COMMAND PARSER][ERROR] unknown command '{}'".format(pre)
             )
 
-    def _convert_to_values(self, command, parsebridge, info, index=1) -> tuple:
+    def _convert_to_values(self, command, parse_bridge, info, index=1) -> tuple:
         """
         parse command into values that can be than executed
         :param command: the command to parse
-        :param parsebridge: the command info to use
+        :param parse_bridge: the command info to use
         :param info: the info to use
         :param index: the index to start on
         """
         if len(command) == 1 and not any(
             [
                 subcommand.mode == mcpython.server.command.Command.ParseMode.OPTIONAL
-                for subcommand in parsebridge.sub_commands
+                for subcommand in parse_bridge.sub_commands
             ]
         ):
             logger.println(
@@ -129,10 +150,10 @@ class CommandParser:
                 "syntax".format(command)
             )
             return None, None
-        active_entry = parsebridge
+        active_entry = parse_bridge
         values = []
-        array = [parsebridge]
-        commandregistry = shared.registry.get_by_name("minecraft:command")
+        array = [parse_bridge]
+        command_registry = shared.registry.get_by_name("minecraft:command")
         while len(active_entry.sub_commands) > 0 and index < len(
             command
         ):  # iterate over the whole command
@@ -142,7 +163,7 @@ class CommandParser:
             ) in (
                 active_entry.sub_commands
             ):  # go through all commands and check if valid
-                if not flag1 and commandregistry.command_entries[
+                if not flag1 and command_registry.command_entries[
                     subcommand.type
                 ].is_valid(
                     command, index, subcommand.args, subcommand.kwargs
@@ -151,7 +172,7 @@ class CommandParser:
                         (subcommand, active_entry.sub_commands.index(subcommand))
                     )
                     active_entry = subcommand
-                    index, value = commandregistry.command_entries[
+                    index, value = command_registry.command_entries[
                         subcommand.type
                     ].parse(command, index, info, subcommand.args, subcommand.kwargs)
                     values.append(value)  # set value
@@ -168,7 +189,7 @@ class CommandParser:
                     return values, array
                 else:
                     logger.println(
-                        "[CHAT][COMMANDPARSER][ERROR] can't parse command, missing entry at position {}:".format(
+                        "[CHAT][COMMAND PARSER][ERROR] can't parse command, missing entry at position {}:".format(
                             len(array) + 1
                         )
                     )
@@ -190,7 +211,7 @@ class CommandParser:
         ):
             return values, array
         logger.println(
-            "command is not ended correct. please look at the command syntax."
+            "Command is not ended correct. Please look at the command syntax via e.g. /help <command name>."
         )
         return None, array
 

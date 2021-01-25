@@ -24,9 +24,9 @@ class CommandRegistryInfo(mcpython.server.command.Command.Command):
     CANCEL_REGISTRY_INFO = False
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "registryinfo"
-        parsebridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES))
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "registryinfo"
+        parse_bridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES))
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -35,11 +35,16 @@ class CommandRegistryInfo(mcpython.server.command.Command.Command):
         ):
             return
         registry = shared.registry.get_by_name(values[0])
+
+        # todo: add extension point for mods with custom registries
+        # todo: add option to hide registries from this in the registry
+
         if registry is None:
             logger.println(
                 "[CHAT][ERROR] selected unknown registry: '{}'".format(values[0])
             )
             return
+
         if len(values) == 1:
             logger.println("values in registry '{}'".format(values[0]))
             for key in registry.entries.keys():

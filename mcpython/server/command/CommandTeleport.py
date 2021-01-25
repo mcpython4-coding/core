@@ -22,9 +22,9 @@ class CommandTeleport(mcpython.server.command.Command.Command):
     NAME = "minecraft:teleport"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = ["tp", "teleport"]  # both are valid
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = ["tp", "teleport"]  # both are valid
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.SELECTOR)
             .add_subcommand(SubCommand(ParseType.SELECTOR))
             .add_subcommand(SubCommand(ParseType.POSITION))
@@ -41,6 +41,7 @@ class CommandTeleport(mcpython.server.command.Command.Command):
                         if info.dimension is not None
                         else entity.chunk.dimension.id,
                     )
+
             else:  # tp [selector] [position]
                 for entity in values[0]:
                     entity.teleport(
@@ -49,6 +50,7 @@ class CommandTeleport(mcpython.server.command.Command.Command):
                         if info.dimension is not None
                         else entity.chunk.dimension.id,
                     )
+
         else:  # tp [position]
             shared.world.get_active_player().teleport(
                 tuple(values[0]),

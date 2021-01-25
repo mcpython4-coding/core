@@ -23,11 +23,11 @@ class CommandSetblock(mcpython.server.command.Command.Command):
     NAME = "minecraft:setblock"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "setblock"
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "setblock"
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.POSITION).add_subcommand(
-                SubCommand(ParseType.BLOCKNAME)
+                SubCommand(ParseType.BLOCK_NAME)
             )
         )
 

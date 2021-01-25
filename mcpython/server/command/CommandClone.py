@@ -25,9 +25,9 @@ class CommandClone(mcpython.server.command.Command.Command):
     NAME = "minecraft:clone"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "clone"
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "clone"
+        parse_bridge.add_subcommand(
             ParseType.POSITION.add_subcommand(
                 ParseType.POSITION.add_subcommand(
                     ParseType.STRING_WITHOUT_QUOTES.set_mode(
@@ -36,7 +36,7 @@ class CommandClone(mcpython.server.command.Command.Command):
                         ParseType.STRING_WITHOUT_QUOTES.set_mode(
                             ParseMode.OPTIONAL
                         ).add_subcommand(
-                            ParseType.BLOCKNAME.set_mode(ParseMode.OPTIONAL)
+                            ParseType.BLOCK_NAME.set_mode(ParseMode.OPTIONAL)
                         )
                     )
                 )
@@ -46,6 +46,7 @@ class CommandClone(mcpython.server.command.Command.Command):
     @staticmethod
     def parse(values: list, modes: list, info):
         # todo: split up into three functions in an util/world.py for moving modes
+        # todo: raise error on float-positions
 
         if 3 < len(values) < 6 and values[3] == "filtered":
             info.chat.print_ln(

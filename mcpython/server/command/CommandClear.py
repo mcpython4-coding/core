@@ -31,12 +31,14 @@ class CommandClear(mcpython.server.command.Command.Command):
     NAME = "minecraft:clear"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "clear"
-        parsebridge.add_subcommand(ParseType.SELECTOR.set_mode(ParseMode.OPTIONAL))
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "clear"
+        parse_bridge.add_subcommand(ParseType.SELECTOR.set_mode(ParseMode.OPTIONAL))
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
+        # todo: add some lists in this class instead of public events
+
         if shared.event_handler.call_cancelable("command:clear", info):
             return  # event for canceling such event
 
@@ -61,9 +63,10 @@ class CommandClear(mcpython.server.command.Command.Command):
 
         shared.inventory_handler.moving_slot.get_itemstack().clean()  # make sure that he has nothing in his hand
 
+        # and call the event that we are done
         shared.event_handler.call(
             "command:clear:end", info
-        )  # and call the event that we are done
+        )
 
     @staticmethod
     def get_help() -> list:

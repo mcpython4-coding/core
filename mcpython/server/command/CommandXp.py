@@ -27,36 +27,36 @@ class CommandXp(mcpython.server.command.Command.Command):
     NAME = "minecraft:xp"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = ["xp", "experience"]
-        parsebridge.add_subcommand(
-            SubCommand(ParseType.DEFINIED_STRING, "add").add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = ["xp", "experience"]
+        parse_bridge.add_subcommand(
+            SubCommand(ParseType.DEFINED_STRING, "add").add_subcommand(
                 SubCommand(ParseType.SELECTOR).add_subcommand(
                     SubCommand(ParseType.INT)
                     .add_subcommand(
                         SubCommand(
-                            ParseType.DEFINIED_STRING, "points", mode=ParseMode.OPTIONAL
+                            ParseType.DEFINED_STRING, "points", mode=ParseMode.OPTIONAL
                         )
                     )
                     .add_subcommand(
                         SubCommand(
-                            ParseType.DEFINIED_STRING, "levels", mode=ParseMode.OPTIONAL
+                            ParseType.DEFINED_STRING, "levels", mode=ParseMode.OPTIONAL
                         )
                     )
                 )
             )
         ).add_subcommand(
-            SubCommand(ParseType.DEFINIED_STRING, "set").add_subcommand(
+            SubCommand(ParseType.DEFINED_STRING, "set").add_subcommand(
                 SubCommand(ParseType.SELECTOR).add_subcommand(
                     SubCommand(ParseType.INT)
                     .add_subcommand(
                         SubCommand(
-                            ParseType.DEFINIED_STRING, "points", mode=ParseMode.OPTIONAL
+                            ParseType.DEFINED_STRING, "points", mode=ParseMode.OPTIONAL
                         )
                     )
                     .add_subcommand(
                         SubCommand(
-                            ParseType.DEFINIED_STRING, "levels", mode=ParseMode.OPTIONAL
+                            ParseType.DEFINED_STRING, "levels", mode=ParseMode.OPTIONAL
                         )
                     )
                 )
@@ -69,9 +69,11 @@ class CommandXp(mcpython.server.command.Command.Command):
             if modes[1][1] == 1:
                 shared.world.get_active_player().xp = 0
                 shared.world.get_active_player().xp_level = 0
+
             if len(modes) == 4 or modes[4][1] == 0:  # points
                 for player in values[1]:
                     player.add_xp(values[2])
+
             elif modes[4][1] == 1:  # levels
                 for player in values[1]:
                     player.add_xp_level(values[2])

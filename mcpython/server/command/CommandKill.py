@@ -27,9 +27,9 @@ class CommandKill(mcpython.server.command.Command.Command):
     NAME = "minecraft:kill"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "kill"
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "kill"
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)
         )
 

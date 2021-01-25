@@ -17,7 +17,7 @@ import mcpython.common.event.Registry
 
 class Selector(mcpython.common.event.Registry.IRegistryContent):
     """
-    selector base class
+    Selector base class
     """
 
     TYPE = "minecraft:selector"

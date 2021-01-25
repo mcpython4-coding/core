@@ -1484,4 +1484,7 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed some issues with block rendering, and similar
 [uuk]: fixed some issues about reloading, model baking, block state aliases, ...
 [github]: end of feature phase for snapshot 21w04a, starting on 25.01.2021, 2 days before planned release
+[uuk]: float entry in commands does not accept NaN and inf now
+[uuk]: refactored some command entry names
+[uuk]: written down some plans for the command system
 

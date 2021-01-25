@@ -18,18 +18,24 @@ import mcpython.common.mod.ModMcpython
 
 
 def register_command(registry, command):
-    if issubclass(command, mcpython.server.command.Command.Command):  # is it an command
+    # is it an command
+    if issubclass(command, mcpython.server.command.Command.Command):
         shared.command_parser.add_command(command)
+
+    # or an command entry
     elif issubclass(
         command, mcpython.server.command.CommandEntry.CommandEntry
-    ):  # or an command entry
+    ):
         command_registry.command_entries[command.NAME] = command
+
+    # or an selector?
     elif issubclass(
         command, mcpython.server.command.Selector.Selector
-    ):  # or an selector?
+    ):
         command_registry.selector.append(command)
+
     else:
-        raise ValueError("can't register object {} to commandhandler".format(command))
+        raise ValueError("can't register object '{}' to command handler".format(command))
 
 
 command_registry = mcpython.common.event.Registry.Registry(

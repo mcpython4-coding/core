@@ -29,13 +29,13 @@ class CommandGamerule(mcpython.server.command.Command.Command):
     CANCEL_GIVE = False
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.STRING_WITHOUT_QUOTES).add_subcommand(
                 SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL)
             )
         )
-        parsebridge.main_entry = "gamerule"
+        parse_bridge.main_entry = "gamerule"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -52,11 +52,11 @@ class CommandGamerule(mcpython.server.command.Command.Command):
                     value
                 )
             else:
-                shared.chat.print_ln(
+                info.chat.print_ln(
                     "invalid value '{}' for gamerule '{}'".format(value, rule)
                 )
         else:
-            shared.chat.print_ln(
+            info.chat.print_ln(
                 "value of gamerule '{}': {}".format(
                     rule, shared.world.gamerule_handler.table[rule].status.status
                 )

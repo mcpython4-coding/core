@@ -30,26 +30,26 @@ class CommandGive(mcpython.server.command.Command.Command):
     CANCEL_GIVE = False
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.SELECTOR).add_subcommand(
-                SubCommand(ParseType.ITEMNAME).add_subcommand(
+                SubCommand(ParseType.ITEM_NAME).add_subcommand(
                     SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
                 )
             )
         )
-        parsebridge.main_entry = "give"
+        parse_bridge.main_entry = "give"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
+        # get the stack to add
         stack = mcpython.common.container.ItemStack.ItemStack(
             values[1]
-        )  # get the stack to add
+        )
+
         if len(values) > 2:
-            stack.amount = abs(values[2])  # get the amount if provided
-        # check for overflow
-        if stack.amount > stack.item.STACK_SIZE:
-            stack.amount = stack.item.STACK_SIZE
+            stack.set_amount(values[2])  # get the amount if provided
+
         for player in values[0]:  # iterate over all players to give
             player.pick_up_item(stack)
 

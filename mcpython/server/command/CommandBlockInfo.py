@@ -19,34 +19,30 @@ import mcpython.util.math
 class CommandBlockInfo(mcpython.server.command.Command.Command):
     """
     Class for the /blockinfo command
+    todo: add variant for entities
     """
 
     NAME = "minecraft:block_info"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "blockinfo"
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "blockinfo"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
-        # x, y, z = info.entity.position
-        # nx, ny, nz = mcpython.util.math.normalize(info.entity.position)
-        # chunk = info.dimension.get_chunk(
-        #     *mcpython.util.math.position_to_chunk(info.entity.position),
-        #     create=False
-        # )
-        vector = shared.window.get_sight_vector()
-        blockpos, previous, hitpos = shared.world.hit_test(info.entity.position, vector)
+        # Which block do we want?
+        blockpos, previous, hit_position = shared.world.hit_test(info.entity.position, shared.window.get_sight_vector())
+
         if blockpos:
             block = shared.world.get_dimension(info.dimension).get_block(blockpos)
             if type(block) == str:
-                logger.println("invalid target")
+                info.chat.print_ln("invalid target")
             else:
-                logger.println(repr(block))
-                logger.println(block.TAGS)
+                info.chat.print_ln(repr(block))
+                info.chat.print_ln(", ".join(block.TAGS))
         else:
-            logger.println("invalid target")
+            info.chat.print_ln("invalid target")
 
     @staticmethod
     def get_help() -> list:
-        return ["/blockinfo: prints info about the block looking at"]
+        return ["/blockinfo: prints info about the block looking at, including a full repr() of it and its tags"]

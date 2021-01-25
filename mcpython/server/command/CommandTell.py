@@ -22,11 +22,11 @@ class CommandTell(mcpython.server.command.Command.Command):
     NAME = "minecraft:tell"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = ["tell", "msg", "w"]
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = ["tell", "msg", "w"]
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.SELECTOR).add_subcommand(
-                SubCommand(ParseType.OPEN_END_UNDEFINITED_STRING)
+                SubCommand(ParseType.OPEN_END_UNDEFINED_STRING)
             )
         )
 

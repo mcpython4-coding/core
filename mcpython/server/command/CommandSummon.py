@@ -27,9 +27,9 @@ class CommandSummon(mcpython.server.command.Command.Command):
     NAME = "minecraft:summon"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "summon"
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "summon"
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.STRING_WITHOUT_QUOTES).add_subcommand(
                 SubCommand(ParseType.POSITION, mode=ParseMode.OPTIONAL)
             )
@@ -39,6 +39,8 @@ class CommandSummon(mcpython.server.command.Command.Command):
     def parse(cls, values: list, modes: list, info):
         position = values[1] if len(values) > 1 else info.entity.position
         # todo: add check if entity is summon-able by command
+        # todo: add help
+        # todo: add special command entry for entity type
         try:
             shared.entity_handler.spawn_entity(values[0], position, check_summon=True)
         except ValueError:

@@ -28,9 +28,9 @@ class CommandFunction(mcpython.server.command.Command.Command):
     NAME = "minecraft:function_command"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "function"
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "function"
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL)
         )
 

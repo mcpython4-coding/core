@@ -25,6 +25,7 @@ class McFunctionFile:
     def __init__(self, data: str, name: str):
         self.lines = data.split("\n")
         self.name = name
+        # todo: pre-parse data
 
     def execute(self, info=None):
         count = 0

@@ -27,36 +27,36 @@ class CommandExecute(mcpython.server.command.Command.Command):
     NAME = "minecraft:execute"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
+    def insert_parse_bridge(parse_bridge: ParseBridge):
         # missing: align, anchored, facing, in
         execute_as = SubCommand(
-            ParseType.DEFINIED_STRING, "as", mode=ParseMode.OPTIONAL
+            ParseType.DEFINED_STRING, "as", mode=ParseMode.OPTIONAL
         ).add_subcommand(SubCommand(ParseType.SELECTOR))
         execute_at = SubCommand(
-            ParseType.DEFINIED_STRING, "at", mode=ParseMode.OPTIONAL
+            ParseType.DEFINED_STRING, "at", mode=ParseMode.OPTIONAL
         ).add_subcommand(SubCommand(ParseType.POSITION))
         execute_in = SubCommand(
-            ParseType.DEFINIED_STRING, "in", mode=ParseMode.OPTIONAL
+            ParseType.DEFINED_STRING, "in", mode=ParseMode.OPTIONAL
         ).add_subcommand(SubCommand(ParseType.INT))
         # missing: blocks, data, score
         execute_if = (
-            SubCommand(ParseType.DEFINIED_STRING, "if", mode=ParseMode.OPTIONAL)
+            SubCommand(ParseType.DEFINED_STRING, "if", mode=ParseMode.OPTIONAL)
             .add_subcommand(
-                SubCommand(ParseType.DEFINIED_STRING, "block").add_subcommand(
-                    SubCommand(ParseType.POSITION).add_subcommand(ParseType.BLOCKNAME)
+                SubCommand(ParseType.DEFINED_STRING, "block").add_subcommand(
+                    SubCommand(ParseType.POSITION).add_subcommand(ParseType.BLOCK_NAME)
                 )
             )
             .add_subcommand(
-                SubCommand(ParseType.DEFINIED_STRING, "entity").add_subcommand(
+                SubCommand(ParseType.DEFINED_STRING, "entity").add_subcommand(
                     SubCommand(ParseType.SELECTOR)
                 )
             )
         )
         execute_run = SubCommand(
-            ParseType.DEFINIED_STRING, "run", mode=ParseMode.OPTIONAL
-        ).add_subcommand(SubCommand(ParseType.OPEN_END_UNDEFINITED_STRING, min=1))
+            ParseType.DEFINED_STRING, "run", mode=ParseMode.OPTIONAL
+        ).add_subcommand(SubCommand(ParseType.OPEN_END_UNDEFINED_STRING, min=1))
         execute_unless = SubCommand(
-            ParseType.DEFINIED_STRING, "unless", mode=ParseMode.OPTIONAL
+            ParseType.DEFINED_STRING, "unless", mode=ParseMode.OPTIONAL
         )
         execute_unless.sub_commands = execute_if.sub_commands
         sub_commands = [execute_as, execute_at, execute_in, execute_if, execute_run]
@@ -70,10 +70,10 @@ class CommandExecute(mcpython.server.command.Command.Command):
             execute_unless.sub_commands[1].sub_commands[0],
         ]
         for subcommand in sub_commands_ends + [
-            parsebridge
-        ]:  # every end can be assinged with an new
+            parse_bridge
+        ]:  # every end can be assigned with an new
             subcommand.sub_commands = sub_commands
-        parsebridge.main_entry = "execute"
+        parse_bridge.main_entry = "execute"
 
     @staticmethod
     def parse(values: list, modes: list, info):

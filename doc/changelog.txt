@@ -57,6 +57,7 @@ changelog of snapshot <21w04a> released on <27.01.2021>, targeting <20w03a>
 
     Commands:
         - added /blockinfo command giving information about the block currently looking at
+        - added /recipeview command for below recipe view
 
     Rendering:
         - improved block rendering

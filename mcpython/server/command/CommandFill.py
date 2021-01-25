@@ -27,15 +27,15 @@ class CommandFill(mcpython.server.command.Command.Command):
     NAME = "minecraft:fill"
 
     @staticmethod
-    def insert_parse_bridge(parsebridge: ParseBridge):
-        parsebridge.main_entry = "fill"
-        parsebridge.add_subcommand(
+    def insert_parse_bridge(parse_bridge: ParseBridge):
+        parse_bridge.main_entry = "fill"
+        parse_bridge.add_subcommand(
             SubCommand(ParseType.POSITION).add_subcommand(
                 SubCommand(ParseType.POSITION).add_subcommand(
-                    SubCommand(ParseType.BLOCKNAME).add_subcommand(
+                    SubCommand(ParseType.BLOCK_NAME).add_subcommand(
                         SubCommand(
-                            ParseType.DEFINIED_STRING, mode=ParseMode.OPTIONAL
-                        ).add_subcommand(ParseType.BLOCKNAME)
+                            ParseType.DEFINED_STRING, mode=ParseMode.OPTIONAL
+                        ).add_subcommand(ParseType.BLOCK_NAME)
                     )
                 )
             )
