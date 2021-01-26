@@ -174,7 +174,7 @@ class BiomeSerializer(mcpython.common.data.DataSerializerHandler.ISerializer):
         raise NotImplementedError()
 
     @classmethod
-    def register(cls, obj: ISerializeAble):
+    def register(cls, obj):
         cls.COLLECTED.append(obj)
         shared.biome_handler.register(obj)
 

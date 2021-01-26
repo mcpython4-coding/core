@@ -1488,4 +1488,5 @@ R   [uuk]: improved world serialization API
 [uuk]: refactored some command entry names
 [uuk]: written down some plans for the command system
 [uuk]: improved & documented some worldgen stuff
+[uuk]: fixed issue 252: reload problems with DataSerializationHandler
 

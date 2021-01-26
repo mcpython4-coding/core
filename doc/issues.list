@@ -88,6 +88,7 @@ issue 164:
     bug: saving/loading big worlds take long time
     fix: do NOT load every time the whole .region file, store it in RAM [we have enough of it]
     additional fix: load them part by part
+    3rd fix: move to other process
 
 issue 165:
     bug: changing chunks in an big world takes a long time due to internal re-calculations
@@ -112,12 +113,13 @@ issue 177:
 
 issue 178:
     bug: hotbar is not transparent(rendered)
-    fix: enable alpha blending in this phase
+    fix: enable alpha blending in this phase [somehow not correctly working!]
 
 issue 185:
     bug: in big worlds, chunks can get randomly hidden (or unloaded?) [e.g. debug world]
-    fix: implement chunk load ticket system
+    fix: implement chunk load ticket system [WIP]
     root cause search: implement logger for unloading & hiding chunks
+    temporary fix: prevent from unloading [for some short moment, they get unloaded]
 
 issue 196:
     bug: when in gui and picking up an itemstack during holding one, it gets reset
@@ -128,26 +130,13 @@ issue 199:  [removed with save rework]
          list
     fix: add them to the storage system and re-assign on load
 
-issue 201:
-    bug: in debug world, you can change block states, break blocks, add blocks, ...
-    fix: implement system to have an event bus for an generator mode only active when in an world with these world
-        generator
-
 issue 217:  [removed with save rework]
     bug: chest content can get lost [see warnings in log]
 
 issue 218: [removed when command rework]
     bug: game crashes when using e.g. "/tp @s 10 10 10" in chat
 
-issue 219:
-    bug: errors with block showing are printed multiply times in BlockItemGenerator
-
 issue 235:
     bug: tools are CONSUMED when using them
 
-issue 247:
-    bug: blocks get hidden when updated [whole world] leading into big lag
-    properly caused by a face-miss-calculation in the new rendering parts
-    since: development of 21w01a
-
-[251]
+[252]

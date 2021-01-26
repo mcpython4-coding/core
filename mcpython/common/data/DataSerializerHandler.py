@@ -76,13 +76,13 @@ class DatapackSerializationHelper:
         self.serializer.append(serializer)
         return self
 
-    def map_pack(self, modname: str, pathname: str):
+    def map_pack(self, modname: str, pathname: str, immediate=False):
         directory = self.path_group.format(modname=modname, pathname=pathname)
         for file in mcpython.ResourceLoader.get_all_entries(directory):
             if file.endswith("/"):
                 continue
 
-            if self.load_on_stage is None:
+            if self.load_on_stage is None or immediate:
                 self.load_file(file)
             else:
                 shared.mod_loader(modname, self.load_on_stage, file)(self.load_file)
@@ -100,6 +100,7 @@ class DatapackSerializationHelper:
                     if callable(self.on_deserialize):
                         self.on_deserialize(obj)
                     break
+
             else:
                 logger.println(
                     "[RESOURCE LOOKUP][{}][WARN] could not read file '{}' as no valid decoder was found!".format(
@@ -122,7 +123,7 @@ class DatapackSerializationHelper:
                 modname,
                 pathname,
             ) in mcpython.common.data.ResourcePipe.handler.namespaces:
-                self.map_pack(modname, pathname)
+                self.map_pack(modname, pathname, immediate=True)
 
     def bake(self):
         pass
