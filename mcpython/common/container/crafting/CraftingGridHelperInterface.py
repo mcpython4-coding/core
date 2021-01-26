@@ -54,8 +54,9 @@ class CraftingGridHelperInterface(
         enable_shapeless_recipes=True,
     ):
         """
-        Creates an new grid recipe interface
-        Recipe order: first in, first checked
+        Creates a new grid recipe interface
+        Recipe order: mixed lookup order based on item count & grid size. Non-order preserving
+        todo: create lookup with hash
         :param slot_input_map: an Slot[[ for input
         :param slot_output_map: an Slot for output
         :param maxsize: the max size for recipes. may be None for full grid size

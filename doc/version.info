@@ -1492,4 +1492,5 @@ R   [uuk]: improved world serialization API
 [uuk]: refactored command system
 [uuk]: /execute command has now some form of registry for storing the individual nodes of the tree, adding a extension
        point for mods
+[uuk]: grid recipes are now hash-able, and implement __eq__ both using only as_grid_for_view()
 

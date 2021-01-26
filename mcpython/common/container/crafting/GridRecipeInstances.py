@@ -58,6 +58,36 @@ class AbstractCraftingGridRecipe(
         mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
     )
 
+    def __init__(self):
+        super().__init__()
+        self.grid_hash = None
+
+    def __hash__(self):
+        if self.grid_hash is None:
+            self.grid_hash = self.calculate_hash()
+
+        return self.grid_hash
+
+    def calculate_hash(self) -> int:
+        grid, output = self.as_grid_for_view()
+        data = (
+            tuple((
+                tuple((
+                    tuple((
+                        (itemstack.get_item_name(), itemstack.amount)
+                        for itemstack in items
+                    ))
+                    for items in row
+                ))
+                for row in grid
+            )),
+            (output.get_item_name(), output.amount)
+        )
+        return hash(data)
+
+    def __eq__(self, other):
+        return isinstance(other, AbstractCraftingGridRecipe) and self.as_grid_for_view() == other.as_grid_for_view()
+
     def as_grid_for_view(
         self, size=(3, 3)
     ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:

@@ -8,24 +8,48 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 from mcpython import shared, logger
 import mcpython.common.item.AbstractItem
 import typing
 
 
-class ItemStack:
+class AbstractItemStack(ABC):
     """
-    Base class for item stored somewhere
+    Abstract class for item stack like objects
     """
 
-    @staticmethod
-    def create_empty():
-        """
-        get an empty itemstack
-        """
-        return ItemStack(None)
+    @classmethod
+    def create_empty(cls):
+        raise NotImplementedError
 
-    def __init__(self, item_name_or_instance, amount=1):
+    def copy(self) -> "AbstractItemStack":
+        raise NotImplementedError
+
+    def copy_from(self, other: "AbstractItemStack"):
+        raise NotImplementedError
+
+    def clean(self):
+        raise NotImplementedError
+
+    def is_empty(self) -> bool:
+        raise NotImplementedError
+
+
+class ItemStack(AbstractItemStack):
+    """
+    Default implementation for item stacks
+    """
+
+    @classmethod
+    def create_empty(cls):
+        """
+        Get an empty itemstack
+        """
+        return cls()
+
+    def __init__(self, item_name_or_instance=None, amount=1):
         if issubclass(
             type(item_name_or_instance), mcpython.common.item.AbstractItem.AbstractItem
         ):
