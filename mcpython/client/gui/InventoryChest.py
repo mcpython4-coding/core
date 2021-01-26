@@ -9,7 +9,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
-import mcpython.client.gui.Inventory
+import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
 import mcpython.common.container.crafting.CraftingManager
@@ -22,7 +22,7 @@ import PIL.Image
 import mcpython.util.texture
 
 
-class InventoryChest(mcpython.client.gui.Inventory.Inventory):
+class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     """
     Inventory class for chest
     Defines the default chest layout
@@ -64,6 +64,7 @@ class InventoryChest(mcpython.client.gui.Inventory.Inventory):
             "user:keyboard:press", self.on_key_press
         )
 
+    # todo: move to container
     def create_slots(self) -> list:
         # 3 rows of 9 slots of storage
         return [mcpython.client.gui.Slot.Slot() for _ in range(9 * 3)]

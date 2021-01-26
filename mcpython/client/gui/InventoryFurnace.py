@@ -10,7 +10,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
 from mcpython import logger
-import mcpython.client.gui.Inventory
+import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
 import mcpython.common.container.crafting.FurnaceCraftingHelper
@@ -23,9 +23,10 @@ import mcpython.util.texture
 import PIL.Image
 
 
-class InventoryFurnace(mcpython.client.gui.Inventory.Inventory):
+class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     """
     Inventory class for the furnace
+    todo: move a LOT of stuff to the container
     """
 
     TEXTURE_BG = None

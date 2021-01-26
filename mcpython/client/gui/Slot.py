@@ -8,6 +8,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+# todo: split container part & rendering part
 from abc import ABC
 
 from mcpython import shared, logger

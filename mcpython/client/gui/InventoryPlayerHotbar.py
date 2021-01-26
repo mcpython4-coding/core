@@ -9,7 +9,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared, logger
-import mcpython.client.gui.Inventory
+import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.InventoryHandler
 import mcpython.client.gui.Slot
 import pyglet
@@ -146,7 +146,7 @@ mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
 reload()
 
 
-class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
+class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     """
     main inventory for the hotbar
     """
@@ -168,6 +168,7 @@ class InventoryPlayerHotbar(mcpython.client.gui.Inventory.Inventory):
     def is_blocking_interactions(self) -> bool:
         return False
 
+    # todo: move to container
     def create_slots(self) -> list:
         return [mcpython.client.gui.Slot.Slot() for _ in range(9)]
 

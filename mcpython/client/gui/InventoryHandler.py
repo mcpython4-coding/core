@@ -9,7 +9,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared, logger
-import mcpython.client.gui.Inventory
+import mcpython.client.gui.ContainerRenderer
 import mcpython.client.state.StatePart
 from pyglet.window import key, mouse
 import mcpython.client.gui.Slot

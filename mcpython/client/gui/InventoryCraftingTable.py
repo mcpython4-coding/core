@@ -9,7 +9,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
-import mcpython.client.gui.Inventory
+import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
 import mcpython.common.container.crafting.CraftingManager
@@ -21,7 +21,7 @@ import PIL.Image
 import mcpython.util.texture
 
 
-class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
+class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     """
     inventory class for the crafting table
     """
@@ -54,6 +54,7 @@ class InventoryCraftingTable(mcpython.client.gui.Inventory.Inventory):
         if self.custom_name is None:
             self.custom_name = "Crafting Table"
 
+    # todo: move to container
     def create_slots(self) -> list:
         # 36 slots of main, 9 crafting grid, 1 crafting output
         # base_slots = shared.world.get_active_player().inventory_main.slots[:36]

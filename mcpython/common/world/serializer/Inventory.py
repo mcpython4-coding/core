@@ -9,7 +9,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
-import mcpython.client.gui.Inventory
+import mcpython.client.gui.ContainerRenderer
 import uuid
 
 """
@@ -31,7 +31,7 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
     def load(
         cls,
         save_file,
-        inventory: mcpython.client.gui.Inventory.Inventory,
+        inventory: mcpython.client.gui.ContainerRenderer.ContainerRenderer,
         path: str,
         file=None,
     ):
@@ -66,7 +66,7 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
         cls,
         data,
         save_file,
-        inventory: mcpython.client.gui.Inventory.Inventory,
+        inventory: mcpython.client.gui.ContainerRenderer.ContainerRenderer,
         path: str,
         file=None,
         override=False,

@@ -131,6 +131,7 @@ class HoveringItemBoxProvider:
     """
     Class for generating these tool-tips like in mc
     Uses above IHoveringItemBoxDefinition class to generate for itemstacks
+    Create a new instance for rendering 2 or more at the same time
     """
 
     def __init__(self):
@@ -146,7 +147,7 @@ class HoveringItemBoxProvider:
         self, itemstack: mcpython.common.container.ItemStack.ItemStack, position
     ):
         """
-        will render the ItemBoxProvider for an given slot
+        Will render the ItemBoxProvider for a given slot
         :param itemstack: the slot to render over
         :param position: the position to render at, or None if calculated from slot
         """
@@ -154,28 +155,35 @@ class HoveringItemBoxProvider:
             self.last_slot = itemstack
             self.cached_provider = itemstack.item.get_tooltip_provider()
             self.cached_text = self.cached_provider.getHoveringText(itemstack)
+
             for plugin in self.cached_provider.PLUGINS:
                 plugin.manipulateShownText(itemstack, self.cached_text)
+
             if len(self.labels) > len(self.cached_text):
                 [label.delete() for label in self.labels[len(self.cached_text) :]]
                 self.labels = self.labels[: len(self.cached_text)]
+
             if len(self.labels) < len(self.cached_text):
                 self.labels += [
                     pyglet.text.HTMLLabel(batch=self.label_batch)
                     for _ in range(len(self.cached_text) - len(self.labels))
                 ]
+
             for i, line in enumerate(self.cached_text):
                 text = pyglet.text.decode_html(line)
                 self.labels[i].document = text
                 self.labels[i].anchor_y = "top"
+
             self.bg_rectangle.width = (
                 max([label.content_width for label in self.labels]) + 10
             )
             self.bg_rectangle.height = (
                 sum([label.content_height // 2 for label in self.labels]) + 10
             )
+
         self.bg_rectangle.position = position
         self.bg_rectangle.draw()
+
         y = position[1] + self.bg_rectangle.height
         for label in self.labels:
             label.begin_update()
@@ -183,6 +191,7 @@ class HoveringItemBoxProvider:
             label.y = y - 4
             y -= label.content_height // 2
             label.end_update()
+
         self.label_batch.draw()
 
     def eraseCache(self):

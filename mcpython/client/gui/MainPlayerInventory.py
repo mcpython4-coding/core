@@ -9,7 +9,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
-import mcpython.client.gui.Inventory
+import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.common.container.ItemStack
 import mcpython.common.container.crafting.CraftingManager
@@ -21,7 +21,7 @@ import mcpython.util.texture
 import mcpython.common.event.EventHandler
 
 
-class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
+class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     """
     inventory class for the main part of the inventory
     """
@@ -57,6 +57,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
         if self.custom_name is None:
             self.custom_name = "Inventory"
 
+    # todo: move to container
     def create_slots(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
         return (
@@ -75,6 +76,7 @@ class MainPlayerInventory(mcpython.client.gui.Inventory.Inventory):
             + [mcpython.client.gui.Slot.Slot()]
         )
 
+    # todo: move to container
     def armor_update(self, player=None):
         # todo: add toughness
         # todo: move to player

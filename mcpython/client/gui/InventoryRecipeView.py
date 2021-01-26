@@ -10,11 +10,11 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.client.gui.Inventory
+import mcpython.client.gui.ContainerRenderer
 import mcpython.client.rendering.gui.RecipeViewRenderer
 
 
-class InventorySingleRecipeView(mcpython.client.gui.Inventory.Inventory):
+class InventorySingleRecipeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     """
     Inventory class for single inventory recipe view
     todo: add custom name attribute setter from renderer if needed
@@ -43,6 +43,7 @@ class InventorySingleRecipeView(mcpython.client.gui.Inventory.Inventory):
         self.window_anchor = "MM"
         self.renderer.draw(self.get_position(), hovering_slot=hovering_slot)
 
+    # todo: move to container
     def get_interaction_slots(self):
         return self.renderer.get_slots()
 

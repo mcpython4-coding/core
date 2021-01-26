@@ -18,14 +18,12 @@ import mcpython.util.texture
 import PIL.Image
 import uuid
 import random
-import deprecation
 
 
-class Inventory(ABC):
+class ContainerRenderer(ABC):
     """
-    base inventory class
-    todo: split up into the storage part and the rendering part
-        [WIP, see common/container/AbstractContainer.py]
+    Base class for rendering a container at the client
+    Client-only code
     """
 
     @staticmethod
@@ -34,7 +32,8 @@ class Inventory(ABC):
         :return: the location of the inventory config file (if provided)
         """
 
-    def __init__(self):
+    def __init__(self, container=None):
+        self.container = container
         self.active = False
         self.bg_sprite: typing.Optional[pyglet.sprite.Sprite] = None
         self.bg_image_size = None
@@ -43,18 +42,17 @@ class Inventory(ABC):
         self.position = (0, 0)
         self.bg_image_pos = (0, 0)
         shared.inventory_handler.add(self)
-        self.slots = self.create_slots()
-        self.config = {}
+        self.slots = self.create_slot_renderers()
+        self.config = {}  # todo: add special class holding this information with serializer for it
         self.reload_config()
-        self.uuid = uuid.uuid4()
-        self.custom_name = None
+        self.custom_name = None  # the custom name; If set, rendered in the inventory
         self.custom_name_label = pyglet.text.Label()
         self.custom_name_label.anchor_y = "top"
         self.custom_name_label.color = (0, 0, 0, 255)
 
     def reload_config(self):
         """
-        reload the config file
+        Reload the config file
         """
         if self.get_config_file() is not None:
             try:
@@ -65,24 +63,33 @@ class Inventory(ABC):
                         self.get_config_file(), self
                     )
                 )
+                self.config = {}
+                self.on_reload()
+                return
         else:
             self.config = {}
             self.on_reload()
             return
-        for slotid in self.config["slots"] if "slots" in self.config else []:
-            sid = int(slotid)
-            entry = self.config["slots"][slotid]
+
+        for raw_slot_id in self.config["slots"] if "slots" in self.config else []:
+            slot_id = int(raw_slot_id)
+            entry = self.config["slots"][raw_slot_id]
+
             if "position" in entry:
                 x, y = tuple(entry["position"])
-                self.slots[sid].position = x, y
+                self.slots[slot_id].position = x, y
+
             if "allow_player_insert" in entry:
-                self.slots[sid].interaction_mode[1] = entry["allow_player_insert"]
+                self.slots[slot_id].interaction_mode[1] = entry["allow_player_insert"]
+
             if "allow_player_remove" in entry:
-                self.slots[sid].interaction_mode[0] = entry["allow_player_remove"]
+                self.slots[slot_id].interaction_mode[0] = entry["allow_player_remove"]
+
             if "allow_player_add_to_free_place" in entry:
-                self.slots[sid].interaction_mode[2] = entry[
+                self.slots[slot_id].interaction_mode[2] = entry[
                     "allow_player_add_to_free_place"
                 ]
+
             if "empty_slot_image" in entry:
                 try:
                     image = mcpython.ResourceLoader.read_image(
@@ -91,23 +98,29 @@ class Inventory(ABC):
                     image = mcpython.util.texture.to_pyglet_image(
                         image.resize((32, 32), PIL.Image.NEAREST)
                     )
-                    self.slots[sid].empty_image = pyglet.sprite.Sprite(image)
+                    self.slots[slot_id].empty_image = pyglet.sprite.Sprite(image)
                 except:
                     logger.print_exception(
                         "[FATAL] failed to load empty slot image from {}".format(
                             entry["empty_slot_image"]
                         )
                     )
+
             if "allowed_tags" in entry:
-                self.slots[sid].allowed_item_tags = entry["allowed_tags"]
+                self.slots[slot_id].allowed_item_tags = entry["allowed_tags"]
+
         if "image_size" in self.config:
             self.bg_image_size = tuple(self.config["image_size"])
+
         if "image_anchor" in self.config:
             self.bg_anchor = self.config["image_anchor"]
+
         if "window_anchor" in self.config:
             self.window_anchor = self.config["window_anchor"]
+
         if "image_position" in self.config:
             self.position = self.config["image_position"]
+
         if "image_location" in self.config:
             try:
                 if mcpython.ResourceLoader.exists(self.config["image_location"]):
@@ -128,8 +141,10 @@ class Inventory(ABC):
                         self.config["image_location"]
                     )
                 )
+
         if "bg_image_pos" in self.config:
             self.bg_image_pos = tuple(self.config["bg_image_pos"])
+
         self.on_reload()
 
     def on_reload(self):
@@ -138,9 +153,9 @@ class Inventory(ABC):
     def tick(self, dt: float):
         pass
 
-    def create_slots(self) -> list:
+    def create_slot_renderers(self) -> list:
         """
-        creates the slots
+        Creates the slots
         :return: the slots the inventory uses
         """
         return []
@@ -149,10 +164,12 @@ class Inventory(ABC):
         """
         :return: the position of the inventory
         todo: add cache
+        todo: recalculate on resize than
         """
         x, y = self.position
         wx, wy = shared.window.get_size()
         sx, sy = self.bg_image_size if self.bg_image_size is not None else (0, 0)
+
         if self.bg_anchor[0] == "M":
             x -= sx // 2
         elif self.bg_anchor[0] == "R":
@@ -169,6 +186,7 @@ class Inventory(ABC):
             y += wy // 2
         elif self.window_anchor[1] == "U":
             y = wy - abs(y)
+
         return x, y
 
     def on_activate(self):
@@ -187,13 +205,19 @@ class Inventory(ABC):
     def is_always_open(self) -> bool:
         return False
 
+    def is_blocking_interactions(self) -> bool:
+        return True
+
     def get_draw_slots(self):
+        """
+        Helper function for getting the slots to draw on screen
+        """
         return self.get_interaction_slots()
 
     def draw(self, hovering_slot=None):
         """
         Draws the inventory
-        Feel free to copy code into your own inventory and write your rendering around it!
+        Feel free to copy code into your own inventory and write your rendering around it
         """
         x, y = self.get_position()
         if self.bg_sprite is not None:
@@ -217,9 +241,7 @@ class Inventory(ABC):
             self.custom_name_label.y = y + self.bg_image_size[1] - 10
             self.custom_name_label.draw()
 
-    def is_blocking_interactions(self) -> bool:
-        return True
-
+    # todo: remove
     def on_world_cleared(self):
         [slot.get_itemstack().clean() for slot in self.slots]
         if self in shared.inventory_handler.opened_inventory_stack:
@@ -228,10 +250,12 @@ class Inventory(ABC):
     def get_interaction_slots(self):
         return self.slots
 
+    # todo: remove
     def clear(self):
         for slot in self.slots:
             slot.get_itemstack().clean()
 
+    # todo: add option if container should be copied
     def copy(self):
         obj = self.__class__()
         for i in range(3 * 9):
@@ -240,7 +264,7 @@ class Inventory(ABC):
 
     def load(self, data) -> bool:
         """
-        serializes the data into the inventory
+        Deserializes the data into the inventory
         :param data: the data saved
         :return: if load is valid or not
         """
@@ -248,13 +272,13 @@ class Inventory(ABC):
 
     def post_load(self, data):
         """
-        serializes stuff after the the slot data is loaded
+        Deserializes stuff after the the slot data is loaded
         :param data: the data stored
         """
 
     def save(self):
         """
-        serializes the inventory into an pickle-able data stream
+        Serializes the inventory into an pickle-able data stream
         :return: the data
         """
         return "no:data"
@@ -298,7 +322,6 @@ class Inventory(ABC):
                     )
                     slot.itemstack.amount = itemstack.item.STACK_SIZE
                     itemstack.set_amount(overflow)
-        # logger.println("itemstack overflow: ".format(itemstack))
         return False
 
     def update_shift_container(self):

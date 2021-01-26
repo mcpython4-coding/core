@@ -25,6 +25,7 @@ class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
         if self.custom_name is None:
             self.custom_name = "Shulker Box"
 
+    # todo: move to container & let it display the chest renderer
     def create_slots(self) -> list:
         slots = super().create_slots()
         for slot in slots:

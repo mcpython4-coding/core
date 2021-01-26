@@ -27,7 +27,7 @@ class AbstractContainer(ABC):
     def create_renderer(cls):
         """
         Called when loading a client to create the renderer; this is the only part which should interact
-        with client-only code
+        with client-only code in this class
         """
 
     def __init__(self):

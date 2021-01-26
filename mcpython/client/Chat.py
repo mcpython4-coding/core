@@ -19,13 +19,13 @@ from mcpython import shared, logger
 import mcpython.server.command.CommandHandler
 import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler
-import mcpython.client.gui.Inventory
+import mcpython.client.gui.ContainerRenderer
 import mcpython.util.opengl
 from mcpython.util.annotation import onlyInClient
 
 
 @onlyInClient()
-class ChatInventory(mcpython.client.gui.Inventory.Inventory):
+class ChatInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     """
     main class for chat
     """
