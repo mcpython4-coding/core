@@ -1495,4 +1495,6 @@ R   [uuk]: improved world serialization API
 [uuk]: grid recipes are now hash-able, and implement __eq__ both using only as_grid_for_view()
 [uuk]: refactored inventory system
 [uuk]: added server console
+[uuk]: added dimension name command entry type
+[uuk]: /execute in takes now a dimension name instead of an id
 

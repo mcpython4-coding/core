@@ -217,6 +217,28 @@ def load():
             return flag
 
     @shared.registry
+    class DimensionNameEntry(CommandEntry):
+        """
+        Dimension name entry
+        """
+
+        NAME = CommandArgumentType.DIMENSION_NAME
+
+        @staticmethod
+        def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
+            return start + 1, entry_list[start]
+
+        @staticmethod
+        def is_valid(entry_list: list, start: int, arguments, kwargs) -> bool:
+            # is this item arrival?
+            flag = entry_list[start] in shared.world.get_dimension_names()
+
+            if not flag:
+                logger.println("[INFORM] invalid due to missing dimension")
+
+            return flag
+
+    @shared.registry
     class SelectorEntry(CommandEntry):
         """
         Selector entry

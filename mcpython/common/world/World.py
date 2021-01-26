@@ -133,7 +133,10 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         return self.get_dimension(self.active_dimension)
 
-    def get_dimension_by_name(self, name: str):
+    def get_dimension_names(self) -> typing.Iterable[str]:
+        return self.dim_to_id.keys()
+
+    def get_dimension_by_name(self, name: str) -> mcpython.common.world.AbstractInterface.IDimension:
         return self.dimensions[self.dim_to_id[name]]
 
     def add_dimension(

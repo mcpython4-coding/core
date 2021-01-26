@@ -35,7 +35,7 @@ class CommandExecute(mcpython.server.command.Command.Command):
         ).add_node(Node(CommandArgumentType.POSITION)),
         "in": Node(
             CommandArgumentType.DEFINED_STRING, "in", mode=CommandArgumentMode.OPTIONAL
-        ).add_node(Node(CommandArgumentType.INT)),
+        ).add_node(Node(CommandArgumentType.DIMENSION_NAME)),
         "if": Node(
             CommandArgumentType.DEFINED_STRING,
             "if",
@@ -149,7 +149,7 @@ class CommandExecute(mcpython.server.command.Command.Command):
                 return
 
         elif command == "in":
-            info.dimension = values[index + 1]
+            info.dimension = shared.world.get_dimension_by_name(values[index + 1]).get_id()
             index += 2
             CommandExecute._parse_subcommand(index, values[index], values, info)
             return

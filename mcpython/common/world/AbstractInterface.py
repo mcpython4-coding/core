@@ -66,13 +66,13 @@ class IChunk(ABC):
         self.chunk_loaded_list = tuple([[] for _ in range(16)])
 
     def is_loaded(self) -> bool:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def is_generated(self) -> bool:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def is_visible(self) -> bool:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def add_chunk_load_ticket(self, ticket_type: ChunkLoadTicketType, data=None):
         """
@@ -120,18 +120,18 @@ class IChunk(ABC):
 
     # simple getter for the dimension
     def get_dimension(self) -> "IDimension":
-        raise NotImplementedError()
+        raise NotImplementedError
 
     # simple getter for the chunk position
     def get_position(self) -> typing.Tuple[int, int]:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_maximum_y_coordinate_from_generation(self, x: int, z: int) -> int:
         """
         Helper for finding the highest position in the chunk from generation
         todo: migrate to special system for world generation attributes
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def exposed_faces(
         self, position: typing.Tuple[int, int, int]
@@ -140,13 +140,13 @@ class IChunk(ABC):
         Helper for getting exposed faces of a block
         todo: add iterating variant
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def is_position_blocked(self, position: typing.Tuple[float, float, float]) -> bool:
         """
         Checks if the given position is not air
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def add_block(
         self,
@@ -176,7 +176,7 @@ class IChunk(ABC):
         :return: the block instance or None if it could not be created for some reason
         todo: add method which raises an exception on fail
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def on_block_updated(
         self, position: typing.Tuple[float, float, float], itself=True
@@ -184,7 +184,7 @@ class IChunk(ABC):
         """
         Updates the block at the given position
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def remove_block(
         self,
@@ -208,14 +208,14 @@ class IChunk(ABC):
         todo: add "unsafe" variant skipping various sanity checks
         todo: add option to not call on_remove on target block
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         """
         Checks the visual state of adjusting blocks to the given position
         todo: rename to something fitting!
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def show_block(
         self,
@@ -231,7 +231,7 @@ class IChunk(ABC):
         todo: remove
         use block.face_state.update(True) instead
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def hide_block(
         self,
@@ -247,21 +247,21 @@ class IChunk(ABC):
         todo: remove
         use block.face_state.hide_all() instead
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def show(self, force=False):
         """
         Shows the entire chunk
         :param force: unused; todo: remove
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def hide(self, force=False):
         """
         Hides an entire chunk
         :param force: if to force-hide; todo: remove
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
         """
@@ -269,14 +269,14 @@ class IChunk(ABC):
         :param position: the position to update at
         :param hide: not for usage; todo: remove
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def exposed(self, position: typing.Tuple[int, int, int]):
         """
         Checks if the given position is exposed so it should be shown
         :param position: the position to check
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def update_visible(self, hide=True, immediate=False):
         """
@@ -285,7 +285,7 @@ class IChunk(ABC):
         :param hide: unused; todo: remove
         :param immediate: immediate execute tasks or scheduling for later?
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def hide_all(self, immediate=True):
         """
@@ -293,7 +293,7 @@ class IChunk(ABC):
         todo: merge with hide()
         :param immediate: immediate execute tasks or scheduling for later?
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_block(
         self, position: typing.Tuple[int, int, int]
@@ -304,7 +304,7 @@ class IChunk(ABC):
         :return: the block instance, a str representing a block (e.g. for scheduled during generation) or None
             if there is no block
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def as_shareable(self) -> "IChunk":
         """
@@ -312,13 +312,13 @@ class IChunk(ABC):
         :return: this chunk instance
         INFO: currently not in use
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def mark_dirty(self):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_entities(self):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def tick(self):
         pass
@@ -327,10 +327,10 @@ class IChunk(ABC):
         pass
 
     def set_value(self, key: str, data):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_value(self, key: str):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def __getitem__(self, item):
         return self.get_block(item)
@@ -362,10 +362,10 @@ class IDimension(ABC):
         self.loaded = True
 
     def get_dimension_range(self) -> typing.Tuple[int, int]:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_id(self):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_chunk(
         self,
@@ -374,7 +374,7 @@ class IDimension(ABC):
         generate: bool = True,
         create: bool = True,
     ) -> IChunk:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_chunk_for_position(
         self,
@@ -384,12 +384,12 @@ class IDimension(ABC):
         ],
         **kwargs
     ) -> typing.Optional[IChunk]:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_block(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def add_block(
         self,
@@ -402,64 +402,67 @@ class IDimension(ABC):
         check_build_range=True,
         block_state=None,
     ):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def remove_block(
         self, position: tuple, immediate=True, block_update=True, block_update_self=True
     ):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def hide_block(self, position, immediate=True):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_world_generation_config_for_layer(self, layer_name: str):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_world_generation_config_entry(self, name: str, default=None):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def set_world_generation_config_entry(self, name: str, value):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def set_world_generation_config_for_layer(self, layer_name, layer_config):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_name(self) -> str:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def unload_chunk(self, chunk: IChunk):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def tick(self):
         pass
 
 
 class IWorld(ABC):
+    def get_dimension_names(self) -> typing.Iterable[str]:
+        raise NotImplementedError
+    
     def add_player(
         self, name: str, add_inventories: bool = True, override: bool = True
     ):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_active_player(self, create: bool = True) -> typing.Optional:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def reset_config(self):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_active_dimension(self) -> typing.Union[IDimension, None]:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def add_dimension(self, dim_id: int, name: str, dim_config=None) -> IDimension:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def join_dimension(self, dim_id: int):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_dimension(self, dim_id: int) -> IDimension:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def hit_test(
         self,
@@ -474,13 +477,13 @@ class IWorld(ABC):
         ],
         typing.Tuple[None, None, None],
     ]:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def show_chunk(self, chunk: typing.Union[typing.Tuple[int, int], IChunk]):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def hide_chunk(self, chunk: typing.Union[typing.Tuple[int, int], IChunk]):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def change_chunks(
         self,
@@ -489,10 +492,10 @@ class IWorld(ABC):
         generate_chunks=True,
         load_immediate=True,
     ):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def cleanup(self, remove_dims=False, filename=None):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def setup_by_filename(self, filename: str):
-        raise NotImplementedError()
+        raise NotImplementedError

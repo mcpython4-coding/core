@@ -21,41 +21,44 @@ class CommandArgumentType(enum.Enum):
     """
 
     # A defined string like the string "as", without "
-    DEFINED_STRING = 0
+    DEFINED_STRING = enum.auto()
 
     # An int. May be negative; cannot be NaN or inf
-    INT = 1
+    INT = enum.auto()
 
     # A string in "" or '', not mixed. May have spaces in it
-    STRING = 2
+    STRING = enum.auto()
 
     # A float number, can be negative; must be parse-able by float(), cannot contain spaces
     # Represents a java double
-    FLOAT = 3
+    FLOAT = enum.auto()
 
     # A name for a block. Can start with or without mod namespace; must be lookup-able in the block registry
-    BLOCK_NAME = 4
+    BLOCK_NAME = enum.auto()
 
     # A name for an item. Can start with or without mod namespace; must be lookup-able in the item registry
-    ITEM_NAME = 5
+    ITEM_NAME = enum.auto()
+
+    # A name of a dimension in the active world
+    DIMENSION_NAME = enum.auto()
 
     # A entity selector; defined by its own registry
-    SELECTOR = 6
+    SELECTOR = enum.auto()
 
     # A position. May be selector for position; Selector must be unique
-    POSITION = 7
+    POSITION = enum.auto()
 
     # A selection of different strings out of an list
-    SELECT_DEFINED_STRING = 8
+    SELECT_DEFINED_STRING = enum.auto()
 
     # A variable list of strings
-    OPEN_END_UNDEFINED_STRING = 9
+    OPEN_END_UNDEFINED_STRING = enum.auto()
 
     # A variable string without the ""
-    STRING_WITHOUT_QUOTES = 10
+    STRING_WITHOUT_QUOTES = enum.auto()
 
     # A boolean value
-    BOOLEAN = 11
+    BOOLEAN = enum.auto()
 
     def add_node(self, subcommand):
         return Node(self).add_node(subcommand)
