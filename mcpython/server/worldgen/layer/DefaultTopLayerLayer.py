@@ -42,10 +42,10 @@ class DefaultTopLayerLayer(ILayer):
 
         for (x, z), v in noise_map:
             world_height = heightmap[(x, z)][0][1]
-            biome = shared.biome_handler.biomes[
-                biome_map[(x, z)]
-            ]
-            reference.schedule_invoke(cls.generate_xz, reference, x, z, config, v, world_height, biome)
+            biome = shared.biome_handler.biomes[biome_map[(x, z)]]
+            reference.schedule_invoke(
+                cls.generate_xz, reference, x, z, config, v, world_height, biome
+            )
 
     @staticmethod
     def generate_xz(reference, x, z, config, noise_value, world_height, biome):

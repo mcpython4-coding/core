@@ -33,7 +33,10 @@ class McFunctionFile:
             if not line.startswith("#"):
                 if line.count(" ") + line.count("   ") == len(line):
                     continue
-                shared.command_parser.parse("/" + line, info.copy())
+
+                shared.command_parser.parse(
+                    "/" + line, info.copy(include_variables=False)
+                )
                 count += 1
         shared.chat.print_ln(
             "executed {} commands from function {}".format(count, self.name)

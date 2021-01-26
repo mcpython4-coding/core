@@ -10,7 +10,11 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
 import mcpython.server.command.Command
-from mcpython.server.command.Command import ParseBridge, ParseType, ParseMode
+from mcpython.server.command.Command import (
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    CommandArgumentMode,
+)
 
 
 @shared.registry
@@ -31,9 +35,11 @@ class CommandClear(mcpython.server.command.Command.Command):
     NAME = "minecraft:clear"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "clear"
-        parse_bridge.add_subcommand(ParseType.SELECTOR.set_mode(ParseMode.OPTIONAL))
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "clear"
+        command_syntax_holder.add_node(
+            CommandArgumentType.SELECTOR.set_mode(CommandArgumentMode.OPTIONAL)
+        )
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -64,9 +70,7 @@ class CommandClear(mcpython.server.command.Command.Command):
         shared.inventory_handler.moving_slot.get_itemstack().clean()  # make sure that he has nothing in his hand
 
         # and call the event that we are done
-        shared.event_handler.call(
-            "command:clear:end", info
-        )
+        shared.event_handler.call("command:clear:end", info)
 
     @staticmethod
     def get_help() -> list:

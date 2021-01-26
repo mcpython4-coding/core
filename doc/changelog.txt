@@ -54,10 +54,12 @@ changelog of snapshot <21w04a> released on <27.01.2021>, targeting <20w03a>
     - crafting recipes are slightly other loaded
     - behaviour changes of BlockFaceState
     - refactors of various small parts
+    - refactor of command system; everything is broken
 
     Commands:
         - added /blockinfo command giving information about the block currently looking at
         - added /recipeview command for below recipe view
+        - /execute has now a registry-like structure for sub-nodes
 
     Rendering:
         - improved block rendering

@@ -11,10 +11,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared, logger
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
-    SubCommand,
-    ParseType,
-    ParseMode,
-    ParseBridge,
+    Node,
+    CommandArgumentType,
+    CommandArgumentMode,
+    CommandSyntaxHolder,
 )
 
 
@@ -27,11 +27,11 @@ class CommandHelp(mcpython.server.command.Command.Command):
     NAME = "minecraft:help"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = ["help", "?"]
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
-        ).add_subcommand(SubCommand(ParseType.STRING, mode=ParseMode.OPTIONAL))
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = ["help", "?"]
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.INT, mode=CommandArgumentMode.OPTIONAL)
+        ).add_node(Node(CommandArgumentType.STRING, mode=CommandArgumentMode.OPTIONAL))
 
     @staticmethod
     def parse(values: list, modes: list, info):

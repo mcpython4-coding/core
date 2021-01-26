@@ -12,10 +12,10 @@ from mcpython import shared
 import mcpython.common.DataPack
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
-    ParseBridge,
-    ParseType,
-    ParseMode,
-    SubCommand,
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    CommandArgumentMode,
+    Node,
 )
 
 
@@ -28,10 +28,13 @@ class CommandFunction(mcpython.server.command.Command.Command):
     NAME = "minecraft:function_command"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "function"
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "function"
+        command_syntax_holder.add_node(
+            Node(
+                CommandArgumentType.STRING_WITHOUT_QUOTES,
+                mode=CommandArgumentMode.OPTIONAL,
+            )
         )
 
     @classmethod

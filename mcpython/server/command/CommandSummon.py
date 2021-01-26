@@ -11,10 +11,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared, logger
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
-    ParseBridge,
-    ParseType,
-    ParseMode,
-    SubCommand,
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    CommandArgumentMode,
+    Node,
 )
 
 
@@ -27,11 +27,11 @@ class CommandSummon(mcpython.server.command.Command.Command):
     NAME = "minecraft:summon"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "summon"
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.STRING_WITHOUT_QUOTES).add_subcommand(
-                SubCommand(ParseType.POSITION, mode=ParseMode.OPTIONAL)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "summon"
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.STRING_WITHOUT_QUOTES).add_node(
+                Node(CommandArgumentType.POSITION, mode=CommandArgumentMode.OPTIONAL)
             )
         )
 

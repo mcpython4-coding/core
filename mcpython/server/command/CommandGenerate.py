@@ -12,10 +12,10 @@ from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.util.math
 from mcpython.server.command.Command import (
-    ParseBridge,
-    ParseType,
-    ParseMode,
-    SubCommand,
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    CommandArgumentMode,
+    Node,
 )
 
 
@@ -28,14 +28,14 @@ class CommandGenerate(mcpython.server.command.Command.Command):
     NAME = "minecraft:generate"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "generate"
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL).add_subcommand(
-                SubCommand(ParseType.INT).add_subcommand(
-                    SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL).add_subcommand(
-                        SubCommand(ParseType.INT)
-                    )
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "generate"
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.INT, mode=CommandArgumentMode.OPTIONAL).add_node(
+                Node(CommandArgumentType.INT).add_node(
+                    Node(
+                        CommandArgumentType.INT, mode=CommandArgumentMode.OPTIONAL
+                    ).add_node(Node(CommandArgumentType.INT))
                 )
             )
         )
@@ -61,9 +61,7 @@ class CommandGenerate(mcpython.server.command.Command.Command):
                 c = dim.get_chunk(x, z, generate=False)
                 shared.world_generation_handler.add_chunk_to_generation_list(c)
                 # only generate the ones from us todo: add option to runtime-generate
-                shared.world_generation_handler.task_handler.process_tasks(
-                    chunks=[c]
-                )
+                shared.world_generation_handler.task_handler.process_tasks(chunks=[c])
 
     @staticmethod
     def get_help() -> list:

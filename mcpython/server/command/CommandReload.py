@@ -18,7 +18,7 @@ import mcpython.common.event.EventHandler
 import mcpython.common.event.TickHandler
 import mcpython.client.rendering.entities.EntityRenderer
 import mcpython.client.rendering.util
-from mcpython.server.command.Command import ParseBridge
+from mcpython.server.command.Command import CommandSyntaxHolder
 
 
 @shared.registry
@@ -30,8 +30,8 @@ class CommandReload(mcpython.server.command.Command.Command):
     NAME = "minecraft:reload"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "reload"
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "reload"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):

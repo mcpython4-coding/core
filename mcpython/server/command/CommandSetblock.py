@@ -11,7 +11,11 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.util.math
-from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
+from mcpython.server.command.Command import (
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    Node,
+)
 
 
 @shared.registry
@@ -23,11 +27,11 @@ class CommandSetblock(mcpython.server.command.Command.Command):
     NAME = "minecraft:setblock"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "setblock"
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.POSITION).add_subcommand(
-                SubCommand(ParseType.BLOCK_NAME)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "setblock"
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.POSITION).add_node(
+                Node(CommandArgumentType.BLOCK_NAME)
             )
         )
 

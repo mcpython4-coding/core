@@ -10,7 +10,11 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared, logger
 import mcpython.server.command.Command
-from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
+from mcpython.server.command.Command import (
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    Node,
+)
 
 
 @shared.registry
@@ -24,22 +28,22 @@ class CommandLoot(mcpython.server.command.Command.Command):
     CANCEL_CLEAR = False  # cancel the clear-execute
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "loot"
-        end1 = SubCommand(ParseType.DEFINED_STRING, "loot").add_subcommand(
-            SubCommand(ParseType.STRING_WITHOUT_QUOTES)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "loot"
+        end1 = Node(CommandArgumentType.DEFINED_STRING, "loot").add_node(
+            Node(CommandArgumentType.STRING_WITHOUT_QUOTES)
         )
-        end2 = SubCommand(ParseType.DEFINED_STRING, "mine").add_subcommand(
-            SubCommand(ParseType.POSITION)
+        end2 = Node(CommandArgumentType.DEFINED_STRING, "mine").add_node(
+            Node(CommandArgumentType.POSITION)
         )
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.DEFINED_STRING, "give").add_subcommand(
-                SubCommand(ParseType.SELECTOR).add_subcommand(end1).add_subcommand(end2)
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "give").add_node(
+                Node(CommandArgumentType.SELECTOR).add_node(end1).add_node(end2)
             )
         )
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.DEFINED_STRING, "insert").add_subcommand(
-                SubCommand(ParseType.POSITION).add_subcommand(end1).add_subcommand(end2)
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "insert").add_node(
+                Node(CommandArgumentType.POSITION).add_node(end1).add_node(end2)
             )
         )
 

@@ -11,10 +11,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
-    ParseBridge,
-    ParseType,
-    SubCommand,
-    ParseMode,
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    Node,
+    CommandArgumentMode,
 )
 
 
@@ -27,11 +27,11 @@ class CommandGamemode(mcpython.server.command.Command.Command):
     NAME = "minecraft:gamemode"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.add_subcommand(
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.add_node(
             # todo: add config for values somewhere
-            SubCommand(
-                ParseType.SELECT_DEFINED_STRING,
+            Node(
+                CommandArgumentType.SELECT_DEFINED_STRING,
                 "0",
                 "1",
                 "2",
@@ -40,9 +40,11 @@ class CommandGamemode(mcpython.server.command.Command.Command):
                 "creative",
                 "hardcore",
                 "spectator",
-            ).add_subcommand(SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL))
+            ).add_node(
+                Node(CommandArgumentType.SELECTOR, mode=CommandArgumentMode.OPTIONAL)
+            )
         )
-        parse_bridge.main_entry = "gamemode"
+        command_syntax_holder.main_entry = "gamemode"
 
     @staticmethod
     def parse(values: list, modes: list, info):

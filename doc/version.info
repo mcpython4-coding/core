@@ -1489,4 +1489,7 @@ R   [uuk]: improved world serialization API
 [uuk]: written down some plans for the command system
 [uuk]: improved & documented some worldgen stuff
 [uuk]: fixed issue 252: reload problems with DataSerializationHandler
+[uuk]: refactored command system
+[uuk]: /execute command has now some form of registry for storing the individual nodes of the tree, adding a extension
+       point for mods
 

@@ -11,7 +11,11 @@ This project is not official by mojang and does not relate to it.
 from mcpython import logger
 from mcpython import shared
 import mcpython.server.command.Command
-from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
+from mcpython.server.command.Command import (
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    Node,
+)
 import mcpython.util.math
 import mcpython.client.gui.InventoryRecipeView
 
@@ -26,16 +30,18 @@ class CommandRecipeView(mcpython.server.command.Command.Command):
     INVENTORY = mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView()
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "recipeview"
-        parse_bridge.add_subcommand(SubCommand(ParseType.STRING_WITHOUT_QUOTES))
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "recipeview"
+        command_syntax_holder.add_node(Node(CommandArgumentType.STRING_WITHOUT_QUOTES))
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
         name = values[0]
 
         if name not in shared.crafting_handler.recipe_table:
-            info.chat.print_ln("[RECIPE VIEW][ERROR] recipe '{}' is not found!".format(name))
+            info.chat.print_ln(
+                "[RECIPE VIEW][ERROR] recipe '{}' is not found!".format(name)
+            )
             return
 
         recipe = shared.crafting_handler.recipe_table[name]

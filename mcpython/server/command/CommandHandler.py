@@ -23,19 +23,17 @@ def register_command(registry, command):
         shared.command_parser.add_command(command)
 
     # or an command entry
-    elif issubclass(
-        command, mcpython.server.command.CommandEntry.CommandEntry
-    ):
+    elif issubclass(command, mcpython.server.command.CommandEntry.CommandEntry):
         command_registry.command_entries[command.NAME] = command
 
     # or an selector?
-    elif issubclass(
-        command, mcpython.server.command.Selector.Selector
-    ):
+    elif issubclass(command, mcpython.server.command.Selector.Selector):
         command_registry.selector.append(command)
 
     else:
-        raise ValueError("can't register object '{}' to command handler".format(command))
+        raise ValueError(
+            "can't register object '{}' to command handler".format(command)
+        )
 
 
 command_registry = mcpython.common.event.Registry.Registry(

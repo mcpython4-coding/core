@@ -11,10 +11,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
-    ParseBridge,
-    ParseType,
-    ParseMode,
-    SubCommand,
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    CommandArgumentMode,
+    Node,
 )
 
 
@@ -27,36 +27,44 @@ class CommandXp(mcpython.server.command.Command.Command):
     NAME = "minecraft:xp"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = ["xp", "experience"]
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.DEFINED_STRING, "add").add_subcommand(
-                SubCommand(ParseType.SELECTOR).add_subcommand(
-                    SubCommand(ParseType.INT)
-                    .add_subcommand(
-                        SubCommand(
-                            ParseType.DEFINED_STRING, "points", mode=ParseMode.OPTIONAL
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = ["xp", "experience"]
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "add").add_node(
+                Node(CommandArgumentType.SELECTOR).add_node(
+                    Node(CommandArgumentType.INT)
+                    .add_node(
+                        Node(
+                            CommandArgumentType.DEFINED_STRING,
+                            "points",
+                            mode=CommandArgumentMode.OPTIONAL,
                         )
                     )
-                    .add_subcommand(
-                        SubCommand(
-                            ParseType.DEFINED_STRING, "levels", mode=ParseMode.OPTIONAL
+                    .add_node(
+                        Node(
+                            CommandArgumentType.DEFINED_STRING,
+                            "levels",
+                            mode=CommandArgumentMode.OPTIONAL,
                         )
                     )
                 )
             )
-        ).add_subcommand(
-            SubCommand(ParseType.DEFINED_STRING, "set").add_subcommand(
-                SubCommand(ParseType.SELECTOR).add_subcommand(
-                    SubCommand(ParseType.INT)
-                    .add_subcommand(
-                        SubCommand(
-                            ParseType.DEFINED_STRING, "points", mode=ParseMode.OPTIONAL
+        ).add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "set").add_node(
+                Node(CommandArgumentType.SELECTOR).add_node(
+                    Node(CommandArgumentType.INT)
+                    .add_node(
+                        Node(
+                            CommandArgumentType.DEFINED_STRING,
+                            "points",
+                            mode=CommandArgumentMode.OPTIONAL,
                         )
                     )
-                    .add_subcommand(
-                        SubCommand(
-                            ParseType.DEFINED_STRING, "levels", mode=ParseMode.OPTIONAL
+                    .add_node(
+                        Node(
+                            CommandArgumentType.DEFINED_STRING,
+                            "levels",
+                            mode=CommandArgumentMode.OPTIONAL,
                         )
                     )
                 )

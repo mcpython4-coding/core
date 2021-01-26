@@ -11,10 +11,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
-    ParseType,
-    ParseMode,
-    SubCommand,
-    ParseBridge,
+    CommandArgumentType,
+    CommandArgumentMode,
+    Node,
+    CommandSyntaxHolder,
 )
 
 
@@ -29,13 +29,16 @@ class CommandGamerule(mcpython.server.command.Command.Command):
     CANCEL_GIVE = False
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.STRING_WITHOUT_QUOTES).add_subcommand(
-                SubCommand(ParseType.STRING_WITHOUT_QUOTES, mode=ParseMode.OPTIONAL)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.STRING_WITHOUT_QUOTES).add_node(
+                Node(
+                    CommandArgumentType.STRING_WITHOUT_QUOTES,
+                    mode=CommandArgumentMode.OPTIONAL,
+                )
             )
         )
-        parse_bridge.main_entry = "gamerule"
+        command_syntax_holder.main_entry = "gamerule"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):

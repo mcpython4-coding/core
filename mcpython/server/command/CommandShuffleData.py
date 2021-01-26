@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.common.container.ItemStack
-from mcpython.server.command.Command import ParseBridge
+from mcpython.server.command.Command import CommandSyntaxHolder
 import mcpython.common.config
 
 
@@ -24,8 +24,8 @@ class CommandShuffleData(mcpython.server.command.Command.Command):
     NAME = "minecraft:shuffle_data_command"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "shuffledata"
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "shuffledata"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):

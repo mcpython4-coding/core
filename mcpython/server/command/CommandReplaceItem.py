@@ -12,10 +12,10 @@ from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.common.container.ItemStack
 from mcpython.server.command.Command import (
-    ParseType,
-    ParseMode,
-    SubCommand,
-    ParseBridge,
+    CommandArgumentType,
+    CommandArgumentMode,
+    Node,
+    CommandSyntaxHolder,
 )
 
 
@@ -30,25 +30,31 @@ class CommandReplaceItem(mcpython.server.command.Command.Command):
     CANCEL_GIVE = False
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "replaceitem"
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.DEFINED_STRING, "block").add_subcommand(
-                SubCommand(ParseType.POSITION).add_subcommand(
-                    SubCommand(ParseType.INT).add_subcommand(
-                        SubCommand(ParseType.ITEM_NAME).add_subcommand(
-                            SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "replaceitem"
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "block").add_node(
+                Node(CommandArgumentType.POSITION).add_node(
+                    Node(CommandArgumentType.INT).add_node(
+                        Node(CommandArgumentType.ITEM_NAME).add_node(
+                            Node(
+                                CommandArgumentType.INT,
+                                mode=CommandArgumentMode.OPTIONAL,
+                            )
                         )
                     )
                 )
             )
         )
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.DEFINED_STRING, "entity").add_subcommand(
-                SubCommand(ParseType.SELECTOR).add_subcommand(
-                    SubCommand(ParseType.INT).add_subcommand(
-                        SubCommand(ParseType.ITEM_NAME).add_subcommand(
-                            SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "entity").add_node(
+                Node(CommandArgumentType.SELECTOR).add_node(
+                    Node(CommandArgumentType.INT).add_node(
+                        Node(CommandArgumentType.ITEM_NAME).add_node(
+                            Node(
+                                CommandArgumentType.INT,
+                                mode=CommandArgumentMode.OPTIONAL,
+                            )
                         )
                     )
                 )

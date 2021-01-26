@@ -10,7 +10,11 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
 import mcpython.server.command.Command
-from mcpython.server.command.Command import ParseBridge, ParseType, ParseMode
+from mcpython.server.command.Command import (
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    CommandArgumentMode,
+)
 
 
 @shared.registry
@@ -25,18 +29,20 @@ class CommandClone(mcpython.server.command.Command.Command):
     NAME = "minecraft:clone"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "clone"
-        parse_bridge.add_subcommand(
-            ParseType.POSITION.add_subcommand(
-                ParseType.POSITION.add_subcommand(
-                    ParseType.STRING_WITHOUT_QUOTES.set_mode(
-                        ParseMode.OPTIONAL
-                    ).add_subcommand(
-                        ParseType.STRING_WITHOUT_QUOTES.set_mode(
-                            ParseMode.OPTIONAL
-                        ).add_subcommand(
-                            ParseType.BLOCK_NAME.set_mode(ParseMode.OPTIONAL)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "clone"
+        command_syntax_holder.add_node(
+            CommandArgumentType.POSITION.add_node(
+                CommandArgumentType.POSITION.add_node(
+                    CommandArgumentType.STRING_WITHOUT_QUOTES.set_mode(
+                        CommandArgumentMode.OPTIONAL
+                    ).add_node(
+                        CommandArgumentType.STRING_WITHOUT_QUOTES.set_mode(
+                            CommandArgumentMode.OPTIONAL
+                        ).add_node(
+                            CommandArgumentType.BLOCK_NAME.set_mode(
+                                CommandArgumentMode.OPTIONAL
+                            )
                         )
                     )
                 )

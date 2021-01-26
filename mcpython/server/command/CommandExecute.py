@@ -8,72 +8,89 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
+
 from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
-    SubCommand,
-    ParseBridge,
-    ParseType,
-    ParseMode,
+    Node,
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    CommandArgumentMode,
 )
 
 
 @shared.registry
 class CommandExecute(mcpython.server.command.Command.Command):
     """
-    class for /execute command
+    Class for /execute command
     """
+
+    EXECUTE_NODES = {
+        "as": Node(
+            CommandArgumentType.DEFINED_STRING, "as", mode=CommandArgumentMode.OPTIONAL
+        ).add_node(Node(CommandArgumentType.SELECTOR)),
+        "at": Node(
+            CommandArgumentType.DEFINED_STRING, "at", mode=CommandArgumentMode.OPTIONAL
+        ).add_node(Node(CommandArgumentType.POSITION)),
+        "in": Node(
+            CommandArgumentType.DEFINED_STRING, "in", mode=CommandArgumentMode.OPTIONAL
+        ).add_node(Node(CommandArgumentType.INT)),
+        "if": Node(
+            CommandArgumentType.DEFINED_STRING,
+            "if",
+            mode=CommandArgumentMode.OPTIONAL,
+        )
+        .add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "block").add_node(
+                Node(CommandArgumentType.POSITION).add_node(
+                    CommandArgumentType.BLOCK_NAME
+                )
+            )
+        )
+        .add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "entity").add_node(
+                Node(CommandArgumentType.SELECTOR)
+            )
+        ),
+        "unless": Node(
+            CommandArgumentType.DEFINED_STRING,
+            "unless",
+            mode=CommandArgumentMode.OPTIONAL,
+        ),
+    }
+
+    EXECUTE_NODES["unless"].nodes = EXECUTE_NODES["if"].nodes
+
+    EXECUTE_END_NODES = [
+        Node(
+            CommandArgumentType.DEFINED_STRING, "run", mode=CommandArgumentMode.OPTIONAL
+        ).add_node(Node(CommandArgumentType.OPEN_END_UNDEFINED_STRING, min=1))
+    ]
+
+    SPECIAL_NODE_PARSING = {}
 
     NAME = "minecraft:execute"
 
-    @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        # missing: align, anchored, facing, in
-        execute_as = SubCommand(
-            ParseType.DEFINED_STRING, "as", mode=ParseMode.OPTIONAL
-        ).add_subcommand(SubCommand(ParseType.SELECTOR))
-        execute_at = SubCommand(
-            ParseType.DEFINED_STRING, "at", mode=ParseMode.OPTIONAL
-        ).add_subcommand(SubCommand(ParseType.POSITION))
-        execute_in = SubCommand(
-            ParseType.DEFINED_STRING, "in", mode=ParseMode.OPTIONAL
-        ).add_subcommand(SubCommand(ParseType.INT))
+    @classmethod
+    def insert_command_syntax_holder(cls, command_syntax_holder: CommandSyntaxHolder):
+        # missing: align, anchored, facing
         # missing: blocks, data, score
-        execute_if = (
-            SubCommand(ParseType.DEFINED_STRING, "if", mode=ParseMode.OPTIONAL)
-            .add_subcommand(
-                SubCommand(ParseType.DEFINED_STRING, "block").add_subcommand(
-                    SubCommand(ParseType.POSITION).add_subcommand(ParseType.BLOCK_NAME)
-                )
-            )
-            .add_subcommand(
-                SubCommand(ParseType.DEFINED_STRING, "entity").add_subcommand(
-                    SubCommand(ParseType.SELECTOR)
-                )
-            )
-        )
-        execute_run = SubCommand(
-            ParseType.DEFINED_STRING, "run", mode=ParseMode.OPTIONAL
-        ).add_subcommand(SubCommand(ParseType.OPEN_END_UNDEFINED_STRING, min=1))
-        execute_unless = SubCommand(
-            ParseType.DEFINED_STRING, "unless", mode=ParseMode.OPTIONAL
-        )
-        execute_unless.sub_commands = execute_if.sub_commands
-        sub_commands = [execute_as, execute_at, execute_in, execute_if, execute_run]
-        sub_commands_ends = [
-            execute_as.sub_commands[0],
-            execute_at.sub_commands[0],
-            execute_in.sub_commands[0],
-            execute_if.sub_commands[0].sub_commands[0].sub_commands[0],
-            execute_if.sub_commands[1].sub_commands[0],
-            execute_unless.sub_commands[0].sub_commands[0].sub_commands[0],
-            execute_unless.sub_commands[1].sub_commands[0],
-        ]
-        for subcommand in sub_commands_ends + [
-            parse_bridge
-        ]:  # every end can be assigned with an new
-            subcommand.sub_commands = sub_commands
-        parse_bridge.main_entry = "execute"
+
+        command_syntax_holder.main_entry = "execute"
+        followed = []
+
+        for node in cls.EXECUTE_NODES.values():
+            followed.extend(node.get_node_ends())
+
+        for node in cls.EXECUTE_NODES.values():
+            command_syntax_holder.add_node(node)
+
+        for node in followed:
+            for entry in itertools.chain(
+                cls.EXECUTE_NODES.values(), cls.EXECUTE_END_NODES
+            ):
+                node.add_node(entry)
 
     @staticmethod
     def parse(values: list, modes: list, info):
@@ -81,8 +98,8 @@ class CommandExecute(mcpython.server.command.Command.Command):
             0, values[0], values, info
         )  # execute first entry
 
-    @staticmethod
-    def _parse_subcommand(index, command, values, info):
+    @classmethod
+    def _parse_subcommand(cls, index, command, values, info):
         """
         execute an entry in the parsed command
         :param index: the index to start
@@ -97,12 +114,14 @@ class CommandExecute(mcpython.server.command.Command.Command):
                 info.entity = entity
                 CommandExecute._parse_subcommand(index, values[index], values, info)
             return
+
         elif command == "at":
             index += 2
             for position in values[index - 1]:
                 info.position = position
                 CommandExecute._parse_subcommand(index, values[index], values, info)
             return
+
         elif command in ["if", "unless"]:
             subcommand: str = values[index + 1]
             index += 2
@@ -128,21 +147,27 @@ class CommandExecute(mcpython.server.command.Command.Command):
             # should we exit?
             if command == "unless" if flag else command == "if":
                 return
+
         elif command == "in":
             info.dimension = values[index + 1]
             index += 2
             CommandExecute._parse_subcommand(index, values[index], values, info)
             return
+
         elif command == "run":
             # execute command
             shared.command_parser.parse("/" + " ".join(values[index + 1]), info=info)
             index += 2
+
+        elif command in cls.SPECIAL_NODE_PARSING:
+            cls.SPECIAL_NODE_PARSING[command](index, command, values, info)
 
         if len(values) > index:  # have we more commands to parse?
             CommandExecute._parse_subcommand(index, values[index], values, info)
 
     @staticmethod
     def get_help() -> list:
+        # todo: build dynamically
         return [
             "/execute \\as <selector>\\at <position>\\in <dimension id>\\if / unless \\block <position> <blockname>\\entity <selector>"
             "\\ \\ run <command>: execute command with given arguments"

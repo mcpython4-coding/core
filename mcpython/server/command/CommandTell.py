@@ -10,7 +10,11 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
 import mcpython.server.command.Command
-from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
+from mcpython.server.command.Command import (
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    Node,
+)
 
 
 @shared.registry
@@ -22,11 +26,11 @@ class CommandTell(mcpython.server.command.Command.Command):
     NAME = "minecraft:tell"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = ["tell", "msg", "w"]
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.SELECTOR).add_subcommand(
-                SubCommand(ParseType.OPEN_END_UNDEFINED_STRING)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = ["tell", "msg", "w"]
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.SELECTOR).add_node(
+                Node(CommandArgumentType.OPEN_END_UNDEFINED_STRING)
             )
         )
 

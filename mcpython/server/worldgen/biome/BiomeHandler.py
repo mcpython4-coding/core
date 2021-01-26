@@ -40,7 +40,9 @@ class BiomeHandler:
         self(biome)
 
     @classmethod
-    def setup_biome_feature_list(cls, biome: typing.Type[mcpython.server.worldgen.biome.Biome.Biome], force=False):
+    def setup_biome_feature_list(
+        cls, biome: typing.Type[mcpython.server.worldgen.biome.Biome.Biome], force=False
+    ):
         """
         Helper function for recalculating the internal biome feature sorted array
         :param biome: the biome

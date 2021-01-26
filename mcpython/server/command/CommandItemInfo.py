@@ -11,7 +11,11 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared, logger
 import mcpython.server.command.Command
 import mcpython.common.container.ItemStack
-from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
+from mcpython.server.command.Command import (
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    Node,
+)
 
 
 @shared.registry
@@ -24,19 +28,21 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
     NAME = "minecraft:iteminfo"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "iteminfo"
-        parse_bridge.add_subcommand(SubCommand(ParseType.DEFINED_STRING, "hand"))
-        parse_bridge.add_subcommand(SubCommand(ParseType.DEFINED_STRING, "inventory"))
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.DEFINED_STRING, "item").add_subcommand(
-                SubCommand(ParseType.ITEM_NAME)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "iteminfo"
+        command_syntax_holder.add_node(Node(CommandArgumentType.DEFINED_STRING, "hand"))
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "inventory")
+        )
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "item").add_node(
+                Node(CommandArgumentType.ITEM_NAME)
             )
         )
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.DEFINED_STRING, "block").add_subcommand(
-                SubCommand(ParseType.DEFINED_STRING, "inventory").add_subcommand(
-                    SubCommand(ParseType.POSITION)
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "block").add_node(
+                Node(CommandArgumentType.DEFINED_STRING, "inventory").add_node(
+                    Node(CommandArgumentType.POSITION)
                 )
             )
         )
@@ -68,7 +74,9 @@ class CommandItemInfo(mcpython.server.command.Command.Command):
                 for si, slot in enumerate(inventory.slots):
                     if not slot.get_itemstack().is_empty():
                         logger.println("slot {}".format(si + 1))
-                        CommandItemInfo.print_info(slot.get_itemstack(), info.chat.print_ln)
+                        CommandItemInfo.print_info(
+                            slot.get_itemstack(), info.chat.print_ln
+                        )
 
     @staticmethod
     def print_info(itemstack, method=logger.println):

@@ -11,7 +11,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import logger
 from mcpython import shared
 import mcpython.server.command.Command
-from mcpython.server.command.Command import ParseBridge
+from mcpython.server.command.Command import CommandSyntaxHolder
 import mcpython.util.math
 
 
@@ -25,13 +25,15 @@ class CommandBlockInfo(mcpython.server.command.Command.Command):
     NAME = "minecraft:block_info"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "blockinfo"
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "blockinfo"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
         # Which block do we want?
-        blockpos, previous, hit_position = shared.world.hit_test(info.entity.position, shared.window.get_sight_vector())
+        blockpos, previous, hit_position = shared.world.hit_test(
+            info.entity.position, shared.window.get_sight_vector()
+        )
 
         if blockpos:
             block = shared.world.get_dimension(info.dimension).get_block(blockpos)
@@ -45,4 +47,6 @@ class CommandBlockInfo(mcpython.server.command.Command.Command):
 
     @staticmethod
     def get_help() -> list:
-        return ["/blockinfo: prints info about the block looking at, including a full repr() of it and its tags"]
+        return [
+            "/blockinfo: prints info about the block looking at, including a full repr() of it and its tags"
+        ]

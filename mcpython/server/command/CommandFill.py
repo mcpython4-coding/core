@@ -11,10 +11,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
-    ParseBridge,
-    ParseType,
-    ParseMode,
-    SubCommand,
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    CommandArgumentMode,
+    Node,
 )
 
 
@@ -27,15 +27,16 @@ class CommandFill(mcpython.server.command.Command.Command):
     NAME = "minecraft:fill"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "fill"
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.POSITION).add_subcommand(
-                SubCommand(ParseType.POSITION).add_subcommand(
-                    SubCommand(ParseType.BLOCK_NAME).add_subcommand(
-                        SubCommand(
-                            ParseType.DEFINED_STRING, mode=ParseMode.OPTIONAL
-                        ).add_subcommand(ParseType.BLOCK_NAME)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "fill"
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.POSITION).add_node(
+                Node(CommandArgumentType.POSITION).add_node(
+                    Node(CommandArgumentType.BLOCK_NAME).add_node(
+                        Node(
+                            CommandArgumentType.DEFINED_STRING,
+                            mode=CommandArgumentMode.OPTIONAL,
+                        ).add_node(CommandArgumentType.BLOCK_NAME)
                     )
                 )
             )

@@ -32,7 +32,9 @@ class DefaultStonePlacementLayer(ILayer):
             for z in range(chunk.position[1] * 16, chunk.position[1] * 16 + 16):
 
                 height = heightmap[(x, z)][0][1]
-                reference.schedule_invoke(cls.generate_xz, reference, x, z, config, height)
+                reference.schedule_invoke(
+                    cls.generate_xz, reference, x, z, config, height
+                )
 
     @staticmethod
     def generate_xz(reference, x, z, config, height):

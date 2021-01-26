@@ -10,11 +10,12 @@ This project is not official by mojang and does not relate to it.
 """
 import enum
 import typing
+import itertools
 
 import mcpython.common.event.Registry
 
 
-class ParseType(enum.Enum):
+class CommandArgumentType(enum.Enum):
     """
     An enum for command entries
     """
@@ -56,14 +57,14 @@ class ParseType(enum.Enum):
     # A boolean value
     BOOLEAN = 11
 
-    def add_subcommand(self, subcommand):
-        return SubCommand(self).add_subcommand(subcommand)
+    def add_node(self, subcommand):
+        return Node(self).add_node(subcommand)
 
-    def set_mode(self, parse_mode: "ParseMode"):
-        return SubCommand(self, parse_mode)
+    def set_mode(self, parse_mode: "CommandArgumentMode"):
+        return Node(self, parse_mode)
 
 
-class ParseMode(enum.Enum):
+class CommandArgumentMode(enum.Enum):
     """
     An enum for how ParseType-entries are handled
     """
@@ -73,65 +74,85 @@ class ParseMode(enum.Enum):
     # todo: add something like OPTIONAL_ALLOW_FURTHER
 
 
-class SubCommand:
+class Node:
     """
-    Class for an part of an command. contains one parse-able entry, one ParseMode and an list of sub-commands
+    Class for an part of a command (a "Node"). Contains one parse-able entry, one ParseMode and a list of sub-commands
     """
 
-    def __init__(self, entry_type: ParseType, *args, mode=ParseMode.USER_NEED_ENTER, **kwargs):
+    def __init__(
+        self,
+        entry_type: CommandArgumentType,
+        *args,
+        mode=CommandArgumentMode.USER_NEED_ENTER,
+        on_node_iterated: typing.Callable[
+            [typing.Any, typing.List, typing.List], None
+        ] = None,
+        on_node_executed: typing.Callable[
+            [typing.Any, typing.List, typing.List], None
+        ] = None,
+        **kwargs
+    ):
         """
-        Creates an new subcommand
+        Creates an new Node
         :param entry_type: the type to use
         :param args: arguments to use for check & parsing
         :param mode: the mode to use
         :param kwargs: optional arguments for check & parsing
+        :param on_node_executed: run when this node is the last one on the stack; signature: (info, values, node stack)
+        :param on_node_iterated: run when this node is used during command parsing; signature: (info, values, node stack)
+        todo: add attribute if it can be the last on the stack or not
         """
         self.type = entry_type
         self.mode = mode
-        self.sub_commands: typing.List["SubCommand"] = []
+        self.nodes: typing.List["Node"] = []
         self.args = args
         self.kwargs = kwargs
+        self.on_node_executed = on_node_executed
+        self.on_node_iterated = on_node_iterated
 
-    def add_subcommand(self, subcommand: typing.Union["SubCommand", ParseType]):
+    def add_node(self, node: typing.Union["Node", CommandArgumentType]):
         """
-        Add an new SubCommand to this SubCommand
-        :param subcommand: the SubCommand to add
+        Add a new sub-Node to this Node
+        :param node: the Node to add
         :return: itself
         """
-        if isinstance(subcommand, ParseType):
-            subcommand = SubCommand(subcommand)
+        if isinstance(node, CommandArgumentType):
+            node = Node(node)
 
-        self.sub_commands.append(subcommand)
+        self.nodes.append(node)
         return self
 
+    def get_node_ends(self) -> typing.Iterable["Node"]:
+        if len(self.nodes) == 0:
+            return (self,)
+        return itertools.chain(*(node.get_node_ends() for node in self.nodes))
 
-class ParseBridge:
+
+class CommandSyntaxHolder:
     """
     A build system for commands
     Inspired by minecraft's brigadier (https://github.com/Mojang/brigadier)
-
-    todo: every SubCommand should have an onParsingEndHere method executing the command instead of
-        a single function giving the tree
     """
 
-    def __init__(self, command):
+    def __init__(self, command: typing.Type["Command"]):
         """
-        creates an new ParseBridge
+        Creates a new CommandSyntaxHolder instance
         :param command: the command base class to use
         """
         self.main_entry = None
-        self.sub_commands = []
-        command.insert_parse_bridge(self)
+        self.nodes = []
+        command.insert_command_syntax_holder(self)
 
-    def add_subcommand(self, subcommand: typing.Union[SubCommand, ParseType]):
+    def add_node(self, node: typing.Union[Node, CommandArgumentType]):
         """
-        add an new subcommand to this
-        :param subcommand: the subcommand to add or an ParseType
+        add a new Node to this
+        :param node: the Node to add or a ParseType
         :return: the object invoked on (the self)
         """
-        if isinstance(subcommand, ParseType):
-            subcommand = SubCommand(subcommand)
-        self.sub_commands.append(subcommand)
+        if isinstance(node, CommandArgumentType):
+            node = Node(node)
+
+        self.nodes.append(node)
         return self
 
 
@@ -143,10 +164,10 @@ class Command(mcpython.common.event.Registry.IRegistryContent):
     TYPE = "minecraft:command"  # the type definition for the registry
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
         """
         Takes an ParseBridge and fills it with life
-        :param parse_bridge: the parse bridge to use
+        :param command_syntax_holder: the parse bridge to use
         """
         raise NotImplementedError()
 
@@ -157,6 +178,7 @@ class Command(mcpython.common.event.Registry.IRegistryContent):
         :param values: the values parsed over parse bridge
         :param modes: the modes used (a list of decisions)
         :param info: a ParsingCommandInfo for parsing this command
+        todo: remove
         """
 
     @staticmethod

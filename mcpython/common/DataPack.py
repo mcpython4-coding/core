@@ -124,6 +124,7 @@ class DataPackHandler:
         """
         if info is None:
             info = mcpython.server.command.CommandParser.ParsingCommandInfo()
+
         if name.startswith("#"):  # an tag
             try:
                 tag = shared.tag_handler.get_tag_for(name, "functions")
@@ -132,11 +133,13 @@ class DataPackHandler:
             for name in tag.entries:
                 self.try_call_function(name, info.copy())
             return
+
         for datapack in self.loaded_data_packs:
             if datapack.status == DataPackStatus.ACTIVATED:
                 if name in datapack.function_table:
                     return datapack.function_table[name].execute(info)
-        raise ValueError("can't find function '{}'".format(name))
+
+        logger.println("can't find function '{}'".format(name))
 
 
 datapack_handler = DataPackHandler()
@@ -165,6 +168,7 @@ class DataPack:
         """
         if self.status == DataPackStatus.SYSTEM_ERROR:
             return
+
         # when the data pack was active, unload it first
         try:
             if self.status in (DataPackStatus.ACTIVATED, DataPackStatus.DEACTIVATED):
@@ -197,12 +201,14 @@ class DataPack:
                     ] = mcpython.server.command.McFunctionFile.McFunctionFile(
                         self.access.read_raw(file).decode("UTF-8"), name
                     )
+
         except:
             self.status = DataPackStatus.SYSTEM_ERROR
             logger.print_exception(
                 "error during loading data pack '{}'".format(self.name)
             )
             return
+
         self.status = DataPackStatus.ACTIVATED
 
     def unload(self):

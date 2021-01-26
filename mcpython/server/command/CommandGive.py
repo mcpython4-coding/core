@@ -12,10 +12,10 @@ from mcpython import shared
 import mcpython.server.command.Command
 import mcpython.common.container.ItemStack
 from mcpython.server.command.Command import (
-    ParseType,
-    ParseMode,
-    SubCommand,
-    ParseBridge,
+    CommandArgumentType,
+    CommandArgumentMode,
+    Node,
+    CommandSyntaxHolder,
 )
 
 
@@ -30,22 +30,20 @@ class CommandGive(mcpython.server.command.Command.Command):
     CANCEL_GIVE = False
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.SELECTOR).add_subcommand(
-                SubCommand(ParseType.ITEM_NAME).add_subcommand(
-                    SubCommand(ParseType.INT, mode=ParseMode.OPTIONAL)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.SELECTOR).add_node(
+                Node(CommandArgumentType.ITEM_NAME).add_node(
+                    Node(CommandArgumentType.INT, mode=CommandArgumentMode.OPTIONAL)
                 )
             )
         )
-        parse_bridge.main_entry = "give"
+        command_syntax_holder.main_entry = "give"
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
         # get the stack to add
-        stack = mcpython.common.container.ItemStack.ItemStack(
-            values[1]
-        )
+        stack = mcpython.common.container.ItemStack.ItemStack(values[1])
 
         if len(values) > 2:
             stack.set_amount(values[2])  # get the amount if provided

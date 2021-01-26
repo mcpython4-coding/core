@@ -414,7 +414,7 @@ class SaveFile:
 
     def access_file_pickle(self, file: str):
         """
-        access save an pickle file
+        Access save a pickle file
         :param file: the file to load
         :return: the data of the file or None if an error has occur
         """
@@ -431,10 +431,14 @@ class SaveFile:
                 )
             )
             return
+        except AttributeError:
+            logger.println(
+                "[SAVE][INVALID] module changed in between code systems, leading into corrupted file {}".format(
+                    file))
 
     def access_raw(self, file: str):
         """
-        access save an file in binary mode
+        Access save a file in binary mode
         :param file: the file to load
         :return: the data of the file or None if an error has occur
         """

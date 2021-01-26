@@ -11,10 +11,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 import mcpython.server.command.Command
 from mcpython.server.command.Command import (
-    ParseBridge,
-    ParseType,
-    ParseMode,
-    SubCommand,
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    CommandArgumentMode,
+    Node,
 )
 
 
@@ -27,10 +27,10 @@ class CommandKill(mcpython.server.command.Command.Command):
     NAME = "minecraft:kill"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = "kill"
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.SELECTOR, mode=ParseMode.OPTIONAL)
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = "kill"
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.SELECTOR, mode=CommandArgumentMode.OPTIONAL)
         )
 
     @staticmethod

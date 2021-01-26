@@ -10,7 +10,11 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
 import mcpython.server.command.Command
-from mcpython.server.command.Command import ParseBridge, ParseType, SubCommand
+from mcpython.server.command.Command import (
+    CommandSyntaxHolder,
+    CommandArgumentType,
+    Node,
+)
 
 
 @shared.registry
@@ -22,13 +26,13 @@ class CommandTeleport(mcpython.server.command.Command.Command):
     NAME = "minecraft:teleport"
 
     @staticmethod
-    def insert_parse_bridge(parse_bridge: ParseBridge):
-        parse_bridge.main_entry = ["tp", "teleport"]  # both are valid
-        parse_bridge.add_subcommand(
-            SubCommand(ParseType.SELECTOR)
-            .add_subcommand(SubCommand(ParseType.SELECTOR))
-            .add_subcommand(SubCommand(ParseType.POSITION))
-        ).add_subcommand(SubCommand(ParseType.POSITION))
+    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
+        command_syntax_holder.main_entry = ["tp", "teleport"]  # both are valid
+        command_syntax_holder.add_node(
+            Node(CommandArgumentType.SELECTOR)
+            .add_node(Node(CommandArgumentType.SELECTOR))
+            .add_node(Node(CommandArgumentType.POSITION))
+        ).add_node(Node(CommandArgumentType.POSITION))
 
     @staticmethod
     def parse(values: list, modes: list, info):

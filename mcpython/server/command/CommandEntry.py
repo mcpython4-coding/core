@@ -10,7 +10,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared, logger
 import mcpython.common.event.Registry
-from mcpython.server.command.Command import ParseType
+from mcpython.server.command.Command import CommandArgumentType
 import math
 
 
@@ -54,7 +54,7 @@ def load():
         Entry for definite string
         """
 
-        NAME = ParseType.DEFINED_STRING
+        NAME = CommandArgumentType.DEFINED_STRING
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -70,7 +70,7 @@ def load():
         Entry for int
         """
 
-        NAME = ParseType.INT
+        NAME = CommandArgumentType.INT
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -90,7 +90,7 @@ def load():
         String entry
         """
 
-        NAME = ParseType.STRING
+        NAME = CommandArgumentType.STRING
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -101,11 +101,11 @@ def load():
                 while not entry_list[start + i].endswith(start_char):
                     start += 1
                     entries.append(entry_list[start + i])
-                
+
                 data = " ".join(entries)
                 if data[0] in "'\"":
                     data = data[1:-1]
-                
+
                 return start + i + 1, data
 
         @staticmethod
@@ -118,11 +118,11 @@ def load():
                     start += 1
                     entries.append(entry_list[start + i])
                     if start >= len(entry_list):
-                        
+
                         return False  # it does NOT close
-                
+
                 return True  # it does close
-        
+
             return False  # it does NOT start
 
     @shared.registry
@@ -131,7 +131,7 @@ def load():
         string entry
         """
 
-        NAME = ParseType.STRING_WITHOUT_QUOTES
+        NAME = CommandArgumentType.STRING_WITHOUT_QUOTES
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -147,7 +147,7 @@ def load():
         float entry
         """
 
-        NAME = ParseType.FLOAT
+        NAME = CommandArgumentType.FLOAT
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -167,7 +167,7 @@ def load():
         blockname entry
         """
 
-        NAME = ParseType.BLOCK_NAME
+        NAME = CommandArgumentType.BLOCK_NAME
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -197,7 +197,7 @@ def load():
         Item name entry
         """
 
-        NAME = ParseType.ITEM_NAME
+        NAME = CommandArgumentType.ITEM_NAME
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -206,10 +206,7 @@ def load():
         @staticmethod
         def is_valid(entry_list: list, start: int, arguments, kwargs) -> bool:
             # is this item arrival?
-            flag = (
-                entry_list[start]
-                in shared.registry.get_by_name("minecraft:item")
-            )
+            flag = entry_list[start] in shared.registry.get_by_name("minecraft:item")
 
             if not flag:
                 logger.println(
@@ -225,7 +222,7 @@ def load():
         Selector entry
         """
 
-        NAME = ParseType.SELECTOR
+        NAME = CommandArgumentType.SELECTOR
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -254,7 +251,7 @@ def load():
         Position entry
         """
 
-        NAME = ParseType.POSITION
+        NAME = CommandArgumentType.POSITION
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -307,7 +304,7 @@ def load():
         Select definite string entry
         """
 
-        NAME = ParseType.SELECT_DEFINED_STRING
+        NAME = CommandArgumentType.SELECT_DEFINED_STRING
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -323,7 +320,7 @@ def load():
         open end undefined string entry
         """
 
-        NAME = ParseType.OPEN_END_UNDEFINED_STRING
+        NAME = CommandArgumentType.OPEN_END_UNDEFINED_STRING
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
@@ -342,7 +339,7 @@ def load():
     class BooleanEntry(CommandEntry):
         TABLE = [("true", "True"), ("false", "False")]
 
-        NAME = ParseType.BOOLEAN
+        NAME = CommandArgumentType.BOOLEAN
 
         @staticmethod
         def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
