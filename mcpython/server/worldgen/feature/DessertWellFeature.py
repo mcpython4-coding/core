@@ -18,6 +18,7 @@ from mcpython import shared
 class DessertWellFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
     NAME = "minecraft:dessert_well_feature"
 
+    # todo: make tag
     SAND_LIKE = [
         "minecraft:sand",
         "minecraft:red_sand",

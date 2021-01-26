@@ -9,6 +9,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
+from abc import ABC
 
 import mcpython.common.event.Registry
 import mcpython.server.worldgen.feature.IOre
@@ -16,7 +17,13 @@ import mcpython.server.worldgen.feature.IFeature
 import mcpython.common.world.AbstractInterface
 
 
-class Biome(mcpython.common.event.Registry.IRegistryContent):
+class Biome(mcpython.common.event.Registry.IRegistryContent, ABC):
+    """
+    Abstract base class for biomes
+    Defines the look of the biome
+    todo: add factory for it
+    """
+
     NAME = "minecraft:unknown_biome"
 
     # name -> weight, group size

@@ -34,18 +34,21 @@ class DefaultTemperatureLayer(ILayer):
 
     @staticmethod
     def normalize_config(config: LayerConfig):
-        if not hasattr(config, "min"):
-            config.min = -0.5
-        if not hasattr(config, "max"):
-            config.max = 2.0
+        if config.temperature_min is None:
+            config.temperature_min = -0.5
+        if config.temperature_max is None:
+            config.temperature_max = 2.0
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        temperature_map = chunk.get_value("minecraft:temperature_map")
-        r = [config.min, config.max]
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
+
+        temperature_map = chunk.get_value("minecraft:temperature_map")
+        r = [config.temperature_min, config.temperature_max]
+
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
+
         for (x, z), v in noise_map:
             v *= abs(r[0] - r[1])
             v += r[0]

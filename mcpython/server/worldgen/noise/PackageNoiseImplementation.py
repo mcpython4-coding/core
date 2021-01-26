@@ -15,7 +15,7 @@ import typing
 
 class NoiseImplementation(INoiseImplementation):
     """
-    Default noise implementation.
+    Noise implementation using the noise library
     """
 
     NAME = "minecraft:package_noise_noise"

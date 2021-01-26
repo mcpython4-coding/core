@@ -1487,4 +1487,5 @@ R   [uuk]: improved world serialization API
 [uuk]: float entry in commands does not accept NaN and inf now
 [uuk]: refactored some command entry names
 [uuk]: written down some plans for the command system
+[uuk]: improved & documented some worldgen stuff
 

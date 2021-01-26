@@ -26,14 +26,16 @@ class DefaultStonePlacementLayer(ILayer):
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
+        heightmap = reference.chunk.get_value("heightmap")
+
         for x in range(chunk.position[0] * 16, chunk.position[0] * 16 + 16):
             for z in range(chunk.position[1] * 16, chunk.position[1] * 16 + 16):
-                reference.schedule_invoke(cls.generate_xz, reference, x, z, config)
+
+                height = heightmap[(x, z)][0][1]
+                reference.schedule_invoke(cls.generate_xz, reference, x, z, config, height)
 
     @staticmethod
-    def generate_xz(reference, x, z, config):
-        heightmap = reference.chunk.get_value("heightmap")
-        height = heightmap[(x, z)][0][1]
+    def generate_xz(reference, x, z, config, height):
         for y in range(1, height + 1):
             if not reference.chunk.is_position_blocked((x, y, z)):
                 reference.schedule_block_add((x, y, z), "minecraft:stone")

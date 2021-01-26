@@ -36,15 +36,17 @@ class DefaultHeightMapLayer(ILayer):
 
     @staticmethod
     def normalize_config(config: LayerConfig):
-        if not hasattr(config, "max_height_factor"):
+        if config.max_height_factor is None:
             config.max_height_factor = 1
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        heightmap = chunk.get_value("heightmap")
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
+        heightmap = chunk.get_value("heightmap")
+
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
+
         for (x, z), v in noise_map:
             heightmap[(x, z)] = cls.get_height_at(config, chunk, x, z, v)
 
@@ -56,7 +58,7 @@ class DefaultHeightMapLayer(ILayer):
         end *= config.max_height_factor
         v *= end - start
         v += start
-        info = [(1, round(v))]
+        info = [(1, round(v))]  # todo: do some more special stuff here!
         return info
 
 

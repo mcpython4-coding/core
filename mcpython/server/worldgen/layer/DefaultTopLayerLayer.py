@@ -36,27 +36,34 @@ class DefaultTopLayerLayer(ILayer):
         chunk = reference.chunk
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
+
+        heightmap = chunk.get_value("heightmap")
+        biome_map = chunk.get_value("minecraft:biome_map")
+
         for (x, z), v in noise_map:
-            reference.schedule_invoke(cls.generate_xz, reference, x, z, config, v)
+            world_height = heightmap[(x, z)][0][1]
+            biome = shared.biome_handler.biomes[
+                biome_map[(x, z)]
+            ]
+            reference.schedule_invoke(cls.generate_xz, reference, x, z, config, v, world_height, biome)
 
     @staticmethod
-    def generate_xz(reference, x, z, config, noise_value):
+    def generate_xz(reference, x, z, config, noise_value, world_height, biome):
         chunk = reference.chunk
-        heightmap = chunk.get_value("heightmap")
-        mheight = heightmap[(x, z)][0][1]
-        biome = shared.biome_handler.biomes[
-            chunk.get_value("minecraft:biome_map")[(x, z)]
-        ]
+
         r = biome.get_top_layer_height_range((x, z), chunk.get_dimension())
         noise_value *= r[1] - r[0]
         noise_value += r[0]
         height = round(noise_value)
+
         decorators = biome.get_top_layer_configuration(
             height, (x, z), chunk.get_dimension()
         )
+
         for i in range(height):
-            y = mheight - (height - i - 1)
+            y = world_height - (height - i - 1)
             block = reference.get_block((x, y, z), chunk)
+
             if block and (block if type(block) == str else block.NAME) in [
                 "minecraft:stone"
             ]:

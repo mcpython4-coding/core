@@ -34,15 +34,17 @@ class DefaultLandMassLayer(ILayer):
 
     @staticmethod
     def normalize_config(config: LayerConfig):
-        if not hasattr(config, "masses"):
+        if config.masses is None:
             config.masses = config.world_generator_config.LANDMASSES
 
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        land_map = chunk.get_value("minecraft:landmass_map")
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
+        land_map = chunk.get_value("minecraft:landmass_map")
+
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
+
         for (x, z), v in noise_map:
             v *= len(config.masses)
             v = round(v)

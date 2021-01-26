@@ -53,10 +53,10 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
             self.bottom_extension = None, 0
         else:
             self.top_extension = tuple(
-                config["blocks"].setdefault("top_extension", (None, 0))
+                config["blocks"].setdefault("top_extension", (self.default_block, 1))
             )
             self.bottom_extension = tuple(
-                config["blocks"].setdefault("bottom_extension", (None, 0))
+                config["blocks"].setdefault("bottom_extension", (self.default_block, 1))
             )
         self.height_range = tuple(config.setdefault("height_range", (3, 5)))
 
