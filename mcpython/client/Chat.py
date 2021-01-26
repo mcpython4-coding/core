@@ -132,14 +132,18 @@ class Chat:
                 self.text[: self.active_index - 1] + self.text[self.active_index :]
             )
             self.active_index -= 1
+
         elif symbol == key.DELETE and self.active_index < len(self.text):
             self.text = (
                 self.text[: self.active_index] + self.text[self.active_index + 1 :]
             )
-        elif symbol == 65360:
-            self.active_index = 0  # begin key
+
+        elif symbol == 65360:  # begin key
+            self.active_index = 0
+
         elif symbol == key.END:
             self.active_index = len(self.text)
+
         elif symbol == key.ENTER:  # execute command
             self.CANCEL_INPUT = False
             shared.event_handler.call("chat:text_enter", self.text)
@@ -157,6 +161,7 @@ class Chat:
                 self.print_ln(self.text)
             self.history.insert(0, self.text)
             self.close()
+
         elif (
             symbol == key.UP and self.history_index < len(self.history) - 1
         ):  # go one item up in the history

@@ -49,9 +49,13 @@ class LaunchWrapper:
 
     def inject_sys_argv(self, argv: typing.List[str]):
         """
-        Currently unused helper function for loading the sys.argv config into the game
+        Helper function for loading the sys.argv config into the game
         todo: all sys.argv parsing belongs here, with a general parser for options not specified
         """
+        if not self.is_client:
+            if "--console" in argv:
+                import mcpython.server.ServerConsoleHandler
+                mcpython.server.ServerConsoleHandler.handler.run()
 
     def setup(self):
         """

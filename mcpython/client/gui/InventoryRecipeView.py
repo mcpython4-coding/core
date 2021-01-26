@@ -14,7 +14,9 @@ import mcpython.client.gui.ContainerRenderer
 import mcpython.client.rendering.gui.RecipeViewRenderer
 
 
-class InventorySingleRecipeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
+class InventorySingleRecipeView(
+    mcpython.client.gui.ContainerRenderer.ContainerRenderer
+):
     """
     Inventory class for single inventory recipe view
     todo: add custom name attribute setter from renderer if needed

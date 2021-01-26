@@ -44,7 +44,9 @@ class ContainerRenderer(ABC):
         self.uuid = uuid.uuid4()
         shared.inventory_handler.add(self)
         self.slots = self.create_slot_renderers()
-        self.config = {}  # todo: add special class holding this information with serializer for it
+        self.config = (
+            {}
+        )  # todo: add special class holding this information with serializer for it
         self.reload_config()
         self.custom_name = None  # the custom name; If set, rendered in the inventory
         self.custom_name_label = pyglet.text.Label()
@@ -77,7 +79,11 @@ class ContainerRenderer(ABC):
             entry = self.config["slots"][raw_slot_id]
 
             if slot_id < 0 or slot_id >= len(self.slots):
-                logger.println("[WARN] slot id {} loaded from file {} for inventory instance {} is invalid!".format(slot_id, self.get_config_file(), self))
+                logger.println(
+                    "[WARN] slot id {} loaded from file {} for inventory instance {} is invalid!".format(
+                        slot_id, self.get_config_file(), self
+                    )
+                )
                 continue
 
             if "position" in entry:

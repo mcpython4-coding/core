@@ -71,22 +71,31 @@ class AbstractCraftingGridRecipe(
     def calculate_hash(self) -> int:
         grid, output = self.as_grid_for_view()
         data = (
-            tuple((
-                tuple((
-                    tuple((
-                        (itemstack.get_item_name(), itemstack.amount)
-                        for itemstack in items
-                    ))
-                    for items in row
-                ))
-                for row in grid
-            )),
-            (output.get_item_name(), output.amount)
+            tuple(
+                (
+                    tuple(
+                        (
+                            tuple(
+                                (
+                                    (itemstack.get_item_name(), itemstack.amount)
+                                    for itemstack in items
+                                )
+                            )
+                            for items in row
+                        )
+                    )
+                    for row in grid
+                )
+            ),
+            (output.get_item_name(), output.amount),
         )
         return hash(data)
 
     def __eq__(self, other):
-        return isinstance(other, AbstractCraftingGridRecipe) and self.as_grid_for_view() == other.as_grid_for_view()
+        return (
+            isinstance(other, AbstractCraftingGridRecipe)
+            and self.as_grid_for_view() == other.as_grid_for_view()
+        )
 
     def as_grid_for_view(
         self, size=(3, 3)

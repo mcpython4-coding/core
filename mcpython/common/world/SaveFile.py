@@ -434,7 +434,9 @@ class SaveFile:
         except AttributeError:
             logger.println(
                 "[SAVE][INVALID] module changed in between code systems, leading into corrupted file {}".format(
-                    file))
+                    file
+                )
+            )
 
     def access_raw(self, file: str):
         """

@@ -153,7 +153,10 @@ class CommandParser:
 
     def _convert_to_values(
         self, command, syntax, info, index=1
-    ) -> typing.Tuple[typing.Optional[typing.List], typing.Optional[typing.List[typing.Tuple[typing.Any, int]]]]:
+    ) -> typing.Tuple[
+        typing.Optional[typing.List],
+        typing.Optional[typing.List[typing.Tuple[typing.Any, int]]],
+    ]:
         """
         Parse command into values that can be than executed
         :param command: the command to parse
@@ -219,10 +222,7 @@ class CommandParser:
                     )
                     info.chat.print_ln(
                         " - missing one of the following entries: {}".format(
-                            [
-                                subcommand.type
-                                for subcommand in active_entry.nodes
-                            ]
+                            [subcommand.type for subcommand in active_entry.nodes]
                         )
                     )
                     info.chat.print_ln(" - gotten values: {}".format(values))
