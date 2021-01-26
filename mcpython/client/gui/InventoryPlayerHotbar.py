@@ -169,7 +169,7 @@ class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRende
         return False
 
     # todo: move to container
-    def create_slots(self) -> list:
+    def create_slot_renderers(self) -> list:
         return [mcpython.client.gui.Slot.Slot() for _ in range(9)]
 
     def on_activate(self):

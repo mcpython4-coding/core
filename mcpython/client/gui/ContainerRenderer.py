@@ -41,6 +41,7 @@ class ContainerRenderer(ABC):
         self.window_anchor = "MM"
         self.position = (0, 0)
         self.bg_image_pos = (0, 0)
+        self.uuid = uuid.uuid4()
         shared.inventory_handler.add(self)
         self.slots = self.create_slot_renderers()
         self.config = {}  # todo: add special class holding this information with serializer for it
@@ -74,6 +75,10 @@ class ContainerRenderer(ABC):
         for raw_slot_id in self.config["slots"] if "slots" in self.config else []:
             slot_id = int(raw_slot_id)
             entry = self.config["slots"][raw_slot_id]
+
+            if slot_id < 0 or slot_id >= len(self.slots):
+                logger.println("[WARN] slot id {} loaded from file {} for inventory instance {} is invalid!".format(slot_id, self.get_config_file(), self))
+                continue
 
             if "position" in entry:
                 x, y = tuple(entry["position"])

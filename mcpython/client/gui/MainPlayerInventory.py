@@ -58,7 +58,7 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
             self.custom_name = "Inventory"
 
     # todo: move to container
-    def create_slots(self) -> list:
+    def create_slot_renderers(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
         return (
             [self.hotbar.slots[i].copy() for i in range(9)]

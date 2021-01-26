@@ -65,7 +65,7 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         )
 
     # todo: move to container
-    def create_slots(self) -> list:
+    def create_slot_renderers(self) -> list:
         # 3 rows of 9 slots of storage
         return [mcpython.client.gui.Slot.Slot() for _ in range(9 * 3)]
 

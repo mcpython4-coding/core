@@ -26,8 +26,8 @@ class InventoryShulkerBox(mcpython.client.gui.InventoryChest.InventoryChest):
             self.custom_name = "Shulker Box"
 
     # todo: move to container & let it display the chest renderer
-    def create_slots(self) -> list:
-        slots = super().create_slots()
+    def create_slot_renderers(self) -> list:
+        slots = super().create_slot_renderers()
         for slot in slots:
             slot.disallowed_item_tags = ["#minecraft:shulkerbox_like_items"]
         return slots
