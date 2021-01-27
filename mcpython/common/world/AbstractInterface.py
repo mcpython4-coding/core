@@ -440,7 +440,7 @@ class IDimension(ABC):
 class IWorld(ABC):
     def get_dimension_names(self) -> typing.Iterable[str]:
         raise NotImplementedError
-    
+
     def add_player(
         self, name: str, add_inventories: bool = True, override: bool = True
     ):

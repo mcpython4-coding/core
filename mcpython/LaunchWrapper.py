@@ -55,6 +55,7 @@ class LaunchWrapper:
         if not self.is_client:
             if "--console" in argv:
                 import mcpython.server.ServerConsoleHandler
+
                 mcpython.server.ServerConsoleHandler.handler.run()
 
     def setup(self):

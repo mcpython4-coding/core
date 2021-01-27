@@ -32,4 +32,3 @@ class ServerConsoleHandler:
 
 
 handler = ServerConsoleHandler()
-

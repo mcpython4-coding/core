@@ -61,6 +61,7 @@ changelog of snapshot <21w04a> released on <27.01.2021>, targeting <20w03a>
         - added /recipeview command for below recipe view
         - /execute has now a registry-like structure for sub-nodes
         - /execute in takes now a dimension name instead of its ID
+        - defined /execute var [currently not use-able]
 
     Rendering:
         - improved block rendering

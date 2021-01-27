@@ -9,6 +9,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import itertools
+import typing
 
 from mcpython import shared
 import mcpython.server.command.Command
@@ -52,15 +53,57 @@ class CommandExecute(mcpython.server.command.Command.Command):
             Node(CommandArgumentType.DEFINED_STRING, "entity").add_node(
                 Node(CommandArgumentType.SELECTOR)
             )
+        )
+        .add_node(
+            Node(CommandArgumentType.DEFINED_STRING, "var")
+            .add_node(
+                Node(CommandArgumentType.DEFINED_STRING, "defined").add_node(
+                    Node(CommandArgumentType.STRING_WITHOUT_QUOTES)
+                )
+            )
+            .add_node(
+                Node(CommandArgumentType.DEFINED_STRING, "compare").add_node(
+                    CommandArgumentType.DEFINED_STRING.add_node(
+                        Node(CommandArgumentType.DEFINED_STRING, "==").add_node(
+                            CommandArgumentType.STRING_WITHOUT_QUOTES
+                        )
+                    )
+                    .add_node(
+                        Node(CommandArgumentType.DEFINED_STRING, "!=").add_node(
+                            CommandArgumentType.STRING_WITHOUT_QUOTES
+                        )
+                    )
+                    .add_node(
+                        Node(CommandArgumentType.DEFINED_STRING, ">").add_node(
+                            CommandArgumentType.STRING_WITHOUT_QUOTES
+                        )
+                    )
+                    .add_node(
+                        Node(CommandArgumentType.DEFINED_STRING, ">=").add_node(
+                            CommandArgumentType.STRING_WITHOUT_QUOTES
+                        )
+                    )
+                    .add_node(
+                        Node(CommandArgumentType.DEFINED_STRING, "<").add_node(
+                            CommandArgumentType.STRING_WITHOUT_QUOTES
+                        )
+                    )
+                    .add_node(
+                        Node(CommandArgumentType.DEFINED_STRING, "<=").add_node(
+                            CommandArgumentType.STRING_WITHOUT_QUOTES
+                        )
+                    )
+                )
+            )
         ),
+
+        # sub-nodes are copied from if-condition during command init, and are shared
         "unless": Node(
             CommandArgumentType.DEFINED_STRING,
             "unless",
             mode=CommandArgumentMode.OPTIONAL,
         ),
     }
-
-    EXECUTE_NODES["unless"].nodes = EXECUTE_NODES["if"].nodes
 
     EXECUTE_END_NODES = [
         Node(
@@ -79,6 +122,10 @@ class CommandExecute(mcpython.server.command.Command.Command):
 
         command_syntax_holder.main_entry = "execute"
         followed = []
+
+        old = cls.EXECUTE_NODES["unless"].nodes
+        cls.EXECUTE_NODES["unless"].nodes = cls.EXECUTE_NODES["if"].nodes
+        cls.EXECUTE_NODES["unless"].nodes.extend(old)
 
         for node in cls.EXECUTE_NODES.values():
             followed.extend(node.get_node_ends())
@@ -99,13 +146,14 @@ class CommandExecute(mcpython.server.command.Command.Command):
         )  # execute first entry
 
     @classmethod
-    def _parse_subcommand(cls, index, command, values, info):
+    def _parse_subcommand(cls, index: int, command: str, values: typing.List, info):
         """
-        execute an entry in the parsed command
+        Execute an entry in the parsed command
         :param index: the index to start
         :param command: the parsed active command
         :param values: the values that where parsed
         :param info: the command info which was used
+        Mods adding custom entries should use the SPECIAL_NODE_PARSING extension point for parsing their entries
         """
 
         if command == "as":
@@ -126,6 +174,7 @@ class CommandExecute(mcpython.server.command.Command.Command):
             subcommand: str = values[index + 1]
             index += 2
             flag = None
+
             if subcommand == "block":
                 position, name = values[index], values[index + 1]
                 index += 2
@@ -133,23 +182,48 @@ class CommandExecute(mcpython.server.command.Command.Command):
                     block = shared.world.world[position]
                     flag = (
                         block.NAME
-                        == shared.registry.get_by_name("minecraft:block")
-                        .entries[name]
-                        .NAME
+                        == shared.registry.get_by_name("minecraft:block")[name].NAME
                     )
                 else:
                     flag = name in ["air", "minecraft:air", None, 0]
+
             elif subcommand == "entity":
                 selector = values[index]
                 index += 1
                 flag = len(selector) > 0
+
+            elif subcommand == "var":
+                if values[index] == "defined":
+                    flag = (
+                        values[index + 1].removeprefix("<").removesuffix(">")
+                        in info.local_variable_stack
+                    )
+                    index += 2
+
+                elif values[index] == "compare":
+                    a, op, b = values[index + 1 : index + 5]
+                    # todo: make more safe
+                    flag = eval(
+                        "{} {} {}".format(
+                            info.local_variable_stack[a[1:-1]]
+                            if a.startswith("<")
+                            else a,
+                            op,
+                            info.local_variable_stack[b[1:-1]]
+                            if b.startswith("<")
+                            else b,
+                        )
+                    )
+                    index += 4
 
             # should we exit?
             if command == "unless" if flag else command == "if":
                 return
 
         elif command == "in":
-            info.dimension = shared.world.get_dimension_by_name(values[index + 1]).get_id()
+            info.dimension = shared.world.get_dimension_by_name(
+                values[index + 1]
+            ).get_id()
             index += 2
             CommandExecute._parse_subcommand(index, values[index], values, info)
             return

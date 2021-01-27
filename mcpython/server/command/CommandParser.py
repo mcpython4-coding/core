@@ -206,12 +206,12 @@ class CommandParser:
             else:
                 if all(
                     [
-                        subcommand.mode
+                        node.mode
                         == mcpython.server.command.Command.CommandArgumentMode.OPTIONAL
-                        for subcommand in active_entry.nodes
+                        for node in active_entry.nodes
                     ]
                 ):
-                    info.chat.print_ln([x.mode for x in active_entry.nodes])
+                    info.chat.print_ln([node.mode for node in active_entry.nodes])
                     return values, array
 
                 else:
@@ -222,7 +222,10 @@ class CommandParser:
                     )
                     info.chat.print_ln(
                         " - missing one of the following entries: {}".format(
-                            [subcommand.type for subcommand in active_entry.nodes]
+                            [
+                                f"{node.type} with *{node.args}"
+                                for node in active_entry.nodes
+                            ]
                         )
                     )
                     info.chat.print_ln(" - gotten values: {}".format(values))

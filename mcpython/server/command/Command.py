@@ -24,20 +24,27 @@ class CommandArgumentType(enum.Enum):
     DEFINED_STRING = enum.auto()
 
     # An int. May be negative; cannot be NaN or inf
+    # todo: add a non-negative variant
+    # todo: add variant with NaN and inf
     INT = enum.auto()
 
-    # A string in "" or '', not mixed. May have spaces in it
+    # A string in "" or '', not mixed. May have spaces in it, determined by the " or ' s
     STRING = enum.auto()
 
     # A float number, can be negative; must be parse-able by float(), cannot contain spaces
     # Represents a java double
+    # todo: add a non-negative variant
     FLOAT = enum.auto()
 
     # A name for a block. Can start with or without mod namespace; must be lookup-able in the block registry
+    # todo: add variant with forced namespace
     BLOCK_NAME = enum.auto()
 
     # A name for an item. Can start with or without mod namespace; must be lookup-able in the item registry
+    # todo: add variant with forced namespace
     ITEM_NAME = enum.auto()
+
+    # todo: add entity name
 
     # A name of a dimension in the active world
     DIMENSION_NAME = enum.auto()
@@ -45,7 +52,8 @@ class CommandArgumentType(enum.Enum):
     # A entity selector; defined by its own registry
     SELECTOR = enum.auto()
 
-    # A position. May be selector for position; Selector must be unique
+    # A position. May be selector; Selector must point to exactly one entity
+    # todo: add variant only for whole blocks
     POSITION = enum.auto()
 
     # A selection of different strings out of an list
@@ -54,7 +62,7 @@ class CommandArgumentType(enum.Enum):
     # A variable list of strings
     OPEN_END_UNDEFINED_STRING = enum.auto()
 
-    # A variable string without the ""
+    # A variable string without the "", without spaces
     STRING_WITHOUT_QUOTES = enum.auto()
 
     # A boolean value
@@ -70,16 +78,17 @@ class CommandArgumentType(enum.Enum):
 class CommandArgumentMode(enum.Enum):
     """
     An enum for how ParseType-entries are handled
+    todo: merge as optional: bool = False into node creation
     """
 
     USER_NEED_ENTER = 0  # user must enter this entry
     OPTIONAL = 1  # user can enter this, but all sub-elements are than invalid
-    # todo: add something like OPTIONAL_ALLOW_FURTHER
 
 
 class Node:
     """
     Class for an part of a command (a "Node"). Contains one parse-able entry, one ParseMode and a list of sub-commands
+    todo: add variant without entry only linking a subset of nodes
     """
 
     def __init__(
@@ -96,7 +105,7 @@ class Node:
         **kwargs
     ):
         """
-        Creates an new Node
+        Creates a new Node instance, representing
         :param entry_type: the type to use
         :param args: arguments to use for check & parsing
         :param mode: the mode to use
@@ -104,6 +113,8 @@ class Node:
         :param on_node_executed: run when this node is the last one on the stack; signature: (info, values, node stack)
         :param on_node_iterated: run when this node is used during command parsing; signature: (info, values, node stack)
         todo: add attribute if it can be the last on the stack or not
+        todo: add permission config entry
+        todo: add "optional" parameter
         """
         self.type = entry_type
         self.mode = mode
@@ -117,7 +128,7 @@ class Node:
         """
         Add a new sub-Node to this Node
         :param node: the Node to add
-        :return: itself
+        :return: the current Node
         """
         if isinstance(node, CommandArgumentType):
             node = Node(node)
@@ -127,8 +138,11 @@ class Node:
 
     def get_node_ends(self) -> typing.Iterable["Node"]:
         if len(self.nodes) == 0:
-            return (self,)
-        return itertools.chain(*(node.get_node_ends() for node in self.nodes))
+            return (self),
+        if all(node.mode == CommandArgumentMode.OPTIONAL for node in self.nodes):
+            yield self
+        for node in self.nodes:
+            yield from node.get_node_ends()
 
 
 class CommandSyntaxHolder:
@@ -169,8 +183,8 @@ class Command(mcpython.common.event.Registry.IRegistryContent):
     @staticmethod
     def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
         """
-        Takes an ParseBridge and fills it with life
-        :param command_syntax_holder: the parse bridge to use
+        Takes a CommandSyntaxHolder and fills it with life
+        :param command_syntax_holder: the syntax holder to use
         """
         raise NotImplementedError()
 

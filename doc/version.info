@@ -1497,4 +1497,7 @@ R   [uuk]: improved world serialization API
 [uuk]: added server console
 [uuk]: added dimension name command entry type
 [uuk]: /execute in takes now a dimension name instead of an id
+[uuk]: added /execute if var <...> command allowing the following structure
+    - defined <var name>: successes if the variable is defined
+    - compare <a> <op> <b>: success if a <op> b is True (op may be ==, !=, <, <=, >, >=)
 
