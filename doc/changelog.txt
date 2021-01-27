@@ -47,7 +47,16 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot 21w04a released on 27.01.2021, targeting 20w03a
+changelog of snapshot <21w06a> released on <...> targeting <21w03a>
+    Commands:
+        - added /worldgendebug command
+
+    World Generation:
+        - added async world generation process
+        - added access system from other processes to the current world
+
+
+changelog of snapshot 21w04a released on 27.01.2021, targeting 21w03a
     This snapshot broke backwards compatibility, again...
     Namely (the most note-able):
     - item factories

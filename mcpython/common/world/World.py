@@ -79,6 +79,8 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             if dimension.loaded:
                 dimension.tick()
 
+        self.world_generation_process.run_tasks()
+
     def add_player(
         self, name: str, add_inventories: bool = True, override: bool = True
     ):

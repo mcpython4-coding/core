@@ -23,6 +23,12 @@ import mcpython.util.math
 
 
 class RemoteWorldHelper:
+    """
+    Some really big, complex system for asynchronous world-access-able multiprocessing.
+    Use RemoteWorldHelper.spawn_process(World) for creating a new process linke to the given world.
+    You MUST call run_tasks() regular on your RemoteWorldHelperReference to process tasks to run on main!
+    """
+
     class RemoteWorldContext:
         def __init__(self, world: mcpython.common.world.AbstractInterface.IWorld, helper):
             self.world = world
@@ -72,6 +78,9 @@ class RemoteWorldHelper:
                 )
             )
 
+        def get_worker_count(self):
+            return self.instance.get_worker_count()
+
     @classmethod
     def spawn_process(cls, world: mcpython.common.world.AbstractInterface.IWorld) -> "RemoteWorldHelper.RemoteWorldHelperReference":
         instance = cls()
@@ -91,9 +100,9 @@ class RemoteWorldHelper:
         task, info = cls.decode_task(task, context)
 
         async def run():
-            context.get_helper().worker_count += 1
+            context.get_helper().worker_count.value += 1
             task()
-            context.get_helper().worker_count -= 1
+            context.get_helper().worker_count.value -= 1
 
         asyncio.ensure_future(run())
 
@@ -116,9 +125,12 @@ class RemoteWorldHelper:
 
         self.running = True
         self.inner_task_id = 0
-        self.worker_count = 0
+        self.worker_count = multiprocessing.Value("i", 0)
 
         self.pending_result_waits = {}
+
+    def get_worker_count(self) -> int:
+        return self.worker_count.value
 
     def stop(self):
         self.running = False
@@ -162,6 +174,19 @@ class RemoteWorldHelper:
 
     def run_on_main(self, func, *args, **kwargs):
         self.task_main_queue.put(
+            self.encode_task(
+                func,
+                args,
+                kwargs,
+                (
+                    -1,
+                    False,
+                ),
+            )
+        )
+
+    def run_on_process(self, func, *args, **kwargs):
+        self.task_off_process_queue.put(
             self.encode_task(
                 func,
                 args,
