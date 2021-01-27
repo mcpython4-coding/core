@@ -30,19 +30,24 @@ class RemoteWorldHelper:
     """
 
     class RemoteWorldContext:
-        def __init__(self, world: mcpython.common.world.AbstractInterface.IWorld, helper):
+        def __init__(
+            self, world: mcpython.common.world.AbstractInterface.IWorld, helper
+        ):
             self.world = world
             self.helper = helper
 
-        def get_world(self):
+        def get_world(self) -> mcpython.common.world.AbstractInterface.IWorld:
             return self.world
 
-        def get_helper(self):
+        def get_helper(self) -> "RemoteWorldHelper":
             return self.helper
 
     class RemoteWorldHelperReference:
         def __init__(
-            self, instance: "RemoteWorldHelper", process: multiprocessing.Process, world: mcpython.common.world.AbstractInterface.IWorld
+            self,
+            instance: "RemoteWorldHelper",
+            process: multiprocessing.Process,
+            world: mcpython.common.world.AbstractInterface.IWorld,
         ):
             self.instance = instance
             self.process = process
@@ -82,7 +87,9 @@ class RemoteWorldHelper:
             return self.instance.get_worker_count()
 
     @classmethod
-    def spawn_process(cls, world: mcpython.common.world.AbstractInterface.IWorld) -> "RemoteWorldHelper.RemoteWorldHelperReference":
+    def spawn_process(
+        cls, world: mcpython.common.world.AbstractInterface.IWorld
+    ) -> "RemoteWorldHelper.RemoteWorldHelperReference":
         instance = cls()
         process = multiprocessing.Process(target=instance.run)
         process.start()
@@ -90,27 +97,33 @@ class RemoteWorldHelper:
 
     @classmethod
     def run_task(cls, task, result_helper, context):
-        task, (task_id, wait_for_result) = cls.decode_task(task, context)
-        result = task()
+        task, args, kwargs, (task_id, wait_for_result) = cls.decode_task(task)
+        result = task(context, *args, **kwargs)
         if wait_for_result:
             result_helper(task_id, result)
 
     @classmethod
     def run_task_async(cls, task, context):
-        task, info = cls.decode_task(task, context)
+        task, args, kwargs, info = cls.decode_task(task)
 
         async def run():
             context.get_helper().worker_count.value += 1
-            task()
+            p = task(context, *args, **kwargs)
+
+            if isinstance(p, typing.Coroutine):
+                await p
+
             context.get_helper().worker_count.value -= 1
 
         asyncio.ensure_future(run())
 
     @classmethod
-    def decode_task(cls, task, context) -> typing.Tuple[typing.Callable, typing.Any]:
+    def decode_task(cls, task) -> typing.Tuple[typing.Callable, list, dict, typing.Any]:
         data, args, kwargs, info = pickle.loads(task)
         return (
-            lambda: types.FunctionType(marshal.loads(data), globals())(context, *args, **kwargs),
+            types.FunctionType(marshal.loads(data), globals()),
+            args,
+            kwargs,
             info,
         )
 
@@ -424,7 +437,9 @@ class RemoteDimension(mcpython.common.world.AbstractInterface.IDimension):
     async def set_world_generation_config_for_layer(self, layer_name, layer_config):
         # todo: can we cache it?
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension_id).set_world_generation_config_for_layer(layer_name, layer_config)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension_id)
+            .set_world_generation_config_for_layer(layer_name, layer_config)
         )
 
     async def get_world_generation_config_entry(self, name: str, default=None):
@@ -437,12 +452,16 @@ class RemoteDimension(mcpython.common.world.AbstractInterface.IDimension):
 
     async def set_world_generation_config_entry(self, name: str, value):
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension_id).set_world_generation_config_entry(name, value)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension_id)
+            .set_world_generation_config_entry(name, value)
         )
 
     async def unload_chunk(self, chunk: IChunk):
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension_id).unload_chunk(chunk)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension_id)
+            .unload_chunk(chunk)
         )
 
 
@@ -460,21 +479,28 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
     async def is_loaded(self) -> bool:
         # todo: cache and get informed by chunk
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(*self.position).is_loaded()
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .is_loaded()
         )
 
     async def is_generated(self) -> bool:
         # todo: cache and get informed by chunk
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).is_generated()
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .is_generated()
         )
 
     async def is_visible(self) -> bool:
         # todo: cache and get informed by chunk
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).is_visible()
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .is_visible()
         )
 
     def get_dimension(self) -> "RemoteDimension":
@@ -485,52 +511,66 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
 
     async def get_maximum_y_coordinate_from_generation(self, x: int, z: int) -> int:
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).get_maximum_y_coordinate_from_generation(x, z)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .get_maximum_y_coordinate_from_generation(x, z)
         )
 
     async def exposed_faces(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Dict[mcpython.util.enums.EnumSide, bool]:
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).exposed_faces(position)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .exposed_faces(position)
         )
 
     async def is_position_blocked(
         self, position: typing.Tuple[float, float, float]
     ) -> bool:
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).is_position_blocked()
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .is_position_blocked()
         )
 
     async def add_block(self, *args, **kwargs):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).add_block(*args, **kwargs)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .add_block(*args, **kwargs)
         )
 
     def on_block_updated(
         self, position: typing.Tuple[float, float, float], itself=True
     ):
         self.helper.run_on_main(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).on_block_updated(position)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .on_block_updated(position)
         )
 
     async def remove_block(self, *args, **kwargs):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).remove_block(*args, **kwargs)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .remove_block(*args, **kwargs)
         )
 
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         self.helper.run_on_main(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).check_neighbors(position)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .check_neighbors(position)
         )
 
     async def show_block(
@@ -542,8 +582,10 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
         immediate: bool = True,
     ):
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).show_block(position, immediate=immediate)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .show_block(position, immediate=immediate)
         )
 
     async def hide_block(
@@ -555,46 +597,60 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
         immediate=True,
     ):
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).hide_block(position, immediate=immediate)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .hide_block(position, immediate=immediate)
         )
 
     async def show(self, force=False):
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).show(force=force)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .show(force=force)
         )
 
     async def hide(self, force=False):
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).hide(force=force)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .hide(force=force)
         )
 
     async def update_visible_block(
         self, position: typing.Tuple[int, int, int], hide=True
     ):
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).update_visible_block(position, hide=hide)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .update_visible_block(position, hide=hide)
         )
 
     async def exposed(self, position: typing.Tuple[int, int, int]):
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).exposed(position)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .exposed(position)
         )
 
     async def update_visible(self, hide=True, immediate=False):
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).update_visible(hide=hide, immediate=immediate)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .update_visible(hide=hide, immediate=immediate)
         )
 
     async def hide_all(self, immediate=True):
         await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).hide_all(immediate=immediate)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .hide_all(immediate=immediate)
         )
 
     async def get_block(
@@ -602,8 +658,10 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
     ) -> typing.Union[typing.Any, str, None]:
         # todo: cache
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).get_block(position)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .get_block(position)
         )
 
     def as_shareable(self) -> "RemoteChunk":
@@ -611,27 +669,35 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
 
     def mark_dirty(self):
         self.helper.run_on_main(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).mark_dirty()
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .mark_dirty()
         )
 
     async def get_entities(self):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).get_entities()
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .get_entities()
         )
 
     async def set_value(self, key: str, data):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).set_value(key, data)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .set_value(key, data)
         )
 
     async def get_value(self, key: str):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_dimension(self.dimension.get_id()).get_chunk(
-                *self.position).get_value(key)
+            lambda context: context.get_world()
+            .get_dimension(self.dimension.get_id())
+            .get_chunk(*self.position)
+            .get_value(key)
         )

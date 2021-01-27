@@ -55,9 +55,7 @@ class IChunk(ABC):
 
         # a set of entities in this chunk
         # todo: maybe use per-sector?
-        self.entities: typing.Set[
-            typing.Any
-        ] = set()
+        self.entities: typing.Set[typing.Any] = set()
 
         # inner API list for ChunkLoadTickets [WIP]
         # todo: use something better...
@@ -149,15 +147,11 @@ class IChunk(ABC):
     def add_block(
         self,
         position: tuple,
-        block_name: typing.Union[
-            str, typing.Any
-        ],
+        block_name: typing.Union[str, typing.Any],
         immediate=True,
         block_update=True,
         block_update_self=True,
-        lazy_setup: typing.Callable[
-            [typing.Any], None
-        ] = None,
+        lazy_setup: typing.Callable[[typing.Any], None] = None,
         check_build_range=True,
         block_state=None,
     ) -> typing.Optional[typing.Any]:

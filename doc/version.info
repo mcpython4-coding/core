@@ -1506,7 +1506,8 @@ R   [uuk]: improved world serialization API
 [uuk]: added RemoteWorldAccess dummy file for defining async world access
 [github]: released snapshot 21w04a
 
-[uuk]: implemented RemoteWorldAccess async implementation and process management
-[uuk]: added /worldgendebug command
-[uuk]:
+[uuk]: implemented RemoteWorldAccess async implementation and process management using asyncio
+[uuk]: added /worldgendebug command, for debugging the world gen system [and the process system]
+[uuk]: added /worldgendebug info and /worldgendebug ping
+[uuk]: targeting now 21w05b
 

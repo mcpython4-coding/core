@@ -47,7 +47,10 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <21w06a> released on <...> targeting <21w03a>
+changelog of snapshot <21w07a> released on <...> targeting <21w05b>
+    This snapshot breaks again compatibility, mainly the following:
+        - rework how the world generates - from ground up!
+
     Commands:
         - added /worldgendebug command
 

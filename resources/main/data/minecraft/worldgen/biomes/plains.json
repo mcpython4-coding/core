@@ -1,5 +1,6 @@
 {
   "name": "minecraft:plains",
+  "mass": "land",
   "passive_spawns": {
         "minecraft:sheep": [12, 4],
         "minecraft:pigs": [10, 4],

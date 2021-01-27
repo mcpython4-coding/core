@@ -1,5 +1,6 @@
 {
   "name": "minecraft:dessert",
+  "mass": "land",
   "passive_spawns": {
     "minecraft:rabbit": [
       4,

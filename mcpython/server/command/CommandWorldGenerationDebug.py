@@ -34,9 +34,7 @@ class CommandWorldGenDebug(mcpython.server.command.Command.Command):
         command_syntax_holder.main_entry = "worldgendebug"
         command_syntax_holder.add_node(
             Node(CommandArgumentType.DEFINED_STRING, "info")
-        ).add_node(
-            Node(CommandArgumentType.DEFINED_STRING, "ping")
-        )
+        ).add_node(Node(CommandArgumentType.DEFINED_STRING, "ping"))
 
     @classmethod
     def parse(cls, values: list, modes: list, info):
@@ -46,9 +44,15 @@ class CommandWorldGenDebug(mcpython.server.command.Command.Command):
             print(remote_helper.get_worker_count())
 
         elif values[0] == "ping":
+
             def ping(context):
                 print("ping")
                 context.get_helper().run_on_main(lambda _: print("pong"))
+
+                async def test(ctx):
+                    print("pingpong")
+
+                context.get_helper().run_on_process(test)
 
             remote_helper.run_on_process(ping)
 
@@ -56,5 +60,5 @@ class CommandWorldGenDebug(mcpython.server.command.Command.Command):
     def get_help() -> list:
         return [
             "/worldgendebug info: prints general information about world gen",
-            "/worldgendebug ping: pings the world generation process. If everything is fine, prints 'ping' and 'pong'"
+            "/worldgendebug ping: pings the world generation process. If everything is fine, prints 'ping', 'pong' and 'pingpong'",
         ]
