@@ -24,15 +24,16 @@ wrapper = mcpython.LaunchWrapper.LaunchWrapper()
 wrapper.prepare_client()
 
 
-try:
-    wrapper.print_header()
-    wrapper.inject_sys_argv(sys.argv)  # load sys.argv
-    wrapper.setup()  # do setup stuff
-    wrapper.launch()  # and start mainloop
-except SystemExit:
-    sys.exit(-1)
-except:
-    wrapper.error_clean()
-    sys.exit(-1)
+if __name__ == "__main__":
+    try:
+        wrapper.print_header()
+        wrapper.inject_sys_argv(sys.argv)  # load sys.argv
+        wrapper.setup()  # do setup stuff
+        wrapper.launch()  # and start mainloop
+    except SystemExit:
+        sys.exit(-1)
+    except:
+        wrapper.error_clean()
+        sys.exit(-1)
 
-wrapper.clean()
+    wrapper.clean()

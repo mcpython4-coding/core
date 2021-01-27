@@ -72,6 +72,7 @@ def load_commands():
         CommandShuffleData,
         CommandBlockInfo,
         CommandRecipeView,
+        CommandWorldGenerationDebug,
     )
 
     # register this at the end

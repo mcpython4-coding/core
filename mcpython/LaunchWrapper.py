@@ -244,6 +244,7 @@ class LaunchWrapper:
         (not save)
         MAY crash on non-fully stable systems
         """
+        shared.world.world_generation_process.stop()
         import mcpython.ResourceLoader
 
         mcpython.ResourceLoader.close_all_resources()

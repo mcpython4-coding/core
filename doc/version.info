@@ -1504,4 +1504,8 @@ R   [uuk]: improved world serialization API
 [uuk]: WARNING: this compiler takes LONG time on first compilation
 [uuk]: compilation is handled by dev/generate_binary.py
 [uuk]: added RemoteWorldAccess dummy file for defining async world access
+[github]: released snapshot 21w04a
+
+[uuk]: implemented RemoteWorldAccess async implementation and process management
+[uuk]: added /worldgendebug command
 

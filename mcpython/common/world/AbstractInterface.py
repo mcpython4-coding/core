@@ -12,8 +12,6 @@ from abc import ABC
 import typing
 import enum
 import mcpython.util.enums
-import mcpython.common.block.AbstractBlock
-import mcpython.common.entity.AbstractEntity
 
 
 class ChunkLoadTicketType(enum.Enum):
@@ -58,7 +56,7 @@ class IChunk(ABC):
         # a set of entities in this chunk
         # todo: maybe use per-sector?
         self.entities: typing.Set[
-            mcpython.common.entity.AbstractEntity.AbstractEntity
+            typing.Any
         ] = set()
 
         # inner API list for ChunkLoadTickets [WIP]
@@ -152,21 +150,21 @@ class IChunk(ABC):
         self,
         position: tuple,
         block_name: typing.Union[
-            str, mcpython.common.block.AbstractBlock.AbstractBlock
+            str, typing.Any
         ],
         immediate=True,
         block_update=True,
         block_update_self=True,
         lazy_setup: typing.Callable[
-            [mcpython.common.block.AbstractBlock.AbstractBlock], None
+            [typing.Any], None
         ] = None,
         check_build_range=True,
         block_state=None,
-    ) -> typing.Optional[mcpython.common.block.AbstractBlock.AbstractBlock]:
+    ) -> typing.Optional[typing.Any]:
         """
         Adds an block to the given position
         :param position: the position to add at
-        :param block_name: the name of the block or an instance of it (mcpython.common.block.AbstractBlock.AbstractBlock)
+        :param block_name: the name of the block or an instance of it (typing.Any)
         :param immediate: if the block should be shown if needed or not
         :param block_update: if an block-update should be send to neighbors blocks
         :param block_update_self: if the block should get an block-update
@@ -190,12 +188,12 @@ class IChunk(ABC):
         self,
         position: typing.Union[
             typing.Tuple[int, int, int],
-            mcpython.common.block.AbstractBlock.AbstractBlock,
+            typing.Any,
         ],
         immediate: bool = True,
         block_update: bool = True,
         block_update_self: bool = True,
-        reason=mcpython.common.block.AbstractBlock.BlockRemovalReason.UNKNOWN,
+        reason=None,
     ):
         """
         Removes a block from a given position
@@ -221,7 +219,7 @@ class IChunk(ABC):
         self,
         position: typing.Union[
             typing.Tuple[int, int, int],
-            mcpython.common.block.AbstractBlock.AbstractBlock,
+            typing.Any,
         ],
         immediate: bool = True,
     ):
@@ -237,7 +235,7 @@ class IChunk(ABC):
         self,
         position: typing.Union[
             typing.Tuple[int, int, int],
-            mcpython.common.block.AbstractBlock.AbstractBlock,
+            typing.Any,
         ],
         immediate=True,
     ):
@@ -297,7 +295,7 @@ class IChunk(ABC):
 
     def get_block(
         self, position: typing.Tuple[int, int, int]
-    ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
+    ) -> typing.Union[typing.Any, str, None]:
         """
         Getter function for a block
         :param position: the position
@@ -380,7 +378,7 @@ class IDimension(ABC):
         self,
         position: typing.Union[
             typing.Tuple[float, float, float],
-            mcpython.common.block.AbstractBlock.AbstractBlock,
+            typing.Any,
         ],
         **kwargs
     ) -> typing.Optional[IChunk]:
@@ -388,7 +386,7 @@ class IDimension(ABC):
 
     def get_block(
         self, position: typing.Tuple[int, int, int]
-    ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
+    ) -> typing.Union[typing.Any, str, None]:
         raise NotImplementedError
 
     def add_block(
