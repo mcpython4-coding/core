@@ -138,7 +138,7 @@ class Node:
 
     def get_node_ends(self) -> typing.Iterable["Node"]:
         if len(self.nodes) == 0:
-            return (self),
+            return ((self),)
         if all(node.mode == CommandArgumentMode.OPTIONAL for node in self.nodes):
             yield self
         for node in self.nodes:

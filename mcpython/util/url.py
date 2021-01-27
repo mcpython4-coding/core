@@ -31,35 +31,18 @@ class SimulatedResponse:
         return None
 
 
-SIMULATE = False
-
-
 def get_url(url, **kwargs):
     """
-    gets the content of an URL as an requests.get() or an an SimulatedResponse-instance
+    Gets the content of an URL as an requests.get() or an an SimulatedResponse-instance
     :param url: the url to download from
     :param kwargs: kwargs to requests.get() with
     :return: the content
     """
-    if SIMULATE:
-        raw = None
-        # These files are not provided in the git repo because I consider them
-        # kind of sensitive.  Feel free to provide your own in their place.
-        if url.startswith("https://api.mojang.com/users/profiles/minecraft/"):
-            with open(shared.build + "/simulated_userid_response.json", "r") as f:
-                content = f.read()
-            is_json = True
-        elif url.startswith(
-            "https://sessionserver.mojang.com/session/minecraft/profile/"
-        ):
-            with open(shared.build + "/simulated_userinfo_response.json", "r") as f:
-                content = f.read()
-            is_json = True
-        else:
-            with open(shared.build + "/simulated_skin_response.png", "rb") as f:
-                content = f.read()
-            is_json = False
-            raw = io.BytesIO(content)
-        return SimulatedResponse(content, is_json, raw)
-    else:
-        return requests.get(url, **kwargs)
+    return requests.get(url, **kwargs)
+
+
+async def get_url_async(url, **kwargs):
+    """
+    Async variant of above get_url() method
+    """
+    return requests.get(url, **kwargs)

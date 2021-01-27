@@ -47,14 +47,14 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <21w04a> released on <27.01.2021>, targeting <20w03a>
+changelog of snapshot 21w04a released on 27.01.2021, targeting 20w03a
     This snapshot broke backwards compatibility, again...
-    Namely:
-    - items are now constructed differently
-    - crafting recipes are slightly other loaded
-    - behaviour changes of BlockFaceState
-    - refactors of various small parts
-    - refactor of command system; everything is broken
+    Namely (the most note-able):
+    - item factories
+    - crafting recipes
+    - behaviour changes of BlockFaceState, for better performance
+    - command system
+    - inventory system (pushed in direction of container separation)
 
     Commands:
         - added /blockinfo command giving information about the block currently looking at
@@ -82,6 +82,10 @@ changelog of snapshot <21w04a> released on <27.01.2021>, targeting <20w03a>
         - ItemFactory is now also created by FactoryBuilder
         - this is breaking existing code, again...
         - added a new combined factory system using in-memory calculations
+
+    Build System:
+        - improved undocumented build
+        - started writing a binary building API based on https://github.com/Nuitka/Nuitka
 
     Fixed issues:
         - escaping in logs did not work in some edge cases correctly

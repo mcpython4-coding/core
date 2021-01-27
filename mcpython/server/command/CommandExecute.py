@@ -96,7 +96,6 @@ class CommandExecute(mcpython.server.command.Command.Command):
                 )
             )
         ),
-
         # sub-nodes are copied from if-condition during command init, and are shared
         "unless": Node(
             CommandArgumentType.DEFINED_STRING,

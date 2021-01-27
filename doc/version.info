@@ -1500,4 +1500,8 @@ R   [uuk]: improved world serialization API
 [uuk]: added /execute if var <...> command allowing the following structure
     - defined <var name>: successes if the variable is defined
     - compare <a> <op> <b>: success if a <op> b is True (op may be ==, !=, <, <=, >, >=)
+[uuk]: implemented compiler using nuitka (https://github.com/Nuitka/Nuitka)
+[uuk]: WARNING: this compiler takes LONG time on first compilation
+[uuk]: compilation is handled by dev/generate_binary.py
+[uuk]: added RemoteWorldAccess dummy file for defining async world access
 
