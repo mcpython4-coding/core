@@ -224,8 +224,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         return self.get_chunk(*mcpython.util.math.position_to_chunk(position), **kwargs)
 
     def get_block(
-        self, position: typing.Tuple[int, int, int],
-            none_if_str=False
+        self, position: typing.Tuple[int, int, int], none_if_str=False
     ) -> typing.Union[mcpython.common.block.AbstractBlock.AbstractBlock, str, None]:
         chunk = self.get_chunk_for_position(position, generate=False, create=False)
         if chunk is None:

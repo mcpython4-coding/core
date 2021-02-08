@@ -388,8 +388,7 @@ class RemoteDimension(mcpython.common.world.AbstractInterface.IDimension):
         return await self.get_chunk(*pos)
 
     async def get_block(
-        self, position: typing.Tuple[int, int, int],
-            none_if_str=False
+        self, position: typing.Tuple[int, int, int], none_if_str=False
     ) -> typing.Union[typing.Any, str, None]:
         # todo: some form of remote block / only the block name?
         return await self.helper.run_on_main_async(
@@ -655,8 +654,7 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
         )
 
     async def get_block(
-        self, position: typing.Tuple[int, int, int],
-            none_if_str=False
+        self, position: typing.Tuple[int, int, int], none_if_str=False
     ) -> typing.Union[typing.Any, str, None]:
         # todo: cache
         return await self.helper.run_on_main_async(

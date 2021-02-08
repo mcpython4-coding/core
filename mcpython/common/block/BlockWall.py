@@ -108,6 +108,7 @@ def create_wall_class(name: str):
     Constructor helper for creating a new wall class
     For internal usage only!
     """
+
     class GeneratedWall(IWall):
         NAME = name
 

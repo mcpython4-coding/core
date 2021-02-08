@@ -212,14 +212,13 @@ class ModLoader:
                         "- could not locate mod.json file for mod at '{}'".format(file)
                     )
 
-    def look_out(self):
+    def look_out(self, from_files=True):
         """
         Will load all mods arrival
         """
-        if not shared.ENABLE_MOD_LOADER: return
-
-        locations = self.get_locations()
-        self.load_mod_json_from_locations(locations)
+        if from_files:
+            locations = self.get_locations()
+            self.load_mod_json_from_locations(locations)
 
         # this is special, as it is not loaded from files...
         import mcpython.common.mod.ModMcpython
@@ -430,7 +429,11 @@ class ModLoader:
 
         if "loaderVersion" in data:
             if data["loaderVersion"].startswith("["):
-                self.error_builder.println("- found forge-version indicator in mod from file {}, which is currently unsupported".format(file))
+                self.error_builder.println(
+                    "- found forge-version indicator in mod from file {}, which is currently unsupported".format(
+                        file
+                    )
+                )
                 return
 
             version = data["loaderVersion"]
@@ -609,8 +612,8 @@ class ModLoader:
             if stage.call_one(astate):
                 return
 
-        if shared.IS_CLIENT:
-            self.update_pgb_text()
+        # if shared.IS_CLIENT:
+        self.update_pgb_text()
 
     def update_pgb_text(self):
         """

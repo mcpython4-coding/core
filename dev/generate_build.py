@@ -240,16 +240,16 @@ class BuildManager:
             )
 
     def collect_assets(self):
-        subprocess.call(
-            [
-                sys.executable,
-                self.local + "/__main__.py",
-                "--data-gen",
-                "--exit-after-data-gen",
-                "--no-window",
-                "--enable-all-blocks",
-            ],
-        )
+        # subprocess.call(
+        #     [
+        #         sys.executable,
+        #         self.local + "/__main__.py",
+        #         "--data-gen",
+        #         "--exit-after-data-gen",
+        #         # "--no-window",
+        #         "--enable-all-blocks",
+        #     ],
+        # )
 
         print("collecting assets...")
         copytree(self.local + "/resources/generated", self.tmp_folder.name)
@@ -312,7 +312,7 @@ class BuildManager:
                 result = []  # here we store the context
                 in_multi_line_comment = 0
                 for line_n, line in enumerate(data):
-                    line = line[:-1]
+                    line = line.removesuffix("\n")
                     multi_line_change = False
                     index = None
                     in_string = 0
@@ -326,10 +326,12 @@ class BuildManager:
                                 elif in_multi_line_comment == 1:
                                     in_multi_line_comment = 0
                                     multi_line_change = True
+
                             elif in_string == 0:
                                 in_string = 1
                             elif in_string == 1:
                                 in_string = 0
+
                         elif e == "'" and not (i > 0 and line[i - 1] == "\\"):
                             if len(line) > i + 1 and line[i : i + 3] == "'''":
                                 if in_multi_line_comment == 0:
@@ -339,13 +341,16 @@ class BuildManager:
                                 elif in_multi_line_comment == 2:
                                     in_multi_line_comment = 0
                                     multi_line_change = True
+
                             elif in_string == 0:
                                 in_string = 2
                             elif in_string == 2:
                                 in_string = 0
+
                         elif e == "#" and in_string == 0 and index is None:
                             index = i
                             break
+
                     if index is not None:
                         line = line[:index]
                     if not (not multi_line_change and in_multi_line_comment != 0):
@@ -365,8 +370,8 @@ class BuildManager:
                     f.write(string)
 
     def strip_client_only_code(self):
-        shutil.rmtree(self.tmp_folder.name+"/mcpython/client")
-        os.remove(self.tmp_folder.name+"/__main__.py")
+        shutil.rmtree(self.tmp_folder.name + "/mcpython/client")
+        os.remove(self.tmp_folder.name + "/__main__.py")
 
 
 if __name__ == "__main__":

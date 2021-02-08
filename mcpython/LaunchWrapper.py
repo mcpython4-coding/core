@@ -181,12 +181,7 @@ class LaunchWrapper:
         Do ModLoader initial stuff
         Looks for mods in the path only when shared.ENABLE_MOD_LOADER is True
         """
-        if shared.ENABLE_MOD_LOADER:
-            shared.mod_loader.look_out()
-        else:
-            # This here is than the only mod we want to load
-            import mcpython.common.mod.ModMcpython
-
+        shared.mod_loader.look_out(from_files=shared.ENABLE_MOD_LOADER)
         shared.mod_loader.sort_mods()
         shared.mod_loader.write_mod_info()
 

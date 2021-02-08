@@ -79,10 +79,7 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
         block = chunk.get_block(position, none_if_str=True)
 
-        if (
-            block is None
-            or "#minecraft:supports_nether_portal" not in block.TAGS
-        ):
+        if block is None or "#minecraft:supports_nether_portal" not in block.TAGS:
             chunk.remove_block(self.position)
             return True
 

@@ -69,10 +69,13 @@ model_handler = None  # the model handler instance, client-only
 mod_loader = None  # the mod loader instance
 
 
-# todo: move to separated file
-import mcpython.client.rendering.RenderingHelper
+try:
+    # todo: move to separated file
+    import mcpython.client.rendering.RenderingHelper as _helper
 
-rendering_helper = mcpython.client.rendering.RenderingHelper.RenderingHelper()
+    rendering_helper = _helper.RenderingHelper()
+except ImportError:
+    rendering_helper = None
 
 NEXT_EVENT_BUS_ID = 0
 

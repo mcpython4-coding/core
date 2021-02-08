@@ -300,8 +300,7 @@ class IChunk(ABC):
         raise NotImplementedError
 
     def get_block(
-        self, position: typing.Tuple[int, int, int],
-        none_if_str=False
+        self, position: typing.Tuple[int, int, int], none_if_str=False
     ) -> typing.Union[typing.Any, str, None]:
         """
         Getter function for a block
@@ -394,8 +393,7 @@ class IDimension(ABC):
         raise NotImplementedError
 
     def get_block(
-        self, position: typing.Tuple[int, int, int],
-        none_if_str=False
+        self, position: typing.Tuple[int, int, int], none_if_str=False
     ) -> typing.Union[typing.Any, str, None]:
         raise NotImplementedError
 

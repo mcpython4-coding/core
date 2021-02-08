@@ -517,8 +517,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             self.hide_block(position, immediate=immediate)
 
     def get_block(
-        self, position: typing.Tuple[int, int, int],
-        none_if_str=False
+        self, position: typing.Tuple[int, int, int], none_if_str=False
     ) -> typing.Union[Block.AbstractBlock, str, None]:
         """
         will get the block at an given position
@@ -530,9 +529,13 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         return (
             self._world[position]
             if position in self._world
-            else (shared.world_generation_handler.task_handler.get_block(
-                position, chunk=self
-            ) if not none_if_str else None)
+            else (
+                shared.world_generation_handler.task_handler.get_block(
+                    position, chunk=self
+                )
+                if not none_if_str
+                else None
+            )
         )
 
     def __str__(self):

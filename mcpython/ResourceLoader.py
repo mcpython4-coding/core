@@ -16,7 +16,18 @@ import zipfile
 from abc import ABC
 import itertools
 
-import PIL.Image
+try:
+    import PIL.Image as PIL_Image
+except ImportError:
+
+    class PIL_Image:
+        class Image:
+            pass
+
+        @classmethod
+        def open(cls, file: str):
+            raise IOError()
+
 
 import mcpython.common.config
 import mcpython.util.texture
@@ -72,15 +83,15 @@ class IResourceLoader(ABC):
         """
         raise NotImplementedError()
 
-    def read_image(self, path: str) -> PIL.Image.Image:
+    def read_image(self, path: str) -> PIL_Image.Image:
         """
-        will read an file into the system as an PIL.Image.Image
+        will read an file into the system as an PIL_Image.Image
         :param path: the file name to use
         :return: the content of the file loaded as image
         """
         with open(shared.tmp.name + "/resource_output.png", mode="wb") as f:
             f.write(self.read_raw(path))
-        return PIL.Image.open(shared.tmp.name + "/resource_output.png")
+        return PIL_Image.open(shared.tmp.name + "/resource_output.png")
 
     def read_decoding(self, path: str, encoding: str) -> str:
         """
@@ -95,6 +106,7 @@ class IResourceLoader(ABC):
         """
         Called when the resource path should be closed
         """
+        pass
 
     def get_all_entries_in_directory(
         self, directory: str, go_sub=True
@@ -131,10 +143,10 @@ class ResourceZipFile(IResourceLoader):
     def read_raw(self, path: str) -> bytes:
         return self.archive.read(path)
 
-    def read_image(self, path: str) -> PIL.Image.Image:
+    def read_image(self, path: str) -> PIL_Image.Image:
         with open(shared.tmp.name + "/resource_output.png", mode="wb") as f:
             f.write(self.archive.read(path))
-        return PIL.Image.open(shared.tmp.name + "/resource_output.png")
+        return PIL_Image.open(shared.tmp.name + "/resource_output.png")
 
     def close(self):
         self.archive.close()
@@ -183,8 +195,8 @@ class ResourceDirectory(IResourceLoader):
             data: bytes = f.read()
         return data
 
-    def read_image(self, path: str) -> PIL.Image.Image:
-        return PIL.Image.open(os.path.join(self.path, path))
+    def read_image(self, path: str) -> PIL_Image.Image:
+        return PIL_Image.open(os.path.join(self.path, path))
 
     def get_all_entries_in_directory(
         self, directory: str, go_sub=True
@@ -227,7 +239,7 @@ class SimulatedResourceLoader(IResourceLoader):
     def provide_raw(self, name: str, raw: bytes):
         self.raw[name] = raw
 
-    def provide_image(self, name: str, image: PIL.Image.Image):
+    def provide_image(self, name: str, image: PIL_Image.Image):
         self.images[name] = image
 
     @staticmethod
@@ -245,11 +257,11 @@ class SimulatedResourceLoader(IResourceLoader):
             return self.raw[path]
         raise IOError("could not find {}".format(path))
 
-    def read_image(self, path: str) -> PIL.Image.Image:
+    def read_image(self, path: str) -> PIL_Image.Image:
         if path in self.raw:
             with open(shared.tmp.name + "/resource_output.png", mode="wb") as f:
                 f.write(self.raw[path])
-            return PIL.Image.open(shared.tmp.name + "/resource_output.png")
+            return PIL_Image.open(shared.tmp.name + "/resource_output.png")
         return self.images[path]
 
     def close(self):
@@ -329,15 +341,11 @@ def load_resource_packs():
 
     # for local accessing the various directories used by the game
     # todo: this might need tweaks for builded executeables
-    RESOURCE_LOCATIONS.append(
-        ResourceDirectory(shared.local)
-    )
+    RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local))
     RESOURCE_LOCATIONS.append(ResourceDirectory(shared.home))
     RESOURCE_LOCATIONS.append(ResourceDirectory(shared.build))
 
-    if (
-        shared.dev_environment
-    ):
+    if shared.dev_environment:
         # only in dev-environment we need these special folders
         # todo: strip when building
         # todo: use the .jar file for source resources instead of extracting them

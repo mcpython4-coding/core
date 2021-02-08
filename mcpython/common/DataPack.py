@@ -54,7 +54,8 @@ class DataPackHandler:
         subsequent systems to register them (datapack:search)
         WARNING: this function is called also on each reload
         """
-        if not shared.ENABLE_DATAPACK_LOADER: return
+        if not shared.ENABLE_DATAPACK_LOADER:
+            return
 
         for path in os.listdir(shared.home + "/datapacks"):
             self.load_datapack_from_directory(shared.home + "/datapacks/" + path)
