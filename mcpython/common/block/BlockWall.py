@@ -12,6 +12,7 @@ import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
 from mcpython import shared
 import mcpython.util.enums
+import mcpython.common.block.PossibleBlockStateBuilder
 
 
 class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
@@ -19,6 +20,17 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     DEFAULT_FACE_SOLID = (
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
+    # todo: up is not always allowed / depends on the configuration of the other stuff!
+    DEBUG_WORLD_BLOCK_STATES = (
+        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
+        .add_comby("north", "low", "unset")
+        .add_comby("east", "low", "unset")
+        .add_comby("south", "low", "unset")
+        .add_comby("west", "low", "unset")
+        .add_comby_bool("up")
+        .build()
     )
 
     def __init__(self):
@@ -102,26 +114,8 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     def set_model_state(self, state: dict):
         for key in state:
-            self.connections[key] = state[key] == "true"
-
-    @staticmethod
-    def get_all_model_states() -> list:
-        states = []
-        for north in range(2):
-            for east in range(2):
-                for south in range(2):
-                    for west in range(2):
-                        for up in range(2):
-                            states.append(
-                                {
-                                    "north": "low" if north else "unset",
-                                    "east": "low" if north else "unset",
-                                    "south": "low" if north else "unset",
-                                    "west": "low" if north else "unset",
-                                    "up": str(bool(up)).lower(),
-                                }
-                            )
-        return states
+            if key in self.connections:
+                self.connections[key] = state[key] in ("low", "true")
 
 
 # create all classes for the blocks

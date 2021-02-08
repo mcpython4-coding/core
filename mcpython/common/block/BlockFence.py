@@ -8,36 +8,37 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
 from mcpython import shared
 import mcpython.util.enums
+import mcpython.common.block.PossibleBlockStateBuilder
 
 
 # todo: add factory method for this
-class IFence(mcpython.common.block.AbstractBlock.AbstractBlock):
+class IFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     """
-    Base class for every fence-like block. Expects
+    Abstract base class for every fence-like block
     """
 
-    FENCE_TYPE_NAME: set = set()  # the type list of the fences
+    # The type list of the fences; same types are able to connect to each other, not same types not
+    FENCE_TYPE_NAME: set = set()
 
-    # todo: add bounding-box
-    BBOX = None  # the bounding box
+    # the bounding box todo: add
+    BBOX = None
 
-    DEBUG_WORLD_BLOCK_STATES = []
-    for north in range(2):
-        for east in range(2):
-            for south in range(2):
-                for west in range(2):
-                    DEBUG_WORLD_BLOCK_STATES.append(
-                        {
-                            "north": str(bool(north)).lower(),
-                            "east": str(bool(east)).lower(),
-                            "south": str(bool(south)).lower(),
-                            "west": str(bool(west)).lower(),
-                        }
-                    )
+    # the debug world states
+    DEBUG_WORLD_BLOCK_STATES = (
+        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
+        .combinations()
+        .add_comby_bool("north")
+        .add_comby_bool("east")
+        .add_comby_bool("south")
+        .add_comby_bool("west")
+        .build()
+    )
 
     DEFAULT_FACE_SOLID = (
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID

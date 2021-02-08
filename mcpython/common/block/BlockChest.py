@@ -19,6 +19,7 @@ import mcpython.common.item.AbstractToolItem
 import mcpython.util.enums
 from . import AbstractBlock
 import mcpython.client.rendering.blocks.TemporaryChestRenderer
+import mcpython.common.block.PossibleBlockStateBuilder
 
 BBOX = mcpython.common.block.BoundingBox.BoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)
@@ -44,12 +45,11 @@ class BlockChest(AbstractBlock.AbstractBlock):
 
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
-    DEBUG_WORLD_BLOCK_STATES = [
-        {"side": mcpython.util.enums.EnumSide.N},
-        {"side": mcpython.util.enums.EnumSide.E},
-        {"side": mcpython.util.enums.EnumSide.S},
-        {"side": mcpython.util.enums.EnumSide.W},
-    ]
+    DEBUG_WORLD_BLOCK_STATES = (
+        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
+        .add_comby_side_horizontal("side")
+        .build()
+    )
 
     DEFAULT_FACE_SOLID = (
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
@@ -136,13 +136,13 @@ class BlockChest(AbstractBlock.AbstractBlock):
         if "side" in state:
             face = state["side"]
             if type(face) == str:
-                self.front_side = mcpython.util.enums.EnumSide[state["side"]]
+                self.front_side = mcpython.util.enums.EnumSide[state["side"].upper()]
             else:
                 self.front_side = face
 
     def get_model_state(self) -> dict:
         return {
-            "side": self.front_side.name,
+            "side": self.front_side.normal_name,
             "type": "normal" if not self.is_christmas else "christmas",
         }
 
@@ -185,7 +185,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
             self.set_model_state(data["model"])
         else:
             logger.println(
-                "[SERIALIZER][WARN] {} is missing model state in save files".format(
+                "[SERIALIZER][WARN] '{}' is missing model state in save files; this indicates a save error...".format(
                     self
                 )
             )
@@ -194,7 +194,9 @@ class BlockChest(AbstractBlock.AbstractBlock):
             self.loot_table_link = data["loot_table"]
         else:
             logger.println(
-                "[SERIALIZER][WARN] {} is missing loot table in save files".format(self)
+                "[SERIALIZER][WARN] '{}' is missing loot table in save files; this indicates a save error...".format(
+                    self
+                )
             )
 
 

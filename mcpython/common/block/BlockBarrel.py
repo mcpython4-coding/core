@@ -14,6 +14,7 @@ from pyglet.window import mouse, key
 import mcpython.util.enums
 import pyglet
 import mcpython.client.gui.InventoryBarrel
+import mcpython.common.block.PossibleBlockStateBuilder
 
 
 class BlockBarrel(AbstractBlock.AbstractBlock):
@@ -23,10 +24,12 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
 
     NAME: str = "minecraft:barrel"  # the name of the block
 
-    DEBUG_WORLD_BLOCK_STATES = []
-    for face in ["north", "east", "south", "west", "up", "down"]:
-        DEBUG_WORLD_BLOCK_STATES.append({"open": "false", "facing": face})
-        DEBUG_WORLD_BLOCK_STATES.append({"open": "true", "facing": face})
+    DEBUG_WORLD_BLOCK_STATES = (
+        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
+        .add_comby_bool("open")
+        .add_comby_side("facing")
+        .build()
+    )
 
     HARDNESS = 2.5
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]

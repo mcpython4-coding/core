@@ -1512,4 +1512,7 @@ R   [uuk]: improved world serialization API
 [uuk]: targeting now 21w05b
 [uuk]: Chunk's world attribute is now private (moved to _world), same for positions_updated_since_last_save
 [uuk]: added helper functions for _positions_updated_since_last_save work
+[uuk]: added PossibleBlockStateBuilder for simple building all possible states; this might change order of states
+       in debug world
+[uuk]: fixed wall block state issues
 

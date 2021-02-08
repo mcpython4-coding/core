@@ -113,6 +113,8 @@ FACE_ORDER: typing.List[EnumSide] = [
     EnumSide.WEST,
 ]
 
+FACE_ORDER_HORIZONTAL = FACE_ORDER[2:]
+
 # How to rotate the different faces?
 ROTATE: typing.List[typing.List[EnumSide]] = [
     [EnumSide.WEST, EnumSide.DOWN, EnumSide.EAST, EnumSide.UP],

@@ -14,6 +14,7 @@ from mcpython import shared
 import mcpython.util.enums
 from mcpython.common.block.BlockChest import BBOX
 from . import AbstractBlock
+import mcpython.common.block.PossibleBlockStateBuilder
 
 
 class BlockEnderChest(AbstractBlock.AbstractBlock):
@@ -28,6 +29,12 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
     HARDNESS = 2.5
     MINIMUM_TOOL_LEVEL = 0
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
+
+    DEBUG_WORLD_BLOCK_STATES = (
+        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
+        .add_comby_side_horizontal("side")
+        .build()
+    )
 
     def __init__(self):
         super().__init__()
@@ -69,19 +76,12 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
         if "side" in state:
             face = state["side"]
             if type(face) == str:
-                self.front_side = mcpython.util.enums.EnumSide[state["side"]]
+                self.front_side = mcpython.util.enums.EnumSide[state["side"].upper()]
             else:
                 self.front_side = face
 
     def get_model_state(self) -> dict:
-        return {"side": self.front_side.name}
-
-    DEBUG_WORLD_BLOCK_STATES = [
-        {"side": mcpython.util.enums.EnumSide.N},
-        {"side": mcpython.util.enums.EnumSide.E},
-        {"side": mcpython.util.enums.EnumSide.S},
-        {"side": mcpython.util.enums.EnumSide.W},
-    ]
+        return {"side": self.front_side.normal_name}
 
     def get_view_bbox(self):
         return BBOX

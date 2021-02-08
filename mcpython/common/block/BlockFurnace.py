@@ -13,6 +13,7 @@ import mcpython.common.block.IHorizontalOrientableBlock
 from pyglet.window import key, mouse
 import mcpython.client.gui.InventoryFurnace
 from mcpython.util.enums import EnumSide
+import mcpython.common.block.PossibleBlockStateBuilder
 
 
 class BlockFurnace(
@@ -28,11 +29,18 @@ class BlockFurnace(
 
     NAME: str = "minecraft:furnace"
 
-    def __init__(self, *args, **kwargs):
+    DEBUG_WORLD_BLOCK_STATES = (
+        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
+        .add_comby_bool("active")
+        .add_comby_side_horizontal("facing")
+        .build()
+    )
+
+    def __init__(self):
         """
         creates an furnace block in the world
         """
-        super().__init__(*args, **kwargs)
+        super().__init__()
         self.active = False
         self.inventory = mcpython.client.gui.InventoryFurnace.InventoryFurnace(
             self, self.FURNACE_RECIPES
@@ -45,20 +53,6 @@ class BlockFurnace(
         super().set_model_state(state)
         if "lit" in state:
             self.active = state["lit"] == "true"
-
-    DEBUG_WORLD_BLOCK_STATES = [
-        {
-            mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock.MODEL_FACE_NAME: face.name,
-            "active": "false",
-        }
-        for face in mcpython.util.enums.EnumSide.iterate()[2:]
-    ] + [
-        {
-            mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock.MODEL_FACE_NAME: face.name,
-            "active": "true",
-        }
-        for face in mcpython.util.enums.EnumSide.iterate()[2:]
-    ]
 
     def on_player_interaction(self, player, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
