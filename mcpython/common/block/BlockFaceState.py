@@ -20,7 +20,7 @@ import copy
 class BlockFaceState:
     """
     Class for face state of the block
-    todo: merge into AbstractBlock
+    todo: merge data into AbstractBlock & make this a static class
     """
 
     DEFAULT_FACE_STATE = {
@@ -158,8 +158,7 @@ class BlockFaceState:
         if state == self.faces and not redraw_complete:
             return
 
-        chunk.positions_updated_since_last_save.add(self.block.position)
-        chunk.mark_dirty()
+        chunk.mark_position_dirty(self.block.position)
 
         self.hide_all()
 

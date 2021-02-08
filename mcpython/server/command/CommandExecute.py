@@ -177,8 +177,8 @@ class CommandExecute(mcpython.server.command.Command.Command):
             if subcommand == "block":
                 position, name = values[index], values[index + 1]
                 index += 2
-                if position in shared.world.world:
-                    block = shared.world.world[position]
+                block = shared.world.get_active_dimension().get_chunk_for_position(*position).get_block(position)
+                if block is not None and not isinstance(block, str):
                     flag = (
                         block.NAME
                         == shared.registry.get_by_name("minecraft:block")[name].NAME

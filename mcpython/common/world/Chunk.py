@@ -46,7 +46,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         position: typing.Tuple[int, int],
     ):
         """
-        Will create an new chunk instance
+        Will create a new chunk instance
         :param dimension: the world.Dimension.Dimension object used to store this chunk
         :param position: the position of the chunk
         WARNING: use Dimension.get_chunk() where possible [saver variant, will do some work in the background]
@@ -206,7 +206,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :return: if there is an block
         """
         return (
-            position in self.world
+            position in self._world
             or shared.world_generation_handler.task_handler.get_block(position, self)
             is not None
         )
@@ -244,7 +244,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 "position '{}' is no valid block position".format(position)
             )
 
-        if position in self.world:
+        if position in self._world:
             self.remove_block(
                 position,
                 immediate=immediate,
@@ -284,7 +284,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 block_update_self=block_update_self,
             )
 
-        self.world[position] = block
+        self._world[position] = block
 
         block.on_block_added()
 
@@ -292,7 +292,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             block.set_model_state(block_state)
 
         self.mark_dirty()
-        self.positions_updated_since_last_save.add(position)
+        self.mark_position_dirty(position)
 
         if immediate and shared.IS_CLIENT:
             block.face_state.update()
@@ -346,18 +346,18 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param block_update_self: Whether the block to remove should get an block-update or not
         :param reason: the reason why the block was removed
         """
-        if position not in self.world:
+        if position not in self._world:
             return
 
         if issubclass(type(position), Block.AbstractBlock):
             position = position.position
 
-        self.world[position].on_block_remove(reason)
+        self._world[position].on_block_remove(reason)
 
         if shared.IS_CLIENT:
-            self.world[position].face_state.hide_all()
+            self._world[position].face_state.hide_all()
 
-        del self.world[position]
+        del self._world[position]
 
         if block_update:
             self.on_block_updated(position, include_itself=block_update_self)
@@ -365,7 +365,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if immediate:
             self.check_neighbors(position)
 
-        self.positions_updated_since_last_save.add(position)
+        self.mark_position_dirty(position)
         self.mark_dirty()
 
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
@@ -401,11 +401,11 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if issubclass(type(position), Block.AbstractBlock):
             position = position.position
 
-        if position not in self.world:
+        if position not in self._world:
             return
 
         if immediate:
-            self.world[position].face_state.update(redraw_complete=True)
+            self._world[position].face_state.update(redraw_complete=True)
         else:
             shared.world_generation_handler.task_handler.schedule_visual_update(
                 self, position
@@ -431,9 +431,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             position = position.position
 
         if immediate:
-            if position not in self.world:
+            if position not in self._world:
                 return
-            self.world[position].face_state.hide_all()
+            self._world[position].face_state.hide_all()
         else:
             shared.world_generation_handler.task_handler.schedule_visual_update(
                 self, position
@@ -478,7 +478,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if not shared.IS_CLIENT:
             return
 
-        self.positions_updated_since_last_save.add(position)
+        self.mark_position_dirty(position)
 
         if not self.exposed(position):
             self.hide_block(position)
@@ -497,7 +497,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if not shared.IS_CLIENT:
             return
 
-        for position in self.world.keys():
+        for position in self._world.keys():
             if immediate:
                 shared.world_generation_handler.task_handler.schedule_visual_update(
                     self, position
@@ -513,7 +513,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if not shared.IS_CLIENT:
             return
 
-        for position in self.world:
+        for position in self._world:
             self.hide_block(position, immediate=immediate)
 
     def get_block(
@@ -526,8 +526,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         todo: split up into get_block_generated and get_block_un_generated
         """
         return (
-            self.world[position]
-            if position in self.world
+            self._world[position]
+            if position in self._world
             else shared.world_generation_handler.task_handler.get_block(
                 position, chunk=self
             )

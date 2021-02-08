@@ -1510,4 +1510,6 @@ R   [uuk]: improved world serialization API
 [uuk]: added /worldgendebug command, for debugging the world gen system [and the process system]
 [uuk]: added /worldgendebug info and /worldgendebug ping
 [uuk]: targeting now 21w05b
+[uuk]: Chunk's world attribute is now private (moved to _world), same for positions_updated_since_last_save
+[uuk]: added helper functions for _positions_updated_since_last_save work
 

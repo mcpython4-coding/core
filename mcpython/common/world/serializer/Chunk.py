@@ -534,20 +534,20 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         )  # where to dump inventory stuff
         overridden = not override
         for position in (
-            chunk_instance.positions_updated_since_last_save
+            chunk_instance.get_positions_updated_since_last_save()
             if not override
-            else chunk_instance.world.keys()
+            else (e[0] for e in chunk_instance)
         ):
             rel_position = (
                 position[0] - chunk_instance.get_position()[0] * 16,
                 position[1],
                 position[2] - chunk_instance.get_position()[1] * 16,
             )  # the relative position to the chunk
-            if position not in chunk_instance.world and not override:
+            block = chunk_instance.get_block(position)
+            if block is None and not override:
                 if rel_position in cdata["blocks"]:
                     del cdata["blocks"][rel_position]  # ok, old data MUST be removed
                 continue
-            block = chunk_instance.world[position]
             block_data = {
                 "custom": block.dump_data(),
                 "name": block.NAME,
@@ -582,7 +582,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             else:
                 cdata["blocks"][rel_position] = len(palette)
                 palette.append(block_data)
-        chunk_instance.positions_updated_since_last_save.clear()
+        chunk_instance.clear_positions_updated_since_last_save()
 
         # this is about entity stuff...
         # todo: move completely to Entity-API

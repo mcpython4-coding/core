@@ -32,24 +32,26 @@ class IChunk(ABC):
     Abstract class for chunks
     Belows follows an API description
     This API is STABLE, its implementation should NOT change dramatically if not needed
+    Implementations beside the default Chunk implementation may change signature and calling type (async/await).
+    They should try to be as close to the API as possible
 
     The following stuff MAY change in the near future:
-        - structure / existence of world-attribute
-        - structure / existence of positions_updated_since_last_save-attribute
+        - structure / existence of __world-attribute
+        - structure / existence of __positions_updated_since_last_save-attribute
         - existence of entities attribute
         - WIP of chunk_loaded_list attribute, together with add_chunk_load_ticket(...) and check_for_unload()
     """
 
     def __init__(self):
         # the world, as a dict position -> block instance
-        # todo: use relative position
-        # todo: maybe use sectors?
-        self.world: typing.Dict[typing.Tuple[int, int, int], typing.Any] = {}
+        # todo: use relative positions!
+        # todo: maybe use sections -> dynamic based on world height?
+        self._world: typing.Dict[typing.Tuple[int, int, int], typing.Any] = {}
 
         # set holding positions updated since last save
         # todo: use relative positions
         # todo: maybe replace by dirty sectors?
-        self.positions_updated_since_last_save: typing.Set[
+        self._positions_updated_since_last_save: typing.Set[
             typing.Tuple[int, int, int]
         ] = set()
 
@@ -60,6 +62,16 @@ class IChunk(ABC):
         # inner API list for ChunkLoadTickets [WIP]
         # todo: use something better...
         self.chunk_loaded_list = tuple([[] for _ in range(16)])
+
+    def clear_positions_updated_since_last_save(self):
+        self._positions_updated_since_last_save.clear()
+
+    def get_positions_updated_since_last_save(self):
+        return self._positions_updated_since_last_save
+
+    def mark_position_dirty(self, position):
+        self._positions_updated_since_last_save.add(position)
+        self.mark_dirty()
 
     def is_loaded(self) -> bool:
         raise NotImplementedError
@@ -337,7 +349,8 @@ class IChunk(ABC):
         return self.get_block(item) is not None
 
     def __iter__(self):
-        return self.world.items()
+        # todo: is there a better way?
+        yield from self._world.items()
 
     def __eq__(self, other: "IChunk"):
         return (
