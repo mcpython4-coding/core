@@ -294,24 +294,25 @@ def load_resource_packs():
     if not os.path.exists(shared.home + "/resourcepacks"):
         os.makedirs(shared.home + "/resourcepacks")
 
-    for file in os.listdir(shared.home + "/resourcepacks"):
-        if file in [
-            "{}.jar".format(mcpython.common.config.MC_VERSION_BASE),
-            "minecraft.zip",
-        ]:
-            continue
-        file = shared.home + "/resourcepacks/" + file
-        flag = True
-        for source in RESOURCE_PACK_LOADERS:
-            if flag and source.is_valid(file):
-                RESOURCE_LOCATIONS.append(source(file))
-                flag = False
-        if flag:
-            logger.println(
-                "[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(
-                    file
+    if shared.ENABLE_RESOURCE_PACK_LOADER:
+        for file in os.listdir(shared.home + "/resourcepacks"):
+            if file in [
+                "{}.jar".format(mcpython.common.config.MC_VERSION_BASE),
+                "minecraft.zip",
+            ]:
+                continue
+            file = shared.home + "/resourcepacks/" + file
+            flag = True
+            for source in RESOURCE_PACK_LOADERS:
+                if flag and source.is_valid(file):
+                    RESOURCE_LOCATIONS.append(source(file))
+                    flag = False
+            if flag:
+                logger.println(
+                    "[ResourceLocator][WARNING] can't load path {}. No valid loader found!".format(
+                        file
+                    )
                 )
-            )
 
     i = 0
     while i < len(sys.argv):
@@ -326,16 +327,20 @@ def load_resource_packs():
         else:
             i += 1
 
+    # for local accessing the various directories used by the game
+    # todo: this might need tweaks for builded executeables
     RESOURCE_LOCATIONS.append(
         ResourceDirectory(shared.local)
-    )  # for local access, may be not needed
+    )
     RESOURCE_LOCATIONS.append(ResourceDirectory(shared.home))
     RESOURCE_LOCATIONS.append(ResourceDirectory(shared.build))
 
     if (
         shared.dev_environment
-    ):  # only in dev-environment we need these special folders...
-        print(shared.local)
+    ):
+        # only in dev-environment we need these special folders
+        # todo: strip when building
+        # todo: use the .jar file for source resources instead of extracting them
         RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/main"))
         RESOURCE_LOCATIONS.append(
             ResourceDirectory(shared.local + "/resources/generated")

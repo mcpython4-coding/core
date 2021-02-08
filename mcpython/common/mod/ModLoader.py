@@ -216,6 +216,8 @@ class ModLoader:
         """
         Will load all mods arrival
         """
+        if not shared.ENABLE_MOD_LOADER: return
+
         locations = self.get_locations()
         self.load_mod_json_from_locations(locations)
 
@@ -248,7 +250,7 @@ class ModLoader:
 
     def check_for_update(self):
         """
-        Will check for changes between versions
+        Will check for changes between versions between this session and the one before
         """
         logger.println(
             "found mod{}: {}".format(
@@ -261,21 +263,21 @@ class ModLoader:
                 self.previous_mods[modname]
             ):
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
+                # todo: include version change
                 logger.println(
-                    "rebuild mode due to mod change (remove / version change) of {}".format(
+                    "rebuild mode due to mod change (remove / version change) of '{}'".format(
                         modname
                     )
                 )
                 shared.invalidate_cache = True
-                shared.data_gen = True
 
         for modname in self.mods.keys():
             if modname not in self.previous_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
+                # todo: include version of the mod
                 shared.invalidate_cache = True
-                shared.data_gen = True
                 logger.println(
-                    "rebuild mode due to mod change (addition) of {}".format(modname)
+                    "rebuild mode due to mod change (addition) of '{}'".format(modname)
                 )
 
     def write_mod_info(self):
@@ -301,6 +303,7 @@ class ModLoader:
         Will parse the decoded json-data to the correct system
         :param data: the data of the mod
         :param file: the file allocated (used for warning messages)
+        todo: maybe a better format?
         """
         version = data["version"]
         if version == "1.2.0":  # latest
@@ -386,6 +389,8 @@ class ModLoader:
                             return
                 else:
                     raise IOError("invalid loader '{}'".format(loader))
+            else:
+                raise IOError("invalid version: {}".format(version))
 
     @classmethod
     def cast_dependency(cls, depend: dict):
@@ -394,19 +399,22 @@ class ModLoader:
         :param depend: the depend dict
         :return: the parsed mod.Mod.ModDependency-object
         """
-        c = {}
-        if "version" in depend:
-            c["version_min"] = depend["version"]
-        if "upper_version" in depend:
-            c["version_max"] = depend["upper_version"]
-        if "versions" in depend:
-            c["versions"] = depend["versions"]
+        config = {}
 
-        return mcpython.common.mod.Mod.ModDependency(depend["name"], **c)
+        if "version" in depend:
+            config["version_min"] = depend["version"]
+
+        if "upper_version" in depend:
+            config["version_max"] = depend["upper_version"]
+
+        if "versions" in depend:
+            config["versions"] = depend["versions"]
+
+        return mcpython.common.mod.Mod.ModDependency(depend["name"], **config)
 
     def load_mods_toml(self, data: str, file: str):
         """
-        will load an toml-data-object
+        Will load a toml-data-object
         :param data: the toml-representation
         :param file: the file for debugging reasons
         """
@@ -422,9 +430,11 @@ class ModLoader:
 
         if "loaderVersion" in data:
             if data["loaderVersion"].startswith("["):
-                self.error_builder.println("- found forge-version indicator")
+                self.error_builder.println("- found forge-version indicator in mod from file {}, which is currently unsupported".format(file))
                 return
+
             version = data["loaderVersion"]
+
             if version.endswith("["):
                 mc_version = 0  # todo: implement
             elif version.count("[") == version.count("]") == 0:
@@ -455,8 +465,9 @@ class ModLoader:
 
     def add_to_add(self, instance: mcpython.common.mod.Mod.Mod):
         """
-        Will add an mod-instance into the inner system
+        Will add a mod-instance into the inner system
         :param instance: the mod instance to add
+        Use only when really needed. The system is designed for beeing data-driven!
         """
         if not shared.event_handler.call_cancelable(
             "modloader:mod_registered", instance
@@ -465,14 +476,17 @@ class ModLoader:
 
         self.mods[instance.name] = instance
         self.located_mods.append(instance)
-        instance.path = self.active_directory
+
+        if instance.path is not None:
+            instance.path = self.active_directory
+
         self.located_mod_instances.append(instance)
 
     def check_mod_duplicates(self):
         """
         Will check for mod duplicates
         :return an tuple of errors as string and collected mod-info's as dict
-        todo: add config option for strategy: fail, load newest, load oldest, load all
+        todo: add config option for strategy: fail, load newest, load oldest, load all, load none
         """
         errors = False
         mod_info = {}
@@ -480,7 +494,7 @@ class ModLoader:
         for mod in self.located_mods:
             if mod.name in mod_info:
                 self.error_builder.println(
-                    " -Mod '{}' found in {} has more than one version in the folder. Please load only every mod ONES".format(
+                    " - Mod '{}' found in {} has more than one version in the folder. Please add every mod only ones!".format(
                         mod.name,
                         mod.path,
                     )
@@ -493,8 +507,8 @@ class ModLoader:
 
     def check_dependency_errors(self, errors: bool, mod_info: dict):
         """
-        Will iterate through
-        :param errors: the error list
+        Will iterate through all mods and check dependencies
+        :param errors: if errors occured
         :param mod_info: the mod info dict
         :return: errors and mod-info-tuple
         """
@@ -506,6 +520,7 @@ class ModLoader:
                             mod.name, depend
                         )
                     )
+                    errors = True
 
             for depend in mod.depend_info[2]:
                 if depend.arrival():
@@ -514,6 +529,7 @@ class ModLoader:
                             mod.name, depend
                         )
                     )
+                    errors = True
 
             for depend in mod.depend_info[5]:
                 if not depend.arrival():
@@ -571,6 +587,8 @@ class ModLoader:
     def process(self):
         """
         Will process some loading tasks scheduled
+        Used internally during mod loading state
+        If on client, the renderer is also updated
         """
         if not mcpython.common.mod.ModLoadingPipe.manager.order.is_active():
             return
@@ -591,7 +609,8 @@ class ModLoader:
             if stage.call_one(astate):
                 return
 
-        self.update_pgb_text()
+        if shared.IS_CLIENT:
+            self.update_pgb_text()
 
     def update_pgb_text(self):
         """

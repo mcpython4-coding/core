@@ -58,6 +58,15 @@ class LaunchWrapper:
 
                 mcpython.server.ServerConsoleHandler.handler.run()
 
+            if "--no-mods" in sys.argv:
+                shared.ENABLE_MOD_LOADER = False
+
+            if "--no-data-packs" in sys.argv:
+                shared.ENABLE_DATAPACK_LOADER = False
+
+            if "--no-resource-packs" in sys.argv:
+                shared.ENABLE_RESOURCE_PACK_LOADER = False
+
     def setup(self):
         """
         Setup general stuff which does not take long to complete
@@ -120,8 +129,9 @@ class LaunchWrapper:
         """
         Helper function for OpenGL setup
         Loads also the needed API
+        todo: move more rendering setup code here
         """
-        assert shared.IS_CLIENT, "can only setup on client7"
+        assert shared.IS_CLIENT, "can only setup on client, this is a dedicated server!"
 
         import mcpython.client.rendering.util
 
@@ -130,6 +140,7 @@ class LaunchWrapper:
     def print_header(self):
         """
         Prints an header describing the program name and its version
+        todo: include some more information about the system
         """
 
         version = mcpython.common.config.FULL_VERSION_NAME.upper()
@@ -151,8 +162,6 @@ class LaunchWrapper:
         if not os.path.exists(shared.home + "/mods"):
             os.makedirs(shared.home + "/mods")
 
-        sys.path.append(shared.local + "/mcpython")
-
         # check if build folder exists, if not, we need to create its content
         if not os.path.exists(shared.build):
             logger.println("rebuild mode due to missing cache folder")
@@ -170,8 +179,14 @@ class LaunchWrapper:
     def load_mods(self):
         """
         Do ModLoader initial stuff
+        Looks for mods in the path only when shared.ENABLE_MOD_LOADER is True
         """
-        shared.mod_loader.look_out()
+        if shared.ENABLE_MOD_LOADER:
+            shared.mod_loader.look_out()
+        else:
+            # This here is than the only mod we want to load
+            import mcpython.common.mod.ModMcpython
+
         shared.mod_loader.sort_mods()
         shared.mod_loader.write_mod_info()
 
