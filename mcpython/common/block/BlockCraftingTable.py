@@ -36,6 +36,7 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
             return False
 
     def get_inventories(self):
+        # todo: this seems not good..., maybe return None, and add a option for a internal inventory?
         return [shared.world.get_active_player().inventory_crafting_table]
 
     def on_block_remove(self, reason):

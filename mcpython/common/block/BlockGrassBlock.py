@@ -39,15 +39,14 @@ class BlockGrassBlock(AbstractBlock.AbstractBlock):
                 break
 
         else:
-            instance = dim.get_block((x, y + 1, z))
-            if instance is not None and type(instance) != str:
-                if (
-                    instance.face_solid[mcpython.util.enums.EnumSide.UP]
-                    or instance.face_solid[mcpython.util.enums.EnumSide.DOWN]
-                ):
-                    dim.get_chunk_for_position(self.position).add_block(
-                        self.position, "minecraft:dirt"
-                    )
+            instance = dim.get_block((x, y + 1, z), none_if_str=True)
+            if instance is not None and (
+                instance.face_solid[mcpython.util.enums.EnumSide.UP]
+                or instance.face_solid[mcpython.util.enums.EnumSide.DOWN]
+            ):
+                dim.get_chunk_for_position(self.position).add_block(
+                    self.position, "minecraft:dirt"
+                )
 
 
 @shared.mod_loader("minecraft", "stage:block:load")

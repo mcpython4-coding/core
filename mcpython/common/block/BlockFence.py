@@ -24,12 +24,12 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     """
 
     # The type list of the fences; same types are able to connect to each other, not same types not
-    FENCE_TYPE_NAME: set = set()
+    FENCE_TYPE_NAME = set()
 
-    # the bounding box todo: add
+    # the bounding box todo: add the real bounding box
     BBOX = None
 
-    # the debug world states
+    # the debug world states, constructed by a builder, using all possible combinations
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
         .combinations()
@@ -104,11 +104,13 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     ):
         if instance is None or type(instance) == str:
             return False
+
         return instance.face_solid[face.invert()] or (
             issubclass(type(instance), IFence)
             and len(self.FENCE_TYPE_NAME.intersection(instance.FENCE_TYPE_NAME)) > 0
         )
 
+    # the state the block item generator should use, this kinda looks nice
     BLOCK_ITEM_GENERATOR_STATE = {"east": "true", "west": "true"}
 
 

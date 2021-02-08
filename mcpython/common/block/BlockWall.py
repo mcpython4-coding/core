@@ -59,37 +59,25 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
 
         dim = shared.world.get_dimension_by_name(self.dimension)
 
-        block_north: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
-            (x + 1, y, z)
-        )
-        block_east: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
-            (x, y, z + 1)
-        )
-        block_south: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
-            (x - 1, y, z)
-        )
-        block_west: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
-            (x, y, z - 1)
-        )
+        block_north = dim.get_block((x + 1, y, z), none_if_str=True)
+        block_east = dim.get_block((x, y, z + 1), none_if_str=True)
+        block_south = dim.get_block((x - 1, y, z), none_if_str=True)
+        block_west = dim.get_block((x, y, z - 1), none_if_str=True)
 
         self.connections["east"] = block_north is not None and (
-            type(block_north) != str
-            and block_north.face_solid[mcpython.util.enums.EnumSide.SOUTH]
+            block_north.face_solid[mcpython.util.enums.EnumSide.SOUTH]
             or issubclass(type(block_north), IWall)
         )
         self.connections["south"] = block_east is not None and (
-            type(block_east) != str
-            and block_east.face_solid[mcpython.util.enums.EnumSide.WEST]
+            block_east.face_solid[mcpython.util.enums.EnumSide.WEST]
             or issubclass(type(block_east), IWall)
         )
         self.connections["west"] = block_south is not None and (
-            type(block_south) != str
-            and block_south.face_solid[mcpython.util.enums.EnumSide.NORTH]
+            block_south.face_solid[mcpython.util.enums.EnumSide.NORTH]
             or issubclass(type(block_south), IWall)
         )
         self.connections["north"] = block_west is not None and (
-            type(block_west) != str
-            and block_west.face_solid[mcpython.util.enums.EnumSide.EAST]
+            block_west.face_solid[mcpython.util.enums.EnumSide.EAST]
             or issubclass(type(block_west), IWall)
         )
         self.connections["up"] = False  # for next calculation, this must be False
@@ -97,13 +85,10 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
             self.connections["north"] != self.connections["south"]
             or self.connections["east"] != self.connections["west"]
         )
-        upper_block: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
-            (x, y + 1, z)
-        )
+        upper_block = dim.get_block((x, y + 1, z), none_if_str=True)
         if (
             not self.connections["up"]
             and upper_block is not None
-            and type(upper_block) != str
             and upper_block.face_solid[mcpython.util.enums.EnumSide.DOWN]
             and not issubclass(type(upper_block), IWall)
         ):
@@ -118,18 +103,18 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
                 self.connections[key] = state[key] in ("low", "true")
 
 
-# create all classes for the blocks
+def create_wall_class(name: str):
+    """
+    Constructor helper for creating a new wall class
+    For internal usage only!
+    """
+    class GeneratedWall(IWall):
+        NAME = name
 
-
-class RedSandstoneWall(IWall):
-    NAME = "minecraft:red_sandstone_wall"
-
-
-class SandstoneWall(IWall):
-    NAME = "minecraft:sandstone_wall"
+    return GeneratedWall
 
 
 @shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    shared.registry.register(RedSandstoneWall)
-    shared.registry.register(SandstoneWall)
+    shared.registry.register(create_wall_class("minecraft:red_sandstone_wall"))
+    shared.registry.register(create_wall_class("minecraft:sandstone_wall"))

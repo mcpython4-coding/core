@@ -42,6 +42,7 @@ class BlockFurnace(
         """
         super().__init__()
         self.active = False
+
         self.inventory = mcpython.client.gui.InventoryFurnace.InventoryFurnace(
             self, self.FURNACE_RECIPES
         )
@@ -56,8 +57,11 @@ class BlockFurnace(
 
     def on_player_interaction(self, player, button, modifiers, exact_hit) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            shared.inventory_handler.show(self.inventory)
+            if shared.IS_CLIENT:
+                shared.inventory_handler.show(self.inventory)
+
             return True
+
         else:
             return False
 
@@ -73,13 +77,15 @@ class BlockFurnace(
             return [self.inventory.slots[37]], []
 
     def on_block_remove(self, reason):
-        if not shared.world.gamerule_handler.table["doTileDrops"].status.status:
-            return
-        for slot in self.inventory.slots:
-            shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
-            slot.itemstack.clean()
-        shared.inventory_handler.hide(self.inventory)
-        del self.inventory
+        # todo: add special flag for not dropping
+        if shared.world.gamerule_handler.table["doTileDrops"].status.status:
+            for slot in self.inventory.slots:
+                shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
+                slot.itemstack.clean()
+
+        if shared.IS_CLIENT:
+            shared.inventory_handler.hide(self.inventory)
+            del self.inventory
 
 
 class BlastFurnace(BlockFurnace):

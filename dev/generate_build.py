@@ -209,6 +209,8 @@ class BuildManager:
         self.create_build("dev")
         self.strip_documentation()
         self.create_build("doc_stripped")
+        self.strip_client_only_code()
+        self.create_build("dedicated_server")
 
     def collect_python_files(self):
         for directory in self.library_paths:
@@ -361,6 +363,10 @@ class BuildManager:
                     while "\n\n" in string:
                         string = string.replace("\n\n", "\n")
                     f.write(string)
+
+    def strip_client_only_code(self):
+        shutil.rmtree(self.tmp_folder.name+"/mcpython/client")
+        os.remove(self.tmp_folder.name+"/__main__.py")
 
 
 if __name__ == "__main__":

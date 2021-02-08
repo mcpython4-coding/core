@@ -20,6 +20,8 @@ import mcpython.common.block.PossibleBlockStateBuilder
 class BlockEnderChest(AbstractBlock.AbstractBlock):
     """
     class for the ender chest
+    todo: check if it can be opened like in chests
+    todo: fix renderer
     """
 
     NAME = "minecraft:enderchest"
@@ -61,7 +63,8 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
         self, player, button: int, modifiers: int, hit_position: tuple
     ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            shared.inventory_handler.show(self.inventory)
+            if shared.IS_CLIENT:
+                shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -75,6 +78,7 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
     def set_model_state(self, state: dict):
         if "side" in state:
             face = state["side"]
+
             if type(face) == str:
                 self.front_side = mcpython.util.enums.EnumSide[state["side"].upper()]
             else:
@@ -87,7 +91,8 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
         return BBOX
 
     def on_block_remove(self, reason):
-        shared.inventory_handler.hide(self.inventory)
+        if shared.IS_CLIENT:
+            shared.inventory_handler.hide(self.inventory)
 
 
 @shared.mod_loader("minecraft", "stage:block:load")

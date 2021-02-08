@@ -388,13 +388,14 @@ class RemoteDimension(mcpython.common.world.AbstractInterface.IDimension):
         return await self.get_chunk(*pos)
 
     async def get_block(
-        self, position: typing.Tuple[int, int, int]
+        self, position: typing.Tuple[int, int, int],
+            none_if_str=False
     ) -> typing.Union[typing.Any, str, None]:
         # todo: some form of remote block / only the block name?
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
             .get_dimension(self.dimension_id)
-            .get_block(position)
+            .get_block(position, none_if_str=none_if_str)
         )
 
     async def add_block(self, *args, **kwargs):
@@ -654,14 +655,15 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
         )
 
     async def get_block(
-        self, position: typing.Tuple[int, int, int]
+        self, position: typing.Tuple[int, int, int],
+            none_if_str=False
     ) -> typing.Union[typing.Any, str, None]:
         # todo: cache
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
             .get_dimension(self.dimension.get_id())
             .get_chunk(*self.position)
-            .get_block(position)
+            .get_block(position, none_if_str=none_if_str)
         )
 
     def as_shareable(self) -> "RemoteChunk":

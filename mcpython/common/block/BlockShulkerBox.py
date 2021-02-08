@@ -40,7 +40,7 @@ def create_shulker_box(name):
                 return False
 
         def get_inventories(self):
-            return [self.inventory]
+            return self.inventory,
 
         HARDNESS = 2.5
         MINIMUM_TOOL_LEVEL = 0

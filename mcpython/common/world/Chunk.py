@@ -517,20 +517,22 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             self.hide_block(position, immediate=immediate)
 
     def get_block(
-        self, position: typing.Tuple[int, int, int]
+        self, position: typing.Tuple[int, int, int],
+        none_if_str=False
     ) -> typing.Union[Block.AbstractBlock, str, None]:
         """
         will get the block at an given position
         :param position: the position to check for, must be normalized
+        :param none_if_str: if none if the block instance is str
         :return: None if no block, str if scheduled and Block.Block if created
         todo: split up into get_block_generated and get_block_un_generated
         """
         return (
             self._world[position]
             if position in self._world
-            else shared.world_generation_handler.task_handler.get_block(
+            else (shared.world_generation_handler.task_handler.get_block(
                 position, chunk=self
-            )
+            ) if not none_if_str else None)
         )
 
     def __str__(self):
