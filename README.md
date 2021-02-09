@@ -9,7 +9,7 @@ You are looking at the development-section of the installation guide.
 You can use the launcher from https://github.com/mcpython4-coding/Launcher
 to automatically download and set up the latest version of mcpython4
 
-How to setup?
+How to set up?
 -----------------------------------------------------------------------------------------------------
 Install any version of python 3.
 
@@ -19,30 +19,29 @@ Download this project, unzip it, open a console in its directory and type:
 python tools/installer.py
 ```
 
-This will set up all required libraries.
+This will set up all required libraries and download resources needed not shipped in the default zipfile.
 
-The python command crashes in the pip-section!(This section's instructions are under the assumption that you have already install python)
+The python command crashes in the pip-section! (This section's instructions are under the assumption that you have already installed python)
 ----------------------------------------------------------------------------------------------------
-If python crashes with an error that says something about syntax,than you have got the wrong version:use python 3,not 2.
-(On Linux/UNIX,this can be done by replacing python with python3 and pip with pip3 in the bash commands)
+If python crashes with an error that says something about syntax, then you have got the wrong version: use python 3.9, not 2.X, not 3.8 or lower.
+(On Linux/UNIX,this can be done by replacing "python" with "python3 -3.9" and "pip" with "pip3" in the bash commands)
 If only the pip command crashes, then you haven't installed pip! This is only a problem on Linux/UNIX, a quick fix is to use:
 ```bash
 sudo apt-get install python3-pip
 ```
-If both fails with error like "command not found",then it means you've not added python to PATH(This is a problem only on Windows).The fast fix is:
+If both fails with error like "command not found",then it means you've not added python to PATH (This is a problem only on Windows). The fast fix is:
 Run the installer file again, click "Modify",then check the box called "Add to PATH", then the click OK.
 
 How to run?
 -----------------------------------------------------------------------------------------------------
-Type in the console:
+Client:
 ```shell script
 python __main__.py
 ```
 
-On your first run in dev-environment, use the following command
-to create some special resources:
+Dedicated server:
 ```shell script
-python __main__.py --data-gen
+python launch_server.py
 ```
 
 Flags
@@ -57,17 +56,16 @@ Please run the project with:
 ```shell script
 python __main__.py --invalidate-cache
 ```
- It will take longer than normal but will invalidate the cache and rebuild.
+ It will take longer than normal but will invalidate the cache and rebuild it.
+ Block-items are getting re-generated (the only thing happening currently)
  
  
  **I came across some weired looking blocks, but in the world they are very rare**
  
  
-It is possible to create an so-called debug world. This world contains every possible block state of every block in the game in one big world.
-For enabling this world generator, run the game with:
-```shell script
-python __main__.py --debug-world
-```
+It is possible to create a so-called debug world. This world contains every possible block state of every block in the game in one big world.
+For enabling this world generator, select the world generator by clicking ones on the default_overwold button
+during creating a new world.
 
  **I want to play in fullscreen**
 
