@@ -66,7 +66,7 @@ FUNNY_STRINGS = [
     "Why so crasholic? Maybe do better next time?",
     "This is not going to plan, really, not going to plan; Maybe I should try better?",
     "CrashReportException: exception occured",
-    "let FUNNY_STRINGS = ['DON'T  DO  THAT.'];"
+    "let FUNNY_STRINGS = ['DON'T  DO  THAT.'];",
 ]
 
 if not os.path.exists(shared.home + "/logs"):

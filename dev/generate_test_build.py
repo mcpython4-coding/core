@@ -24,14 +24,10 @@ with open(home + "/version.json") as f:
 name = data["name"]
 counter = data["preview_build_counter"] + 1
 data["preview_build_counter"] += 1
+data["id"] += 1
 
 
 with open(home + "/version.json", mode="w") as f:
     json.dump(data, f, indent="  ")
 
-
-subprocess.call([sys.executable, local + "/update_licence_headers.py"])
-subprocess.call([sys.executable, local + "/formatting.py"])
-generate_build.BuildManager(
-    " ".join(name.split(" ")[:-1]) + " " + str(counter)
-).generate()
+generate_build.main(" ".join(name.split(" ")[:-1]) + " " + str(counter))

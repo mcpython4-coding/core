@@ -9,6 +9,7 @@ mod loader inspired by "minecraft forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import os
+import sys
 
 
 def update_licence_headers_in_project(project_home, header):
@@ -35,7 +36,9 @@ def update_licence_headers_in_project(project_home, header):
 
 if __name__ == "__main__":
     update_licence_headers_in_project(
-        os.path.dirname(os.path.dirname(__file__)),
+        os.path.dirname(os.path.dirname(__file__))
+        if len(sys.argv) == 1
+        else sys.argv[1],
         '''"""
 mcpython - a minecraft clone written in python licenced under MIT-licence
 authors: uuk, xkcdjerry (inactive)

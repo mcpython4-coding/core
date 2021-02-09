@@ -197,6 +197,7 @@ class Command(mcpython.common.event.Registry.IRegistryContent):
         :param info: a ParsingCommandInfo for parsing this command
         todo: remove
         """
+        pass
 
     @staticmethod
     def get_help() -> list:

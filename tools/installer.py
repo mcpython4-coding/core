@@ -13,10 +13,13 @@ import sys
 import os
 
 """
-installation code for setting up your python
+Installation code for setting up your python
+Does some magic for stripped builds
 """
 
-home = os.path.dirname(os.path.dirname(__file__))
+home = os.path.dirname(__file__)
+if not os.path.exists(home + "/__main__.py"):
+    home = os.path.dirname(home)
 
 
 subprocess.call(
@@ -29,7 +32,9 @@ subprocess.call(
 subprocess.call(
     [
         sys.executable,
-        home + "/tools/update_asset_source.py",
+        home + "/tools/update_asset_source.py"
+        if os.path.exists(home + "/tools/update_asset_source.py")
+        else home + "/update_asset_source.py",
         "https://launcher.mojang.com/v1/objects/8230cf2349b48ba79b0581a3fc76be53f26312bc/client.jar",
         home,
     ],

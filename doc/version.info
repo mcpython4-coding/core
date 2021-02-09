@@ -1516,4 +1516,11 @@ R   [uuk]: improved world serialization API
        in debug world
 [uuk]: fixed wall block state issues
 [uuk]: added option to disable mod loader, resource pack loader and data pack loader
+[uuk]: implemented new build system, capable of a lot better builds, and faster startup times
+[uuk]: the new build system is more general-use-case build system with a modular toolchain
+[uuk]: the build system will strip client resources from the dedicated server
+[uuk]: the build system will minifie non-dev builds
+[uuk]: the build system will compress json files
+[uuk]: dedicated server builds strip now all client code, making them currently not working, but they are going
+       in the right direction
 
