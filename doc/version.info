@@ -1524,5 +1524,6 @@ R   [uuk]: improved world serialization API
 [uuk]: dedicated server builds strip now all client code, making them currently not working, but they are going
        in the right direction
 [uuk]: fixed release task
-[uuk]: dumped pyglet to 1.5.15
+[uuk]: dumped pyglet to 1.5.
+[uuk]: targetting now 21w06a
 

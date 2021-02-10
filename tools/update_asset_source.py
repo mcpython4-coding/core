@@ -17,7 +17,7 @@ import zipfile
 import shutil
 import sys
 
-home = os.path.dirname(__file__).replace("\\", "/")
+home = os.path.dirname(__file__).replace("\\", "/").removesuffix("/")
 target = home if not os.path.exists(home + "/tools") else home + "/tools"
 url = input("url to source: ") if len(sys.argv) == 1 else sys.argv[1]
 
@@ -34,13 +34,13 @@ if os.path.exists(home + "/resources/source"):
 
 print("copying new...")
 
-target = sys.argv[2] + "/" if len(sys.argv) > 2 else home + "/resources/source/"
+target_dir = sys.argv[2] + "/" if len(sys.argv) > 2 else os.path.dirname(home) + "/resources/source/"
 
 with zipfile.ZipFile(target + "/source.zip") as f:
     for file in f.namelist():
         if "assets" in file or "data" in file and "net/minecraft" not in file:
             data = f.read(file)
-            fd = target + file
+            fd = target_dir + file
             d = os.path.dirname(fd)
             if not os.path.isdir(d):
                 os.makedirs(d)
