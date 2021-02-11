@@ -49,7 +49,10 @@ information on development:
 
 changelog of snapshot <21w07a> released on <...> targeting <21w06a>
     This snapshot breaks again compatibility, mainly the following:
-        - rework how the world generates - from ground up! [WIP]
+        - reworked how the world generates
+        - reworked how the world stores data maps of chunks (e.g. heightmaps)
+        - broke with this world loading compatbilility, did not add a DataFixer for it, so old worlds cannot be
+            loaded
 
     Commands:
         - added /worldgendebug command
@@ -57,6 +60,7 @@ changelog of snapshot <21w07a> released on <...> targeting <21w06a>
     World Generation:
         - added async world generation process
         - added access system from other processes to the current world
+        - reworked how data maps of chunks are done
 
     Launch options:
         - added options to disable mod loader, data pack loader, and reosurce pack loader

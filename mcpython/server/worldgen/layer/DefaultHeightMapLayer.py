@@ -46,25 +46,22 @@ class DefaultHeightMapLayer(ILayer):
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
-        heightmap = chunk.get_value("heightmap")
+        height_map = chunk.get_map("minecraft:height_map")
+        biome_map = chunk.get_map("minecraft:biome_map")
 
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
 
         for (x, z), v in noise_map:
-            heightmap[(x, z)] = cls.get_height_at(config, chunk, x, z, v)
+            height_map.set_at_xz(
+                x, z, cls.get_height_at(config, chunk, x, z, v, biome_map)
+            )
 
     @classmethod
-    def get_height_at(cls, config, chunk, x, z, v) -> list:
-        biome_map = chunk.get_value("minecraft:biome_map")
-        biome = shared.biome_handler.biomes[biome_map[(x, z)]]
+    def get_height_at(cls, config, chunk, x, z, v, biome_map) -> list:
+        biome = shared.biome_handler.biomes[biome_map.get_at_xz(x, z)]
         start, end = biome.get_height_range()
         end *= config.max_height_factor
         v *= end - start
         v += start
         info = [(1, round(v))]  # todo: do some more special stuff here!
         return info
-
-
-mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "heightmap", DefaultHeightMapLayer, {}
-)

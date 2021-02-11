@@ -1526,4 +1526,7 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed release task
 [uuk]: dumped pyglet to 1.5.
 [uuk]: targetting now 21w06a
+[uuk]: chunk data maps are now instance-based, coming with helper code around them
+[uuk]: this breaks loading old worlds, again...
+[uuk]: optmised how data maps are stored
 

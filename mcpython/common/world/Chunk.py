@@ -14,12 +14,13 @@ This project is not official by mojang and does not relate to it.
 import datetime
 import typing
 
+from mcpython import shared
+from mcpython import logger
 import mcpython.common.block.AbstractBlock as Block
 import mcpython.util.enums
 import mcpython.util.math
-from mcpython import shared
-from mcpython.util.math import *  # todo: remove
 import mcpython.common.world.AbstractInterface
+import mcpython.server.worldgen.map.AbstractChunkInfoMap
 
 
 class Chunk(mcpython.common.world.AbstractInterface.IChunk):
@@ -28,20 +29,6 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
     """
 
     now = datetime.datetime.now()  # when is now?
-
-    attributes = {}  # an dict representing the default attributes of an chunk
-
-    @staticmethod
-    def add_default_attribute(name: str, reference: typing.Any, default: typing.Any):
-        """
-        will add an config entry into every new chunk instance
-        :param name: the name of the attribute
-        :param reference: the reference to use; unused internally
-        :param default: the default value
-        WARNING: content must be saved by owner, not auto-saved
-        todo: make class based
-        """
-        Chunk.attributes[name] = (reference, default, None)
 
     def __init__(
         self,
@@ -73,12 +60,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         # if the chunk was modified since last save
         self.dirty = False
 
-        self.attr: typing.Dict[str, typing.Any] = {}  # todo: rewrite!
-        for attr in self.attributes.keys():
-            v = self.attributes[attr][1]
-            if hasattr(v, "copy") and callable(v.copy):
-                v = v.copy()
-            self.attr[attr] = v
+        shared.world_generation_handler.setup_chunk_maps(self)
 
         self.add_chunk_load_ticket(
             mcpython.common.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS
@@ -112,26 +94,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param z: the y coord
         :return: the y value at that position
         """
-        height_map = self.get_value("heightmap")
-        y = height_map[x, z][0][1] if (x, z) in height_map else 0
-        return y
-
-    def set_value(self, name: str, value):
-        """
-        Will set an attribute of the chunk
-        :param name: the name to use
-        :param value: the value to use
-        """
-        self.attr[name] = value
-        self.mark_dirty()
-
-    def get_value(self, name: str):
-        """
-        Will get the value of the given name
-        :param name: the name to get
-        :return: the data stored
-        """
-        return self.attr[name]
+        height_map = self.get_map("minecraft:height_map")
+        return height_map.get_at_xz(x, z)[0][1]
 
     def draw(self):
         """

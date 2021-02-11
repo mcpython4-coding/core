@@ -15,6 +15,7 @@ from abc import ABC
 import typing
 import enum
 import mcpython.util.enums
+import mcpython.server.worldgen.map.AbstractChunkInfoMap
 
 
 class ChunkLoadTicketType(enum.Enum):
@@ -65,6 +66,16 @@ class IChunk(ABC):
         # inner API list for ChunkLoadTickets [WIP]
         # todo: use something better...
         self.chunk_loaded_list = tuple([[] for _ in range(16)])
+
+        self.data_maps: typing.Dict[
+            str, mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap
+        ] = {}
+
+    def get_map(self, name: str):
+        return self.data_maps[name]
+
+    def get_all_data_maps(self):
+        return list(self.data_maps.values())
 
     def clear_positions_updated_since_last_save(self):
         self._positions_updated_since_last_save.clear()
@@ -224,57 +235,56 @@ class IChunk(ABC):
         """
         raise NotImplementedError
 
-    def show_block(
-        self,
-        position: typing.Union[
-            typing.Tuple[int, int, int],
-            typing.Any,
-        ],
-        immediate: bool = True,
-    ):
-        """
-        Client-only visual show function
-        Unused internally
-        todo: remove
-        use block.face_state.update(True) instead
-        """
-        raise NotImplementedError
+    # Not anymore required...
+    # def show_block(
+    #     self,
+    #     position: typing.Union[
+    #         typing.Tuple[int, int, int],
+    #         typing.Any,
+    #     ],
+    #     immediate: bool = True,
+    # ):
+    #     """
+    #     Client-only visual show function
+    #     Unused internally
+    #     todo: remove
+    #     use block.face_state.update(True) instead
+    #     """
+    #     raise NotImplementedError
+    #
+    # def hide_block(
+    #     self,
+    #     position: typing.Union[
+    #         typing.Tuple[int, int, int],
+    #         typing.Any,
+    #     ],
+    #     immediate=True,
+    # ):
+    #     """
+    #     Client-only visual hide function
+    #     Unused internally
+    #     todo: remove
+    #     use block.face_state.hide_all() instead
+    #     """
+    #     raise NotImplementedError
 
-    def hide_block(
-        self,
-        position: typing.Union[
-            typing.Tuple[int, int, int],
-            typing.Any,
-        ],
-        immediate=True,
-    ):
-        """
-        Client-only visual hide function
-        Unused internally
-        todo: remove
-        use block.face_state.hide_all() instead
-        """
-        raise NotImplementedError
-
-    def show(self, force=False):
+    def show(self):
         """
         Shows the entire chunk
-        :param force: unused; todo: remove
         """
         raise NotImplementedError
 
-    def hide(self, force=False):
+    def hide(self):
         """
         Hides an entire chunk
-        :param force: if to force-hide; todo: remove
+        :param force: if to force-hide
         """
         raise NotImplementedError
 
-    def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
+    def update_visible_block(self, position: typing.Tuple[int, int, int]):
         """
         Calls Block.face_state.update()
         :param position: the position to update at
-        :param hide: not for usage; todo: remove
         """
         raise NotImplementedError
 
@@ -285,11 +295,9 @@ class IChunk(ABC):
         """
         raise NotImplementedError
 
-    def update_visible(self, hide=True, immediate=False):
+    def update_visible(self, immediate=False):
         """
         Updates the visible state of ALL blocks in the chunk
-        todo: merge with show()
-        :param hide: unused; todo: remove
         :param immediate: immediate execute tasks or scheduling for later?
         """
         raise NotImplementedError
@@ -297,7 +305,6 @@ class IChunk(ABC):
     def hide_all(self, immediate=True):
         """
         Hides all chunks in the chunk
-        todo: merge with hide()
         :param immediate: immediate execute tasks or scheduling for later?
         """
         raise NotImplementedError
@@ -333,12 +340,6 @@ class IChunk(ABC):
 
     def save(self):
         pass
-
-    def set_value(self, key: str, data):
-        raise NotImplementedError
-
-    def get_value(self, key: str):
-        raise NotImplementedError
 
     def __getitem__(self, item):
         return self.get_block(item)

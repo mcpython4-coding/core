@@ -47,7 +47,7 @@ class DefaultTemperatureLayer(ILayer):
         chunk = reference.chunk
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
 
-        temperature_map = chunk.get_value("minecraft:temperature_map")
+        temperature_map = chunk.get_map("minecraft:temperature_map")
         r = [config.temperature_min, config.temperature_max]
 
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
@@ -55,9 +55,4 @@ class DefaultTemperatureLayer(ILayer):
         for (x, z), v in noise_map:
             v *= abs(r[0] - r[1])
             v += r[0]
-            temperature_map[(x, z)] = v
-
-
-mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "minecraft:temperature_map", DefaultTemperatureLayer, {}
-)
+            temperature_map.set_at_xz(x, z, v)

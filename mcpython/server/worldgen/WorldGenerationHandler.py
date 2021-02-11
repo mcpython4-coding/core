@@ -23,6 +23,7 @@ import mcpython.server.worldgen.layer.ILayer
 import mcpython.server.worldgen.mode
 import mcpython.server.worldgen.WorldGenerationTaskArrays
 import mcpython.common.event.Registry
+import mcpython.server.worldgen.map.AbstractChunkInfoMap
 
 
 class WorldGenerationHandler:
@@ -56,6 +57,25 @@ class WorldGenerationHandler:
             ["minecraft:generation_feature"],
             "stage:worldgen:feature",
         )
+
+        self.chunk_maps = {}
+
+    def setup_chunk_maps(self, chunk):
+        chunk.data_maps.update(
+            {
+                name: chunk_map.init_on(chunk)
+                for name, chunk_map in self.chunk_maps.items()
+            }
+        )
+
+    def register_chunk_map(
+        self,
+        chunk_map: typing.Type[
+            mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap
+        ],
+    ):
+        self.chunk_maps[chunk_map.NAME] = chunk_map
+        return self
 
     def serialize_chunk_generator_info(self) -> dict:
         data = {}
@@ -317,6 +337,10 @@ class WorldGenerationHandler:
     ):
         if issubclass(data, mcpython.server.worldgen.layer.ILayer.ILayer):
             self.register_layer(data)
+        elif issubclass(
+            data, mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap
+        ):
+            self.register_chunk_map(data)
         else:
             raise TypeError("unknown data type", type(data))
         return data
@@ -363,6 +387,16 @@ def load_features():
     from .feature.village import VillageFeatureDefinition
 
 
+def load_maps():
+    from .map import (
+        BiomeMap,
+        HeightMap,
+        LandMassMap,
+        TemperatureMap,
+        FeatureMap,
+    )
+
+
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:worldgen:layer", load_layers, info="loading generation layers"
 )
@@ -371,4 +405,7 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:worldgen:feature", load_features, info="loading world gen features"
+)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+    "stage:worldgen:maps", load_maps, info="loading chunk maps"
 )

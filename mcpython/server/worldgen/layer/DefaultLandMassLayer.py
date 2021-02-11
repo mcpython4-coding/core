@@ -44,7 +44,7 @@ class DefaultLandMassLayer(ILayer):
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
-        land_map = chunk.get_value("minecraft:landmass_map")
+        land_map = chunk.get_map("minecraft:landmass_map")
 
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
 
@@ -53,9 +53,4 @@ class DefaultLandMassLayer(ILayer):
             v = round(v)
             if v == len(config.masses):
                 v = 0
-            land_map[(x, z)] = config.masses[v]
-
-
-mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "minecraft:landmass_map", DefaultLandMassLayer, {}
-)
+            land_map.set_at_xz(x, z, config.masses[v])

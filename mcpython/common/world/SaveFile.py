@@ -60,7 +60,7 @@ History of save versions:
     - player data reformat
 """
 
-shared.STORAGE_VERSION = LATEST_VERSION = 8  # the latest version, used for upgrading
+shared.STORAGE_VERSION = LATEST_VERSION = 9  # the latest version, used for upgrading
 
 # where the stuff should be saved
 SAVE_DIRECTORY = (
@@ -503,4 +503,5 @@ class SaveFile:
 
 @shared.mod_loader("minecraft", "stage:datafixer:general")
 def load_elements():
-    from mcpython.common.world.datafixers import DataFixer7to8
+    # from mcpython.common.world.datafixers import
+    pass

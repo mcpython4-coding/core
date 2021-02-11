@@ -48,15 +48,15 @@ class DefaultFeatureLayer(ILayer):
         chunk = reference.chunk
 
         # todo: rename to structure blocking info or something similar
-        treemap = chunk.get_value("tree_blocked")
-        if (x, z) in treemap:
+        treemap = chunk.get_map("minecraft:feature_map")
+        if not treemap.get_at_xz(x, z, "minecraft:tree"):
             return  # is an tree nearby?
 
         # the various maps
         biome = shared.biome_handler.biomes[
-            chunk.get_value("minecraft:biome_map")[(x, z)]
+            chunk.get_map("minecraft:biome_map").get_at_xz(x, z)
         ]
-        height = chunk.get_value("heightmap")[(x, z)][0][1]
+        height = chunk.get_map("minecraft:height_map").get_at_xz(x, z)[0][1]
 
         # and now iterate over all features
         for group in biome.FEATURES_SORTED:
@@ -89,8 +89,3 @@ class DefaultFeatureLayer(ILayer):
                     z,
                     feature_def.config,
                 )
-
-
-mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "tree_blocked", DefaultFeatureLayer, []
-)

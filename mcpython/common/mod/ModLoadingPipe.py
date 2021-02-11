@@ -469,10 +469,12 @@ manager.add_stage(
     .add_event_stage("stage:worldgen:serializer:biomes:load", "stage:worldgen:feature")
     .add_event_stage("stage:worldgen:biomes", "stage:worldgen:serializer:biomes:load")
     .add_event_stage("stage:worldgen:layer", "stage:worldgen:serializer:prepare")
+    .add_event_stage("stage:worldgen:maps")
     .add_event_stage(
         "stage:worldgen:serializer:mode:load",
         "stage:worldgen:layer",
         "stage:worldgen:biomes",
+        "stage:worldgen:maps",
     )
     .add_event_stage(
         "stage:worldgen:serializer:mode:modify", "stage:worldgen:serializer:mode:load"

@@ -40,12 +40,12 @@ class DefaultTopLayerLayer(ILayer):
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
 
-        heightmap = chunk.get_value("heightmap")
-        biome_map = chunk.get_value("minecraft:biome_map")
+        height_map = chunk.get_map("minecraft:height_map")
+        biome_map = chunk.get_map("minecraft:biome_map")
 
         for (x, z), v in noise_map:
-            world_height = heightmap[(x, z)][0][1]
-            biome = shared.biome_handler.biomes[biome_map[(x, z)]]
+            world_height = height_map.get_at_xz(x, z)[0][1]
+            biome = shared.biome_handler.biomes[biome_map.get_at_xz(x, z)]
             reference.schedule_invoke(
                 cls.generate_xz, reference, x, z, config, v, world_height, biome
             )

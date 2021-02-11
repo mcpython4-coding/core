@@ -419,7 +419,12 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         for x in range(chunk[0] * 16, chunk[0] * 16 + 16):
             positions.extend([(x, z) for z in range(chunk[1] * 16, chunk[1] * 16 + 16)])
 
-        if (
+        for data_map in chunk_instance.get_all_data_maps():
+            if data_map.NAME in data["maps"]:
+                data_map_data = data["maps"][data_map.NAME]
+                data_map.load_from_saves(data_map_data)
+
+        """if (
             "minecraft:landmass_map" in data["maps"]
             and "biome" in data["maps"]
             and "height" in data["maps"]
@@ -451,7 +456,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                         chunk, dimension
                     ),
                     "this might indicate an unsuccessful save of the world!",
-                )
+                )"""
 
         for entity in data["entities"]:
             if entity["type"] == "minecraft:player":
@@ -546,11 +551,14 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 position[1],
                 position[2] - chunk_instance.get_position()[1] * 16,
             )  # the relative position to the chunk
-            block = chunk_instance.get_block(position)
+
+            block = chunk_instance.get_block(position, none_if_str=True)
+
             if block is None and not override:
                 if rel_position in cdata["blocks"]:
                     del cdata["blocks"][rel_position]  # ok, old data MUST be removed
                 continue
+
             block_data = {
                 "custom": block.dump_data(),
                 "name": block.NAME,
@@ -602,7 +610,10 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             cdata["entities"].append(edata)
 
         if override:  # we want to re-dump all data maps
-            biome_map = chunk_instance.get_value(
+            for data_map in chunk_instance.get_all_data_maps():
+                cdata["maps"][data_map.NAME] = data_map.dump_for_saves()
+
+            """biome_map = chunk_instance.get_value(
                 "minecraft:biome_map"
             )  # read the biome map ...
 
@@ -646,7 +657,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             height_map = chunk_instance.get_value("heightmap")
             cdata["maps"]["height"] = [
                 height_map[pos] if pos in height_map else -1 for pos in positions
-            ]
+            ]"""
 
         data[chunk] = cdata  # dump the chunk into the region
         write_region_data(

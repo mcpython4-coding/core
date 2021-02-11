@@ -48,27 +48,26 @@ class DefaultBiomeMapLayer(ILayer):
     @classmethod
     def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
-        cx, cz = chunk.position
+        cx, cz = chunk.get_position()
 
         # The various chunk maps needed
-        biome_map = chunk.get_value("minecraft:biome_map")
-        land_map = chunk.get_value("minecraft:landmass_map")
-        temperature_map = chunk.get_value("minecraft:temperature_map")
+        biome_map = chunk.get_map("minecraft:biome_map")
+        land_map = chunk.get_map("minecraft:landmass_map")
+        temperature_map = chunk.get_map("minecraft:temperature_map")
 
         # Now iterate over all positions
         # todo: use a map calculation
         for x in range(cx * 16, cx * 16 + 16):
             for z in range(cz * 16, cz * 16 + 16):
-                biome_map[
-                    (x, z)
-                ] = config.world_generator_config.BIOME_SOURCE.get_biome_at(
-                    x, z, cls.noises, land_map[(x, z)], config, temperature_map[(x, z)]
+                biome_map.set_at_xz(
+                    x,
+                    z,
+                    config.world_generator_config.BIOME_SOURCE.get_biome_at(
+                        x,
+                        z,
+                        cls.noises,
+                        land_map.get_at_xz(x, z),
+                        config,
+                        temperature_map.get_at_xz(x, z),
+                    ),
                 )
-
-        # And now write the biome map into the chunk
-        chunk.set_value("minecraft:biome_map", biome_map)
-
-
-mcpython.common.world.Chunk.Chunk.add_default_attribute(
-    "minecraft:biome_map", DefaultBiomeMapLayer, {}
-)
