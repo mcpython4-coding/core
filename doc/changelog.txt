@@ -47,11 +47,11 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <21w07a> released on <...> targeting <21w06a>
+changelog of snapshot <21w??a> released on <...> targeting <21w07a>
     This snapshot breaks again compatibility, mainly the following:
         - reworked how the world generates
         - reworked how the world stores data maps of chunks (e.g. heightmaps)
-        - broke with this world loading compatbilility, did not add a DataFixer for it, so old worlds cannot be
+        - broke with this world loading compatibility, did not add a DataFixer for it, so old worlds cannot be
             loaded
 
     Commands:
