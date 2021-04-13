@@ -63,7 +63,9 @@ class TickHandler:
         shared.inventory_handler.tick(dt)
         shared.world.tick()
         # todo: include command info here!
-        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:tick", None)
+        mcpython.common.DataPack.datapack_handler.try_call_function(
+            "#minecraft:tick", None
+        )
         if self.enable_random_ticks:
             pyglet.clock.schedule_once(self.send_random_ticks, 0)
         while len(self.execute_array) > 0:

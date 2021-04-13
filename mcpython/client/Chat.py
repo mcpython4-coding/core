@@ -25,6 +25,7 @@ import mcpython.common.event.EventHandler
 import mcpython.client.gui.ContainerRenderer
 import mcpython.util.opengl
 from mcpython.util.annotation import onlyInClient
+import mcpython.server.command.CommandParser
 
 
 @onlyInClient()
@@ -110,6 +111,7 @@ class Chat:
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:clear_chat", self.clear
         )
+        self.executing_command_info = None
 
     def enter(self, text: str):
         """
@@ -153,16 +155,28 @@ class Chat:
             logger.println(
                 "[CHAT][INFO] entered text: '{}'".format(self.text), console=False
             )
+
             if self.CANCEL_INPUT:
                 self.history.insert(0, self.text)
                 self.close()
                 return
+
             if self.text.startswith("/"):
                 # execute command
-                # todo: add env
-                shared.command_parser.run(self.text, None)
+                if self.executing_command_info is None:
+                    self.executing_command_info = mcpython.server.command.CommandParser.CommandExecutionEnvironment(
+                        this=shared.world.get_active_player()
+                    )
+                    self.executing_command_info.chat = self
+                else:
+                    player = shared.world.get_active_player()
+                    self.executing_command_info.position = player.get_position()
+                    self.executing_command_info.dimension = player.get_dimension()
+                shared.command_parser.run(self.text, self.executing_command_info)
+
             else:
                 self.print_ln(self.text)
+
             self.history.insert(0, self.text)
             self.close()
 

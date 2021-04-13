@@ -366,6 +366,9 @@ class IChunk(ABC):
     def __hash__(self):
         return hash((self.get_dimension().get_name(), self.get_position()))
 
+    def entity_iterator(self) -> typing.Iterable:
+        raise NotImplementedError
+
 
 class IDimension(ABC):
     def __init__(self):
@@ -446,6 +449,12 @@ class IDimension(ABC):
     def tick(self):
         pass
 
+    def entity_iterator(self) -> typing.Iterable:
+        raise NotImplementedError
+
+    def get_world(self) -> "IDimension":
+        raise NotImplementedError
+
 
 class IWorld(ABC):
     def get_dimension_names(self) -> typing.Iterable[str]:
@@ -457,6 +466,9 @@ class IWorld(ABC):
         raise NotImplementedError
 
     def get_active_player(self, create: bool = True) -> typing.Optional:
+        raise NotImplementedError
+
+    def player_iterator(self) -> typing.Iterable:
         raise NotImplementedError
 
     def reset_config(self):
@@ -508,4 +520,7 @@ class IWorld(ABC):
         raise NotImplementedError
 
     def setup_by_filename(self, filename: str):
+        raise NotImplementedError
+
+    def entity_iterator(self) -> typing.Iterable:
         raise NotImplementedError

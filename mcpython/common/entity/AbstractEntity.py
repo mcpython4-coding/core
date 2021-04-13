@@ -115,6 +115,9 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
     def set_motion(self, motion: tuple):
         self.nbt_data["motion"] = motion
 
+    def get_dimension(self):
+        return self.dimension
+
     movement = motion = property(get_motion, set_motion)
 
     # only for some small use-cases. WARNING: will  N O T  do any internal handling for updating the position

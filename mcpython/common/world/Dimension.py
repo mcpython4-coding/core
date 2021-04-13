@@ -159,6 +159,14 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
 
         self.height_range = (0, 255)
 
+    def get_world(self):
+        return self.world
+
+    def entity_iterator(self) -> typing.Iterable:
+        for chunk in self.chunks.values():
+            yield from chunk.entity_iterator()
+            yield from chunk.entity_iterator()
+
     def tick(self):
         for chunk in self.chunks.values():
             if chunk.is_loaded():

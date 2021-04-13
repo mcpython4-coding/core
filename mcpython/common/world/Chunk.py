@@ -66,6 +66,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             mcpython.common.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS
         )
 
+    def entity_iterator(self) -> typing.Iterable:
+        return tuple(self.entities)
+
     def tick(self):
         self.check_for_unload()
 

@@ -1,5 +1,6 @@
 import typing
 from abc import ABC
+import random
 
 from mcpython import logger
 from mcpython import shared
@@ -34,7 +35,7 @@ class CommandExecutionTracker:
         return self.content[self.current_index]
 
     def get_multi(self, count: int) -> typing.Iterable[str]:
-        return self.content[self.current_index:self.current_index+count]
+        return self.content[self.current_index : self.current_index + count]
 
     def increase(self, count: int):
         self.current_index += count
@@ -98,7 +99,10 @@ class RegistryContent(ICommandElementIdentifier):
         tracker.collect(self.inner_registry.get(key))
 
     def __eq__(self, other):
-        return isinstance(other, RegistryContent) and self.inner_registry == other.inner_registry
+        return (
+            isinstance(other, RegistryContent)
+            and self.inner_registry == other.inner_registry
+        )
 
 
 class Block(ICommandElementIdentifier):
@@ -129,6 +133,57 @@ class Block(ICommandElementIdentifier):
 
     def __eq__(self, other):
         return isinstance(other, Block)
+
+
+class Selector(ICommandElementIdentifier):
+    SELECTORS = {
+        # Something fancy, double lambdas! Outer for creating from string, inner for execution
+        # first is meta-mode; 0 is no meta, 1 optional, and 2 forced
+        # type 0 takes only a single lambda, as it is not fed with the meta string
+        "@p": (0, lambda env: (env.get_this(),)),
+        "@a": (0, lambda env: list(env.get_dimension().get_world().player_iterator())),
+        "@r": (
+            0,
+            lambda env: (
+                random.choice(env.get_dimension().get_world().player_iterator())
+            ),
+        ),
+        # todo: use also meta-data
+        "@e": (
+            1,
+            lambda string: lambda env: list(
+                env.get_dimension().get_world().entity_iterator()
+            ),
+        ),
+    }
+
+    def is_valid(self, node: "CommandNode", tracker: CommandExecutionTracker) -> bool:
+        string = tracker.get()
+        pre = string.split("[")[0]
+        if pre not in self.SELECTORS:
+            return False
+
+        meta_mode, transformer = self.SELECTORS[pre]
+        if meta_mode == 0 and "[" in string:
+            return False
+        if meta_mode == 2 and "[" not in string:
+            return False
+
+        return True
+
+    def simulate(self, node: "CommandNode", tracker: CommandExecutionTracker):
+        string = tracker.get()
+        tracker.increase(1)
+        pre = string.split("[")[0]
+
+        meta_mode, transformer = self.SELECTORS[pre]
+
+        meta = None if "[" not in string else "[".join(string.split("[")[1:])[:-1]
+
+        tracker.collect(transformer(meta) if meta_mode != 0 else transformer)
+
+    def __eq__(self, other):
+        return isinstance(other, Selector)
 
 
 class CommandNode:
@@ -172,7 +227,9 @@ class CommandNode:
         :return: when arrival, the end CommandNode for execution
         """
         if not self.inner_identifier.is_valid(self, tracker):
-            tracker.parsing_errors.append(f"node '{self.name}' using entry {self.inner_identifier}")
+            tracker.parsing_errors.append(
+                f"node '{self.name}' using entry {self.inner_identifier}"
+            )
             return
 
         tracker.save()
@@ -208,4 +265,3 @@ class Command(CommandNode):
     def __init__(self, name: str):
         super().__init__(DefinedString("/" + name))
         self.name = name
-

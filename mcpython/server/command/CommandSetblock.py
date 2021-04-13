@@ -13,7 +13,7 @@ setblock = Command("setblock").than(
     .than(
         CommandNode(Block())
         .of_name("block")
-        .on_execution(lambda env, data: print(data[1]))
+        .on_execution(lambda env, data: env.get_dimension().add_block(data[1], data[2]))
         .info("Sets a given block at the given position")
     )
 )
