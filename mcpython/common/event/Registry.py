@@ -118,6 +118,12 @@ class Registry:
     def unlock(self):
         self.locked = False
 
+    def is_valid_key(self, key: str):
+        return key in self.full_entries
+
+    def get(self, key: str):
+        return self.full_entries[key]
+
 
 class RegistryInjectionHolder:
     def __init__(self, *args, **kwargs):  # todo: do something with the args and kwargs!

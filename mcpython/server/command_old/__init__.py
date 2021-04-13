@@ -11,27 +11,3 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import threading
-
-from mcpython import logger
-from mcpython import shared
-
-
-class ServerConsoleHandler:
-    def __init__(self):
-        self.thread = threading.Thread(target=self._run)
-        self.running = True
-
-    def _run(self):
-        while self.running:
-            command = input(">>> ")
-            if command.startswith("/"):
-                shared.command_parser.run(command)
-            else:
-                logger.println("[SERVER]", command)
-
-    def run(self):
-        self.thread.start()
-
-
-handler = ServerConsoleHandler()

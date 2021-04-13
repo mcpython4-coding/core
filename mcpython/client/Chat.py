@@ -19,7 +19,7 @@ import pyglet
 from pyglet.window import key
 
 from mcpython import shared, logger
-import mcpython.server.command.CommandHandler
+import mcpython.server.command.CommandParser
 import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler
 import mcpython.client.gui.ContainerRenderer
@@ -159,7 +159,8 @@ class Chat:
                 return
             if self.text.startswith("/"):
                 # execute command
-                shared.command_parser.parse(self.text)
+                # todo: add env
+                shared.command_parser.run(self.text, None)
             else:
                 self.print_ln(self.text)
             self.history.insert(0, self.text)

@@ -18,8 +18,7 @@ import typing
 
 from mcpython import shared, logger
 import mcpython.ResourceLoader
-import mcpython.server.command.CommandParser
-import mcpython.server.command.McFunctionFile
+import mcpython.server.command.FunctionFile
 import mcpython.common.event.EventHandler
 
 
@@ -121,7 +120,7 @@ class DataPackHandler:
     def try_call_function(
         self,
         name: str,
-        info: mcpython.server.command.CommandParser.ParsingCommandInfo = None,
+        info,
     ):
         """
         Will try to invoke a function in a datapack
@@ -129,9 +128,6 @@ class DataPackHandler:
         :param info: the info-object to use; when None, one is constructed for this
         WARNING: will only invoke ONE function/tag from the datapacks, not all
         """
-        if info is None:
-            info = mcpython.server.command.CommandParser.ParsingCommandInfo()
-
         if name.startswith("#"):  # an tag
             try:
                 tag = shared.tag_handler.get_tag_for(name, "functions")

@@ -245,7 +245,11 @@ def normalize_ceil(position: typing.Tuple[float, float, float]):
         raise
 
 
-def position_to_chunk(position: typing.Union[typing.Tuple[float, float, float], typing.Tuple[float, float]]) -> typing.Tuple[int, int]:
+def position_to_chunk(
+    position: typing.Union[
+        typing.Tuple[float, float, float], typing.Tuple[float, float]
+    ]
+) -> typing.Tuple[int, int]:
     """
     Returns a tuple representing the chunk for the given `position`.
     :param position: the position, as a two-tuple (x, z) or three-tuple (x, y, z)
