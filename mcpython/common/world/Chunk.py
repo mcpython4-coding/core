@@ -138,7 +138,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
         for face in mcpython.util.enums.FACE_ORDER:
             pos = face.relative_offset(position)
-            chunk_position = mcpython.util.math.position_to_chunk_unsafe(pos)
+            chunk_position = mcpython.util.math.position_to_chunk(pos)
 
             if chunk_position != self.position:
                 chunk = self.dimension.get_chunk(chunk_position, generate=False)

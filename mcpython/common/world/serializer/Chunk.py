@@ -24,7 +24,8 @@ import mcpython.common.world.AbstractInterface
 
 
 def chunk2region(cx, cz):
-    return cx >> 5, cz >> 5
+    # todo: move to util/math
+    return round(cx) >> 5, round(cz) >> 5
 
 
 def access_region_data(

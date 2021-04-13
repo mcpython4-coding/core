@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import typing
 
 from mcpython import shared, logger
@@ -26,7 +27,7 @@ def cube_vertices_better(
     ny: float,
     nz: float,
     faces=(True, True, True, True, True, True),
-):
+) -> typing.Iterable[typing.List[float]]:
     """
     Similar to cube_vertices, but will return it per-face instead of an whole array of data
     :param x: the x position
@@ -36,7 +37,7 @@ def cube_vertices_better(
     :param ny: the size in y direction
     :param nz: the size in z direction
     :param faces: which faces to generate
-    :return: an tuple of length 6 representing each face
+    :return: a tuple of length 6 representing each face
     """
     top = (
         [
@@ -175,12 +176,14 @@ def tex_coordinates(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
         (dx + mx - ex, dy + my - ey),
         (dx + bx, dy + my - ey),
     ]
+
     if rot != 0:
         reindex = rot // 90
         _positions = positions
         positions = [0] * len(positions)
         for i, e in enumerate(_positions):
             positions[(i + reindex) % 4] = e
+
     return sum(positions, tuple())
 
 
@@ -198,6 +201,7 @@ def tex_coordinates_better(
     """
     if tex_region is None:
         tex_region = [(0, 0, 1, 1)] * len(args)
+
     return [
         tex_coordinates(
             *(face if face is not None else (0, 0)),
@@ -209,66 +213,46 @@ def tex_coordinates_better(
     ]
 
 
-def tex_coordinates_factor(fx, fy, tx, ty):
-    return fx, fy, tx, fy, tx, ty, fx, ty
-
-
-def normalize(position):
+def normalize(position: typing.Tuple[float, float, float]):
     """
     Accepts `position` of arbitrary precision and returns the block
-    containing that position.
+    containing that position
+
+    Uses simply rounding on all components
 
     :param position: the position
-    :return block_position: the rounded position
-
+    :return: the rounded position
     """
     try:
-        if type(position) in (tuple, list, set) and len(position) != 3:
-            logger.println("[FATAL] invalid position '{}'".format(position))
-            return position
-        x, y, z = position if type(position) == tuple else tuple(position)
-        x, y, z = (int(round(x)), int(round(y)), int(round(z)))
-        return x, y, z
+        assert len(position) == 3, "expected size is 3"
+        return tuple(round(e) for e in position)
     except:
         logger.println("[FATAL] error during parsing position {}".format(position))
         raise
 
 
-def normalize_ceil(position):
+def normalize_ceil(position: typing.Tuple[float, float, float]):
     """
     Same as normalize(position), but with math.ceil() instead of round()
     :param position: the position
     :return: the ceil-ed position
     """
     try:
-        x, y, z = position if type(position) == tuple else tuple(position)
-        x, y, z = (int(math.ceil(x)), int(math.ceil(y)), int(math.ceil(z)))
-        return x, y, z
+        assert len(position) == 3, "expected size is 3"
+        return tuple(math.ceil(e) for e in position)
     except:
         logger.println(position)
         raise
 
 
-def position_to_chunk(position):
+def position_to_chunk(position: typing.Union[typing.Tuple[float, float, float], typing.Tuple[float, float]]) -> typing.Tuple[int, int]:
     """
     Returns a tuple representing the chunk for the given `position`.
-
-    :param position: the position
-    :return: the chunk
+    :param position: the position, as a two-tuple (x, z) or three-tuple (x, y, z)
+    :return: the chunk position, as (x, z)
     """
-    x, _, z = normalize(position)
+    x, *_, z = position
     x, z = x // 16, z // 16
-    return x, z
-
-
-def position_to_chunk_unsafe(position):
-    """
-    Returns a tuple representing the chunk for the given `position`.
-
-    :param position: the position
-    :return: the chunk
-    """
-    x, z = position[0] // 16, position[-1] // 16
     return x, z
 
 
@@ -284,6 +268,8 @@ def topological_sort(items):
 
     An empty iterable (e.g. list, tuple, set, ...) produces no items but
     raises no exception.
+
+    todo: replace with native sorting system
     """
     provided = set()
     items = list(items)
@@ -315,6 +301,8 @@ def rotate_point(point, origin, rotation):
     :param origin: the origin to rotate around
     :param rotation: the rotation angle
     :return: the rotated point
+
+    todo: optimise!
     """
     # code translated from https://stackoverflow.com/questions/13275719/rotate-a-3d-point-around-another-one
     x, y, z = point
@@ -343,6 +331,11 @@ def rotate_point(point, origin, rotation):
 
 
 def product(iterable: typing.List[float]):
+    """
+    Similar to sum(), will use * instead of +
+    :param iterable: the iterable of add-ables
+    :return: the product of all elements
+    """
     v = iterable[0]
     for x in iterable[1:]:
         v *= x

@@ -63,8 +63,8 @@ changelog of snapshot <21w??a> released on <...> targeting <21w07a>
         - reworked how data maps of chunks are done
 
     Launch options:
-        - added options to disable mod loader, data pack loader, and reosurce pack loader
-        - boosted server load cycle even more!
+        - added options to disable mod loader, data pack loader, and resource pack loader
+        - boosted server load cycle even more
 
 
 changelog of snapshot 21w04a released on 27.01.2021, targeting 21w03a

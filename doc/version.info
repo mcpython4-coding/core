@@ -1530,3 +1530,4 @@ R   [uuk]: improved world serialization API
 [uuk]: this breaks loading old worlds, again...
 [uuk]: optimised how data maps are stored
 
+[uuk]: some minor optimisations around math functions
