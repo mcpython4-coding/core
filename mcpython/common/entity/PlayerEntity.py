@@ -147,7 +147,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     def set_gamemode(self, gamemode: typing.Union[int, str]):
         """
-        Sets the player gamemodes and the assigned properties
+        Sets the player game-modes and the assigned properties
+        todo: something better here?
         """
         if str(gamemode) in self.GAMEMODE_DICT:
             gamemode = self.GAMEMODE_DICT[str(gamemode)]

@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -11,24 +11,20 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.server.command.Builder import (
-    Command,
-    CommandNode,
-    IntPosition,
-    Block,
-)
+from mcpython.server.command.Builder import Command, CommandNode, Selector
 from mcpython import shared
 
 
-setblock = Command("setblock").than(
-    CommandNode(IntPosition())
-    .of_name("position")
+kill = (
+    Command("kill")
     .than(
-        CommandNode(Block())
-        .of_name("block")
-        .on_execution(lambda env, data: env.get_dimension().add_block(data[1], data[2]))
-        .info("Sets a given block at the given position")
+        CommandNode(Selector(max_entities=1))
+        .of_name("who")
+        .on_execution(lambda env, data: [entity.kill() for entity in data[1](env)])
+        .info("kills all selected entities")
     )
+    .on_execution(lambda env, data: env.get_this().kill())
+    .info("kills the executing entity")
 )
 
-shared.command_parser.register_command(setblock)
+shared.command_parser.register_command(kill)

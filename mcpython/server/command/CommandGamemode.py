@@ -14,20 +14,39 @@ This project is not official by mojang and does not relate to it.
 from mcpython.server.command.Builder import (
     Command,
     CommandNode,
-    IntPosition,
-    Block,
+    Selector,
+    DefinedString,
 )
 from mcpython import shared
+import enum
 
 
-setblock = Command("setblock").than(
-    CommandNode(IntPosition())
-    .of_name("position")
+def gamemode(mode, entities):
+    for entity in entities:
+        entity.set_gamemode(mode)
+
+
+setblock = Command("gamemode").than(
+    CommandNode(
+        DefinedString(
+            "0",
+            "1",
+            "2",
+            "3",
+            "survival",
+            "creative",
+            "hardcore",
+            "spectator",
+        )
+    )
+    .of_name("mode")
+    .on_execution(lambda env, data: gamemode(data[1], (env.get_this(),)))
+    .info("Sets the gamemode of the executing player")
     .than(
-        CommandNode(Block())
-        .of_name("block")
-        .on_execution(lambda env, data: env.get_dimension().add_block(data[1], data[2]))
-        .info("Sets a given block at the given position")
+        CommandNode(Selector())
+        .of_name("players")
+        .info("Sets the gamemode of selected players")
+        .on_execution(lambda env, data: gamemode(data[1], data[2]))
     )
 )
 

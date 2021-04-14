@@ -51,41 +51,6 @@ class CommandEntry(mcpython.common.event.Registry.IRegistryContent):
 
 
 def load():
-    @shared.registry
-    class DefiniteString(CommandEntry):
-        """
-        Entry for definite string
-        """
-
-        NAME = CommandArgumentType.DEFINED_STRING
-
-        @staticmethod
-        def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
-            return start + 1, entry_list[start]
-
-        @staticmethod
-        def is_valid(entry_list: list, start: int, arguments, kwargs) -> bool:
-            return entry_list[start] == arguments[0]
-
-    @shared.registry
-    class IntEntry(CommandEntry):
-        """
-        Entry for int
-        """
-
-        NAME = CommandArgumentType.INT
-
-        @staticmethod
-        def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
-            return start + 1, int(entry_list[start])
-
-        @staticmethod
-        def is_valid(entry_list: list, start: int, arguments, kwargs) -> bool:
-            try:
-                v = int(entry_list[start])  # try to convert to int
-                return not (math.isnan(v) or math.isinf(v))
-            except ValueError:
-                return False
 
     @shared.registry
     class StringEntry(CommandEntry):
@@ -165,61 +130,6 @@ def load():
                 return False
 
     @shared.registry
-    class BlockNameEntry(CommandEntry):
-        """
-        blockname entry
-        """
-
-        NAME = CommandArgumentType.BLOCK_NAME
-
-        @staticmethod
-        def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
-            return start + 1, entry_list[start]
-
-        @staticmethod
-        def is_valid(entry_list: list, start: int, arguments, kwargs) -> bool:
-            # is this block arrival?
-            flag = entry_list[start] in shared.registry.get_by_name(
-                "minecraft:block"
-            ) or entry_list[start] in (
-                "air",
-                "minecraft:air",
-            )
-
-            if not flag:
-                logger.println(
-                    "[INFORM] invalid due to missing registry entry. Use '/registryinfo block' for an list "
-                    "of all found blocks!"
-                )
-
-            return flag
-
-    @shared.registry
-    class ItemNameEntry(CommandEntry):
-        """
-        Item name entry
-        """
-
-        NAME = CommandArgumentType.ITEM_NAME
-
-        @staticmethod
-        def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
-            return start + 1, entry_list[start]
-
-        @staticmethod
-        def is_valid(entry_list: list, start: int, arguments, kwargs) -> bool:
-            # is this item arrival?
-            flag = entry_list[start] in shared.registry.get_by_name("minecraft:item")
-
-            if not flag:
-                logger.println(
-                    "[INFORM] invalid due to missing registry entry. Use '/registryinfo item' for an list "
-                    "of all found blocks"
-                )
-
-            return flag
-
-    @shared.registry
     class DimensionNameEntry(CommandEntry):
         """
         Dimension name entry
@@ -269,75 +179,6 @@ def load():
                     for x in shared.registry.get_by_name("minecraft:command").selector
                 ]
             )
-
-    @shared.registry
-    class PositionEntry(CommandEntry):
-        """
-        Position entry
-        """
-
-        NAME = CommandArgumentType.POSITION
-
-        @staticmethod
-        def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
-            if SelectorEntry.is_valid(entry_list, start, arguments, kwargs):
-                return (
-                    start + 1,
-                    SelectorEntry.parse(entry_list, start, info, arguments, kwargs)[
-                        0
-                    ].position,
-                )
-            x, y, z = tuple(entry_list[start : start + 3])
-            x = PositionEntry._parse_coordinate_to_real(x, 0, info)
-            y = PositionEntry._parse_coordinate_to_real(y, 1, info)
-            z = PositionEntry._parse_coordinate_to_real(z, 2, info)
-            return start + 3, (x, y, z)
-
-        @staticmethod
-        def _parse_coordinate_to_real(r: str, index: int, info) -> float:
-            """
-            Parses a coordinate (could be relative) to a valid coordinate
-            :param r: the coordinate to use
-            :param index: the index in the info position
-            :param info: the info to use
-            :return: an float value representing this
-            """
-            if r.startswith("~"):
-                v = info.position[index]
-                if len(r) > 1:
-                    v += int(r[1:])
-                return v
-
-            return float(r)
-
-        @staticmethod
-        def is_valid(entry_list: list, start: int, arguments, kwargs) -> bool:
-            if SelectorEntry.is_valid(entry_list, start, arguments, kwargs):
-                return True
-            try:
-                [
-                    float(x) if not x.startswith("~") else None
-                    for x in entry_list[start : start + 3]
-                ]
-                return True
-            except ValueError:
-                return False
-
-    @shared.registry
-    class SelectDefinedStringEntry(CommandEntry):
-        """
-        Select definite string entry
-        """
-
-        NAME = CommandArgumentType.SELECT_DEFINED_STRING
-
-        @staticmethod
-        def parse(entry_list: list, start: int, info, arguments, kwargs) -> tuple:
-            return start + 1, entry_list[start]
-
-        @staticmethod
-        def is_valid(entry_list: list, start: int, arguments, kwargs) -> bool:
-            return entry_list[start] in arguments  # check if should be used
 
     @shared.registry
     class OpenEndUndefinedStringEntry(CommandEntry):

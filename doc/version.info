@@ -1532,3 +1532,5 @@ R   [uuk]: improved world serialization API
 
 [uuk]: some minor optimisations around math functions
 [uuk]: rewritten how the command system works
+[uuk]: this may have broken all commands, and anything to do with it
+[uuk]: /blockinfo optionally accepts now a position
