@@ -120,6 +120,7 @@ def load_commands():
         CommandGive,
         CommandKill,
         CommandBlockInfo,
+        CommandReload,
     )
 
 
