@@ -484,3 +484,8 @@ class Command(CommandNode):
     def __init__(self, name: str):
         super().__init__(DefinedString("/" + name))
         self.name = name
+        self.additional_names = []
+
+    def alias(self, name: str):
+        self.additional_names.append(name)
+        return self

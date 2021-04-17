@@ -118,6 +118,12 @@ class CommandParser:
         """
 
         self.commands[command.name.removeprefix("/")] = command
+
+        for alias in command.additional_names:
+            instance = mcpython.server.command.Builder.Command(alias)
+            instance.following_nodes = command.following_nodes  # todo: additional meta data
+            self.register_command(instance)
+
         return self
 
 

@@ -1537,4 +1537,5 @@ R   [uuk]: improved world serialization API
 [uuk]: added helper code for working with larger structures in the world. Allows filling, cloning, and some special
        structure construction without needing big implementations
 [uuk]: renamed /recipeview to /view recipe and /registryinfo to /view registry
-[uuk]: migrated script for recipe view & registry info into their recpective handlers
+[uuk]: migrated script for recipe view & registry info into their respective handlers
+[uuk]: registry list is now a map, for more efficient lookups

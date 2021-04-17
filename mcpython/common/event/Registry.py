@@ -154,7 +154,7 @@ class RegistryHandler:
                         args[0].injectable
                     )
                 )
-            for registry in self.registries:
+            for registry in self.registries.values():
                 if registry.allow_argument_injection and registry.is_valid(
                     args[0].injectable
                 ):
@@ -171,7 +171,7 @@ class RegistryHandler:
                         args[0]
                     )
                 )
-            for registry in self.registries:
+            for registry in self.registries.values():
                 if registry.is_valid(args[0]):
                     registry.register(args[0])
                     return args[0]
