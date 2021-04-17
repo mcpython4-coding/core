@@ -20,9 +20,12 @@ import mcpython.common.event.EventHandler
 import sys
 import random
 import json
+import mcpython.client.gui.InventoryRecipeView
 
 
 class CraftingManager:
+    RECIPE_VIEW_INVENTORY = None
+
     def __init__(self):
         # todo: add special registry for recipes
         self.recipe_info_table = {}
@@ -172,6 +175,27 @@ class CraftingManager:
         print()
 
         shared.event_handler.call("crafting_manager:reload:end", self)
+
+    def show_to_player(self, recipe_name: str):
+        # todo: show error messages in chat
+
+        if recipe_name not in self.recipe_table:
+            logger.println(f"recipe '{recipe_name}' was not found!")
+            return
+
+        recipe = self.recipe_table[recipe_name]
+        if recipe.RECIPE_VIEW is None:
+            logger.println(f"recipe {recipe_name} does not support showing")
+            return
+
+        if self.RECIPE_VIEW_INVENTORY is None:
+            self.RECIPE_VIEW_INVENTORY = mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView()
+
+        shared.inventory_handler.show(
+            self.RECIPE_VIEW_INVENTORY.set_renderer(
+                recipe.RECIPE_VIEW.prepare_for_recipe(recipe)
+            )
+        )
 
 
 shared.crafting_handler = CraftingManager()

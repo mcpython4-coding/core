@@ -1536,3 +1536,5 @@ R   [uuk]: improved world serialization API
 [uuk]: /blockinfo optionally accepts now a position
 [uuk]: added helper code for working with larger structures in the world. Allows filling, cloning, and some special
        structure construction without needing big implementations
+[uuk]: renamed /recipeview to /view recipe and /registryinfo to /view registry
+[uuk]: migrated script for recipe view & registry info into their recpective handlers

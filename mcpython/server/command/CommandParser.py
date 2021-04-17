@@ -139,6 +139,7 @@ def load_commands():
         CommandClone,
         CommandFill,
         CommandFunction,
+        CommandView,
     )
 
     handler: CommandParser = shared.command_parser
@@ -154,6 +155,7 @@ def load_commands():
     handler.register_command(CommandClone.clone)
     handler.register_command(CommandFill.fill)
     handler.register_command(CommandFunction.function)
+    handler.register_command(CommandView.view)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
