@@ -31,7 +31,53 @@ class ChunkLoadTicketType(enum.Enum):
         yield self
 
 
-class IChunk(ABC):
+class ISupportWorldInterface(ABC):
+    """
+    Abstract intermediate common to chunk & dimension; Defines interaction with underlying world
+    """
+
+    def add_block(
+        self,
+        position: tuple,
+        block_name: typing.Union[str, typing.Any],
+        immediate=True,
+        block_update=True,
+        block_update_self=True,
+        lazy_setup: typing.Callable[[typing.Any], None] = None,
+        check_build_range=True,
+        block_state=None,
+    ) -> typing.Optional[typing.Any]:
+        raise NotImplementedError
+
+    def remove_block(
+        self,
+        position: typing.Union[
+            typing.Tuple[int, int, int],
+            typing.Any,
+        ],
+        immediate: bool = True,
+        block_update: bool = True,
+        block_update_self: bool = True,
+        reason=None,
+    ):
+        raise NotImplementedError
+
+    def check_neighbors(self, position: typing.Tuple[int, int, int]):
+        raise NotImplementedError
+
+    def update_visible_block(self, position: typing.Tuple[int, int, int]):
+        raise NotImplementedError
+
+    def exposed(self, position: typing.Tuple[int, int, int]):
+        raise NotImplementedError
+
+    def get_block(
+        self, position: typing.Tuple[int, int, int], none_if_str=False
+    ) -> typing.Union[typing.Any, str, None]:
+        raise NotImplementedError
+
+
+class IChunk(ISupportWorldInterface, ABC):
     """
     Abstract class for chunks
     Belows follows an API description
@@ -140,12 +186,17 @@ class IChunk(ABC):
         if not flag:
             self.get_dimension().unload_chunk(self)
 
-    # simple getter for the dimension
     def get_dimension(self) -> "IDimension":
+        """
+        Getter for the dimension of the chunk
+        """
         raise NotImplementedError
 
-    # simple getter for the chunk position
     def get_position(self) -> typing.Tuple[int, int]:
+        """
+        Getter for the chunk position
+        :return:
+        """
         raise NotImplementedError
 
     def get_maximum_y_coordinate_from_generation(self, x: int, z: int) -> int:
@@ -234,39 +285,6 @@ class IChunk(ABC):
         todo: rename to something fitting!
         """
         raise NotImplementedError
-
-    # Not anymore required...
-    # def show_block(
-    #     self,
-    #     position: typing.Union[
-    #         typing.Tuple[int, int, int],
-    #         typing.Any,
-    #     ],
-    #     immediate: bool = True,
-    # ):
-    #     """
-    #     Client-only visual show function
-    #     Unused internally
-    #     todo: remove
-    #     use block.face_state.update(True) instead
-    #     """
-    #     raise NotImplementedError
-    #
-    # def hide_block(
-    #     self,
-    #     position: typing.Union[
-    #         typing.Tuple[int, int, int],
-    #         typing.Any,
-    #     ],
-    #     immediate=True,
-    # ):
-    #     """
-    #     Client-only visual hide function
-    #     Unused internally
-    #     todo: remove
-    #     use block.face_state.hide_all() instead
-    #     """
-    #     raise NotImplementedError
 
     def show(self):
         """
@@ -370,7 +388,7 @@ class IChunk(ABC):
         raise NotImplementedError
 
 
-class IDimension(ABC):
+class IDimension(ISupportWorldInterface, ABC):
     def __init__(self):
         self.loaded = True
 

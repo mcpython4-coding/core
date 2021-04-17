@@ -26,5 +26,3 @@ kill = (
     .on_execution(lambda env, data: env.get_this().kill())
     .info("kills the executing entity")
 )
-
-shared.command_parser.register_command(kill)

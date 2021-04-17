@@ -20,7 +20,8 @@ from mcpython import shared
 
 
 def block_info(env, position):
-    if position is None: return
+    if position is None:
+        return
 
     block = env.get_dimension().get_block(position)
     if type(block) == str:
@@ -38,8 +39,15 @@ blockinfo = (
         .on_execution(lambda env, data: block_info(env, data[1]))
         .info("Gives information about the given block")
     )
-    .on_execution(lambda env, data: block_info(env, env.get_dimension().get_world().hit_test(env.get_this().get_position(), shared.window.get_sight_vector())[0]))
+    .on_execution(
+        lambda env, data: block_info(
+            env,
+            env.get_dimension()
+            .get_world()
+            .hit_test(env.get_this().get_position(), shared.window.get_sight_vector())[
+                0
+            ],
+        )
+    )
     .info("Gives information about the block looking at")
 )
-
-shared.command_parser.register_command(blockinfo)

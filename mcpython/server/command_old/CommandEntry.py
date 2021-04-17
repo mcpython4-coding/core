@@ -51,7 +51,6 @@ class CommandEntry(mcpython.common.event.Registry.IRegistryContent):
 
 
 def load():
-
     @shared.registry
     class StringEntry(CommandEntry):
         """

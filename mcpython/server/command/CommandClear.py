@@ -19,23 +19,21 @@ from mcpython.server.command.Builder import (
 from mcpython import shared
 
 
-def clear(entities):
+def clear_helper(entities):
     for entity in entities:
         for inventory in entity.get_inventories():
             inventory.clear()
         entity.on_inventory_cleared()
 
 
-setblock = (
+clear = (
     Command("clear")
     .than(
         CommandNode(Selector())
         .of_name("target")
-        .on_execution(lambda env, data: clear(data[1](env)))
+        .on_execution(lambda env, data: clear_helper(data[1](env)))
         .info("clears the inventory of all entities of target")
     )
-    .on_execution(lambda env, data: clear((env.get_this(),)))
+    .on_execution(lambda env, data: clear_helper((env.get_this(),)))
     .info("Clears the inventory of the executing entity")
 )
-
-shared.command_parser.register_command(setblock)

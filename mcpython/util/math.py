@@ -344,3 +344,17 @@ def product(iterable: typing.List[float]):
     for x in iterable[1:]:
         v *= x
     return v
+
+
+def vector_offset(
+    vector: typing.Tuple[float, ...], base: typing.Tuple[float, ...]
+) -> typing.Tuple[float, ...]:
+    return tuple(a - b for a, b in zip(vector, base))
+
+
+def vector_negate(vector: typing.Tuple[float, ...]) -> typing.Tuple[float, ...]:
+    return tuple(-e for e in vector)
+
+
+def sort_components(a: typing.Tuple[float, ...], b: typing.Tuple[float, ...]):
+    return tuple(zip(*map(lambda a: (min(a), max(a)), zip(a, b))))

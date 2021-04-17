@@ -1534,3 +1534,5 @@ R   [uuk]: improved world serialization API
 [uuk]: rewritten how the command system works
 [uuk]: this may have broken all commands, and anything to do with it
 [uuk]: /blockinfo optionally accepts now a position
+[uuk]: added helper code for working with larger structures in the world. Allows filling, cloning, and some special
+       structure construction without needing big implementations

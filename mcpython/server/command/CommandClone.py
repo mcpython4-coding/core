@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -15,17 +15,26 @@ from mcpython.server.command.Builder import (
     Command,
     CommandNode,
     IntPosition,
-    Block,
 )
+import mcpython.common.world.util
 
 
-setblock = Command("setblock").than(
+# todo: full command here!
+clone = Command("clone").than(
     CommandNode(IntPosition())
-    .of_name("position")
+    .of_name("start")
     .than(
-        CommandNode(Block())
-        .of_name("block")
-        .on_execution(lambda env, data: env.get_dimension().add_block(data[1], data[2]))
-        .info("Sets a given block at the given position")
+        CommandNode(IntPosition())
+        .of_name("end")
+        .than(
+            CommandNode(IntPosition())
+            .of_name("target")
+            .info("clones the given area to the given target")
+            .on_execution(
+                lambda env, data: mcpython.common.world.util.clone(
+                    env.get_dimension(), data[1], data[2], data[3]
+                )
+            )
+        )
     )
 )

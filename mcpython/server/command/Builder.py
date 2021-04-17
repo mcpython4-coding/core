@@ -381,6 +381,19 @@ class Selector(ICommandElementIdentifier):
         return isinstance(other, Selector)
 
 
+class AnyString(ICommandElementIdentifier):
+    INSTANCE: typing.Optional["AnyString"] = None
+
+    def is_valid(self, node: "CommandNode", tracker: CommandExecutionTracker) -> bool:
+        return True
+
+    def parse(self, node: "CommandNode", tracker: CommandExecutionTracker):
+        tracker.collect(tracker.increase(1).get(-1))
+
+
+AnyString.INSTANCE = AnyString()
+
+
 class CommandNode:
     """
     A node in the tree of a command

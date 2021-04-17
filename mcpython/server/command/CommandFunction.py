@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -11,21 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.server.command.Builder import (
-    Command,
-    CommandNode,
-    IntPosition,
-    Block,
-)
+from mcpython.server.command.Builder import Command, CommandNode, AnyString
+from mcpython import shared
 
 
-setblock = Command("setblock").than(
-    CommandNode(IntPosition())
-    .of_name("position")
-    .than(
-        CommandNode(Block())
-        .of_name("block")
-        .on_execution(lambda env, data: env.get_dimension().add_block(data[1], data[2]))
-        .info("Sets a given block at the given position")
-    )
+function = Command("function").than(
+    CommandNode(AnyString.INSTANCE)
+    .of_name("function")
+    .info("invokes the function given")
+    .on_execution(lambda env, data: shared.command_parser.run_function(data[1], env))
 )

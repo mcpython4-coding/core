@@ -21,12 +21,12 @@ from mcpython import shared
 import enum
 
 
-def gamemode(mode, entities):
+def gamemode_helper(mode, entities):
     for entity in entities:
         entity.set_gamemode(mode)
 
 
-setblock = Command("gamemode").than(
+gamemode = Command("gamemode").than(
     CommandNode(
         DefinedString(
             "0",
@@ -40,14 +40,12 @@ setblock = Command("gamemode").than(
         )
     )
     .of_name("mode")
-    .on_execution(lambda env, data: gamemode(data[1], (env.get_this(),)))
+    .on_execution(lambda env, data: gamemode_helper(data[1], (env.get_this(),)))
     .info("Sets the gamemode of the executing player")
     .than(
         CommandNode(Selector())
         .of_name("players")
         .info("Sets the gamemode of selected players")
-        .on_execution(lambda env, data: gamemode(data[1], data[2]))
+        .on_execution(lambda env, data: gamemode_helper(data[1], data[2]))
     )
 )
-
-shared.command_parser.register_command(setblock)

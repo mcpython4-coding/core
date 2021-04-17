@@ -128,6 +128,11 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
     """
     Class holding a whole dimension
     Default cross-side implementation
+
+    todo: add network synced variant
+    todo: add save/load/delete methods
+    todo: better config system for world gen
+    todo: move rendering to separated structure only created on client
     """
 
     # normal, alpha; mods are free to add more; todo: add better API

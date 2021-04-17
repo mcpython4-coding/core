@@ -18,6 +18,7 @@ from mcpython import shared
 import mcpython.server.command.Builder
 import mcpython.common.mod.ModMcpython
 from mcpython.common.world.AbstractInterface import IDimension
+import mcpython.common.DataPack
 
 
 class CommandExecutionEnvironment:
@@ -72,6 +73,10 @@ class CommandParser:
                 f"command parser: during running {string} in {env} using {node}"
             )
 
+    def run_function(self, name: str, info=None):
+        # todo: move here
+        mcpython.common.DataPack.datapack_handler.try_call_function(name, info)
+
     def parse(self, string: str):
         tracker = mcpython.server.command.Builder.CommandExecutionTracker.from_string(
             string
@@ -98,13 +103,20 @@ class CommandParser:
                 f"[COMMAND PARSER][ERROR] invalid command syntax for command '{head}' ({string}), information "
                 "following below on each command node"
             )
+
             for error in tracker.parsing_errors:
                 logger.println("- " + error)
+
             return
 
         return node, tracker.collected_values
 
     def register_command(self, command: mcpython.server.command.Builder.Command):
+        """
+        Helper method for registering a command into the system
+        :param command: the command instance
+        """
+
         self.commands[command.name.removeprefix("/")] = command
         return self
 
@@ -113,6 +125,8 @@ shared.command_parser = CommandParser()
 
 
 def load_commands():
+    # This is the deal, we import & register here, so others can safely import our classes without worrying about
+    # flooding the registry in the wrong moment
     from . import (
         CommandSetblock,
         CommandClear,
@@ -121,7 +135,25 @@ def load_commands():
         CommandKill,
         CommandBlockInfo,
         CommandReload,
+        CommandWorldGenerationDebug,
+        CommandClone,
+        CommandFill,
+        CommandFunction,
     )
+
+    handler: CommandParser = shared.command_parser
+
+    handler.register_command(CommandSetblock.setblock)
+    handler.register_command(CommandClear.clear)
+    handler.register_command(CommandGamemode.gamemode)
+    handler.register_command(CommandGive.give)
+    handler.register_command(CommandKill.kill)
+    handler.register_command(CommandBlockInfo.blockinfo)
+    handler.register_command(CommandReload.reload)
+    handler.register_command(CommandWorldGenerationDebug.worldgendebug)
+    handler.register_command(CommandClone.clone)
+    handler.register_command(CommandFill.fill)
+    handler.register_command(CommandFunction.function)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

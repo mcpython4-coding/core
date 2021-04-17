@@ -49,5 +49,3 @@ reload = (
     .on_execution(lambda env, data: reload_func())
     .info("Reloads data packs")
 )
-
-shared.command_parser.register_command(reload)
