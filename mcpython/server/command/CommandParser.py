@@ -153,6 +153,7 @@ def load_commands():
         CommandFunction,
         CommandData,
         CommandGenerate,
+        CommandGamerule,
     )
 
     handler: CommandParser = shared.command_parser
@@ -170,6 +171,7 @@ def load_commands():
     handler.register_command(CommandFunction.function)
     handler.register_command(CommandData.data)
     handler.register_command(CommandGenerate.generate)
+    handler.register_command(CommandGamerule.gamerule)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
