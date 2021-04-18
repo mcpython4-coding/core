@@ -1519,7 +1519,7 @@ R   [uuk]: improved world serialization API
 [uuk]: implemented new build system, capable of a lot better builds, and faster startup times
 [uuk]: the new build system is more general-use-case build system with a modular toolchain
 [uuk]: the build system will strip client resources from the dedicated server
-[uuk]: the build system will minifie non-dev builds
+[uuk]: the build system will minify non-dev builds
 [uuk]: the build system will compress json files
 [uuk]: dedicated server builds strip now all client code, making them currently not working, but they are going
        in the right direction
@@ -1545,6 +1545,8 @@ R   [uuk]: improved world serialization API
 [uuk]: migrated /generate <from X> <from Z> <to X> <to Z> to /generate area <...>
 [uuk]: fixed some world generation stuff
 [uuk]: migrated /blockinfo & /iteminfo to /info block and /info item
+[uuk]: migrated /shuffledata to /data shuffle
+[uuk]: migrated /view to /data view
 
 
 issues:

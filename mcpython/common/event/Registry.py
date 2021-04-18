@@ -202,7 +202,13 @@ class RegistryHandler:
         logger.println(f"values in registry '{registry}'")
         for key in r.entries.keys():
             element = r.entries[key]
-            logger.println(" -", key, element, element.INFO, sep=" ")
+            logger.println(
+                " -",
+                key,
+                element,
+                element.INFO if element.INFO is not None else "",
+                sep=" ",
+            )
 
 
 shared.registry = RegistryHandler()

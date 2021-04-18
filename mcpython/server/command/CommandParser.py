@@ -151,7 +151,7 @@ def load_commands():
         CommandClone,
         CommandFill,
         CommandFunction,
-        CommandView,
+        CommandData,
         CommandGenerate,
     )
 
@@ -168,7 +168,7 @@ def load_commands():
     handler.register_command(CommandClone.clone)
     handler.register_command(CommandFill.fill)
     handler.register_command(CommandFunction.function)
-    handler.register_command(CommandView.view)
+    handler.register_command(CommandData.data)
     handler.register_command(CommandGenerate.generate)
 
 

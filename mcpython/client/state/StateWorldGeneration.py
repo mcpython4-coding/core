@@ -254,7 +254,12 @@ class StateWorldGeneration(State.State):
 
         # reload all the data-packs
         mcpython.common.DataPack.datapack_handler.reload()
-        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load", mcpython.server.command.CommandParser.CommandExecutionEnvironment(dimension=shared.world.get_active_dimension()))
+        mcpython.common.DataPack.datapack_handler.try_call_function(
+            "#minecraft:load",
+            mcpython.server.command.CommandParser.CommandExecutionEnvironment(
+                dimension=shared.world.get_active_dimension()
+            ),
+        )
         shared.state_handler.switch_to("minecraft:gameinfo", immediate=False)
 
     def bind_to_eventbus(self):

@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -47,9 +47,7 @@ def print_item_info(itemstack, text: str):
         if itemstack.item.HAS_BLOCK:
             logger.println("- blockname: {}".format(itemstack.item.get_block()))
         logger.println(
-            "- item file: '{}'".format(
-                itemstack.item.get_default_item_image_location()
-            )
+            "- item file: '{}'".format(itemstack.item.get_default_item_image_location())
         )
         logger.println("- max stack size: {}".format(itemstack.item.STACK_SIZE))
         tags = []
@@ -60,8 +58,7 @@ def print_item_info(itemstack, text: str):
 
 
 info = (
-    Command("info")
-    .than(
+    Command("info").than(
         CommandNode(DefinedString("block"))
         .of_name("block")
         .than(
@@ -75,9 +72,9 @@ info = (
                 env,
                 env.get_dimension()
                 .get_world()
-                .hit_test(env.get_this().get_position(), shared.window.get_sight_vector())[
-                    0
-                ],
+                .hit_test(
+                    env.get_this().get_position(), shared.window.get_sight_vector()
+                )[0],
             )
         )
         .info("Gives information about the block looking at")
@@ -91,7 +88,10 @@ info = (
             .of_name("hand")
             .info("gets information about the held item")
             .on_execution(
-                lambda env, data: print_item_info(env.get_this().get_active_inventory_slot().get_itemstack(), "held item")
+                lambda env, data: print_item_info(
+                    env.get_this().get_active_inventory_slot().get_itemstack(),
+                    "held item",
+                )
             )
         )
         .than(

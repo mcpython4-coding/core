@@ -355,7 +355,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             return
 
         chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
-            shared.world.dimensions[dimension].get_chunk(int(chunk[0]), int(chunk[1]), generate=False)
+            shared.world.dimensions[dimension].get_chunk(
+                int(chunk[0]), int(chunk[1]), generate=False
+            )
         )
         if chunk_instance.loaded:
             return
