@@ -115,6 +115,9 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
     def set_motion(self, motion: tuple):
         self.nbt_data["motion"] = motion
 
+    def get_dimension(self):
+        return self.dimension
+
     movement = motion = property(get_motion, set_motion)
 
     # only for some small use-cases. WARNING: will  N O T  do any internal handling for updating the position
@@ -164,7 +167,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
 
     def tell(self, msg: str):
         """
-        tells the entity an message. Not intended to inter-mod com
+        Tells the entity an message. Not intended to inter-mod com
         Should be used by say-commands
         :param msg: the msg to tell
         """
@@ -186,7 +189,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         :param kill_animation: if the kill animation should be played
         :param damage_source: the source of the damage
         :param force: if it should be forced or not
-        :param internal: when this is set, this is a normal despawn / unload call
+        :param internal: when this is set, this is a normal de-spawn / unload call
         todo: drop items if selected
         todo: play kill animation if selected
         """
@@ -212,7 +215,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         self, damage, reason: mcpython.common.entity.DamageSource.DamageSource = None
     ):
         """
-        applies damage to the entity
+        Applies damage to the entity
         FOR MODER:
             this function is an default implementation. for an working example, see the player entity
             - you may want to apply armor calculation code
@@ -226,7 +229,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
 
     def on_interact(self, player, button, modifiers, itemstack):
         """
-        called when the player tries to interact with the entity
+        Called when the player tries to interact with the entity
         :param player: the player doing so, WARNING: only type-hinted for entity, not world/player.py:Player
         :param button: the button used
         :param modifiers: the modifiers used
@@ -267,7 +270,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
 
     def dump(self):
         """
-        dumps the entity into an save-able version
+        Dumps the entity into an save-able version
         :return: an pickle-able version, excluding position, rotation and harts, should include inventory serializer
             calls to make sure that everything works
         The nbt data is auto-saved
@@ -276,7 +279,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
 
     def load(self, data):
         """
-        loads data into the entity, previous saved
+        Loads data into the entity, previous saved
         For Moder:
             you CAN include an version entry to make sure you can fix the data version
         :param data: the data to load from

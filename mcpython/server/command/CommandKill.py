@@ -11,38 +11,18 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython.server.command.Builder import Command, CommandNode, Selector
 from mcpython import shared
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    CommandArgumentMode,
-    Node,
+
+
+kill = (
+    Command("kill")
+    .than(
+        CommandNode(Selector(max_entities=1))
+        .of_name("who")
+        .on_execution(lambda env, data: [entity.kill() for entity in data[1](env)])
+        .info("kills all selected entities")
+    )
+    .on_execution(lambda env, data: env.get_this().kill())
+    .info("kills the executing entity")
 )
-
-
-@shared.registry
-class CommandKill(mcpython.server.command.Command.Command):
-    """
-    class for /kill command
-    """
-
-    NAME = "minecraft:kill"
-
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = "kill"
-        command_syntax_holder.add_node(
-            Node(CommandArgumentType.SELECTOR, mode=CommandArgumentMode.OPTIONAL)
-        )
-
-    @staticmethod
-    def parse(values: list, modes: list, info):
-        if len(values) == 0:
-            values.append([shared.world.get_active_player()])
-        for entity in values[0]:
-            entity.kill(test_totem=False)  # kill all entities selected
-
-    @staticmethod
-    def get_help() -> list:
-        return ["/kill [<selector>: default=@s]: kills entity(s)"]

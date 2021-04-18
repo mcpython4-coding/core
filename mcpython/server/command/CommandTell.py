@@ -11,42 +11,28 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    Node,
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    Selector,
+    AnyString,
 )
 
 
-@shared.registry
-class CommandTell(mcpython.server.command.Command.Command):
-    """
-    command /tell, /msg and /w
-    """
-
-    NAME = "minecraft:tell"
-
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = ["tell", "msg", "w"]
-        command_syntax_holder.add_node(
-            Node(CommandArgumentType.SELECTOR).add_node(
-                Node(CommandArgumentType.OPEN_END_UNDEFINED_STRING)
+tell = (
+    Command("tell")
+    .alias("msg")
+    .alias("w")
+    .than(
+        CommandNode(Selector())
+        .of_name("target")
+        .than(
+            CommandNode(AnyString().open())
+            .of_name("text")
+            .info("sends the given text to the given entities")
+            .on_execution(
+                lambda env, data: [entity.tell(data[2]) for entity in data[1](env)]
             )
         )
-
-    @classmethod
-    def parse(cls, values: list, modes: list, info):
-        msg = " ".join(values[1])
-        for entity in values[0]:
-            entity.tell(msg)
-
-    @staticmethod
-    def get_help() -> list:
-        return [
-            "/tell <selector> <msg>: tells an player an message",
-            "/msg <selector> <msg>: tells an player an message",
-            "/w <selector> <msg>: tells an player an message",
-        ]
+    )
+)

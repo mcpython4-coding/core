@@ -355,7 +355,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             return
 
         chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
-            shared.world.dimensions[dimension].get_chunk(*chunk, generate=False)
+            shared.world.dimensions[dimension].get_chunk(
+                int(chunk[0]), int(chunk[1]), generate=False
+            )
         )
         if chunk_instance.loaded:
             return
@@ -417,7 +419,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 )
 
         positions = []
-        for x in range(chunk[0] * 16, chunk[0] * 16 + 16):
+        for x in range(int(chunk[0] * 16), int(chunk[0] * 16 + 16)):
             positions.extend([(x, z) for z in range(chunk[1] * 16, chunk[1] * 16 + 16)])
 
         for data_map in chunk_instance.get_all_data_maps():

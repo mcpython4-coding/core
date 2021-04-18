@@ -11,40 +11,21 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.server.command.Command
-import mcpython.util.math
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    Node,
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    IntPosition,
+    Block,
 )
 
 
-@shared.registry
-class CommandSetblock(mcpython.server.command.Command.Command):
-    """
-    class for /setblock command
-    """
-
-    NAME = "minecraft:setblock"
-
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = "setblock"
-        command_syntax_holder.add_node(
-            Node(CommandArgumentType.POSITION).add_node(
-                Node(CommandArgumentType.BLOCK_NAME)
-            )
-        )
-
-    @staticmethod
-    def parse(values: list, modes: list, info):
-        position = mcpython.util.math.normalize(values[0])
-        shared.world.dimensions[info.dimension].get_chunk_for_position(
-            position
-        ).add_block(position, values[1])
-
-    @staticmethod
-    def get_help() -> list:
-        return ["/setblock <position> <blockname>"]
+setblock = Command("setblock").than(
+    CommandNode(IntPosition())
+    .of_name("position")
+    .than(
+        CommandNode(Block())
+        .of_name("block")
+        .on_execution(lambda env, data: env.get_dimension().add_block(data[1], data[2]))
+        .info("Sets a given block at the given position")
+    )
+)

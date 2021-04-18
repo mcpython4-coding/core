@@ -43,7 +43,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         super().__init__()
         self.dimension = dimension
-        self.position = position
+        self.position = tuple(int(e) for e in position)
 
         # used when the chunks gets invalid or is loaded at the moment
         self.is_ready = False
@@ -65,6 +65,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         self.add_chunk_load_ticket(
             mcpython.common.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS
         )
+
+    def entity_iterator(self) -> typing.Iterable:
+        return tuple(self.entities)
 
     def tick(self):
         self.check_for_unload()

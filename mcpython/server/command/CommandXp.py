@@ -11,87 +11,85 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    CommandArgumentMode,
-    Node,
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    Selector,
+    DefinedString,
+    Int,
 )
 
 
-@shared.registry
-class CommandXp(mcpython.server.command.Command.Command):
-    """
-    command /xp
-    """
-
-    NAME = "minecraft:xp"
-
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = ["xp", "experience"]
-        command_syntax_holder.add_node(
-            Node(CommandArgumentType.DEFINED_STRING, "add").add_node(
-                Node(CommandArgumentType.SELECTOR).add_node(
-                    Node(CommandArgumentType.INT)
-                    .add_node(
-                        Node(
-                            CommandArgumentType.DEFINED_STRING,
-                            "points",
-                            mode=CommandArgumentMode.OPTIONAL,
-                        )
-                    )
-                    .add_node(
-                        Node(
-                            CommandArgumentType.DEFINED_STRING,
-                            "levels",
-                            mode=CommandArgumentMode.OPTIONAL,
-                        )
+xp = (
+    Command("xp")
+    .alias("experience")
+    .than(
+        CommandNode(DefinedString("add"))
+        .of_name("add")
+        .than(
+            CommandNode(Selector())
+            .of_name("target")
+            .than(
+                CommandNode(
+                    Int(only_positive=True)
+                )  # todo: allow negative for removing XP
+                .of_name("amount")
+                .than(
+                    CommandNode(DefinedString("points"))
+                    .of_name("points")
+                    .info("adds <amount> experience points to the selected players")
+                    .on_execution(
+                        lambda env, data: [
+                            player.add_xp(data[3]) for player in data[2](env)
+                        ]
                     )
                 )
-            )
-        ).add_node(
-            Node(CommandArgumentType.DEFINED_STRING, "set").add_node(
-                Node(CommandArgumentType.SELECTOR).add_node(
-                    Node(CommandArgumentType.INT)
-                    .add_node(
-                        Node(
-                            CommandArgumentType.DEFINED_STRING,
-                            "points",
-                            mode=CommandArgumentMode.OPTIONAL,
-                        )
-                    )
-                    .add_node(
-                        Node(
-                            CommandArgumentType.DEFINED_STRING,
-                            "levels",
-                            mode=CommandArgumentMode.OPTIONAL,
-                        )
+                .than(
+                    CommandNode(DefinedString("levels"))
+                    .of_name("levels")
+                    .info("adds <amount> experience levels to the selected players")
+                    .on_execution(
+                        lambda env, data: [
+                            player.add_xp_level(data[3]) for player in data[2](env)
+                        ]
                     )
                 )
             )
         )
-
-    @staticmethod
-    def parse(values: list, modes: list, info):
-        if modes[1][1] in [0, 1]:
-            if modes[1][1] == 1:
-                shared.world.get_active_player().xp = 0
-                shared.world.get_active_player().xp_level = 0
-
-            if len(modes) == 4 or modes[4][1] == 0:  # points
-                for player in values[1]:
-                    player.add_xp(values[2])
-
-            elif modes[4][1] == 1:  # levels
-                for player in values[1]:
-                    player.add_xp_level(values[2])
-
-    @staticmethod
-    def get_help() -> list:
-        return [
-            "/xp add <selector> <level> [points|levels]: add xp to entity",
-            "/xp set <selector> <level> [points|levels]: set xp level of entity",
-        ]
+    )
+    .than(
+        CommandNode(DefinedString("set"))
+        .of_name("set")
+        .than(
+            CommandNode(Selector())
+            .of_name("target")
+            .than(
+                CommandNode(Int(only_positive=True))
+                .of_name("amount")
+                .than(
+                    CommandNode(DefinedString("points"))
+                    .of_name("points")
+                    .info("sets the experience of the selected players to <amount>")
+                    .on_execution(
+                        lambda env, data: [
+                            player.clear_xp().add_xp(data[3]) for player in data[2](env)
+                        ]
+                    )
+                )
+                .than(
+                    CommandNode(DefinedString("levels"))
+                    .of_name("levels")
+                    .info(
+                        "sets the experience level of the selected players to <amount>"
+                    )
+                    .on_execution(
+                        lambda env, data: [
+                            player.clear_xp().add_xp_level(data[3])
+                            for player in data[2](env)
+                        ]
+                    )
+                )
+            )
+        )
+    )
+)

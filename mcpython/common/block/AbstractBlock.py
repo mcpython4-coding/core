@@ -385,3 +385,8 @@ class AbstractBlock(parent):
             self.dimension,
             self.block_state,
         )
+
+    def copy(self):
+        instance = type(self)()
+        instance.set_model_state(self.get_model_state())
+        return instance

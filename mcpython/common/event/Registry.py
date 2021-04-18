@@ -58,7 +58,7 @@ class Registry:
         self.full_entries = {}
         self.locked = False
         self.class_based = class_based
-        shared.registry.registries.append(self)
+        shared.registry.registries[name] = self
         self.dump_content_in_saves = dump_content_in_saves
 
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
@@ -118,6 +118,12 @@ class Registry:
     def unlock(self):
         self.locked = False
 
+    def is_valid_key(self, key: str):
+        return key in self.full_entries
+
+    def get(self, key: str):
+        return self.full_entries[key]
+
 
 class RegistryInjectionHolder:
     def __init__(self, *args, **kwargs):  # todo: do something with the args and kwargs!
@@ -132,13 +138,15 @@ class RegistryInjectionHolder:
 
 class RegistryHandler:
     def __init__(self):
-        self.registries = []
+        self.registries = {}
 
     def __call__(self, *args, **kwargs):
         if len(args) == len(kwargs) == 0:
             raise ValueError("can't register. no object provided")
+
         elif len(args) > 1 or len(kwargs) > 0:  # create an injectable object instance
             return RegistryInjectionHolder(*args, **kwargs)
+
         elif type(args[0]) == RegistryInjectionHolder:
             if not issubclass(args[0].inhectable, IRegistryContent):
                 raise ValueError(
@@ -146,7 +154,7 @@ class RegistryHandler:
                         args[0].injectable
                     )
                 )
-            for registry in self.registries:
+            for registry in self.registries.values():
                 if registry.allow_argument_injection and registry.is_valid(
                     args[0].injectable
                 ):
@@ -155,6 +163,7 @@ class RegistryHandler:
             raise ValueError(
                 "could not register entry {} as no registry was found".format(args[0])
             )
+
         else:
             if not issubclass(args[0], IRegistryContent):
                 raise ValueError(
@@ -162,7 +171,7 @@ class RegistryHandler:
                         args[0]
                     )
                 )
-            for registry in self.registries:
+            for registry in self.registries.values():
                 if registry.is_valid(args[0]):
                     registry.register(args[0])
                     return args[0]
@@ -173,9 +182,7 @@ class RegistryHandler:
             )
 
     def get_by_name(self, name: str) -> typing.Optional[Registry]:
-        for registry in self.registries:
-            if registry.name == name:
-                return registry
+        return None if name not in self.registries else self.registries[name]
 
     def register(self, *args, **kwargs):
         return self(*args, **kwargs)
@@ -185,6 +192,23 @@ class RegistryHandler:
 
     def create_deferred(self, registry: str, mod_name: str):
         return DeferredRegistryPipe(self.get_by_name(registry), mod_name)
+
+    def print_content(self, registry: str):
+        r = self.get_by_name(registry)
+        if r is None:
+            logger.println(f"registry {registry} not found!")
+            return
+
+        logger.println(f"values in registry '{registry}'")
+        for key in r.entries.keys():
+            element = r.entries[key]
+            logger.println(
+                " -",
+                key,
+                element,
+                element.INFO if element.INFO is not None else "",
+                sep=" ",
+            )
 
 
 shared.registry = RegistryHandler()

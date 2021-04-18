@@ -11,49 +11,32 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython.server.command.Builder import Command, CommandNode, Selector, Item, Int
 from mcpython import shared
-import mcpython.server.command.Command
-import mcpython.common.container.ItemStack
-from mcpython.server.command.Command import (
-    CommandArgumentType,
-    CommandArgumentMode,
-    Node,
-    CommandSyntaxHolder,
-)
 
 
-@shared.registry
-class CommandGive(mcpython.server.command.Command.Command):
-    """
-    class for /give command
-    """
+def give_helper(entities, item, count):
+    if len(entities) > 0:
+        import mcpython.common.container.ItemStack
 
-    NAME = "minecraft:give"
+        stack = mcpython.common.container.ItemStack.ItemStack(item, count)
 
-    CANCEL_GIVE = False
+        entities[0].pick_up_item(stack)
 
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.add_node(
-            Node(CommandArgumentType.SELECTOR).add_node(
-                Node(CommandArgumentType.ITEM_NAME).add_node(
-                    Node(CommandArgumentType.INT, mode=CommandArgumentMode.OPTIONAL)
-                )
-            )
+
+give = Command("give").than(
+    CommandNode(Selector(max_entities=1))
+    .of_name("to whom")
+    .than(
+        CommandNode(Item())
+        .of_name("item")
+        .on_execution(lambda env, data: give_helper(data[1](env), data[2], 1))
+        .info("Gives the selected entity one item")
+        .than(
+            CommandNode(Int(only_positive=True, include_zero=True))
+            .of_name("count")
+            .on_execution(lambda env, data: give_helper(data[1](env), data[2], data[3]))
+            .info("Gives the selected entity <amount> items")
         )
-        command_syntax_holder.main_entry = "give"
-
-    @classmethod
-    def parse(cls, values: list, modes: list, info):
-        # get the stack to add
-        stack = mcpython.common.container.ItemStack.ItemStack(values[1])
-
-        if len(values) > 2:
-            stack.set_amount(values[2])  # get the amount if provided
-
-        for player in values[0]:  # iterate over all players to give
-            player.pick_up_item(stack)
-
-    @staticmethod
-    def get_help() -> list:
-        return ["/give <selector> <item> [<amount>: default=1]: gives items"]
+    )
+)

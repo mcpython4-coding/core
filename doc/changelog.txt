@@ -55,6 +55,8 @@ changelog of snapshot <21w??a> released on <...> targeting <21w07a>
             loaded
 
     Commands:
+        - rewritten how commands work internally
+        - a lot of migrations
         - added /worldgendebug command
 
     World Generation:

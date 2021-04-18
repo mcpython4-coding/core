@@ -96,7 +96,7 @@ class WorldGenerationHandler:
 
     def add_chunk_to_generation_list(
         self,
-        chunk,
+        chunk: mcpython.common.world.AbstractInterface.IChunk,
         dimension=None,
         force_generate=False,
         immediate=False,
@@ -234,50 +234,13 @@ class WorldGenerationHandler:
         :param chunk: the chunk, as an instance, or a tuple
         :param dimension: if tuple, specifies the dimension. When still None, the active dimension is used
         :param check_chunk: if the chunk should be checked if its generated or not
+        todo: add flag to override any data, not only add additional if the chunk exists
         """
-        if not self.enable_generation:
-            return
-        if check_chunk and chunk.generated:
-            return
+        if isinstance(chunk, tuple):
+            chunk = dimension.get_chunk(chunk, generate=False)
 
-        if type(chunk) == tuple:
-            if dimension is None:
-                chunk = shared.world.get_active_dimension().get_chunk(
-                    *chunk, generate=False
-                )
-            elif type(dimension) == int:
-                chunk = shared.world.dimensions[dimension].get_chunk(
-                    *chunk, generate=False
-                )
-            elif type(dimension) == str:
-                chunk = shared.world.get_dimension(dimension).get_chunk(
-                    *chunk, generate=False
-                )
-            else:
-                chunk = dimension.get_chunk(*chunk, generate=False)
-
-        chunk.loaded = True
-        logger.println("generating", chunk.position)
-        dimension = chunk.dimension
-        config = self.get_current_config(dimension)
-        if "on_chunk_generate_pre" in config:
-            config["on_chunk_generate_pre"](chunk.position[0], chunk.position[1], chunk)
-
-        handler = mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference(
-            self.task_handler, chunk
-        )
-        config.on_chunk_prepare_generation(chunk, handler)
-
-        for i, layer_name in enumerate(config["layers"]):
-            layer = self.layers[layer_name]
-            layer.add_generate_functions_to_chunk(
-                dimension.world_generation_config_objects[layer_name], handler
-            )
-            shared.world_generation_handler.task_handler.process_tasks()
-
-        self.mark_finished(chunk)
-        chunk.generated = True
-        chunk.loaded = True
+        self.add_chunk_to_generation_list(chunk, dimension)
+        self.task_handler.process_chunk(chunk)
 
     def get_current_config(
         self, dimension: mcpython.common.world.AbstractInterface.IDimension

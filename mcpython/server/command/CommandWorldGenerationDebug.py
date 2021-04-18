@@ -11,57 +11,45 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import logger
-from mcpython import shared
-import mcpython.server.command.Command
-from mcpython.server.command.Command import CommandSyntaxHolder
-import mcpython.util.math
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    CommandArgumentMode,
-    Node,
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    DefinedString,
 )
+from mcpython import shared
 
 
-@shared.registry
-class CommandWorldGenDebug(mcpython.server.command.Command.Command):
-    """
-    Class for the /worldgendebug command
-    """
+def ping(env):
+    def p(context):
+        print("ping")
+        context.get_helper().run_on_main(lambda _: print("pong"))
 
-    NAME = "minecraft:world_gen_debug"
+        async def test(ctx):
+            print("ping-pong")
 
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = "worldgendebug"
-        command_syntax_holder.add_node(
-            Node(CommandArgumentType.DEFINED_STRING, "info")
-        ).add_node(Node(CommandArgumentType.DEFINED_STRING, "ping"))
+        context.get_helper().run_on_process(test)
 
-    @classmethod
-    def parse(cls, values: list, modes: list, info):
-        remote_helper = shared.world.world_generation_process
-        if values[0] == "info":
-            # -1 because we (the query task) are currently also running
-            print(remote_helper.get_worker_count())
+    env.get_dimension().get_world().world_generation_process.run_on_process(p)
 
-        elif values[0] == "ping":
 
-            def ping(context):
-                print("ping")
-                context.get_helper().run_on_main(lambda _: print("pong"))
-
-                async def test(ctx):
-                    print("pingpong")
-
-                context.get_helper().run_on_process(test)
-
-            remote_helper.run_on_process(ping)
-
-    @staticmethod
-    def get_help() -> list:
-        return [
-            "/worldgendebug info: prints general information about world gen",
-            "/worldgendebug ping: pings the world generation process. If everything is fine, prints 'ping', 'pong' and 'pingpong'",
-        ]
+worldgendebug = (
+    Command("worldgendebug")
+    .than(
+        CommandNode(DefinedString("info"))
+        .of_name("info")
+        .info("gets information about the current world generation status")
+        .on_execution(
+            lambda env, data: print(
+                env.get_dimension()
+                .get_world()
+                .world_generation_process.get_worker_count()
+            )
+        )
+    )
+    .than(
+        CommandNode(DefinedString("ping"))
+        .of_name("ping")
+        .info("pings the world generation process")
+        .on_execution(lambda env, data: ping(env))
+    )
+)

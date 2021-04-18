@@ -11,40 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython.server.command.Builder import Command, CommandNode, AnyString
 from mcpython import shared
-import mcpython.common.DataPack
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    CommandArgumentMode,
-    Node,
+
+
+function = Command("function").than(
+    CommandNode(AnyString.INSTANCE)
+    .of_name("function")
+    .info("invokes the function given")
+    .on_execution(lambda env, data: shared.command_parser.run_function(data[1], env))
 )
-
-
-@shared.registry
-class CommandFunction(mcpython.server.command.Command.Command):
-    """
-    command /function
-    """
-
-    NAME = "minecraft:function_command"
-
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = "function"
-        command_syntax_holder.add_node(
-            Node(
-                CommandArgumentType.STRING_WITHOUT_QUOTES,
-                mode=CommandArgumentMode.OPTIONAL,
-            )
-        )
-
-    @classmethod
-    def parse(cls, values: list, modes: list, info):
-        mcpython.common.DataPack.datapack_handler.try_call_function(values[0], info)
-        # todo: make self-calling save [sub-function calls are possible! -> move to an "execute"-stack]
-
-    @staticmethod
-    def get_help() -> list:
-        return ["/function <name>: runs the function named name from an datapack"]

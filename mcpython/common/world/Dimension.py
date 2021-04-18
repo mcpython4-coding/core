@@ -128,6 +128,11 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
     """
     Class holding a whole dimension
     Default cross-side implementation
+
+    todo: add network synced variant
+    todo: add save/load/delete methods
+    todo: better config system for world gen
+    todo: move rendering to separated structure only created on client
     """
 
     # normal, alpha; mods are free to add more; todo: add better API
@@ -158,6 +163,14 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         self.batches = [pyglet.graphics.Batch() for _ in range(self.BATCH_COUNT)]
 
         self.height_range = (0, 255)
+
+    def get_world(self):
+        return self.world
+
+    def entity_iterator(self) -> typing.Iterable:
+        for chunk in self.chunks.values():
+            yield from chunk.entity_iterator()
+            yield from chunk.entity_iterator()
 
     def tick(self):
         for chunk in self.chunks.values():

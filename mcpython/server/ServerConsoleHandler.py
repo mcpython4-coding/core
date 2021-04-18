@@ -26,7 +26,7 @@ class ServerConsoleHandler:
         while self.running:
             command = input(">>> ")
             if command.startswith("/"):
-                shared.command_parser.parse(command)
+                shared.command_parser.run(command)
             else:
                 logger.println("[SERVER]", command)
 

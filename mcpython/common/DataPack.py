@@ -18,8 +18,7 @@ import typing
 
 from mcpython import shared, logger
 import mcpython.ResourceLoader
-import mcpython.server.command.CommandParser
-import mcpython.server.command.McFunctionFile
+import mcpython.server.command.FunctionFile
 import mcpython.common.event.EventHandler
 
 
@@ -46,9 +45,27 @@ class DataPackHandler:
     """
 
     def __init__(self):
-        self.loaded_data_packs = []
+        self.loaded_data_packs: typing.List["DataPack"] = []
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "game:close", self.cleanup
+        )
+
+    def enable_pack(self, pack: str):
+        for p in self.loaded_data_packs:
+            if p.name == pack:
+                p.set_status(DataPackStatus.ACTIVATED)
+                return
+        logger.println(
+            f"[DATA PACK HANDLER][WARN] told to enable datapack '{pack}', but it was not found!"
+        )
+
+    def disable_pack(self, pack: str):
+        for p in self.loaded_data_packs:
+            if p.name == pack:
+                p.set_status(DataPackStatus.DEACTIVATED)
+                return
+        logger.println(
+            f"[DATA PACK HANDLER][WARN] told to disable datapack '{pack}', but it was not found!"
         )
 
     def schedule_datapack_load(self):
@@ -121,7 +138,7 @@ class DataPackHandler:
     def try_call_function(
         self,
         name: str,
-        info: mcpython.server.command.CommandParser.ParsingCommandInfo = None,
+        info,
     ):
         """
         Will try to invoke a function in a datapack
@@ -129,9 +146,6 @@ class DataPackHandler:
         :param info: the info-object to use; when None, one is constructed for this
         WARNING: will only invoke ONE function/tag from the datapacks, not all
         """
-        if info is None:
-            info = mcpython.server.command.CommandParser.ParsingCommandInfo()
-
         if name.startswith("#"):  # an tag
             try:
                 tag = shared.tag_handler.get_tag_for(name, "functions")

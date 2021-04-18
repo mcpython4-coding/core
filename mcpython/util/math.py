@@ -245,7 +245,11 @@ def normalize_ceil(position: typing.Tuple[float, float, float]):
         raise
 
 
-def position_to_chunk(position: typing.Union[typing.Tuple[float, float, float], typing.Tuple[float, float]]) -> typing.Tuple[int, int]:
+def position_to_chunk(
+    position: typing.Union[
+        typing.Tuple[float, float, float], typing.Tuple[float, float]
+    ]
+) -> typing.Tuple[int, int]:
     """
     Returns a tuple representing the chunk for the given `position`.
     :param position: the position, as a two-tuple (x, z) or three-tuple (x, y, z)
@@ -340,3 +344,17 @@ def product(iterable: typing.List[float]):
     for x in iterable[1:]:
         v *= x
     return v
+
+
+def vector_offset(
+    vector: typing.Tuple[float, ...], base: typing.Tuple[float, ...]
+) -> typing.Tuple[float, ...]:
+    return tuple(a - b for a, b in zip(vector, base))
+
+
+def vector_negate(vector: typing.Tuple[float, ...]) -> typing.Tuple[float, ...]:
+    return tuple(-e for e in vector)
+
+
+def sort_components(a: typing.Tuple[float, ...], b: typing.Tuple[float, ...]):
+    return tuple(zip(*map(lambda a: (min(a), max(a)), zip(a, b))))

@@ -11,44 +11,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import gc
-
+from mcpython.server.command.Builder import (
+    Command,
+)
 from mcpython import shared
-import mcpython.common.DataPack
-import mcpython.server.command.Command
-import mcpython.common.config
 import mcpython.common.event.EventHandler
-import mcpython.common.event.TickHandler
-import mcpython.client.rendering.entities.EntityRenderer
-import mcpython.client.rendering.util
-from mcpython.server.command.Command import CommandSyntaxHolder
 
 
-@shared.registry
-class CommandReload(mcpython.server.command.Command.Command):
-    """
-    class for /reload command
-    """
+def reload_func():
+    import mcpython.common.data.ResourcePipe
 
-    NAME = "minecraft:reload"
-
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = "reload"
-
-    @classmethod
-    def parse(cls, values: list, modes: list, info):
-        cls.reload()
-
-    @classmethod
-    def reload(cls):
-        import mcpython.common.data.ResourcePipe
-
-        mcpython.common.data.ResourcePipe.handler.reload_content()
-
-    @staticmethod
-    def get_help() -> list:
-        return ["/reload: reloads the world"]
+    mcpython.common.data.ResourcePipe.handler.reload_content()
 
 
 def reload_chunks():
@@ -67,5 +40,12 @@ mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "hotkey:chunk_reload", reload_chunks
 )
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "hotkey:reload_textures", CommandReload.reload
+    "hotkey:reload_textures", reload_func
+)
+
+
+reload = (
+    Command("reload")
+    .on_execution(lambda env, data: reload_func())
+    .info("Reloads data packs")
 )

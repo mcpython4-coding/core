@@ -11,66 +11,41 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    Node,
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    Selector,
+    Position,
 )
+from mcpython import shared
 
 
-@shared.registry
-class CommandTeleport(mcpython.server.command.Command.Command):
-    """
-    class for /teleport command
-    """
-
-    NAME = "minecraft:teleport"
-
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = ["tp", "teleport"]  # both are valid
-        command_syntax_holder.add_node(
-            Node(CommandArgumentType.SELECTOR)
-            .add_node(Node(CommandArgumentType.SELECTOR))
-            .add_node(Node(CommandArgumentType.POSITION))
-        ).add_node(Node(CommandArgumentType.POSITION))
-
-    @staticmethod
-    def parse(values: list, modes: list, info):
-        if modes[1][0] == 0:  # tp [selector]
-            if modes[2][0] == 0:  # tp [selector] [selector]
-                for entity in values[0]:
-                    entity.teleport(
-                        tuple(values[1][0].position),
-                        info.dimension
-                        if info.dimension is not None
-                        else entity.chunk.dimension.id,
-                    )
-
-            else:  # tp [selector] [position]
-                for entity in values[0]:
-                    entity.teleport(
-                        tuple(values[1][0]),
-                        info.dimension
-                        if info.dimension is not None
-                        else entity.chunk.dimension.id,
-                    )
-
-        else:  # tp [position]
-            shared.world.get_active_player().teleport(
-                tuple(values[0]),
-                info.dimension
-                if info.dimension is not None
-                else shared.world.get_active_player().chunk.dimension.id,
+teleport = (
+    Command("teleport")
+    .alias("tp")
+    .than(
+        CommandNode(Selector())
+        .of_name("entity")
+        .than(
+            CommandNode(Position())
+            .of_name("target position")
+            .info("teleports the given entities to the given position")
+            .on_execution(
+                lambda env, data: [
+                    entity.teleport(data[2](env)[0], env.get_dimension())
+                    for entity in data[1](env)
+                ]
             )
-
-    @staticmethod
-    def get_help() -> list:
-        return [
-            "/tp <selector> <position>: teleport given entity(s) to position",
-            "/tp <position>: teleport executer to position",
-            "/teleport <selector> <position>: teleport given entity(s) to position",
-            "/teleport <position>: teleport executer to position",
-        ]
+        )
+    )
+    .than(
+        CommandNode(Position())
+        .of_name("target")
+        .info("teleports the current entity to the given position")
+        .on_execution(
+            lambda env, data: env.get_this().teleport(
+                data[1](env)[0], env.get_dimension()
+            )
+        )
+    )
+)

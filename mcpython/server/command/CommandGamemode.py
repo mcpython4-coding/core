@@ -11,53 +11,41 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    Node,
-    CommandArgumentMode,
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    Selector,
+    DefinedString,
 )
+from mcpython import shared
+import enum
 
 
-@shared.registry
-class CommandGamemode(mcpython.server.command.Command.Command):
-    """
-    class for /gamemode command
-    """
+def gamemode_helper(mode, entities):
+    for entity in entities:
+        entity.set_gamemode(mode)
 
-    NAME = "minecraft:gamemode"
 
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.add_node(
-            # todo: add config for values somewhere
-            Node(
-                CommandArgumentType.SELECT_DEFINED_STRING,
-                "0",
-                "1",
-                "2",
-                "3",
-                "survival",
-                "creative",
-                "hardcore",
-                "spectator",
-            ).add_node(
-                Node(CommandArgumentType.SELECTOR, mode=CommandArgumentMode.OPTIONAL)
-            )
+gamemode = Command("gamemode").than(
+    CommandNode(
+        DefinedString(
+            "0",
+            "1",
+            "2",
+            "3",
+            "survival",
+            "creative",
+            "hardcore",
+            "spectator",
         )
-        command_syntax_holder.main_entry = "gamemode"
-
-    @staticmethod
-    def parse(values: list, modes: list, info):
-        mode = values[0]
-        if len(values) == 1:  # have we an selector?
-            shared.world.get_active_player().set_gamemode(mode)
-        else:
-            for player in values[1]:  # iterate through all players
-                player.set_gamemode(mode)
-
-    @staticmethod
-    def get_help() -> list:
-        return ["/gamemode <mode> [<selector>: default=@s]: set gamemode of entity(s)"]
+    )
+    .of_name("mode")
+    .on_execution(lambda env, data: gamemode_helper(data[1], (env.get_this(),)))
+    .info("Sets the gamemode of the executing player")
+    .than(
+        CommandNode(Selector())
+        .of_name("players")
+        .info("Sets the gamemode of selected players")
+        .on_execution(lambda env, data: gamemode_helper(data[1], data[2]))
+    )
+)

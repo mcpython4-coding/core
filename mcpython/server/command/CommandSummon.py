@@ -11,46 +11,43 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared, logger
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    CommandArgumentMode,
-    Node,
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    Position,
+    AnyString,
 )
+from mcpython import shared
 
-
-@shared.registry
-class CommandSummon(mcpython.server.command.Command.Command):
-    """
-    command /summon
-    """
-
-    NAME = "minecraft:summon"
-
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = "summon"
-        command_syntax_holder.add_node(
-            Node(CommandArgumentType.STRING_WITHOUT_QUOTES).add_node(
-                Node(CommandArgumentType.POSITION, mode=CommandArgumentMode.OPTIONAL)
+summon = Command("summon").than(
+    CommandNode(AnyString.INSTANCE)
+    .of_name("entity type")
+    .info("spawns the given entity at the current location")
+    .on_execution(
+        lambda env, data: shared.entity_handler.spawn_entity(
+            data[1], env.get_position(), check_summon=True
+        )
+    )
+    .with_handle(
+        ValueError,
+        lambda env, data, e: "[COMMAND][SUMMON] entity type '{}' not found!".format(
+            data[1]
+        ),
+    )
+    .than(
+        CommandNode(Position())
+        .of_name("position")
+        .info("spawns the entity at the given position")
+        .on_execution(
+            lambda env, data: shared.entity_handler.spawn_entity(
+                data[1], data[2], check_summon=True
             )
         )
-
-    @classmethod
-    def parse(cls, values: list, modes: list, info):
-        position = values[1] if len(values) > 1 else info.entity.position
-        # todo: add check if entity is summon-able by command
-        # todo: add help
-        # todo: add special command entry for entity type
-        try:
-            shared.entity_handler.spawn_entity(values[0], position, check_summon=True)
-        except ValueError:
-            logger.println(
-                "[COMMAND][SUMMON] entity type '{}' not found!".format(values[0])
-            )
-
-    @staticmethod
-    def get_help() -> list:
-        return []
+        .with_handle(
+            ValueError,
+            lambda env, data, e: "[COMMAND][SUMMON] entity type '{}' not found!".format(
+                data[1]
+            ),
+        )
+    )
+)

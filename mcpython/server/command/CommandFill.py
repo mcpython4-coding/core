@@ -11,67 +11,97 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.server.command.Command
-from mcpython.server.command.Command import (
-    CommandSyntaxHolder,
-    CommandArgumentType,
-    CommandArgumentMode,
-    Node,
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    IntPosition,
+    Block,
+    DefinedString,
 )
+import mcpython.common.world.util
 
 
-@shared.registry
-class CommandFill(mcpython.server.command.Command.Command):
-    """
-    class for /fill command
-    """
+def default_fill(dim, start, end, block_source):
+    mcpython.common.world.util.fill_area_replacing(
+        dim,
+        start,
+        end,
+        block_source,
+        mcpython.common.world.util.AnyBlock([block_source]),
+    )
 
-    NAME = "minecraft:fill"
 
-    @staticmethod
-    def insert_command_syntax_holder(command_syntax_holder: CommandSyntaxHolder):
-        command_syntax_holder.main_entry = "fill"
-        command_syntax_holder.add_node(
-            Node(CommandArgumentType.POSITION).add_node(
-                Node(CommandArgumentType.POSITION).add_node(
-                    Node(CommandArgumentType.BLOCK_NAME).add_node(
-                        Node(
-                            CommandArgumentType.DEFINED_STRING,
-                            mode=CommandArgumentMode.OPTIONAL,
-                        ).add_node(CommandArgumentType.BLOCK_NAME)
+fill = Command("fill").than(
+    CommandNode(IntPosition())
+    .of_name("start")
+    .than(
+        CommandNode(IntPosition())
+        .of_name("end")
+        .than(
+            CommandNode(Block())
+            .of_name("block")
+            .info("fills the given region with the given block")
+            .on_execution(
+                lambda env, data: default_fill(env.get_dimension(), *data[1:4])
+            )
+            .than(
+                CommandNode(DefinedString("replace"))
+                .of_name("replace")
+                .info("replaces all blocks")
+                .on_execution(
+                    lambda env, data: default_fill(env.get_dimension(), *data[1:4])
+                )
+                .than(
+                    CommandNode(Block())
+                    .of_name("replacing")
+                    .info("replaces all blocks of the given type with the given block")
+                    .on_execution(
+                        lambda env, data: mcpython.common.world.util.fill_area_replacing(
+                            env.get_dimension(), data[1], data[2], data[3], data[5]
+                        )
+                    )
+                )
+            )
+            .than(
+                CommandNode(DefinedString("destroy"))
+                .of_name("destroy")
+                .info("replaces all blocks, including identical blocks")
+                .on_execution(
+                    lambda env, data: mcpython.common.world.util.fill_area(
+                        env.get_dimension(), data[1], data[2], data[3]
+                    )
+                )
+            )
+            .than(
+                CommandNode(DefinedString("keep"))
+                .of_name("keep")
+                .info("replaces only air")
+                .on_execution(
+                    lambda env, data: mcpython.common.world.util.fill_area_replacing(
+                        env.get_dimension(), data[1], data[2], data[3], "minecraft:air"
+                    )
+                )
+            )
+            .than(
+                CommandNode(DefinedString("hollow"))
+                .of_name("hollow")
+                .info("creates a hollow structure with air in the middle")
+                .on_execution(
+                    lambda env, data: mcpython.common.world.util.create_hollow_structure(
+                        env.get_dimension(), data[1], data[2], data[3], fill_center=True
+                    )
+                )
+            )
+            .than(
+                CommandNode(DefinedString("outline"))
+                .of_name("outline")
+                .info("creates a hollow structure without replacing the core")
+                .on_execution(
+                    lambda env, data: mcpython.common.world.util.create_hollow_structure(
+                        env.get_dimension(), data[1], data[2], data[3]
                     )
                 )
             )
         )
-
-    @staticmethod
-    def parse(values: list, modes: list, info):
-        replace = None if len(values) == 3 else values[4]
-        dimension = shared.world.dimensions[info.dimension]
-        # sort positions so that pos1 < pos2
-        (fx, fy, fz), (tx, ty, tz) = tuple(values[:2])
-        if fx > tx:
-            tx, fx = fx, tx
-        if fy > ty:
-            ty, fy = fy, ty
-        if fz > tz:
-            tz, fz = fz, tz
-        # iterate over all blocks
-        positions = []
-        for x in range(round(fx), round(tx) + 1):
-            for y in range(round(fy), round(ty) + 1):
-                for z in range(round(fz), round(tz) + 1):
-                    block = dimension.get_block((x, y, z))
-                    if not replace or (
-                        block and block.NAME == replace
-                    ):  # check for replace block
-                        chunk = dimension.get_chunk_for_position((x, y, z))
-                        chunk.add_block((x, y, z), values[2], block_update=False)
-                        positions.append((chunk, (x, y, z)))
-        for chunk, position in positions:
-            chunk.on_block_updated(position)
-
-    @staticmethod
-    def get_help() -> list:
-        return ["/fill <from> <to> <block> [replace <blockname>]"]
+    )
+)
