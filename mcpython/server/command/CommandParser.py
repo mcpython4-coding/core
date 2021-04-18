@@ -175,6 +175,7 @@ def load_commands():
         CommandTell,
         CommandXp,
         CommandExecute,
+        CommandDatapack,
     )
 
     handler: CommandParser = shared.command_parser
@@ -196,6 +197,7 @@ def load_commands():
     handler.register_command(CommandTell.tell)
     handler.register_command(CommandXp.xp)
     handler.register_command(CommandExecute.execute)
+    handler.register_command(CommandDatapack.datapack)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

@@ -45,9 +45,27 @@ class DataPackHandler:
     """
 
     def __init__(self):
-        self.loaded_data_packs = []
+        self.loaded_data_packs: typing.List["DataPack"] = []
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "game:close", self.cleanup
+        )
+
+    def enable_pack(self, pack: str):
+        for p in self.loaded_data_packs:
+            if p.name == pack:
+                p.set_status(DataPackStatus.ACTIVATED)
+                return
+        logger.println(
+            f"[DATA PACK HANDLER][WARN] told to enable datapack '{pack}', but it was not found!"
+        )
+
+    def disable_pack(self, pack: str):
+        for p in self.loaded_data_packs:
+            if p.name == pack:
+                p.set_status(DataPackStatus.DEACTIVATED)
+                return
+        logger.println(
+            f"[DATA PACK HANDLER][WARN] told to disable datapack '{pack}', but it was not found!"
         )
 
     def schedule_datapack_load(self):

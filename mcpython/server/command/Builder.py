@@ -236,7 +236,8 @@ class Position(ICommandElementIdentifier):
 
     def is_valid(self, node: "CommandNode", tracker: CommandExecutionTracker) -> bool:
         return tracker.has(3) and all(
-            e.removeprefix("-").replace(".", "", 1).isdigit() for e in tracker.get_multi(3)
+            e.removeprefix("-").replace(".", "", 1).isdigit()
+            for e in tracker.get_multi(3)
         )
 
     def parse(self, node: "CommandNode", tracker: CommandExecutionTracker):

@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -34,11 +34,45 @@ command_chainable: typing.List[CommandNode] = []
 
 
 class parts:
-    run = CommandNode(DefinedString("run")).than(CommandNode(AnyString().open())).info("runs the following command in the defined environment").on_execution(lambda env, data: shared.command_parser.run(data[-1], env.copy()))
+    run = (
+        CommandNode(DefinedString("run"))
+        .than(CommandNode(AnyString().open()))
+        .info("runs the following command in the defined environment")
+        .on_execution(lambda env, data: shared.command_parser.run(data[-1], env.copy()))
+    )
 
-    as_ = CommandNode(DefinedString("as")).than(CommandNode(Selector())).than(CommandNode(AnyString().open())).on_execution(lambda env, data: [shared.command_parser.run(data[-1], env.copy().with_this(entity)) for entity in data[-2]()])
-    at = CommandNode(DefinedString("at")).than(CommandNode(Position())).than(CommandNode(AnyString().open())).on_execution(lambda env, data: [shared.command_parser.run(data[-1], env.copy().with_position(pos)) for pos in data[-2]()])
-    in_ = CommandNode(DefinedString("in")).than(CommandNode(AnyString.INSTANCE)).than(AnyString().open()).on_execution(lambda env, data: shared.command_parser.run(data[-1], env.copy().with_dimension(data[-2])))
+    as_ = (
+        CommandNode(DefinedString("as"))
+        .than(CommandNode(Selector()))
+        .than(CommandNode(AnyString().open()))
+        .on_execution(
+            lambda env, data: [
+                shared.command_parser.run(data[-1], env.copy().with_this(entity))
+                for entity in data[-2]()
+            ]
+        )
+    )
+    at = (
+        CommandNode(DefinedString("at"))
+        .than(CommandNode(Position()))
+        .than(CommandNode(AnyString().open()))
+        .on_execution(
+            lambda env, data: [
+                shared.command_parser.run(data[-1], env.copy().with_position(pos))
+                for pos in data[-2]()
+            ]
+        )
+    )
+    in_ = (
+        CommandNode(DefinedString("in"))
+        .than(CommandNode(AnyString.INSTANCE))
+        .than(AnyString().open())
+        .on_execution(
+            lambda env, data: shared.command_parser.run(
+                data[-1], env.copy().with_dimension(data[-2])
+            )
+        )
+    )
     # todo: if & unless
 
 
