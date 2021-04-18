@@ -176,6 +176,7 @@ def load_commands():
         CommandExecute,
         CommandDatapack,
         CommandSummon,
+        CommandTeleport,
     )
 
     handler: CommandParser = shared.command_parser
@@ -199,6 +200,7 @@ def load_commands():
     handler.register_command(CommandExecute.execute)
     handler.register_command(CommandDatapack.datapack)
     handler.register_command(CommandSummon.summon)
+    handler.register_command(CommandTeleport.teleport)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

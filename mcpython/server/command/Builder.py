@@ -462,7 +462,9 @@ class CommandNode:
         self.info_text = text
         return self
 
-    def with_handle(self, error: typing.Type[Exception], message_formatter: typing.Callable):
+    def with_handle(
+        self, error: typing.Type[Exception], message_formatter: typing.Callable
+    ):
         self.handles.append((error, message_formatter))
         return self
 

@@ -48,7 +48,7 @@ class parts:
         .on_execution(
             lambda env, data: [
                 shared.command_parser.run(data[-1], env.copy().with_this(entity))
-                for entity in data[-2]()
+                for entity in data[-2](env)
             ]
         )
     )
@@ -59,7 +59,7 @@ class parts:
         .on_execution(
             lambda env, data: [
                 shared.command_parser.run(data[-1], env.copy().with_position(pos))
-                for pos in data[-2]()
+                for pos in data[-2](env)
             ]
         )
     )

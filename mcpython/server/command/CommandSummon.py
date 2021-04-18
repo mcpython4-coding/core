@@ -19,30 +19,35 @@ from mcpython.server.command.Builder import (
 )
 from mcpython import shared
 
-summon = (
-    Command("summon")
+summon = Command("summon").than(
+    CommandNode(AnyString.INSTANCE)
+    .of_name("entity type")
+    .info("spawns the given entity at the current location")
+    .on_execution(
+        lambda env, data: shared.entity_handler.spawn_entity(
+            data[1], env.get_position(), check_summon=True
+        )
+    )
+    .with_handle(
+        ValueError,
+        lambda env, data, e: "[COMMAND][SUMMON] entity type '{}' not found!".format(
+            data[1]
+        ),
+    )
     .than(
-        CommandNode(AnyString.INSTANCE)
-        .of_name("entity type")
-        .info("spawns the given entity at the current location")
+        CommandNode(Position())
+        .of_name("position")
+        .info("spawns the entity at the given position")
         .on_execution(
-            lambda env, data: shared.entity_handler.spawn_entity(data[1], env.get_position(), check_summon=True)
+            lambda env, data: shared.entity_handler.spawn_entity(
+                data[1], data[2], check_summon=True
+            )
         )
         .with_handle(
             ValueError,
-            lambda env, data, e: "[COMMAND][SUMMON] entity type '{}' not found!".format(data[1])
-        )
-        .than(
-            CommandNode(Position())
-            .of_name("position")
-            .info("spawns the entity at the given position")
-            .on_execution(
-                lambda env, data: shared.entity_handler.spawn_entity(data[1], data[2], check_summon=True)
-            )
-            .with_handle(
-                ValueError,
-                lambda env, data, e: "[COMMAND][SUMMON] entity type '{}' not found!".format(data[1])
-            )
+            lambda env, data, e: "[COMMAND][SUMMON] entity type '{}' not found!".format(
+                data[1]
+            ),
         )
     )
 )
