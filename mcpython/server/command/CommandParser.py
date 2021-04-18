@@ -145,7 +145,7 @@ def load_commands():
         CommandGamemode,
         CommandGive,
         CommandKill,
-        CommandBlockInfo,
+        CommandInfo,
         CommandReload,
         CommandWorldGenerationDebug,
         CommandClone,
@@ -162,7 +162,7 @@ def load_commands():
     handler.register_command(CommandGamemode.gamemode)
     handler.register_command(CommandGive.give)
     handler.register_command(CommandKill.kill)
-    handler.register_command(CommandBlockInfo.blockinfo)
+    handler.register_command(CommandInfo.info)
     handler.register_command(CommandReload.reload)
     handler.register_command(CommandWorldGenerationDebug.worldgendebug)
     handler.register_command(CommandClone.clone)

@@ -1544,6 +1544,7 @@ R   [uuk]: improved world serialization API
        collection of chunks, which consumes a lot of memory
 [uuk]: migrated /generate <from X> <from Z> <to X> <to Z> to /generate area <...>
 [uuk]: fixed some world generation stuff
+[uuk]: migrated /blockinfo & /iteminfo to /info block and /info item
 
 
 issues:
