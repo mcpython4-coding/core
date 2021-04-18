@@ -228,6 +228,26 @@ class IntPosition(ICommandElementIdentifier):
         return isinstance(other, IntPosition)
 
 
+class Position(ICommandElementIdentifier):
+    """
+    A position, in float terms
+    todo: allow local references, and selectors
+    """
+
+    def is_valid(self, node: "CommandNode", tracker: CommandExecutionTracker) -> bool:
+        return tracker.has(3) and all(
+            e.removeprefix("-").replace(".", "", 1).isdigit() for e in tracker.get_multi(3)
+        )
+
+    def parse(self, node: "CommandNode", tracker: CommandExecutionTracker):
+        p = tracker.get_multi(3)
+        tracker.increase(3)
+        tracker.collect(lambda env: [tuple(float(e) for e in p)])
+
+    def __eq__(self, other):
+        return isinstance(other, IntPosition)
+
+
 class RegistryContent(ICommandElementIdentifier):
     """
     Registry entry getter

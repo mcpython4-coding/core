@@ -41,15 +41,30 @@ class CommandExecutionEnvironment:
         ), "failed to get dimension; dimension is not set!"
         return self.dimension
 
+    def with_dimension(self, dimension):
+        if isinstance(dimension, str):
+            self.dimension = self.dimension.get_world().get_dimension_by_name(dimension)
+        else:
+            self.dimension = dimension
+        return self
+
     def get_position(self):
         assert (
             self.position is not None or self.this is not None
         ), "position cannot be got"
         return self.position if self.position is not None else self.this.get_position()
 
+    def with_position(self, position):
+        self.position = position
+        return self
+
     def get_this(self):
         assert self.this is not None, "failed to get 'this'; this is not set"
         return self.this
+
+    def with_this(self, this):
+        self.this = this
+        return self
 
     def copy(self):
         instance = CommandExecutionEnvironment(self.position, self.dimension, self.this)
@@ -139,6 +154,9 @@ shared.command_parser = CommandParser()
 def load_commands():
     # This is the deal, we import & register here, so others can safely import our classes without worrying about
     # flooding the registry in the wrong moment
+    # And it also resolves errors during dynamic reload / cross process loading
+    # todo: use deferred registering
+    # todo: dynamic registering based on module list, by calling register_command() on the given attr of the module
     from . import (
         CommandSetblock,
         CommandClear,
@@ -156,6 +174,7 @@ def load_commands():
         CommandGamerule,
         CommandTell,
         CommandXp,
+        CommandExecute,
     )
 
     handler: CommandParser = shared.command_parser
@@ -176,6 +195,7 @@ def load_commands():
     handler.register_command(CommandGamerule.gamerule)
     handler.register_command(CommandTell.tell)
     handler.register_command(CommandXp.xp)
+    handler.register_command(CommandExecute.execute)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
