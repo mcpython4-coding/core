@@ -43,7 +43,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         super().__init__()
         self.dimension = dimension
-        self.position = position
+        self.position = tuple(int(e) for e in position)
 
         # used when the chunks gets invalid or is loaded at the moment
         self.is_ready = False

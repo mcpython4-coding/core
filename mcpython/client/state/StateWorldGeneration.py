@@ -35,6 +35,7 @@ import mcpython.common.entity.PlayerEntity
 from . import State
 from mcpython.util.annotation import onlyInClient
 import mcpython.server.worldgen.noise.NoiseManager
+import mcpython.server.command.CommandParser
 
 
 DEFAULT_GENERATION_CONFIG: typing.Dict[str, typing.Any] = {
@@ -253,7 +254,7 @@ class StateWorldGeneration(State.State):
 
         # reload all the data-packs
         mcpython.common.DataPack.datapack_handler.reload()
-        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load")
+        mcpython.common.DataPack.datapack_handler.try_call_function("#minecraft:load", mcpython.server.command.CommandParser.CommandExecutionEnvironment(dimension=shared.world.get_active_dimension()))
         shared.state_handler.switch_to("minecraft:gameinfo", immediate=False)
 
     def bind_to_eventbus(self):

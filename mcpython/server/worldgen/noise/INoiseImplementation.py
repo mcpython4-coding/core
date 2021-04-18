@@ -92,5 +92,5 @@ class INoiseImplementation:
     def calculate_area(
         self, start: typing.Tuple, end: typing.Tuple
     ) -> typing.Iterator[typing.Tuple[typing.Tuple, float]]:
-        for position in itertools.product(*(range(a, b) for a, b in zip(start, end))):
+        for position in itertools.product(*(range(int(a), int(b)) for a, b in zip(start, end))):
             yield position, self.calculate_position(position)

@@ -28,9 +28,7 @@ class CommandExecutionEnvironment:
         dimension: IDimension = None,
         this=None,
     ):
-        self.position = (
-            position if position is not None or this is None else this.get_position()
-        )
+        self.position = position
         self.dimension = (
             dimension if dimension is not None or this is None else this.get_dimension()
         )
@@ -42,6 +40,12 @@ class CommandExecutionEnvironment:
             self.dimension is not None
         ), "failed to get dimension; dimension is not set!"
         return self.dimension
+
+    def get_position(self):
+        assert (
+            self.position is not None or self.this is not None
+        ), "position cannot be got"
+        return self.position if self.position is not None else self.this.get_position()
 
     def get_this(self):
         assert self.this is not None, "failed to get 'this'; this is not set"
@@ -121,7 +125,9 @@ class CommandParser:
 
         for alias in command.additional_names:
             instance = mcpython.server.command.Builder.Command(alias)
-            instance.following_nodes = command.following_nodes  # todo: additional meta data
+            instance.following_nodes = (
+                command.following_nodes
+            )  # todo: additional meta data
             self.register_command(instance)
 
         return self
@@ -146,6 +152,7 @@ def load_commands():
         CommandFill,
         CommandFunction,
         CommandView,
+        CommandGenerate,
     )
 
     handler: CommandParser = shared.command_parser
@@ -162,6 +169,7 @@ def load_commands():
     handler.register_command(CommandFill.fill)
     handler.register_command(CommandFunction.function)
     handler.register_command(CommandView.view)
+    handler.register_command(CommandGenerate.generate)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

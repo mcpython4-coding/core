@@ -1539,3 +1539,13 @@ R   [uuk]: improved world serialization API
 [uuk]: renamed /recipeview to /view recipe and /registryinfo to /view registry
 [uuk]: migrated script for recipe view & registry info into their respective handlers
 [uuk]: registry list is now a map, for more efficient lookups
+[uuk]: fixed world-generator's generate_chunk method
+[uuk]: world generation task array has now a generate_chunk method for generating a single chunk instead of a sortable
+       collection of chunks, which consumes a lot of memory
+[uuk]: migrated /generate <from X> <from Z> <to X> <to Z> to /generate area <...>
+[uuk]: fixed some world generation stuff
+
+
+issues:
+- non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
+- world generation progress is not displayed

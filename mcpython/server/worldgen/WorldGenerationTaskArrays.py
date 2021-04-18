@@ -230,24 +230,34 @@ class WorldGenerationTaskHandler:
 
         chunks.sort(key=lambda c: abs(c.position[0] * c.position[1]))
         for chunk in chunks:
-            flag = True
-            while flag:
-                flag = (
-                    self._process_0_array(chunk)
-                    or self._process_1_array(chunk)
-                    or self._process_2_array(chunk)
-                )
-                if timer is not None and time.time() - start >= timer:
-                    return
+            self.process_chunk(chunk)
+            timer -= time.time() - start
+            if timer < 0:
+                return
+            start = time.time()
 
-            if chunk in self.chunks:
-                if not chunk.generated:
-                    shared.world_generation_handler.mark_finished(chunk)
+    def process_chunk(
+        self, chunk: mcpython.common.world.AbstractInterface.IChunk, timer=None
+    ):
+        start = time.time()
+        flag = True
+        while flag:
+            flag = (
+                self._process_0_array(chunk)
+                or self._process_1_array(chunk)
+                or self._process_2_array(chunk)
+            )
+            if timer is not None and time.time() - start >= timer:
+                return
 
-                self.chunks.remove(chunk)
-                chunk.generated = True
-                chunk.finished = True
-                chunk.loaded = True
+        if chunk in self.chunks:
+            if not chunk.generated:
+                shared.world_generation_handler.mark_finished(chunk)
+
+            self.chunks.remove(chunk)
+            chunk.generated = True
+            chunk.finished = True
+            chunk.loaded = True
 
     def _process_0_array(
         self, chunk: mcpython.common.world.AbstractInterface.IChunk

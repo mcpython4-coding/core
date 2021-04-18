@@ -33,7 +33,9 @@ class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSeriali
 
         registry_miss_match = {}
 
-        for registry in shared.registry.registries.values():  # iterate over all registries
+        for (
+            registry
+        ) in shared.registry.registries.values():  # iterate over all registries
             if not registry.dump_content_in_saves:
                 continue
 

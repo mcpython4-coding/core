@@ -189,7 +189,9 @@ class CraftingManager:
             return
 
         if self.RECIPE_VIEW_INVENTORY is None:
-            self.RECIPE_VIEW_INVENTORY = mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView()
+            self.RECIPE_VIEW_INVENTORY = (
+                mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView()
+            )
 
         shared.inventory_handler.show(
             self.RECIPE_VIEW_INVENTORY.set_renderer(

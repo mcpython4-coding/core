@@ -20,24 +20,30 @@ from mcpython.server.command.Builder import (
 from mcpython import shared
 
 
-view = Command("view").than(
-    CommandNode(DefinedString("recipe"))
-    .of_name("recipe")
+view = (
+    Command("view")
     .than(
-        CommandNode(AnyString.INSTANCE)
+        CommandNode(DefinedString("recipe"))
         .of_name("recipe")
-        .info("creates a view for the given recipe")
-        .on_execution(lambda env, data: shared.crafting_handler.show_to_player(data[2]))
+        .than(
+            CommandNode(AnyString.INSTANCE)
+            .of_name("recipe")
+            .info("creates a view for the given recipe")
+            .on_execution(
+                lambda env, data: shared.crafting_handler.show_to_player(data[2])
+            )
+        )
     )
-).than(
-    # todo: a real in-game view with scrollbar, and custom injection point for rendering,
-    #   e.g. items with item texture, blocks with BlockItem, ...
-    CommandNode(DefinedString("registry"))
-    .of_name("registry")
     .than(
-        CommandNode(AnyString.INSTANCE)
+        # todo: a real in-game view with scrollbar, and custom injection point for rendering,
+        #   e.g. items with item texture, blocks with BlockItem, ...
+        CommandNode(DefinedString("registry"))
         .of_name("registry")
-        .info("views the content of a registry")
-        .on_execution(lambda env, data: shared.registry.print_content(data[2]))
+        .than(
+            CommandNode(AnyString.INSTANCE)
+            .of_name("registry")
+            .info("views the content of a registry")
+            .on_execution(lambda env, data: shared.registry.print_content(data[2]))
+        )
     )
 )
