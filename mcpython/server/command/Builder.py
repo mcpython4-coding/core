@@ -335,7 +335,7 @@ class Selector(ICommandElementIdentifier):
         "@r": (
             0,
             lambda env: (
-                random.choice(env.get_dimension().get_world().player_iterator())
+                random.choice(env.get_dimension().get_world().player_iterator()),
             ),
         ),
         # todo: use also meta-data
@@ -384,11 +384,25 @@ class Selector(ICommandElementIdentifier):
 class AnyString(ICommandElementIdentifier):
     INSTANCE: typing.Optional["AnyString"] = None
 
+    def __init__(self):
+        self.opened = False
+
     def is_valid(self, node: "CommandNode", tracker: CommandExecutionTracker) -> bool:
         return True
 
     def parse(self, node: "CommandNode", tracker: CommandExecutionTracker):
-        tracker.collect(tracker.increase(1).get(-1))
+        if self.opened:
+            string = []
+            while tracker.has(1):
+                string.append(tracker.get())
+                tracker.increase(1)
+            tracker.collect(" ".join(string))
+        else:
+            tracker.collect(tracker.increase(1).get(-1))
+
+    def open(self):
+        self.opened = True
+        return self
 
 
 AnyString.INSTANCE = AnyString()
