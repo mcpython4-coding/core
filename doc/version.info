@@ -1548,7 +1548,7 @@ R   [uuk]: improved world serialization API
 [uuk]: migrated /shuffledata to /data shuffle
 [uuk]: migrated /view to /data view
 [uuk]: added optional exception handling to command nodes
-[uuk]: dropped /loot command for now
+[uuk]: dropped /loot, /replaceitem and /help commands for now
 
 
 issues:

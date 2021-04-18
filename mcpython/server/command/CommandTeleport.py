@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -43,7 +43,9 @@ teleport = (
         .of_name("target")
         .info("teleports the current entity to the given position")
         .on_execution(
-            lambda env, data: env.get_this().teleport(data[1](env)[0], env.get_dimension())
+            lambda env, data: env.get_this().teleport(
+                data[1](env)[0], env.get_dimension()
+            )
         )
     )
 )
