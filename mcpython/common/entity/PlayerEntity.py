@@ -184,16 +184,23 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             needed = self.get_needed_xp_for_next_level()
             if self.xp + xp < needed:
                 self.xp += xp
-                return
+                return self
             elif xp > needed:
                 xp -= needed
                 self.xp_level += 1
             else:
                 xp = xp - (needed - self.xp)
                 self.xp_level += 1
+        return self
 
     def add_xp_level(self, xp_levels: int):
         self.xp_level += xp_levels
+        return self
+
+    def clear_xp(self):
+        self.xp_level = 0
+        self.xp = 0
+        return self
 
     def pick_up_item(
         self,

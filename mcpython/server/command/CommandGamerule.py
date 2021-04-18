@@ -23,27 +23,22 @@ from mcpython import logger, shared
 def set_rule(name: str, state):
     shared.world.gamerule_handler.table[
         name
-    ].status = shared.world.gamerule_handler.table[name].status.__class__(
-        state
+    ].status = shared.world.gamerule_handler.table[name].status.__class__(state)
+
+
+gamerule = Command("gamerule").than(
+    CommandNode(AnyString.INSTANCE)
+    .of_name("rule")
+    .info("gets the state of a given rule")
+    .on_execution(
+        lambda env, data: logger.println(
+            f"rule {data[1]}: {shared.world.gamerule_handler.table[data[1]].status.status}"
+        )
     )
-
-
-gamerule = (
-    Command("gamerule")
     .than(
         CommandNode(AnyString.INSTANCE)
-        .of_name("rule")
-        .info("gets the state of a given rule")
-        .on_execution(
-            lambda env, data: logger.println(f"rule {data[1]}: {shared.world.gamerule_handler.table[data[1]].status.status}")
-        )
-        .than(
-            CommandNode(AnyString.INSTANCE)
-            .of_name("state")
-            .info("sets the given rule to the given state")
-            .on_execution(
-                lambda env, data: set_rule(*data[1:])
-            )
-        )
+        .of_name("state")
+        .info("sets the given rule to the given state")
+        .on_execution(lambda env, data: set_rule(*data[1:]))
     )
 )
