@@ -440,6 +440,7 @@ class CommandNode:
         self.on_execution_callbacks = []
         self.name = "unknown"
         self.info_text = ""
+        self.handles = []
 
     def than(self, node: "CommandNode"):
         """
@@ -459,6 +460,10 @@ class CommandNode:
 
     def info(self, text: str):
         self.info_text = text
+        return self
+
+    def with_handle(self, error: typing.Type[Exception], message_formatter: typing.Callable):
+        self.handles.append((error, message_formatter))
         return self
 
     def get_executing_node(
@@ -507,6 +512,19 @@ class CommandNode:
             track = entry.get_similar_node(node)
             if track is not None:
                 return track
+
+    def run(self, env, data):
+        try:
+            for func in self.on_execution_callbacks:
+                func(env, data)
+
+        except Exception as e:
+            for compare, handle in self.handles:
+                if isinstance(e, compare):
+                    env.chat.print_ln(handle(env, data, e))
+                    break
+            else:
+                raise
 
 
 class Command(CommandNode):

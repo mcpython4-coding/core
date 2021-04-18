@@ -85,8 +85,7 @@ class CommandParser:
         node, data = parsed
 
         try:
-            for func in node.on_execution_callbacks:
-                func(env, data)
+            node.run(env, data)
         except:
             logger.print_exception(
                 f"command parser: during running {string} in {env} using {node}"
@@ -176,6 +175,7 @@ def load_commands():
         CommandXp,
         CommandExecute,
         CommandDatapack,
+        CommandSummon,
     )
 
     handler: CommandParser = shared.command_parser
@@ -198,6 +198,7 @@ def load_commands():
     handler.register_command(CommandXp.xp)
     handler.register_command(CommandExecute.execute)
     handler.register_command(CommandDatapack.datapack)
+    handler.register_command(CommandSummon.summon)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

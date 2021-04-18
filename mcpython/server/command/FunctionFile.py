@@ -40,5 +40,4 @@ class FunctionFile:
 
     def execute(self, info):
         for node, data in self.command_nodes:
-            for func in node.on_execution_callbacks:
-                func(info, data)
+            node.run(info, data)
