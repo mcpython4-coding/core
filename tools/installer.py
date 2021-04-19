@@ -39,7 +39,9 @@ subprocess.call(
         if os.path.exists(home + "/tools/update_asset_source.py")
         else home + "/update_asset_source.py",
         "https://launcher.mojang.com/v1/objects/749805abb797f201a76e2c6ad2e7ff6f790bb53c/client.jar",
-        home if not os.path.exists(home + "/tools/update_asset_source.py") else home+"/resources/source",
+        home
+        if not os.path.exists(home + "/tools/update_asset_source.py")
+        else home + "/resources/source",
     ],
     stdout=sys.stdout,
 )

@@ -18,6 +18,7 @@ import mcpython.common.block.BoundingBox
 from mcpython import shared
 import mcpython.util.enums
 import mcpython.common.block.PossibleBlockStateBuilder
+from mcpython.util.enums import EnumSide
 
 
 # todo: add factory method for this
@@ -115,6 +116,46 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
     # the state the block item generator should use, this kinda looks nice
     BLOCK_ITEM_GENERATOR_STATE = {"east": "true", "west": "true"}
+
+
+class IFenceGate(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
+    """
+    todo: implement behaviour
+    """
+
+    DEBUG_WORLD_BLOCK_STATES = (
+        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
+        .combinations()
+        .add_comby_side_horizontal("facing")
+        .add_comby_bool("in_wall")
+        .add_comby_bool("open")
+        .build()
+    )
+
+    def __init__(self):
+        super().__init__()
+        self.facing = EnumSide.NORTH
+        self.in_wall = False
+        self.open = False
+
+    def get_model_state(self) -> dict:
+        return {
+            "facing": self.facing.normal_name,
+            "in_wall": str(self.in_wall).lower(),
+            "open": str(self.open).lower()
+        }
+
+    def set_model_state(self, state: dict):
+        if "facing" in state:
+            self.facing = EnumSide[state["facing"].upper()]
+
+        if "in_wall" in state:
+            self.in_wall = state["in_wall"] == "true"
+
+        if "open" in state:
+            self.open = state["open"] == "true"
+
+    BLOCK_ITEM_GENERATOR_STATE = {"facing": "north", "in_wall": "false", "opened": "true"}
 
 
 class IWoodenFence(IFence):

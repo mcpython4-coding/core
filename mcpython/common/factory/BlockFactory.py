@@ -78,7 +78,18 @@ def set_wall(instance: FactoryBuilder.IFactory):
 )
 def set_fence(instance: FactoryBuilder.IFactory, *types: str):
     instance.base_classes.append(BlockFence.IFence)
-    instance.config_table["fence_type_name"] = set(types) if len(types) > 0 else {"minecraft:wooden_fence"}
+    instance.config_table["fence_type_name"] = (
+        set(types) if len(types) > 0 else {"minecraft:wooden_fence"}
+    )
+    instance.set_solid(False).set_all_side_solid(False)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_fence_gate")
+)
+def set_fence_gate(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(BlockFence.IFenceGate)
     instance.set_solid(False).set_all_side_solid(False)
     return instance
 
@@ -209,9 +220,7 @@ def build_class(
             "debug_world_states", cls.DEBUG_WORLD_BLOCK_STATES
         )
 
-        FENCE_TYPE_NAME = configs.setdefault(
-            "fence_type_name", tuple()
-        )
+        FENCE_TYPE_NAME = configs.setdefault("fence_type_name", tuple())
 
     return ModifiedClass
 
