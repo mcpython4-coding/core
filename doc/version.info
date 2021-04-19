@@ -1549,6 +1549,7 @@ R   [uuk]: improved world serialization API
 [uuk]: migrated /view to /data view
 [uuk]: added optional exception handling to command nodes
 [uuk]: dropped /loot, /replaceitem and /help commands for now
+[uuk]: fixed installer putting assets to wrong folder in dev-environment
 
 
 issues:

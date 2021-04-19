@@ -29,31 +29,32 @@ import mcpython.LaunchWrapper
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
 wrapper.prepare_server()
 
-print(
-    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-)
-import mcpython.logger
 
-mcpython.logger.println(
-    "[EXPERIMENTAL][WARN] launching experimental dedicated mcpython server"
-)
-mcpython.logger.println(
-    "[EXPERIMENTAL][WARN] see version.info and git diffs for recent changes"
-)
-print(
-    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-)
+if __name__ == "__main__":
+    print(
+        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    )
+    import mcpython.logger
 
+    mcpython.logger.println(
+        "[EXPERIMENTAL][WARN] launching experimental dedicated mcpython server"
+    )
+    mcpython.logger.println(
+        "[EXPERIMENTAL][WARN] see version.info and git diffs for recent changes"
+    )
+    print(
+        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    )
 
-try:
-    wrapper.print_header()
-    wrapper.inject_sys_argv(sys.argv)  # load sys.argv
-    wrapper.setup()  # do setup stuff
-    wrapper.launch()  # and start mainloop
-except SystemExit:
-    sys.exit(-1)
-except:
-    wrapper.error_clean()
-    sys.exit(-1)
+    try:
+        wrapper.print_header()
+        wrapper.inject_sys_argv(sys.argv)  # load sys.argv
+        wrapper.setup()  # do setup stuff
+        wrapper.launch()  # and start mainloop
+    except SystemExit:
+        sys.exit(-1)
+    except:
+        wrapper.error_clean()
+        sys.exit(-1)
 
-wrapper.clean()
+    wrapper.clean()

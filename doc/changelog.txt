@@ -47,17 +47,19 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <21w??a> released on <...> targeting <21w07a>
+changelog of snapshot <21w16a> released on <...> targeting <21w15a>
     This snapshot breaks again compatibility, mainly the following:
         - reworked how the world generates
         - reworked how the world stores data maps of chunks (e.g. heightmaps)
         - broke with this world loading compatibility, did not add a DataFixer for it, so old worlds cannot be
             loaded
+        - rewritten command system from ground
 
     Commands:
         - rewritten how commands work internally
         - a lot of migrations
         - added /worldgendebug command
+        - moved some commands around, removed some, added some new nodes to some
 
     World Generation:
         - added async world generation process

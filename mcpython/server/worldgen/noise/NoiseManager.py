@@ -110,7 +110,7 @@ class NoiseManager:
 
     def deserialize_seed_map(self, data: dict):
         if data is None:
-            logger.println("[WARN] seed map is empty!")
+            logger.println("[WARN] seed map is empty, skipping deserialization; This indicates a fatal error")
             return
 
         for noise, name in self.noise_instances:

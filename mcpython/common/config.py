@@ -18,7 +18,7 @@ import sys
 
 from mcpython import shared
 
-MC_VERSION_BASE = "20w51a"
+MC_VERSION_BASE = "21w15a"
 VERSION_TYPE = "snapshot"
 
 
