@@ -1551,6 +1551,7 @@ R   [uuk]: improved world serialization API
 [uuk]: dropped /loot, /replaceitem and /help commands for now
 [uuk]: fixed installer putting assets to wrong folder in dev-environment
 [uuk]: fixed texture reload at wrong place in world loading causing some block state compares to fail
+[uuk]: BlockFactory now supports fences
 
 
 issues:

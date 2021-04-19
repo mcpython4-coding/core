@@ -21,6 +21,7 @@ import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
 import mcpython.common.block.ILog as ILog
 import mcpython.common.block.ISlab as ISlab
+import mcpython.common.block.BlockFence as BlockFence
 import mcpython.common.container.ItemStack
 import mcpython.common.factory.FactoryBuilder
 import mcpython.common.factory.IFactoryModifier
@@ -69,6 +70,16 @@ def set_slab(instance: FactoryBuilder.IFactory):
 )
 def set_wall(instance: FactoryBuilder.IFactory):
     instance.base_classes.append(BlockWall.IWall)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_fence")
+)
+def set_fence(instance: FactoryBuilder.IFactory, *types: str):
+    instance.base_classes.append(BlockFence.IFence)
+    instance.config_table["fence_type_name"] = set(types) if len(types) > 0 else {"minecraft:wooden_fence"}
+    instance.set_solid(False).set_all_side_solid(False)
     return instance
 
 
@@ -196,6 +207,10 @@ def build_class(
 
         DEBUG_WORLD_BLOCK_STATES = configs.setdefault(
             "debug_world_states", cls.DEBUG_WORLD_BLOCK_STATES
+        )
+
+        FENCE_TYPE_NAME = configs.setdefault(
+            "fence_type_name", tuple()
         )
 
     return ModifiedClass
