@@ -11,15 +11,12 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - add scoreboards with commands, execute command entry, ... [5]
     - make world gen more fail-save [2]
     - add ores [4]
-    - add mcpi API support [10]
     - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum [7]
     - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality] [5]
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log [6]
-    - parser for the new mc dimension config format [20]
+    - parser for the new mc world gen config format [20]
     - add an mode where the window opens only when the load is complete [100]
-    - add an "show"-mode where the user is forced into one single world loading immediate when entering the game
-        and when the user tries to go back to start menu, the game is closing. [change button text for that] [100]
     - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation [30]
     - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html) [110]
     - implement lighting [1000]

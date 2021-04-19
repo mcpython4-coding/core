@@ -1550,6 +1550,7 @@ R   [uuk]: improved world serialization API
 [uuk]: added optional exception handling to command nodes
 [uuk]: dropped /loot, /replaceitem and /help commands for now
 [uuk]: fixed installer putting assets to wrong folder in dev-environment
+[uuk]: fixed texture reload at wrong place in world loading causing some block state compares to fail
 
 
 issues:

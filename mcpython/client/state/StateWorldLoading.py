@@ -75,8 +75,8 @@ class StateWorldLoading(State.State):
                 shared.world.get_active_dimension().get_chunk(*chunk)
             )
             self.status_table[chunk] = 1 / c if c > 0 else -1
+
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
-            shared.event_handler.call("data:reload:work")
             shared.state_handler.switch_to("minecraft:game")
             shared.world.world_loaded = True
             if (
@@ -84,12 +84,19 @@ class StateWorldLoading(State.State):
                 and mcpython.common.config.SHUFFLE_INTERVAL > 0
             ):
                 shared.event_handler.call("data:shuffle:all")
+
         self.parts[1].text = "{}%".format(
             round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10
         )
 
     def activate(self):
         super().activate()
+
+        shared.event_handler.call("data:reload:work")
+        import mcpython.common.data.ResourcePipe
+
+        mcpython.common.data.ResourcePipe.handler.reload_content()
+
         shared.world_generation_handler.enable_generation = False
         self.status_table.clear()
         shared.dimension_handler.init_dims()
@@ -119,9 +126,6 @@ class StateWorldLoading(State.State):
         super().deactivate()
         player = shared.world.get_active_player()
         player.teleport(player.position, force_chunk_save_update=True)
-        import mcpython.common.data.ResourcePipe
-
-        mcpython.common.data.ResourcePipe.handler.reload_content()
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
