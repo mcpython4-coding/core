@@ -38,3 +38,9 @@ class TagGenerator(IDataGenerator):
             else (generator.default_namespace, name)
         )
         return "data/{}/tags/{}/{}.json".format(namespace, self.group, name)
+
+    def also(self, group: str, generator: DataGeneratorInstance, name: str):
+        instance = TagGenerator(group)
+        instance.affected = self.affected
+        generator.annotate(instance, name)
+        return self
