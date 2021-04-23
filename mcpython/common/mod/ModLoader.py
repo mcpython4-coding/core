@@ -160,9 +160,9 @@ class ModLoader:
         Will load the mod description files for the given locations and parse their content
         :param locations: the locations found
         """
-        for file in locations:
-            self.located_mod_instances.clear()
+        self.located_mod_instances.clear()
 
+        for file in locations:
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
@@ -219,6 +219,10 @@ class ModLoader:
                     self.error_builder.println(
                         "- could not locate mod.json file for mod for mod-directory '{}'".format(file)
                     )
+
+            for mod in self.located_mod_instances:
+                mod.path = file
+            self.located_mod_instances.clear()
 
     def look_out(self, from_files=True):
         """

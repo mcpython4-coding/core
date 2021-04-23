@@ -1564,6 +1564,9 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed debug world chunk generator crashing due to wrong use of chunk maps
 [uuk]: fixed mod-loader not able to load mod.json-files without an exception
 [uuk]: added /data view registry <registry> <namespace> variant filtering the registry after a given namespace
+[uuk]: fixed a few derps in the data generator system
+[uuk]: fixed mod loader not setting path attribute on mods
+[uuk]: fixed data-generators using not simplejson for formatting json files
 
 
 issues:

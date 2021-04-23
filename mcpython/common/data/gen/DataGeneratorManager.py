@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import json
+import simplejson
 import os
 from mcpython import logger
 from mcpython import shared
@@ -34,7 +34,7 @@ class IDataGenerator:
                 )
             )
             return
-        generator.write(json.dumps(self.dump(generator)).encode("utf-8"), file)
+        generator.write(simplejson.dumps(self.dump(generator), indent="  ").encode("utf-8"), file)
 
     def get_default_location(
         self, generator: "DataGeneratorInstance", name: str
@@ -53,6 +53,7 @@ class DataGeneratorInstance:
 
     def write(self, data: bytes, file: str):
         file = self.get_full_path(file)
+        os.makedirs(os.path.dirname(file), exist_ok=True)
         with open(file, mode="wb") as f:
             f.write(data)
 
@@ -64,6 +65,7 @@ class DataGeneratorInstance:
 
     def generate(self):
         for generator, name in self.to_generate:
+            print(f"running data generator named '{name}'")
             try:
                 generator.write(self, name)
             except UnsupportedIndirectDumpException:

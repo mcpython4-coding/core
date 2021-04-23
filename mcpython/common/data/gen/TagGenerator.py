@@ -25,14 +25,16 @@ class TagGenerator(IDataGenerator):
 
     def add_affected(self, *affected):
         self.affected.update(affected)
+        return self
 
     def dump(self, generator: "DataGeneratorInstance"):
         return {"replace": self.override, "values": list(self.affected)}
 
     def get_default_location(self, generator: "DataGeneratorInstance", name: str):
+        name = name.removeprefix("#")
         namespace, name = (
             name.split(":")
             if name.count(":") == 1
             else (generator.default_namespace, name)
         )
-        return "data/{}/tags/{}/{}.json".format(name, self.group, name)
+        return "data/{}/tags/{}/{}.json".format(namespace, self.group, name)
