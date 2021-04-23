@@ -206,13 +206,18 @@ class ModLoader:
                 self.active_directory = file
                 if os.path.exists(file + "/mod.json"):
                     with open(file + "/mod.json") as sf:
-                        self.load_mods_json(sf.read(), file + "/mod.json")
+                        content = sf.read()
+                    try:
+                        self.load_mods_json(content, file + "/mod.json")
+                    except:
+                        logger.print_exception(f"during loading mod.json file from '{file}'")
+
                 elif os.path.exists(file + "/mods.toml"):
                     with open(file + "/mods.toml") as sf:
                         self.load_mods_toml(sf.read(), file + "/mods.toml")
                 else:
                     self.error_builder.println(
-                        "- could not locate mod.json file for mod at '{}'".format(file)
+                        "- could not locate mod.json file for mod for mod-directory '{}'".format(file)
                     )
 
     def look_out(self, from_files=True):
@@ -391,8 +396,8 @@ class ModLoader:
                             return
                 else:
                     raise IOError("invalid loader '{}'".format(loader))
-            else:
-                raise IOError("invalid version: {}".format(version))
+        else:
+            raise IOError("invalid version: {}".format(version))
 
     @classmethod
     def cast_dependency(cls, depend: dict):
