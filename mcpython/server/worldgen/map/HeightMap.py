@@ -56,7 +56,7 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         return data
 
     def get_at_xz(self, x: int, z: int):
-        return self.height_map[x, z]
+        return self.height_map[x, z] if (x, z) in self else [(0, 0)]
 
     def set_at_xz(self, x: int, z: int, height):
         self.height_map[x, z] = height

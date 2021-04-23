@@ -1560,6 +1560,7 @@ R   [uuk]: improved world serialization API
        world generation breaks down in either case before this positions
 [uuk]: fixed Chunk.save() loading the chunk instead of saving it
 [uuk]: changed inventory custom text color to white from black
+[uuk]: fixed debug world chunk generator crashing due to wrong use of chunk maps
 
 
 issues:

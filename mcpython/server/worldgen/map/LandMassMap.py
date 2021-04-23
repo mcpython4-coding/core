@@ -60,7 +60,7 @@ class LandMassMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap)
         return data
 
     def get_at_xz(self, x: int, z: int) -> str:
-        return self.land_mass_map[x, z]
+        return self.land_mass_map[x, z] if (x, z) in self.land_mass_map else "void"
 
     def set_at_xz(self, x: int, z: int, mass: str):
         self.land_mass_map[x, z] = mass

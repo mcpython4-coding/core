@@ -38,7 +38,7 @@ subprocess.call(
         home + "/tools/update_asset_source.py"
         if os.path.exists(home + "/tools/update_asset_source.py")
         else home + "/update_asset_source.py",
-        "https://launcher.mojang.com/v1/objects/749805abb797f201a76e2c6ad2e7ff6f790bb53c/client.jar",
+        "https://launcher.mojang.com/v1/objects/f124f2aad604e88f27f010834d82c7af85506b6c/client.jar",
         home
         if not os.path.exists(home + "/tools/update_asset_source.py")
         else home + "/resources/source",

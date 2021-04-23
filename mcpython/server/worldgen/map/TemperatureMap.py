@@ -46,7 +46,7 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
         return data
 
     def get_at_xz(self, x: int, z: int) -> float:
-        return self.temperature_map[x, z]
+        return self.temperature_map[x, z] if (x, z) in self.temperature_map else 0
 
     def set_at_xz(self, x: int, z: int, temperature: float):
         self.temperature_map[x, z] = temperature

@@ -69,14 +69,15 @@ class DebugWorldGenerator(
         cx, cz = chunk.position
 
         if (cx, cz) in BlockInfo.TABLE:
-            height_map = chunk.get_value("heightmap")
+            height_map = chunk.get_map("minecraft:height_map")
             block_map = BlockInfo.TABLE[(cx, cz)]
             for x, z in block_map.keys():
                 block, state = block_map[(x, z)]
                 array.schedule_block_add(
                     (x, 10, z), block, block_update=False, block_state=state
                 )
-                height_map[(x, z)] = [(0, 30)]
+                height_map.set_at_xz(x, z, [(0, 30)])  # todo: relative to lower world limit
+
             for x in range(16):
                 for z in range(16):
                     array.schedule_block_add(

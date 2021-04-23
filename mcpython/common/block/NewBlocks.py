@@ -9,7 +9,7 @@ air
 
 
 def plant(name: str):
-    return BlockFactory().set_name(name).set_solid(False).set_all_side_solid(False)
+    return BlockFactory().set_name(name).set_solid(False).set_all_side_solid(False).set_strength(0)
 
 
 def wood(name: str, normal=True):
@@ -34,28 +34,54 @@ def wood(name: str, normal=True):
         BlockFactory().set_name(f"minecraft:{name}_leaves").set_solid(False).set_all_side_solid(False).set_strength(0.2).finish()
         BlockFactory().set_name(f"minecraft:{name}_log").set_log().set_strength(2).finish()
         BlockFactory().set_name(f"minecraft:{name}_wood").set_log().set_strength(2).finish()
-        plant(f"minecraft:{name}_sapling").set_strength(0).finish()
+        plant(f"minecraft:{name}_sapling").finish()
 
     CombinedFactoryInstance(f"minecraft:{name}_wall", f"minecraft:block/{name}_planks").create_wall(suffix="_wall")
 
     # todo: signs, stairs
 
 
+def stone_like(name: str, existing_full=True, existing_slab=True, existing_wall=True, existing_stairs=True, existing_fence=False, texture=None):
+    fname = name.removesuffix("s")
+    instance = CombinedFactoryInstance(f"minecraft:{name}", f"minecraft:block/{name}" if texture is None else texture)
+
+    if existing_full:
+        BlockFactory().set_name(f"minecraft:{name}").finish()
+    else:
+        instance.create_full_block()
+
+    if existing_slab:
+        BlockFactory().set_name(f"minecraft:{fname}_slab").set_slab().finish()
+    else:
+        instance.create_slab_block("_slab")
+
+    if existing_wall:
+        BlockFactory().set_name(f"minecraft:{fname}_wall").set_wall().finish()
+    else:
+        instance.create_wall("_wall")
+
+    if existing_stairs:
+        BlockFactory().set_name(f"minecraft:{fname}_stairs").set_default_model_state("facing=east,half=bottom,shape=inner_left").set_solid(False).set_all_side_solid(False).finish()
+    else:
+        pass  # todo: implement
+
+    if existing_fence:
+        BlockFactory().set_name(f"minecraft:{fname}_fence").set_fence().finish()
+    else:
+        instance.create_fence("_fence")
+
+
 wood("acacia")
 BlockFactory().set_name("minecraft:activator_rail").set_solid(False).set_all_side_solid(False).set_default_model_state("powered=false,shape=north_south").finish()
-plant("minecraft:allium").set_strength(0).finish()
+plant("minecraft:allium").finish()
+BlockFactory().set_name("minecraft:amethyst_block").finish()
+BlockFactory().set_name("minecraft:amethyst_cluster").set_solid(False).set_all_side_solid(False).set_default_model_state("facing=up").finish()
+BlockFactory().set_name("minecraft:ancient_debris").finish()
+stone_like("andesite")
 
 
 # All blocks, by blockstate
 """
-allium
-amethyst_block
-amethyst_cluster
-ancient_debris
-andesite
-andesite_slab
-andesite_stairs
-andesite_wall
 anvil
 attached_melon_stem
 attached_pumpkin_stem
