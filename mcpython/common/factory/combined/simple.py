@@ -487,7 +487,7 @@ class CombinedFactoryInstance:
                 "model_info": {"uvlock": True, "y": 270},
                 "textures": wall_textures,
             },
-            block_factory_consumer=lambda _, instance: instance.set_wall()
+            block_factory_consumer=lambda _, instance: instance.set_wall().set_solid(False).set_all_side_solid(False)
             == (
                 0
                 if "block_factory_consumer" not in consumers
