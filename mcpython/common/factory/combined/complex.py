@@ -25,4 +25,5 @@ def create_full_slab_wall_set(
     )
     if and_button:
         instance.create_button_block(suffix=lambda n: n.removesuffix("s") + "_button")
+
     return instance

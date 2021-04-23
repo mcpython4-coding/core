@@ -62,19 +62,32 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
         shared.world_generation_handler.setup_chunk_maps(self)
 
+        # for all default chunks, we add such ticket. todo: remove & set only when needed
         self.add_chunk_load_ticket(
             mcpython.common.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS
         )
 
     def entity_iterator(self) -> typing.Iterable:
+        """
+        Returns an iterable of entities in this chunk
+        """
         return tuple(self.entities)
 
     def tick(self):
+        """
+        General chunk tick
+        todo: move random ticks & entity ticks here
+        """
+
         self.check_for_unload()
 
     def save(self):
-        shared.world.save_file.read(
-            "minecraft:chunk", dimension=self.get_dimension(), chunk=self.position
+        """
+        Wrapper function for saving this file
+        Wraps SaveFile.dump around this chunk
+        """
+        shared.world.save_file.dump(
+            self, "minecraft:chunk", dimension=self.get_dimension(), chunk=self.position
         )
 
     def as_shareable(self) -> mcpython.common.world.AbstractInterface.IChunk:
@@ -84,25 +97,31 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         self.dirty = True
         return self
 
-    def get_dimension(self):
+    def get_dimension(self) -> mcpython.common.world.AbstractInterface.IDimension:
         return self.dimension
 
-    def get_position(self):
+    def get_position(self) -> typing.Tuple[int, int]:
         return self.position
 
-    def get_maximum_y_coordinate_from_generation(self, x: int, z: int) -> int:
+    def get_maximum_y_coordinate_from_generation(self, x: int, z: int, default=None) -> int:
         """
-        Helper function for getting the y height at the given xz generation based on the generation code
+        Helper function for getting the y height at the given xz generation based on the generation code, by looking
+            up the internal map
         :param x: the x coord
         :param z: the y coord
+        :param default: the default value when no value is set
         :return: the y value at that position
         """
         height_map = self.get_map("minecraft:height_map")
-        return height_map.get_at_xz(x, z)[0][1]
+        return height_map.get_at_xz(x, z)[0][1] if (x, z) in height_map else default
 
     def draw(self):
         """
         Will draw the chunk with the content for it
+        Draws all entities
+        todo: for this, add a batch
+
+        will schedule a chunk load from saves when needed
         """
         if not self.is_ready or not self.visible:
             return
@@ -171,7 +190,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
     def is_position_blocked(self, position: typing.Tuple[float, float, float]) -> bool:
         """
-        will return if at an given position is an block or an block is scheduled
+        Will return if at an given position is a block or a block is scheduled [e.g. by world generation]
         :param position: the position to check
         :return: if there is an block
         """
@@ -191,6 +210,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         lazy_setup: typing.Callable[[Block.AbstractBlock], None] = None,
         check_build_range=True,
         block_state=None,
+        replace_existing=True,
     ):
         """
         Adds an block to the given position
@@ -202,6 +222,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param lazy_setup: an callable for setting up the block instance
         :param check_build_range: if the build limits should be checked
         :param block_state: the block state to create in, or None if not set
+        :param replace_existing: if existing blocks should be replaced
         :return: the block instance or None if it could not be created
         """
         # check if it is in build range
@@ -215,6 +236,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             )
 
         if position in self._world:
+            if not replace_existing:
+                return
+
             self.remove_block(
                 position,
                 immediate=immediate,
@@ -278,7 +302,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         self, position: typing.Tuple[int, int, int], include_itself=True
     ):
         """
-        will call to the neighbor blocks an block update
+        Will call to the neighbor blocks an block update
         :param position: the position in the center
         :param include_itself: if the block itself should be updated
         """
@@ -297,7 +321,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                                 b.on_block_update()
                             except:
                                 logger.print_exception(
-                                    "during block-updating block {}".format(b)
+                                    "during block-updating block {} caused by block at {}".format(b, position)
                                 )
 
     def remove_block(
@@ -346,12 +370,16 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         is added or removed.
         :param position: the position as the center
         """
+        # Only do this on the client
         if not shared.IS_CLIENT:
             return
+
+        # for each block touching, do...
         for face in mcpython.util.enums.EnumSide.iterate():
-            block = self.dimension.get_block(face.relative_offset(position))
-            if block is None or isinstance(block, str):
+            block = self.dimension.get_block(face.relative_offset(position), none_if_str=True)
+            if block is None:
                 continue
+
             block.face_state.update(True)
 
     def show_block(

@@ -497,6 +497,65 @@ class CombinedFactoryInstance:
         )
         return self
 
+    def create_fence(self, suffix=None, texture=None, color=None, **consumers):
+        if texture is None:
+            texture = self.default_texture
+        name = (
+            self.target_base_name
+            if suffix is None
+            else self.target_base_name + "_" + suffix
+            if not callable(suffix)
+            else suffix(self.target_base_name)
+        )
+        texture = self.create_colored_texture(texture, color=color)
+        fence_textures = {"texture": texture}
+        # todo: can we use some form of template here?
+        self.create_multipart_block(
+            name,
+            {
+                "when": {},
+                "model_name_suffix": "post",
+                "textures": fence_textures,
+                "parent": "minecraft:block/fence_post",
+            },
+            {
+                "when": {"north": "true"},
+                "model_name_suffix": "side",
+                "model_info": {"uvlock": True},
+                "textures": fence_textures,
+                "parent": "minecraft:block/fence_side",
+            },
+            {
+                "when": {"east": "low"},
+                "model_name_suffix": "side",
+                "reuse": True,
+                "model_info": {"uvlock": True, "y": 90},
+                "textures": fence_textures,
+            },
+            {
+                "when": {"south": "true"},
+                "model_name_suffix": "side",
+                "reuse": True,
+                "model_info": {"uvlock": True, "y": 180},
+                "textures": fence_textures,
+            },
+            {
+                "when": {"west": "true"},
+                "model_name_suffix": "side",
+                "reuse": True,
+                "model_info": {"uvlock": True, "y": 270},
+                "textures": fence_textures,
+            },
+            block_factory_consumer=lambda _, instance: instance.set_fence()
+            == (
+                0
+                if "block_factory_consumer" not in consumers
+                else consumers["block_factory_consumer"](_, instance)
+            ),
+            **consumers,
+        )
+        return self
+
     def create_multipart_block(
         self,
         name: str,

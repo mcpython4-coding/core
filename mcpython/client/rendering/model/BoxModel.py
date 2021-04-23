@@ -51,19 +51,15 @@ class BoxModel:
         return cls(data, model)
 
     def __init__(self, data: dict, model=None, flip_y=True):
-        # todo: move most of the code here to the build function
+        # todo: move most of the code here to the build function / decode function
         self.atlas = None
         self.model = model
         self.data = data
 
-        self.boxposition = [x / 16 for x in data["from"]]
-        self.box_size = (
-            data["to"][0] - data["from"][0],
-            data["to"][1] - data["from"][1],
-            data["to"][2] - data["from"][2],
-        )
+        self.box_position = tuple([x / 16 for x in data["from"]])
+        self.box_size = tuple([a - b for a, b in zip(data["to"], data["from"])])
 
-        self.relative_position = [x // 2 / 16 for x in self.box_size]
+        self.relative_position = tuple([x // 2 / 16 for x in self.box_size])
         self.faces = {
             mcpython.util.enums.EnumSide.U: None,
             mcpython.util.enums.EnumSide.D: None,
@@ -95,14 +91,16 @@ class BoxModel:
         self.texture_region_rotate = [0] * 6
 
         for face in mcpython.util.enums.EnumSide.iterate():
-            face_name = face.normal_name
-            if face_name in data["faces"]:
-                f = data["faces"][face_name]
+            name: str = face.normal_name
+
+            if name in data["faces"]:
+                f = data["faces"][name]
                 var = f["texture"]
                 self.faces[face] = (
                     model.get_texture_position(var) if model is not None else None
                 )
                 index = SIDE_ORDER.index(face)
+
                 if "uv" in f:
                     uvs = tuple(f["uv"])
                     uvs = (uvs[0], 16 - uvs[1], uvs[2], 16 - uvs[3])
@@ -117,23 +115,26 @@ class BoxModel:
                         self.texture_region[index] = tuple(
                             [uvs[i] / 16 for i in UV_INDICES[index]]
                         )
+
                 if "rotation" in f:
                     self.texture_region_rotate[index] = f["rotation"]
 
         self.rotation = (0, 0, 0)
-        self.rotation_core = (0, 0, 0)
+        self.rotation_center = (0, 0, 0)
 
         if "rotation" in data:
+            # Another rotation center than 0, 0, 0
             if "origin" in data["rotation"]:
-                self.rotation_core = tuple(data["rotation"]["origin"])
+                self.rotation_center = tuple(e / 16 for e in data["rotation"]["origin"])
+
             rot = [0, 0, 0]
             rot["xyz".index(data["rotation"]["axis"])] = data["rotation"]["angle"]
             self.rotation = tuple(rot)
 
         status = (
             self.rotation,
-            self.rotation_core,
-            tuple(self.boxposition),
+            self.rotation_center,
+            tuple(self.box_position),
             self.box_size,
         )
         if status in SIMILAR_VERTEX:
@@ -146,8 +147,10 @@ class BoxModel:
         self.un_active = None
 
         if model is not None and model.drawable and self.model.texture_atlas:
+            # todo: add additional flag for this
             if shared.mod_loader.finished:
                 self.build()
+
             else:
                 # todo: can we extract data if needed?
                 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
@@ -165,6 +168,10 @@ class BoxModel:
         )
 
     def build(self, atlas=None):
+        """
+        "Builds" the model by preparing internal data like preparing the texture atlas, the texture coordinates
+        """
+
         if atlas is None:
             atlas = self.model.texture_atlas
 
@@ -192,28 +199,26 @@ class BoxModel:
             for i, face in enumerate(mcpython.util.enums.EnumSide.iterate())
         }
         self.atlas = atlas
-        # todo: can we upload vertices to GPU in advance?
-        # todo: can we pre-calculated rotated variants
+        # todo: can we upload vertices to GPU in advance and use some clever code for drawing?
+        # todo: can we pre-calculated rotated variants for faster draw times later down the road
 
     def get_vertex_variant(self, rotation: tuple, position: tuple) -> list:
         """
-        implementation to get the vertex data for an rotated block
+        Implementation to get the vertex data for a rotated block
         :param rotation: the rotation to use
         :param position: the position of the vertex cube
         """
-        x, y, z = position
-        x += self.boxposition[0] - 0.5 + self.relative_position[0]
-        y += self.boxposition[1] - 0.5 + self.relative_position[1]
-        z += self.boxposition[2] - 0.5 + self.relative_position[2]
+        x, y, z = (self.box_position[i] - .5 + self.relative_position[i] + position[i] for i in range(3))
 
-        # is there data prepared in this case?
+        # Is there data prepared in this case?
         if rotation in self.rotated_vertices:
             vertex_r = [
                 [(e[0] + x, e[1] + y, e[2] + z) for e in m]
                 for m in self.rotated_vertices[rotation]
             ]
 
-        # otherwise, create it and store it
+        # Otherwise, create it and store it
+        # todo: share across similar BoxModels
         else:
             vertex = mcpython.util.math.cube_vertices_better(
                 x,
@@ -234,7 +239,7 @@ class BoxModel:
                     )
                     v = mcpython.util.math.rotate_point(
                         v,
-                        tuple([position[i] + self.rotation_core[i] for i in range(3)]),
+                        tuple([position[i] + self.rotation_center[i] for i in range(3)]),
                         self.rotation,
                     )
                     face_r.append(v)
@@ -304,14 +309,14 @@ class BoxModel:
                 len(collected_data[0]) // 3,
                 pyglet.gl.GL_QUADS,
                 self.atlas.group,
-                ("v3f/static", collected_data[0]),
+                ("v3d/static", collected_data[0]),
                 ("t2f/static", collected_data[1]),
             ),
         )
 
-    def add_to_batch(self, position, batch, rotation, active_faces=None, uv_lock=False):
+    def add_to_batch(self, position: typing.Tuple[float, float, float], batch, rotation, active_faces=None, uv_lock=False):
         """
-        adds the box model to the batch
+        Adds the box model to the batch
         :param position: the position based on
         :param batch: the batches to select from
         :param rotation: the rotation to use
@@ -336,7 +341,7 @@ class BoxModel:
             )
             self.model.texture_atlas.group.unset_state()
 
-    def draw(self, position, rotation, active_faces=None, uv_lock=False):
+    def draw(self, position: typing.Tuple[float, float, float], rotation, active_faces=None, uv_lock=False):
         """
         draws the BoxModel direct into the world
         WARNING: use batches for better performance

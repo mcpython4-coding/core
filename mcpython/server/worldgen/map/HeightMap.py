@@ -18,6 +18,14 @@ from mcpython import shared
 
 @shared.world_generation_handler
 class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
+    """
+    Representation of a heightmap in-code
+    Each chunk has one in the normal case
+
+    Contains also the serializer code
+    todo: implement better serializer
+    """
+
     NAME = "minecraft:height_map"
 
     def __init__(self, chunk):
@@ -52,3 +60,6 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
 
     def set_at_xz(self, x: int, z: int, height):
         self.height_map[x, z] = height
+
+    def __contains__(self, item):
+        return item in self.height_map

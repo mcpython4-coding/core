@@ -68,6 +68,7 @@ def load():
         BlockCoralBlock,
         BlockFence,
         BlockWall,
+        NewBlocks,
     )
 
 

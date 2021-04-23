@@ -415,11 +415,17 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     def move_to_spawn_point(self):
         x, _, z = mcpython.util.math.normalize(self.position)
+        h = self.dimension.get_chunk_for_position(
+            self.position
+        ).get_maximum_y_coordinate_from_generation(x, z)
+
+        if h is None:
+            logger.println(f"[WARN] cannot find spawn height at {x} {z}. Using '255' as default")
+            h = 255
+
         self.position = (
             shared.world.spawnpoint[0],
-            self.dimension.get_chunk_for_position(
-                self.position
-            ).get_maximum_y_coordinate_from_generation(x, z)
+            h
             + 3,
             shared.world.spawnpoint[1],
         )

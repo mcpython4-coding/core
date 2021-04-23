@@ -166,10 +166,6 @@ class IWoodenFence(IFence):
     FENCE_TYPE_NAME = {"minecraft:wooden_fence"}
 
 
-class AcaciaFence(IWoodenFence):
-    NAME = "minecraft:acacia_fence"
-
-
 class BirchFence(IWoodenFence):
     NAME = "minecraft:birch_fence"
 
@@ -215,7 +211,6 @@ def load():
     shared.registry.register(DarkOakFence)
     shared.registry.register(JungleFence)
     shared.registry.register(BirchFence)
-    shared.registry.register(AcaciaFence)
     shared.registry.register(WarpedFence)
     shared.registry.register(CrimsonFence)
     shared.registry.register(NetherBrickFence)

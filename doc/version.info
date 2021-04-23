@@ -1551,7 +1551,15 @@ R   [uuk]: improved world serialization API
 [uuk]: dropped /loot, /replaceitem and /help commands for now
 [uuk]: fixed installer putting assets to wrong folder in dev-environment
 [uuk]: fixed texture reload at wrong place in world loading causing some block state compares to fail
-[uuk]: BlockFactory now supports fences
+[uuk]: BlockFactory & CombinedBlockFactory now support fences & fence gates
+[uuk]: added basic fence gate system
+[uuk]: fixed rotation in entries in models rotating around wrong center
+[uuk]: BoxModel is now more immutable than before
+[uuk]: increased accuracy (but also GPU memory load) for BoxModel's
+[uuk]: fixed exceptions in some edge-cases when dying [closing local issue 150]
+       world generation breaks down in either case before this positions
+[uuk]: fixed Chunk.save() loading the chunk instead of saving it
+[uuk]: changed inventory custom text color to white from black
 
 
 issues:

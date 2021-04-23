@@ -60,7 +60,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
 
     def __init__(self):
         """
-        Creates an new BlockChest
+        Creates a new BlockChest block
         """
         super().__init__()
 
@@ -84,6 +84,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
                 self.front_side = mcpython.util.enums.EnumSide.E
             elif dz < 0 and abs(dx) < abs(dz):
                 self.front_side = mcpython.util.enums.EnumSide.W
+
         self.face_solid = {
             face: False for face in mcpython.util.enums.EnumSide.iterate()
         }
@@ -98,6 +99,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
         Checks if the inventory can be opened
         :return: if the block can be opened
         """
+
         x, y, z = self.position
         instance = shared.world.get_dimension_by_name(self.dimension).get_block(
             (x, y + 1, z)
@@ -124,6 +126,7 @@ class BlockChest(AbstractBlock.AbstractBlock):
                     insert_when_same_item=False,
                 )
                 self.loot_table_link = None
+
             shared.inventory_handler.show(self.inventory)
             return True
         else:
@@ -146,7 +149,6 @@ class BlockChest(AbstractBlock.AbstractBlock):
     def get_model_state(self) -> dict:
         return {
             "side": self.front_side.normal_name,
-            "type": "normal" if not self.is_christmas else "christmas",
         }
 
     def get_view_bbox(self):

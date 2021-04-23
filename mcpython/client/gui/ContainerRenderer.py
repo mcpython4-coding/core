@@ -47,14 +47,14 @@ class ContainerRenderer(ABC):
         self.uuid = uuid.uuid4()
         shared.inventory_handler.add(self)
         self.slots = self.create_slot_renderers()
-        self.config = (
-            {}
-        )  # todo: add special class holding this information with serializer for it
+
+        # todo: add special class holding this information with serializer for it
+        self.config = {}
+
         self.reload_config()
         self.custom_name = None  # the custom name; If set, rendered in the inventory
-        self.custom_name_label = pyglet.text.Label()
+        self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
         self.custom_name_label.anchor_y = "top"
-        self.custom_name_label.color = (0, 0, 0, 255)
 
     def reload_config(self):
         """
