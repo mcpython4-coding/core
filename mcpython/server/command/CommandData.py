@@ -68,6 +68,12 @@ data = (
                 .of_name("registry")
                 .info("views the content of a registry")
                 .on_execution(lambda env, d: shared.registry.print_content(d[3]))
+                .than(
+                    CommandNode(AnyString.INSTANCE)
+                    .of_name("namespace")
+                    .info("views the content of a registry filtered by namespace")
+                    .on_execution(lambda env, d: shared.registry.print_content(d[3], d[4]))
+                )
             )
         )
     )

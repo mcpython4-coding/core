@@ -1555,12 +1555,15 @@ R   [uuk]: improved world serialization API
 [uuk]: added basic fence gate system
 [uuk]: fixed rotation in entries in models rotating around wrong center
 [uuk]: BoxModel is now more immutable than before
-[uuk]: increased accuracy (but also GPU memory load) for BoxModel's
+[uuk]: increased accuracy (but also GPU memory load) for BoxModel's by using doubles instead of floats for vertex
+       coordinates
 [uuk]: fixed exceptions in some edge-cases when dying [closing local issue 150]
-       world generation breaks down in either case before this positions
+       world generation breaks down in either case before this positions, so currently, it does not matter really
 [uuk]: fixed Chunk.save() loading the chunk instead of saving it
 [uuk]: changed inventory custom text color to white from black
 [uuk]: fixed debug world chunk generator crashing due to wrong use of chunk maps
+[uuk]: fixed mod-loader not able to load mod.json-files without an exception
+[uuk]: added /data view registry <registry> <namespace> variant filtering the registry after a given namespace
 
 
 issues:

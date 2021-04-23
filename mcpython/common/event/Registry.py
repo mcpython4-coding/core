@@ -193,7 +193,9 @@ class RegistryHandler:
     def create_deferred(self, registry: str, mod_name: str):
         return DeferredRegistryPipe(self.get_by_name(registry), mod_name)
 
-    def print_content(self, registry: str):
+    def print_content(self, registry: str, namespace=None):
+        namespace = "" if namespace is None else namespace + ":"
+
         r = self.get_by_name(registry)
         if r is None:
             logger.println(f"registry {registry} not found!")
@@ -201,14 +203,15 @@ class RegistryHandler:
 
         logger.println(f"values in registry '{registry}'")
         for key in r.entries.keys():
-            element = r.entries[key]
-            logger.println(
-                " -",
-                key,
-                element,
-                element.INFO if element.INFO is not None else "",
-                sep=" ",
-            )
+            if not isinstance(key, str) or key.startswith(namespace):
+                element = r.entries[key]
+                logger.println(
+                    " -",
+                    key,
+                    element,
+                    element.INFO if element.INFO is not None else "",
+                    sep=" ",
+                )
 
 
 shared.registry = RegistryHandler()
