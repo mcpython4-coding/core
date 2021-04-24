@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 
-from mcpython.common.container.ItemStack import ItemStack
+from mcpython.common.container.ResourceStack import ItemStack
 import typing
 from mcpython.common.data.gen.DataGeneratorManager import (
     IDataGenerator,

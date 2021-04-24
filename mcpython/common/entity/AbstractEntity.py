@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 from mcpython import shared, logger
 import mcpython.common.event.Registry
 import mcpython.common.entity.EntityHandler
@@ -200,7 +200,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
             del shared.entity_handler.entity_map[self.uuid]
 
     def pick_up_item(
-        self, itemstack: mcpython.common.container.ItemStack.ItemStack
+        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> bool:
         """
         Let the entity pick up an item and insert it into its inventory

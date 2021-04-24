@@ -16,7 +16,7 @@ from mcpython import shared
 from mcpython.common.config import FLYING_SPEED, GRAVITY, TERMINAL_VELOCITY, JUMP_SPEED
 from pyglet.window import key, mouse
 import pyglet
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.common.config
 import mcpython.util.math
 import time
@@ -229,7 +229,7 @@ class StatePartGame(StatePart.StatePart):
             self.calculate_new_break_time()
 
         player = shared.world.get_active_player()
-        selected_itemstack: mcpython.common.container.ItemStack.ItemStack = (
+        selected_itemstack: mcpython.common.container.ResourceStack.ItemStack = (
             player.get_active_inventory_slot().get_itemstack()
         )
         if (
@@ -370,7 +370,7 @@ class StatePartGame(StatePart.StatePart):
                 )
                 self.mouse_press_time = 0
                 block = shared.world.get_active_dimension().get_block(blockpos)
-                itemstack = mcpython.common.container.ItemStack.ItemStack(
+                itemstack = mcpython.common.container.ResourceStack.ItemStack(
                     block.NAME if type(block) != str else block
                 )
                 block = chunk.get_block(blockpos)

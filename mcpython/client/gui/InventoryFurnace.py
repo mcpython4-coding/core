@@ -15,7 +15,7 @@ from mcpython import shared
 from mcpython import logger
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.common.container.crafting.FurnaceCraftingHelper
 import mcpython.common.event.EventHandler
 import pyglet
@@ -292,7 +292,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def finish(self):
         if self.slots[2].itemstack.is_empty():
             self.slots[2].set_itemstack(
-                mcpython.common.container.ItemStack.ItemStack(self.recipe.output)
+                mcpython.common.container.ResourceStack.ItemStack(self.recipe.output)
             )
         else:
             if self.slots[2].itemstack.item.STACK_SIZE > self.slots[2].itemstack.amount:

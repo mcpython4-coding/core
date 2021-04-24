@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.crafting.CraftingGridHelperInterface
 import pyglet

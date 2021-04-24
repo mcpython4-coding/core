@@ -19,7 +19,7 @@ from abc import ABC
 import mcpython.client.gui.Slot
 import mcpython.common.block.BlockFaceState
 import mcpython.common.block.BoundingBox
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.common.event.Registry
 import mcpython.util.enums
 from mcpython import shared
@@ -337,7 +337,7 @@ class AbstractBlock(parent):
         return self.get_view_bbox()
 
     def on_request_item_for_block(
-        self, itemstack: mcpython.common.container.ItemStack.ItemStack
+        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ):
         """
         Used when an item is requested exactly for this block. Useful for setting custom data to the itemstack

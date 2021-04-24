@@ -16,7 +16,7 @@ from abc import ABC
 
 from mcpython import shared, logger
 import pyglet
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.common.item.ItemHandler
 import mcpython.ResourceLoader
 import mcpython.client.rendering.model.ItemModel
@@ -35,12 +35,12 @@ class ISlot(ABC):
     def get_capacity(self) -> int:
         raise NotImplementedError()
 
-    def get_itemstack(self) -> mcpython.common.container.ItemStack.ItemStack:
+    def get_itemstack(self) -> mcpython.common.container.ResourceStack.ItemStack:
         raise NotImplementedError()
 
     def set_itemstack(
         self,
-        stack: mcpython.common.container.ItemStack.ItemStack,
+        stack: mcpython.common.container.ResourceStack.ItemStack,
         update=True,
         player=False,
     ):
@@ -62,7 +62,7 @@ class ISlot(ABC):
         pass
 
     def can_set_item(
-        self, itemstack: mcpython.common.container.ItemStack.ItemStack
+        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> bool:
         raise NotImplementedError()
 
@@ -116,7 +116,7 @@ class Slot(ISlot):
         self.__itemstack = (
             itemstack
             if itemstack
-            else mcpython.common.container.ItemStack.ItemStack.create_empty()
+            else mcpython.common.container.ResourceStack.ItemStack.create_empty()
         )
 
         self.position = position
@@ -165,19 +165,19 @@ class Slot(ISlot):
             else (64 if self.itemstack.is_empty() else self.itemstack.item.STACK_SIZE)
         )
 
-    def get_itemstack(self) -> mcpython.common.container.ItemStack.ItemStack:
+    def get_itemstack(self) -> mcpython.common.container.ResourceStack.ItemStack:
         return self.__itemstack
 
     def set_itemstack(
         self,
-        stack: mcpython.common.container.ItemStack.ItemStack,
+        stack: mcpython.common.container.ResourceStack.ItemStack,
         update=True,
         player=False,
     ):
         self.__itemstack = (
             stack
             if stack is not None
-            else mcpython.common.container.ItemStack.ItemStack.create_empty()
+            else mcpython.common.container.ResourceStack.ItemStack.create_empty()
         )
         if update:
             self.call_update(player=player)
@@ -272,7 +272,7 @@ class Slot(ISlot):
             self.amount_label.draw()
 
     def can_set_item(
-        self, itemstack: mcpython.common.container.ItemStack.ItemStack
+        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> bool:
         if callable(self.check_function):
             if not self.check_function(self, itemstack):
@@ -317,7 +317,7 @@ class Slot(ISlot):
 
     def load(self, data):
         self.set_itemstack(
-            mcpython.common.container.ItemStack.ItemStack(
+            mcpython.common.container.ResourceStack.ItemStack(
                 data["itemstack"]["itemname"], data["itemstack"]["amount"]
             )
         )
@@ -455,7 +455,7 @@ class SlotCopy:
 
     def load(self, data):
         self.set_itemstack(
-            mcpython.common.container.ItemStack.ItemStack(
+            mcpython.common.container.ResourceStack.ItemStack(
                 data["itemstack"]["itemname"], data["itemstack"]["amount"]
             )
         )
@@ -539,14 +539,14 @@ class SlotInfiniteStackExchangeable(Slot):
 
     def set_itemstack(
         self,
-        stack: mcpython.common.container.ItemStack.ItemStack,
+        stack: mcpython.common.container.ResourceStack.ItemStack,
         update=True,
         player=False,
     ):
         self.__itemstack = (
             stack
             if stack is not None
-            else mcpython.common.container.ItemStack.ItemStack.create_empty()
+            else mcpython.common.container.ResourceStack.ItemStack.create_empty()
         )
         if not stack.is_empty():
             self.reference_stack = stack.copy()
@@ -568,7 +568,7 @@ class SlotTrashCan(Slot):
         self.__itemstack = (
             stack
             if stack
-            else mcpython.common.container.ItemStack.ItemStack.create_empty()
+            else mcpython.common.container.ResourceStack.ItemStack.create_empty()
         )
         flag = True
         if update:

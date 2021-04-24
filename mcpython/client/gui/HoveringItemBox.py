@@ -12,7 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import pyglet
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.common.Language
 from mcpython import shared
 
@@ -27,7 +27,7 @@ class IHoveringItemBoxDefinitionPlugin:
     """
 
     def manipulateShownText(
-        self, slot: mcpython.common.container.ItemStack.ItemStack, text: list
+        self, slot: mcpython.common.container.ResourceStack.ItemStack, text: list
     ):
         raise NotImplementedError()
 
@@ -47,7 +47,7 @@ class IHoveringItemBoxDefinition:
         cls.PLUGINS = []
 
     def getHoveringText(
-        self, itemstack: mcpython.common.container.ItemStack.ItemStack
+        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> list:
         raise NotImplementedError()
 
@@ -71,7 +71,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
         self.default_style = default_style
 
     def getHoveringText(
-        self, itemstack: mcpython.common.container.ItemStack.ItemStack
+        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> list:
         if itemstack.is_empty():
             return []
@@ -147,7 +147,7 @@ class HoveringItemBoxProvider:
         self.bg_rectangle = pyglet.shapes.Rectangle(0, 0, 0, 0, (0, 0, 0))
 
     def renderFor(
-        self, itemstack: mcpython.common.container.ItemStack.ItemStack, position
+        self, itemstack: mcpython.common.container.ResourceStack.ItemStack, position
     ):
         """
         Will render the ItemBoxProvider for a given slot

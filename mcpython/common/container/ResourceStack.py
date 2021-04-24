@@ -18,19 +18,19 @@ import mcpython.common.item.AbstractItem
 import typing
 
 
-class AbstractItemStack(ABC):
+class AbstractResourceStack(ABC):
     """
-    Abstract class for item stack like objects
+    Abstract class for stack like objects
     """
 
     @classmethod
     def create_empty(cls):
         raise NotImplementedError
 
-    def copy(self) -> "AbstractItemStack":
+    def copy(self) -> "AbstractResourceStack":
         raise NotImplementedError
 
-    def copy_from(self, other: "AbstractItemStack"):
+    def copy_from(self, other: "AbstractResourceStack"):
         raise NotImplementedError
 
     def clean(self):
@@ -39,8 +39,17 @@ class AbstractItemStack(ABC):
     def is_empty(self) -> bool:
         raise NotImplementedError
 
+    def contains_same_resource(self, other: "AbstractResourceStack") -> bool:
+        raise NotImplementedError
 
-class ItemStack(AbstractItemStack):
+    def has_more_than(self, other: "AbstractResourceStack") -> bool:
+        raise NotImplementedError
+
+    def get_difference(self, other: "AbstractResourceStack") -> "AbstractResourceStack":
+        raise NotImplementedError
+
+
+class ItemStack(AbstractResourceStack):
     """
     Default implementation for item stacks
     """
@@ -133,3 +142,46 @@ class ItemStack(AbstractItemStack):
 
     def __repr__(self):
         return str(self)
+
+    def contains_same_resource(self, other: "AbstractResourceStack") -> bool:
+        return isinstance(other, ItemStack) and self.get_item_name() == other.get_item_name()
+
+    def has_more_than(self, other: "AbstractResourceStack") -> bool:
+        return self.contains_same_resource(other) and self.amount >= other.amount
+
+    def get_difference(self, other: "AbstractResourceStack") -> "AbstractResourceStack":
+        return None if not self.contains_same_resource(other) else self.copy().set_amount(self.amount - other.amount)
+
+
+class FluidStack(AbstractResourceStack):
+    @classmethod
+    def create_empty(cls):
+        return cls(None)
+
+    def __init__(self, fluid: typing.Optional[str], amount: float = 0):
+        self.fluid = fluid
+        self.amount = amount
+
+    def copy(self) -> "AbstractResourceStack":
+        return FluidStack(self.fluid, self.amount)
+
+    def copy_from(self, other: "FluidStack"):
+        self.fluid, self.amount = other.fluid, other.amount
+        return self
+
+    def clean(self):
+        self.fluid = None
+        self.amount = 0
+
+    def is_empty(self) -> bool:
+        return self.fluid is None or self.amount == 0
+
+    def contains_same_resource(self, other: "AbstractResourceStack") -> bool:
+        return isinstance(other, FluidStack) and self.fluid == other.fluid
+
+    def has_more_than(self, other: "AbstractResourceStack") -> bool:
+        return self.contains_same_resource(other) and self.amount >= other.amount
+
+    def get_difference(self, other: "AbstractResourceStack") -> "AbstractResourceStack":
+        return None if not self.contains_same_resource(other) else self.copy().set_amount(self.amount - other.amount)
+

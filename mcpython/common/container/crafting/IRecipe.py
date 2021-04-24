@@ -16,7 +16,7 @@ from abc import ABC
 
 import mcpython.common.event.Registry
 import json
-from mcpython.common.container.ItemStack import ItemStack
+from mcpython.common.container.ResourceStack import ItemStack
 
 
 class IRecipe(mcpython.common.event.Registry.IRegistryContent, ABC):

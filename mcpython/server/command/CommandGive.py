@@ -17,9 +17,9 @@ from mcpython import shared
 
 def give_helper(entities, item, count):
     if len(entities) > 0:
-        import mcpython.common.container.ItemStack
+        import mcpython.common.container.ResourceStack
 
-        stack = mcpython.common.container.ItemStack.ItemStack(item, count)
+        stack = mcpython.common.container.ResourceStack.ItemStack(item, count)
 
         entities[0].pick_up_item(stack)
 

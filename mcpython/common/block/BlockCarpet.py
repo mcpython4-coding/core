@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
 from mcpython import shared
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.util.enums
 
 carpet_bbox = mcpython.common.block.BoundingBox.BoundingBox((1, 1 / 16, 1))
@@ -43,7 +43,7 @@ class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
                 (x, y, z), block_update=False
             )
             shared.world.get_active_player().pick_up_item(
-                mcpython.common.container.ItemStack.ItemStack("minecraft:carpet")
+                mcpython.common.container.ResourceStack.ItemStack("minecraft:carpet")
             )  # todo: drop in world
 
     def get_view_bbox(self):

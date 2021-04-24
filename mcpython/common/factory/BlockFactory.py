@@ -22,7 +22,7 @@ import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientable
 import mcpython.common.block.ILog as ILog
 import mcpython.common.block.ISlab as ISlab
 import mcpython.common.block.BlockFence as BlockFence
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.common.factory.FactoryBuilder
 import mcpython.common.factory.IFactoryModifier
 import mcpython.util.enums
@@ -466,7 +466,7 @@ def build_class_default_state(
             return self.get_view_bbox()
 
         def on_request_item_for_block(
-            self, itemstack: mcpython.common.container.ItemStack.ItemStack
+            self, itemstack: mcpython.common.container.ResourceStack.ItemStack
         ):
             if not is_super_base:
                 super().on_request_item_for_block(itemstack)

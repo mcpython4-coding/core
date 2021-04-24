@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.item.AbstractArmorItem
@@ -104,7 +104,7 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
             slot: mcpython.client.gui.Slot.Slot
             itemstack = slot.get_itemstack()
             slot.set_itemstack(
-                mcpython.common.container.ItemStack.ItemStack.create_empty()
+                mcpython.common.container.ResourceStack.ItemStack.create_empty()
             )
             if not shared.world.get_active_player().pick_up_item(itemstack):
                 pass  # todo: drop item as item could not be added to inventory

@@ -15,7 +15,7 @@ import enum
 import random
 import typing
 
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.common.data.loot.LootTableCondition
 import mcpython.common.data.loot.LootTableFunction
 import mcpython.common.event.EventHandler
@@ -110,7 +110,7 @@ class LootTableHandler:
         if table_name in self.loot_tables:
             return self.loot_tables[table_name].roll(block=block, player=player)
         # todo: add option to print an warning here
-        return [mcpython.common.container.ItemStack.ItemStack(block.NAME)]
+        return [mcpython.common.container.ResourceStack.ItemStack(block.NAME)]
 
     def for_mod_name(self, modname: str, path_name: str = None, immediate=False):
         if path_name is None:
@@ -222,11 +222,11 @@ class LootTablePoolEntry:
             return None
         items = []
         if self.entry_type == LootTablePoolEntryType.ITEM:
-            items.append(mcpython.common.container.ItemStack.ItemStack(self.name))
+            items.append(mcpython.common.container.ResourceStack.ItemStack(self.name))
         elif self.entry_type == LootTablePoolEntryType.TAG:
             if self.expand:
                 items.append(
-                    mcpython.common.container.ItemStack.ItemStack(
+                    mcpython.common.container.ResourceStack.ItemStack(
                         random.choice(
                             shared.tag_handler.get_tag_for(self.name, "items")
                         )
@@ -234,7 +234,7 @@ class LootTablePoolEntry:
                 )
             else:
                 items += [
-                    mcpython.common.container.ItemStack.ItemStack(name)
+                    mcpython.common.container.ResourceStack.ItemStack(name)
                     for name in shared.tag_handler.get_tag_for(self.name, "items")
                 ]
         elif self.entry_type == LootTablePoolEntryType.LOOT_TABLE:

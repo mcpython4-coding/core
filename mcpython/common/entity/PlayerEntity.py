@@ -20,7 +20,7 @@ import mcpython.common.entity.AbstractEntity
 import mcpython.common.event.EventHandler
 import mcpython.client.gui.InventoryChest
 import mcpython.client.gui.MainPlayerInventory
-import mcpython.common.container.ItemStack
+import mcpython.common.container.ResourceStack
 import mcpython.client.gui.Slot
 import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.entities.EntityRenderer
@@ -205,7 +205,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def pick_up_item(
         self,
         itemstack: typing.Union[
-            mcpython.common.container.ItemStack.ItemStack, mcpython.client.gui.Slot.Slot
+            mcpython.common.container.ResourceStack.ItemStack, mcpython.client.gui.Slot.Slot
         ],
     ) -> bool:
         """

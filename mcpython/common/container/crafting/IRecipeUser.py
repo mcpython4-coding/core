@@ -15,7 +15,7 @@ import typing
 
 import mcpython.common.event.Registry
 import mcpython.common.container.crafting.IRecipe
-from mcpython.common.container.ItemStack import ItemStack
+from mcpython.common.container.ResourceStack import ItemStack
 
 
 class IRecipeUser(mcpython.common.event.Registry.IRegistryContent):
