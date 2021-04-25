@@ -29,7 +29,7 @@ BBOX = mcpython.common.block.BoundingBox.BoundingBox(
 )  # the bounding box of the chest
 
 
-class BlockChest(AbstractBlock.AbstractBlock):
+class Chest(AbstractBlock.AbstractBlock):
     """
     The Chest block class
     """
@@ -203,8 +203,3 @@ class BlockChest(AbstractBlock.AbstractBlock):
                     self
                 )
             )
-
-
-@shared.mod_loader("minecraft", "stage:block:load")
-def load():
-    shared.registry.register(BlockChest)

@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared, logger
 import mcpython.common.container.crafting.IRecipe
 import mcpython.ResourceLoader
-import mcpython.common.item.ItemHandler
+import mcpython.common.item.ItemManager
 import mcpython.common.mod.ModMcpython
 import mcpython.common.event.EventHandler
 import sys

@@ -20,12 +20,12 @@ import mcpython.client.gui.InventoryBarrel
 import mcpython.common.block.PossibleBlockStateBuilder
 
 
-class BlockBarrel(AbstractBlock.AbstractBlock):
+class Barrel(AbstractBlock.AbstractBlock):
     """
-    class for the Barrel-Block
+    Class for the Barrel-Block
     """
 
-    NAME: str = "minecraft:barrel"  # the name of the block
+    NAME = "minecraft:barrel"
 
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
@@ -115,8 +115,3 @@ class BlockBarrel(AbstractBlock.AbstractBlock):
 
         shared.inventory_handler.hide(self.inventory)
         del self.inventory
-
-
-@shared.mod_loader("minecraft", "stage:block:load")
-def load():
-    shared.registry.register(BlockBarrel)

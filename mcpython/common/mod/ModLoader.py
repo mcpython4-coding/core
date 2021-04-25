@@ -25,7 +25,7 @@ import mcpython.client.state.StateModLoading
 import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.mod.Mod
-import mcpython.common.mod.ModLoadingPipe
+import mcpython.common.mod.ModLoadingStages
 import mcpython.ResourceLoader
 import mcpython.util.math
 from mcpython import logger
@@ -609,7 +609,7 @@ class ModLoader:
         Used internally during mod loading state
         If on client, the renderer is also updated
         """
-        if not mcpython.common.mod.ModLoadingPipe.manager.order.is_active():
+        if not mcpython.common.mod.ModLoadingStages.manager.order.is_active():
             return
 
         start = time.time()
@@ -617,12 +617,12 @@ class ModLoader:
             shared.state_handler.active_state
         )
         astate.parts[0].progress_max = len(
-            mcpython.common.mod.ModLoadingPipe.manager.stages
+            mcpython.common.mod.ModLoadingStages.manager.stages
         )
         astate.parts[1].progress_max = len(self.mods)
 
         while time.time() - start < 0.2:
-            stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
+            stage = mcpython.common.mod.ModLoadingStages.manager.get_stage()
             if stage is None:
                 break
             if stage.call_one(astate):
@@ -635,7 +635,7 @@ class ModLoader:
         """
         Will update the text of the pgb's in mod loading
         """
-        stage = mcpython.common.mod.ModLoadingPipe.manager.get_stage()
+        stage = mcpython.common.mod.ModLoadingStages.manager.get_stage()
         if stage is None:
             return
 
@@ -665,7 +665,7 @@ class ModLoader:
             len(stage.events),
             stage.name,
             self.active_loading_stage,
-            len(mcpython.common.mod.ModLoadingPipe.manager.stages),
+            len(mcpython.common.mod.ModLoadingStages.manager.stages),
         )
 
 

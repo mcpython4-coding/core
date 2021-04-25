@@ -123,8 +123,3 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
                 entity.teleport((x * 8, y, z * 8), "minecraft:overworld")
 
             entity.in_nether_portal_since = None
-
-
-@shared.mod_loader("minecraft", "stage:block:load")
-def load():
-    shared.registry.register(NetherPortalBlock)

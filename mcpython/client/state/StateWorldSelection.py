@@ -21,7 +21,7 @@ from pyglet.window import key, mouse
 
 from mcpython import shared
 import mcpython.ResourceLoader
-import mcpython.common.DataPack
+import mcpython.common.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.StateWorldGeneration

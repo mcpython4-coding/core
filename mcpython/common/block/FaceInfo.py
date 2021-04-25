@@ -20,7 +20,7 @@ import mcpython.util.enums
 import copy
 
 
-class BlockFaceState:
+class FaceInfo:
     """
     Class for face state of the block
     todo: merge data into AbstractBlock & make this a static class

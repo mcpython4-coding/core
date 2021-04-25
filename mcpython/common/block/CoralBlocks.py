@@ -70,13 +70,7 @@ class TubeCoralBlock(ICoralBlock):
     NAME: str = "minecraft:tube_coral_block"
 
 
-@shared.mod_loader("minecraft", "stage:block:load")
 def load():
-    shared.registry.register(BrainCoralBlock)
-    shared.registry.register(BubbleCoralBlock)
-    shared.registry.register(FireCoralBlock)
-    shared.registry.register(HornCoralBlock)
-    shared.registry.register(TubeCoralBlock)
     # the dead variants, todo: add attributes like hardness
     mcpython.common.factory.BlockFactory.BlockFactory().set_name(
         "minecraft:dead_brain_coral_block"

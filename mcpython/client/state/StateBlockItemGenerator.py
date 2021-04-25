@@ -26,7 +26,7 @@ import PIL.Image, PIL.ImageDraw
 import sys
 import json
 import mcpython.common.factory.ItemFactory
-import mcpython.common.item.ItemHandler
+import mcpython.common.item.ItemManager
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StateModLoading
 import psutil
@@ -183,8 +183,8 @@ class StateBlockItemGenerator(State.State):
             json.dump(self.table, f)
 
         # baking the item models needed
-        mcpython.common.item.ItemHandler.build()
-        mcpython.common.item.ItemHandler.ITEM_ATLAS.load()
+        mcpython.common.item.ItemManager.build()
+        mcpython.common.item.ItemManager.ITEM_ATLAS.load()
         mcpython.client.rendering.model.ItemModel.handler.bake()
 
         logger.println("finished!")

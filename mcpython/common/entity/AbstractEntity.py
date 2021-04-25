@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.container.ResourceStack
 from mcpython import shared, logger
 import mcpython.common.event.Registry
-import mcpython.common.entity.EntityHandler
+import mcpython.common.entity.EntityManager
 import uuid
 import mcpython.util.math
 import traceback

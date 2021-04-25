@@ -51,6 +51,7 @@ changelog of snapshot <21w17a> released on <...> targeting <21w16a>
         - broke with this world loading compatibility, did not add a DataFixer for it, so old worlds cannot be
             loaded
         - rewritten command system from ground
+        - refactored some important bits. This breaks block construction & rendering
 
     Commands:
         - rewritten how commands work internally
@@ -69,6 +70,9 @@ changelog of snapshot <21w17a> released on <...> targeting <21w16a>
     Launch options:
         - added options to disable mod loader, data pack loader, and resource pack loader
         - boosted server load cycle even more
+
+    Build System:
+        - major fixes to the system
 
 
 changelog of snapshot 21w04a released on 27.01.2021, targeting 21w03a

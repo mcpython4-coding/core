@@ -1573,6 +1573,9 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed build system not removing data gen call lines
 [uuk]: fixed some installer hiccups
 [uuk]: fixed minified build target
+[uuk]: refactored some *Handler's to *Manager's
+[uuk]: added acacia fence block
+[uuk]: some more refactors
 
 
 issues:

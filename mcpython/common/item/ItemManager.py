@@ -15,7 +15,7 @@ from mcpython import shared, logger
 import mcpython.ResourceLoader
 import mcpython.common.event.Registry
 import mcpython.client.texture.TextureAtlas
-import mcpython.common.item.ItemAtlas
+import mcpython.common.item.ItemTextureAtlas
 import json
 import os
 import mcpython.common.factory.ItemFactory
@@ -28,7 +28,7 @@ import mcpython.common.data.tags.TagGroup
 COLLECTED_ITEMS = []
 tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("items")
 
-ITEM_ATLAS = mcpython.common.item.ItemAtlas.ItemAtlasHandler()
+ITEM_ATLAS = mcpython.common.item.ItemTextureAtlas.ItemAtlasHandler()
 
 
 def build():

@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 from mcpython import shared
-import mcpython.common.DataPack
+import mcpython.common.DataPacks
 import mcpython.common.config
 import mcpython.client.rendering.util
 import mcpython.client.rendering.entities.EntityRenderer
@@ -131,7 +131,7 @@ class ResourcePipeHandler:
         if not shared.event_handler.call_cancelable("data:reload:cancel"):
             return
 
-        mcpython.common.DataPack.datapack_handler.reload()  # reloads all data packs
+        mcpython.common.DataPacks.datapack_handler.reload()  # reloads all data packs
         shared.tag_handler.reload()  # reloads all tags
         shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
 

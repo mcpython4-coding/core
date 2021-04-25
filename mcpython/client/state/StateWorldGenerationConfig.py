@@ -22,7 +22,7 @@ from pyglet.window import key
 import pyglet
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
-import mcpython.common.DataPack
+import mcpython.common.DataPacks
 import mcpython.client.state.StateWorldGeneration
 from mcpython.util.annotation import onlyInClient
 import mcpython.server.worldgen.noise.NoiseManager

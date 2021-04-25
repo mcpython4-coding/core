@@ -55,21 +55,51 @@ def load():
     loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
     """
     from . import (
-        BlockGrassBlock,
-        BlockDirt,
-        BlockCraftingTable,
-        BlockChest,
-        BlockEnderChest,
-        BlockNetherPortal,
-        BlockShulkerBox,
-        BlockCarpet,
-        BlockFurnace,
-        BlockBarrel,
-        BlockCoralBlock,
-        BlockFence,
-        BlockWall,
+        GrassBlock,
+        Dirt,
+        CraftingTable,
+        Chest,
+        EnderChest,
+        NetherPortal,
+        ShulkerBox,
+        Carpet,
+        Furnace,
+        Barrel,
+        CoralBlocks,
+        Fence,
+        Walls,
         NewBlocks,
     )
+
+    block_registry.register(GrassBlock.GrassBlock)
+    block_registry.register(Dirt.Dirt)
+    block_registry.register(CraftingTable.CraftingTable)
+    block_registry.register(Chest.Chest)
+    block_registry.register(EnderChest.EnderChest)
+    block_registry.register(NetherPortal.NetherPortalBlock)
+    block_registry.register(Furnace.Furnace)
+    block_registry.register(Furnace.BlastFurnace)
+    block_registry.register(Furnace.Smoker)
+    block_registry.register(Barrel.Barrel)
+    block_registry.register(CoralBlocks.BubbleCoralBlock)
+    block_registry.register(CoralBlocks.BrainCoralBlock)
+    block_registry.register(CoralBlocks.FireCoralBlock)
+    block_registry.register(CoralBlocks.HornCoralBlock)
+    block_registry.register(CoralBlocks.TubeCoralBlock)
+    block_registry.register(Fence.OakFence)
+    block_registry.register(Fence.SpruceFence)
+    block_registry.register(Fence.BirchFence)
+    block_registry.register(Fence.JungleFence)
+    block_registry.register(Fence.CrimsonFence)
+    block_registry.register(Fence.DarkOakFence)
+    block_registry.register(Fence.NetherBrickFence)
+    block_registry.register(Fence.WarpedFence)
+    block_registry.register(Fence.AcaciaFence)
+
+    Carpet.load()
+    CoralBlocks.load()
+    ShulkerBox.load()
+    Walls.load()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

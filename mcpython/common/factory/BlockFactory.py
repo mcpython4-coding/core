@@ -15,13 +15,13 @@ import pickle
 import typing
 
 import mcpython.common.block.AbstractBlock
-import mcpython.common.block.BlockWall as BlockWall
+import mcpython.common.block.Walls as BlockWall
 import mcpython.common.block.BoundingBox
 import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
 import mcpython.common.block.ILog as ILog
 import mcpython.common.block.ISlab as ISlab
-import mcpython.common.block.BlockFence as BlockFence
+import mcpython.common.block.Fence as BlockFence
 import mcpython.common.container.ResourceStack
 import mcpython.common.factory.FactoryBuilder
 import mcpython.common.factory.IFactoryModifier
@@ -69,7 +69,7 @@ def set_slab(instance: FactoryBuilder.IFactory):
     FactoryBuilder.AnnotationFactoryConfigurator("set_wall")
 )
 def set_wall(instance: FactoryBuilder.IFactory):
-    instance.base_classes.append(BlockWall.IWall)
+    instance.base_classes.append(BlockWall.AbstractWall)
     return instance
 
 
@@ -77,7 +77,7 @@ def set_wall(instance: FactoryBuilder.IFactory):
     FactoryBuilder.AnnotationFactoryConfigurator("set_fence")
 )
 def set_fence(instance: FactoryBuilder.IFactory, *types: str):
-    instance.base_classes.append(BlockFence.IFence)
+    instance.base_classes.append(BlockFence.AbstractFence)
     instance.config_table["fence_type_name"] = (
         set(types) if len(types) > 0 else {"minecraft:wooden_fence"}
     )
@@ -89,7 +89,7 @@ def set_fence(instance: FactoryBuilder.IFactory, *types: str):
     FactoryBuilder.AnnotationFactoryConfigurator("set_fence_gate")
 )
 def set_fence_gate(instance: FactoryBuilder.IFactory):
-    instance.base_classes.append(BlockFence.IFenceGate)
+    instance.base_classes.append(BlockFence.AbstractFenceGate)
     instance.set_solid(False).set_all_side_solid(False)
     return instance
 

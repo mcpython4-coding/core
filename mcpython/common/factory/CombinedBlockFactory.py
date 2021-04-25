@@ -18,7 +18,7 @@ import mcpython.common.data.gen.RecipeGenerator
 import mcpython.common.factory.BlockFactory
 import enum
 import typing
-import mcpython.common.block.BlockWall
+import mcpython.common.block.Walls
 
 WALL_TEMPLATE = sum([[(x, y) for y in range(2)] for x in range(3)], [])
 SLAB_TEMPLATE = [(x, 0) for x in range(3)]

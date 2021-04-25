@@ -15,12 +15,12 @@ from pyglet.window import mouse, key
 
 from mcpython import shared
 import mcpython.util.enums
-from mcpython.common.block.BlockChest import BBOX
+from mcpython.common.block.Chest import BBOX
 from . import AbstractBlock
 import mcpython.common.block.PossibleBlockStateBuilder
 
 
-class BlockEnderChest(AbstractBlock.AbstractBlock):
+class EnderChest(AbstractBlock.AbstractBlock):
     """
     class for the ender chest
     todo: check if it can be opened like in chests
@@ -96,8 +96,3 @@ class BlockEnderChest(AbstractBlock.AbstractBlock):
     def on_block_remove(self, reason):
         if shared.IS_CLIENT:
             shared.inventory_handler.hide(self.inventory)
-
-
-@shared.mod_loader("minecraft", "stage:block:load")
-def load():
-    shared.registry.register(BlockEnderChest)

@@ -63,7 +63,7 @@ class AbstractFluid(mcpython.common.event.Registry.IRegistryContent, ABC):
     @classmethod
     def __init_subclass__(cls, **kwargs):
         if cls.NAME is not None and cls.FLUID_BLOCK_NAME is None:
-            import mcpython.common.block.BlockHandler
+            import mcpython.common.block.BlockManager
 
             block_registry = shared.registry.get_by_name("minecraft:block")
             if block_registry.is_valid_key(cls.NAME):

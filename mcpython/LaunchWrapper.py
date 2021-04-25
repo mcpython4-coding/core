@@ -111,12 +111,12 @@ class LaunchWrapper:
             sys.exit()
 
         import mcpython.common.event.Registry
-        import mcpython.common.block.BlockHandler
-        import mcpython.common.item.ItemHandler
-        import mcpython.common.entity.EntityHandler
+        import mcpython.common.block.BlockManager
+        import mcpython.common.item.ItemManager
+        import mcpython.common.entity.EntityManager
         import mcpython.common.fluid.FluidManager
         import mcpython.server.worldgen.WorldGenerationHandler
-        import mcpython.server.worldgen.biome.BiomeHandler
+        import mcpython.server.worldgen.biome.BiomeManager
         import mcpython.server.worldgen.layer
         import mcpython.server.worldgen.feature
 

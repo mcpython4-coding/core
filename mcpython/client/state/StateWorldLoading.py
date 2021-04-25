@@ -18,7 +18,7 @@ import mcpython.util.math
 from pyglet.window import key
 import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
-import mcpython.common.DataPack
+import mcpython.common.DataPacks
 import mcpython.util.opengl
 import mcpython.common.config
 from mcpython.util.annotation import onlyInClient

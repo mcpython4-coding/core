@@ -17,7 +17,7 @@ import typing
 from abc import ABC
 
 import mcpython.client.gui.Slot
-import mcpython.common.block.BlockFaceState
+import mcpython.common.block.FaceInfo
 import mcpython.common.block.BoundingBox
 import mcpython.common.container.ResourceStack
 import mcpython.common.event.Registry
@@ -142,8 +142,8 @@ class AbstractBlock(parent):
         self.dimension = None  # dimension instance
         self.set_to: typing.Optional[typing.Tuple[float, float, float]] = None
         self.real_hit: typing.Optional[typing.Tuple[float, float, float]] = None
-        self.face_state: mcpython.common.block.BlockFaceState.BlockFaceState = (
-            mcpython.common.block.BlockFaceState.BlockFaceState(self)
+        self.face_state: mcpython.common.block.FaceInfo.FaceInfo = (
+            mcpython.common.block.FaceInfo.FaceInfo(self)
         )
         self.block_state: typing.Optional[int] = None
         self.set_by = None  # optional player

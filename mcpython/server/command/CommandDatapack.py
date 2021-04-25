@@ -18,7 +18,7 @@ from mcpython.server.command.Builder import (
     DefinedString,
 )
 from mcpython import shared
-import mcpython.common.DataPack
+import mcpython.common.DataPacks
 
 
 datapack = (
@@ -29,7 +29,7 @@ datapack = (
             .of_name("datapack")
             .info("enables the specified datapack")
             .on_execution(
-                lambda env, data: mcpython.common.DataPack.datapack_handler.enable_pack(
+                lambda env, data: mcpython.common.DataPacks.datapack_handler.enable_pack(
                     data[2]
                 )
             )
@@ -41,7 +41,7 @@ datapack = (
             .of_name("datapack")
             .info("disables the specified datapack")
             .on_execution(
-                lambda env, data: mcpython.common.DataPack.datapack_handler.disable_pack(
+                lambda env, data: mcpython.common.DataPacks.datapack_handler.disable_pack(
                     data[2]
                 )
             )
@@ -51,13 +51,13 @@ datapack = (
         CommandNode(DefinedString("list")).on_execution(
             lambda env, data: [
                 env.chat.print_ln(f"- {pack.name}: {pack.status.name.lower()}")
-                for pack in mcpython.common.DataPack.datapack_handler.loaded_data_packs
+                for pack in mcpython.common.DataPacks.datapack_handler.loaded_data_packs
             ]
         )
     )
     .than(
         CommandNode(DefinedString("release")).on_execution(
-            lambda env, data: mcpython.common.DataPack.datapack_handler.cleanup()
+            lambda env, data: mcpython.common.DataPacks.datapack_handler.cleanup()
         )
     )
 )

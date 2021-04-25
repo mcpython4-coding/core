@@ -18,7 +18,7 @@ import mcpython.util.enums
 import mcpython.common.item.AbstractToolItem
 
 
-class BlockCraftingTable(AbstractBlock.AbstractBlock):
+class CraftingTable(AbstractBlock.AbstractBlock):
     """
     Class for the crafting table
     """
@@ -50,8 +50,3 @@ class BlockCraftingTable(AbstractBlock.AbstractBlock):
     @classmethod
     def modify_block_item(cls, factory):
         factory.set_fuel_level(15)
-
-
-@shared.mod_loader("minecraft", "stage:block:load")
-def load():
-    shared.registry.register(BlockCraftingTable)

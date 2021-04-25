@@ -29,7 +29,7 @@ mcpython.add_load_default_resources()
 
 def init():
     import mcpython.common.data.loot.LootTable
-    import mcpython.common.entity.EntityHandler
+    import mcpython.common.entity.EntityManager
 
 
 mcpython.eventbus.subscribe("stage:mod:init", init)

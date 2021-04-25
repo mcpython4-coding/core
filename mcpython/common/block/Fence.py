@@ -22,7 +22,7 @@ from mcpython.util.enums import EnumSide
 
 
 # todo: add factory method for this
-class IFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
+class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     """
     Abstract base class for every fence-like block
     """
@@ -110,7 +110,7 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
             return False
 
         return instance.face_solid[face.invert()] or (
-            issubclass(type(instance), IFence)
+            issubclass(type(instance), AbstractFence)
             and len(self.FENCE_TYPE_NAME.intersection(instance.FENCE_TYPE_NAME)) > 0
         )
 
@@ -118,7 +118,7 @@ class IFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     BLOCK_ITEM_GENERATOR_STATE = {"east": "true", "west": "true"}
 
 
-class IFenceGate(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
+class AbstractFenceGate(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     """
     todo: implement behaviour
     """
@@ -162,7 +162,7 @@ class IFenceGate(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     }
 
 
-class IWoodenFence(IFence):
+class AbstractWoodenFence(AbstractFence):
     """
     Base class for every wooden fence; used to set the wooden fence flag for all children at ones
     """
@@ -170,51 +170,43 @@ class IWoodenFence(IFence):
     FENCE_TYPE_NAME = {"minecraft:wooden_fence"}
 
 
-class BirchFence(IWoodenFence):
+class BirchFence(AbstractWoodenFence):
     NAME = "minecraft:birch_fence"
 
 
-class DarkOakFence(IWoodenFence):
+class DarkOakFence(AbstractWoodenFence):
     NAME = "minecraft:dark_oak_fence"
 
 
-class JungleFence(IWoodenFence):
+class JungleFence(AbstractWoodenFence):
     NAME = "minecraft:jungle_fence"
 
 
-class OakFence(IWoodenFence):
+class OakFence(AbstractWoodenFence):
     NAME = "minecraft:oak_fence"
 
 
-class SpruceFence(IWoodenFence):
+class SpruceFence(AbstractWoodenFence):
     NAME = "minecraft:spruce_fence"
 
 
-class CrimsonFence(IFence):
+class AcaciaFence(AbstractWoodenFence):
+    NAME = "minecraft:acacia_fence"
+
+
+class CrimsonFence(AbstractFence):
     FENCE_TYPE_NAME = {"minecraft:wooden_fence", "minecraft:nether_fence"}
 
     NAME = "minecraft:crimson_fence"
 
 
-class WarpedFence(IFence):
+class WarpedFence(AbstractFence):
     FENCE_TYPE_NAME = {"minecraft:wooden_fence", "minecraft:nether_fence"}
 
     NAME = "minecraft:warped_fence"
 
 
-class NetherBrickFence(IFence):
+class NetherBrickFence(AbstractFence):
     NAME = "minecraft:nether_brick_fence"
 
     FENCE_TYPE_NAME = {"minecraft:nether_fence"}
-
-
-@shared.mod_loader("minecraft", "stage:block:load")
-def load():
-    shared.registry.register(OakFence)
-    shared.registry.register(SpruceFence)
-    shared.registry.register(DarkOakFence)
-    shared.registry.register(JungleFence)
-    shared.registry.register(BirchFence)
-    shared.registry.register(WarpedFence)
-    shared.registry.register(CrimsonFence)
-    shared.registry.register(NetherBrickFence)

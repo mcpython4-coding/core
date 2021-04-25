@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
 from mcpython import shared
@@ -18,7 +20,7 @@ import mcpython.util.enums
 import mcpython.common.block.PossibleBlockStateBuilder
 
 
-class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
+class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     # todo: add bounding-box
 
     DEFAULT_FACE_SOLID = (
@@ -69,19 +71,19 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
 
         self.connections["east"] = block_north is not None and (
             block_north.face_solid[mcpython.util.enums.EnumSide.SOUTH]
-            or issubclass(type(block_north), IWall)
+            or issubclass(type(block_north), AbstractWall)
         )
         self.connections["south"] = block_east is not None and (
             block_east.face_solid[mcpython.util.enums.EnumSide.WEST]
-            or issubclass(type(block_east), IWall)
+            or issubclass(type(block_east), AbstractWall)
         )
         self.connections["west"] = block_south is not None and (
             block_south.face_solid[mcpython.util.enums.EnumSide.NORTH]
-            or issubclass(type(block_south), IWall)
+            or issubclass(type(block_south), AbstractWall)
         )
         self.connections["north"] = block_west is not None and (
             block_west.face_solid[mcpython.util.enums.EnumSide.EAST]
-            or issubclass(type(block_west), IWall)
+            or issubclass(type(block_west), AbstractWall)
         )
         self.connections["up"] = False  # for next calculation, this must be False
         self.connections["up"] = list(self.connections.values()).count(True) != 2 or (
@@ -93,7 +95,7 @@ class IWall(mcpython.common.block.AbstractBlock.AbstractBlock):
             not self.connections["up"]
             and upper_block is not None
             and upper_block.face_solid[mcpython.util.enums.EnumSide.DOWN]
-            and not issubclass(type(upper_block), IWall)
+            and not issubclass(type(upper_block), AbstractWall)
         ):
             self.connections["up"] = True
 
@@ -112,13 +114,12 @@ def create_wall_class(name: str):
     For internal usage only!
     """
 
-    class GeneratedWall(IWall):
+    class GeneratedWall(AbstractWall):
         NAME = name
 
     return GeneratedWall
 
 
-@shared.mod_loader("minecraft", "stage:block:load")
 def load():
     shared.registry.register(create_wall_class("minecraft:red_sandstone_wall"))
     shared.registry.register(create_wall_class("minecraft:sandstone_wall"))

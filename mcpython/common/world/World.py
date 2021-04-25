@@ -17,7 +17,7 @@ import typing
 import pyglet
 
 from mcpython import shared, logger
-import mcpython.common.DataPack
+import mcpython.common.DataPacks
 import mcpython.common.config
 import mcpython.client.state.StatePartGame
 import mcpython.common.world.SaveFile
@@ -425,7 +425,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.players.clear()
         if filename is not None:
             self.setup_by_filename(filename)
-        mcpython.common.DataPack.datapack_handler.cleanup()
+        mcpython.common.DataPacks.datapack_handler.cleanup()
         shared.event_handler.call("world:clean")
 
     def setup_by_filename(self, filename: str):

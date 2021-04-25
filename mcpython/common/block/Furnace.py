@@ -19,7 +19,7 @@ from mcpython.util.enums import EnumSide
 import mcpython.common.block.PossibleBlockStateBuilder
 
 
-class BlockFurnace(
+class Furnace(
     mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock
 ):
     """
@@ -91,20 +91,13 @@ class BlockFurnace(
             del self.inventory
 
 
-class BlastFurnace(BlockFurnace):
+class BlastFurnace(Furnace):
     NAME: str = "minecraft:blast_furnace"
 
     FURNACE_RECIPES: list = ["minecraft:blasting"]
 
 
-class Smoker(BlockFurnace):
+class Smoker(Furnace):
     NAME: str = "minecraft:smoker"
 
     FURNACE_RECIPES: list = ["minecraft:smoking"]
-
-
-@shared.mod_loader("minecraft", "stage:block:load")
-def load():
-    shared.registry.register(BlockFurnace)
-    shared.registry.register(BlastFurnace)
-    shared.registry.register(Smoker)

@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
 from mcpython import shared
@@ -20,7 +22,7 @@ import mcpython.util.enums
 carpet_bbox = mcpython.common.block.BoundingBox.BoundingBox((1, 1 / 16, 1))
 
 
-class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
+class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     """
     base class for every carpet
     """
@@ -54,7 +56,7 @@ class ICarpet(mcpython.common.block.AbstractBlock.AbstractBlock):
         factory.set_fuel_level(3.35)
 
 
-def create_carpet(carpet_color: str):
+def create_carpet_block(carpet_color: str):
     """
     generator function for carpets. Will create an new class for an carpet
     :param carpet_color: the color name of the carpet
@@ -62,13 +64,12 @@ def create_carpet(carpet_color: str):
     """
 
     @shared.registry
-    class Carpet(ICarpet):
+    class Carpet(AbstractCarpet):
         NAME: str = "{}_carpet".format(carpet_color)  # the name of the block
 
     return Carpet
 
 
-@shared.mod_loader("minecraft", "stage:block:load")
 def load():
     for color in mcpython.util.enums.COLORS:
-        create_carpet("minecraft:" + color)
+        create_carpet_block("minecraft:" + color)

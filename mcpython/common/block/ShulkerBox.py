@@ -20,7 +20,7 @@ import mcpython.common.factory.ItemFactory
 
 def create_shulker_box(name):
     @shared.registry
-    class BlockShulkerBox(AbstractBlock.AbstractBlock):
+    class ShulkerBox(AbstractBlock.AbstractBlock):
         def __init__(self):
             super().__init__()
             import mcpython.client.gui.InventoryShulkerBox as InventoryShulkerBox
@@ -71,7 +71,6 @@ def create_shulker_box(name):
             shared.inventory_handler.hide(self.inventory)
 
 
-@shared.mod_loader("minecraft", "stage:block:load")
 def load():
     create_shulker_box("shulker_box")
     for color in mcpython.util.enums.COLORS:

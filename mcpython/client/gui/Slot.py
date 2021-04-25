@@ -17,7 +17,7 @@ from abc import ABC
 from mcpython import shared, logger
 import pyglet
 import mcpython.common.container.ResourceStack
-import mcpython.common.item.ItemHandler
+import mcpython.common.item.ItemManager
 import mcpython.ResourceLoader
 import mcpython.client.rendering.model.ItemModel
 
@@ -121,10 +121,10 @@ class Slot(ISlot):
 
         self.position = position
         if self.__itemstack.item:
-            pos, index = mcpython.common.item.ItemHandler.items.item_index_table[
+            pos, index = mcpython.common.item.ItemManager.items.item_index_table[
                 self.__itemstack.get_item_name()
             ][self.__itemstack.item.get_active_image_location()]
-            image = mcpython.common.item.ItemHandler.ITEM_ATLAS.atlases[index].group[
+            image = mcpython.common.item.ItemManager.ITEM_ATLAS.atlases[index].group[
                 tuple(pos)
             ]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
@@ -235,7 +235,7 @@ class Slot(ISlot):
             != self.__last_item_file
             or self.sprite is None
         ):
-            image = mcpython.common.item.ItemHandler.items.item_index_table[
+            image = mcpython.common.item.ItemManager.items.item_index_table[
                 self.itemstack.get_item_name()
             ][self.itemstack.item.get_active_image_location()]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
@@ -354,10 +354,10 @@ class SlotCopy:
         self.master: Slot = master
         self.position = position
         if self.get_itemstack().item:
-            pos, index = mcpython.common.item.ItemHandler.items.item_index_table[
+            pos, index = mcpython.common.item.ItemManager.items.item_index_table[
                 self.get_itemstack().get_item_name()
             ][self.get_itemstack().item.get_active_image_location()]
-            image = mcpython.common.item.ItemHandler.ITEM_ATLAS.atlases[index].group[
+            image = mcpython.common.item.ItemManager.ITEM_ATLAS.atlases[index].group[
                 tuple(pos)
             ]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
@@ -418,7 +418,7 @@ class SlotCopy:
             != self.__last_item_file
             or self.sprite is None
         ):
-            image = mcpython.common.item.ItemHandler.items.item_index_table[
+            image = mcpython.common.item.ItemManager.items.item_index_table[
                 self.itemstack.get_item_name()
             ][self.itemstack.item.get_active_image_location()]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)

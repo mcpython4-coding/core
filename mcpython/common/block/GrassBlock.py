@@ -16,13 +16,12 @@ from . import AbstractBlock
 import mcpython.util.enums
 
 
-class BlockDirt(AbstractBlock.AbstractBlock):
+class GrassBlock(AbstractBlock.AbstractBlock):
     """
-    Base class for dirt
-    todo: implement real -> grass convert
+    Class for the grass block
     """
 
-    NAME: str = "minecraft:dirt"
+    NAME = "minecraft:grass_block"
 
     HARDNESS = 0.5
     BLAST_RESISTANCE = 0.5
@@ -30,31 +29,24 @@ class BlockDirt(AbstractBlock.AbstractBlock):
 
     ENABLE_RANDOM_TICKS = True
 
+    def get_model_state(self) -> dict:
+        return {"snowy": "false"}
+
     def on_random_update(self):
-        dim = shared.world.get_dimension_by_name(self.dimension)
         x, y, z = self.position
+        dim = shared.world.get_dimension_by_name(self.dimension)
+
         for dy in range(y + 1, dim.get_dimension_range()[1] + 1):
             instance = dim.get_block((x, dy, z))
             if instance is not None:
                 break
 
         else:
-            for dx in range(-1, 2):
-                for dy in range(-1, 2):
-                    for dz in range(-1, 2):
-                        position = (x + dx, y + dy, z + dz)
-                        instance = dim.get_block(position)
-                        if instance is not None:
-                            if instance == "minecraft:grass_block" or (
-                                type(instance) != str
-                                and instance.NAME == "minecraft:grass_block"
-                            ):
-                                dim.get_chunk_for_position(self.position).add_block(
-                                    self.position, "minecraft:grass_block"
-                                )
-                                return
-
-
-@shared.mod_loader("minecraft", "stage:block:load")
-def load():
-    shared.registry.register(BlockDirt)
+            instance = dim.get_block((x, y + 1, z), none_if_str=True)
+            if instance is not None and (
+                instance.face_solid[mcpython.util.enums.EnumSide.UP]
+                or instance.face_solid[mcpython.util.enums.EnumSide.DOWN]
+            ):
+                dim.get_chunk_for_position(self.position).add_block(
+                    self.position, "minecraft:dirt"
+                )

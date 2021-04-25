@@ -18,7 +18,7 @@ from mcpython import shared
 import mcpython.server.command.Builder
 import mcpython.common.mod.ModMcpython
 from mcpython.common.world.AbstractInterface import IDimension
-import mcpython.common.DataPack
+import mcpython.common.DataPacks
 
 
 class CommandExecutionEnvironment:
@@ -93,7 +93,7 @@ class CommandParser:
 
     def run_function(self, name: str, info=None):
         # todo: move here
-        mcpython.common.DataPack.datapack_handler.try_call_function(name, info)
+        mcpython.common.DataPacks.datapack_handler.try_call_function(name, info)
 
     def parse(self, string: str):
         tracker = mcpython.server.command.Builder.CommandExecutionTracker.from_string(

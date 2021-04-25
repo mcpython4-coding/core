@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.client.rendering.BatchHelper
 import mcpython.client.rendering.model.BoxModel
 import mcpython.ResourceLoader
-import mcpython.common.item.ItemAtlas
+import mcpython.common.item.ItemTextureAtlas
 from mcpython import shared, logger
 
 
@@ -149,7 +149,7 @@ class ItemModel:
 class ItemModelHandler:
     def __init__(self):
         self.models = {}
-        self.atlas = mcpython.common.item.ItemAtlas.ItemAtlasHandler(
+        self.atlas = mcpython.common.item.ItemTextureAtlas.ItemAtlasHandler(
             folder=shared.build + "/tmp_items"
         )
         shared.mod_loader("minecraft", "stage:model:item:bake")(self.bake)
