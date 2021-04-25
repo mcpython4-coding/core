@@ -103,7 +103,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
     def get_position(self) -> typing.Tuple[int, int]:
         return self.position
 
-    def get_maximum_y_coordinate_from_generation(self, x: int, z: int, default=None) -> int:
+    def get_maximum_y_coordinate_from_generation(
+        self, x: int, z: int, default=None
+    ) -> int:
         """
         Helper function for getting the y height at the given xz generation based on the generation code, by looking
             up the internal map
@@ -321,7 +323,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                                 b.on_block_update()
                             except:
                                 logger.print_exception(
-                                    "during block-updating block {} caused by block at {}".format(b, position)
+                                    "during block-updating block {} caused by block at {}".format(
+                                        b, position
+                                    )
                                 )
 
     def remove_block(
@@ -376,7 +380,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
         # for each block touching, do...
         for face in mcpython.util.enums.EnumSide.iterate():
-            block = self.dimension.get_block(face.relative_offset(position), none_if_str=True)
+            block = self.dimension.get_block(
+                face.relative_offset(position), none_if_str=True
+            )
             if block is None:
                 continue
 

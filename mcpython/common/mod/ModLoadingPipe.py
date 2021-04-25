@@ -303,7 +303,19 @@ manager.add_stage(
     .update_order()
 )
 manager.add_stage(
-    LoadingStage("minecraft:blocks", "loading blocks", "minecraft:combined_factories")
+    LoadingStage(
+        "minecraft:fluids", "loading fluid definitions", "minecraft:combined_factories"
+    )
+    .add_event_stage("stage:fluids:register")
+    .update_order()
+)
+manager.add_stage(
+    LoadingStage(
+        "minecraft:blocks",
+        "loading blocks",
+        "minecraft:combined_factories",
+        "minecraft:fluids",
+    )
     .add_event_stage("stage:block:factory:prepare")
     .add_event_stage("stage:block:factory_usage", "stage:block:factory:prepare")
     .add_event_stage("stage:block:factory:finish", "stage:block:factory_usage")
@@ -314,7 +326,12 @@ manager.add_stage(
     .update_order()
 )
 manager.add_stage(
-    LoadingStage("minecraft:items", "loading items", "minecraft:combined_factories")
+    LoadingStage(
+        "minecraft:items",
+        "loading items",
+        "minecraft:combined_factories",
+        "minecraft:fluids",
+    )
     .add_event_stage("stage:item:factory:prepare")
     .add_event_stage("stage:item:factory_usage", "stage:item:factory:prepare")
     .add_event_stage("stage:item:factory:finish", "stage:item:factory_usage")

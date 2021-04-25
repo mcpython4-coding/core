@@ -114,6 +114,7 @@ class LaunchWrapper:
         import mcpython.common.block.BlockHandler
         import mcpython.common.item.ItemHandler
         import mcpython.common.entity.EntityHandler
+        import mcpython.common.fluid.FluidManager
         import mcpython.server.worldgen.WorldGenerationHandler
         import mcpython.server.worldgen.biome.BiomeHandler
         import mcpython.server.worldgen.layer

@@ -76,7 +76,9 @@ class DebugWorldGenerator(
                 array.schedule_block_add(
                     (x, 10, z), block, block_update=False, block_state=state
                 )
-                height_map.set_at_xz(x, z, [(0, 30)])  # todo: relative to lower world limit
+                height_map.set_at_xz(
+                    x, z, [(0, 30)]
+                )  # todo: relative to lower world limit
 
             for x in range(16):
                 for z in range(16):

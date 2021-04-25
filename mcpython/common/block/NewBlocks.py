@@ -1,3 +1,16 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 from mcpython.common.factory.BlockFactory import BlockFactory
 from mcpython.common.factory.combined.complex import create_full_slab_wall_set
 from mcpython.common.factory.combined.simple import CombinedFactoryInstance
@@ -9,7 +22,13 @@ air
 
 
 def plant(name: str):
-    return BlockFactory().set_name(name).set_solid(False).set_all_side_solid(False).set_strength(0)
+    return (
+        BlockFactory()
+        .set_name(name)
+        .set_solid(False)
+        .set_all_side_solid(False)
+        .set_strength(0)
+    )
 
 
 def wood(name: str, normal=True):
@@ -22,28 +41,50 @@ def wood(name: str, normal=True):
     BlockFactory().set_name(f"minecraft:{name}_fence").set_fence().set_strength(
         0.5
     ).finish()
-    BlockFactory().set_name(f"minecraft:{name}_fence_gate").set_fence_gate().set_strength(
-        0.5
-    ).finish()
+    BlockFactory().set_name(
+        f"minecraft:{name}_fence_gate"
+    ).set_fence_gate().set_strength(0.5).finish()
 
     BlockFactory().set_name(f"minecraft:{name}_planks").set_strength(2).finish()
-    BlockFactory().set_name(f"minecraft:{name}_pressure_plate").set_default_model_state("powered=false").set_solid(False).set_all_side_solid(False).set_strength(0.5).finish()
-    BlockFactory().set_name(f"minecraft:{name}_slab").set_slab().set_strength(2).finish()
+    BlockFactory().set_name(f"minecraft:{name}_pressure_plate").set_default_model_state(
+        "powered=false"
+    ).set_solid(False).set_all_side_solid(False).set_strength(0.5).finish()
+    BlockFactory().set_name(f"minecraft:{name}_slab").set_slab().set_strength(
+        2
+    ).finish()
 
     if normal:
-        BlockFactory().set_name(f"minecraft:{name}_leaves").set_solid(False).set_all_side_solid(False).set_strength(0.2).finish()
-        BlockFactory().set_name(f"minecraft:{name}_log").set_log().set_strength(2).finish()
-        BlockFactory().set_name(f"minecraft:{name}_wood").set_log().set_strength(2).finish()
+        BlockFactory().set_name(f"minecraft:{name}_leaves").set_solid(
+            False
+        ).set_all_side_solid(False).set_strength(0.2).finish()
+        BlockFactory().set_name(f"minecraft:{name}_log").set_log().set_strength(
+            2
+        ).finish()
+        BlockFactory().set_name(f"minecraft:{name}_wood").set_log().set_strength(
+            2
+        ).finish()
         plant(f"minecraft:{name}_sapling").finish()
 
-    CombinedFactoryInstance(f"minecraft:{name}_wall", f"minecraft:block/{name}_planks").create_wall(suffix="_wall")
+    CombinedFactoryInstance(
+        f"minecraft:{name}_wall", f"minecraft:block/{name}_planks"
+    ).create_wall(suffix="_wall")
 
     # todo: signs, stairs
 
 
-def stone_like(name: str, existing_full=True, existing_slab=True, existing_wall=True, existing_stairs=True, existing_fence=False, texture=None):
+def stone_like(
+    name: str,
+    existing_full=True,
+    existing_slab=True,
+    existing_wall=True,
+    existing_stairs=True,
+    existing_fence=False,
+    texture=None,
+):
     fname = name.removesuffix("s")
-    instance = CombinedFactoryInstance(f"minecraft:{name}", f"minecraft:block/{name}" if texture is None else texture)
+    instance = CombinedFactoryInstance(
+        f"minecraft:{name}", f"minecraft:block/{name}" if texture is None else texture
+    )
 
     if existing_full:
         BlockFactory().set_name(f"minecraft:{name}").finish()
@@ -61,7 +102,9 @@ def stone_like(name: str, existing_full=True, existing_slab=True, existing_wall=
         instance.create_wall("_wall")
 
     if existing_stairs:
-        BlockFactory().set_name(f"minecraft:{fname}_stairs").set_default_model_state("facing=east,half=bottom,shape=inner_left").set_solid(False).set_all_side_solid(False).finish()
+        BlockFactory().set_name(f"minecraft:{fname}_stairs").set_default_model_state(
+            "facing=east,half=bottom,shape=inner_left"
+        ).set_solid(False).set_all_side_solid(False).finish()
     else:
         pass  # todo: implement
 
@@ -72,10 +115,14 @@ def stone_like(name: str, existing_full=True, existing_slab=True, existing_wall=
 
 
 wood("acacia")
-BlockFactory().set_name("minecraft:activator_rail").set_solid(False).set_all_side_solid(False).set_default_model_state("powered=false,shape=north_south").finish()
+BlockFactory().set_name("minecraft:activator_rail").set_solid(False).set_all_side_solid(
+    False
+).set_default_model_state("powered=false,shape=north_south").finish()
 plant("minecraft:allium").finish()
 BlockFactory().set_name("minecraft:amethyst_block").finish()
-BlockFactory().set_name("minecraft:amethyst_cluster").set_solid(False).set_all_side_solid(False).set_default_model_state("facing=up").finish()
+BlockFactory().set_name("minecraft:amethyst_cluster").set_solid(
+    False
+).set_all_side_solid(False).set_default_model_state("facing=up").finish()
 BlockFactory().set_name("minecraft:ancient_debris").finish()
 stone_like("andesite")
 

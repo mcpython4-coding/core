@@ -63,6 +63,9 @@ changelog of snapshot <21w17a> released on <...> targeting <21w16a>
         - added access system from other processes to the current world
         - reworked how data maps of chunks are done
 
+    Fluids:
+        - implemented basic fluid API
+
     Launch options:
         - added options to disable mod loader, data pack loader, and resource pack loader
         - boosted server load cycle even more

@@ -74,7 +74,11 @@ class Registry:
     def is_valid(self, obj: IRegistryContent):
         return not self.locked and obj.TYPE in self.registry_type_names
 
-    def register(self, obj: IRegistryContent, override_existing=True):
+    def register(
+        self,
+        obj: typing.Union[IRegistryContent, typing.Type[IRegistryContent]],
+        override_existing=True,
+    ):
         """
         Registers an obj to this registry
         """

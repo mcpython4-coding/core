@@ -144,13 +144,20 @@ class ItemStack(AbstractResourceStack):
         return str(self)
 
     def contains_same_resource(self, other: "AbstractResourceStack") -> bool:
-        return isinstance(other, ItemStack) and self.get_item_name() == other.get_item_name()
+        return (
+            isinstance(other, ItemStack)
+            and self.get_item_name() == other.get_item_name()
+        )
 
     def has_more_than(self, other: "AbstractResourceStack") -> bool:
         return self.contains_same_resource(other) and self.amount >= other.amount
 
     def get_difference(self, other: "AbstractResourceStack") -> "AbstractResourceStack":
-        return None if not self.contains_same_resource(other) else self.copy().set_amount(self.amount - other.amount)
+        return (
+            None
+            if not self.contains_same_resource(other)
+            else self.copy().set_amount(self.amount - other.amount)
+        )
 
 
 class FluidStack(AbstractResourceStack):
@@ -183,5 +190,8 @@ class FluidStack(AbstractResourceStack):
         return self.contains_same_resource(other) and self.amount >= other.amount
 
     def get_difference(self, other: "AbstractResourceStack") -> "AbstractResourceStack":
-        return None if not self.contains_same_resource(other) else self.copy().set_amount(self.amount - other.amount)
-
+        return (
+            None
+            if not self.contains_same_resource(other)
+            else self.copy().set_amount(self.amount - other.amount)
+        )

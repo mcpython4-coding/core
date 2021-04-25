@@ -107,6 +107,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
                 self.slots[0].itemstack.get_item_name()
                 in shared.crafting_handler.furnace_recipes[x]
                 for x in self.types
+                if x in shared.crafting_handler.furnace_recipes  # todo: why do we need this?
             ]
         ):
             if self.fuel_left == 0:
@@ -306,6 +307,10 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         self.update_status()
 
     def load(self, data: dict) -> bool:
+        if not isinstance(data, dict):
+            logger.println("[FURNACE][FATAL]: invalid data loaded from saves: ", data)
+            return False
+
         self.fuel_left = data.setdefault("fuel", 0)
         self.fuel_max = data.setdefault("max fuel", 0)
         self.xp_stored = data.setdefault("xp", 0)

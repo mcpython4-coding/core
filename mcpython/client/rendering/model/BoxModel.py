@@ -208,7 +208,10 @@ class BoxModel:
         :param rotation: the rotation to use
         :param position: the position of the vertex cube
         """
-        x, y, z = (self.box_position[i] - .5 + self.relative_position[i] + position[i] for i in range(3))
+        x, y, z = (
+            self.box_position[i] - 0.5 + self.relative_position[i] + position[i]
+            for i in range(3)
+        )
 
         # Is there data prepared in this case?
         if rotation in self.rotated_vertices:
@@ -239,7 +242,9 @@ class BoxModel:
                     )
                     v = mcpython.util.math.rotate_point(
                         v,
-                        tuple([position[i] + self.rotation_center[i] for i in range(3)]),
+                        tuple(
+                            [position[i] + self.rotation_center[i] for i in range(3)]
+                        ),
                         self.rotation,
                     )
                     face_r.append(v)
@@ -314,7 +319,14 @@ class BoxModel:
             ),
         )
 
-    def add_to_batch(self, position: typing.Tuple[float, float, float], batch, rotation, active_faces=None, uv_lock=False):
+    def add_to_batch(
+        self,
+        position: typing.Tuple[float, float, float],
+        batch,
+        rotation,
+        active_faces=None,
+        uv_lock=False,
+    ):
         """
         Adds the box model to the batch
         :param position: the position based on
@@ -341,7 +353,13 @@ class BoxModel:
             )
             self.model.texture_atlas.group.unset_state()
 
-    def draw(self, position: typing.Tuple[float, float, float], rotation, active_faces=None, uv_lock=False):
+    def draw(
+        self,
+        position: typing.Tuple[float, float, float],
+        rotation,
+        active_faces=None,
+        uv_lock=False,
+    ):
         """
         draws the BoxModel direct into the world
         WARNING: use batches for better performance

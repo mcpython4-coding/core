@@ -205,7 +205,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def pick_up_item(
         self,
         itemstack: typing.Union[
-            mcpython.common.container.ResourceStack.ItemStack, mcpython.client.gui.Slot.Slot
+            mcpython.common.container.ResourceStack.ItemStack,
+            mcpython.client.gui.Slot.Slot,
         ],
     ) -> bool:
         """
@@ -420,13 +421,14 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         ).get_maximum_y_coordinate_from_generation(x, z)
 
         if h is None:
-            logger.println(f"[WARN] cannot find spawn height at {x} {z}. Using '255' as default")
+            logger.println(
+                f"[WARN] cannot find spawn height at {x} {z}. Using '255' as default"
+            )
             h = 255
 
         self.position = (
             shared.world.spawnpoint[0],
-            h
-            + 3,
+            h + 3,
             shared.world.spawnpoint[1],
         )
 

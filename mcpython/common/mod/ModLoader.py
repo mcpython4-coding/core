@@ -210,14 +210,18 @@ class ModLoader:
                     try:
                         self.load_mods_json(content, file + "/mod.json")
                     except:
-                        logger.print_exception(f"during loading mod.json file from '{file}'")
+                        logger.print_exception(
+                            f"during loading mod.json file from '{file}'"
+                        )
 
                 elif os.path.exists(file + "/mods.toml"):
                     with open(file + "/mods.toml") as sf:
                         self.load_mods_toml(sf.read(), file + "/mods.toml")
                 else:
                     self.error_builder.println(
-                        "- could not locate mod.json file for mod for mod-directory '{}'".format(file)
+                        "- could not locate mod.json file for mod for mod-directory '{}'".format(
+                            file
+                        )
                     )
 
             for mod in self.located_mod_instances:

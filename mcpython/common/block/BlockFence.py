@@ -142,7 +142,7 @@ class IFenceGate(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         return {
             "facing": self.facing.normal_name,
             "in_wall": str(self.in_wall).lower(),
-            "open": str(self.open).lower()
+            "open": str(self.open).lower(),
         }
 
     def set_model_state(self, state: dict):
@@ -155,7 +155,11 @@ class IFenceGate(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         if "open" in state:
             self.open = state["open"] == "true"
 
-    BLOCK_ITEM_GENERATOR_STATE = {"facing": "north", "in_wall": "false", "opened": "true"}
+    BLOCK_ITEM_GENERATOR_STATE = {
+        "facing": "north",
+        "in_wall": "false",
+        "opened": "true",
+    }
 
 
 class IWoodenFence(IFence):

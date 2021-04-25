@@ -1569,6 +1569,7 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed data-generators using not simplejson for formatting json files
 [uuk]: TagGenerator has now a also() function useful for generating the same tag entries in two different tag groups
 [uuk]: implemented fluid item stack
+[uuk]: implemented abstract system for fluid
 
 
 issues:
