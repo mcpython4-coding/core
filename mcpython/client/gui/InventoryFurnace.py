@@ -107,7 +107,8 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
                 self.slots[0].itemstack.get_item_name()
                 in shared.crafting_handler.furnace_recipes[x]
                 for x in self.types
-                if x in shared.crafting_handler.furnace_recipes  # todo: why do we need this?
+                if x
+                in shared.crafting_handler.furnace_recipes  # todo: why do we need this?
             ]
         ):
             if self.fuel_left == 0:

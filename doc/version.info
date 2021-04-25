@@ -1570,6 +1570,9 @@ R   [uuk]: improved world serialization API
 [uuk]: TagGenerator has now a also() function useful for generating the same tag entries in two different tag groups
 [uuk]: implemented fluid item stack
 [uuk]: implemented abstract system for fluid
+[uuk]: fixed build system not removing data gen call lines
+[uuk]: fixed some installer hiccups
+[uuk]: fixed minified build target
 
 
 issues:

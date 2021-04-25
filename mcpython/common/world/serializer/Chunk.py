@@ -420,7 +420,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
         positions = []
         for x in range(int(chunk[0] * 16), int(chunk[0] * 16 + 16)):
-            positions.extend([(x, z) for z in range(int(chunk[1]) * 16, int(chunk[1]) * 16 + 16)])
+            positions.extend(
+                [(x, z) for z in range(int(chunk[1]) * 16, int(chunk[1]) * 16 + 16)]
+            )
 
         for data_map in chunk_instance.get_all_data_maps():
             if data_map.NAME in data["maps"]:

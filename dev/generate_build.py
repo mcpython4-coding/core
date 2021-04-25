@@ -504,12 +504,25 @@ class CustomCodePatcher(AbstractBuildStage):
         )
         view.write(
             "tools/installer.py",
-            view.read("tools/installer.py").replace(
-                'subprocess.Popen([sys.executable, "./__main__.py", "--data-gen", "--exit-after-data-gen", "--no-window"], stdout=sys.stdout)'.encode(
+            view.read("tools/installer.py")
+            .replace(
+                """subprocess.call(
+    [
+        sys.executable,
+        home + "/__main__.py",
+        "--data-gen",
+        "--exit-after-data-gen",
+        "--no-window",
+    ],
+    stdout=sys.stdout,
+)""".encode(
                     "utf-8"
                 ),
                 b"",
                 1,
+            )
+            .replace(
+                "IS_DEV = True".encode("utf-8"), "IS_DEV = False".encode("UTF-8"), 1
             ),
         )
         # data = json.loads(view.read("version.json").decode("utf-8"))
@@ -580,7 +593,6 @@ DEFAULT_BUILD_INSTANCE.add_stage(
             )
         ),
         FilePrefixRenamerTask("doc/", ""),
-        FilePrefixRenamerTask("tools/", ""),
         DumpTask("minified.zip", as_zip=True),
         CLIENT_FILE_STRIPPER,
         DumpTask("dedicated_minified.zip", as_zip=True),
@@ -594,6 +606,8 @@ def main(*argv):
         config = json.load(f)
 
     output_folder = config.setdefault("output_folder", HOME + "/builds")
+
+    print("writing to", output_folder + "/" + build_name)
     config["version_id"] += 1
     version_id = config["version_id"]
 

@@ -19,6 +19,7 @@ import os
 Installation code for setting up your python
 Does some magic for stripped builds
 """
+IS_DEV = True
 
 home = os.path.dirname(__file__)
 if not os.path.exists(home + "/__main__.py"):
@@ -31,17 +32,13 @@ subprocess.call(
     stderr=sys.stderr,
 )
 
-# todo: move to config the url
+# todo: move the url to config
 subprocess.call(
     [
         sys.executable,
-        home + "/tools/update_asset_source.py"
-        if os.path.exists(home + "/tools/update_asset_source.py")
-        else home + "/update_asset_source.py",
+        home + "/tools/update_asset_source.py",
         "https://launcher.mojang.com/v1/objects/f124f2aad604e88f27f010834d82c7af85506b6c/client.jar",
-        home
-        if not os.path.exists(home + "/tools/update_asset_source.py")
-        else home + "/resources/source",
+        home if not IS_DEV else home + "/resources/source",
     ],
     stdout=sys.stdout,
 )
