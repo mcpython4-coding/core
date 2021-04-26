@@ -107,7 +107,7 @@ class TextureAtlas:
         for x in range(self.size[0]):
             self.free_space.update(set([(x, y) for y in range(self.size[1])]))
         self.images = []
-        self.imagelocations = []  # an images[-parallel (x, y)-list
+        self.image_locations = []  # an images[-parallel (x, y)-list
         if add_missing_texture:
             self.add_image(MISSING_TEXTURE, position=(0, 0))
         self.group = None
@@ -115,8 +115,10 @@ class TextureAtlas:
     def add_image(self, image: PIL.Image.Image, ind=None, position=None) -> tuple:
         if ind is None:
             ind = image
+
         if ind in self.images:
-            return self.imagelocations[self.images.index(ind)]
+            return self.image_locations[self.images.index(ind)]
+
         if image.size[0] > self.image_size[0] or image.size[1] > self.image_size[1]:
             self.image_size = image.size[0], image.size[0]
             self.texture = self.texture.resize(
@@ -125,7 +127,9 @@ class TextureAtlas:
             )
         else:
             image = image.resize(self.image_size, PIL.Image.NEAREST)
+
         if len(self.free_space) == 0:
+            # todo: export to separate function
             old = self.texture
             sx, sy = self.size
             self.size = sx * 2, sy * 2
@@ -137,6 +141,7 @@ class TextureAtlas:
                 for y in range(sy * 2):
                     if x >= sx or y >= sy:
                         self.free_space.add((x, y))
+
         self.images.append(ind)
         if position is None or position not in self.free_space:
             x, y = self.free_space.pop()
@@ -152,14 +157,14 @@ class TextureAtlas:
             ),
         )
         pos = x, y
-        x += 1
-        if x >= self.size[0]:
-            x = 0
-            y += 1
-        self.imagelocations.append(pos)
+        self.image_locations.append(pos)
         return pos
 
     def is_free_for(self, images: list) -> bool:
+        # todo: is there are fast way to check for images present?
+        return len(images) <= len(self.free_space)
+
+    def is_free_for_slow(self, images: list) -> bool:
         count = 0
         for image in images:
             if image not in self.images:

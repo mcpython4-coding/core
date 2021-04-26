@@ -607,7 +607,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             *mcpython.util.math.position_to_chunk(
                 shared.world.get_active_player().position
             ),
-            create=False
+            create=False,
         )
         self.label.text = (
             "%02d (%.2f, %.2f, %.2f) [region %01d %01d], gamemode %01d"

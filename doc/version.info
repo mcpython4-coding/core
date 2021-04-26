@@ -1578,6 +1578,7 @@ R   [uuk]: improved world serialization API
 [uuk]: some more refactors
 [uuk]: fixed issues with recipe loaders leading into recipe loading issues
 [uuk]: implemented recipe dummies for all other recipe types
+[uuk]: improved texture atlas performance by quite a bit
 
 
 issues:

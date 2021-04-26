@@ -46,7 +46,7 @@ class ItemAtlasHandler:
         if not arrival:
             image = ResourceLoader.read_image(file).resize((32, 32), PIL.Image.NEAREST)
             for i, atlas in enumerate(self.atlases):
-                if atlas.is_free_for([image]):
+                if atlas.is_free_for_slow([image]):
                     self.position_map[file] = (i, atlas.add_image(image))
                     break
             else:

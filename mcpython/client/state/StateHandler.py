@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import time
+
 from mcpython import shared, logger
 from . import State
 import mcpython.common.event.TickHandler
@@ -35,22 +37,25 @@ class StateHandler:
                 self._switch_to, state_name
             )
 
-    def _switch_to(self, statename: str):
-        if statename not in self.states:
-            logger.print_stack("state '{}' does not exists".format(statename))
+    def _switch_to(self, state_name: str):
+        if state_name not in self.states:
+            logger.print_stack("state '{}' does not exists".format(state_name))
             sys.exit(-10)
-        self.CANCEL_SWITCH_STATE = False
-        shared.event_handler.call("state:switch:pre", statename)
-        if self.CANCEL_SWITCH_STATE:
-            return
+
+        previous = self.active_state.NAME if self.active_state is not None else None
+        now = time.time()
+
+        shared.event_handler.call("state:switch:pre", state_name)
+
         if self.active_state:
             self.active_state.deactivate()
-        self.active_state: State.State = self.states[statename]
+
+        self.active_state: State.State = self.states[state_name]
         self.active_state.activate()
         self.active_state.eventbus.call("user:window:resize", *shared.window.get_size())
-        shared.event_handler.call("state:switch:post", statename)
+        shared.event_handler.call("state:switch:post", state_name)
         logger.println(
-            "[STATE HANDLER][STATE CHANGE] state changed to '{}'".format(statename),
+            f"[STATE HANDLER][STATE CHANGE] state changed to '{state_name}' (from {repr(previous)}) took {time.time()-now}s'",
             console=False,
         )
 
