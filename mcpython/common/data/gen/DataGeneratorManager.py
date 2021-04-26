@@ -43,9 +43,7 @@ class IDataGenerator:
             )
             return
 
-        generator.write(
-            simplejson.dumps(data, indent="  ").encode("utf-8"), file
-        )
+        generator.write(simplejson.dumps(data, indent="  ").encode("utf-8"), file)
 
     def get_default_location(
         self, generator: "DataGeneratorInstance", name: str

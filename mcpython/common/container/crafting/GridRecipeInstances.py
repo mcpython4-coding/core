@@ -253,8 +253,9 @@ class GridShapeless(AbstractCraftingGridRecipe):
 class ArmorDyeRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_armordye"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-            typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -266,8 +267,9 @@ class ArmorDyeRecipe(AbstractCraftingGridRecipe):
 class BannerDuplicateRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_bannerduplicate"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -279,8 +281,9 @@ class BannerDuplicateRecipe(AbstractCraftingGridRecipe):
 class BookCloningRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_bookcloning"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -292,8 +295,9 @@ class BookCloningRecipe(AbstractCraftingGridRecipe):
 class FireworkRocketRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_firework_rocket"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -305,8 +309,9 @@ class FireworkRocketRecipe(AbstractCraftingGridRecipe):
 class FireworkStarRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_firework_star"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -318,8 +323,9 @@ class FireworkStarRecipe(AbstractCraftingGridRecipe):
 class FireworkStarFadeRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_firework_star_fade"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -331,8 +337,9 @@ class FireworkStarFadeRecipe(AbstractCraftingGridRecipe):
 class MapCloningRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_mapcloning"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -344,8 +351,9 @@ class MapCloningRecipe(AbstractCraftingGridRecipe):
 class MapExtendingRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_mapextending"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -357,8 +365,9 @@ class MapExtendingRecipe(AbstractCraftingGridRecipe):
 class RepairItemRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_repairitem"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -370,8 +379,9 @@ class RepairItemRecipe(AbstractCraftingGridRecipe):
 class ShieldDecoration(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_shielddecoration"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -383,8 +393,9 @@ class ShieldDecoration(AbstractCraftingGridRecipe):
 class ShulkerboxColoringRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_shulkerboxcoloring"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -396,8 +407,9 @@ class ShulkerboxColoringRecipe(AbstractCraftingGridRecipe):
 class SuspiciousStewRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_suspiciousstew"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod
@@ -409,8 +421,9 @@ class SuspiciousStewRecipe(AbstractCraftingGridRecipe):
 class TippedArrowRecipe(AbstractCraftingGridRecipe):
     RECIPE_TYPE_NAMES = ["minecraft:crafting_special_tippedarrow"]
 
-    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
-        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+    def as_grid_for_view(
+        self, size=(3, 3)
+    ) -> typing.Tuple[typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
         return [], None
 
     @classmethod

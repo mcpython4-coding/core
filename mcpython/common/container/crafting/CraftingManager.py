@@ -66,17 +66,19 @@ class CraftingManager:
         return recipe
 
     def __call__(self, obj):
-        assert issubclass(obj, mcpython.common.container.crafting.IRecipe.IRecipe), "must be IRecipe"
-        [
-            self.recipe_info_table.setdefault(name, obj)
-            for name in obj.RECIPE_TYPE_NAMES
-        ]
+        assert issubclass(
+            obj, mcpython.common.container.crafting.IRecipe.IRecipe
+        ), "must be IRecipe"
+        [self.recipe_info_table.setdefault(name, obj) for name in obj.RECIPE_TYPE_NAMES]
         return obj
 
     def add_recipe(
-        self, recipe: mcpython.common.container.crafting.IRecipe.IRecipe, name: str = None
+        self,
+        recipe: mcpython.common.container.crafting.IRecipe.IRecipe,
+        name: str = None,
     ):
-        if name is None: name = recipe.name
+        if name is None:
+            name = recipe.name
         assert name is not None, "name must be set"
 
         recipe.name = name
@@ -94,7 +96,9 @@ class CraftingManager:
             self.add_recipe(recipe, name)
             return recipe
         else:
-            logger.println(f"[RECIPE MANAGER][WARN] failed to find recipe decoder '{recipe_type}' for recipe '{name}'")
+            logger.println(
+                f"[RECIPE MANAGER][WARN] failed to find recipe decoder '{recipe_type}' for recipe '{name}'"
+            )
             return None
 
     def add_recipe_from_file(self, file: str):
@@ -111,7 +115,8 @@ class CraftingManager:
             data = json.loads(data)
         except:
             logger.print_exception(
-                "during json-decoding recipe from file '{}'".format(file), "'" + data + "'"
+                "during json-decoding recipe from file '{}'".format(file),
+                "'" + data + "'",
             )
             return
 
@@ -208,7 +213,12 @@ shared.crafting_handler = CraftingManager()
 
 
 def load_recipe_providers():
-    from . import FurnaceCraftingHelper, GridRecipeInstances, StonecuttingRecipe, SmithingRecipe
+    from . import (
+        FurnaceCraftingHelper,
+        GridRecipeInstances,
+        StonecuttingRecipe,
+        SmithingRecipe,
+    )
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
