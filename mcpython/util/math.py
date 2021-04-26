@@ -158,7 +158,7 @@ def tex_coordinates(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
     :param size: the size of the texture atlas used
     :param region: the texture region to use. (0, 0, 1, 1) is full texture atlas texture size
     :param rot: in steps of 90: how much to rotate the vertices
-    :return: an tuple representing the texture coordinates
+    :return: a tuple representing the texture coordinates
     """
     mx = 1.0 / size[0]
     my = 1.0 / size[1]
@@ -188,13 +188,13 @@ def tex_coordinates(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
 
 
 def tex_coordinates_better(
-    *args, size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)
+    *args: typing.Tuple[int, int], size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)
 ) -> list:
     """
-    this is an better implementation of above tex_coords function. It will return an list of coords instead
-    of an list where you have to manually find entries
-    :param args: every face to calculate
-    :param size: the size of the texture group
+    This is an better implementation of above tex_coords function. It will return an list of coords instead
+        of an list where you have to manually find entries for drawing
+    :param args: for each face to calculate, the uv's as a tuple of size 2
+    :param size: the size of the texture group, as specified by the texture atlas
     :param tex_region: the region in the texture, where 0 is one end and 1 the other
     :param rotation: the rotation of the whole thing
     :return: an list of lists of texture coords
@@ -257,7 +257,7 @@ def position_to_chunk(
     """
     x, *_, z = position
     x, z = x // 16, z // 16
-    return x, z
+    return int(x), int(z)
 
 
 # code from https://stackoverflow.com/questions/11557241/python-sorting-a-dependency-list

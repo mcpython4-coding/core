@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 # This is an semi-stable API for drawing stuff on the screen.
 # todo: implement via pyglet's shape module & use batches
+# todo: use geometry shaders after pyglet 2.0
 import pyglet.gl as gl
 import pyglet
 import math

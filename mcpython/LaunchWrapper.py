@@ -77,6 +77,7 @@ class LaunchWrapper:
         """
 
         if not self.__side_prepared:
+            logger.println("[WARN] no side was set up. Falling back to client...")
             self.prepare_client()
 
         import mcpython.ResourceLoader
@@ -95,6 +96,8 @@ class LaunchWrapper:
 
         shared.event_handler.call("game:startup")
 
+        logger.println("[INFO] setup complete")
+
     def setup_registries(self):
         """
         Helper functions for loading the modules which create registries and do similar stuff
@@ -108,6 +111,7 @@ class LaunchWrapper:
 
         @shared.mod_loader("minecraft", "special:exit")
         def exit():
+            logger.println("[INFO] stopping program as requested. If you the program continues execution, please report this")
             sys.exit()
 
         import mcpython.common.event.Registry
@@ -135,7 +139,7 @@ class LaunchWrapper:
         Loads also the needed API
         todo: move more rendering setup code here
         """
-        assert shared.IS_CLIENT, "can only setup on client, this is a dedicated server!"
+        assert shared.IS_CLIENT, "can only setup on client, this is set up for being a dedicated server"
 
         import mcpython.client.rendering.util
 
@@ -238,25 +242,30 @@ class LaunchWrapper:
         (save)
         Will enforce cleanup when possible
         """
+        logger.println("[WARN] Closing the game in a bad way, please make sure that nothing broke...")
+
         import mcpython.ResourceLoader
 
         try:
             mcpython.ResourceLoader.close_all_resources()
             logger.print_exception("general uncaught exception during running the game")
         except:
-            logger.print_exception("failed to close resources")
+            logger.print_exception("failed to close resources, skipping")
+
         try:
             shared.tmp.cleanup()
         except NameError:
             pass
         except:
-            logger.print_exception("file cleanup exception [NON-FATAL]")
+            logger.print_exception("file cleanup exception [NON-FATAL], skipping")
+
+        sys.exit(-1)
 
     def clean(self):
         """
-        Helper function for normal cleanup
-        (not save)
+        Helper function for normal cleanup (not save, will hard-crash in some cases)
         MAY crash on non-fully stable systems
+        Also invokes the event for closing the game, stops the world generation process, ...
         """
         shared.world.world_generation_process.stop()
         import mcpython.ResourceLoader
@@ -264,3 +273,5 @@ class LaunchWrapper:
         mcpython.ResourceLoader.close_all_resources()
         shared.event_handler.call("game:close")
         shared.tmp.cleanup()
+
+        sys.exit(0)

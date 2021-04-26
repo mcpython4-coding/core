@@ -145,6 +145,8 @@ class LogAxis(enum.Enum):
 
 
 class ToolType(enum.Enum):
+    # todo: export to registry
+
     HAND = 0
     PICKAXE = 1
     AXE = 2
