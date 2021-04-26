@@ -66,6 +66,7 @@ class ItemStack(AbstractResourceStack):
             type(item_name_or_instance), mcpython.common.item.AbstractItem.AbstractItem
         ):
             self.item = item_name_or_instance
+
         elif type(item_name_or_instance) == str:
             if (
                 item_name_or_instance
@@ -79,8 +80,14 @@ class ItemStack(AbstractResourceStack):
                     "[FATAL] can't find item named '{}'".format(item_name_or_instance)
                 )
                 self.item = None
+
         else:
+            if item_name_or_instance is not None:
+                logger.println(
+                    "[FATAL] cannot"
+                )
             self.item = None
+
         self.amount = amount if self.item and 0 <= amount <= self.item.STACK_SIZE else 0
 
     def copy(self) -> "ItemStack":

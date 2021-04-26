@@ -29,13 +29,22 @@ class IDataGenerator:
         file = self.get_default_location(generator, name)
         if file is None:
             logger.println(
-                "[WARN] failed to dump data generator {} named {}, as no file was returned".format(
+                "Failed to dump data generator {} named '{}', as no file was returned".format(
                     self, name
                 )
             )
             return
+
+        try:
+            data = self.dump(generator)
+        except:
+            logger.print_exception(
+                f"Failed to serialize data generator {self} named '{name}', This is a bad thing!"
+            )
+            return
+
         generator.write(
-            simplejson.dumps(self.dump(generator), indent="  ").encode("utf-8"), file
+            simplejson.dumps(data, indent="  ").encode("utf-8"), file
         )
 
     def get_default_location(
@@ -72,7 +81,7 @@ class DataGeneratorInstance:
                 generator.write(self, name)
             except UnsupportedIndirectDumpException:
                 logger.print_exception(
-                    "[WARN] failed to dump data generator {} named {}".format(
+                    "Failed to write data generator {} named '{}', This is a bad thing!".format(
                         generator, name
                     )
                 )

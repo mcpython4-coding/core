@@ -23,7 +23,7 @@ class FurnaceRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
     """
 
     # The list of type descriptors to decode
-    RECIPE_NAMES = ["minecraft:smelting", "minecraft:blasting", "minecraft:smoking"]
+    RECIPE_TYPE_NAMES = ["minecraft:smelting", "minecraft:blasting", "minecraft:smoking", "minecraft:campfire_cooking"]
 
     @classmethod
     def from_data(cls, data: dict, file: str) -> "FurnaceRecipe":

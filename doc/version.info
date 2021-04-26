@@ -1576,6 +1576,8 @@ R   [uuk]: improved world serialization API
 [uuk]: refactored some *Handler's to *Manager's
 [uuk]: added acacia fence block
 [uuk]: some more refactors
+[uuk]: fixed issues with recipe loaders leading into recipe loading issues
+[uuk]: implemented recipe dummies for all other recipe types
 
 
 issues:

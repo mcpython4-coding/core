@@ -247,3 +247,172 @@ class GridShapeless(AbstractCraftingGridRecipe):
             for _ in range(size[0])
         ]
         return grid, ItemStack(*self.output)
+
+
+@shared.crafting_handler
+class ArmorDyeRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_armordye"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+            typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class BannerDuplicateRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_bannerduplicate"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class BookCloningRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_bookcloning"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class FireworkRocketRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_firework_rocket"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class FireworkStarRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_firework_star"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class FireworkStarFadeRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_firework_star_fade"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class MapCloningRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_mapcloning"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class MapExtendingRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_mapextending"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class RepairItemRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_repairitem"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class ShieldDecoration(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_shielddecoration"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class ShulkerboxColoringRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_shulkerboxcoloring"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class SuspiciousStewRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_suspiciousstew"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
+
+
+@shared.crafting_handler
+class TippedArrowRecipe(AbstractCraftingGridRecipe):
+    RECIPE_TYPE_NAMES = ["minecraft:crafting_special_tippedarrow"]
+
+    def as_grid_for_view(self, size=(3, 3)) -> typing.Tuple[
+        typing.List[typing.List[typing.List[ItemStack]]], ItemStack]:
+        return [], None
+
+    @classmethod
+    def from_data(cls, data: dict, file: str):
+        return cls()
