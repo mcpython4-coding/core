@@ -32,7 +32,7 @@ class LaunchWrapper:
         self.__side_prepared = False
 
     def prepare_client(self):
-        assert not self.__side_prepared
+        assert not self.__side_prepared, "can only prepare ones"
 
         # init OpenGL
         import pyglet
@@ -43,7 +43,7 @@ class LaunchWrapper:
         logger.println("client side")
 
     def prepare_server(self):
-        assert not self.__side_prepared
+        assert not self.__side_prepared, "can only prepare ones"
 
         self.__side_prepared = True
         shared.IS_CLIENT = self.is_client = False
