@@ -41,6 +41,9 @@ class CommandExecutionEnvironment:
         ), "failed to get dimension; dimension is not set!"
         return self.dimension
 
+    def get_current_chunk(self):
+        return self.get_dimension().get_chunk_for_position(self.get_this().get_position())
+
     def with_dimension(self, dimension):
         if isinstance(dimension, str):
             self.dimension = self.dimension.get_world().get_dimension_by_name(dimension)
@@ -169,7 +172,7 @@ def load_commands():
         CommandFill,
         CommandFunction,
         CommandData,
-        CommandGenerate,
+        CommandChunk,
         CommandGamerule,
         CommandTell,
         CommandXp,
@@ -193,7 +196,7 @@ def load_commands():
     handler.register_command(CommandFill.fill)
     handler.register_command(CommandFunction.function)
     handler.register_command(CommandData.data)
-    handler.register_command(CommandGenerate.generate)
+    handler.register_command(CommandChunk.chunk)
     handler.register_command(CommandGamerule.gamerule)
     handler.register_command(CommandTell.tell)
     handler.register_command(CommandXp.xp)

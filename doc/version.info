@@ -1585,8 +1585,9 @@ R   [uuk]: improved world serialization API
 [uuk]: improved event system; a lot less RAM consumption
 [uuk]: fixed event unsubscribing not working for the majority of its previous lifetime
 [uuk]: improved mdk
+[uuk]: migrated /generate to /chunk generate
+[uuk]: added /chunk delete command deleting the current chunk
+[uuk]: added clear() method to Chunk's
+[uuk]: added /chunk save for saving the current chunk
+[uuk]: added /chunk visualupdate for updating all visual states of all blocks in that chunk
 
-
-issues:
-- non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
-- world generation progress is not displayed

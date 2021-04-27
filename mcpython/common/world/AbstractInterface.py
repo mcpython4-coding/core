@@ -117,6 +117,20 @@ class IChunk(ISupportWorldInterface, ABC):
             str, mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap
         ] = {}
 
+    def clear(self):
+        import mcpython.common.entity.PlayerEntity
+        import mcpython.shared
+
+        # So, we need to hide all blocks in this chunk for this to work...
+        if mcpython.shared.IS_CLIENT:
+            self.hide()
+
+        self._world.clear()
+        for entity in self.entities.copy():
+            # We should not remove players...
+            if not isinstance(entity, mcpython.common.entity.PlayerEntity.PlayerEntity):
+                entity.kill(force=True)
+
     def get_map(self, name: str):
         return self.data_maps[name]
 
@@ -285,6 +299,13 @@ class IChunk(ISupportWorldInterface, ABC):
         todo: rename to something fitting!
         """
         raise NotImplementedError
+
+    def update_all_rendering(self):
+        for position, block in self._world.items():
+            if not self.exposed(position):
+                block.face_state.hide_all()
+            else:
+                block.face_state.update()
 
     def show(self):
         """
