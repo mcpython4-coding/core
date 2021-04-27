@@ -83,6 +83,10 @@ changelog of snapshot <21w17a> released on <...> targeting <21w16a>
     Rendering:
         - some fixes around rotations in block models
 
+    Event system:
+        - major improvements, including RAM usage, call times, ...
+        - fixed function unsubscribing never working
+
 
 changelog of snapshot 21w04a released on 27.01.2021, targeting 21w03a
     This snapshot broke backwards compatibility, again...

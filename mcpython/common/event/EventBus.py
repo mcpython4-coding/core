@@ -72,71 +72,47 @@ class EventBus:
         :param kwargs: the kwargs to give
         :param info: an info to give for the caller
         """
-        if (function, args, kwargs, info) in self.event_subscriptions.setdefault(
-            event_name, []
-        ):
+        signature = (function, args, kwargs, info)
+        if signature in self.event_subscriptions.setdefault(event_name, []):
             return
-        self.event_subscriptions[event_name].append((function, args, kwargs, info))
-        if shared.debug_events:
-            with open(
-                shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
-            ) as f:
-                f.write(
-                    "\nevent subscription of '{}' to '{}'".format(function, event_name)
-                )
+
+        self.event_subscriptions[event_name].append(signature)
 
     def unsubscribe(self, event_name: str, function):
         """
-        remove an function from the event bus
+        Remove an function from the event bus
         :param event_name: the event name the function was registered to
         :param function: the function itself
         :raise ValueError: when event name is unknown OR function was never assigned
         """
-        if (
-            event_name not in self.event_subscriptions
-            or function not in self.event_subscriptions[event_name]
-        ):
-            if self.crash_on_error:
-                raise ValueError(
-                    "can't find function {} in event '{}'".format(function, event_name)
-                )
-            return
-        self.event_subscriptions[event_name].remove(function)
-        if shared.debug_events:
-            with open(
-                shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
-            ) as f:
-                f.write(
-                    "\nevent unsubscribe of '{}' to event '{}'".format(
-                        function, event_name
-                    )
-                )
+        for signature in self.event_subscriptions[event_name][:]:
+            if signature[0] == function:
+                self.event_subscriptions[event_name].remove(signature)
+                break
+        else:
+            raise ValueError(f"cannot find function {function} in event {event_name}")
 
     def call(self, event_name: str, *args, **kwargs):
         """
-        call an event on this event bus. also works when deactivated
+        Call an event on this event bus. Also works when deactivated
         :param event_name: the name of the event to call
         :param args: arguments to give
         :param kwargs: kwargs to give
-        :return: an list of tuple of (return value, info)
         """
-        result = []
         if event_name not in self.event_subscriptions:
-            return result
+            return
+
         exception_occ = False
         for function, eargs, ekwargs, info in self.event_subscriptions[event_name]:
             dif = "Exception"
             try:
                 start = time.time()
-                result.append(
-                    (
-                        function(
-                            *list(args) + list(self.extra_arguments[0]) + list(eargs),
-                            **{**kwargs, **self.extra_arguments[1], **ekwargs}
-                        ),
-                        info,
-                    )
+
+                function(
+                    *list(args) + list(self.extra_arguments[0]) + list(eargs),
+                    **{**kwargs, **self.extra_arguments[1], **ekwargs},
                 )
+
                 dif = time.time() - start
             except SystemExit:
                 raise
@@ -155,19 +131,9 @@ class EventBus:
                     "during event:",
                     event_name,
                 )
-            if shared.debug_events:
-                with open(
-                    shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
-                ) as f:
-                    f.write(
-                        "\nevent call of '{}' takes {}s until finish".format(
-                            function, dif
-                        )
-                    )
         if exception_occ and self.crash_on_error:
             logger.println("\nout of the above reasons, the game has crashed")
             sys.exit(-1)
-        return result
 
     def call_cancelable(self, event_name: str, *args, **kwargs):
         """
@@ -189,7 +155,7 @@ class EventBus:
         event_name: str,
         check_function: typing.Callable[[typing.Any], bool],
         *args,
-        **kwargs
+        **kwargs,
     ):
         """
         Will call the event stack until an check_function returns True or all subscriptions where done
@@ -206,7 +172,7 @@ class EventBus:
             try:
                 result = function(
                     *list(args) + list(self.extra_arguments[0]) + list(eargs),
-                    **{**kwargs, **self.extra_arguments[1], **ekwargs}
+                    **{**kwargs, **self.extra_arguments[1], **ekwargs},
                 )
                 dif = time.time() - start
                 if shared.debug_events:
@@ -280,7 +246,7 @@ class EventBus:
                     (
                         function(
                             *list(args) + list(self.extra_arguments[0]) + list(eargs),
-                            **{**kwargs, **self.extra_arguments[1], **ekwargs}
+                            **{**kwargs, **self.extra_arguments[1], **ekwargs},
                         ),
                         info,
                     )

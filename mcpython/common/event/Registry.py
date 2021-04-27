@@ -222,6 +222,10 @@ shared.registry = RegistryHandler()
 
 
 class DeferredRegistryPipe:
+    """
+    Base class for deferred registries
+    """
+
     def __init__(self, registry: Registry, modname: str):
         self.registry = registry
         self.modname = modname

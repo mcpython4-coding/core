@@ -1582,6 +1582,8 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed & improved biome debug world generator
 [uuk]: added new biome: sunflower plains [no difference to normal plains currently]
 [uuk]: improved fluid API
+[uuk]: improved event system; a lot less RAM consumption
+[uuk]: fixed event unsubscribing not working for the majority of its previous lifetime
 
 
 issues:
