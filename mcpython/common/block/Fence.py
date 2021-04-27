@@ -15,7 +15,7 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
-from mcpython import shared
+from mcpython import shared, logger
 import mcpython.util.enums
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython.util.enums import EnumSide
@@ -147,7 +147,10 @@ class AbstractFenceGate(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
     def set_model_state(self, state: dict):
         if "facing" in state:
-            self.facing = EnumSide[state["facing"].upper()]
+            try:
+                self.facing = EnumSide[state["facing"].upper()]
+            except KeyError:
+                logger.println(f"[FATAL][WARN] {self} got unexpected data for facing: {repr(state['facing'])}")
 
         if "in_wall" in state:
             self.in_wall = state["in_wall"] == "true"

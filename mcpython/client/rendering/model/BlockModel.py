@@ -70,25 +70,23 @@ class Model:
             self.texture_addresses[name] = add[i][0]
             self.texture_atlas = add[i][1]
 
-        self.boxmodels = (
+        self.box_models = (
             []
             if not self.parent
-            else [x.copy(new_model=self) for x in self.parent.boxmodels]
+            else [x.copy(new_model=self) for x in self.parent.box_models]
         )
 
         if "elements" in data:
-            self.boxmodels.clear()
+            self.box_models.clear()
             for element in data["elements"]:
-                self.boxmodels.append(
+                self.box_models.append(
                     mcpython.client.rendering.model.BoxModel.BoxModel(element, self)
                 )
 
     def get_prepared_data_for(self, position, config, face):
         if not self.drawable:
             raise NotImplementedError(
-                "can't draw an model '{}' which has not defined textures".format(
-                    self.name
-                )
+                f"can't draw an model '{self.name}' which has not defined textures"
             )
 
         rotation = config["rotation"]
@@ -96,9 +94,9 @@ class Model:
             rotation = (0, 0, 90)
 
         collected_data = [], []
-        boxmodel = None
-        for boxmodel in self.boxmodels:
-            a, b = boxmodel.get_prepared_box_data(
+        box_model = None
+        for box_model in self.box_models:
+            a, b = box_model.get_prepared_box_data(
                 position,
                 rotation,
                 face.rotate((0, -90, 0))
@@ -107,7 +105,7 @@ class Model:
             )
             collected_data[0].extend(a)
             collected_data[1].extend(b)
-        return collected_data, boxmodel
+        return collected_data, box_model
 
     def add_face_to_batch(
         self,
@@ -116,10 +114,10 @@ class Model:
         config: dict,
         face: mcpython.util.enums.EnumSide,
     ):
-        collected_data, boxmodel = self.get_prepared_data_for(position, config, face)
-        if boxmodel is None:
+        collected_data, box_model = self.get_prepared_data_for(position, config, face)
+        if box_model is None:
             return tuple()
-        return boxmodel.add_prepared_data_to_batch(collected_data, batch)
+        return box_model.add_prepared_data_to_batch(collected_data, batch)
 
     def draw_face(
         self,
@@ -127,23 +125,27 @@ class Model:
         config: dict,
         face: mcpython.util.enums.EnumSide,
     ):
-        collected_data, boxmodel = self.get_prepared_data_for(position, config, face)
-        if boxmodel is None:
+        collected_data, box_model = self.get_prepared_data_for(position, config, face)
+        if box_model is None:
             return
-        boxmodel.draw_prepared_data(collected_data)
+        box_model.draw_prepared_data(collected_data)
 
     def get_texture_position(
         self, name: str
     ) -> typing.Optional[typing.Tuple[int, int]]:
         if not self.drawable:
             return 0, 0
+
         if name in self.texture_addresses:
             return self.texture_addresses[name]
+
         if name in self.texture_names:
             return self.get_texture_position(self.texture_names[name])
+
         if name.startswith("#"):
             n = name[1:]
             if n in self.texture_addresses:
                 return self.texture_addresses[n]
+
             if n in self.texture_names:
                 return self.get_texture_position(self.texture_names[n])

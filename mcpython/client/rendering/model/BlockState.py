@@ -271,7 +271,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                 if type(data) == dict:
                     model, config, _ = BlockState.decode_entry(data)
                     model = shared.model_handler.models[model]
-                    for boxmodel in model.boxmodels:
+                    for boxmodel in model.box_models:
                         bbox.bounding_boxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
                                 tuple([e / 16 for e in boxmodel.box_size]),
@@ -291,7 +291,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                             data[instance.block_state]
                         )
                     model = shared.model_handler.models[model]
-                    for boxmodel in model.boxmodels:
+                    for boxmodel in model.box_models:
                         bbox.bounding_boxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
                                 tuple([e / 16 for e in boxmodel.box_size]),
@@ -465,7 +465,7 @@ class DefaultDecoder(IBlockStateDecoder):
             if keymap == data:
                 model, config, _ = blockstate.models[instance.block_state]
                 model = shared.model_handler.models[model]
-                for boxmodel in model.boxmodels:
+                for boxmodel in model.box_models:
                     rotation = config["rotation"]
                     bbox.bounding_boxes.append(
                         mcpython.common.block.BoundingBox.BoundingBox(
