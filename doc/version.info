@@ -1579,6 +1579,8 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed issues with recipe loaders leading into recipe loading issues
 [uuk]: implemented recipe dummies for all other recipe types
 [uuk]: improved texture atlas performance by quite a bit
+[uuk]: fixed & improved biome debug world generator
+[uuk]: added new biome: sunflower plains [no difference to normal plains currently]
 
 
 issues:

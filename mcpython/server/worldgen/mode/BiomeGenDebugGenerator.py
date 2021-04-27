@@ -17,6 +17,7 @@ from mcpython import shared
 import mcpython.server.worldgen.mode.IWorldGenConfig
 import mcpython.server.worldgen.mode.DefaultOverWorldGenerator
 import mcpython.common.mod.ModMcpython
+import mcpython.server.worldgen.WorldGenerationTaskArrays
 
 
 class DebugBiomeWorldGenerator(
@@ -59,13 +60,21 @@ class DebugBiomeWorldGenerator(
         chunk,
     ):
         cx, cz = chunk.position
-        biome_map = chunk.get_value("minecraft:biome_map")
+        biome_map = chunk.get_map("minecraft:biome_map")
+        height_map = chunk.get_map("minecraft:height_map")
+
         for dx in range(16):
             for dz in range(16):
                 x, z = cx * 16 + dx, cz * 16 + dz
-                biome = biome_map[(x, z)]
+                biome = biome_map.get_at_xz(x, z)
                 block = cls.BIOME_TO_BLOCK[biome]
-                chunk.add_block((x, 0, z), block)
+                chunk.add_block((x, 0, z), block, block_update=False, block_update_self=False)
+
+                height_map.set_at_xz(x, z, [(0, 5)])
+
+        if shared.world.get_active_player().gamemode != 3:
+            shared.world.get_active_player().set_gamemode(3)
+        shared.world.get_active_player().flying = True
 
 
 shared.world_generation_handler.register_world_gen_config(DebugBiomeWorldGenerator)
