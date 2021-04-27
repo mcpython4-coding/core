@@ -21,6 +21,7 @@ Toolchain:
 - obfuscator
 - System to dynamically migrate code from deobf <-> obf and up versions [only simple changes]
 - Better custom LaunchWrapper use system
+- PyCharm launch Configuration setup handler for dev env and mdk
 
 Library backend:
 - upgrade to pyglet 2.0 [currently: 2.0dev2]
