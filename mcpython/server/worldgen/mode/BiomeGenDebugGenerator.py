@@ -68,7 +68,9 @@ class DebugBiomeWorldGenerator(
                 x, z = cx * 16 + dx, cz * 16 + dz
                 biome = biome_map.get_at_xz(x, z)
                 block = cls.BIOME_TO_BLOCK[biome]
-                chunk.add_block((x, 0, z), block, block_update=False, block_update_self=False)
+                chunk.add_block(
+                    (x, 0, z), block, block_update=False, block_update_self=False
+                )
 
                 height_map.set_at_xz(x, z, [(0, 5)])
 

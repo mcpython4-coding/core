@@ -188,7 +188,10 @@ def tex_coordinates(x, y, size=(32, 32), region=(0, 0, 1, 1), rot=0) -> tuple:
 
 
 def tex_coordinates_better(
-    *args: typing.Tuple[int, int], size=(32, 32), tex_region=None, rotation=(0, 0, 0, 0, 0, 0)
+    *args: typing.Tuple[int, int],
+    size=(32, 32),
+    tex_region=None,
+    rotation=(0, 0, 0, 0, 0, 0)
 ) -> list:
     """
     This is an better implementation of above tex_coords function. It will return an list of coords instead

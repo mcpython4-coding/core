@@ -63,9 +63,15 @@ changelog of snapshot <21w17a> released on <...> targeting <21w16a>
         - added async world generation process
         - added access system from other processes to the current world
         - reworked how data maps of chunks are done
+        - fixed world generator for debug worlds
+        - added sunflower plains biome
 
     Fluids:
-        - implemented basic fluid API
+        - implemented basic fluid API, including:
+            - a fluid class
+            - a fluid stack
+            - a fluid item container
+            - a fluid block base class
 
     Launch options:
         - added options to disable mod loader, data pack loader, and resource pack loader
@@ -73,6 +79,9 @@ changelog of snapshot <21w17a> released on <...> targeting <21w16a>
 
     Build System:
         - major fixes to the system
+
+    Rendering:
+        - some fixes around rotations in block models
 
 
 changelog of snapshot 21w04a released on 27.01.2021, targeting 21w03a

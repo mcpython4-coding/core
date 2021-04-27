@@ -111,7 +111,9 @@ class LaunchWrapper:
 
         @shared.mod_loader("minecraft", "special:exit")
         def exit():
-            logger.println("[INFO] stopping program as requested. If you the program continues execution, please report this")
+            logger.println(
+                "[INFO] stopping program as requested. If you the program continues execution, please report this"
+            )
             sys.exit()
 
         import mcpython.common.event.Registry
@@ -139,7 +141,9 @@ class LaunchWrapper:
         Loads also the needed API
         todo: move more rendering setup code here
         """
-        assert shared.IS_CLIENT, "can only setup on client, this is set up for being a dedicated server"
+        assert (
+            shared.IS_CLIENT
+        ), "can only setup on client, this is set up for being a dedicated server"
 
         import mcpython.client.rendering.util
 
@@ -242,7 +246,9 @@ class LaunchWrapper:
         (save)
         Will enforce cleanup when possible
         """
-        logger.println("[WARN] Closing the game in a bad way, please make sure that nothing broke...")
+        logger.println(
+            "[WARN] Closing the game in a bad way, please make sure that nothing broke..."
+        )
 
         import mcpython.ResourceLoader
 

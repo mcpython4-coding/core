@@ -1581,6 +1581,7 @@ R   [uuk]: improved world serialization API
 [uuk]: improved texture atlas performance by quite a bit
 [uuk]: fixed & improved biome debug world generator
 [uuk]: added new biome: sunflower plains [no difference to normal plains currently]
+[uuk]: improved fluid API
 
 
 issues:
