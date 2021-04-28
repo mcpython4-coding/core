@@ -42,7 +42,9 @@ class CommandExecutionEnvironment:
         return self.dimension
 
     def get_current_chunk(self):
-        return self.get_dimension().get_chunk_for_position(self.get_this().get_position())
+        return self.get_dimension().get_chunk_for_position(
+            self.get_this().get_position()
+        )
 
     def with_dimension(self, dimension):
         if isinstance(dimension, str):

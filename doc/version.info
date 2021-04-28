@@ -1590,4 +1590,8 @@ R   [uuk]: improved world serialization API
 [uuk]: added clear() method to Chunk's
 [uuk]: added /chunk save for saving the current chunk
 [uuk]: added /chunk visualupdate for updating all visual states of all blocks in that chunk
+[uuk]: started test framework foundation
+[uuk]: end of feature phase for snapshot 21w17a
+[uuk]: dumped target asset version to 21w17a
+[uuk]: released snapshot 21w17a
 

@@ -40,4 +40,6 @@ def init():
     def do_data_gen():
         import mcpython.common.data.gen.DataGeneratorManager as DataGeneratorManager
 
-        instance = DataGeneratorManager.DataGeneratorInstance(shared.mod_loader.mods["{NAME}"].path)
+        instance = DataGeneratorManager.DataGeneratorInstance(
+            shared.mod_loader.mods["{NAME}"].path
+        )

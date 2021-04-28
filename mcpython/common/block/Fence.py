@@ -150,7 +150,9 @@ class AbstractFenceGate(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
             try:
                 self.facing = EnumSide[state["facing"].upper()]
             except KeyError:
-                logger.println(f"[FATAL][WARN] {self} got unexpected data for facing: {repr(state['facing'])}")
+                logger.println(
+                    f"[FATAL][WARN] {self} got unexpected data for facing: {repr(state['facing'])}"
+                )
 
         if "in_wall" in state:
             self.in_wall = state["in_wall"] == "true"

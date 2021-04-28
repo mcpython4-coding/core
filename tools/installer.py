@@ -37,7 +37,7 @@ subprocess.call(
     [
         sys.executable,
         home + "/tools/update_asset_source.py",
-        "https://launcher.mojang.com/v1/objects/f124f2aad604e88f27f010834d82c7af85506b6c/client.jar",
+        "https://launcher.mojang.com/v1/objects/6f0597c8dfef133d59cdce2c629a37f0e259512b/client.jar",
         home if not IS_DEV else home + "/resources/source",
     ],
     stdout=sys.stdout,

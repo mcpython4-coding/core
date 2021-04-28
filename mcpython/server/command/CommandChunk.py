@@ -84,24 +84,18 @@ chunk = (
         CommandNode(DefinedString("delete"))
         .of_name("delete")
         .info("deletes the content of the current chunk")
-        .on_execution(
-            lambda env, data: env.get_current_chunk().clear()
-        )
+        .on_execution(lambda env, data: env.get_current_chunk().clear())
     )
     .than(
         CommandNode(DefinedString("save"))
         .of_name("save")
         .info("saves the current chunk")
-        .on_execution(
-            lambda env, data: env.get_current_chunk().save()
-        )
+        .on_execution(lambda env, data: env.get_current_chunk().save())
     )
     .than(
         CommandNode(DefinedString("visualupdate"))
         .of_name("visual update")
         .info("updates the visible state of all blocks in that chunk")
-        .on_execution(
-            lambda env, data: env.get_current_chunk().update_all_rendering()
-        )
+        .on_execution(lambda env, data: env.get_current_chunk().update_all_rendering())
     )
 )
