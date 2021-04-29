@@ -52,6 +52,7 @@ class EventBus:
         self.popped_event_subscriptions = {}
         self.extra_arguments = (args, kwargs)
         self.crash_on_error = crash_on_error
+        self.close_on_error = True
         self.sub_buses = []
         self.id = shared.NEXT_EVENT_BUS_ID
         shared.NEXT_EVENT_BUS_ID += 1
@@ -104,7 +105,6 @@ class EventBus:
 
         exception_occ = False
         for function, eargs, ekwargs, info in self.event_subscriptions[event_name]:
-            dif = "Exception"
             try:
                 start = time.time()
 
@@ -112,8 +112,6 @@ class EventBus:
                     *list(args) + list(self.extra_arguments[0]) + list(eargs),
                     **{**kwargs, **self.extra_arguments[1], **ekwargs},
                 )
-
-                dif = time.time() - start
             except SystemExit:
                 raise
             except MemoryError:
@@ -131,9 +129,13 @@ class EventBus:
                     "during event:",
                     event_name,
                 )
+
         if exception_occ and self.crash_on_error:
             logger.println("\nout of the above reasons, the game has crashed")
-            sys.exit(-1)
+            if self.close_on_error:
+                sys.exit(-1)
+            else:
+                raise RuntimeError
 
     def call_cancelable(self, event_name: str, *args, **kwargs):
         """

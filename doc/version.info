@@ -1595,3 +1595,6 @@ R   [uuk]: improved world serialization API
 [uuk]: dumped target asset version to 21w17a
 [uuk]: released snapshot 21w17a
 
+[uuk]: tweaked test framework a little bit
+[uuk]: written some more tests for the bases of the system
+

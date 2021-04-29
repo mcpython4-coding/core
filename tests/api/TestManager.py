@@ -63,6 +63,8 @@ class TestStage:
                 print("-", repr(e))
             return False
 
+        print("successful!")
+
         return True
 
 
