@@ -7,5 +7,5 @@ toml==0.10.2
 requests==2.25.1
 deprecation==2.1.0
 simplejson==3.17.2
-black==21.4b1
+black==21.4b2
 Python-NBT==1.2.0
