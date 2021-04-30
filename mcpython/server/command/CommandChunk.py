@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import os
+
 from mcpython.server.command.Builder import Command, CommandNode, Int, DefinedString
 from mcpython import shared
 import mcpython.util.math
@@ -69,8 +71,8 @@ chunk = (
                                         env.get_dimension().get_chunk(x, z)
                                     )
                                     for x, z in itertools.product(
-                                        range(data[2], data[4] + 1),
                                         range(data[3], data[5] + 1),
+                                        range(data[4], data[6] + 1),
                                     )
                                 ]
                             )
@@ -85,6 +87,14 @@ chunk = (
         .of_name("delete")
         .info("deletes the content of the current chunk")
         .on_execution(lambda env, data: env.get_current_chunk().clear())
+        .than(
+            CommandNode(DefinedString("all"))
+            .of_name("all")
+            .info("deletes all chunks in the current dim")
+            .on_execution(
+                lambda env, data: [c.clear() for c in env.get_dimension().chunk_iterator()]
+            )
+        )
     )
     .than(
         CommandNode(DefinedString("save"))
@@ -97,5 +107,19 @@ chunk = (
         .of_name("visual update")
         .info("updates the visible state of all blocks in that chunk")
         .on_execution(lambda env, data: env.get_current_chunk().update_all_rendering())
+    )
+    .than(
+        CommandNode(DefinedString("dumpdatadebug"))
+        .of_name("dump data debug")
+        .info("dumps the debug information")
+        .on_execution(lambda env, data: os.makedirs(shared.home+"/debug_chunk_maps") == env.get_current_chunk().dump_debug_maps(shared.home+"/debug_chunk_maps/debug_map_{}.png"))
+        .than(
+            CommandNode(DefinedString("all"))
+            .of_name("all")
+            .info("dumps all maps to files")
+            .on_execution(
+                lambda env, data: env.get_dimension().dump_debug_maps_all_chunks(shared.home+"/debug_chunk_maps/{}.png")
+            )
+        )
     )
 )

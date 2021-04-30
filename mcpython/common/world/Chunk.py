@@ -555,3 +555,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
     def get_entities(self):
         return self.entities
+
+    def dump_debug_maps(self, file_formatter: str):
+        for m in self.data_maps.values():
+            m.dump_debug_info(file_formatter.format(m.NAME.replace(":", "_")))

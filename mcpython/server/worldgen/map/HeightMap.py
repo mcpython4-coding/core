@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import typing
 from mcpython import shared
+import PIL.Image
 
 
 @shared.world_generation_handler

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import os
 import sys
 import typing
 
@@ -336,3 +337,11 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
 
     def get_name(self) -> str:
         return self.name
+
+    def dump_debug_maps_all_chunks(self, file_formatter: str):
+        os.makedirs(os.path.dirname(file_formatter.format("test")), exist_ok=True)
+        for pos, chunk in self.chunks.items():
+            chunk.dump_debug_maps(file_formatter.format(f"{pos[0]}_{pos[1]}_{{}}"))
+
+    def chunk_iterator(self):
+        return self.chunks.values()

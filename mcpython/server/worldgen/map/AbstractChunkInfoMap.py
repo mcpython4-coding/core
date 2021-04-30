@@ -34,3 +34,6 @@ class AbstractMap(ABC):
 
     def dump_for_saves(self):
         pass
+
+    def dump_debug_info(self, file: str):
+        pass

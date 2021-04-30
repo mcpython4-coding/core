@@ -48,6 +48,13 @@ changelog of snapshot <21w09a> released on <?> targeting <21w17a>
     Test Framework:
         - tweaked some stuff
 
+    Commands:
+        - added /chunk delete all command
+        - added /chunk dumpdatadebug [all] command
+
+    World generation:
+        - added debug helper code for dumping the map structure in image format
+
 
 changelog of snapshot 21w17a released on 28.04.2021 targeting 21w17a
     This snapshot breaks again compatibility, mainly the following:

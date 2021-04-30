@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import typing
 from mcpython import shared
+import PIL.Image
 
 
 @shared.world_generation_handler
@@ -50,3 +51,10 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
 
     def set_at_xz(self, x: int, z: int, temperature: float):
         self.temperature_map[x, z] = temperature
+
+    def dump_debug_info(self, file: str):
+        image = PIL.Image.new("RGBA", (16, 16))
+        for (x, z), temp in self.biome_map.items():
+            image.putpixel((x % 16, z % 16), temp * 255 % 256)
+        image.save(file)
+

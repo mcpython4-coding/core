@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import typing
 from mcpython import shared
+import PIL.Image
 
 
 @shared.world_generation_handler
@@ -64,3 +65,13 @@ class LandMassMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap)
 
     def set_at_xz(self, x: int, z: int, mass: str):
         self.land_mass_map[x, z] = mass
+
+    def dump_debug_info(self, file: str):
+        mass2color = {}
+        image = PIL.Image.new("RGBA", (16, 16))
+        for (x, z), mass in self.biome_map.items():
+            if mass not in mass2color:
+                seed = hash(mass)
+                mass2color[mass] = (seed % 256, seed % (256 ** 2) // 256, seed % (256 ** 3) // (256 ** 2), 255)
+            image.putpixel((x % 16, z % 16), mass2color[mass])
+        image.save(file)

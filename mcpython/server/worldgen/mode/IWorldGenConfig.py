@@ -40,6 +40,10 @@ class SingleBiomeSource(IBiomeSource):
 
 
 class DefaultBiomeSource(IBiomeSource):
+    """
+    The default biome source
+    """
+
     @classmethod
     def get_biome_at(cls, x, z, noises, landmass, config, temperature) -> str:
         v = (

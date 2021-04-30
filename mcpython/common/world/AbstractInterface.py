@@ -408,6 +408,9 @@ class IChunk(ISupportWorldInterface, ABC):
     def entity_iterator(self) -> typing.Iterable:
         raise NotImplementedError
 
+    def dump_debug_maps(self, file_formatter: str):
+        pass
+
 
 class IDimension(ISupportWorldInterface, ABC):
     def __init__(self):
@@ -492,6 +495,12 @@ class IDimension(ISupportWorldInterface, ABC):
         raise NotImplementedError
 
     def get_world(self) -> "IDimension":
+        raise NotImplementedError
+
+    def dump_debug_maps_all_chunks(self, file_formatter: str):
+        pass
+
+    def chunk_iterator(self):
         raise NotImplementedError
 
 
