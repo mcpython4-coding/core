@@ -24,11 +24,11 @@ if sys.version_info.major < 3 or sys.version_info.minor < 9:
 import mcpython.LaunchWrapper
 
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
-wrapper.prepare_client()
 
 
 if __name__ == "__main__":
     try:
+        wrapper.prepare_client()
         wrapper.print_header()
         wrapper.inject_sys_argv(sys.argv)  # load sys.argv
         wrapper.setup()  # do setup stuff

@@ -168,16 +168,20 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         self.draw_profiler = cProfile.Profile()  # todo: move to separated class
         self.tick_profiler = cProfile.Profile()  # todo: move to separated class
 
+        self.keys = key.KeyStateHandler()  # key handler from pyglet
+
+        # todo: move to separated class
+        self.CROSSHAIRS_TEXTURE = None
+
+    def load(self):
         # This call schedules the `update()` method to be called 20 times per sec. This is the main game event loop.
         pyglet.clock.schedule_interval(self.update, 0.05)
         pyglet.clock.schedule_interval(self.print_profiler, 10)
 
         mcpython.client.state.StateHandler.load()  # load the state system
 
-        self.keys = key.KeyStateHandler()  # key handler from pyglet
         self.push_handlers(self.keys)
 
-        # todo: move to separated class
         self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
             mcpython.ResourceLoader.read_image("gui/icons")
             .crop((0, 0, 15, 15))

@@ -40,6 +40,15 @@ class LaunchWrapper:
         self.__side_prepared = True
         shared.IS_CLIENT = self.is_client = True
         shared.NO_WINDOW = "--no-window" in sys.argv
+
+        import mcpython.client.rendering.window
+
+        # todo: move size to config files / sys.argv
+        mcpython.client.rendering.window.Window(
+            width=800, height=600, resizable=True
+        )
+        shared.window.set_caption("mcpython 4 early loading stage")
+
         logger.println("client side")
 
     def prepare_server(self):
@@ -213,12 +222,9 @@ class LaunchWrapper:
         shared.world = mcpython.common.world.World.World()
 
         import pyglet
-        import mcpython.client.rendering.window
 
-        # todo: move size to config files / sys.argv
-        mcpython.client.rendering.window.Window(
-            width=800, height=600, resizable=True
-        ).reset_caption()
+        shared.window.load()
+        shared.window.reset_caption()
 
         if shared.IS_CLIENT:
             try:
