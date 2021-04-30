@@ -36,14 +36,33 @@ def run():
     print("LaunchWrapper creation successful")
 
 
-@api.annotation.TestSetting(99).no_result()
+@api.annotation.TestSetting(99)
 def prepare_client():
+    import mcpython.shared
+
     WRAPPER.prepare_client()
+
+    if mcpython.shared.window is None:
+        print("failed to create window")
+        return False
+
+    import pyglet
+
+    if not isinstance(mcpython.shared.window, pyglet.window.Window):
+        print("window instance is somehow wrong...", mcpython.shared.window)
+        return False
+
     print("client-setup successful")
+    return True
 
 
 @api.annotation.TestSetting(98)
 def test_event_0():
+    """
+    This is the first major test for the event system
+    If everything goes to plan, it will handle the exception and pass it as a RuntimeError back to the event caller
+    """
+
     import mcpython.common.event.EventHandler
     mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.crash_on_error = True
     mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.close_on_error = False
@@ -60,6 +79,8 @@ def test_event_0():
         mcpython.shared.event_handler.call("mcpython:test_framework:test_event_0")
     except RuntimeError:
         return True
+    except ValueError:
+        print("something changed the callback exception to the real one...")
 
     return False
 

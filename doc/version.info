@@ -1597,5 +1597,5 @@ R   [uuk]: improved world serialization API
 
 [uuk]: tweaked test framework a little bit
 [uuk]: written some more tests for the bases of the system
-[uuk]: window is now spawned during client setup instead of some time after
+[uuk]: window is now spawned during client setup instead of some time after, preparing for future rendering stuff
 
