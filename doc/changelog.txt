@@ -55,6 +55,9 @@ changelog of snapshot <21w09a> released on <?> targeting <21w17a>
     World generation:
         - added debug helper code for dumping the map structure in image format
 
+    Modding:
+        - removed the API management system
+
 
 changelog of snapshot 21w17a released on 28.04.2021 targeting 21w17a
     This snapshot breaks again compatibility, mainly the following:
