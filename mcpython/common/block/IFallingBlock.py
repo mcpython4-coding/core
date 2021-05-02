@@ -31,7 +31,7 @@ class IFallingBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
         dim = shared.world.get_dimension_by_name(self.dimension)
         instance = dim.get_block((x, y - 1, z))
         if not instance:
-            shared.entity_handler.spawn_entity(
+            shared.entity_manager.spawn_entity(
                 "minecraft:falling_block", self.position, representing_block=self
             )
             dim.remove_block(self.position)

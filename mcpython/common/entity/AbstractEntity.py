@@ -196,8 +196,8 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         if self.chunk is not None and self in self.chunk.entities:
             self.chunk.entities.remove(self)
 
-        if self.uuid in shared.entity_handler.entity_map:
-            del shared.entity_handler.entity_map[self.uuid]
+        if self.uuid in shared.entity_manager.entity_map:
+            del shared.entity_manager.entity_map[self.uuid]
 
     def pick_up_item(
         self, itemstack: mcpython.common.container.ResourceStack.ItemStack

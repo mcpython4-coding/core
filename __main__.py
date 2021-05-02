@@ -24,6 +24,7 @@ if sys.version_info.major < 3 or sys.version_info.minor < 9:
 
 # LaunchWrapper is the system for launching the game
 import mcpython.LaunchWrapper
+
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
 
 

@@ -11,12 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared, logger
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 
 
-class EntityHandler:
+class EntityManager:
     """
     Handler for entities in the current world
     """
@@ -33,10 +35,11 @@ class EntityHandler:
     def add_entity_cls(self, registry, entity_cls):
         if shared.IS_CLIENT:
             entity_cls.init_renderers()
+        return self
 
     def spawn_entity(
         self,
-        name,
+        name: typing.Union[str, typing.Any],
         position,
         *args,
         dimension=None,
@@ -44,28 +47,34 @@ class EntityHandler:
         check_summon=False,
         **kwargs
     ):
-        if name not in self.registry.entries:
-            raise ValueError("unknown entity type name: '{}'".format(name))
+        if isinstance(name, str):
+            if name not in self.registry.entries:
+                raise ValueError("unknown entity type name: '{}'".format(name))
 
-        if dimension is None:
-            dimension = shared.world.get_active_dimension()
+            if dimension is None:
+                dimension = shared.world.get_active_dimension()
 
-        if type(dimension) in (str, int):
-            dimension = shared.world.get_dimension(dimension)
+            if type(dimension) in (str, int):
+                dimension = shared.world.get_dimension(dimension)
 
-        entity_cls = self.registry.entries[name]
+            entity_cls = self.registry.entries[name]
 
-        if not entity_cls.SUMMON_ABLE and check_summon:
-            logger.println(
-                "[WARN] tried to summon an not-summon-able entity named '{}' at '{}'".format(
-                    name, position
+            if not entity_cls.SUMMON_ABLE and check_summon:
+                logger.println(
+                    "[WARN] tried to summon a not-summon-able entity named '{}' at '{}'".format(
+                        name, position
+                    )
                 )
-            )
-            return
+                return
 
-        entity = entity_cls.create_new(position, *args, dimension=dimension, **kwargs)
+            entity = entity_cls.create_new(position, *args, dimension=dimension, **kwargs)
+
+        else:
+            entity = name
+
         if uuid is not None:
             entity.uuid = uuid
+
         self.entity_map[entity.uuid] = entity
         entity.teleport(entity.position, force_chunk_save_update=True)
 
@@ -73,12 +82,15 @@ class EntityHandler:
 
     def tick(self, dt: float):
         # todo: move to dimensions
+        # todo: move most of this here to entity
 
         for entity in list(self.entity_map.values()):
             entity.tick(dt)
+
+            # update the positions of the children
             if (
                 entity.parent is None and entity.child is not None
-            ):  # update the positions of the children
+            ):
                 x, y, z = entity.position
                 y += entity.entity_height
                 child = entity.child
@@ -88,11 +100,12 @@ class EntityHandler:
                     y += child.entity_height
                     child = child.child
 
+            # check if it has fallen to far down so it should be killed
             if not entity.nbt_data["invulnerable"] and entity.position[1] < -1000 + (
                 entity.dimension.get_dimension_range()[0]
                 if entity.dimension is not None
                 else 0
-            ):  # check if it has fallen to far down so it should be killed
+            ):
                 entity.kill()
 
             # todo: add collision & falling system
@@ -109,10 +122,13 @@ class EntityHandler:
                     )
                 )
 
+        # At the end, discard all entities here; Errors may arise when above handles an exception
+        # and the entity is not removed
+        # todo: add indicator at entity to not delete itself than!
         self.entity_map.clear()
 
 
-shared.entity_handler = EntityHandler()
+shared.entity_manager = EntityManager()
 
 
 def load():

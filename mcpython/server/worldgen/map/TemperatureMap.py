@@ -57,4 +57,3 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
         for (x, z), temp in self.biome_map.items():
             image.putpixel((x % 16, z % 16), temp * 255 % 256)
         image.save(file)
-

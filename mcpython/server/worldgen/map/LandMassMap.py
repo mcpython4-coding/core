@@ -72,6 +72,11 @@ class LandMassMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap)
         for (x, z), mass in self.biome_map.items():
             if mass not in mass2color:
                 seed = hash(mass)
-                mass2color[mass] = (seed % 256, seed % (256 ** 2) // 256, seed % (256 ** 3) // (256 ** 2), 255)
+                mass2color[mass] = (
+                    seed % 256,
+                    seed % (256 ** 2) // 256,
+                    seed % (256 ** 3) // (256 ** 2),
+                    255,
+                )
             image.putpixel((x % 16, z % 16), mass2color[mass])
         image.save(file)

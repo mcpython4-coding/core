@@ -16,10 +16,6 @@ import typing
 import mcpython.common.event.Registry
 
 
-class IFactory:
-    pass
-
-
 class IFactoryModifier:
     def __init__(self):
         self.subscriber = []
@@ -27,7 +23,7 @@ class IFactoryModifier:
     def on_apply(
         self,
         target: typing.Callable[
-            [IFactory, mcpython.common.event.Registry.IRegistryContent],
+            [typing.Any, mcpython.common.event.Registry.IRegistryContent],
             mcpython.common.event.Registry.IRegistryContent,
         ],
     ):
@@ -35,7 +31,7 @@ class IFactoryModifier:
 
     def apply(
         self,
-        factory: IFactory,
+        factory,
         instance: mcpython.common.event.Registry.IRegistryContent,
     ) -> mcpython.common.event.Registry.IRegistryContent:
         for target in self.subscriber:

@@ -89,13 +89,15 @@ class Registry:
                 )
             )
             return
+
         if obj.NAME == "minecraft:unknown_registry_content":
             logger.print_stack(
                 "can't register unnamed object '{}'".format(obj),
                 "every registry object MUST have an unique name",
             )
             return
-        if obj.NAME in self.entries and override_existing:
+
+        if obj.NAME in self.entries and not override_existing:
             logger.println(
                 "[INFO] skipping register of {} named '{}' into registry '{}' as currently arrival".format(
                     obj, obj.NAME, self.name
@@ -105,11 +107,17 @@ class Registry:
 
         self.entries[obj.NAME] = obj
         self.full_entries[obj.NAME] = obj
+
         if hasattr(obj.NAME, "split"):
             self.full_entries[obj.NAME.split(":")[-1]] = obj
+
         if self.injection_function:
             self.injection_function(self, obj)
+
+        # Call the event function on the object
         obj.on_register(self)
+
+        return obj
 
     def entries_iterator(self) -> typing.Iterable[IRegistryContent]:
         if self.locked:

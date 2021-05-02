@@ -225,7 +225,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             typing.Tuple[float, float, float],
             mcpython.common.block.AbstractBlock.AbstractBlock,
         ],
-        **kwargs
+        **kwargs,
     ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
         """
         Gets an chunk for an position

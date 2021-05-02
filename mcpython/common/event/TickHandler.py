@@ -59,7 +59,7 @@ class TickHandler:
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
                     return
-        shared.entity_handler.tick(dt)
+        shared.entity_manager.tick(dt)
         shared.inventory_handler.tick(dt)
         shared.world.tick()
         # todo: include command info here!

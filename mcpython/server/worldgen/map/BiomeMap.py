@@ -83,6 +83,11 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         for (x, y, z), biome in self.biome_map.items():
             if biome not in biome2color:
                 seed = hash(biome)
-                biome2color[biome] = (seed % 256, seed % (256 ** 2) // 256, seed % (256 ** 3) // (256 ** 2), 255)
+                biome2color[biome] = (
+                    seed % 256,
+                    seed % (256 ** 2) // 256,
+                    seed % (256 ** 3) // (256 ** 2),
+                    255,
+                )
             image.putpixel((x % 16, z % 16), biome2color[biome])
         image.save(file)

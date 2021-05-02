@@ -64,6 +64,7 @@ def test_event_0():
     """
 
     import mcpython.common.event.EventHandler
+
     mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.crash_on_error = True
     mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.close_on_error = False
     import mcpython.shared

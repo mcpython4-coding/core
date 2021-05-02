@@ -65,7 +65,7 @@ crafting_handler = None  # the crafting manager instance
 tag_handler = None  # the tag handler instance
 dimension_handler = None  # the dimension handler instance
 loot_table_handler = None  # the loot table manager instance
-entity_handler = None  # the entity manager instance
+entity_manager = None  # the entity manager instance
 
 model_handler = None  # the model handler instance, client-only
 

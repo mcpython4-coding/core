@@ -100,7 +100,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         if not override and name in self.players:
             return self.players[name]
-        self.players[name] = shared.entity_handler.spawn_entity(
+        self.players[name] = shared.entity_manager.spawn_entity(
             "minecraft:player", (0, 0, 0), name
         )
         if add_inventories:
@@ -421,7 +421,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             inv.clear()
         self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
         shared.world_generation_handler.task_handler.clear()
-        shared.entity_handler.clear()
+        shared.entity_manager.clear()
         self.players.clear()
         if filename is not None:
             self.setup_by_filename(filename)

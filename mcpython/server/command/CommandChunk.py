@@ -92,7 +92,9 @@ chunk = (
             .of_name("all")
             .info("deletes all chunks in the current dim")
             .on_execution(
-                lambda env, data: [c.clear() for c in env.get_dimension().chunk_iterator()]
+                lambda env, data: [
+                    c.clear() for c in env.get_dimension().chunk_iterator()
+                ]
             )
         )
     )
@@ -112,13 +114,20 @@ chunk = (
         CommandNode(DefinedString("dumpdatadebug"))
         .of_name("dump data debug")
         .info("dumps the debug information")
-        .on_execution(lambda env, data: os.makedirs(shared.home+"/debug_chunk_maps") == env.get_current_chunk().dump_debug_maps(shared.home+"/debug_chunk_maps/debug_map_{}.png"))
+        .on_execution(
+            lambda env, data: os.makedirs(shared.home + "/debug_chunk_maps")
+            == env.get_current_chunk().dump_debug_maps(
+                shared.home + "/debug_chunk_maps/debug_map_{}.png"
+            )
+        )
         .than(
             CommandNode(DefinedString("all"))
             .of_name("all")
             .info("dumps all maps to files")
             .on_execution(
-                lambda env, data: env.get_dimension().dump_debug_maps_all_chunks(shared.home+"/debug_chunk_maps/{}.png")
+                lambda env, data: env.get_dimension().dump_debug_maps_all_chunks(
+                    shared.home + "/debug_chunk_maps/{}.png"
+                )
             )
         )
     )

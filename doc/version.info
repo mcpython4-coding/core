@@ -1602,4 +1602,6 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed /chunk generate area command crashing due to wrong argument parsing
 [uuk]: added /chunk delete all command
 [uuk]: removed APIManager
+[uuk]: fixed wrong override condition in Registry.py
+[uuk]: EntityManager.spawn_entity() accepts now also an entity instance
 

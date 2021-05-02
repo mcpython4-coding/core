@@ -44,9 +44,7 @@ class LaunchWrapper:
         import mcpython.client.rendering.window
 
         # todo: move size to config files / sys.argv
-        mcpython.client.rendering.window.Window(
-            width=800, height=600, resizable=True
-        )
+        mcpython.client.rendering.window.Window(width=800, height=600, resizable=True)
         shared.window.set_caption("mcpython 4 early loading stage")
 
         logger.println("client side")

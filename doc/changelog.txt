@@ -45,6 +45,9 @@ information on development:
 
 
 changelog of snapshot <21w09a> released on <?> targeting <21w17a>
+    This snapshot again breaks backwards compatibility.
+    We have refactored again some stuff
+
     Test Framework:
         - tweaked some stuff
 
