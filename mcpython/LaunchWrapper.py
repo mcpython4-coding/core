@@ -55,6 +55,11 @@ class LaunchWrapper:
         self.__side_prepared = True
         shared.IS_CLIENT = self.is_client = False
         shared.NO_WINDOW = True
+
+        # todo: fake-window here!
+        import mcpython.client.rendering.window
+        mcpython.client.rendering.window.Window()
+
         logger.println("server side")
 
     def inject_sys_argv(self, argv: typing.List[str]):
@@ -221,8 +226,9 @@ class LaunchWrapper:
 
         import pyglet
 
-        shared.window.load()
-        shared.window.reset_caption()
+        if shared.window is not None:
+            shared.window.load()
+            shared.window.reset_caption()
 
         if shared.IS_CLIENT:
             try:
