@@ -602,12 +602,16 @@ DEFAULT_BUILD_INSTANCE.add_stage(
 
 def main(*argv):
     build_name = input("build name: ") if len(argv) == 0 else argv[0]
-    with open(HOME + "/config.json") as f:
-        config = json.load(f)
 
-    output_folder = config.setdefault("output_folder", HOME + "/builds")
+    if os.path.exists(HOME+"/config.json"):
+        with open(HOME + "/config.json") as f:
+            config = json.load(f)
 
-    print("writing to", output_folder + "/" + build_name)
+        output_folder = config.setdefault("output_folder", HOME + "/builds/" + build_name)
+    else:
+        output_folder = input("output folder: ")
+
+    print("writing to", output_folder)
     config["version_id"] += 1
     version_id = config["version_id"]
 
@@ -616,7 +620,7 @@ def main(*argv):
 
     DEFAULT_BUILD_INSTANCE.build_name = build_name
     DEFAULT_BUILD_INSTANCE.version_id = version_id
-    DEFAULT_BUILD_INSTANCE.run(os.path.dirname(HOME), output_folder + "/" + build_name)
+    DEFAULT_BUILD_INSTANCE.run(os.path.dirname(HOME), output_folder)
 
 
 if __name__ == "__main__":
