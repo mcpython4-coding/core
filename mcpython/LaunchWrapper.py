@@ -58,6 +58,7 @@ class LaunchWrapper:
 
         # todo: fake-window here!
         import mcpython.client.rendering.window
+
         mcpython.client.rendering.window.Window()
 
         logger.println("server side")

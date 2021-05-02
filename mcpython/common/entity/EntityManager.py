@@ -67,7 +67,9 @@ class EntityManager:
                 )
                 return
 
-            entity = entity_cls.create_new(position, *args, dimension=dimension, **kwargs)
+            entity = entity_cls.create_new(
+                position, *args, dimension=dimension, **kwargs
+            )
 
         else:
             entity = name
@@ -88,9 +90,7 @@ class EntityManager:
             entity.tick(dt)
 
             # update the positions of the children
-            if (
-                entity.parent is None and entity.child is not None
-            ):
+            if entity.parent is None and entity.child is not None:
                 x, y, z = entity.position
                 y += entity.entity_height
                 child = entity.child

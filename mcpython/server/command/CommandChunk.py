@@ -103,12 +103,33 @@ chunk = (
         .of_name("save")
         .info("saves the current chunk")
         .on_execution(lambda env, data: env.get_current_chunk().save())
+        .than(
+            CommandNode(DefinedString("all"))
+            .of_name("all")
+            .info("saves all chunks in the current dimension")
+            .on_execution(
+                lambda env, data: [
+                    c.save() for c in env.get_dimension().chunk_iterator()
+                ]
+            )
+        )
     )
     .than(
         CommandNode(DefinedString("visualupdate"))
         .of_name("visual update")
         .info("updates the visible state of all blocks in that chunk")
         .on_execution(lambda env, data: env.get_current_chunk().update_all_rendering())
+        .than(
+            CommandNode(DefinedString("all"))
+            .of_name("all")
+            .info("visual-updates all chunks in the current dimension")
+            .on_execution(
+                lambda env, data: [
+                    c.update_all_rendering()
+                    for c in env.get_dimension().chunk_iterator()
+                ]
+            )
+        )
     )
     .than(
         CommandNode(DefinedString("dumpdatadebug"))

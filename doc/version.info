@@ -1604,4 +1604,5 @@ R   [uuk]: improved world serialization API
 [uuk]: removed APIManager
 [uuk]: fixed wrong override condition in Registry.py
 [uuk]: EntityManager.spawn_entity() accepts now also an entity instance
+[uuk]: extended visualupdate and save subcommand of /chunk to have an "all" variant
 
