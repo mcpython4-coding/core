@@ -18,15 +18,14 @@ import sys
 
 from mcpython import shared
 
-MC_VERSION_BASE = "21w17a"
-VERSION_TYPE = "snapshot"
-
 
 with open(shared.local + "/version.json") as f:
     data = json.load(f)
 
 VERSION_ID = data["id"]
 VERSION_NAME = data["name"]
+MC_VERSION_BASE = data["mc_version"]
+VERSION_TYPE = data["version_type"]
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE

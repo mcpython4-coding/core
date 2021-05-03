@@ -525,14 +525,17 @@ class CustomCodePatcher(AbstractBuildStage):
                 "IS_DEV = True".encode("utf-8"), "IS_DEV = False".encode("UTF-8"), 1
             ),
         )
-        # data = json.loads(view.read("version.json").decode("utf-8"))
+        data = json.loads(view.read("version.json").decode("utf-8"))
+        data.update(
+            {
+                "name": build_manager.build_name,
+                "id": build_manager.version_id,
+            }
+        )
         view.write(
             "version.json",
             json.dumps(
-                {
-                    "name": build_manager.build_name,
-                    "id": build_manager.version_id,
-                },
+                data,
                 indent="  ",
             ).encode("utf-8"),
         )
