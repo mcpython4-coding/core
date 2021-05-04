@@ -1606,4 +1606,6 @@ R   [uuk]: improved world serialization API
 [uuk]: EntityManager.spawn_entity() accepts now also an entity instance
 [uuk]: extended visualupdate and save subcommand of /chunk to have an "all" variant
 [uuk]: exported some more version constants to version.json
+[uuk]: EntityRenderer is now more open to render without a real entity instance, only with the position,
+       as most of the functions require only the position
 

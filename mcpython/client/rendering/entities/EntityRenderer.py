@@ -70,8 +70,8 @@ class EntityRenderer:
         self.box_models.clear()
         self.states.clear()
         reloaded = []
-        for boxname in self.data["boxes"]:
-            box = self.data["boxes"][boxname]
+        for box_name in self.data["boxes"]:
+            box = self.data["boxes"][box_name]
             texture = box["texture"]
             self.texture_size = box["texture_size"]
             if texture in TEXTURES and texture in reloaded:
@@ -114,7 +114,7 @@ class EntityRenderer:
                     for e in box["uv"]
                 ]
             self.box_models[
-                boxname
+                box_name
             ] = mcpython.client.rendering.model.BoxModel.BaseBoxModel(
                 box["position"] if "position" in box else (0, 0, 0),
                 tuple([e / 16 for e in box["size"]]),
@@ -127,15 +127,16 @@ class EntityRenderer:
             d = self.data["states"][state]
             self.states[state] = d["boxes"]
 
-    def draw(self, entity, state, rotation=(0, 0, 0), part_rotation=None):
+    def draw(self, entity_or_position, state, rotation=(0, 0, 0), part_rotation=None):
         """
-        draws the EntityRenderer
-        :param entity: the entity to render
-        :param state: the state to render
-        :param rotation: the rotation to use
-        :param part_rotation: the rotation of every part
+        Draws the EntityRenderer at the given position
+        :param entity_or_position: the entity to render or the position to render at
+        :param state: the state to render, as in the model of the entity
+        :param rotation: the rotation to use; as (rx, ry, rz)
+        :param part_rotation: the rotation of every part, as a dict of model part -> (rx, ry, rz), calculated onto
+            the "other" rotations
         """
-        x, y, z = entity.position
+        x, y, z = entity_or_position.position if not isinstance(entity_or_position, tuple) else entity_or_position
         for ibox, d in enumerate(self.states[state]):
             box = self.box_models[d["box"]]
             rotation_2 = (0, 0, 0) if "rotation" not in d else d["rotation"]
@@ -160,14 +161,22 @@ class EntityRenderer:
 
     def draw_box(
         self,
-        entity,
-        boxname,
+        entity_or_position,
+        box_name: str,
         position=(0, 0, 0),
         rotation=(0, 0, 0),
         rotation_center=(0, 0, 0),
     ):
-        x, y, z = entity.position
-        box = self.box_models[boxname]
+        """
+        Renders a single box of the model
+        :param entity_or_position: the position to render at or the entity to render
+        :param box_name: the box name
+        :param position: the offset
+        :param rotation: the rotation
+        :param rotation_center: the center to rotate around
+        """
+        x, y, z = entity_or_position.position if not isinstance(entity_or_position, tuple) else entity_or_position
+        box = self.box_models[box_name]
         box.draw(
             (x + position[0], y + position[1], z + position[2]),
             rotation=rotation,
@@ -175,20 +184,23 @@ class EntityRenderer:
         )
 
     def add_to_batch(
-        self, batch, entity, state, rotation=(0, 0, 0), part_rotation=None
+        self, batch: pyglet.graphics.Batch, entity_or_position, state, rotation=(0, 0, 0), part_rotation=None
     ):
         """
-        adds the entity to an batch. Useful mostly for static entities like static complex block elements
+        Adds the entity to a batch. Useful mostly for static entities like static complex block elements
+
+        WARNING: this is not-mutable
+        WARNING: batch  M U S T  be rendered in an 3d environment with, if the texture needs it, alpha enabled
+
         :param batch: the batch to use
-        :param entity: the entity to add
+        :param entity_or_position: the entity to add
         :param state: the state to add
         :param rotation: the rotation to use
         :param part_rotation: the rotation of every part
         :return: an list of vertex-objects created with the batch
-        WARNING: batch  M U S T  be rendered in an 3d environment with, if the texture needs it, alpha enabled
         """
         data = []
-        x, y, z = entity.position
+        x, y, z = entity_or_position.position if not isinstance(entity_or_position, tuple) else entity_or_position
         for d in self.states[state]:
             box = self.box_models[d["box"]]
             rotation_2 = (0, 0, 0) if "rotation" not in d else d["rotation"]

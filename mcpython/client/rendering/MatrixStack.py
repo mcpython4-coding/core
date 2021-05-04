@@ -18,7 +18,7 @@ from mcpython.util.annotation import onlyInClient
 @onlyInClient()
 class MatrixStack:
     """
-    class handling an configuration of transformations for applying
+    Class handling an configuration of transformations for applying
     todo: optimise
     todo: use pyglet.matrix instead [pyglet 2 needed]
     """
@@ -142,7 +142,7 @@ class LinkedMatrixStack(MatrixStack):
 
     def apply(self):
         """
-        will apply the configuration onto the system. Will reset all present transformations
+        Will apply the configuration onto the system. Will reset all present transformations
         """
         _gl.glLoadIdentity()
         for opcode, *d in self.operation_stack:
@@ -154,6 +154,7 @@ class LinkedMatrixStack(MatrixStack):
                         else d[0]()
                     )
                 )
+
             elif opcode == 1:
                 _gl.glRotated(
                     *(
@@ -162,8 +163,10 @@ class LinkedMatrixStack(MatrixStack):
                         else d[0]()
                     )
                 )
+
             elif opcode == 2:
                 _gl.glScaled(*[e if not callable(e) else e() for e in d])
+
             elif opcode == 3:
                 _gl.glViewport(
                     *(
@@ -172,10 +175,13 @@ class LinkedMatrixStack(MatrixStack):
                         else d[0]()
                     )
                 )
+
             elif opcode == 4:
                 _gl.glMatrixMode(d[0] if not callable(d[0]) else d[0]())
+
             elif opcode == 5:
                 _gl.glLoadIdentity()
+
             elif opcode == 6:
                 _gl.gluPerspective(
                     *(

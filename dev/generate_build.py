@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+# This system is a general-use-case build system written in python
+# It contains some common tasks for creating builds
 import os
 import shutil
 import subprocess
@@ -578,17 +580,25 @@ DEFAULT_BUILD_INSTANCE.add_stage(FilePrefixRenamerTask("resources/generated/", "
 DEFAULT_BUILD_INSTANCE.add_stage(FilePrefixRenamerTask("resources/main/", ""))
 DEFAULT_BUILD_INSTANCE.add_stage(FilePrefixRenamerTask("licences/", ""))
 
-# General stuff not needed
-
+# We are now at a point where the project is ready for its first build, but we need to patch some stuff
+# beforehand
 DEFAULT_BUILD_INSTANCE.add_stage(CustomCodePatcher())
+
+# Dev build is this
 DEFAULT_BUILD_INSTANCE.add_stage(DumpTask("dev.zip", as_zip=True))
+
+# We split of the file view, filter it and dump it as dedicated
 DEFAULT_BUILD_INSTANCE.add_stage(
     BuildSplitStage(CLIENT_FILE_STRIPPER, DumpTask("dedicated.zip", as_zip=True))
 )
+
+# We split again (for no reason here) and do some more tasks
 DEFAULT_BUILD_INSTANCE.add_stage(
     BuildSplitStage(
+        # minify the code & the json files
         PyMinifierTask(),
         JsonMinifierTask(),
+        # filter out some files not needed
         FileFilterTask(
             lambda file: not (
                 file.startswith("tools/mdk")
@@ -604,6 +614,11 @@ DEFAULT_BUILD_INSTANCE.add_stage(
 
 
 def main(*argv):
+    """
+    Launcher for the default build configuration for mcpython
+    :param argv: argv, as passed to sys.argv
+    First element may be build name, second may be output folder
+    """
     build_name = input("build name: ") if len(argv) == 0 else argv[0]
 
     if os.path.exists(HOME+"/config.json"):
@@ -612,7 +627,7 @@ def main(*argv):
 
         output_folder = config.setdefault("output_folder", HOME + "/builds/" + build_name)
     else:
-        output_folder = input("output folder: ")
+        output_folder = input("output folder: ") if len(argv) <= 1 else argv[1]
 
     print("writing to", output_folder)
     config["version_id"] += 1

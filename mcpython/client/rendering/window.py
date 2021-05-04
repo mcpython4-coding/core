@@ -152,9 +152,8 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             color=(0, 0, 0, 255),
         )
 
-        self.cpu_usage = psutil.cpu_percent(
-            interval=None
-        )  # todo: move to separated class
+        # todo: move to separated class
+        self.cpu_usage = psutil.cpu_percent(interval=None)
         self.cpu_usage_timer = 0  # todo: move to separated class
 
         # storing mouse information todo: use pyglet's mouse handler
@@ -197,7 +196,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
     def print_profiler(self, dt=None):
         """
-        will print the enabled profiler(s)
+        Will print the enabled profiler(s)
         todo: move to separated Profiler class
         """
         if not mcpython.common.config.ENABLE_PROFILING:
@@ -213,7 +212,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
     def reset_caption(self):
         """
-        will set the caption of the window to the default one
+        Will set the caption of the window to the default one
         """
         self.set_caption(
             "mcpython 4 - {}".format(mcpython.common.config.FULL_VERSION_NAME)
@@ -279,6 +278,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             and mcpython.common.config.ENABLE_PROFILING
         ):
             self.tick_profiler.enable()
+
         shared.event_handler.call("gameloop:tick:start", dt)
 
         self.cpu_usage_timer += dt
@@ -300,6 +300,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             for x in shared.state_handler.active_state.parts
         ):
             shared.world_generation_handler.task_handler.process_tasks(timer=0.02)
+
         sector = position_to_chunk(shared.world.get_active_player().position)
         if sector != self.sector:
             pyglet.clock.schedule_once(
@@ -310,6 +311,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             self.sector = sector
 
         shared.event_handler.call("gameloop:tick:end", dt)
+
         if (
             mcpython.common.config.ENABLE_PROFILER_TICK
             and mcpython.common.config.ENABLE_PROFILING
@@ -693,21 +695,23 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
     def on_text(self, text: str):
         """
-        called by pyglet with decoded key values when an text is entered
+        Called by pyglet with decoded key values when an text is entered
         :param text: the text entered
         """
         shared.event_handler.call("user:keyboard:enter", text)
 
     def on_close(self):
         """
-        called when the window tries to close itself
+        Called when the window tries to close itself
         cleans up some stuff before closing
         """
         if shared.world.save_file.save_in_progress:
             return
+
         if shared.world.world_loaded:
             # have we an world which should be saved?
             shared.world.get_active_player().inventory_main.remove_items_from_crafting()
             shared.world.save_file.save_world(override=True)
+
         self.set_fullscreen(False)
         self.close()
