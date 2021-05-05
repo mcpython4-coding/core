@@ -28,19 +28,23 @@ class StateModLoading(State.State):
 
     def get_parts(self) -> list:
         return [
+            # stage
             UIPartProgressBar.UIPartProgressBar(
                 (20, 10), (20, 20), status=1, color=(1.0, 0.0, 0.0)
-            ),  # stage
+            ),
+            # mod
             UIPartProgressBar.UIPartProgressBar(
                 (20, 40), (20, 20), status=1, color=(0.0, 0.0, 1.0)
-            ),  # mod
+            ),
+            # item
             UIPartProgressBar.UIPartProgressBar(
                 (20, 70), (20, 20), status=1, color=(0.0, 1.0, 0.0)
-            ),  # item
+            ),
+            # memory usage
             UIPartProgressBar.UIPartProgressBar(
                 (20, 10),
                 (20, 20),
-                status=1,  # memory usage
+                status=1,
                 color=(1.0, 0.0, 0.0),
                 progress_items=psutil.virtual_memory().total,
             ),

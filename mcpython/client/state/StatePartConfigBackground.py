@@ -37,6 +37,7 @@ class BackgroundHandler:
     def recreate(cls, wx, wy):
         if cls.old_win_size == (wx, wy):
             return
+
         cls.old_win_size = (wx, wy)
         [obj.delete() for obj in cls.objects]
         cls.objects.clear()
