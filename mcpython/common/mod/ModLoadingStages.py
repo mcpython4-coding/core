@@ -63,6 +63,11 @@ class LoadingStageManager:
 
 
 class LoadingStage:
+    """
+    A single LoadingStage instance
+    Used for holding information about the stage
+    """
+
     def __init__(self, name: str, user_facing_name: str, *dependencies: str):
         # todo: add option for client-only here
 
@@ -93,6 +98,7 @@ class LoadingStage:
         )
         self.current_progress += 1
         self.active_mod_index = 0
+        return self
 
     def finished(self):
         return not (self.order.is_active() or len(self.event_scheduled))
@@ -165,35 +171,38 @@ class LoadingStage:
         else:
             astate.parts[2].progress_max = 0
 
+    def prepare_next_stage(self, astate):
+        self.active_mod_index = 0
+
+        if self.finished():
+            return self.finish(astate)
+
+        self.next_event()
+        mod_instance = shared.mod_loader.mods[
+            shared.mod_loader.mod_loading_order[self.active_mod_index]
+        ]
+        self.max_progress = (
+            len(mod_instance.eventbus.event_subscriptions[self.active_event])
+            if self.active_event in mod_instance.eventbus.event_subscriptions
+            else 0
+        )
+        astate.parts[2].progress_max = self.max_progress
+        astate.parts[2].progress = 0
+
     def call_one(self, astate):
         """
         Will call one event from the stack
         :param astate: the state to use
+
+        todo: split into smaller parts!
         """
         if self.active_event is None:
             self.finish(astate)
             return
 
-        if self.active_mod_index >= len(shared.mod_loader.mods):
-            self.active_mod_index = 0
-            if self.finished():
-                return self.finish(astate)
-            self.next_event()
-            mod_instance = shared.mod_loader.mods[
-                shared.mod_loader.mod_loading_order[self.active_mod_index]
-            ]
-            self.max_progress = (
-                len(mod_instance.eventbus.event_subscriptions[self.active_event])
-                if self.active_event in mod_instance.eventbus.event_subscriptions
-                else 0
-            )
-            astate.parts[2].progress_max = self.max_progress
-            astate.parts[2].progress = 0
-            return
-
-        if self.active_event is None:
-            self.next_event()
-            self.active_mod_index = 0
+        # todo: modloader needs a constant for the count of loaded mods
+        if self.active_mod_index >= len(shared.mod_loader.mods) or self.active_event is None:
+            self.prepare_next_stage(astate)
 
         modname = shared.mod_loader.mod_loading_order[self.active_mod_index]
         mod_instance = shared.mod_loader.mods[modname]
