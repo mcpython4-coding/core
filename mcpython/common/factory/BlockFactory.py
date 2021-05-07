@@ -15,13 +15,13 @@ import pickle
 import typing
 
 import mcpython.common.block.AbstractBlock
-import mcpython.common.block.Walls as BlockWall
 import mcpython.common.block.BoundingBox
+import mcpython.common.block.Fence as BlockFence
 import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
 import mcpython.common.block.ILog as ILog
 import mcpython.common.block.ISlab as ISlab
-import mcpython.common.block.Fence as BlockFence
+import mcpython.common.block.Walls as BlockWall
 import mcpython.common.container.ResourceStack
 import mcpython.common.factory.FactoryBuilder
 import mcpython.common.factory.IFactoryModifier

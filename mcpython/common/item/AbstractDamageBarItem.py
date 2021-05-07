@@ -14,9 +14,8 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import pyglet
-
 import mcpython.common.item.AbstractItem
+import pyglet
 
 
 class AbstractDamageBarItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):

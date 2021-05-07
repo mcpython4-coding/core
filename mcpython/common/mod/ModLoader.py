@@ -19,8 +19,6 @@ import time
 import typing
 import zipfile
 
-import toml
-
 import mcpython.client.state.StateModLoading
 import mcpython.common.config
 import mcpython.common.event.EventHandler
@@ -28,8 +26,8 @@ import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
 import mcpython.ResourceLoader
 import mcpython.util.math
-from mcpython import logger
-from mcpython import shared
+import toml
+from mcpython import logger, shared
 
 
 class ModLoader:

@@ -11,12 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import math
+
+import pyglet
+
 # This is an semi-stable API for drawing stuff on the screen.
 # todo: implement via pyglet's shape module & use batches
 # todo: use geometry shaders after pyglet 2.0
 import pyglet.gl as gl
-import pyglet
-import math
 
 
 def draw_rectangle(position, size, color=(0.0, 0.0, 0.0)):

@@ -15,10 +15,6 @@ This project is not official by mojang and does not relate to it.
 # todo: make class-based
 # todo: make more fail-save
 
-# file licensed under the licence in licenses/LICENSE_mcskinview
-# modified for this project to match the overall system
-# modified for newer skin textures
-from mcpython.util.url import get_url
 import json
 import os
 import shutil
@@ -26,8 +22,12 @@ from base64 import b64decode
 
 import PIL.Image
 import requests
+from mcpython import logger, shared
 
-from mcpython import shared, logger
+# file licensed under the licence in licenses/LICENSE_mcskinview
+# modified for this project to match the overall system
+# modified for newer skin textures
+from mcpython.util.url import get_url
 
 DEBUG = False
 SIMULATE = False

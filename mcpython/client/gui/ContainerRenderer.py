@@ -11,16 +11,16 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import random
 import typing
+import uuid
 from abc import ABC
 
-from mcpython import shared, logger
-import pyglet
 import mcpython.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
-import uuid
-import random
+import pyglet
+from mcpython import logger, shared
 
 
 class ContainerRenderer(ABC):

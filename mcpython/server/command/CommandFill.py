@@ -11,14 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import mcpython.common.world.util
 from mcpython.server.command.Builder import (
+    Block,
     Command,
     CommandNode,
-    IntPosition,
-    Block,
     DefinedString,
+    IntPosition,
 )
-import mcpython.common.world.util
 
 
 def default_fill(dim, start, end, block_source):

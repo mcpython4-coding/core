@@ -14,11 +14,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython.server.command.Builder import (
     Command,
     CommandNode,
-    Selector,
     DefinedString,
     Int,
+    Selector,
 )
-
 
 xp = (
     Command("xp")

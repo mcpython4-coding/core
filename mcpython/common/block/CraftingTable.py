@@ -11,11 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-from . import AbstractBlock
-from pyglet.window import mouse, key
-import mcpython.util.enums
 import mcpython.common.item.AbstractToolItem
+import mcpython.util.enums
+from mcpython import shared
+from pyglet.window import key, mouse
+
+from . import AbstractBlock
 
 
 class CraftingTable(AbstractBlock.AbstractBlock):

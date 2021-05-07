@@ -17,12 +17,12 @@ import os
 import platform
 import random
 import sys
-from datetime import datetime
+import traceback
 import typing
+from datetime import datetime
 
 import mcpython.common.config
 from mcpython import shared
-import traceback
 
 # adapted from mc version 1.15.2, decompiled with mc-forge located under net.minecraft.crash.CrashReport
 # added some extra entries

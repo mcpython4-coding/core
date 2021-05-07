@@ -11,20 +11,20 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import typing
-
-import PIL.Image
-import pyglet
 
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.GridRecipeInstances as GridRecipe
 import mcpython.common.container.crafting.IRecipe
-from mcpython import logger
 import mcpython.common.event.EventHandler
 import mcpython.ResourceLoader
 import mcpython.util.texture
+import PIL.Image
+import pyglet
+from mcpython import logger
+
 from . import RecipeViewRenderer
-import itertools
 
 
 class CraftingTableLikeRecipeViewRenderer(

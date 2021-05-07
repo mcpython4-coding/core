@@ -11,13 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared, logger
-import pyglet
-import mcpython.util.math
 import random
+
+import mcpython.client.state.StatePartGame
 import mcpython.common.config
 import mcpython.common.DataPacks
-import mcpython.client.state.StatePartGame
+import mcpython.util.math
+import pyglet
+from mcpython import logger, shared
 
 
 class TickHandler:

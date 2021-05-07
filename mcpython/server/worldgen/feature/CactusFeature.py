@@ -11,9 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.server.worldgen.feature.IFeature
 import random
 
+import mcpython.server.worldgen.feature.IFeature
 from mcpython import shared
 
 

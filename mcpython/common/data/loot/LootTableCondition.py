@@ -11,10 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.event.Registry
-import mcpython.common.entity.DamageSource
-from mcpython import shared
 import random
+
+import mcpython.common.entity.DamageSource
+import mcpython.common.event.Registry
+from mcpython import shared
 
 
 class ILootTableCondition(mcpython.common.event.Registry.IRegistryContent):

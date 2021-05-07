@@ -15,7 +15,6 @@ import mcpython.common.event.Registry
 import mcpython.common.fluid.AbstractFluid
 from mcpython import shared
 
-
 fluid_manager = mcpython.common.event.Registry.Registry(
     "minecraft:fluid", ["minecraft:fluid"], "stage:fluids:register"
 )

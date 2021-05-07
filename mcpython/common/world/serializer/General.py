@@ -11,15 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared, logger
-import mcpython.ResourceLoader
 import mcpython.common.config
-import mcpython.common.world.SaveFile
-import mcpython.common.world.datafixers.IDataFixer
-import mcpython.common.world.serializer.IDataSerializer
-import mcpython.util.getskin
 import mcpython.common.entity.PlayerEntity
+import mcpython.common.world.datafixers.IDataFixer
+import mcpython.common.world.SaveFile
+import mcpython.common.world.serializer.IDataSerializer
+import mcpython.ResourceLoader
 import mcpython.server.worldgen.noise.NoiseManager
+import mcpython.util.getskin
+from mcpython import logger, shared
 
 
 class WorldConfigFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):

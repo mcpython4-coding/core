@@ -12,17 +12,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import gc
+import json
 import sys
 
-from mcpython import shared, logger
-import mcpython.common.mod.ModMcpython
+import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState
+import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
 import mcpython.util.enums
 import mcpython.util.math
-import json
-import mcpython.client.rendering.blocks.ICustomBlockRenderer
+from mcpython import logger, shared
 
 
 class ModelHandler:

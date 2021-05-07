@@ -11,9 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import os
 import subprocess
 import sys
-import os
 
 """
 Installation code for setting up your python

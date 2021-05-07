@@ -11,20 +11,22 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from . import StatePart
-from mcpython import shared
-from mcpython.common.config import FLYING_SPEED, GRAVITY, TERMINAL_VELOCITY, JUMP_SPEED
-from pyglet.window import key, mouse
-import pyglet
-import mcpython.common.container.ResourceStack
-import mcpython.common.config
-import mcpython.util.math
+import enum
+import math
 import time
+
+import mcpython.common.config
+import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractFoodItem as ItemFood
 import mcpython.common.item.AbstractToolItem as ItemTool
-import math
-import enum
+import mcpython.util.math
+import pyglet
+from mcpython import shared
+from mcpython.common.config import FLYING_SPEED, GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
 from mcpython.util.annotation import onlyInClient
+from pyglet.window import key, mouse
+
+from . import StatePart
 
 
 @onlyInClient()

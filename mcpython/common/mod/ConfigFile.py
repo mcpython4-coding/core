@@ -15,7 +15,7 @@ import os
 import sys
 from abc import ABC
 
-from mcpython import shared, logger
+from mcpython import logger, shared
 
 if not os.path.isdir(shared.home + "/config"):
     os.makedirs(shared.home + "/config")

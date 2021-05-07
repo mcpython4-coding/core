@@ -13,16 +13,16 @@ This project is not official by mojang and does not relate to it.
 """
 from datetime import datetime
 
-import pyglet
-from pyglet.window import mouse, key
-
+import mcpython.client.rendering.blocks.TemporaryChestRenderer
 import mcpython.common.block.BoundingBox
-from mcpython import shared, logger
+import mcpython.common.block.PossibleBlockStateBuilder
 import mcpython.common.item.AbstractToolItem
 import mcpython.util.enums
+import pyglet
+from mcpython import logger, shared
+from pyglet.window import key, mouse
+
 from . import AbstractBlock
-import mcpython.client.rendering.blocks.TemporaryChestRenderer
-import mcpython.common.block.PossibleBlockStateBuilder
 
 BBOX = mcpython.common.block.BoundingBox.BoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)

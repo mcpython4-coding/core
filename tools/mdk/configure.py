@@ -11,12 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import zipfile
-import subprocess
-import os
-import urllib.request
 import json
+import os
+import subprocess
 import sys
+import urllib.request
+import zipfile
 
 
 def download_file(url, dest):
@@ -54,9 +54,8 @@ if a == "1":
     elif v == 3:
         directory = input("please select the launcher directory: ")
         sys.path.append(directory)
-        import launcher.Launcher
-
         import launcher.globalstorage as G
+        import launcher.Launcher
 
         G.local = directory  # re-direct this!
 

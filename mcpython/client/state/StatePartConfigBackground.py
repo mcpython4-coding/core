@@ -11,11 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import pyglet
-import PIL.Image
 import mcpython.ResourceLoader
-from mcpython import shared
 import mcpython.util.texture
+import PIL.Image
+import pyglet
+from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
 

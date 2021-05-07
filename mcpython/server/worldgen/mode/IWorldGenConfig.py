@@ -12,12 +12,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
-from mcpython import shared
-import mcpython.server.worldgen.layer.DefaultBiomeLayer
-import mcpython.common.world.AbstractInterface
-import mcpython.server.worldgen.WorldGenerationTaskArrays
+
 import mcpython.common.data.DataSerializerHandler
 import mcpython.common.data.worldgen.WorldGenerationMode
+import mcpython.common.world.AbstractInterface
+import mcpython.server.worldgen.layer.DefaultBiomeLayer
+import mcpython.server.worldgen.WorldGenerationTaskArrays
+from mcpython import shared
 
 
 class IBiomeSource:

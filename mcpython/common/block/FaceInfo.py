@@ -11,13 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import copy
 import typing
 
-import mcpython.common.event.EventHandler
-from mcpython import shared
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
+import mcpython.common.event.EventHandler
 import mcpython.util.enums
-import copy
+from mcpython import shared
 
 
 class FaceInfo:

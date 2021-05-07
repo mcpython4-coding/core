@@ -14,13 +14,12 @@ This project is not official by mojang and does not relate to it.
 import datetime
 import typing
 
-from mcpython import shared
-from mcpython import logger
 import mcpython.common.block.AbstractBlock as Block
-import mcpython.util.enums
-import mcpython.util.math
 import mcpython.common.world.AbstractInterface
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
+import mcpython.util.enums
+import mcpython.util.math
+from mcpython import logger, shared
 
 
 class Chunk(mcpython.common.world.AbstractInterface.IChunk):

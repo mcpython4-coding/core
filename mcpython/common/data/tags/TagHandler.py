@@ -11,12 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import logger
-from mcpython import shared
-import mcpython.ResourceLoader
-import mcpython.common.mod.ModMcpython
 import mcpython.common.data.tags.Tag
 import mcpython.common.data.tags.TagGroup
+import mcpython.common.mod.ModMcpython
+import mcpython.ResourceLoader
+from mcpython import logger, shared
 
 
 class TagHandler:

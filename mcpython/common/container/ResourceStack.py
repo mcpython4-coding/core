@@ -11,11 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
 from abc import ABC
 
-from mcpython import shared, logger
 import mcpython.common.item.AbstractItem
-import typing
+from mcpython import logger, shared
 
 
 class AbstractResourceStack(ABC):

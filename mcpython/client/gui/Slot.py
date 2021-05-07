@@ -14,13 +14,12 @@ This project is not official by mojang and does not relate to it.
 # todo: split container part & rendering part
 from abc import ABC
 
-from mcpython import shared, logger
-import pyglet
+import mcpython.client.rendering.model.ItemModel
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.ItemManager
 import mcpython.ResourceLoader
-import mcpython.client.rendering.model.ItemModel
-
+import pyglet
+from mcpython import logger, shared
 
 SLOT_WIDTH = 32
 

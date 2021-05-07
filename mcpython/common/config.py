@@ -18,7 +18,6 @@ import sys
 
 from mcpython import shared
 
-
 with open(shared.local + "/version.json") as f:
     data = json.load(f)
 

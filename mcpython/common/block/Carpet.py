@@ -15,9 +15,9 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
-from mcpython import shared
 import mcpython.common.container.ResourceStack
 import mcpython.util.enums
+from mcpython import shared
 
 carpet_bbox = mcpython.common.block.BoundingBox.BoundingBox((1, 1 / 16, 1))
 

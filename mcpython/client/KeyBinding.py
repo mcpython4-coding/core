@@ -11,9 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from pyglet.window import key, mouse
 import typing
+
 from mcpython.util.annotation import onlyInClient
+from pyglet.window import key, mouse
 
 
 @onlyInClient()

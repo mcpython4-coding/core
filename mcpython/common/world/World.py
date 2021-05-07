@@ -14,21 +14,20 @@ This project is not official by mojang and does not relate to it.
 import random
 import typing
 
-import pyglet
-
-from mcpython import shared, logger
-import mcpython.common.DataPacks
-import mcpython.common.config
 import mcpython.client.state.StatePartGame
-import mcpython.common.world.SaveFile
-import mcpython.util.math
+import mcpython.common.config
+import mcpython.common.DataPacks
+import mcpython.common.entity.PlayerEntity
+import mcpython.common.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.common.world.Dimension
 import mcpython.common.world.GameRule
-import mcpython.server.worldgen.WorldGenerationHandler
-import mcpython.common.entity.PlayerEntity
-import mcpython.common.world.AbstractInterface
 import mcpython.common.world.RemoteWorldAccess
+import mcpython.common.world.SaveFile
+import mcpython.server.worldgen.WorldGenerationHandler
+import mcpython.util.math
+import pyglet
+from mcpython import logger, shared
 
 
 class World(mcpython.common.world.AbstractInterface.IWorld):

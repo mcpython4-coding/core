@@ -13,12 +13,11 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import logger
-from mcpython import shared
-import mcpython.server.command.Builder
-import mcpython.common.mod.ModMcpython
-from mcpython.common.world.AbstractInterface import IDimension
 import mcpython.common.DataPacks
+import mcpython.common.mod.ModMcpython
+import mcpython.server.command.Builder
+from mcpython import logger, shared
+from mcpython.common.world.AbstractInterface import IDimension
 
 
 class CommandExecutionEnvironment:
@@ -162,26 +161,26 @@ def load_commands():
     # todo: use deferred registering
     # todo: dynamic registering based on module list, by calling register_command() on the given attr of the module
     from . import (
-        CommandSetblock,
+        CommandChunk,
         CommandClear,
-        CommandGamemode,
-        CommandGive,
-        CommandKill,
-        CommandInfo,
-        CommandReload,
-        CommandWorldGenerationDebug,
         CommandClone,
+        CommandData,
+        CommandDatapack,
+        CommandExecute,
         CommandFill,
         CommandFunction,
-        CommandData,
-        CommandChunk,
+        CommandGamemode,
         CommandGamerule,
-        CommandTell,
-        CommandXp,
-        CommandExecute,
-        CommandDatapack,
+        CommandGive,
+        CommandInfo,
+        CommandKill,
+        CommandReload,
+        CommandSetblock,
         CommandSummon,
         CommandTeleport,
+        CommandTell,
+        CommandWorldGenerationDebug,
+        CommandXp,
     )
 
     handler: CommandParser = shared.command_parser

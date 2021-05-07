@@ -13,19 +13,20 @@ This project is not official by mojang and does not relate to it.
 """
 import random
 
+import mcpython.client.state.StatePartConfigBackground
+import mcpython.client.state.StateWorldGeneration
+import mcpython.common.DataPacks
+import mcpython.common.mod.ModMcpython
+import mcpython.server.worldgen.noise.NoiseManager
+import mcpython.util.math
+import pyglet
+from mcpython import shared
+from mcpython.util.annotation import onlyInClient
+from pyglet.window import key
+
 from . import State
 from .ui import UIPartButton, UIPartTextInput
 from .ui.UIPartTextInput import INT_PATTERN
-from mcpython import shared
-import mcpython.util.math
-from pyglet.window import key
-import pyglet
-import mcpython.common.mod.ModMcpython
-import mcpython.client.state.StatePartConfigBackground
-import mcpython.common.DataPacks
-import mcpython.client.state.StateWorldGeneration
-from mcpython.util.annotation import onlyInClient
-import mcpython.server.worldgen.noise.NoiseManager
 
 
 @onlyInClient()

@@ -11,19 +11,18 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-from mcpython import logger
+import time
+
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
-import mcpython.common.container.ResourceStack
 import mcpython.common.container.crafting.FurnaceCraftingHelper
+import mcpython.common.container.ResourceStack
 import mcpython.common.event.EventHandler
-import pyglet
-import time
 import mcpython.ResourceLoader
-import mcpython.common.event.EventHandler
 import mcpython.util.texture
 import PIL.Image
+import pyglet
+from mcpython import logger, shared
 
 
 class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):

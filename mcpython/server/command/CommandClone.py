@@ -11,13 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.server.command.Builder import (
-    Command,
-    CommandNode,
-    IntPosition,
-)
 import mcpython.common.world.util
-
+from mcpython.server.command.Builder import Command, CommandNode, IntPosition
 
 # todo: full command here!
 clone = Command("clone").than(

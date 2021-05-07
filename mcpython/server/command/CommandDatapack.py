@@ -11,15 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import mcpython.common.DataPacks
+from mcpython import shared
 from mcpython.server.command.Builder import (
+    AnyString,
     Command,
     CommandNode,
-    AnyString,
     DefinedString,
 )
-from mcpython import shared
-import mcpython.common.DataPacks
-
 
 datapack = (
     Command("datapack")

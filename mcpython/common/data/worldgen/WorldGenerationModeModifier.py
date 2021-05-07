@@ -13,10 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import logger
-from mcpython import shared
 import mcpython.common.data.DataSerializerHandler
 import mcpython.util.data
+from mcpython import logger, shared
 from mcpython.common.data.DataSerializerHandler import ISerializeAble
 
 

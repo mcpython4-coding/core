@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from abc import ABC
 import typing
-import mcpython.common.data.tags.ITagTarget
+from abc import ABC
 
+import mcpython.common.data.tags.ITagTarget
 import mcpython.common.data.tags.Tag
 import mcpython.util.math
 

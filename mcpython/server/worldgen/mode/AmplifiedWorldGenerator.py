@@ -11,9 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.server.worldgen.mode.IWorldGenConfig
 import mcpython.server.worldgen.mode.DefaultOverWorldGenerator
+import mcpython.server.worldgen.mode.IWorldGenConfig
+from mcpython import shared
 
 
 class AmplifiedOverworldGenerator(

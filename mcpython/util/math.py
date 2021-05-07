@@ -12,11 +12,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import itertools
+import math
 import typing
 
-from mcpython import shared, logger
-import math
 import deprecation
+from mcpython import logger, shared
 
 
 def cube_vertices_better(

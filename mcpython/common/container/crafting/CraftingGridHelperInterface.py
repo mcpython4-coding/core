@@ -18,8 +18,7 @@ import mcpython.common.container.crafting.GridRecipeInstances
 import mcpython.common.container.crafting.IRecipe
 import mcpython.common.container.crafting.IRecipeUser
 import mcpython.common.container.ResourceStack
-from mcpython import logger
-from mcpython import shared
+from mcpython import logger, shared
 
 
 class IRecipeAdapter:

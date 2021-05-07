@@ -11,16 +11,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from . import State, StatePartGame
-import mcpython.client.gui.InventoryHandler
-from mcpython import shared
-from pyglet.window import key
-import mcpython.common.event.TickHandler
-import pyglet
-from pyglet.window import mouse
-import mcpython.common.mod.ModMcpython
 import time
+
+import mcpython.client.gui.InventoryHandler
+import mcpython.common.event.TickHandler
+import mcpython.common.mod.ModMcpython
+import pyglet
+from mcpython import shared
 from mcpython.util.annotation import onlyInClient
+from pyglet.window import key, mouse
+
+from . import State, StatePartGame
 
 
 @onlyInClient()

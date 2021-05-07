@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import python_nbt.nbt as nbt
 import mcpython.ResourceLoader
+import python_nbt.nbt as nbt
 from mcpython import shared
 
 

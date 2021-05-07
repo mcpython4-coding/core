@@ -14,16 +14,16 @@ This project is not official by mojang and does not relate to it.
 import time
 import typing
 
-from mcpython import shared, logger
+import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
-import mcpython.common.world.Chunk
 import mcpython.common.world.AbstractInterface
+import mcpython.common.world.Chunk
 import mcpython.common.world.Dimension
 import mcpython.server.worldgen.layer.ILayer
+import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.server.worldgen.mode
 import mcpython.server.worldgen.WorldGenerationTaskArrays
-import mcpython.common.event.Registry
-import mcpython.server.worldgen.map.AbstractChunkInfoMap
+from mcpython import logger, shared
 
 
 class WorldGenerationHandler:
@@ -316,22 +316,22 @@ def load_layers():
     from .layer import (
         DefaultBedrockLayer,
         DefaultBiomeLayer,
+        DefaultFeatureLayer,
         DefaultHeightMapLayer,
         DefaultLandMassLayer,
         DefaultStonePlacementLayer,
         DefaultTemperatureLayer,
         DefaultTopLayerLayer,
-        DefaultFeatureLayer,
     )
 
 
 def load_modes():
     from .mode import (
-        DefaultOverWorldGenerator,
+        AmplifiedWorldGenerator,
+        BiomeGenDebugGenerator,
         DebugOverWorldGenerator,
         DefaultNetherWorldGenerator,
-        BiomeGenDebugGenerator,
-        AmplifiedWorldGenerator,
+        DefaultOverWorldGenerator,
         EndWorldGenerator,
     )
 
@@ -351,13 +351,7 @@ def load_features():
 
 
 def load_maps():
-    from .map import (
-        BiomeMap,
-        HeightMap,
-        LandMassMap,
-        TemperatureMap,
-        FeatureMap,
-    )
+    from .map import BiomeMap, FeatureMap, HeightMap, LandMassMap, TemperatureMap
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

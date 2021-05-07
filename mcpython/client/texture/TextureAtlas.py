@@ -11,12 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import PIL.Image
-import mcpython.ResourceLoader
-from mcpython import shared
-import pyglet
 import os
+
 import mcpython.common.config
+import mcpython.ResourceLoader
+import PIL.Image
+import pyglet
+from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
 MISSING_TEXTURE = mcpython.ResourceLoader.read_image(

@@ -11,10 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import typing
-from mcpython import shared
+
+import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image
+from mcpython import shared
 
 
 @shared.world_generation_handler

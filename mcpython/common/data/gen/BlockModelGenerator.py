@@ -12,12 +12,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
+
 import mcpython.util.enums
-from mcpython.common.data.gen.DataGeneratorManager import (
-    IDataGenerator,
-    DataGeneratorInstance,
-)
 from mcpython import logger
+from mcpython.common.data.gen.DataGeneratorManager import (
+    DataGeneratorInstance,
+    IDataGenerator,
+)
 
 
 def encode_model_key(key):

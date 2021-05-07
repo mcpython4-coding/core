@@ -15,9 +15,9 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
-from mcpython import shared
-import mcpython.util.enums
 import mcpython.common.block.PossibleBlockStateBuilder
+import mcpython.util.enums
+from mcpython import shared
 
 
 class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):

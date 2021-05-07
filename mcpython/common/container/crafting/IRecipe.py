@@ -11,11 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import json
 import typing
 from abc import ABC
 
 import mcpython.common.event.Registry
-import json
 from mcpython.common.container.ResourceStack import ItemStack
 
 

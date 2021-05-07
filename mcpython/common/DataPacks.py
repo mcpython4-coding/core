@@ -16,10 +16,10 @@ import json
 import os
 import typing
 
-from mcpython import shared, logger
+import mcpython.common.event.EventHandler
 import mcpython.ResourceLoader
 import mcpython.server.command.FunctionFile
-import mcpython.common.event.EventHandler
+from mcpython import logger, shared
 
 
 class DatapackLoadException(Exception):

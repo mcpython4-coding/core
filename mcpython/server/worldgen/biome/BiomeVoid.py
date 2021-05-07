@@ -13,10 +13,11 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared
 import mcpython.common.config
-from . import Biome
 import mcpython.common.world.AbstractInterface
+from mcpython import shared
+
+from . import Biome
 
 
 class Void(Biome.Biome):

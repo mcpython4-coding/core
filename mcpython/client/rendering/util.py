@@ -11,11 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from pyglet.gl import *
-import pyglet
 import mcpython.common.config
+import pyglet
 from mcpython.util.annotation import onlyInClient
-
+from pyglet.gl import *
 
 __all__ = ["setup", "setup_fog", "draw_line_box", "set_2d", "set_3d"]
 

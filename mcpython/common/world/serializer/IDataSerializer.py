@@ -68,10 +68,10 @@ data_serializer_registry = mcpython.common.event.Registry.Registry(
 @shared.mod_loader("minecraft", "stage:serializer:parts")
 def load():
     from mcpython.common.world.serializer import (
-        General,
-        PlayerData,
-        Inventory,
         Chunk,
         GameRule,
+        General,
+        Inventory,
+        PlayerData,
         RegistryInfo,
     )

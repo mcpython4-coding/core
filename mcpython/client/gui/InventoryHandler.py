@@ -11,13 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared, logger
 import mcpython.client.gui.ContainerRenderer
-import mcpython.client.state.StatePart
-from pyglet.window import key, mouse
-import mcpython.client.gui.Slot
-import mcpython.client.gui.ShiftContainer
 import mcpython.client.gui.HoveringItemBox
+import mcpython.client.gui.ShiftContainer
+import mcpython.client.gui.Slot
+import mcpython.client.state.StatePart
+from mcpython import logger, shared
+from pyglet.window import key, mouse
 
 
 class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):

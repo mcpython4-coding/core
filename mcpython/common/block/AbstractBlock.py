@@ -17,8 +17,8 @@ import typing
 from abc import ABC
 
 import mcpython.client.gui.Slot
-import mcpython.common.block.FaceInfo
 import mcpython.common.block.BoundingBox
+import mcpython.common.block.FaceInfo
 import mcpython.common.container.ResourceStack
 import mcpython.common.event.Registry
 import mcpython.util.enums

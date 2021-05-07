@@ -11,16 +11,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared, logger
+import json
+import random
+import sys
+
+import mcpython.client.gui.InventoryRecipeView
 import mcpython.common.container.crafting.IRecipe
-import mcpython.ResourceLoader
+import mcpython.common.event.EventHandler
 import mcpython.common.item.ItemManager
 import mcpython.common.mod.ModMcpython
-import mcpython.common.event.EventHandler
-import sys
-import random
-import json
-import mcpython.client.gui.InventoryRecipeView
+import mcpython.ResourceLoader
+from mcpython import logger, shared
 
 
 class CraftingManager:
@@ -216,8 +217,8 @@ def load_recipe_providers():
     from . import (
         FurnaceCraftingHelper,
         GridRecipeInstances,
-        StonecuttingRecipe,
         SmithingRecipe,
+        StonecuttingRecipe,
     )
 
 

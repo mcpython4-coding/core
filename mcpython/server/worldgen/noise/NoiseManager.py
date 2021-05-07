@@ -11,14 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
 import importlib
+import typing
 
 from mcpython import logger
 from mcpython.server.worldgen.noise.INoiseImplementation import (
+    EQUAL_MERGER,
     INoiseImplementation,
     IOctaveMerger,
-    EQUAL_MERGER,
 )
 
 

@@ -11,13 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
-from mcpython import shared
-import mcpython.common.DataPacks
-import mcpython.common.config
-import mcpython.client.rendering.util
-import mcpython.client.rendering.entities.EntityRenderer
 import gc
+import typing
+
+import mcpython.client.rendering.entities.EntityRenderer
+import mcpython.client.rendering.util
+import mcpython.common.config
+import mcpython.common.DataPacks
+from mcpython import shared
 
 
 def recipe_mapper(modname, pathname):
@@ -73,8 +74,8 @@ def language_mapper(modname, pathname):
 def loot_table_mapper(modname, pathname):
     from mcpython.common.data.loot import (
         LootTable,
-        LootTableFunction,
         LootTableCondition,
+        LootTableFunction,
     )
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
@@ -183,7 +184,7 @@ if shared.IS_CLIENT:
 
 def load():
     from mcpython.common.data.worldgen import (
+        Biome,
         WorldGenerationMode,
         WorldGenerationModeModifier,
-        Biome,
     )

@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import api.annotation
 
-
 WRAPPER = None
 
 

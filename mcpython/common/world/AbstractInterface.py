@@ -11,11 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from abc import ABC
-import typing
 import enum
-import mcpython.util.enums
+import typing
+from abc import ABC
+
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
+import mcpython.util.enums
 
 
 class ChunkLoadTicketType(enum.Enum):

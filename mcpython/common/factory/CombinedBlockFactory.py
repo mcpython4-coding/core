@@ -11,14 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.common.data.gen.BlockModelGenerator
-from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance
-import mcpython.common.data.gen.RecipeGenerator
-import mcpython.common.factory.BlockFactory
 import enum
 import typing
+
 import mcpython.common.block.Walls
+import mcpython.common.data.gen.BlockModelGenerator
+import mcpython.common.data.gen.RecipeGenerator
+import mcpython.common.factory.BlockFactory
+from mcpython import shared
+from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance
 
 WALL_TEMPLATE = sum([[(x, y) for y in range(2)] for x in range(3)], [])
 SLAB_TEMPLATE = [(x, 0) for x in range(3)]

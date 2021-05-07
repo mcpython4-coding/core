@@ -11,14 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import os
 
-from mcpython.server.command.Builder import Command, CommandNode, Int, DefinedString
-from mcpython import shared
 import mcpython.util.math
-import itertools
-from mcpython import logger
-
+from mcpython import logger, shared
+from mcpython.server.command.Builder import Command, CommandNode, DefinedString, Int
 
 chunk = (
     Command("chunk")

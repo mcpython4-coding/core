@@ -11,13 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import logger
 import mcpython.common.block.AbstractBlock
+import mcpython.common.data.tags.TagGroup
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
+from mcpython import logger
 from mcpython.common.block.AbstractBlock import AbstractBlock
-import mcpython.common.data.tags.TagGroup
-
 
 tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("blocks")
 
@@ -55,20 +54,20 @@ def load():
     loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
     """
     from . import (
-        GrassBlock,
-        Dirt,
-        CraftingTable,
-        Chest,
-        EnderChest,
-        NetherPortal,
-        ShulkerBox,
-        Carpet,
-        Furnace,
         Barrel,
+        Carpet,
+        Chest,
         CoralBlocks,
+        CraftingTable,
+        Dirt,
+        EnderChest,
         Fence,
-        Walls,
+        Furnace,
+        GrassBlock,
+        NetherPortal,
         NewBlocks,
+        ShulkerBox,
+        Walls,
     )
 
     block_registry.register(GrassBlock.GrassBlock)
@@ -107,5 +106,4 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
 )
 
 
-from . import IFallingBlock, ILog
-from . import Blocks
+from . import Blocks, IFallingBlock, ILog

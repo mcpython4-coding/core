@@ -17,9 +17,8 @@ import random
 import typing
 
 import mcpython.common.world.AbstractInterface
-from mcpython import shared
-
 import mcpython.util.math
+from mcpython import shared
 
 
 class BlockSource:

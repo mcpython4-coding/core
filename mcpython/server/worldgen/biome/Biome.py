@@ -15,9 +15,9 @@ import typing
 from abc import ABC
 
 import mcpython.common.event.Registry
-import mcpython.server.worldgen.feature.IOre
-import mcpython.server.worldgen.feature.IFeature
 import mcpython.common.world.AbstractInterface
+import mcpython.server.worldgen.feature.IFeature
+import mcpython.server.worldgen.feature.IOre
 
 
 class Biome(mcpython.common.event.Registry.IRegistryContent, ABC):

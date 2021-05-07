@@ -14,9 +14,9 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import pyglet
-import mcpython.common.container.crafting.IRecipe
 import mcpython.client.gui.Slot
+import mcpython.common.container.crafting.IRecipe
+import pyglet
 
 
 class NotEnoughItemsException(Exception):

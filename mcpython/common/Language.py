@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared, logger
 import mcpython.ResourceLoader
+from mcpython import logger, shared
 
 LANGUAGES: typing.Dict[str, "Language"] = {}  # table of data of Languages
 # change this for having another language, you have to include the needed lang files yourself :/

@@ -220,6 +220,8 @@ class LaunchWrapper:
         """
         self.load_mods()
 
+        import mcpython.common.container.crafting.CraftingManager
+
         # Create the world instance
         import mcpython.common.world.World
 

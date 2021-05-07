@@ -11,13 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
 from abc import ABC
 
-import mcpython.common.container.crafting.IRecipe
-from mcpython import shared, logger
 import mcpython.client.rendering.gui.CraftingGridRecipeRenderer
+import mcpython.common.container.crafting.IRecipe
+from mcpython import logger, shared
 from mcpython.common.container.ResourceStack import ItemStack
-import typing
 
 
 def transform_to_item_stack(item, file: str) -> list:

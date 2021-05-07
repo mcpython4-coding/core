@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.common.entity.AbstractEntity
 import mcpython.common.block.AbstractBlock
+import mcpython.common.entity.AbstractEntity
 import mcpython.util.math
+from mcpython import shared
 
 
 @shared.registry

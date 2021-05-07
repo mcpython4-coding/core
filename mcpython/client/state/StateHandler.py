@@ -11,14 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import sys
 import time
 
-from mcpython import shared, logger
-from . import State
-import mcpython.common.event.TickHandler
 import mcpython.client.state.StateConfigFile
-import sys
+import mcpython.common.event.TickHandler
+from mcpython import logger, shared
 from mcpython.util.annotation import onlyInClient
+
+from . import State
 
 
 @onlyInClient()
@@ -75,16 +76,17 @@ handler = shared.state_handler = StateHandler()
 
 @onlyInClient()
 def load():
-    from . import (
-        StateGame,
-        StateEscape,
-        StateStartMenu,
-        StateGameInfo,
-        StateBlockItemGenerator,
-        StateWorldGenerationConfig,
-        StateModLoading,
-    )
     import mcpython.client.gui.InventoryHandler
+
+    from . import (
+        StateBlockItemGenerator,
+        StateEscape,
+        StateGame,
+        StateGameInfo,
+        StateModLoading,
+        StateStartMenu,
+        StateWorldGenerationConfig,
+    )
 
     # todo: add client-check
 

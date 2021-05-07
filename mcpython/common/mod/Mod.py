@@ -11,10 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
+import typing
+
 import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler
-import typing
+from mcpython import shared
 
 
 class ModDependency:

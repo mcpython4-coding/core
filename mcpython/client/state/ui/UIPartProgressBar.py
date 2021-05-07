@@ -11,11 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import pyglet.gl
-import pyglet
 import mcpython.util.opengl
-from . import UIPart
+import pyglet
+import pyglet.gl
 from mcpython.util.annotation import onlyInClient
+
+from . import UIPart
 
 
 @onlyInClient()

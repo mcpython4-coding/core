@@ -11,14 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import logger
-from mcpython.common.data.gen.DataGeneratorManager import (
-    IDataGenerator,
-    DataGeneratorInstance,
-)
-import PIL.Image
 import mcpython.ResourceLoader as ResourceLoader
 import mcpython.util.texture
+import PIL.Image
+from mcpython import logger
+from mcpython.common.data.gen.DataGeneratorManager import (
+    DataGeneratorInstance,
+    IDataGenerator,
+)
 
 
 class TextureConstructor(IDataGenerator):

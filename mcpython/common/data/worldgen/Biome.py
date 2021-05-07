@@ -14,11 +14,11 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-from mcpython import shared
 import mcpython.common.data.DataSerializerHandler
-import mcpython.util.data
-from mcpython.common.data.DataSerializerHandler import ISerializeAble
 import mcpython.common.world.AbstractInterface
+import mcpython.util.data
+from mcpython import shared
+from mcpython.common.data.DataSerializerHandler import ISerializeAble
 
 
 class ITopLayerConfigurator(ABC):

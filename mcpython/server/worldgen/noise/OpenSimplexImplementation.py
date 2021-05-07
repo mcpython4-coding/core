@@ -11,9 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import opensimplex
 from mcpython.server.worldgen.noise.INoiseImplementation import INoiseImplementation
-import typing
 
 
 class OpenSimplexImplementation(INoiseImplementation):

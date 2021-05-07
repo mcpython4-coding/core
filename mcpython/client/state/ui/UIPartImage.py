@@ -13,9 +13,10 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.event.EventInfo
 import pyglet
-from pyglet.window import mouse
-from . import UIPart
 from mcpython.util.annotation import onlyInClient
+from pyglet.window import mouse
+
+from . import UIPart
 
 
 @onlyInClient()

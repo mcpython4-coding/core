@@ -11,13 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from pyglet.window import mouse, key
-
-from mcpython import shared
-import mcpython.util.enums
-from mcpython.common.block.Chest import BBOX
-from . import AbstractBlock
 import mcpython.common.block.PossibleBlockStateBuilder
+import mcpython.util.enums
+from mcpython import shared
+from mcpython.common.block.Chest import BBOX
+from pyglet.window import key, mouse
+
+from . import AbstractBlock
 
 
 class EnderChest(AbstractBlock.AbstractBlock):

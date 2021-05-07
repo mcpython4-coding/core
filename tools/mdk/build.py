@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import shutil
-import os
-import zipfile
 import json
+import os
+import shutil
+import zipfile
 
 local = os.path.dirname(__file__)
 

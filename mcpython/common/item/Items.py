@@ -11,12 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.factory.ItemFactory
-from mcpython import shared
 import random
-from mcpython.util.enums import ToolType
-import mcpython.common.mod.ModMcpython
+
 import mcpython.client.gui.HoveringItemBox
+import mcpython.common.factory.ItemFactory
+import mcpython.common.mod.ModMcpython
+from mcpython import shared
+from mcpython.util.enums import ToolType
 
 
 def load_item():

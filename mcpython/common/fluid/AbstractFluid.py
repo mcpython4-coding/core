@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 from abc import ABC
+
 import mcpython.common.event.Registry
 import mcpython.common.world.AbstractInterface
 from mcpython import shared

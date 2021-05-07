@@ -11,17 +11,19 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import time
+
+import mcpython.client.state.StateGame
+import mcpython.common.event.EventInfo
+import mcpython.common.mod.ModMcpython
+import mcpython.util.callbacks
+import pyglet
+from mcpython import shared
+from mcpython.util.annotation import onlyInClient
+from pyglet.window import key
+
 from . import State, StatePartGame
 from .ui import UIPartButton, UIPartLabel
-import mcpython.common.event.EventInfo
-from mcpython import shared
-from pyglet.window import key
-import pyglet
-import mcpython.client.state.StateGame
-import mcpython.util.callbacks
-import mcpython.common.mod.ModMcpython
-import time
-from mcpython.util.annotation import onlyInClient
 
 
 @onlyInClient()

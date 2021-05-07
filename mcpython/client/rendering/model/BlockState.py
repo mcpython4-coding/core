@@ -11,20 +11,18 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
 import copy
-
-import pyglet
-
-from mcpython import shared, logger
-import mcpython.ResourceLoader
 import random
-import mcpython.common.mod.ModMcpython
-import mcpython.common.event.Registry
-import mcpython.common.block.BoundingBox
-import copy
+import typing
+
 import mcpython.client.rendering.model.api
+import mcpython.common.block.BoundingBox
+import mcpython.common.event.Registry
+import mcpython.common.mod.ModMcpython
+import mcpython.ResourceLoader
 import mcpython.util.enums
+import pyglet
+from mcpython import logger, shared
 
 
 class BlockStateNotNeeded(Exception):

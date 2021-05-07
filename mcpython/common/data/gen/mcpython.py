@@ -11,10 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.common.data.gen.TextureDataGen import TextureConstructor
-from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance
 from mcpython import shared
-
+from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance
+from mcpython.common.data.gen.TextureDataGen import TextureConstructor
 
 generator = DataGeneratorInstance(
     shared.local + "/resources/generated" if shared.dev_environment else shared.local

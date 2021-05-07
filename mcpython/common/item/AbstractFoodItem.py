@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 
-from mcpython import shared
 import mcpython.common.item.AbstractItem
+from mcpython import shared
 
 
 class AbstractFoodItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):

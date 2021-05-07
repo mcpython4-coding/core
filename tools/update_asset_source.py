@@ -12,10 +12,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import os
-import requests
-import zipfile
 import shutil
 import sys
+import zipfile
+
+import requests
 
 home = os.path.dirname(__file__).replace("\\", "/").removesuffix("/")
 target = home if not os.path.exists(home + "/tools") else home + "/tools"

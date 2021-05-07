@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import logger
 import mcpython.common.mod.ModMcpython
+from mcpython import logger
 
 
 class Tag:

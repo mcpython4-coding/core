@@ -11,10 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared, logger
-import mcpython.common.block.AbstractBlock
-import time
 import math
+import time
+
+import mcpython.common.block.AbstractBlock
+from mcpython import logger, shared
 
 
 class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):

@@ -13,13 +13,11 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import pyglet
-
-from mcpython import shared
-from mcpython import logger
-import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.client.rendering.model.BoxModel
+import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.util.enums
+import pyglet
+from mcpython import logger, shared
 
 
 class Model:

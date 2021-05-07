@@ -18,25 +18,23 @@ import shutil
 import sys
 import typing
 
-from pyglet.window import key
-
-from mcpython import shared, logger
-import mcpython.ResourceLoader
-import mcpython.common.DataPacks
-import mcpython.common.config
-import mcpython.common.config
-import mcpython.common.mod.ModMcpython
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.ui.UIPartLabel
+import mcpython.common.config
+import mcpython.common.DataPacks
+import mcpython.common.entity.PlayerEntity
+import mcpython.common.mod.ModMcpython
+import mcpython.ResourceLoader
+import mcpython.server.command.CommandParser
+import mcpython.server.worldgen.noise.NoiseManager
 import mcpython.util.getskin
 import mcpython.util.math
 import mcpython.util.opengl
-import mcpython.common.entity.PlayerEntity
-from . import State
+from mcpython import logger, shared
 from mcpython.util.annotation import onlyInClient
-import mcpython.server.worldgen.noise.NoiseManager
-import mcpython.server.command.CommandParser
+from pyglet.window import key
 
+from . import State
 
 DEFAULT_GENERATION_CONFIG: typing.Dict[str, typing.Any] = {
     "world_config_name": "minecraft:default_overworld",

@@ -11,15 +11,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from . import UIPart
-import pyglet.window.key
 import time
+
+import clipboard
+import mcpython.client.state.StatePart
+import mcpython.common.Language
 import mcpython.util.opengl
 import pyglet
-import mcpython.common.Language
-import mcpython.client.state.StatePart
-import clipboard
+import pyglet.window.key
 from mcpython.util.annotation import onlyInClient
+
+from . import UIPart
 
 ALL_PATTERN = None
 INT_PATTERN = "-0123456789."

@@ -12,14 +12,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.event.EventInfo
-import pyglet
-from pyglet.window import mouse
-import mcpython.ResourceLoader
-from . import UIPart
-import mcpython.util.opengl
 import mcpython.common.Language
-from mcpython.util.enums import ButtonMode
+import mcpython.ResourceLoader
+import mcpython.util.opengl
+import pyglet
 from mcpython.util.annotation import onlyInClient
+from mcpython.util.enums import ButtonMode
+from pyglet.window import mouse
+
+from . import UIPart
 
 image = mcpython.ResourceLoader.read_pyglet_image("gui/widgets")
 disabled = image.get_region(2, 256 - 46 - 17, 196, 14)

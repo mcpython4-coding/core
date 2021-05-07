@@ -21,8 +21,7 @@ import mcpython.common.data.loot.LootTableFunction
 import mcpython.common.event.EventHandler
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
-from mcpython import logger
-from mcpython import shared
+from mcpython import logger, shared
 
 
 class LootTableTypes(enum.Enum):

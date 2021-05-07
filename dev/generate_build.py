@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import json as old_json
+
 # This system is a general-use-case build system written in python
 # It contains some common tasks for creating builds
 import os
@@ -23,7 +25,6 @@ import zipfile
 from abc import ABC
 
 import simplejson as json
-import json as old_json
 
 HOME = os.path.dirname(__file__)
 
@@ -621,11 +622,13 @@ def main(*argv):
     """
     build_name = input("build name: ") if len(argv) == 0 else argv[0]
 
-    if os.path.exists(HOME+"/config.json"):
+    if os.path.exists(HOME + "/config.json"):
         with open(HOME + "/config.json") as f:
             config = json.load(f)
 
-        output_folder = config.setdefault("output_folder", HOME + "/builds/" + build_name)
+        output_folder = config.setdefault(
+            "output_folder", HOME + "/builds/" + build_name
+        )
     else:
         output_folder = input("output folder: ") if len(argv) <= 1 else argv[1]
 

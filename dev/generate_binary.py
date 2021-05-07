@@ -12,8 +12,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 print("this task depends on nuitka, a python -> c++ compiler")
-import subprocess
 import os
+import subprocess
 import sys
 
 

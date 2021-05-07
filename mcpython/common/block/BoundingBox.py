@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.util.math
 import mcpython.client.rendering.util
+import mcpython.util.math
 
 
 class AbstractBoundingBox(ABC):

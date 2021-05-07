@@ -14,10 +14,9 @@ This project is not official by mojang and does not relate to it.
 import collections
 import math
 
-import pyglet.gl as _gl
-
-from mcpython import shared
 import mcpython.client.rendering.MatrixStack
+import pyglet.gl as _gl
+from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
 

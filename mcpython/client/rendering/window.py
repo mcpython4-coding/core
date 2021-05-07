@@ -12,25 +12,25 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 
-import PIL.Image
-import psutil
-import pyglet
-from pyglet.gl import *
-from pyglet.window import key, mouse
 import cProfile
 
-import mcpython.ResourceLoader
-import mcpython.common.event.EventHandler
-import mcpython.common.event.TickHandler
-import mcpython.common.config
 import mcpython.client.rendering.util
 import mcpython.client.state.StateHandler
 import mcpython.client.state.StatePartGame
+import mcpython.common.config
+import mcpython.common.event.EventHandler
+import mcpython.common.event.TickHandler
+import mcpython.ResourceLoader
 import mcpython.util.math
 import mcpython.util.texture
+import PIL.Image
+import psutil
+import pyglet
 from mcpython.common.config import *  # todo: remove
-from mcpython.util.math import *  # todo: remove
 from mcpython.util.annotation import onlyInClient
+from mcpython.util.math import *  # todo: remove
+from pyglet.gl import *
+from pyglet.window import key, mouse
 
 
 class NoWindow:

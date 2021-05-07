@@ -12,8 +12,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.network.NetworkChannel
-import mcpython.common.network.packages.AbstractPackage
 import mcpython.common.network.NetworkConnector
+import mcpython.common.network.packages.AbstractPackage
 from mcpython import shared
 
 

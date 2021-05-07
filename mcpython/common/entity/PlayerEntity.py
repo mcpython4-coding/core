@@ -13,19 +13,19 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared, logger
-import mcpython.ResourceLoader
 import mcpython.client.Chat
-import mcpython.common.entity.AbstractEntity
-import mcpython.common.event.EventHandler
 import mcpython.client.gui.InventoryChest
 import mcpython.client.gui.MainPlayerInventory
-import mcpython.common.container.ResourceStack
 import mcpython.client.gui.Slot
-import mcpython.common.mod.ModMcpython
 import mcpython.client.rendering.entities.EntityRenderer
-import mcpython.util.math
+import mcpython.common.container.ResourceStack
+import mcpython.common.entity.AbstractEntity
 import mcpython.common.entity.DamageSource
+import mcpython.common.event.EventHandler
+import mcpython.common.mod.ModMcpython
+import mcpython.ResourceLoader
+import mcpython.util.math
+from mcpython import logger, shared
 
 
 @shared.registry

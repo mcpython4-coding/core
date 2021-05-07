@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from abc import ABC
-import typing
-import socket
 import enum
+import socket
+import typing
+from abc import ABC
 
 
 class SideType(enum.Enum):

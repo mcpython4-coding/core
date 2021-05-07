@@ -15,9 +15,9 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
-from mcpython import shared, logger
-import mcpython.util.enums
 import mcpython.common.block.PossibleBlockStateBuilder
+import mcpython.util.enums
+from mcpython import logger, shared
 from mcpython.util.enums import EnumSide
 
 

@@ -13,12 +13,12 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.ResourceLoader
-import mcpython.common.event.EventHandler
-import mcpython.common.event.Registry
-from mcpython import shared, logger
 import mcpython.client.state.State
 import mcpython.client.state.StatePart
+import mcpython.common.event.EventHandler
+import mcpython.common.event.Registry
+import mcpython.ResourceLoader
+from mcpython import logger, shared
 from mcpython.util.annotation import onlyInClient
 
 

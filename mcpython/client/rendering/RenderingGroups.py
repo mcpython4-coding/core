@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import pyglet
 import mcpython.client.rendering.MatrixStack
+import pyglet
 from mcpython.util.annotation import onlyInClient
 
 

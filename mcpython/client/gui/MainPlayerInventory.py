@@ -11,17 +11,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
-import mcpython.common.container.ResourceStack
-import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.crafting.CraftingGridHelperInterface
+import mcpython.common.container.crafting.CraftingManager
+import mcpython.common.container.ResourceStack
+import mcpython.common.event.EventHandler
 import mcpython.common.item.AbstractArmorItem
 import mcpython.ResourceLoader
-import PIL.Image
 import mcpython.util.texture
-import mcpython.common.event.EventHandler
+import PIL.Image
+from mcpython import shared
 
 
 class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):

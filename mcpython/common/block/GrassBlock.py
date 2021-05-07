@@ -11,9 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-from . import AbstractBlock
 import mcpython.util.enums
+from mcpython import shared
+
+from . import AbstractBlock
 
 
 class GrassBlock(AbstractBlock.AbstractBlock):

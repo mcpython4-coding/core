@@ -14,27 +14,27 @@ This project is not official by mojang and does not relate to it.
 import datetime
 import json
 import os
+import shutil
 
-import PIL.Image
-import pyglet
-from pyglet.window import key, mouse
-
-from mcpython import shared
-import mcpython.ResourceLoader
-import mcpython.common.DataPacks
-import mcpython.common.mod.ModMcpython
+import mcpython.client.rendering.RenderingGroups
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.StateWorldGeneration
 import mcpython.client.state.StateWorldLoading
+import mcpython.common.DataPacks
+import mcpython.common.mod.ModMcpython
 import mcpython.common.world.SaveFile
+import mcpython.ResourceLoader
 import mcpython.util.math
 import mcpython.util.opengl
 import mcpython.util.texture
+import PIL.Image
+import pyglet
+from mcpython import shared
+from mcpython.util.annotation import onlyInClient
+from pyglet.window import key, mouse
+
 from . import State
 from .ui import UIPartButton, UIPartScrollBar
-import shutil
-from mcpython.util.annotation import onlyInClient
-import mcpython.client.rendering.RenderingGroups
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
     mcpython.ResourceLoader.read_image("assets/missing_texture.png").resize(

@@ -11,13 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.server.command.Builder import (
-    Command,
-    CommandNode,
-    Position,
-    AnyString,
-)
 from mcpython import shared
+from mcpython.server.command.Builder import AnyString, Command, CommandNode, Position
 
 summon = Command("summon").than(
     CommandNode(AnyString.INSTANCE)

@@ -11,12 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import psutil
+import pyglet
+from mcpython import shared
+from mcpython.util.annotation import onlyInClient
+
 from . import State
 from .ui import UIPartProgressBar
-from mcpython import shared
-import pyglet
-import psutil
-from mcpython.util.annotation import onlyInClient
 
 
 @onlyInClient()

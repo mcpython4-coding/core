@@ -11,13 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import json
 import os
 import sys
 import typing
 import zipfile
 from abc import ABC
-import itertools
 
 try:
     import PIL.Image as PIL_Image
@@ -34,8 +34,7 @@ except ImportError:
 
 import mcpython.common.config
 import mcpython.util.texture
-from mcpython import logger
-from mcpython import shared
+from mcpython import logger, shared
 
 """
 specifications for the resource loader system

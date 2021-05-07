@@ -11,13 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
 import itertools
+import typing
 
-from mcpython import shared
 import mcpython.common.mod.ModMcpython
 import mcpython.server.worldgen.biome.Biome
 import mcpython.server.worldgen.feature.IFeature
+from mcpython import shared
 
 
 class BiomeHandler:
@@ -151,7 +151,7 @@ shared.biome_handler = BiomeHandler()
 
 
 def load():
-    from . import BiomeVoid, BiomeMountains
+    from . import BiomeMountains, BiomeVoid
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

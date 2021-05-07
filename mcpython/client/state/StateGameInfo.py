@@ -11,16 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
 import mcpython.client.state.State
 import mcpython.client.state.StatePartGame
-from mcpython.client.state.ui import UIPartImage, UIPartLabel
-import mcpython.util.texture
-import mcpython.ResourceLoader
-from pyglet.window import key
 import mcpython.common.mod.ModMcpython
+import mcpython.ResourceLoader
+import mcpython.util.texture
+from mcpython import shared
+from mcpython.client.state.ui import UIPartImage, UIPartLabel
 from mcpython.util.annotation import onlyInClient
-
+from pyglet.window import key
 
 # todo: use pyglet.image.Image.get_region(area)
 sprite = mcpython.util.texture.to_pyglet_sprite(

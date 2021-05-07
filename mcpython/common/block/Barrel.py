@@ -11,13 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-from . import AbstractBlock
-from pyglet.window import mouse, key
-import mcpython.util.enums
-import pyglet
 import mcpython.client.gui.InventoryBarrel
 import mcpython.common.block.PossibleBlockStateBuilder
+import mcpython.util.enums
+import pyglet
+from mcpython import shared
+from pyglet.window import key, mouse
+
+from . import AbstractBlock
 
 
 class Barrel(AbstractBlock.AbstractBlock):

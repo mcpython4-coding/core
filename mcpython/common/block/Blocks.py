@@ -12,12 +12,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.factory.BlockFactory
-from mcpython import shared
-from mcpython.util.enums import ToolType
 import mcpython.common.mod.ModMcpython
-from mcpython.common.factory import CombinedBlockFactory
-from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance
+from mcpython import shared
 from mcpython.common.config import ENABLED_EXTRA_BLOCKS as BLOCKS
+from mcpython.common.data.gen.DataGeneratorManager import DataGeneratorInstance
+from mcpython.common.factory import CombinedBlockFactory
+from mcpython.util.enums import ToolType
 
 
 def remove_if_downer_block_not_solid(instance):

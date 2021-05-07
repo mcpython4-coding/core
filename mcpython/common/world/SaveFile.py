@@ -11,15 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import simplejson as json
 import os
 import pickle
 import sys
 
-from mcpython import shared, logger
 import mcpython.common.event.Registry
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
+import simplejson as json
+from mcpython import logger, shared
 
 """
 How to decide when an new version is needed?

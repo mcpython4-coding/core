@@ -11,20 +11,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
 import copy
+import typing
 
-import mcpython.common.item.AbstractItem
-import mcpython.common.item.AbstractFoodItem
-import mcpython.common.item.AbstractToolItem
+import mcpython.common.factory.IFactoryModifier
 import mcpython.common.item.AbstractArmorItem
 import mcpython.common.item.AbstractDamageBarItem
+import mcpython.common.item.AbstractFoodItem
+import mcpython.common.item.AbstractItem
+import mcpython.common.item.AbstractToolItem
 from mcpython import shared
-import mcpython.common.factory.IFactoryModifier
-
-
 from mcpython.common.factory.FactoryBuilder import FactoryBuilder
-
 
 ItemFactoryInstance = FactoryBuilder(
     "minecraft:item", mcpython.common.item.AbstractItem.AbstractItem

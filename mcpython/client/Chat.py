@@ -15,17 +15,15 @@ import html
 import time
 
 import clipboard
-import pyglet
-from pyglet.window import key
-
-from mcpython import shared, logger
-import mcpython.server.command.CommandParser
+import mcpython.client.gui.ContainerRenderer
 import mcpython.common.event.EventBus
 import mcpython.common.event.EventHandler
-import mcpython.client.gui.ContainerRenderer
-import mcpython.util.opengl
-from mcpython.util.annotation import onlyInClient
 import mcpython.server.command.CommandParser
+import mcpython.util.opengl
+import pyglet
+from mcpython import logger, shared
+from mcpython.util.annotation import onlyInClient
+from pyglet.window import key
 
 
 @onlyInClient()

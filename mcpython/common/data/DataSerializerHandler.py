@@ -15,10 +15,9 @@ import typing
 from abc import ABC
 
 import mcpython.common.data.ResourcePipe
-import mcpython.ResourceLoader
-from mcpython import logger
 import mcpython.common.event.EventHandler
-from mcpython import shared
+import mcpython.ResourceLoader
+from mcpython import logger, shared
 
 
 class ISerializeAble(ABC):

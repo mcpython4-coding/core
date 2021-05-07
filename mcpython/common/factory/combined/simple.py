@@ -13,9 +13,10 @@ This project is not official by mojang and does not relate to it.
 """
 import os
 import typing
-import PIL.Image
-import mcpython.util.texture
+
 import mcpython.ResourceLoader
+import mcpython.util.texture
+import PIL.Image
 from mcpython import shared
 
 

@@ -13,12 +13,12 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.util.math
-import mcpython.util.enums
-import pyglet
 import mcpython.common.config
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
+import mcpython.util.enums
+import mcpython.util.math
+import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 

@@ -15,8 +15,8 @@ import enum
 import random
 from abc import ABC
 
-import mcpython.common.world.Dimension
 import mcpython.common.world.AbstractInterface
+import mcpython.common.world.Dimension
 import mcpython.server.worldgen.feature.IFeature
 from mcpython import shared
 

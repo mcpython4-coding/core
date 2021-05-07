@@ -15,7 +15,7 @@ import sys
 import time
 import typing
 
-from mcpython import shared, logger
+from mcpython import logger, shared
 
 
 class CancelAbleEvent:

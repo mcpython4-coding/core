@@ -16,7 +16,6 @@ import mcpython.ResourceLoader
 import pyglet
 from mcpython.util.annotation import onlyInClient
 
-
 RENDERERS = []
 TEXTURES = {}
 
@@ -136,7 +135,11 @@ class EntityRenderer:
         :param part_rotation: the rotation of every part, as a dict of model part -> (rx, ry, rz), calculated onto
             the "other" rotations
         """
-        x, y, z = entity_or_position.position if not isinstance(entity_or_position, tuple) else entity_or_position
+        x, y, z = (
+            entity_or_position.position
+            if not isinstance(entity_or_position, tuple)
+            else entity_or_position
+        )
         for ibox, d in enumerate(self.states[state]):
             box = self.box_models[d["box"]]
             rotation_2 = (0, 0, 0) if "rotation" not in d else d["rotation"]
@@ -175,7 +178,11 @@ class EntityRenderer:
         :param rotation: the rotation
         :param rotation_center: the center to rotate around
         """
-        x, y, z = entity_or_position.position if not isinstance(entity_or_position, tuple) else entity_or_position
+        x, y, z = (
+            entity_or_position.position
+            if not isinstance(entity_or_position, tuple)
+            else entity_or_position
+        )
         box = self.box_models[box_name]
         box.draw(
             (x + position[0], y + position[1], z + position[2]),
@@ -184,7 +191,12 @@ class EntityRenderer:
         )
 
     def add_to_batch(
-        self, batch: pyglet.graphics.Batch, entity_or_position, state, rotation=(0, 0, 0), part_rotation=None
+        self,
+        batch: pyglet.graphics.Batch,
+        entity_or_position,
+        state,
+        rotation=(0, 0, 0),
+        part_rotation=None,
     ):
         """
         Adds the entity to a batch. Useful mostly for static entities like static complex block elements
@@ -200,7 +212,11 @@ class EntityRenderer:
         :return: an list of vertex-objects created with the batch
         """
         data = []
-        x, y, z = entity_or_position.position if not isinstance(entity_or_position, tuple) else entity_or_position
+        x, y, z = (
+            entity_or_position.position
+            if not isinstance(entity_or_position, tuple)
+            else entity_or_position
+        )
         for d in self.states[state]:
             box = self.box_models[d["box"]]
             rotation_2 = (0, 0, 0) if "rotation" not in d else d["rotation"]

@@ -12,15 +12,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
-
-import mcpython.common.world.serializer.IDataSerializer
-import mcpython.common.world.datafixers.IDataFixer
-from mcpython import shared, logger
-import mcpython.common.world.Chunk
-import mcpython.common.world.AbstractInterface
-import mcpython.util.enums
 import uuid
+
 import mcpython.common.world.AbstractInterface
+import mcpython.common.world.Chunk
+import mcpython.common.world.datafixers.IDataFixer
+import mcpython.common.world.serializer.IDataSerializer
+import mcpython.util.enums
+from mcpython import logger, shared
 
 
 def chunk2region(cx, cz):

@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import simplejson
 import os
-from mcpython import logger
-from mcpython import shared
+
+import simplejson
+from mcpython import logger, shared
 
 
 class UnsupportedIndirectDumpException(Exception):

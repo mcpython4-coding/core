@@ -11,16 +11,16 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import os
+import typing
+
 import mcpython.client.texture.TextureAtlas
+import mcpython.common.event.EventHandler
 import mcpython.ResourceLoader as ResourceLoader
 import mcpython.util.texture
-from mcpython import shared
-from mcpython import logger
-import mcpython.common.event.EventHandler
-import typing
 import PIL.Image
 import pyglet
-import os
+from mcpython import logger, shared
 
 LATEST_INFO_VERSION = 3
 

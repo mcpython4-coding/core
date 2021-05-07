@@ -14,11 +14,10 @@ This project is not official by mojang and does not relate to it.
 
 import random
 
+import mcpython.server.worldgen.noise.INoiseImplementation
 import mcpython.server.worldgen.noise.NoiseManager
-
 from mcpython import shared
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
-import mcpython.server.worldgen.noise.INoiseImplementation
 
 
 @shared.world_generation_handler

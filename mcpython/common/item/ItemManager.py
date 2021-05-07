@@ -11,19 +11,19 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared, logger
-import mcpython.ResourceLoader
-import mcpython.common.event.Registry
-import mcpython.client.texture.TextureAtlas
-import mcpython.common.item.ItemTextureAtlas
 import json
 import os
-import mcpython.common.factory.ItemFactory
-import mcpython.common.mod.ModMcpython
+
 import mcpython.client.gui.HoveringItemBox
 import mcpython.client.rendering.model.ItemModel
+import mcpython.client.texture.TextureAtlas
 import mcpython.common.data.tags.TagGroup
-
+import mcpython.common.event.Registry
+import mcpython.common.factory.ItemFactory
+import mcpython.common.item.ItemTextureAtlas
+import mcpython.common.mod.ModMcpython
+import mcpython.ResourceLoader
+from mcpython import logger, shared
 
 COLLECTED_ITEMS = []
 tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("items")

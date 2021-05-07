@@ -11,14 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import marshal
+import multiprocessing
+import pickle
+import time
 import typing
 
 import mcpython.common.world.AbstractInterface
-import time
 from mcpython import logger, shared
-import multiprocessing
-import marshal
-import pickle
 
 
 class WorldGenerationTaskHandler:

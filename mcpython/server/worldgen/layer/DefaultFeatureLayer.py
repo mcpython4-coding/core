@@ -14,10 +14,10 @@ This project is not official by mojang and does not relate to it.
 
 import random
 
-from mcpython import shared
 import mcpython.common.world.Chunk
-from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 import mcpython.server.worldgen.feature.IFeature
+from mcpython import shared
+from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 
 
 @shared.world_generation_handler

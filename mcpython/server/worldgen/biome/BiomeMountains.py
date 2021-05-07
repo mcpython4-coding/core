@@ -13,9 +13,10 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from mcpython import shared
 import mcpython.common.config
-from mcpython.server.worldgen.feature import SpruceTreeFeature, IOre
+from mcpython import shared
+from mcpython.server.worldgen.feature import IOre, SpruceTreeFeature
+
 from . import Biome
 
 

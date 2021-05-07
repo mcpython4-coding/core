@@ -11,28 +11,30 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import json
+import os
+import sys
 import typing
+
+import mcpython.client.gui.HoveringItemBox
+import mcpython.client.rendering.model.ItemModel
+import mcpython.client.state.StateModLoading
+import mcpython.common.event.EventInfo
+import mcpython.common.event.TickHandler
+import mcpython.common.factory.ItemFactory
+import mcpython.common.item.AbstractItem
+import mcpython.common.item.ItemManager
+import mcpython.common.mod.ModMcpython
+import mcpython.ResourceLoader
+import PIL.Image
+import PIL.ImageDraw
+import psutil
+import pyglet
+from mcpython import logger, shared
+from mcpython.util.annotation import onlyInClient
 
 from . import State, StatePartGame
 from .ui import UIPartProgressBar
-import mcpython.common.event.EventInfo
-from mcpython import shared, logger
-import pyglet
-import os
-import mcpython.ResourceLoader
-import mcpython.common.item.AbstractItem
-import mcpython.common.event.TickHandler
-import PIL.Image, PIL.ImageDraw
-import sys
-import json
-import mcpython.common.factory.ItemFactory
-import mcpython.common.item.ItemManager
-import mcpython.common.mod.ModMcpython
-import mcpython.client.state.StateModLoading
-import psutil
-import mcpython.client.gui.HoveringItemBox
-import mcpython.client.rendering.model.ItemModel
-from mcpython.util.annotation import onlyInClient
 
 
 @onlyInClient()
@@ -79,9 +81,7 @@ class StateBlockItemGenerator(State.State):
                 ),
             ),
             # the memory usage bar
-            mcpython.client.state.StateModLoading.modloading.parts[
-                3
-            ],
+            mcpython.client.state.StateModLoading.modloading.parts[3],
         ]
 
     def on_draw_2d_pre(self):
@@ -183,7 +183,9 @@ class StateBlockItemGenerator(State.State):
             instance.face_state.update(redraw_complete=True)
         except ValueError:  # if the block is not working, use the next
             self.block_index = 0
-            logger.print_exception(f"during adding first block to BlockItemGenerator (being {self.tasks[0]})")
+            logger.print_exception(
+                f"during adding first block to BlockItemGenerator (being {self.tasks[0]})"
+            )
 
         # We do not want to skip ticks, as this would be bad here...
         mcpython.common.event.TickHandler.handler.enable_tick_skipping = False

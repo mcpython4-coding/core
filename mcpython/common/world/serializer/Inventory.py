@@ -11,9 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-import mcpython.client.gui.ContainerRenderer
 import uuid
+
+import mcpython.client.gui.ContainerRenderer
+from mcpython import shared
 
 """
 improvements for the future:

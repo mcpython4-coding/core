@@ -13,11 +13,11 @@ This project is not official by mojang and does not relate to it.
 """
 import math
 
-from mcpython import shared
-import mcpython.server.worldgen.mode.IWorldGenConfig
-import mcpython.server.worldgen.mode.DefaultOverWorldGenerator
 import mcpython.common.mod.ModMcpython
+import mcpython.server.worldgen.mode.DefaultOverWorldGenerator
+import mcpython.server.worldgen.mode.IWorldGenConfig
 import mcpython.server.worldgen.WorldGenerationTaskArrays
+from mcpython import shared
 
 
 class DebugBiomeWorldGenerator(
