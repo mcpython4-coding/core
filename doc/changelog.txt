@@ -64,6 +64,9 @@ changelog of snapshot <21w09a> released on <?> targeting <21w17a>
     Entity Rendering:
         - some small improvements
 
+    Toolchain:
+        - imports can now be also sorted, using the isort module
+
 
 changelog of snapshot 21w17a released on 28.04.2021 targeting 21w17a
     This snapshot breaks again compatibility, mainly the following:

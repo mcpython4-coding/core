@@ -245,9 +245,36 @@ class ProjectBuildManager:
         return view
 
 
-class BlackCodeFormattingPreperation(AbstractProjectPreparation):
+class BlackCodeFormattingPreparation(AbstractProjectPreparation):
     def execute_in(self, directory: str, build_manager):
         subprocess.call([sys.executable, "-m", "black", directory])
+
+
+class ISortCodeFormattingPreperation(AbstractProjectPreparation):
+    def execute_in(self, directory: str, build_manager):
+        import isort
+
+        for root, dirs, files in os.walk(directory):
+            if (
+                    ".git" in root
+                    or "resources" in root
+                    or "build" in root
+                    or "__pycache__" in root
+            ):
+                continue
+
+            for file in files:
+                if not file.endswith(".py"):
+                    continue
+
+                if file == "LaunchWrapper.py":
+                    continue
+
+                try:
+                    isort.file(os.path.join(root, file))
+                except:
+                    print(os.path.join(root, file))
+                    raise
 
 
 class UpdateLicenceHeadersPreparation(AbstractProjectPreparation):
@@ -555,7 +582,8 @@ CLIENT_FILE_STRIPPER = FileFilterTask(
 
 DEFAULT_BUILD_INSTANCE = ProjectBuildManager()
 
-DEFAULT_BUILD_INSTANCE.add_preparation_stage(BlackCodeFormattingPreperation())
+DEFAULT_BUILD_INSTANCE.add_preparation_stage(BlackCodeFormattingPreparation())
+DEFAULT_BUILD_INSTANCE.add_preparation_stage(ISortCodeFormattingPreperation())
 DEFAULT_BUILD_INSTANCE.add_preparation_stage(UpdateLicenceHeadersPreparation())
 
 # Filter the file tree
