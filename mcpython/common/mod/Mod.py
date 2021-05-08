@@ -161,9 +161,10 @@ class Mod:
                 crash_on_error=False
             )
         )
+        # need, possible, not possible, before, after, only with, only without
         self.depend_info = [
             [] for _ in range(7)
-        ]  # need, possible, not possible, before, after, only with, only without
+        ]
         self.path = None
         self.version = version  # the version of the mod, as an tuple
         self.version_name = version_name

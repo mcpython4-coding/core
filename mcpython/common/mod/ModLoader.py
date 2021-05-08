@@ -32,33 +32,60 @@ from mcpython import logger, shared
 
 class ModLoader:
     """
-    The mod loader class
+    The ModLoader class
+
+    The mod loader is a system capable of loading code into the game, for actively modification
+    the behaviour and the content of the game.
+
+    WARNING: mods CAN damage your pc software-wise. They are small programs executed on your pc.
+        Use only mods from sources you trust!
+        DO  N E V E R  DOWNLOAD MODS FROM STRANGE SOURCES
+        We, the developers of mcpython, give NOT WARRANTIES for things mods do, including, but not limited to,
+        damage on the end user pc and/or direct or indirect stealing of valuable information about the user, including
+        the download of programs to do so.
     """
 
     def __init__(self):
         """
-        Creates an new mod-loader-instance
-        WARNING: only ONE instance should be present.
-        When creating a second instance, you should know what you are doing!
+        Creates a new mod-loader-instance
+        WARNING: only ONE instance should be present, otherwise, bad things might happen
         """
+        # the list of located mods
         self.located_mods: typing.List[mcpython.common.mod.Mod.Mod] = []
+
+        # a mapping mod name -> mod instance
         self.mods: typing.Dict[str, mcpython.common.mod.Mod.Mod] = {}
+
+        # the order of mod loading, by mod name
         self.mod_loading_order: typing.List[str] = []
+
+        # the directory currently loading from
         self.active_directory: typing.Optional[str] = None
+
+        # which stage we are in
         self.active_loading_stage: int = 0
+
+        # used for detecting mod changes between versions
         self.previous_mods = {}
+
+        # temporary list of mods, for setting stuff
         self.located_mod_instances = []
 
+        # fill the previous mods with data from the disk, if arrival
         if os.path.exists(shared.build + "/mods.json"):
             with open(shared.build + "/mods.json") as f:
                 self.previous_mods = json.load(f)
 
+        # if mod loading has finished
         self.finished = False
+
+        # the stages used during reload, todo: remove
         self.reload_stages: typing.List[str] = []
 
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "command:reload:end", self.execute_reload_stages
         )
+
         self.error_builder = logger.TableBuilder()
 
     def register_reload_assigned_loading_stage(self, stage: str):
@@ -68,6 +95,7 @@ class ModLoader:
         todo: remove -> resource pipe
         """
         self.reload_stages.append(stage)
+        return self
 
     def execute_reload_stages(self):
         # todo: remove -> resource pipe
@@ -78,6 +106,7 @@ class ModLoader:
                 ]
                 instance.eventbus.resetEventStack(event_name)
                 instance.eventbus.call(event_name)
+        return self
 
     def __call__(
         self, modname: str, event_name: str, *args, **kwargs
@@ -98,7 +127,7 @@ class ModLoader:
             return self.mods[item]
         raise IndexError(item)
 
-    def __contains__(self, item):
+    def __contains__(self, item: str):
         return item in self.mods
 
     def __iter__(self):
@@ -139,14 +168,12 @@ class ModLoader:
                     locations.remove(file)
                 else:
                     self.error_builder.println(
-                        "-attempted to remove mod '{}' which is not found".format(file)
+                        "- attempted to remove mod '{}' which is not found".format(file)
                     )
                 for _ in range(2):
                     sys.argv.pop(i)
             else:
                 i += 1
-
-        shared.event_handler.call("modloader:location_search", locations)
 
         for i, location in enumerate(locations):
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
@@ -232,6 +259,9 @@ class ModLoader:
         """
         if from_files:
             locations = self.get_locations()
+
+            shared.event_handler.call("minecraft:modloader:location_lookup_complete", self, locations)
+
             self.load_mod_json_from_locations(locations)
 
         # this is special, as it is not loaded from files...
@@ -259,18 +289,20 @@ class ModLoader:
             else:
                 i += 1
 
-        self.check_for_update()
-
-    def check_for_update(self):
-        """
-        Will check for changes between versions between this session and the one before
-        """
         logger.println(
             "found mod{}: {}".format(
                 "s" if len(self.located_mods) > 1 else "", len(self.located_mods)
             )
         )
 
+        shared.event_handler.call("minecraft:modloader:mod_selection_complete", self, self.mods)
+
+        self.check_for_update()
+
+    def check_for_update(self):
+        """
+        Will check for changes between versions between this session and the one before
+        """
         for modname in self.previous_mods.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(
                 self.previous_mods[modname]
@@ -282,26 +314,30 @@ class ModLoader:
                         modname
                     )
                 )
-                shared.invalidate_cache = True
+                if shared.event_handler.call_cancelable("minecraft:modloader:mod_change", self, modname,
+                                                        self.mods[modname]):
+                    shared.invalidate_cache = True
 
         for modname in self.mods.keys():
             if modname not in self.previous_mods:  # any new mods?
                 # we have an mod which was loaded not previous but now
                 # todo: include version of the mod
-                shared.invalidate_cache = True
                 logger.println(
                     "rebuild mode due to mod change (addition) of '{}'".format(modname)
                 )
+                if shared.event_handler.call_cancelable("minecraft:modloader:mod_addition", self, modname, self.mods[modname]):
+                    shared.invalidate_cache = True
 
     def write_mod_info(self):
         """
         Writes the data for the mod table into the file
         """
-        if not os.path.isdir(shared.build):
-            os.makedirs(shared.build)
+        os.makedirs(shared.build, exist_ok=True)
+
         with open(shared.build + "/mods.json", mode="w") as f:
             m = {instance.name: instance.version for instance in self.mods.values()}
             json.dump(m, f)
+        return self
 
     def load_mods_json(self, data: str, file: str):
         """
@@ -310,6 +346,7 @@ class ModLoader:
         :param file: the file located under
         """
         self.load_from_decoded_json(json.loads(data), file)
+        return self
 
     def load_from_decoded_json(self, data: dict, file: str):
         """
@@ -499,6 +536,8 @@ class ModLoader:
 
         self.located_mod_instances.append(instance)
 
+        return self
+
     def check_mod_duplicates(self):
         """
         Will check for mod duplicates
@@ -517,6 +556,7 @@ class ModLoader:
                     )
                 )
                 errors = True
+                shared.event_handler.call("minecraft:mod_loader:duplicated_mod_found", self, mod)
             else:
                 mod_info[mod.name] = []
 
@@ -532,22 +572,25 @@ class ModLoader:
         for mod in self.located_mods:
             for depend in mod.depend_info[0]:
                 if not depend.arrival():
-                    self.error_builder.println(
-                        "- Mod '{}' needs mod {} which is not provided".format(
-                            mod.name, depend
+                    if shared.event_handler.call_cancelable("minecraft:modloader:missing_dependency", self, mod, depend):
+                        self.error_builder.println(
+                            "- Mod '{}' needs mod {} which is not provided".format(
+                                mod.name, depend
+                            )
                         )
-                    )
-                    errors = True
+                        errors = True
 
             for depend in mod.depend_info[2]:
                 if depend.arrival():
-                    self.error_builder.println(
-                        "- Mod '{}' is incompatible with {} which is provided".format(
-                            mod.name, depend
+                    if shared.event_handler.call_cancelable("minecraft:modloader:incompatible_mod", self, mod, depend):
+                        self.error_builder.println(
+                            "- Mod '{}' is incompatible with {} which is provided".format(
+                                mod.name, depend
+                            )
                         )
-                    )
-                    errors = True
+                        errors = True
 
+            # todo: do we want two more events here?
             for depend in mod.depend_info[5]:
                 if not depend.arrival():
                     del mod_info[mod.name]
@@ -623,6 +666,7 @@ class ModLoader:
             stage = mcpython.common.mod.ModLoadingStages.manager.get_stage()
             if stage is None:
                 break
+
             if stage.call_one(astate):
                 return
 

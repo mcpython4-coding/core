@@ -1610,4 +1610,6 @@ R   [uuk]: improved world serialization API
        as most of the functions require only the position
 [uuk]: toolchain contains now a stage for import refactoring
 [uuk]: slightly improved mod loading stage system
+[uuk]: tweaked some mod loading stuff
+[uuk]: changed events, added events.md documentation of the new events
 
