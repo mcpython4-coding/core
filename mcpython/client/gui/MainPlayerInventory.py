@@ -22,6 +22,7 @@ import mcpython.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 from mcpython import shared
+import mcpython.client.gui.InventoryCreativeTab
 
 
 class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
@@ -109,6 +110,11 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
             if not shared.world.get_active_player().pick_up_item(itemstack):
                 pass  # todo: drop item as item could not be added to inventory
         self.slots[-2].get_itemstack().clean()
+
+    def on_activate(self):
+        if shared.world.get_active_player().gamemode == 1:
+            shared.inventory_handler.hide(self)
+            mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.open()
 
     def on_deactivate(self):
         self.remove_items_from_crafting()

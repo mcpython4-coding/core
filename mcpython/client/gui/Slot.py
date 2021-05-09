@@ -221,7 +221,7 @@ class Slot(ISlot):
 
     def draw(self, dx=0, dy=0, hovering=False):
         """
-        draws the slot
+        Draws the slot
         """
         if hovering:
             PYGLET_IMAGE_HOVERING.position = (
@@ -229,6 +229,7 @@ class Slot(ISlot):
                 self.position[1] + dy,
             )
             PYGLET_IMAGE_HOVERING.draw()
+
         if not self.itemstack.is_empty() and (
             self.itemstack.item.get_default_item_image_location()
             != self.__last_item_file
@@ -238,6 +239,7 @@ class Slot(ISlot):
                 self.itemstack.get_item_name()
             ][self.itemstack.item.get_active_image_location()]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
+
         elif self.itemstack.is_empty():
             self.sprite = None
             if self.empty_image is not None:
@@ -246,9 +248,11 @@ class Slot(ISlot):
                     self.position[1] + dy,
                 )
                 self.empty_image.draw()
+
         if self.sprite:
             self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
             self.sprite.draw()
+
         self.__last_item_file = (
             self.itemstack.item.get_default_item_image_location()
             if self.itemstack.item
@@ -333,6 +337,9 @@ class Slot(ISlot):
 
     def getParent(self):
         return self
+
+    def clean_itemstack(self):
+        self.get_itemstack().clean()
 
 
 class SlotCopy:
@@ -484,12 +491,13 @@ class SlotInfiniteStack(Slot):
         on_update=None,
         allow_half_getting=True,
         on_shift_click=None,
+        allow_player_override_delete=True,
     ):
         super().__init__(
             itemstack=itemstack,
             position=position,
             allow_player_remove=allow_player_remove,
-            allow_player_insert=False,
+            allow_player_insert=allow_player_override_delete,
             allow_player_add_to_free_place=allow_player_add_to_free_place,
             on_update=on_update,
             allow_half_getting=allow_half_getting,
@@ -501,14 +509,28 @@ class SlotInfiniteStack(Slot):
     def set_itemstack(self, stack, update=True, player=False):
         pass
 
+    def clean_itemstack(self):
+        pass
+
+    def set_itemstack_force(self, stack):
+        super().set_itemstack(stack)
+        self.reference_stack = stack.copy().set_amount(1)
+        return self
+
     def call_update(self, player=False):
-        if not self.on_update:
-            return
         [f(player=player) for f in self.on_update]
-        if self.itemstack != self.reference_stack:
-            self.itemstack.set_itemstack(self.reference_stack.copy())
+        if self.itemstack.get_item_name() != self.reference_stack.get_item_name():
+            self.itemstack = self.reference_stack.copy()
+        self.itemstack.set_amount(1)
+        self.reference_stack.set_amount(1)
 
     itemstack = property(Slot.get_itemstack, set_itemstack)
+
+    def __repr__(self):
+        return f"InfiniteSlot(item='{self.reference_stack.get_item_name()}',visible='{self.itemstack.get_item_name()}',position={self.position})'"
+
+    def __str__(self):
+        return repr(self)
 
 
 class SlotInfiniteStackExchangeable(Slot):

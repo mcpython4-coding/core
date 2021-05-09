@@ -75,5 +75,9 @@ class StateModLoading(State.State):
     def on_update(self, dt):
         shared.mod_loader.process()
 
+    def deactivate(self):
+        super().deactivate()
+        shared.world.get_active_player().init_creative_tabs()
+
 
 modloading = StateModLoading()

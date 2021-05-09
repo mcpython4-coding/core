@@ -73,9 +73,11 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             shared.state_handler.states["minecraft:game"].parts[
                 0
             ].activate_keyboard = True
+
         for inventory in shared.inventory_handler.opened_inventory_stack:
             shared.rendering_helper.enableAlpha()  # make sure that it is enabled
             inventory.draw(hovering_slot=hovering_slot)
+
         if not shared.inventory_handler.moving_slot.get_itemstack().is_empty():
             shared.inventory_handler.moving_slot.position = shared.window.mouse_position
             shared.inventory_handler.moving_slot.draw(0, 0)
@@ -166,8 +168,9 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 shared.inventory_handler.moving_slot.set_itemstack(
                     slot.itemstack.copy()
                 )
-                slot.itemstack.clean()
+                slot.clean_itemstack()
                 slot.call_update(True)
+
             elif slot.interaction_mode[1] and slot.itemstack == moving_itemstack:
                 target = min(
                     slot.itemstack.item.STACK_SIZE,
@@ -178,9 +181,11 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 )
                 slot.itemstack.set_amount(target)
                 slot.call_update(True)
+
             elif slot.can_set_item(moving_itemstack):
                 self.mode = 1
                 self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+
         elif button == mouse.RIGHT:
             if moving_itemstack.is_empty() and slot.allow_half_getting:
                 if not slot.interaction_mode[0]:
@@ -194,6 +199,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             elif slot.can_set_item(moving_itemstack):
                 self.mode = 2
                 self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+
         elif button == mouse.MIDDLE:
             if (
                 moving_itemstack.is_empty()
@@ -247,21 +253,27 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
     def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
         if shared.window.exclusive:
             return  # when no mouse interaction is active, do nothing
+
         slot = self._get_slot_for(x, y)
         if slot is None:
             return
+
         if self.mode != 0 and (
             slot.itemstack.item == self.moving_itemstack.item
             or slot.itemstack.is_empty()
         ):
             if not slot.can_set_item(self.moving_itemstack):
                 return
+
             if not slot.interaction_mode[1]:
                 return
+
             if slot not in self.slot_list:
                 self.slot_list.append(slot)
                 self.original_amount.append(slot.itemstack.amount)
+
             self.reorder_slot_list_stacks()
+
         elif modifiers & key.MOD_SHIFT:
             slot = self._get_slot_for(x, y)
             if slot.on_shift_click:
@@ -286,6 +298,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
     def reorder_slot_list_stacks(self):
         if len(self.slot_list) == 0:
             return
+
         if self.mode == 1:
             total = self.moving_itemstack.amount
             per_element = total // len(self.slot_list)
@@ -294,11 +307,14 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 x = 0 if overhead == 0 else 1
                 if overhead > 0:
                     overhead -= 1
+
                 if slot.itemstack.is_empty():
                     slot.set_itemstack(self.moving_itemstack.copy())
+
                 slot.itemstack.set_amount(self.original_amount[i] + per_element + x)
                 slot.call_update(True)
             shared.inventory_handler.moving_slot.itemstack.clean()
+
         elif self.mode == 2:
             overhead = self.moving_itemstack.amount
             for i, slot in enumerate(self.slot_list):
@@ -309,6 +325,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                     overhead -= 1
                     slot.call_update(True)
             shared.inventory_handler.moving_slot.itemstack.set_amount(overhead)
+
         elif self.mode == 3:
             for i, slot in enumerate(self.slot_list):
                 if slot.itemstack.item != self.moving_itemstack.item:

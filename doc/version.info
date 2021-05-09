@@ -1613,4 +1613,6 @@ R   [uuk]: improved world serialization API
 [uuk]: tweaked some mod loading stuff
 [uuk]: changed events, added events.md documentation of the new events
 [uuk]: some minor improvements
+[uuk]: started implementing creative tabs, finally!
+[uuk]: fixed some minor hiccups around some slot stuff
 

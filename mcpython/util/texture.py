@@ -101,3 +101,7 @@ def hex_to_color(color: str) -> typing.Tuple[int, int, int]:
 def int_hex_to_color(color: int) -> typing.Tuple[int, int, int]:
     v = hex(color)[2:]
     return hex_to_color("0"*(6-len(v))+v)
+
+
+def resize_image_pyglet(image: pyglet.image.AbstractImage, size: typing.Tuple[int, int]) -> pyglet.image.AbstractImage:
+    return to_pyglet_image(to_pillow_image(image).resize(size, PIL.Image.NEAREST))

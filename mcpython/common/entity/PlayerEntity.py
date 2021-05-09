@@ -145,6 +145,11 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             (self.inventory_main, False),
         ]
 
+    def init_creative_tabs(self):
+        from mcpython.client.gui.InventoryCreativeTab import CT_MANAGER, init
+
+        init()
+
     def set_gamemode(self, gamemode: typing.Union[int, str]):
         """
         Sets the player game-modes and the assigned properties

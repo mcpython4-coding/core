@@ -62,12 +62,12 @@ class ItemStack(AbstractResourceStack):
         return cls()
 
     def __init__(self, item_name_or_instance=None, amount=1):
-        if issubclass(
-            type(item_name_or_instance), mcpython.common.item.AbstractItem.AbstractItem
+        if isinstance(
+            item_name_or_instance, mcpython.common.item.AbstractItem.AbstractItem
         ):
             self.item = item_name_or_instance
 
-        elif type(item_name_or_instance) == str:
+        elif isinstance(item_name_or_instance, str):
             if (
                 item_name_or_instance
                 in shared.registry.get_by_name("minecraft:item").entries
@@ -83,7 +83,7 @@ class ItemStack(AbstractResourceStack):
 
         else:
             if item_name_or_instance is not None:
-                logger.println("[FATAL] cannot")
+                logger.println("[FATAL] cannot create itemstack with unknown item type", item_name_or_instance)
             self.item = None
 
         self.amount = amount if self.item and 0 <= amount <= self.item.STACK_SIZE else 0
