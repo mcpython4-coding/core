@@ -17,12 +17,13 @@ import typing
 import PIL.Image
 import pyglet
 from mcpython import shared
+import mcpython.util.math
 
 
 def colorize(
     mask: PIL.Image.Image,
     color: tuple,
-    colorizer=lambda color, mask: tuple(c * m // 255 for c, m in zip(color, mask)),
+    colorizer=lambda color, mask: tuple(c * mask // 255 for c in color[:3])+(tuple() if len(color) == 3 else (color[-1])),
 ) -> PIL.Image.Image:
     """
     Colorize an image-mask with a color using colorizer as the operator
@@ -40,6 +41,22 @@ def colorize(
             if color_alpha:
                 pixel_color = colorizer(color, color_alpha)
                 new_image.putpixel((x, y), pixel_color)
+    return new_image
+
+
+def layer_with_alpha(base: PIL.Image.Image, top: PIL.Image.Image):
+    top = top.convert("RGBA")
+    new_image: PIL.Image.Image = PIL.Image.new("RGBA", base.size)
+    for x in range(base.size[0]):
+        for y in range(base.size[1]):
+            b = base.getpixel((x, y))
+            t = top.getpixel((x, y))
+            a = t[3] / 255
+            if a == 0:
+                new_image.putpixel((x, y), b)
+            else:
+                new_image.putpixel((x, y), tuple(round(e[0] * (1 - a) + e[1] * a) for e in zip(b, t[:3])))
+
     return new_image
 
 
@@ -79,3 +96,8 @@ def hex_to_color(color: str) -> typing.Tuple[int, int, int]:
     Helper method for transforming a hex string encoding a color into a tuple of color entries
     """
     return int(color[:2], base=16), int(color[2:4], base=16), int(color[4:6], base=16)
+
+
+def int_hex_to_color(color: int) -> typing.Tuple[int, int, int]:
+    v = hex(color)[2:]
+    return hex_to_color("0"*(6-len(v))+v)

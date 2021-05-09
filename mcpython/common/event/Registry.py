@@ -42,7 +42,7 @@ class Registry:
         self,
         name: str,
         registry_type_names: list,
-        phase: str,
+        phase: typing.Optional[str],
         injection_function=None,
         allow_argument_injection=False,
         class_based=True,
@@ -123,6 +123,11 @@ class Registry:
         if self.locked:
             return self.entries.keys()
         return self.entries.copy().keys()
+
+    def elements_iterator(self) -> typing.Iterable[IRegistryContent]:
+        if self.locked:
+            return self.entries.values()
+        return self.entries.copy().values()
 
     def lock(self):
         self.locked = True

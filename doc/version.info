@@ -1612,4 +1612,5 @@ R   [uuk]: improved world serialization API
 [uuk]: slightly improved mod loading stage system
 [uuk]: tweaked some mod loading stuff
 [uuk]: changed events, added events.md documentation of the new events
+[uuk]: some minor improvements
 

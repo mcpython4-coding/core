@@ -86,6 +86,9 @@ class EventBus:
         :param function: the function itself
         :raise ValueError: when event name is unknown OR function was never assigned
         """
+        if event_name not in self.event_subscriptions:
+            raise ValueError(f"cannot find function {function} in event {event_name}")
+
         for signature in self.event_subscriptions[event_name][:]:
             if signature[0] == function:
                 self.event_subscriptions[event_name].remove(signature)

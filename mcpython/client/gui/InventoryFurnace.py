@@ -213,6 +213,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             )
         except ValueError:
             pass
+
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
