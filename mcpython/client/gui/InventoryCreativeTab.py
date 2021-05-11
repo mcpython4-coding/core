@@ -14,6 +14,11 @@ import mcpython.util.texture as texture_util
 
 
 class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC):
+    """
+    Base class for a creative tab
+    Comes with some helper code
+    """
+
     def __init__(self):
         super().__init__()
         self.tab_icon = None
@@ -48,13 +53,13 @@ class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC
         for slot in self.get_draw_slots():
             slot.draw_label()
 
-        """if self.custom_name is not None:
+        if self.custom_name is not None:
             if self.custom_name_label.text != self.custom_name:
                 self.custom_name_label.text = self.custom_name
 
             self.custom_name_label.x = x + 15
             self.custom_name_label.y = y + self.bg_image_size[1] - 10
-            self.custom_name_label.draw()"""
+            self.custom_name_label.draw()
 
     def on_deactivate(self):
         super().on_deactivate()
@@ -69,28 +74,49 @@ class CreativeItemTab(ICreativeView):
         self.icon = icon
         self.group = group if group is not None else ItemGroup()
         self.scroll_offset = 0
+        self.old_scroll_offset = 0
         self.linked_tag = linked_tag
 
         if linked_tag is not None:
+            # If there is a tag linked to this tab, subscribe to the reload event
+
             import mcpython.common.data.ResourcePipe
             mcpython.common.data.ResourcePipe.handler.register_data_processor(self.load_from_tag)
 
     def load_from_tag(self):
+        """
+        Helper method for reloading the content from the underlying tag
+        Use only when self.linked_tag is set, otherwise, this will crash
+        """
+        assert self.linked_tag is not None, "linked tag cannot be None"
+
         tag = shared.tag_handler.get_entries_for(self.linked_tag, "items")
         self.group.entries.clear()
         self.group.entries += (ItemStack(e) for e in tag)
 
-        self.update_rendering()
+        self.update_rendering(force=True)
 
-    def update_rendering(self):
+    def update_rendering(self, force=False):
+        """
+        Updates the slot content of the rendering system
+        :param force: force update, also when nothing changed
+        """
+        if self.old_scroll_offset != self.scroll_offset: return
+        self.old_scroll_offset = self.scroll_offset
+
         for i, slot in enumerate(self.slots[9:]):
             i += self.scroll_offset * 9
+
             if i < len(self.group.entries):
                 slot.set_itemstack_force(self.group.entries[i].copy())
             else:
                 slot.set_itemstack_force(ItemStack.create_empty())
 
     def create_slot_renderers(self):
+        """
+        Creates the slots
+        """
+
         slots = [
             [
                 mcpython.client.gui.Slot.SlotInfiniteStack(ItemStack.create_empty(), position=(18+x*36, 61+y*36)) for x in range(9)
@@ -101,6 +127,11 @@ class CreativeItemTab(ICreativeView):
         return [slot.copy((18+i*36, slot.position[1]-2)) for i, slot in enumerate(shared.world.get_active_player().inventory_main.slots[:9])] + sum(slots, [])
 
     def add_item(self, item: typing.Union[ItemStack, str]):
+        """
+        Adds an item to the underlying item group
+        :param item: the item stack or the item name
+        """
+
         self.group.add(item if not isinstance(item, str) else ItemStack(item))
         return self
 
@@ -115,9 +146,6 @@ class CreativeItemTab(ICreativeView):
 
     def draw(self, hovering_slot=None):
         super().draw(hovering_slot)
-
-        if self.slots[9].get_itemstack().is_empty():
-            self.update_rendering()
 
     def clear(self):
         pass
