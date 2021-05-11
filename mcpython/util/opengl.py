@@ -36,6 +36,7 @@ def draw_rectangle(position, size, color=(0.0, 0.0, 0.0)):
     gl.glVertex2f(x, y)
     gl.glVertex2f(x + dx, y)
     gl.glEnd()
+    gl.glColor3d(1, 1, 1)
 
 
 def draw_line(f, t, color=(0.0, 0.0, 0.0)):
@@ -44,6 +45,7 @@ def draw_line(f, t, color=(0.0, 0.0, 0.0)):
     gl.glVertex2f(*f)
     gl.glVertex2f(*t)
     gl.glEnd()
+    gl.glColor3d(1, 1, 1)
 
 
 def draw_line_rectangle(position, size, color=(0.0, 0.0, 0.0)):
@@ -53,3 +55,4 @@ def draw_line_rectangle(position, size, color=(0.0, 0.0, 0.0)):
     draw_line((x, y), (x + sx, y), color=color)
     draw_line((x + sx, y), (x + sx, y + sy), color=color)
     draw_line((x, y + sy), (x + sx, y + sy), color=color)
+    gl.glColor3d(1, 1, 1)

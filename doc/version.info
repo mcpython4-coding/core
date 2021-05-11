@@ -1618,4 +1618,11 @@ R   [uuk]: improved world serialization API
 [uuk]: made creative tab content data-drive-able via tags
 [uuk]: fixed another minor issue with slots introduced during inventory setup for creative tabs
 [uuk]: creative tabs are tag-driven now
+[uuk]: fixed opengl helpers not correctly cleaning up afterwards after drawing
+[uuk]: implemented scrollbar system for inventories, used currently in creative tabs
+
+
+pending:
+- Creative background Icon tab icons are not updated when hovering over
+- SlotCopy is not updating underlying ItemStack resulting into miss-match
 
