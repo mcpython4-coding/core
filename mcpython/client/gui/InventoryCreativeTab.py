@@ -141,25 +141,25 @@ class CreativeTabManager:
         tab.update_rendering()
         if len(self.pages[-1]) < 10:
             self.pages[-1].append(tab)
-            tab.tab_icon = self.LOWER_TAB if len(self.pages[-1]) <= 5 else self.UPPER_TAB
+            tab.tab_icon = self.UPPER_TAB if len(self.pages[-1]) <= 5 else self.LOWER_TAB
             tab.tab_slot.set_itemstack(tab.get_icon_stack())
         else:
             self.pages.append([tab])
-            tab.tab_icon = self.LOWER_TAB
+            tab.tab_icon = self.UPPER_TAB
             tab.tab_slot.set_itemstack(tab.get_icon_stack())
         return self
 
     def draw_tabs(self, lower_left_position: typing.Tuple[int, int], container_size: typing.Tuple[int, int]):
         tabs = self.pages[self.current_page]
         x, y = lower_left_position
-        for tab in tabs[:5]:
+        for tab in tabs[5:]:
             tab.tab_icon.blit(x, y-self.TAB_SIZE[1])
             tab.tab_slot.draw(x + 10, y - self.TAB_SIZE[1] + 10)
             x += self.TAB_SIZE[0]
 
         x = lower_left_position[0]
         y += container_size[1]
-        for tab in tabs[5:]:
+        for tab in tabs[:5]:
             tab.tab_icon.blit(x, y)
             tab.tab_slot.draw(x + 10, y + 10)
             x += self.TAB_SIZE[0]
