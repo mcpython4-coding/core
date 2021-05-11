@@ -1615,4 +1615,6 @@ R   [uuk]: improved world serialization API
 [uuk]: some minor improvements
 [uuk]: started implementing creative tabs, finally!
 [uuk]: fixed some minor hiccups around some slot stuff
+[uuk]: made creative tab content data-drive-able via tags
+[uuk]: fixed another minor issue with slots introduced during inventory setup for creative tabs
 

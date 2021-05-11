@@ -482,6 +482,13 @@ if shared.IS_CLIENT:
         .add_event_stage("stage:block_boundingbox_get", "stage:boxmodel:bake")
         .update_order()
     )
+    manager.add_stage(
+        LoadingStage(
+            "minecraft:item_groups", "minecraft:items", "minecraft:textures"
+        )
+        .add_event_stage("stage:item_groups:load")
+    )
+
 manager.add_stage(
     LoadingStage(
         "minecraft:world_generation",

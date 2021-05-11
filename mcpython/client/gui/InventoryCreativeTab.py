@@ -56,15 +56,31 @@ class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC
             self.custom_name_label.y = y + self.bg_image_size[1] - 10
             self.custom_name_label.draw()"""
 
+    def on_deactivate(self):
+        super().on_deactivate()
+        shared.state_handler.active_state.parts[0].activate_mouse = True
+
 
 class CreativeItemTab(ICreativeView):
     bg_texture: pyglet.image.AbstractImage = texture_util.to_pyglet_image(mcpython.util.texture.to_pillow_image(mcpython.ResourceLoader.read_pyglet_image("minecraft:gui/container/creative_inventory/tab_items").get_region(0, 120, 194, 255-120)).resize((2*195, 2*136), PIL.Image.NEAREST))
 
-    def __init__(self, icon: ItemStack, group: ItemGroup = None):
+    def __init__(self, icon: ItemStack, group: ItemGroup = None, linked_tag=None):
         super().__init__()
         self.icon = icon
         self.group = group if group is not None else ItemGroup()
         self.scroll_offset = 0
+        self.linked_tag = linked_tag
+
+        if linked_tag is not None:
+            import mcpython.common.data.ResourcePipe
+            mcpython.common.data.ResourcePipe.handler.register_data_processor(self.load_from_tag)
+
+    def load_from_tag(self):
+        tag = shared.tag_handler.get_entries_for(self.linked_tag, "items")
+        self.group.entries.clear()
+        self.group.entries += (ItemStack(e) for e in tag)
+
+        self.update_rendering()
 
     def update_rendering(self):
         for i, slot in enumerate(self.slots[9:]):
@@ -159,7 +175,7 @@ BuildingBlocks = None
 
 def init():
     global BuildingBlocks
-    BuildingBlocks = CreativeItemTab(ItemStack("minecraft:bricks")).add_item("minecraft:stone").add_item("minecraft:granite")
+    BuildingBlocks = CreativeItemTab(ItemStack("minecraft:bricks"), linked_tag="#minecraft:tab_building_blocks")
 
     CT_MANAGER.add_tab(BuildingBlocks)
 

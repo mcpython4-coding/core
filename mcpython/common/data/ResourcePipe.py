@@ -91,6 +91,7 @@ class ResourcePipeHandler:
         self.mappers: typing.List[typing.Callable[[str, str], None]] = []
         self.reload_handlers = []
         self.bake_handlers = []
+        self.data_processors = []
 
     def register_for_mod(self, providing_mod: str, namespace: str = None):
         """
@@ -124,6 +125,10 @@ class ResourcePipeHandler:
 
     def register_bake_listener(self, listener):
         self.bake_handlers.append(listener)
+        return self
+
+    def register_data_processor(self, listener):
+        self.data_processors.append(listener)
         return self
 
     def reload_content(self):
@@ -169,6 +174,9 @@ class ResourcePipeHandler:
 
         gc.collect()  # make sure that memory was cleaned up
         shared.window.print_profiler()  # and now print the profile's (if needed)
+
+        for function in self.data_processors:
+            function()
 
 
 handler = ResourcePipeHandler()

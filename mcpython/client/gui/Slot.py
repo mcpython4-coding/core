@@ -74,6 +74,9 @@ class ISlot(ABC):
     def getParent(self) -> "ISlot":
         raise NotImplementedError()
 
+    def clean_itemstack(self):
+        self.get_itemstack().clean()
+
 
 class Slot(ISlot):
     """
@@ -337,9 +340,6 @@ class Slot(ISlot):
 
     def getParent(self):
         return self
-
-    def clean_itemstack(self):
-        self.get_itemstack().clean()
 
 
 class SlotCopy:
