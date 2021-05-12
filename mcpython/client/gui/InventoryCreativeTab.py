@@ -273,7 +273,8 @@ class CreativeItemTab(ICreativeView):
             return
         self.old_scroll_offset = self.scroll_offset
 
-        entries = self.group.view()
+        entries = list(self.group.view())  # todo: cache value!
+        self.scroll_bar.set_max_value(max(math.ceil(len(entries) / 9)-8, 1))
 
         # print("cycling at", self.name, "entries:", entries)
 
@@ -750,3 +751,10 @@ def init():
         Brewing
     )
     # CT_MANAGER.add_tab(Test)
+
+    """AllTestTab = CreativeItemTab("All Items", ItemStack("minecraft:nether_star"))
+
+    for item in shared.registry.get_by_name("minecraft:item").entries_iterator():
+        AllTestTab.add_item(ItemStack(item))
+
+    CT_MANAGER.add_tab(AllTestTab)"""

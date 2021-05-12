@@ -1640,7 +1640,6 @@ R   [uuk]: improved world serialization API
 
 
 pending:
-- test creative tab system very well by adding ALL items to one & testing
 - fix button texture generator
 - fix slot offset of dynamic copy slots
 
