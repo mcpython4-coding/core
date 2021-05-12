@@ -28,6 +28,7 @@ class StateHandler:
         self.active_state: State.State or None = None
         self.states = {}
         self.CANCEL_SWITCH_STATE = False
+        self.global_key_bind_toggle = False
 
     def switch_to(self, state_name: str, immediate=True):
         assert state_name is not None

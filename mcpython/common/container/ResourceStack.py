@@ -61,7 +61,7 @@ class ItemStack(AbstractResourceStack):
         """
         return cls()
 
-    def __init__(self, item_name_or_instance=None, amount=1):
+    def __init__(self, item_name_or_instance=None, amount=1, warn_if_unarrival=True):
         if isinstance(
             item_name_or_instance, mcpython.common.item.AbstractItem.AbstractItem
         ):
@@ -76,13 +76,14 @@ class ItemStack(AbstractResourceStack):
                     item_name_or_instance
                 ]()
             else:
-                logger.println(
-                    "[FATAL] can't find item named '{}'".format(item_name_or_instance)
-                )
+                if warn_if_unarrival:
+                    logger.println(
+                        "[FATAL] can't find item named '{}'".format(item_name_or_instance)
+                    )
                 self.item = None
 
         else:
-            if item_name_or_instance is not None:
+            if item_name_or_instance is not None and warn_if_unarrival:
                 logger.println(
                     "[FATAL] cannot create itemstack with unknown item type",
                     item_name_or_instance,

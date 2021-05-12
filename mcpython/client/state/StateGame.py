@@ -61,6 +61,8 @@ class StateGame(State.State):
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
 
     def on_key_press(self, symbol, modifiers):
+        if shared.state_handler.global_key_bind_toggle: return
+
         if symbol == key.ESCAPE and shared.window.exclusive:
             shared.state_handler.switch_to("minecraft:escape_state")
         elif symbol == key.R:

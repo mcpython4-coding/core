@@ -539,7 +539,7 @@ class SlotInfiniteStack(Slot):
         pass
 
     def set_itemstack_force(self, stack):
-        super().set_itemstack(stack)
+        super().set_itemstack(stack.copy().set_amount(1))
         self.reference_stack = stack.copy().set_amount(1)
         return self
 

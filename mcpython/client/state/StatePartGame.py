@@ -546,6 +546,8 @@ class StatePartGame(StatePart.StatePart):
             if hotkey.blocks(symbol, modifiers):
                 return
 
+        if shared.state_handler.global_key_bind_toggle: return
+
         if symbol == key.W and not shared.window.keys[key.S]:
             shared.window.strafe[0] = -1
         elif symbol == key.S and not shared.window.keys[key.W]:

@@ -1632,13 +1632,14 @@ R   [uuk]: improved world serialization API
 [uuk]: added buttons to switch pages
 [uuk]: implemented player inventory tab
 [uuk]: fixed some other small stuff
+[uuk]: ItemGroups have now a "filter" function
+[uuk]: added ui helper for search fields
+[uuk]: added search-based item tab
+[uuk]: added a way to disable certain keybinds
+[uuk]: creative item tab content loaded from tags is now filtered
 
 
 pending:
-- search tab [REGEX]
-- auto-removal of non-arrival items from creative tabs
-- save the tab we were in to saves
-- test gamemode 0 inventory
 - test creative tab system very well by adding ALL items to one & testing
 - fix button texture generator
 - fix slot offset of dynamic copy slots

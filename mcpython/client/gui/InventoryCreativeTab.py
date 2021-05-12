@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import math
 import typing
 from abc import ABC
@@ -25,10 +26,11 @@ import mcpython.util.texture as texture_util
 import PIL.Image
 import pyglet
 from mcpython import shared
-from mcpython.common.container.ItemGroup import ItemGroup
+from mcpython.common.container.ItemGroup import ItemGroup, FilteredItemGroup
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.util.opengl import draw_line_rectangle
 from pyglet.window import key, mouse
+import mcpython.client.rendering.ui.SearchBar
 
 TAB_TEXTURE = mcpython.ResourceLoader.read_pyglet_image(
     "minecraft:gui/container/creative_inventory/tabs"
@@ -96,6 +98,8 @@ class CreativeTabScrollbar:
         self.callback(self.currently_scrolling)
 
     def on_key_press(self, symbol, modifiers):
+        if shared.state_handler.global_key_bind_toggle: return
+
         if symbol == key.UP:
             self.on_mouse_scroll(0, 0, 0, -1)
 
@@ -253,7 +257,7 @@ class CreativeItemTab(ICreativeView):
 
         tag = shared.tag_handler.get_entries_for(self.linked_tag, "items")
         self.group.entries.clear()
-        self.group.entries += (ItemStack(e) for e in tag)
+        self.group.entries += filter(lambda stack: not stack.is_empty(), (ItemStack(e, warn_if_unarrival=True) for e in tag))
         self.scroll_bar.set_max_value(
             max(1, (math.ceil(len(self.group.entries) / 9) - 4))
         )
@@ -269,13 +273,26 @@ class CreativeItemTab(ICreativeView):
             return
         self.old_scroll_offset = self.scroll_offset
 
-        for i, slot in enumerate(self.slots[9:]):
-            i += self.scroll_offset * 9
+        entries = self.group.view()
 
-            if i < len(self.group.entries):
-                slot.set_itemstack_force(self.group.entries[i].copy())
-            else:
+        # print("cycling at", self.name, "entries:", entries)
+
+        entries = iter(entries)
+
+        if self.scroll_offset != 0:
+            for _ in range(9*self.scroll_offset):
+                next(entries)
+
+        for i, slot in enumerate(self.slots[9:]):
+            try:
+                entry = next(entries)
+            except StopIteration:
+                # todo: can we simply clean the itemstack?
                 slot.set_itemstack_force(ItemStack.create_empty())
+            else:
+                # print("writing at", i, "stack", entry)
+                # todo: can we change the item in the stack?
+                slot.set_itemstack_force(entry)
 
         for slot in self.slots[:9]:
             slot.invalidate()
@@ -315,7 +332,13 @@ class CreativeItemTab(ICreativeView):
         :param item: the item stack or the item name
         """
 
-        self.group.add(item if not isinstance(item, str) else ItemStack(item))
+        if isinstance(item, str):
+            item = ItemStack(item, warn_if_unarrival=False)
+
+        if item.is_empty():
+            return self
+
+        self.group.add(item)
         return self
 
     def get_icon_stack(self) -> ItemStack:
@@ -344,6 +367,38 @@ class CreativeItemTab(ICreativeView):
         super().on_activate()
         self.scroll_bar.activate()
         self.update_rendering(True)
+
+
+class CreativeTabSearchBar(CreativeItemTab):
+    bg_texture: pyglet.image.AbstractImage = texture_util.to_pyglet_image(
+        mcpython.util.texture.to_pillow_image(
+            mcpython.ResourceLoader.read_pyglet_image(
+                "minecraft:gui/container/creative_inventory/tab_item_search"
+            ).get_region(0, 120, 194, 255 - 120)
+        ).resize((2 * 195, 2 * 136), PIL.Image.NEAREST)
+    )
+
+    def __init__(
+        self, name: str, icon: ItemStack, group: ItemGroup = None, linked_tag=None
+    ):
+        super().__init__(name, icon, group, linked_tag)
+        self.group: FilteredItemGroup = self.group.filtered()
+        self.search_bar = mcpython.client.rendering.ui.SearchBar.SearchBar(
+            change_callback=lambda text: self.group.apply_raw_filter(f"(.*){text}(.*)"),
+            enter_callback=lambda: self.search_bar.disable(),
+            exit_callback=lambda: self.search_bar.disable(),
+            enable_mouse_to_enter=True,
+        )
+        self.tab_icon = CreativeTabManager.UPPER_TAB
+        self.tab_icon_selected = CreativeTabManager.UPPER_TAB_SELECTED
+
+    def on_deactivate(self):
+        super().on_deactivate()
+        self.search_bar.disable()
+
+    def on_activate(self):
+        super().on_activate()
+        self.group.apply_raw_filter("(.*)")
 
 
 class CreativePlayerInventory(ICreativeView):
@@ -449,6 +504,8 @@ class CreativeTabManager:
         return len(self.pages) > 1
 
     def on_key_press(self, button, mod):
+        if shared.state_handler.global_key_bind_toggle: return
+
         if button == key.E:
             shared.inventory_handler.hide(self.current_tab)
         elif button == key.N and self.is_multi_page():
@@ -463,6 +520,9 @@ class CreativeTabManager:
     def init_tabs_if_needed(self):
         if self.inventory_instance is None:
             self.inventory_instance = CreativePlayerInventory()
+
+        if self.search_instance is None:
+            self.search_instance = CreativeTabSearchBar("Search", ItemStack("minecraft:paper"))
 
     def activate(self):
         mcpython.common.event.TickHandler.handler.bind(
@@ -570,6 +630,12 @@ class CreativeTabManager:
             self.inventory_instance,
             x + container_size[0] - self.TAB_SIZE[0],
             y - self.TAB_SIZE[1],
+        )
+
+        self.draw_tab(
+            self.search_instance,
+            x + container_size[0] - self.TAB_SIZE[0],
+            y + container_size[1]
         )
 
         if self.is_multi_page():
