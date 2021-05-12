@@ -257,7 +257,7 @@ class CreativeItemTab(ICreativeView):
 
         tag = shared.tag_handler.get_entries_for(self.linked_tag, "items")
         self.group.entries.clear()
-        self.group.entries += filter(lambda stack: not stack.is_empty(), (ItemStack(e, warn_if_unarrival=True) for e in tag))
+        self.group.entries += filter(lambda stack: not stack.is_empty(), (ItemStack(e, warn_if_unarrival=False) for e in tag))
         self.scroll_bar.set_max_value(
             max(1, (math.ceil(len(self.group.entries) / 9) - 4))
         )
@@ -274,7 +274,7 @@ class CreativeItemTab(ICreativeView):
         self.old_scroll_offset = self.scroll_offset
 
         entries = list(self.group.view())  # todo: cache value!
-        self.scroll_bar.set_max_value(max(math.ceil(len(entries) / 9)-8, 1))
+        self.scroll_bar.set_max_value(max(math.ceil(len(entries) / 9)-4, 1))
 
         # print("cycling at", self.name, "entries:", entries)
 
