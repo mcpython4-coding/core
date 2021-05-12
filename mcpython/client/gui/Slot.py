@@ -429,7 +429,9 @@ class SlotCopy(ISlot):
 
     def draw_label(self, x=None, y=None):
         self.master.draw_label(
-            x if x is not None else self.slot_position[0] + self.position[0] + SLOT_WIDTH,
+            x
+            if x is not None
+            else self.slot_position[0] + self.position[0] + SLOT_WIDTH,
             y if y is not None else self.slot_position[1] + self.position[1],
         )
 
@@ -472,16 +474,6 @@ class SlotCopyWithDynamicTarget(SlotCopy):
         self.valid = False
         self.cached_master = None
         self.position = position
-        if self.master and self.get_itemstack().item:
-            pos, index = mcpython.common.item.ItemManager.items.item_index_table[
-                self.get_itemstack().get_item_name()
-            ][self.get_itemstack().item.get_active_image_location()]
-            image = mcpython.common.item.ItemManager.ITEM_ATLAS.atlases[index].group[
-                tuple(pos)
-            ]
-            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
-        else:
-            self.sprite = None
         self.__last_item_file = (
             self.itemstack.item.get_default_item_image_location()
             if self.master and self.itemstack.item

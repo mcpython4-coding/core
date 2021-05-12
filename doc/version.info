@@ -1630,11 +1630,16 @@ R   [uuk]: improved world serialization API
 [uuk]: bumped target mc version to 21w19a
 [uuk]: implemented some button rendering code
 [uuk]: added buttons to switch pages
+[uuk]: implemented player inventory tab
+[uuk]: fixed some other small stuff
 
 
 pending:
-- arrow buttons on the tab view if more than 9 tabs are registered
-- main player inventory tab
 - search tab [REGEX]
 - auto-removal of non-arrival items from creative tabs
+- save the tab we were in to saves
+- test gamemode 0 inventory
+- test creative tab system very well by adding ALL items to one & testing
+- fix button texture generator
+- fix slot offset of dynamic copy slots
 

@@ -1,19 +1,41 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 import typing
 
-from mcpython.client.rendering.ui.ButtonBackgroundBuilder import DefaultButtonTexture, ButtonState
+import mcpython.common.event.EventBus
+import mcpython.ResourceLoader
 import pyglet
 from mcpython import shared
-import mcpython.common.event.EventBus
+from mcpython.client.rendering.ui.ButtonBackgroundBuilder import (
+    ButtonState,
+    DefaultButtonTexture,
+)
 from pyglet.window import key, mouse
-import mcpython.ResourceLoader
 
 
 class ImageOverlayButtonRenderer:
-    def __init__(self, button_size: typing.Tuple[int, int], icon: pyglet.image.AbstractImage, on_press: typing.Callable, icon_offset=(0, 0)):
+    def __init__(
+        self,
+        button_size: typing.Tuple[int, int],
+        icon: pyglet.image.AbstractImage,
+        on_press: typing.Callable,
+        icon_offset=(0, 0),
+    ):
         self.backgrounds = (
             DefaultButtonTexture.get_pyglet_texture(*button_size, ButtonState.ACTIVE),
-            DefaultButtonTexture.get_pyglet_texture( * button_size, ButtonState.HOVERING),
-            DefaultButtonTexture.get_pyglet_texture(*button_size, ButtonState.DISABLED)
+            DefaultButtonTexture.get_pyglet_texture(*button_size, ButtonState.HOVERING),
+            DefaultButtonTexture.get_pyglet_texture(*button_size, ButtonState.DISABLED),
         )
         self.icon = icon
         self.icon_offset = icon_offset
@@ -47,7 +69,10 @@ class ImageOverlayButtonRenderer:
         self.on_press()
 
     def over_button(self, x: int, y: int):
-        return 0 <= x - self.position[0] <= self.size[0] and 0 <= y - self.position[1] <= self.size[1]
+        return (
+            0 <= x - self.position[0] <= self.size[0]
+            and 0 <= y - self.position[1] <= self.size[1]
+        )
 
     def activate(self):
         self.hovering = self.over_button(*shared.window.mouse_position)
@@ -64,10 +89,15 @@ class ImageOverlayButtonRenderer:
         else:
             self.backgrounds[0].blit(*self.position)
 
-        self.icon.blit(self.position[0] + self.icon_offset[0], self.position[1] + self.icon_offset[1])
+        self.icon.blit(
+            self.position[0] + self.icon_offset[0],
+            self.position[1] + self.icon_offset[1],
+        )
 
 
-ARROW_TEXTURE_SHEET = mcpython.ResourceLoader.read_pyglet_image("minecraft:gui/recipe_book")
+ARROW_TEXTURE_SHEET = mcpython.ResourceLoader.read_pyglet_image(
+    "minecraft:gui/recipe_book"
+)
 RIGHT_ARROW = ARROW_TEXTURE_SHEET.get_region(0, 32, 12, 17)
 LEFT_ARROW = ARROW_TEXTURE_SHEET.get_region(15, 32, 12, 17)
 
@@ -82,4 +112,3 @@ def arrow_button_right(position, callback):
     instance = ImageOverlayButtonRenderer((18, 18), RIGHT_ARROW, callback, (3, 0))
     instance.position = position
     return instance
-
