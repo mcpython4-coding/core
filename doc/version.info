@@ -1626,10 +1626,13 @@ R   [uuk]: improved world serialization API
 [uuk]: added SlotCopy variant for dynamic slot referencing
 [uuk]: maybe fixed normal SlotCopy
 [uuk]: E closes now also the inventory
+[uuk]: N and M are now switching between the creative tab pages [not single tabs]
+[uuk]: bumped target mc version to 21w19a
+[uuk]: implemented some button rendering code
+[uuk]: added buttons to switch pages
 
 
 pending:
-- SlotCopy is not updating underlying ItemStack resulting into miss-match
 - arrow buttons on the tab view if more than 9 tabs are registered
 - main player inventory tab
 - search tab [REGEX]

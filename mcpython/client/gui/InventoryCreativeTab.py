@@ -15,6 +15,7 @@ from mcpython.common.container.ItemGroup import ItemGroup
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.util.opengl import draw_line_rectangle
 from pyglet.window import key, mouse
+import mcpython.client.rendering.ui.Buttons
 
 TAB_TEXTURE = mcpython.ResourceLoader.read_pyglet_image(
     "minecraft:gui/container/creative_inventory/tabs"
@@ -340,10 +341,10 @@ class CreativeTabManager:
         TAB_TEXTURE.get_region(0, 224 - 30, 28, 30), TAB_SIZE
     )
     LOWER_TAB = texture_util.resize_image_pyglet(
-        TAB_TEXTURE.get_region(0, 128, 28, 30), TAB_SIZE
+        TAB_TEXTURE.get_region(0, 164, 28, 30), TAB_SIZE
     )
     LOWER_TAB_SELECTED = texture_util.resize_image_pyglet(
-        TAB_TEXTURE.get_region(0, 164, 28, 30), TAB_SIZE
+        TAB_TEXTURE.get_region(0, 128, 28, 30), TAB_SIZE
     )
 
     def __init__(self):
@@ -362,14 +363,25 @@ class CreativeTabManager:
 
         self.hovering_tab = None
 
+        self.page_left = mcpython.client.rendering.ui.Buttons.arrow_button_left((0, 0), lambda: self.increase_page(-1))
+        self.page_right = mcpython.client.rendering.ui.Buttons.arrow_button_right((0, 0), lambda: self.increase_page(1))
+        self.page_label = pyglet.text.Label(anchor_x="center", anchor_y="center")
+
         self.lower_left_position = 0, 0
         self.container_size = 1, 1
 
         self.current_tab: typing.Optional[ICreativeView] = None
 
+    def is_multi_page(self):
+        return len(self.pages) > 1
+
     def on_key_press(self, button, mod):
         if button == key.E:
             shared.inventory_handler.hide(self.current_tab)
+        elif button == key.N and self.is_multi_page():
+            self.current_page = max(self.current_page - 1, 0)
+        elif button == key.M and self.is_multi_page():
+            self.current_page = min(self.current_page + 1, len(self.pages) - 1)
 
     def on_mouse_move(self, x, y, dx, dy, *_):
         tab = self.get_tab_at(x, y)
@@ -380,8 +392,14 @@ class CreativeTabManager:
             self.underlying_event_bus.activate, 1
         )
 
+        if self.is_multi_page():
+            self.page_left.activate()
+            self.page_right.activate()
+
     def deactivate(self):
         self.underlying_event_bus.deactivate()
+        self.page_left.deactivate()
+        self.page_right.deactivate()
 
     def on_mouse_press(self, mx, my, button, modifiers):
         if not button & mouse.LEFT:
@@ -389,13 +407,7 @@ class CreativeTabManager:
 
         tab = self.get_tab_at(mx, my)
         if tab is not None:
-            shared.inventory_handler.hide(self.current_tab)
-            self.current_tab.is_selected = False
-
-            self.current_tab = tab
-
-            tab.is_selected = True
-            shared.inventory_handler.show(tab)
+            self.switch_to_tab(tab)
 
     def get_tab_at(self, mx, my) -> typing.Optional[ICreativeView]:
         tx, ty = self.TAB_SIZE
@@ -467,12 +479,41 @@ class CreativeTabManager:
             tab.tab_slot.draw(x + 10, y + 10)
             x += self.TAB_SIZE[0]
 
+        if self.is_multi_page():
+            self.page_left.active = self.current_page != 0
+            self.page_left.position = lower_left_position[0] - 10, lower_left_position[1] + container_size[1] + self.TAB_SIZE[1] + 10
+            self.page_left.draw()
+
+            self.page_right.active = self.current_page != len(self.pages) - 1
+            self.page_right.position = lower_left_position[0] + container_size[0] + 10, lower_left_position[1] + container_size[1] + self.TAB_SIZE[1] + 10
+            self.page_right.draw()
+
+            self.page_label.text = f"{self.current_page + 1} / {len(self.pages)}"
+            self.page_label.position = lower_left_position[0] + container_size[0] // 2 + 10, lower_left_position[1] + container_size[1] + self.TAB_SIZE[1] + 19
+            self.page_label.draw()
+
     def open(self):
         if self.current_tab is None:
             self.current_tab = self.pages[0][0]
             self.current_tab.is_selected = True
 
         shared.inventory_handler.show(self.current_tab)
+
+    def increase_page(self, count: int):
+        previous = self.current_page
+        self.current_page = max(0, min(self.current_page + count, len(self.pages) - 1))
+        if previous != self.current_page:
+            self.switch_to_tab(self.pages[self.current_page][0])
+
+    def switch_to_tab(self, tab: ICreativeView):
+        if self.current_tab is not None:
+            shared.inventory_handler.hide(self.current_tab)
+            self.current_tab.is_selected = False
+
+        self.current_tab = tab
+
+        tab.is_selected = True
+        shared.inventory_handler.show(tab)
 
 
 CT_MANAGER = CreativeTabManager()
@@ -486,10 +527,11 @@ Food = None
 Tools = None
 Weapons = None
 Brewing = None
+Test = None
 
 
 def init():
-    global BuildingBlocks, Decoration, Redstone, Transportation, Miscellaneous, Food, Tools, Weapons, Brewing
+    global BuildingBlocks, Decoration, Redstone, Transportation, Miscellaneous, Food, Tools, Weapons, Brewing, Test
     BuildingBlocks = CreativeItemTab(
         "Building Blocks",
         ItemStack("minecraft:bricks"),
@@ -529,9 +571,13 @@ def init():
     Brewing = CreativeItemTab(
         "Brewing", ItemStack("minecraft:barrier"), linked_tag="#minecraft:tab_brewing"
     )
+    Test = CreativeItemTab(
+        "Testing", ItemStack("minecraft:diamond_block")
+    ).add_item("minecraft:obsidian")
 
     CT_MANAGER.add_tab(BuildingBlocks).add_tab(Decoration).add_tab(Redstone).add_tab(
         Transportation
     ).add_tab(Miscellaneous).add_tab(Food).add_tab(Tools).add_tab(Weapons).add_tab(
         Brewing
     )
+    CT_MANAGER.add_tab(Test)
