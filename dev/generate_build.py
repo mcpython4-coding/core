@@ -256,10 +256,10 @@ class ISortCodeFormattingPreperation(AbstractProjectPreparation):
 
         for root, dirs, files in os.walk(directory):
             if (
-                    ".git" in root
-                    or "resources" in root
-                    or "build" in root
-                    or "__pycache__" in root
+                ".git" in root
+                or "resources" in root
+                or "build" in root
+                or "__pycache__" in root
             ):
                 continue
 

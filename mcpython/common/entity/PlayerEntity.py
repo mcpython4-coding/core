@@ -130,9 +130,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         import mcpython.client.gui.InventoryCraftingTable as InvCrafting
         import mcpython.client.gui.InventoryPlayerHotbar as InvHotbar
 
-        self.inventory_hotbar = InvHotbar.InventoryPlayerHotbar(self)
+        self.inventory_hotbar = InvHotbar.InventoryPlayerHotbar.create(self)
         self.inventory_main = (
-            mcpython.client.gui.MainPlayerInventory.MainPlayerInventory(
+            mcpython.client.gui.MainPlayerInventory.MainPlayerInventory.create(
                 self.inventory_hotbar
             )
         )
@@ -323,6 +323,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 return
 
         super().kill()
+        self.inventory_main.free()
+        self.inventory_hotbar.free()
         if (
             not internal
             and not force

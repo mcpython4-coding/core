@@ -11,7 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.client.gui.ContainerRenderer
+import mcpython.client.gui.InventoryCreativeTab
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
@@ -22,7 +25,6 @@ import mcpython.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 from mcpython import shared
-import mcpython.client.gui.InventoryCreativeTab
 
 
 class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
@@ -32,6 +34,15 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
 
     TEXTURE = None
     TEXTURE_SIZE = None
+    INSTANCES: typing.List["MainPlayerInventory"] = []
+
+    @classmethod
+    def create(cls, hotbar):
+        if len(cls.INSTANCES) > 0:
+            instance = cls.INSTANCES.pop()
+            instance.hotbar = hotbar
+            return instance
+        return cls(hotbar)
 
     @classmethod
     def update_texture(cls):
@@ -125,6 +136,9 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
             self.slots[:9] + self.slots[36:41]
         )
         shared.inventory_handler.shift_container.container_B = self.slots[9:36]
+
+    def free(self):
+        MainPlayerInventory.INSTANCES.append(self)
 
 
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(

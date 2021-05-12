@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import sys
 import time
+import typing
 
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.InventoryHandler
@@ -154,6 +155,16 @@ class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRende
     main inventory for the hotbar
     """
 
+    INSTANCES: typing.List["InventoryPlayerHotbar"] = []
+
+    @classmethod
+    def create(cls, player):
+        if len(cls.INSTANCES) > 0:
+            instance = cls.INSTANCES.pop()
+            instance.player = player
+            return instance
+        return cls(player)
+
     def __init__(self, player):
         super().__init__()
         self.player = player
@@ -163,6 +174,9 @@ class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRende
         self.time_since_last_change = 0
 
         self.xp_level_lable = pyglet.text.Label(color=(92, 133, 59), anchor_x="center")
+
+    def free(self):
+        InventoryPlayerHotbar.INSTANCES.append(self)
 
     @staticmethod
     def get_config_file():

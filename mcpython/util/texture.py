@@ -14,16 +14,17 @@ This project is not official by mojang and does not relate to it.
 # util functions from manipulating image data and converting between different formats
 import typing
 
+import mcpython.util.math
 import PIL.Image
 import pyglet
 from mcpython import shared
-import mcpython.util.math
 
 
 def colorize(
     mask: PIL.Image.Image,
     color: tuple,
-    colorizer=lambda color, mask: tuple(c * mask // 255 for c in color[:3])+(tuple() if len(color) == 3 else (color[-1])),
+    colorizer=lambda color, mask: tuple(c * mask // 255 for c in color[:3])
+    + (tuple() if len(color) == 3 else (color[-1])),
 ) -> PIL.Image.Image:
     """
     Colorize an image-mask with a color using colorizer as the operator
@@ -55,7 +56,10 @@ def layer_with_alpha(base: PIL.Image.Image, top: PIL.Image.Image):
             if a == 0:
                 new_image.putpixel((x, y), b)
             else:
-                new_image.putpixel((x, y), tuple(round(e[0] * (1 - a) + e[1] * a) for e in zip(b, t[:3])))
+                new_image.putpixel(
+                    (x, y),
+                    tuple(round(e[0] * (1 - a) + e[1] * a) for e in zip(b, t[:3])),
+                )
 
     return new_image
 
@@ -100,8 +104,10 @@ def hex_to_color(color: str) -> typing.Tuple[int, int, int]:
 
 def int_hex_to_color(color: int) -> typing.Tuple[int, int, int]:
     v = hex(color)[2:]
-    return hex_to_color("0"*(6-len(v))+v)
+    return hex_to_color("0" * (6 - len(v)) + v)
 
 
-def resize_image_pyglet(image: pyglet.image.AbstractImage, size: typing.Tuple[int, int]) -> pyglet.image.AbstractImage:
+def resize_image_pyglet(
+    image: pyglet.image.AbstractImage, size: typing.Tuple[int, int]
+) -> pyglet.image.AbstractImage:
     return to_pyglet_image(to_pillow_image(image).resize(size, PIL.Image.NEAREST))

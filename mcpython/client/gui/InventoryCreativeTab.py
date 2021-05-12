@@ -2,22 +2,23 @@ import math
 import typing
 from abc import ABC
 
-import PIL.Image
-import pyglet
-
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
-from mcpython.common.container.ResourceStack import ItemStack
-from mcpython.common.container.ItemGroup import ItemGroup
-import mcpython.ResourceLoader
-from mcpython import shared
-import mcpython.util.texture as texture_util
-from mcpython.util.opengl import draw_line_rectangle
 import mcpython.common.event.EventBus
-from pyglet.window import mouse, key
+import mcpython.common.event.TickHandler
+import mcpython.ResourceLoader
+import mcpython.util.texture as texture_util
+import PIL.Image
+import pyglet
+from mcpython import shared
+from mcpython.common.container.ItemGroup import ItemGroup
+from mcpython.common.container.ResourceStack import ItemStack
+from mcpython.util.opengl import draw_line_rectangle
+from pyglet.window import key, mouse
 
-
-TAB_TEXTURE = mcpython.ResourceLoader.read_pyglet_image("minecraft:gui/container/creative_inventory/tabs")
+TAB_TEXTURE = mcpython.ResourceLoader.read_pyglet_image(
+    "minecraft:gui/container/creative_inventory/tabs"
+)
 
 
 class CreativeTabScrollbar:
@@ -30,14 +31,20 @@ class CreativeTabScrollbar:
 
     SCROLLBAR_SIZE = 24, 30
 
-    NON_SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(TAB_TEXTURE.get_region(232, 241, 12, 15), SCROLLBAR_SIZE)
-    SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(TAB_TEXTURE.get_region(244, 241, 12, 15), SCROLLBAR_SIZE)
+    NON_SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(
+        TAB_TEXTURE.get_region(232, 241, 12, 15), SCROLLBAR_SIZE
+    )
+    SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(
+        TAB_TEXTURE.get_region(244, 241, 12, 15), SCROLLBAR_SIZE
+    )
 
     def __init__(self, callback: typing.Callable[[int], None], scroll_until: int = 1):
         self.callback = callback
         self.scroll_until = scroll_until
         self.currently_scrolling = 1
-        self.underlying_event_bus: mcpython.common.event.EventBus.EventBus = shared.event_handler.create_bus(active=False)
+        self.underlying_event_bus: mcpython.common.event.EventBus.EventBus = (
+            shared.event_handler.create_bus(active=False)
+        )
 
         self.underlying_event_bus.subscribe("user:mouse:drag", self.on_mouse_drag)
         self.underlying_event_bus.subscribe("user:mouse:motion", self.on_mouse_move)
@@ -60,13 +67,18 @@ class CreativeTabScrollbar:
 
     def on_mouse_move(self, x, y, dx, dy):
         cx, cy = self.get_scrollbar_position()
-        if 0 <= x - cx <= self.SCROLLBAR_SIZE[0] and 0 <= y - cy <= self.SCROLLBAR_SIZE[1]:
+        if (
+            0 <= x - cx <= self.SCROLLBAR_SIZE[0]
+            and 0 <= y - cy <= self.SCROLLBAR_SIZE[1]
+        ):
             self.is_hovered = True
         else:
             self.is_hovered = False
 
     def on_mouse_scroll(self, x, y, sx, sy):
-        self.currently_scrolling = max(1, min(self.currently_scrolling+math.copysign(1, sy), self.scroll_until))
+        self.currently_scrolling = max(
+            1, min(self.currently_scrolling + math.copysign(1, sy), self.scroll_until)
+        )
         self.callback(self.currently_scrolling)
 
     def on_key_press(self, symbol, modifiers):
@@ -89,7 +101,9 @@ class CreativeTabScrollbar:
         sx, sy = self.SCROLLBAR_SIZE
         y += self.height - sy
         if self.scroll_until != 1:
-            y -= (self.height - sy) * ((self.currently_scrolling - 1) / (self.scroll_until - 1))
+            y -= (self.height - sy) * (
+                (self.currently_scrolling - 1) / (self.scroll_until - 1)
+            )
         # print(self.position, self.SCROLLBAR_SIZE, self.height, self.currently_scrolling, self.scroll_until, x, y)
         return x, y
 
@@ -97,7 +111,9 @@ class CreativeTabScrollbar:
         self.position = lower_left
         self.height = height
 
-        (self.NON_SELECTED_SCROLLBAR if self.is_hovered else self.SELECTED_SCROLLBAR).blit(*self.get_scrollbar_position())
+        (
+            self.NON_SELECTED_SCROLLBAR if self.is_hovered else self.SELECTED_SCROLLBAR
+        ).blit(*self.get_scrollbar_position())
 
         # This is here for debugging where the bar is drawn
         # draw_line_rectangle(lower_left, (self.SCROLLBAR_SIZE[0], height), (1, 0, 0))
@@ -172,9 +188,17 @@ class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC
 
 
 class CreativeItemTab(ICreativeView):
-    bg_texture: pyglet.image.AbstractImage = texture_util.to_pyglet_image(mcpython.util.texture.to_pillow_image(mcpython.ResourceLoader.read_pyglet_image("minecraft:gui/container/creative_inventory/tab_items").get_region(0, 120, 194, 255-120)).resize((2*195, 2*136), PIL.Image.NEAREST))
+    bg_texture: pyglet.image.AbstractImage = texture_util.to_pyglet_image(
+        mcpython.util.texture.to_pillow_image(
+            mcpython.ResourceLoader.read_pyglet_image(
+                "minecraft:gui/container/creative_inventory/tab_items"
+            ).get_region(0, 120, 194, 255 - 120)
+        ).resize((2 * 195, 2 * 136), PIL.Image.NEAREST)
+    )
 
-    def __init__(self, name: str, icon: ItemStack, group: ItemGroup = None, linked_tag=None):
+    def __init__(
+        self, name: str, icon: ItemStack, group: ItemGroup = None, linked_tag=None
+    ):
         super().__init__()
         self.icon = icon
         self.group = group if group is not None else ItemGroup()
@@ -187,7 +211,10 @@ class CreativeItemTab(ICreativeView):
             # If there is a tag linked to this tab, subscribe to the reload event
 
             import mcpython.common.data.ResourcePipe
-            mcpython.common.data.ResourcePipe.handler.register_data_processor(self.load_from_tag)
+
+            mcpython.common.data.ResourcePipe.handler.register_data_processor(
+                self.load_from_tag
+            )
 
         self.scroll_bar = CreativeTabScrollbar(self.set_scrolling)
 
@@ -200,12 +227,16 @@ class CreativeItemTab(ICreativeView):
         Helper method for reloading the content from the underlying tag
         Use only when self.linked_tag is set, otherwise, this will crash
         """
-        assert self.linked_tag is not None, "linked tag shouldn't be None when calling this method..."
+        assert (
+            self.linked_tag is not None
+        ), "linked tag shouldn't be None when calling this method..."
 
         tag = shared.tag_handler.get_entries_for(self.linked_tag, "items")
         self.group.entries.clear()
         self.group.entries += (ItemStack(e) for e in tag)
-        self.scroll_bar.set_max_value(max(1, (math.ceil(len(self.group.entries) / 9)-4)))
+        self.scroll_bar.set_max_value(
+            max(1, (math.ceil(len(self.group.entries) / 9) - 4))
+        )
 
         self.update_rendering(force=True)
 
@@ -214,7 +245,8 @@ class CreativeItemTab(ICreativeView):
         Updates the slot content of the rendering system
         :param force: force update, also when nothing changed
         """
-        if self.old_scroll_offset == self.scroll_offset and not force: return
+        if self.old_scroll_offset == self.scroll_offset and not force:
+            return
         self.old_scroll_offset = self.scroll_offset
 
         for i, slot in enumerate(self.slots[9:]):
@@ -225,19 +257,37 @@ class CreativeItemTab(ICreativeView):
             else:
                 slot.set_itemstack_force(ItemStack.create_empty())
 
+        for slot in self.slots[:9]:
+            slot.invalidate()
+
     def create_slot_renderers(self):
         """
         Creates the slots
         """
 
+        def work(i):
+            return lambda: shared.world.get_active_player().inventory_main.slots[i]
+
         slots = [
             [
-                mcpython.client.gui.Slot.SlotInfiniteStack(ItemStack.create_empty(), position=(18+x*36, 61+y*36)) for x in range(9)
+                mcpython.client.gui.Slot.SlotInfiniteStack(
+                    ItemStack.create_empty(), position=(18 + x * 36, 61 + y * 36)
+                )
+                for x in range(9)
             ]
             for y in range(4, -1, -1)
         ]
         # some black magic...
-        return [slot.copy((18+i*36, slot.position[1]-2)) for i, slot in enumerate(shared.world.get_active_player().inventory_main.slots[:9])] + sum(slots, [])
+        return [
+            mcpython.client.gui.Slot.SlotCopyWithDynamicTarget(
+                work(j),
+                position=(
+                    20 + j * 36,
+                    16,
+                ),
+            )
+            for j in range(9)
+        ] + sum(slots, [])
 
     def add_item(self, item: typing.Union[ItemStack, str]):
         """
@@ -252,11 +302,13 @@ class CreativeItemTab(ICreativeView):
         return self.icon
 
     def get_view_size(self) -> typing.Tuple[int, int]:
-        return 2*195, 2*136
+        return 2 * 195, 2 * 136
 
     def draw_at(self, position: typing.Tuple[int, int], hovering_slot=None):
         self.bg_texture.blit(*position)
-        self.scroll_bar.draw_at((position[0]+176*2, position[1]+8*2), self.get_view_size()[1]-50)
+        self.scroll_bar.draw_at(
+            (position[0] + 176 * 2, position[1] + 8 * 2), self.get_view_size()[1] - 50
+        )
 
     def draw(self, hovering_slot=None):
         super().draw(hovering_slot)
@@ -278,13 +330,21 @@ class CreativeItemTab(ICreativeView):
 
 class CreativeTabManager:
 
-    TAB_SIZE = 28*2, 30*2
+    TAB_SIZE = 28 * 2, 30 * 2
 
     # todo: make this reload-able!
-    UPPER_TAB = texture_util.resize_image_pyglet(TAB_TEXTURE.get_region(0, 224, 28, 30), TAB_SIZE)
-    UPPER_TAB_SELECTED = texture_util.resize_image_pyglet(TAB_TEXTURE.get_region(0, 224-30, 28, 30), TAB_SIZE)
-    LOWER_TAB = texture_util.resize_image_pyglet(TAB_TEXTURE.get_region(0, 128, 28, 30), TAB_SIZE)
-    LOWER_TAB_SELECTED = texture_util.resize_image_pyglet(TAB_TEXTURE.get_region(0, 164, 28, 30), TAB_SIZE)
+    UPPER_TAB = texture_util.resize_image_pyglet(
+        TAB_TEXTURE.get_region(0, 224, 28, 30), TAB_SIZE
+    )
+    UPPER_TAB_SELECTED = texture_util.resize_image_pyglet(
+        TAB_TEXTURE.get_region(0, 224 - 30, 28, 30), TAB_SIZE
+    )
+    LOWER_TAB = texture_util.resize_image_pyglet(
+        TAB_TEXTURE.get_region(0, 128, 28, 30), TAB_SIZE
+    )
+    LOWER_TAB_SELECTED = texture_util.resize_image_pyglet(
+        TAB_TEXTURE.get_region(0, 164, 28, 30), TAB_SIZE
+    )
 
     def __init__(self):
         self.pages: typing.List[typing.List[ICreativeView]] = [[]]
@@ -292,11 +352,13 @@ class CreativeTabManager:
         self.search_instance = None
         self.current_page = 0
 
-        self.underlying_event_bus: mcpython.common.event.EventBus.EventBus = shared.event_handler.create_bus(
-            active=False)
+        self.underlying_event_bus: mcpython.common.event.EventBus.EventBus = (
+            shared.event_handler.create_bus(active=False)
+        )
         self.underlying_event_bus.subscribe("user:mouse:press", self.on_mouse_press)
         self.underlying_event_bus.subscribe("user:mouse:drag", self.on_mouse_move)
         self.underlying_event_bus.subscribe("user:mouse:motion", self.on_mouse_move)
+        self.underlying_event_bus.subscribe("user:keyboard:press", self.on_key_press)
 
         self.hovering_tab = None
 
@@ -305,18 +367,25 @@ class CreativeTabManager:
 
         self.current_tab: typing.Optional[ICreativeView] = None
 
+    def on_key_press(self, button, mod):
+        if button == key.E:
+            shared.inventory_handler.hide(self.current_tab)
+
     def on_mouse_move(self, x, y, dx, dy, *_):
         tab = self.get_tab_at(x, y)
         self.hovering_tab = tab
 
     def activate(self):
-        self.underlying_event_bus.activate()
+        mcpython.common.event.TickHandler.handler.bind(
+            self.underlying_event_bus.activate, 1
+        )
 
     def deactivate(self):
         self.underlying_event_bus.deactivate()
 
     def on_mouse_press(self, mx, my, button, modifiers):
-        if not button & mouse.LEFT: return
+        if not button & mouse.LEFT:
+            return
 
         tab = self.get_tab_at(mx, my)
         if tab is not None:
@@ -350,8 +419,14 @@ class CreativeTabManager:
         tab.update_rendering()
         if len(self.pages[-1]) < 9:
             self.pages[-1].append(tab)
-            tab.tab_icon = self.UPPER_TAB if len(self.pages[-1]) <= 4 else self.LOWER_TAB
-            tab.tab_icon_selected = self.UPPER_TAB_SELECTED if len(self.pages[-1]) <= 4 else self.LOWER_TAB_SELECTED
+            tab.tab_icon = (
+                self.UPPER_TAB if len(self.pages[-1]) <= 4 else self.LOWER_TAB
+            )
+            tab.tab_icon_selected = (
+                self.UPPER_TAB_SELECTED
+                if len(self.pages[-1]) <= 4
+                else self.LOWER_TAB_SELECTED
+            )
             tab.tab_slot.set_itemstack(tab.get_icon_stack())
         else:
             self.pages.append([tab])
@@ -360,22 +435,34 @@ class CreativeTabManager:
             tab.tab_slot.set_itemstack(tab.get_icon_stack())
         return self
 
-    def draw_tabs(self, lower_left_position: typing.Tuple[int, int], container_size: typing.Tuple[int, int]):
+    def draw_tabs(
+        self,
+        lower_left_position: typing.Tuple[int, int],
+        container_size: typing.Tuple[int, int],
+    ):
         self.lower_left_position = lower_left_position
         self.container_size = container_size
 
         tabs = self.pages[self.current_page]
         x, y = lower_left_position
         for tab in tabs[4:]:
-            icon = tab.tab_icon if not tab.is_selected and tab != self.hovering_tab else tab.tab_icon_selected
-            icon.blit(x, y-self.TAB_SIZE[1])
+            icon = (
+                tab.tab_icon
+                if not tab.is_selected and tab != self.hovering_tab
+                else tab.tab_icon_selected
+            )
+            icon.blit(x, y - self.TAB_SIZE[1])
             tab.tab_slot.draw(x + 10, y - self.TAB_SIZE[1] + 10)
             x += self.TAB_SIZE[0]
 
         x = lower_left_position[0]
         y += container_size[1]
         for tab in tabs[:4]:
-            icon = tab.tab_icon if not tab.is_selected and tab != self.hovering_tab else tab.tab_icon_selected
+            icon = (
+                tab.tab_icon
+                if not tab.is_selected and tab != self.hovering_tab
+                else tab.tab_icon_selected
+            )
             icon.blit(x, y)
             tab.tab_slot.draw(x + 10, y + 10)
             x += self.TAB_SIZE[0]
@@ -403,15 +490,48 @@ Brewing = None
 
 def init():
     global BuildingBlocks, Decoration, Redstone, Transportation, Miscellaneous, Food, Tools, Weapons, Brewing
-    BuildingBlocks = CreativeItemTab("Building Blocks", ItemStack("minecraft:bricks"), linked_tag="#minecraft:tab_building_blocks")
-    Decoration = CreativeItemTab("Decoration", ItemStack("minecraft:barrier"), linked_tag="#minecraft:tab_decoration")
-    Redstone = CreativeItemTab("Redstone", ItemStack("minecraft:redstone_block"), linked_tag="#minecraft:tab_redstone")
-    Transportation = CreativeItemTab("Transportation", ItemStack("minecraft:barrier"), linked_tag="#minecraft:tab_transportation")
-    Miscellaneous = CreativeItemTab("Miscellaneous", ItemStack("minecraft:stick"), linked_tag="#minecraft:tab_miscellaneous")
-    Food = CreativeItemTab("Food", ItemStack("minecraft:potato"), linked_tag="#minecraft:tab_food")
-    Tools = CreativeItemTab("Tools", ItemStack("minecraft:iron_axe"), linked_tag="#minecraft:tab_tools")
-    Weapons = CreativeItemTab("Weapons", ItemStack("minecraft:iron_sword"), linked_tag="#minecraft:tab_weapons")
-    Brewing = CreativeItemTab("Brewing", ItemStack("minecraft:barrier"), linked_tag="#minecraft:tab_brewing")
+    BuildingBlocks = CreativeItemTab(
+        "Building Blocks",
+        ItemStack("minecraft:bricks"),
+        linked_tag="#minecraft:tab_building_blocks",
+    )
+    Decoration = CreativeItemTab(
+        "Decoration",
+        ItemStack("minecraft:barrier"),
+        linked_tag="#minecraft:tab_decoration",
+    )
+    Redstone = CreativeItemTab(
+        "Redstone",
+        ItemStack("minecraft:redstone_block"),
+        linked_tag="#minecraft:tab_redstone",
+    )
+    Transportation = CreativeItemTab(
+        "Transportation",
+        ItemStack("minecraft:barrier"),
+        linked_tag="#minecraft:tab_transportation",
+    )
+    Miscellaneous = CreativeItemTab(
+        "Miscellaneous",
+        ItemStack("minecraft:stick"),
+        linked_tag="#minecraft:tab_miscellaneous",
+    )
+    Food = CreativeItemTab(
+        "Food", ItemStack("minecraft:potato"), linked_tag="#minecraft:tab_food"
+    )
+    Tools = CreativeItemTab(
+        "Tools", ItemStack("minecraft:iron_axe"), linked_tag="#minecraft:tab_tools"
+    )
+    Weapons = CreativeItemTab(
+        "Weapons",
+        ItemStack("minecraft:iron_sword"),
+        linked_tag="#minecraft:tab_weapons",
+    )
+    Brewing = CreativeItemTab(
+        "Brewing", ItemStack("minecraft:barrier"), linked_tag="#minecraft:tab_brewing"
+    )
 
-    CT_MANAGER.add_tab(BuildingBlocks).add_tab(Decoration).add_tab(Redstone).add_tab(Transportation).add_tab(Miscellaneous).add_tab(Food).add_tab(Tools).add_tab(Weapons).add_tab(Brewing)
-
+    CT_MANAGER.add_tab(BuildingBlocks).add_tab(Decoration).add_tab(Redstone).add_tab(
+        Transportation
+    ).add_tab(Miscellaneous).add_tab(Food).add_tab(Tools).add_tab(Weapons).add_tab(
+        Brewing
+    )

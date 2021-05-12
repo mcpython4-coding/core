@@ -260,7 +260,9 @@ class ModLoader:
         if from_files:
             locations = self.get_locations()
 
-            shared.event_handler.call("minecraft:modloader:location_lookup_complete", self, locations)
+            shared.event_handler.call(
+                "minecraft:modloader:location_lookup_complete", self, locations
+            )
 
             self.load_mod_json_from_locations(locations)
 
@@ -295,7 +297,9 @@ class ModLoader:
             )
         )
 
-        shared.event_handler.call("minecraft:modloader:mod_selection_complete", self, self.mods)
+        shared.event_handler.call(
+            "minecraft:modloader:mod_selection_complete", self, self.mods
+        )
 
         self.check_for_update()
 
@@ -314,8 +318,9 @@ class ModLoader:
                         modname
                     )
                 )
-                if shared.event_handler.call_cancelable("minecraft:modloader:mod_change", self, modname,
-                                                        self.mods[modname]):
+                if shared.event_handler.call_cancelable(
+                    "minecraft:modloader:mod_change", self, modname, self.mods[modname]
+                ):
                     shared.invalidate_cache = True
 
         for modname in self.mods.keys():
@@ -325,7 +330,12 @@ class ModLoader:
                 logger.println(
                     "rebuild mode due to mod change (addition) of '{}'".format(modname)
                 )
-                if shared.event_handler.call_cancelable("minecraft:modloader:mod_addition", self, modname, self.mods[modname]):
+                if shared.event_handler.call_cancelable(
+                    "minecraft:modloader:mod_addition",
+                    self,
+                    modname,
+                    self.mods[modname],
+                ):
                     shared.invalidate_cache = True
 
     def write_mod_info(self):
@@ -556,7 +566,9 @@ class ModLoader:
                     )
                 )
                 errors = True
-                shared.event_handler.call("minecraft:mod_loader:duplicated_mod_found", self, mod)
+                shared.event_handler.call(
+                    "minecraft:mod_loader:duplicated_mod_found", self, mod
+                )
             else:
                 mod_info[mod.name] = []
 
@@ -572,7 +584,9 @@ class ModLoader:
         for mod in self.located_mods:
             for depend in mod.depend_info[0]:
                 if not depend.arrival():
-                    if shared.event_handler.call_cancelable("minecraft:modloader:missing_dependency", self, mod, depend):
+                    if shared.event_handler.call_cancelable(
+                        "minecraft:modloader:missing_dependency", self, mod, depend
+                    ):
                         self.error_builder.println(
                             "- Mod '{}' needs mod {} which is not provided".format(
                                 mod.name, depend
@@ -582,7 +596,9 @@ class ModLoader:
 
             for depend in mod.depend_info[2]:
                 if depend.arrival():
-                    if shared.event_handler.call_cancelable("minecraft:modloader:incompatible_mod", self, mod, depend):
+                    if shared.event_handler.call_cancelable(
+                        "minecraft:modloader:incompatible_mod", self, mod, depend
+                    ):
                         self.error_builder.println(
                             "- Mod '{}' is incompatible with {} which is provided".format(
                                 mod.name, depend

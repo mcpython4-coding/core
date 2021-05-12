@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 # todo: split container part & rendering part
+import typing
 from abc import ABC
 
 import mcpython.client.rendering.model.ItemModel
@@ -54,10 +55,10 @@ class ISlot(ABC):
     def deepCopy(self):
         raise NotImplementedError()
 
-    def draw(self, dx=0, dy=0, hovering=False):
+    def draw(self, dx=0, dy=0, hovering=False, center_position=None):
         pass
 
-    def draw_label(self):
+    def draw_label(self, x=None, y=None):
         pass
 
     def can_set_item(
@@ -189,7 +190,9 @@ class Slot(ISlot):
             try:
                 f(player=player)
             except:
-                logger.print_exception("during invoking {} for slot {}".format(f, self))
+                logger.print_exception(
+                    "during invoking {} for slot-update of {}".format(f, self)
+                )
 
     itemstack = property(get_itemstack, set_itemstack)
 
@@ -222,14 +225,17 @@ class Slot(ISlot):
             self.check_function,
         )
 
-    def draw(self, dx=0, dy=0, hovering=False):
+    def draw(self, dx=0, dy=0, hovering=False, center_position=None):
         """
         Draws the slot
         """
+        if center_position is None:
+            center_position = self.position
+
         if hovering:
             PYGLET_IMAGE_HOVERING.position = (
-                self.position[0] + dx,
-                self.position[1] + dy,
+                center_position[0] + dx,
+                center_position[1] + dy,
             )
             PYGLET_IMAGE_HOVERING.draw()
 
@@ -247,13 +253,13 @@ class Slot(ISlot):
             self.sprite = None
             if self.empty_image is not None:
                 self.empty_image.position = (
-                    self.position[0] + dx,
-                    self.position[1] + dy,
+                    center_position[0] + dx,
+                    center_position[1] + dy,
                 )
                 self.empty_image.draw()
 
         if self.sprite:
-            self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
+            self.sprite.position = (center_position[0] + dx, center_position[1] + dy)
             self.sprite.draw()
 
         self.__last_item_file = (
@@ -262,7 +268,7 @@ class Slot(ISlot):
             else None
         )
 
-    def draw_label(self):
+    def draw_label(self, x=None, y=None):
         """
         these code draws only the label, before, normal draw should be executed for correct setup
         """
@@ -273,8 +279,8 @@ class Slot(ISlot):
             self.amount_label.anchor_x = "right"
 
             self.amount_label.text = str(self.itemstack.amount)
-            self.amount_label.x = self.sprite.x + SLOT_WIDTH
-            self.amount_label.y = self.sprite.y
+            self.amount_label.x = (self.sprite.x + SLOT_WIDTH) if x is None else x
+            self.amount_label.y = self.sprite.y if y is None else y
             self.amount_label.draw()
 
     def can_set_item(
@@ -331,8 +337,8 @@ class Slot(ISlot):
             self.itemstack.item.set_data(data["itemstack"]["data"])
 
     def __str__(self):
-        return "Slot(position=({},{}),itemstack={})".format(
-            *self.position, self.itemstack
+        return "Slot(position=({},{}),itemstack={},memory={})".format(
+            *self.position, self.itemstack, hex(id(self))
         )
 
     def __repr__(self):
@@ -342,7 +348,13 @@ class Slot(ISlot):
         return self
 
 
-class SlotCopy:
+class SlotCopy(ISlot):
+    def get_capacity(self) -> int:
+        return self.master.get_capacity()
+
+    def deepCopy(self):
+        return self.master.deepCopy()
+
     def __init__(
         self,
         master,
@@ -359,7 +371,7 @@ class SlotCopy:
         # todo: add options for item allowing
         self.master: Slot = master
         self.position = position
-        if self.get_itemstack().item:
+        if self.master and self.get_itemstack().item:
             pos, index = mcpython.common.item.ItemManager.items.item_index_table[
                 self.get_itemstack().get_item_name()
             ][self.get_itemstack().item.get_active_image_location()]
@@ -371,7 +383,7 @@ class SlotCopy:
             self.sprite = None
         self.__last_item_file = (
             self.itemstack.item.get_default_item_image_location()
-            if self.itemstack.item
+            if self.master and self.itemstack.item
             else None
         )
         self.interaction_mode = [
@@ -383,9 +395,11 @@ class SlotCopy:
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
         self.amount_label = pyglet.text.Label(
-            text=str(self.master.itemstack.amount), anchor_x="right"
+            text=str(self.master.itemstack.amount) if self.master else "-",
+            anchor_x="right",
         )
         self.on_button_press = on_button_press
+        self.slot_position = 0, 0
 
     def get_allowed_item_tags(self):
         return self.master.allowed_item_tags
@@ -409,68 +423,28 @@ class SlotCopy:
     def copy(self, position=(0, 0)):
         return self.master.copy(position=position)
 
-    def draw(self, dx=0, dy=0, hovering=False):
-        """
-        draws the slot
-        """
-        if hovering:
-            PYGLET_IMAGE_HOVERING.position = (
-                self.position[0] + dx,
-                self.position[1] + dy,
-            )
-            PYGLET_IMAGE_HOVERING.draw()
-        if not self.itemstack.is_empty() and (
-            self.itemstack.item.get_default_item_image_location()
-            != self.__last_item_file
-            or self.sprite is None
-        ):
-            image = mcpython.common.item.ItemManager.items.item_index_table[
-                self.itemstack.get_item_name()
-            ][self.itemstack.item.get_active_image_location()]
-            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
-        elif self.itemstack.is_empty():
-            self.sprite = None
-        if self.sprite:
-            self.sprite.position = (self.position[0] + dx, self.position[1] + dy)
-            self.sprite.draw()
-        self.__last_item_file = (
-            self.itemstack.item.get_default_item_image_location()
-            if self.itemstack.item
-            else None
-        )
+    def draw(self, dx=0, dy=0, hovering=False, center_position=None):
+        self.master.draw(dx, dy, hovering, center_position=self.position)
+        self.slot_position = dx, dy
 
-    def draw_label(self):
-        if self.itemstack.amount > 1:
-            self.amount_label.text = str(self.itemstack.amount)
-            self.amount_label.x = self.sprite.x + SLOT_WIDTH
-            self.amount_label.y = self.sprite.y
-            self.amount_label.draw()
+    def draw_label(self, x=None, y=None):
+        self.master.draw_label(
+            x if x is not None else self.slot_position[0] + self.position[0] + SLOT_WIDTH,
+            y if y is not None else self.slot_position[1] + self.position[1],
+        )
 
     def can_set_item(self, itemstack) -> bool:
         return self.master.can_set_item(itemstack)
 
     def save(self):
-        d = {
-            "itemname": self.itemstack.get_item_name(),
-            "amount": self.itemstack.amount,
-            "data": None,
-        }
-        if not self.itemstack.is_empty():
-            d["data"] = self.itemstack.item.get_data()
-        return {"itemstack": d}
+        return self.master.save()
 
     def load(self, data):
-        self.set_itemstack(
-            mcpython.common.container.ResourceStack.ItemStack(
-                data["itemstack"]["itemname"], data["itemstack"]["amount"]
-            )
-        )
-        if not self.itemstack.is_empty():
-            self.itemstack.item.set_data(data["itemstack"]["data"])
+        self.master.load(data)
 
     def __str__(self):
-        return "Slot(position=({},{}),itemstack={},type='copy')".format(
-            *self.position, self.itemstack
+        return "SlotCopy(position=({},{}),of={},memory={})".format(
+            *self.position, self.master, hex(id(self))
         )
 
     def __repr__(self):
@@ -478,6 +452,66 @@ class SlotCopy:
 
     def getParent(self):
         return self.master
+
+
+class SlotCopyWithDynamicTarget(SlotCopy):
+    def __init__(
+        self,
+        getter: typing.Callable[[], ISlot],
+        position=(0, 0),
+        allow_player_remove=True,
+        allow_player_insert=True,
+        allow_player_add_to_free_place=True,
+        on_update=None,
+        allow_half_getting=True,
+        on_shift_click=None,
+        on_button_press=None,
+    ):
+        self.slot_position = 0, 0
+        self.getter = getter
+        self.valid = False
+        self.cached_master = None
+        self.position = position
+        if self.master and self.get_itemstack().item:
+            pos, index = mcpython.common.item.ItemManager.items.item_index_table[
+                self.get_itemstack().get_item_name()
+            ][self.get_itemstack().item.get_active_image_location()]
+            image = mcpython.common.item.ItemManager.ITEM_ATLAS.atlases[index].group[
+                tuple(pos)
+            ]
+            self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
+        else:
+            self.sprite = None
+        self.__last_item_file = (
+            self.itemstack.item.get_default_item_image_location()
+            if self.master and self.itemstack.item
+            else None
+        )
+        self.interaction_mode = [
+            allow_player_remove,
+            allow_player_insert,
+            allow_player_add_to_free_place,
+        ]
+        self.on_update = [on_update] if on_update else []
+        self.allow_half_getting = allow_half_getting
+        self.on_shift_click = on_shift_click
+        self.amount_label = pyglet.text.Label(
+            text=str(self.master.get_itemstack().amount) if self.master else "-",
+            anchor_x="right",
+        )
+        self.on_button_press = on_button_press
+
+    def invalidate(self):
+        self.valid = False
+
+    def get_master(self):
+        if self.valid:
+            return self.cached_master
+        self.cached_master = self.getter()
+        self.valid = True
+        return self.cached_master
+
+    master = property(get_master)
 
 
 class SlotInfiniteStack(Slot):

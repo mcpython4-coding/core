@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
+
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.HoveringItemBox
 import mcpython.client.gui.ShiftContainer
@@ -99,15 +101,18 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 hovering_slot.get_itemstack(), (x + ix + 32, y + iy + 32)
             )
 
-    def _get_slot_for(self, x, y) -> mcpython.client.gui.Slot.Slot:
+    def _get_slot_for(self, x: int, y: int) -> mcpython.client.gui.Slot.Slot:
         """
-        get slot for position
+        Gets slot for position
         :param x: the x position
         :param y: the y position
         :return: the slot or None if none found
         todo: move to InventoryHandler
         """
-        for inventory in shared.inventory_handler.opened_inventory_stack:
+        for inventory in itertools.chain(
+            shared.inventory_handler.opened_inventory_stack,
+            shared.inventory_handler.always_opened,
+        ):
             dx, dy = inventory.get_position()
             for slot in inventory.get_interaction_slots():
                 sx, sy = slot.position
@@ -118,7 +123,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
 
     def _get_slot_inventory_for(self, x, y):
         """
-        get slot for position
+        Gets inventory of the slot for the position
         :param x: the x position
         :param y: the y position
         :return: the slot and the inventory or None and None if none found
@@ -171,7 +176,9 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 slot.clean_itemstack()
                 slot.call_update(True)
 
-            elif slot.interaction_mode[1] and slot.itemstack == moving_itemstack:
+            elif slot.interaction_mode[1] and slot.itemstack.contains_same_resource(
+                moving_itemstack
+            ):
                 target = min(
                     slot.itemstack.item.STACK_SIZE,
                     slot.itemstack.amount + moving_itemstack.amount,
@@ -190,12 +197,14 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             if moving_itemstack.is_empty() and slot.allow_half_getting:
                 if not slot.interaction_mode[0]:
                     return
+
                 amount = slot.itemstack.amount
                 shared.inventory_handler.moving_slot.set_itemstack(
                     slot.itemstack.copy().set_amount(amount - amount // 2)
                 )
                 slot.itemstack.set_amount(amount // 2)
                 slot.call_update(True)
+
             elif slot.can_set_item(moving_itemstack):
                 self.mode = 2
                 self.on_mouse_drag(x, y, 0, 0, button, modifiers)
@@ -223,7 +232,9 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             self.moving_itemstack = None
             self.mode = 0
             return
+
         self.reorder_slot_list_stacks()
+
         if self.mode == 1:
             if len(self.slot_list) == 0:
                 pass  # todo: drop item [see entity update]
@@ -231,6 +242,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             self.original_amount.clear()
             self.moving_itemstack = None
             self.mode = 0
+
         elif self.mode == 2:
             if len(self.slot_list) == 0:
                 pass  # todo: drop item [see entity update]
@@ -238,6 +250,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
             self.original_amount.clear()
             self.moving_itemstack = None
             self.mode = 0
+
         elif self.mode == 3:
             self.slot_list.clear()
             self.original_amount.clear()
@@ -313,6 +326,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
 
                 slot.itemstack.set_amount(self.original_amount[i] + per_element + x)
                 slot.call_update(True)
+
             shared.inventory_handler.moving_slot.itemstack.clean()
 
         elif self.mode == 2:

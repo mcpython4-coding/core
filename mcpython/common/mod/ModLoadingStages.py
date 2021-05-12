@@ -201,7 +201,10 @@ class LoadingStage:
             return
 
         # todo: modloader needs a constant for the count of loaded mods
-        if self.active_mod_index >= len(shared.mod_loader.mods) or self.active_event is None:
+        if (
+            self.active_mod_index >= len(shared.mod_loader.mods)
+            or self.active_event is None
+        ):
             self.prepare_next_stage(astate)
 
         modname = shared.mod_loader.mod_loading_order[self.active_mod_index]
@@ -485,8 +488,7 @@ if shared.IS_CLIENT:
     manager.add_stage(
         LoadingStage(
             "minecraft:item_groups", "minecraft:items", "minecraft:textures"
-        )
-        .add_event_stage("stage:item_groups:load")
+        ).add_event_stage("stage:item_groups:load")
     )
 
 manager.add_stage(

@@ -83,7 +83,10 @@ class ItemStack(AbstractResourceStack):
 
         else:
             if item_name_or_instance is not None:
-                logger.println("[FATAL] cannot create itemstack with unknown item type", item_name_or_instance)
+                logger.println(
+                    "[FATAL] cannot create itemstack with unknown item type",
+                    item_name_or_instance,
+                )
             self.item = None
 
         self.amount = amount if self.item and 0 <= amount <= self.item.STACK_SIZE else 0

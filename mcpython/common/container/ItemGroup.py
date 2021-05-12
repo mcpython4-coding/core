@@ -15,4 +15,3 @@ class ItemGroup:
     def sort_after_item_name(self):
         self.entries.sort(key=lambda stack: stack.get_item_name())
         return self
-
