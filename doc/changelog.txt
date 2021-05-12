@@ -67,6 +67,9 @@ changelog of snapshot <21w10a> released on <?> targeting <21w17a>
     Toolchain:
         - imports can now be also sorted, using the isort module
 
+    Inventories:
+        - implemented creative player inventory
+
 
 changelog of snapshot 21w17a released on 28.04.2021 targeting 21w17a
     This snapshot breaks again compatibility, mainly the following:

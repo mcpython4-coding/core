@@ -1620,9 +1620,15 @@ R   [uuk]: improved world serialization API
 [uuk]: creative tabs are tag-driven now
 [uuk]: fixed opengl helpers not correctly cleaning up afterwards after drawing
 [uuk]: implemented scrollbar system for inventories, used currently in creative tabs
+[uuk]: improved creative tab system by adding system to switch between tabs
+[uuk]: tabs get now highlighted when hovering over them or selecting them
+[uuk]: page buttons will scroll now whole creative tab pages
 
 
 pending:
-- Creative background Icon tab icons are not updated when hovering over
 - SlotCopy is not updating underlying ItemStack resulting into miss-match
+- arrow buttons on the tab view if more than 9 tabs are registered
+- main player inventory tab
+- search tab [REGEX]
+- auto-removal of non-arrival items from creative tabs
 
