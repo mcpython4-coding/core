@@ -1,6 +1,23 @@
 {
   "replace": false,
   "values": [
-
+    "minecraft:powered_rail",
+    "minecraft:detector_rail",
+    "minecraft:rail",
+    "minecraft:activator_rail",
+    "minecraft:minecart",
+    "minecraft:saddle",
+    "minecraft:oak_boat",
+    "minecraft:chest_minecart",
+    "minecraft:carrot_on_a_stick",
+    "minecraft:warped_fungus_on_a_stick",
+    "minecraft:tnt_minecart",
+    "minecraft:hopper_minecart",
+    "minecraft:elytra",
+    "minecraft:spruce_boat",
+    "minecraft:birch_boat",
+    "minecraft:jungle_boat",
+    "minecraft:acacia_boat",
+    "minecraft:dark_oak_boat"
   ]
 }
