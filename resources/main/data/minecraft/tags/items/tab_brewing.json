@@ -1,5 +1,17 @@
 {
   "replace": false,
   "values": [
+    "minecraft:ghast_tear",
+    "minecraft:water_bottle",
+    "minecraft:fermented_spider_eye",
+    "minecraft:blaze_powder",
+    "minecraft:magma_cream",
+    "minecraft:brewing_stand",
+    "minecraft:cauldron",
+    "minecraft:glistering_melon_slice",
+    "minecraft:golden_carrot",
+    "minecraft.rabbit_foot",
+    "minecraft:dragon_breath",
+    "minecraft:phantom_membrane"
   ]
 }
