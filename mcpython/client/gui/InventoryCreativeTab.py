@@ -707,6 +707,7 @@ Brewing = None
 Test = None
 
 
+@shared.mod_loader("minecraft", "stage:item_groups:load")
 def init():
     global BuildingBlocks, Decoration, Redstone, Transportation, Miscellaneous, Food, Tools, Weapons, Brewing, Test
     BuildingBlocks = CreativeItemTab(
