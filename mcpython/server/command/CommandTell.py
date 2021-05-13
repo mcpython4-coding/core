@@ -11,7 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.server.command.Builder import AnyString, Command, CommandNode, Selector
+from mcpython.server.command.Builder import (AnyString, Command, CommandNode,
+                                             Selector)
 
 tell = (
     Command("tell")

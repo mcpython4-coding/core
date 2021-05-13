@@ -16,9 +16,7 @@ import typing
 import mcpython.util.enums
 from mcpython import logger
 from mcpython.common.data.gen.DataGeneratorManager import (
-    DataGeneratorInstance,
-    IDataGenerator,
-)
+    DataGeneratorInstance, IDataGenerator)
 
 
 def encode_model_key(key):

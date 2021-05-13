@@ -1,14 +1,33 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 import typing
 
 import mcpython.common.event.EventBus
 import pyglet
 from mcpython import shared
-from pyglet.window import key, mouse
 from mcpython.util import opengl
+from pyglet.window import key, mouse
 
 
 class SearchBar:
-    def __init__(self, change_callback=None, enter_callback=None, exit_callback=None, enable_mouse_to_enter=False):
+    def __init__(
+        self,
+        change_callback=None,
+        enter_callback=None,
+        exit_callback=None,
+        enable_mouse_to_enter=False,
+    ):
         self.change_callback = change_callback
         self.enter_callback = enter_callback
         self.exit_callback = exit_callback
@@ -48,18 +67,25 @@ class SearchBar:
         self.change_callback(self.inner_text)
 
     def on_mouse_press(self, x, y, button, mod):
-        if button == mouse.LEFT and self.enable_mouse_to_enter and self.is_position_in_field(x, y):
+        if (
+            button == mouse.LEFT
+            and self.enable_mouse_to_enter
+            and self.is_position_in_field(x, y)
+        ):
             self.enable()
 
     def enable(self):
-        if shared.state_handler.global_key_bind_toggle: return
-        if self.enabled: return
+        if shared.state_handler.global_key_bind_toggle:
+            return
+        if self.enabled:
+            return
         self.enabled = True
         self.underlying_event_bus.activate()
         shared.state_handler.global_key_bind_toggle = True
 
     def disable(self):
-        if not self.enabled: return
+        if not self.enabled:
+            return
         self.enabled = False
         self.underlying_event_bus.deactivate()
         shared.state_handler.global_key_bind_toggle = False
@@ -75,5 +101,7 @@ class SearchBar:
         opengl.draw_line_rectangle(self.position, self.entry_size, (1, 0, 0))
 
     def is_position_in_field(self, x: int, y: int):
-        return 0 <= x - self.position[0] <= self.entry_size[0] and 0 <= y - self.position[1] <= self.entry_size[1]
-
+        return (
+            0 <= x - self.position[0] <= self.entry_size[0]
+            and 0 <= y - self.position[1] <= self.entry_size[1]
+        )

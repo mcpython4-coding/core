@@ -72,11 +72,8 @@ def language_mapper(modname, pathname):
 
 
 def loot_table_mapper(modname, pathname):
-    from mcpython.common.data.loot import (
-        LootTable,
-        LootTableCondition,
-        LootTableFunction,
-    )
+    from mcpython.common.data.loot import (LootTable, LootTableCondition,
+                                           LootTableFunction)
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:loottables:load",
@@ -191,8 +188,5 @@ if shared.IS_CLIENT:
 
 
 def load():
-    from mcpython.common.data.worldgen import (
-        Biome,
-        WorldGenerationMode,
-        WorldGenerationModeModifier,
-    )
+    from mcpython.common.data.worldgen import (Biome, WorldGenerationMode,
+                                               WorldGenerationModeModifier)

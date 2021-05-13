@@ -78,7 +78,9 @@ class ItemStack(AbstractResourceStack):
             else:
                 if warn_if_unarrival:
                     logger.println(
-                        "[FATAL] can't find item named '{}'".format(item_name_or_instance)
+                        "[FATAL] can't find item named '{}'".format(
+                            item_name_or_instance
+                        )
                     )
                 self.item = None
 

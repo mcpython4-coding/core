@@ -16,9 +16,7 @@ from abc import ABC
 
 from mcpython import logger
 from mcpython.common.data.gen.DataGeneratorManager import (
-    DataGeneratorInstance,
-    IDataGenerator,
-)
+    DataGeneratorInstance, IDataGenerator)
 
 
 class ILootTableCondition(IDataGenerator, ABC):

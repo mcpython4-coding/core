@@ -22,7 +22,8 @@ import mcpython.common.item.AbstractToolItem as ItemTool
 import mcpython.util.math
 import pyglet
 from mcpython import shared
-from mcpython.common.config import FLYING_SPEED, GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
+from mcpython.common.config import (FLYING_SPEED, GRAVITY, JUMP_SPEED,
+                                    TERMINAL_VELOCITY)
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 
@@ -546,7 +547,8 @@ class StatePartGame(StatePart.StatePart):
             if hotkey.blocks(symbol, modifiers):
                 return
 
-        if shared.state_handler.global_key_bind_toggle: return
+        if shared.state_handler.global_key_bind_toggle:
+            return
 
         if symbol == key.W and not shared.window.keys[key.S]:
             shared.window.strafe[0] = -1

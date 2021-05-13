@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import re
 import typing
 
 from mcpython.common.container.ResourceStack import ItemStack
-import re
 
 
 class ItemGroup:
@@ -35,7 +35,8 @@ class ItemGroup:
 
     def filter_for(self, pattern: re.Pattern) -> typing.Iterator[ItemStack]:
         for entry in self.entries:
-            if entry.is_empty(): continue
+            if entry.is_empty():
+                continue
             if pattern.fullmatch(entry.get_item_name()):
                 yield entry
 

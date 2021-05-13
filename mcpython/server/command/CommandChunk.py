@@ -16,7 +16,8 @@ import os
 
 import mcpython.util.math
 from mcpython import logger, shared
-from mcpython.server.command.Builder import Command, CommandNode, DefinedString, Int
+from mcpython.server.command.Builder import (Command, CommandNode,
+                                             DefinedString, Int)
 
 chunk = (
     Command("chunk")

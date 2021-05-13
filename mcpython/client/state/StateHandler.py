@@ -79,15 +79,9 @@ handler = shared.state_handler = StateHandler()
 def load():
     import mcpython.client.gui.InventoryHandler
 
-    from . import (
-        StateBlockItemGenerator,
-        StateEscape,
-        StateGame,
-        StateGameInfo,
-        StateModLoading,
-        StateStartMenu,
-        StateWorldGenerationConfig,
-    )
+    from . import (StateBlockItemGenerator, StateEscape, StateGame,
+                   StateGameInfo, StateModLoading, StateStartMenu,
+                   StateWorldGenerationConfig)
 
     # todo: add client-check
 

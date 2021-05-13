@@ -19,6 +19,7 @@ from abc import ABC
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.client.rendering.ui.Buttons
+import mcpython.client.rendering.ui.SearchBar
 import mcpython.common.event.EventBus
 import mcpython.common.event.TickHandler
 import mcpython.ResourceLoader
@@ -26,11 +27,10 @@ import mcpython.util.texture as texture_util
 import PIL.Image
 import pyglet
 from mcpython import shared
-from mcpython.common.container.ItemGroup import ItemGroup, FilteredItemGroup
+from mcpython.common.container.ItemGroup import FilteredItemGroup, ItemGroup
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.util.opengl import draw_line_rectangle
 from pyglet.window import key, mouse
-import mcpython.client.rendering.ui.SearchBar
 
 TAB_TEXTURE = mcpython.ResourceLoader.read_pyglet_image(
     "minecraft:gui/container/creative_inventory/tabs"
@@ -98,7 +98,8 @@ class CreativeTabScrollbar:
         self.callback(self.currently_scrolling)
 
     def on_key_press(self, symbol, modifiers):
-        if shared.state_handler.global_key_bind_toggle: return
+        if shared.state_handler.global_key_bind_toggle:
+            return
 
         if symbol == key.UP:
             self.on_mouse_scroll(0, 0, 0, -1)
@@ -257,7 +258,10 @@ class CreativeItemTab(ICreativeView):
 
         tag = shared.tag_handler.get_entries_for(self.linked_tag, "items")
         self.group.entries.clear()
-        self.group.entries += filter(lambda stack: not stack.is_empty(), (ItemStack(e, warn_if_unarrival=False) for e in tag))
+        self.group.entries += filter(
+            lambda stack: not stack.is_empty(),
+            (ItemStack(e, warn_if_unarrival=False) for e in tag),
+        )
         self.scroll_bar.set_max_value(
             max(1, (math.ceil(len(self.group.entries) / 9) - 4))
         )
@@ -274,14 +278,14 @@ class CreativeItemTab(ICreativeView):
         self.old_scroll_offset = self.scroll_offset
 
         entries = list(self.group.view())  # todo: cache value!
-        self.scroll_bar.set_max_value(max(math.ceil(len(entries) / 9)-4, 1))
+        self.scroll_bar.set_max_value(max(math.ceil(len(entries) / 9) - 4, 1))
 
         # print("cycling at", self.name, "entries:", entries)
 
         entries = iter(entries)
 
         if self.scroll_offset != 0:
-            for _ in range(9*self.scroll_offset):
+            for _ in range(9 * self.scroll_offset):
                 next(entries)
 
         for i, slot in enumerate(self.slots[9:]):
@@ -445,7 +449,7 @@ class CreativePlayerInventory(ICreativeView):
             mcpython.client.gui.Slot.SlotCopyWithDynamicTarget(
                 work(45),
             ),
-            mcpython.client.gui.Slot.SlotTrashCan()
+            mcpython.client.gui.Slot.SlotTrashCan(),
         ]
 
     @staticmethod
@@ -505,7 +509,8 @@ class CreativeTabManager:
         return len(self.pages) > 1
 
     def on_key_press(self, button, mod):
-        if shared.state_handler.global_key_bind_toggle: return
+        if shared.state_handler.global_key_bind_toggle:
+            return
 
         if button == key.E:
             shared.inventory_handler.hide(self.current_tab)
@@ -523,7 +528,9 @@ class CreativeTabManager:
             self.inventory_instance = CreativePlayerInventory()
 
         if self.search_instance is None:
-            self.search_instance = CreativeTabSearchBar("Search", ItemStack("minecraft:paper"))
+            self.search_instance = CreativeTabSearchBar(
+                "Search", ItemStack("minecraft:paper")
+            )
 
     def activate(self):
         mcpython.common.event.TickHandler.handler.bind(
@@ -636,7 +643,7 @@ class CreativeTabManager:
         self.draw_tab(
             self.search_instance,
             x + container_size[0] - self.TAB_SIZE[0],
-            y + container_size[1]
+            y + container_size[1],
         )
 
         if self.is_multi_page():

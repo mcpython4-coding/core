@@ -16,10 +16,7 @@ import typing
 
 from mcpython import logger
 from mcpython.server.worldgen.noise.INoiseImplementation import (
-    EQUAL_MERGER,
-    INoiseImplementation,
-    IOctaveMerger,
-)
+    EQUAL_MERGER, INoiseImplementation, IOctaveMerger)
 
 
 class NoiseImplementationWrapper(INoiseImplementation):
