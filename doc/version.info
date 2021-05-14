@@ -1637,6 +1637,9 @@ R   [uuk]: improved world serialization API
 [uuk]: added search-based item tab
 [uuk]: added a way to disable certain keybinds
 [uuk]: creative item tab content loaded from tags is now filtered
+[uuk]: added LazyClassLoadItemstack class for lazy-init-ing ItemStack's
+       This is used in creative tabs; This fixes mods beeing unable to add blocks to their creative tabs
+[uuk]: added "/data creative missing" command for checking tabs for lazy item stacks with missing items
 
 
 pending:

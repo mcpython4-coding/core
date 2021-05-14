@@ -26,9 +26,11 @@ import mcpython.ResourceLoader
 import mcpython.util.texture as texture_util
 import PIL.Image
 import pyglet
+
+from mcpython import logger
 from mcpython import shared
 from mcpython.common.container.ItemGroup import FilteredItemGroup, ItemGroup
-from mcpython.common.container.ResourceStack import ItemStack
+from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
 from mcpython.util.opengl import draw_line_rectangle
 from pyglet.window import key, mouse
 
@@ -273,6 +275,8 @@ class CreativeItemTab(ICreativeView):
         Updates the slot content of the rendering system
         :param force: force update, also when nothing changed
         """
+        self.group.load_lazy()
+
         if self.old_scroll_offset == self.scroll_offset and not force:
             return
         self.old_scroll_offset = self.scroll_offset
@@ -331,17 +335,14 @@ class CreativeItemTab(ICreativeView):
             for j in range(9)
         ] + sum(slots, [])
 
-    def add_item(self, item: typing.Union[ItemStack, str]):
+    def add_item(self, item: typing.Union[ItemStack, LazyClassLoadItemstack, str]):
         """
         Adds an item to the underlying item group
         :param item: the item stack or the item name
         """
 
         if isinstance(item, str):
-            item = ItemStack(item, warn_if_unarrival=False)
-
-        if item.is_empty():
-            return self
+            item = LazyClassLoadItemstack(item)
 
         self.group.add(item)
         return self
@@ -691,6 +692,20 @@ class CreativeTabManager:
 
         tab.is_selected = True
         shared.inventory_handler.show(tab)
+
+    def print_missing(self):
+        for page in self.pages:
+            for tab in page:
+                if isinstance(tab, CreativeItemTab):
+
+                    entries = []
+
+                    for itemstack in tab.group.entries:
+                        if isinstance(itemstack, LazyClassLoadItemstack) and itemstack.is_empty():
+                            entries.append("- "+itemstack.lazy_item_name)
+
+                    if entries:
+                        logger.write_into_container(entries, header=f"Missing items in {tab.name}")
 
 
 CT_MANAGER = CreativeTabManager()

@@ -171,6 +171,20 @@ class ItemStack(AbstractResourceStack):
         )
 
 
+class LazyClassLoadItemstack(ItemStack):
+    def __init__(self, item_name: str, amount=1):
+        super().__init__(item_name, amount=amount, warn_if_unarrival=False)
+        self.lazy_amount = amount
+        self.lazy_item_name = item_name
+
+    def lookup(self):
+        self.copy_from(ItemStack(self.lazy_item_name, self.lazy_amount, warn_if_unarrival=False))
+        return self
+
+    def __repr__(self):
+        return f"LazyItemStack(current={super().__repr__()},linked='{self.lazy_item_name}')"
+
+
 class FluidStack(AbstractResourceStack):
     @classmethod
     def create_empty(cls):

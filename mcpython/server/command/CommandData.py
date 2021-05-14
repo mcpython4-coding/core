@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import logger, shared
 from mcpython.server.command.Builder import (AnyString, Command, CommandNode,
                                              DefinedString)
+import importlib
 
 data = (
     # todo
@@ -71,6 +72,19 @@ data = (
                         lambda env, d: shared.registry.print_content(d[3], d[4])
                     )
                 )
+            )
+        )
+    )
+    .than(
+        CommandNode(DefinedString("creative"))
+        .of_name("creative")
+        .than(
+            # client-executed
+            CommandNode(DefinedString("missing"))
+            .of_name("missing")
+            .info("prints all missing items in creative tabs")
+            .on_execution(
+                lambda env, d: importlib.import_module("mcpython.client.gui.InventoryCreativeTab").CT_MANAGER.print_missing()
             )
         )
     )
