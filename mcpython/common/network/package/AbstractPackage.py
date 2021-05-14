@@ -13,7 +13,15 @@ This project is not official by mojang and does not relate to it.
 """
 
 
-class Channel:
-    def __init__(self, name: str, static_id=None):
-        self.name = name
-        self.static_id = static_id
+class AbstractPackage:
+    def __init__(self):
+        self.package_id = -1  # set during send process
+        self.previous_packages = []  # set only during receiving or calling answer()
+
+    def send(self):
+        pass
+
+    def answer(self, package: "AbstractPackage"):
+        assert self.package_id != -1, "package ID must be set by calling send()!"
+
+        package.previous_packages = self.previous_packages + [self.package_id]

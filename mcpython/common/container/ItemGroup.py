@@ -23,7 +23,9 @@ class ItemGroup:
         self.has_lazy = False
 
     def add(self, entry: ItemStack):
-        assert isinstance(entry, LazyClassLoadItemstack) or not entry.is_empty(), "itemstack cannot be empty!"
+        assert (
+            isinstance(entry, LazyClassLoadItemstack) or not entry.is_empty()
+        ), "itemstack cannot be empty!"
         self.entries.append(entry.set_amount(1))
 
         if isinstance(entry, LazyClassLoadItemstack):
@@ -32,7 +34,8 @@ class ItemGroup:
         return self
 
     def load_lazy(self):
-        if not self.has_lazy: return
+        if not self.has_lazy:
+            return
 
         has = False
         for entry in self.entries:

@@ -11,8 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.server.command.Builder import (Command, CommandNode,
-                                             DefinedString, Int, Selector)
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    DefinedString,
+    Int,
+    Selector,
+)
 
 xp = (
     Command("xp")

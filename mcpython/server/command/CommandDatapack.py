@@ -13,8 +13,12 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.DataPacks
 from mcpython import shared
-from mcpython.server.command.Builder import (AnyString, Command, CommandNode,
-                                             DefinedString)
+from mcpython.server.command.Builder import (
+    AnyString,
+    Command,
+    CommandNode,
+    DefinedString,
+)
 
 datapack = (
     Command("datapack")

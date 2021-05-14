@@ -53,9 +53,22 @@ def load():
     """
     loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
     """
-    from . import (Barrel, Carpet, Chest, CoralBlocks, CraftingTable, Dirt,
-                   EnderChest, Fence, Furnace, GrassBlock, NetherPortal,
-                   NewBlocks, ShulkerBox, Walls)
+    from . import (
+        Barrel,
+        Carpet,
+        Chest,
+        CoralBlocks,
+        CraftingTable,
+        Dirt,
+        EnderChest,
+        Fence,
+        Furnace,
+        GrassBlock,
+        NetherPortal,
+        NewBlocks,
+        ShulkerBox,
+        Walls,
+    )
 
     block_registry.register(GrassBlock.GrassBlock)
     block_registry.register(Dirt.Dirt)

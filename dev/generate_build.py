@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import json as old_json
+
 # This system is a general-use-case build system written in python
 # It contains some common tasks for creating builds
 import os

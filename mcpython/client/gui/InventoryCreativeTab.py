@@ -26,9 +26,7 @@ import mcpython.ResourceLoader
 import mcpython.util.texture as texture_util
 import PIL.Image
 import pyglet
-
-from mcpython import logger
-from mcpython import shared
+from mcpython import logger, shared
 from mcpython.common.container.ItemGroup import FilteredItemGroup, ItemGroup
 from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
 from mcpython.util.opengl import draw_line_rectangle
@@ -701,11 +699,16 @@ class CreativeTabManager:
                     entries = []
 
                     for itemstack in tab.group.entries:
-                        if isinstance(itemstack, LazyClassLoadItemstack) and itemstack.is_empty():
-                            entries.append("- "+itemstack.lazy_item_name)
+                        if (
+                            isinstance(itemstack, LazyClassLoadItemstack)
+                            and itemstack.is_empty()
+                        ):
+                            entries.append("- " + itemstack.lazy_item_name)
 
                     if entries:
-                        logger.write_into_container(entries, header=f"Missing items in {tab.name}")
+                        logger.write_into_container(
+                            entries, header=f"Missing items in {tab.name}"
+                        )
 
 
 CT_MANAGER = CreativeTabManager()

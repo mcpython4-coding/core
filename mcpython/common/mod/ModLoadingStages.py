@@ -486,9 +486,8 @@ if shared.IS_CLIENT:
         .update_order()
     )
     manager.add_stage(
-        LoadingStage(
-            "minecraft:item_groups", "minecraft:items", "minecraft:textures"
-        ).add_event_stage("stage:item_groups:load")
+        LoadingStage("minecraft:item_groups", "minecraft:items", "minecraft:textures")
+        .add_event_stage("stage:item_groups:load")
         .update_order()
     )
 

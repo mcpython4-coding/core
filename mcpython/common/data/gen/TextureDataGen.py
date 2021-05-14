@@ -16,7 +16,9 @@ import mcpython.util.texture
 import PIL.Image
 from mcpython import logger
 from mcpython.common.data.gen.DataGeneratorManager import (
-    DataGeneratorInstance, IDataGenerator)
+    DataGeneratorInstance,
+    IDataGenerator,
+)
 
 
 class TextureConstructor(IDataGenerator):

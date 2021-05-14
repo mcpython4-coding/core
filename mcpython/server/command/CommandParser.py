@@ -160,12 +160,28 @@ def load_commands():
     # And it also resolves errors during dynamic reload / cross process loading
     # todo: use deferred registering
     # todo: dynamic registering based on module list, by calling register_command() on the given attr of the module
-    from . import (CommandChunk, CommandClear, CommandClone, CommandData,
-                   CommandDatapack, CommandExecute, CommandFill,
-                   CommandFunction, CommandGamemode, CommandGamerule,
-                   CommandGive, CommandInfo, CommandKill, CommandReload,
-                   CommandSetblock, CommandSummon, CommandTeleport,
-                   CommandTell, CommandWorldGenerationDebug, CommandXp)
+    from . import (
+        CommandChunk,
+        CommandClear,
+        CommandClone,
+        CommandData,
+        CommandDatapack,
+        CommandExecute,
+        CommandFill,
+        CommandFunction,
+        CommandGamemode,
+        CommandGamerule,
+        CommandGive,
+        CommandInfo,
+        CommandKill,
+        CommandReload,
+        CommandSetblock,
+        CommandSummon,
+        CommandTeleport,
+        CommandTell,
+        CommandWorldGenerationDebug,
+        CommandXp,
+    )
 
     handler: CommandParser = shared.command_parser
 

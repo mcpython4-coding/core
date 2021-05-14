@@ -1641,8 +1641,3 @@ R   [uuk]: improved world serialization API
        This is used in creative tabs; This fixes mods beeing unable to add blocks to their creative tabs
 [uuk]: added "/data creative missing" command for checking tabs for lazy item stacks with missing items
 
-
-pending:
-- fix button texture generator
-- fix slot offset of dynamic copy slots
-

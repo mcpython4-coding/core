@@ -17,7 +17,9 @@ from abc import ABC
 from mcpython import logger
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.common.data.gen.DataGeneratorManager import (
-    DataGeneratorInstance, IDataGenerator)
+    DataGeneratorInstance,
+    IDataGenerator,
+)
 
 
 class ICraftingKeyEncoder(ABC):

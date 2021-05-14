@@ -178,7 +178,9 @@ class LazyClassLoadItemstack(ItemStack):
         self.lazy_item_name = item_name
 
     def lookup(self):
-        self.copy_from(ItemStack(self.lazy_item_name, self.lazy_amount, warn_if_unarrival=False))
+        self.copy_from(
+            ItemStack(self.lazy_item_name, self.lazy_amount, warn_if_unarrival=False)
+        )
         return self
 
     def __repr__(self):

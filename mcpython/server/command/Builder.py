@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import random
+
 # This is real cool stuff, a builder for commands, like mojang's bridagier, but a lot more simple
 # This is the independent implementation, beside some command entries only making sense here
 # Feel free to use in other games, see LICENCE for licence for using the code

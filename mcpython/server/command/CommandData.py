@@ -11,10 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import logger, shared
-from mcpython.server.command.Builder import (AnyString, Command, CommandNode,
-                                             DefinedString)
 import importlib
+
+from mcpython import logger, shared
+from mcpython.server.command.Builder import (
+    AnyString,
+    Command,
+    CommandNode,
+    DefinedString,
+)
 
 data = (
     # todo
@@ -84,7 +89,9 @@ data = (
             .of_name("missing")
             .info("prints all missing items in creative tabs")
             .on_execution(
-                lambda env, d: importlib.import_module("mcpython.client.gui.InventoryCreativeTab").CT_MANAGER.print_missing()
+                lambda env, d: importlib.import_module(
+                    "mcpython.client.gui.InventoryCreativeTab"
+                ).CT_MANAGER.print_missing()
             )
         )
     )
