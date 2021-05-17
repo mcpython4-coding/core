@@ -29,10 +29,14 @@ wrapper = mcpython.LaunchWrapper.LaunchWrapper()
 
 
 if __name__ == "__main__":
+    from mcpython import logger
+
     try:
         wrapper.prepare_client()
+        logger.println("client side")
         wrapper.print_header()
         wrapper.inject_sys_argv(sys.argv)  # load sys.argv
+        logger.println("[INFO] setup complete")
         wrapper.setup()  # do setup stuff
         wrapper.launch()  # and start mainloop
     except SystemExit:

@@ -60,6 +60,7 @@ changelog of snapshot <21w10a> released on <?> targeting <21w19a>
 
     Modding:
         - removed the API management system
+        - added extension point for other mod loaders
 
     Entity Rendering:
         - some small improvements

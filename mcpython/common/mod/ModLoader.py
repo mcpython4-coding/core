@@ -22,6 +22,7 @@ import zipfile
 import mcpython.client.state.StateModLoading
 import mcpython.common.config
 import mcpython.common.event.EventHandler
+import mcpython.common.ExtensionPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
 import mcpython.ResourceLoader
@@ -447,8 +448,23 @@ class ModLoader:
                                 "- can't load mod file {}".format(location)
                             )
                             return
+                elif (
+                    loader
+                    in mcpython.common.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
+                        0
+                    ]
+                ):
+                    mcpython.common.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
+                        0
+                    ][
+                        loader
+                    ].load_mod_from_json(
+                        entry
+                    )
                 else:
-                    raise IOError("invalid loader '{}'".format(loader))
+                    self.error_builder.println(
+                        f"mod version file {file} specified dependency on mod loader {loader}, which is not arrival!"
+                    )
         else:
             raise IOError("invalid version: {}".format(version))
 
@@ -480,12 +496,28 @@ class ModLoader:
         """
         data = toml.loads(data)
         if "modLoader" in data:
-            if data["modLoader"] == "javafml":
-                self.error_builder.println(
-                    "- found java mod in file {}. As an mod-author, please upgrade to python as javafml or wait for us to write an JVM in python [WIP]".format(
-                        file
+            if data["modLoader"] != "pythonml":
+                loader = data["modLoader"]
+
+                if (
+                    loader
+                    in mcpython.common.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
+                        1
+                    ]
+                ):
+                    mcpython.common.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
+                        1
+                    ][
+                        loader
+                    ].load_mod_from_toml(
+                        data
                     )
-                )
+                else:
+                    self.error_builder.println(
+                        "- found {} in file {}. As an mod-author, please upgrade to python (pythonml) or install a loader extension mod".format(
+                            loader, file
+                        )
+                    )
                 return
 
         if "loaderVersion" in data:
@@ -577,7 +609,7 @@ class ModLoader:
     def check_dependency_errors(self, errors: bool, mod_info: dict):
         """
         Will iterate through all mods and check dependencies
-        :param errors: if errors occured
+        :param errors: if errors occurred
         :param mod_info: the mod info dict
         :return: errors and mod-info-tuple
         """

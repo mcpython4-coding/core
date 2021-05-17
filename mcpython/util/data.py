@@ -11,6 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+"""
+Some util functions around data
+Contains methods for simplejson 'ing binary data [for the codec system]
+and a helper function for transforming all mutable lists to immutable tuples in data structures
+"""
 import simplejson
 
 

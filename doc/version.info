@@ -1640,4 +1640,7 @@ R   [uuk]: improved world serialization API
 [uuk]: added LazyClassLoadItemstack class for lazy-init-ing ItemStack's
        This is used in creative tabs; This fixes mods beeing unable to add blocks to their creative tabs
 [uuk]: added "/data creative missing" command for checking tabs for lazy item stacks with missing items
+[uuk]: elytra can now be also put into chestplate slot
+[uuk]: added extension point for mod loaders
+[uuk]: mod loader will now not CRASH when an invalid loader name is specified in a mod.json file
 

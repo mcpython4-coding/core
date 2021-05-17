@@ -533,7 +533,7 @@ class SlotInfiniteStack(Slot):
         self.reference_stack = self.itemstack.copy()
 
     def set_itemstack(self, stack, update=True, player=False):
-        pass
+        stack.clean()
 
     def clean_itemstack(self):
         pass
@@ -557,6 +557,11 @@ class SlotInfiniteStack(Slot):
 
     def __str__(self):
         return repr(self)
+
+    def can_set_item(
+        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
+    ) -> bool:
+        return True
 
 
 class SlotInfiniteStackExchangeable(Slot):

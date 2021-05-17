@@ -19,6 +19,8 @@ import typing
 import zipfile
 from abc import ABC
 
+# servers don't need textures, so pillow is not required
+# WARNING: this  M A Y  break other stuff
 try:
     import PIL.Image as PIL_Image
 except ImportError:

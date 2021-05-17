@@ -15,6 +15,8 @@ import os
 import sys
 import typing
 
+import pyglet.app
+
 import mcpython.ResourceLoader
 import mcpython.common.config
 from mcpython import shared, logger
@@ -22,7 +24,7 @@ from mcpython import shared, logger
 
 class LaunchWrapper:
     """
-    Class for launching the game in an certain configuration
+    Class for launching the game in a certain configuration
     Loads all needed part and executed the loading task cycle.
     todo: move shared.py content into here & remove shared.py
     """
@@ -32,6 +34,13 @@ class LaunchWrapper:
         self.__side_prepared = False
 
     def prepare_client(self):
+        """
+        Prepares a client setup
+
+        Sets up the OpenGL driver backend
+        Spawns a window
+        """
+
         assert not self.__side_prepared, "can only prepare ones"
 
         # init OpenGL
@@ -47,9 +56,15 @@ class LaunchWrapper:
         mcpython.client.rendering.window.Window(width=800, height=600, resizable=True)
         shared.window.set_caption("mcpython 4 early loading stage")
 
-        logger.println("client side")
+        return self
 
     def prepare_server(self):
+        """
+        Prepares a sever
+        Spawns a fake "window"
+        WARNING: currently, also initializes the OpenGL driver
+        """
+
         assert not self.__side_prepared, "can only prepare ones"
 
         self.__side_prepared = True
@@ -61,7 +76,7 @@ class LaunchWrapper:
 
         mcpython.client.rendering.window.Window()
 
-        logger.println("server side")
+        return self
 
     def inject_sys_argv(self, argv: typing.List[str]):
         """
@@ -82,6 +97,8 @@ class LaunchWrapper:
 
             if "--no-resource-packs" in sys.argv:
                 shared.ENABLE_RESOURCE_PACK_LOADER = False
+
+        return self
 
     def setup(self):
         """
@@ -109,7 +126,7 @@ class LaunchWrapper:
 
         shared.event_handler.call("game:startup")
 
-        logger.println("[INFO] setup complete")
+        return self
 
     def setup_registries(self):
         """
@@ -127,7 +144,12 @@ class LaunchWrapper:
             logger.println(
                 "[INFO] stopping program as requested. If you the program continues execution, please report this"
             )
-            sys.exit()
+
+            shared.window.close()
+
+            pyglet.app.exit()
+
+            sys.exit(-1)
 
         import mcpython.common.event.Registry
         import mcpython.common.block.BlockManager
@@ -148,6 +170,8 @@ class LaunchWrapper:
 
         mcpython.common.data.ResourcePipe.load()
 
+        return self
+
     def setup_opengl(self):
         """
         Helper function for OpenGL setup
@@ -162,6 +186,8 @@ class LaunchWrapper:
 
         mcpython.client.rendering.util.setup()
 
+        return self
+
     def print_header(self):
         """
         Prints an header describing the program name and its version
@@ -172,6 +198,8 @@ class LaunchWrapper:
         logger.println("---------------" + "-" * len(version))
         logger.println("- MCPYTHON 4 {} -".format(version))
         logger.println("---------------" + "-" * len(version))
+
+        return self
 
     def setup_files(self):
         """
@@ -201,6 +229,8 @@ class LaunchWrapper:
                 logger.print_exception("[FATAL] failed to load default skin")
                 sys.exit(-1)
 
+        return self
+
     def load_mods(self):
         """
         Do ModLoader initial stuff
@@ -209,6 +239,8 @@ class LaunchWrapper:
         shared.mod_loader.look_out(from_files=shared.ENABLE_MOD_LOADER)
         shared.mod_loader.sort_mods()
         shared.mod_loader.write_mod_info()
+
+        return self
 
     def launch(self):
         """
@@ -248,10 +280,13 @@ class LaunchWrapper:
         try:
             pyglet.app.run()
         except SystemExit:
+            # sys.exit() should not be handled
             raise
         except:
-            logger.print_exception("ERROR DURING RUNTIME")
-            raise
+            logger.print_exception("ERROR DURING RUNTIME (UNHANDLED)")
+            sys.exit(-1)
+
+        return self
 
     def error_clean(self):
         """
@@ -292,5 +327,3 @@ class LaunchWrapper:
         mcpython.ResourceLoader.close_all_resources()
         shared.event_handler.call("game:close")
         shared.tmp.cleanup()
-
-        sys.exit(0)
