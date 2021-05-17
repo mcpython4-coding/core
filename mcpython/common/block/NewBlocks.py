@@ -18,6 +18,8 @@ from mcpython.common.factory.combined.simple import CombinedFactoryInstance
 """
 Missing:
 air
+attached_melon_stem
+attached_pumpkin_stem
 """
 
 
@@ -125,23 +127,19 @@ BlockFactory().set_name("minecraft:amethyst_cluster").set_solid(
 ).set_all_side_solid(False).set_default_model_state("facing=up").finish()
 BlockFactory().set_name("minecraft:ancient_debris").finish()
 stone_like("andesite")
+BlockFactory().set_name("minecraft:anvil").set_solid(False).set_all_side_solid(False).set_default_model_state("facing=north").finish()
+BlockFactory().set_name("minecraft:azalea_leaves").set_solid(False).set_all_side_solid(False).finish()
+BlockFactory().set_name("minecraft:azalea_leaves_flowers").set_solid(False).set_all_side_solid(False).finish()
+plant("minecraft:azure_bluet").finish()
+plant("minecraft:bamboo").set_default_model_state("age=0,leaves=small").finish()
+plant("minecraft:bamboo_sapling").finish()
+BlockFactory().set_name("minecraft:barrier").set_break_able_flag(False).set_all_side_solid(False).set_solid(False).finish()
+BlockFactory().set_name("minecraft:basalt").set_log().finish()
+BlockFactory().set_name("minecraft:beacon").set_all_side_solid(False).set_solid(False).finish()
 
 
 # All blocks, by blockstate
 """
-anvil
-attached_melon_stem
-attached_pumpkin_stem
-azalea
-azalea_leaves
-azalea_leaves_flowers
-azure_bluet
-bamboo
-bamboo_sapling
-barrel
-barrier
-basalt
-beacon
 bedrock
 beehive
 beetroots

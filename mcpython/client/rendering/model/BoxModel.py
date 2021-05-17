@@ -38,7 +38,7 @@ SIDE_ORDER = [
     mcpython.util.enums.EnumSide.WEST,
     mcpython.util.enums.EnumSide.EAST,
 ]
-UV_INDICES = [(1, 0, 3, 2), (1, 0, 3, 2)] + [
+UV_INDICES = [(0, 3, 2, 1), (1, 0, 3, 2)] + [
     (0, 1, 2, 3)
 ] * 4  # representative for the order of uv insertion
 SIMILAR_VERTEX = {}

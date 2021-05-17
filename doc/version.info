@@ -1643,4 +1643,6 @@ R   [uuk]: improved world serialization API
 [uuk]: elytra can now be also put into chestplate slot
 [uuk]: added extension point for mod loaders
 [uuk]: mod loader will now not CRASH when an invalid loader name is specified in a mod.json file
+[uuk]: added a few new blocks
+[uuk]: fixed experience bottle not working correctly
 

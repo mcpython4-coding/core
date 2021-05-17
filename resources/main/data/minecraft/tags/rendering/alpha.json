@@ -39,6 +39,12 @@
     "minecraft:brown_stained_glass_pane",
     "minecraft:green_stained_glass_pane",
     "minecraft:red_stained_glass_pane",
-    "minecraft:black_stained_glass_pane"
+    "minecraft:black_stained_glass_pane",
+    "minecraft:azalea_leaves",
+    "minecraft:azalea_leaves_flowers",
+    "minecraft:azure_bluet",
+    "minecraft:bamboo",
+    "minecraft:bamboo_sapling",
+    "minecraft:beacon"
   ]
 }
