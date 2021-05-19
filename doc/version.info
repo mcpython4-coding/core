@@ -1650,4 +1650,6 @@ R   [uuk]: improved world serialization API
 
 [uuk]: started new development cycle, scheduled for lasting 21 days (3 weeks)
 [uuk]: some more networking stuff
+[uuk]: dumped target mc version to 21w20a
+[uuk]: moved url for download source to version.json file
 

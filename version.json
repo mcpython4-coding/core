@@ -2,7 +2,8 @@
   "name": "test build for 21w22a 0",
   "id": 63,
   "preview_build_counter": 1,
-  "mc_version": "21w19a",
+  "mc_version": "21w21a",
+  "mc_version_url": "https://launcher.mojang.com/v1/objects/96efb012b75620e881d5b97deb6fd9f02caab4e5/client.jar",
   "version_type": "snapshot",
   "stable": false
 }

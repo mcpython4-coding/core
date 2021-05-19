@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import os
 import subprocess
 import sys
+import json
 
 """
 Installation code for setting up your python
@@ -32,12 +33,16 @@ subprocess.call(
     stderr=sys.stderr,
 )
 
+
+with open(home+"/version.json") as f:
+    version_data = json.load(f)
+
 # todo: move the url to config
 subprocess.call(
     [
         sys.executable,
         home + "/tools/update_asset_source.py",
-        "https://launcher.mojang.com/v1/objects/ec029994171ba8e3d9a68458d7d307a67a84faac/client.jar",
+        version_data["mc_version_url"],
         home if not IS_DEV else home + "/resources/source",
     ],
     stdout=sys.stdout,
