@@ -189,6 +189,7 @@ class BiomeSerializer(mcpython.common.data.DataSerializerHandler.ISerializer):
         cls.COLLECTED.clear()
 
 
+# todo: add modifier system
 instance = mcpython.common.data.DataSerializerHandler.DatapackSerializationHelper(
     "minecraft:biomes",
     "data/{pathname}/worldgen/biomes",

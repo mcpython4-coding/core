@@ -93,7 +93,7 @@ class IWorldGenConfig(mcpython.common.data.DataSerializerHandler.ISerializeAble)
     DISPLAY_NAME = None
 
     BIOMES = []
-    BIOME_SOURCE: typing.Type[IBiomeSource] = SingleBiomeSource("minecraft:void")
+    BIOME_SOURCE: IBiomeSource = SingleBiomeSource("minecraft:void")
 
     LANDMASSES = []
     LAYERS = []

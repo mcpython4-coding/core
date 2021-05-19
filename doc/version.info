@@ -1656,4 +1656,5 @@ R   [uuk]: improved world serialization API
 [uuk]: EventBus.subscribe allows now for multiple subscriptions with the same "signature"
 [uuk]: EventBus.unsubscribe will now unsubscribe all functions to an event, not only the first found one
 [uuk]: some minor cleanup at EventBus
+[uuk]: fixed some minor stuff in the world generation serializer
 

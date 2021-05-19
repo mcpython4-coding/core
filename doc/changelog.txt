@@ -55,6 +55,12 @@ changelog of snapshot <21w23a> released on <?> targeting <21w20a>
     Networking:
         - further work on the network system
 
+    Event system:
+        - improved internal event bus system
+
+    Mod loader:
+        - moved ExtensionPoint class to mod package
+
 
 changelog of snapshot 21w20a released on 19.5.2021 targeting 21w19a
     This snapshot again breaks backwards compatibility.
