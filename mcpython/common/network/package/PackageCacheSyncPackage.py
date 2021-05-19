@@ -14,5 +14,6 @@ This project is not official by mojang and does not relate to it.
 from . import AbstractPackage
 
 
-class PackageCacheSyncPackage(AbstractPackage):
-    pass
+class PackageCacheSyncPackage(AbstractPackage.AbstractPackage):
+    def encode(self) -> bytes:
+        pass

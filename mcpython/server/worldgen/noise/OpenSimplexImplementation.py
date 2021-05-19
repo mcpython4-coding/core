@@ -14,8 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import opensimplex
-from mcpython.server.worldgen.noise.INoiseImplementation import \
-    INoiseImplementation
+from mcpython.server.worldgen.noise.INoiseImplementation import INoiseImplementation
 
 
 class OpenSimplexImplementation(INoiseImplementation):

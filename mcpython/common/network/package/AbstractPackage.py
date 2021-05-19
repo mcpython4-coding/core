@@ -60,7 +60,14 @@ class AbstractPackage:
     def encode(self) -> bytes:
         raise NotImplementedError
 
+    @classmethod
+    def from_data(cls, package_data: bytes):
+        pass
+
     def answer(self, package: "AbstractPackage"):
         assert self.package_id != -1, "package ID must be set by calling send()!"
 
         package.previous_packages = self.previous_packages + [self.package_id]
+
+    def handle_inner(self):
+        pass

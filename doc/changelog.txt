@@ -11,18 +11,25 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - add scoreboards with commands, execute command entry, ... [5]
     - make world gen more fail-save [2]
     - add ores [4]
-    - tool level system based on an enum-list-like system were every block defines an Enum-entry for minimum [7]
-    - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality] [5]
+    - tool level system based on tags were every block has a) a tag for the tool type and b) a tag for tool level [7]
+
     - add an line into logging where the system searches for the location where the error occur and will link the mod
         caused it into the log [6]
+
     - parser for the new mc world gen config format [20]
+
     - add an mode where the window opens only when the load is complete [100]
+
     - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation [30]
-    - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html) [110]
-    - implement lighting [1000]
+
+    - upgrade to pyglet 2:
+        - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html) [110]
+        - implement lighting [1000]
+        - rendering layer system [20]
+        - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality] [5]
+
     - launcher system to download mc assets separately [10]
     - entity AI system [30]
-    - rendering layer system [20]
     - make loot table system only load needed loot tables, etc. [10]
     - BlockItemGenerator should store images in an better way, not single-files
 
@@ -42,6 +49,11 @@ information on development:
     - developers may want to create test builds for themselves. run dev/generate_test_build.py for it.
         When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID of it
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
+
+
+changelog of snapshot <21w23a> released on <?> targeting <21w20a>
+    Networking:
+        - further work on the network system
 
 
 changelog of snapshot 21w20a released on 19.5.2021 targeting 21w19a

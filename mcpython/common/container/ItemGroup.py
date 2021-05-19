@@ -14,8 +14,7 @@ This project is not official by mojang and does not relate to it.
 import re
 import typing
 
-from mcpython.common.container.ResourceStack import (ItemStack,
-                                                     LazyClassLoadItemstack)
+from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
 
 
 class ItemGroup:

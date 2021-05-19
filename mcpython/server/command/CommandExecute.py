@@ -14,8 +14,14 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 from mcpython import shared
-from mcpython.server.command.Builder import (AnyString, Command, CommandNode,
-                                             DefinedString, Position, Selector)
+from mcpython.server.command.Builder import (
+    AnyString,
+    Command,
+    CommandNode,
+    DefinedString,
+    Position,
+    Selector,
+)
 
 """
 This is the complex command /execute <...>

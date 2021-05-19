@@ -64,11 +64,8 @@ class NetworkManager:
         ), "package must be registered for sending it"
 
         encoded_head = (
-            package.PACKAGE_TYPE_ID << 2 + 2
-            if package.CAN_GET_ANSWER
-            else 0 + 1
-            if package.previous_packages
-            else 0
+            (package.PACKAGE_TYPE_ID << 2 + 2 if package.CAN_GET_ANSWER else 0)
+            + (1 if package.previous_packages else 0)
         ).to_bytes(3, "big", signed=False)
 
         if package.CAN_GET_ANSWER and package.package_id == -1:
@@ -97,6 +94,12 @@ class NetworkManager:
             + package_size_data
             + package_data
         )
+
+        if shared.IS_CLIENT:
+            if destination == 0:
+                shared.CLIENT_NETWORK_HANDLER.send_package(data)
+        else:
+            shared.SERVER_NETWORK_HANDLER.send_package(data, destination)
 
     def register_package_handler(
         self,
@@ -150,6 +153,93 @@ class NetworkManager:
     def clean_network_graph(self):
         self.valid_package_ids.clear()
         self.custom_package_handlers.clear()
+
+    def fetch_as_client(self):
+        shared.CLIENT_NETWORK_HANDLER.work()
+        buffer = shared.CLIENT_NETWORK_HANDLER.data_stream
+
+        while True:
+            package = self.fetch_package_from_buffer(buffer)
+
+            if package is None:
+                return
+
+            if package.PACKAGE_TYPE_ID in self.general_package_handlers:
+                for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
+                    func(package, self.client_id)
+
+            if package.package_id in self.custom_package_handlers:
+                for func in self.custom_package_handlers[package.package_id]:
+                    func(package, self.client_id)
+                self.custom_package_handlers[package.package_id].clear()
+
+    def fetch_as_server(self):
+        shared.CLIENT_NETWORK_HANDLER.work()
+        buffer = shared.CLIENT_NETWORK_HANDLER.data_stream
+
+        while True:
+            package = self.fetch_package_from_buffer(buffer)
+
+            if package is None:
+                return
+
+            if package.PACKAGE_TYPE_ID in self.general_package_handlers:
+                for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
+                    func(package, 0)
+
+            if package.package_id in self.custom_package_handlers:
+                for func in self.custom_package_handlers[package.package_id]:
+                    func(package, 0)
+                self.custom_package_handlers[package.package_id].clear()
+
+    def fetch_package_from_buffer(self, buffer):
+        try:
+            head = int.from_bytes(buffer[:4], "big", signed=False)
+
+            package_type = head >> 2
+
+            has_package_id = head & 2
+            has_previous_package_id = head & 1
+
+            index = 4
+            if has_package_id:
+                package_id = int.from_bytes(
+                    buffer[index : index + 4], "big", signed=False
+                )
+                index += 4
+            else:
+                package_id = -1
+
+            if has_previous_package_id:
+                previous_id = int.from_bytes(
+                    buffer[index : index + 4], "big", signed=False
+                )
+                index += 4
+            else:
+                previous_id = None
+
+            package_size = int.from_bytes(
+                buffer[index : index + 3], "big", signed=False
+            )
+            index += 3
+
+            package_data = buffer[index : index + package_size]
+
+            del buffer[: index + package_size]
+
+        except IndexError:
+            return
+
+        package: mcpython.common.network.package.AbstractPackage.AbstractPackage = (
+            self.package_types[package_type].from_data(package_data)
+        )
+        package.package_id = package_id
+        if previous_id:
+            package.previous_packages.append(previous_id)
+
+        package.handle_inner()
+
+        return package
 
 
 shared.NETWORK_MANAGER = NetworkManager()

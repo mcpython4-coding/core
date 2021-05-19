@@ -14,8 +14,12 @@ This project is not official by mojang and does not relate to it.
 import importlib
 
 from mcpython import logger, shared
-from mcpython.server.command.Builder import (AnyString, Command, CommandNode,
-                                             DefinedString)
+from mcpython.server.command.Builder import (
+    AnyString,
+    Command,
+    CommandNode,
+    DefinedString,
+)
 
 data = (
     # todo

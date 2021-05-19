@@ -14,8 +14,12 @@ This project is not official by mojang and does not relate to it.
 import enum
 
 from mcpython import shared
-from mcpython.server.command.Builder import (Command, CommandNode,
-                                             DefinedString, Selector)
+from mcpython.server.command.Builder import (
+    Command,
+    CommandNode,
+    DefinedString,
+    Selector,
+)
 
 
 def gamemode_helper(mode, entities):

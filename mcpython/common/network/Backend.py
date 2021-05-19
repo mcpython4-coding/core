@@ -16,6 +16,11 @@ import threading
 
 
 class ClientBackend:
+    """
+    The backend of the client
+    It wraps the socket in a set of helper functions
+    """
+
     def __init__(self, ip="localhost", port=8080):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ip, self.port = ip, port
@@ -41,6 +46,11 @@ class ClientBackend:
 
 
 class ServerBackend:
+    """
+    Server network handler
+    Contains threading code for each client
+    """
+
     def __init__(self, ip="0.0.0.0", port=8080):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ip, self.port = ip, port
@@ -68,13 +78,13 @@ class ServerBackend:
             self.data_by_client[addr] = bytearray()
 
             thread = threading.Thread(
-                target=self.single_client_thread, args=(conn, addr)
+                target=self.single_client_thread, args=(conn, addr, len(threads) + 1)
             )
             thread.run()
 
             threads.append(thread)
 
-    def single_client_thread(self, conn, addr):
+    def single_client_thread(self, conn, addr, client_id: int):
         while True:
             data = conn.recv(4096)
 
@@ -82,39 +92,3 @@ class ServerBackend:
 
             if addr in self.pending_stops:
                 return
-
-
-def spawn_server():
-    serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serv.bind(("0.0.0.0", 8080))
-    serv.listen(5)
-    while True:
-        conn, addr = serv.accept()
-        from_client = ""
-
-        while True:
-            data = conn.recv(4096)
-            if not data:
-                break
-            from_client += data.decode("utf-8")
-            print(from_client, conn.send(b"I am SERVER<br>"))
-
-        conn.close()
-        print("client disconnected")
-
-
-def spawn_client():
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(("localhost", 8080))
-    client.send(b"I am CLIENT<br>")
-    from_server = client.recv(4096)
-    client.close()
-    print(from_server)
-
-
-if __name__ == "__main__":
-    server = ServerBackend()
-    server.connect()
-    server.enable_server()
-    client = ClientBackend()
-    client.connect()
