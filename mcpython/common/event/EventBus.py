@@ -15,6 +15,8 @@ import sys
 import time
 import typing
 
+import pyglet.app
+
 from mcpython import logger, shared
 
 
@@ -73,11 +75,7 @@ class EventBus:
         :param kwargs: the kwargs to give
         :param info: an info to give for the caller
         """
-        signature = (function, args, kwargs, info)
-        if signature in self.event_subscriptions.setdefault(event_name, []):
-            return
-
-        self.event_subscriptions[event_name].append(signature)
+        self.event_subscriptions.setdefault(event_name, []).append((function, args, kwargs, info))
 
     def unsubscribe(self, event_name: str, function):
         """
@@ -89,11 +87,13 @@ class EventBus:
         if event_name not in self.event_subscriptions:
             raise ValueError(f"cannot find function {function} in event {event_name}")
 
+        any_found = False
         for signature in self.event_subscriptions[event_name][:]:
             if signature[0] == function:
                 self.event_subscriptions[event_name].remove(signature)
-                break
-        else:
+                any_found = True
+
+        if not any_found:
             raise ValueError(f"cannot find function {function} in event {event_name}")
 
     def call(self, event_name: str, *args, **kwargs):
@@ -109,15 +109,15 @@ class EventBus:
         exception_occ = False
         for function, eargs, ekwargs, info in self.event_subscriptions[event_name]:
             try:
-                start = time.time()
-
                 function(
                     *list(args) + list(self.extra_arguments[0]) + list(eargs),
                     **{**kwargs, **self.extra_arguments[1], **ekwargs},
                 )
             except SystemExit:
                 raise
-            except MemoryError:
+            except MemoryError:  # Memory error is something fatal
+                shared.window.close()
+                pyglet.app.exit()
                 sys.exit(-1)
             except:
                 exception_occ = True
@@ -136,6 +136,8 @@ class EventBus:
         if exception_occ and self.crash_on_error:
             logger.println("\nout of the above reasons, the game has crashed")
             if self.close_on_error:
+                shared.window.close()
+                pyglet.app.exit()
                 sys.exit(-1)
             else:
                 raise RuntimeError
@@ -171,7 +173,8 @@ class EventBus:
         :return: the result in the moment of True or None
         """
         if event_name not in self.event_subscriptions:
-            return None
+            return
+
         for function, eargs, ekwargs, info in self.event_subscriptions[event_name]:
             start = time.time()
             try:
@@ -190,9 +193,13 @@ class EventBus:
                                 function, dif
                             )
                         )
+
                 if check_function(result):
                     return result
+
             except MemoryError:
+                shared.window.close()
+                pyglet.app.exit()
                 sys.exit(-1)
             except SystemExit:
                 raise
@@ -227,24 +234,27 @@ class EventBus:
         self.sub_buses.append(bus)
         return bus
 
-    def call_as_stack(self, event_name, *args, amount=1, **kwargs):
+    def call_as_stack(self, event_name, *args, amount=1, store_stuff=True, **kwargs):
         result = []
         if event_name not in self.event_subscriptions:
             raise RuntimeError(
                 "event bus has no notation for the '{}' event".format(event_name)
             )
+
         if len(self.event_subscriptions[event_name]) < amount:
             raise RuntimeError(
-                "can't run event. EventBus is for the event '{}' empty".format(
-                    event_name
+                "can't run event. EventBus has for the event '{}' not enough subscriber(s) (expected: {})".format(
+                    event_name, amount
                 )
             )
+
         exception_occ = False
         for _ in range(amount):
-            function, eargs, ekwargs, info = d = self.event_subscriptions[
-                event_name
-            ].pop(0)
-            self.popped_event_subscriptions.setdefault(event_name, []).append(d)
+            function, eargs, ekwargs, info = d = self.event_subscriptions[event_name].pop(0)
+
+            if store_stuff:
+                self.popped_event_subscriptions.setdefault(event_name, []).append(d)
+
             start = time.time()
             try:
                 result.append(
@@ -259,6 +269,8 @@ class EventBus:
             except SystemExit:
                 raise
             except MemoryError:
+                shared.window.close()
+                pyglet.app.exit()
                 sys.exit(-1)
             except:
                 exception_occ = True
@@ -283,12 +295,16 @@ class EventBus:
                             function, dif
                         )
                     )
+
         if exception_occ and self.crash_on_error:
-            logger.println("\nout of the above reasons, the game has crashes")
+            logger.println("\nout of the above reasons, the game has crashed during call-as-stack call")
+            shared.window.close()
+            pyglet.app.exit()
             sys.exit(-1)
+
         return result
 
-    def resetEventStack(self, event_name: str):
+    def reset_event_stack(self, event_name: str):
         """
         Will reset all event subscriptions which where popped from the normal list
         :param event_name: the name of the event to restore

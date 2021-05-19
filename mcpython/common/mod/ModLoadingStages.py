@@ -211,7 +211,7 @@ class LoadingStage:
         mod_instance = shared.mod_loader.mods[modname]
 
         try:
-            mod_instance.eventbus.call_as_stack(self.active_event)
+            mod_instance.eventbus.call_as_stack(self.active_event, store_stuff=False)
 
         except RuntimeError:  # when we are empty
             self.active_mod_index += 1

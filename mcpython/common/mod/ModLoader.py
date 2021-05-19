@@ -22,7 +22,7 @@ import zipfile
 import mcpython.client.state.StateModLoading
 import mcpython.common.config
 import mcpython.common.event.EventHandler
-import mcpython.common.ExtensionPoint
+import mcpython.common.mod.ExtensionPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
 import mcpython.ResourceLoader
@@ -105,7 +105,7 @@ class ModLoader:
                 instance = shared.mod_loader.mods[
                     shared.mod_loader.mod_loading_order[i]
                 ]
-                instance.eventbus.resetEventStack(event_name)
+                instance.eventbus.reset_event_stack(event_name)
                 instance.eventbus.call(event_name)
         return self
 
@@ -450,11 +450,11 @@ class ModLoader:
                             return
                 elif (
                     loader
-                    in mcpython.common.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
+                    in mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
                         0
                     ]
                 ):
-                    mcpython.common.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
+                    mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
                         0
                     ][
                         loader
@@ -501,11 +501,11 @@ class ModLoader:
 
                 if (
                     loader
-                    in mcpython.common.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
+                    in mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
                         1
                     ]
                 ):
-                    mcpython.common.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
+                    mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
                         1
                     ][
                         loader

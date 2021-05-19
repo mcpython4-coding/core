@@ -1652,4 +1652,8 @@ R   [uuk]: improved world serialization API
 [uuk]: some more networking stuff
 [uuk]: dumped target mc version to 21w20a
 [uuk]: moved url for download source to version.json file
+[uuk]: moved ExtensionPoint class to mod folder
+[uuk]: EventBus.subscribe allows now for multiple subscriptions with the same "signature"
+[uuk]: EventBus.unsubscribe will now unsubscribe all functions to an event, not only the first found one
+[uuk]: some minor cleanup at EventBus
 
