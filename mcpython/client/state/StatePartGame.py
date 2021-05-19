@@ -22,7 +22,8 @@ import mcpython.common.item.AbstractToolItem as ItemTool
 import mcpython.util.math
 import pyglet
 from mcpython import shared
-from mcpython.common.config import FLYING_SPEED, GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
+from mcpython.common.config import (FLYING_SPEED, GRAVITY, JUMP_SPEED,
+                                    TERMINAL_VELOCITY)
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 

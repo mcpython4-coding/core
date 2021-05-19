@@ -313,45 +313,29 @@ shared.world_generation_handler = WorldGenerationHandler()
 
 
 def load_layers():
-    from .layer import (
-        DefaultBedrockLayer,
-        DefaultBiomeLayer,
-        DefaultFeatureLayer,
-        DefaultHeightMapLayer,
-        DefaultLandMassLayer,
-        DefaultStonePlacementLayer,
-        DefaultTemperatureLayer,
-        DefaultTopLayerLayer,
-    )
+    from .layer import (DefaultBedrockLayer, DefaultBiomeLayer,
+                        DefaultFeatureLayer, DefaultHeightMapLayer,
+                        DefaultLandMassLayer, DefaultStonePlacementLayer,
+                        DefaultTemperatureLayer, DefaultTopLayerLayer)
 
 
 def load_modes():
-    from .mode import (
-        AmplifiedWorldGenerator,
-        BiomeGenDebugGenerator,
-        DebugOverWorldGenerator,
-        DefaultNetherWorldGenerator,
-        DefaultOverWorldGenerator,
-        EndWorldGenerator,
-    )
+    from .mode import (AmplifiedWorldGenerator, BiomeGenDebugGenerator,
+                       DebugOverWorldGenerator, DefaultNetherWorldGenerator,
+                       DefaultOverWorldGenerator, EndWorldGenerator)
 
 
 def load_features():
-    from .feature import (
-        CactusFeature,
-        DessertTempleFeature,
-        DessertWellFeature,
-        FossileFeature,
-        OakTreeFeature,
-        PillagerOutpostDefinition,
-        PlantFeature,
-        SpruceTreeFeature,
-    )
+    from .feature import (CactusFeature, DessertTempleFeature,
+                          DessertWellFeature, FossileFeature, OakTreeFeature,
+                          PillagerOutpostDefinition, PlantFeature,
+                          SpruceTreeFeature)
     from .feature.village import VillageFeatureDefinition
 
 
 def load_maps():
-    from .map import BiomeMap, FeatureMap, HeightMap, LandMassMap, TemperatureMap
+    from .map import (BiomeMap, FeatureMap, HeightMap, LandMassMap,
+                      TemperatureMap)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

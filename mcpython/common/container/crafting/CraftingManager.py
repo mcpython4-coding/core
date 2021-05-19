@@ -214,12 +214,8 @@ shared.crafting_handler = CraftingManager()
 
 
 def load_recipe_providers():
-    from . import (
-        FurnaceCraftingHelper,
-        GridRecipeInstances,
-        SmithingRecipe,
-        StonecuttingRecipe,
-    )
+    from . import (FurnaceCraftingHelper, GridRecipeInstances, SmithingRecipe,
+                   StonecuttingRecipe)
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

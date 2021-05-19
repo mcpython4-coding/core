@@ -28,7 +28,8 @@ import PIL.Image
 import pyglet
 from mcpython import logger, shared
 from mcpython.common.container.ItemGroup import FilteredItemGroup, ItemGroup
-from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
+from mcpython.common.container.ResourceStack import (ItemStack,
+                                                     LazyClassLoadItemstack)
 from mcpython.util.opengl import draw_line_rectangle
 from pyglet.window import key, mouse
 

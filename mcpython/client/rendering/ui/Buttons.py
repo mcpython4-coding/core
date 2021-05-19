@@ -18,9 +18,7 @@ import mcpython.ResourceLoader
 import pyglet
 from mcpython import shared
 from mcpython.client.rendering.ui.ButtonBackgroundBuilder import (
-    ButtonState,
-    DefaultButtonTexture,
-)
+    ButtonState, DefaultButtonTexture)
 from pyglet.window import key, mouse
 
 

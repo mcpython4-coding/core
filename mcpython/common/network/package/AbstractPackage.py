@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
+
 from mcpython import shared
 
 
@@ -47,7 +48,9 @@ class AbstractPackage:
         shared.NETWORK_MANAGER.send_package(self, destination)
 
         if self.CAN_GET_ANSWER:
-            shared.NETWORK_MANAGER.register_answer_handler(self, self.on_answer_received)
+            shared.NETWORK_MANAGER.register_answer_handler(
+                self, self.on_answer_received
+            )
 
         return self
 

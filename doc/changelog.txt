@@ -44,7 +44,7 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <21w10a> released on <?> targeting <21w19a>
+changelog of snapshot 21w20a released on 19.5.2021 targeting 21w19a
     This snapshot again breaks backwards compatibility.
     We have refactored again some stuff
 
