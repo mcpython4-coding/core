@@ -56,6 +56,9 @@ class LaunchWrapper:
         mcpython.client.rendering.window.Window(width=800, height=600, resizable=True)
         shared.window.set_caption("mcpython 4 early loading stage")
 
+        import mcpython.common.network.Backend
+        shared.CLIENT_NETWORK_HANDLER = mcpython.common.network.Backend.ClientBackend()
+
         return self
 
     def prepare_server(self):
@@ -75,6 +78,9 @@ class LaunchWrapper:
         import mcpython.client.rendering.window
 
         mcpython.client.rendering.window.Window()
+
+        import mcpython.common.network.Backend
+        shared.SERVER_NETWORK_HANDLER = mcpython.common.network.Backend.ServerBackend()
 
         return self
 

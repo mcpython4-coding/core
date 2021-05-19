@@ -71,6 +71,9 @@ changelog of snapshot <21w10a> released on <?> targeting <21w19a>
     Inventories:
         - implemented creative player inventory with creative tabs [data-driven, but extension point via events]
 
+    Networking:
+        - some smaller work on network handlers
+
 
 changelog of snapshot 21w17a released on 28.04.2021 targeting 21w17a
     This snapshot breaks again compatibility, mainly the following:

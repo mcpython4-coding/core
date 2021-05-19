@@ -1645,4 +1645,5 @@ R   [uuk]: improved world serialization API
 [uuk]: mod loader will now not CRASH when an invalid loader name is specified in a mod.json file
 [uuk]: added a few new blocks
 [uuk]: fixed experience bottle not working correctly
+[uuk]: started adding some networking codes
 
