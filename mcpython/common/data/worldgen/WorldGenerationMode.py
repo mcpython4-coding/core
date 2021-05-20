@@ -72,16 +72,22 @@ class WorldGenerationModeSerializer(
     def serialize(cls, obj) -> dict:
         import mcpython.server.worldgen.mode.IWorldGenConfig
 
-        assert isinstance(obj, mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig), "only world gen configs can be serialized!"
+        assert isinstance(
+            obj, mcpython.server.worldgen.mode.IWorldGenConfig.IWorldGenConfig
+        ), "only world gen configs can be serialized!"
 
         data = {
             "name": obj.NAME,
             "dimension": obj.DIMENSION,
             "biome_source": {
-                "type": next(filter(
-                    lambda key: isinstance(obj.BIOME_SOURCE, cls.BIOME_SOURCES[key]),
-                    list(cls.BIOME_SOURCES.keys()),
-                )),
+                "type": next(
+                    filter(
+                        lambda key: isinstance(
+                            obj.BIOME_SOURCE, cls.BIOME_SOURCES[key]
+                        ),
+                        list(cls.BIOME_SOURCES.keys()),
+                    )
+                ),
                 "args": obj.BIOME_SOURCE.get_creation_args(),
             },
         }

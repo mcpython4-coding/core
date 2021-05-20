@@ -16,7 +16,6 @@ import time
 import typing
 
 import pyglet.app
-
 from mcpython import logger, shared
 
 
@@ -75,7 +74,9 @@ class EventBus:
         :param kwargs: the kwargs to give
         :param info: an info to give for the caller
         """
-        self.event_subscriptions.setdefault(event_name, []).append((function, args, kwargs, info))
+        self.event_subscriptions.setdefault(event_name, []).append(
+            (function, args, kwargs, info)
+        )
 
     def unsubscribe(self, event_name: str, function):
         """
@@ -250,7 +251,9 @@ class EventBus:
 
         exception_occ = False
         for _ in range(amount):
-            function, eargs, ekwargs, info = d = self.event_subscriptions[event_name].pop(0)
+            function, eargs, ekwargs, info = d = self.event_subscriptions[
+                event_name
+            ].pop(0)
 
             if store_stuff:
                 self.popped_event_subscriptions.setdefault(event_name, []).append(d)
@@ -297,7 +300,9 @@ class EventBus:
                     )
 
         if exception_occ and self.crash_on_error:
-            logger.println("\nout of the above reasons, the game has crashed during call-as-stack call")
+            logger.println(
+                "\nout of the above reasons, the game has crashed during call-as-stack call"
+            )
             shared.window.close()
             pyglet.app.exit()
             sys.exit(-1)

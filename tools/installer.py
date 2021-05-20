@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import json
 import os
 import subprocess
 import sys
-import json
 
 """
 Installation code for setting up your python
@@ -34,7 +34,7 @@ subprocess.call(
 )
 
 
-with open(home+"/version.json") as f:
+with open(home + "/version.json") as f:
     version_data = json.load(f)
 
 # todo: move the url to config

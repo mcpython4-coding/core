@@ -1657,4 +1657,5 @@ R   [uuk]: improved world serialization API
 [uuk]: EventBus.unsubscribe will now unsubscribe all functions to an event, not only the first found one
 [uuk]: some minor cleanup at EventBus
 [uuk]: fixed some minor stuff in the world generation serializer
+[uuk]: deleted reload stage system from mod loader (not the reload pipe, the old one)
 

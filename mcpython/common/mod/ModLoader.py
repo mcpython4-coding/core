@@ -67,7 +67,7 @@ class ModLoader:
         self.active_loading_stage: int = 0
 
         # used for detecting mod changes between versions
-        self.previous_mods = {}
+        self.previous_mod_list = {}
 
         # temporary list of mods, for setting stuff
         self.located_mod_instances = []
@@ -75,39 +75,12 @@ class ModLoader:
         # fill the previous mods with data from the disk, if arrival
         if os.path.exists(shared.build + "/mods.json"):
             with open(shared.build + "/mods.json") as f:
-                self.previous_mods = json.load(f)
+                self.previous_mod_list = json.load(f)
 
         # if mod loading has finished
         self.finished = False
 
-        # the stages used during reload, todo: remove
-        self.reload_stages: typing.List[str] = []
-
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-            "command:reload:end", self.execute_reload_stages
-        )
-
         self.error_builder = logger.TableBuilder()
-
-    def register_reload_assigned_loading_stage(self, stage: str):
-        """
-        Will register an loading stage as one to executed on every reload
-        :param stage: the event name of the stage
-        todo: remove -> resource pipe
-        """
-        self.reload_stages.append(stage)
-        return self
-
-    def execute_reload_stages(self):
-        # todo: remove -> resource pipe
-        for event_name in self.reload_stages:
-            for i in range(len(self.mods)):
-                instance = shared.mod_loader.mods[
-                    shared.mod_loader.mod_loading_order[i]
-                ]
-                instance.eventbus.reset_event_stack(event_name)
-                instance.eventbus.call(event_name)
-        return self
 
     def __call__(
         self, modname: str, event_name: str, *args, **kwargs
@@ -116,8 +89,13 @@ class ModLoader:
         Annotation to the event system
         :param modname: the mod name
         :param event_name: the event name
-        :param info: the info
-        :return: an ModLoaderAnnotation-instance for annotation
+        :param info: the info, as shown by EventBus during errors
+        :return: a callable, used for regisering
+
+        Example:
+        @shared.modloader("minecraft", "stage:mod:init")
+        def test():
+            print("Hello world!")
         """
         return lambda function: self.mods[modname].eventbus.subscribe(
             event_name, function, *args, **kwargs
@@ -126,6 +104,7 @@ class ModLoader:
     def __getitem__(self, item: str):
         if item in self.mods:
             return self.mods[item]
+
         raise IndexError(item)
 
     def __contains__(self, item: str):
@@ -136,8 +115,10 @@ class ModLoader:
 
     def get_locations(self) -> list:
         """
-        Will return an list of mod locations found for loading
-        todo: split up into smaller portions
+        Will return a list of mod locations found for loading
+        Will parse sys.argv input
+        %home%/mods is searched by default
+        todo: add a way to disable the default location
         """
         locations = []
         folders = [shared.home + "/mods"]
@@ -169,7 +150,9 @@ class ModLoader:
                     locations.remove(file)
                 else:
                     self.error_builder.println(
-                        "- attempted to remove mod '{}' which is not found".format(file)
+                        "- attempted to remove mod file '{}' which is not found".format(
+                            file
+                        )
                     )
                 for _ in range(2):
                     sys.argv.pop(i)
@@ -177,6 +160,7 @@ class ModLoader:
                 i += 1
 
         for i, location in enumerate(locations):
+            # todo: use name here
             logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
 
         return locations
@@ -308,15 +292,16 @@ class ModLoader:
         """
         Will check for changes between versions between this session and the one before
         """
-        for modname in self.previous_mods.keys():
+        for modname in self.previous_mod_list.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(
-                self.previous_mods[modname]
+                self.previous_mod_list[modname]
             ):
                 # we have an mod which was previous loaded and not now or which was loaded before in another version
                 # todo: include version change
                 logger.println(
-                    "rebuild mode due to mod change (remove / version change) of '{}'".format(
-                        modname
+                    "rebuild mode due to mod change ({}) of '{}'".format(
+                        "remove" if modname not in self.mods else "version change",
+                        modname,
                     )
                 )
                 if shared.event_handler.call_cancelable(
@@ -325,7 +310,7 @@ class ModLoader:
                     shared.invalidate_cache = True
 
         for modname in self.mods.keys():
-            if modname not in self.previous_mods:  # any new mods?
+            if modname not in self.previous_mod_list:  # any new mods?
                 # we have an mod which was loaded not previous but now
                 # todo: include version of the mod
                 logger.println(
