@@ -26,7 +26,6 @@ class LaunchWrapper:
     """
     Class for launching the game in a certain configuration
     Loads all needed part and executed the loading task cycle.
-    todo: move shared.py content into here & remove shared.py
     """
 
     def __init__(self):

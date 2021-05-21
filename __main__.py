@@ -18,7 +18,8 @@ import traceback
 # todo: bump to python 3.10 when all dependencies support it
 if sys.version_info.major < 3 or sys.version_info.minor < 9:
     print(
-        "[WARN] you are using an not supported version of python. Game will not be able to run!"
+        "[FATAL] you are using an not supported version of python. "
+        "You need at least python 3.9 in order to run the game!"
     )
     sys.exit(-1)
 
