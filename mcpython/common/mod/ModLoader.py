@@ -305,7 +305,7 @@ class ModLoader:
                     )
                 )
                 if shared.event_handler.call_cancelable(
-                    "minecraft:modloader:mod_change", self, modname, self.mods[modname]
+                    "minecraft:modloader:mod_change", self, modname, self.mods[modname] if modname in self.mods else None
                 ):
                     shared.invalidate_cache = True
 

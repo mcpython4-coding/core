@@ -4,34 +4,35 @@ todo: make into an .md file
 
 planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
         before next stable release):
-    - add data-based factory system
-    - move more game logic to tags
-    - refactor event names
+    - add data-driven factory system
+    - move more game logic to tags [WIP]
+    - refactor event names [WIP]
     - do not read inventory config for each inventory, load it ones & share
-    - add scoreboards with commands, execute command entry, ... [5]
-    - make world gen more fail-save [2]
-    - add ores [4]
-    - tool level system based on tags were every block has a) a tag for the tool type and b) a tag for tool level [7]
+    - add scoreboards with commands, execute command entry, ...
+    - make world gen more fail-save
+    - add ores
+    - tool level system based on tags were every block has a) a tag for the tool type and b) a tag for tool level
+        [tags exists by vanilla]
 
     - add an line into logging where the system searches for the location where the error occur and will link the mod
-        caused it into the log [6]
+        caused it into the log
 
-    - parser for the new mc world gen config format [20]
+    - parser for the new mc world gen config format
 
-    - add an mode where the window opens only when the load is complete [100]
+    - add an mode where the window opens only when the load is complete
 
-    - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation [30]
+    - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
 
     - upgrade to pyglet 2:
-        - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html) [110]
+        - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html)
         - implement lighting [1000]
         - rendering layer system [20]
-        - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality] [5]
+        - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality]
 
-    - launcher system to download mc assets separately [10]
-    - entity AI system [30]
-    - make loot table system only load needed loot tables, etc. [10]
-    - BlockItemGenerator should store images in an better way, not single-files
+    - launcher system to download mc assets separately [MP4-12]
+    - entity AI system
+    - make loot table system only load needed loot tables, etc.
+    - BlockItemGenerator should be replaced by an in-game block renderer
 
 information on development:
     - the development is split up into 2 phases: the dev-branch with changes to the code and the final releases pushed
@@ -59,7 +60,10 @@ changelog of snapshot <21w23a> released on <?> targeting <21w20a>
         - improved internal event bus system
 
     Mod loader:
-        - moved ExtensionPoint class to mod package
+        - moved ExtensionPoint class to mod package [MP4-11]
+
+    Storage:
+        -
 
 
 changelog of snapshot 21w20a released on 19.5.2021 targeting 21w19a

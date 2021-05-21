@@ -55,12 +55,14 @@ History of save versions:
     - re-write of data fixer system, old still fix-able
     - removed "version"-attribute out of region files and inventory files
     - data fixers are applied to the WHOLE world ON LOAD, not when needed
-- 7: introduced: 12.12.2020, outdated since: -, not loadable since: -
+- 7: introduced: 12.12.2020, outdated since: 21.05.2021, not loadable since: 21.05.2021
     - major code refactoring breaking nearly everything
     - player data reformat
+- 10: introduced: 21.05.2021, outdated since: -, not loadable since: -
+    - improved block palette
 """
 
-shared.STORAGE_VERSION = LATEST_VERSION = 9  # the latest version, used for upgrading
+shared.STORAGE_VERSION = LATEST_VERSION = 10  # the latest version, used for upgrading
 
 # where the stuff should be saved
 SAVE_DIRECTORY = (

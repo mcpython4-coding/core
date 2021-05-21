@@ -1658,4 +1658,5 @@ R   [uuk]: improved world serialization API
 [uuk]: some minor cleanup at EventBus
 [uuk]: fixed some minor stuff in the world generation serializer
 [uuk]: deleted reload stage system from mod loader (not the reload pipe, the old one)
+[uuk]: improved how block palette is stored and entity data is stored
 

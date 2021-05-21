@@ -371,18 +371,14 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.generated = data["generated"]
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
         for i, d in enumerate(data["block_palette"]):
-            if d["name"] not in shared.registry.get_by_name("minecraft:block").entries:
+            if d[0] not in shared.registry.get_by_name("minecraft:block").entries:
                 # todo: add missing texture block -> insert here
                 logger.println(
                     "[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block".format(
                         d["name"], chunk, dimension
                     )
                 )
-                data["block_palette"][i] = {
-                    "shown": False,
-                    "name": "minecraft:air",
-                    "custom": {},
-                }
+                data["block_palette"][i] = ("minecraft:air", {}, False, tuple())
 
         for rel_position in data["blocks"].keys():
             position = (
@@ -395,26 +391,30 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             def add(instance):
                 if instance is None:
                     return
-                instance.inject(d["custom"])
-                inventories = instance.get_inventories()
-                if "inventories" not in d:
-                    return
-                for i, path in enumerate(d["inventories"]):
-                    if i >= len(inventories):
-                        break
-                    save_file.read(
-                        "minecraft:inventory",
-                        inventory=inventories[i],
-                        path=path,
-                        file=inv_file,
-                    )
 
-            flag = d["shown"]
+                instance.inject(d[1])
+
+                if len(d) > 3:
+                    inventories = instance.get_inventories()
+                    if "inventories" not in d:
+                        return
+
+                    for i, path in enumerate(d[3]):
+                        if i >= len(inventories):
+                            break
+                        save_file.read(
+                            "minecraft:inventory",
+                            inventory=inventories[i],
+                            path=path,
+                            file=inv_file,
+                        )
+
+            flag = d[2]
             if immediate:
-                add(chunk_instance.add_block(position, d["name"], immediate=flag))
+                add(chunk_instance.add_block(position, d[0], immediate=flag))
             else:
                 shared.world_generation_handler.task_handler.schedule_block_add(
-                    chunk_instance, position, d["name"], on_add=add, immediate=flag
+                    chunk_instance, position, d[0], on_add=add, immediate=flag
                 )
 
         positions = []
@@ -428,48 +428,16 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 data_map_data = data["maps"][data_map.NAME]
                 data_map.load_from_saves(data_map_data)
 
-        """if (
-            "minecraft:landmass_map" in data["maps"]
-            and "biome" in data["maps"]
-            and "height" in data["maps"]
-            and sum([len(data["maps"][key]) for key in data["maps"]])
-            == len(data["maps"]) * 256
-        ):
-            try:
-                chunk_instance.set_value(
-                    "minecraft:landmass_map",
-                    {
-                        pos: data["maps"]["landmass_palette"][
-                            data["maps"]["minecraft:landmass_map"][i]
-                        ]
-                        for i, pos in enumerate(positions)
-                    },
-                )
-                biome_map = {
-                    pos: data["maps"]["biome_palette"][data["maps"]["biome"][i]]
-                    for i, pos in enumerate(positions)
-                }
-                chunk_instance.set_value("minecraft:biome_map", biome_map)
-                chunk_instance.set_value(
-                    "heightmap",
-                    {pos: data["maps"]["height"][i] for i, pos in enumerate(positions)},
-                )
-            except IndexError:
-                logger.print_exception(
-                    "[CHUNK][CORRUPTED] palette map exception in chunk '{}' in dimension '{}'".format(
-                        chunk, dimension
-                    ),
-                    "this might indicate an unsuccessful save of the world!",
-                )"""
-
         for entity in data["entities"]:
-            if entity["type"] == "minecraft:player":
+            # todo: add dynamic system for skipping
+            if entity[0] == "minecraft:player":
                 continue
+
             try:
                 entity_instance = shared.entity_manager.spawn_entity(
-                    entity["type"],
-                    entity["position"],
-                    uuid=uuid.UUID(entity["uuid"]),
+                    entity[0],
+                    entity[1],
+                    uuid=uuid.UUID(entity[4]),
                     dimension=shared.world.dimensions[dimension],
                 )
             except ValueError:
@@ -481,11 +449,11 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     )
                 )
                 continue
-            entity_instance.rotation = entity["rotation"]
-            entity_instance.harts = entity["harts"]
+            entity_instance.rotation = entity[2]
+            entity_instance.harts = entity[3]
             if "nbt" in entity:
-                entity_instance.nbt_data.update(entity["nbt"])
-            entity_instance.load(entity["custom"])
+                entity_instance.nbt_data.update(entity[6])
+            entity_instance.load(entity[5])
 
         chunk_instance.loaded = True
         chunk_instance.is_ready = True
@@ -498,22 +466,28 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     def save(cls, data, save_file, dimension: int, chunk: tuple, override=False):
         if dimension not in shared.world.dimensions:
             return
+
         if chunk not in shared.world.dimensions[dimension].chunks:
             return
+
         region = chunk2region(*chunk)
         chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
             shared.world.dimensions[dimension].chunks[chunk]
         )
-        if not chunk_instance.is_generated():
-            return
+
         data = save_file.access_file_pickle(
             "dim/{}/{}_{}.region".format(dimension, *region)
         )
+
+        # If the file does not exist, create a empty region
         if data is None:
             data = {}
+
+        # If the chunk exists, the chunk data is arrival
         if chunk in data and not override:
             cdata = data[chunk]
-            override = False
+
+        # Otherwise, we need to create a dummy object for later filling
         else:
             cdata = {
                 "dimension": dimension,
@@ -521,22 +495,16 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 "blocks": {},
                 "block_palette": [],
                 "generated": chunk_instance.is_generated(),
-                "maps": {
-                    "minecraft:landmass_map": [None] * 16 ** 2,
-                    "landmass_palette": [],
-                    # "temperature": [None] * 16 ** 2,
-                    "biome": [0] * 16 ** 2,
-                    "biome_palette": [],
-                    "height": [None] * 16 ** 2,
-                },
                 "entities": [],
+                "maps": {}
             }
+            # And mark that all data should be written
             override = True
 
-        # when doing stuff, please make sure that nothing fancy happens
+        # When doing stuff, please make sure that nothing fancy happens with chunks
         shared.world_generation_handler.enable_generation = False
 
-        # these section is for dumping block stuff...
+        # Load the block palette
         palette = cdata[
             "block_palette"
         ]  # list of {"custom": <some stuff>, "name": <name>, "shown": <shown>, ...}
@@ -558,30 +526,34 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
             block = chunk_instance.get_block(position, none_if_str=True)
 
+            assert not isinstance(block, str), "something is really wrong!"
+
             if block is None and not override:
                 if rel_position in cdata["blocks"]:
                     del cdata["blocks"][rel_position]  # ok, old data MUST be removed
                 continue
 
-            block_data = {
-                "custom": block.dump_data(),
-                "name": block.NAME,
-                "shown": any(block.face_state.faces.values()),
-            }
+            block_data = (block.NAME, block.dump_data(), any(block.face_state.faces.values()),)
 
             # inventory data
             # todo: move to custom function in Block-class
             if block.get_inventories() is not None:  # have we any inventory of stuff
-                block_data["inventories"] = []  # create the entry for the data
+                block_data = block_data + ([],)
+
+                # iterate over all inventories
                 for i, inventory in enumerate(
                     block.get_inventories()
-                ):  # iterate over all inventories
-                    if not overridden:  # only if we need data, load it
+                ):
+                    # only if we need data, load it
+                    if not overridden:
                         save_file.dump_file_pickle(inv_file, {})
                         overridden = True
+
+                    # were to locate in the file
                     path = "blockinv/{}_{}_{}/{}".format(
                         *rel_position, i
-                    )  # were to locate in the file
+                    )
+
                     save_file.dump(
                         None,
                         "minecraft:inventory",
@@ -589,79 +561,34 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                         path=path,
                         file=inv_file,
                     )
-                    block_data["inventories"].append(path)
+                    block_data[3].append(path)
 
-            # dump into the palette table
+            # Dump into the palette table
             if block_data in palette:
                 cdata["blocks"][rel_position] = palette.index(block_data)
             else:
                 cdata["blocks"][rel_position] = len(palette)
                 palette.append(block_data)
+
         chunk_instance.clear_positions_updated_since_last_save()
 
         # this is about entity stuff...
         # todo: move completely to Entity-API
         for entity in chunk_instance.get_entities():
-            edata = {
-                "type": entity.NAME,
-                "position": entity.position,
-                "rotation": entity.rotation,
-                "harts": entity.harts,
-                "uuid": str(entity.uuid),
-                "custom": entity.dump(),
-                "nbt": entity.nbt_data,
-            }
-            cdata["entities"].append(edata)
+            entity_data = (
+                entity.NAME,
+                entity.position,
+                entity.rotation,
+                entity.harts,
+                str(entity.uuid),
+                entity.dump(),
+                entity.nbt_data,
+            )
+            cdata["entities"].append(entity_data)
 
         if override:  # we want to re-dump all data maps
             for data_map in chunk_instance.get_all_data_maps():
                 cdata["maps"][data_map.NAME] = data_map.dump_for_saves()
-
-            """biome_map = chunk_instance.get_value(
-                "minecraft:biome_map"
-            )  # read the biome map ...
-
-            # ... and use it as an template for the following
-            # todo: use something else more stable!
-            positions = list(
-                biome_map.keys()
-            )  # an list of all (x, z) in the chunk, for sorting the arrays
-            positions.sort(key=lambda x: x[1])
-            positions.sort(key=lambda x: x[0])
-
-            landmass_map = chunk_instance.get_value("minecraft:landmass_map")
-            cdata["maps"]["minecraft:landmass_map"] = []
-            cdata["maps"]["landmass_palette"] = []
-            for pos in positions:
-                mass = landmass_map[pos]
-                if mass not in cdata["maps"]["landmass_palette"]:
-                    index = len(cdata["maps"]["landmass_palette"])
-                    cdata["maps"]["landmass_palette"].append(mass)
-                else:
-                    index = cdata["maps"]["landmass_palette"].index(mass)
-                cdata["maps"]["minecraft:landmass_map"].append(index)
-
-            # temperature_map = chunk_instance.get_value("minecraft:temperature_map")
-            # cdata["maps"]["temperature"] = [temperature_map[pos] for pos in positions]
-
-            biome_palette = []
-            biomes = []
-            for pos in positions:
-                if biome_map[pos] not in biome_palette:
-                    index = len(biome_palette)
-                    biome_palette.append(biome_map[pos])
-                else:
-                    index = biome_palette.index(biome_map[pos])
-                biomes.append(index)
-            cdata["maps"]["biome"] = biomes
-            cdata["maps"][
-                "biome_palette"
-            ] = biome_palette  # todo: move to global map of biomes
-
-            height_map = chunk_instance.get_value("heightmap")
-            cdata["maps"]["height"] = [
-                height_map[pos] if pos in height_map else -1 for pos in positions
-            ]"""
 
         data[chunk] = cdata  # dump the chunk into the region
         write_region_data(

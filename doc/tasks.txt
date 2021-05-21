@@ -3,20 +3,14 @@
 Issues:
 - non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
 - world generation progress is not displayed
-- biome map generation is broken, square patterns!
-- biome map is not saved to save files or loaded not correctly somehow!
+- biome map is not saved to save files or loaded not correctly somehow
 
 
 Toolchain:
-- version.json information for, loaded by the game & the tools:
-    - version name & id
-    - target mc version download url
-    - stable or not
-- installation.json storing local information like:
+- userconfig.json storing local information like:
     - path to launcher
     - user name
     - path to mc asset folder / archive
-- installer lookup for local mc installation -> use their .jar
 - installer .jar file linking in the installation.json file instead of extraction
 - obfuscator
 - System to dynamically migrate code from deobf <-> obf and up versions [only simple changes]
