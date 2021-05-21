@@ -26,6 +26,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
     """
     representation of an chunk in the world
     """
+    BLOCK_REGISTRY = shared.registry.get_by_name("minecraft:block")
 
     now = datetime.datetime.now()  # when is now?
 
@@ -299,12 +300,12 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
         # Create the block instance from the registry
         else:
-            # todo: cache registry
-            table = shared.registry.get_by_name("minecraft:block").full_table
-            if block_name not in table:
+            if not self.BLOCK_REGISTRY.is_valid_key(block_name):
                 return
 
-            block = table[block_name]()
+            block_cls = self.BLOCK_REGISTRY.get(block_name)
+
+            block = block_cls()
             block.position = position
             block.dimension = self.dimension.get_name()
             if lazy_setup is not None:
