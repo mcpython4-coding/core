@@ -63,7 +63,7 @@ changelog of snapshot <21w23a> released on <?> targeting <21w20a>
         - moved ExtensionPoint class to mod package [MP4-11]
 
     Storage:
-        -
+        - improved storage of block palette and entities
 
 
 changelog of snapshot 21w20a released on 19.5.2021 targeting 21w19a

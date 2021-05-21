@@ -166,12 +166,12 @@ class FaceInfo:
         self.hide_all()
 
         for key in state.keys():
-            face = (
-                key
-                if not isinstance(key, str)
-                else mcpython.util.enums.EnumSide[key.upper()]
-            )
             if state[key]:
+                face = (
+                    key
+                    if not isinstance(key, str)
+                    else mcpython.util.enums.EnumSide[key.upper()]
+                )
                 self.show_face(face)
 
     def hide_all(self):

@@ -496,7 +496,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 "block_palette": [],
                 "generated": chunk_instance.is_generated(),
                 "entities": [],
-                "maps": {}
+                "maps": {},
             }
             # And mark that all data should be written
             override = True
@@ -533,7 +533,11 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     del cdata["blocks"][rel_position]  # ok, old data MUST be removed
                 continue
 
-            block_data = (block.NAME, block.dump_data(), any(block.face_state.faces.values()),)
+            block_data = (
+                block.NAME,
+                block.dump_data(),
+                any(block.face_state.faces.values()),
+            )
 
             # inventory data
             # todo: move to custom function in Block-class
@@ -541,18 +545,14 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 block_data = block_data + ([],)
 
                 # iterate over all inventories
-                for i, inventory in enumerate(
-                    block.get_inventories()
-                ):
+                for i, inventory in enumerate(block.get_inventories()):
                     # only if we need data, load it
                     if not overridden:
                         save_file.dump_file_pickle(inv_file, {})
                         overridden = True
 
                     # were to locate in the file
-                    path = "blockinv/{}_{}_{}/{}".format(
-                        *rel_position, i
-                    )
+                    path = "blockinv/{}_{}_{}/{}".format(*rel_position, i)
 
                     save_file.dump(
                         None,

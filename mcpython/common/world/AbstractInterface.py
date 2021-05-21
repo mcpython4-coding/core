@@ -230,6 +230,16 @@ class IChunk(ISupportWorldInterface, ABC):
         """
         raise NotImplementedError
 
+    def exposed_faces_iterator(
+        self, position: typing.Tuple[int, int, int]
+    ) -> typing.Iterator[mcpython.util.enums.EnumSide]:
+        """
+        Variant of exposed_faces yielding the exposed faces instead of using a dict
+        """
+        return (
+            face for face, visible in self.exposed_faces(position).items() if visible
+        )
+
     def is_position_blocked(self, position: typing.Tuple[float, float, float]) -> bool:
         """
         Checks if the given position is not air

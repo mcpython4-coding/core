@@ -42,34 +42,35 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         """
         super().__init__()
         self.dimension = dimension
+
+        # The position of the chunk
         self.position = tuple(int(e) for e in position)
 
-        # used when the chunks gets invalid or is loaded at the moment
+        # Used when the chunks gets invalid or is loaded at the moment
         self.is_ready = False
 
-        # used when the chunk should be visible
+        # Indicated that the chunk is shown to the player
+        # todo: client-only
         self.visible = False
 
-        # used if load success
+        # Indicated that the chunk is loaded
         self.loaded = False
 
-        # used if generation success
+        # Indicates that the chunk is generated
         self.generated = False
 
-        # if the chunk was modified since last save
+        # Indicated that the chunk was modified
         self.dirty = False
 
+        # Creates the needed chunk maps as defined in the world generation handler
         shared.world_generation_handler.setup_chunk_maps(self)
 
-        # for all default chunks, we add such ticket. todo: remove & set only when needed
+        # For all default chunks, we add such ticket. todo: remove & set only when needed
         self.add_chunk_load_ticket(
             mcpython.common.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS
         )
 
     def entity_iterator(self) -> typing.Iterable:
-        """
-        Returns an iterable of entities in this chunk
-        """
         return tuple(self.entities)
 
     def tick(self):
@@ -81,10 +82,6 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         self.check_for_unload()
 
     def save(self):
-        """
-        Wrapper function for saving this file
-        Wraps SaveFile.dump around this chunk
-        """
         shared.world.save_file.dump(
             self, "minecraft:chunk", dimension=self.get_dimension(), chunk=self.position
         )
@@ -122,12 +119,12 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         Draws all entities
         todo: for this, add a batch
 
-        will schedule a chunk load from saves when needed
+        Will schedule a chunk load from saves when needed
         """
         if not self.is_ready or not self.visible:
             return
 
-        # todo: add an list of blocks which want an draw() call
+        # todo: add a list of blocks which want an draw() call
 
         # load if needed
         if not self.loaded:
@@ -139,6 +136,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             )
 
         # todo: can we also use batches & manipulate vertex data?
+        #  [WIP, see rendering/entities/EntityBoxRenderingHelper.py]
         for entity in self.entities:
             entity.draw()
 
@@ -189,9 +187,47 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
         return faces
 
+    def exposed_faces_iterator(
+        self, position: typing.Tuple[int, int, int]
+    ) -> typing.Iterator[mcpython.util.enums.EnumSide]:
+        instance = self.get_block(position)
+
+        if instance is None or type(instance) == str:
+            yield from mcpython.util.enums.EnumSide.iterate()
+
+        for face in mcpython.util.enums.FACE_ORDER:
+            pos = face.relative_offset(position)
+            chunk_position = mcpython.util.math.position_to_chunk(pos)
+
+            if chunk_position != self.position:
+                chunk = self.dimension.get_chunk(chunk_position, generate=False)
+
+                if chunk is None:
+                    continue
+            else:
+                chunk = self
+
+            if not (
+                not chunk.is_loaded()
+                and shared.world.hide_faces_to_not_generated_chunks
+            ):
+                block = chunk.get_block(pos)
+
+                if not (
+                    block is None
+                    or (
+                        not isinstance(block, str)
+                        and (
+                            not block.face_solid[face.invert()]
+                            or not instance.face_solid[face]
+                        )
+                    )
+                ):
+                    yield face
+
     def is_position_blocked(self, position: typing.Tuple[float, float, float]) -> bool:
         """
-        Will return if at an given position is a block or a block is scheduled [e.g. by world generation]
+        Will return if at a given position is a block or a block is scheduled [e.g. by world generation]
         :param position: the position to check
         :return: if there is an block
         """
@@ -214,7 +250,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         replace_existing=True,
     ):
         """
-        Adds an block to the given position
+        Adds a block to the given position
         :param position: the position to add
         :param block_name: the name of the block or an instance of it
         :param immediate: if the block should be shown if needed
@@ -254,12 +290,16 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             block = block_name
             block.position = position
             block.dimension = self.dimension.get_name()
+
             if lazy_setup is not None:
                 lazy_setup(block)
+
             if shared.IS_CLIENT:
                 block.face_state.update()
 
+        # Create the block instance from the registry
         else:
+            # todo: cache registry
             table = shared.registry.get_by_name("minecraft:block").full_table
             if block_name not in table:
                 return
@@ -270,15 +310,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             if lazy_setup is not None:
                 lazy_setup(block)
 
-        if self.now.day == 13 and self.now.month == 1 and "diorite" in block.NAME:
-            return self.add_block(
-                position,
-                block.NAME.replace("diorite", "andesite"),
-                immediate=immediate,
-                block_update=block_update,
-                block_update_self=block_update_self,
-            )
-
+        # store the block instance in the local world
         self._world[position] = block
 
         block.on_block_added()
