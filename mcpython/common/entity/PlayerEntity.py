@@ -66,27 +66,32 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.armor_level = 0
         self.armor_toughness = 0
 
-        self.in_nether_portal_since = None
+        self.in_nether_portal_since: typing.Optional[float] = None
         self.should_leave_nether_portal_before_dim_change = False
 
-        self.flying = False  # are we currently flying?
+        # are we currently flying?
+        self.flying = False
 
-        self.fallen_since_y = -1  # how far did we fall?
+        # how far did we fall?
+        self.fallen_since_y: float = -1
 
         # which slot is currently selected
         self.active_inventory_slot: int = 0
 
         # used for determine if we can access stuff now or must wait
+        # todo: can we do something else
         if not shared.mod_loader.finished:
             mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                 "stage:inventories",
                 self.create_inventories,
                 info="setting up player inventory",
             )
+
         else:
             self.create_inventories()
 
-        # todo: move to somewhere else!
+        # todo: move to somewhere else! (Each player creation does a new one!)
+        # todo: client-only
         mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:get_player_position", self.hotkey_get_position
         )
@@ -94,15 +99,19 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             "hotkey:gamemode_1-3_toggle", self.toggle_gamemode
         )
 
+        # the different parts of the player inventory
+        # todo: use only containers here
         self.inventory_hotbar = None
         self.inventory_main = None
         self.inventory_enderchest = None
         self.inventory_chat = None
         self.inventory_crafting_table = None
 
+        # the lookup order of inventory, todo: move to inventory handler
         self.inventory_order = []
 
     def hotkey_get_position(self):
+        # todo: remove this check when only the current player uses this event
         if self != shared.world.get_active_player():
             return
 
@@ -114,6 +123,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         """
         Toggles between gamemode 1 and 3, used internally for the hotkey F3+N
         """
+        # todo: remove this check
         if self != shared.world.get_active_player():
             return
 
@@ -172,9 +182,13 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
             self.gamemode = gamemode
         else:
+            # todo: add an option to raise an exception here
             logger.println("[ERROR] invalid gamemode:", gamemode)
 
     def get_needed_xp_for_next_level(self) -> int:
+        """
+        :return: the xp amount needed to reach the next xp level
+        """
         if self.xp_level < 16:
             return self.xp_level * 2 + 5
         elif self.xp_level < 30:
@@ -268,8 +282,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def set_active_inventory_slot(self, slot: int):
         """
         Sets the active inventory slot by ID (0-8)
+        Clamped in the range when out of range
         """
-        self.active_inventory_slot = slot
+        self.active_inventory_slot = max(min(round(slot), 8), 0)
+        return self
 
     def get_active_inventory_slot(self):
         """
@@ -277,6 +293,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         """
         if self.inventory_hotbar is None:
             self.create_inventories()
+
         return self.inventory_hotbar.slots[self.active_inventory_slot]
 
     def kill(
@@ -288,19 +305,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         force=False,
         internal=False,
     ):
-        if not force and not shared.event_handler.call_cancelable(
-            "player:pre_die",
-            self,
-            drop_items,
-            kill_animation,
-            damage_source,
-            test_totem,
-        ):
-            return
-
         if test_totem and not force:
             # todo: add effects of totem
             # todo: add list to player of possible slots with possibility of being callable
+            # todo: add tag for this functionality
             a = (
                 self.get_active_inventory_slot().get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"
@@ -321,21 +329,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 return
 
         super().kill()
+
+        # We don't need them anymore? todo: this feels wrong!
         self.inventory_main.free()
         self.inventory_hotbar.free()
-        if (
-            not internal
-            and not force
-            and not shared.event_handler.call_cancelable(
-                "player:dead:cancel_post",
-                self,
-                drop_items,
-                kill_animation,
-                damage_source,
-                test_totem,
-            )
-        ):
-            return
 
         sector = mcpython.util.math.position_to_chunk(self.position)
         shared.world.change_chunks(sector, None)
@@ -356,7 +353,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             )  # todo: add death screen and death type
 
         if not internal:
-            self.move_to_spawn_point()
+            self.teleport_to_spawn_point()
 
         self.active_inventory_slot = 0
         shared.window.dy = 0
@@ -416,10 +413,11 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 self.kill()
 
     def reset_moving_slot(self):
-        self.pick_up_item(shared.inventory_handler.moving_slot.get_itemstack().copy())
-        shared.inventory_handler.moving_slot.get_itemstack().clean()
+        stack = shared.inventory_handler.moving_slot.get_itemstack()
+        self.pick_up_item(stack.copy())
+        stack.clean()
 
-    def move_to_spawn_point(self):
+    def teleport_to_spawn_point(self):
         x, _, z = mcpython.util.math.normalize(self.position)
         h = self.dimension.get_chunk_for_position(
             self.position
@@ -447,10 +445,13 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         old_position = self.position
         if position is not None:
             self.set_position_unsafe(position)
+
         rx, ry, rz = self.rotation if rotation is None else rotation
         rotation_whole = (0, rx + 90, 0)
+
         if self != shared.world.get_active_player() or full is True:
             self.RENDERER.draw(self, "outer", rotation=rotation_whole)
+
         else:
             if (
                 self.get_active_inventory_slot() is not None
@@ -464,6 +465,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 self.RENDERER.draw_box(
                     self, "left_arm_rotated", rotation=rotation_whole
                 )
+
         self.set_position_unsafe(old_position)
 
     def __str__(self):
@@ -482,10 +484,12 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def teleport(self, position, dimension=None, force_chunk_save_update=False):
         before = self.chunk.dimension if self.chunk is not None else None
         super().teleport(position, dimension, force_chunk_save_update)
+        # todo: this seems not good...
         if (
             self.chunk.dimension if self.chunk is not None else None
         ) != before and self == shared.world.get_active_player():
             self.chunk.dimension.world.join_dimension(self.chunk.dimension.id)
 
+    # General API
     def get_inventories(self) -> list:
-        return [self.inventory_main, self.inventory_hotbar, self.inventory_enderchest]
+        return [self.inventory_main, self.inventory_hotbar]

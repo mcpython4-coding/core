@@ -26,6 +26,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
     """
     representation of an chunk in the world
     """
+
     BLOCK_REGISTRY = shared.registry.get_by_name("minecraft:block")
 
     now = datetime.datetime.now()  # when is now?

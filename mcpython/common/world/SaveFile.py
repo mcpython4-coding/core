@@ -60,9 +60,12 @@ History of save versions:
     - player data reformat
 - 10: introduced: 21.05.2021, outdated since: -, not loadable since: -
     - improved block palette
+    - improved entity storage
+    - removed some sanity checks for backwards compatibility
 """
 
-shared.STORAGE_VERSION = LATEST_VERSION = 10  # the latest version, used for upgrading
+# the latest version, used for upgrading
+shared.STORAGE_VERSION = LATEST_VERSION = 10
 
 # where the stuff should be saved
 SAVE_DIRECTORY = (
@@ -80,6 +83,7 @@ def register_storage_fixer(
     _, fixer: mcpython.common.world.datafixers.IDataFixer.IStorageVersionFixer
 ):
     SaveFile.storage_version_fixers.setdefault(fixer.FIXES_FROM, []).append(fixer)
+    return fixer
 
 
 def register_mod_fixer(
@@ -88,11 +92,12 @@ def register_mod_fixer(
     SaveFile.mod_fixers.setdefault(fixer.MOD_NAME, {}).setdefault(
         fixer.FIXES_FROM, []
     ).append(fixer)
+    return fixer
 
 
 class SaveFile:
     """
-    Interface to an stored file on the disk
+    Interface to a stored file on the disk
     Used to load certain parts into the system & store them
     """
 
@@ -145,11 +150,13 @@ class SaveFile:
 
     def load_world(self):
         """
-        loads all setup-data into the world
+        Loads all setup-data into the world
         """
         shared.world.cleanup()  # make sure everything is removed before we start
+
         try:
             self.read("minecraft:general")
+
             while self.version != LATEST_VERSION:
                 if self.version not in self.storage_version_fixers:
                     logger.println(
@@ -160,19 +167,24 @@ class SaveFile:
                     shared.world.cleanup()
                     shared.state_handler.switch_to("minecraft:startmenu")
                     return
+
                 fixers = self.storage_version_fixers[self.version]
                 if len(fixers) > 1:
                     # search for the one fixing to the nearest version to the searched for
                     fixer = min(fixers, key=lambda f: abs(LATEST_VERSION - f.FIXES_TO))
                 else:
                     fixer = fixers[0]
+
                 self.apply_storage_fixer(fixer.NAME)
                 self.read("minecraft:general")
                 self.version = fixer.FIXES_TO
+
             self.dump(None, "minecraft:general")
+
             self.read("minecraft:player_data")
             self.read("minecraft:gamerule")
             self.read("minecraft:registry_info_serializer")
+
         except mcpython.common.world.serializer.IDataSerializer.MissingSaveException:
             logger.println(
                 "[WARN] save '{}' not found, falling back to selection menu".format(
@@ -182,6 +194,7 @@ class SaveFile:
             shared.world.cleanup()
             shared.state_handler.switch_to("minecraft:world_selection")
             return
+
         except:
             shared.world.cleanup()
             shared.state_handler.switch_to("minecraft:startmenu")
@@ -189,25 +202,26 @@ class SaveFile:
                 "exception during loading world. falling back to start menu..."
             )
             return
-        # todo: load data packs for save files and than enable the below
-        # shared.commandparser.parse("/reload")
 
     def save_world(self, *_, override=False):
         """
-        save all base-data into the system
+        Save all base-data into the system
         :param _: used when used by special event triggers
         :param override: flag for saving the chunks
         """
         if self.save_in_progress:
             raise IOError("can't save world. save in process")
         try:
+            # Make sure that nothing else is going on...
             self.save_in_progress = True
             shared.world_generation_handler.enable_generation = False
+
             logger.println("saving world...")
             self.dump(None, "minecraft:general")
             self.dump(None, "minecraft:player_data")
             self.dump(None, "minecraft:gamerule")
             self.dump(None, "minecraft:registry_info_serializer")
+
             for chunk in shared.world.get_active_dimension().chunks:
                 # todo: save all loaded dimension, not only the active one
                 if shared.world.get_active_dimension().get_chunk(*chunk).loaded:
@@ -218,19 +232,22 @@ class SaveFile:
                         chunk=chunk,
                         override=override,
                     )
+
             logger.println("save complete!")
+
+            # And open the system again
             shared.world_generation_handler.enable_generation = True
+            self.save_in_progress = False
         except:
+            logger.print_exception(
+                "Exception during saving world. Falling back to start menu"
+            )
             shared.world.cleanup()
             shared.state_handler.switch_to("minecraft:startmenu")
-            logger.print_exception(
-                "exception during saving world. falling back to start menu..."
-            )
-        self.save_in_progress = False
 
     def apply_storage_fixer(self, name: str, *args, **kwargs):
         """
-        will apply an fixer to fix the storage version
+        Will apply an fixer to fix the storage version
         :param name: the name of the fixer to use
         :param args: the args to send
         :param kwargs: the kwargs to use
@@ -238,9 +255,11 @@ class SaveFile:
         """
         if name not in self.storage_fixer_registry.entries:
             raise DataFixerNotFoundException(name)
+
         fixer: mcpython.common.world.datafixers.IDataFixer.IStorageVersionFixer = (
             self.storage_fixer_registry.entries[name]
         )
+
         try:
             fixer.apply(self, *args, **kwargs)
             for name, args, kwargs in fixer.GROUP_FIXER_NAMES:
@@ -261,20 +280,24 @@ class SaveFile:
         """
         if name not in self.group_fixer_registry.entries:
             raise DataFixerNotFoundException(name)
+
         fixer: mcpython.common.world.datafixers.IDataFixer.IGroupFixer = (
             self.group_fixer_registry.entries[name]
         )
+
         try:
             fixer.apply(self, *args, **kwargs)
             for name, args, kwargs in fixer.PART_FIXER_NAMES:
                 self.apply_part_fixer(name, *args, **kwargs)
+
         except:
-            logger.print_exception("during data-fixing group fixer '{}'".format(name))
+            logger.print_exception("During data-fixing group fixer '{}' (FATAL)".format(name))
+            shared.world.cleanup()
             shared.state_handler.switch_to("minecraft:startmenu")
 
     def apply_part_fixer(self, name: str, *args, **kwargs):
         """
-        will apply an part fixer to the system
+        Will apply an part fixer to the system
         :param name: the name to use
         :param args: the args to send
         :param kwargs: the kwargs
@@ -282,18 +305,21 @@ class SaveFile:
         """
         if name not in self.part_fixer_registry.entries:
             raise DataFixerNotFoundException(name)
+
         fixer: mcpython.common.world.datafixers.IDataFixer.IPartFixer = (
             self.part_fixer_registry.entries[name]
         )
+
         try:
             fixer.apply(self, *args, **kwargs)
         except:
-            logger.print_exception("during data-fixing part '{}'".format(name))
+            logger.print_exception("During data-fixing part '{}' (fatal)".format(name))
+            shared.world.cleanup()
             shared.state_handler.switch_to("minecraft:startmenu")
 
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
         """
-        applies an mod fixer(list) to the system
+        Applies an mod fixer(list) to the system
         :param modname: the mod name
         :param source_version: where to start from
         :param args: args to call with
@@ -302,8 +328,10 @@ class SaveFile:
         """
         if modname not in self.mod_fixers or modname not in shared.mod_loader.mods:
             raise DataFixerNotFoundException(modname)
+
         instance = shared.mod_loader.mods[modname]
         fixers = self.mod_fixers[modname]
+
         while instance.version != source_version:
             possible_fixers = set()
             for fixer in fixers:
@@ -340,10 +368,11 @@ class SaveFile:
                 ]
             except:
                 logger.print_exception(
-                    "during data-fixing mod {} from {} to {}".format(
+                    "during data-fixing mod {} from {} to {} (fatal)".format(
                         modname, fixer.FIXES_FROM, fixer.FIXES_TO
                     )
                 )
+                shared.world.cleanup()
                 shared.state_handler.switch_to("minecraft:startmenu")
                 return
 
@@ -366,11 +395,12 @@ class SaveFile:
         ):
             if serializer.PART == part:
                 return serializer
+
         raise ValueError("can't find serializer named '{}'".format(part))
 
     def read(self, part, **kwargs):
         """
-        reads an part of the save-file
+        Reads an part of the save-file
         :param part: the part to load
         :param kwargs: kwargs given to the loader
         :return: whatever the loader returns
@@ -386,7 +416,7 @@ class SaveFile:
 
     def dump(self, data, part, **kwargs):
         """
-        similar to read(...), but the other way round.
+        Similar to read(...), but the other way round.
         :param data: the data to store, optional, may be None
         :param part: the part to save
         :param kwargs: the kwargs to give the saver
@@ -401,19 +431,21 @@ class SaveFile:
 
     def access_file_json(self, file: str):
         """
-        access save an json file
+        Access a saved json file
         :param file: the file to load
         :return: the data of the file or None if an error has occur
         """
         file = os.path.join(self.directory, file)
         if not os.path.isfile(file):
             return
+
         try:
             with open(file) as f:
                 return json.load(f)
+
         except json.decoder.JSONDecodeError:
-            logger.println(
-                "[SAVE][CORRUPTED] file '{}' seems to be corrupted".format(file)
+            logger.print_exception(
+                "File '{}' seems to be corrupted, below the loader exception".format(file)
             )
             return
 
@@ -430,15 +462,15 @@ class SaveFile:
             with open(file, mode="rb") as f:
                 return pickle.load(f)
         except (pickle.UnpicklingError, EOFError, ModuleNotFoundError):
-            logger.println(
-                "[SAVE][CORRUPTED] file '{}' seems to be corrupted. See error message for info".format(
+            logger.print_exception(
+                "File '{}' seems to be corrupted. See error message for info, below the loading exception".format(
                     file
                 )
             )
             return
         except AttributeError:
-            logger.println(
-                "[SAVE][INVALID] module changed in between code systems, leading into corrupted file {}".format(
+            logger.print_exception(
+                "Module changed in between code systems, leading into corrupted file {}".format(
                     file
                 )
             )
@@ -452,6 +484,7 @@ class SaveFile:
         file = os.path.join(self.directory, file)
         if not os.path.isfile(file):
             return
+
         with open(file, mode="rb") as f:
             return f.read()
 

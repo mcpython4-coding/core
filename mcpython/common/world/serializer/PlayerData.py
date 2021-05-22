@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import time
+import typing
 
 import mcpython.common.world.datafixers.IDataFixer
 from mcpython import shared
@@ -44,18 +45,20 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
         if issubclass(fixer, PlayerDataFixer):
             data = save_file.access_file_json("players.json")
             for name in data:
-                pdata = data[name]
+                player_data = data[name]
                 player = (
                     shared.world.players[name]
                     if name not in shared.world.players
                     else None
                 )
-                pdata = fixer.fix(save_file, player, pdata)
-                data[name] = pdata
+                player_data = fixer.fix(save_file, player, player_data)
+                data[name] = player_data
             save_file.dump_file_json("players.json", data)
+        else:
+            raise ValueError(f"invalid part fixer for player data: {fixer}")
 
     @classmethod
-    def load(cls, save_file):
+    def load(cls, save_file, **_):
         data = save_file.access_file_json("players.json")
         if data is not None and shared.world.get_active_player().name in data:
             player = shared.world.get_active_player()
@@ -71,6 +74,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
             player.rotation = pd["rotation"]
             shared.world.join_dimension(pd["dimension"])
             shared.world.get_active_player().flying = pd["flying"]
+
             for i, (name, inventory) in enumerate(
                 zip(pd["inventory_data"], player.get_inventories())
             ):
@@ -79,24 +83,25 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                     inventory=inventory,
                     path="players/{}/inventory/{}".format(player.name, i),
                 )
-            if "dimension_data" in pd:
-                if (
-                    pd["dimension_data"]["nether_portal"]["portal_inner_time"]
-                    is not None
-                ):
-                    player.in_nether_portal_since = (
-                        time.time()
-                        - pd["dimension_data"]["nether_portal"]["portal_inner_time"]
-                    )
-                player.should_leave_nether_portal_before_dim_change = pd[
-                    "dimension_data"
-                ]["nether_portal"]["portal_need_leave_before_change"]
+
+            if (
+                pd["dimension_data"]["nether_portal"]["portal_inner_time"]
+                is not None
+            ):
+                player.in_nether_portal_since = (
+                    time.time()
+                    - pd["dimension_data"]["nether_portal"]["portal_inner_time"]
+                )
+            player.should_leave_nether_portal_before_dim_change = pd[
+                "dimension_data"
+            ]["nether_portal"]["portal_need_leave_before_change"]
 
     @classmethod
-    def save(cls, data, save_file):
+    def save(cls, data, save_file, **_):
         data = save_file.access_file_json("players.json")
         if data is None:
             data = {}
+
         for player in shared.world.players.values():
             # todo: move to player custom save data
             data[player.name] = {
@@ -113,9 +118,11 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                 "flying": shared.world.get_active_player().flying,
                 "dimension_data": {
                     "nether_portal": {
-                        "portal_inner_time": None
-                        if player.in_nether_portal_since is None
-                        else time.time() - player.in_nether_portal_since,
+                        "portal_inner_time": (
+                            None
+                            if player.in_nether_portal_since is None
+                            else time.time() - typing.cast(float, player.in_nether_portal_since)
+                        ),
                         "portal_need_leave_before_change": player.should_leave_nether_portal_before_dim_change,
                     }
                 },
@@ -123,6 +130,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                     inventory.uuid.int for inventory in player.get_inventories()
                 ],
             }
+
             [
                 save_file.dump(
                     None,
@@ -132,4 +140,5 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                 )
                 for i, inventory in enumerate(player.get_inventories())
             ]
+
         save_file.dump_file_json("players.json", data)

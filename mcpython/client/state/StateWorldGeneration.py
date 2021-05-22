@@ -203,7 +203,7 @@ class StateWorldGeneration(State.State):
 
         # todo: this is also only client code
         shared.world.active_player = player_name
-        shared.world.get_active_player().move_to_spawn_point()
+        shared.world.get_active_player().teleport_to_spawn_point()
         shared.world.config["enable_auto_gen"] = self.world_gen_config[
             "auto_gen_enabled"
         ]
