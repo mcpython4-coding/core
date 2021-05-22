@@ -77,10 +77,11 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         self.parent = None  # the entity this is riding todo: move into nbt
         self.child = None  # the entity this is ridden by  todo: move into nbt
 
+        # dict holding entity data, automatically saved & loaded, when loading, data is put ontop of the existing dict
         self.nbt_data = {
             "motion": (0, 0, 0),
             "invulnerable": False,
-        }  # dict holding entity data, automatically saved & loaded, when loading, data is put ontop of the existing dict
+        }
 
     def __del__(self):
         if not hasattr(self, "chunk"):

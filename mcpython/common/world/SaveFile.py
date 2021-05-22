@@ -291,7 +291,9 @@ class SaveFile:
                 self.apply_part_fixer(name, *args, **kwargs)
 
         except:
-            logger.print_exception("During data-fixing group fixer '{}' (FATAL)".format(name))
+            logger.print_exception(
+                "During data-fixing group fixer '{}' (FATAL)".format(name)
+            )
             shared.world.cleanup()
             shared.state_handler.switch_to("minecraft:startmenu")
 
@@ -445,7 +447,9 @@ class SaveFile:
 
         except json.decoder.JSONDecodeError:
             logger.print_exception(
-                "File '{}' seems to be corrupted, below the loader exception".format(file)
+                "File '{}' seems to be corrupted, below the loader exception".format(
+                    file
+                )
             )
             return
 

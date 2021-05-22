@@ -15,8 +15,9 @@ import os
 import subprocess
 import sys
 
-import generate_build
 import simplejson as json
+
+import generate_build
 
 local = os.path.dirname(__file__)
 home = os.path.dirname(local)

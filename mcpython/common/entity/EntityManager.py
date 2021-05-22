@@ -14,7 +14,6 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.common.event.Registry
-import mcpython.common.mod.ModMcpython
 from mcpython import logger, shared
 
 
@@ -128,11 +127,13 @@ class EntityManager:
         self.entity_map.clear()
 
 
-shared.entity_manager = EntityManager()
-
-
 def load():
     from mcpython.common.entity import AbstractEntity, FallingBlockEntity
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:entities", load)
+# This check is here as test env don't want to import this stuff
+if not shared.IS_TEST_ENV:
+    shared.entity_manager = EntityManager()
+
+    import mcpython.common.mod.ModMcpython
+    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:entities", load)

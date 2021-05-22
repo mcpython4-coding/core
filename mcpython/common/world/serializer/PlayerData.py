@@ -84,17 +84,14 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                     path="players/{}/inventory/{}".format(player.name, i),
                 )
 
-            if (
-                pd["dimension_data"]["nether_portal"]["portal_inner_time"]
-                is not None
-            ):
+            if pd["dimension_data"]["nether_portal"]["portal_inner_time"] is not None:
                 player.in_nether_portal_since = (
                     time.time()
                     - pd["dimension_data"]["nether_portal"]["portal_inner_time"]
                 )
-            player.should_leave_nether_portal_before_dim_change = pd[
-                "dimension_data"
-            ]["nether_portal"]["portal_need_leave_before_change"]
+            player.should_leave_nether_portal_before_dim_change = pd["dimension_data"][
+                "nether_portal"
+            ]["portal_need_leave_before_change"]
 
     @classmethod
     def save(cls, data, save_file, **_):
@@ -121,7 +118,8 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                         "portal_inner_time": (
                             None
                             if player.in_nether_portal_since is None
-                            else time.time() - typing.cast(float, player.in_nether_portal_since)
+                            else time.time()
+                            - typing.cast(float, player.in_nether_portal_since)
                         ),
                         "portal_need_leave_before_change": player.should_leave_nether_portal_before_dim_change,
                     }

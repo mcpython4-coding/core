@@ -21,7 +21,7 @@ class DamageSource:
 
     def __init__(self, name: str = None):
         self.attributes = {}
-        self.__attributes = set()
+        self.__attributes = {"bypasses_armor", "bypasses_invulnerability", "bypasses_magic", "is_explosion", "is_fire", "is_magic", "is_projectile", "is_lighting"}
         self.type = name
 
         self.bypasses_armor = False

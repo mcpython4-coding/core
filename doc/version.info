@@ -1660,4 +1660,6 @@ R   [uuk]: improved world serialization API
 [uuk]: deleted reload stage system from mod loader (not the reload pipe, the old one)
 [uuk]: improved how block palette is stored and entity data is stored
 [uuk]: cleaned up some storage stuff
+[uuk]: fixed DamageSource __eq__ not checking for defined attributes, only for custom
+[uuk]: implemented a handful of unit tests for entities
 

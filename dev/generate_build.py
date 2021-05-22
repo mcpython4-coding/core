@@ -582,8 +582,8 @@ CLIENT_FILE_STRIPPER = FileFilterTask(
 
 DEFAULT_BUILD_INSTANCE = ProjectBuildManager()
 
-DEFAULT_BUILD_INSTANCE.add_preparation_stage(BlackCodeFormattingPreparation())
 DEFAULT_BUILD_INSTANCE.add_preparation_stage(ISortCodeFormattingPreperation())
+DEFAULT_BUILD_INSTANCE.add_preparation_stage(BlackCodeFormattingPreparation())
 DEFAULT_BUILD_INSTANCE.add_preparation_stage(UpdateLicenceHeadersPreparation())
 
 # Filter the file tree
