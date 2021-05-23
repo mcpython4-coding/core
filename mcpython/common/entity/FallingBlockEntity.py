@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.block.AbstractBlock
 import mcpython.common.entity.AbstractEntity
 import mcpython.util.math
 from mcpython import shared
@@ -30,7 +29,7 @@ class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def __init__(
         self,
         *args,
-        representing_block: mcpython.common.block.AbstractBlock.AbstractBlock = None,
+        representing_block=None,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
@@ -38,7 +37,7 @@ class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.nbt_data["motion"] = (0, -0.4, 0)
 
     def draw(self):
-        if self.block is not None:
+        if self.block is not None and shared.IS_CLIENT:
             self.block.position = self.position
             shared.model_handler.draw_block(self.block)  # todo: use batch
 
@@ -51,6 +50,7 @@ class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         x, y, z = mcpython.util.math.normalize(self.position)
         block = self.chunk.get_block((x, y - 1, z))
+
         if (self.position[1] - y <= 0.1) and not (block is None or type(block) == str):
             if not block.IS_SOLID:
                 self.kill()  # todo: drop item in world

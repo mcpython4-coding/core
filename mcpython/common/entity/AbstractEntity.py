@@ -58,7 +58,7 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         for moder: you SHOULD implement an custom constructor which set the bellow values to an "good" value
         """
         self.dimension = (
-            shared.world.get_active_dimension() if dimension is None else dimension
+            shared.world.get_active_dimension() if dimension is None and shared.world is not None else dimension
         )
         self.unsafe_position = (0, 0, 0)  # todo: move to nbt
         self.rotation = (0, 0, 0)  # todo: move to nbt
@@ -82,6 +82,8 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
             "motion": (0, 0, 0),
             "invulnerable": False,
         }
+
+        self.dead = False
 
     def __del__(self):
         if not hasattr(self, "chunk"):
@@ -144,15 +146,18 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         if self.chunk is None:
             before_dim = None
         else:
-            before_dim = self.chunk.dimension.id
+            before_dim = self.chunk.get_dimension().get_id()
+
         if dimension is None:
             dimension_id = before_dim if before_dim is not None else 0
         else:
             dimension_id = dimension
-        dimension = shared.world.get_dimension(dimension_id)
+
+        dimension = shared.world.get_dimension(dimension_id) if shared.world is not None else None
         self.unsafe_position = position
         if dimension is None:
             return
+
         sector_after = mcpython.util.math.position_to_chunk(self.position)
         if (
             sector_before != sector_after
@@ -198,8 +203,10 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         if self.chunk is not None and self in self.chunk.entities:
             self.chunk.entities.remove(self)
 
-        if self.uuid in shared.entity_manager.entity_map:
+        if shared.entity_manager is not None and self.uuid in shared.entity_manager.entity_map:
             del shared.entity_manager.entity_map[self.uuid]
+
+        self.dead = True
 
     def pick_up_item(
         self, itemstack: mcpython.common.container.ResourceStack.ItemStack
