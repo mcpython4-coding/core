@@ -17,6 +17,7 @@ import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 from mcpython import logger
 from mcpython.common.block.AbstractBlock import AbstractBlock
+from ... import shared
 
 tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("blocks")
 
@@ -101,9 +102,9 @@ def load():
     Walls.load()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:block:load", load, info="loading special blocks"
-)
+if not shared.IS_TEST_ENV:
+    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+        "stage:block:load", load, info="loading special blocks"
+    )
 
-
-from . import Blocks, IFallingBlock, ILog
+    from . import Blocks, IFallingBlock, ILog

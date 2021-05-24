@@ -40,7 +40,7 @@ class Barrel(AbstractBlock.AbstractBlock):
 
     def __init__(self):
         """
-        Creates an new BlockBarrel-class
+        Creates a new BlockBarrel-class
         """
         super().__init__()
 
@@ -85,15 +85,17 @@ class Barrel(AbstractBlock.AbstractBlock):
         return self.inventory.slots, self.inventory.slots
 
     def set_model_state(self, state: dict):
-        if "side" in state:
-            face = state["side"]
+        if "facing" in state:
+            face = state["facing"]
             if type(face) == str:
-                self.facing = mcpython.util.enums.EnumSide[state["side"]]
+                self.facing = mcpython.util.enums.EnumSide[face.upper()]
             else:
                 self.facing = face
+        if "open" in state:
+            self.opened = str(state["open"]).lower() == "true"
 
     def get_model_state(self) -> dict:
-        return {"facing": self.facing, "open": str(self.opened).lower()}
+        return {"facing": self.facing.normal_name if not isinstance(self.facing, str) else self.facing, "open": str(self.opened).lower()}
 
     @classmethod
     def set_block_data(cls, item, block):
