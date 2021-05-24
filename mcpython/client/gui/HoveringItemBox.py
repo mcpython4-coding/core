@@ -80,7 +80,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
         raw = self.localize_builder.format(*item_name.split(":"))
         localized_name = mcpython.common.Language.get(raw)
         if raw == localized_name:
-            localized_name = itemstack.item.__class__.__name__
+            localized_name = itemstack.item.NAME
         if localized_name == "ConstructedItem":
             localized_name = "<MissingName:{{{};{}x}}>".format(
                 item_name, itemstack.amount

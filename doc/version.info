@@ -1663,4 +1663,5 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed DamageSource __eq__ not checking for defined attributes, only for custom
 [uuk]: implemented a handful of unit tests for entities
 [uuk]: cleaned up some code which was running on the server
+[uuk]: tooltip renderer will now use item name rather than item class name when missing translation component
 
