@@ -18,12 +18,14 @@ from mcpython.util.enums import LogAxis
 
 class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
-    base class for logs
+    Base class for log-like blocks
     """
 
     def __init__(self):
         super().__init__()
         self.axis = LogAxis.Y
+
+    def on_block_added(self):
         if self.set_to:
             dx, dy, dz = (
                 abs(self.set_to[0] - self.position[0]),
@@ -34,6 +36,8 @@ class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
                 self.axis = LogAxis.X
             elif dz:
                 self.axis = LogAxis.Z
+
+            self.face_state.update(True)
 
     def get_model_state(self):
         return {"axis": self.axis.name.lower()}
