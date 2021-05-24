@@ -32,8 +32,9 @@ class EntityManager:
         self.entity_map = {}
 
     def add_entity_cls(self, registry, entity_cls):
-        if shared.IS_CLIENT:
+        if shared.IS_CLIENT and not shared.IS_TEST_ENV:
             entity_cls.init_renderers()
+
         return self
 
     def spawn_entity(

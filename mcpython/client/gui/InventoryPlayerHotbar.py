@@ -147,7 +147,9 @@ def reload():
 mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", reload
 )
-reload()
+
+if shared.IS_CLIENT:
+    reload()
 
 
 class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRenderer):

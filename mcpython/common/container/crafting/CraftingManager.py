@@ -19,7 +19,6 @@ import mcpython.client.gui.InventoryRecipeView
 import mcpython.common.container.crafting.IRecipe
 import mcpython.common.event.EventHandler
 import mcpython.common.item.ItemManager
-import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
 from mcpython import logger, shared
 
@@ -222,6 +221,9 @@ def load_recipe_providers():
     )
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:recipe:groups", load_recipe_providers, info="loading crafting recipe groups"
-)
+if not shared.IS_TEST_ENV:
+    import mcpython.common.mod.ModMcpython
+
+    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+        "stage:recipe:groups", load_recipe_providers, info="loading crafting recipe groups"
+    )

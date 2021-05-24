@@ -17,6 +17,8 @@ import math
 import mcpython.ResourceLoader
 import PIL.Image
 import pyglet
+
+from mcpython import shared
 from mcpython.util import texture as texture_util
 
 
@@ -67,11 +69,24 @@ class ButtonBackgroundBuilder:
         return texture_util.to_pyglet_image(self.get_texture_for_size(sx, sy, state))
 
 
-WIDGETS = mcpython.ResourceLoader.read_image(
-    "assets/minecraft/textures/gui/widgets.png"
-)
-DefaultButtonTexture = ButtonBackgroundBuilder(
-    WIDGETS.crop((2, 256 - 66 - 17, 196 + 2, 14 + 256 - 66 - 17)),
-    WIDGETS.crop((2, 256 - 86 - 17, 196 + 2, 14 + 256 - 86 - 17)),
-    WIDGETS.crop((2, 256 - 46 - 17, 196 + 2, 14 + 256 - 46 - 17)),
-)
+WIDGETS = None
+DefaultButtonTexture = None
+
+
+# todo: bind to reload event
+def reload():
+    global WIDGETS, DefaultButtonTexture
+
+    WIDGETS = mcpython.ResourceLoader.read_image(
+        "assets/minecraft/textures/gui/widgets.png"
+    )
+
+    DefaultButtonTexture = ButtonBackgroundBuilder(
+        WIDGETS.crop((2, 256 - 66 - 17, 196 + 2, 14 + 256 - 66 - 17)),
+        WIDGETS.crop((2, 256 - 86 - 17, 196 + 2, 14 + 256 - 86 - 17)),
+        WIDGETS.crop((2, 256 - 46 - 17, 196 + 2, 14 + 256 - 46 - 17)),
+    )
+
+
+if not shared.IS_TEST_ENV:
+    reload()

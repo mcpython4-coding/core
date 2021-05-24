@@ -15,7 +15,6 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.client.rendering.model.ItemModel
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.ItemManager
 import mcpython.ResourceLoader
@@ -24,11 +23,14 @@ from mcpython import logger, shared
 
 SLOT_WIDTH = 32
 
-PYGLET_IMAGE_HOVERING = pyglet.sprite.Sprite(
-    mcpython.ResourceLoader.read_pyglet_image(
-        "assets/minecraft/textures/gui/hotbar_selected.png"
+if shared.IS_CLIENT and not shared.IS_TEST_ENV:
+    PYGLET_IMAGE_HOVERING = pyglet.sprite.Sprite(
+        mcpython.ResourceLoader.read_pyglet_image(
+            "assets/minecraft/textures/gui/hotbar_selected.png"
+        )
     )
-)
+else:
+    PYGLET_IMAGE_HOVERING = None
 
 
 class ISlot(ABC):

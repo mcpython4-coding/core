@@ -32,7 +32,7 @@ from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItem
 from mcpython.util.opengl import draw_line_rectangle
 from pyglet.window import key, mouse
 
-TAB_TEXTURE = mcpython.ResourceLoader.read_pyglet_image(
+TAB_TEXTURE = None if shared.IS_TEST_ENV else mcpython.ResourceLoader.read_pyglet_image(
     "minecraft:gui/container/creative_inventory/tabs"
 )
 
@@ -47,12 +47,18 @@ class CreativeTabScrollbar:
 
     SCROLLBAR_SIZE = 24, 30
 
-    NON_SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(
-        TAB_TEXTURE.get_region(232, 241, 12, 15), SCROLLBAR_SIZE
-    )
-    SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(
-        TAB_TEXTURE.get_region(244, 241, 12, 15), SCROLLBAR_SIZE
-    )
+    NON_SELECTED_SCROLLBAR = None
+    SELECTED_SCROLLBAR = None
+
+    # todo: bind to reload handler
+    @classmethod
+    def reload(cls):
+        cls.NON_SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(
+            TAB_TEXTURE.get_region(232, 241, 12, 15), cls.SCROLLBAR_SIZE
+        )
+        cls.SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(
+            TAB_TEXTURE.get_region(244, 241, 12, 15), cls.SCROLLBAR_SIZE
+        )
 
     def __init__(self, callback: typing.Callable[[int], None], scroll_until: int = 1):
         self.callback = callback
@@ -151,6 +157,10 @@ class CreativeTabScrollbar:
         self.currently_scrolling = min(self.currently_scrolling, value)
 
 
+if not shared.IS_TEST_ENV:
+    CreativeTabScrollbar.reload()
+
+
 class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC):
     """
     Base class for a creative tab
@@ -213,13 +223,17 @@ class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC
 
 
 class CreativeItemTab(ICreativeView):
-    bg_texture: pyglet.image.AbstractImage = texture_util.to_pyglet_image(
-        mcpython.util.texture.to_pillow_image(
-            mcpython.ResourceLoader.read_pyglet_image(
-                "minecraft:gui/container/creative_inventory/tab_items"
-            ).get_region(0, 120, 194, 255 - 120)
-        ).resize((2 * 195, 2 * 136), PIL.Image.NEAREST)
-    )
+    bg_texture: pyglet.image.AbstractImage = None
+
+    @classmethod
+    def reload(cls):
+        cls.bg_texture = texture_util.to_pyglet_image(
+            mcpython.util.texture.to_pillow_image(
+                mcpython.ResourceLoader.read_pyglet_image(
+                    "minecraft:gui/container/creative_inventory/tab_items"
+                ).get_region(0, 120, 194, 255 - 120)
+            ).resize((2 * 195, 2 * 136), PIL.Image.NEAREST)
+        )
 
     def __init__(
         self, name: str, icon: ItemStack, group: ItemGroup = None, linked_tag=None
@@ -373,14 +387,20 @@ class CreativeItemTab(ICreativeView):
         self.update_rendering(True)
 
 
+if not shared.IS_TEST_ENV:
+    CreativeItemTab.reload()
+
+
 class CreativeTabSearchBar(CreativeItemTab):
-    bg_texture: pyglet.image.AbstractImage = texture_util.to_pyglet_image(
-        mcpython.util.texture.to_pillow_image(
-            mcpython.ResourceLoader.read_pyglet_image(
-                "minecraft:gui/container/creative_inventory/tab_item_search"
-            ).get_region(0, 120, 194, 255 - 120)
-        ).resize((2 * 195, 2 * 136), PIL.Image.NEAREST)
-    )
+    @classmethod
+    def reload(cls):
+        cls.bg_texture = texture_util.to_pyglet_image(
+            mcpython.util.texture.to_pillow_image(
+                mcpython.ResourceLoader.read_pyglet_image(
+                    "minecraft:gui/container/creative_inventory/tab_item_search"
+                ).get_region(0, 120, 194, 255 - 120)
+            ).resize((2 * 195, 2 * 136), PIL.Image.NEAREST)
+        )
 
     def __init__(
         self, name: str, icon: ItemStack, group: ItemGroup = None, linked_tag=None
@@ -405,15 +425,23 @@ class CreativeTabSearchBar(CreativeItemTab):
         self.group.apply_raw_filter("(.*)")
 
 
+if not shared.IS_TEST_ENV:
+    CreativeTabScrollbar.reload()
+
+
 class CreativePlayerInventory(ICreativeView):
     TEXTURE_SIZE = 195 * 2, 136 * 2
 
-    TEXTURE = texture_util.resize_image_pyglet(
-        mcpython.ResourceLoader.read_pyglet_image(
-            "minecraft:gui/container/creative_inventory/tab_inventory"
-        ).get_region(0, 120, 195, 136),
-        TEXTURE_SIZE,
-    )
+    TEXTURE = None
+
+    @classmethod
+    def reload(cls):
+        cls.TEXTURE = texture_util.resize_image_pyglet(
+            mcpython.ResourceLoader.read_pyglet_image(
+                "minecraft:gui/container/creative_inventory/tab_inventory"
+            ).get_region(0, 120, 195, 136),
+            cls.TEXTURE_SIZE,
+        )
 
     def __init__(self):
         super().__init__()
@@ -456,23 +484,34 @@ class CreativePlayerInventory(ICreativeView):
         return "assets/config/inventory/player_inventory_main_creative.json"
 
 
+if not shared.IS_TEST_ENV:
+    CreativePlayerInventory.reload()
+
+
 class CreativeTabManager:
 
     TAB_SIZE = 28 * 2, 30 * 2
 
     # todo: make this reload-able!
-    UPPER_TAB = texture_util.resize_image_pyglet(
-        TAB_TEXTURE.get_region(0, 224, 28, 30), TAB_SIZE
-    )
-    UPPER_TAB_SELECTED = texture_util.resize_image_pyglet(
-        TAB_TEXTURE.get_region(0, 224 - 30, 28, 30), TAB_SIZE
-    )
-    LOWER_TAB = texture_util.resize_image_pyglet(
-        TAB_TEXTURE.get_region(0, 164, 28, 30), TAB_SIZE
-    )
-    LOWER_TAB_SELECTED = texture_util.resize_image_pyglet(
-        TAB_TEXTURE.get_region(0, 128, 28, 30), TAB_SIZE
-    )
+    UPPER_TAB = None
+    UPPER_TAB_SELECTED = None
+    LOWER_TAB = None
+    LOWER_TAB_SELECTED = None
+
+    @classmethod
+    def reload(cls):
+        cls.UPPER_TAB = texture_util.resize_image_pyglet(
+            TAB_TEXTURE.get_region(0, 224, 28, 30), cls.TAB_SIZE
+        )
+        cls.UPPER_TAB_SELECTED = texture_util.resize_image_pyglet(
+            TAB_TEXTURE.get_region(0, 224 - 30, 28, 30), cls.TAB_SIZE
+        )
+        cls.LOWER_TAB = texture_util.resize_image_pyglet(
+            TAB_TEXTURE.get_region(0, 164, 28, 30), cls.TAB_SIZE
+        )
+        cls.LOWER_TAB_SELECTED = texture_util.resize_image_pyglet(
+            TAB_TEXTURE.get_region(0, 128, 28, 30), cls.TAB_SIZE
+        )
 
     def __init__(self):
         self.pages: typing.List[typing.List[ICreativeView]] = [[]]
@@ -493,10 +532,10 @@ class CreativeTabManager:
 
         self.page_left = mcpython.client.rendering.ui.Buttons.arrow_button_left(
             (0, 0), lambda: self.increase_page(-1)
-        )
+        ) if not shared.IS_TEST_ENV else None
         self.page_right = mcpython.client.rendering.ui.Buttons.arrow_button_right(
             (0, 0), lambda: self.increase_page(1)
-        )
+        ) if not shared.IS_TEST_ENV else None
         self.page_label = pyglet.text.Label(anchor_x="center", anchor_y="center")
 
         self.lower_left_position = 0, 0
@@ -709,6 +748,10 @@ class CreativeTabManager:
                         logger.write_into_container(
                             entries, header=f"Missing items in {tab.name}"
                         )
+
+
+if not shared.IS_TEST_ENV:
+    CreativeTabManager.reload()
 
 
 CT_MANAGER = CreativeTabManager()

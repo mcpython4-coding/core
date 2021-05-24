@@ -95,11 +95,23 @@ class ImageOverlayButtonRenderer:
         )
 
 
-ARROW_TEXTURE_SHEET = mcpython.ResourceLoader.read_pyglet_image(
-    "minecraft:gui/recipe_book"
-)
-RIGHT_ARROW = ARROW_TEXTURE_SHEET.get_region(0, 32, 12, 17)
-LEFT_ARROW = ARROW_TEXTURE_SHEET.get_region(15, 32, 12, 17)
+ARROW_TEXTURE_SHEET = None
+RIGHT_ARROW = None
+LEFT_ARROW = None
+
+
+# todo: add to reload handler
+def reload():
+    global ARROW_TEXTURE_SHEET, RIGHT_ARROW, LEFT_ARROW
+    ARROW_TEXTURE_SHEET = mcpython.ResourceLoader.read_pyglet_image(
+        "minecraft:gui/recipe_book"
+    )
+    RIGHT_ARROW = ARROW_TEXTURE_SHEET.get_region(0, 32, 12, 17)
+    LEFT_ARROW = ARROW_TEXTURE_SHEET.get_region(15, 32, 12, 17)
+
+
+if not shared.IS_TEST_ENV:
+    reload()
 
 
 def arrow_button_left(position, callback):

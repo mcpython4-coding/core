@@ -15,20 +15,22 @@ import json
 import os
 
 import mcpython.client.gui.HoveringItemBox
-import mcpython.client.rendering.model.ItemModel
-import mcpython.client.texture.TextureAtlas
-import mcpython.common.data.tags.TagGroup
+import mcpython.common.data.tags.TagTargetHolder
 import mcpython.common.event.Registry
 import mcpython.common.factory.ItemFactory
-import mcpython.common.item.ItemTextureAtlas
-import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
 from mcpython import logger, shared
 
 COLLECTED_ITEMS = []
-tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("items")
+tag_holder = mcpython.common.data.tags.TagTargetHolder.TagTargetHolder("items")
 
-ITEM_ATLAS = mcpython.common.item.ItemTextureAtlas.ItemAtlasHandler()
+
+if shared.IS_CLIENT and not shared.IS_TEST_ENV:
+    import mcpython.common.item.ItemTextureAtlas
+
+    ITEM_ATLAS = mcpython.common.item.ItemTextureAtlas.ItemAtlasHandler()
+else:
+    ITEM_ATLAS = None
 
 
 def build():
@@ -70,9 +72,12 @@ def load_data():
                 block = shared.registry.get_by_name("minecraft:block")[name]
                 block.modify_block_item(obj)
                 obj.finish()
-                model = mcpython.client.rendering.model.ItemModel.ItemModel(name)
-                model.addTextureLayer(0, entry[1])
-                mcpython.client.rendering.model.ItemModel.handler.models[name] = model
+
+                if shared.IS_CLIENT:
+                    import mcpython.client.rendering.model.ItemModel as ItemModel
+                    model = ItemModel.ItemModel(name)
+                    model.addTextureLayer(0, entry[1])
+                    ItemModel.handler.models[name] = model
             else:
                 builder.println("-'{}'".format(entry))
                 data.remove(entry)
@@ -87,8 +92,11 @@ def register_item(registry, cls):
     if cls.NAME in items.item_index_table:
         return
     items.item_index_table.setdefault(cls.NAME, {})
-    for i, file in enumerate(cls.get_used_texture_files()):
-        ITEM_ATLAS.add_file("{}#{}".format(cls.NAME, i), file)
+
+    if shared.IS_CLIENT:
+        for i, file in enumerate(cls.get_used_texture_files()):
+            ITEM_ATLAS.add_file("{}#{}".format(cls.NAME, i), file)
+
     COLLECTED_ITEMS.append(cls)
 
 
@@ -105,11 +113,14 @@ def load_items():
     pass
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:block:overwrite", load_data, info="loading prepared item data"
-)
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:item:load", load_items, info="loading items"
-)
+if not shared.IS_TEST_ENV:
+    import mcpython.common.mod.ModMcpython
 
-import mcpython.common.item.Items
+    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+        "stage:block:overwrite", load_data, info="loading prepared item data"
+    )
+    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+        "stage:item:load", load_items, info="loading items"
+    )
+
+    import mcpython.common.item.Items

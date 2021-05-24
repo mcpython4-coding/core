@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.mod.ModMcpython
 from mcpython import logger
+from mcpython import shared
 
 
 class Tag:
@@ -74,7 +74,7 @@ class Tag:
                         old_entries.remove(entry)
                         continue
                     self.entries = old_entries
-                    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+                    shared.mod_loader["minecraft"].eventbus.subscribe(
                         "stage:tag:load", self.build
                     )
                     self.load_tries += 1

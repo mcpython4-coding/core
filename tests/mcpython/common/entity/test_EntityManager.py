@@ -59,9 +59,13 @@ class TestEntityManager(TestCase):
                 nonlocal successful_callback
                 successful_callback = True
 
+        shared.IS_TEST_ENV = False
+
         self.entity_manager_instance.add_entity_cls(None, TestEntity)
 
         self.assertTrue(successful_callback)
+
+        shared.IS_TEST_ENV = True
 
     def test_spawn_entity_from_class(self):
         self.ensure_setup()

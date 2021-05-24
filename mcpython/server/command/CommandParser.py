@@ -14,7 +14,6 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.common.DataPacks
-import mcpython.common.mod.ModMcpython
 import mcpython.server.command.Builder
 from mcpython import logger, shared
 from mcpython.common.world.AbstractInterface import IDimension
@@ -207,6 +206,9 @@ def load_commands():
     handler.register_command(CommandTeleport.teleport)
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:commands", load_commands
-)
+if not shared.IS_TEST_ENV:
+    import mcpython.common.mod.ModMcpython
+
+    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+        "stage:commands", load_commands
+    )

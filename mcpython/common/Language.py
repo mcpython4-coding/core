@@ -158,8 +158,9 @@ def from_mod_name(modname: str):
     from_directory("assets/{}/lang".format(modname), modname)
 
 
-from_mod_name("mcpython")
-from_mod_name("minecraft")
+def load():
+    from_mod_name("mcpython")
+    from_mod_name("minecraft")
 
 # todo: make load of only the active language and load others when needed -> reduce RAM usage
 # todo: make an sys.argv option to disable loading & translating

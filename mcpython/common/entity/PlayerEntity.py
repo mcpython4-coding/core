@@ -13,16 +13,12 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.client.Chat
-import mcpython.client.gui.InventoryChest
-import mcpython.client.gui.MainPlayerInventory
 import mcpython.client.gui.Slot
 import mcpython.client.rendering.entities.EntityRenderer
 import mcpython.common.container.ResourceStack
 import mcpython.common.entity.AbstractEntity
 import mcpython.common.entity.DamageSource
 import mcpython.common.event.EventHandler
-import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
 import mcpython.util.math
 from mcpython import logger, shared
@@ -81,7 +77,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         # used for determine if we can access stuff now or must wait
         # todo: can we do something else
         if not shared.mod_loader.finished:
-            mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+            shared.mod_loader["minecraft"].eventbus.subscribe(
                 "stage:inventories",
                 self.create_inventories,
                 info="setting up player inventory",
@@ -139,15 +135,18 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         """
         import mcpython.client.gui.InventoryCraftingTable as InvCrafting
         import mcpython.client.gui.InventoryPlayerHotbar as InvHotbar
+        import mcpython.client.Chat as Chat
+        import mcpython.client.gui.InventoryChest as Chest
+        import mcpython.client.gui.MainPlayerInventory as Main
 
         self.inventory_hotbar = InvHotbar.InventoryPlayerHotbar.create(self)
         self.inventory_main = (
-            mcpython.client.gui.MainPlayerInventory.MainPlayerInventory.create(
+            Main.MainPlayerInventory.create(
                 self.inventory_hotbar
             )
         )
-        self.inventory_chat = mcpython.client.Chat.ChatInventory()
-        self.inventory_enderchest = mcpython.client.gui.InventoryChest.InventoryChest()
+        self.inventory_chat = Chat.ChatInventory()
+        self.inventory_enderchest = Chest.InventoryChest()
         self.inventory_crafting_table = InvCrafting.InventoryCraftingTable()
 
         self.inventory_order = [

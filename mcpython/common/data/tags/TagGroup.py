@@ -17,26 +17,7 @@ from abc import ABC
 import mcpython.common.data.tags.ITagTarget
 import mcpython.common.data.tags.Tag
 import mcpython.util.math
-
-
-class TagTargetHolder:
-    def __init__(self, name: str):
-        self.name = name
-        self.classes: typing.List[
-            typing.Type[mcpython.common.data.tags.ITagTarget.ITagTarget]
-        ] = []
-        TagGroup.TAG_HOLDERS.setdefault(name, []).append(self)
-
-    def register_class(
-        self, cls: typing.Type[mcpython.common.data.tags.ITagTarget.ITagTarget]
-    ):
-        self.classes.append(cls)
-        return cls
-
-    def update(self, group: "TagGroup"):
-        # print(self.classes)
-        for cls in self.classes:
-            cls.TAGS = group.get_tags_for(cls.NAME)
+from .TagTargetHolder import TagTargetHolder
 
 
 class TagGroup:

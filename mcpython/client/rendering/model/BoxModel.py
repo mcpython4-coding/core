@@ -14,7 +14,6 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.common.config
-import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
 import mcpython.util.enums
 import mcpython.util.math
@@ -153,7 +152,7 @@ class BoxModel:
 
             else:
                 # todo: can we extract data if needed?
-                mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+                shared.mod_loader["minecraft"].eventbus.subscribe(
                     "stage:boxmodel:bake", self.build
                 )
 
