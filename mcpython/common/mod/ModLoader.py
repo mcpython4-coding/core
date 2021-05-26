@@ -23,6 +23,7 @@ import mcpython.client.state.StateModLoading
 import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
+import mcpython.loader.java.JavaEntryPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
 import mcpython.ResourceLoader
@@ -189,11 +190,15 @@ class ModLoader:
                                 with f.open("mod.toml", mode="r") as sf:
                                     self.load_mods_toml(sf.read().decode("utf-8"), file)
                             except KeyError:
-                                self.error_builder.println(
-                                    "- could not locate mod.json file in mod at '{}'".format(
-                                        file
+                                try:
+                                    with f.open("META-INF/mods.toml", mode="r") as sf:
+                                        self.load_mods_toml(sf.read().decode("utf-8"), file)
+                                except KeyError:
+                                    self.error_builder.println(
+                                        "- could not locate mod.json file in mod at '{}'".format(
+                                            file
+                                        )
                                     )
-                                )
 
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
@@ -227,6 +232,11 @@ class ModLoader:
                 elif os.path.exists(file + "/mods.toml"):
                     with open(file + "/mods.toml") as sf:
                         self.load_mods_toml(sf.read(), file + "/mods.toml")
+
+                elif os.path.exists(file + "/META-INF/mods.toml"):
+                    with open(file + "/META-INF/mods.toml") as sf:
+                        self.load_mods_toml(sf.read(), file + "/META-INF/mods.toml")
+
                 else:
                     self.error_builder.println(
                         "- could not locate mod.json file for mod for mod-directory '{}'".format(
@@ -447,7 +457,7 @@ class ModLoader:
                     ][
                         loader
                     ].load_mod_from_json(
-                        entry
+                        file, entry
                     )
                 else:
                     self.error_builder.println(
@@ -498,7 +508,7 @@ class ModLoader:
                     ][
                         loader
                     ].load_mod_from_toml(
-                        data
+                        file, data
                     )
                 else:
                     self.error_builder.println(
@@ -655,12 +665,8 @@ class ModLoader:
 
         if errors:
             logger.println("found mods: ")
-            logger.println(
-                " -",
-                "\n - ".join(
-                    [instance.mod_string() for instance in self.mods.values()]
-                ),
-            )
+            for instance in self.mods.values():
+                logger.println(" -", instance.mod_string())
             logger.println()
 
             self.error_builder.finish()

@@ -34,9 +34,9 @@ class ModLoaderExtensionPoint(AbstractExtensionPoint):
             cls.EXTENSION_POINTS[1][cls.NAME] = cls
 
     @classmethod
-    def load_mod_from_toml(cls, data):
+    def load_mod_from_toml(cls, source_file, data):
         pass
 
     @classmethod
-    def load_mod_from_json(cls, data):
+    def load_mod_from_json(cls, source_file, data):
         pass

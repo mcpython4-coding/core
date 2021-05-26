@@ -87,7 +87,7 @@ class Language:
             LANGUAGES[name] = cls()
         language = LANGUAGES[name]
         try:
-            lines = mcpython.ResourceLoader.read_raw(file).decode("UTF-8").split("\n")
+            lines = mcpython.ResourceLoader.read_raw(file).decode("UTF-8", 0, None).split("\n")
         except:
             logger.print_exception(
                 "[ERROR] failed to load (old) language file {}".format(file)
