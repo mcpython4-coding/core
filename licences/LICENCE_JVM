@@ -1,0 +1,12 @@
+Mcpython contains code specified by the java virtual machine specifications found under
+https://docs.oracle.com/javase/specs/jvms/se16/html.
+
+It contains library code for various libraries, partially shipped together with minecraft: java edition, partially
+part of the adopt OpenJDK found under https://adoptopenjdk.net/
+All python implementations, when not marked otherwise, are written independent from the implementations of the source
+library, using only the class and function names.
+The JVM "bridge" contains code frames from minecraft forge and its libraries, and also parts of the mappings
+used by minecraft forge.
+
+All code names and implementations not created purely for this project are licenced under their respective licence.
+Consult the licence of the parts for more information.
