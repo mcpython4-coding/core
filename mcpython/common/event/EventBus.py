@@ -276,36 +276,7 @@ class EventBus:
                 pyglet.app.exit()
                 sys.exit(-1)
             except:
-                exception_occ = True
-                logger.print_exception(
-                    "during calling function:",
-                    function,
-                    "with arguments:",
-                    list(args) + list(self.extra_arguments[0]) + list(eargs),
-                    {**kwargs, **self.extra_arguments[1], **ekwargs},
-                    "function info:",
-                    info,
-                    "during event:",
-                    event_name,
-                )
-            dif = time.time() - start
-            if shared.debug_events:
-                with open(
-                    shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="a"
-                ) as f:
-                    f.write(
-                        "\nevent call of {} takes {}s until finish".format(
-                            function, dif
-                        )
-                    )
-
-        if exception_occ and self.crash_on_error:
-            logger.println(
-                "\nout of the above reasons, the game has crashed during call-as-stack call"
-            )
-            shared.window.close()
-            pyglet.app.exit()
-            sys.exit(-1)
+                raise
 
         return result
 

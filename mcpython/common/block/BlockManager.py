@@ -17,6 +17,7 @@ import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 from mcpython import logger
 from mcpython.common.block.AbstractBlock import AbstractBlock
+
 from ... import shared
 
 tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("blocks")

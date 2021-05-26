@@ -21,7 +21,11 @@ class Runtime:
         self.stacks.append(stack)
         return stack
 
-    def run_method(self, method: typing.Union[mcpython.loader.java.Java.JavaMethod, typing.Callable], *args):
+    def run_method(
+        self,
+        method: typing.Union[mcpython.loader.java.Java.JavaMethod, typing.Callable],
+        *args,
+    ):
         if callable(method):
             return method(*args)
 
@@ -33,11 +37,14 @@ class Runtime:
         stack.code = method.code_repr
         stack.method = method
         method.code_repr.prepare_stack(stack)
-        stack.local_vars[:len(args)] = list(args)
+        stack.local_vars[: len(args)] = list(args)
 
         stack.run()
 
-    def get_arg_count_of(self, method: typing.Union[mcpython.loader.java.Java.JavaMethod, typing.Callable]) -> int:
+    def get_arg_count_of(
+        self,
+        method: typing.Union[mcpython.loader.java.Java.JavaMethod, typing.Callable],
+    ) -> int:
         if hasattr(method, "signature"):
             signature = method.signature
         elif hasattr(method, "native_signature"):
@@ -49,7 +56,9 @@ class Runtime:
         i = 0
         c = 0
         while i < len(v):
-            c += 1
+            if v[i] != "[":
+                c += 1
+
             if v[i] == "L":
                 i = v.index(";", i) + 1
             else:
@@ -67,6 +76,7 @@ class Stack:
         self.method = None
 
         import mcpython.loader.java.Java
+
         self.vm = mcpython.loader.java.Java.vm
 
         self.runtime: Runtime = None
@@ -76,9 +86,11 @@ class Stack:
         self.code: "BytecodeRepr" = None
 
     def pop(self):
+        # print("-", self.stack[-1])
         return self.stack.pop(-1)
 
     def push(self, value):
+        # print("+", value)
         self.stack.append(value)
 
     def end(self, value=None):
@@ -108,7 +120,9 @@ class Instruction(ABC):
     OPCODES: typing.Set[int] = set()
 
     @classmethod
-    def decode(cls, data: bytearray, index, class_file) -> typing.Tuple[typing.Any, int]:
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
         return None, 1
 
     @classmethod
@@ -118,8 +132,15 @@ class Instruction(ABC):
 
 class CPLinkedInstruction(Instruction, ABC):
     @classmethod
-    def decode(cls, data: bytearray, index, class_file) -> typing.Tuple[typing.Any, int]:
-        return class_file.cp[mcpython.loader.java.Java.U2.unpack(data[index + 1:index + 3])[0]-1], 3
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return (
+            class_file.cp[
+                mcpython.loader.java.Java.U2.unpack(data[index + 1 : index + 3])[0] - 1
+            ],
+            3,
+        )
 
 
 class BytecodeRepr:
@@ -134,7 +155,9 @@ class BytecodeRepr:
     def __init__(self, code: mcpython.loader.java.Java.CodeParser):
         self.code = code
 
-        self.decoded_code: typing.List[typing.Optional[typing.Tuple[Instruction, typing.Any, int]]] = [None] * len(code.code)
+        self.decoded_code: typing.List[
+            typing.Optional[typing.Tuple[Instruction, typing.Any, int]]
+        ] = [None] * len(code.code)
 
         code = bytearray(code.code)
         i = 0
@@ -150,7 +173,13 @@ class BytecodeRepr:
                 i += size
 
             else:
-                raise ValueError("invalid instruction: "+str(hex(tag))+" (following bits: "+str(code[i:i+5])+")")
+                raise ValueError(
+                    "invalid instruction: "
+                    + str(hex(tag))
+                    + " (following bits: "
+                    + str(code[i : i + 5])
+                    + ")"
+                )
 
     def prepare_stack(self, stack: Stack):
         stack.local_vars = [None] * self.code.max_locals
@@ -161,13 +190,74 @@ class BytecodeRepr:
 # Now, the instruction implementations
 
 
-@BytecodeRepr.register_instruction
-class AConstNull(Instruction):
-    OPCODES = {0x01}
+class ConstPush(Instruction, ABC):
+    PUSHES = None
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        stack.push(None)
+        stack.push(cls.PUSHES)
+
+
+@BytecodeRepr.register_instruction
+class AConstNull(ConstPush):
+    OPCODES = {0x01}
+
+
+@BytecodeRepr.register_instruction
+class IConstM1(ConstPush):
+    OPCODES = {0x02}
+    PUSHES = -1
+
+
+@BytecodeRepr.register_instruction
+class IConst0(ConstPush):
+    OPCODES = {0x03}
+    PUSHES = 0
+
+
+@BytecodeRepr.register_instruction
+class IConst1(ConstPush):
+    OPCODES = {0x04}
+    PUSHES = 1
+
+
+@BytecodeRepr.register_instruction
+class IConst2(ConstPush):
+    OPCODES = {0x05}
+    PUSHES = 2
+
+
+@BytecodeRepr.register_instruction
+class IConst3(ConstPush):
+    OPCODES = {0x06}
+    PUSHES = 3
+
+
+@BytecodeRepr.register_instruction
+class IConst4(ConstPush):
+    OPCODES = {0x07}
+    PUSHES = 4
+
+
+@BytecodeRepr.register_instruction
+class IConst5(ConstPush):
+    OPCODES = {0x08}
+    PUSHES = 5
+
+
+@BytecodeRepr.register_instruction
+class BiPush(Instruction):
+    OPCODES = {0x10}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U1_S.unpack(data[index + 1 : index + 2])[0], 2
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.push(data)
 
 
 @BytecodeRepr.register_instruction
@@ -175,8 +265,10 @@ class SiPush(Instruction):
     OPCODES = {0x11}
 
     @classmethod
-    def decode(cls, data: bytearray, index, class_file) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1:index + 3])[0], 3
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -188,12 +280,18 @@ class LDC(Instruction):
     OPCODES = {0x12}
 
     @classmethod
-    def decode(cls, data: bytearray, index, class_file) -> typing.Tuple[typing.Any, int]:
-        return data[index+1], 2
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return data[index + 1], 2
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        stack.push(mcpython.loader.java.Java.decode_cp_constant(stack.method.class_file.cp[data-1]))
+        stack.push(
+            mcpython.loader.java.Java.decode_cp_constant(
+                stack.method.class_file.cp[data - 1]
+            )
+        )
 
 
 @BytecodeRepr.register_instruction
@@ -298,14 +396,32 @@ class IfNEq(Instruction):
     OPCODES = {0xA6}
 
     @classmethod
-    def decode(cls, data: bytearray, index, class_file) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index+1:index+3])[0], 3
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
         if stack.pop() != stack.pop():
             stack.cp += data
             return True
+
+
+@BytecodeRepr.register_instruction
+class Goto(Instruction):
+    OPCODES = {0xA7}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.cp += data
+        return True
 
 
 @BytecodeRepr.register_instruction
@@ -351,7 +467,9 @@ class InvokeVirtual(CPLinkedInstruction):
         method = stack.vm.get_method_of_nat(data)
         # todo: add args
         arg_count = stack.runtime.get_arg_count_of(method)
-        stack.runtime.run_method(method, *reversed([stack.pop() for _ in range(arg_count + 1)]))
+        stack.runtime.run_method(
+            method, *reversed([stack.pop() for _ in range(arg_count + 1)])
+        )
 
 
 @BytecodeRepr.register_instruction
@@ -362,7 +480,9 @@ class InvokeSpecial(CPLinkedInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         method = stack.vm.get_method_of_nat(data)
         arg_count = stack.runtime.get_arg_count_of(method)
-        stack.runtime.run_method(method, *reversed([stack.pop() for _ in range(arg_count + 1)]))
+        stack.runtime.run_method(
+            method, *reversed([stack.pop() for _ in range(arg_count + 1)])
+        )
 
 
 @BytecodeRepr.register_instruction
@@ -373,7 +493,11 @@ class InvokeStatic(CPLinkedInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         method = stack.vm.get_method_of_nat(data)
         arg_count = stack.runtime.get_arg_count_of(method)
-        stack.push(stack.runtime.run_method(method, *reversed([stack.pop() for _ in range(arg_count)])))
+        stack.push(
+            stack.runtime.run_method(
+                method, *reversed([stack.pop() for _ in range(arg_count)])
+            )
+        )
 
 
 @BytecodeRepr.register_instruction
@@ -381,14 +505,25 @@ class InvokeInterface(CPLinkedInstruction):
     OPCODES = {0xB9}
 
     @classmethod
-    def decode(cls, data: bytearray, index, class_file) -> typing.Tuple[typing.Any, int]:
-        return (class_file.cp[mcpython.loader.java.Java.U2.unpack(data[index + 1:index + 3])[0] - 1], data[index+3]), 5
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return (
+            class_file.cp[
+                mcpython.loader.java.Java.U2.unpack(data[index + 1 : index + 3])[0] - 1
+            ],
+            data[index + 3],
+        ), 5
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         method = stack.vm.get_method_of_nat(data[0])
         arg_count = stack.runtime.get_arg_count_of(method)
-        stack.push(stack.runtime.run_method(method, *reversed([stack.pop() for _ in range(arg_count + 1)])))
+        stack.push(
+            stack.runtime.run_method(
+                method, *reversed([stack.pop() for _ in range(arg_count + 1)])
+            )
+        )
 
 
 @BytecodeRepr.register_instruction
@@ -396,12 +531,21 @@ class InvokeDynamic(CPLinkedInstruction):
     OPCODES = {0xBA}
 
     @classmethod
-    def decode(cls, data: bytearray, index, class_file) -> typing.Tuple[typing.Any, int]:
-        return class_file.cp[mcpython.loader.java.Java.U2.unpack(data[index + 1:index + 3])[0] - 1], 5
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return (
+            class_file.cp[
+                mcpython.loader.java.Java.U2.unpack(data[index + 1 : index + 3])[0] - 1
+            ],
+            5,
+        )
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        boostrap = stack.method.class_file.attributes["BootstrapMethods"][0].entries[data[1]]
+        boostrap = stack.method.class_file.attributes["BootstrapMethods"][0].entries[
+            data[1]
+        ]
         nat = data[2]
         # print(boostrap, "\n", nat)
 
@@ -422,10 +566,18 @@ class New(CPLinkedInstruction):
 
 
 @BytecodeRepr.register_instruction
+class ANewArray(CPLinkedInstruction):
+    OPCODES = {0xBD}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.push([None] * stack.pop())
+
+
+@BytecodeRepr.register_instruction
 class CheckCast(CPLinkedInstruction):
     OPCODES = {0xC0}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         pass  # todo: implement
-

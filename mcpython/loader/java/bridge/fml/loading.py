@@ -1,5 +1,5 @@
-from mcpython.loader.java.Java import native, NativeClass
 from mcpython import shared
+from mcpython.loader.java.Java import NativeClass, native
 
 
 class FMLLoadingContext(NativeClass):
@@ -27,12 +27,7 @@ class DistMarker(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update(
-            {
-                "CLIENT": "client",
-                "SERVER": "server"
-            }
-        )
+        self.exposed_attributes.update({"CLIENT": "client", "SERVER": "server"})
 
 
 class FMLEnvironment(NativeClass):
@@ -46,7 +41,21 @@ class FMLEnvironment(NativeClass):
 class DistExecutor(NativeClass):
     NAME = "net/minecraftforge/fml/DistExecutor"
 
-    @native("runForDist", "(Ljava/util/function/Supplier;Ljava/util/function/Supplier;)Ljava/lang/Object;")
+    @native(
+        "runForDist",
+        "(Ljava/util/function/Supplier;Ljava/util/function/Supplier;)Ljava/lang/Object;",
+    )
     def runForDist(self, left, right):
         pass
 
+
+class FMLPaths(NativeClass):
+    NAME = "net/minecraftforge/fml/loading/FMLPaths"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes = {"CONFIGDIR": None}
+
+    @native("get", "()Ljava/nio/file/Path;")
+    def get(self, instance):
+        return None

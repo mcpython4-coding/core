@@ -75,6 +75,7 @@ def load_data():
 
                 if shared.IS_CLIENT:
                     import mcpython.client.rendering.model.ItemModel as ItemModel
+
                     model = ItemModel.ItemModel(name)
                     model.addTextureLayer(0, entry[1])
                     ItemModel.handler.models[name] = model

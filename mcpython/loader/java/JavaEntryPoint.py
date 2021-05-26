@@ -1,24 +1,23 @@
 import sys
-
-import pyglet.app
+import traceback
 
 import mcpython.common.mod.ExtensionPoint
-import mcpython.loader.java.Java
-from mcpython.loader.java.Java import vm as jvm
-import mcpython.loader.java.Runtime
-from mcpython import logger
-from mcpython import shared
-import mcpython.ResourceLoader
-
 import mcpython.common.mod.Mod
-
+import mcpython.loader.java.Java
+import mcpython.loader.java.Runtime
+import mcpython.ResourceLoader
+import pyglet.app
+from mcpython import logger, shared
+from mcpython.loader.java.Java import vm as jvm
 
 jvm.init_builtins()
 jvm.init_bridge()
 
 
 # Replace java bytecode loader with ResourceLoader's lookup system
-mcpython.loader.java.Java.get_bytecode_of_class = lambda file: mcpython.ResourceLoader.read_raw(file.replace(".", "/")+".class")
+mcpython.loader.java.Java.get_bytecode_of_class = (
+    lambda file: mcpython.ResourceLoader.read_raw(file.replace(".", "/") + ".class")
+)
 mcpython.loader.java.Java.info = lambda text: logger.println("[JAVA][INFO]", text)
 mcpython.loader.java.Java.warn = lambda text: logger.println("[JAVA][WARN]", text)
 
@@ -51,6 +50,23 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
 
             except:
                 logger.print_exception("[JAVA][FATAL] fatal class loader exception")
+
+                if shared.IS_CLIENT:
+                    shared.window.set_caption("JavaFML JVM error")
+
+                    try:
+                        import mcpython.client.state.StateLoadingException
+
+                        mcpython.client.state.StateLoadingException.error_occur(
+                            traceback.format_exc()
+                        )
+                    except:
+                        logger.print_exception("error screen error")
+                    else:
+                        import mcpython.common.mod.ModLoader
+
+                        raise mcpython.common.mod.ModLoader.LoadingInterruptException
+
                 shared.window.close()
                 pyglet.app.exit()
                 sys.exit(-1)
@@ -79,11 +95,14 @@ class JavaModLoader(mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint):
             if "mainClass" in d:
                 mod.main_classes.append(d["mainClass"])
             else:
-                logger.println("[WARN] java-fml does currently not support dynamic class lookup")
+                logger.println(
+                    "[WARN] java-fml does currently not support dynamic class lookup"
+                )
 
             shared.mod_loader(d["modId"], "stage:mod:init")(mod.load_underlying_classes)
 
         for mod in data["dependencies"]:
             for d in data["dependencies"][mod]:
-                mods[mod].add_dependency(d["modId"] if d["modId"] != "forge" else "minecraft")
-
+                mods[mod].add_dependency(
+                    d["modId"] if d["modId"] != "forge" else "minecraft"
+                )

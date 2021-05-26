@@ -2,13 +2,13 @@
 # Mainly independent from mcpython's source
 # See Runtime.py for a system for executing the bytecode
 # See builtin folder for python implementations for java internals
+import struct
 import types
 import typing
-
-import struct
 from abc import ABC
 
 U1 = struct.Struct("!B")
+U1_S = struct.Struct("!b")
 U2 = struct.Struct("!H")
 U2_S = struct.Struct("!h")
 U4 = struct.Struct("!I")
@@ -56,13 +56,15 @@ def info(text: str):
 
 
 def get_bytecode_of_class(class_name: str):
-    with open("./"+class_name.replace(".", "/")+".class", mode="rb") as f:
+    with open("./" + class_name.replace(".", "/") + ".class", mode="rb") as f:
         return f.read()
 
 
 class JavaVM:
     def __init__(self):
-        self.classes: typing.Dict[str, typing.Union["AbstractJavaClass", typing.Type]] = {}
+        self.classes: typing.Dict[
+            str, typing.Union["AbstractJavaClass", typing.Type]
+        ] = {}
         self.lazy_classes = set()
 
     def load_lazy(self):
@@ -74,10 +76,12 @@ class JavaVM:
         from mcpython.loader.java.builtin.java.util import ArrayList, HashMap
 
     def init_bridge(self):
-        from mcpython.loader.java.bridge.fml import loading
+        from mcpython.loader.java.bridge import util
+        from mcpython.loader.java.bridge.codec import builder
         from mcpython.loader.java.bridge.event import registries
-        from mcpython.loader.java.bridge.lib import logging, google_collect
-        from mcpython.loader.java.bridge.world import collection
+        from mcpython.loader.java.bridge.fml import loading
+        from mcpython.loader.java.bridge.lib import google_collect, logging
+        from mcpython.loader.java.bridge.world import biomes, collection
 
     def get_class(self, name: str) -> "AbstractJavaClass":
         if name.replace(".", "/") in self.classes:
@@ -93,9 +97,9 @@ class JavaVM:
         try:
             bytecode = get_bytecode_of_class(name)
         except FileNotFoundError:
-            raise RuntimeError(f"class {name} not found!")
+            raise RuntimeError(f"class {name} not found!") from None
 
-        info("loading java class '"+name+"'")
+        info("loading java class '" + name + "'")
 
         cls = JavaBytecodeClass()
         cls.from_bytes(bytearray(bytecode))
@@ -158,13 +162,19 @@ class NativeClass(AbstractJavaClass, ABC):
 
         for key, value in self.__class__.__dict__.items():
             if hasattr(value, "native_name"):
-                self.exposed_methods.setdefault((value.native_name, value.native_signature), getattr(self, key))
+                self.exposed_methods.setdefault(
+                    (value.native_name, value.native_signature), getattr(self, key)
+                )
 
     def get_method(self, name: str, signature: str, inner=False):
         try:
             return self.exposed_methods[(name, signature)]
         except KeyError:
-            m = self.parent.get_method(name, signature, inner=True) if self.parent is not None else None
+            m = (
+                self.parent.get_method(name, signature, inner=True)
+                if self.parent is not None
+                else None
+            )
             if m is None:
                 for interface in self.interfaces:
                     m = interface.get_method(name, signature, inner=True)
@@ -184,6 +194,9 @@ class NativeClass(AbstractJavaClass, ABC):
     def create_instance(self):
         return NativeClassInstance(self)
 
+    def __repr__(self):
+        return f"NativeClass({self.NAME})"
+
 
 class NativeClassInstance:
     def __init__(self, native_class: "NativeClass"):
@@ -191,6 +204,9 @@ class NativeClassInstance:
 
     def get_method(self, name: str, signature: str):
         return self.native_class.get_method(name, signature)
+
+    def __repr__(self):
+        return f"NativeClassInstance(of={self.native_class},id={hex(id(self))})"
 
 
 def native(name: str, signature: str):
@@ -247,7 +263,12 @@ class CodeParser(AbstractAttributeParser):
         self.code = pop_sized(size, data)
 
         for _ in range(pop_u2(data)):
-            start, end, handler, catch = pop_u2(data), pop_u2(data), pop_u2(data), pop_u2(data)
+            start, end, handler, catch = (
+                pop_u2(data),
+                pop_u2(data),
+                pop_u2(data),
+                pop_u2(data),
+            )
             self.exception_table.setdefault(start, []).append((end, handler, catch))
 
         self.attributes.from_data(table.class_file, data)
@@ -259,8 +280,10 @@ class BootstrapMethods(AbstractAttributeParser):
 
     def parse(self, table: "JavaAttributeTable", data: bytearray):
         for _ in range(pop_u2(data)):
-            method_ref = table.class_file.cp[pop_u2(data)-1]
-            arguments = [table.class_file.cp[pop_u2(data)-1] for _ in range(pop_u2(data))]
+            method_ref = table.class_file.cp[pop_u2(data) - 1]
+            arguments = [
+                table.class_file.cp[pop_u2(data) - 1] for _ in range(pop_u2(data))
+            ]
             self.entries.append((method_ref, arguments))
 
 
@@ -270,8 +293,26 @@ class StackMapTableParser(AbstractAttributeParser):
 
 
 class JavaAttributeTable:
-    ATTRIBUTES_NEED_PARSING = {"ConstantValue", "Code", "StackMapTable", "BootstrapMethods", "NestHost", "NestMembers"}
-    ATTRIBUTES_MAY_PARSING = {"Exceptions", "InnerClasses", "EnclosingMethods", "Synthetic", "Signature", "Record", "SourceFile", "LineNumberTable", "LocalVariableTable", "LocalVariableTypeTable"}
+    ATTRIBUTES_NEED_PARSING = {
+        "ConstantValue",
+        "Code",
+        "StackMapTable",
+        "BootstrapMethods",
+        "NestHost",
+        "NestMembers",
+    }
+    ATTRIBUTES_MAY_PARSING = {
+        "Exceptions",
+        "InnerClasses",
+        "EnclosingMethods",
+        "Synthetic",
+        "Signature",
+        "Record",
+        "SourceFile",
+        "LineNumberTable",
+        "LocalVariableTable",
+        "LocalVariableTypeTable",
+    }
 
     ATTRIBUTES = {
         "ConstantValue": ConstantValueParser,
@@ -290,7 +331,7 @@ class JavaAttributeTable:
         self.class_file = class_file
 
         for _ in range(pop_u2(data)):
-            name = class_file.cp[pop_u2(data)-1][1]
+            name = class_file.cp[pop_u2(data) - 1][1]
             data_size = pop_u4(data)
             d = pop_sized(data_size, data)
             self.attributes_unparsed.setdefault(name, []).append(d)
@@ -310,11 +351,14 @@ class JavaAttributeTable:
 
         diff_need = self.ATTRIBUTES_NEED_PARSING.intersection(keyset)
         if diff_need:
-            raise RuntimeError(f"The following attribute(s) could not be parsed (attribute holder: {self.parent}): "+", ".join(diff_need))
+            raise RuntimeError(
+                f"The following attribute(s) could not be parsed (attribute holder: {self.parent}): "
+                + ", ".join(diff_need)
+            )
 
         diff_may = self.ATTRIBUTES_MAY_PARSING.intersection(keyset)
         if diff_may:
-            info("missing attribute parsing for: "+", ".join(diff_may))
+            info("missing attribute parsing for: " + ", ".join(diff_may))
 
     def __getitem__(self, item):
         return self.attributes[item]
@@ -331,7 +375,7 @@ class JavaField:
     def from_data(self, class_file: "JavaBytecodeClass", data: bytearray):
         self.class_file = class_file
         self.access = pop_u2(data)
-        self.name = class_file.cp[pop_u2(data)-1][1]
+        self.name = class_file.cp[pop_u2(data) - 1][1]
         self.descriptor = class_file.cp[pop_u2(data) - 1][1]
         self.attributes.from_data(class_file, data)
 
@@ -352,7 +396,7 @@ class JavaMethod:
     def from_data(self, class_file: "JavaBytecodeClass", data: bytearray):
         self.class_file = class_file
         self.access = pop_u2(data)
-        self.name = class_file.cp[pop_u2(data)-1][1]
+        self.name = class_file.cp[pop_u2(data) - 1][1]
         self.signature = class_file.cp[pop_u2(data) - 1][1]
         self.attributes.from_data(class_file, data)
 
@@ -379,8 +423,10 @@ class JavaBytecodeClass(AbstractJavaClass):
 
         minor, major = pop_u2(data), pop_u2(data)
 
-        info(f"class file version: {major}.{minor} (Java {major-44 if major > 45 else '1.0.2 or 1.1'}"
-             f"{' preview features enabled' if major > 56 and minor == 65535 else ''})")
+        info(
+            f"class file version: {major}.{minor} (Java {major-44 if major > 45 else '1.0.2 or 1.1'}"
+            f"{' preview features enabled' if major > 56 and minor == 65535 else ''})"
+        )
 
         cp_size = pop_u2(data) - 1
         self.cp += [None] * cp_size
@@ -422,17 +468,20 @@ class JavaBytecodeClass(AbstractJavaClass):
             if tag in (7, 9, 10, 11, 8, 5, 6, 12, 16, 19, 20):
                 e = e[1:]
                 self.cp[i].clear()
-                self.cp[i] += [tag] + [self.cp[x-1] for x in e]
+                self.cp[i] += [tag] + [self.cp[x - 1] for x in e]
 
             elif tag in (15, 17, 18):
-                self.cp[i] = self.cp[i][:2] + [self.cp[self.cp[i][-1]-1]]
+                self.cp[i] = self.cp[i][:2] + [self.cp[self.cp[i][-1] - 1]]
 
         self.access |= pop_u2(data)
 
-        self.name = self.cp[pop_u2(data)-1][1][1]
-        self.parent = vm.get_lazy_class(self.cp[pop_u2(data)-1][1][1])
+        self.name = self.cp[pop_u2(data) - 1][1][1]
+        self.parent = vm.get_lazy_class(self.cp[pop_u2(data) - 1][1][1])
 
-        self.interfaces += [vm.get_lazy_class(self.cp[pop_u2(data)-1][1][1]) for _ in range(pop_u2(data))]
+        self.interfaces += [
+            vm.get_lazy_class(self.cp[pop_u2(data) - 1][1][1])
+            for _ in range(pop_u2(data))
+        ]
 
         for _ in range(pop_u2(data)):
             field = JavaField()
@@ -449,7 +498,15 @@ class JavaBytecodeClass(AbstractJavaClass):
         self.attributes.from_data(self, data)
 
     def get_method(self, name: str, signature: str, inner=False):
-        return self.methods[(name, signature)]
+        des = (name, signature)
+        if des in self.methods:
+            return self.methods[des]
+
+        m = self.parent().get_method(*des) if self.parent is not None else None
+        if m is not None:
+            return m
+
+        raise AttributeError(self, des)
 
     def get_static_attribute(self, name: str):
         return self.static_field_values[name]
@@ -493,4 +550,3 @@ def decode_cp_constant(const):
     elif const[0] == 8:  # string
         return const[1][1]
     raise NotImplementedError(const)
-

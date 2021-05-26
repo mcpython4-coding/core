@@ -23,13 +23,17 @@ import mcpython.client.state.StateModLoading
 import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
-import mcpython.loader.java.JavaEntryPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
+import mcpython.loader.java.JavaEntryPoint
 import mcpython.ResourceLoader
 import mcpython.util.math
 import toml
 from mcpython import logger, shared
+
+
+class LoadingInterruptException(Exception):
+    pass
 
 
 class ModLoader:
@@ -192,7 +196,9 @@ class ModLoader:
                             except KeyError:
                                 try:
                                     with f.open("META-INF/mods.toml", mode="r") as sf:
-                                        self.load_mods_toml(sf.read().decode("utf-8"), file)
+                                        self.load_mods_toml(
+                                            sf.read().decode("utf-8"), file
+                                        )
                                 except KeyError:
                                     self.error_builder.println(
                                         "- could not locate mod.json file in mod at '{}'".format(
@@ -709,8 +715,14 @@ class ModLoader:
             if stage is None:
                 break
 
-            if stage.call_one(astate):
+            try:
+                if stage.call_one(astate):
+                    return
+            except LoadingInterruptException:
+                print("stopping loading cycle")
                 return
+            except:
+                sys.exit(-1)
 
         # if shared.IS_CLIENT:
         self.update_pgb_text()

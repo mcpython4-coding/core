@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from mcpython import shared
+
 shared.IS_TEST_ENV = True
 
 
@@ -38,7 +39,9 @@ class TestFallingBlockEntity(TestCase):
     def test_tick_fall(self):
         import mcpython.common.entity.FallingBlockEntity
 
-        instance = mcpython.common.entity.FallingBlockEntity.FallingBlockEntity(representing_block="minecraft:stone")
+        instance = mcpython.common.entity.FallingBlockEntity.FallingBlockEntity(
+            representing_block="minecraft:stone"
+        )
         instance.chunk = FakeChunk
 
         self.assertFalse(instance.dead)

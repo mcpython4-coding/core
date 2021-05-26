@@ -17,6 +17,7 @@ from abc import ABC
 import mcpython.common.data.tags.ITagTarget
 import mcpython.common.data.tags.Tag
 import mcpython.util.math
+
 from .TagTargetHolder import TagTargetHolder
 
 

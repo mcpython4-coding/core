@@ -225,5 +225,7 @@ if not shared.IS_TEST_ENV:
     import mcpython.common.mod.ModMcpython
 
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-        "stage:recipe:groups", load_recipe_providers, info="loading crafting recipe groups"
+        "stage:recipe:groups",
+        load_recipe_providers,
+        info="loading crafting recipe groups",
     )

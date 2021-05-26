@@ -1,6 +1,7 @@
 from unittest import TestCase
+
 from mcpython import shared
-from pyglet.window import mouse, key
+from pyglet.window import key, mouse
 
 
 class FakeInventoryHandler:

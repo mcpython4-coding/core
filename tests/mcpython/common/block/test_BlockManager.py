@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 from mcpython import shared
 
 
@@ -15,4 +16,3 @@ class TestBlockManager(TestCase):
         shared.mod_loader = FakeModLoader()
 
         import mcpython.common.block.BlockManager
-

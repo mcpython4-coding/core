@@ -133,18 +133,14 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         Helper method for setting up the player inventory
         todo: can we re-use inventories from previous players?
         """
-        import mcpython.client.gui.InventoryCraftingTable as InvCrafting
-        import mcpython.client.gui.InventoryPlayerHotbar as InvHotbar
         import mcpython.client.Chat as Chat
         import mcpython.client.gui.InventoryChest as Chest
+        import mcpython.client.gui.InventoryCraftingTable as InvCrafting
+        import mcpython.client.gui.InventoryPlayerHotbar as InvHotbar
         import mcpython.client.gui.MainPlayerInventory as Main
 
         self.inventory_hotbar = InvHotbar.InventoryPlayerHotbar.create(self)
-        self.inventory_main = (
-            Main.MainPlayerInventory.create(
-                self.inventory_hotbar
-            )
-        )
+        self.inventory_main = Main.MainPlayerInventory.create(self.inventory_hotbar)
         self.inventory_chat = Chat.ChatInventory()
         self.inventory_enderchest = Chest.InventoryChest()
         self.inventory_crafting_table = InvCrafting.InventoryCraftingTable()

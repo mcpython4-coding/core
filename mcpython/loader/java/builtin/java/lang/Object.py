@@ -1,4 +1,4 @@
-from mcpython.loader.java.Java import native, NativeClass
+from mcpython.loader.java.Java import NativeClass, native
 
 
 class Object(NativeClass):
@@ -7,4 +7,3 @@ class Object(NativeClass):
     @native("<init>", "()V")
     def init(self, instance):
         pass
-

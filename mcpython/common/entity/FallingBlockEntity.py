@@ -26,12 +26,7 @@ class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     NAME = "minecraft:falling_block"
 
-    def __init__(
-        self,
-        *args,
-        representing_block=None,
-        **kwargs
-    ):
+    def __init__(self, *args, representing_block=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.block = representing_block  # todo: store in nbt
         self.nbt_data["motion"] = (0, -0.4, 0)

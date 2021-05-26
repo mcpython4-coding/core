@@ -1,7 +1,8 @@
-from unittest import TestCase
 import uuid
+from unittest import TestCase
 
 from mcpython import shared
+
 shared.IS_TEST_ENV = True
 
 
@@ -24,10 +25,7 @@ class BaseTestEntity:
         pass
 
     @classmethod
-    def kill(
-        cls,
-        *_, **__
-    ):
+    def kill(cls, *_, **__):
         pass
 
 
@@ -38,10 +36,14 @@ class TestEntityManager(TestCase):
         self.entity_manager_instance = None
 
     def ensure_setup(self):
-        if self.entity_manager_instance is not None: return
+        if self.entity_manager_instance is not None:
+            return
 
         import mcpython.common.entity.EntityManager
-        self.entity_manager_instance = mcpython.common.entity.EntityManager.EntityManager()
+
+        self.entity_manager_instance = (
+            mcpython.common.entity.EntityManager.EntityManager()
+        )
 
     def test_module_import(self):
         import mcpython.common.entity.EntityManager
@@ -86,7 +88,9 @@ class TestEntityManager(TestCase):
 
         self.assertTrue(teleport_success)
         self.assertIn(instance.uuid, self.entity_manager_instance.entity_map)
-        self.assertEqual(self.entity_manager_instance.entity_map[instance.uuid], instance)
+        self.assertEqual(
+            self.entity_manager_instance.entity_map[instance.uuid], instance
+        )
 
     def test_tick(self):
         self.ensure_setup()
@@ -152,4 +156,3 @@ class TestEntityManager(TestCase):
         self.entity_manager_instance.clear()
 
         self.assertEqual(len(self.entity_manager_instance.entity_map), 0)
-

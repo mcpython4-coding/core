@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from mcpython import shared
+
 shared.IS_TEST_ENV = True
 
 

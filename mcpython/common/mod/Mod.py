@@ -158,7 +158,7 @@ class Mod:
         self.name = name
         self.eventbus: mcpython.common.event.EventBus.EventBus = (
             mcpython.common.event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
-                crash_on_error=False
+                crash_on_error=True
             )
         )
         # need, possible, not possible, before, after, only with, only without

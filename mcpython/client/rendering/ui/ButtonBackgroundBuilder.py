@@ -17,7 +17,6 @@ import math
 import mcpython.ResourceLoader
 import PIL.Image
 import pyglet
-
 from mcpython import shared
 from mcpython.util import texture as texture_util
 
