@@ -27,6 +27,18 @@ class FMLLoadingContext(NativeClass):
         pass
 
 
+class ModLoadingContext(NativeClass):
+    NAME = "net/minecraftforge/fml/ModLoadingContext"
+
+    @native("get", "()Lnet/minecraftforge/fml/ModLoadingContext;")
+    def get_context(self):
+        pass
+
+    @native("registerConfig", "(Lnet/minecraftforge/fml/config/ModConfig$Type;Lnet/minecraftforge/common/ForgeConfigSpec;Ljava/lang/String;)V")
+    def registerConfig(self, instance, config_type, config_spec, file_name: str):
+        pass
+
+
 class EventBus(NativeClass):
     NAME = "net/minecraftforge/eventbus/api/IEventBus"
 
@@ -72,3 +84,43 @@ class FMLPaths(NativeClass):
     @native("get", "()Ljava/nio/file/Path;")
     def get(self, instance):
         return None
+
+
+class ModConfig_Type(NativeClass):
+    NAME = "net/minecraftforge/fml/config/ModConfig$Type"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes = {"COMMON": None, "CLIENT": None}
+
+
+class ForgeConfigSpec_Builder(NativeClass):
+    NAME = "net/minecraftforge/common/ForgeConfigSpec$Builder"
+
+    @native('<init>', '()V')
+    def init(self, instance):
+        pass
+
+    @native("comment", "(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;")
+    def comment(self, instance, text: str):
+        return instance
+
+    @native('push', '(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;')
+    def push(self, instance, text: str):
+        return instance
+
+    @native("defineEnum", "(Ljava/lang/String;Ljava/lang/Enum;)Lnet/minecraftforge/common/ForgeConfigSpec$EnumValue;")
+    def defineEnum(self, instance, name: str, enum):
+        return instance
+
+    @native("define", "(Ljava/lang/String;Z)Lnet/minecraftforge/common/ForgeConfigSpec$BooleanValue;")
+    def defineBool(self, instance, name: str, default: bool):
+        return instance
+
+    @native("pop", "()Lnet/minecraftforge/common/ForgeConfigSpec$Builder;")
+    def pop(self, instance):
+        return instance
+
+    @native("build", "()Lnet/minecraftforge/common/ForgeConfigSpec;")
+    def build(self, instance):
+        return

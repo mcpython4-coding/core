@@ -85,8 +85,9 @@ class JavaVM:
             self.get_class(self.lazy_classes.pop())
 
     def init_builtins(self):
-        from mcpython.loader.java.builtin.java.lang import Object
+        from mcpython.loader.java.builtin.java.lang import Object, Enum
         from mcpython.loader.java.builtin.java.util import ArrayList, HashMap
+        from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
     def init_bridge(self):
         from mcpython.loader.java.bridge import util
@@ -214,6 +215,7 @@ class NativeClass(AbstractJavaClass, ABC):
 class NativeClassInstance:
     def __init__(self, native_class: "NativeClass"):
         self.native_class = native_class
+        self.fields = {}
 
     def get_method(self, name: str, signature: str):
         return self.native_class.get_method(name, signature)

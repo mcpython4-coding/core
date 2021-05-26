@@ -332,7 +332,7 @@ class ArrayStore(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load0(Instruction):
-    OPCODES = {0x2A}
+    OPCODES = {0x2A, 0x1B}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -341,7 +341,7 @@ class Load0(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load1(Instruction):
-    OPCODES = {0x2B}
+    OPCODES = {0x2B, 0x1C}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -350,7 +350,7 @@ class Load1(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load2(Instruction):
-    OPCODES = {0x2C}
+    OPCODES = {0x2C, 0x1D}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -472,6 +472,18 @@ class PutStatic(CPLinkedInstruction):
 
 
 @BytecodeRepr.register_instruction
+class PutField(CPLinkedInstruction):
+    OPCODES = {0xB5}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        name = data[2][1][1]
+        value = stack.pop()
+        obj = stack.pop()
+        obj.fields[name] = value
+
+
+@BytecodeRepr.register_instruction
 class InvokeVirtual(CPLinkedInstruction):
     OPCODES = {0xB6}
 
@@ -480,9 +492,9 @@ class InvokeVirtual(CPLinkedInstruction):
         method = stack.vm.get_method_of_nat(data)
         # todo: add args
         arg_count = stack.runtime.get_arg_count_of(method)
-        stack.runtime.run_method(
+        stack.push(stack.runtime.run_method(
             method, *reversed([stack.pop() for _ in range(arg_count + 1)])
-        )
+        ))
 
 
 @BytecodeRepr.register_instruction
