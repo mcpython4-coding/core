@@ -54,10 +54,10 @@ class Runtime:
 
         stack.run()
 
-    def get_arg_count_of(
+    def get_arg_parts_of(
         self,
         method: typing.Union[mcpython.loader.java.Java.JavaMethod, typing.Callable],
-    ) -> int:
+    ) -> typing.Iterator[str]:
         if hasattr(method, "signature"):
             signature = method.signature
         elif hasattr(method, "native_signature"):
@@ -67,16 +67,40 @@ class Runtime:
 
         v = signature.removeprefix("(").split(")")[0]
         i = 0
+        start = 0
         c = 0
         while i < len(v):
+            is_array = False
             if v[i] != "[":
                 c += 1
+                is_array = True
 
             if v[i] == "L":
                 i = v.index(";", i) + 1
+                yield v[start:i], False
             else:
                 i += 1
-        return c
+                yield v[start:i], v[i-1] in "DL"
+
+            if not is_array:
+                start = i
+
+    def parse_args_from_stack(self, method, stack, static=False):
+        parts = list(self.get_arg_parts_of(method))
+
+        args = [stack.pop() for _ in range(len(parts))]
+
+        if not static:
+            args.append(stack.pop())
+
+        if isinstance(method, mcpython.loader.java.Java.JavaMethod):
+            offset = 0
+            for i, (_, state) in enumerate(parts):
+                if state:
+                    args.insert(i+1+offset, None)
+                    offset += 1
+
+        return reversed(args)
 
 
 class Stack:
@@ -528,9 +552,8 @@ class InvokeVirtual(CPLinkedInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         method = stack.vm.get_method_of_nat(data)
         # todo: add args
-        arg_count = stack.runtime.get_arg_count_of(method)
         stack.push(stack.runtime.run_method(
-            method, *reversed([stack.pop() for _ in range(arg_count + 1)])
+            method, *stack.runtime.parse_args_from_stack(method, stack)
         ))
 
 
@@ -541,9 +564,8 @@ class InvokeSpecial(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         method = stack.vm.get_method_of_nat(data)
-        arg_count = stack.runtime.get_arg_count_of(method)
         stack.runtime.run_method(
-            method, *reversed([stack.pop() for _ in range(arg_count + 1)])
+            method, *stack.runtime.parse_args_from_stack(method, stack)
         )
 
 
@@ -554,10 +576,9 @@ class InvokeStatic(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         method = stack.vm.get_method_of_nat(data)
-        arg_count = stack.runtime.get_arg_count_of(method)
         stack.push(
             stack.runtime.run_method(
-                method, *reversed([stack.pop() for _ in range(arg_count)])
+                method, *stack.runtime.parse_args_from_stack(method, stack, static=True)
             )
         )
 
@@ -580,10 +601,9 @@ class InvokeInterface(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         method = stack.vm.get_method_of_nat(data[0])
-        arg_count = stack.runtime.get_arg_count_of(method)
         stack.push(
             stack.runtime.run_method(
-                method, *reversed([stack.pop() for _ in range(arg_count + 1)])
+                method, *stack.runtime.parse_args_from_stack(method, stack)
             )
         )
 
