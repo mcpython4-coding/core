@@ -86,13 +86,13 @@ class JavaVM:
 
     def init_builtins(self):
         from mcpython.loader.java.builtin.java.lang import Object, Enum
-        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap
+        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map
         from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
     def init_bridge(self):
         from mcpython.loader.java.bridge import util
         from mcpython.loader.java.bridge.codec import builder
-        from mcpython.loader.java.bridge.event import registries
+        from mcpython.loader.java.bridge.event import registries, content
         from mcpython.loader.java.bridge.fml import loading
         from mcpython.loader.java.bridge.lib import google_collect, logging
         from mcpython.loader.java.bridge.world import biomes, collection
@@ -504,6 +504,9 @@ class JavaBytecodeClass(AbstractJavaClass):
 
             self.fields[field.name] = field
 
+            if field.access & 0x0008:
+                self.static_field_values[field.name] = None
+
         for _ in range(pop_u2(data)):
             method = JavaMethod()
             method.from_data(self, data)
@@ -524,6 +527,19 @@ class JavaBytecodeClass(AbstractJavaClass):
         raise AttributeError(self, des)
 
     def get_static_attribute(self, name: str):
+        if name not in self.static_field_values:
+            if self.parent is not None:
+                try:
+                    return self.parent().get_static_attribute(name)
+                except KeyError:
+                    pass
+
+            for interface in self.interfaces:
+                try:
+                    return interface().get_static_attribute(name)
+                except KeyError:
+                    pass
+
         return self.static_field_values[name]
 
     def set_static_attribute(self, name: str, value):
@@ -562,6 +578,6 @@ class JavaClassInstance:
 def decode_cp_constant(const):
     if const[0] == 7:  # Class
         return vm.get_class(const[1][1])
-    elif const[0] == 8:  # string
-        return const[1][1]
+    elif const[0] in (3, 4, 5, 6, 8):
+        return const[1][1] if isinstance(const[1], list) else const[1]
     raise NotImplementedError(const)

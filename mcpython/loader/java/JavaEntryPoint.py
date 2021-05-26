@@ -31,7 +31,7 @@ jvm.init_bridge()
 mcpython.loader.java.Java.get_bytecode_of_class = (
     lambda file: mcpython.ResourceLoader.read_raw(file.replace(".", "/") + ".class")
 )
-mcpython.loader.java.Java.info = lambda text: logger.println("[JAVA][INFO]", text)
+# mcpython.loader.java.Java.info = lambda text: logger.println("[JAVA][INFO]", text)
 mcpython.loader.java.Java.warn = lambda text: logger.println("[JAVA][WARN]", text)
 
 

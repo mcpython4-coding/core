@@ -44,7 +44,10 @@ class EventBus(NativeClass):
 
     @native("addListener", "(Ljava/util/function/Consumer;)V")
     def addListener(self, instance, function):
-        pass
+        if function.name == "commonSetup":
+            import mcpython.loader.java.Runtime
+            runtime = mcpython.loader.java.Runtime.Runtime()
+            runtime.run_method(function, None)
 
 
 class DistMarker(NativeClass):
@@ -124,3 +127,14 @@ class ForgeConfigSpec_Builder(NativeClass):
     @native("build", "()Lnet/minecraftforge/common/ForgeConfigSpec;")
     def build(self, instance):
         return
+
+
+class FMLCommonSetupEvent(NativeClass):
+    NAME = "net/minecraftforge/fml/event/lifecycle/FMLCommonSetupEvent"
+
+    @native("enqueueWork", "(Ljava/lang/Runnable;)Ljava/util/concurrent/CompletableFuture;")
+    def enqueueWork(self, instance, work):
+        import mcpython.loader.java.Runtime
+        runtime = mcpython.loader.java.Runtime.Runtime()
+        runtime.run_method(work, None)
+

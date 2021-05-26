@@ -42,5 +42,5 @@ class Biomes(NativeClass):
     def get_static_attribute(self, name: str):
         if name in self.exposed_attributes:
             return self.exposed_attributes[name]
-        print("missing biome key", name)
+        # print("missing biome key", name)  # todo: fix!
         return None

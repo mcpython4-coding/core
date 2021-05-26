@@ -41,6 +41,10 @@ class Maps(NativeClass):
         instance = self.vm.get_class("java/util/HashMap").create_instance()
         return instance
 
+    @native("newHashMap", "(Ljava/util/Map;)Ljava/util/HashMap;")
+    def copyHashMap(self, instance):
+        return instance.copy()
+
 
 class ImmutableList(NativeClass):
     NAME = "com/google/common/collect/ImmutableList"

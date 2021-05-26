@@ -111,12 +111,12 @@ class Stack:
         self.return_value = value
 
     def run(self):
-        print("launching method", self.method)
+        mcpython.loader.java.Java.info(("launching method", self.method))
 
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
-            print(self.cp, instruction, self.stack)
+            mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
 
             try:
                 result = instruction[0].invoke(instruction[1], self)
@@ -126,7 +126,7 @@ class Stack:
             if not result and self.cp != -1:
                 self.cp += instruction[2]
 
-        print("finished method", self.method)
+        mcpython.loader.java.Java.info(("finished method", self.method))
 
 
 class Instruction(ABC):
@@ -308,6 +308,25 @@ class LDC(Instruction):
 
 
 @BytecodeRepr.register_instruction
+class LDC_W(Instruction):
+    OPCODES = {0x13}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2.unpack(data[index + 1:index + 3])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.push(
+            mcpython.loader.java.Java.decode_cp_constant(
+                stack.method.class_file.cp[data - 1]
+            )
+        )
+
+
+@BytecodeRepr.register_instruction
 class ArrayLoad(Instruction):
     OPCODES = {0x32}
 
@@ -332,7 +351,7 @@ class ArrayStore(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load0(Instruction):
-    OPCODES = {0x2A, 0x1B}
+    OPCODES = {0x2A, 0x1B, 0x22}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -341,7 +360,7 @@ class Load0(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load1(Instruction):
-    OPCODES = {0x2B, 0x1C}
+    OPCODES = {0x2B, 0x1C, 0x23}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -350,11 +369,20 @@ class Load1(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load2(Instruction):
-    OPCODES = {0x2C, 0x1D}
+    OPCODES = {0x2C, 0x1D, 0x24}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(stack.local_vars[2])
+
+
+@BytecodeRepr.register_instruction
+class Load3(Instruction):
+    OPCODES = {0x2D, 0x1E, 0x25}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.push(stack.local_vars[3])
 
 
 @BytecodeRepr.register_instruction
@@ -382,6 +410,15 @@ class Store2(Instruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.local_vars[2] = stack.pop()
+
+
+@BytecodeRepr.register_instruction
+class Store4(Instruction):
+    OPCODES = {0x4E}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.local_vars[3] = stack.pop()
 
 
 @BytecodeRepr.register_instruction

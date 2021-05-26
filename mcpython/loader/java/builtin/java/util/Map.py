@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -14,5 +14,9 @@ This project is not official by mojang and does not relate to it.
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class HashMap(NativeClass):
-    NAME = "java/util/HashMap"
+class Map(NativeClass):
+    NAME = "java/util/Map"
+
+    @native("put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+    def put(self, instance, key, value):
+        return value
