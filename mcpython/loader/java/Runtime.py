@@ -150,7 +150,7 @@ class Stack:
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
-            mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
+            # mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
 
             try:
                 result = instruction[0].invoke(instruction[1], self)
@@ -290,6 +290,24 @@ class IConst4(ConstPush):
 class IConst5(ConstPush):
     OPCODES = {0x08}
     PUSHES = 5
+
+
+@BytecodeRepr.register_instruction
+class FConst0(ConstPush):
+    OPCODES = {0x0B}
+    PUSHES = 0.0
+
+
+@BytecodeRepr.register_instruction
+class FConst1(ConstPush):
+    OPCODES = {0x0C}
+    PUSHES = 1.0
+
+
+@BytecodeRepr.register_instruction
+class FConst2(ConstPush):
+    OPCODES = {0x0D}
+    PUSHES = 2.0
 
 
 @BytecodeRepr.register_instruction

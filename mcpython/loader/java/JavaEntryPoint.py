@@ -41,7 +41,7 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.loader_version = 0
-        self.main_classes = []
+        self.main_classes = ["biomesoplenty/init/ModBlocks"]
 
     def mod_string(self):
         return super().mod_string() + " [JavaFML]"
