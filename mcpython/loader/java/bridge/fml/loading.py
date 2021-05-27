@@ -11,8 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
+import traceback
+
+from mcpython import shared, logger
 from mcpython.loader.java.Java import NativeClass, native
+from mcpython.loader.java.Runtime import Runtime, UnhandledInstructionException
 
 
 class FMLLoadingContext(NativeClass):
@@ -45,9 +48,55 @@ class EventBus(NativeClass):
     @native("addListener", "(Ljava/util/function/Consumer;)V")
     def addListener(self, instance, function):
         if function.name == "commonSetup":
-            import mcpython.loader.java.Runtime
-            runtime = mcpython.loader.java.Runtime.Runtime()
-            runtime.run_method(function, None)
+            runtime = Runtime()
+            try:
+                runtime.run_method(function, None)
+            except UnhandledInstructionException:
+                logger.print_exception(f"during invoking commonSetup listener {function}")
+
+                if shared.IS_CLIENT:
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+
+                    import mcpython.common.mod.ModLoader
+
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException
+
+        elif function.name == "clientSetup":
+            if shared.IS_CLIENT:
+                runtime = Runtime()
+                try:
+                    runtime.run_method(function, None)
+                except UnhandledInstructionException:
+                    logger.print_exception(f"during invoking clientSetup listener {function}")
+
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+
+                    import mcpython.common.mod.ModLoader
+
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException
+
+        elif function.name == "loadComplete":
+            def run():
+                runtime = Runtime()
+                try:
+                    runtime.run_method(function, None)
+                except UnhandledInstructionException:
+                    logger.print_exception(f"during invoking loadComplete listener {function}")
+
+                    if shared.IS_CLIENT:
+                        import mcpython.client.state.StateLoadingException
+                        mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+
+                        import mcpython.common.mod.ModLoader
+
+                        raise mcpython.common.mod.ModLoader.LoadingInterruptException
+
+            shared.mod_loader("minecraft", "stage:post")(run)
+
+        else:
+            print("missing BRIDGE binding for", function)
 
 
 class DistMarker(NativeClass):

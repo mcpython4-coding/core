@@ -12,10 +12,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import asyncio
+import traceback
 import typing
 from abc import ABC
 
 import mcpython.loader.java.Java
+
+
+class UnhandledInstructionException(Exception): pass
 
 
 class Runtime:
@@ -146,12 +150,12 @@ class Stack:
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
-            mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
+            # mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
 
             try:
                 result = instruction[0].invoke(instruction[1], self)
             except:
-                raise RuntimeError(f"during invoking {instruction} [index: {self.cp}]")
+                raise UnhandledInstructionException(f"during invoking {instruction} [index: {self.cp}]")
 
             if not result and self.cp != -1:
                 self.cp += instruction[2]
@@ -380,6 +384,21 @@ class ArrayStore(Instruction):
 
 
 @BytecodeRepr.register_instruction
+class Load(Instruction):
+    OPCODES = {0x19}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U1.unpack(data[index + 1:index + 2])[0], 2
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.push(stack.local_vars[data])
+
+
+@BytecodeRepr.register_instruction
 class Load0(Instruction):
     OPCODES = {0x2A, 0x1B, 0x22}
 
@@ -416,8 +435,23 @@ class Load3(Instruction):
 
 
 @BytecodeRepr.register_instruction
+class Store(Instruction):
+    OPCODES = {0x3A}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U1.unpack(data[index + 1:index + 2])[0], 2
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.local_vars[data] = stack.pop()
+
+
+@BytecodeRepr.register_instruction
 class Store0(Instruction):
-    OPCODES = {0x4B}
+    OPCODES = {0x4B, 0x3B}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -426,7 +460,7 @@ class Store0(Instruction):
 
 @BytecodeRepr.register_instruction
 class Store1(Instruction):
-    OPCODES = {0x4C}
+    OPCODES = {0x4C, 0x3C}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -435,7 +469,7 @@ class Store1(Instruction):
 
 @BytecodeRepr.register_instruction
 class Store2(Instruction):
-    OPCODES = {0x4D}
+    OPCODES = {0x4D, 0x3D}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -443,8 +477,8 @@ class Store2(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Store4(Instruction):
-    OPCODES = {0x4E}
+class Store3(Instruction):
+    OPCODES = {0x4E, 0x3E}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -469,6 +503,38 @@ class DUP(Instruction):
         v = stack.pop()
         stack.push(v)
         stack.push(v)
+
+
+@BytecodeRepr.register_instruction
+class IINC(Instruction):
+    OPCODES = {0x84}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return (data[index+1], mcpython.loader.java.Java.U1_S.unpack(data[index + 2 : index + 3])), 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.local_vars[data[0]] += data[1]
+
+
+@BytecodeRepr.register_instruction
+class IfGe(Instruction):
+    OPCODES = {0xA2}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() <= stack.pop():
+            stack.cp += data
+            return True
 
 
 @BytecodeRepr.register_instruction
@@ -660,6 +726,15 @@ class ANewArray(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push([None] * stack.pop())
+
+
+@BytecodeRepr.register_instruction
+class ArrayLength(Instruction):
+    OPCODES = {0xBE}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.push(len(stack.pop()))
 
 
 @BytecodeRepr.register_instruction
