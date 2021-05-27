@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -24,6 +24,10 @@ class Blocks(NativeClass):
     def get_static_attribute(self, name: str):
         if name in self.exposed_attributes: return self.exposed_attributes[name]
         return None  # todo: registry lookup when needed
+
+    @native("func_235430_a_", "(Lnet/minecraft/block/material/MaterialColor;Lnet/minecraft/block/material/MaterialColor;)Lnet/minecraft/block/RotatedPillarBlock;")
+    def func_235430_a_(self, color_a, color_b):
+        pass
 
 
 class AbstractBlock(NativeClass):
@@ -81,6 +85,14 @@ class AbstractBlock_Properties(NativeClass):
     def func_200942_a(self, instance):
         return instance
 
+    @native("func_200946_b", "()Lnet/minecraft/block/AbstractBlock$Properties;")
+    def func_200946_b(self, instance):
+        return instance
+
+    @native("func_226896_b_", "()Lnet/minecraft/block/AbstractBlock$Properties;")
+    def func_226896_b_(self, instance):
+        return instance
+
 
 class SoundType(NativeClass):
     NAME = "net/minecraft/block/SoundType"
@@ -90,6 +102,7 @@ class SoundType(NativeClass):
         self.exposed_attributes.update({
             "field_185855_h": None,
             "field_185850_c": None,
+            "field_185848_a": None,
         })
 
     @native("<init>", "(FFLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;)V")
@@ -170,6 +183,9 @@ class Material(NativeClass):
             "field_151577_b": None,
             "field_151583_m": None,
             "field_151592_s": None,
+            "field_151575_d": None,
+            "field_151585_k": None,
+            "field_151584_j": None,
         })
 
 
@@ -186,6 +202,13 @@ class MaterialColor(NativeClass):
             "field_151663_o": None,
             "field_193559_aa": None,
             "field_241540_ac_": None,
+            "field_151648_G": None,
+            "field_151653_I": None,
+            "field_193565_Q": None,
+            "field_193562_N": None,
+            "field_151645_D": None,
+            "field_193561_M": None,
+            "field_197655_T": None,
         })
 
 
@@ -241,6 +264,59 @@ class WallBlock(Block):
 
 class GrassBlock(Block):
     NAME = "net/minecraft/block/GrassBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class HorizontalFaceBlock(Block):
+    NAME = "net/minecraft/block/HorizontalFaceBlock"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_196366_M": None,
+            "field_185512_D": None,
+        })
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+    @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
+    def func_180632_j(self, instance, state):
+        pass
+
+    def get_dynamic_field_keys(self):
+        return super().get_dynamic_field_keys() | {"field_176227_L"}
+
+
+class HugeMushroomBlock(Block):
+    NAME = "net/minecraft/block/HugeMushroomBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class SaplingBlock(Block):
+    NAME = "net/minecraft/block/SaplingBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/trees/Tree;Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, tree, properties):
+        pass
+
+    @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
+    def func_180632_j(self, instance, block_state):
+        pass
+
+    def get_dynamic_field_keys(self):
+        return super().get_dynamic_field_keys() | {"field_176227_L"}
+
+
+class LeavesBlock(Block):
+    NAME = "net/minecraft/block/LeavesBlock"
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
@@ -321,5 +397,59 @@ class IItemProvider(NativeClass):
 
     @native("func_199767_j", "()Lnet/minecraft/item/Item;")
     def getItem(self, instance):
+        pass
+
+
+class AttachFace(NativeClass):
+    NAME = "net/minecraft/state/properties/AttachFace"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "FLOOR": "net/minecraft/state/properties/AttachFace::FLOOR"
+        })
+
+
+class BlockState(NativeClass):
+    NAME = "net/minecraft/block/BlockState"
+
+    @native("func_206870_a", "(Lnet/minecraft/state/Property;Ljava/lang/Comparable;)Ljava/lang/Object;")
+    def func_206870_a(self, instance, prop, value):
+        pass
+
+
+class BlockStateProperties(NativeClass):
+    NAME = "net/minecraft/state/properties/BlockStateProperties"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_208137_al": None,
+        })
+
+
+class Direction(NativeClass):
+    NAME = "net/minecraft/util/Direction"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "NORTH": "net/minecraft/util/Direction::NORTH"
+        })
+
+
+class Tree(NativeClass):
+    NAME = "net/minecraft/block/trees/Tree"
+
+    @native("<init>", "()V")
+    def init(self, instance):
+        pass
+
+
+class BigTree(NativeClass):
+    NAME = "net/minecraft/block/trees/BigTree"
+
+    @native("<init>", "()V")
+    def init(self, instance):
         pass
 

@@ -15,14 +15,10 @@ from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class Files(NativeClass):
-    NAME = "java/nio/file/Files"
+class Integer(NativeClass):
+    NAME = "java/lang/Integer"
 
-    @native("get", "(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;")
-    def get(self, a, b):
-        pass
-
-    @native("createDirectory", "(Ljava/nio/file/Path;[Ljava/nio/file/attribute/FileAttribute;)Ljava/nio/file/Path;")
-    def createDirectory(self, path, b):
-        pass
+    @native("valueOf", "(I)Ljava/lang/Integer;")
+    def valueOf(self, instance):
+        return instance
 

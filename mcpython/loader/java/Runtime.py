@@ -639,7 +639,11 @@ class GetField(CPLinkedInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         name = data[2][1][1]
         obj = stack.pop()
-        stack.push(obj.fields[name])
+        try:
+            stack.push(obj.fields[name])
+        except KeyError:
+            print(obj)
+            raise
 
 
 @BytecodeRepr.register_instruction

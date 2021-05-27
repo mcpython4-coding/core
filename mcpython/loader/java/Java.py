@@ -85,7 +85,7 @@ class JavaVM:
             self.get_class(self.lazy_classes.pop())
 
     def init_builtins(self):
-        from mcpython.loader.java.builtin.java.lang import Object, Enum
+        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer
         from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map
         from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
@@ -96,6 +96,7 @@ class JavaVM:
         from mcpython.loader.java.bridge.fml import loading
         from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil
         from mcpython.loader.java.bridge.world import biomes, collection
+        from mcpython.loader.java.bridge.container import containers
 
     def get_class(self, name: str) -> "AbstractJavaClass":
         if name.replace(".", "/") in self.classes:
@@ -161,6 +162,9 @@ class AbstractJavaClass:
 
     def on_annotate(self, cls, args):
         raise RuntimeError((self, cls, args))
+
+    def get_dynamic_field_keys(self):
+        return set()
 
 
 class NativeClass(AbstractJavaClass, ABC):
@@ -473,6 +477,7 @@ class JavaBytecodeClass(AbstractJavaClass):
         self.access = 0
         self.methods = {}
         self.fields = {}
+        self.dynamic_field_keys = set()
         self.static_field_values = {}
         self.attributes = JavaAttributeTable(self)
 
@@ -559,6 +564,8 @@ class JavaBytecodeClass(AbstractJavaClass):
 
             if field.access & 0x0008:
                 self.static_field_values[field.name] = None
+            else:
+                self.dynamic_field_keys.add(field.name)
 
         for _ in range(pop_u2(data)):
             method = JavaMethod()
@@ -584,12 +591,6 @@ class JavaBytecodeClass(AbstractJavaClass):
             if self.parent is not None:
                 try:
                     return self.parent().get_static_attribute(name)
-                except KeyError:
-                    pass
-
-            for interface in self.interfaces:
-                try:
-                    return interface().get_static_attribute(name)
                 except KeyError:
                     pass
 
@@ -622,16 +623,22 @@ class JavaBytecodeClass(AbstractJavaClass):
         return JavaClassInstance(self)
 
     def __repr__(self):
-        return f"JavaBytecodeClass({self.name},access={bin(self.access)})"
+        return f"JavaBytecodeClass({self.name},access={bin(self.access)},parent={self.parent()},interfaces=[{', '.join(repr(e) for e in self.interfaces)}])"
+
+    def get_dynamic_field_keys(self):
+        return self.dynamic_field_keys | self.parent().get_dynamic_field_keys()
 
 
 class JavaClassInstance:
     def __init__(self, class_file: JavaBytecodeClass):
         self.class_file = class_file
-        self.fields = {}
+        self.fields = {name: None for name in class_file.get_dynamic_field_keys()}
 
     def get_method(self, name: str, signature: str):
         return self.class_file.get_method(name, signature)
+
+    def __repr__(self):
+        return f"JavaByteCodeClassInstance(of={self.class_file})"
 
 
 def decode_cp_constant(const):

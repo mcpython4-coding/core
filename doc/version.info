@@ -1669,4 +1669,5 @@ R   [uuk]: improved world serialization API
 [uuk]: the javafml mod loader is build to support BiomesOPlenty build 1.16.5-13.0.1.0.465, any other mod may work,
        or may not. Feel free to write an extension library for the bridge system
 [uuk]: ModLoader will switch to a special state when error occurs during mod loading
+[uuk]: loading exceptions are now mostly FATAL and cannot be skipped
 
