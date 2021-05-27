@@ -258,13 +258,13 @@ class IConstM1(ConstPush):
 
 @BytecodeRepr.register_instruction
 class IConst0(ConstPush):
-    OPCODES = {0x03}
+    OPCODES = {0x03, 0x0E}
     PUSHES = 0
 
 
 @BytecodeRepr.register_instruction
 class IConst1(ConstPush):
-    OPCODES = {0x04}
+    OPCODES = {0x04, 0x0F}
     PUSHES = 1
 
 
@@ -361,7 +361,7 @@ class LDC(Instruction):
 
 @BytecodeRepr.register_instruction
 class LDC_W(Instruction):
-    OPCODES = {0x13}
+    OPCODES = {0x13, 0x14}
 
     @classmethod
     def decode(
@@ -589,6 +589,15 @@ class Goto(Instruction):
 
 
 @BytecodeRepr.register_instruction
+class AReturn(Instruction):
+    OPCODES = {0xB0}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.end(stack.pop())
+
+
+@BytecodeRepr.register_instruction
 class Return(Instruction):
     OPCODES = {0xB1}
 
@@ -620,6 +629,17 @@ class PutStatic(CPLinkedInstruction):
         name = data[2][1][1]
         value = stack.pop()
         java_class.set_static_attribute(name, value)
+
+
+@BytecodeRepr.register_instruction
+class GetField(CPLinkedInstruction):
+    OPCODES = {0xB4}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        name = data[2][1][1]
+        obj = stack.pop()
+        stack.push(obj.fields[name])
 
 
 @BytecodeRepr.register_instruction

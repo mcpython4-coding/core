@@ -35,6 +35,12 @@ class ForgeRegistries(NativeClass):
         self.exposed_attributes = {
             "WORLD_TYPES": self.vm.get_class(
                 "net/minecraftforge/registries/IForgeRegistry"
+            ).create_instance(),
+            "BLOCKS": self.vm.get_class(
+                "net/minecraftforge/registries/IForgeRegistry"
+            ).create_instance(),
+            "ITEMS": self.vm.get_class(
+                "net/minecraftforge/registries/IForgeRegistry"
             ).create_instance()
         }
 

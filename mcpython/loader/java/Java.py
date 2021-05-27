@@ -504,14 +504,14 @@ class JavaBytecodeClass(AbstractJavaClass):
             elif tag in (9, 10, 11, 12, 17, 18):
                 d = tag, pop_u2(data), pop_u2(data)
             elif tag == 3:
-                d = tag, pop_struct(INT, data)
+                d = tag, pop_struct(INT, data)[0]
             elif tag == 4:
-                d = tag, pop_struct(FLOAT, data)
+                d = tag, pop_struct(FLOAT, data)[0]
             elif tag == 5:
-                d = tag, pop_struct(LONG, data)
+                d = tag, pop_struct(LONG, data)[0]
                 i += 1
             elif tag == 6:
-                d = tag, pop_struct(DOUBLE, data)
+                d = tag, pop_struct(DOUBLE, data)[0]
                 i += 1
             elif tag == 1:
                 size = pop_u2(data)
@@ -525,12 +525,18 @@ class JavaBytecodeClass(AbstractJavaClass):
             self.cp[j] = list(d)
 
         for i, e in enumerate(self.cp):
+            if e is None: continue
+
             tag = e[0]
 
-            if tag in (7, 9, 10, 11, 8, 5, 6, 12, 16, 19, 20):
+            if tag in (7, 9, 10, 11, 8, 12, 16, 19, 20):
                 e = e[1:]
                 self.cp[i].clear()
-                self.cp[i] += [tag] + [self.cp[x - 1] for x in e]
+                try:
+                    self.cp[i] += [tag] + [self.cp[x - 1] for x in e]
+                except TypeError:
+                    print(tag, e, self.cp)
+                    raise
 
             elif tag in (15, 17, 18):
                 self.cp[i] = self.cp[i][:2] + [self.cp[self.cp[i][-1] - 1]]
