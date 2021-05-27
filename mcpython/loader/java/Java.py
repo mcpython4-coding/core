@@ -159,6 +159,9 @@ class AbstractJavaClass:
     def create_instance(self):
         raise NotImplementedError
 
+    def on_annotate(self, cls, args):
+        raise RuntimeError((self, cls, args))
+
 
 class NativeClass(AbstractJavaClass, ABC):
     NAME = None
@@ -307,6 +310,48 @@ class StackMapTableParser(AbstractAttributeParser):
         pass  # todo: implement
 
 
+class ElementValue:
+    def __init__(self):
+        self.tag = None
+        self.data = None
+
+    def parse(self, table: "JavaAttributeTable", data: bytearray):
+        self.tag = tag = chr(pop_u1(data))
+
+        if tag in "BCDFIJSZs":
+            self.data = decode_cp_constant(table.class_file.cp[pop_u2(data)-1])
+        elif tag == "e":
+            cls_name = table.class_file.cp[pop_u2(data)-1][1].removeprefix("L").removesuffix(";")
+            attr_name = table.class_file.cp[pop_u2(data)-1][1]
+
+            cls = vm.get_class(cls_name)
+            self.data = cls.get_static_attribute(attr_name)
+        else:
+            raise NotImplementedError(tag)
+
+        return self
+
+
+class RuntimeVisibleAnnotationsParser(AbstractAttributeParser):
+    def __init__(self):
+        self.annotations = []
+
+    def parse(self, table: "JavaAttributeTable", data: bytearray):
+        for _ in range(pop_u2(data)):
+            annotation_type = table.class_file.cp[pop_u2(data)-1][1].removeprefix("L").removesuffix(";")
+
+            values = []
+
+            for _ in range(pop_u2(data)):
+                name = table.class_file.cp[pop_u2(data)-1][1]
+                value = ElementValue().parse(table, data)
+                values.append((name, value))
+
+            self.annotations.append((annotation_type, values))
+
+        print(self.annotations)
+
+
 class JavaAttributeTable:
     ATTRIBUTES_NEED_PARSING = {
         "ConstantValue",
@@ -315,6 +360,7 @@ class JavaAttributeTable:
         "BootstrapMethods",
         "NestHost",
         "NestMembers",
+        "RuntimeVisibleAnnotations",
     }
     ATTRIBUTES_MAY_PARSING = {
         "Exceptions",
@@ -334,6 +380,7 @@ class JavaAttributeTable:
         "Code": CodeParser,
         "BootstrapMethods": BootstrapMethods,
         "StackMapTable": StackMapTableParser,
+        "RuntimeVisibleAnnotations": RuntimeVisibleAnnotationsParser,
     }
 
     def __init__(self, parent):
@@ -559,6 +606,12 @@ class JavaBytecodeClass(AbstractJavaClass):
             runtime = mcpython.loader.java.Runtime.Runtime()
             runtime.run_method(self.get_method("<clinit>", "()V", inner=True))
 
+        if "RuntimeVisibleAnnotations" in self.attributes.attributes:
+            for annotation in self.attributes["RuntimeVisibleAnnotations"]:
+                for cls_name, args in annotation.annotations:
+                    cls = vm.get_class(cls_name)
+                    cls.on_annotate(self, args)
+
     def create_instance(self):
         return JavaClassInstance(self)
 
@@ -578,6 +631,6 @@ class JavaClassInstance:
 def decode_cp_constant(const):
     if const[0] == 7:  # Class
         return vm.get_class(const[1][1])
-    elif const[0] in (3, 4, 5, 6, 8):
+    elif const[0] in (1, 3, 4, 5, 6, 8):
         return const[1][1] if isinstance(const[1], list) else const[1]
     raise NotImplementedError(const)

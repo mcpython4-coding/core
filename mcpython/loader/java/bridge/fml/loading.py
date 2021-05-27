@@ -18,6 +18,30 @@ from mcpython.loader.java.Java import NativeClass, native
 from mcpython.loader.java.Runtime import Runtime, UnhandledInstructionException
 
 
+class Mod(NativeClass):
+    NAME = "net/minecraftforge/fml/common/Mod"
+
+    def on_annotate(self, cls, args):
+        pass
+
+
+class Mod_EventBusSubscriber(NativeClass):
+    NAME = "net/minecraftforge/fml/common/Mod$EventBusSubscriber"
+
+    def on_annotate(self, cls, args):
+        pass
+
+
+class Mod_EventBusSubscriber_Bus(NativeClass):
+    NAME = "net/minecraftforge/fml/common/Mod$EventBusSubscriber$Bus"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "MOD": "net/minecraftforge/fml/common/Mod$EventBusSubscriber$Bus::MOD"
+        })
+
+
 class FMLLoadingContext(NativeClass):
     NAME = "net/minecraftforge/fml/javafmlmod/FMLJavaModLoadingContext"
 

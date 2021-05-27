@@ -84,7 +84,7 @@ class Runtime:
             else:
                 i += 1
                 if not is_array:
-                    yield v[start:i], v[i-1] in "DL"
+                    yield v[start:i], v[i-1] in "DJ"
 
             if not is_array:
                 start = i
