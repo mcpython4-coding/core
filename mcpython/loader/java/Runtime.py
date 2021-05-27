@@ -150,7 +150,7 @@ class Stack:
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
-            # mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
+            mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
 
             try:
                 result = instruction[0].invoke(instruction[1], self)
@@ -400,7 +400,7 @@ class Load(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load0(Instruction):
-    OPCODES = {0x2A, 0x1B, 0x22}
+    OPCODES = {0x2A, 0x1A, 0x22}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -409,7 +409,7 @@ class Load0(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load1(Instruction):
-    OPCODES = {0x2B, 0x1C, 0x23}
+    OPCODES = {0x2B, 0x1B, 0x23}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -418,7 +418,7 @@ class Load1(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load2(Instruction):
-    OPCODES = {0x2C, 0x1D, 0x24}
+    OPCODES = {0x2C, 0x1C, 0x24}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -427,7 +427,7 @@ class Load2(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load3(Instruction):
-    OPCODES = {0x2D, 0x1E, 0x25}
+    OPCODES = {0x2D, 0x1D, 0x25}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):

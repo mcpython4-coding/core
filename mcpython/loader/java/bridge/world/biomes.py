@@ -44,3 +44,12 @@ class Biomes(NativeClass):
             return self.exposed_attributes[name]
         # print("missing biome key", name)  # todo: fix!
         return None
+
+
+class BiomeManager_Type(NativeClass):
+    NAME = "net/minecraftforge/common/BiomeManager$BiomeType"
+
+    @native("values", "()[Lnet/minecraftforge/common/BiomeManager$BiomeType;")
+    def values(self):
+        # todo: implement
+        return []
