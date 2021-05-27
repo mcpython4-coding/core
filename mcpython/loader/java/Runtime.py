@@ -68,11 +68,10 @@ class Runtime:
         v = signature.removeprefix("(").split(")")[0]
         i = 0
         start = 0
-        c = 0
         while i < len(v):
             is_array = False
-            if v[i] != "[":
-                c += 1
+
+            if v[i] == "[":
                 is_array = True
 
             if v[i] == "L":
@@ -80,27 +79,34 @@ class Runtime:
                 yield v[start:i], False
             else:
                 i += 1
-                yield v[start:i], v[i-1] in "DL"
+                if not is_array:
+                    yield v[start:i], v[i-1] in "DL"
 
             if not is_array:
                 start = i
 
     def parse_args_from_stack(self, method, stack, static=False):
-        parts = list(self.get_arg_parts_of(method))
+        parts = tuple(self.get_arg_parts_of(method))
+        previous_count = len(stack.stack)
 
-        args = [stack.pop() for _ in range(len(parts))]
+        try:
+            args = [stack.pop() for _ in range(len(parts))]
 
-        if not static:
-            args.append(stack.pop())
+            if not static:
+                args.append(stack.pop())
+
+        except IndexError:
+            print(method, stack.stack, static, previous_count, len(parts), parts)
+            raise
 
         if isinstance(method, mcpython.loader.java.Java.JavaMethod):
             offset = 0
             for i, (_, state) in enumerate(parts):
                 if state:
-                    args.insert(i+1+offset, None)
+                    args.insert(i+offset, None)
                     offset += 1
 
-        return reversed(args)
+        return tuple(reversed(args))
 
 
 class Stack:

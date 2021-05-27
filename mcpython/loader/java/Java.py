@@ -94,7 +94,7 @@ class JavaVM:
         from mcpython.loader.java.bridge.codec import builder
         from mcpython.loader.java.bridge.event import registries, content
         from mcpython.loader.java.bridge.fml import loading
-        from mcpython.loader.java.bridge.lib import google_collect, logging
+        from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil
         from mcpython.loader.java.bridge.world import biomes, collection
 
     def get_class(self, name: str) -> "AbstractJavaClass":
