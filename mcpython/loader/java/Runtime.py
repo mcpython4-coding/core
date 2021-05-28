@@ -160,7 +160,7 @@ class Stack:
             if not result and self.cp != -1:
                 self.cp += instruction[2]
 
-        mcpython.loader.java.Java.info(("finished method", self.method))
+        # mcpython.loader.java.Java.info(("finished method", self.method))
 
 
 class Instruction(ABC):

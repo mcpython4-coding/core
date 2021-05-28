@@ -228,6 +228,9 @@ class NativeClassInstance:
     def get_method(self, name: str, signature: str):
         return self.native_class.get_method(name, signature)
 
+    def get_class(self):
+        return self.native_class
+
     def __repr__(self):
         return f"NativeClassInstance(of={self.native_class},id={hex(id(self))})"
 
@@ -354,7 +357,7 @@ class RuntimeVisibleAnnotationsParser(AbstractAttributeParser):
 
             self.annotations.append((annotation_type, values))
 
-        print(self.annotations)
+        # print(self.annotations)
 
 
 class JavaAttributeTable:
@@ -640,6 +643,9 @@ class JavaClassInstance:
 
     def __repr__(self):
         return f"JavaByteCodeClassInstance(of={self.class_file})"
+
+    def get_class(self):
+        return self.class_file
 
 
 def decode_cp_constant(const):

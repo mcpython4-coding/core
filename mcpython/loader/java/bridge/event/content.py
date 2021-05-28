@@ -27,7 +27,7 @@ class Blocks(NativeClass):
 
     @native("func_235430_a_", "(Lnet/minecraft/block/material/MaterialColor;Lnet/minecraft/block/material/MaterialColor;)Lnet/minecraft/block/RotatedPillarBlock;")
     def func_235430_a_(self, color_a, color_b):
-        pass
+        return self.vm.get_class("net/minecraft/block/Block").create_instance()
 
 
 class AbstractBlock(NativeClass):
@@ -168,6 +168,7 @@ class Block(AbstractBlock):
 
     @native("setRegistryName", "(Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
     def setRegistryName(self, instance, name: str):
+        instance.registry_name = name
         return instance
 
     @native("func_208617_a", "(DDDDDD)Lnet/minecraft/util/math/shapes/VoxelShape;")
@@ -576,6 +577,7 @@ class BlockItem(NativeClass):
 
     @native("setRegistryName", "(Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
     def setRegistryName(self, instance, name: str):
+        instance.registry_name = name
         return instance
 
 

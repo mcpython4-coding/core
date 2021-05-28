@@ -11,8 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
+from mcpython import shared, logger
 from mcpython.loader.java.Java import NativeClass, native
+import mcpython.common.event.Registry
 
 
 class GameData(NativeClass):
@@ -23,8 +24,15 @@ class IForgeRegistry(NativeClass):
     NAME = "net/minecraftforge/registries/IForgeRegistry"
 
     @native("register", "(Lnet/minecraftforge/registries/IForgeRegistryEntry;)V")
-    def register(self, instance, entry):
-        pass
+    def register(self, registry, entry):
+        if registry is None:
+            logger.println(f"[JAVAFML][WARN] object {entry} could not get registered to registry!")
+            return
+
+        registry = registry()
+
+        if registry.name == "minecraft:block":
+            parseBlockToFactory(entry)
 
 
 class ForgeRegistries(NativeClass):
@@ -33,15 +41,9 @@ class ForgeRegistries(NativeClass):
     def __init__(self):
         super().__init__()
         self.exposed_attributes = {
-            "WORLD_TYPES": self.vm.get_class(
-                "net/minecraftforge/registries/IForgeRegistry"
-            ).create_instance(),
-            "BLOCKS": self.vm.get_class(
-                "net/minecraftforge/registries/IForgeRegistry"
-            ).create_instance(),
-            "ITEMS": self.vm.get_class(
-                "net/minecraftforge/registries/IForgeRegistry"
-            ).create_instance()
+            "WORLD_TYPES": None,
+            "BLOCKS": lambda: shared.registry.get_by_name("minecraft:block"),
+            "ITEMS": lambda: shared.registry.get_by_name("minecraft:item"),
         }
 
 
@@ -56,5 +58,17 @@ class Registry(NativeClass):
         "func_218325_a",
         "(Lnet/minecraft/util/registry/Registry;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;",
     )
-    def func_218325_a(self, registry, name: str, obj):
-        return obj
+    def func_218325_a(self, registry: mcpython.common.event.Registry.Registry, name: str, obj):
+        pass
+
+
+def parseBlockToFactory(obj):
+    if not hasattr(obj, "registry_name"):
+        logger.println(f"[JAVAFML][TRANSFORMER] transformation of {obj} failed as no registry name is set!")
+        return
+
+    import mcpython.common.factory.BlockFactory
+
+    instance = mcpython.common.factory.BlockFactory.BlockFactory().set_name("biomesoplenty:"+obj.registry_name)
+    instance.finish()
+

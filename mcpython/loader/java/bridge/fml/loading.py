@@ -22,7 +22,8 @@ class Mod(NativeClass):
     NAME = "net/minecraftforge/fml/common/Mod"
 
     def on_annotate(self, cls, args):
-        print("mod", 1, cls, args)
+        # print("mod", 1, cls, args)
+        pass
 
 
 class Mod_EventBusSubscriber(NativeClass):
@@ -36,8 +37,8 @@ class Mod_EventBusSubscriber(NativeClass):
             runtime = Runtime()
 
             runtime.run_method(method, shared.registry.get_by_name("minecraft:block"))
-        else:
-            print("sub", 2, cls, args)
+        # else:
+            # print("sub", 2, cls, args)
 
 
 class Mod_EventBusSubscriber_Bus(NativeClass):
