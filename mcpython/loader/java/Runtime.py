@@ -573,6 +573,23 @@ class IfNEq(Instruction):
 
 
 @BytecodeRepr.register_instruction
+class IfEq0(Instruction):
+    OPCODES = {0x99}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() == 0:
+            stack.cp += data
+            return True
+
+
+@BytecodeRepr.register_instruction
 class Goto(Instruction):
     OPCODES = {0xA7}
 
@@ -786,3 +803,12 @@ class CheckCast(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         pass  # todo: implement
+
+
+@BytecodeRepr.register_instruction
+class Mul(Instruction):
+    OPCODES = {0x68}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.push(stack.pop() * stack.pop())

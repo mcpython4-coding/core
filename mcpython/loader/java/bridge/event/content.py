@@ -93,6 +93,10 @@ class AbstractBlock_Properties(NativeClass):
     def func_226896_b_(self, instance):
         return instance
 
+    @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
+    def func_180632_j(self, instance, value, blockstate):
+        pass
+
 
 class SoundType(NativeClass):
     NAME = "net/minecraft/block/SoundType"
@@ -170,6 +174,17 @@ class Block(AbstractBlock):
     def func_208617_a(self, *v):
         pass
 
+    @native("func_235697_s_", "()Lnet/minecraft/block/material/MaterialColor;")
+    def getMaterialColor(self, instance):
+        pass
+
+    @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
+    def func_180632_j(self, instance, state):
+        pass
+
+    def get_dynamic_field_keys(self):
+        return super().get_dynamic_field_keys() | {"field_176227_L"}
+
 
 class Material(NativeClass):
     NAME = "net/minecraft/block/material/Material"
@@ -186,6 +201,10 @@ class Material(NativeClass):
             "field_151575_d": None,
             "field_151585_k": None,
             "field_151584_j": None,
+            "field_151594_q": None,
+            "field_151582_l": None,
+            "field_204868_h": None,
+            "field_203243_f": None,
         })
 
 
@@ -209,6 +228,24 @@ class MaterialColor(NativeClass):
             "field_151645_D": None,
             "field_193561_M": None,
             "field_197655_T": None,
+            "field_151666_j": None,
+            "field_151671_v": None,
+            "field_193567_S": None,
+            "field_151664_l": None,
+            "field_151678_z": None,
+            "field_151654_J": None,
+            "field_193566_R": None,
+            "field_151665_m": None,
+            "field_151670_w": None,
+            "field_151679_y": None,
+            "field_151649_A": None,
+            "field_193564_P": None,
+            "field_193572_X": None,
+            "field_193571_W": None,
+            "field_193568_T": None,
+            "field_197656_x": None,
+            "field_151675_r": None,
+            "field_151655_K": None,
         })
 
 
@@ -323,6 +360,186 @@ class LeavesBlock(Block):
         pass
 
 
+class RotatedPillarBlock(Block):
+    NAME = "net/minecraft/block/RotatedPillarBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class FenceBlock(Block):
+    NAME = "net/minecraft/block/FenceBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class FenceGateBlock(Block):
+    NAME = "net/minecraft/block/FenceGateBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class DoorBlock(Block):
+    NAME = "net/minecraft/block/DoorBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class TrapDoorBlock(Block):
+    NAME = "net/minecraft/block/TrapDoorBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class PressurePlateBlock(Block):
+    NAME = "net/minecraft/block/PressurePlateBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/PressurePlateBlock$Sensitivity;Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, sensitivity, properties):
+        pass
+
+
+class PressurePlateBlock_Sensitivity(NativeClass):
+    NAME = "net/minecraft/block/PressurePlateBlock$Sensitivity"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "EVERYTHING": "net/minecraft/block/PressurePlateBlock$Sensitivity::EVERYTHING"
+        })
+
+
+class WoodButtonBlock(Block):
+    NAME = "net/minecraft/block/WoodButtonBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class FlowerBlock(Block):
+    NAME = "net/minecraft/block/FlowerBlock"
+
+    @native("<init>", "(Lnet/minecraft/potion/Effect;ILnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, effect, level, properties):
+        pass
+
+
+class TallFlowerBlock(Block):
+    NAME = "net/minecraft/block/TallFlowerBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class DoublePlantBlock(Block):
+    NAME = "net/minecraft/block/DoublePlantBlock"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_176492_b": None
+        })
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+    @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
+    def func_180632_j(self, instance, state):
+        pass
+
+    def get_dynamic_field_keys(self):
+        return super().get_dynamic_field_keys() | {"field_176227_L"}
+
+
+class VineBlock(Block):
+    NAME = "net/minecraft/block/VineBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class BushBlock(Block):
+    NAME = "net/minecraft/block/BushBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class IWaterLoggable(NativeClass):
+    NAME = "net/minecraft/block/IWaterLoggable"
+
+
+class HorizontalBlock(Block):
+    NAME = "net/minecraft/block/HorizontalBlock"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_185512_D": None,
+        })
+
+
+class SixWayBlock(Block):
+    NAME = "net/minecraft/block/SixWayBlock"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_196488_a": None,
+            "field_196490_b": None,
+            "field_196492_c": None,
+            "field_196495_y": None,
+            "field_196496_z": None,
+            "field_196489_A": None,
+        })
+
+    @native("<init>", "(FLnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, value, properties):
+        pass
+
+    @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
+    def func_180632_j(self, instance, state):
+        pass
+
+
+class MushroomBlock(Block):
+    NAME = "net/minecraft/block/MushroomBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        pass
+
+
+class FlowerPotBlock(Block):
+    NAME = "net/minecraft/block/FlowerPotBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, block, properties):
+        pass
+
+
+class IPlantable(NativeClass):
+    NAME = "net/minecraftforge/common/IPlantable"
+
+
+class IGrowable(NativeClass):
+    NAME = "net/minecraft/block/IGrowable"
+
+
 class Item_Properties(NativeClass):
     NAME = "net/minecraft/item/Item$Properties"
 
@@ -425,6 +642,17 @@ class BlockStateProperties(NativeClass):
         super().__init__()
         self.exposed_attributes.update({
             "field_208137_al": None,
+            "field_208198_y": None,
+        })
+
+
+class DoubleBlockHalf(NativeClass):
+    NAME = "net/minecraft/state/properties/DoubleBlockHalf"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "LOWER": "net/minecraft/state/properties/DoubleBlockHalf::UPPER"
         })
 
 
@@ -434,7 +662,10 @@ class Direction(NativeClass):
     def __init__(self):
         super().__init__()
         self.exposed_attributes.update({
-            "NORTH": "net/minecraft/util/Direction::NORTH"
+            "NORTH": "net/minecraft/util/Direction::NORTH",
+            "SOUTH": "net/minecraft/util/Direction::SOUTH",
+            "WEST": "net/minecraft/util/Direction::WEST",
+            "EAST": "net/minecraft/util/Direction::EAST",
         })
 
 

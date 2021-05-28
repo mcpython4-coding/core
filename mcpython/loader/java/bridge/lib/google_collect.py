@@ -45,6 +45,10 @@ class Maps(NativeClass):
     def copyHashMap(self, instance):
         return instance.copy()
 
+    @native("newEnumMap", "(Ljava/util/Map;)Ljava/util/EnumMap;")
+    def newEnumMap(self, base_map):
+        return base_map
+
 
 class ImmutableList(NativeClass):
     NAME = "com/google/common/collect/ImmutableList"
@@ -71,3 +75,11 @@ class ImmutableList(NativeClass):
         instance = self.create_instance()
         instance.underlying_tuple = stuff
         return instance
+
+
+class ImmutableMap(NativeClass):
+    NAME = "com/google/common/collect/ImmutableMap"
+
+    @native("of", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap;")
+    def of(self, *stuff):
+        return self.create_instance()

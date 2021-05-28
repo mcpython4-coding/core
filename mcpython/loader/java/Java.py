@@ -85,7 +85,7 @@ class JavaVM:
             self.get_class(self.lazy_classes.pop())
 
     def init_builtins(self):
-        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer
+        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean
         from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map
         from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
@@ -96,7 +96,8 @@ class JavaVM:
         from mcpython.loader.java.bridge.fml import loading
         from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil
         from mcpython.loader.java.bridge.world import biomes, collection
-        from mcpython.loader.java.bridge.container import containers
+        from mcpython.loader.java.bridge.misc import containers, potions
+        from mcpython.loader.java.bridge.client import rendering
 
     def get_class(self, name: str) -> "AbstractJavaClass":
         if name.replace(".", "/") in self.classes:
@@ -623,7 +624,7 @@ class JavaBytecodeClass(AbstractJavaClass):
         return JavaClassInstance(self)
 
     def __repr__(self):
-        return f"JavaBytecodeClass({self.name},access={bin(self.access)},parent={self.parent()},interfaces=[{', '.join(repr(e) for e in self.interfaces)}])"
+        return f"JavaBytecodeClass({self.name},access={bin(self.access)},parent={self.parent()},interfaces=[{', '.join(repr(e()) for e in self.interfaces)}])"
 
     def get_dynamic_field_keys(self):
         return self.dynamic_field_keys | self.parent().get_dynamic_field_keys()
