@@ -167,6 +167,9 @@ class AbstractJavaClass:
     def get_dynamic_field_keys(self):
         return set()
 
+    def is_subclass_of(self, class_name: str) -> bool:
+        raise NotImplementedError
+
 
 class NativeClass(AbstractJavaClass, ABC):
     NAME = None
@@ -178,6 +181,7 @@ class NativeClass(AbstractJavaClass, ABC):
     def __init__(self):
         super().__init__()
         self.vm = vm
+        self.name = self.NAME
 
         self.exposed_attributes = {}
         self.exposed_methods = {}
@@ -218,6 +222,9 @@ class NativeClass(AbstractJavaClass, ABC):
 
     def __repr__(self):
         return f"NativeClass({self.NAME})"
+
+    def is_subclass_of(self, class_name: str):
+        return self.name == class_name
 
 
 class NativeClassInstance:
@@ -631,6 +638,9 @@ class JavaBytecodeClass(AbstractJavaClass):
 
     def get_dynamic_field_keys(self):
         return self.dynamic_field_keys | self.parent().get_dynamic_field_keys()
+
+    def is_subclass_of(self, class_name: str):
+        return self.name == class_name or self.parent().is_subclass_of(class_name) or any(interface().is_subclass_of(class_name) for interface in self.interfaces)
 
 
 class JavaClassInstance:

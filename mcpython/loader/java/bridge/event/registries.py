@@ -90,5 +90,15 @@ def parseBlockToFactory(obj):
     import mcpython.common.factory.BlockFactory
 
     instance = mcpython.common.factory.BlockFactory.BlockFactory().set_name("biomesoplenty:"+obj.registry_name)
+
+    if obj.get_class().is_subclass_of("net/minecraft/block/SandBlock"):
+        instance.set_fall_able()
+    elif obj.get_class().is_subclass_of("net/minecraft/block/StairBlock"):
+        pass
+    elif obj.get_class().is_subclass_of("net/minecraft/block/SlabBlock"):
+        instance.set_slab()
+    elif obj.get_class().is_subclass_of("net/minecraft/block/WallBlock"):
+        instance.set_wall()
+
     instance.finish()
 
