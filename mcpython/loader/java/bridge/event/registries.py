@@ -21,6 +21,12 @@ class GameData(NativeClass):
 
 
 class IForgeRegistry(NativeClass):
+    """
+    Wrapper around the forge registry instances lying around in the system
+    register() wraps the underlying registry around our internal registries
+    todo: add some mapping registry name -> obj transformer
+    """
+
     NAME = "net/minecraftforge/registries/IForgeRegistry"
 
     @native("register", "(Lnet/minecraftforge/registries/IForgeRegistryEntry;)V")
@@ -36,6 +42,13 @@ class IForgeRegistry(NativeClass):
 
 
 class ForgeRegistries(NativeClass):
+    """
+    Wrapper around the class holding all arrival registries
+    Contains suppliers to the internal registries where arrival
+
+    This is equivalent to shared/registry and shared/registry.get_by_name(...)
+    """
+
     NAME = "net/minecraftforge/registries/ForgeRegistries"
 
     def __init__(self):
@@ -48,6 +61,13 @@ class ForgeRegistries(NativeClass):
 
 
 class Registry(NativeClass):
+    """
+    The default mc registry
+    All registries implement IForgeRegistry, so this is only decoration
+
+    This is the equivalent to mcpython/event/registry/Registry
+    """
+
     NAME = "net/minecraft/util/registry/Registry"
 
     def __init__(self):

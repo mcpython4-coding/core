@@ -1670,4 +1670,11 @@ R   [uuk]: improved world serialization API
        or may not. Feel free to write an extension library for the bridge system
 [uuk]: ModLoader will switch to a special state when error occurs during mod loading
 [uuk]: loading exceptions are now mostly FATAL and cannot be skipped
+[uuk]: implemented JVM -> BlockFactory transformer
+
+pending:
+- fix hardcoded location lookup; load all class bytecode immediately and class-init when needed
+- fix hardcoded namespace in block factory transform
+- implement more of the instructions
+- prepare for mc forge 1.17 [when it is released]
 

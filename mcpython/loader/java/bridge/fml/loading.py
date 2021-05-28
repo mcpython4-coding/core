@@ -32,11 +32,14 @@ class Mod_EventBusSubscriber(NativeClass):
     def on_annotate(self, cls, args):
 
         if ("registerBlocks", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V") in cls.methods:
-            method = cls.get_method("registerBlocks", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V")
+            @shared.mod_loader("minecraft", "stage:block:factory:prepare")
+            def load():
+                method = cls.get_method("registerBlocks", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V")
 
-            runtime = Runtime()
+                runtime = Runtime()
 
-            runtime.run_method(method, shared.registry.get_by_name("minecraft:block"))
+                runtime.run_method(method, shared.registry.get_by_name("minecraft:block"))
+
         # else:
             # print("sub", 2, cls, args)
 

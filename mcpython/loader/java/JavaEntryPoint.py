@@ -102,6 +102,7 @@ class JavaModLoader(mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint):
 
         for d in data["mods"]:
             mod = JavaMod(d["modId"], d["version"].split("-")[-1])
+            mod.add_load_default_resources()
             mods[d["modId"]] = mod
             mod.loader_version = loader_version
 

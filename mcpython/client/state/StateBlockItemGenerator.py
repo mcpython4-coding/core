@@ -152,6 +152,7 @@ class StateBlockItemGenerator(State.State):
             return
 
         # We want to hide this error messages
+        # todo: add command line option to disable
         shared.model_handler.hide_blockstate_errors = True
 
         # Update the progress bar progress
