@@ -223,7 +223,15 @@ class FMLCommonSetupEvent(NativeClass):
 
     @native("enqueueWork", "(Ljava/lang/Runnable;)Ljava/util/concurrent/CompletableFuture;")
     def enqueueWork(self, instance, work):
+        # todo: make run safe
         import mcpython.loader.java.Runtime
         runtime = mcpython.loader.java.Runtime.Runtime()
         runtime.run_method(work, None)
+
+
+class OnlyIn(NativeClass):
+    NAME = "net/minecraftforge/api/distmarker/OnlyIn"
+
+    def on_annotate(self, cls, args):
+        logger.println("[FML][WARN] got internal @OnlyIn marker not specified for use in mods. Things may break!")
 

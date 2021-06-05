@@ -1674,6 +1674,15 @@ R   [uuk]: improved world serialization API
 [uuk]: ModLoader assigns now the resource access to each Mod instance when loading
 [uuk]: JavaFML will now load all classes in class path of the mod
 [uuk]: JavaFML will now remember which mod is currently active making other mods in theory work
+[uuk]: bumped test version of biomesoplenty to 1.16.5-13.1.0.469
+
+pending:
+- special attribute in class files storing a "native-version" used during native resolving for making cross-version
+    possible (load 1.12 mods and 1.16 mods e.g.)
+- load JavaFML only when needed (e.g. via a flag, maybe --enable-fml)
+- use more properties added by the setup functions for BlockProperties
+- create Items when possible
+- wrap ItemGroups around our creative tab system
 
 pushed back:
 - implement all of the instructions
