@@ -482,8 +482,8 @@ class JavaAttributeTable:
             )
 
         diff_may = self.ATTRIBUTES_MAY_PARSING.intersection(keyset)
-        if diff_may:
-            info("missing attribute parsing for: " + ", ".join(diff_may))
+        # if diff_may:
+            # info("missing attribute parsing for: " + ", ".join(diff_may))
 
     def __getitem__(self, item):
         return self.attributes[item]

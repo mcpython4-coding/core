@@ -54,6 +54,9 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
             if not file.endswith(".class"): continue
             cls = file.split(".")[0]
             try:
+                # make sure that this is set!
+                shared.CURRENT_EVENT_SUB = self.name
+
                 java_class = jvm.load_class(cls)
 
                 # todo: check if mod main class

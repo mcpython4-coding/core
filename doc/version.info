@@ -1673,12 +1673,9 @@ R   [uuk]: improved world serialization API
 [uuk]: implemented JVM -> BlockFactory transformer
 [uuk]: ModLoader assigns now the resource access to each Mod instance when loading
 [uuk]: JavaFML will now load all classes in class path of the mod
-
-pending:
-- fix hardcoded location lookup; load all class bytecode immediately and class-init when needed
-- fix hardcoded namespace in block factory transform
+[uuk]: JavaFML will now remember which mod is currently active making other mods in theory work
 
 pushed back:
-- implement more of the instructions
+- implement all of the instructions
 - prepare for mc forge 1.17 [when it is released]
 

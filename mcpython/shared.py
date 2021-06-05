@@ -45,6 +45,9 @@ NO_WINDOW = False
 IS_CLIENT = True
 IS_TEST_ENV = False
 
+# used by fml to store which mod is currently working
+CURRENT_EVENT_SUB = None
+
 STORAGE_VERSION = None  # the version of the storage format
 
 NO_LOG_ESCAPE = "--no-log-escape" in sys.argv

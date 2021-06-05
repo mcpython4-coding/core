@@ -97,16 +97,21 @@ def parseBlockToFactory(obj):
 
     import mcpython.common.factory.BlockFactory
 
-    instance = mcpython.common.factory.BlockFactory.BlockFactory().set_name("biomesoplenty:"+obj.registry_name)
+    instance = mcpython.common.factory.BlockFactory.BlockFactory().set_name(shared.CURRENT_EVENT_SUB+":"+obj.registry_name)
+    cls = obj.get_class()
 
-    if obj.get_class().is_subclass_of("net/minecraft/block/SandBlock"):
+    if cls.is_subclass_of("net/minecraft/block/SandBlock"):
         instance.set_fall_able()
-    elif obj.get_class().is_subclass_of("net/minecraft/block/StairBlock"):
-        pass
-    elif obj.get_class().is_subclass_of("net/minecraft/block/SlabBlock"):
+    elif cls.is_subclass_of("net/minecraft/block/StairBlock"):
+        instance.set_default_model_state("facing=east,half=bottom,shape=inner_left")
+    elif cls.is_subclass_of("net/minecraft/block/SlabBlock"):
         instance.set_slab()
-    elif obj.get_class().is_subclass_of("net/minecraft/block/WallBlock"):
+    elif cls.is_subclass_of("net/minecraft/block/WallBlock"):
         instance.set_wall()
+    elif cls.is_subclass_of("net/minecraft/block/FlowerPotBlock") or cls.is_subclass_of("net/minecraft/block/LeavesBlock"):
+        instance.set_solid(False).set_all_side_solid(False)
+    else:
+        print(obj)
 
     instance.finish()
 
