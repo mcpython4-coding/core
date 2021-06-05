@@ -110,8 +110,10 @@ def parseBlockToFactory(obj):
         instance.set_wall()
     elif cls.is_subclass_of("net/minecraft/block/FlowerPotBlock") or cls.is_subclass_of("net/minecraft/block/LeavesBlock"):
         instance.set_solid(False).set_all_side_solid(False)
+    elif cls.is_subclass_of("net/minecraft/block/RotatedPillarBlock"):
+        instance.set_log()
     else:
-        print(obj)
+        print(obj, obj.registry_name)
 
     try:
         instance.set_strength(obj.properties.hardness, obj.properties.blast_resistance)

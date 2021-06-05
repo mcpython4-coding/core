@@ -27,7 +27,10 @@ class Blocks(NativeClass):
 
     @native("func_235430_a_", "(Lnet/minecraft/block/material/MaterialColor;Lnet/minecraft/block/material/MaterialColor;)Lnet/minecraft/block/RotatedPillarBlock;")
     def func_235430_a_(self, color_a, color_b):
-        return self.vm.get_class("net/minecraft/block/Block").create_instance()
+        # todo: this seems odd
+        instance = self.vm.get_class("net/minecraft/block/RotatedPillarBlock").create_instance()
+        instance.properties = self.vm.get_class("net/minecraft/block/AbstractBlock$Properties").create_instance()
+        return instance
 
 
 class AbstractBlock(NativeClass):
@@ -40,6 +43,8 @@ class AbstractBlock_Properties(NativeClass):
     def create_instance(self):
         instance = super().create_instance()
         instance.hardness = instance.blast_resistance = 0
+        instance.harvest_level = 0
+        instance.harvest_tool = 0
         return instance
 
     @native("func_200949_a", "(Lnet/minecraft/block/material/Material;Lnet/minecraft/block/material/MaterialColor;)Lnet/minecraft/block/AbstractBlock$Properties;")
@@ -57,10 +62,13 @@ class AbstractBlock_Properties(NativeClass):
 
     @native("harvestLevel", "(I)Lnet/minecraft/block/AbstractBlock$Properties;")
     def harvestLevel(self, instance, level: int):
+        instance.harvest_level = level
         return instance
 
     @native("harvestTool", "(Lnet/minecraftforge/common/ToolType;)Lnet/minecraft/block/AbstractBlock$Properties;")
     def harvestTool(self, instance, tool):
+        # todo: inject into TAG
+        instance.harvest_tool = tool
         return instance
 
     @native("func_200950", "(Lnet/minecraft/block/AbstractBlock;)Lnet/minecraft/block/AbstractBlock$Properties;")
@@ -73,6 +81,7 @@ class AbstractBlock_Properties(NativeClass):
 
     @native("func_200948_a", "(FF)Lnet/minecraft/block/AbstractBlock$Properties;")
     def func_200948_a(self, instance, a, b):
+        instance.hardness = instance.blast_resistance = a, b
         return instance
 
     @native("func_200945_a", "(Lnet/minecraft/block/material/Material;)Lnet/minecraft/block/AbstractBlock$Properties;")

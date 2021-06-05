@@ -1678,9 +1678,9 @@ R   [uuk]: improved world serialization API
 [uuk]: added some parsing for the BlockProperty stuff
 [uuk]: fixed Runtime.run_method not returning for non-native methods the return value, resulting into None to be always
        pushed back onto the stack
+[uuk]: <FML> fixed Blocks.func_235430_a_() not setting Block$Properties
 
 pending:
-- use more properties added by the setup functions for BlockProperties
 - create Items when possible
 - wrap ItemGroups around our creative tab system
 - remove logging noise from the JVM

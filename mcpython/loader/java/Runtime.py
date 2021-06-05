@@ -44,7 +44,7 @@ class Runtime:
         *args,
     ):
         if callable(method):
-            mcpython.loader.java.Java.info(("launching native method", method))
+            # mcpython.loader.java.Java.info(("launching native method", method))
             return method(*args)
 
         if method.code_repr is None:
@@ -148,12 +148,12 @@ class Stack:
         self.return_value = value
 
     def run(self):
-        mcpython.loader.java.Java.info(("launching method", self.method))
+        # mcpython.loader.java.Java.info(("launching method", self.method))
 
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
-            mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
+            # mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
 
             try:
                 result = instruction[0].invoke(instruction[1], self)
@@ -163,7 +163,7 @@ class Stack:
             if not result and self.cp != -1:
                 self.cp += instruction[2]
 
-        mcpython.loader.java.Java.info(("finished method", self.method, self.return_value))
+        # mcpython.loader.java.Java.info(("finished method", self.method, self.return_value))
 
 
 class Instruction(ABC):
