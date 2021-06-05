@@ -19,6 +19,7 @@ import struct
 import types
 import typing
 from abc import ABC
+import copy
 
 U1 = struct.Struct("!B")
 U1_S = struct.Struct("!b")
@@ -80,6 +81,8 @@ class JavaVM:
         ] = {}
         self.lazy_classes = set()
 
+        self.array_helper = JavaArrayManager(self)
+
     def load_lazy(self):
         while len(self.lazy_classes) > 0:
             self.get_class(self.lazy_classes.pop())
@@ -94,22 +97,29 @@ class JavaVM:
         from mcpython.loader.java.bridge.codec import builder
         from mcpython.loader.java.bridge.event import registries, content
         from mcpython.loader.java.bridge.fml import loading
-        from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil
+        from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil, gson
         from mcpython.loader.java.bridge.world import biomes, collection
         from mcpython.loader.java.bridge.misc import containers, potions
         from mcpython.loader.java.bridge.client import rendering
 
     def get_class(self, name: str) -> "AbstractJavaClass":
         if name.replace(".", "/") in self.classes:
-            return self.classes[name.replace(".", "/")]
+            cls = self.classes[name.replace(".", "/")]
+        else:
+            cls = self.load_class(name)
 
-        return self.load_class(name)
+        cls.prepare_use()
+
+        return cls
 
     def get_lazy_class(self, name: str):
         self.lazy_classes.add(name)
         return lambda: self.get_class(name)
 
     def load_class(self, name: str) -> "AbstractJavaClass":
+        if name.startswith("["):
+            return self.array_helper.get(name)
+
         try:
             bytecode = get_bytecode_of_class(name)
         except FileNotFoundError:
@@ -137,9 +147,6 @@ class JavaVM:
         descriptor = nat[2][2][1]
         cls = self.get_class(cls)
         return cls.get_method(name, descriptor)
-
-
-vm = JavaVM()
 
 
 class AbstractJavaClass:
@@ -170,13 +177,17 @@ class AbstractJavaClass:
     def is_subclass_of(self, class_name: str) -> bool:
         raise NotImplementedError
 
+    def prepare_use(self):
+        pass
+
 
 class NativeClass(AbstractJavaClass, ABC):
     NAME = None
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
-        vm.register_native(cls)
+        if cls.NAME is not None:
+            vm.register_native(cls)
 
     def __init__(self):
         super().__init__()
@@ -212,6 +223,8 @@ class NativeClass(AbstractJavaClass, ABC):
             return m
 
     def get_static_attribute(self, name: str):
+        if name not in self.exposed_attributes:
+            raise KeyError(self, name)
         return self.exposed_attributes[name]
 
     def set_static_attribute(self, name: str, value):
@@ -249,6 +262,41 @@ def native(name: str, signature: str):
         return method
 
     return setup
+
+
+class ArrayBase(NativeClass):
+    def __init__(self, depth: int, name: str, base_class: AbstractJavaClass):
+        super().__init__()
+        self.base_class = base_class
+        self.depth = depth
+        self.name = name
+
+    def create_instance(self):
+        return []
+
+    @native("clone", "()Ljava/lang/Object;")
+    def clone(self, instance):
+        return instance.copy()
+
+
+class JavaArrayManager:
+    """
+    Helper class for working with java arrays of non-standard type (e.g. [Lnet/minecraft/ResourceLocation;)
+    It creates the needed array classes and holds them for later reuse
+    """
+
+    def __init__(self, vm):
+        self.vm = vm
+
+    def get(self, class_text: str):
+        depth = class_text.count("[")
+        cls_name = class_text[depth:]
+        cls = self.vm.get_class(cls_name.removeprefix("L").removesuffix(";"))
+
+        instance = ArrayBase(depth, class_text, cls)
+
+        self.vm.classes[class_text] = instance
+        return instance
 
 
 class AbstractAttributeParser(ABC):
@@ -495,6 +543,8 @@ class JavaBytecodeClass(AbstractJavaClass):
         self.on_bake = []
         self.on_instance_creation = []
 
+        self.class_init_complete = False
+
     def from_bytes(self, data: bytearray):
         magic = pop_u4(data)
         assert magic == 0xCAFEBABE, f"magic {magic} is invalid!"
@@ -615,15 +665,6 @@ class JavaBytecodeClass(AbstractJavaClass):
             method(self)
         self.on_bake.clear()
 
-        if ("<clinit>", "()V") in self.methods:
-            try:
-                import mcpython.loader.java.Runtime
-            except ImportError:
-                return
-
-            runtime = mcpython.loader.java.Runtime.Runtime()
-            runtime.run_method(self.get_method("<clinit>", "()V", inner=True))
-
         if "RuntimeVisibleAnnotations" in self.attributes.attributes:
             for annotation in self.attributes["RuntimeVisibleAnnotations"]:
                 for cls_name, args in annotation.annotations:
@@ -641,6 +682,19 @@ class JavaBytecodeClass(AbstractJavaClass):
 
     def is_subclass_of(self, class_name: str):
         return self.name == class_name or self.parent().is_subclass_of(class_name) or any(interface().is_subclass_of(class_name) for interface in self.interfaces)
+
+    def prepare_use(self):
+        if self.class_init_complete: return
+        self.class_init_complete = True
+
+        if ("<clinit>", "()V") in self.methods:
+            try:
+                import mcpython.loader.java.Runtime
+            except ImportError:
+                return
+
+            runtime = mcpython.loader.java.Runtime.Runtime()
+            runtime.run_method(self.get_method("<clinit>", "()V", inner=True))
 
 
 class JavaClassInstance:
@@ -664,3 +718,6 @@ def decode_cp_constant(const):
     elif const[0] in (1, 3, 4, 5, 6, 8):
         return const[1][1] if isinstance(const[1], list) else const[1]
     raise NotImplementedError(const)
+
+
+vm = JavaVM()

@@ -50,7 +50,8 @@ class Mod_EventBusSubscriber_Bus(NativeClass):
     def __init__(self):
         super().__init__()
         self.exposed_attributes.update({
-            "MOD": "net/minecraftforge/fml/common/Mod$EventBusSubscriber$Bus::MOD"
+            "MOD": "net/minecraftforge/fml/common/Mod$EventBusSubscriber$Bus::MOD",
+            "FORGE": "net/minecraftforge/fml/common/Mod$EventBusSubscriber$Bus::FORGE"
         })
 
 

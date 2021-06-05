@@ -391,7 +391,7 @@ class ArrayLoad(Instruction):
 
 @BytecodeRepr.register_instruction
 class ArrayStore(Instruction):
-    OPCODES = {0x53}
+    OPCODES = {0x53, 0x4F}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -776,6 +776,21 @@ class New(CPLinkedInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         c = stack.vm.get_class(data[1][1])
         stack.push(c.create_instance())
+
+
+@BytecodeRepr.register_instruction
+class NewArray(CPLinkedInstruction):
+    OPCODES = {0xBC}
+
+    @classmethod
+    def decode(
+            cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U1.unpack(data[index + 1:index + 2])[0], 2
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        stack.push([None] * stack.pop())
 
 
 @BytecodeRepr.register_instruction

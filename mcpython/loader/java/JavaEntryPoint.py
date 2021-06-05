@@ -41,7 +41,6 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.loader_version = 0
-        self.main_classes = ["biomesoplenty/init/ModBlocks"]
 
     def mod_string(self):
         return super().mod_string() + " [JavaFML]"
@@ -55,7 +54,7 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
             if not file.endswith(".class"): continue
             cls = file.split(".")[0]
             try:
-                java_class = jvm.get_class(cls)
+                java_class = jvm.load_class(cls)
 
                 # todo: check if mod main class
 

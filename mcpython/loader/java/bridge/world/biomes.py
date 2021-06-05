@@ -49,6 +49,15 @@ class Biomes(NativeClass):
 class BiomeManager_Type(NativeClass):
     NAME = "net/minecraftforge/common/BiomeManager$BiomeType"
 
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "ICY": None,
+            "COOL": None,
+            "WARM": None,
+            "DESERT": None,
+        })
+
     @native("values", "()[Lnet/minecraftforge/common/BiomeManager$BiomeType;")
     def values(self):
         # todo: implement

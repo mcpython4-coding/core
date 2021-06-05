@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -15,13 +15,22 @@ from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class ResourceLocation(NativeClass):
-    NAME = "net/minecraft/util/ResourceLocation"
+class Gson(NativeClass):
+    NAME = "com/google/gson/Gson"
 
-    @native("<init>", "(Ljava/lang/String;)V")
-    def init(self, instance, location: str):
+
+class GsonBuilder(NativeClass):
+    NAME = "com/google/gson/GsonBuilder"
+
+    @native("<init>", "()V")
+    def init(self, instance):
         pass
 
-    @native("<init>", "(Ljava/lang/String;Ljava/lang/String;)V")
-    def init(self, instance, namespace: str, postfix: str):
-        pass
+    @native("setPrettyPrinting", "()Lcom/google/gson/GsonBuilder;")
+    def setPrettyPrinting(self, instance):
+        return instance
+
+    @native("create", "()Lcom/google/gson/Gson;")
+    def create(self, instance):
+        return self.vm.get_class(Gson.NAME).create_instance()
+

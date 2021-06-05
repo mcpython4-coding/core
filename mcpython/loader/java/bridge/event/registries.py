@@ -82,6 +82,14 @@ class Registry(NativeClass):
         pass
 
 
+class RegistryKey(NativeClass):
+    NAME = "net/minecraft/util/RegistryKey"
+
+    @native("func_240903_a_", "(Lnet/minecraft/util/RegistryKey;Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/util/RegistryKey;")
+    def func_240903_a_(self, key, location):
+        return key
+
+
 def parseBlockToFactory(obj):
     if not hasattr(obj, "registry_name"):
         logger.println(f"[JAVAFML][TRANSFORMER] transformation of {obj} failed as no registry name is set!")

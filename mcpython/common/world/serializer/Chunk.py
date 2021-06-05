@@ -375,7 +375,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 # todo: add missing texture block -> insert here
                 logger.println(
                     "[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block".format(
-                        d["name"], chunk, dimension
+                        d[0], chunk, dimension
                     )
                 )
                 data["block_palette"][i] = ("minecraft:air", {}, False, tuple())

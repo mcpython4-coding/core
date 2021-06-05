@@ -625,8 +625,18 @@ class AttachFace(NativeClass):
     def __init__(self):
         super().__init__()
         self.exposed_attributes.update({
-            "FLOOR": "net/minecraft/state/properties/AttachFace::FLOOR"
+            "FLOOR": "net/minecraft/state/properties/AttachFace::FLOOR",
+            "WALL": "net/minecraft/state/properties/AttachFace::WALL",
+            "CEILING": "net/minecraft/state/properties/AttachFace::CEILING"
         })
+
+    @native("values", "()[Lnet/minecraft/state/properties/AttachFace;")
+    def values(self):
+        return list(self.exposed_attributes.keys())
+
+    @native("ordinal", "()I")
+    def ordinal(self, instance):
+        return 0
 
 
 class BlockState(NativeClass):
@@ -669,6 +679,14 @@ class Direction(NativeClass):
             "WEST": "net/minecraft/util/Direction::WEST",
             "EAST": "net/minecraft/util/Direction::EAST",
         })
+
+    @native("values", "()[Lnet/minecraft/util/Direction;")
+    def values(self):
+        return list(self.exposed_attributes.values())
+
+    @native("ordinal", "()I")
+    def ordinal(self, instance):
+        return 0
 
 
 class Tree(NativeClass):
