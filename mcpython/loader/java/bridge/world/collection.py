@@ -31,3 +31,4 @@ class ForgeWorldType(NativeClass):
     )
     def setRegistryName(self, instance, name):
         instance.registry_name = name
+        return instance

@@ -16,10 +16,12 @@ import json
 import os
 import sys
 import time
+import traceback
 import typing
 import zipfile
 
 import mcpython.client.state.StateModLoading
+import mcpython.client.state.StateLoadingException
 import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
@@ -728,6 +730,8 @@ class ModLoader:
                     return
             except LoadingInterruptException:
                 print("stopping loading cycle")
+                logger.print_exception()
+                mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
                 return
             except:
                 sys.exit(-1)

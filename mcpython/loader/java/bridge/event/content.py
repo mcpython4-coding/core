@@ -37,12 +37,18 @@ class AbstractBlock(NativeClass):
 class AbstractBlock_Properties(NativeClass):
     NAME = "net/minecraft/block/AbstractBlock$Properties"
 
+    def create_instance(self):
+        instance = super().create_instance()
+        instance.hardness = instance.blast_resistance = 0
+        return instance
+
     @native("func_200949_a", "(Lnet/minecraft/block/material/Material;Lnet/minecraft/block/material/MaterialColor;)Lnet/minecraft/block/AbstractBlock$Properties;")
     def func_200949_a(self, material, material_color):
         return self.create_instance()
 
     @native("func_200943_b", "(F)Lnet/minecraft/block/AbstractBlock$Properties;")
     def func_200943_b(self, instance, value):
+        instance.hardness = instance.blast_resistance = value
         return instance
 
     @native("func_200947_a", "(Lnet/minecraft/block/SoundType;)Lnet/minecraft/block/AbstractBlock$Properties;")
@@ -63,7 +69,7 @@ class AbstractBlock_Properties(NativeClass):
 
     @native("func_200950_a", "(Lnet/minecraft/block/AbstractBlock;)Lnet/minecraft/block/AbstractBlock$Properties;")
     def func_200950_a(self, instance):
-        return instance
+        return instance.properties
 
     @native("func_200948_a", "(FF)Lnet/minecraft/block/AbstractBlock$Properties;")
     def func_200948_a(self, instance, a, b):
@@ -160,11 +166,11 @@ class Block(AbstractBlock):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
     @native("func_176223_P", "()Lnet/minecraft/block/BlockState;")
     def func_176223_P(self, instance):
-        pass
+        return instance.properties
 
     @native("setRegistryName", "(Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
     def setRegistryName(self, instance, name: str):
@@ -273,7 +279,7 @@ class SandBlock(Block):
 
     @native("<init>", "(ILnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, value, properties):
-        pass
+        instance.properties = properties
 
 
 class StairsBlock(Block):
@@ -281,7 +287,7 @@ class StairsBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/BlockState;Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, a, properties):
-        pass
+        instance.properties = properties
 
 
 class SlabBlock(Block):
@@ -289,7 +295,7 @@ class SlabBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class WallBlock(Block):
@@ -297,7 +303,7 @@ class WallBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class GrassBlock(Block):
@@ -305,7 +311,7 @@ class GrassBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class HorizontalFaceBlock(Block):
@@ -320,7 +326,7 @@ class HorizontalFaceBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
     @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
     def func_180632_j(self, instance, state):
@@ -335,7 +341,7 @@ class HugeMushroomBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class SaplingBlock(Block):
@@ -343,7 +349,7 @@ class SaplingBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/trees/Tree;Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, tree, properties):
-        pass
+        instance.properties = properties
 
     @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
     def func_180632_j(self, instance, block_state):
@@ -358,7 +364,7 @@ class LeavesBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class RotatedPillarBlock(Block):
@@ -366,7 +372,7 @@ class RotatedPillarBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class FenceBlock(Block):
@@ -374,7 +380,7 @@ class FenceBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class FenceGateBlock(Block):
@@ -382,7 +388,7 @@ class FenceGateBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class DoorBlock(Block):
@@ -390,7 +396,7 @@ class DoorBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class TrapDoorBlock(Block):
@@ -398,7 +404,7 @@ class TrapDoorBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class PressurePlateBlock(Block):
@@ -406,7 +412,7 @@ class PressurePlateBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/PressurePlateBlock$Sensitivity;Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, sensitivity, properties):
-        pass
+        instance.properties = properties
 
 
 class PressurePlateBlock_Sensitivity(NativeClass):
@@ -424,7 +430,7 @@ class WoodButtonBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class FlowerBlock(Block):
@@ -432,7 +438,7 @@ class FlowerBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/potion/Effect;ILnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, effect, level, properties):
-        pass
+        instance.properties = properties
 
 
 class TallFlowerBlock(Block):
@@ -440,7 +446,7 @@ class TallFlowerBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class DoublePlantBlock(Block):
@@ -454,7 +460,7 @@ class DoublePlantBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
     @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
     def func_180632_j(self, instance, state):
@@ -469,7 +475,7 @@ class VineBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class BushBlock(Block):
@@ -477,7 +483,7 @@ class BushBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class IWaterLoggable(NativeClass):
@@ -510,7 +516,7 @@ class SixWayBlock(Block):
 
     @native("<init>", "(FLnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, value, properties):
-        pass
+        instance.properties = properties
 
     @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
     def func_180632_j(self, instance, state):
@@ -522,7 +528,7 @@ class MushroomBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, properties):
-        pass
+        instance.properties = properties
 
 
 class FlowerPotBlock(Block):
@@ -530,7 +536,7 @@ class FlowerPotBlock(Block):
 
     @native("<init>", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, block, properties):
-        pass
+        instance.properties = properties
 
 
 class IPlantable(NativeClass):

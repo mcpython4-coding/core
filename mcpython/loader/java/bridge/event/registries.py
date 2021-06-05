@@ -113,5 +113,10 @@ def parseBlockToFactory(obj):
     else:
         print(obj)
 
+    try:
+        instance.set_strength(obj.properties.hardness, obj.properties.blast_resistance)
+    except AttributeError:
+        raise AttributeError(obj, instance)
+
     instance.finish()
 

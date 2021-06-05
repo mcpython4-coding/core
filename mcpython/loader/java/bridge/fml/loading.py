@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import traceback
 
+import mcpython.common.mod.ModLoader
 from mcpython import shared, logger
 from mcpython.loader.java.Java import NativeClass, native
 from mcpython.loader.java.Runtime import Runtime, UnhandledInstructionException
@@ -41,7 +42,10 @@ class Mod_EventBusSubscriber(NativeClass):
 
                 runtime = Runtime()
 
-                runtime.run_method(method, shared.registry.get_by_name("minecraft:block"))
+                try:
+                    runtime.run_method(method, shared.registry.get_by_name("minecraft:block"))
+                except:
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException
 
         # else:
             # print("sub", 2, cls, args)
