@@ -21,3 +21,7 @@ class ResourceLocation(NativeClass):
     @native("<init>", "(Ljava/lang/String;)V")
     def init(self, instance, location: str):
         pass
+
+    @native("<init>", "(Ljava/lang/String;Ljava/lang/String;)V")
+    def init(self, instance, location: str):
+        pass

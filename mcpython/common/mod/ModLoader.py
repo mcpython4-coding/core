@@ -67,6 +67,7 @@ class ModLoader:
 
         # the directory currently loading from
         self.active_directory: typing.Optional[str] = None
+        self.current_resource_access = None
 
         # which stage we are in
         self.active_loading_stage: int = 0
@@ -181,8 +182,10 @@ class ModLoader:
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
+                    resource = mcpython.ResourceLoader.ResourceZipFile(file)
+                    self.current_resource_access = resource
                     mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
-                        0, mcpython.ResourceLoader.ResourceZipFile(file)
+                        0, resource
                     )
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
@@ -208,6 +211,7 @@ class ModLoader:
 
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
+                    self.current_resource_access = None
                     try:
                         data = importlib.import_module(
                             "mods." + file.split("/")[-1].split("\\")[-1].split(".")[0]
@@ -221,8 +225,10 @@ class ModLoader:
 
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
+                resource = mcpython.ResourceLoader.ResourceDirectory(file)
+                self.current_resource_access = resource
                 mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
-                    0, mcpython.ResourceLoader.ResourceDirectory(file)
+                    0, resource
                 )
                 self.active_directory = file
                 if os.path.exists(file + "/mod.json"):
@@ -579,6 +585,8 @@ class ModLoader:
 
         if instance.path is not None:
             instance.path = self.active_directory
+
+        instance.resource_access = self.current_resource_access
 
         self.located_mod_instances.append(instance)
 

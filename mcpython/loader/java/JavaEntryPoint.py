@@ -51,15 +51,20 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
         Called during mod init for loading the java code from the .jar archives
         """
 
-        for cls in self.main_classes:
+        for file in self.resource_access.get_all_entries_in_directory(""):
+            if not file.endswith(".class"): continue
+            cls = file.split(".")[0]
             try:
-                logger.println(f"[JAVA FML][INFO] loading class {cls}")
                 java_class = jvm.get_class(cls)
-                jvm.load_lazy()
 
-                logger.println(f"[JAVA FML][INFO] executing class {cls}")
-                instance = java_class.create_instance()
-                self.runtime.run_method(instance.get_method("<init>", "()V"), instance)
+                # todo: check if mod main class
+
+                if False:
+                    jvm.load_lazy()
+
+                    logger.println(f"[JAVA FML][INFO] executing class {cls}")
+                    instance = java_class.create_instance()
+                    self.runtime.run_method(instance.get_method("<init>", "()V"), instance)
 
             except:
                 logger.print_exception("[JAVA][FATAL] fatal class loader exception")
@@ -105,13 +110,6 @@ class JavaModLoader(mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint):
             mod.add_load_default_resources()
             mods[d["modId"]] = mod
             mod.loader_version = loader_version
-
-            if "mainClass" in d:
-                mod.main_classes.append(d["mainClass"])
-            else:
-                logger.println(
-                    "[WARN] java-fml does currently not support dynamic class lookup"
-                )
 
             shared.mod_loader(d["modId"], "stage:mod:init")(mod.load_underlying_classes)
 

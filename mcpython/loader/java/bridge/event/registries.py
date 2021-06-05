@@ -72,7 +72,7 @@ class Registry(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes = {"field_239689_aA_": None}
+        self.exposed_attributes = {"field_239689_aA_": None, "field_239720_u_": None}
 
     @native(
         "func_218325_a",
