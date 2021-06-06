@@ -112,6 +112,14 @@ class AbstractBlock_Properties(NativeClass):
     def func_180632_j(self, instance, value, blockstate):
         pass
 
+    @native("func_235842_b_", "(Lnet/minecraft/block/AbstractBlock$IPositionPredicate;)Lnet/minecraft/block/AbstractBlock$Properties;")
+    def func_235842_b_(self, instance, position_predicate):
+        return instance
+
+    @native("func_235828_a_", "(Lnet/minecraft/block/AbstractBlock$IPositionPredicate;)Lnet/minecraft/block/AbstractBlock$Properties;")
+    def func_235828_a_(self, instance, position_predicate):
+        return instance
+
 
 class SoundType(NativeClass):
     NAME = "net/minecraft/block/SoundType"
@@ -122,6 +130,7 @@ class SoundType(NativeClass):
             "field_185855_h": None,
             "field_185850_c": None,
             "field_185848_a": None,
+            "field_185851_d": None,
         })
 
     @native("<init>", "(FFLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;)V")
@@ -508,6 +517,18 @@ class HorizontalBlock(Block):
             "field_185512_D": None,
         })
 
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        instance.properties = properties
+
+    @native("func_180632_j", "(Lnet/minecraft/block/BlockState;)V")
+    def func_180632_j(self, instance, state):
+        pass
+
+    @native("func_176223_P", "()Lnet/minecraft/block/BlockState;")
+    def func_176223_P(self, instance):
+        return instance
+
 
 class SixWayBlock(Block):
     NAME = "net/minecraft/block/SixWayBlock"
@@ -781,6 +802,14 @@ class Direction(NativeClass):
     @native("ordinal", "()I")
     def ordinal(self, instance):
         return 0
+
+
+class EnumProperty(NativeClass):
+    NAME = "net/minecraft/state/EnumProperty"
+
+    @native("func_177709_a", "(Ljava/lang/String;Ljava/lang/Class;)Lnet/minecraft/state/EnumProperty;")
+    def func_1777709_a(self, name, cls):
+        return self.create_instance()
 
 
 class Tree(NativeClass):

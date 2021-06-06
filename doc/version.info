@@ -1684,7 +1684,7 @@ R   [uuk]: improved world serialization API
 
 pending:
 - remove logging noise from the JVM
-- create some mapping method signature -> event stage replacing the hardcoded event annotation stuff
+- flag for debug mode for jvm
 
 pushed back behind next snapshot, moved away from here before merge onto main:
 - make the exception screen scrollable
@@ -1696,4 +1696,6 @@ pushed back behind next snapshot, moved away from here before merge onto main:
 - runtime mod reload
 - an attachable debugger for certain functions / opcode regions
 - a framework for actively modifying bytecode -> optimisation system
+- a bytecode viewer for debugging single instructions [in-game, via some callback and continue system]
+- jvm exception handling [currently not implemented]
 

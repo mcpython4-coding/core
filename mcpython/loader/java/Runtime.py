@@ -408,7 +408,7 @@ class ArrayStore(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load(Instruction):
-    OPCODES = {0x19}
+    OPCODES = {0x19, 0x15}
 
     @classmethod
     def decode(
@@ -459,7 +459,7 @@ class Load3(Instruction):
 
 @BytecodeRepr.register_instruction
 class Store(Instruction):
-    OPCODES = {0x3A}
+    OPCODES = {0x3A, 0x36}
 
     @classmethod
     def decode(
@@ -529,6 +529,26 @@ class DUP(Instruction):
 
 
 @BytecodeRepr.register_instruction
+class IADD(Instruction):
+    OPCODES = {0x60}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        b, a = stack.pop(), stack.pop()
+        stack.push(a + b)
+
+
+@BytecodeRepr.register_instruction
+class IDIV(Instruction):
+    OPCODES = {0x6C}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        b, a = stack.pop(), stack.pop()
+        stack.push(a // b)
+
+
+@BytecodeRepr.register_instruction
 class IINC(Instruction):
     OPCODES = {0x84}
 
@@ -536,7 +556,7 @@ class IINC(Instruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return (data[index+1], mcpython.loader.java.Java.U1_S.unpack(data[index + 2 : index + 3])), 3
+        return (data[index+1], mcpython.loader.java.Java.U1_S.unpack(data[index + 2 : index + 3])[0]), 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -612,7 +632,7 @@ class Goto(Instruction):
 
 @BytecodeRepr.register_instruction
 class AReturn(Instruction):
-    OPCODES = {0xB0}
+    OPCODES = {0xB0, 0xAC}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -823,6 +843,21 @@ class CheckCast(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         pass  # todo: implement
+
+
+@BytecodeRepr.register_instruction
+class InstanceOf(CPLinkedInstruction):
+    OPCODES = {0xC0}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        obj = stack.pop()
+
+        if not hasattr(obj, "get_class"):
+            # todo: we need a fix here!
+            stack.push(0)
+        else:
+            stack.push(int(obj is None or obj.get_class().is_subclass_of(data[1][1])))
 
 
 @BytecodeRepr.register_instruction

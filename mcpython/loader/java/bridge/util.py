@@ -30,3 +30,34 @@ class ResourceLocation(NativeClass):
     @native("<init>", "(Ljava/lang/String;Ljava/lang/String;)V")
     def init(self, instance, namespace: str, postfix: str):
         instance.name = namespace + ":" + postfix
+
+
+class IBooleanFunction(NativeClass):
+    NAME = "net/minecraft/util/math/shapes/IBooleanFunction"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_223234_e_": None,
+        })
+
+
+class VoxelShape(NativeClass):
+    NAME = "net/minecraft/util/math/shapes/VoxelShape"
+
+
+class VoxelShapes(NativeClass):
+    NAME = "net/minecraft/util/math/shapes/VoxelShapes"
+
+    @native("func_197878_a", "(Lnet/minecraft/util/math/shapes/VoxelShape;Lnet/minecraft/util/math/shapes/VoxelShape;Lnet/minecraft/util/math/shapes/IBooleanFunction;)Lnet/minecraft/util/math/shapes/VoxelShape;")
+    def func_197878_a(self, a, b, function):
+        return self.vm.get_class("net/minecraft/util/math/shapes/VoxelShape").create_instance()
+
+
+class AxisAlignedBB(NativeClass):
+    NAME = "net/minecraft/util/math/AxisAlignedBB"
+
+    @native("<init>", "(DDDDDD)V")
+    def init(self, instance, a, b, c, d, e, f):
+        pass
+

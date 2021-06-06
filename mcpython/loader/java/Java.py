@@ -16,6 +16,7 @@ This project is not official by mojang and does not relate to it.
 # See Runtime.py for a system for executing the bytecode
 # See builtin folder for python implementations for java internals
 import struct
+import traceback
 import types
 import typing
 from abc import ABC
@@ -88,8 +89,8 @@ class JavaVM:
             self.get_class(self.lazy_classes.pop())
 
     def init_builtins(self):
-        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean
-        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map
+        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean, Deprecated, ThreadLocal
+        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List
         from mcpython.loader.java.builtin.java.util.function import Predicate
         from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
@@ -390,6 +391,10 @@ class ElementValue:
 
             cls = vm.get_class(cls_name)
             self.data = cls.get_static_attribute(attr_name)
+        elif tag == "c":
+            self.data = table.class_file.cp[pop_u2(data)-1]
+        elif tag == "[":
+            self.data = [ElementValue().parse(table, data) for _ in range(pop_u2(data))]
         else:
             raise NotImplementedError(tag)
 
@@ -669,8 +674,14 @@ class JavaBytecodeClass(AbstractJavaClass):
         if "RuntimeVisibleAnnotations" in self.attributes.attributes:
             for annotation in self.attributes["RuntimeVisibleAnnotations"]:
                 for cls_name, args in annotation.annotations:
-                    cls = vm.get_class(cls_name)
-                    cls.on_annotate(self, args)
+                    try:
+                        cls = vm.get_class(cls_name)
+                    except RuntimeError:  # checks if the class exists
+                        # todo: can we do something else here, maybe add a flag to get_class to return None if the class
+                        #   could not be loaded -> None check here
+                        traceback.print_exc()
+                    else:
+                        cls.on_annotate(self, args)
 
     def create_instance(self):
         return JavaClassInstance(self)

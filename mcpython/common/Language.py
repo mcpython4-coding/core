@@ -89,7 +89,7 @@ class Language:
         try:
             lines = (
                 mcpython.ResourceLoader.read_raw(file)
-                .decode("UTF-8", 0, None)
+                .decode("UTF-8", "ignore")
                 .split("\n")
             )
         except:

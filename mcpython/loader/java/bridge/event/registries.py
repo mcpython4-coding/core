@@ -101,6 +101,13 @@ class RegistryObject(NativeClass):
         return registry().get(location.name) if registry is not None else None
 
 
+class ObjectHolder(NativeClass):
+    NAME = "net/minecraftforge/registries/ObjectHolder"
+
+    def on_annotate(self, cls, args):
+        pass
+
+
 def parseBlockToFactory(obj):
     if not hasattr(obj, "registry_name"):
         logger.println(f"[JAVAFML][TRANSFORMER] transformation of {obj} failed as no registry name is set!")
@@ -123,8 +130,8 @@ def parseBlockToFactory(obj):
         instance.set_solid(False).set_all_side_solid(False)
     elif cls.is_subclass_of("net/minecraft/block/RotatedPillarBlock"):
         instance.set_log()
-    else:
-        print(obj, obj.registry_name)
+    # else:
+        # print(obj, obj.registry_name)
 
     try:
         instance.set_strength(obj.properties.hardness, obj.properties.blast_resistance)
@@ -160,4 +167,12 @@ def parseItemToFactory(obj):
         raise AttributeError(obj, instance)
 
     instance.finish()
+
+
+class RegistryEvent__Register(NativeClass):
+    NAME = "net/minecraftforge/event/RegistryEvent$Register"
+
+    @native("getRegistry", "()Lnet/minecraftforge/registries/IForgeRegistry;")
+    def getRegistry(self, instance):
+        return lambda: instance
 
