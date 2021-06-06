@@ -1679,11 +1679,13 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed Runtime.run_method not returning for non-native methods the return value, resulting into None to be always
        pushed back onto the stack
 [uuk]: <FML> fixed Blocks.func_235430_a_() not setting Block$Properties
+[uuk]: added base injection point for items
+[uuk]: items
 
 pending:
-- create Items when possible
-- wrap ItemGroups around our creative tab system
+- BlockItems should use the creative tab system even if not creating item instances
 - remove logging noise from the JVM
+- create some mapping method signature -> event stage replacing the hardcoded event annotation stuff
 
 pushed back behind next snapshot, moved away from here before merge onto main:
 - make the exception screen scrollable
@@ -1693,4 +1695,6 @@ pushed back behind next snapshot, moved away from here before merge onto main:
 - implement all of the instructions
 - prepare for mc forge 1.17 [when it is released]
 - runtime mod reload
+- an attachable debugger for certain functions / opcode regions
+- a framework for actively modifying bytecode -> optimisation system
 

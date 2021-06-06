@@ -556,8 +556,37 @@ class IGrowable(NativeClass):
     NAME = "net/minecraft/block/IGrowable"
 
 
+class Item(NativeClass):
+    NAME = "net/minecraft/item/Item"
+
+    def create_instance(self):
+        instance = super().create_instance()
+        instance.properties = None
+        instance.registry_name = None
+        return instance
+
+    @native("<init>", "(Lnet/minecraft/item/Item$Properties;)V")
+    def init(self, instance, properties):
+        instance.properties = properties
+
+    @native("setRegistryName", "(Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, name):
+        instance.registry_name = name
+        return instance
+
+    @native("func_70067_L", "()Z")
+    def func_70067_L(self, instance):
+        return 0
+
+
 class Item_Properties(NativeClass):
     NAME = "net/minecraft/item/Item$Properties"
+
+    def create_instance(self):
+        instance = super().create_instance()
+        instance.item_group = None
+        instance.rarity = None
+        return instance
 
     @native("<init>", "()V")
     def init(self, instance):
@@ -565,6 +594,16 @@ class Item_Properties(NativeClass):
 
     @native("func_200916_a", "(Lnet/minecraft/item/ItemGroup;)Lnet/minecraft/item/Item$Properties;")
     def setItemGroup(self, instance, item_group):
+        instance.item_group = item_group
+        return instance
+
+    @native("func_208103_a", "(Lnet/minecraft/item/Rarity;)Lnet/minecraft/item/Item$Properties;")
+    def setRarity(self, instance, rarity):
+        instance.rarity = rarity
+        return instance
+
+    @native("func_200917_a", "(I)Lnet/minecraft/item/Item$Properties;")
+    def func_200917_a(self, instance, value):
         return instance
 
 
@@ -574,16 +613,37 @@ class ItemGroup(NativeClass):
     def __init__(self):
         super().__init__()
         self.exposed_attributes.update({
-            "field_78ß32_a": None,
-            "field_78032_a": [],
+            # Exposed for a ID of the tab, as mc requires it for no reason. We don't need it
+            "field_78032_a": []
         })
 
     @native("<init>", "(ILjava/lang/String;)V")
     def init(self, instance, a: int, b: str):
-        pass
+        import mcpython.client.gui.InventoryCreativeTab
+
+        import mcpython.loader.java.Runtime
+        runtime = mcpython.loader.java.Runtime.Runtime()
+
+        # create the item stack
+        stack = runtime.run_method(instance.get_class().get_method("func_78016_d", "()Lnet/minecraft/item/ItemStack;"))
+
+        instance.underlying_tab = mcpython.client.gui.InventoryCreativeTab.CreativeItemTab(b, stack.underlying_stack)
+
+        @shared.mod_loader("minecraft", "stage:item_groups:load")
+        def add_tab():
+            mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.add_tab(instance.underlying_tab)
 
 
-class BlockItem(NativeClass):
+class ItemStack(NativeClass):
+    NAME = "net/minecraft/item/ItemStack"
+
+    @native("<init>", "(Lnet/minecraft/util/IItemProvider;)V")
+    def init(self, instance, item_provider):
+        import mcpython.common.container.ResourceStack
+        instance.underlying_stack = mcpython.common.container.ResourceStack.ItemStack()
+
+
+class BlockItem(Item):
     NAME = "net/minecraft/item/BlockItem"
 
     @native("<init>", "(Lnet/minecraft/block/Block;Lnet/minecraft/item/Item$Properties;)V")
@@ -626,12 +686,30 @@ class ShovelItem(NativeClass):
         }
 
 
+class MusicDiscItem(Item):
+    NAME = "net/minecraft/item/MusicDiscItem"
+
+    @native("<init>", "(ILjava/util/function/Supplier;Lnet/minecraft/item/Item$Properties;)V")
+    def init(self, instance, value, supplier, properties):
+        instance.properties = properties
+
+
 class IItemProvider(NativeClass):
     NAME = "net/minecraft/util/IItemProvider"
 
     @native("func_199767_j", "()Lnet/minecraft/item/Item;")
     def getItem(self, instance):
         pass
+
+
+class ItemRarity(NativeClass):
+    NAME = "net/minecraft/item/Rarity"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "RARE": "net/minecraft/item/Rarity::RARE"
+        })
 
 
 class AttachFace(NativeClass):
@@ -718,4 +796,14 @@ class BigTree(NativeClass):
     @native("<init>", "()V")
     def init(self, instance):
         pass
+
+
+class EntityPredicates(NativeClass):
+    NAME = "net/minecraft/util/EntityPredicates"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_180132_d": None,
+        })
 

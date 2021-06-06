@@ -90,6 +90,7 @@ class JavaVM:
     def init_builtins(self):
         from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean
         from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map
+        from mcpython.loader.java.builtin.java.util.function import Predicate
         from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
     def init_bridge(self):
@@ -99,7 +100,7 @@ class JavaVM:
         from mcpython.loader.java.bridge.fml import loading
         from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil, gson
         from mcpython.loader.java.bridge.world import biomes, collection
-        from mcpython.loader.java.bridge.misc import containers, potions
+        from mcpython.loader.java.bridge.misc import containers, potions, dispenser
         from mcpython.loader.java.bridge.client import rendering
 
     def get_class(self, name: str) -> "AbstractJavaClass":

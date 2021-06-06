@@ -35,7 +35,7 @@ class Mod_EventBusSubscriber(NativeClass):
         if ("registerBlocks", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V") in cls.methods:
             current_mod = shared.CURRENT_EVENT_SUB
 
-            @shared.mod_loader("minecraft", "stage:block:factory:prepare")
+            @shared.mod_loader("minecraft", "stage:block:factory_usage")
             def load():
                 shared.CURRENT_EVENT_SUB = current_mod
                 method = cls.get_method("registerBlocks", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V")
@@ -44,6 +44,21 @@ class Mod_EventBusSubscriber(NativeClass):
 
                 try:
                     runtime.run_method(method, shared.registry.get_by_name("minecraft:block"))
+                except:
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException
+
+        if ("registerItems", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V") in cls.methods:
+            current_mod = shared.CURRENT_EVENT_SUB
+
+            @shared.mod_loader("minecraft", "stage:item:factory_usage")
+            def load():
+                shared.CURRENT_EVENT_SUB = current_mod
+                method = cls.get_method("registerItems", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V")
+
+                runtime = Runtime()
+
+                try:
+                    runtime.run_method(method, shared.registry.get_by_name("minecraft:item"))
                 except:
                     raise mcpython.common.mod.ModLoader.LoadingInterruptException
 

@@ -39,6 +39,8 @@ class IForgeRegistry(NativeClass):
 
         if registry.name == "minecraft:block":
             parseBlockToFactory(entry)
+        elif registry.name == "minecraft:item":
+            parseItemToFactory(entry)
 
 
 class ForgeRegistries(NativeClass):
@@ -57,6 +59,7 @@ class ForgeRegistries(NativeClass):
             "WORLD_TYPES": None,
             "BLOCKS": lambda: shared.registry.get_by_name("minecraft:block"),
             "ITEMS": lambda: shared.registry.get_by_name("minecraft:item"),
+            "SOUND_EVENTS": None,
         }
 
 
@@ -90,6 +93,14 @@ class RegistryKey(NativeClass):
         return key
 
 
+class RegistryObject(NativeClass):
+    NAME = "net/minecraftforge/fml/RegistryObject"
+
+    @native("of", "(Lnet/minecraft/util/ResourceLocation;Lnet/minecraftforge/registries/IForgeRegistry;)Lnet/minecraftforge/fml/RegistryObject;")
+    def of(self, location, registry):
+        return registry().get(location.name) if registry is not None else None
+
+
 def parseBlockToFactory(obj):
     if not hasattr(obj, "registry_name"):
         logger.println(f"[JAVAFML][TRANSFORMER] transformation of {obj} failed as no registry name is set!")
@@ -117,6 +128,30 @@ def parseBlockToFactory(obj):
 
     try:
         instance.set_strength(obj.properties.hardness, obj.properties.blast_resistance)
+    except AttributeError:
+        raise AttributeError(obj, instance)
+
+    instance.finish()
+
+
+def parseItemToFactory(obj):
+    cls = obj.get_class()
+
+    # we can skip BlockItems as they are created on the fly
+    # todo: inject item properties somewhere
+    if cls.is_subclass_of("net/minecraft/item/BlockItem"): return
+
+    import mcpython.common.factory.ItemFactory
+
+    name = shared.CURRENT_EVENT_SUB + ":" + obj.registry_name
+    instance = mcpython.common.factory.ItemFactory.ItemFactory().set_name(name)
+
+    try:
+        tab = obj.properties.item_group
+
+        if tab is not None:
+            # todo: do we need a lazy here?
+            tab.underlying_tab.add_item(name)
     except AttributeError:
         raise AttributeError(obj, instance)
 

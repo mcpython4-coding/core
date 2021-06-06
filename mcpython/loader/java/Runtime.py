@@ -148,6 +148,8 @@ class Stack:
         self.return_value = value
 
     def run(self):
+        # todo: is this really needed?
+        self.method.class_file.prepare_use()
         # mcpython.loader.java.Java.info(("launching method", self.method))
 
         while self.cp != -1:

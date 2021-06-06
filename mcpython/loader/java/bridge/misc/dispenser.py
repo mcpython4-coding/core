@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -15,18 +15,18 @@ from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class ResourceLocation(NativeClass):
-    NAME = "net/minecraft/util/ResourceLocation"
+class DefaultDispenseItemBehavior(NativeClass):
+    NAME = "net/minecraft/dispenser/DefaultDispenseItemBehavior"
 
-    def create_instance(self):
-        instance = super().create_instance()
-        instance.name = ""
-        return instance
+    @native("<init>", "()V")
+    def init(self, instance):
+        pass
 
-    @native("<init>", "(Ljava/lang/String;)V")
-    def init(self, instance, location: str):
-        instance.name = location
 
-    @native("<init>", "(Ljava/lang/String;Ljava/lang/String;)V")
-    def init(self, instance, namespace: str, postfix: str):
-        instance.name = namespace + ":" + postfix
+class DispenserBlock(NativeClass):
+    NAME = "net/minecraft/block/DispenserBlock"
+
+    @native("func_199774_a", "(Lnet/minecraft/util/IItemProvider;Lnet/minecraft/dispenser/IDispenseItemBehavior;)V")
+    def func_199774_a(self, provider, behaviour):
+        pass
+
