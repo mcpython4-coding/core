@@ -648,7 +648,8 @@ class BlockItem(Item):
 
     @native("<init>", "(Lnet/minecraft/block/Block;Lnet/minecraft/item/Item$Properties;)V")
     def init(self, instance, block, properties):
-        pass
+        instance.block = block
+        instance.properties = properties
 
     @native("setRegistryName", "(Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
     def setRegistryName(self, instance, name: str):

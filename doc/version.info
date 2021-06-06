@@ -1680,10 +1680,9 @@ R   [uuk]: improved world serialization API
        pushed back onto the stack
 [uuk]: <FML> fixed Blocks.func_235430_a_() not setting Block$Properties
 [uuk]: added base injection point for items
-[uuk]: items
+[uuk]: items are now using the ItemGroup correctly
 
 pending:
-- BlockItems should use the creative tab system even if not creating item instances
 - remove logging noise from the JVM
 - create some mapping method signature -> event stage replacing the hardcoded event annotation stuff
 

@@ -137,13 +137,17 @@ def parseBlockToFactory(obj):
 def parseItemToFactory(obj):
     cls = obj.get_class()
 
+    name = shared.CURRENT_EVENT_SUB + ":" + obj.registry_name
+
     # we can skip BlockItems as they are created on the fly
     # todo: inject item properties somewhere
-    if cls.is_subclass_of("net/minecraft/item/BlockItem"): return
+    if cls.is_subclass_of("net/minecraft/item/BlockItem"):
+        if obj.properties is not None and obj.properties.item_group is not None:
+            obj.properties.item_group.underlying_tab.add_item(name)
+        return
 
     import mcpython.common.factory.ItemFactory
 
-    name = shared.CURRENT_EVENT_SUB + ":" + obj.registry_name
     instance = mcpython.common.factory.ItemFactory.ItemFactory().set_name(name)
 
     try:
