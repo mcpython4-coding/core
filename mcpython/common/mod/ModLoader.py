@@ -730,8 +730,6 @@ class ModLoader:
                     return
             except LoadingInterruptException:
                 print("stopping loading cycle")
-                logger.print_exception()
-                mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
                 return
             except:
                 sys.exit(-1)

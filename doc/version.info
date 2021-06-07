@@ -1685,11 +1685,11 @@ R   [uuk]: improved world serialization API
        [can be used to implement another mod loader version / type]
        This allows in the future to load 1.17 mods in parallel to 1.16.5 mods
 [uuk]: implemented non-gui attachable debugger for methods
+[uuk]: cleaned up exception printing by using our own text collector for jvm exceptions
+[uuk]: fixed resolving of invokedynamic instruction
 
 pending:
-- remove logging noise from the JVM
-- flag for debug mode for jvm
-- clean up error printing in log
+- class load split into event subs
 
 pushed back behind next snapshot, moved away from here before merge onto main:
 - make the exception screen scrollable

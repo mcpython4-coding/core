@@ -90,7 +90,12 @@ class CraftingManager:
     def add_recipe_from_data(self, data: dict, name: str, file: str = None):
         recipe_type = data["type"]
         if recipe_type in self.recipe_info_table:
-            recipe = self.recipe_info_table[recipe_type].from_data(data, file)
+            try:
+                recipe = self.recipe_info_table[recipe_type].from_data(data, file)
+            except:
+                logger.print_exception(f"during decoding {file}")
+                recipe = None
+
             if recipe is None:
                 return 0
             self.add_recipe(recipe, name)
@@ -142,12 +147,14 @@ class CraftingManager:
                 )
             )
             return  # make sure to load only ones!
+
         self.loaded_mod_dirs.add(modname)
         for file in mcpython.ResourceLoader.get_all_entries(
             "data/{}/recipes".format(modname)
         ):
             if file.endswith("/"):
                 continue
+
             if not load_direct:
                 shared.mod_loader.mods[modname].eventbus.subscribe(
                     "stage:recipe:bake",

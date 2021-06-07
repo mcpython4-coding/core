@@ -39,7 +39,7 @@ class Biomes(NativeClass):
             "field_76768_g": None,
         }
 
-    def get_static_attribute(self, name: str):
+    def get_static_attribute(self, name: str, expected_type=None):
         if name in self.exposed_attributes:
             return self.exposed_attributes[name]
         # print("missing biome key", name)  # todo: fix!

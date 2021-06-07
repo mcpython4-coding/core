@@ -23,8 +23,10 @@ class Mod(NativeClass):
     NAME = "net/minecraftforge/fml/common/Mod"
 
     def on_annotate(self, cls, args):
-        # print("mod", 1, cls, args)
-        pass
+        import mcpython.loader.java.Runtime
+        runtime = mcpython.loader.java.Runtime.Runtime()
+        instance = cls.create_instance()
+        runtime.run_method(cls.get_method("<init>", "()V"), instance)
 
 
 class Mod_EventBusSubscriber(NativeClass):
@@ -98,6 +100,10 @@ class ModLoadingContext(NativeClass):
 
     @native("registerConfig", "(Lnet/minecraftforge/fml/config/ModConfig$Type;Lnet/minecraftforge/common/ForgeConfigSpec;Ljava/lang/String;)V")
     def registerConfig(self, instance, config_type, config_spec, file_name: str):
+        pass
+
+    @native("registerConfig", "(Lnet/minecraftforge/fml/config/ModConfig$Type;Lnet/minecraftforge/common/ForgeConfigSpec;)V")
+    def registerConfig2(self, instance, config_type, config_spec):
         pass
 
 
@@ -182,7 +188,11 @@ class DistExecutor(NativeClass):
         "(Ljava/util/function/Supplier;Ljava/util/function/Supplier;)Ljava/lang/Object;",
     )
     def runForDist(self, left, right):
-        pass
+        pass  # todo: run code when on the respective side
+
+    @native("unsafeRunForDist", "(Ljava/util/function/Supplier;Ljava/util/function/Supplier;)Ljava/lang/Object;")
+    def unsafeRunForDist(self, left, right):
+        return self.runForDist(left, right)
 
 
 class FMLPaths(NativeClass):
@@ -205,7 +215,7 @@ class ModConfig_Type(NativeClass):
         self.exposed_attributes = {"COMMON": None, "CLIENT": None}
 
 
-class ForgeConfigSpec_Builder(NativeClass):
+class ForgeConfigSpec__Builder(NativeClass):
     NAME = "net/minecraftforge/common/ForgeConfigSpec$Builder"
 
     @native('<init>', '()V')
@@ -236,6 +246,10 @@ class ForgeConfigSpec_Builder(NativeClass):
     def build(self, instance):
         return
 
+    @native("configure", "(Ljava/util/function/Function;)Lorg/apache/commons/lang3/tuple/Pair;")
+    def configure(self, instance, function):
+        return None, None
+
 
 class FMLCommonSetupEvent(NativeClass):
     NAME = "net/minecraftforge/fml/event/lifecycle/FMLCommonSetupEvent"
@@ -252,5 +266,15 @@ class OnlyIn(NativeClass):
     NAME = "net/minecraftforge/api/distmarker/OnlyIn"
 
     def on_annotate(self, cls, args):
-        logger.println("[FML][WARN] got internal @OnlyIn marker not specified for use in mods. Things may break!")
+        logger.println(f"[FML][WARN] got internal @OnlyIn marker on cls {cls.name} not specified for use in mods. Things may break!")
+
+
+class MinecraftForge(NativeClass):
+    NAME = "net/minecraftforge/common/MinecraftForge"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "EVENT_BUS": None,
+        })
 

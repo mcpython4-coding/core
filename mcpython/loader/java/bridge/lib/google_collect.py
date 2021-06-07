@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
+from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
 
 class HashMultiMap(NativeClass):
@@ -103,3 +104,46 @@ class ImmutableMultimap__Builder(NativeClass):
     @native("build", "()Lcom/google/common/collect/ImmutableMultimap;")
     def build(self, instance):
         return self.vm.get_class("com/google/common/collect/ImmutableMultimap", version=self.internal_version).create_instance()
+
+
+class MutableClassToInstanceMap(NativeClass):
+    NAME = "com/google/common/collect/MutableClassToInstanceMap"
+
+    @native("create", "()Lcom/google/common/collect/MutableClassToInstanceMap;")
+    def create(self):
+        return self.create_instance()
+
+    @native("containsKey", "(Ljava/lang/Object;)Z")
+    def containsKey(self, instance, key):
+        return False
+
+    @native("putInstance", "(Ljava/lang/Class;Ljava/lang/Object;)Ljava/lang/Object;")
+    def putInstance(self, instance, cls, obj):
+        return obj
+
+
+class Preconditions(NativeClass):
+    NAME = "com/google/common/base/Preconditions"
+
+    @native("checkNotNull", "(Ljava/lang/Object;)Ljava/lang/Object;")
+    def checkNotNull(self, obj):
+        if obj is None:
+            raise StackCollectingException("expected non-null, got null")
+        return obj
+
+    @native("checkArgument", "(Z)V")
+    def checkArgument(self, value):
+        if not value:
+            raise StackCollectingException("expected true, got false")
+
+
+class ClassToInstanceMap(NativeClass):
+    NAME = "com/google/common/collect/ClassToInstanceMap"
+
+    @native("containsKey", "(Ljava/lang/Object;)Z")
+    def containsKey(self, instance, key):
+        return False
+
+    @native("putInstance", "(Ljava/lang/Class;Ljava/lang/Object;)Ljava/lang/Object;")
+    def putInstance(self, instance, cls, obj):
+        return obj

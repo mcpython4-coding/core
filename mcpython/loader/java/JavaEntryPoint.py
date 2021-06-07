@@ -15,6 +15,7 @@ import sys
 import traceback
 
 import mcpython.common.mod.ExtensionPoint
+from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 import mcpython.common.mod.Mod
 import mcpython.loader.java.Java
 import mcpython.loader.java.Runtime
@@ -31,7 +32,7 @@ jvm.init_bridge()
 mcpython.loader.java.Java.get_bytecode_of_class = (
     lambda file: mcpython.ResourceLoader.read_raw(file.replace(".", "/") + ".class")
 )
-mcpython.loader.java.Java.info = lambda text: logger.println("[JAVA][INFO]", text)
+# mcpython.loader.java.Java.info = lambda text: logger.println("[JAVA][INFO]", text)
 mcpython.loader.java.Java.warn = lambda text: logger.println("[JAVA][WARN]", text)
 
 
@@ -68,6 +69,28 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
                     instance = java_class.create_instance()
                     self.runtime.run_method(instance.get_method("<init>", "()V"), instance)
 
+            except StackCollectingException as e:
+                if shared.IS_CLIENT:
+                    shared.window.set_caption("JavaFML JVM error")
+
+                    try:
+                        import mcpython.client.state.StateLoadingException
+
+                        exception = e.format_exception()
+                        mcpython.client.state.StateLoadingException.error_occur(exception)
+                        logger.print_exception("raw exception trace")
+                        logger.write_into_container("fatal FML error", exception.split("\n"))
+                    except:
+                        logger.print_exception("error screen error")
+                    else:
+                        import mcpython.common.mod.ModLoader
+
+                        raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
+
+                shared.window.close()
+                pyglet.app.exit()
+                sys.exit(-1)
+
             except:
                 logger.print_exception("[JAVA][FATAL] fatal class loader exception")
 
@@ -85,7 +108,7 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
                     else:
                         import mcpython.common.mod.ModLoader
 
-                        raise mcpython.common.mod.ModLoader.LoadingInterruptException
+                        raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
                 shared.window.close()
                 pyglet.app.exit()

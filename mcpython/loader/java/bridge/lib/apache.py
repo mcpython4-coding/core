@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -11,12 +11,22 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class HashMap(NativeClass):
-    NAME = "java/util/HashMap"
+class Pair(NativeClass):
+    """
+    Represented by tuples
+    """
 
-    @native("<init>", "()V")
-    def init(self, instance):
-        pass
+    NAME = "org/apache/commons/lang3/tuple/Pair"
+
+    @native("getLeft", "()Ljava/lang/Object;")
+    def getLeft(self, instance):
+        return instance[0]
+
+    @native("getRight", "()Ljava/lang/Object;")
+    def getRight(self, instance):
+        return instance[1]
+

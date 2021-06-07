@@ -21,7 +21,7 @@ class Blocks(NativeClass):
     def __init__(self):
         super().__init__()
 
-    def get_static_attribute(self, name: str):
+    def get_static_attribute(self, name: str, expected_type=None):
         if name in self.exposed_attributes: return self.exposed_attributes[name]
         return None  # todo: registry lookup when needed
 

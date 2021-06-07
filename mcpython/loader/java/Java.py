@@ -21,6 +21,7 @@ import types
 import typing
 from abc import ABC
 import copy
+from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
 U1 = struct.Struct("!B")
 U1_S = struct.Struct("!b")
@@ -92,8 +93,9 @@ class JavaVM:
             self.get_class(name, version=version)
 
     def init_builtins(self):
-        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean, Deprecated, ThreadLocal
-        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List, Iterator
+        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean, Deprecated, ThreadLocal, FunctionalInterface, Class
+        from mcpython.loader.java.builtin.java.lang.annotation import ElementType, RetentionPolicy, Target, Retention, Documented
+        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List, Iterator, EnumSet, IdentityHashMap
         from mcpython.loader.java.builtin.java.util.function import Predicate
         from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
@@ -102,7 +104,7 @@ class JavaVM:
         from mcpython.loader.java.bridge.codec import builder
         from mcpython.loader.java.bridge.event import registries, content
         from mcpython.loader.java.bridge.fml import loading
-        from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil, gson
+        from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil, gson, apache
         from mcpython.loader.java.bridge.world import biomes, collection
         from mcpython.loader.java.bridge.misc import containers, potions, dispenser
         from mcpython.loader.java.bridge.client import rendering
@@ -132,21 +134,30 @@ class JavaVM:
         try:
             bytecode = get_bytecode_of_class(name)
         except FileNotFoundError:
-            raise RuntimeError(f"class {name} not found!") from None
+            raise StackCollectingException(f"class {name} not found!") from None
 
         info("loading java class '" + name + "'")
 
         cls = JavaBytecodeClass()
         cls.internal_version = version
         cls.vm = self
-        cls.from_bytes(bytearray(bytecode))
+
+        try:
+            cls.from_bytes(bytearray(bytecode))
+        except StackCollectingException as e:
+            e.add_trace(f"decoding class {name}")
+            raise
 
         if not shared:
             self.classes_by_version.setdefault(version, {})[name] = cls
         else:
             self.shared_classes[name] = cls
 
-        cls.bake()
+        try:
+            cls.bake()
+        except StackCollectingException as e:
+            e.add_trace(f"baking class {name}")
+            raise
 
         info(f"class load of class '{name}' finished")
 
@@ -183,7 +194,7 @@ class AbstractJavaClass:
     def get_method(self, name: str, signature: str, inner=False):
         raise NotImplementedError
 
-    def get_static_attribute(self, name: str):
+    def get_static_attribute(self, name: str, expected_type=None):
         raise NotImplementedError
 
     def set_static_attribute(self, name: str, value):
@@ -238,24 +249,32 @@ class NativeClass(AbstractJavaClass, ABC):
         try:
             return self.exposed_methods[(name, signature)]
         except KeyError:
-            m = (
-                self.parent.get_method(name, signature, inner=True)
-                if self.parent is not None
-                else None
-            )
-            if m is None:
-                for interface in self.interfaces:
-                    m = interface.get_method(name, signature, inner=True)
-                    if m is not None:
-                        return m
-                if not inner:
-                    raise AttributeError((self, name, signature, self.exposed_methods)) from None
-                return
-            return m
+            try:
+                m = (
+                    self.parent.get_method(name, signature, inner=True)
+                    if self.parent is not None
+                    else None
+                )
 
-    def get_static_attribute(self, name: str):
+                if m is None:
+                    for interface in self.interfaces:
+                        m = interface.get_method(name, signature, inner=True)
+                        if m is not None:
+                            return m
+
+                else:
+                    return m
+
+            except StackCollectingException as e:
+                e.add_trace(f"not found up at {self.name}")
+                raise
+
+        raise StackCollectingException(f"class {self.name} has no method named '{name}' with signature {signature}").add_trace(str(list(self.exposed_methods.keys()))) from None
+
+    def get_static_attribute(self, name: str, expected_type=None):
         if name not in self.exposed_attributes:
-            raise KeyError(self, name)
+            raise StackCollectingException(f"unknown static attribute '{name}' of class '{self.name}' (expected type: {expected_type})")
+
         return self.exposed_attributes[name]
 
     def set_static_attribute(self, name: str, value):
@@ -410,6 +429,8 @@ class ElementValue:
         self.data = None
 
     def parse(self, table: "JavaAttributeTable", data: bytearray):
+        # as by https://docs.oracle.com/javase/specs/jvms/se16/html/jvms-4.html#jvms-4.7.16
+
         self.tag = tag = chr(pop_u1(data))
 
         if tag in "BCDFIJSZs":
@@ -419,11 +440,25 @@ class ElementValue:
             attr_name = table.class_file.cp[pop_u2(data)-1][1]
 
             cls = vm.get_class(cls_name, version=table.class_file.internal_version)
-            self.data = cls.get_static_attribute(attr_name)
+            self.data = cls.get_static_attribute(attr_name, "ENUM-ENTRY")
         elif tag == "c":
             self.data = table.class_file.cp[pop_u2(data)-1]
         elif tag == "[":
             self.data = [ElementValue().parse(table, data) for _ in range(pop_u2(data))]
+        elif tag == "@":
+            annotation_type = table.class_file.cp[pop_u2(data) - 1][1].removeprefix("L").removesuffix(";")
+
+            values = []
+
+            for _ in range(pop_u2(data)):
+                name = table.class_file.cp[pop_u2(data) - 1]
+                if name[0] != 1:
+                    raise StackCollectingException("invalid ")
+                name = name[1]
+                value = ElementValue().parse(table, data)
+                values.append((name, value))
+
+            self.data = annotation_type, values
         else:
             raise NotImplementedError(tag)
 
@@ -441,13 +476,17 @@ class RuntimeVisibleAnnotationsParser(AbstractAttributeParser):
             values = []
 
             for _ in range(pop_u2(data)):
-                name = table.class_file.cp[pop_u2(data)-1][1]
+                name = table.class_file.cp[pop_u2(data)-1]
+                if name[0] != 1:
+                    raise StackCollectingException(f"invalid name @annotation head for ElementValue pair: {name}")
+
+                name = name[1]
                 value = ElementValue().parse(table, data)
                 values.append((name, value))
 
             self.annotations.append((annotation_type, values))
 
-        # print(self.annotations)
+        return self
 
 
 class JavaAttributeTable:
@@ -676,13 +715,18 @@ class JavaBytecodeClass(AbstractJavaClass):
         if des in self.methods:
             return self.methods[des]
 
-        m = self.parent().get_method(*des) if self.parent is not None else None
+        try:
+            m = self.parent().get_method(*des) if self.parent is not None else None
+        except StackCollectingException as e:
+            e.add_trace(f"not found up in {self.name}")
+            raise
+
         if m is not None:
             return m
 
         raise AttributeError(self, des)
 
-    def get_static_attribute(self, name: str):
+    def get_static_attribute(self, name: str, expected_type=None):
         if name not in self.static_field_values:
             if self.parent is not None:
                 try:
@@ -709,10 +753,15 @@ class JavaBytecodeClass(AbstractJavaClass):
                 for cls_name, args in annotation.annotations:
                     try:
                         cls = vm.get_class(cls_name, version=self.internal_version)
-                    except RuntimeError:  # checks if the class exists
-                        # todo: can we do something else here, maybe add a flag to get_class to return None if the class
-                        #   could not be loaded -> None check here
-                        traceback.print_exc()
+                    except StackCollectingException as e:
+                        # checks if the class exists, this will be true if it is a here class loader exception
+                        if e.text.startswith("class ") and e.text.endswith(" not found!") and len(e.traces) == 0:
+                            # todo: can we do something else here, maybe add a flag to get_class to return None if the class
+                            #   could not be loaded -> None check here
+                            traceback.print_exc()
+                        else:
+                            e.add_trace(f"runtime visible annotation handling @class {self.name} loading class {cls_name}")
+                            raise
                     else:
                         cls.on_annotate(self, args)
 
@@ -736,10 +785,16 @@ class JavaBytecodeClass(AbstractJavaClass):
             try:
                 import mcpython.loader.java.Runtime
             except ImportError:
+                # If we have no way to invoke bytecode, don't do so
                 return
 
             runtime = mcpython.loader.java.Runtime.Runtime()
-            runtime.run_method(self.get_method("<clinit>", "()V", inner=True))
+
+            try:
+                runtime.run_method(self.get_method("<clinit>", "()V", inner=True))
+            except StackCollectingException as e:
+                e.add_trace(f"during class init of {self.name}")
+                raise
 
 
 class JavaClassInstance:

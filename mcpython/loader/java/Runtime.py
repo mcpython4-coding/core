@@ -11,12 +11,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import sys
 import asyncio
 import traceback
 import typing
 from abc import ABC
 
 import mcpython.loader.java.Java
+from mcpython.loader.java.JavaExceptionStack import StackCollectingException
+
+
+DEBUG = "--debug-vm" in sys.argv
 
 
 class UnhandledInstructionException(Exception): pass
@@ -155,7 +160,7 @@ class Stack:
         """
 
         # todo: check for general debugging & class debugging
-        debugging = (self.method.class_file.name, self.method.name, self.method.signature) in self.method.class_file.vm.debugged_methods
+        debugging = DEBUG or (self.method.class_file.name, self.method.name, self.method.signature) in self.method.class_file.vm.debugged_methods
 
         # todo: is this really needed?
         self.method.class_file.prepare_use()
@@ -164,12 +169,14 @@ class Stack:
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
-            if debugging: mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
+            if debugging: mcpython.loader.java.Java.info((self.cp, instruction))
 
             try:
                 result = instruction[0].invoke(instruction[1], self)
-            except:
-                raise UnhandledInstructionException(f"during invoking {instruction} [index: {self.cp}]")
+            except StackCollectingException as e:
+                e.add_trace(f"during invoking {instruction[0]} in {self.method} [index: {self.cp}]")
+                e.add_trace(str(instruction[1]))
+                raise
 
             if not result and self.cp != -1:
                 self.cp += instruction[2]
@@ -234,7 +241,7 @@ class BytecodeRepr:
                 i += size
 
             else:
-                raise ValueError(
+                raise StackCollectingException(
                     "invalid instruction: "
                     + str(hex(tag))
                     + " (following bits: "
@@ -641,6 +648,23 @@ class IfEq0(Instruction):
 
 
 @BytecodeRepr.register_instruction
+class IfNEq0(Instruction):
+    OPCODES = {0x9A}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() != 0:
+            stack.cp += data
+            return True
+
+
+@BytecodeRepr.register_instruction
 class Goto(Instruction):
     OPCODES = {0xA7}
 
@@ -683,7 +707,7 @@ class GetStatic(CPLinkedInstruction):
         cls_name = data[1][1][1]
         java_class = stack.vm.get_class(cls_name, version=stack.method.class_file.internal_version)
         name = data[2][1][1]
-        stack.push(java_class.get_static_attribute(name))
+        stack.push(java_class.get_static_attribute(name, expected_type=data[2][2][1]))
 
 
 @BytecodeRepr.register_instruction
@@ -783,9 +807,12 @@ class InvokeInterface(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         method = stack.vm.get_method_of_nat(data[0], version=stack.method.class_file.internal_version)
+        args = stack.runtime.parse_args_from_stack(method, stack)
+        obj = args[0]
+        method = obj.get_class().get_method(method.name if hasattr(method, "name") else method.native_name, method.signature if hasattr(method, "signature") else method.native_signature)
         stack.push(
             stack.runtime.run_method(
-                method, *stack.runtime.parse_args_from_stack(method, stack)
+                method, *args
             )
         )
 
@@ -815,7 +842,21 @@ class InvokeDynamic(CPLinkedInstruction):
 
         target_nat = boostrap[1][1][2][2]
 
-        method = stack.method.class_file.get_method(target_nat[1][1], target_nat[2][1])
+        try:
+            cls_file = stack.vm.get_class(boostrap[1][1][2][1][1][1], version=stack.method.class_file.internal_version)
+            method = cls_file.get_method(target_nat[1][1], target_nat[2][1])
+        except StackCollectingException as e:
+            e.add_trace(str(boostrap[0]))
+            e.add_trace(str(boostrap[1]))
+            e.add_trace(str(nat))
+            raise
+        except:
+            e = StackCollectingException("during resolving invokedynamic")
+            e.add_trace(str(boostrap[0]))
+            e.add_trace(str(boostrap[1]))
+            e.add_trace(str(nat))
+            raise e
+
         stack.push(method)
 
 
@@ -863,6 +904,18 @@ class ArrayLength(Instruction):
 
 
 @BytecodeRepr.register_instruction
+class AThrow(Instruction):
+    OPCODES = {0xBF}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        exception = stack.pop()
+        stack.stack.clear()
+        stack.push(exception)
+        raise StackCollectingException("User raised exception", base=exception)
+
+
+@BytecodeRepr.register_instruction
 class CheckCast(CPLinkedInstruction):
     OPCODES = {0xC0}
 
@@ -884,6 +937,23 @@ class InstanceOf(CPLinkedInstruction):
             stack.push(0)
         else:
             stack.push(int(obj is None or obj.get_class().is_subclass_of(data[1][1])))
+
+
+@BytecodeRepr.register_instruction
+class IfNull(Instruction):
+    OPCODES = {0xC6}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() is None:
+            stack.cp += data
+            return True
 
 
 @BytecodeRepr.register_instruction

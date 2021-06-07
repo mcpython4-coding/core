@@ -32,6 +32,7 @@ class StateHandler:
 
     def switch_to(self, state_name: str, immediate=True):
         assert state_name is not None
+
         if immediate:
             self._switch_to(state_name)
         else:

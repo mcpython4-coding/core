@@ -34,7 +34,7 @@ class StateLoadingException(State.State):
         for label in self.labels:
             label.delete()
         self.labels.clear()
-        y = 30
+        y = 50
         for line in reversed(text.split("\n")):
             self.labels.append(
                 pyglet.text.Label(
