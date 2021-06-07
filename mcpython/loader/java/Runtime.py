@@ -148,14 +148,23 @@ class Stack:
         self.return_value = value
 
     def run(self):
+        """
+        Runs the data on this stack
+
+        todo: add async variant
+        """
+
+        # todo: check for general debugging & class debugging
+        debugging = (self.method.class_file.name, self.method.name, self.method.signature) in self.method.class_file.vm.debugged_methods
+
         # todo: is this really needed?
         self.method.class_file.prepare_use()
-        # mcpython.loader.java.Java.info(("launching method", self.method))
+        if debugging: mcpython.loader.java.Java.info(("launching method", self.method))
 
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
-            # mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
+            if debugging: mcpython.loader.java.Java.info((self.cp, instruction, self.stack))
 
             try:
                 result = instruction[0].invoke(instruction[1], self)
@@ -165,7 +174,7 @@ class Stack:
             if not result and self.cp != -1:
                 self.cp += instruction[2]
 
-        # mcpython.loader.java.Java.info(("finished method", self.method, self.return_value))
+        if debugging: mcpython.loader.java.Java.info(("finished method", self.method, self.return_value))
 
 
 class Instruction(ABC):
@@ -581,6 +590,23 @@ class IfGe(Instruction):
 
 
 @BytecodeRepr.register_instruction
+class IfLe(Instruction):
+    OPCODES = {0xA4}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() >= stack.pop():
+            stack.cp += data
+            return True
+
+
+@BytecodeRepr.register_instruction
 class IfNEq(Instruction):
     OPCODES = {0xA6}
 
@@ -847,7 +873,7 @@ class CheckCast(CPLinkedInstruction):
 
 @BytecodeRepr.register_instruction
 class InstanceOf(CPLinkedInstruction):
-    OPCODES = {0xC0}
+    OPCODES = {0xC1}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):

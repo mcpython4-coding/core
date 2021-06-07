@@ -77,6 +77,7 @@ def get_bytecode_of_class(class_name: str):
 
 class JavaVM:
     def __init__(self):
+        self.debugged_methods = set()
         self.shared_classes: typing.Dict[
             str, typing.Union["AbstractJavaClass", typing.Type]
         ] = {}
@@ -92,7 +93,7 @@ class JavaVM:
 
     def init_builtins(self):
         from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean, Deprecated, ThreadLocal
-        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List
+        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List, Iterator
         from mcpython.loader.java.builtin.java.util.function import Predicate
         from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
@@ -137,6 +138,7 @@ class JavaVM:
 
         cls = JavaBytecodeClass()
         cls.internal_version = version
+        cls.vm = self
         cls.from_bytes(bytearray(bytecode))
 
         if not shared:
@@ -165,6 +167,9 @@ class JavaVM:
         cls = self.get_class(cls, version=version)
         return cls.get_method(name, descriptor)
 
+    def debug_method(self, cls: str, name: str, sig: str):
+        self.debugged_methods.add((cls, name, sig))
+
 
 class AbstractJavaClass:
     def __init__(self):
@@ -173,6 +178,7 @@ class AbstractJavaClass:
         self.parent = None
         self.interfaces = []
         self.internal_version = 0
+        self.vm = None
 
     def get_method(self, name: str, signature: str, inner=False):
         raise NotImplementedError
@@ -243,7 +249,7 @@ class NativeClass(AbstractJavaClass, ABC):
                     if m is not None:
                         return m
                 if not inner:
-                    raise AttributeError((self, name, signature, self.exposed_methods))
+                    raise AttributeError((self, name, signature, self.exposed_methods)) from None
                 return
             return m
 
@@ -684,7 +690,11 @@ class JavaBytecodeClass(AbstractJavaClass):
                 except KeyError:
                     pass
 
-        return self.static_field_values[name]
+        try:
+            return self.static_field_values[name]
+        except KeyError:
+            print(self)
+            raise
 
     def set_static_attribute(self, name: str, value):
         self.static_field_values[name] = value
@@ -756,3 +766,5 @@ def decode_cp_constant(const, version=0):
 
 
 vm = JavaVM()
+# this is the way how to attach a debugger to a certain method
+# vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")

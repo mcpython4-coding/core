@@ -15,18 +15,14 @@ from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class List(NativeClass):
-    NAME = "java/util/List"
+class Iterator(NativeClass):
+    NAME = "java/util/Iterator"
 
-    def create_instance(self):
-        return []
+    @native("hasNext", "()Z")
+    def hasNext(self, instance):
+        return int(len(instance) > 0)
 
-    @native("add", "(Ljava/lang/Object;)Z")
-    def add(self, instance, item):
-        instance.append(item)
-        return True
-
-    @native("iterator", "()Ljava/util/Iterator;")
-    def iterator(self, instance):
-        return instance
+    @native("next", "()Ljava/lang/Object;")
+    def next(self, instance):
+        return instance.pop(0)
 

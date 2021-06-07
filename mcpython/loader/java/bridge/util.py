@@ -61,3 +61,7 @@ class AxisAlignedBB(NativeClass):
     def init(self, instance, a, b, c, d, e, f):
         pass
 
+
+class IStringSerializable(NativeClass):
+    NAME = "net/minecraft/util/IStringSerializable"
+

@@ -195,6 +195,10 @@ class Block(AbstractBlock):
         instance.registry_name = name
         return instance
 
+    @native("getRegistryName", "()Lnet/minecraft/util/ResourceLocation;")
+    def getRegistryName(self, instance):
+        return instance.registry_name
+
     @native("func_208617_a", "(DDDDDD)Lnet/minecraft/util/math/shapes/VoxelShape;")
     def func_208617_a(self, *v):
         pass
@@ -580,6 +584,12 @@ class IGrowable(NativeClass):
 class Item(NativeClass):
     NAME = "net/minecraft/item/Item"
 
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_111210_e": None,
+        })
+
     def create_instance(self):
         instance = super().create_instance()
         instance.properties = None
@@ -593,6 +603,11 @@ class Item(NativeClass):
     @native("setRegistryName", "(Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
     def setRegistryName(self, instance, name):
         instance.registry_name = name
+        return instance
+
+    @native("setRegistryName", "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName2(self, instance, name):
+        instance.registry_name = name if isinstance(name, str) else name.name
         return instance
 
     @native("func_70067_L", "()Z")
@@ -654,6 +669,10 @@ class ItemGroup(NativeClass):
         def add_tab():
             mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.add_tab(instance.underlying_tab)
 
+    @native("<init>", "(Ljava/lang/String;)V")
+    def init2(self, instance, name: str):
+        self.init(instance, -1, name)
+
 
 class ItemStack(NativeClass):
     NAME = "net/minecraft/item/ItemStack"
@@ -675,6 +694,11 @@ class BlockItem(Item):
     @native("setRegistryName", "(Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
     def setRegistryName(self, instance, name: str):
         instance.registry_name = name
+        return instance
+
+    @native("setRegistryName", "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName2(self, instance, name):
+        instance.registry_name = name if isinstance(name, str) else name.name
         return instance
 
 
@@ -835,5 +859,33 @@ class EntityPredicates(NativeClass):
         super().__init__()
         self.exposed_attributes.update({
             "field_180132_d": None,
+        })
+
+
+class EntityAttributes(NativeClass):
+    NAME = "net/minecraft/entity/ai/attributes/Attributes"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_233823_f_": None,
+        })
+
+
+class EntityAttributeModifier(NativeClass):
+    NAME = "net/minecraft/entity/ai/attributes/AttributeModifier"
+
+    @native("<init>", "(Ljava/util/UUID;Ljava/lang/String;DLnet/minecraft/entity/ai/attributes/AttributeModifier$Operation;)V")
+    def init(self, instance, uuid, a: str, b: float, operation):
+        pass
+
+
+class EntityAttributeModifier__Operation(NativeClass):
+    NAME = "net/minecraft/entity/ai/attributes/AttributeModifier$Operation"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "ADDITION": "net/minecraft/entity/ai/attributes/AttributeModifier$Operation::ADDITION"
         })
 

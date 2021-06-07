@@ -1684,10 +1684,12 @@ R   [uuk]: improved world serialization API
 [uuk]: made it possible to register classes only for a certain "version", meaning other versions cannot access it
        [can be used to implement another mod loader version / type]
        This allows in the future to load 1.17 mods in parallel to 1.16.5 mods
+[uuk]: implemented non-gui attachable debugger for methods
 
 pending:
 - remove logging noise from the JVM
 - flag for debug mode for jvm
+- clean up error printing in log
 
 pushed back behind next snapshot, moved away from here before merge onto main:
 - make the exception screen scrollable
@@ -1695,7 +1697,7 @@ pushed back behind next snapshot, moved away from here before merge onto main:
 - implement all of the instructions
 - prepare for mc forge 1.17 [when it is released]
 - runtime mod reload
-- an attachable debugger for certain functions / opcode regions
+- an attachable debugger for certain functions / opcode regions with ui [maybe in second window?]
 - a framework for actively modifying bytecode -> optimisation system
 - a bytecode viewer for debugging single instructions [in-game, via some callback and continue system]
 - jvm exception handling [currently not implemented]

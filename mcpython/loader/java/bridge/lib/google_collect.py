@@ -83,3 +83,23 @@ class ImmutableMap(NativeClass):
     @native("of", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap;")
     def of(self, *stuff):
         return self.create_instance()
+
+
+class ImmutableMultimap(NativeClass):
+    NAME = "com/google/common/collect/ImmutableMultimap"
+
+    @native("builder", "()Lcom/google/common/collect/ImmutableMultimap$Builder;")
+    def builder(self):
+        return self.vm.get_class("com/google/common/collect/ImmutableMultimap$Builder", version=self.internal_version).create_instance()
+
+
+class ImmutableMultimap__Builder(NativeClass):
+    NAME = "com/google/common/collect/ImmutableMultimap$Builder"
+
+    @native("put", "(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMultimap$Builder;")
+    def put(self, instance, key, value):
+        return instance
+
+    @native("build", "()Lcom/google/common/collect/ImmutableMultimap;")
+    def build(self, instance):
+        return self.vm.get_class("com/google/common/collect/ImmutableMultimap", version=self.internal_version).create_instance()
