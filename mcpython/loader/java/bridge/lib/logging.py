@@ -21,7 +21,7 @@ class CoreLogger(NativeClass):
     def create_instance(self):
         instance = super().create_instance()
         instance.level = self.vm.get_class(
-            "org/apache/logging/log4j/Level"
+            "org/apache/logging/log4j/Level", version=self.internal_version
         ).get_static_attribute("OFF")
         return instance
 
@@ -51,8 +51,8 @@ class LogManager(NativeClass):
 
     @native("getLogger", "(Ljava/lang/Class;)Lorg/apache/logging/log4j/Logger;")
     def getLogger(self, cls):
-        return self.vm.get_class("org/apache/logging/log4j/Logger").create_instance()
+        return self.vm.get_class("org/apache/logging/log4j/Logger", version=self.internal_version).create_instance()
 
     @native("getLogger", "(Ljava/lang/String;)Lorg/apache/logging/log4j/Logger;")
     def getLoggerFromString(self, string: str):
-        return self.vm.get_class("org/apache/logging/log4j/Logger").create_instance()
+        return self.vm.get_class("org/apache/logging/log4j/Logger", version=self.internal_version).create_instance()

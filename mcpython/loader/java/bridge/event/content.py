@@ -28,8 +28,8 @@ class Blocks(NativeClass):
     @native("func_235430_a_", "(Lnet/minecraft/block/material/MaterialColor;Lnet/minecraft/block/material/MaterialColor;)Lnet/minecraft/block/RotatedPillarBlock;")
     def func_235430_a_(self, color_a, color_b):
         # todo: this seems odd
-        instance = self.vm.get_class("net/minecraft/block/RotatedPillarBlock").create_instance()
-        instance.properties = self.vm.get_class("net/minecraft/block/AbstractBlock$Properties").create_instance()
+        instance = self.vm.get_class("net/minecraft/block/RotatedPillarBlock", version=self.internal_version).create_instance()
+        instance.properties = self.vm.get_class("net/minecraft/block/AbstractBlock$Properties", version=self.internal_version).create_instance()
         return instance
 
 

@@ -32,5 +32,5 @@ class GsonBuilder(NativeClass):
 
     @native("create", "()Lcom/google/gson/Gson;")
     def create(self, instance):
-        return self.vm.get_class(Gson.NAME).create_instance()
+        return self.vm.get_class(Gson.NAME, version=self.internal_version).create_instance()
 

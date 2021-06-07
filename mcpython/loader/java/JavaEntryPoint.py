@@ -57,7 +57,7 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
                 # make sure that this is set!
                 shared.CURRENT_EVENT_SUB = self.name
 
-                java_class = jvm.load_class(cls)
+                jvm.load_class(cls, version=self.loader_version)
 
                 # todo: check if mod main class
 

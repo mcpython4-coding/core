@@ -1681,6 +1681,9 @@ R   [uuk]: improved world serialization API
 [uuk]: <FML> fixed Blocks.func_235430_a_() not setting Block$Properties
 [uuk]: added base injection point for items
 [uuk]: items are now using the ItemGroup correctly
+[uuk]: made it possible to register classes only for a certain "version", meaning other versions cannot access it
+       [can be used to implement another mod loader version / type]
+       This allows in the future to load 1.17 mods in parallel to 1.16.5 mods
 
 pending:
 - remove logging noise from the JVM
@@ -1688,8 +1691,6 @@ pending:
 
 pushed back behind next snapshot, moved away from here before merge onto main:
 - make the exception screen scrollable
-- special attribute in class files storing a "native-version" used during native resolving for making cross-version
-    possible (load 1.12 mods and 1.16 mods e.g.)
 - load JavaFML only when needed (e.g. via a flag, maybe --enable-fml)
 - implement all of the instructions
 - prepare for mc forge 1.17 [when it is released]

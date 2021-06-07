@@ -51,7 +51,7 @@ class VoxelShapes(NativeClass):
 
     @native("func_197878_a", "(Lnet/minecraft/util/math/shapes/VoxelShape;Lnet/minecraft/util/math/shapes/VoxelShape;Lnet/minecraft/util/math/shapes/IBooleanFunction;)Lnet/minecraft/util/math/shapes/VoxelShape;")
     def func_197878_a(self, a, b, function):
-        return self.vm.get_class("net/minecraft/util/math/shapes/VoxelShape").create_instance()
+        return self.vm.get_class("net/minecraft/util/math/shapes/VoxelShape", version=self.internal_version).create_instance()
 
 
 class AxisAlignedBB(NativeClass):

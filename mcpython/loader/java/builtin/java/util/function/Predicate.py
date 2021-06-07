@@ -20,7 +20,7 @@ class Predicate(NativeClass):
 
     @native("and", "(Ljava/util/function/Predicate;)Ljava/util/function/Predicate;")
     def and_chain(self, this, other):
-        instance = self.vm.get_class("java/util/function/Predicate$And").create_instance()
+        instance = self.vm.get_class("java/util/function/Predicate$And", version=self.internal_version).create_instance()
         instance.elements = [this, other]
         return instance
 

@@ -77,16 +77,18 @@ def get_bytecode_of_class(class_name: str):
 
 class JavaVM:
     def __init__(self):
-        self.classes: typing.Dict[
+        self.shared_classes: typing.Dict[
             str, typing.Union["AbstractJavaClass", typing.Type]
         ] = {}
-        self.lazy_classes = set()
+        self.classes_by_version: typing.Dict[typing.Hashable, typing.Dict[str, "AbstractJavaClass"]] = {}
+        self.lazy_classes: typing.Set[typing.Tuple[typing.Any, str]] = set()
 
         self.array_helper = JavaArrayManager(self)
 
     def load_lazy(self):
         while len(self.lazy_classes) > 0:
-            self.get_class(self.lazy_classes.pop())
+            version, name = self.lazy_classes.pop()
+            self.get_class(name, version=version)
 
     def init_builtins(self):
         from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean, Deprecated, ThreadLocal
@@ -104,21 +106,25 @@ class JavaVM:
         from mcpython.loader.java.bridge.misc import containers, potions, dispenser
         from mcpython.loader.java.bridge.client import rendering
 
-    def get_class(self, name: str) -> "AbstractJavaClass":
-        if name.replace(".", "/") in self.classes:
-            cls = self.classes[name.replace(".", "/")]
+    def get_class(self, name: str, version=0) -> "AbstractJavaClass":
+        name = name.replace(".", "/")
+        if name in self.shared_classes:
+            cls = self.shared_classes[name]
+        elif name in self.classes_by_version.setdefault(version, {}):
+            cls = self.classes_by_version[version][name]
         else:
-            cls = self.load_class(name)
+            cls = self.load_class(name, version=version)
 
         cls.prepare_use()
 
         return cls
 
-    def get_lazy_class(self, name: str):
-        self.lazy_classes.add(name)
-        return lambda: self.get_class(name)
+    def get_lazy_class(self, name: str, version: typing.Any = 0):
+        self.lazy_classes.add((version, name))
+        return lambda: self.get_class(name, version=version)
 
-    def load_class(self, name: str) -> "AbstractJavaClass":
+    def load_class(self, name: str, version: typing.Any = 0, shared=False) -> "AbstractJavaClass":
+        name = name.replace(".", "/")
         if name.startswith("["):
             return self.array_helper.get(name)
 
@@ -130,24 +136,33 @@ class JavaVM:
         info("loading java class '" + name + "'")
 
         cls = JavaBytecodeClass()
+        cls.internal_version = version
         cls.from_bytes(bytearray(bytecode))
 
-        self.classes[name.replace(".", "/")] = cls
+        if not shared:
+            self.classes_by_version.setdefault(version, {})[name] = cls
+        else:
+            self.shared_classes[name] = cls
 
         cls.bake()
 
-        info(f"class load of class '{name}' (internally: '{cls.name}') finished")
+        info(f"class load of class '{name}' finished")
 
         return cls
 
-    def register_native(self, n: typing.Type["NativeClass"]):
-        self.classes[n.NAME] = n()
+    def register_native(self, n: typing.Type["NativeClass"], version=None):
+        instance = n()
+        instance.internal_version = version
+        if version is None:
+            self.shared_classes[n.NAME] = instance
+        else:
+            self.classes_by_version.setdefault(version, {})[n.NAME] = instance
 
-    def get_method_of_nat(self, nat):
+    def get_method_of_nat(self, nat, version: typing.Any = 0):
         cls = nat[1][1][1]
         name = nat[2][1][1]
         descriptor = nat[2][2][1]
-        cls = self.get_class(cls)
+        cls = self.get_class(cls, version=version)
         return cls.get_method(name, descriptor)
 
 
@@ -157,6 +172,7 @@ class AbstractJavaClass:
         self.file_source: str = None
         self.parent = None
         self.interfaces = []
+        self.internal_version = 0
 
     def get_method(self, name: str, signature: str, inner=False):
         raise NotImplementedError
@@ -185,11 +201,18 @@ class AbstractJavaClass:
 
 class NativeClass(AbstractJavaClass, ABC):
     NAME = None
+    EXPOSED_VERSIONS: typing.Optional[set] = None
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
         if cls.NAME is not None:
-            vm.register_native(cls)
+
+            if cls.EXPOSED_VERSIONS is None:
+                vm.register_native(cls)
+            else:
+                # todo: add flag to share native
+                for version in cls.EXPOSED_VERSIONS:
+                    vm.register_native(cls, version)
 
     def __init__(self):
         super().__init__()
@@ -287,17 +310,17 @@ class JavaArrayManager:
     It creates the needed array classes and holds them for later reuse
     """
 
-    def __init__(self, vm):
-        self.vm = vm
+    def __init__(self, vm_i: JavaVM):
+        self.vm = vm_i
 
-    def get(self, class_text: str):
+    def get(self, class_text: str, version=0):
         depth = class_text.count("[")
         cls_name = class_text[depth:]
-        cls = self.vm.get_class(cls_name.removeprefix("L").removesuffix(";"))
+        cls = self.vm.get_class(cls_name.removeprefix("L").removesuffix(";"), version=version)
 
         instance = ArrayBase(depth, class_text, cls)
 
-        self.vm.classes[class_text] = instance
+        self.vm.shared_classes[class_text] = instance
         return instance
 
 
@@ -389,7 +412,7 @@ class ElementValue:
             cls_name = table.class_file.cp[pop_u2(data)-1][1].removeprefix("L").removesuffix(";")
             attr_name = table.class_file.cp[pop_u2(data)-1][1]
 
-            cls = vm.get_class(cls_name)
+            cls = vm.get_class(cls_name, version=table.class_file.internal_version)
             self.data = cls.get_static_attribute(attr_name)
         elif tag == "c":
             self.data = table.class_file.cp[pop_u2(data)-1]
@@ -616,10 +639,10 @@ class JavaBytecodeClass(AbstractJavaClass):
         self.access |= pop_u2(data)
 
         self.name = self.cp[pop_u2(data) - 1][1][1]
-        self.parent = vm.get_lazy_class(self.cp[pop_u2(data) - 1][1][1])
+        self.parent = vm.get_lazy_class(self.cp[pop_u2(data) - 1][1][1], version=self.internal_version)
 
         self.interfaces += [
-            vm.get_lazy_class(self.cp[pop_u2(data) - 1][1][1])
+            vm.get_lazy_class(self.cp[pop_u2(data) - 1][1][1], version=self.internal_version)
             for _ in range(pop_u2(data))
         ]
 
@@ -675,7 +698,7 @@ class JavaBytecodeClass(AbstractJavaClass):
             for annotation in self.attributes["RuntimeVisibleAnnotations"]:
                 for cls_name, args in annotation.annotations:
                     try:
-                        cls = vm.get_class(cls_name)
+                        cls = vm.get_class(cls_name, version=self.internal_version)
                     except RuntimeError:  # checks if the class exists
                         # todo: can we do something else here, maybe add a flag to get_class to return None if the class
                         #   could not be loaded -> None check here
@@ -724,9 +747,9 @@ class JavaClassInstance:
         return self.class_file
 
 
-def decode_cp_constant(const):
+def decode_cp_constant(const, version=0):
     if const[0] == 7:  # Class
-        return vm.get_class(const[1][1])
+        return vm.get_class(const[1][1], version=version)
     elif const[0] in (1, 3, 4, 5, 6, 8):
         return const[1][1] if isinstance(const[1], list) else const[1]
     raise NotImplementedError(const)

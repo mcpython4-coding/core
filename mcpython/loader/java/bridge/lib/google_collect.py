@@ -29,7 +29,7 @@ class Lists(NativeClass):
 
     @native("newArrayList", "()Ljava/util/ArrayList;")
     def create(self):
-        instance = self.vm.get_class("java/util/ArrayList").create_instance()
+        instance = self.vm.get_class("java/util/ArrayList", version=self.internal_version).create_instance()
         return instance
 
 
@@ -38,7 +38,7 @@ class Maps(NativeClass):
 
     @native("newHashMap", "()Ljava/util/HashMap;")
     def create(self):
-        instance = self.vm.get_class("java/util/HashMap").create_instance()
+        instance = self.vm.get_class("java/util/HashMap", version=self.internal_version).create_instance()
         return instance
 
     @native("newHashMap", "(Ljava/util/Map;)Ljava/util/HashMap;")

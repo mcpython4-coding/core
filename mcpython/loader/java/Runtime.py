@@ -359,7 +359,7 @@ class LDC(Instruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(
             mcpython.loader.java.Java.decode_cp_constant(
-                stack.method.class_file.cp[data - 1]
+                stack.method.class_file.cp[data - 1], version=stack.method.class_file.internal_version,
             )
         )
 
@@ -378,7 +378,7 @@ class LDC_W(Instruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(
             mcpython.loader.java.Java.decode_cp_constant(
-                stack.method.class_file.cp[data - 1]
+                stack.method.class_file.cp[data - 1], version=stack.method.class_file.internal_version,
             )
         )
 
@@ -655,7 +655,7 @@ class GetStatic(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         cls_name = data[1][1][1]
-        java_class = stack.vm.get_class(cls_name)
+        java_class = stack.vm.get_class(cls_name, version=stack.method.class_file.internal_version)
         name = data[2][1][1]
         stack.push(java_class.get_static_attribute(name))
 
@@ -667,7 +667,7 @@ class PutStatic(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         cls_name = data[1][1][1]
-        java_class = stack.vm.get_class(cls_name)
+        java_class = stack.vm.get_class(cls_name, version=stack.method.class_file.internal_version)
         name = data[2][1][1]
         value = stack.pop()
         java_class.set_static_attribute(name, value)
@@ -706,7 +706,7 @@ class InvokeVirtual(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        method = stack.vm.get_method_of_nat(data)
+        method = stack.vm.get_method_of_nat(data, version=stack.method.class_file.internal_version)
         # todo: add args
         stack.push(stack.runtime.run_method(
             method, *stack.runtime.parse_args_from_stack(method, stack)
@@ -719,7 +719,7 @@ class InvokeSpecial(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        method = stack.vm.get_method_of_nat(data)
+        method = stack.vm.get_method_of_nat(data, version=stack.method.class_file.internal_version)
         stack.runtime.run_method(
             method, *stack.runtime.parse_args_from_stack(method, stack)
         )
@@ -731,7 +731,7 @@ class InvokeStatic(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        method = stack.vm.get_method_of_nat(data)
+        method = stack.vm.get_method_of_nat(data, version=stack.method.class_file.internal_version)
         stack.push(
             stack.runtime.run_method(
                 method, *stack.runtime.parse_args_from_stack(method, stack, static=True)
@@ -756,7 +756,7 @@ class InvokeInterface(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        method = stack.vm.get_method_of_nat(data[0])
+        method = stack.vm.get_method_of_nat(data[0], version=stack.method.class_file.internal_version)
         stack.push(
             stack.runtime.run_method(
                 method, *stack.runtime.parse_args_from_stack(method, stack)
@@ -799,7 +799,7 @@ class New(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        c = stack.vm.get_class(data[1][1])
+        c = stack.vm.get_class(data[1][1], version=stack.method.class_file.internal_version)
         stack.push(c.create_instance())
 
 
