@@ -1692,4 +1692,5 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed latest biomesoplenty build [1.16.5-13.1.0.471]
 [uuk]: fixed uv horizontal rendering of blocks
 [uuk]: <fml>: fixed StairsBlocks not correctly getting resolved
+[uuk]: bumped target mc version to 1.17
 

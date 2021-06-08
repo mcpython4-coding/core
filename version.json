@@ -2,8 +2,8 @@
   "name": "test build for 21w23a 3",
   "id": 65,
   "preview_build_counter": 3,
-  "mc_version": "1.17-pre1",
-  "mc_version_url": "https://launcher.mojang.com/v1/objects/940af6eda421da56e3bf9c390df65ba713cc8f7f/client.jar",
+  "mc_version": "1.17",
+  "mc_version_url": "https://launcher.mojang.com/v1/objects/fe88ac6c8a0bedc9a48e5c9b48eb0f4dc24ccc79/client.jar",
   "version_type": "snapshot",
   "stable": false
 }
