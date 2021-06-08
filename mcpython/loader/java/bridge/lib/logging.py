@@ -53,6 +53,10 @@ class LogManager(NativeClass):
     def getLogger(self, cls):
         return self.vm.get_class("org/apache/logging/log4j/Logger", version=self.internal_version).create_instance()
 
+    @native("getLogger", "()Lorg/apache/logging/log4j/Logger;")
+    def getLogger2(self):
+        return self.vm.get_class("org/apache/logging/log4j/Logger", version=self.internal_version).create_instance()
+
     @native("getLogger", "(Ljava/lang/String;)Lorg/apache/logging/log4j/Logger;")
     def getLoggerFromString(self, string: str):
         return self.vm.get_class("org/apache/logging/log4j/Logger", version=self.internal_version).create_instance()

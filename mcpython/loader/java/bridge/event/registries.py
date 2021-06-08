@@ -176,3 +176,11 @@ class RegistryEvent__Register(NativeClass):
     def getRegistry(self, instance):
         return lambda: instance
 
+
+class RenderingRegistry(NativeClass):
+    NAME = "net/minecraftforge/fml/client/registry/RenderingRegistry"
+
+    @native("registerEntityRenderingHandler", "(Lnet/minecraft/entity/EntityType;Lnet/minecraftforge/fml/client/registry/IRenderFactory;)V")
+    def registerEntityRenderingHandler(self, entity_type, render_factory):
+        pass
+

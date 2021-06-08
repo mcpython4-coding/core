@@ -53,66 +53,70 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
 
         for file in self.resource_access.get_all_entries_in_directory(""):
             if not file.endswith(".class"): continue
-            cls = file.split(".")[0]
-            try:
-                # make sure that this is set!
-                shared.CURRENT_EVENT_SUB = self.name
 
-                jvm.load_class(cls, version=self.loader_version)
+            self.load_mod_file(file)
 
-                # todo: check if mod main class
+    def load_mod_file(self, file: str):
+        cls = file.split(".")[0]
+        try:
+            # make sure that this is set!
+            shared.CURRENT_EVENT_SUB = self.name
 
-                if False:
-                    jvm.load_lazy()
+            jvm.load_class(cls, version=self.loader_version)
 
-                    logger.println(f"[JAVA FML][INFO] executing class {cls}")
-                    instance = java_class.create_instance()
-                    self.runtime.run_method(instance.get_method("<init>", "()V"), instance)
+            # todo: check if mod main class
 
-            except StackCollectingException as e:
-                if shared.IS_CLIENT:
-                    shared.window.set_caption("JavaFML JVM error")
+            if False:
+                jvm.load_lazy()
 
-                    try:
-                        import mcpython.client.state.StateLoadingException
+                logger.println(f"[JAVA FML][INFO] executing class {cls}")
+                instance = java_class.create_instance()
+                self.runtime.run_method(instance.get_method("<init>", "()V"), instance)
 
-                        exception = e.format_exception()
-                        mcpython.client.state.StateLoadingException.error_occur(exception)
-                        logger.print_exception("raw exception trace")
-                        logger.write_into_container("fatal FML error", exception.split("\n"))
-                    except:
-                        logger.print_exception("error screen error")
-                    else:
-                        import mcpython.common.mod.ModLoader
+        except StackCollectingException as e:
+            if shared.IS_CLIENT:
+                shared.window.set_caption("JavaFML JVM error")
 
-                        raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
+                try:
+                    import mcpython.client.state.StateLoadingException
 
-                shared.window.close()
-                pyglet.app.exit()
-                sys.exit(-1)
+                    exception = e.format_exception()
+                    mcpython.client.state.StateLoadingException.error_occur(exception)
+                    logger.print_exception("raw exception trace")
+                    logger.write_into_container("fatal FML error", exception.split("\n"))
+                except:
+                    logger.print_exception("error screen error")
+                else:
+                    import mcpython.common.mod.ModLoader
 
-            except:
-                logger.print_exception("[JAVA][FATAL] fatal class loader exception")
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
-                if shared.IS_CLIENT:
-                    shared.window.set_caption("JavaFML JVM error")
+            shared.window.close()
+            pyglet.app.exit()
+            sys.exit(-1)
 
-                    try:
-                        import mcpython.client.state.StateLoadingException
+        except:
+            logger.print_exception("[JAVA][FATAL] fatal class loader exception")
 
-                        mcpython.client.state.StateLoadingException.error_occur(
-                            traceback.format_exc()
-                        )
-                    except:
-                        logger.print_exception("error screen error")
-                    else:
-                        import mcpython.common.mod.ModLoader
+            if shared.IS_CLIENT:
+                shared.window.set_caption("JavaFML JVM error")
 
-                        raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
+                try:
+                    import mcpython.client.state.StateLoadingException
 
-                shared.window.close()
-                pyglet.app.exit()
-                sys.exit(-1)
+                    mcpython.client.state.StateLoadingException.error_occur(
+                        traceback.format_exc()
+                    )
+                except:
+                    logger.print_exception("error screen error")
+                else:
+                    import mcpython.common.mod.ModLoader
+
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
+
+            shared.window.close()
+            pyglet.app.exit()
+            sys.exit(-1)
 
 
 class JavaModLoader(mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint):

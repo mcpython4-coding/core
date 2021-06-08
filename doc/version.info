@@ -1688,17 +1688,3 @@ R   [uuk]: improved world serialization API
 [uuk]: cleaned up exception printing by using our own text collector for jvm exceptions
 [uuk]: fixed resolving of invokedynamic instruction
 
-pending:
-- class load split into event subs
-
-pushed back behind next snapshot, moved away from here before merge onto main:
-- make the exception screen scrollable
-- load JavaFML only when needed (e.g. via a flag, maybe --enable-fml)
-- implement all of the instructions
-- prepare for mc forge 1.17 [when it is released]
-- runtime mod reload
-- an attachable debugger for certain functions / opcode regions with ui [maybe in second window?]
-- a framework for actively modifying bytecode -> optimisation system
-- a bytecode viewer for debugging single instructions [in-game, via some callback and continue system]
-- jvm exception handling [currently not implemented]
-

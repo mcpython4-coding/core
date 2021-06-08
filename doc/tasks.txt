@@ -50,3 +50,15 @@ Split into 4 parts:
 - In-game tests: tests executed in-game automatically [see mc test framework], using structures and interaction paths
     for game behaviour, can be mixed with user interaction tests
 
+
+FML
+- make the exception screen scrollable
+- load JavaFML only when needed (e.g. via a flag, maybe --enable-fml)
+- implement all of the instructions
+- prepare for mc forge 1.17 [when it is released]
+- runtime mod reload
+- an attachable debugger for certain functions / opcode regions with ui [maybe in second window?]
+- a framework for actively modifying bytecode -> optimisation system
+- a bytecode viewer for debugging single instructions [in-game, via some callback and continue system]
+- jvm exception handling [currently not implemented]
+

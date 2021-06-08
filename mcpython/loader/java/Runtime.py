@@ -147,11 +147,12 @@ class Stack:
         self.code: "BytecodeRepr" = None
 
     def pop(self):
-        # print("-", self.stack[-1])
+        if len(self.stack) == 0:
+            raise StackCollectingException("StackUnderflowException")
+
         return self.stack.pop(-1)
 
     def push(self, value):
-        # print("+", value)
         self.stack.append(value)
 
     def end(self, value=None):
@@ -170,12 +171,15 @@ class Stack:
 
         # todo: is this really needed?
         self.method.class_file.prepare_use()
-        if debugging: mcpython.loader.java.Java.info(("launching method", self.method))
+        if debugging: mcpython.loader.java.Java.warn(("launching method", self.method))
 
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
-            if debugging: mcpython.loader.java.Java.info((self.cp, instruction))
+            if debugging:
+                mcpython.loader.java.Java.warn("instruction [info before invoke] "+str((self.cp, instruction)))
+                mcpython.loader.java.Java.warn("stack: "+str(self.stack)[:200])
+                mcpython.loader.java.Java.warn("local: "+str(self.local_vars)[:200])
 
             try:
                 result = instruction[0].invoke(instruction[1], self)
@@ -187,7 +191,7 @@ class Stack:
             if not result and self.cp != -1:
                 self.cp += instruction[2]
 
-        if debugging: mcpython.loader.java.Java.info(("finished method", self.method, self.return_value))
+        if debugging: mcpython.loader.java.Java.warn(("finished method", self.method, self.return_value))
 
 
 class Instruction(ABC):
@@ -793,9 +797,11 @@ class InvokeSpecial(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         method = stack.vm.get_method_of_nat(data, version=stack.method.class_file.internal_version)
-        stack.runtime.run_method(
+        result = stack.runtime.run_method(
             method, *stack.runtime.parse_args_from_stack(method, stack)
         )
+        if (method.name if hasattr(method, "name") else method.native_name) not in ("<init>", "<clinit>"):
+            stack.push(result)
 
 
 @BytecodeRepr.register_instruction

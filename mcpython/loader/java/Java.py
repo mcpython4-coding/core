@@ -95,9 +95,9 @@ class JavaVM:
     def init_builtins(self):
         from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean, Deprecated, ThreadLocal, FunctionalInterface, Class, Double
         from mcpython.loader.java.builtin.java.lang.annotation import ElementType, RetentionPolicy, Target, Retention, Documented
-        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List, Iterator, EnumSet, IdentityHashMap, HashSet, Random, WeakHashMap, Arrays
+        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List, Iterator, EnumSet, IdentityHashMap, HashSet, Random, WeakHashMap, Arrays, Collections
         from mcpython.loader.java.builtin.java.util.stream import Stream
-        from mcpython.loader.java.builtin.java.util.function import Predicate
+        from mcpython.loader.java.builtin.java.util.function import Predicate, Supplier
         from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
     def init_bridge(self):
@@ -832,3 +832,5 @@ def decode_cp_constant(const, version=0):
 vm = JavaVM()
 # this is the way how to attach a debugger to a certain method
 # vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")
+vm.debug_method("appeng/bootstrap/BlockDefinitionBuilder", "build", "()Lappeng/api/definitions/IBlockDefinition;")
+vm.debug_method("appeng/bootstrap/FeatureFactory", "addBootstrapComponent", "(Lappeng/bootstrap/IBootstrapComponent;)V")

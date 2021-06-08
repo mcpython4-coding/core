@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
+from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
 
 class Blocks(NativeClass):
@@ -193,11 +194,18 @@ class Block(AbstractBlock):
 
     @native("func_176223_P", "()Lnet/minecraft/block/BlockState;")
     def func_176223_P(self, instance):
-        return instance.properties
+        return instance.properties if instance is not None else None
 
     @native("setRegistryName", "(Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
     def setRegistryName(self, instance, name: str):
         instance.registry_name = name
+        return instance
+
+    @native("setRegistryName", "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName2(self, instance, namespace: str, name: str):
+        if instance is None: return instance
+
+        instance.registry_name = namespace + ":" + name
         return instance
 
     @native("getRegistryName", "()Lnet/minecraft/util/ResourceLocation;")
@@ -680,16 +688,20 @@ class ItemGroup(NativeClass):
         })
 
     @native("<init>", "(ILjava/lang/String;)V")
-    def init(self, instance, a: int, b: str):
+    def init(self, instance, a: int, name: str):
         import mcpython.client.gui.InventoryCreativeTab
 
         import mcpython.loader.java.Runtime
         runtime = mcpython.loader.java.Runtime.Runtime()
 
         # create the item stack
-        stack = runtime.run_method(instance.get_class().get_method("func_78016_d", "()Lnet/minecraft/item/ItemStack;"))
+        try:
+            stack = runtime.run_method(instance.get_class().get_method("func_78016_d", "()Lnet/minecraft/item/ItemStack;"))
+        except StackCollectingException as e:
+            e.add_trace(f"during creating ItemStack for item group {name}")
+            raise
 
-        instance.underlying_tab = mcpython.client.gui.InventoryCreativeTab.CreativeItemTab(b, stack.underlying_stack)
+        instance.underlying_tab = mcpython.client.gui.InventoryCreativeTab.CreativeItemTab(name, stack.underlying_stack)
 
         @shared.mod_loader("minecraft", "stage:item_groups:load")
         def add_tab():
@@ -720,6 +732,11 @@ class BlockItem(Item):
     @native("setRegistryName", "(Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
     def setRegistryName(self, instance, name: str):
         instance.registry_name = name
+        return instance
+
+    @native("setRegistryName", "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, namespace: str, name: str):
+        instance.registry_name = namespace + ":" + name
         return instance
 
     @native("setRegistryName", "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
@@ -914,4 +931,38 @@ class EntityAttributeModifier__Operation(NativeClass):
         self.exposed_attributes.update({
             "ADDITION": "net/minecraft/entity/ai/attributes/AttributeModifier$Operation::ADDITION"
         })
+
+
+class EntityClassification(NativeClass):
+    NAME = "net/minecraft/entity/EntityClassification"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "MISC": None,
+        })
+
+
+class EntityType__Builder(NativeClass):
+    NAME = "net/minecraft/entity/EntityType$Builder"
+
+    @native("func_220322_a", "(Lnet/minecraft/entity/EntityType$IFactory;Lnet/minecraft/entity/EntityClassification;)Lnet/minecraft/entity/EntityType$Builder;")
+    def create(self, factory, classification):
+        return self.create_instance()
+
+    @native("func_220321_a", "(FF)Lnet/minecraft/entity/EntityType$Builder;")
+    def func_220321_a(self, instance, a, b):
+        return instance
+
+    @native("setCustomClientFactory", "(Ljava/util/function/BiFunction;)Lnet/minecraft/entity/EntityType$Builder;")
+    def setCustomClientFactory(self, instance, function):
+        return instance
+
+    @native("func_233606_a_", "(I)Lnet/minecraft/entity/EntityType$Builder;")
+    def func_233606_a_(self, instance, v):
+        return instance
+
+    @native("func_206830_a", "(Ljava/lang/String;)Lnet/minecraft/entity/EntityType;")
+    def func_206830_a(self, instance, v):
+        return instance
 

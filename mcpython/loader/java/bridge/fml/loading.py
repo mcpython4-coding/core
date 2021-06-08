@@ -163,6 +163,10 @@ class EventBus(NativeClass):
         else:
             print("missing BRIDGE binding for", function)
 
+    @native("register", "(Ljava/lang/Object;)V")
+    def register(self, instance, obj):
+        pass
+
 
 class DistMarker(NativeClass):
     NAME = "net/minecraftforge/api/distmarker/Dist"
@@ -253,6 +257,26 @@ class ForgeConfigSpec__Builder(NativeClass):
     @native("configure", "(Ljava/util/function/Function;)Lorg/apache/commons/lang3/tuple/Pair;")
     def configure(self, instance, function):
         return None, None
+
+    @native("comment", "([Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;")
+    def comment(self, instance, comments):
+        return instance
+
+    @native("comment", "(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;")
+    def comment2(self, instance, comments):
+        return instance
+
+    @native("define", "(Ljava/lang/String;Ljava/lang/Object;)Lnet/minecraftforge/common/ForgeConfigSpec$ConfigValue;")
+    def define(self, instance, name, obj):
+        return instance
+
+    @native("defineInRange", "(Ljava/lang/String;III)Lnet/minecraftforge/common/ForgeConfigSpec$IntValue;")
+    def defineInRange(self, instance, name, a, b, c):
+        return instance
+
+    @native("defineList", "(Ljava/lang/String;Ljava/util/List;Ljava/util/function/Predicate;)Lnet/minecraftforge/common/ForgeConfigSpec$ConfigValue;")
+    def defineList(self, instance, name, a, b):
+        return instance
 
 
 class FMLCommonSetupEvent(NativeClass):
