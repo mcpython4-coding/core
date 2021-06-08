@@ -23,4 +23,3 @@ class ArrayList(NativeClass):
     @native("<init>", "()V")
     def init(self, instance):
         pass
-

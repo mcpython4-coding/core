@@ -21,4 +21,3 @@ class Integer(NativeClass):
     @native("valueOf", "(I)Ljava/lang/Integer;")
     def valueOf(self, instance):
         return instance
-

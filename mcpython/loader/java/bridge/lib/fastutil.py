@@ -21,4 +21,3 @@ class Object2FloatMap(NativeClass):
     @native("put", "(Ljava/lang/Object;F)F")
     def put(self, instance, key, value):
         return value
-

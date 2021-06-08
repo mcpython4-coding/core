@@ -25,4 +25,3 @@ class Path(NativeClass):
     @native("toString", "()Ljava/lang/String;")
     def toString(self, instance):
         return ""
-

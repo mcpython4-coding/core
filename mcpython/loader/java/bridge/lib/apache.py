@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -29,4 +29,3 @@ class Pair(NativeClass):
     @native("getRight", "()Ljava/lang/Object;")
     def getRight(self, instance):
         return instance[1]
-

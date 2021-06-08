@@ -11,9 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared, logger
-from mcpython.loader.java.Java import NativeClass, native
 import mcpython.common.event.Registry
+from mcpython import logger, shared
+from mcpython.loader.java.Java import NativeClass, native
 
 
 class GameData(NativeClass):
@@ -32,7 +32,9 @@ class IForgeRegistry(NativeClass):
     @native("register", "(Lnet/minecraftforge/registries/IForgeRegistryEntry;)V")
     def register(self, registry, entry):
         if registry is None:
-            logger.println(f"[JAVAFML][WARN] object {entry} could not get registered to registry!")
+            logger.println(
+                f"[JAVAFML][WARN] object {entry} could not get registered to registry!"
+            )
             return
 
         registry = registry()
@@ -81,14 +83,19 @@ class Registry(NativeClass):
         "func_218325_a",
         "(Lnet/minecraft/util/registry/Registry;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;",
     )
-    def func_218325_a(self, registry: mcpython.common.event.Registry.Registry, name: str, obj):
+    def func_218325_a(
+        self, registry: mcpython.common.event.Registry.Registry, name: str, obj
+    ):
         pass
 
 
 class RegistryKey(NativeClass):
     NAME = "net/minecraft/util/RegistryKey"
 
-    @native("func_240903_a_", "(Lnet/minecraft/util/RegistryKey;Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/util/RegistryKey;")
+    @native(
+        "func_240903_a_",
+        "(Lnet/minecraft/util/RegistryKey;Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/util/RegistryKey;",
+    )
     def func_240903_a_(self, key, location):
         return key
 
@@ -96,7 +103,10 @@ class RegistryKey(NativeClass):
 class RegistryObject(NativeClass):
     NAME = "net/minecraftforge/fml/RegistryObject"
 
-    @native("of", "(Lnet/minecraft/util/ResourceLocation;Lnet/minecraftforge/registries/IForgeRegistry;)Lnet/minecraftforge/fml/RegistryObject;")
+    @native(
+        "of",
+        "(Lnet/minecraft/util/ResourceLocation;Lnet/minecraftforge/registries/IForgeRegistry;)Lnet/minecraftforge/fml/RegistryObject;",
+    )
     def of(self, location, registry):
         return registry().get(location.name) if registry is not None else None
 
@@ -110,12 +120,16 @@ class ObjectHolder(NativeClass):
 
 def parseBlockToFactory(obj):
     if not hasattr(obj, "registry_name"):
-        logger.println(f"[JAVAFML][TRANSFORMER] transformation of {obj} failed as no registry name is set!")
+        logger.println(
+            f"[JAVAFML][TRANSFORMER] transformation of {obj} failed as no registry name is set!"
+        )
         return
 
     import mcpython.common.factory.BlockFactory
 
-    instance = mcpython.common.factory.BlockFactory.BlockFactory().set_name(shared.CURRENT_EVENT_SUB+":"+obj.registry_name)
+    instance = mcpython.common.factory.BlockFactory.BlockFactory().set_name(
+        shared.CURRENT_EVENT_SUB + ":" + obj.registry_name
+    )
     cls = obj.get_class()
 
     if cls.is_subclass_of("net/minecraft/block/SandBlock"):
@@ -126,12 +140,14 @@ def parseBlockToFactory(obj):
         instance.set_slab()
     elif cls.is_subclass_of("net/minecraft/block/WallBlock"):
         instance.set_wall()
-    elif cls.is_subclass_of("net/minecraft/block/FlowerPotBlock") or cls.is_subclass_of("net/minecraft/block/LeavesBlock"):
+    elif cls.is_subclass_of("net/minecraft/block/FlowerPotBlock") or cls.is_subclass_of(
+        "net/minecraft/block/LeavesBlock"
+    ):
         instance.set_solid(False).set_all_side_solid(False)
     elif cls.is_subclass_of("net/minecraft/block/RotatedPillarBlock"):
         instance.set_log()
     # else:
-        # print(obj, obj.registry_name)
+    # print(obj, obj.registry_name)
 
     try:
         instance.set_strength(obj.properties.hardness, obj.properties.blast_resistance)
@@ -180,7 +196,9 @@ class RegistryEvent__Register(NativeClass):
 class RenderingRegistry(NativeClass):
     NAME = "net/minecraftforge/fml/client/registry/RenderingRegistry"
 
-    @native("registerEntityRenderingHandler", "(Lnet/minecraft/entity/EntityType;Lnet/minecraftforge/fml/client/registry/IRenderFactory;)V")
+    @native(
+        "registerEntityRenderingHandler",
+        "(Lnet/minecraft/entity/EntityType;Lnet/minecraftforge/fml/client/registry/IRenderFactory;)V",
+    )
     def registerEntityRenderingHandler(self, entity_type, render_factory):
         pass
-

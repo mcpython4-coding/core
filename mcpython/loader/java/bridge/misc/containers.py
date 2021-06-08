@@ -21,4 +21,3 @@ class StateContainer(NativeClass):
     @native("func_177621_b", "()Lnet/minecraft/state/StateHolder;")
     def func_177621_b(self, instance):
         return instance
-

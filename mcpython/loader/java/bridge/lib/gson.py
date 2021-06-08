@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -32,5 +32,6 @@ class GsonBuilder(NativeClass):
 
     @native("create", "()Lcom/google/gson/Gson;")
     def create(self, instance):
-        return self.vm.get_class(Gson.NAME, version=self.internal_version).create_instance()
-
+        return self.vm.get_class(
+            Gson.NAME, version=self.internal_version
+        ).create_instance()

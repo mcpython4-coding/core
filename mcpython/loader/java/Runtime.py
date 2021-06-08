@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import sys
 import asyncio
+import sys
 import traceback
 import typing
 from abc import ABC
@@ -20,11 +20,11 @@ from abc import ABC
 import mcpython.loader.java.Java
 from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
-
 DEBUG = "--debug-vm" in sys.argv
 
 
-class UnhandledInstructionException(Exception): pass
+class UnhandledInstructionException(Exception):
+    pass
 
 
 class Runtime:
@@ -53,10 +53,12 @@ class Runtime:
             try:
                 return method(*args)
             except StackCollectingException as e:
-                e.add_trace("invoking native "+str(method)+" with "+str(args))
+                e.add_trace("invoking native " + str(method) + " with " + str(args))
                 raise
             except:
-                raise StackCollectingException(f"during invoking native {method} with {args}")
+                raise StackCollectingException(
+                    f"during invoking native {method} with {args}"
+                )
 
         if method.code_repr is None:
             method.code_repr = BytecodeRepr(method.attributes["Code"][0])
@@ -98,7 +100,7 @@ class Runtime:
             else:
                 i += 1
                 if not is_array:
-                    yield v[start:i], v[i-1] in "DJ"
+                    yield v[start:i], v[i - 1] in "DJ"
 
             if not is_array:
                 start = i
@@ -121,7 +123,7 @@ class Runtime:
             offset = 0
             for i, (_, state) in enumerate(parts):
                 if state:
-                    args.insert(i+offset, None)
+                    args.insert(i + offset, None)
                     offset += 1
 
         return tuple(reversed(args))
@@ -167,31 +169,43 @@ class Stack:
         """
 
         # todo: check for general debugging & class debugging
-        debugging = DEBUG or (self.method.class_file.name, self.method.name, self.method.signature) in self.method.class_file.vm.debugged_methods
+        debugging = (
+            DEBUG
+            or (self.method.class_file.name, self.method.name, self.method.signature)
+            in self.method.class_file.vm.debugged_methods
+        )
 
         # todo: is this really needed?
         self.method.class_file.prepare_use()
-        if debugging: mcpython.loader.java.Java.warn(("launching method", self.method))
+        if debugging:
+            mcpython.loader.java.Java.warn(("launching method", self.method))
 
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
             if debugging:
-                mcpython.loader.java.Java.warn("instruction [info before invoke] "+str((self.cp, instruction)))
-                mcpython.loader.java.Java.warn("stack: "+str(self.stack)[:200])
-                mcpython.loader.java.Java.warn("local: "+str(self.local_vars)[:200])
+                mcpython.loader.java.Java.warn(
+                    "instruction [info before invoke] " + str((self.cp, instruction))
+                )
+                mcpython.loader.java.Java.warn("stack: " + str(self.stack)[:200])
+                mcpython.loader.java.Java.warn("local: " + str(self.local_vars)[:200])
 
             try:
                 result = instruction[0].invoke(instruction[1], self)
             except StackCollectingException as e:
-                e.add_trace(f"during invoking {instruction[0]} in {self.method} [index: {self.cp}]")
+                e.add_trace(
+                    f"during invoking {instruction[0]} in {self.method} [index: {self.cp}]"
+                )
                 e.add_trace(str(instruction[1]))
                 raise
 
             if not result and self.cp != -1:
                 self.cp += instruction[2]
 
-        if debugging: mcpython.loader.java.Java.warn(("finished method", self.method, self.return_value))
+        if debugging:
+            mcpython.loader.java.Java.warn(
+                ("finished method", self.method, self.return_value)
+            )
 
 
 class Instruction(ABC):
@@ -385,7 +399,8 @@ class LDC(Instruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(
             mcpython.loader.java.Java.decode_cp_constant(
-                stack.method.class_file.cp[data - 1], version=stack.method.class_file.internal_version,
+                stack.method.class_file.cp[data - 1],
+                version=stack.method.class_file.internal_version,
             )
         )
 
@@ -398,13 +413,14 @@ class LDC_W(Instruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2.unpack(data[index + 1:index + 3])[0], 3
+        return mcpython.loader.java.Java.U2.unpack(data[index + 1 : index + 3])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(
             mcpython.loader.java.Java.decode_cp_constant(
-                stack.method.class_file.cp[data - 1], version=stack.method.class_file.internal_version,
+                stack.method.class_file.cp[data - 1],
+                version=stack.method.class_file.internal_version,
             )
         )
 
@@ -440,7 +456,7 @@ class Load(Instruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U1.unpack(data[index + 1:index + 2])[0], 2
+        return mcpython.loader.java.Java.U1.unpack(data[index + 1 : index + 2])[0], 2
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -491,7 +507,7 @@ class Store(Instruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U1.unpack(data[index + 1:index + 2])[0], 2
+        return mcpython.loader.java.Java.U1.unpack(data[index + 1 : index + 2])[0], 2
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -582,7 +598,10 @@ class IINC(Instruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return (data[index+1], mcpython.loader.java.Java.U1_S.unpack(data[index + 2 : index + 3])[0]), 3
+        return (
+            data[index + 1],
+            mcpython.loader.java.Java.U1_S.unpack(data[index + 2 : index + 3])[0],
+        ), 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -732,7 +751,9 @@ class GetStatic(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         cls_name = data[1][1][1]
-        java_class = stack.vm.get_class(cls_name, version=stack.method.class_file.internal_version)
+        java_class = stack.vm.get_class(
+            cls_name, version=stack.method.class_file.internal_version
+        )
         name = data[2][1][1]
         stack.push(java_class.get_static_attribute(name, expected_type=data[2][2][1]))
 
@@ -744,7 +765,9 @@ class PutStatic(CPLinkedInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         cls_name = data[1][1][1]
-        java_class = stack.vm.get_class(cls_name, version=stack.method.class_file.internal_version)
+        java_class = stack.vm.get_class(
+            cls_name, version=stack.method.class_file.internal_version
+        )
         name = data[2][1][1]
         value = stack.pop()
         java_class.set_static_attribute(name, value)
@@ -783,11 +806,15 @@ class InvokeVirtual(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        method = stack.vm.get_method_of_nat(data, version=stack.method.class_file.internal_version)
+        method = stack.vm.get_method_of_nat(
+            data, version=stack.method.class_file.internal_version
+        )
         # todo: add args
-        stack.push(stack.runtime.run_method(
-            method, *stack.runtime.parse_args_from_stack(method, stack)
-        ))
+        stack.push(
+            stack.runtime.run_method(
+                method, *stack.runtime.parse_args_from_stack(method, stack)
+            )
+        )
 
 
 @BytecodeRepr.register_instruction
@@ -796,11 +823,16 @@ class InvokeSpecial(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        method = stack.vm.get_method_of_nat(data, version=stack.method.class_file.internal_version)
+        method = stack.vm.get_method_of_nat(
+            data, version=stack.method.class_file.internal_version
+        )
         result = stack.runtime.run_method(
             method, *stack.runtime.parse_args_from_stack(method, stack)
         )
-        if (method.name if hasattr(method, "name") else method.native_name) not in ("<init>", "<clinit>"):
+        if (method.name if hasattr(method, "name") else method.native_name) not in (
+            "<init>",
+            "<clinit>",
+        ):
             stack.push(result)
 
 
@@ -810,7 +842,9 @@ class InvokeStatic(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        method = stack.vm.get_method_of_nat(data, version=stack.method.class_file.internal_version)
+        method = stack.vm.get_method_of_nat(
+            data, version=stack.method.class_file.internal_version
+        )
         stack.push(
             stack.runtime.run_method(
                 method, *stack.runtime.parse_args_from_stack(method, stack, static=True)
@@ -835,22 +869,25 @@ class InvokeInterface(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        method = stack.vm.get_method_of_nat(data[0], version=stack.method.class_file.internal_version)
+        method = stack.vm.get_method_of_nat(
+            data[0], version=stack.method.class_file.internal_version
+        )
         args = stack.runtime.parse_args_from_stack(method, stack)
         obj = args[0]
 
         try:
-            method = obj.get_class().get_method(method.name if hasattr(method, "name") else method.native_name, method.signature if hasattr(method, "signature") else method.native_signature)
+            method = obj.get_class().get_method(
+                method.name if hasattr(method, "name") else method.native_name,
+                method.signature
+                if hasattr(method, "signature")
+                else method.native_signature,
+            )
         except StackCollectingException as e:
             print(e.format_exception())
         except AttributeError:
             pass
 
-        stack.push(
-            stack.runtime.run_method(
-                method, *args
-            )
-        )
+        stack.push(stack.runtime.run_method(method, *args))
 
 
 @BytecodeRepr.register_instruction
@@ -879,7 +916,10 @@ class InvokeDynamic(CPLinkedInstruction):
         target_nat = boostrap[1][1][2][2]
 
         try:
-            cls_file = stack.vm.get_class(boostrap[1][1][2][1][1][1], version=stack.method.class_file.internal_version)
+            cls_file = stack.vm.get_class(
+                boostrap[1][1][2][1][1][1],
+                version=stack.method.class_file.internal_version,
+            )
             method = cls_file.get_method(target_nat[1][1], target_nat[2][1])
         except StackCollectingException as e:
             e.add_trace(str(boostrap[0]))
@@ -902,7 +942,9 @@ class New(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        c = stack.vm.get_class(data[1][1], version=stack.method.class_file.internal_version)
+        c = stack.vm.get_class(
+            data[1][1], version=stack.method.class_file.internal_version
+        )
         stack.push(c.create_instance())
 
 
@@ -912,9 +954,9 @@ class NewArray(CPLinkedInstruction):
 
     @classmethod
     def decode(
-            cls, data: bytearray, index, class_file
+        cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U1.unpack(data[index + 1:index + 2])[0], 2
+        return mcpython.loader.java.Java.U1.unpack(data[index + 1 : index + 2])[0], 2
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):

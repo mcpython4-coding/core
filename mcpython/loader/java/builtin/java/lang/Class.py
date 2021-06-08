@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -24,4 +24,3 @@ class Class(NativeClass):
     @native("getInterfaces", "()[Ljava/lang/Class;")
     def getInterfaces(self, instance):
         return [interface() for interface in instance.interfaces]
-

@@ -20,8 +20,8 @@ import traceback
 import typing
 import zipfile
 
-import mcpython.client.state.StateModLoading
 import mcpython.client.state.StateLoadingException
+import mcpython.client.state.StateModLoading
 import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
@@ -186,9 +186,7 @@ class ModLoader:
                     sys.path.append(file)
                     resource = mcpython.ResourceLoader.ResourceZipFile(file)
                     self.current_resource_access = resource
-                    mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
-                        0, resource
-                    )
+                    mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(0, resource)
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
                         try:
@@ -229,9 +227,7 @@ class ModLoader:
                 sys.path.append(file)
                 resource = mcpython.ResourceLoader.ResourceDirectory(file)
                 self.current_resource_access = resource
-                mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
-                    0, resource
-                )
+                mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(0, resource)
                 self.active_directory = file
                 if os.path.exists(file + "/mod.json"):
                     with open(file + "/mod.json") as sf:

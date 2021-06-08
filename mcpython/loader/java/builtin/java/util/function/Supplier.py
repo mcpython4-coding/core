@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -21,4 +21,3 @@ class Supplier(NativeClass):
     @native("get", "()Ljava/lang/Object;")
     def get(self, instance):
         pass  # todo: implement
-

@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -34,7 +34,9 @@ class RenderType(NativeClass):
 class RenderTypeLookup(NativeClass):
     NAME = "net/minecraft/client/renderer/RenderTypeLookup"
 
-    @native("setRenderLayer", "(Lnet/minecraft/block/Block;Lnet/minecraft/client/renderer/RenderType;)V")
+    @native(
+        "setRenderLayer",
+        "(Lnet/minecraft/block/Block;Lnet/minecraft/client/renderer/RenderType;)V",
+    )
     def setRenderLayer(self, block, render_type):
         pass
-

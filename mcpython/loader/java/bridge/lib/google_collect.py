@@ -30,7 +30,9 @@ class Lists(NativeClass):
 
     @native("newArrayList", "()Ljava/util/ArrayList;")
     def create(self):
-        instance = self.vm.get_class("java/util/ArrayList", version=self.internal_version).create_instance()
+        instance = self.vm.get_class(
+            "java/util/ArrayList", version=self.internal_version
+        ).create_instance()
         return instance
 
 
@@ -39,7 +41,9 @@ class Maps(NativeClass):
 
     @native("newHashMap", "()Ljava/util/HashMap;")
     def create(self):
-        instance = self.vm.get_class("java/util/HashMap", version=self.internal_version).create_instance()
+        instance = self.vm.get_class(
+            "java/util/HashMap", version=self.internal_version
+        ).create_instance()
         return instance
 
     @native("newHashMap", "(Ljava/util/Map;)Ljava/util/HashMap;")
@@ -81,7 +85,10 @@ class ImmutableList(NativeClass):
 class ImmutableMap(NativeClass):
     NAME = "com/google/common/collect/ImmutableMap"
 
-    @native("of", "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap;")
+    @native(
+        "of",
+        "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap;",
+    )
     def of(self, *stuff):
         return self.create_instance()
 
@@ -91,19 +98,27 @@ class ImmutableMultimap(NativeClass):
 
     @native("builder", "()Lcom/google/common/collect/ImmutableMultimap$Builder;")
     def builder(self):
-        return self.vm.get_class("com/google/common/collect/ImmutableMultimap$Builder", version=self.internal_version).create_instance()
+        return self.vm.get_class(
+            "com/google/common/collect/ImmutableMultimap$Builder",
+            version=self.internal_version,
+        ).create_instance()
 
 
 class ImmutableMultimap__Builder(NativeClass):
     NAME = "com/google/common/collect/ImmutableMultimap$Builder"
 
-    @native("put", "(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMultimap$Builder;")
+    @native(
+        "put",
+        "(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMultimap$Builder;",
+    )
     def put(self, instance, key, value):
         return instance
 
     @native("build", "()Lcom/google/common/collect/ImmutableMultimap;")
     def build(self, instance):
-        return self.vm.get_class("com/google/common/collect/ImmutableMultimap", version=self.internal_version).create_instance()
+        return self.vm.get_class(
+            "com/google/common/collect/ImmutableMultimap", version=self.internal_version
+        ).create_instance()
 
 
 class MutableClassToInstanceMap(NativeClass):

@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -26,7 +26,9 @@ class DefaultDispenseItemBehavior(NativeClass):
 class DispenserBlock(NativeClass):
     NAME = "net/minecraft/block/DispenserBlock"
 
-    @native("func_199774_a", "(Lnet/minecraft/util/IItemProvider;Lnet/minecraft/dispenser/IDispenseItemBehavior;)V")
+    @native(
+        "func_199774_a",
+        "(Lnet/minecraft/util/IItemProvider;Lnet/minecraft/dispenser/IDispenseItemBehavior;)V",
+    )
     def func_199774_a(self, provider, behaviour):
         pass
-

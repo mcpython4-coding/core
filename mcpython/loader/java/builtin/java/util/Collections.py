@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -20,4 +20,3 @@ class Collections(NativeClass):
     @native("addAll", "(Ljava/util/Collection;[Ljava/lang/Object;)Z")
     def addAll(self, collection, objects):
         pass  # todo: implement
-

@@ -22,7 +22,9 @@ class Files(NativeClass):
     def get(self, a, b):
         pass
 
-    @native("createDirectory", "(Ljava/nio/file/Path;[Ljava/nio/file/attribute/FileAttribute;)Ljava/nio/file/Path;")
+    @native(
+        "createDirectory",
+        "(Ljava/nio/file/Path;[Ljava/nio/file/attribute/FileAttribute;)Ljava/nio/file/Path;",
+    )
     def createDirectory(self, path, b):
         pass
-

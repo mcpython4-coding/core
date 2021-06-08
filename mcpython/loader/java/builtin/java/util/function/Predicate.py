@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -20,7 +20,9 @@ class Predicate(NativeClass):
 
     @native("and", "(Ljava/util/function/Predicate;)Ljava/util/function/Predicate;")
     def and_chain(self, this, other):
-        instance = self.vm.get_class("java/util/function/Predicate$And", version=self.internal_version).create_instance()
+        instance = self.vm.get_class(
+            "java/util/function/Predicate$And", version=self.internal_version
+        ).create_instance()
         instance.elements = [this, other]
         return instance
 
@@ -32,4 +34,3 @@ class AndPredicate(Predicate):
         instance = super().create_instance()
         instance.elements = []
         return instance
-

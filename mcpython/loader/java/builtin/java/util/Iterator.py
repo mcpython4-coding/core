@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -25,4 +25,3 @@ class Iterator(NativeClass):
     @native("next", "()Ljava/lang/Object;")
     def next(self, instance):
         return instance.pop(0)
-

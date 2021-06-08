@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import copy
+
 # Framework for loading and executing java bytecode
 # Mainly independent from mcpython's source
 # See Runtime.py for a system for executing the bytecode
@@ -20,7 +22,7 @@ import traceback
 import types
 import typing
 from abc import ABC
-import copy
+
 from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
 U1 = struct.Struct("!B")
@@ -82,7 +84,9 @@ class JavaVM:
         self.shared_classes: typing.Dict[
             str, typing.Union["AbstractJavaClass", typing.Type]
         ] = {}
-        self.classes_by_version: typing.Dict[typing.Hashable, typing.Dict[str, "AbstractJavaClass"]] = {}
+        self.classes_by_version: typing.Dict[
+            typing.Hashable, typing.Dict[str, "AbstractJavaClass"]
+        ] = {}
         self.lazy_classes: typing.Set[typing.Tuple[typing.Any, str]] = set()
 
         self.array_helper = JavaArrayManager(self)
@@ -93,22 +97,62 @@ class JavaVM:
             self.get_class(name, version=version)
 
     def init_builtins(self):
-        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean, Deprecated, ThreadLocal, FunctionalInterface, Class, Double
-        from mcpython.loader.java.builtin.java.lang.annotation import ElementType, RetentionPolicy, Target, Retention, Documented
-        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List, Iterator, EnumSet, IdentityHashMap, HashSet, Random, WeakHashMap, Arrays, Collections
-        from mcpython.loader.java.builtin.java.util.stream import Stream
+        from mcpython.loader.java.builtin.java.lang import (
+            Boolean,
+            Class,
+            Deprecated,
+            Double,
+            Enum,
+            FunctionalInterface,
+            Integer,
+            Object,
+            ThreadLocal,
+        )
+        from mcpython.loader.java.builtin.java.lang.annotation import (
+            Documented,
+            ElementType,
+            Retention,
+            RetentionPolicy,
+            Target,
+        )
+        from mcpython.loader.java.builtin.java.nio.file import Files, Path, Paths
+        from mcpython.loader.java.builtin.java.util import (
+            ArrayList,
+            Arrays,
+            Collections,
+            EnumSet,
+            HashMap,
+            HashSet,
+            IdentityHashMap,
+            Iterator,
+            List,
+            Map,
+            Random,
+            WeakHashMap,
+        )
         from mcpython.loader.java.builtin.java.util.function import Predicate, Supplier
-        from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
+        from mcpython.loader.java.builtin.java.util.stream import Stream
 
     def init_bridge(self):
         from mcpython.loader.java.bridge import util
-        from mcpython.loader.java.bridge.codec import builder
-        from mcpython.loader.java.bridge.event import registries, content
-        from mcpython.loader.java.bridge.fml import loading
-        from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil, gson, apache
-        from mcpython.loader.java.bridge.world import biomes, collection
-        from mcpython.loader.java.bridge.misc import containers, potions, dispenser, tags
         from mcpython.loader.java.bridge.client import rendering
+        from mcpython.loader.java.bridge.codec import builder
+        from mcpython.loader.java.bridge.event import content, registries
+        from mcpython.loader.java.bridge.fml import loading
+        from mcpython.loader.java.bridge.lib import (
+            apache,
+            fastutil,
+            google_collect,
+            gson,
+            logging,
+        )
+        from mcpython.loader.java.bridge.misc import (
+            containers,
+            dispenser,
+            potions,
+            tags,
+        )
+        from mcpython.loader.java.bridge.world import biomes, collection
 
     def get_class(self, name: str, version=0) -> "AbstractJavaClass":
         name = name.replace(".", "/")
@@ -127,7 +171,9 @@ class JavaVM:
         self.lazy_classes.add((version, name))
         return lambda: self.get_class(name, version=version)
 
-    def load_class(self, name: str, version: typing.Any = 0, shared=False) -> "AbstractJavaClass":
+    def load_class(
+        self, name: str, version: typing.Any = 0, shared=False
+    ) -> "AbstractJavaClass":
         name = name.replace(".", "/")
         if name.startswith("["):
             return self.array_helper.get(name)
@@ -270,11 +316,15 @@ class NativeClass(AbstractJavaClass, ABC):
                 e.add_trace(f"not found up at {self.name}")
                 raise
 
-        raise StackCollectingException(f"class {self.name} has no method named '{name}' with signature {signature}").add_trace(str(list(self.exposed_methods.keys()))) from None
+        raise StackCollectingException(
+            f"class {self.name} has no method named '{name}' with signature {signature}"
+        ).add_trace(str(list(self.exposed_methods.keys()))) from None
 
     def get_static_attribute(self, name: str, expected_type=None):
         if name not in self.exposed_attributes:
-            raise StackCollectingException(f"unknown static attribute '{name}' of class '{self.name}' (expected type: {expected_type})")
+            raise StackCollectingException(
+                f"unknown static attribute '{name}' of class '{self.name}' (expected type: {expected_type})"
+            )
 
         return self.exposed_attributes[name]
 
@@ -342,7 +392,9 @@ class JavaArrayManager:
     def get(self, class_text: str, version=0):
         depth = class_text.count("[")
         cls_name = class_text[depth:]
-        cls = self.vm.get_class(cls_name.removeprefix("L").removesuffix(";"), version=version)
+        cls = self.vm.get_class(
+            cls_name.removeprefix("L").removesuffix(";"), version=version
+        )
 
         instance = ArrayBase(depth, class_text, cls)
 
@@ -435,19 +487,27 @@ class ElementValue:
         self.tag = tag = chr(pop_u1(data))
 
         if tag in "BCDFIJSZs":
-            self.data = decode_cp_constant(table.class_file.cp[pop_u2(data)-1])
+            self.data = decode_cp_constant(table.class_file.cp[pop_u2(data) - 1])
         elif tag == "e":
-            cls_name = table.class_file.cp[pop_u2(data)-1][1].removeprefix("L").removesuffix(";")
-            attr_name = table.class_file.cp[pop_u2(data)-1][1]
+            cls_name = (
+                table.class_file.cp[pop_u2(data) - 1][1]
+                .removeprefix("L")
+                .removesuffix(";")
+            )
+            attr_name = table.class_file.cp[pop_u2(data) - 1][1]
 
             cls = vm.get_class(cls_name, version=table.class_file.internal_version)
             self.data = cls.get_static_attribute(attr_name, "ENUM-ENTRY")
         elif tag == "c":
-            self.data = table.class_file.cp[pop_u2(data)-1]
+            self.data = table.class_file.cp[pop_u2(data) - 1]
         elif tag == "[":
             self.data = [ElementValue().parse(table, data) for _ in range(pop_u2(data))]
         elif tag == "@":
-            annotation_type = table.class_file.cp[pop_u2(data) - 1][1].removeprefix("L").removesuffix(";")
+            annotation_type = (
+                table.class_file.cp[pop_u2(data) - 1][1]
+                .removeprefix("L")
+                .removesuffix(";")
+            )
 
             values = []
 
@@ -472,14 +532,20 @@ class RuntimeVisibleAnnotationsParser(AbstractAttributeParser):
 
     def parse(self, table: "JavaAttributeTable", data: bytearray):
         for _ in range(pop_u2(data)):
-            annotation_type = table.class_file.cp[pop_u2(data)-1][1].removeprefix("L").removesuffix(";")
+            annotation_type = (
+                table.class_file.cp[pop_u2(data) - 1][1]
+                .removeprefix("L")
+                .removesuffix(";")
+            )
 
             values = []
 
             for _ in range(pop_u2(data)):
-                name = table.class_file.cp[pop_u2(data)-1]
+                name = table.class_file.cp[pop_u2(data) - 1]
                 if name[0] != 1:
-                    raise StackCollectingException(f"invalid name @annotation head for ElementValue pair: {name}")
+                    raise StackCollectingException(
+                        f"invalid name @annotation head for ElementValue pair: {name}"
+                    )
 
                 name = name[1]
                 value = ElementValue().parse(table, data)
@@ -558,7 +624,7 @@ class JavaAttributeTable:
 
         diff_may = self.ATTRIBUTES_MAY_PARSING.intersection(keyset)
         # if diff_may:
-            # info("missing attribute parsing for: " + ", ".join(diff_may))
+        # info("missing attribute parsing for: " + ", ".join(diff_may))
 
     def __getitem__(self, item):
         return self.attributes[item]
@@ -666,7 +732,8 @@ class JavaBytecodeClass(AbstractJavaClass):
             self.cp[j] = list(d)
 
         for i, e in enumerate(self.cp):
-            if e is None: continue
+            if e is None:
+                continue
 
             tag = e[0]
 
@@ -685,10 +752,14 @@ class JavaBytecodeClass(AbstractJavaClass):
         self.access |= pop_u2(data)
 
         self.name = self.cp[pop_u2(data) - 1][1][1]
-        self.parent = vm.get_lazy_class(self.cp[pop_u2(data) - 1][1][1], version=self.internal_version)
+        self.parent = vm.get_lazy_class(
+            self.cp[pop_u2(data) - 1][1][1], version=self.internal_version
+        )
 
         self.interfaces += [
-            vm.get_lazy_class(self.cp[pop_u2(data) - 1][1][1], version=self.internal_version)
+            vm.get_lazy_class(
+                self.cp[pop_u2(data) - 1][1][1], version=self.internal_version
+            )
             for _ in range(pop_u2(data))
         ]
 
@@ -764,12 +835,18 @@ class JavaBytecodeClass(AbstractJavaClass):
                         cls = vm.get_class(cls_name, version=self.internal_version)
                     except StackCollectingException as e:
                         # checks if the class exists, this will be true if it is a here class loader exception
-                        if e.text.startswith("class ") and e.text.endswith(" not found!") and len(e.traces) == 0:
+                        if (
+                            e.text.startswith("class ")
+                            and e.text.endswith(" not found!")
+                            and len(e.traces) == 0
+                        ):
                             # todo: can we do something else here, maybe add a flag to get_class to return None if the class
                             #   could not be loaded -> None check here
                             traceback.print_exc()
                         else:
-                            e.add_trace(f"runtime visible annotation handling @class {self.name} loading class {cls_name}")
+                            e.add_trace(
+                                f"runtime visible annotation handling @class {self.name} loading class {cls_name}"
+                            )
                             raise
                     else:
                         cls.on_annotate(self, args)
@@ -784,10 +861,17 @@ class JavaBytecodeClass(AbstractJavaClass):
         return self.dynamic_field_keys | self.parent().get_dynamic_field_keys()
 
     def is_subclass_of(self, class_name: str):
-        return self.name == class_name or self.parent().is_subclass_of(class_name) or any(interface().is_subclass_of(class_name) for interface in self.interfaces)
+        return (
+            self.name == class_name
+            or self.parent().is_subclass_of(class_name)
+            or any(
+                interface().is_subclass_of(class_name) for interface in self.interfaces
+            )
+        )
 
     def prepare_use(self):
-        if self.class_init_complete: return
+        if self.class_init_complete:
+            return
         self.class_init_complete = True
 
         if ("<clinit>", "()V") in self.methods:
@@ -832,5 +916,13 @@ def decode_cp_constant(const, version=0):
 vm = JavaVM()
 # this is the way how to attach a debugger to a certain method
 # vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")
-vm.debug_method("appeng/bootstrap/BlockDefinitionBuilder", "build", "()Lappeng/api/definitions/IBlockDefinition;")
-vm.debug_method("appeng/bootstrap/FeatureFactory", "addBootstrapComponent", "(Lappeng/bootstrap/IBootstrapComponent;)V")
+vm.debug_method(
+    "appeng/bootstrap/BlockDefinitionBuilder",
+    "build",
+    "()Lappeng/api/definitions/IBlockDefinition;",
+)
+vm.debug_method(
+    "appeng/bootstrap/FeatureFactory",
+    "addBootstrapComponent",
+    "(Lappeng/bootstrap/IBootstrapComponent;)V",
+)

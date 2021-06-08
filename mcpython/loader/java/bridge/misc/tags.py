@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -21,4 +21,3 @@ class BlockTags(NativeClass):
     @native("func_199894_a", "(Ljava/lang/String;)Lnet/minecraft/tags/ITag$INamedTag;")
     def getByName(self, name: str):
         return shared.tag_handler.get_tag_for(name, "blocks", or_else_none=True)
-

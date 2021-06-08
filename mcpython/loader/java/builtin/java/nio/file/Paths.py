@@ -21,4 +21,3 @@ class Paths(NativeClass):
     @native("get", "(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;")
     def get(self, a, b):
         pass
-

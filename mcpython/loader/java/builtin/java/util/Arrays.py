@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -20,4 +20,3 @@ class Arrays(NativeClass):
     @native("stream", "([Ljava/lang/Object;)Ljava/util/stream/Stream;")
     def stream(self, data):
         return data
-

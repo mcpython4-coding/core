@@ -21,4 +21,3 @@ class Enum(NativeClass):
     @native("<init>", "(Ljava/lang/String;I)V")
     def init(self, instance, name: str, value: int):
         pass
-

@@ -15,7 +15,6 @@ import sys
 import traceback
 
 import mcpython.common.mod.ExtensionPoint
-from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 import mcpython.common.mod.Mod
 import mcpython.loader.java.Java
 import mcpython.loader.java.Runtime
@@ -23,6 +22,7 @@ import mcpython.ResourceLoader
 import pyglet.app
 from mcpython import logger, shared
 from mcpython.loader.java.Java import vm as jvm
+from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
 jvm.init_builtins()
 jvm.init_bridge()
@@ -52,7 +52,8 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
         """
 
         for file in self.resource_access.get_all_entries_in_directory(""):
-            if not file.endswith(".class"): continue
+            if not file.endswith(".class"):
+                continue
 
             self.load_mod_file(file)
 
@@ -83,7 +84,9 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
                     exception = e.format_exception()
                     mcpython.client.state.StateLoadingException.error_occur(exception)
                     logger.print_exception("raw exception trace")
-                    logger.write_into_container("fatal FML error", exception.split("\n"))
+                    logger.write_into_container(
+                        "fatal FML error", exception.split("\n")
+                    )
                 except:
                     logger.print_exception("error screen error")
                 else:

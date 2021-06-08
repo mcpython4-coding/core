@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -23,9 +23,10 @@ class ElementType(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "TYPE": 0,
-            "FIELD": 1,
-            "METHOD": 2,
-        })
-
+        self.exposed_attributes.update(
+            {
+                "TYPE": 0,
+                "FIELD": 1,
+                "METHOD": 2,
+            }
+        )

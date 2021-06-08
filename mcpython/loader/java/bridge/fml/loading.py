@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import traceback
 
 import mcpython.common.mod.ModLoader
-from mcpython import shared, logger
+from mcpython import logger, shared
 from mcpython.loader.java.Java import NativeClass, native
 from mcpython.loader.java.Runtime import Runtime, UnhandledInstructionException
 
@@ -24,6 +24,7 @@ class Mod(NativeClass):
 
     def on_annotate(self, cls, args):
         import mcpython.loader.java.Runtime
+
         runtime = mcpython.loader.java.Runtime.Runtime()
         instance = cls.create_instance()
         runtime.run_method(cls.get_method("<init>", "()V"), instance)
@@ -34,38 +35,54 @@ class Mod_EventBusSubscriber(NativeClass):
 
     def on_annotate(self, cls, args):
 
-        if ("registerBlocks", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V") in cls.methods:
+        if (
+            "registerBlocks",
+            "(Lnet/minecraftforge/event/RegistryEvent$Register;)V",
+        ) in cls.methods:
             current_mod = shared.CURRENT_EVENT_SUB
 
             @shared.mod_loader("minecraft", "stage:block:factory_usage")
             def load():
                 shared.CURRENT_EVENT_SUB = current_mod
-                method = cls.get_method("registerBlocks", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V")
+                method = cls.get_method(
+                    "registerBlocks",
+                    "(Lnet/minecraftforge/event/RegistryEvent$Register;)V",
+                )
 
                 runtime = Runtime()
 
                 try:
-                    runtime.run_method(method, shared.registry.get_by_name("minecraft:block"))
+                    runtime.run_method(
+                        method, shared.registry.get_by_name("minecraft:block")
+                    )
                 except:
                     raise mcpython.common.mod.ModLoader.LoadingInterruptException
 
-        if ("registerItems", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V") in cls.methods:
+        if (
+            "registerItems",
+            "(Lnet/minecraftforge/event/RegistryEvent$Register;)V",
+        ) in cls.methods:
             current_mod = shared.CURRENT_EVENT_SUB
 
             @shared.mod_loader("minecraft", "stage:item:factory_usage")
             def load():
                 shared.CURRENT_EVENT_SUB = current_mod
-                method = cls.get_method("registerItems", "(Lnet/minecraftforge/event/RegistryEvent$Register;)V")
+                method = cls.get_method(
+                    "registerItems",
+                    "(Lnet/minecraftforge/event/RegistryEvent$Register;)V",
+                )
 
                 runtime = Runtime()
 
                 try:
-                    runtime.run_method(method, shared.registry.get_by_name("minecraft:item"))
+                    runtime.run_method(
+                        method, shared.registry.get_by_name("minecraft:item")
+                    )
                 except:
                     raise mcpython.common.mod.ModLoader.LoadingInterruptException
 
         # else:
-            # print("sub", 2, cls, args)
+        # print("sub", 2, cls, args)
 
 
 class Mod_EventBusSubscriber_Bus(NativeClass):
@@ -73,10 +90,12 @@ class Mod_EventBusSubscriber_Bus(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "MOD": "net/minecraftforge/fml/common/Mod$EventBusSubscriber$Bus::MOD",
-            "FORGE": "net/minecraftforge/fml/common/Mod$EventBusSubscriber$Bus::FORGE"
-        })
+        self.exposed_attributes.update(
+            {
+                "MOD": "net/minecraftforge/fml/common/Mod$EventBusSubscriber$Bus::MOD",
+                "FORGE": "net/minecraftforge/fml/common/Mod$EventBusSubscriber$Bus::FORGE",
+            }
+        )
 
 
 class FMLLoadingContext(NativeClass):
@@ -98,11 +117,17 @@ class ModLoadingContext(NativeClass):
     def get_context(self):
         pass
 
-    @native("registerConfig", "(Lnet/minecraftforge/fml/config/ModConfig$Type;Lnet/minecraftforge/common/ForgeConfigSpec;Ljava/lang/String;)V")
+    @native(
+        "registerConfig",
+        "(Lnet/minecraftforge/fml/config/ModConfig$Type;Lnet/minecraftforge/common/ForgeConfigSpec;Ljava/lang/String;)V",
+    )
     def registerConfig(self, instance, config_type, config_spec, file_name: str):
         pass
 
-    @native("registerConfig", "(Lnet/minecraftforge/fml/config/ModConfig$Type;Lnet/minecraftforge/common/ForgeConfigSpec;)V")
+    @native(
+        "registerConfig",
+        "(Lnet/minecraftforge/fml/config/ModConfig$Type;Lnet/minecraftforge/common/ForgeConfigSpec;)V",
+    )
     def registerConfig2(self, instance, config_type, config_spec):
         pass
 
@@ -117,11 +142,16 @@ class EventBus(NativeClass):
             try:
                 runtime.run_method(function, None)
             except UnhandledInstructionException:
-                logger.print_exception(f"during invoking commonSetup listener {function}")
+                logger.print_exception(
+                    f"during invoking commonSetup listener {function}"
+                )
 
                 if shared.IS_CLIENT:
                     import mcpython.client.state.StateLoadingException
-                    mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+
+                    mcpython.client.state.StateLoadingException.error_occur(
+                        traceback.format_exc()
+                    )
 
                     import mcpython.common.mod.ModLoader
 
@@ -133,26 +163,37 @@ class EventBus(NativeClass):
                 try:
                     runtime.run_method(function, None)
                 except UnhandledInstructionException:
-                    logger.print_exception(f"during invoking clientSetup listener {function}")
+                    logger.print_exception(
+                        f"during invoking clientSetup listener {function}"
+                    )
 
                     import mcpython.client.state.StateLoadingException
-                    mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+
+                    mcpython.client.state.StateLoadingException.error_occur(
+                        traceback.format_exc()
+                    )
 
                     import mcpython.common.mod.ModLoader
 
                     raise mcpython.common.mod.ModLoader.LoadingInterruptException
 
         elif function.name == "loadComplete":
+
             def run():
                 runtime = Runtime()
                 try:
                     runtime.run_method(function, None)
                 except UnhandledInstructionException:
-                    logger.print_exception(f"during invoking loadComplete listener {function}")
+                    logger.print_exception(
+                        f"during invoking loadComplete listener {function}"
+                    )
 
                     if shared.IS_CLIENT:
                         import mcpython.client.state.StateLoadingException
-                        mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+
+                        mcpython.client.state.StateLoadingException.error_occur(
+                            traceback.format_exc()
+                        )
 
                         import mcpython.common.mod.ModLoader
 
@@ -198,7 +239,10 @@ class DistExecutor(NativeClass):
     def runForDist(self, left, right):
         pass  # todo: run code when on the respective side
 
-    @native("unsafeRunForDist", "(Ljava/util/function/Supplier;Ljava/util/function/Supplier;)Ljava/lang/Object;")
+    @native(
+        "unsafeRunForDist",
+        "(Ljava/util/function/Supplier;Ljava/util/function/Supplier;)Ljava/lang/Object;",
+    )
     def unsafeRunForDist(self, left, right):
         return self.runForDist(left, right)
 
@@ -226,23 +270,35 @@ class ModConfig_Type(NativeClass):
 class ForgeConfigSpec__Builder(NativeClass):
     NAME = "net/minecraftforge/common/ForgeConfigSpec$Builder"
 
-    @native('<init>', '()V')
+    @native("<init>", "()V")
     def init(self, instance):
         pass
 
-    @native("comment", "(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;")
+    @native(
+        "comment",
+        "(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;",
+    )
     def comment(self, instance, text: str):
         return instance
 
-    @native('push', '(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;')
+    @native(
+        "push",
+        "(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;",
+    )
     def push(self, instance, text: str):
         return instance
 
-    @native("defineEnum", "(Ljava/lang/String;Ljava/lang/Enum;)Lnet/minecraftforge/common/ForgeConfigSpec$EnumValue;")
+    @native(
+        "defineEnum",
+        "(Ljava/lang/String;Ljava/lang/Enum;)Lnet/minecraftforge/common/ForgeConfigSpec$EnumValue;",
+    )
     def defineEnum(self, instance, name: str, enum):
         return instance
 
-    @native("define", "(Ljava/lang/String;Z)Lnet/minecraftforge/common/ForgeConfigSpec$BooleanValue;")
+    @native(
+        "define",
+        "(Ljava/lang/String;Z)Lnet/minecraftforge/common/ForgeConfigSpec$BooleanValue;",
+    )
     def defineBool(self, instance, name: str, default: bool):
         return instance
 
@@ -254,27 +310,45 @@ class ForgeConfigSpec__Builder(NativeClass):
     def build(self, instance):
         return
 
-    @native("configure", "(Ljava/util/function/Function;)Lorg/apache/commons/lang3/tuple/Pair;")
+    @native(
+        "configure",
+        "(Ljava/util/function/Function;)Lorg/apache/commons/lang3/tuple/Pair;",
+    )
     def configure(self, instance, function):
         return None, None
 
-    @native("comment", "([Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;")
+    @native(
+        "comment",
+        "([Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;",
+    )
     def comment(self, instance, comments):
         return instance
 
-    @native("comment", "(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;")
+    @native(
+        "comment",
+        "(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;",
+    )
     def comment2(self, instance, comments):
         return instance
 
-    @native("define", "(Ljava/lang/String;Ljava/lang/Object;)Lnet/minecraftforge/common/ForgeConfigSpec$ConfigValue;")
+    @native(
+        "define",
+        "(Ljava/lang/String;Ljava/lang/Object;)Lnet/minecraftforge/common/ForgeConfigSpec$ConfigValue;",
+    )
     def define(self, instance, name, obj):
         return instance
 
-    @native("defineInRange", "(Ljava/lang/String;III)Lnet/minecraftforge/common/ForgeConfigSpec$IntValue;")
+    @native(
+        "defineInRange",
+        "(Ljava/lang/String;III)Lnet/minecraftforge/common/ForgeConfigSpec$IntValue;",
+    )
     def defineInRange(self, instance, name, a, b, c):
         return instance
 
-    @native("defineList", "(Ljava/lang/String;Ljava/util/List;Ljava/util/function/Predicate;)Lnet/minecraftforge/common/ForgeConfigSpec$ConfigValue;")
+    @native(
+        "defineList",
+        "(Ljava/lang/String;Ljava/util/List;Ljava/util/function/Predicate;)Lnet/minecraftforge/common/ForgeConfigSpec$ConfigValue;",
+    )
     def defineList(self, instance, name, a, b):
         return instance
 
@@ -282,10 +356,13 @@ class ForgeConfigSpec__Builder(NativeClass):
 class FMLCommonSetupEvent(NativeClass):
     NAME = "net/minecraftforge/fml/event/lifecycle/FMLCommonSetupEvent"
 
-    @native("enqueueWork", "(Ljava/lang/Runnable;)Ljava/util/concurrent/CompletableFuture;")
+    @native(
+        "enqueueWork", "(Ljava/lang/Runnable;)Ljava/util/concurrent/CompletableFuture;"
+    )
     def enqueueWork(self, instance, work):
         # todo: make run safe
         import mcpython.loader.java.Runtime
+
         runtime = mcpython.loader.java.Runtime.Runtime()
         runtime.run_method(work, None)
 
@@ -294,7 +371,9 @@ class OnlyIn(NativeClass):
     NAME = "net/minecraftforge/api/distmarker/OnlyIn"
 
     def on_annotate(self, cls, args):
-        logger.println(f"[FML][WARN] got internal @OnlyIn marker on cls {cls.name} not specified for use in mods. Things may break!")
+        logger.println(
+            f"[FML][WARN] got internal @OnlyIn marker on cls {cls.name} not specified for use in mods. Things may break!"
+        )
 
 
 class MinecraftForge(NativeClass):
@@ -302,7 +381,8 @@ class MinecraftForge(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "EVENT_BUS": None,
-        })
-
+        self.exposed_attributes.update(
+            {
+                "EVENT_BUS": None,
+            }
+        )
