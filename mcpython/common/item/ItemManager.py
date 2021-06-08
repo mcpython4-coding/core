@@ -89,7 +89,6 @@ def load_data():
 
 def register_item(registry, cls):
     tag_holder.register_class(cls)
-    items.entries[cls.NAME.split(":")[-1]] = cls
     if cls.NAME in items.item_index_table:
         return
     items.item_index_table.setdefault(cls.NAME, {})

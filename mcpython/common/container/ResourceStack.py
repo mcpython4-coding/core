@@ -70,9 +70,9 @@ class ItemStack(AbstractResourceStack):
         elif isinstance(item_name_or_instance, str):
             if (
                 item_name_or_instance
-                in shared.registry.get_by_name("minecraft:item").entries
+                in shared.registry.get_by_name("minecraft:item").full_entries
             ):
-                self.item = shared.registry.get_by_name("minecraft:item").entries[
+                self.item = shared.registry.get_by_name("minecraft:item").full_entries[
                     item_name_or_instance
                 ]()
             else:

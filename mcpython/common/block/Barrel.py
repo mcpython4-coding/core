@@ -70,9 +70,10 @@ class Barrel(AbstractBlock.AbstractBlock):
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple
     ):
+        # open the inv when needed
         if button == mouse.RIGHT and not modifiers & (
             key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL
-        ):  # open the inv when needed
+        ):
             shared.inventory_handler.show(self.inventory)
             return True
         else:

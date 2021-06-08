@@ -1693,4 +1693,7 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed uv horizontal rendering of blocks
 [uuk]: <fml>: fixed StairsBlocks not correctly getting resolved
 [uuk]: bumped target mc version to 1.17
+[uuk]: improved memory usage / block instance
+[uuk]: item-registry's entries attribute will now contain every item only ones, it is replaced by the full_entries attribute
+[uuk]: fixed naming of AbstractFluidContainer item base class
 

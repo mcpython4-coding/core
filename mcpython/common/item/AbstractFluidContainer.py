@@ -18,7 +18,7 @@ import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractItem
 
 
-class AbstractArmorItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
+class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC):
     """
     Common base class for container-like items holding fluids
     """

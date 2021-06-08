@@ -23,10 +23,6 @@ from mcpython import shared
 class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     # todo: add bounding-box
 
-    DEFAULT_FACE_SOLID = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-    )
-
     # todo: up is not always allowed / depends on the configuration of the other stuff!
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
@@ -40,6 +36,7 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
     def __init__(self):
         super().__init__()
+        self.face_solid = self.UNSOLID_FACE_SOLID
         self.connections = {
             "north": False,
             "east": False,
