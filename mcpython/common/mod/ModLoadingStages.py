@@ -98,6 +98,7 @@ class LoadingStage:
         )
         self.current_progress += 1
         self.active_mod_index = 0
+        # print(self.active_event)
         return self
 
     def finished(self):

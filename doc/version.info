@@ -1689,4 +1689,5 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed resolving of invokedynamic instruction
 [github]: end of feature period of snapshot 21w23a
 [uuk]: fixed chat history index not resetting after entering a command
+[uuk]: fixed latest biomesoplenty build [1.16.5-13.1.0.471]
 

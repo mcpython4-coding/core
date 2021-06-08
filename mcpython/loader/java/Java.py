@@ -916,13 +916,5 @@ def decode_cp_constant(const, version=0):
 vm = JavaVM()
 # this is the way how to attach a debugger to a certain method
 # vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")
-vm.debug_method(
-    "appeng/bootstrap/BlockDefinitionBuilder",
-    "build",
-    "()Lappeng/api/definitions/IBlockDefinition;",
-)
-vm.debug_method(
-    "appeng/bootstrap/FeatureFactory",
-    "addBootstrapComponent",
-    "(Lappeng/bootstrap/IBootstrapComponent;)V",
-)
+# vm.debug_method("appeng/bootstrap/BlockDefinitionBuilder", "build", "()Lappeng/api/definitions/IBlockDefinition;")
+# vm.debug_method("appeng/bootstrap/FeatureFactory", "addBootstrapComponent", "(Lappeng/bootstrap/IBootstrapComponent;)V")

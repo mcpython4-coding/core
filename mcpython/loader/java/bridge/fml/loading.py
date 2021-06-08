@@ -56,10 +56,15 @@ class Mod_EventBusSubscriber(NativeClass):
                     runtime.run_method(
                         method, shared.registry.get_by_name("minecraft:block")
                     )
+                except StackCollectingException as e:
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(e.format_exception())
+                    print(e.format_exception())
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
                 except:
                     import mcpython.client.state.StateLoadingException
                     mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
-                    print(e.format_exception())
+                    traceback.print_exc()
                     raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
         if (

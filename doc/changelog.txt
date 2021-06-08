@@ -69,7 +69,7 @@ changelog of snapshot 21w23a released on 9.6.2021 targeting <1.17>
         - added transformer system for transforming java bytecode defined objects into readable code for our loader
 
         The following mods are known to load partially:
-            - biomesoplenty, tested with 1.16.5-13.1.0.469
+            - biomesoplenty, tested with 1.16.5-13.1.0.471
             - storage drawers, tested with 1.16.3-8.2.2
 
         Any other mod may or may not load; Implementation wrappers for parts are welcome to be PR'ed

@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import sys
 import time
+import traceback
 import typing
 
 import pyglet.app
@@ -139,7 +140,10 @@ class EventBus:
             if self.close_on_error:
                 shared.window.close()
                 pyglet.app.exit()
-                sys.exit(-1)
+                import mcpython.client.state.StateLoadingException
+                from mcpython.common.mod.ModLoader import LoadingInterruptException
+                mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+                return
             else:
                 raise RuntimeError
 
@@ -272,9 +276,10 @@ class EventBus:
             except SystemExit:
                 raise
             except MemoryError:
-                shared.window.close()
-                pyglet.app.exit()
-                sys.exit(-1)
+                import mcpython.client.state.StateLoadingException
+                from mcpython.common.mod.ModLoader import LoadingInterruptException
+                mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+                return
             except:
                 raise
 

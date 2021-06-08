@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import sys
 import time
+import traceback
 import typing
 
 import mcpython.client.gui.ContainerRenderer
@@ -42,13 +43,16 @@ TEXTURES = _TEXTURES
 
 
 def reload():
+    import mcpython.ResourceLoader as ResourceLoader
     try:
-        base: pyglet.image.AbstractImage = mcpython.ResourceLoader.read_pyglet_image(
+        base: pyglet.image.AbstractImage = ResourceLoader.read_pyglet_image(
             "gui/icons"
         )
     except:
         logger.print_exception("[FATAL] failed to load hotbar image")
-        sys.exit(-1)
+        import mcpython.client.state.StateLoadingException as StateLoadingException
+        StateLoadingException.error_occur(traceback.format_exc())
+        return
 
     def _get_tex_region(rx, ry, rex, rey):
         image = base.get_region(
@@ -120,7 +124,7 @@ def reload():
             ],
         ]
 
-        base = mcpython.ResourceLoader.read_image("minecraft:gui/widgets")
+        base = ResourceLoader.read_image("minecraft:gui/widgets")
 
         bar = mcpython.util.texture.to_pyglet_image(
             base.crop((0, 0, 182, 22)).resize((364, 44), PIL.Image.NEAREST)

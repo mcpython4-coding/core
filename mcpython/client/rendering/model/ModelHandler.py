@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import gc
 import json
 import sys
+import traceback
 
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.client.rendering.model.BlockModel
@@ -132,10 +133,16 @@ class ModelHandler:
                 sorted_models.remove("minecraft:block/block")
             if "block/block" in sorted_models:
                 sorted_models.remove("block/block")
-        except ValueError:
+        except:
             logger.println(self.found_models, "\n", self.dependence_list)
             logger.print_exception("top-sort error during sorting models")
-            sys.exit(-1)
+            import mcpython.client.state.StateLoadingException as StateLoadingException
+            from mcpython.common.mod.ModLoader import LoadingInterruptException
+            StateLoadingException.error_occur(traceback.format_exc())
+            traceback.print_exc()
+
+            raise LoadingInterruptException from None
+
         sorted_models = list(set(sorted_models))
         self.dependence_list.clear()  # decrease memory usage
         for x in sorted_models:

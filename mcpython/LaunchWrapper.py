@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import os
 import sys
+import traceback
 import typing
 
 import pyglet.app
@@ -297,7 +298,9 @@ class LaunchWrapper:
             raise
         except:
             logger.print_exception("ERROR DURING RUNTIME (UNHANDLED)")
-            sys.exit(-1)
+            import mcpython.client.state.StateLoadingException
+            mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+            return self
 
         return self
 

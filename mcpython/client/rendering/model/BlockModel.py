@@ -83,9 +83,10 @@ class Model:
 
     def get_prepared_data_for(self, position, config, face):
         if not self.drawable:
-            raise NotImplementedError(
-                f"can't draw an model '{self.name}' which has not defined textures"
+            logger.println(
+                f"[BLOCK MODEL][FATAL] can't draw an model '{self.name}' which has not defined textures"
             )
+            return [], None
 
         rotation = config["rotation"]
         if rotation == (90, 90, 0):

@@ -66,9 +66,6 @@ class CraftingManager:
         return recipe
 
     def __call__(self, obj):
-        assert issubclass(
-            obj, mcpython.common.container.crafting.IRecipe.IRecipe
-        ), "must be IRecipe"
         [self.recipe_info_table.setdefault(name, obj) for name in obj.RECIPE_TYPE_NAMES]
         return obj
 
@@ -79,11 +76,16 @@ class CraftingManager:
     ):
         if name is None:
             name = recipe.name
-        assert name is not None, "name must be set"
+        else:
+            recipe.name = name
 
-        recipe.name = name
-        recipe.bake()
-        recipe.prepare()
+        try:
+            recipe.bake()
+            recipe.prepare()
+        except:
+            logger.print_exception("during preparing recipe "+name)
+            return self
+
         self.recipe_table[name] = recipe
         return self
 

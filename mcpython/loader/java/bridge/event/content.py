@@ -687,6 +687,28 @@ class FlowerPotBlock(Block):
         instance.properties = properties
 
 
+class AbstractTopPlantBlock(Block):
+    NAME = "net/minecraft/block/AbstractTopPlantBlock"
+
+    @native(
+        "<init>",
+        "(Lnet/minecraft/block/AbstractBlock$Properties;Lnet/minecraft/util/Direction;Lnet/minecraft/util/math/shapes/VoxelShape;ZD)V",
+    )
+    def init(self, instance, properties, direction, shape, a, b):
+        instance.properties = properties
+
+
+class AbstractBodyPlantBlock(Block):
+    NAME = "net/minecraft/block/AbstractBodyPlantBlock"
+
+    @native(
+        "<init>",
+        "(Lnet/minecraft/block/AbstractBlock$Properties;Lnet/minecraft/util/Direction;Lnet/minecraft/util/math/shapes/VoxelShape;Z)V",
+    )
+    def init(self, instance, properties, direction, shape, a):
+        instance.properties = properties
+
+
 class IPlantable(NativeClass):
     NAME = "net/minecraftforge/common/IPlantable"
 
@@ -983,6 +1005,8 @@ class Direction(NativeClass):
                 "SOUTH": "net/minecraft/util/Direction::SOUTH",
                 "WEST": "net/minecraft/util/Direction::WEST",
                 "EAST": "net/minecraft/util/Direction::EAST",
+                "DOWN": "net/minecraft/util/Direction::DOWN",
+                "UP": "net/minecraft/util/Direction::UP",
             }
         )
 
