@@ -102,7 +102,7 @@ class BoxModel:
 
                 if "uv" in f:
                     uvs = tuple(f["uv"])
-                    uvs = (uvs[0], 16 - uvs[1], uvs[2], 16 - uvs[3])
+                    uvs = (uvs[0], uvs[3], uvs[2], uvs[1])
                     if flip_y:
                         self.texture_region[index] = tuple(
                             [

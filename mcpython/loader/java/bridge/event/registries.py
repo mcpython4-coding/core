@@ -134,8 +134,8 @@ def parseBlockToFactory(obj):
 
     if cls.is_subclass_of("net/minecraft/block/SandBlock"):
         instance.set_fall_able()
-    elif cls.is_subclass_of("net/minecraft/block/StairBlock"):
-        instance.set_default_model_state("facing=east,half=bottom,shape=inner_left")
+    elif cls.is_subclass_of("net/minecraft/block/StairsBlock"):
+        instance.set_default_model_state("facing=east,half=bottom,shape=inner_left").set_solid(False).set_all_side_solid(False)
     elif cls.is_subclass_of("net/minecraft/block/SlabBlock"):
         instance.set_slab()
     elif cls.is_subclass_of("net/minecraft/block/WallBlock"):
@@ -147,7 +147,7 @@ def parseBlockToFactory(obj):
     elif cls.is_subclass_of("net/minecraft/block/RotatedPillarBlock"):
         instance.set_log()
     # else:
-    # print(obj, obj.registry_name)
+    #     print(obj, obj.registry_name)
 
     try:
         instance.set_strength(obj.properties.hardness, obj.properties.blast_resistance)
