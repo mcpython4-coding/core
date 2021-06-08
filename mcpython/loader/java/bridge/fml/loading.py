@@ -17,6 +17,7 @@ import mcpython.common.mod.ModLoader
 from mcpython import logger, shared
 from mcpython.loader.java.Java import NativeClass, native
 from mcpython.loader.java.Runtime import Runtime, UnhandledInstructionException
+from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
 
 class Mod(NativeClass):
@@ -56,7 +57,10 @@ class Mod_EventBusSubscriber(NativeClass):
                         method, shared.registry.get_by_name("minecraft:block")
                     )
                 except:
-                    raise mcpython.common.mod.ModLoader.LoadingInterruptException
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+                    print(e.format_exception())
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
         if (
             "registerItems",
@@ -78,8 +82,15 @@ class Mod_EventBusSubscriber(NativeClass):
                     runtime.run_method(
                         method, shared.registry.get_by_name("minecraft:item")
                     )
+                except StackCollectingException as e:
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(e.format_exception())
+                    print(e.format_exception())
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
                 except:
-                    raise mcpython.common.mod.ModLoader.LoadingInterruptException
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
         # else:
         # print("sub", 2, cls, args)
@@ -141,6 +152,11 @@ class EventBus(NativeClass):
             runtime = Runtime()
             try:
                 runtime.run_method(function, None)
+            except StackCollectingException as e:
+                import mcpython.client.state.StateLoadingException
+                mcpython.client.state.StateLoadingException.error_occur(e.format_exception())
+                print(e.format_exception())
+                raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
             except UnhandledInstructionException:
                 logger.print_exception(
                     f"during invoking commonSetup listener {function}"
@@ -155,13 +171,20 @@ class EventBus(NativeClass):
 
                     import mcpython.common.mod.ModLoader
 
-                    raise mcpython.common.mod.ModLoader.LoadingInterruptException
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
         elif function.name == "clientSetup":
             if shared.IS_CLIENT:
                 runtime = Runtime()
                 try:
                     runtime.run_method(function, None)
+                except StackCollectingException as e:
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(e.format_exception())
+                    print(e.format_exception())
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
                 except UnhandledInstructionException:
                     logger.print_exception(
                         f"during invoking clientSetup listener {function}"
@@ -175,7 +198,9 @@ class EventBus(NativeClass):
 
                     import mcpython.common.mod.ModLoader
 
-                    raise mcpython.common.mod.ModLoader.LoadingInterruptException
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
         elif function.name == "loadComplete":
 
@@ -183,6 +208,11 @@ class EventBus(NativeClass):
                 runtime = Runtime()
                 try:
                     runtime.run_method(function, None)
+                except StackCollectingException as e:
+                    import mcpython.client.state.StateLoadingException
+                    mcpython.client.state.StateLoadingException.error_occur(e.format_exception())
+                    print(e.format_exception())
+                    raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
                 except UnhandledInstructionException:
                     logger.print_exception(
                         f"during invoking loadComplete listener {function}"
@@ -197,7 +227,9 @@ class EventBus(NativeClass):
 
                         import mcpython.common.mod.ModLoader
 
-                        raise mcpython.common.mod.ModLoader.LoadingInterruptException
+                        import mcpython.client.state.StateLoadingException
+                        mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+                        raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
             shared.mod_loader("minecraft", "stage:post")(run)
 

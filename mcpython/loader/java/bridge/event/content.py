@@ -850,7 +850,7 @@ class BlockItem(Item):
         "setRegistryName",
         "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
     )
-    def setRegistryName(self, instance, namespace: str, name: str):
+    def setRegistryName2(self, instance, namespace: str, name: str):
         instance.registry_name = namespace + ":" + name
         return instance
 
@@ -1109,3 +1109,11 @@ class EntityType__Builder(NativeClass):
     @native("func_206830_a", "(Ljava/lang/String;)Lnet/minecraft/entity/EntityType;")
     def func_206830_a(self, instance, v):
         return instance
+
+
+class Entity(NativeClass):
+    NAME = "net/minecraft/entity/Entity"
+
+    @native("func_70067_L", "()Z")
+    def func_70067_L(self):
+        return 0
