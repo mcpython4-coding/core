@@ -29,12 +29,13 @@ from pyglet.window import key
 @onlyInClient()
 class ChatInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     """
-    main class for chat
+    Main class for chat inventory
+    Every player should have one
     """
 
     def __init__(self):
         """
-        creates an new Chat-instance
+        Creates a new Chat-inventory-instance
         """
         super().__init__()
         self.label = pyglet.text.HTMLLabel("", x=15, y=15)
@@ -46,37 +47,33 @@ class ChatInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     def update_text(self, text: str, underline_index: int):
         """
-        updates the text displayed by the chat
+        Updates the text displayed by the chat
         :param text: the text to use
         :param underline_index: the index where the "_" is
         """
         if len(text) < underline_index:
             self.label.text = "<font color='white'>" + text + "_</font>"
             return
+
         try:
             self.label.text = "<font color='white'>{}<u>{}</u>{}</font>".format(
                 text[:underline_index],
                 text[underline_index],
                 text[1 + underline_index :],
             )
+
         except IndexError:
             self.label.text = (
                 "<font color='white'>" + text + "<span>&#95;</span></font>"
             )
 
     def on_activate(self):
-        """
-        called by the system on activation of the inventory
-        """
         shared.chat.text = ""
         shared.chat.active_index = 0
         shared.chat.has_entered_t = False
         self.eventbus.activate()
 
     def on_deactivate(self):
-        """
-        called by the system on deactivation of the inventory
-        """
         self.eventbus.deactivate()
 
     def draw(self, hovering_slot=None):
@@ -85,24 +82,23 @@ class ChatInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             (10, 10), (wx - 20, 20), color=(0.0, 0.0, 0.0, 0.8)
         )
         text = html.escape(shared.chat.text)
+
         if (round(time.time() - self.timer) % 2) == 1:
             self.update_text(text, shared.chat.active_index)
         else:
             self.label.text = "<font color='white'>" + text + "</font>"
+
         self.label.draw()
 
 
 class Chat:
     """
-    main class for chat
+    Main class for chat
     """
 
     def __init__(self):
-        """
-        creates an new chat
-        """
-        self.text: str = ""
-        self.history: list = []
+        self.text: str = ""  # the text currently shown
+        self.history: list = []  # the previous commands
         self.history_index = -1
         self.active_index = -1
         self.CANCEL_INPUT = False
@@ -148,16 +144,9 @@ class Chat:
             self.active_index = len(self.text)
 
         elif symbol == key.ENTER:  # execute command
-            self.CANCEL_INPUT = False
-            shared.event_handler.call("chat:text_enter", self.text)
             logger.println(
                 "[CHAT][INFO] entered text: '{}'".format(self.text), console=False
             )
-
-            if self.CANCEL_INPUT:
-                self.history.insert(0, self.text)
-                self.close()
-                return
 
             if self.text.startswith("/"):
                 # execute command
@@ -176,6 +165,7 @@ class Chat:
                 self.print_ln(self.text)
 
             self.history.insert(0, self.text)
+            self.history_index = -1
             self.close()
 
         elif (
@@ -184,6 +174,7 @@ class Chat:
             self.history_index += 1
             self.text = self.history[self.history_index]
             self.active_index = len(self.text)
+
         elif (
             symbol == key.DOWN and self.history_index >= 0
         ):  # go one item down in the history
@@ -193,14 +184,17 @@ class Chat:
             else:
                 self.text = ""
             self.active_index = len(self.text)
+
         elif symbol == key.LEFT:
             self.active_index -= 1
             if self.active_index < 0:
                 self.active_index = len(self.text) + self.active_index + 1
+
         elif symbol == key.RIGHT:
             self.active_index += 1
             if self.active_index > len(self.text):
                 self.active_index = 0
+
         elif symbol == key.V and modifiers & key.MOD_CTRL:  # insert text from clipboard
             self.enter(clipboard.paste())
 

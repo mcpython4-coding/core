@@ -1687,4 +1687,6 @@ R   [uuk]: improved world serialization API
 [uuk]: implemented non-gui attachable debugger for methods
 [uuk]: cleaned up exception printing by using our own text collector for jvm exceptions
 [uuk]: fixed resolving of invokedynamic instruction
+[github]: end of feature period of snapshot 21w23a
+[uuk]: fixed chat history index not resetting after entering a command
 
