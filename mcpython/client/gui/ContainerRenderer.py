@@ -60,7 +60,8 @@ class ContainerRenderer(ABC):
         """
         Reload the config file
         """
-        if shared.IS_TEST_ENV: return
+        if shared.IS_TEST_ENV:
+            return
 
         if self.get_config_file() is not None:
             try:

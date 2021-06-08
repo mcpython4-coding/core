@@ -1,0 +1,164 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
+from mcpython import shared
+from mcpython.loader.java.Java import NativeClass, native
+from mcpython.loader.java.JavaExceptionStack import StackCollectingException
+
+
+class HashMultiMap(NativeClass):
+    NAME = "com/google/common/collect/HashMultimap"
+
+    @native("create", "()Lcom/google/common/collect/HashMultimap;")
+    def create(self):
+        instance = self.create_instance()
+        return instance
+
+
+class Lists(NativeClass):
+    NAME = "com/google/common/collect/Lists"
+
+    @native("newArrayList", "()Ljava/util/ArrayList;")
+    def create(self):
+        instance = self.vm.get_class(
+            "java/util/ArrayList", version=self.internal_version
+        ).create_instance()
+        return instance
+
+
+class Maps(NativeClass):
+    NAME = "com/google/common/collect/Maps"
+
+    @native("newHashMap", "()Ljava/util/HashMap;")
+    def create(self):
+        instance = self.vm.get_class(
+            "java/util/HashMap", version=self.internal_version
+        ).create_instance()
+        return instance
+
+    @native("newHashMap", "(Ljava/util/Map;)Ljava/util/HashMap;")
+    def copyHashMap(self, instance):
+        return instance.copy()
+
+    @native("newEnumMap", "(Ljava/util/Map;)Ljava/util/EnumMap;")
+    def newEnumMap(self, base_map):
+        return base_map
+
+
+class ImmutableList(NativeClass):
+    NAME = "com/google/common/collect/ImmutableList"
+
+    def create_instance(self):
+        instance = super().create_instance()
+        instance.underlying_tuple = None
+        return instance
+
+    @native(
+        "of",
+        "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;[Ljava/lang/Object;)Lcom/google/common/collect/ImmutableList;",
+    )
+    def of(self, *stuff):
+        instance = self.create_instance()
+        instance.underlying_tuple = stuff[:-1] + tuple(stuff[-1])
+        return instance
+
+    @native(
+        "of",
+        "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableList;",
+    )
+    def of_2(self, *stuff):
+        instance = self.create_instance()
+        instance.underlying_tuple = stuff
+        return instance
+
+
+class ImmutableMap(NativeClass):
+    NAME = "com/google/common/collect/ImmutableMap"
+
+    @native(
+        "of",
+        "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap;",
+    )
+    def of(self, *stuff):
+        return self.create_instance()
+
+
+class ImmutableMultimap(NativeClass):
+    NAME = "com/google/common/collect/ImmutableMultimap"
+
+    @native("builder", "()Lcom/google/common/collect/ImmutableMultimap$Builder;")
+    def builder(self):
+        return self.vm.get_class(
+            "com/google/common/collect/ImmutableMultimap$Builder",
+            version=self.internal_version,
+        ).create_instance()
+
+
+class ImmutableMultimap__Builder(NativeClass):
+    NAME = "com/google/common/collect/ImmutableMultimap$Builder"
+
+    @native(
+        "put",
+        "(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMultimap$Builder;",
+    )
+    def put(self, instance, key, value):
+        return instance
+
+    @native("build", "()Lcom/google/common/collect/ImmutableMultimap;")
+    def build(self, instance):
+        return self.vm.get_class(
+            "com/google/common/collect/ImmutableMultimap", version=self.internal_version
+        ).create_instance()
+
+
+class MutableClassToInstanceMap(NativeClass):
+    NAME = "com/google/common/collect/MutableClassToInstanceMap"
+
+    @native("create", "()Lcom/google/common/collect/MutableClassToInstanceMap;")
+    def create(self):
+        return self.create_instance()
+
+    @native("containsKey", "(Ljava/lang/Object;)Z")
+    def containsKey(self, instance, key):
+        return False
+
+    @native("putInstance", "(Ljava/lang/Class;Ljava/lang/Object;)Ljava/lang/Object;")
+    def putInstance(self, instance, cls, obj):
+        return obj
+
+
+class Preconditions(NativeClass):
+    NAME = "com/google/common/base/Preconditions"
+
+    @native("checkNotNull", "(Ljava/lang/Object;)Ljava/lang/Object;")
+    def checkNotNull(self, obj):
+        if obj is None:
+            raise StackCollectingException("expected non-null, got null")
+        return obj
+
+    @native("checkArgument", "(Z)V")
+    def checkArgument(self, value):
+        if not value:
+            raise StackCollectingException("expected true, got false")
+
+
+class ClassToInstanceMap(NativeClass):
+    NAME = "com/google/common/collect/ClassToInstanceMap"
+
+    @native("containsKey", "(Ljava/lang/Object;)Z")
+    def containsKey(self, instance, key):
+        return False
+
+    @native("putInstance", "(Ljava/lang/Class;Ljava/lang/Object;)Ljava/lang/Object;")
+    def putInstance(self, instance, cls, obj):
+        return obj

@@ -51,8 +51,10 @@ class LaunchWrapper:
 
         import mcpython.client.rendering.window
 
-        # todo: move size to config files / sys.argv
+        # todo: move size & screen to config files / sys.argv
+        # screen = pyglet.canvas.get_display().get_screens()[-1]
         mcpython.client.rendering.window.Window(width=800, height=600, resizable=True)
+        # shared.window.set_location(screen.x+20, screen.y+60)
         shared.window.set_caption("mcpython 4 early loading stage")
 
         import mcpython.common.network.Backend
@@ -178,6 +180,7 @@ class LaunchWrapper:
         mcpython.common.data.ResourcePipe.load()
 
         import mcpython.common.Language
+
         mcpython.common.Language.load()
 
         return self

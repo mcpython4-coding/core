@@ -406,12 +406,15 @@ def transform_name(file: str, raise_on_error=True) -> str:
         return f
 
     if raise_on_error:
-        logger.println(
-            "can't find '{}' in resource system. Replacing with missing texture image...".format(
-                file
+        if file.endswith(".png"):
+            logger.println(
+                "can't find '{}' in resource system. Replacing with missing texture image...".format(
+                    file
+                )
             )
-        )
-        return "assets/missing_texture.png"
+            return "assets/missing_texture.png"
+        else:
+            raise FileNotFoundError(file)
 
     return file
 

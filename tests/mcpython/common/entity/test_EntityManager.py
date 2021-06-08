@@ -1,7 +1,21 @@
-from unittest import TestCase
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 import uuid
+from unittest import TestCase
 
 from mcpython import shared
+
 shared.IS_TEST_ENV = True
 
 
@@ -24,10 +38,7 @@ class BaseTestEntity:
         pass
 
     @classmethod
-    def kill(
-        cls,
-        *_, **__
-    ):
+    def kill(cls, *_, **__):
         pass
 
 
@@ -38,10 +49,14 @@ class TestEntityManager(TestCase):
         self.entity_manager_instance = None
 
     def ensure_setup(self):
-        if self.entity_manager_instance is not None: return
+        if self.entity_manager_instance is not None:
+            return
 
         import mcpython.common.entity.EntityManager
-        self.entity_manager_instance = mcpython.common.entity.EntityManager.EntityManager()
+
+        self.entity_manager_instance = (
+            mcpython.common.entity.EntityManager.EntityManager()
+        )
 
     def test_module_import(self):
         import mcpython.common.entity.EntityManager
@@ -86,7 +101,9 @@ class TestEntityManager(TestCase):
 
         self.assertTrue(teleport_success)
         self.assertIn(instance.uuid, self.entity_manager_instance.entity_map)
-        self.assertEqual(self.entity_manager_instance.entity_map[instance.uuid], instance)
+        self.assertEqual(
+            self.entity_manager_instance.entity_map[instance.uuid], instance
+        )
 
     def test_tick(self):
         self.ensure_setup()
@@ -152,4 +169,3 @@ class TestEntityManager(TestCase):
         self.entity_manager_instance.clear()
 
         self.assertEqual(len(self.entity_manager_instance.entity_map), 0)
-

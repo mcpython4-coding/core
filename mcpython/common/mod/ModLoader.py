@@ -16,19 +16,26 @@ import json
 import os
 import sys
 import time
+import traceback
 import typing
 import zipfile
 
+import mcpython.client.state.StateLoadingException
 import mcpython.client.state.StateModLoading
 import mcpython.common.config
 import mcpython.common.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
+import mcpython.loader.java.JavaEntryPoint
 import mcpython.ResourceLoader
 import mcpython.util.math
 import toml
 from mcpython import logger, shared
+
+
+class LoadingInterruptException(Exception):
+    pass
 
 
 class ModLoader:
@@ -62,6 +69,7 @@ class ModLoader:
 
         # the directory currently loading from
         self.active_directory: typing.Optional[str] = None
+        self.current_resource_access = None
 
         # which stage we are in
         self.active_loading_stage: int = 0
@@ -176,9 +184,9 @@ class ModLoader:
             if os.path.isfile(file):
                 if zipfile.is_zipfile(file):  # compressed file
                     sys.path.append(file)
-                    mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
-                        0, mcpython.ResourceLoader.ResourceZipFile(file)
-                    )
+                    resource = mcpython.ResourceLoader.ResourceZipFile(file)
+                    self.current_resource_access = resource
+                    mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(0, resource)
                     self.active_directory = file
                     with zipfile.ZipFile(file) as f:
                         try:
@@ -189,14 +197,21 @@ class ModLoader:
                                 with f.open("mod.toml", mode="r") as sf:
                                     self.load_mods_toml(sf.read().decode("utf-8"), file)
                             except KeyError:
-                                self.error_builder.println(
-                                    "- could not locate mod.json file in mod at '{}'".format(
-                                        file
+                                try:
+                                    with f.open("META-INF/mods.toml", mode="r") as sf:
+                                        self.load_mods_toml(
+                                            sf.read().decode("utf-8"), file
+                                        )
+                                except KeyError:
+                                    self.error_builder.println(
+                                        "- could not locate mod.json file in mod at '{}'".format(
+                                            file
+                                        )
                                     )
-                                )
 
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
+                    self.current_resource_access = None
                     try:
                         data = importlib.import_module(
                             "mods." + file.split("/")[-1].split("\\")[-1].split(".")[0]
@@ -210,9 +225,9 @@ class ModLoader:
 
             elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
                 sys.path.append(file)
-                mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(
-                    0, mcpython.ResourceLoader.ResourceDirectory(file)
-                )
+                resource = mcpython.ResourceLoader.ResourceDirectory(file)
+                self.current_resource_access = resource
+                mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(0, resource)
                 self.active_directory = file
                 if os.path.exists(file + "/mod.json"):
                     with open(file + "/mod.json") as sf:
@@ -227,6 +242,11 @@ class ModLoader:
                 elif os.path.exists(file + "/mods.toml"):
                     with open(file + "/mods.toml") as sf:
                         self.load_mods_toml(sf.read(), file + "/mods.toml")
+
+                elif os.path.exists(file + "/META-INF/mods.toml"):
+                    with open(file + "/META-INF/mods.toml") as sf:
+                        self.load_mods_toml(sf.read(), file + "/META-INF/mods.toml")
+
                 else:
                     self.error_builder.println(
                         "- could not locate mod.json file for mod for mod-directory '{}'".format(
@@ -447,7 +467,7 @@ class ModLoader:
                     ][
                         loader
                     ].load_mod_from_json(
-                        entry
+                        file, entry
                     )
                 else:
                     self.error_builder.println(
@@ -498,7 +518,7 @@ class ModLoader:
                     ][
                         loader
                     ].load_mod_from_toml(
-                        data
+                        file, data
                     )
                 else:
                     self.error_builder.println(
@@ -563,6 +583,8 @@ class ModLoader:
 
         if instance.path is not None:
             instance.path = self.active_directory
+
+        instance.resource_access = self.current_resource_access
 
         self.located_mod_instances.append(instance)
 
@@ -655,12 +677,8 @@ class ModLoader:
 
         if errors:
             logger.println("found mods: ")
-            logger.println(
-                " -",
-                "\n - ".join(
-                    [instance.mod_string() for instance in self.mods.values()]
-                ),
-            )
+            for instance in self.mods.values():
+                logger.println(" -", instance.mod_string())
             logger.println()
 
             self.error_builder.finish()
@@ -703,8 +721,14 @@ class ModLoader:
             if stage is None:
                 break
 
-            if stage.call_one(astate):
+            try:
+                if stage.call_one(astate):
+                    return
+            except LoadingInterruptException:
+                print("stopping loading cycle")
                 return
+            except:
+                sys.exit(-1)
 
         # if shared.IS_CLIENT:
         self.update_pgb_text()

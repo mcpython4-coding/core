@@ -137,4 +137,5 @@ if not shared.IS_TEST_ENV:
     shared.entity_manager = EntityManager()
 
     import mcpython.common.mod.ModMcpython
+
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:entities", load)

@@ -1,6 +1,20 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 from unittest import TestCase
 
 from mcpython import shared
+
 shared.IS_TEST_ENV = True
 
 
@@ -27,8 +41,8 @@ class TestPlayerEntity(TestCase):
         import mcpython.common.entity.PlayerEntity
 
     def test_constructor(self):
-        import mcpython.common.entity.PlayerEntity
         import mcpython.common.container.crafting.CraftingManager
+        import mcpython.common.entity.PlayerEntity
 
         shared.IS_CLIENT = False
 
@@ -39,8 +53,8 @@ class TestPlayerEntity(TestCase):
         self.assertEqual(instance.name, "test_player")
 
     def test_set_gamemode(self):
-        import mcpython.common.entity.PlayerEntity
         import mcpython.common.container.crafting.CraftingManager
+        import mcpython.common.entity.PlayerEntity
 
         shared.IS_CLIENT = False
 
@@ -57,8 +71,8 @@ class TestPlayerEntity(TestCase):
         self.assertEqual(instance.gamemode, 0)
 
     def test_set_active_inventory_slot(self):
-        import mcpython.common.entity.PlayerEntity
         import mcpython.common.container.crafting.CraftingManager
+        import mcpython.common.entity.PlayerEntity
 
         shared.IS_CLIENT = False
 
@@ -76,8 +90,8 @@ class TestPlayerEntity(TestCase):
         self.assertEqual(instance.active_inventory_slot, 8)
 
     def test_on_inventory_cleared(self):
-        import mcpython.common.entity.PlayerEntity
         import mcpython.common.container.crafting.CraftingManager
+        import mcpython.common.entity.PlayerEntity
 
         shared.IS_CLIENT = False
 

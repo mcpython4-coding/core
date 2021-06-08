@@ -121,6 +121,7 @@ def println(*msg, sep=" ", end="\n", console=True, log_file=True):
     ] + [escape(str(e).replace("\\", "/")) for e in msg]
     if console:
         print(*msg, sep=sep, end=end)
+
     if log_file:
         with open(log_file_path, mode="a") as f:
             print(*msg, sep=sep, end=end, file=f)

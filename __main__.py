@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import os
 import sys
 import traceback
 
@@ -41,6 +42,8 @@ if __name__ == "__main__":
         wrapper.setup()  # do setup stuff
         wrapper.launch()  # and start mainloop
     except SystemExit:
+        # this is here to fix some cleanup problems
+        # os._exit(-1)
         raise
     except:
         wrapper.error_clean()

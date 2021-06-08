@@ -61,6 +61,19 @@ changelog of snapshot <21w23a> released on <?> targeting <21w20a>
 
     Mod loader:
         - moved ExtensionPoint class to mod package [MP4-11]
+        - added ModLoader extension point for JavaFML
+        - mods have now a "resource_access" attribute holding the resource access of that mod
+
+    JavaFML:
+        - implement a JVM in python for loading minecraft: java edition mods
+        - added transformer system for transforming java bytecode defined objects into readable code for our loader
+
+        The following mods are known to load partially:
+            - biomesoplenty, tested with 1.16.5-13.1.0.469
+            - storage drawers, tested with 1.16.3-8.2.2
+
+        Any other mod may or may not load; Implementation wrappers for parts are welcome to be PR'ed
+        We cannot guarantee any mod to load as out system changes rapidly
 
     Storage:
         - improved storage of block palette and entities

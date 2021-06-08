@@ -32,8 +32,12 @@ from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItem
 from mcpython.util.opengl import draw_line_rectangle
 from pyglet.window import key, mouse
 
-TAB_TEXTURE = None if shared.IS_TEST_ENV else mcpython.ResourceLoader.read_pyglet_image(
-    "minecraft:gui/container/creative_inventory/tabs"
+TAB_TEXTURE = (
+    None
+    if shared.IS_TEST_ENV
+    else mcpython.ResourceLoader.read_pyglet_image(
+        "minecraft:gui/container/creative_inventory/tabs"
+    )
 )
 
 
@@ -530,12 +534,20 @@ class CreativeTabManager:
 
         self.hovering_tab = None
 
-        self.page_left = mcpython.client.rendering.ui.Buttons.arrow_button_left(
-            (0, 0), lambda: self.increase_page(-1)
-        ) if not shared.IS_TEST_ENV else None
-        self.page_right = mcpython.client.rendering.ui.Buttons.arrow_button_right(
-            (0, 0), lambda: self.increase_page(1)
-        ) if not shared.IS_TEST_ENV else None
+        self.page_left = (
+            mcpython.client.rendering.ui.Buttons.arrow_button_left(
+                (0, 0), lambda: self.increase_page(-1)
+            )
+            if not shared.IS_TEST_ENV
+            else None
+        )
+        self.page_right = (
+            mcpython.client.rendering.ui.Buttons.arrow_button_right(
+                (0, 0), lambda: self.increase_page(1)
+            )
+            if not shared.IS_TEST_ENV
+            else None
+        )
         self.page_label = pyglet.text.Label(anchor_x="center", anchor_y="center")
 
         self.lower_left_position = 0, 0

@@ -58,7 +58,9 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         for moder: you SHOULD implement an custom constructor which set the bellow values to an "good" value
         """
         self.dimension = (
-            shared.world.get_active_dimension() if dimension is None and shared.world is not None else dimension
+            shared.world.get_active_dimension()
+            if dimension is None and shared.world is not None
+            else dimension
         )
         self.unsafe_position = (0, 0, 0)  # todo: move to nbt
         self.rotation = (0, 0, 0)  # todo: move to nbt
@@ -153,7 +155,11 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         else:
             dimension_id = dimension
 
-        dimension = shared.world.get_dimension(dimension_id) if shared.world is not None else None
+        dimension = (
+            shared.world.get_dimension(dimension_id)
+            if shared.world is not None
+            else None
+        )
         self.unsafe_position = position
         if dimension is None:
             return
@@ -203,7 +209,10 @@ class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
         if self.chunk is not None and self in self.chunk.entities:
             self.chunk.entities.remove(self)
 
-        if shared.entity_manager is not None and self.uuid in shared.entity_manager.entity_map:
+        if (
+            shared.entity_manager is not None
+            and self.uuid in shared.entity_manager.entity_map
+        ):
             del shared.entity_manager.entity_map[self.uuid]
 
         self.dead = True

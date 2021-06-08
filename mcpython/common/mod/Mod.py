@@ -158,7 +158,7 @@ class Mod:
         self.name = name
         self.eventbus: mcpython.common.event.EventBus.EventBus = (
             mcpython.common.event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
-                crash_on_error=False
+                crash_on_error=True
             )
         )
         # need, possible, not possible, before, after, only with, only without
@@ -167,6 +167,7 @@ class Mod:
         self.version = version  # the version of the mod, as an tuple
         self.version_name = version_name
         self.package = None  # the package where the mod-file was found
+        self.resource_access = None  # where to load resources from
         shared.mod_loader.add_to_add(self)
 
     def mod_string(self):
