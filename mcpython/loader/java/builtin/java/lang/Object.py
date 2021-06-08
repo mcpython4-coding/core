@@ -20,3 +20,7 @@ class Object(NativeClass):
     @native("<init>", "()V")
     def init(self, instance):
         pass
+
+    @native("getClass", "()Ljava/lang/Class;")
+    def getClass(self, instance):
+        return instance.get_class()

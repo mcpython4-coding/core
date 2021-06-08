@@ -14,14 +14,18 @@ This project is not official by mojang and does not relate to it.
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class Class(NativeClass):
-    NAME = "java/lang/Class"
+class Stream(NativeClass):
+    NAME = "java/util/stream/Stream"
 
-    @native("isInstance", "(Ljava/lang/Object;)Z")
-    def isInstance(self, instance, obj):
-        return obj.get_class().is_subclass_of(instance.name)
+    @native("filter", "(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;")
+    def filter(self, instance, predicate):
+        return instance
 
-    @native("getInterfaces", "()[Ljava/lang/Class;")
-    def getInterfaces(self, instance):
-        return [interface() for interface in instance.interfaces]
+    @native("forEach", "(Ljava/util/function/Consumer;)V")
+    def forEach(self, instance, consumer):
+        try:
+            for entry in instance:
+                consumer.inner(entry)
+        except TypeError:
+            pass
 

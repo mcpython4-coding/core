@@ -21,3 +21,7 @@ class EnumSet(NativeClass):
     def noneOf(self, cls):
         return self.create_instance()
 
+    @native("clear", "()V")
+    def clear(self, instance):
+        pass
+

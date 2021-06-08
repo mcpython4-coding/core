@@ -93,9 +93,10 @@ class JavaVM:
             self.get_class(name, version=version)
 
     def init_builtins(self):
-        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean, Deprecated, ThreadLocal, FunctionalInterface, Class
+        from mcpython.loader.java.builtin.java.lang import Object, Enum, Integer, Boolean, Deprecated, ThreadLocal, FunctionalInterface, Class, Double
         from mcpython.loader.java.builtin.java.lang.annotation import ElementType, RetentionPolicy, Target, Retention, Documented
-        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List, Iterator, EnumSet, IdentityHashMap
+        from mcpython.loader.java.builtin.java.util import ArrayList, HashMap, Map, List, Iterator, EnumSet, IdentityHashMap, HashSet, Random, WeakHashMap, Arrays
+        from mcpython.loader.java.builtin.java.util.stream import Stream
         from mcpython.loader.java.builtin.java.util.function import Predicate
         from mcpython.loader.java.builtin.java.nio.file import Path, Paths, Files
 
@@ -106,7 +107,7 @@ class JavaVM:
         from mcpython.loader.java.bridge.fml import loading
         from mcpython.loader.java.bridge.lib import google_collect, logging, fastutil, gson, apache
         from mcpython.loader.java.bridge.world import biomes, collection
-        from mcpython.loader.java.bridge.misc import containers, potions, dispenser
+        from mcpython.loader.java.bridge.misc import containers, potions, dispenser, tags
         from mcpython.loader.java.bridge.client import rendering
 
     def get_class(self, name: str, version=0) -> "AbstractJavaClass":
@@ -718,8 +719,16 @@ class JavaBytecodeClass(AbstractJavaClass):
         try:
             m = self.parent().get_method(*des) if self.parent is not None else None
         except StackCollectingException as e:
-            e.add_trace(f"not found up in {self.name}")
-            raise
+            for interface in self.interfaces:
+                try:
+                    m = interface().get_method(*des)
+                except StackCollectingException:
+                    pass
+                else:
+                    break
+            else:
+                e.add_trace(f"not found up in {self.name}")
+                raise
 
         if m is not None:
             return m

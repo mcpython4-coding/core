@@ -50,7 +50,13 @@ class Runtime:
     ):
         if callable(method):
             # mcpython.loader.java.Java.info(("launching native method", method))
-            return method(*args)
+            try:
+                return method(*args)
+            except StackCollectingException as e:
+                e.add_trace("invoking native "+str(method)+" with "+str(args))
+                raise
+            except:
+                raise StackCollectingException(f"during invoking native {method} with {args}")
 
         if method.code_repr is None:
             method.code_repr = BytecodeRepr(method.attributes["Code"][0])
@@ -424,7 +430,7 @@ class ArrayStore(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load(Instruction):
-    OPCODES = {0x19, 0x15}
+    OPCODES = {0x19, 0x15, 0x18}
 
     @classmethod
     def decode(
@@ -439,7 +445,7 @@ class Load(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load0(Instruction):
-    OPCODES = {0x2A, 0x1A, 0x22}
+    OPCODES = {0x2A, 0x1A, 0x22, 0x26}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -448,7 +454,7 @@ class Load0(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load1(Instruction):
-    OPCODES = {0x2B, 0x1B, 0x23}
+    OPCODES = {0x2B, 0x1B, 0x23, 0x27}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -457,7 +463,7 @@ class Load1(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load2(Instruction):
-    OPCODES = {0x2C, 0x1C, 0x24}
+    OPCODES = {0x2C, 0x1C, 0x24, 0x28}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -466,7 +472,7 @@ class Load2(Instruction):
 
 @BytecodeRepr.register_instruction
 class Load3(Instruction):
-    OPCODES = {0x2D, 0x1D, 0x25}
+    OPCODES = {0x2D, 0x1D, 0x25, 0x29}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -609,6 +615,23 @@ class IfLe(Instruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
         if stack.pop() >= stack.pop():
+            stack.cp += data
+            return True
+
+
+@BytecodeRepr.register_instruction
+class IfEq(Instruction):
+    OPCODES = {0xA5}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() == stack.pop():
             stack.cp += data
             return True
 
@@ -809,7 +832,14 @@ class InvokeInterface(CPLinkedInstruction):
         method = stack.vm.get_method_of_nat(data[0], version=stack.method.class_file.internal_version)
         args = stack.runtime.parse_args_from_stack(method, stack)
         obj = args[0]
-        method = obj.get_class().get_method(method.name if hasattr(method, "name") else method.native_name, method.signature if hasattr(method, "signature") else method.native_signature)
+
+        try:
+            method = obj.get_class().get_method(method.name if hasattr(method, "name") else method.native_name, method.signature if hasattr(method, "signature") else method.native_signature)
+        except StackCollectingException as e:
+            print(e.format_exception())
+        except AttributeError:
+            pass
+
         stack.push(
             stack.runtime.run_method(
                 method, *args

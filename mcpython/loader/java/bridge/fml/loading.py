@@ -171,6 +171,10 @@ class DistMarker(NativeClass):
         super().__init__()
         self.exposed_attributes.update({"CLIENT": "client", "SERVER": "server"})
 
+    @native("isClient", "()Z")
+    def isClient(self, instance):
+        return int(instance == "client")
+
 
 class FMLEnvironment(NativeClass):
     NAME = "net/minecraftforge/fml/loading/FMLEnvironment"

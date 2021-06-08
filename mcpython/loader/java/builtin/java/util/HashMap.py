@@ -20,3 +20,11 @@ class HashMap(NativeClass):
     @native("<init>", "()V")
     def init(self, instance):
         pass
+
+    @native("<init>", "(I)V")
+    def init2(self, instance, size: int):
+        pass
+
+    @native("put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+    def put(self, instance, key, value):
+        return value

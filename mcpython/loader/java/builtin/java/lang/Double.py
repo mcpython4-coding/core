@@ -11,17 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class Class(NativeClass):
-    NAME = "java/lang/Class"
+class Double(NativeClass):
+    NAME = "java/lang/Double"
 
-    @native("isInstance", "(Ljava/lang/Object;)Z")
-    def isInstance(self, instance, obj):
-        return obj.get_class().is_subclass_of(instance.name)
-
-    @native("getInterfaces", "()[Ljava/lang/Class;")
-    def getInterfaces(self, instance):
-        return [interface() for interface in instance.interfaces]
+    @native("valueOf", "(D)Ljava/lang/Double;")
+    def valueOf(self, instance):
+        return instance
 

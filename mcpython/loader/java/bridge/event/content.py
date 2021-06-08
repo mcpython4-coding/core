@@ -120,6 +120,10 @@ class AbstractBlock_Properties(NativeClass):
     def func_235828_a_(self, instance, position_predicate):
         return instance
 
+    @native("func_235861_h_", "()Lnet/minecraft/block/AbstractBlock$Properties;")
+    def func_235861_h_(self, instance):
+        return instance
+
 
 class SoundType(NativeClass):
     NAME = "net/minecraft/block/SoundType"
@@ -131,6 +135,7 @@ class SoundType(NativeClass):
             "field_185850_c": None,
             "field_185848_a": None,
             "field_185851_d": None,
+            "field_185853_f": None,
         })
 
     @native("<init>", "(FFLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundEvent;)V")
@@ -236,6 +241,14 @@ class Material(NativeClass):
             "field_203243_f": None,
         })
 
+    @native("func_151565_r", "()Lnet/minecraft/block/material/MaterialColor;")
+    def getMaterialColor(self, instance):
+        pass
+
+    @native("<init>", "(Lnet/minecraft/block/material/MaterialColor;ZZZZZZLnet/minecraft/block/material/PushReaction;)V")
+    def init(self, instance, color, a, b, c, d, e, f, reaction):
+        pass
+
 
 class MaterialColor(NativeClass):
     NAME = "net/minecraft/block/material/MaterialColor"
@@ -275,6 +288,19 @@ class MaterialColor(NativeClass):
             "field_197656_x": None,
             "field_151675_r": None,
             "field_151655_K": None,
+            "field_151660_b": None,
+            "field_151668_h": None,
+        })
+
+
+class MaterialPushReaction(NativeClass):
+    NAME = "net/minecraft/block/material/PushReaction"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "NORMAL": "net/minecraft/block/material/PushReaction::NORMAL",
+            "DESTROY": "net/minecraft/block/material/PushReaction::DESTROY",
         })
 
 

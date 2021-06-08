@@ -14,14 +14,10 @@ This project is not official by mojang and does not relate to it.
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class Class(NativeClass):
-    NAME = "java/lang/Class"
+class Arrays(NativeClass):
+    NAME = "java/util/Arrays"
 
-    @native("isInstance", "(Ljava/lang/Object;)Z")
-    def isInstance(self, instance, obj):
-        return obj.get_class().is_subclass_of(instance.name)
-
-    @native("getInterfaces", "()[Ljava/lang/Class;")
-    def getInterfaces(self, instance):
-        return [interface() for interface in instance.interfaces]
+    @native("stream", "([Ljava/lang/Object;)Ljava/util/stream/Stream;")
+    def stream(self, data):
+        return data
 

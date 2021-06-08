@@ -94,15 +94,17 @@ class TagHandler:
                     info="loading tag-group '{}'".format(taggroup.name),
                 )
 
-    def get_tag_for(self, name: str, group: str) -> mcpython.common.data.tags.Tag.Tag:
+    def get_tag_for(self, name: str, group: str, or_else_none=False) -> mcpython.common.data.tags.Tag.Tag:
         """
         will return the tag by name and group
         :param name: the name to use
         :param group: the group to use
+        :param or_else_none: return None if tag not found?
         :return: the tag instance
         :raises ValueError: when the tag is not found
         """
         if group not in self.taggroups or name not in self.taggroups[group].tags:
+            if or_else_none: return
             raise ValueError("unknown tag '{}' in group '{}'".format(name, group))
         return self.taggroups[group].tags[name]
 

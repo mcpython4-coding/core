@@ -28,8 +28,12 @@ class ResourceLocation(NativeClass):
         instance.name = location
 
     @native("<init>", "(Ljava/lang/String;Ljava/lang/String;)V")
-    def init(self, instance, namespace: str, postfix: str):
+    def init2(self, instance, namespace: str, postfix: str):
         instance.name = namespace + ":" + postfix
+
+    @native("toString", "()Ljava/lang/String;")
+    def toString(self, instance):
+        return instance if isinstance(instance, str) else instance.name
 
 
 class IBooleanFunction(NativeClass):
