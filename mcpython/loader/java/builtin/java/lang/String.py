@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -11,17 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython.loader.java.Java import NativeClass, native
 
 
-class StackCollectingException(Exception):
-    def __init__(self, text: str, base: Exception = None):
-        self.text = text
-        self.traces = []
-        self.base = base
+class String(NativeClass):
+    NAME = "java/lang/String"
 
-    def add_trace(self, line: str):
-        self.traces.append(line)
-        return self
+    @native("equals", "(Ljava/lang/Object;)Z")
+    def equals(self, instance, other):
+        return instance == other
 
-    def format_exception(self):
-        return self.text + "\n" + "\n".join(self.traces)

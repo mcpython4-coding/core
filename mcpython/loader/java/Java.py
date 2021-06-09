@@ -107,6 +107,7 @@ class JavaVM:
             Integer,
             Object,
             ThreadLocal,
+            String,
         )
         from mcpython.loader.java.builtin.java.lang.annotation import (
             Documented,
@@ -138,13 +139,14 @@ class JavaVM:
         from mcpython.loader.java.bridge.client import rendering
         from mcpython.loader.java.bridge.codec import builder
         from mcpython.loader.java.bridge.event import content, registries
-        from mcpython.loader.java.bridge.fml import loading
+        from mcpython.loader.java.bridge.fml import loading, capability, network
         from mcpython.loader.java.bridge.lib import (
             apache,
             fastutil,
             google_collect,
             gson,
             logging,
+            mixin,
         )
         from mcpython.loader.java.bridge.misc import (
             containers,
@@ -318,7 +320,7 @@ class NativeClass(AbstractJavaClass, ABC):
 
         raise StackCollectingException(
             f"class {self.name} has no method named '{name}' with signature {signature}"
-        ).add_trace(str(list(self.exposed_methods.keys()))) from None
+        ).add_trace(str(self)).add_trace(str(list(self.exposed_methods.keys()))) from None
 
     def get_static_attribute(self, name: str, expected_type=None):
         if name not in self.exposed_attributes:
@@ -548,7 +550,13 @@ class RuntimeVisibleAnnotationsParser(AbstractAttributeParser):
                     )
 
                 name = name[1]
-                value = ElementValue().parse(table, data)
+
+                try:
+                    value = ElementValue().parse(table, data)
+                except StackCollectingException as e:
+                    e.add_trace(f"during decoding {self.__class__.__name__}-attribute for annotation class {annotation_type} annotating class {table.class_file.name}")
+                    raise
+
                 values.append((name, value))
 
             self.annotations.append((annotation_type, values))
@@ -668,6 +676,11 @@ class JavaMethod:
 
     def __repr__(self):
         return f"JavaMethod(name='{self.name}',signature='{self.signature}',access='{bin(self.access)}',class='{self.class_file.name}')"
+
+    def invoke(self, *args):
+        import mcpython.loader.java.Runtime
+        runtime = mcpython.loader.java.Runtime.Runtime()
+        return runtime.run_method(self, *args)
 
 
 class JavaBytecodeClass(AbstractJavaClass):
@@ -842,7 +855,8 @@ class JavaBytecodeClass(AbstractJavaClass):
                         ):
                             # todo: can we do something else here, maybe add a flag to get_class to return None if the class
                             #   could not be loaded -> None check here
-                            traceback.print_exc()
+                            print("classloading exception for annotation ignored")
+                            print(e.format_exception())
                         else:
                             e.add_trace(
                                 f"runtime visible annotation handling @class {self.name} loading class {cls_name}"

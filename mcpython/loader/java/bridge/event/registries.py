@@ -77,7 +77,7 @@ class Registry(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes = {"field_239689_aA_": None, "field_239720_u_": None}
+        self.exposed_attributes = {"field_239689_aA_": None, "field_239720_u_": None, "field_212618_g": None,}
 
     @native(
         "func_218325_a",
@@ -202,3 +202,12 @@ class RenderingRegistry(NativeClass):
     )
     def registerEntityRenderingHandler(self, entity_type, render_factory):
         pass
+
+
+class DefaultRegistry(NativeClass):
+    NAME = "net/minecraft/util/registry/DefaultedRegistry"
+
+    @native("func_177774_c", "(Ljava/lang/Object;)Lnet/minecraft/util/ResourceLocation;")
+    def func_177774_c(self, instance, obj):
+        pass
+

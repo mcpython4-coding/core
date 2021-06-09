@@ -75,3 +75,15 @@ class AxisAlignedBB(NativeClass):
 
 class IStringSerializable(NativeClass):
     NAME = "net/minecraft/util/IStringSerializable"
+
+
+class LazyValue(NativeClass):
+    NAME = "net/minecraft/util/LazyValue"
+
+    @native("<init>", "(Ljava/util/function/Supplier;)V")
+    def init(self, instance, supplier):
+        instance.supplier = supplier
+
+    @native("func_179281_c", "()Ljava/lang/Object;")
+    def get(self, instance):
+        return instance.supplier.invoke()

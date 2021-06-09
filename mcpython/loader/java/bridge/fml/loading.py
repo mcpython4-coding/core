@@ -160,6 +160,7 @@ class EventBus(NativeClass):
             except StackCollectingException as e:
                 import mcpython.client.state.StateLoadingException
                 mcpython.client.state.StateLoadingException.error_occur(e.format_exception())
+                logger.print_exception()
                 print(e.format_exception())
                 raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
             except UnhandledInstructionException:
@@ -282,6 +283,10 @@ class DistExecutor(NativeClass):
     )
     def unsafeRunForDist(self, left, right):
         return self.runForDist(left, right)
+
+    @native("unsafeCallWhenOn", "(Lnet/minecraftforge/api/distmarker/Dist;Ljava/util/function/Supplier;)Ljava/lang/Object;")
+    def unsafeCallWhenOn(self, dist, supplier):
+        pass
 
 
 class FMLPaths(NativeClass):
@@ -423,3 +428,15 @@ class MinecraftForge(NativeClass):
                 "EVENT_BUS": None,
             }
         )
+
+
+class ModList(NativeClass):
+    NAME = "net/minecraftforge/fml/ModList"
+
+    @native("get", "()Lnet/minecraftforge/fml/ModList;")
+    def getModList(self):
+        return self
+
+    @native("isLoaded", "(Ljava/lang/String;)Z")
+    def isLoaded(self, instance, name: str):
+        return int(name in shared.mod_loader.mods)

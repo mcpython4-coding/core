@@ -58,6 +58,8 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
             self.load_mod_file(file)
 
     def load_mod_file(self, file: str):
+        import mcpython.client.state.StateLoadingException
+
         cls = file.split(".")[0]
         try:
             # make sure that this is set!
@@ -98,6 +100,9 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
             pyglet.app.exit()
             sys.exit(-1)
 
+        except mcpython.common.mod.ModLoader.LoadingInterruptException:
+            raise
+
         except:
             logger.print_exception("[JAVA][FATAL] fatal class loader exception")
 
@@ -105,8 +110,6 @@ class JavaMod(mcpython.common.mod.Mod.Mod):
                 shared.window.set_caption("JavaFML JVM error")
 
                 try:
-                    import mcpython.client.state.StateLoadingException
-
                     mcpython.client.state.StateLoadingException.error_occur(
                         traceback.format_exc()
                     )

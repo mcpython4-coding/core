@@ -24,3 +24,11 @@ class Class(NativeClass):
     @native("getInterfaces", "()[Ljava/lang/Class;")
     def getInterfaces(self, instance):
         return [interface() for interface in instance.interfaces]
+
+    @native("forName", "(Ljava/lang/String;)Ljava/lang/Class;")
+    def forName(self, name: str):
+        return self.vm.get_class(name, version=self.internal_version)
+
+    @native("newInstance", "()Ljava/lang/Object;")
+    def newInstance(self, cls):
+        return cls.create_instance()

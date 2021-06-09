@@ -146,7 +146,7 @@ class Mod:
         """
         if type(version) != tuple:
             if type(version) == str:
-                version = tuple([int(e) for e in version.split(".")])
+                version = tuple([int(e) for e in version.split(".")]) if version.isdigit() else (0, 1, 0)
             elif type(version) in (set, list):
                 version = tuple(version)
             else:

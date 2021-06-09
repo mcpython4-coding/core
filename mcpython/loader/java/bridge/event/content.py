@@ -938,6 +938,19 @@ class ItemRarity(NativeClass):
         self.exposed_attributes.update({"RARE": "net/minecraft/item/Rarity::RARE"})
 
 
+class DyeColor(NativeClass):
+    NAME = "net/minecraft/item/DyeColor"
+
+    def __init__(self):
+        super().__init__()
+        import mcpython.util.enums
+        self.colors = mcpython.util.enums.COLORS
+
+    @native("values", "()[Lnet/minecraft/item/DyeColor;")
+    def values(self):
+        return self.colors
+
+
 class AttachFace(NativeClass):
     NAME = "net/minecraft/state/properties/AttachFace"
 

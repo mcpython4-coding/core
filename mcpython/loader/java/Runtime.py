@@ -49,11 +49,13 @@ class Runtime:
         *args,
     ):
         if callable(method):
-            # mcpython.loader.java.Java.info(("launching native method", method))
+            from mcpython.common.mod.ModLoader import LoadingInterruptException
             try:
                 return method(*args)
             except StackCollectingException as e:
                 e.add_trace("invoking native " + str(method) + " with " + str(args))
+                raise
+            except (LoadingInterruptException, SystemExit):
                 raise
             except:
                 raise StackCollectingException(
