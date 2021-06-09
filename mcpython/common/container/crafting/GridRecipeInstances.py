@@ -32,7 +32,10 @@ def transform_to_item_stack(item, file: str) -> list:
     if "item" in item:
         itemname = item["item"]
         if itemname not in shared.registry.get_by_name("minecraft:item").full_entries:
-            if itemname not in shared.registry.get_by_name("minecraft:block").full_entries:
+            if (
+                itemname
+                not in shared.registry.get_by_name("minecraft:block").full_entries
+            ):
                 return []
         return [(itemname, item["count"] if "count" in item else 1)]
 

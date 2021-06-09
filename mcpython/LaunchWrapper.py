@@ -299,7 +299,10 @@ class LaunchWrapper:
         except:
             logger.print_exception("ERROR DURING RUNTIME (UNHANDLED)")
             import mcpython.client.state.StateLoadingException
-            mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+
+            mcpython.client.state.StateLoadingException.error_occur(
+                traceback.format_exc()
+            )
             return self
 
         return self

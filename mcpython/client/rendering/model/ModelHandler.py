@@ -138,6 +138,7 @@ class ModelHandler:
             logger.print_exception("top-sort error during sorting models")
             import mcpython.client.state.StateLoadingException as StateLoadingException
             from mcpython.common.mod.ModLoader import LoadingInterruptException
+
             StateLoadingException.error_occur(traceback.format_exc())
             traceback.print_exc()
 

@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -20,10 +20,12 @@ class LocalCapture(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "CAPTURE_FAILSOFT": "org/spongepowered/asm/mixin/injection/callback/LocalCapture::CAPTURE_FAILSOFT",
-            "CAPTURE_FAILHARD": "org/spongepowered/asm/mixin/injection/callback/LocalCapture::CAPTURE_FAILHARD",
-        })
+        self.exposed_attributes.update(
+            {
+                "CAPTURE_FAILSOFT": "org/spongepowered/asm/mixin/injection/callback/LocalCapture::CAPTURE_FAILSOFT",
+                "CAPTURE_FAILHARD": "org/spongepowered/asm/mixin/injection/callback/LocalCapture::CAPTURE_FAILHARD",
+            }
+        )
 
 
 class At__Shift(NativeClass):
@@ -31,7 +33,6 @@ class At__Shift(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "AFTER": "org/spongepowered/asm/mixin/injection/At$Shift::AFTER"
-        })
-
+        self.exposed_attributes.update(
+            {"AFTER": "org/spongepowered/asm/mixin/injection/At$Shift::AFTER"}
+        )

@@ -50,6 +50,7 @@ class Runtime:
     ):
         if callable(method):
             from mcpython.common.mod.ModLoader import LoadingInterruptException
+
             try:
                 return method(*args)
             except StackCollectingException as e:

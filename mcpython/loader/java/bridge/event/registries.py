@@ -77,7 +77,11 @@ class Registry(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes = {"field_239689_aA_": None, "field_239720_u_": None, "field_212618_g": None,}
+        self.exposed_attributes = {
+            "field_239689_aA_": None,
+            "field_239720_u_": None,
+            "field_212618_g": None,
+        }
 
     @native(
         "func_218325_a",
@@ -135,7 +139,9 @@ def parseBlockToFactory(obj):
     if cls.is_subclass_of("net/minecraft/block/SandBlock"):
         instance.set_fall_able()
     elif cls.is_subclass_of("net/minecraft/block/StairsBlock"):
-        instance.set_default_model_state("facing=east,half=bottom,shape=inner_left").set_solid(False).set_all_side_solid(False)
+        instance.set_default_model_state(
+            "facing=east,half=bottom,shape=inner_left"
+        ).set_solid(False).set_all_side_solid(False)
     elif cls.is_subclass_of("net/minecraft/block/SlabBlock"):
         instance.set_slab()
     elif cls.is_subclass_of("net/minecraft/block/WallBlock"):
@@ -207,7 +213,8 @@ class RenderingRegistry(NativeClass):
 class DefaultRegistry(NativeClass):
     NAME = "net/minecraft/util/registry/DefaultedRegistry"
 
-    @native("func_177774_c", "(Ljava/lang/Object;)Lnet/minecraft/util/ResourceLocation;")
+    @native(
+        "func_177774_c", "(Ljava/lang/Object;)Lnet/minecraft/util/ResourceLocation;"
+    )
     def func_177774_c(self, instance, obj):
         pass
-

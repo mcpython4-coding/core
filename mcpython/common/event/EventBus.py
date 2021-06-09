@@ -142,7 +142,10 @@ class EventBus:
                 pyglet.app.exit()
                 import mcpython.client.state.StateLoadingException
                 from mcpython.common.mod.ModLoader import LoadingInterruptException
-                mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+
+                mcpython.client.state.StateLoadingException.error_occur(
+                    traceback.format_exc()
+                )
                 return
             else:
                 raise RuntimeError
@@ -278,7 +281,10 @@ class EventBus:
             except MemoryError:
                 import mcpython.client.state.StateLoadingException
                 from mcpython.common.mod.ModLoader import LoadingInterruptException
-                mcpython.client.state.StateLoadingException.error_occur(traceback.format_exc())
+
+                mcpython.client.state.StateLoadingException.error_occur(
+                    traceback.format_exc()
+                )
                 return
             except:
                 raise

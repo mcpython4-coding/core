@@ -44,13 +44,13 @@ TEXTURES = _TEXTURES
 
 def reload():
     import mcpython.ResourceLoader as ResourceLoader
+
     try:
-        base: pyglet.image.AbstractImage = ResourceLoader.read_pyglet_image(
-            "gui/icons"
-        )
+        base: pyglet.image.AbstractImage = ResourceLoader.read_pyglet_image("gui/icons")
     except:
         logger.print_exception("[FATAL] failed to load hotbar image")
         import mcpython.client.state.StateLoadingException as StateLoadingException
+
         StateLoadingException.error_occur(traceback.format_exc())
         return
 

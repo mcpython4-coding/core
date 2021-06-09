@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -20,11 +20,15 @@ class CapabilityManager(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "INSTANCE": None,
-        })
+        self.exposed_attributes.update(
+            {
+                "INSTANCE": None,
+            }
+        )
 
-    @native("register", "(Ljava/lang/Class;Lnet/minecraftforge/common/capabilities/Capability$IStorage;Ljava/util/concurrent/Callable;)V")
+    @native(
+        "register",
+        "(Ljava/lang/Class;Lnet/minecraftforge/common/capabilities/Capability$IStorage;Ljava/util/concurrent/Callable;)V",
+    )
     def register(self, instance, cls, storage, consumer):
         pass
-

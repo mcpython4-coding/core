@@ -83,7 +83,7 @@ class CraftingManager:
             recipe.bake()
             recipe.prepare()
         except:
-            logger.print_exception("during preparing recipe "+name)
+            logger.print_exception("during preparing recipe " + name)
             return self
 
         self.recipe_table[name] = recipe

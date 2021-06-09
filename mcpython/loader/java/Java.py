@@ -106,8 +106,8 @@ class JavaVM:
             FunctionalInterface,
             Integer,
             Object,
-            ThreadLocal,
             String,
+            ThreadLocal,
         )
         from mcpython.loader.java.builtin.java.lang.annotation import (
             Documented,
@@ -139,7 +139,7 @@ class JavaVM:
         from mcpython.loader.java.bridge.client import rendering
         from mcpython.loader.java.bridge.codec import builder
         from mcpython.loader.java.bridge.event import content, registries
-        from mcpython.loader.java.bridge.fml import loading, capability, network
+        from mcpython.loader.java.bridge.fml import capability, loading, network
         from mcpython.loader.java.bridge.lib import (
             apache,
             fastutil,
@@ -320,7 +320,9 @@ class NativeClass(AbstractJavaClass, ABC):
 
         raise StackCollectingException(
             f"class {self.name} has no method named '{name}' with signature {signature}"
-        ).add_trace(str(self)).add_trace(str(list(self.exposed_methods.keys()))) from None
+        ).add_trace(str(self)).add_trace(
+            str(list(self.exposed_methods.keys()))
+        ) from None
 
     def get_static_attribute(self, name: str, expected_type=None):
         if name not in self.exposed_attributes:
@@ -554,7 +556,9 @@ class RuntimeVisibleAnnotationsParser(AbstractAttributeParser):
                 try:
                     value = ElementValue().parse(table, data)
                 except StackCollectingException as e:
-                    e.add_trace(f"during decoding {self.__class__.__name__}-attribute for annotation class {annotation_type} annotating class {table.class_file.name}")
+                    e.add_trace(
+                        f"during decoding {self.__class__.__name__}-attribute for annotation class {annotation_type} annotating class {table.class_file.name}"
+                    )
                     raise
 
                 values.append((name, value))
@@ -679,6 +683,7 @@ class JavaMethod:
 
     def invoke(self, *args):
         import mcpython.loader.java.Runtime
+
         runtime = mcpython.loader.java.Runtime.Runtime()
         return runtime.run_method(self, *args)
 

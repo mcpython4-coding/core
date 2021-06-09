@@ -944,6 +944,7 @@ class DyeColor(NativeClass):
     def __init__(self):
         super().__init__()
         import mcpython.util.enums
+
         self.colors = mcpython.util.enums.COLORS
 
     @native("values", "()[Lnet/minecraft/item/DyeColor;")
