@@ -1697,3 +1697,5 @@ R   [uuk]: improved world serialization API
 [uuk]: item-registry's entries attribute will now contain every item only ones, it is replaced by the full_entries attribute
 [uuk]: fixed naming of AbstractFluidContainer item base class
 
+[github]: start of development cycle for 21w25a
+
