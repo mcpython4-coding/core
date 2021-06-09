@@ -81,6 +81,7 @@ class Registry(NativeClass):
             "field_239689_aA_": None,
             "field_239720_u_": None,
             "field_212618_g": None,
+            "field_239690_aB_": None,
         }
 
     @native(
@@ -91,6 +92,10 @@ class Registry(NativeClass):
         self, registry: mcpython.common.event.Registry.Registry, name: str, obj
     ):
         pass
+
+    @native("func_218322_a", "(Lnet/minecraft/util/registry/Registry;Lnet/minecraft/util/ResourceLocation;Ljava/lang/Object;)Ljava/lang/Object;")
+    def func_218322_a(self, registry, name, obj):
+        return obj
 
 
 class RegistryKey(NativeClass):
@@ -217,4 +222,8 @@ class DefaultRegistry(NativeClass):
         "func_177774_c", "(Ljava/lang/Object;)Lnet/minecraft/util/ResourceLocation;"
     )
     def func_177774_c(self, instance, obj):
+        pass
+
+    @native("func_241873_b", "(Lnet/minecraft/util/ResourceLocation;)Ljava/util/Optional;")
+    def func_241873_b(self, instance, obj):
         pass

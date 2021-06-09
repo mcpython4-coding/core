@@ -947,9 +947,17 @@ class DyeColor(NativeClass):
 
         self.colors = mcpython.util.enums.COLORS
 
+        self.exposed_attributes.update({
+            color.upper(): color for color in self.colors
+        })
+
     @native("values", "()[Lnet/minecraft/item/DyeColor;")
     def values(self):
         return self.colors
+
+    @native("func_176610_l", "()Ljava/lang/String;")
+    def func_176610_l(self, instance):
+        return instance
 
 
 class AttachFace(NativeClass):

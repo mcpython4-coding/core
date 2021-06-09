@@ -20,3 +20,20 @@ class String(NativeClass):
     @native("equals", "(Ljava/lang/Object;)Z")
     def equals(self, instance, other):
         return instance == other
+
+
+class StringBuilder(NativeClass):
+    NAME = "java/lang/StringBuilder"
+
+    @native("<init>", "()V")
+    def init(self, instance):
+        instance.underlying = []
+
+    @native("append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;")
+    def append(self, instance, text):
+        instance.underlying.append(text)
+        return instance
+
+    @native("toString", "()Ljava/lang/String;")
+    def toString(self, instance):
+        return "".join(instance.underlying)

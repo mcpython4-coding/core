@@ -1699,3 +1699,8 @@ R   [uuk]: improved world serialization API
 
 [github]: start of development cycle for 21w25a
 
+tasks to do:
+- minifier task should minify builtin & bridge library into each only one file
+- a test system for testing mods against mcpython-4
+- a flag to jvm to skip not implemented natives & replace by holder methods, including the body in the console / write to file options
+

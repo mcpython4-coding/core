@@ -17,6 +17,7 @@ import copy
 # Mainly independent from mcpython's source
 # See Runtime.py for a system for executing the bytecode
 # See builtin folder for python implementations for java internals
+import ctypes
 import struct
 import traceback
 import types
@@ -27,9 +28,11 @@ from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
 U1 = struct.Struct("!B")
 U1_S = struct.Struct("!b")
+U1_S_4 = struct.Struct("!bbbb")
 U2 = struct.Struct("!H")
 U2_S = struct.Struct("!h")
 U4 = struct.Struct("!I")
+U4_S = struct.Struct("!i")
 
 INT = struct.Struct("!i")
 FLOAT = struct.Struct("!f")
@@ -49,10 +52,15 @@ def pop_u2(data: bytearray):
     return U2.unpack(e)[0]
 
 
-def pop_u4(data: bytearray):
+def pop_u4(data: bytearray) -> int:
     e = data[:4]
     del data[:4]
     return U4.unpack(e)[0]
+
+
+def pop_u4_s(data: bytearray):
+    byte = (data.pop() << 24) | (data.pop() << 16) | (data.pop() << 8) | data.pop()
+    return ctypes.c_int32(byte).value
 
 
 def pop_sized(size: int, data: bytearray):
@@ -130,9 +138,12 @@ class JavaVM:
             Map,
             Random,
             WeakHashMap,
+            Optional,
         )
-        from mcpython.loader.java.builtin.java.util.function import Predicate, Supplier
+        from mcpython.loader.java.builtin.java.util.function import Predicate, Supplier, Function
         from mcpython.loader.java.builtin.java.util.stream import Stream
+        from mcpython.loader.java.builtin.java.util.regex import Pattern
+        from mcpython.loader.java.builtin.java.util.concurrent import ConcurrentHashMap
 
     def init_bridge(self):
         from mcpython.loader.java.bridge import util
@@ -490,8 +501,10 @@ class ElementValue:
 
         self.tag = tag = chr(pop_u1(data))
 
+        # these can be directly loaded from the constant pool
         if tag in "BCDFIJSZs":
             self.data = decode_cp_constant(table.class_file.cp[pop_u2(data) - 1])
+
         elif tag == "e":
             cls_name = (
                 table.class_file.cp[pop_u2(data) - 1][1]

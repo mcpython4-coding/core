@@ -87,3 +87,15 @@ class LazyValue(NativeClass):
     @native("func_179281_c", "()Ljava/lang/Object;")
     def get(self, instance):
         return instance.supplier.invoke()
+
+
+class Lazy(NativeClass):
+    NAME = "net/minecraftforge/common/util/Lazy"
+
+    @native("concurrentOf", "(Ljava/util/function/Supplier;)Lnet/minecraftforge/common/util/Lazy;")
+    def concurrentOf(self, supplier):
+        return self.create_instance()
+
+    @native("get", "()Ljava/lang/Object;")
+    def get(self, instance):
+        pass

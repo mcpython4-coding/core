@@ -23,6 +23,7 @@ from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 DEBUG = "--debug-vm" in sys.argv
 
 
+# todo: remove
 class UnhandledInstructionException(Exception):
     pass
 
@@ -159,6 +160,10 @@ class Stack:
 
     def push(self, value):
         self.stack.append(value)
+        return value
+
+    def seek(self):
+        return self.stack[-1]
 
     def end(self, value=None):
         self.cp = -1
@@ -167,11 +172,9 @@ class Stack:
     def run(self):
         """
         Runs the data on this stack
-
-        todo: add async variant
         """
 
-        # todo: check for general debugging & class debugging
+        # todo: check for class debugging
         debugging = (
             DEBUG
             or (self.method.class_file.name, self.method.name, self.method.signature)
@@ -211,7 +214,21 @@ class Stack:
             )
 
 
-class Instruction(ABC):
+class BaseInstruction(ABC):
+    """
+    Every instruction has to implement this, everything else does not matter
+    """
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        raise NotImplementedError
+
+
+class OpcodeInstruction(BaseInstruction, ABC):
+    """
+    Base for an opcode based instruction
+    """
+
     OPCODES: typing.Set[int] = set()
 
     @classmethod
@@ -220,12 +237,13 @@ class Instruction(ABC):
     ) -> typing.Tuple[typing.Any, int]:
         return None, 1
 
-    @classmethod
-    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
-        raise NotImplementedError
 
+class CPLinkedInstruction(OpcodeInstruction, ABC):
+    """
+    Base class for instructions containing one single constant pool reference
+    Used often in instructions
+    """
 
-class CPLinkedInstruction(Instruction, ABC):
     @classmethod
     def decode(
         cls, data: bytearray, index, class_file
@@ -239,28 +257,38 @@ class CPLinkedInstruction(Instruction, ABC):
 
 
 class BytecodeRepr:
-    OPCODES: typing.Dict[int, typing.Type[Instruction]] = {}
+    """
+    Structure storing instruction references and data from loaded methods
+    Created moments before first invocation
+
+    Stores all arrival instructions
+    """
+
+    OPCODES: typing.Dict[int, typing.Type[OpcodeInstruction]] = {}
 
     @classmethod
-    def register_instruction(cls, instr: typing.Type[Instruction]):
+    def register_instruction(cls, instr: typing.Type[OpcodeInstruction]):
         for opcode in instr.OPCODES:
             cls.OPCODES[opcode] = instr
+
         return instr
 
     def __init__(self, code: mcpython.loader.java.Java.CodeParser):
         self.code = code
 
         self.decoded_code: typing.List[
-            typing.Optional[typing.Tuple[Instruction, typing.Any, int]]
+            typing.Optional[typing.Tuple[OpcodeInstruction, typing.Any, int]]
         ] = [None] * len(code.code)
 
         code = bytearray(code.code)
         i = 0
+        print("head")
         while i < len(code):
             tag = code[i]
 
             if tag in self.OPCODES:
                 instr = self.OPCODES[tag]
+                # print(instr)
                 data, size = instr.decode(code, i, self.code.class_file)
 
                 self.decoded_code[i] = (instr, data, size)
@@ -274,9 +302,12 @@ class BytecodeRepr:
                     + " (following bits: "
                     + str(code[i : i + 5])
                     + ")"
-                )
+                ).add_trace(str(self.decoded_code)).add_trace(str(self.code.class_file))
 
     def prepare_stack(self, stack: Stack):
+        """
+        Helper method for setting up the stack for execution of this code block
+        """
         stack.local_vars = [None] * self.code.max_locals
         stack.cp = 0
         stack.code = self
@@ -285,7 +316,20 @@ class BytecodeRepr:
 # Now, the instruction implementations
 
 
-class ConstPush(Instruction, ABC):
+@BytecodeRepr.register_instruction
+class NoOp(OpcodeInstruction):
+    OPCODES = {0x00}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        pass
+
+
+class ConstPush(OpcodeInstruction, ABC):
+    """
+    Base class for instructions pushing pre-defined objects
+    """
+
     PUSHES = None
 
     @classmethod
@@ -359,7 +403,7 @@ class FConst2(ConstPush):
 
 
 @BytecodeRepr.register_instruction
-class BiPush(Instruction):
+class BiPush(OpcodeInstruction):
     OPCODES = {0x10}
 
     @classmethod
@@ -374,7 +418,7 @@ class BiPush(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class SiPush(Instruction):
+class SiPush(OpcodeInstruction):
     OPCODES = {0x11}
 
     @classmethod
@@ -389,7 +433,7 @@ class SiPush(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class LDC(Instruction):
+class LDC(OpcodeInstruction):
     OPCODES = {0x12}
 
     @classmethod
@@ -409,7 +453,7 @@ class LDC(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class LDC_W(Instruction):
+class LDC_W(OpcodeInstruction):
     OPCODES = {0x13, 0x14}
 
     @classmethod
@@ -429,8 +473,8 @@ class LDC_W(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class ArrayLoad(Instruction):
-    OPCODES = {0x32}
+class ArrayLoad(OpcodeInstruction):
+    OPCODES = {0x32, 0x2E}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -440,8 +484,8 @@ class ArrayLoad(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class ArrayStore(Instruction):
-    OPCODES = {0x53, 0x4F}
+class ArrayStore(OpcodeInstruction):
+    OPCODES = {0x53, 0x4F, 0x50, 0x54}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -452,7 +496,7 @@ class ArrayStore(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Load(Instruction):
+class Load(OpcodeInstruction):
     OPCODES = {0x19, 0x15, 0x18}
 
     @classmethod
@@ -467,7 +511,7 @@ class Load(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Load0(Instruction):
+class Load0(OpcodeInstruction):
     OPCODES = {0x2A, 0x1A, 0x22, 0x26}
 
     @classmethod
@@ -476,7 +520,7 @@ class Load0(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Load1(Instruction):
+class Load1(OpcodeInstruction):
     OPCODES = {0x2B, 0x1B, 0x23, 0x27}
 
     @classmethod
@@ -485,7 +529,7 @@ class Load1(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Load2(Instruction):
+class Load2(OpcodeInstruction):
     OPCODES = {0x2C, 0x1C, 0x24, 0x28}
 
     @classmethod
@@ -494,7 +538,7 @@ class Load2(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Load3(Instruction):
+class Load3(OpcodeInstruction):
     OPCODES = {0x2D, 0x1D, 0x25, 0x29}
 
     @classmethod
@@ -503,7 +547,7 @@ class Load3(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Store(Instruction):
+class Store(OpcodeInstruction):
     OPCODES = {0x3A, 0x36}
 
     @classmethod
@@ -518,7 +562,7 @@ class Store(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Store0(Instruction):
+class Store0(OpcodeInstruction):
     OPCODES = {0x4B, 0x3B}
 
     @classmethod
@@ -527,7 +571,7 @@ class Store0(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Store1(Instruction):
+class Store1(OpcodeInstruction):
     OPCODES = {0x4C, 0x3C}
 
     @classmethod
@@ -536,7 +580,7 @@ class Store1(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Store2(Instruction):
+class Store2(OpcodeInstruction):
     OPCODES = {0x4D, 0x3D}
 
     @classmethod
@@ -545,7 +589,7 @@ class Store2(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Store3(Instruction):
+class Store3(OpcodeInstruction):
     OPCODES = {0x4E, 0x3E}
 
     @classmethod
@@ -554,7 +598,7 @@ class Store3(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class POP(Instruction):
+class POP(OpcodeInstruction):
     OPCODES = {0x57}
 
     @classmethod
@@ -563,7 +607,7 @@ class POP(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class DUP(Instruction):
+class DUP(OpcodeInstruction):
     OPCODES = {0x59}
 
     @classmethod
@@ -574,7 +618,7 @@ class DUP(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class IADD(Instruction):
+class ADD(OpcodeInstruction):
     OPCODES = {0x60}
 
     @classmethod
@@ -584,7 +628,17 @@ class IADD(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class IDIV(Instruction):
+class SUB(OpcodeInstruction):
+    OPCODES = {0x66}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        b, a = stack.pop(), stack.pop()
+        stack.push(b - a)
+
+
+@BytecodeRepr.register_instruction
+class IDIV(OpcodeInstruction):
     OPCODES = {0x6C}
 
     @classmethod
@@ -594,7 +648,7 @@ class IDIV(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class IINC(Instruction):
+class IINC(OpcodeInstruction):
     OPCODES = {0x84}
 
     @classmethod
@@ -612,7 +666,16 @@ class IINC(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class IfGe(Instruction):
+class NoChange(OpcodeInstruction):
+    OPCODES = {0x90}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        pass
+
+
+@BytecodeRepr.register_instruction
+class IfGe(OpcodeInstruction):
     OPCODES = {0xA2}
 
     @classmethod
@@ -629,7 +692,7 @@ class IfGe(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class IfLe(Instruction):
+class IfLe(OpcodeInstruction):
     OPCODES = {0xA4}
 
     @classmethod
@@ -646,7 +709,7 @@ class IfLe(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class IfEq(Instruction):
+class IfEq(OpcodeInstruction):
     OPCODES = {0xA5}
 
     @classmethod
@@ -663,7 +726,7 @@ class IfEq(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class IfNEq(Instruction):
+class IfNEq(OpcodeInstruction):
     OPCODES = {0xA6}
 
     @classmethod
@@ -680,7 +743,7 @@ class IfNEq(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class IfEq0(Instruction):
+class IfEq0(OpcodeInstruction):
     OPCODES = {0x99}
 
     @classmethod
@@ -697,7 +760,7 @@ class IfEq0(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class IfNEq0(Instruction):
+class IfNEq0(OpcodeInstruction):
     OPCODES = {0x9A}
 
     @classmethod
@@ -714,7 +777,7 @@ class IfNEq0(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Goto(Instruction):
+class Goto(OpcodeInstruction):
     OPCODES = {0xA7}
 
     @classmethod
@@ -730,7 +793,7 @@ class Goto(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class AReturn(Instruction):
+class AReturn(OpcodeInstruction):
     OPCODES = {0xB0, 0xAC}
 
     @classmethod
@@ -739,7 +802,7 @@ class AReturn(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Return(Instruction):
+class Return(OpcodeInstruction):
     OPCODES = {0xB1}
 
     @classmethod
@@ -976,7 +1039,7 @@ class ANewArray(CPLinkedInstruction):
 
 
 @BytecodeRepr.register_instruction
-class ArrayLength(Instruction):
+class ArrayLength(OpcodeInstruction):
     OPCODES = {0xBE}
 
     @classmethod
@@ -985,7 +1048,7 @@ class ArrayLength(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class AThrow(Instruction):
+class AThrow(OpcodeInstruction):
     OPCODES = {0xBF}
 
     @classmethod
@@ -1021,7 +1084,7 @@ class InstanceOf(CPLinkedInstruction):
 
 
 @BytecodeRepr.register_instruction
-class IfNull(Instruction):
+class IfNull(OpcodeInstruction):
     OPCODES = {0xC6}
 
     @classmethod
@@ -1038,9 +1101,37 @@ class IfNull(Instruction):
 
 
 @BytecodeRepr.register_instruction
-class Mul(Instruction):
+class Mul(OpcodeInstruction):
     OPCODES = {0x68}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(stack.pop() * stack.pop())
+
+
+@BytecodeRepr.register_instruction
+class TableSwitch(OpcodeInstruction):
+    OPCODES = {0xAA}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        initial = len(data)
+        while index % 4 != 0:
+            data.pop(0)
+
+        default = mcpython.loader.java.Java.pop_u4_s(data)
+        low = mcpython.loader.java.Java.pop_u4_s(data)
+        high = mcpython.loader.java.Java.pop_u4_s(data)
+        offsets = [mcpython.loader.java.Java.pop_u4_s(data) for _ in range(high - low + 1)]
+        return (default, low, high, offsets), len(data) - initial + 1
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        index = stack.pop()
+        if index < data[1] or index > data[2]:
+            stack.cp += data[0]
+        else:
+            stack.cp += data[3][index - data[1]]
+        return True
