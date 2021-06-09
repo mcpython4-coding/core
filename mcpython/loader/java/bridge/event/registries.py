@@ -44,6 +44,10 @@ class IForgeRegistry(NativeClass):
         elif registry.name == "minecraft:item":
             parseItemToFactory(entry)
 
+    @native("getValue", "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def getValue(self, registry, name):
+        return registry().get(name if isinstance(name, str) else name.name)
+
 
 class ForgeRegistries(NativeClass):
     """
@@ -148,15 +152,19 @@ def parseBlockToFactory(obj):
             "facing=east,half=bottom,shape=inner_left"
         ).set_solid(False).set_all_side_solid(False)
     elif cls.is_subclass_of("net/minecraft/block/SlabBlock"):
-        instance.set_slab()
+        instance.set_slab().set_solid(False).set_all_side_solid(False)
     elif cls.is_subclass_of("net/minecraft/block/WallBlock"):
-        instance.set_wall()
+        instance.set_wall().set_solid(False).set_all_side_solid(False)
     elif cls.is_subclass_of("net/minecraft/block/FlowerPotBlock") or cls.is_subclass_of(
         "net/minecraft/block/LeavesBlock"
     ):
         instance.set_solid(False).set_all_side_solid(False)
     elif cls.is_subclass_of("net/minecraft/block/RotatedPillarBlock"):
         instance.set_log()
+    elif cls.is_subclass_of("net/minecraft/block/FenceBlock"):
+        instance.set_fence()
+    elif cls.is_subclass_of("net/minecraft/block/FenceGateBlock"):
+        instance.set_fence_gate()
     # else:
     #     print(obj, obj.registry_name)
 

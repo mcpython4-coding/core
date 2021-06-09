@@ -48,7 +48,6 @@ class Registry:
         class_based=True,
         dump_content_in_saves=True,
     ):
-        assert ":" in name, "name must be name-spaced"
         self.name = name
         self.phase = phase
         self.registry_type_names = registry_type_names

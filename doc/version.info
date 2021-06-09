@@ -1698,6 +1698,8 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed naming of AbstractFluidContainer item base class
 
 [github]: start of development cycle for 21w25a
+[uuk]: <fml> fixed factory transformer not using fence and fence gate base classes correctly
+[uuk]: <fml> fixed calling func_200948_a breaking blocks
 
 tasks to do:
 - minifier task should minify builtin & bridge library into each only one file

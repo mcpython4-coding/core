@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 from mcpython.loader.java.JavaExceptionStack import StackCollectingException
+import mcpython.common.container.ResourceStack
 
 
 class Blocks(NativeClass):
@@ -66,6 +67,9 @@ class AbstractBlock_Properties(NativeClass):
 
     @native("func_200943_b", "(F)Lnet/minecraft/block/AbstractBlock$Properties;")
     def func_200943_b(self, instance, value):
+        if not isinstance(value, float):
+            raise StackCollectingException("invalid data type")
+
         instance.hardness = instance.blast_resistance = value
         return instance
 
@@ -106,7 +110,7 @@ class AbstractBlock_Properties(NativeClass):
 
     @native("func_200948_a", "(FF)Lnet/minecraft/block/AbstractBlock$Properties;")
     def func_200948_a(self, instance, a, b):
-        instance.hardness = instance.blast_resistance = a, b
+        instance.hardness, instance.blast_resistance = a, b
         return instance
 
     @native(
@@ -808,29 +812,31 @@ class ItemGroup(NativeClass):
     @native("<init>", "(ILjava/lang/String;)V")
     def init(self, instance, a: int, name: str):
         import mcpython.client.gui.InventoryCreativeTab
-        import mcpython.loader.java.Runtime
-
-        runtime = mcpython.loader.java.Runtime.Runtime()
-
-        # create the item stack
-        try:
-            stack = runtime.run_method(
-                instance.get_class().get_method(
-                    "func_78016_d", "()Lnet/minecraft/item/ItemStack;"
-                )
-            )
-        except StackCollectingException as e:
-            e.add_trace(f"during creating ItemStack for item group {name}")
-            raise
 
         instance.underlying_tab = (
             mcpython.client.gui.InventoryCreativeTab.CreativeItemTab(
-                name, stack.underlying_stack
+                name, mcpython.common.container.ResourceStack.ItemStack("minecraft:barrier")
             )
         )
 
         @shared.mod_loader("minecraft", "stage:item_groups:load")
         def add_tab():
+            import mcpython.loader.java.Runtime
+
+            runtime = mcpython.loader.java.Runtime.Runtime()
+
+            # create the item stack
+            try:
+                stack = runtime.run_method(
+                    instance.get_class().get_method(
+                        "func_78016_d", "()Lnet/minecraft/item/ItemStack;"
+                    )
+                )
+            except StackCollectingException as e:
+                e.add_trace(f"during creating ItemStack for item group {name}")
+                raise
+
+            instance.underlying_tab.icon = stack.underlying_stack
             mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.add_tab(
                 instance.underlying_tab
             )

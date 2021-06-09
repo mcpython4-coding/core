@@ -282,7 +282,7 @@ class BytecodeRepr:
 
         code = bytearray(code.code)
         i = 0
-        print("head")
+        # print("head")
         while i < len(code):
             tag = code[i]
 
@@ -987,6 +987,18 @@ class InvokeDynamic(CPLinkedInstruction):
                 version=stack.method.class_file.internal_version,
             )
             method = cls_file.get_method(target_nat[1][1], target_nat[2][1])
+
+            """if not method.access & 0x0008:
+                obj = stack.pop()
+                m = method
+
+                def method(*args):
+                    runtime = Runtime()
+                    runtime.run_method(m, obj, *args)
+
+                method.native_name = m.name
+                method.native_signature = m.signature"""
+
         except StackCollectingException as e:
             e.add_trace(str(boostrap[0]))
             e.add_trace(str(boostrap[1]))
