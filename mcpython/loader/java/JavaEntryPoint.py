@@ -136,7 +136,7 @@ class JavaModLoader(mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint):
 
     @classmethod
     def load_mod_from_toml(cls, file, data):
-        loader_version = int(data["loaderVersion"].removeprefix("[").removesuffix(",)"))
+        loader_version = int(data["loaderVersion"].removeprefix("[").removesuffix(",)").removesuffix(",]").split(".")[0].split(",")[0])
 
         mods = {}
 
@@ -148,8 +148,26 @@ class JavaModLoader(mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint):
 
             shared.mod_loader(d["modId"], "stage:mod:init")(mod.load_underlying_classes)
 
-        for mod in data["dependencies"]:
-            for d in data["dependencies"][mod]:
-                mods[mod].add_dependency(
-                    d["modId"] if d["modId"] != "forge" else "minecraft"
-                )
+        if "dependencies" in data:
+            for mod in data["dependencies"]:
+                # these are error handlers, they should NOT be here... Some people produce really bad mods!
+
+                if isinstance(mod, dict):
+                    logger.println(f"[FML][SEMI FATAL] skipping dependency block {mod} as block is invalid [provided mods: {list(mod.keys())}]")
+                    continue
+
+                if mod not in mods:
+                    logger.println(f"[FML][HARD WARN] reference error in dependency block to {mod} [provided: {list(mods.keys())}]")
+                    continue
+
+                try:
+                    for d in data["dependencies"][mod]:
+                        # search for optional deps
+                        if not d["mandatory"]:
+                            continue
+
+                        mods[mod].add_dependency(
+                            d["modId"] if d["modId"] != "forge" else "minecraft"
+                        )
+                except:
+                    logger.print_exception("decoding dependency structure", str(mod), data)

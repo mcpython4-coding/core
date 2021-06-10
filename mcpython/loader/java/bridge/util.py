@@ -99,3 +99,17 @@ class Lazy(NativeClass):
     @native("get", "()Ljava/lang/Object;")
     def get(self, instance):
         pass
+
+
+class ParametersAreNonnullByDefault(NativeClass):
+    NAME = "javax/annotation/ParametersAreNonnullByDefault"
+
+    def on_annotate(self, cls, args):
+        pass
+
+
+class MethodsReturnNonnullByDefault(NativeClass):
+    NAME = "mcp/MethodsReturnNonnullByDefault"
+
+    def on_annotate(self, cls, args):
+        pass

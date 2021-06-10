@@ -66,6 +66,8 @@ class ForgeRegistries(NativeClass):
             "BLOCKS": lambda: shared.registry.get_by_name("minecraft:block"),
             "ITEMS": lambda: shared.registry.get_by_name("minecraft:item"),
             "SOUND_EVENTS": None,
+            "FLUIDS": None,
+            "TILE_ENTITIES": None,
         }
 
 
@@ -86,6 +88,8 @@ class Registry(NativeClass):
             "field_239720_u_": None,
             "field_212618_g": None,
             "field_239690_aB_": None,
+            "field_239699_ae_": None,
+            "field_218367_H": None,
         }
 
     @native(
@@ -234,4 +238,29 @@ class DefaultRegistry(NativeClass):
 
     @native("func_241873_b", "(Lnet/minecraft/util/ResourceLocation;)Ljava/util/Optional;")
     def func_241873_b(self, instance, obj):
+        pass
+
+
+class DeferredRegister(NativeClass):
+    NAME = "net/minecraftforge/registries/DeferredRegister"
+
+    @native("create",
+            "(Lnet/minecraftforge/registries/IForgeRegistry;Ljava/lang/String;)Lnet/minecraftforge/registries/DeferredRegister;")
+    def create(self, registry, mod_name):
+        pass
+
+    @native("register", "(Lnet/minecraftforge/eventbus/api/IEventBus;)V")
+    def register(self, instance, eventbus):
+        pass
+
+    @native("register", "(Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/minecraftforge/fml/RegistryObject;")
+    def register2(self, instance, name: str, supplier):
+        pass
+
+
+class ForgeRegistryEntry(NativeClass):
+    NAME = "net/minecraftforge/registries/ForgeRegistryEntry"
+
+    @native("<init>", "()V")
+    def init(self, instance):
         pass

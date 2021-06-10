@@ -188,26 +188,21 @@ class ModLoader:
                     self.current_resource_access = resource
                     mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(0, resource)
                     self.active_directory = file
-                    with zipfile.ZipFile(file) as f:
-                        try:
-                            with f.open("mod.json", mode="r") as sf:
-                                self.load_mods_json(sf.read().decode("utf-8"), file)
-                        except KeyError:
-                            try:
-                                with f.open("mod.toml", mode="r") as sf:
-                                    self.load_mods_toml(sf.read().decode("utf-8"), file)
-                            except KeyError:
-                                try:
-                                    with f.open("META-INF/mods.toml", mode="r") as sf:
-                                        self.load_mods_toml(
-                                            sf.read().decode("utf-8"), file
-                                        )
-                                except KeyError:
-                                    self.error_builder.println(
-                                        "- could not locate mod.json file in mod at '{}'".format(
-                                            file
-                                        )
-                                    )
+
+                    if resource.is_in_path("mod.json"):
+                        self.load_mods_json(resource.read_raw("mod.json").decode("utf-8"), file)
+                    elif resource.is_in_path("mod.toml"):
+                        self.load_mods_toml(resource.read_raw("mod.toml").decode("utf-8"), file)
+                    elif resource.is_in_path("mods.toml"):
+                        self.load_mods_toml(resource.read_raw("mods.toml").decode("utf-8"), file)
+                    elif resource.is_in_path("META-INF/mods.toml"):
+                        self.load_mods_toml(resource.read_raw("META-INF/mods.toml").decode("utf-8"), file)
+                    else:
+                        self.error_builder.println(
+                            "- could not locate mod.json/mods.toml file in mod at '{}'".format(
+                                file
+                            )
+                        )
 
                 elif file.endswith(".py"):  # python script file
                     self.active_directory = file
@@ -249,7 +244,7 @@ class ModLoader:
 
                 else:
                     self.error_builder.println(
-                        "- could not locate mod.json file for mod for mod-directory '{}'".format(
+                        "- could not locate mod.json/mods.toml file for mod for mod-directory '{}'".format(
                             file
                         )
                     )

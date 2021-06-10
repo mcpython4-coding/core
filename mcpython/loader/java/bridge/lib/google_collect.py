@@ -162,3 +162,19 @@ class ClassToInstanceMap(NativeClass):
     @native("putInstance", "(Ljava/lang/Class;Ljava/lang/Object;)Ljava/lang/Object;")
     def putInstance(self, instance, cls, obj):
         return obj
+
+
+class CharMatcher(NativeClass):
+    NAME = "com/google/common/base/CharMatcher"
+
+    @native("forPredicate", "(Lcom/google/common/base/Predicate;)Lcom/google/common/base/CharMatcher;")
+    def forPredicate(self, *_):
+        pass
+
+    @native("anyOf", "(Ljava/lang/CharSequence;)Lcom/google/common/base/CharMatcher;")
+    def anyOf(self, *_):
+        pass
+
+    @native("or", "(Lcom/google/common/base/CharMatcher;)Lcom/google/common/base/CharMatcher;")
+    def or_(self, *_):
+        pass

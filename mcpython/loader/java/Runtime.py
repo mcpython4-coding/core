@@ -248,12 +248,14 @@ class CPLinkedInstruction(OpcodeInstruction, ABC):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return (
-            class_file.cp[
-                mcpython.loader.java.Java.U2.unpack(data[index + 1 : index + 3])[0] - 1
-            ],
-            3,
-        )
+        pointer = mcpython.loader.java.Java.U2.unpack(data[index : index + 2])[0] - 1
+        try:
+            return (
+                class_file.cp[pointer],
+                3,
+            )
+        except IndexError:
+            raise StackCollectingException(f"during decoding instruction {cls.__name__} pointing to {pointer}").add_trace(f"current parsing index: {index}, class: {class_file.name}")
 
 
 class BytecodeRepr:
@@ -282,14 +284,22 @@ class BytecodeRepr:
 
         code = bytearray(code.code)
         i = 0
-        # print("head")
+        print("head", self.code.class_file.name)
         while i < len(code):
             tag = code[i]
 
             if tag in self.OPCODES:
                 instr = self.OPCODES[tag]
-                # print(instr)
-                data, size = instr.decode(code, i, self.code.class_file)
+                print(instr, code[:5])
+                try:
+                    data, size = instr.decode(code, i+1, self.code.class_file)
+                except StackCollectingException as e:
+                    e.add_trace(f"during decoding instruction {instr}").add_trace(f"index: {i}, near following: {code[:5]}")
+                    raise
+                except:
+                    raise StackCollectingException(f"during decoding instruction {instr}").add_trace(f"index: {i}, near following: {code[:5]}")
+
+                print(data, size, code[:5])
 
                 self.decoded_code[i] = (instr, data, size)
 
@@ -410,7 +420,7 @@ class BiPush(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U1_S.unpack(data[index + 1 : index + 2])[0], 2
+        return mcpython.loader.java.Java.U1_S.unpack(data[index : index + 1])[0], 2
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -425,7 +435,7 @@ class SiPush(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -440,7 +450,7 @@ class LDC(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return data[index + 1], 2
+        return data[index], 2
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -460,7 +470,7 @@ class LDC_W(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -503,7 +513,7 @@ class Load(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U1.unpack(data[index + 1 : index + 2])[0], 2
+        return mcpython.loader.java.Java.U1.unpack(data[index : index + 1])[0], 2
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -554,7 +564,7 @@ class Store(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U1.unpack(data[index + 1 : index + 2])[0], 2
+        return mcpython.loader.java.Java.U1.unpack(data[index : index + 1])[0], 2
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -656,8 +666,8 @@ class IINC(OpcodeInstruction):
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
         return (
-            data[index + 1],
-            mcpython.loader.java.Java.U1_S.unpack(data[index + 2 : index + 3])[0],
+            data[index],
+            mcpython.loader.java.Java.U1_S.unpack(data[index + 1 : index + 2])[0],
         ), 3
 
     @classmethod
@@ -675,6 +685,40 @@ class NoChange(OpcodeInstruction):
 
 
 @BytecodeRepr.register_instruction
+class IfEq(OpcodeInstruction):
+    OPCODES = {0x9F}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() == stack.pop():
+            stack.cp += data
+            return True
+
+
+@BytecodeRepr.register_instruction
+class IfNE(OpcodeInstruction):
+    OPCODES = {0xA0}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() != stack.pop():
+            stack.cp += data
+            return True
+
+
+@BytecodeRepr.register_instruction
 class IfGe(OpcodeInstruction):
     OPCODES = {0xA2}
 
@@ -682,7 +726,7 @@ class IfGe(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
@@ -699,7 +743,7 @@ class IfLe(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
@@ -716,7 +760,7 @@ class IfEq(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
@@ -733,7 +777,7 @@ class IfNEq(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
@@ -750,7 +794,7 @@ class IfEq0(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
@@ -767,7 +811,7 @@ class IfNEq0(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
@@ -784,7 +828,7 @@ class Goto(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -928,9 +972,9 @@ class InvokeInterface(CPLinkedInstruction):
     ) -> typing.Tuple[typing.Any, int]:
         return (
             class_file.cp[
-                mcpython.loader.java.Java.U2.unpack(data[index + 1 : index + 3])[0] - 1
+                mcpython.loader.java.Java.U2.unpack(data[index : index + 2])[0] - 1
             ],
-            data[index + 3],
+            data[index + 2],
         ), 5
 
     @classmethod
@@ -966,7 +1010,7 @@ class InvokeDynamic(CPLinkedInstruction):
     ) -> typing.Tuple[typing.Any, int]:
         return (
             class_file.cp[
-                mcpython.loader.java.Java.U2.unpack(data[index + 1 : index + 3])[0] - 1
+                mcpython.loader.java.Java.U2.unpack(data[index : index + 2])[0] - 1
             ],
             5,
         )
@@ -1034,7 +1078,7 @@ class NewArray(CPLinkedInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U1.unpack(data[index + 1 : index + 2])[0], 2
+        return mcpython.loader.java.Java.U1.unpack(data[index : index + 1])[0], 2
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -1103,11 +1147,28 @@ class IfNull(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index + 1 : index + 3])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
         if stack.pop() is None:
+            stack.cp += data
+            return True
+
+
+@BytecodeRepr.register_instruction
+class IfNonNull(OpcodeInstruction):
+    OPCODES = {0xC7}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() is not None:
             stack.cp += data
             return True
 
@@ -1123,7 +1184,7 @@ class Mul(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class TableSwitch(OpcodeInstruction):
-    OPCODES = {0xAA}
+    # OPCODES = {0xAA}
 
     @classmethod
     def decode(
@@ -1146,4 +1207,38 @@ class TableSwitch(OpcodeInstruction):
             stack.cp += data[0]
         else:
             stack.cp += data[3][index - data[1]]
+        return True
+
+
+@BytecodeRepr.register_instruction
+class LookupSwitch(OpcodeInstruction):
+    OPCODES = {0xAB}
+
+    @classmethod
+    def decode(
+            cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        initial = len(data)
+        print(data[:40], index)
+        while index % 4 != 0:
+            data.pop(0)
+            index += 1
+
+        default = mcpython.loader.java.Java.pop_u4_s(data)
+        npairs = mcpython.loader.java.Java.pop_u4_s(data)
+
+        try:
+            pairs = {mcpython.loader.java.Java.pop_u4_s(data): mcpython.loader.java.Java.pop_u4_s(data) for _ in range(npairs)}
+        except:
+            raise StackCollectingException(f"during decoding lookupswitch of {npairs} entries, defaulting to {default}")
+
+        return (default, pairs), len(data) - initial + 1
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        key = stack.pop()
+        if key not in data[1]:
+            stack.cp += data[0]
+        else:
+            stack.cp += data[0][key]
         return True

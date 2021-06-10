@@ -37,3 +37,31 @@ class SimpleChannel(NativeClass):
     )
     def registerMessage(self, instance, id, cls, consumer_1, function, consumer_2):
         pass
+
+
+class NetworkRegistry__ChannelBuilder(NativeClass):
+    NAME = "net/minecraftforge/fml/network/NetworkRegistry$ChannelBuilder"
+
+    @native("named",
+            "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/fml/network/NetworkRegistry$ChannelBuilder;")
+    def named(self, name):
+        return self.create_instance()
+
+    @native("clientAcceptedVersions",
+            "(Ljava/util/function/Predicate;)Lnet/minecraftforge/fml/network/NetworkRegistry$ChannelBuilder;")
+    def clientAcceptedVersions(self, instance, predicate):
+        return instance
+
+    @native("serverAcceptedVersions",
+            "(Ljava/util/function/Predicate;)Lnet/minecraftforge/fml/network/NetworkRegistry$ChannelBuilder;")
+    def serverAcceptedVersions(self, instance, predicate):
+        return instance
+
+    @native("networkProtocolVersion",
+            "(Ljava/util/function/Supplier;)Lnet/minecraftforge/fml/network/NetworkRegistry$ChannelBuilder;")
+    def networkProtocolVersion(self, instance, supplier):
+        return instance
+
+    @native("simpleChannel", "()Lnet/minecraftforge/fml/network/simple/SimpleChannel;")
+    def simpleChannel(self, instance):
+        return self.vm.get_class("net/minecraftforge/fml/network/simple/SimpleChannel", version=self.internal_version)

@@ -23,8 +23,12 @@ import traceback
 import types
 import typing
 from abc import ABC
+import sys
 
 from mcpython.loader.java.JavaExceptionStack import StackCollectingException
+
+
+DYNAMIC_NATIVES = "--fill-unknown-natives" in sys.argv
 
 U1 = struct.Struct("!B")
 U1_S = struct.Struct("!b")
@@ -32,7 +36,7 @@ U1_S_4 = struct.Struct("!bbbb")
 U2 = struct.Struct("!H")
 U2_S = struct.Struct("!h")
 U4 = struct.Struct("!I")
-U4_S = struct.Struct("!i")
+U4_S = struct.Struct(">i")
 
 INT = struct.Struct("!i")
 FLOAT = struct.Struct("!f")
@@ -59,8 +63,9 @@ def pop_u4(data: bytearray) -> int:
 
 
 def pop_u4_s(data: bytearray):
-    byte = (data.pop() << 24) | (data.pop() << 16) | (data.pop() << 8) | data.pop()
-    return ctypes.c_int32(byte).value
+    e = data[:4]
+    del data[:4]
+    return U4_S.unpack(e)[0]
 
 
 def pop_sized(size: int, data: bytearray):
@@ -116,6 +121,7 @@ class JavaVM:
             Object,
             String,
             ThreadLocal,
+            System,
         )
         from mcpython.loader.java.builtin.java.lang.annotation import (
             Documented,
@@ -125,6 +131,7 @@ class JavaVM:
             Target,
         )
         from mcpython.loader.java.builtin.java.nio.file import Files, Path, Paths
+        from mcpython.loader.java.builtin.java.io import File
         from mcpython.loader.java.builtin.java.util import (
             ArrayList,
             Arrays,
@@ -139,6 +146,7 @@ class JavaVM:
             Random,
             WeakHashMap,
             Optional,
+            TreeMap,
         )
         from mcpython.loader.java.builtin.java.util.function import Predicate, Supplier, Function
         from mcpython.loader.java.builtin.java.util.stream import Stream
@@ -165,7 +173,7 @@ class JavaVM:
             potions,
             tags,
         )
-        from mcpython.loader.java.bridge.world import biomes, collection
+        from mcpython.loader.java.bridge.world import biomes, collection, world
 
     def get_class(self, name: str, version=0) -> "AbstractJavaClass":
         name = name.replace(".", "/")
@@ -194,6 +202,21 @@ class JavaVM:
         try:
             bytecode = get_bytecode_of_class(name)
         except FileNotFoundError:
+            if DYNAMIC_NATIVES:
+                class Dynamic(NativeClass):
+                    NAME = name
+
+                print(f"""
+Native Dynamic Builder: Class {name} (not found)
+Add into file and add to import list in natives:
+from mcpython import shared
+from mcpython.loader.java.Java import NativeClass, native
+
+class {name.split('/')[-1].replace('$', '__')}(NativeClass):
+    NAME = \"{name}\"""")
+
+                return self.shared_classes[name]
+
             raise StackCollectingException(f"class {name} not found!") from None
 
         info("loading java class '" + name + "'")
@@ -264,6 +287,10 @@ class AbstractJavaClass:
         raise NotImplementedError
 
     def on_annotate(self, cls, args):
+        if DYNAMIC_NATIVES:
+            print("\n"+self.name+" is missing on_annotate implementation!")
+            return
+
         raise RuntimeError((self, cls, args))
 
     def get_dynamic_field_keys(self):
@@ -329,6 +356,25 @@ class NativeClass(AbstractJavaClass, ABC):
                 e.add_trace(f"not found up at {self.name}")
                 raise
 
+        if DYNAMIC_NATIVES:
+            def dynamic(*_):
+                pass
+
+            self.exposed_methods[(name, signature)] = dynamic
+
+            dynamic.native_name = name
+            dynamic.native_signature = signature
+
+            print(f"""
+Native Dynamic Builder: Class {self.name}
+Method {name} with signature {signature}
+Add:
+    @native(\"{name}\", \"{signature}\")
+    def {name.removeprefix("<").removesuffix(">").replace("$", "__")}(self, *_):
+        pass""")
+
+            return dynamic
+
         raise StackCollectingException(
             f"class {self.name} has no method named '{name}' with signature {signature}"
         ).add_trace(str(self)).add_trace(
@@ -337,6 +383,13 @@ class NativeClass(AbstractJavaClass, ABC):
 
     def get_static_attribute(self, name: str, expected_type=None):
         if name not in self.exposed_attributes:
+            if DYNAMIC_NATIVES:
+                print(f"""
+Native Dynamic Builder: Class {self.name}
+Static attribute {name}""")
+                self.exposed_attributes[name] = None
+                return
+
             raise StackCollectingException(
                 f"unknown static attribute '{name}' of class '{self.name}' (expected type: {expected_type})"
             )

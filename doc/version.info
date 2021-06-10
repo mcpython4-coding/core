@@ -1699,10 +1699,15 @@ R   [uuk]: improved world serialization API
 
 [github]: start of development cycle for 21w25a
 [uuk]: <fml> fixed factory transformer not using fence and fence gate base classes correctly
-[uuk]: <fml> fixed calling func_200948_a breaking blocks
+[uuk]: <fml> fixed calling func_200948_a breaking blocks [wrong property setting]
+[uuk]: added debug flag --fill-unknown-natives for auto-filling native methods in-memory
+[uuk]: <fml> added some more debug info
+[uuk]: mod loader is now more efficient at loading mod info files from archives
 
 tasks to do:
 - minifier task should minify builtin & bridge library into each only one file
-- a test system for testing mods against mcpython-4
+- a test system for testing mods & mod-packs against mcpython-4
 - a flag to jvm to skip not implemented natives & replace by holder methods, including the body in the console / write to file options
 
+Currently testing:
+AllTheMods6 [modified as two mods require scala mod loader, and one had a broken mods.toml] with 224 total mods

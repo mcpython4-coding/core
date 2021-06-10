@@ -275,6 +275,8 @@ class EventBus(NativeClass):
 
     @native("addGenericListener", "(Ljava/lang/Class;Ljava/util/function/Consumer;)V")
     def addGenericListener(self, instance, cls, consumer):
+        return
+        # todo: implement
         current_mod = shared.CURRENT_EVENT_SUB
         if cls.name == "net/minecraft/block/Block":
             @shared.mod_loader("minecraft", "stage:block:factory_usage")

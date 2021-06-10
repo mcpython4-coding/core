@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -15,17 +15,15 @@ from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class Path(NativeClass):
-    NAME = "java/nio/file/Path"
+class World(NativeClass):
+    NAME = "net/minecraft/world/World"
 
-    @native("toAbsolutePath", "()Ljava/nio/file/Path;")
-    def toAbsolutePath(self, instance):
-        pass
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_234918_g_": None,
+            "field_234919_h_": None,
+            "field_234920_i_": None,
+            "field_239699_ae_": None,
+        })
 
-    @native("toString", "()Ljava/lang/String;")
-    def toString(self, instance):
-        return ""
-
-    @native("toFile", "()Ljava/io/File;")
-    def toFile(self, *_):
-        pass
