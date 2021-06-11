@@ -306,6 +306,10 @@ class EventBus(NativeClass):
                     traceback.print_exc()
                     raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
+    @native("post", "(Lnet/minecraftforge/eventbus/api/Event;)Z")
+    def post(self, instance, event):
+        pass
+
 
 class DistMarker(NativeClass):
     NAME = "net/minecraftforge/api/distmarker/Dist"
@@ -357,11 +361,15 @@ class FMLPaths(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes = {"CONFIGDIR": None}
+        config_dir = self.create_instance()
+        config_dir.dir = shared.home+"/fml_configs"
+        self.exposed_attributes = {"CONFIGDIR": config_dir}
 
     @native("get", "()Ljava/nio/file/Path;")
     def get(self, instance):
-        return None
+        obj = self.vm.get_class("java/io/Path", version=self.internal_version)
+        obj.path = instance.dir
+        return obj
 
 
 class ModConfig_Type(NativeClass):
@@ -503,3 +511,16 @@ class ModList(NativeClass):
     @native("isLoaded", "(Ljava/lang/String;)Z")
     def isLoaded(self, instance, name: str):
         return int(name in shared.mod_loader.mods)
+
+
+class Event(NativeClass):
+    NAME = "net/minecraftforge/eventbus/api/Event"
+
+    @native("<init>", "()V")
+    def init(self, instance):
+        pass
+
+
+class EventPriority(NativeClass):
+    NAME = "net/minecraftforge/eventbus/api/EventPriority"
+

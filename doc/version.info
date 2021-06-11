@@ -1703,6 +1703,8 @@ R   [uuk]: improved world serialization API
 [uuk]: added debug flag --fill-unknown-natives for auto-filling native methods in-memory
 [uuk]: <fml> added some more debug info
 [uuk]: mod loader is now more efficient at loading mod info files from archives
+[uuk]: <jvm> instructions can now be validated
+[uuk]: <jvm> WARNING: the JVM is now starting to get natives which can DAMAGE your system!
 
 tasks to do [maybe moved away for later]:
 - minifier task should minify builtin & bridge library into each only one file

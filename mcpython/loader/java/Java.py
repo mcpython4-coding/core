@@ -137,7 +137,7 @@ class JavaVM:
             Target,
         )
         from mcpython.loader.java.builtin.java.nio.file import Files, Path, Paths
-        from mcpython.loader.java.builtin.java.io import File
+        from mcpython.loader.java.builtin.java.io import File, Reader, FileInputStream, PushbackInputStream, Path, FileOutputStream, BufferedWriter, OutputStreamWriter
         from mcpython.loader.java.builtin.java.util import (
             ArrayList,
             Arrays,
@@ -153,6 +153,8 @@ class JavaVM:
             WeakHashMap,
             Optional,
             TreeMap,
+            Collection,
+            LinkedList,
         )
         from mcpython.loader.java.builtin.java.util.function import Predicate, Supplier, Function
         from mcpython.loader.java.builtin.java.util.stream import Stream
@@ -178,6 +180,8 @@ class JavaVM:
             dispenser,
             potions,
             tags,
+            enchantments,
+            crafting,
         )
         from mcpython.loader.java.bridge.world import biomes, collection, world
 
@@ -1009,5 +1013,4 @@ def decode_cp_constant(const, version=0):
 vm = JavaVM()
 # this is the way how to attach a debugger to a certain method
 # vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")
-# vm.debug_method("appeng/bootstrap/BlockDefinitionBuilder", "build", "()Lappeng/api/definitions/IBlockDefinition;")
-# vm.debug_method("appeng/bootstrap/FeatureFactory", "addBootstrapComponent", "(Lappeng/bootstrap/IBootstrapComponent;)V")
+# vm.debug_method("shadows/placebo/config/Configuration", "getBoolean", "(Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;)Z")

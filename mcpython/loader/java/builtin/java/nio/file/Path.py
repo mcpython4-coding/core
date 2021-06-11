@@ -27,5 +27,13 @@ class Path(NativeClass):
         return ""
 
     @native("toFile", "()Ljava/io/File;")
-    def toFile(self, *_):
-        pass
+    def toFile(self, instance):
+        obj = self.vm.get_class("java/io/File", version=self.internal_version)
+        obj.path = instance.path
+        return obj
+
+    @native("resolve", "(Ljava/lang/String;)Ljava/nio/file/Path;")
+    def resolve(self, instance, path: str):
+        obj = self.create_instance()
+        obj.path = instance.path + "/" + path
+        return obj

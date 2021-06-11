@@ -113,3 +113,19 @@ class MethodsReturnNonnullByDefault(NativeClass):
 
     def on_annotate(self, cls, args):
         pass
+
+
+class DamageSource(NativeClass):
+    NAME = "net/minecraft/util/DamageSource"
+
+    @native("<init>", "(Ljava/lang/String;)V")
+    def init(self, instance, v):
+        pass
+
+    @native("func_76348_h", "()Lnet/minecraft/util/DamageSource;")
+    def func_76348_h(self, instance):
+        return instance
+
+    @native("func_151518_m", "()Lnet/minecraft/util/DamageSource;")
+    def func_151518_m(self, instance):
+        return instance

@@ -21,3 +21,11 @@ class Boolean(NativeClass):
     @native("valueOf", "(Z)Ljava/lang/Boolean;")
     def valueOf(self, value):
         return value
+
+    @native("toString", "(Z)Ljava/lang/String;")
+    def toString(self, instance):
+        return "true" if instance else "false"
+
+    @native("parseBoolean", "(Ljava/lang/String;)Z")
+    def parseBoolean(self, text: str):
+        return int(text.lower() == "true")

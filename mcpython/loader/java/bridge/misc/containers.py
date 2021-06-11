@@ -21,3 +21,16 @@ class StateContainer(NativeClass):
     @native("func_177621_b", "()Lnet/minecraft/state/StateHolder;")
     def func_177621_b(self, instance):
         return instance
+
+
+class EquipmentSlotType(NativeClass):
+    NAME = "net/minecraft/inventory/EquipmentSlotType"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "HEAD": 0,
+            "CHEST": 1,
+            "LEGS": 2,
+            "FEET": 3,
+        })

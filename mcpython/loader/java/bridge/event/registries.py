@@ -264,3 +264,25 @@ class ForgeRegistryEntry(NativeClass):
     @native("<init>", "()V")
     def init(self, instance):
         pass
+
+
+class RegistryBuilder(NativeClass):
+    NAME = "net/minecraftforge/registries/RegistryBuilder"
+
+    @native("<init>", "()V")
+    def init(self, instance):
+        pass
+
+    @native("setName", "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/RegistryBuilder;")
+    def setName(self, instance, name):
+        instance.name = name
+        return instance
+
+    @native("setType", "(Ljava/lang/Class;)Lnet/minecraftforge/registries/RegistryBuilder;")
+    def setType(self, instance, cls):
+        instance.type = cls
+        return instance
+
+    @native("create", "()Lnet/minecraftforge/registries/IForgeRegistry;")
+    def create(self, instance):
+        return self.vm.get_class("net/minecraftforge/registries/IForgeRegistry", version=self.internal_version).create_instance()

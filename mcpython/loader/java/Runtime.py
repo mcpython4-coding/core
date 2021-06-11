@@ -118,7 +118,8 @@ class Runtime:
             args = [stack.pop() for _ in range(len(parts))]
 
             if not static:
-                args.append(stack.pop())
+                obj = stack.pop()
+                args.append(obj)
 
         except IndexError:
             print(method, stack.stack, static, previous_count, len(parts), parts)
@@ -197,14 +198,18 @@ class Stack:
                 mcpython.loader.java.Java.warn("stack: " + str(self.stack)[:200])
                 mcpython.loader.java.Java.warn("local: " + str(self.local_vars)[:200])
 
+            stack_top = self.stack[:3]
+
             try:
                 result = instruction[0].invoke(instruction[1], self)
             except StackCollectingException as e:
                 e.add_trace(
                     f"during invoking {instruction[0]} in {self.method} [index: {self.cp}]"
                 )
-                e.add_trace(str(instruction[1]))
+                e.add_trace(str(instruction[1])).add_trace(str(stack_top))
                 raise
+            except:
+                raise StackCollectingException(f"Implementation-wise during invoking {instruction[0].__name__} in {self.method} [index: {self.cp}]").add_trace(str(instruction[1])).add_trace(str(stack_top))
 
             if not result and self.cp != -1:
                 self.cp += instruction[2]
@@ -237,6 +242,10 @@ class OpcodeInstruction(BaseInstruction, ABC):
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
         return None, 1
+
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        pass
 
 
 class CPLinkedInstruction(OpcodeInstruction, ABC):
@@ -293,7 +302,7 @@ class BytecodeRepr:
 
             if tag in self.OPCODES:
                 instr = self.OPCODES[tag]
-                print(instr, code[:5])
+                # print(instr, code[:5])
                 try:
                     data, size = instr.decode(code, i+1, self.code.class_file)
                 except StackCollectingException as e:
@@ -317,6 +326,15 @@ class BytecodeRepr:
                     + ")"
                 ).add_trace(str(self.decoded_code)).add_trace(str(self.code.class_file))
 
+        for i, e in enumerate(self.decoded_code):
+            if e is None: continue
+
+            try:
+                e[0].validate(e[1], self)
+            except StackCollectingException as e:
+                e.add_trace(f"during validating {e[0].__name__} with data {e[1]} stored at index {i} in {self.code.table.parent}")
+                raise
+
     def prepare_stack(self, stack: Stack):
         """
         Helper method for setting up the stack for execution of this code block
@@ -331,7 +349,7 @@ class BytecodeRepr:
 
 @BytecodeRepr.register_instruction
 class NoOp(OpcodeInstruction):
-    OPCODES = {0x00}
+    OPCODES = {0x00, 0x90}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
@@ -493,6 +511,13 @@ class ArrayLoad(OpcodeInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         index = stack.pop()
         array = stack.pop()
+
+        if index is None:
+            raise StackCollectingException("NullPointerException: index is null")
+
+        if array is None:
+            raise StackCollectingException("NullPointerException: array is null")
+
         stack.push(array[index])
 
 
@@ -505,6 +530,13 @@ class ArrayStore(OpcodeInstruction):
         value = stack.pop()
         index = stack.pop()
         array = stack.pop()
+
+        if index is None:
+            raise StackCollectingException("NullPointerException: index is null")
+
+        if array is None:
+            raise StackCollectingException("NullPointerException: array is null")
+
         array[index] = value
 
 
@@ -522,6 +554,11 @@ class Load(OpcodeInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(stack.local_vars[data])
 
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if prepared_data >= container.code.max_locals:
+            raise StackCollectingException(f"LocalVariableIndexOutOfBounds: {prepared_data} does not fit into {container.code.max_locals}")
+
 
 @BytecodeRepr.register_instruction
 class Load0(OpcodeInstruction):
@@ -530,6 +567,12 @@ class Load0(OpcodeInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(stack.local_vars[0])
+
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if container.code.max_locals <= 0:
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: 0 does not fit into {container.code.max_locals}")
 
 
 @BytecodeRepr.register_instruction
@@ -540,6 +583,12 @@ class Load1(OpcodeInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(stack.local_vars[1])
 
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if container.code.max_locals <= 1:
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: 1 does not fit into {container.code.max_locals}")
+
 
 @BytecodeRepr.register_instruction
 class Load2(OpcodeInstruction):
@@ -549,6 +598,12 @@ class Load2(OpcodeInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(stack.local_vars[2])
 
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if container.code.max_locals <= 2:
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: 2 does not fit into {container.code.max_locals}")
+
 
 @BytecodeRepr.register_instruction
 class Load3(OpcodeInstruction):
@@ -557,6 +612,12 @@ class Load3(OpcodeInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.push(stack.local_vars[3])
+
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if container.code.max_locals <= 3:
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: 3 does not fit into {container.code.max_locals}")
 
 
 @BytecodeRepr.register_instruction
@@ -573,6 +634,12 @@ class Store(OpcodeInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.local_vars[data] = stack.pop()
 
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if prepared_data >= container.code.max_locals:
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: {prepared_data} does not fit into {container.code.max_locals}")
+
 
 @BytecodeRepr.register_instruction
 class Store0(OpcodeInstruction):
@@ -581,6 +648,12 @@ class Store0(OpcodeInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.local_vars[0] = stack.pop()
+
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if container.code.max_locals <= 0:
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: 0 does not fit into {container.code.max_locals}")
 
 
 @BytecodeRepr.register_instruction
@@ -591,6 +664,12 @@ class Store1(OpcodeInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.local_vars[1] = stack.pop()
 
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if container.code.max_locals <= 1:
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: 1 does not fit into {container.code.max_locals}")
+
 
 @BytecodeRepr.register_instruction
 class Store2(OpcodeInstruction):
@@ -600,6 +679,12 @@ class Store2(OpcodeInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.local_vars[2] = stack.pop()
 
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if container.code.max_locals <= 2:
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: 2 does not fit into {container.code.max_locals}")
+
 
 @BytecodeRepr.register_instruction
 class Store3(OpcodeInstruction):
@@ -608,6 +693,12 @@ class Store3(OpcodeInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.local_vars[3] = stack.pop()
+
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        if container.code.max_locals <= 3:
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: 3 does not fit into {container.code.max_locals}")
 
 
 @BytecodeRepr.register_instruction
@@ -642,7 +733,7 @@ class ADD(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class SUB(OpcodeInstruction):
-    OPCODES = {0x66}
+    OPCODES = {0x66, 0x64}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -661,6 +752,36 @@ class IDIV(OpcodeInstruction):
 
 
 @BytecodeRepr.register_instruction
+class SHL(OpcodeInstruction):
+    OPCODES = {0x78}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        b, a = stack.pop(), stack.pop()
+        stack.push(a << b)
+
+
+@BytecodeRepr.register_instruction
+class AND(OpcodeInstruction):
+    OPCODES = {0x7E}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        b, a = stack.pop(), stack.pop()
+        stack.push(a & b)
+
+
+@BytecodeRepr.register_instruction
+class OR(OpcodeInstruction):
+    OPCODES = {0x80}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        b, a = stack.pop(), stack.pop()
+        stack.push(a | b)
+
+
+@BytecodeRepr.register_instruction
 class IINC(OpcodeInstruction):
     OPCODES = {0x84}
 
@@ -676,15 +797,6 @@ class IINC(OpcodeInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.local_vars[data[0]] += data[1]
-
-
-@BytecodeRepr.register_instruction
-class NoChange(OpcodeInstruction):
-    OPCODES = {0x90}
-
-    @classmethod
-    def invoke(cls, data: typing.Any, stack: Stack):
-        pass
 
 
 @BytecodeRepr.register_instruction
@@ -894,11 +1006,14 @@ class GetField(CPLinkedInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         name = data[2][1][1]
         obj = stack.pop()
+
+        if obj is None:
+            raise StackCollectingException("NullPointerException: object is None")
+
         try:
             stack.push(obj.fields[name])
         except KeyError:
-            print(obj)
-            raise
+            raise StackCollectingException(f"AttributeError: object {obj} has no attribute {name}") from None
 
 
 @BytecodeRepr.register_instruction
