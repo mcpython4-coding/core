@@ -50,6 +50,12 @@ def pop_u1(data: bytearray):
     return U1.unpack(e)[0]
 
 
+def pop_u2_s(data: bytearray):
+    e = data[:2]
+    del data[:2]
+    return U2_S.unpack(e)[0]
+
+
 def pop_u2(data: bytearray):
     e = data[:2]
     del data[:2]

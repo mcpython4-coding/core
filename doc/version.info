@@ -1704,10 +1704,18 @@ R   [uuk]: improved world serialization API
 [uuk]: <fml> added some more debug info
 [uuk]: mod loader is now more efficient at loading mod info files from archives
 
-tasks to do:
+tasks to do [maybe moved away for later]:
 - minifier task should minify builtin & bridge library into each only one file
 - a test system for testing mods & mod-packs against mcpython-4
 - a flag to jvm to skip not implemented natives & replace by holder methods, including the body in the console / write to file options
+- a system to export code portions as "subroutines" & a special invoke instruction, this needs:
+    - a code walker for deciding if instructions are jump-targets
+    - a code walker for deciding which portions of code should get sub-routined, including a system to transform
+        such code into python-native code where possible
+- a code walker to shorten code by removing NOOP's & resolving the jumps to the new destinations
+- maybe decoded instructions store their following instruction instead of the offset?
+- a code walker with a special instruction set for mc-specific instructions (shared.world access?)
+- a constant pool walker for identifying unnecessary elements in the pool and removing them
 
 Currently testing:
 AllTheMods6 [modified as two mods require scala mod loader, and one had a broken mods.toml] with 224 total mods

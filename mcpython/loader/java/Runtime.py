@@ -18,6 +18,7 @@ import typing
 from abc import ABC
 
 import mcpython.loader.java.Java
+from mcpython import logger
 from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
 DEBUG = "--debug-vm" in sys.argv
@@ -284,9 +285,11 @@ class BytecodeRepr:
 
         code = bytearray(code.code)
         i = 0
-        print("head", self.code.class_file.name)
+        # print("head", self.code.class_file.name)
         while i < len(code):
             tag = code[i]
+
+            # print("".join(hex(e)[2:] for e in code[i:i+20]))
 
             if tag in self.OPCODES:
                 instr = self.OPCODES[tag]
@@ -299,7 +302,7 @@ class BytecodeRepr:
                 except:
                     raise StackCollectingException(f"during decoding instruction {instr}").add_trace(f"index: {i}, near following: {code[:5]}")
 
-                print(data, size, code[:5])
+                # print(data, size, code[i:i+10], len(code))
 
                 self.decoded_code[i] = (instr, data, size)
 
@@ -484,7 +487,7 @@ class LDC_W(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class ArrayLoad(OpcodeInstruction):
-    OPCODES = {0x32, 0x2E}
+    OPCODES = {0x32, 0x2E, 0x33}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -1096,6 +1099,13 @@ class ANewArray(CPLinkedInstruction):
 
 @BytecodeRepr.register_instruction
 class ArrayLength(OpcodeInstruction):
+    """
+    Resolves the length of an array
+
+    In some contexts, this result is constant in each call
+    Can we detect this?
+    """
+
     OPCODES = {0xBE}
 
     @classmethod
@@ -1105,6 +1115,12 @@ class ArrayLength(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class AThrow(OpcodeInstruction):
+    """
+    Throws an exception
+
+    In some cases, this raise can be moved up some instructions when no side effect is detected
+    """
+
     OPCODES = {0xBF}
 
     @classmethod
@@ -1190,15 +1206,23 @@ class TableSwitch(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        initial = len(data)
-        while index % 4 != 0:
-            data.pop(0)
+        initial = index
 
-        default = mcpython.loader.java.Java.pop_u4_s(data)
-        low = mcpython.loader.java.Java.pop_u4_s(data)
+        while index % 4 != 0:
+            index += 1
+
+        default = mcpython.loader.java.Java.pop_u4_s(data[index:])
+        index += 4
+
+        low = mcpython.loader.java.Java.pop_u4_s(data[index:])
+        index += 4
+
         high = mcpython.loader.java.Java.pop_u4_s(data)
-        offsets = [mcpython.loader.java.Java.pop_u4_s(data) for _ in range(high - low + 1)]
-        return (default, low, high, offsets), len(data) - initial + 1
+        index += 4
+
+        offsets = [mcpython.loader.java.Java.pop_u4_s(data[index+i*4:]) for i in range(high - low + 1)]
+        index += (high - low + 1) * 4
+        return (default, low, high, offsets), index - initial
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
@@ -1212,33 +1236,84 @@ class TableSwitch(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class LookupSwitch(OpcodeInstruction):
+    """
+    LookupSwitch Instruction
+
+    Specified by https://docs.oracle.com/javase/specs/jvms/se16/html/jvms-6.htm
+
+    Structure
+    0xAA [type byte]
+    0-3 bytes padding to make next byte align to 4 byte blocks
+    The next 4 bytes are the default offset, the next 4 the case counts.
+    Followed by the respective count of 4 bytes case key and 4 bytes case offset.
+
+    Optimisation possibilities:
+    - convert into tableswitch when structure is close to it
+    - for enums: use tableswitch with special case attribute on the enum entries
+    - use simple if-elif-else structure for small examples
+    - when block jumped to is only used to this part, we can extract it into a subroutine implemented in python when
+        possible
+    - instead of doing simple if's in code, we can use this structure with hash to decide between multile parts
+
+    Implementation details
+        We use a while loop and pop bytes until byte alignment is reached
+        We use the pop_u4_s instruction for popping the 4 byte data
+        We store the pairs into a dict structure
+        We raise a StackCollectingException when the dict construction fails, we include the amount of entries and the default offset
+
+    Safety checks
+        Load-time:
+        - all offsets must be valid
+
+        Optimisation in-place:
+        - jumps to head of instruction must be still valid
+        - subroutines must be correctly linked & returned back
+
+        Run-time:
+        - value must be int(-like)
+
+    Exceptions:
+        StackCollectingException(StackUnderflowException): when no key is on the stack
+        <some error during wrong offsets>
+
+    todo: somehow, this does not 100% work...
+    """
+
     OPCODES = {0xAB}
 
     @classmethod
     def decode(
             cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        initial = len(data)
-        print(data[:40], index)
+        before = index
+
         while index % 4 != 0:
-            data.pop(0)
             index += 1
 
-        default = mcpython.loader.java.Java.pop_u4_s(data)
-        npairs = mcpython.loader.java.Java.pop_u4_s(data)
+        default = mcpython.loader.java.Java.pop_u4_s(data[index:])
+        index += 4
+        npairs = mcpython.loader.java.Java.pop_u4_s(data[index:])
+        index += 4
+
+        if npairs > 100:
+            logger.println(f"unusual high npair count {npairs}. This normally indicates an error in bytecode")
+            logger.println(data[index:40+index], index)
 
         try:
-            pairs = {mcpython.loader.java.Java.pop_u4_s(data): mcpython.loader.java.Java.pop_u4_s(data) for _ in range(npairs)}
+            pairs = {mcpython.loader.java.Java.pop_u4_s(data): mcpython.loader.java.Java.pop_u4_s(data[index+i*4:]) for i in range(npairs)}
+            index += npairs * 4
         except:
             raise StackCollectingException(f"during decoding lookupswitch of {npairs} entries, defaulting to {default}")
 
-        return (default, pairs), len(data) - initial + 1
+        return (default, pairs), index - before + 1
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
         key = stack.pop()
+
         if key not in data[1]:
             stack.cp += data[0]
         else:
             stack.cp += data[0][key]
+
         return True
