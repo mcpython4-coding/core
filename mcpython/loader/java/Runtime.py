@@ -297,10 +297,10 @@ class BytecodeRepr:
                 try:
                     data, size = instr.decode(code, i+1, self.code.class_file)
                 except StackCollectingException as e:
-                    e.add_trace(f"during decoding instruction {instr}").add_trace(f"index: {i}, near following: {code[:5]}")
+                    e.add_trace(f"during decoding instruction {instr} in {self.code.table.parent}").add_trace(f"index: {i}, near code: {code[max(0, i-5):i+5]}")
                     raise
                 except:
-                    raise StackCollectingException(f"during decoding instruction {instr}").add_trace(f"index: {i}, near following: {code[:5]}")
+                    raise StackCollectingException(f"during decoding instruction {instr} in {self.code.table.parent}").add_trace(f"index: {i}, near code: {code[max(0, i-5):i+5]}")
 
                 # print(data, size, code[i:i+10], len(code))
 
@@ -438,7 +438,7 @@ class SiPush(OpcodeInstruction):
     def decode(
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
-        return mcpython.loader.java.Java.U2_S.unpack(data[index : index])[0], 3
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):

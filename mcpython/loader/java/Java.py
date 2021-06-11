@@ -507,6 +507,7 @@ class ConstantValueParser(AbstractAttributeParser):
 class CodeParser(AbstractAttributeParser):
     def __init__(self):
         self.class_file: "JavaBytecodeClass" = None
+        self.table: "JavaAttributeTable" = None
         self.max_stacks = 0
         self.max_locals = 0
         self.code: bytes = None
@@ -514,6 +515,7 @@ class CodeParser(AbstractAttributeParser):
         self.attributes = JavaAttributeTable(self)
 
     def parse(self, table: "JavaAttributeTable", data: bytearray):
+        self.table = table
         self.class_file = table.class_file
         self.max_stacks = pop_u2(data)
         self.max_locals = pop_u2(data)
