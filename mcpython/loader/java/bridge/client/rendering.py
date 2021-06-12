@@ -40,3 +40,15 @@ class RenderTypeLookup(NativeClass):
     )
     def setRenderLayer(self, block, render_type):
         pass
+
+
+class ModelProperty(NativeClass):
+    NAME = "net/minecraftforge/client/model/data/ModelProperty"
+
+    @native("<init>", "()V")
+    def init(self, *_):
+        pass
+
+    @native("<init>", "(Ljava/util/function/Predicate;)V")
+    def init2(self, *_):
+        pass

@@ -35,6 +35,10 @@ class ResourceLocation(NativeClass):
     def toString(self, instance):
         return instance if isinstance(instance, str) else instance.name
 
+    @native("func_110623_a", "()Ljava/lang/String;")
+    def getNamespace(self, instance):
+        return (instance if isinstance(instance, str) else instance.name).split(":")[0]
+
 
 class IBooleanFunction(NativeClass):
     NAME = "net/minecraft/util/math/shapes/IBooleanFunction"
@@ -60,6 +64,12 @@ class VoxelShapes(NativeClass):
         "(Lnet/minecraft/util/math/shapes/VoxelShape;Lnet/minecraft/util/math/shapes/VoxelShape;Lnet/minecraft/util/math/shapes/IBooleanFunction;)Lnet/minecraft/util/math/shapes/VoxelShape;",
     )
     def func_197878_a(self, a, b, function):
+        return self.vm.get_class(
+            "net/minecraft/util/math/shapes/VoxelShape", version=self.internal_version
+        ).create_instance()
+
+    @native("func_197881_a", "(Lnet/minecraft/util/math/AxisAlignedBB;)Lnet/minecraft/util/math/shapes/VoxelShape;")
+    def func_197881_a(self, *_):
         return self.vm.get_class(
             "net/minecraft/util/math/shapes/VoxelShape", version=self.internal_version
         ).create_instance()

@@ -50,7 +50,7 @@ class Runtime:
         method: typing.Union[mcpython.loader.java.Java.JavaMethod, typing.Callable],
         *args,
     ):
-        if callable(method):
+        if callable(method) and not isinstance(method, mcpython.loader.java.Java.JavaMethod):
             from mcpython.common.mod.ModLoader import LoadingInterruptException
 
             try:
@@ -364,6 +364,16 @@ class NoOp(OpcodeInstruction):
         pass
 
 
+@BytecodeRepr.register_instruction
+class Any2Float(OpcodeInstruction):
+    OPCODES = {0x87}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        v = stack.pop()
+        stack.push(float(v) if v is not None else v)
+
+
 class ConstPush(OpcodeInstruction, ABC):
     """
     Base class for instructions pushing pre-defined objects
@@ -630,7 +640,7 @@ class Load3(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class Store(OpcodeInstruction):
-    OPCODES = {0x3A, 0x36}
+    OPCODES = {0x3A, 0x36, 0x39, 0x38}
 
     @classmethod
     def decode(
@@ -651,7 +661,7 @@ class Store(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class Store0(OpcodeInstruction):
-    OPCODES = {0x4B, 0x3B}
+    OPCODES = {0x4B, 0x3B, 0x47, 0x43}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -666,7 +676,7 @@ class Store0(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class Store1(OpcodeInstruction):
-    OPCODES = {0x4C, 0x3C}
+    OPCODES = {0x4C, 0x3C, 0x48, 0x44}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -681,7 +691,7 @@ class Store1(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class Store2(OpcodeInstruction):
-    OPCODES = {0x4D, 0x3D}
+    OPCODES = {0x4D, 0x3D, 0x49, 0x45}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -696,7 +706,7 @@ class Store2(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class Store3(OpcodeInstruction):
-    OPCODES = {0x4E, 0x3E}
+    OPCODES = {0x4E, 0x3E, 0x4A, 0x46}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -731,7 +741,7 @@ class DUP(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class ADD(OpcodeInstruction):
-    OPCODES = {0x60}
+    OPCODES = {0x60, 0x63}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -741,7 +751,7 @@ class ADD(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class SUB(OpcodeInstruction):
-    OPCODES = {0x66, 0x64}
+    OPCODES = {0x66, 0x64, 0x67}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -805,6 +815,23 @@ class IINC(OpcodeInstruction):
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         stack.local_vars[data[0]] += data[1]
+
+
+@BytecodeRepr.register_instruction
+class IfGE0(OpcodeInstruction):
+    OPCODES = {0x9C}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() >= 0:
+            stack.cp += data
+            return True
 
 
 @BytecodeRepr.register_instruction
@@ -1340,7 +1367,7 @@ class IfNonNull(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class Mul(OpcodeInstruction):
-    OPCODES = {0x68}
+    OPCODES = {0x68, 0x6B}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):

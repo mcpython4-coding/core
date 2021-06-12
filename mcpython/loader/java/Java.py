@@ -128,6 +128,7 @@ class JavaVM:
             String,
             ThreadLocal,
             System,
+            Math,
         )
         from mcpython.loader.java.builtin.java.lang.annotation import (
             Documented,
@@ -156,8 +157,9 @@ class JavaVM:
             TreeMap,
             Collection,
             LinkedList,
+            EnumMap,
         )
-        from mcpython.loader.java.builtin.java.util.function import Predicate, Supplier, Function
+        from mcpython.loader.java.builtin.java.util.function import Predicate, Supplier, Function, Consumer, BiFunction
         from mcpython.loader.java.builtin.java.util.stream import Stream
         from mcpython.loader.java.builtin.java.util.regex import Pattern
         from mcpython.loader.java.builtin.java.util.concurrent import ConcurrentHashMap
@@ -772,6 +774,9 @@ class JavaMethod:
 
     def get_class(self):
         return self.class_file.vm.get_class("java/lang/reflect/Method", version=self.class_file.internal_version)
+
+    def __call__(self, *args):
+        return self.invoke(*args)
 
 
 class JavaBytecodeClass(AbstractJavaClass):

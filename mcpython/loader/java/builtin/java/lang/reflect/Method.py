@@ -9,3 +9,11 @@ class Method(NativeClass):
     def getClass(self, instance):
         return self
 
+    @native("accept", "(Ljava/lang/Object;)V")
+    def accept(self, instance, obj):
+        instance(obj)
+
+    @native("apply", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+    def apply(self, instance, arg1, arg2):
+        instance(arg1, arg2)
+

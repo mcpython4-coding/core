@@ -20,3 +20,7 @@ class Arrays(NativeClass):
     @native("stream", "([Ljava/lang/Object;)Ljava/util/stream/Stream;")
     def stream(self, data):
         return data
+
+    @native("asList", "([Ljava/lang/Object;)Ljava/util/List;")
+    def asList(self, array):
+        return array

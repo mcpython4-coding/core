@@ -165,6 +165,11 @@ class AbstractBlock_Properties(NativeClass):
     def func_235861_h_(self, instance):
         return instance
 
+    @native("func_235827_a_",
+            "(Lnet/minecraft/block/AbstractBlock$IExtendedPositionPredicate;)Lnet/minecraft/block/AbstractBlock$Properties;")
+    def func_235827_a_(self, instance, predicate):
+        return instance
+
 
 class SoundType(NativeClass):
     NAME = "net/minecraft/block/SoundType"
@@ -266,7 +271,7 @@ class Block(AbstractBlock):
 
     @native("getRegistryName", "()Lnet/minecraft/util/ResourceLocation;")
     def getRegistryName(self, instance):
-        return instance.registry_name
+        return instance.registry_name if instance is not None else None
 
     @native("func_208617_a", "(DDDDDD)Lnet/minecraft/util/math/shapes/VoxelShape;")
     def func_208617_a(self, *v):
@@ -304,6 +309,7 @@ class Material(NativeClass):
                 "field_151582_l": None,
                 "field_204868_h": None,
                 "field_203243_f": None,
+                "field_151573_f": None,
             }
         )
 
@@ -373,8 +379,17 @@ class MaterialPushReaction(NativeClass):
             {
                 "NORMAL": "net/minecraft/block/material/PushReaction::NORMAL",
                 "DESTROY": "net/minecraft/block/material/PushReaction::DESTROY",
+                "PUSH_ONLY": "net/minecraft/block/material/PushReaction::DESTROY",
             }
         )
+
+
+class AbstractGlassBlock(Block):
+    NAME = "net/minecraft/block/AbstractGlassBlock"
+
+    @native("<init>", "(Lnet/minecraft/block/AbstractBlock$Properties;)V")
+    def init(self, instance, properties):
+        instance.properties = properties
 
 
 class FireBlock(Block):
@@ -1008,8 +1023,25 @@ class BlockStateProperties(NativeClass):
             {
                 "field_208137_al": None,
                 "field_208198_y": None,
+                "field_208155_H": None,
             }
         )
+
+
+class BooleanProperty(NativeClass):
+    NAME = "net/minecraft/state/BooleanProperty"
+
+    @native("func_177716_a", "(Ljava/lang/String;)Lnet/minecraft/state/BooleanProperty;")
+    def func_177716_a(self, string):
+        return self.create_instance()
+
+
+class IntegerProperty(NativeClass):
+    NAME = "net/minecraft/state/IntegerProperty"
+
+    @native("func_177719_a", "(Ljava/lang/String;II)Lnet/minecraft/state/IntegerProperty;")
+    def func_177719_a(self, *_):
+        pass
 
 
 class DoubleBlockHalf(NativeClass):
@@ -1029,12 +1061,12 @@ class Direction(NativeClass):
         super().__init__()
         self.exposed_attributes.update(
             {
-                "NORTH": "net/minecraft/util/Direction::NORTH",
-                "SOUTH": "net/minecraft/util/Direction::SOUTH",
-                "WEST": "net/minecraft/util/Direction::WEST",
-                "EAST": "net/minecraft/util/Direction::EAST",
-                "DOWN": "net/minecraft/util/Direction::DOWN",
-                "UP": "net/minecraft/util/Direction::UP",
+                "NORTH": ("net/minecraft/util/Direction::NORTH", (0, 1, 0)),
+                "SOUTH": ("net/minecraft/util/Direction::SOUTH", (0, -1, 0)),
+                "WEST": ("net/minecraft/util/Direction::WEST", (-1, 0, 0)),
+                "EAST": ("net/minecraft/util/Direction::EAST", (1, 0, 0)),
+                "DOWN": ("net/minecraft/util/Direction::DOWN", (0, 0, -1)),
+                "UP": ("net/minecraft/util/Direction::UP", (0, 0, 1)),
             }
         )
 
@@ -1045,6 +1077,18 @@ class Direction(NativeClass):
     @native("ordinal", "()I")
     def ordinal(self, instance):
         return 0
+
+    @native("func_82601_c", "()I")
+    def getXOffset(self, instance):
+        return instance[1][0]
+
+    @native("func_96559_d", "()I")
+    def getYOffset(self, instance):
+        return instance[1][1]
+
+    @native("func_82599_e", "()I")
+    def getZOffset(self, instance):
+        return instance[1][2]
 
 
 class EnumProperty(NativeClass):
@@ -1133,6 +1177,15 @@ class EntityClassification(NativeClass):
         )
 
 
+class EntityType(NativeClass):
+    NAME = "net/minecraft/entity/EntityType"
+
+    @native("setRegistryName",
+            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, name):
+        return instance
+
+
 class EntityType__Builder(NativeClass):
     NAME = "net/minecraft/entity/EntityType$Builder"
 
@@ -1160,6 +1213,23 @@ class EntityType__Builder(NativeClass):
 
     @native("func_206830_a", "(Ljava/lang/String;)Lnet/minecraft/entity/EntityType;")
     def func_206830_a(self, instance, v):
+        return instance
+
+    @native("setRegistryName",
+            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, namespace, name):
+        return instance
+
+    @native("setTrackingRange", "(I)Lnet/minecraft/entity/EntityType$Builder;")
+    def setTrackingRange(self, instance, r: int):
+        return instance
+
+    @native("setUpdateInterval", "(I)Lnet/minecraft/entity/EntityType$Builder;")
+    def setUpdateInterval(self, instance, interval: int):
+        return instance
+
+    @native("setShouldReceiveVelocityUpdates", "(Z)Lnet/minecraft/entity/EntityType$Builder;")
+    def setShouldReceiveVelocityUpdates(self, instance, should):
         return instance
 
 

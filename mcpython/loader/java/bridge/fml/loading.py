@@ -355,6 +355,10 @@ class DistExecutor(NativeClass):
     def unsafeCallWhenOn(self, dist, supplier):
         pass
 
+    @native("runWhenOn", "(Lnet/minecraftforge/api/distmarker/Dist;Ljava/util/function/Supplier;)V")
+    def runWhenOn(self, *_):
+        pass
+
 
 class FMLPaths(NativeClass):
     NAME = "net/minecraftforge/fml/loading/FMLPaths"

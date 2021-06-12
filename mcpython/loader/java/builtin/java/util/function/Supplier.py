@@ -20,4 +20,4 @@ class Supplier(NativeClass):
 
     @native("get", "()Ljava/lang/Object;")
     def get(self, instance):
-        pass  # todo: implement
+        return instance()
