@@ -29,3 +29,7 @@ class List(NativeClass):
     @native("iterator", "()Ljava/util/Iterator;")
     def iterator(self, instance):
         return instance
+
+    @native("forEach", "(Ljava/util/function/Consumer;)V")
+    def forEach(self, instance, consumer):
+        pass

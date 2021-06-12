@@ -66,7 +66,12 @@ class Runtime:
                 )
 
         if method.code_repr is None:
-            method.code_repr = BytecodeRepr(method.attributes["Code"][0])
+            try:
+                code = method.attributes["Code"][0]
+            except KeyError:
+                raise StackCollectingException(f"Abstract method call onto {method} with args {args}; Code attribute not found")
+
+            method.code_repr = BytecodeRepr(code)
 
         stack = self.spawn_stack()
 
@@ -83,10 +88,13 @@ class Runtime:
         self,
         method: typing.Union[mcpython.loader.java.Java.JavaMethod, typing.Callable],
     ) -> typing.Iterator[str]:
+
         if hasattr(method, "signature"):
             signature = method.signature
         elif hasattr(method, "native_signature"):
             signature = method.native_signature
+        elif isinstance(method, str):
+            signature = method
         else:
             raise ValueError(method)
 
@@ -195,8 +203,8 @@ class Stack:
                 mcpython.loader.java.Java.warn(
                     "instruction [info before invoke] " + str((self.cp, instruction))
                 )
-                mcpython.loader.java.Java.warn("stack: " + str(self.stack)[:200])
-                mcpython.loader.java.Java.warn("local: " + str(self.local_vars)[:200])
+                mcpython.loader.java.Java.warn(f"stack ({len(self.stack)}): " + str(self.stack)[-300:])
+                mcpython.loader.java.Java.warn(f"local ({len(self.local_vars)}: " + str(self.local_vars)[:300])
 
             stack_top = self.stack[:3]
 
@@ -1012,8 +1020,8 @@ class GetField(CPLinkedInstruction):
 
         try:
             stack.push(obj.fields[name])
-        except KeyError:
-            raise StackCollectingException(f"AttributeError: object {obj} has no attribute {name}") from None
+        except (KeyError, AttributeError):
+            raise StackCollectingException(f"AttributeError: object {obj} (type {type(obj)}) has no attribute {name}") from None
 
 
 @BytecodeRepr.register_instruction
@@ -1037,10 +1045,20 @@ class InvokeVirtual(CPLinkedInstruction):
         method = stack.vm.get_method_of_nat(
             data, version=stack.method.class_file.internal_version
         )
-        # todo: add args
+        args = stack.runtime.parse_args_from_stack(method, stack)
+
+        obj = args[0]
+
+        if obj is not None:
+            if not hasattr(obj, "get_class"):
+                if hasattr(method, "access") and method.access & 0x0400:
+                    raise StackCollectingException("invalid abstract not-implemented non-reference-able object"+str(obj))
+            else:
+                method = obj.get_class().get_method(method.name if hasattr(method, "name") else method.native_name, method.signature if hasattr(method, "signature") else method.native_signature)
+
         stack.push(
             stack.runtime.run_method(
-                method, *stack.runtime.parse_args_from_stack(method, stack)
+                method, *args
             )
         )
 
@@ -1120,6 +1138,16 @@ class InvokeInterface(CPLinkedInstruction):
 
 @BytecodeRepr.register_instruction
 class InvokeDynamic(CPLinkedInstruction):
+    """
+    InvokeDynamic
+
+    Resolves a method (mostly lambda's) onto the stack
+
+    Pops in case they are needed args from the stack
+
+    todo: cache method lookup
+    """
+
     OPCODES = {0xBA}
 
     @classmethod
@@ -1139,9 +1167,10 @@ class InvokeDynamic(CPLinkedInstruction):
             data[1]
         ]
         nat = data[2]
-        # print(boostrap, "\n", nat)
 
         target_nat = boostrap[1][1][2][2]
+
+        # print("invokedynamic debug", nat, "\n", boostrap)
 
         try:
             cls_file = stack.vm.get_class(
@@ -1149,17 +1178,22 @@ class InvokeDynamic(CPLinkedInstruction):
                 version=stack.method.class_file.internal_version,
             )
             method = cls_file.get_method(target_nat[1][1], target_nat[2][1])
+            outer_signature = boostrap[1][0][1][1]
 
-            """if not method.access & 0x0008:
-                obj = stack.pop()
+            inner_args = len(list(stack.runtime.get_arg_parts_of(method.signature)))
+            outer_args = len(list(stack.runtime.get_arg_parts_of(outer_signature)))
+
+            # have we args to give from the current runtime?
+            if inner_args > outer_args:
+                extra_args = [stack.pop() for _ in range(inner_args - outer_args)]
+
                 m = method
 
                 def method(*args):
-                    runtime = Runtime()
-                    runtime.run_method(m, obj, *args)
+                    stack.runtime.run_method(m, *extra_args, *args)
 
-                method.native_name = m.name
-                method.native_signature = m.signature"""
+                method.native_name = m.name if hasattr(m, "name") else m.native_name
+                method.native_signature = outer_signature
 
         except StackCollectingException as e:
             e.add_trace(str(boostrap[0]))

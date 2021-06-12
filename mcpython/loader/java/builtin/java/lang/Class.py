@@ -32,3 +32,7 @@ class Class(NativeClass):
     @native("newInstance", "()Ljava/lang/Object;")
     def newInstance(self, cls):
         return cls.create_instance()
+
+    @native("desiredAssertionStatus", "()Z")
+    def desiredAssertionStatus(self, *_):
+        return 0

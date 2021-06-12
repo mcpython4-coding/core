@@ -524,3 +524,12 @@ class Event(NativeClass):
 class EventPriority(NativeClass):
     NAME = "net/minecraftforge/eventbus/api/EventPriority"
 
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "HIGHEST": 0,
+            "HIGH": 1,
+            "LOW": 2,
+            "LOWEST": 3,
+        })
+

@@ -886,7 +886,7 @@ class BlockItem(Item):
         "setRegistryName",
         "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
     )
-    def setRegistryName2(self, instance, name):
+    def setRegistryName3(self, instance, name):
         instance.registry_name = name if isinstance(name, str) else name.name
         return instance
 

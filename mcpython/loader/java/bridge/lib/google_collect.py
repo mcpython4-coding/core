@@ -151,6 +151,11 @@ class Preconditions(NativeClass):
         if not value:
             raise StackCollectingException("expected true, got false")
 
+    @native("checkArgument", "(ZLjava/lang/Object;)V")
+    def checkArgument2(self, value, obj):
+        if not value:
+            raise StackCollectingException(f"expected true, got false, message: {obj}")
+
 
 class ClassToInstanceMap(NativeClass):
     NAME = "com/google/common/collect/ClassToInstanceMap"
@@ -178,3 +183,26 @@ class CharMatcher(NativeClass):
     @native("or", "(Lcom/google/common/base/CharMatcher;)Lcom/google/common/base/CharMatcher;")
     def or_(self, *_):
         pass
+
+
+class Strings(NativeClass):
+    NAME = "com/google/common/base/Strings"
+
+    @native("isNullOrEmpty", "(Ljava/lang/String;)Z")
+    def isNullOrEmpty(self, string: str):
+        return int(string is None or len(string) == 0)
+
+
+class ImmutableSet(NativeClass):
+    NAME = "com/google/common/collect/ImmutableSet"
+
+    @native("copyOf", "(Ljava/util/Collection;)Lcom/google/common/collect/ImmutableSet;")
+    def copyOf(self, collection):
+        obj = self.create_instance()
+
+        try:
+            obj.underlying = set(collection) if not hasattr(collection, "get_class") or not hasattr(collection.get_class(), "iter_over_instance") else set(collection.get_class().iter_over_instance(collection))
+        except TypeError:
+            raise NotImplementedError(f"object {collection} seems not iterable!")
+
+        return obj

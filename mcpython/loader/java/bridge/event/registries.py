@@ -68,6 +68,7 @@ class ForgeRegistries(NativeClass):
             "SOUND_EVENTS": None,
             "FLUIDS": None,
             "TILE_ENTITIES": None,
+            "RECIPE_SERIALIZERS": None,
         }
 
 

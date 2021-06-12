@@ -12,10 +12,16 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython.loader.java.Java import NativeClass, native
+import typing
 
 
 class EnumSet(NativeClass):
     NAME = "java/util/EnumSet"
+
+    def create_instance(self):
+        instance = super().create_instance()
+        instance.underlying = set()
+        return instance
 
     @native("noneOf", "(Ljava/lang/Class;)Ljava/util/EnumSet;")
     def noneOf(self, cls):
@@ -28,3 +34,6 @@ class EnumSet(NativeClass):
     @native("addAll", "(Ljava/util/Collection;[Ljava/lang/Object;)Z")
     def addAll(self, collection, objects):
         pass
+
+    def iter_over_instance(self, instance) -> typing.Iterable:
+        return instance.underlying

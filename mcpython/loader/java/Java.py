@@ -136,6 +136,7 @@ class JavaVM:
             RetentionPolicy,
             Target,
         )
+        from mcpython.loader.java.builtin.java.lang.reflect import Method
         from mcpython.loader.java.builtin.java.nio.file import Files, Path, Paths
         from mcpython.loader.java.builtin.java.io import File, Reader, FileInputStream, PushbackInputStream, Path, FileOutputStream, BufferedWriter, OutputStreamWriter
         from mcpython.loader.java.builtin.java.util import (
@@ -166,7 +167,7 @@ class JavaVM:
         from mcpython.loader.java.bridge.client import rendering
         from mcpython.loader.java.bridge.codec import builder
         from mcpython.loader.java.bridge.event import content, registries
-        from mcpython.loader.java.bridge.fml import capability, loading, network
+        from mcpython.loader.java.bridge.fml import capability, loading, network, config
         from mcpython.loader.java.bridge.lib import (
             apache,
             fastutil,
@@ -174,6 +175,7 @@ class JavaVM:
             gson,
             logging,
             mixin,
+            nightconfig,
         )
         from mcpython.loader.java.bridge.misc import (
             containers,
@@ -417,6 +419,9 @@ Static attribute {name}""")
 
     def is_subclass_of(self, class_name: str):
         return self.name == class_name
+
+    def iter_over_instance(self, instance) -> typing.Iterable:
+        raise StackCollectingException(f"unable to iterate over {instance}")
 
 
 class NativeClassInstance:
@@ -765,6 +770,9 @@ class JavaMethod:
         runtime = mcpython.loader.java.Runtime.Runtime()
         return runtime.run_method(self, *args)
 
+    def get_class(self):
+        return self.class_file.vm.get_class("java/lang/reflect/Method", version=self.class_file.internal_version)
+
 
 class JavaBytecodeClass(AbstractJavaClass):
     def __init__(self):
@@ -1013,4 +1021,5 @@ def decode_cp_constant(const, version=0):
 vm = JavaVM()
 # this is the way how to attach a debugger to a certain method
 # vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")
-# vm.debug_method("shadows/placebo/config/Configuration", "getBoolean", "(Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;)Z")
+# vm.debug_method("appeng/bootstrap/FeatureFactory", "block", "(Ljava/lang/String;Ljava/util/function/Supplier;)Lappeng/bootstrap/IBlockBuilder;")
+# vm.debug_method("appeng/core/api/definitions/ApiBlocks", "<init>", "(Lappeng/bootstrap/FeatureFactory;)V")
